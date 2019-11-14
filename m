@@ -2,345 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C1BFC1B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 09:39:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D50BBFC19A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 09:33:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKNIjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 03:39:06 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60952 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfKNIjG (ORCPT
+        id S1726482AbfKNIdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 03:33:24 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:18299 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbfKNIdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 03:39:06 -0500
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iVAeX-0008KG-4z; Thu, 14 Nov 2019 08:38:57 +0000
-Date:   Thu, 14 Nov 2019 09:38:56 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH v9 2/2] selftests: add tests for clone3() with *set_tid
-Message-ID: <20191114083854.lyryiqbxecmxbrb7@wittgenstein>
-References: <20191114070709.1504202-1-areber@redhat.com>
- <20191114070709.1504202-2-areber@redhat.com>
+        Thu, 14 Nov 2019 03:33:23 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191114083320epoutp03bab99a695eba8f835c5cd62e79af62a0~W_l3SYs8Q2681626816epoutp035
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 08:33:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191114083320epoutp03bab99a695eba8f835c5cd62e79af62a0~W_l3SYs8Q2681626816epoutp035
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1573720400;
+        bh=I6Y8cSsjoOp8g/yBAlaiwUPcDkiaowW9hTnA9+NGhVY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=WnCLHXJv3KQAjsP5EvcgfqpRFi+YKSRQPp28Ea5xuIEKyGDjD1k2Z7rVqZQ9WehIU
+         J83a1YFvsdUVcSeQUIAlVOIlLrNBH1IQsGkAWc70WG6yzWi+a9n3r9OIY7SzdIET9c
+         WRm66SfkVhQiuQZnPajGElDZpOp2JBA7kFhY1y8I=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191114083320epcas1p353fe177c22d30e7120f597a70caa9e8e~W_l2wX0mJ3141431414epcas1p3B;
+        Thu, 14 Nov 2019 08:33:20 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47DF9n524PzMqYkd; Thu, 14 Nov
+        2019 08:33:17 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        09.3E.04085.D411DCD5; Thu, 14 Nov 2019 17:33:17 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191114083316epcas1p40975d359d19194b3d40fd29e2aa189d0~W_lz0tcFK1810418104epcas1p4f;
+        Thu, 14 Nov 2019 08:33:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191114083316epsmtrp2bc26688328f4588556f59345244eff80~W_lzz47vT2132521325epsmtrp2B;
+        Thu, 14 Nov 2019 08:33:16 +0000 (GMT)
+X-AuditID: b6c32a37-e19ff70000000ff5-42-5dcd114da2cc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4F.AF.24756.C411DCD5; Thu, 14 Nov 2019 17:33:16 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191114083316epsmtip15147a8f4b8f85af66a76ba5a2b5e0b0c~W_lzY27xN0672206722epsmtip1u;
+        Thu, 14 Nov 2019 08:33:16 +0000 (GMT)
+Subject: Re: [PATCH v4 0/5] Add required-opps support to devfreq passive gov
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <754ec843-eb8f-5149-bf7f-ec4abf938821@samsung.com>
+Date:   Thu, 14 Nov 2019 17:39:01 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191114070709.1504202-2-areber@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAGETcx-tUtnX0T47YGdf7-cgp6e8K9Rgb34Mfe5Za9L4YMGS1g@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0hTYRjHeXfOjsdsdVyaT9JFTwRqajut2SlSi6wGGVh+6YLYQU86tp2N
+        nS26EFhBXsoo7EKjq2GlX8o51IxhrcxMF5W4bgSWhlJqF7PbyDrbMfLb7/0//4f3+b8XElPf
+        J2JJg2DnbQJnookpeOPdxNSUDZG+PE1gIIFtbopifQeGwtjulrMEO1p5D7Gv9l8j2KEfPgXb
+        1flUyVZ4fxPsuL8eZ/2XPirZht77xMoIfeOtRqW++2ilQn/R5dC76soJvbunFNcfddchffvz
+        JoV+1DU3h9xqXFHMc4W8LY4XCiyFBqEonV6fm786X5emYVKYZexSOk7gzHw6nZWdk7LWYJLm
+        pON2ciaHJOVwokgvylhhszjsfFyxRbSn07y10GRdZk0VObPoEIpSCyzm5YxGs1gnGbcbi7/0
+        VymsZeG7+q/8wUtQRVgFCieBWgIfRipRBZpCqqlmBNfe+pXy4guCka93MHnxDYG/vVL5r6Wq
+        zUnIBQ8C97vaiZaPCG77n4RcM6hsGLzsDHEUlQQufx8eNGHUIQzuHu5CwQIhFVoHnxNBnk7F
+        Q8+PvpCuojLgpO9ASMepBXDu9ROJSTKa2gydY5xsiYSOM/14kMOpjRD43RYKhFEx8LL/gkLm
+        edA0fBaTp64Og77qKJmz4M34r4kDmAHv290THAujIx5C5r1Q23EvlBKoMill6+OJ+FporalS
+        BOfBqES43rJIluPhZuAckvedBiNjR5RBC1AqKDukli3zobv3tULmWXC5tJw4hmjnpDTOSQmc
+        kxI4/292EeF1aCZvFc1FvMhYtZNv24VCbzhpaTO68SjbiygS0VNVt6O78tRKbqe42+xFQGJ0
+        lOrEsCSpCrnde3ibJd/mMPGiF+mksz6OxUYXWKQfIdjzGd1irVbLLmHSdAxDx6hWXa3JU1NF
+        nJ038ryVt/3rU5DhsSUoed3D8m0HS14MXPn8LNK8LyHmV0Kqx5ouBAaXnzQFHmw7bH9hrpld
+        8/2TeXRzJLfw1PipsUxfcmttrjtp5a2sQUvKhpYMz5zzwtveaYltJ9ZkNh3xGBs+BdoPGmZn
+        GoRNpxsy5iWaLsy5etpiIks3bunxpqmSs3c01xvX/tQMR6gjaFws5pgkzCZyfwG1JPpd2QMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSnK6P4NlYgzmXdS12bBexONv0ht3i
+        8q45bBafe48wWtxuXMFm8ebHWSaLM6cvsVp0HfrLZvHv2kYWi2sL37NabH5wjM2B22Pb7m2s
+        Hpf7epk8Fmwq9di0qpPNY8vVdhaPvi2rGD2O39jO5PF5k1wARxSXTUpqTmZZapG+XQJXxqcn
+        k5kKOjgrniz7z9LA2MXexcjJISFgIjH56Cy2LkYuDiGB3YwSOz8uhEpISky7eJS5i5EDyBaW
+        OHy4GKLmLaPE/vkvGUFqhAV8JF4snsUKYosIaElsuvaYBaSIWaCDWWLh/K9MEB1dTBJv258z
+        g1SxAVXtf3GDDcTmF1CUuPrjMdgkXgE7ialnm8DiLAKqEnPvXgSzRQUiJJ5vvwFVIyhxcuYT
+        FhCbUyBQ4vffo2CXMguoS/yZd4kZwhaXuPVkPhOELS+x/e0c5gmMwrOQtM9C0jILScssJC0L
+        GFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEx6SW5g7Gy0viDzEKcDAq8fAeED0T
+        K8SaWFZcmXuIUYKDWUmEd8pboBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHep3nHIoUE0hNLUrNT
+        UwtSi2CyTBycUg2M1h8L0hzzdq8QbUjc9Tn91KZpblMqZjpd+7YyikOiaabaojOHZR4+EnGY
+        Uq7QG18Wn+76PEpASlOAoUb+4YqmZom0js6zpzZemf1Z93LCr10cmgfOcU8MSLu+fvHFlTO4
+        DikdWrg4P571z/cZkxKWO59rdDsWeydjptP63DT5Zc+YNswyfOk8TYmlOCPRUIu5qDgRAKT9
+        YenFAgAA
+X-CMS-MailID: 20191114083316epcas1p40975d359d19194b3d40fd29e2aa189d0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190724014230epcas5p371a5fdee330f91a646d619fbcc024acf
+References: <CGME20190724014230epcas5p371a5fdee330f91a646d619fbcc024acf@epcas5p3.samsung.com>
+        <20190724014222.110767-1-saravanak@google.com>
+        <cb0d4aad-81e4-0b8d-40f2-7f58ef1e38d9@samsung.com>
+        <CAGETcx-tUtnX0T47YGdf7-cgp6e8K9Rgb34Mfe5Za9L4YMGS1g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 08:07:09AM +0100, Adrian Reber wrote:
-> +++ b/tools/testing/selftests/clone3/clone3_selftests.h
-> @@ -0,0 +1,29 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef _CLONE3_SELFTESTS_H
-> +#define _CLONE3_SELFTESTS_H
-> +
-> +#include <stdint.h>
-> +
-> +#define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
-> +
-> +#ifndef __NR_clone3
-> +#define __NR_clone3 -1
-> +struct clone_args {
-> +	__aligned_u64 flags;
+Hi Saravana,
 
-Hugh, doesn't that complain about missing definition of __aligned_u64?
-I thought that was declared in linux/types.h
+On 11/14/19 5:23 PM, Saravana Kannan wrote:
+> On Wed, Nov 13, 2019 at 11:48 PM Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>>
+>> Dear Saravana,
+>>
+>> Any other progress of this series?
+> 
+> Hi Chanwoo,
+> 
+> Thanks for checking. I haven't abandoned this patch series. This patch
+> series depends on "lazy linking" of required-opps to avoid a cyclic
+> dependency between devfreq and OPP table population. But Viresh wasn't
+> happy with my implementation of the lazy liking for reasonable
+> reasons.
+> 
+> I had a chat with Viresh during one of the several conferences that I
+> met him at. To fix the lazy linking in the way he wanted it meant we
+> had to fix other issues in the OPP framework that arise when OPP
+> tables are shared in DT but not in memory. So he was kind enough to
+> sign up to add lazy linking support to OPPs so that I won't have to do
+> it. So, I'm waiting on that. So once that's added, I should be able to
+> drop a few patches in this series, do some minor updates and then this
+> will be good to go.
 
-> +	__aligned_u64 pidfd;
-> +	__aligned_u64 child_tid;
-> +	__aligned_u64 parent_tid;
-> +	__aligned_u64 exit_signal;
-> +	__aligned_u64 stack;
-> +	__aligned_u64 stack_size;
-> +	__aligned_u64 tls;
-> +};
-> +#endif
-> +
-> +static pid_t sys_clone3(struct clone_args *args, size_t size)
-> +{
-> +	return syscall(__NR_clone3, args, size);
+Thanks for the detailed explanation. I'll expect the your next version.
 
-And doesn't that one complain about missing syscall() defined in
-sys/syscall.h?
-
-I would rather make the header sm like:
-
-#define _GNU_SOURCE
-#include <sched.h>
-#include <stdint.h>
-#include <syscall.h>
-#include <linux/types.h>
-
-so that the order of inclusion doesn't matter. You're getting away with
-this because you include syscall.h, etc. before clone3_selftests.h in
-clone3_set_tid.c below. I'd rather not rely on such ordering.
-
-/* stuff */
-
-> +}
-> +
-> +#endif /* _CLONE3_SELFTESTS_H */
-> diff --git a/tools/testing/selftests/clone3/clone3_set_tid.c b/tools/testing/selftests/clone3/clone3_set_tid.c
-> +	if (expected_pid == 0 || expected_pid == pid) {
-> +		ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-> +			       getpid(), pid);
-> +	} else {
-> +		ksft_print_msg(
-> +			"Expected child pid %d does not match actual pid %d\n",
-> +			expected_pid, pid);
-> +		ret = -1;
-
-What's that for?
-I think that whole ret variable can go, no?
-
-> +	}
-> +
-> +	if (wait(&status) < 0) {
-> +		ksft_print_msg("Child returned %s\n", strerror(errno));
-> +		return -errno;
-> +	}
-> +
-> +	if (!WIFEXITED(status))
-> +		return -1;
-> +
-> +	return WEXITSTATUS(status);
-> +}
-> +
-> +static void test_clone3_set_tid(pid_t *set_tid,
-> +				size_t set_tid_size,
-> +				int flags,
-> +				int expected,
-> +				int expected_pid,
-> +				bool wait_for_it)
-> +{
-> +	int ret;
-> +
-> +	ksft_print_msg(
-> +		"[%d] Trying clone3() with CLONE_SET_TID to %d and 0x%x\n",
-> +		getpid(), set_tid[0], flags);
-> +	ret = call_clone3_set_tid(set_tid, set_tid_size, flags, expected_pid,
-> +				  wait_for_it);
-> +	ksft_print_msg(
-> +		"[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
-> +		getpid(), set_tid[0], ret, expected);
-> +	if (ret != expected)
-> +		ksft_test_result_fail(
-> +			"[%d] Result (%d) is different than expected (%d)\n",
-> +			getpid(), ret, expected);
-> +	else
-> +		ksft_test_result_pass(
-> +			"[%d] Result (%d) matches expectation (%d)\n",
-> +			getpid(), ret, expected);
-> +}
-> +int main(int argc, char *argv[])
-> +{
-> +	FILE *f;
-> +	char buf;
-> +	char *line;
-> +	int status;
-> +	int ret = -1;
-> +	size_t len = 0;
-> +	int pid_max = 0;
-> +	uid_t uid = getuid();
-> +	char proc_path[100] = {0};
-> +	pid_t pid, ns1, ns2, ns3, ns_pid;
-> +	pid_t set_tid[MAX_PID_NS_LEVEL * 2];
-
-reverse-reverse Christmas tree ordering I see :)
-
-> +
-> +	if (pipe(pipe_1) < 0 || pipe(pipe_2) < 0)
-> +		ksft_exit_fail_msg("pipe() failed\n");
-> +
-> +	ksft_print_header();
-> +	ksft_set_plan(26);
-> +
-> +	f = fopen("/proc/sys/kernel/pid_max", "r");
-> +	if (f == NULL)
-> +		ksft_exit_fail_msg(
-> +			"%s - Could not open /proc/sys/kernel/pid_max\n",
-> +			strerror(errno));
-> +	fscanf(f, "%d", &pid_max);
-> +	fclose(f);
-> +	ksft_print_msg("/proc/sys/kernel/pid_max %d\n", pid_max);
-> +
-> +	/* Try invalid settings */
-> +	memset(&set_tid, 0, sizeof(set_tid));
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL + 1, 0, -EINVAL, 0, 0);
-> +
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2, 0, -EINVAL, 0, 0);
-> +
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2 + 1, 0,
-> +			-EINVAL, 0, 0);
-
-\n
-
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 42, 0, -EINVAL, 0, 0);
-> +
-> +	/*
-> +	 * This can actually work if this test running in a MAX_PID_NS_LEVEL - 1
-> +	 * nested PID namespace.
-> +	 */
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL - 1, 0, -EINVAL, 0, 0);
-> +
-> +	memset(&set_tid, 0xff, sizeof(set_tid));
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL + 1, 0, -EINVAL, 0, 0);
-> +
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2, 0, -EINVAL, 0, 0);
-> +
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2 + 1, 0,
-> +			-EINVAL, 0, 0);
-
-\n
-
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 42, 0, -EINVAL, 0, 0);
-
-\n
-
-> +	/*
-> +	 * This can actually work if this test running in a MAX_PID_NS_LEVEL - 1
-> +	 * nested PID namespace.
-> +	 */
-> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL - 1, 0, -EINVAL, 0, 0);
-> +
-> +	memset(&set_tid, 0, sizeof(set_tid));
-> +	/* Try with an invalid PID */
-> +	set_tid[0] = 0;
-> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
-
-\n
-
-> +	set_tid[0] = -1;
-> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
-
-\n
-
-> +	/* Claim that the set_tid array actually contains 2 elements. */
-> +	test_clone3_set_tid(set_tid, 2, 0, -EINVAL, 0, 0);
-
-\n
-
-> +	/* Try it in a new PID namespace */
-> +	if (uid == 0)
-> +		test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, -EINVAL, 0, 0);
-> +	else
-> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
-> +
-> +	/*
-> +	 * Try with a valid PID (1) but as non-root. This should fail
-
-Where are you trying this as non-root? I think that comment is obsolete,
-no? :)
-
-> +	 * with -EPERM if running in the initial user namespace.
-> +	 * As root it should tell us -EEXIST.
-> +	 */
-> +	set_tid[0] = 1;
-> +	if (uid == 0)
-> +		test_clone3_set_tid(set_tid, 1, 0, -EEXIST, 0, 0);
-> +	else
-> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
-> +
-> +	/* Try it in a new PID namespace */
-> +	if (uid == 0)
-> +		test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, 0, 0, 0);
-> +	else
-> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
-> +
-> +	/* pid_max should fail everywhere */
-> +	set_tid[0] = pid_max;
-> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
-
-\n
-
-> +	if (uid == 0)
-> +		test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, -EINVAL, 0, 0);
-> +	else
-> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
-> +
-> +	if (uid != 0) {
-> +		/*
-> +		 * All remaining tests require root. Tell the framework
-> +		 * that all those tests are skipped as non-root.
-> +		 */
-> +		ksft_cnt.ksft_xskip += ksft_plan - ksft_test_num();
-> +		goto out;
-> +	}
-> +
-> +	/* Find the current active PID */
-> +	pid = fork();
-> +	if (pid == 0) {
-> +		ksft_print_msg("Child has PID %d\n", getpid());
-> +		_exit(EXIT_SUCCESS);
-> +	}
-> +	(void)wait(NULL);
-> +
-> +	/* After the child has finished, its PID should be free. */
-> +	set_tid[0] = pid;
-> +	test_clone3_set_tid(set_tid, 1, 0, 0, 0, 0);
-> +
-> +	/* This should fail as there is no PID 1 in that namespace */
-> +	test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, -EINVAL, 0, 0);
-> +
-> +	/*
-> +	 * Creating a process with PID 1 in the newly created most nested
-> +	 * PID namespace and PID 'pid' in the parent PID namespace. This
-> +	 * needs to work.
-> +	 */
-> +	set_tid[0] = 1;
-> +	set_tid[1] = pid;
-> +	test_clone3_set_tid(set_tid, 2, CLONE_NEWPID, 0, pid, 0);
-> +
-> +	ksft_print_msg("unshare PID namespace\n");
-> +	if (unshare(CLONE_NEWPID) == -1)
-> +		ksft_exit_fail_msg("unshare(CLONE_NEWPID) failed: %s\n",
-> +				strerror(errno));
-> +
-> +	set_tid[0] = pid;
-> +
-> +	/* This should fail as there is no PID 1 in that namespace */
-> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
-> +
-> +	/* Let's create a PID 1 */
-> +	ns_pid = fork();
-> +	if (ns_pid == 0) {
-> +		ksft_print_msg("Child in PID namespace has PID %d\n", getpid());
-> +		set_tid[0] = 2;
-> +		test_clone3_set_tid(set_tid, 1, 0, 0, 2, 0);
-
-\n
-
-> +		set_tid[0] = 1;
-> +		set_tid[1] = 42;
-> +		set_tid[2] = pid;
-> +		/*
-> +		 * This should fail as there are not enough active PID
-> +		 * namespaces. Again assuming this is running in the host's
-> +		 * PID namespace. Not yet nested.
-> +		 */
-> +		test_clone3_set_tid(set_tid, 4, CLONE_NEWPID, -EINVAL, 0, 0);
-> +
-> +		/*
-> +		 * This should work and from the parent we should see
-> +		 * something like 'NSpid:	pid	42	1'.
-> +		 */
-> +		test_clone3_set_tid(set_tid, 3, CLONE_NEWPID, 0, 42, 1);
-
-Nit: test_clone3_set_tid(set_tid, 3, CLONE_NEWPID, 0, 42, true);
-                                                          ^^^ not 1 :)
+Thanks,
+Chanwoo Choi
