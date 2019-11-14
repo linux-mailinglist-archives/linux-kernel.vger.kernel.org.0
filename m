@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 089C5FC32D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D302FC322
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfKNJ6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 04:58:13 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23794 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726869AbfKNJ6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 04:58:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573725490;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZC4IS+wABP7CjGBt1y2Fdpp5FeX+/EyGMLh5jKY6eME=;
-        b=VJoGSgAe2fDS2MxTtqy9S1dMZvkW9ZhkwcerJCFN/csMv5ZzrDtUWEtmq+W3Fd/zQi4ocQ
-        QjfyWs+giLEuVfVn2dVKhr3ZyopqO04dVAsApvFX2s5NMzoamrUcUHb/3dqtAF1jUPAtp2
-        j+4F1awA64wVaDbpNV5jSraAO8QgfwY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-424-crdwlIMvN4K-IxoPHTS3jQ-1; Thu, 14 Nov 2019 04:58:06 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9AAB107ACC5;
-        Thu, 14 Nov 2019 09:58:04 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-117-81.ams2.redhat.com [10.36.117.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 89442165D3;
-        Thu, 14 Nov 2019 09:57:59 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     Stephen Hemminger <sthemmin@microsoft.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jorgen Hansen <jhansen@vmware.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726534AbfKNJ5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 04:57:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41516 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726024AbfKNJ5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 04:57:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 59227ADBB;
+        Thu, 14 Nov 2019 09:57:38 +0000 (UTC)
+Date:   Thu, 14 Nov 2019 10:57:37 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jonathan Richardson <jonathan.richardson@broadcom.com>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        sergey.senozhatsky@gmail.com, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org
-Subject: [PATCH net-next v2 01/15] vsock/vmci: remove unused VSOCK_DEFAULT_CONNECT_TIMEOUT
-Date:   Thu, 14 Nov 2019 10:57:36 +0100
-Message-Id: <20191114095750.59106-2-sgarzare@redhat.com>
-In-Reply-To: <20191114095750.59106-1-sgarzare@redhat.com>
-References: <20191114095750.59106-1-sgarzare@redhat.com>
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: Re: console output duplicated when registering additional consoles
+Message-ID: <20191114095737.wl5nvxu3w6p5thfc@pathway.suse.cz>
+References: <CAHrpVsUHgJA3wjh4fDg43y5OFCCvQb-HSRpyGyhFEKXcWw8WnQ@mail.gmail.com>
+ <CAHrpVsW6jRUYK_mu+dLaBvucAAtUPQ0zcH6_NxsUsTrPewiY_w@mail.gmail.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: crdwlIMvN4K-IxoPHTS3jQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHrpVsW6jRUYK_mu+dLaBvucAAtUPQ0zcH6_NxsUsTrPewiY_w@mail.gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VSOCK_DEFAULT_CONNECT_TIMEOUT definition was introduced with
-commit d021c344051af ("VSOCK: Introduce VM Sockets"), but it is
-never used in the net/vmw_vsock/vmci_transport.c.
+On Wed 2019-11-13 17:28:45, Jonathan Richardson wrote:
+> Adding printk maintainers.
+> This commit seems to have introduced the error:
+> 
+> commit f92b070f2dc89a8ff1a0cc8b608e20abef894c7d
+> Author: Petr Mladek <pmladek@suse.com>
+> Date:   Thu Sep 13 14:34:06 2018 +0200
+> 
+>     printk: Do not miss new messages when replaying the log
+> 
+> If I checkout to the commit before
+> (a06b0c82a049d34d4dc273e8692ed0894458c468), the console output is
+> normal when registering 2 bootconsoles and 2 normal consoles. I've
+> added the log for 4.19.0-rc3 for comparison (previous version was
+> 5.1.0). I don't think this commit took into account that more than one
+> console could be registered. When the second console is registered,
+> 'console_seq >= exclusive_console_stop_seq' is true (both are 0) and
+> exclusive_console is always set to NULL resulting in the log being
+> replayed again to the uart8250 console:
 
-VSOCK_DEFAULT_CONNECT_TIMEOUT is used and defined in
-net/vmw_vsock/af_vsock.c
+This race should not happen because Both exclusive_console and
+exclusive_console_stop_seq are manipulated under console_lock.
+And the log is replayed before console_lock is released.
 
-Cc: Jorgen Hansen <jhansen@vmware.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- net/vmw_vsock/vmci_transport.c | 5 -----
- 1 file changed, 5 deletions(-)
+>         /* Output to all consoles once old messages replayed. */
+>         if (unlikely(exclusive_console &&
+>                  console_seq >= exclusive_console_stop_seq)) {
+>             exclusive_console = NULL;
+>         }
+> 
+> I'm looking into it but any input is helpful. Thanks.
 
-diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.=
-c
-index 6ba98a1efe2e..cf3b78f0038f 100644
---- a/net/vmw_vsock/vmci_transport.c
-+++ b/net/vmw_vsock/vmci_transport.c
-@@ -78,11 +78,6 @@ static int PROTOCOL_OVERRIDE =3D -1;
- #define VMCI_TRANSPORT_DEFAULT_QP_SIZE       262144
- #define VMCI_TRANSPORT_DEFAULT_QP_SIZE_MAX   262144
-=20
--/* The default peer timeout indicates how long we will wait for a peer res=
-ponse
-- * to a control message.
-- */
--#define VSOCK_DEFAULT_CONNECT_TIMEOUT (2 * HZ)
--
- /* Helper function to convert from a VMCI error code to a VSock error code=
-. */
-=20
- static s32 vmci_transport_error_to_vsock_error(s32 vmci_error)
---=20
-2.21.0
+IMHO, the problem is that the log should not be replayed at all.
+See the following code in register_console():
 
+	/*
+	 * If we have a bootconsole, and are switching to a real console,
+	 * don't print everything out again, since when the boot console, and
+	 * the real console are the same physical device, it's annoying to
+	 * see the beginning boot messages twice
+	 */
+	if (bcon && ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV))
+		newcon->flags &= ~CON_PRINTBUFFER;
+
+I already see two problems there:
+
+1. CON_PRINTBUFFER is cleared only when the new console has
+   CON_CONSDEV flag set. It is set only for the console
+   that is defined as the last on the command line.
+   It is a so-called preferred console.
+
+2. bcon is set to the first console in console_drivers list.
+   It is the first registered boot console.
+
+Sigh, this works for simple configuration. But it fails badly when
+more different consoles are configured.
+
+We should clear CON_PRINTBUFFER flag when the real console
+replacing an already registered boot console is registered.
+
+BTW: Similar bug is also at the end of register_console().
+The boot consoles are unregistered only when the preferred
+console is installed.
+
+For a proper solution we would need to match boot and real
+consoles that write messages into the physical device.
+But I am afraid that there is no support for this.
+con->match() callback compares the name defined on
+the command line. And it has side effects (the matching
+console is prepared for registration).
+
+To be honest I am not much familiar with the device interface.
+I am not sure if there is a way to detect the two drivers
+use the same physical hardware.
+
+Sigh, it is a huge historical mess. It would needed a lot
+of work to clean it up.
+
+Best Regards,
+Petr
