@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F918FC239
+	by mail.lfdr.de (Postfix) with ESMTP id D8C17FC23A
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfKNJIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 04:08:45 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:39427 "EHLO ozlabs.org"
+        id S1727447AbfKNJIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 04:08:48 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44749 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbfKNJIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 04:08:34 -0500
+        id S1727365AbfKNJIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 04:08:36 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 47DFyS5DKkz9sRs; Thu, 14 Nov 2019 20:08:32 +1100 (AEDT)
+        id 47DFyT6f97z9sSW; Thu, 14 Nov 2019 20:08:33 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 090d5ab93d0b8a079dd516c16649bd00ba4f7302
-In-Reply-To: <1543498518-107601-1-git-send-email-yuehaibing@huawei.com>
+X-powerpc-patch-commit: bfa2325e5b8b800cc6720cad8d2f066cd0136bee
+In-Reply-To: <1545705876-63132-1-git-send-email-yuehaibing@huawei.com>
 To:     YueHaibing <yuehaibing@huawei.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Michal Suchanek <msuchanek@suse.de>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        "Mauricio Faria de Oliveira" <mauricfo@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Alastair D'Silva <alastair@d-silva.org>,
+        "Frederic Barrat" <fbarrat@linux.vnet.ibm.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
         YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] powerpc/64s: Fix debugfs_simple_attr.cocci warnings
-Message-Id: <47DFyS5DKkz9sRs@ozlabs.org>
-Date:   Thu, 14 Nov 2019 20:08:32 +1100 (AEDT)
+Subject: Re: [PATCH -next] powerpc/powernv/npu: Fix debugfs_simple_attr.cocci warnings
+Message-Id: <47DFyT6f97z9sSW@ozlabs.org>
+Date:   Thu, 14 Nov 2019 20:08:33 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-29 at 13:35:18 UTC, YueHaibing wrote:
+On Tue, 2018-12-25 at 02:44:36 UTC, YueHaibing wrote:
 > Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
 > for debugfs files.
 > 
@@ -49,6 +52,6 @@ On Thu, 2018-11-29 at 13:35:18 UTC, YueHaibing wrote:
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/090d5ab93d0b8a079dd516c16649bd00ba4f7302
+https://git.kernel.org/powerpc/c/bfa2325e5b8b800cc6720cad8d2f066cd0136bee
 
 cheers
