@@ -2,185 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19D29FC641
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 13:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2E6FC5A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 12:50:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfKNMXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 07:23:37 -0500
-Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:28211 "EHLO
-        SHSQR01.unisoc.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726057AbfKNMXg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 07:23:36 -0500
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-        by SHSQR01.unisoc.com with ESMTP id xAEBnlXD019566;
-        Thu, 14 Nov 2019 19:49:47 +0800 (CST)
-        (envelope-from Orson.Zhai@unisoc.com)
-Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-        by SHSQR01.spreadtrum.com with ESMTPS id xAEBmChD018090
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 14 Nov 2019 19:48:12 +0800 (CST)
-        (envelope-from Orson.Zhai@unisoc.com)
-Received: from localhost (10.0.74.112) by BJMBX01.spreadtrum.com (10.0.64.7)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Thu, 14 Nov 2019 19:48:15
- +0800
-From:   Orson Zhai <orson.zhai@unisoc.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <steven.tang@unisoc.com>, Orson Zhai <orson.zhai@unisoc.com>
-Subject: [PATCH 2/2] mfd: syscon: Add syscon-names and phandle args support
-Date:   Thu, 14 Nov 2019 19:45:25 +0800
-Message-ID: <20191114114525.12675-3-orson.zhai@unisoc.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191114114525.12675-1-orson.zhai@unisoc.com>
-References: <20191114114525.12675-1-orson.zhai@unisoc.com>
+        id S1726276AbfKNLu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 06:50:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726057AbfKNLu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 06:50:28 -0500
+Received: from localhost (unknown [223.226.110.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD4ED206DB;
+        Thu, 14 Nov 2019 11:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573732226;
+        bh=7cE8IM/g7fk3rGHkQHrlQziLkAAH6dYps+ysFyhbgXo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CiFuv13QJCCG+uwbTVdr6CSXpD69RDtMPZG7sz9vTCKm37pME91VD96YMVYPy7dXU
+         TryssRvkb0A97U6cyrLLZ3aOr73hSoNGwnTW2Vn2Tk4z6yn6qq2Vn1Z7lXUWhSrvlv
+         iICz4MnaIY0C/BYQVNnvwzcm+7iUxiGnw5HBlG0M=
+Date:   Thu, 14 Nov 2019 17:20:20 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH 1/4] soundwire: sdw_slave: add new fields to
+ track probe status
+Message-ID: <20191114115020.GU952516@vkoul-mobl>
+References: <20191023210657.32440-1-pierre-louis.bossart@linux.intel.com>
+ <20191023210657.32440-2-pierre-louis.bossart@linux.intel.com>
+ <20191103045604.GE2695@vkoul-mobl.Dlink>
+ <f53b28bb-1ec7-a400-54ed-51fd55819ecd@linux.intel.com>
+ <20191108042940.GW952516@vkoul-mobl>
+ <e3e10c25-84dc-f4e7-e94b-d18493450021@linux.intel.com>
+ <20191109111211.GB952516@vkoul-mobl>
+ <5a2a40b3-5a3c-f80a-b2a4-33d821d5b0e6@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.74.112]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL: SHSQR01.spreadtrum.com xAEBmChD018090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a2a40b3-5a3c-f80a-b2a4-33d821d5b0e6@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11-11-19, 10:34, Pierre-Louis Bossart wrote:
+> 
+> 
+> On 11/9/19 5:12 AM, Vinod Koul wrote:
+> > On 08-11-19, 08:55, Pierre-Louis Bossart wrote:
+> > > 
+> > > 
+> > > On 11/7/19 10:29 PM, Vinod Koul wrote:
+> > > > On 04-11-19, 08:32, Pierre-Louis Bossart wrote:
+> > > > > 
+> > > > > 
+> > > > > On 11/2/19 11:56 PM, Vinod Koul wrote:
+> > > > > > On 23-10-19, 16:06, Pierre-Louis Bossart wrote:
+> > > > > > > Changes to the sdw_slave structure needed to solve race conditions on
+> > > > > > > driver probe.
+> > > > > > 
+> > > > > > Can you please explain the race you have observed, it would be a very
+> > > > > > useful to document it as well
+> > > > > 
+> > > > > the races are explained in the [PATCH 00/18] soundwire: code hardening and
+> > > > > suspend-resume support series.
+> > > > 
+> > > > It would make sense to explain it here as well to give details to
+> > > > reviewers, there is nothing wrong with too much detail!
+> > > > 
+> > > > > > > 
+> > > > > > > The functionality is added in the next patch.
+> > > > > > 
+> > > > > > which one..?
+> > > > > 
+> > > > > [PATCH 00/18] soundwire: code hardening and suspend-resume support
+> > > > 
+> > > > Yeah great! let me play detective with 18 patch series. I asked for a
+> > > > patch and got a series!
+> > > > 
+> > > > Again, please help the maintainer to help you. We would love to see this
+> > > > merged as well, but please step up and give more details in cover
+> > > > letter and changelogs. I shouldn't need to do guesswork and scan through the
+> > > > inbox to find the context!
+> > > 
+> > > We are clearly not going anywhere.
+> > 
+> > Correct as you don't seem to provide clear answers, I am asking again
+> > which patch implements the new fields added here, how difficult is it to
+> > provide the *specific* patch which implements this so that I can compare
+> > the implementation and see why this is needed and apply if fine!
+> > 
+> > But no you will not provide a clear answer and start ranting!
+> > 
+> > > I partitioned the patches to make your maintainer life easier and help the
+> > > integration of SoundWire across two trees. All I get is negative feedback,
+> > > grand-standing, and zero comments on actual changes.
+> > 
+> > No you get asked specific question which you do not like and start off
+> > on a tangent!
+> > 
+> > > For the record, I am mindful of reviewer/maintainer workload, and I did
+> > > contact you in September to check your availability and provided a pointer
+> > > to initial code changes. I did send a first version a week prior to your
+> > > travel/vacation, I resend another version when you were back and waited yet
+> > > another two weeks to resend a second version. I also contacted Takashi, Mark
+> > > and you to suggest this code partition, and did not get any pushback. It's
+> > > not like I am pushing stuff down your throat, I have been patient and
+> > > considerate.
+> > > 
+> > > Please start with the patches "soundwire: code hardening and suspend-resume
+> > > support" and come back to this interface description when you have reviewed
+> > > these changes. It's not detective work, it's working around the consequences
+> > > of having separate trees for Audio and SoundWire.
+> > 
+> > Again, which patch in the series does implement these new members!
+> 
+> It's really straightforward...here is the match between headers and
+> functionality:
+> 
+> [PATCH v2 1/5] soundwire: sdw_slave: add new fields to track probe status
+> [PATCH v2 02/19] soundwire: fix race between driver probe and update_status
+> callback
+> 
+> [PATCH v2 2/5] soundwire: add enumeration_complete structure
+> [PATCH v2 12/19] soundwire: add enumeration_complete signaling
+> 
+> [PATCH v2 3/5] soundwire: add initialization_complete definition
+> [PATCH v2 13/19] soundwire: bus: add initialization_complete signaling
+> 
+> [PATCH v2 4/5] soundwire: intel: update interfaces between ASoC and
+> SoundWire
+> [PATCH v2 5/5] soundwire: intel: update stream callbacks for hwparams/free
+> stream operations
+> [PATCH v2 13/14] soundwire: intel: free all resources on hw_free()
 
-There are a lot of global registers used across multiple similar SoCs
-from Unisoc. It is not easy to manage all of them very well by current
-syscon device tree interfaces.
+Thanks for the pointers, I will look at these patches and do the needful
+for this series
 
-Add helper functions to get regmap and syscon args by syscon-names all
-together.
+> I suggested an approach that you didn't comment on, and now I am not sure
+> what to make of the heated wording and exclamation marks. You did not answer
+> to Liam's question on links between ASoC/SoundWire - despite the fact that
+> drivers/soundwire cannot be an isolated subsystem, both the Intel and
+> Qualcomm solutions have a big fat 'depends on SND_SOC'.
+> 
+> At this point I am formally asking for your view and guidance on how we are
+> going to do the SoundWire/ASoC integration. It's now your time to make
+> suggestions on what the flow should be between you and Mark/Takashi. If you
+> don't want this initial change to the header files, then what is your
+> proposal?
 
-This patch does not affect original syscon code and usage. It may help
-other SoC vendors if they have the same trouble as well.
+It is going to be as it would be for any other subsystem. Please mention
+in the cover letter about required dependency. In case asoc needs this I
+will create a immutable tag and in reverse case Mark will do so.
 
-Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
----
- drivers/mfd/syscon.c       | 65 ++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/syscon.h | 22 +++++++++++++
- 2 files changed, 87 insertions(+)
+It is not really an issue if we get the information ahead of time
 
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index 660723276481..7ed1b2e4dba4 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -225,6 +225,71 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
- 
-+struct regmap *syscon_regmap_lookup_by_name(struct device_node *np,
-+					const char *name)
-+{
-+	struct device_node *syscon_np;
-+	struct of_phandle_args args;
-+	struct regmap *regmap;
-+	int index = 0;
-+	int rc;
-+
-+	if (name)
-+		index = of_property_match_string(np, "syscon-names", name);
-+
-+	if (index < 0)
-+		return ERR_PTR(-EINVAL);
-+
-+	rc = of_parse_phandle_with_args(np, "syscons", "#syscon-cells", index,
-+			&args);
-+	if (rc)
-+		return ERR_PTR(rc);
-+
-+	syscon_np = args.np;
-+
-+	if (!syscon_np)
-+		return ERR_PTR(-ENODEV);
-+
-+	regmap = syscon_node_to_regmap(syscon_np);
-+
-+	of_node_put(syscon_np);
-+
-+	return regmap;
-+}
-+EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_name);
-+
-+int syscon_get_args_by_name(struct device_node *np,
-+			const char *name,
-+			int arg_count,
-+			unsigned int *out_args)
-+{
-+	struct of_phandle_args args;
-+	int index = 0;
-+	int rc;
-+
-+	if (name)
-+		index = of_property_match_string(np, "syscon-names", name);
-+
-+	if (index < 0)
-+		return -EINVAL;
-+
-+	rc = of_parse_phandle_with_args(np, "syscons", "#syscon-cells", index,
-+					&args);
-+	if (rc)
-+		return rc;
-+
-+	if (arg_count > args.args_count)
-+		arg_count = args.args_count;
-+
-+	for (index = 0; index < arg_count; index++)
-+		out_args[index] = args.args[index];
-+
-+	of_node_put(args.np);
-+
-+	return arg_count;
-+}
-+EXPORT_SYMBOL_GPL(syscon_get_args_by_name);
-+
- static int syscon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-index 112dc66262cc..5584173cd5d4 100644
---- a/include/linux/mfd/syscon.h
-+++ b/include/linux/mfd/syscon.h
-@@ -23,6 +23,13 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
- extern struct regmap *syscon_regmap_lookup_by_phandle(
- 					struct device_node *np,
- 					const char *property);
-+extern struct regmap *syscon_regmap_lookup_by_name(
-+					struct device_node *np,
-+					const char *name);
-+extern int syscon_get_args_by_name(struct device_node *np,
-+				const char *name,
-+				int arg_count,
-+				unsigned int *out_args);
- #else
- static inline struct regmap *device_node_to_regmap(struct device_node *np)
- {
-@@ -45,6 +52,21 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
- {
- 	return ERR_PTR(-ENOTSUPP);
- }
-+
-+static inline struct regmap *syscon_regmap_lookup_by_name(
-+					struct device_node *np,
-+					const char *name)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
-+
-+static int syscon_get_args_by_name(struct device_node *np,
-+				const char *name,
-+				int arg_count,
-+				unsigned int *out_args)
-+{
-+	return -ENOTSUPP;
-+}
- #endif
- 
- #endif /* __LINUX_MFD_SYSCON_H__ */
 -- 
-2.18.0
-
-
+~Vinod
