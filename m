@@ -2,88 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A6FEFCCED
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C377EFCCF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:17:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKNSQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:16:12 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:35581 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfKNSQM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:16:12 -0500
-Received: by mail-vs1-f68.google.com with SMTP id k15so4529087vsp.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 10:16:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VxmH23UIh9bgluRuYOUap2wtF++JOc1rV8xUaBpEJ7o=;
-        b=mO2PVhZ16pDlTlYuVILvi8A75KjsItYV3DeXppoIPq3BwPbsDM/LW+NfkBp7Qk+ax3
-         jC42FJ/4QTOWM+agweJCKLTAarRvevGAP+kn1yj3AgK8qbl5zqpNse1lpQSxZLOa8vPK
-         LmriK1aIr1Yu4IPoPkCJfA6tn+GqX343TCODAOuTdCTrnSO5apUdtHjQYSL2WZvs6vQ0
-         plS2lZ7eC8FbopssHnbg/0ysYBXqdJG1vvakPm9eNgI2fW1zczisBV420GWmv9uq5wri
-         8r7K1q+hYCqXDdjNMtVpHMBlhhpI9eX081Y6q9NDpmWpdzMr2SNw3sclCmvXtXzmkRAQ
-         T3kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VxmH23UIh9bgluRuYOUap2wtF++JOc1rV8xUaBpEJ7o=;
-        b=l/u4qJwdQjWujVKd4SakYWUJ3K9TmWRZqKf9l0YWD5KHJ5N50qT5lJ7BTYYsZf1MxB
-         52L6sy31JZ07INhMv6+hu/BPcp9WH15zC5usJlkoEmFkcG01PTy5g4wYpockeLmzfQ0X
-         7rbi38yhogkEIJuLx7/GpUVqMczceC1LVs+n+qrKp+esi1K/mFRGMjv+fdHfmw6K15O5
-         PFHs2a0LKWRUSQwRA5ZjnXzwPKatUOGdYvqus5I/Id3zC6IsWjxTu05jElAaaoPLyomR
-         320P5ZfDN5oo2f8lL4O2bTcc5HvP/Nmq/HiKL1kKWlIATNcb6IW1SYMOALa+2Keo5zDa
-         XOgA==
-X-Gm-Message-State: APjAAAWbdg0ANBxdwBOqYJolkPcTwUWjVOej4Qn7mAYKA49KVYowvZbN
-        XHZBmRQdN+P//aDDhes+qN3qQnUpslQeMpxbOU5bDA==
-X-Google-Smtp-Source: APXvYqxRXH/rJzDlko//25OMTKBgGjGCR6O8nuS4Pzy2+D1/twDFtUQrSr+vpmJGm+Wy2gjuADPo9QY7+Ec7wJ2kGjw=
-X-Received: by 2002:a05:6102:2041:: with SMTP id q1mr6523378vsr.15.1573755370771;
- Thu, 14 Nov 2019 10:16:10 -0800 (PST)
+        id S1727044AbfKNSRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:17:30 -0500
+Received: from mga03.intel.com ([134.134.136.65]:36344 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726592AbfKNSR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:17:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:17:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
+   d="scan'208";a="195123359"
+Received: from chiahuil-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.228.77])
+  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2019 10:17:27 -0800
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v3 00/22] soundwire: code hardening and suspend-resume support
+Date:   Thu, 14 Nov 2019 12:16:40 -0600
+Message-Id: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191031195705.36916-1-samitolvanen@google.com> <20191114165730.GC5158@willie-the-truck>
-In-Reply-To: <20191114165730.GC5158@willie-the-truck>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Thu, 14 Nov 2019 10:15:59 -0800
-Message-ID: <CABCJKueJ-J5MPj4-qL230iM3Bu8Qc_4wsViRgt2nJD81_EVJLw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2] arm64: lse: fix LSE atomics with LLVM's
- integrated assembler
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 8:57 AM Will Deacon <will@kernel.org> wrote:
->
-> On Thu, Oct 31, 2019 at 12:57:05PM -0700, Sami Tolvanen wrote:
-> > Unlike gcc, clang considers each inline assembly block to be independent
-> > and therefore, when using the integrated assembler for inline assembly,
-> > any preambles that enable features must be repeated in each block.
-> >
-> > This change defines __LSE_PREAMBLE and adds it to each inline assembly
-> > block that has LSE instructions, which allows them to be compiled also
-> > with clang's assembler.
->
-> Any chance LLVM can be fixed to avoid this bodge in the kernel?
+this patchset applies on top of "[PATCH v3 00/15] soundwire: intel:
+implement new ASoC interfaces".
 
-Unfortunately, LLVM developers consider this to be a feature, not a
-bug, so it's unlikely that we can change how the integrated assembler
-works:
+It implements a series of improvements for:
+a) interrupt handling on Intel platforms in MSI mode
+b) race conditions on codec probe and enumeration
+c) suspend-resume issues (clock-stop mode not supported for now)
+d) underflow handling
+e) updates to the stream state machine which did not support valid
+ALSA transitions.
 
-  https://bugs.llvm.org/show_bug.cgi?id=19749
+These patches were tested extensively on 4 different platforms and are
+viewed as required for any sort of SoundWire-based product. While
+tested extensively on Intel platforms only, they should also benefit
+Qualcomm platforms who haven't yet enabled power management.
 
-Note that this patch is similar to be604c616ca7 ("arm64: sysreg: Make
-mrs_s and msr_s macros work with Clang and LTO"), which worked around
-the same issue in the sysreg code.
+Changes since v2: (no feedback received since November 6)
+Added idle scheduling to deal with pm_runtime issues when devices are
+exposed in the DSDT, but are not populated on the board. A quirk is
+introduced to deal with potential cases where the devices might be
+powered at a later time, in which case it's legit to leave the bus
+active.
+Fixed .prepare callback to handle both underflow and resume cases. The
+previous version was incorrect in the first case and did not follow
+recommended programming sequence
+Fixed an additional race condition leading to a timeout when the codec
+device was suspended while the master remained active.
+Fixed a couple of warnings reported by static analysis
+Removed non-essential pr_err() traces in stream.c, left others when
+useful
+Changed subject of patches dealing with race conditions to make sure
+reviewers can link with the interface changes.
 
-Sami
+
+Changes since v1: (no feedback received since October 23)
+added support for initialization_complete, integration with Realtek
+codecs exposed an additional race condition between the resume
+operation and restoration of settings in separate thread triggered by
+Slave status change.
+No other functional change
+
+Bard Liao (3):
+  soundwire: intel/cadence: fix timeouts in MSI mode
+  soundwire: stream: only prepare stream when it is configured.
+  soundwire: intel: reinitialize IP+DSP in .prepare(), but only when
+    resuming
+
+Pierre-Louis Bossart (19):
+  soundwire: bus: fix race condition with probe_complete signaling
+  soundwire: bus: add PM/no-PM versions of read/write functions
+  soundwire: bus: write Slave Device Number without runtime_pm
+  soundwire: intel: add helpers for link power down and shim wake
+  soundwire: intel: Add basic power management support
+  soundwire: intel: add pm_runtime support
+  soundwire: intel: reset pm_runtime status during system resume
+  soundwire: bus: add helper to reset Slave status to UNATTACHED
+  soundwire: intel: call helper to reset Slave states on resume
+  soundwire: bus: check first if Slaves become UNATTACHED
+  soundwire: bus: fix race condition with enumeration_complete signaling
+  soundwire: bus: fix race condition with initialization_complete
+    signaling
+  soundwire: bus: fix race condition by tracking UNATTACHED transition
+  soundwire: intel: disable pm_runtime when removing a master
+  soundwire: bus: disable pm_runtime in sdw_slave_delete
+  soundwire: stream: remove redundant pr_err traces
+  soundwire: stream: update state machine and add state checks
+  soundwire: stream: do not update parameters during DISABLED-PREPARED
+    transition
+  soundwire: intel: pm_runtime idle scheduling
+
+ Documentation/driver-api/soundwire/stream.rst |  63 ++-
+ drivers/soundwire/bus.c                       | 169 +++++++-
+ drivers/soundwire/bus.h                       |   9 +
+ drivers/soundwire/bus_type.c                  |   5 +
+ drivers/soundwire/cadence_master.c            |  17 +-
+ drivers/soundwire/cadence_master.h            |   8 +
+ drivers/soundwire/intel.c                     | 400 ++++++++++++++++--
+ drivers/soundwire/intel.h                     |   2 +
+ drivers/soundwire/intel_init.c                |  45 +-
+ drivers/soundwire/slave.c                     |   4 +
+ drivers/soundwire/stream.c                    |  71 +++-
+ include/linux/soundwire/sdw.h                 |   1 +
+ include/linux/soundwire/sdw_intel.h           |   4 +
+ 13 files changed, 714 insertions(+), 84 deletions(-)
+
+-- 
+2.20.1
+
