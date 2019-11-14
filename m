@@ -2,112 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AE30FC3FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA94FC3CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:16:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfKNKXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 05:23:10 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:64096 "EHLO
-        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbfKNKXJ (ORCPT
+        id S1726597AbfKNKQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 05:16:10 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49696 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfKNKQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 05:23:09 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 14 Nov 2019 15:46:57 +0530
-IronPort-SDR: lkhLyskng5J0klG/9RWVxN2nL6fyRmJw97v05Gn7Mvg5rotW1gGDf6vfUsRrU2EfFh47YXFMQp
- LGZdt8IUHa1PNQGY/sWDmj4X9soz9gZvB2jUHg/VyEgUG/DCPZH3ZrNSvrkORbycjQ515yY6Y9
- wG7vHS4qplpgxHiB0JYy4bjonIT8WdXqwq627BdQFPhyIG6tvG54qDNTtUpZAyyfOPrHkFaq8d
- DBfwo7otXOKB6O87w188qq3yLCxFC1VzA2Y4ecef2NosgBal4GQ/+zOcwmNydg6GVpXEVe/spe
- t/1Yd/+i1U5+dRyqYUOmDPa3
-Received: from harigovi-linux.qualcomm.com ([10.204.66.147])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 14 Nov 2019 15:46:39 +0530
-Received: by harigovi-linux.qualcomm.com (Postfix, from userid 2332695)
-        id 026CF2704; Thu, 14 Nov 2019 15:46:37 +0530 (IST)
-From:   Harigovindan P <harigovi@codeaurora.org>
-To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     Harigovindan P <harigovi@codeaurora.org>,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        abhinavk@codeaurora.org, jsanka@codeaurora.org,
-        chandanu@codeaurora.org, nganji@codeaurora.org
-Subject: [PATCH v1 2/2] drm/msm: add DSI config changes to support DSI version
-Date:   Thu, 14 Nov 2019 15:46:28 +0530
-Message-Id: <1573726588-18897-3-git-send-email-harigovi@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573726588-18897-1-git-send-email-harigovi@codeaurora.org>
-References: <1573726588-18897-1-git-send-email-harigovi@codeaurora.org>
+        Thu, 14 Nov 2019 05:16:10 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAEAG5gx072653;
+        Thu, 14 Nov 2019 04:16:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573726565;
+        bh=LspHk1aChH4ufLzmXgiqvdBWcKeyK8U16diJVB/oWIU=;
+        h=From:To:CC:Subject:Date;
+        b=Kob0uFVDJBQR/hu1uILa+de9/e9alHQc+MMf97iLVFHDk7W2GXFV0rH4LC3pDw5J/
+         0GgMpSODh891evB2MKYyFi3RRZeQ4MXsjb9B6XKvts6mQyOtvNNs0MCBWbfqScjYND
+         EynsIQnQWeZNNVc9PLYkgAXVcVEbraUMCkj/7CzI=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAEAG5Z0005854
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Nov 2019 04:16:05 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 14
+ Nov 2019 04:16:04 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 14 Nov 2019 04:16:04 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAEAG2C8022278;
+        Thu, 14 Nov 2019 04:16:02 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>
+CC:     <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tony@atomide.com>
+Subject: [PATCH] clk: ti: dra7-atl: Remove pm_runtime_irq_safe()
+Date:   Thu, 14 Nov 2019 12:17:18 +0200
+Message-ID: <20191114101718.20619-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DSI config changes to support DSI version.
+This is not needed for anything, and prevents proper PM transitions for
+parent devices which is bad in case of ti-sysc; this effectively kills
+PM completely. Thus, remove the flag.
 
-Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+Suggested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/gpu/drm/msm/dsi/dsi_cfg.c | 21 +++++++++++++++++++++
- drivers/gpu/drm/msm/dsi/dsi_cfg.h |  1 +
- 2 files changed, 22 insertions(+)
+ drivers/clk/ti/clk-dra7-atl.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-index b7b7c1a..d2c4592 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-@@ -133,6 +133,10 @@ static const char * const dsi_sdm845_bus_clk_names[] = {
- 	"iface", "bus",
- };
+diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+index f65e16c4f3c4..8d4c08b034bd 100644
+--- a/drivers/clk/ti/clk-dra7-atl.c
++++ b/drivers/clk/ti/clk-dra7-atl.c
+@@ -233,7 +233,6 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+ 	cinfo->iobase = of_iomap(node, 0);
+ 	cinfo->dev = &pdev->dev;
+ 	pm_runtime_enable(cinfo->dev);
+-	pm_runtime_irq_safe(cinfo->dev);
  
-+static const char * const dsi_sc7180_bus_clk_names[] = {
-+        "iface", "bus",
-+};
-+
- static const struct msm_dsi_config sdm845_dsi_cfg = {
- 	.io_offset = DSI_6G_REG_SHIFT,
- 	.reg_cfg = {
-@@ -147,6 +151,20 @@ static const struct msm_dsi_config sdm845_dsi_cfg = {
- 	.num_dsi = 2,
- };
- 
-+static const struct msm_dsi_config sc7180_dsi_cfg = {
-+	.io_offset = DSI_6G_REG_SHIFT,
-+	.reg_cfg = {
-+		.num = 1,
-+		.regs = {
-+			{"vdda", 21800, 4 },	/* 1.2 V */
-+		},
-+	},
-+	.bus_clk_names = dsi_sc7180_bus_clk_names,
-+	.num_bus_clks = ARRAY_SIZE(dsi_sc7180_bus_clk_names),
-+	.io_start = { 0xae94000 },
-+	.num_dsi = 1,
-+};
-+
- const static struct msm_dsi_host_cfg_ops msm_dsi_v2_host_ops = {
- 	.link_clk_enable = dsi_link_clk_enable_v2,
- 	.link_clk_disable = dsi_link_clk_disable_v2,
-@@ -201,6 +219,9 @@ static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
- 		&msm8998_dsi_cfg, &msm_dsi_6g_v2_host_ops},
- 	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_2_1,
- 		&sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
-+	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_4_1,
-+		&sc7180_dsi_cfg, &msm_dsi_6g_v2_host_ops},
-+
- };
- 
- const struct msm_dsi_cfg_handler *msm_dsi_cfg_get(u32 major, u32 minor)
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-index e2b7a7d..9919536 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-+++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-@@ -19,6 +19,7 @@
- #define MSM_DSI_6G_VER_MINOR_V1_4_1	0x10040001
- #define MSM_DSI_6G_VER_MINOR_V2_2_0	0x20000000
- #define MSM_DSI_6G_VER_MINOR_V2_2_1	0x20020001
-+#define MSM_DSI_6G_VER_MINOR_V2_4_1	0x20040001
- 
- #define MSM_DSI_V2_VER_MINOR_8064	0x0
- 
+ 	pm_runtime_get_sync(cinfo->dev);
+ 	atl_write(cinfo, DRA7_ATL_PCLKMUX_REG(0), DRA7_ATL_PCLKMUX);
 -- 
-2.7.4
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
