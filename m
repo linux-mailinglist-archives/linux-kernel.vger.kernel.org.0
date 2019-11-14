@@ -2,76 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79ECEFBFDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 06:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB468FBFED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 06:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfKNFu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 00:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbfKNFuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 00:50:55 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C280F206DA;
-        Thu, 14 Nov 2019 05:50:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573710654;
-        bh=4A75EbHYfhyoJ0lhDbgLRn70lmtQcL0MNpem0+VHKtk=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=1n08guEVhPb8UK6CAVnBSbKcdr1bhzFAIYzVKmdZyTwg3cLFLt/y/po33Fzs3Z23j
-         yU5A9GSYX5vYnxlWu6QZ9iRnSMh+HDgucz/akSpMXc4HslM/XwnjgTN5+GeY37Hl5d
-         db1fLr78Pu6s7rG92jverAQAFSl9D1Y5Dz/cIgDU=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191114053404.GA8459@mani>
-References: <20191026110253.18426-1-manivannan.sadhasivam@linaro.org> <20191113222116.E5E9B206E3@mail.kernel.org> <20191114053404.GA8459@mani>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v6 0/7] Add Bitmain BM1880 clock driver
-User-Agent: alot/0.8.1
-Date:   Wed, 13 Nov 2019 21:50:53 -0800
-Message-Id: <20191114055054.C280F206DA@mail.kernel.org>
+        id S1726339AbfKNF4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 00:56:49 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:61117 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725601AbfKNF4t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 00:56:49 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 14 Nov 2019 11:26:47 +0530
+IronPort-SDR: 2nbQ2jeXmIDMIuV9PdKaObubevsHgkvMek8UmORJGLDFKiqdXwYWpuMR+FxL1O8fuHeonkTB0f
+ YruQ10YIxz6esnjt35YhgzY+03/X3VzP3ucBfmR0ecGiCRpb3eLGIiE8/vOcaLiNEZblkvIe12
+ KlE6BUOMqUaWa8hKjREg6Ndo0jVcaz5IP1IBw47fk1z5b/wXGyaONPtk2tg+Kph8uc8s3QS7AY
+ 5qP3/K85+0TJvtLjnTYWEwr5FJjzWC8Wo141JMUNLKzV8ZYbFFTulDNysINPTWxe3rvq9/ND62
+ FrZRpwVsBqYt833/xodjkvzr
+Received: from dhar-linux.qualcomm.com ([10.204.66.25])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 14 Nov 2019 11:26:45 +0530
+Received: by dhar-linux.qualcomm.com (Postfix, from userid 2306995)
+        id 5D0153AE6; Thu, 14 Nov 2019 11:26:44 +0530 (IST)
+From:   Shubhashree Dhar <dhar@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Shubhashree Dhar <dhar@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Subject: [v2] msm: disp: dpu1: add support to access hw irqs regs depending on revision
+Date:   Thu, 14 Nov 2019 11:26:16 +0530
+Message-Id: <1573710976-27551-1-git-send-email-dhar@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-11-13 21:34:04)
-> On Wed, Nov 13, 2019 at 02:21:15PM -0800, Stephen Boyd wrote:
-> > Quoting Manivannan Sadhasivam (2019-10-26 04:02:46)
-> > > Hello,
-> > >=20
-> > > This patchset adds common clock driver for Bitmain BM1880 SoC clock
-> > > controller. The clock controller consists of gate, divider, mux
-> > > and pll clocks with different compositions. Hence, the driver uses
-> > > composite clock structure in place where multiple clocking units are
-> > > combined together.
-> > >=20
-> > > This patchset also removes UART fixed clock and sources clocks from c=
-lock
-> > > controller for Sophon Edge board where the driver has been validated.
-> > >=20
-> >=20
-> > Are you waiting for review here? I see some kbuild reports so I assumed
-> > you would fix and resend.
->=20
-> I'll fix it but I was expecting some review from you so that I can send t=
-he
-> next revision incorporating all comments.
->=20
+Current code assumes that all the irqs registers offsets can be
+accessed in all the hw revisions; this is not the case for some
+targets that should not access some of the irq registers.
+This change adds the support to selectively remove the irqs that
+are not supported in some of the hw revisions.
 
-Ok. I'm glad I broke the silence then.
+Change-Id: I6052b8237b703a1a9edd53893e04f7bd72223da1
+Signed-off-by: Shubhashree Dhar <dhar@codeaurora.org>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |  1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |  3 +++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 22 +++++++++++++++++-----
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h |  1 +
+ 4 files changed, 22 insertions(+), 5 deletions(-)
 
-Can you please resend without any dts changes? Those don't go through
-clk tree. I think otherwise the patches look OK, although I was hoping
-you could register clks by using the new way of specifying parents. Is
-that possible?
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+index 04c8c44..357e15b 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+@@ -421,6 +421,7 @@ static void sdm845_cfg_init(struct dpu_mdss_cfg *dpu_cfg)
+ 		.reg_dma_count = 1,
+ 		.dma_cfg = sdm845_regdma,
+ 		.perf = sdm845_perf_data,
++		.mdss_irqs[0] = 0x3ff,
+ 	};
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+index ec76b868..def8a3f 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+@@ -646,6 +646,7 @@ struct dpu_perf_cfg {
+  * @dma_formats        Supported formats for dma pipe
+  * @cursor_formats     Supported formats for cursor pipe
+  * @vig_formats        Supported formats for vig pipe
++ * @mdss_irqs          Bitmap with the irqs supported by the target
+  */
+ struct dpu_mdss_cfg {
+ 	u32 hwversion;
+@@ -684,6 +685,8 @@ struct dpu_mdss_cfg {
+ 	struct dpu_format_extended *dma_formats;
+ 	struct dpu_format_extended *cursor_formats;
+ 	struct dpu_format_extended *vig_formats;
++
++	DECLARE_BITMAP(mdss_irqs, BITS_PER_BYTE * sizeof(long));
+ };
+ 
+ struct dpu_mdss_hw_cfg_handler {
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+index 8bfa7d0..2a3634c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+@@ -800,7 +800,8 @@ static void dpu_hw_intr_dispatch_irq(struct dpu_hw_intr *intr,
+ 		start_idx = reg_idx * 32;
+ 		end_idx = start_idx + 32;
+ 
+-		if (start_idx >= ARRAY_SIZE(dpu_irq_map) ||
++		if (!test_bit(reg_idx, &intr->irq_mask) ||
++			start_idx >= ARRAY_SIZE(dpu_irq_map) ||
+ 				end_idx > ARRAY_SIZE(dpu_irq_map))
+ 			continue;
+ 
+@@ -955,8 +956,11 @@ static int dpu_hw_intr_clear_irqs(struct dpu_hw_intr *intr)
+ 	if (!intr)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++)
+-		DPU_REG_WRITE(&intr->hw, dpu_intr_set[i].clr_off, 0xffffffff);
++	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++) {
++		if(test_bit(i, &intr->irq_mask))
++			DPU_REG_WRITE(&intr->hw,
++					dpu_intr_set[i].clr_off, 0xffffffff);
++	}
+ 
+ 	/* ensure register writes go through */
+ 	wmb();
+@@ -971,8 +975,11 @@ static int dpu_hw_intr_disable_irqs(struct dpu_hw_intr *intr)
+ 	if (!intr)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++)
+-		DPU_REG_WRITE(&intr->hw, dpu_intr_set[i].en_off, 0x00000000);
++	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++) {
++		if(test_bit(i, &intr->irq_mask))
++			DPU_REG_WRITE(&intr->hw,
++					dpu_intr_set[i].en_off, 0x00000000);
++	}
+ 
+ 	/* ensure register writes go through */
+ 	wmb();
+@@ -991,6 +998,10 @@ static void dpu_hw_intr_get_interrupt_statuses(struct dpu_hw_intr *intr)
+ 
+ 	spin_lock_irqsave(&intr->irq_lock, irq_flags);
+ 	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++) {
++
++		if(!test_bit(i, &intr->irq_mask))
++			continue;
++
+ 		/* Read interrupt status */
+ 		intr->save_irq_status[i] = DPU_REG_READ(&intr->hw,
+ 				dpu_intr_set[i].status_off);
+@@ -1115,6 +1126,7 @@ struct dpu_hw_intr *dpu_hw_intr_init(void __iomem *addr,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
++	intr->irq_mask = m->mdss_irqs[0];
+ 	spin_lock_init(&intr->irq_lock);
+ 
+ 	return intr;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+index 4edcf40..fc9c986 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+@@ -187,6 +187,7 @@ struct dpu_hw_intr {
+ 	u32 *save_irq_status;
+ 	u32 irq_idx_tbl_size;
+ 	spinlock_t irq_lock;
++	unsigned long irq_mask;
+ };
+ 
+ /**
+-- 
+1.9.1
 
