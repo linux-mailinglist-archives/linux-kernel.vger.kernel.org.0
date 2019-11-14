@@ -2,31 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D97FCD3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 943E3FCD3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:20:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfKNSUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:20:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35740 "EHLO mail.kernel.org"
+        id S1727889AbfKNSUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:20:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbfKNSS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727551AbfKNSS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Nov 2019 13:18:26 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B34520842;
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F9D02084E;
         Thu, 14 Nov 2019 18:18:26 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhJ-00014B-DA; Thu, 14 Nov 2019 13:18:25 -0500
-Message-Id: <20191114181825.285418286@goodmis.org>
+        id 1iVJhJ-00014j-Hk; Thu, 14 Nov 2019 13:18:25 -0500
+Message-Id: <20191114181825.435208993@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:17:47 -0500
+Date:   Thu, 14 Nov 2019 13:17:48 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 13/33] ftrace/x86: Add a counter to test function_graph with direct
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [for-next][PATCH 14/33] ftrace/x86: Tell objtool to ignore nondeterministic ftrace stack
+ layout
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -35,95 +37,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-As testing for direct calls from the function graph tracer adds a little
-overhead (which is a lot when tracing every function), add a counter that
-can be used to test if function_graph tracer needs to test for a direct
-caller or not.
+Objtool complains about the new ftrace direct trampoline code:
 
-It would have been nicer if we could use a static branch, but the static
-branch logic fails when used within the function graph tracer trampoline.
+  arch/x86/kernel/ftrace_64.o: warning: objtool: ftrace_regs_caller()+0x190: stack state mismatch: cfa1=7+16 cfa2=7+24
 
+Typically, code has a deterministic stack layout, such that at a given
+instruction address, the stack frame size is always the same.
+
+That's not the case for the new ftrace_regs_caller() code after it
+adjusts the stack for the direct case.  Just plead ignorance and assume
+it's always the non-direct path.  Note this creates a tiny window for
+ORC to get confused.
+
+Link: http://lkml.kernel.org/r/20191108225100.ea3bhsbdf6oerj6g@treble
+
+Reported-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/kernel/ftrace.c | 8 +++++---
- include/linux/ftrace.h   | 2 ++
- kernel/trace/ftrace.c    | 4 ++++
- 3 files changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/unwind_hints.h |  8 ++++++++
+ arch/x86/kernel/ftrace_64.S         | 12 +++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index fef283f6341d..060a361d9d11 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -1049,9 +1049,11 @@ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
- 	 * return address is actually off by one word, and we
- 	 * need to adjust for that.
- 	 */
--	if (ftrace_find_direct_func(self_addr + MCOUNT_INSN_SIZE)) {
--		self_addr = *parent;
--		parent++;
-+	if (ftrace_direct_func_count) {
-+		if (ftrace_find_direct_func(self_addr + MCOUNT_INSN_SIZE)) {
-+			self_addr = *parent;
-+			parent++;
-+		}
- 	}
+diff --git a/arch/x86/include/asm/unwind_hints.h b/arch/x86/include/asm/unwind_hints.h
+index 0bcdb1279361..f5e2eb12cb71 100644
+--- a/arch/x86/include/asm/unwind_hints.h
++++ b/arch/x86/include/asm/unwind_hints.h
+@@ -86,6 +86,14 @@
+ 	UNWIND_HINT sp_offset=\sp_offset
+ .endm
+ 
++.macro UNWIND_HINT_SAVE
++	UNWIND_HINT type=UNWIND_HINT_TYPE_SAVE
++.endm
++
++.macro UNWIND_HINT_RESTORE
++	UNWIND_HINT type=UNWIND_HINT_TYPE_RESTORE
++.endm
++
+ #else /* !__ASSEMBLY__ */
+ 
+ #define UNWIND_HINT(sp_reg, sp_offset, type, end)		\
+diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
+index 6ac7ff304886..b33abdd0a2db 100644
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -178,6 +178,8 @@ ENTRY(ftrace_regs_caller)
+ 	/* Save the current flags before any operations that can change them */
+ 	pushfq
+ 
++	UNWIND_HINT_SAVE
++
+ 	/* added 8 bytes to save flags */
+ 	save_mcount_regs 8
+ 	/* save_mcount_regs fills in first two parameters */
+@@ -250,8 +252,16 @@ GLOBAL(ftrace_regs_call)
+ 1:	restore_mcount_regs
+ 
+ 
++2:
++	/*
++	 * The stack layout is nondetermistic here, depending on which path was
++	 * taken.  This confuses objtool and ORC, rightfully so.  For now,
++	 * pretend the stack always looks like the non-direct case.
++	 */
++	UNWIND_HINT_RESTORE
++
+ 	/* Restore flags */
+-2:	popfq
++	popfq
  
  	/*
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 2bc7bd6b8387..55647e185141 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -247,10 +247,12 @@ static inline void ftrace_free_mem(struct module *mod, void *start, void *end) {
- #endif /* CONFIG_FUNCTION_TRACER */
- 
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-+extern int ftrace_direct_func_count;
- int register_ftrace_direct(unsigned long ip, unsigned long addr);
- int unregister_ftrace_direct(unsigned long ip, unsigned long addr);
- struct ftrace_direct_func *ftrace_find_direct_func(unsigned long addr);
- #else
-+# define ftrace_direct_func_count 0
- static inline int register_ftrace_direct(unsigned long ip, unsigned long addr)
- {
- 	return -ENODEV;
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index c4446eabacbe..f9456346ec66 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2364,6 +2364,7 @@ ftrace_find_tramp_ops_new(struct dyn_ftrace *rec)
- /* Protected by rcu_tasks for reading, and direct_mutex for writing */
- static struct ftrace_hash *direct_functions = EMPTY_HASH;
- static DEFINE_MUTEX(direct_mutex);
-+int ftrace_direct_func_count;
- 
- /*
-  * Search the direct_functions hash to see if the given instruction pointer
-@@ -5056,6 +5057,7 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
- 		direct->addr = addr;
- 		direct->count = 0;
- 		list_add_rcu(&direct->next, &ftrace_direct_funcs);
-+		ftrace_direct_func_count++;
- 	}
- 
- 	entry->ip = ip;
-@@ -5081,6 +5083,7 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
- 			if (free_hash)
- 				free_ftrace_hash(free_hash);
- 			free_hash = NULL;
-+			ftrace_direct_func_count--;
- 		}
- 	} else {
- 		if (!direct->count)
-@@ -5141,6 +5144,7 @@ int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
- 			list_del_rcu(&direct->next);
- 			synchronize_rcu_tasks();
- 			kfree(direct);
-+			ftrace_direct_func_count--;
- 		}
- 	}
-  out_unlock:
+ 	 * As this jmp to ftrace_epilogue can be a short jump
 -- 
 2.23.0
 
