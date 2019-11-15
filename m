@@ -2,77 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F73FDE28
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5269DFDE03
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfKOMnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:43:52 -0500
-Received: from mga14.intel.com ([192.55.52.115]:58938 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727761AbfKOMnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:43:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 04:43:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,308,1569308400"; 
-   d="scan'208";a="257749717"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.197])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 Nov 2019 04:43:43 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 15/15] perf intel-bts: Does not support AUX area sampling
-Date:   Fri, 15 Nov 2019 14:42:25 +0200
-Message-Id: <20191115124225.5247-16-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191115124225.5247-1-adrian.hunter@intel.com>
-References: <20191115124225.5247-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1727603AbfKOMfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:35:46 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6680 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727272AbfKOMfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 07:35:46 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0945A2EB0BF6AD6BB5B6;
+        Fri, 15 Nov 2019 20:35:37 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
+ 20:35:27 +0800
+From:   zhengbin <zhengbin13@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <zhengbin13@huawei.com>
+Subject: [PATCH -next] perf/core: make two symbols static
+Date:   Fri, 15 Nov 2019 20:42:51 +0800
+Message-ID: <1573821771-42748-1-git-send-email-zhengbin13@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an error message because Intel BTS does not support AUX area
-sampling.
+Fix sparse warnings:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+kernel/events/core.c:6278:6: warning: symbol 'perf_pmu_snapshot_aux' was not declared. Should it be static?
+kernel/events/core.c:10118:1: warning: symbol 'dev_attr_nr_addr_filters' was not declared. Should it be static?
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
 ---
- tools/perf/arch/x86/util/auxtrace.c  | 2 ++
- tools/perf/arch/x86/util/intel-bts.c | 5 +++++
- 2 files changed, 7 insertions(+)
+ kernel/events/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/auxtrace.c b/tools/perf/arch/x86/util/auxtrace.c
-index 092543cad324..7abc9fd4cbec 100644
---- a/tools/perf/arch/x86/util/auxtrace.c
-+++ b/tools/perf/arch/x86/util/auxtrace.c
-@@ -29,6 +29,8 @@ struct auxtrace_record *auxtrace_record__init_intel(struct evlist *evlist,
- 	if (intel_pt_pmu)
- 		intel_pt_pmu->auxtrace = true;
- 	intel_bts_pmu = perf_pmu__find(INTEL_BTS_PMU_NAME);
-+	if (intel_bts_pmu)
-+		intel_bts_pmu->auxtrace = true;
- 
- 	evlist__for_each_entry(evlist, evsel) {
- 		if (intel_pt_pmu && evsel->core.attr.type == intel_pt_pmu->type)
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index f7f68a50a5cd..27d9e214d068 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -113,6 +113,11 @@ static int intel_bts_recording_options(struct auxtrace_record *itr,
- 	const struct perf_cpu_map *cpus = evlist->core.cpus;
- 	bool privileged = perf_event_paranoid_check(-1);
- 
-+	if (opts->auxtrace_sample_mode) {
-+		pr_err("Intel BTS does not support AUX area sampling\n");
-+		return -EINVAL;
-+	}
-+
- 	btsr->evlist = evlist;
- 	btsr->snapshot_mode = opts->auxtrace_snapshot_mode;
- 
--- 
-2.17.1
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 16d80ad..9fc62e7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6275,10 +6275,10 @@ static unsigned long perf_prepare_sample_aux(struct perf_event *event,
+ 	return data->aux_size;
+ }
+
+-long perf_pmu_snapshot_aux(struct ring_buffer *rb,
+-			   struct perf_event *event,
+-			   struct perf_output_handle *handle,
+-			   unsigned long size)
++static long perf_pmu_snapshot_aux(struct ring_buffer *rb,
++				  struct perf_event *event,
++				  struct perf_output_handle *handle,
++				  unsigned long size)
+ {
+ 	unsigned long flags;
+ 	long ret;
+@@ -10115,7 +10115,7 @@ static ssize_t nr_addr_filters_show(struct device *dev,
+
+ 	return snprintf(page, PAGE_SIZE - 1, "%d\n", pmu->nr_addr_filters);
+ }
+-DEVICE_ATTR_RO(nr_addr_filters);
++static DEVICE_ATTR_RO(nr_addr_filters);
+
+ static struct idr pmu_idr;
+
+--
+2.7.4
 
