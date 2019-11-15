@@ -2,141 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E17FE187
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFECEFE182
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbfKOPgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 10:36:22 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48116 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727893AbfKOPgR (ORCPT
+        id S1727876AbfKOPgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 10:36:15 -0500
+Received: from mail-oi1-f170.google.com ([209.85.167.170]:36102 "EHLO
+        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727849AbfKOPgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 10:36:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573832176;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=o+ceyNOAgwOHGOedPh8jjnXDmvLZ/5D9KblQB5Ic6zg=;
-        b=hbmfSiROdmw+GqdbnS8Ajy0my+P05Xwwea3PWPxt3dTEYlu1OVrozqge4NlNs5x5K3+JBq
-        Fh3ohZgTyXCqrFpVsxmhWWz1hh8jHKzodKwMD7R9OSZ5k7YzGClP75U11udXXyhRuQX0h8
-        gUMgBCWIhx7OAzuQ67hQtekP+pm3lQE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-272-9G6vf67KOMymBhSKmwPLHw-1; Fri, 15 Nov 2019 10:36:10 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 17B5C8A20E2;
-        Fri, 15 Nov 2019 15:36:08 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-154.ams2.redhat.com [10.36.116.154])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E40F6117E;
-        Fri, 15 Nov 2019 15:36:04 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v8 8/8] platform/x86: touchscreen_dmi: Add info for the Chuwi Vi8 Plus tablet
-Date:   Fri, 15 Nov 2019 16:35:29 +0100
-Message-Id: <20191115153529.215244-9-hdegoede@redhat.com>
-In-Reply-To: <20191115153529.215244-1-hdegoede@redhat.com>
-References: <20191115153529.215244-1-hdegoede@redhat.com>
+        Fri, 15 Nov 2019 10:36:12 -0500
+Received: by mail-oi1-f170.google.com with SMTP id j7so8961142oib.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 07:36:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=VgLYzg5CElzBv1IKrsDM9XMeRJsLCqC62h1yunu/L3M=;
+        b=Ckvv12mynkWN97Iv9bAk7pTBrsFkxgn9ILkmLaRJKRit6tp1vI6ReqhwH2aiwzUN/8
+         xJ4dPqy+yEu9ntBTfj6DF/08NBoycbclOrKwCUVSQ0SE38TS00o3HzOaXgO8+/EPp2wv
+         e7dZ8/h5f5z3rIDCGR+UZirDKPkTj+wp6EURMkBdxDEwdf/MfApwR+8OftcbXiuviJ70
+         t+8gZ0pEfmkS0yp8dPZV+CCZxbmbx3SPRQ3Zs3b6QPN2wSCs7WWtJyrSViUMokj4wszG
+         +L/x+PYr9JmfRFiE31n/QnxPVo5GL+9NUROnOxB7FE+xgewoZD4/CKbm4iPfCzp5+9E0
+         10kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=VgLYzg5CElzBv1IKrsDM9XMeRJsLCqC62h1yunu/L3M=;
+        b=Ctint0l581YJRWokE1GPn82qJwoHKXMi2hc4KJX+syiociVOwm/Yx2F7VXTERzZ9mb
+         P5x+LxeTVZNjcfFUSyD95Pii96zr7QHybF0KLHVYntloFLlTRMCFn6b3fHOxYwwNff2V
+         /btxkeiQW7TlRYxUXY/uOyQaFZBnOfBerYswSLF3b8YV/5kUFcQABu/JoZaLEkZCpQpL
+         d8Sx4M7LQ6a5r4Nu11x1h45f/PzYwEaIt+UlMlHPHApYhrPsjh0oUS1gQ4dBSXRhUNoj
+         +Ha6QY01YXGlE9pASVQaonak1zaBtZzQXRMkH2ITDBxjKSb6BtuPn3avLdu6dCnTYlqa
+         pLjw==
+X-Gm-Message-State: APjAAAXN9XcawyMT3MmKSBAszFYDZYgOhhcV6IMv1pfV4FTdk7m3VYIG
+        un5hZp9VSgJ8VoYD9LYT/SuNZBbfr4YXhfFhy/mXTy5WLRM=
+X-Google-Smtp-Source: APXvYqylgrm3DX1fc8G+XxKSPByo3X8bXs0oPgJFyga0t6e15SAcul8OjUzgfH0degqcF3gehkviA8BggXYxUQdBidE=
+X-Received: by 2002:aca:da85:: with SMTP id r127mr3544375oig.128.1573832171444;
+ Fri, 15 Nov 2019 07:36:11 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: 9G6vf67KOMymBhSKmwPLHw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+From:   Muni Sekhar <munisekharrms@gmail.com>
+Date:   Fri, 15 Nov 2019 21:05:58 +0530
+Message-ID: <CAHhAz+iRpMZskxctvxLz=BtTnq6zsFCrenf_73b6tBwbaZfsHg@mail.gmail.com>
+Subject: NMI injection
+To:     kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen info for the Chuwi Vi8 Plus tablet. This tablet uses a
-Chipone ICN8505 touchscreen controller, with the firmware used by the
-touchscreen embedded in the EFI firmware.
+Hi All,
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v7:
-- Remove PROPERTY_ENTRY_BOOL("efi-embedded-firmware") properties entry,
-  as this is no longer necessary
+Can someone clarify me what is =E2=80=9CNMI injection=E2=80=9D means? Does =
+it helps
+when system is frozen? If so how to do this for Intel Atom processor
+machines?
 
-Changes in v6:
-- Switch from crc sums to SHA256 hashes for the firmware hash
----
- drivers/platform/x86/touchscreen_dmi.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+I configured my system to respond for SysRq key press, but I see when
+system is frozen then SysRq key press has no effect.
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/=
-touchscreen_dmi.c
-index 4449e4c0b26b..4a09b479cda5 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -132,6 +132,18 @@ static const struct ts_dmi_data chuwi_vi8_data =3D {
- =09.properties     =3D chuwi_vi8_props,
- };
-=20
-+static const struct ts_dmi_data chuwi_vi8_plus_data =3D {
-+=09.embedded_fw =3D {
-+=09=09.name=09=3D "chipone/icn8505-HAMP0002.fw",
-+=09=09.prefix =3D { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
-+=09=09.length=09=3D 35012,
-+=09=09.sha256=09=3D { 0x93, 0xe5, 0x49, 0xe0, 0xb6, 0xa2, 0xb4, 0xb3,
-+=09=09=09    0x88, 0x96, 0x34, 0x97, 0x5e, 0xa8, 0x13, 0x78,
-+=09=09=09    0x72, 0x98, 0xb8, 0x29, 0xeb, 0x5c, 0xa7, 0xf1,
-+=09=09=09    0x25, 0x13, 0x43, 0xf4, 0x30, 0x7c, 0xfc, 0x7c },
-+=09},
-+};
-+
- static const struct property_entry chuwi_vi10_props[] =3D {
- =09PROPERTY_ENTRY_U32("touchscreen-min-x", 0),
- =09PROPERTY_ENTRY_U32("touchscreen-min-y", 4),
-@@ -743,6 +755,15 @@ const struct dmi_system_id touchscreen_dmi_table[] =3D=
- {
- =09=09=09DMI_MATCH(DMI_BIOS_VERSION, "CHUWI.D86JLBNR"),
- =09=09},
- =09},
-+=09{
-+=09=09/* Chuwi Vi8 Plus (CWI519) */
-+=09=09.driver_data =3D (void *)&chuwi_vi8_plus_data,
-+=09=09.matches =3D {
-+=09=09=09DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-+=09=09=09DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
-+=09=09=09DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+=09=09},
-+=09},
- =09{
- =09=09/* Chuwi Vi10 (CWI505) */
- =09=09.driver_data =3D (void *)&chuwi_vi10_data,
-@@ -1137,6 +1158,9 @@ static int __init ts_dmi_init(void)
- =09=09return 0; /* Not an error */
-=20
- =09ts_data =3D dmi_id->driver_data;
-+=09/* Some dmi table entries only provide an efi_embedded_fw_desc */
-+=09if (!ts_data->properties)
-+=09=09return 0;
-=20
- =09error =3D bus_register_notifier(&i2c_bus_type, &ts_dmi_notifier);
- =09if (error)
---=20
-2.23.0
+I=E2=80=99ve read that when kernel is locked up it won=E2=80=99t respond fo=
+r SysRq key
+press actions.
 
+What is the definition for =E2=80=9Ckernel locked up=E2=80=9D means? And ho=
+w to solve this?
+
+--
+Thanks,
+Sekhar
