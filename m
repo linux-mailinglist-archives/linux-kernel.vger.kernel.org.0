@@ -2,78 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C69FD5F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:18:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDABFD64D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:24:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfKOGSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:18:22 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7032 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfKOGSW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:18:22 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dce43300000>; Thu, 14 Nov 2019 22:18:24 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 14 Nov 2019 22:18:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 14 Nov 2019 22:18:21 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 15 Nov
- 2019 06:18:21 +0000
-Subject: Re: [PATCH] mm/hmm: remove hmm_range_dma_map and hmm_range_dma_unmap
-To:     Christoph Hellwig <hch@lst.de>, <jgg@ziepe.ca>,
-        <jglisse@redhat.com>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20191113134528.21187-1-hch@lst.de>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <688e4271-bedd-c296-6a35-4547191c8f93@nvidia.com>
-Date:   Thu, 14 Nov 2019 22:18:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727513AbfKOGVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:21:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727494AbfKOGVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 01:21:53 -0500
+Received: from localhost (unknown [104.132.150.99])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F35C220728;
+        Fri, 15 Nov 2019 06:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573798912;
+        bh=4+nCz3LEl6kdoeHSXQYEjgSPf3SPhDIfUUjquwpozLY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AgwsMk63LYEgC47H2n50bnkdPqhS4A3JciDrg0tCdqYHLxJycAjFm4J2UHQ7Ddml7
+         EwA5JPRz6Cf1hueqmlFljWZluGdVaVw901gav9qEG+Dceim3Ll9de0S+Uw+t975Zl7
+         qjbAUU/gT4lzajVegNY7EJZhsLxWc1nofitauQVU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/20] 4.4.202-stable review
+Date:   Fri, 15 Nov 2019 14:20:29 +0800
+Message-Id: <20191115062006.854443935@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191113134528.21187-1-hch@lst.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573798704; bh=sNcshHEF2avVA9rnTZtLVohwfbWOQokarhKdv+S/gRc=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Zc/Sb8xaujNVQ4vAJcVfvPPo9owAxzqF7WFgRq5g3HWn0xwmUv6krqoZt4lBVWB/D
-         nO4E439bNvYQDRD2M0We8h4vUYMDGeQ3N7E8mea/iBSF3HL2cnRQ9vk3luE6ZY2z28
-         qIsAT3jP2R5tE6rTrzgq8wsLWk5BxmvCE4qH0Q98usL50EijewJZGrg27jLQdNqGnY
-         dk5sVbJZl1fMiNse0AQcmLv+sHwp0bLpI+fh/OsQ/Bz3qUQP9+ztszxsgFVn87/8uo
-         aINr2qgVbIF3C8tdx6wNa0P8Z3kPE8gB3fRhRTc7bQaA8fcsUpfwlx+YOKTW0oFuNh
-         NhR+M72R2ud7w==
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.202-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.202-rc1
+X-KernelTest-Deadline: 2019-11-17T06:20+00:00
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/19 5:45 AM, Christoph Hellwig wrote:
-> These two functions have never been used since they were added.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/hmm.h |  23 -------
->  mm/hmm.c            | 147 --------------------------------------------
->  2 files changed, 170 deletions(-)
+This is the start of the stable review cycle for the 4.4.202 release.
+There are 20 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Responses should be made by Sun, 17 Nov 2019 06:18:31 +0000.
+Anything received after that time might be too late.
 
-Also +CC Ralph just for another look. But I know we're not using these 
-routines.
-
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.202-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
 thanks,
--- 
-John Hubbard
-NVIDIA
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.202-rc1
+
+Vineela Tummalapalli <vineela.tummalapalli@intel.com>
+    x86/bugs: Add ITLB_MULTIHIT bug infrastructure
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    x86/speculation/taa: Fix printing of TAA_MSG_SMT on IBRS_ALL CPUs
+
+Michal Hocko <mhocko@suse.com>
+    x86/tsx: Add config options to set tsx=on|off|auto
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/speculation/taa: Add documentation for TSX Async Abort
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/tsx: Add "auto" option to the tsx= cmdline parameter
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    kvm/x86: Export MDS_NO=0 to guests when TSX is enabled
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/speculation/taa: Add sysfs reporting for TSX Async Abort
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/speculation/taa: Add mitigation for TSX Async Abort
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/cpu: Add a "tsx=" cmdline option with TSX disabled by default
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/cpu: Add a helper function x86_read_arch_cap_msr()
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/msr: Add the IA32_TSX_CTRL MSR
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: x86: use Intel speculation bugs and features as derived in generic x86 code
+
+Jim Mattson <jmattson@google.com>
+    kvm: x86: IA32_ARCH_CAPABILITIES is always supported
+
+Sean Christopherson <sean.j.christopherson@intel.com>
+    KVM: x86: Emulate MSR_IA32_ARCH_CAPABILITIES on AMD hosts
+
+Ben Hutchings <ben@decadent.org.uk>
+    KVM: Introduce kvm_get_arch_capabilities()
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/boot: Request no dynamic linker for boot wrapper
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc: Fix compiling a BE kernel with a powerpc64le toolchain
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/Makefile: Use cflags-y/aflags-y for setting endian options
+
+Jonas Gorski <jonas.gorski@gmail.com>
+    MIPS: BCM63XX: fix switch core reset on BCM6368
+
+Junaid Shahid <junaids@google.com>
+    kvm: mmu: Don't read PDPTEs when paging is not enabled
+
+
+-------------
+
+Diffstat:
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |   2 +
+ Documentation/hw-vuln/tsx_async_abort.rst          | 268 +++++++++++++++++++++
+ Documentation/kernel-parameters.txt                |  62 +++++
+ Documentation/x86/tsx_async_abort.rst              | 117 +++++++++
+ Makefile                                           |   4 +-
+ arch/mips/bcm63xx/reset.c                          |   2 +-
+ arch/powerpc/Makefile                              |  31 ++-
+ arch/powerpc/boot/wrapper                          |  24 +-
+ arch/x86/Kconfig                                   |  45 ++++
+ arch/x86/include/asm/cpufeatures.h                 |   2 +
+ arch/x86/include/asm/kvm_host.h                    |   2 +
+ arch/x86/include/asm/msr-index.h                   |  16 ++
+ arch/x86/include/asm/nospec-branch.h               |   4 +-
+ arch/x86/include/asm/processor.h                   |   7 +
+ arch/x86/kernel/cpu/Makefile                       |   2 +-
+ arch/x86/kernel/cpu/bugs.c                         | 143 ++++++++++-
+ arch/x86/kernel/cpu/common.c                       |  93 ++++---
+ arch/x86/kernel/cpu/cpu.h                          |  18 ++
+ arch/x86/kernel/cpu/intel.c                        |   5 +
+ arch/x86/kernel/cpu/tsx.c                          | 140 +++++++++++
+ arch/x86/kvm/cpuid.c                               |  12 +
+ arch/x86/kvm/vmx.c                                 |  15 --
+ arch/x86/kvm/x86.c                                 |  53 +++-
+ drivers/base/cpu.c                                 |  17 ++
+ include/linux/cpu.h                                |   5 +
+ 25 files changed, 1019 insertions(+), 70 deletions(-)
+
+
