@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34347FDD42
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:18:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10BD6FDD39
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:17:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfKOMSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:18:08 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40739 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727527AbfKOMSE (ORCPT
+        id S1727517AbfKOMRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:17:52 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:59740 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727483AbfKOMRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:18:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2so10483625ljg.7
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 04:18:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mduOSCKauFb3j3r6hILUAiEYXazQDNKgF2SjQXFQbkI=;
-        b=vbiYZOTeqUAVzVDgDlbIZVeaduxvSlDcxM60I4FonIbaAMu8P1XdQ24NQzaBi3asR3
-         u3A1xmlhOe/B0S+IlzLwr52sd0EYyMHb2AVYfpo31GnafFeOuR7uad/sLjQJFNhKhtbv
-         Yy99j1Uq+jKfq8n509b9D0vOWHyKRHOvqOcC568u+z9SZXIF7s3RgGR8b4H6qljKQeJt
-         nDeAamnSSRzVVc9l4sWNHvo7p1A/PNrNMqrYN6AgbAxqAPjKLOa4yhqY0z0bkgFjzz9S
-         +NFd54bGysbeoI0hAaRlIwDD02f6Ll6SpMD4PBWcl7TqXUID02nqZ/yOTkVLBsfDbE9A
-         UZhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mduOSCKauFb3j3r6hILUAiEYXazQDNKgF2SjQXFQbkI=;
-        b=YFzFL8goepCflVww7aNWeC80Wj2ICWu72aE/3ZxnTjHieMasQQvDmavrTQ5whJTLsz
-         1j1kBroYXLWiIfpkG0yvUAfL2bF2QAQyPGm6pA90Te8yvJFALs3KgGSXpUJNRRITef5c
-         +DhTHrcisxK0O8AEOT87ZDaVixH4pc6z6X12QthdS1vgpb06/mhWHbvGM8bFkH+qaopQ
-         eJkp3JZmKmDj48aV05pjrSNZpz4MvENcNpM78ckSk8sdbQ5kYspGV6QxKsABM3NSCIpG
-         McGRY8dKoAfZXmubL85rwERJS548A+WlSHbs0R6hf7ET5gIoN/aafkfYnKVTpwiG0sui
-         zabw==
-X-Gm-Message-State: APjAAAUGH5BiyAuuBvP5OE0KKGf7rD/jamrrFX6TthdcLq+xwOdCkmWK
-        6c5Nilt2ADZP5VDJyRmBoA61Xqb+nzgbGw==
-X-Google-Smtp-Source: APXvYqxbUCkeTtglgl2HCSMgv4Zcw5rQ0kPuIS3uqC18GHonYnsqTN47gEHHRwZaQT7gbr1LIyHSPw==
-X-Received: by 2002:a2e:97d3:: with SMTP id m19mr8405280ljj.56.1573820282063;
-        Fri, 15 Nov 2019 04:18:02 -0800 (PST)
-Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
-        by smtp.gmail.com with ESMTPSA id c16sm331070lfp.93.2019.11.15.04.18.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 04:18:01 -0800 (PST)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 5/5] arm64: defconfig: enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM
-Date:   Fri, 15 Nov 2019 13:15:42 +0100
-Message-Id: <20191115121544.2339036-6-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191115121544.2339036-1-niklas.cassel@linaro.org>
-References: <20191115121544.2339036-1-niklas.cassel@linaro.org>
+        Fri, 15 Nov 2019 07:17:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qC9e/jFTs3ufey3dx1Bty3A4kgjYIAA6Ny/ShN4ed/8=; b=CpcoSzGCGDPB3GbYTEh6UU97c
+        V7w3+PV3+ceDma25/jw1+VHnpfkq1sDj48oGfPYLcEBQ8WjPGUODe4yLxgHwFpM3L/yDG9R7dhKam
+        UDnaxz6KUhU32T/ogM7YdbfSvknuR2o5P8RBKAorY+GnlWHcCvSSLEo8GZ/Rj+zgQ9xxGfbvfKBl3
+        hjgY9XemUkjcmRDUXqrtVZ55GWTBYDTcQvkHFvIsHutZlWC+ZibkPX5b5+Ka/aK8ru2cDs6KdPWWI
+        snPR0bff3fhAomXkloIQfih1b5SjCa1ANFQffwIs14wJAccn5DY3bRCH/y30aH9IJzTp3DTLD/I3b
+        HWHv8BZVw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVaXN-0007Sq-7h; Fri, 15 Nov 2019 12:17:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D69F13006FB;
+        Fri, 15 Nov 2019 13:16:06 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E9AD52B12BF1D; Fri, 15 Nov 2019 13:17:14 +0100 (CET)
+Date:   Fri, 15 Nov 2019 13:17:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+Message-ID: <20191115121714.GI4131@hirez.programming.kicks-ass.net>
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+ <20191115095447.GU4114@hirez.programming.kicks-ass.net>
+ <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
+ <20191115103735.GE4131@hirez.programming.kicks-ass.net>
+ <CAKfTPtDi_-h6g+rhV04XXjqpWprC2vT6hgLZSrTW5rdD54PrQA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDi_-h6g+rhV04XXjqpWprC2vT6hgLZSrTW5rdD54PrQA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM.
+On Fri, Nov 15, 2019 at 11:46:01AM +0100, Vincent Guittot wrote:
+> On Fri, 15 Nov 2019 at 11:37, Peter Zijlstra <peterz@infradead.org> wrote:
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> > Sure, but then it can still remember the value passed in last and use
+> > that state later.
+> >
+> > It doesn't _have_ to completely discard values.
+> 
+> yes but it means that we run at the "wrong" frequency during this
+> period and also that the cpufreq must in this case set a kind of timer
+> to resubmit a new frequency change out of scheduler event
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4385033c0a34..09aaffd473a0 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -88,6 +88,7 @@ CONFIG_ACPI_CPPC_CPUFREQ=m
- CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
- CONFIG_ARM_IMX_CPUFREQ_DT=m
-+CONFIG_ARM_QCOM_CPUFREQ_NVMEM=y
- CONFIG_ARM_QCOM_CPUFREQ_HW=y
- CONFIG_ARM_RASPBERRYPI_CPUFREQ=m
- CONFIG_ARM_TEGRA186_CPUFREQ=y
--- 
-2.23.0
+It always runs at the wrong frequency. Almost per definition. We're
+doing near future predictions based on recent past, and if we can only
+set the hardware once every N [ms] then there's really nothing better we
+can do. We'll _have_ to live with the value we 'randomly' pick at the
+start of those N [ms] for the whole period.
 
+And I'm not sure it needs to set a timer, it can simply probe the value
+when we go idle, if this is the kind of system that cares about OPP on
+idle.
