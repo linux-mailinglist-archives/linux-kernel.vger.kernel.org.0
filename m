@@ -2,94 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DF9FD82A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC3FFD836
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfKOIy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 03:54:28 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35478 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOIy2 (ORCPT
+        id S1727149AbfKOI6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 03:58:39 -0500
+Received: from twhmllg3.macronix.com ([122.147.135.201]:45891 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfKOI6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 03:54:28 -0500
-Received: by mail-ot1-f65.google.com with SMTP id c14so415308oth.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 00:54:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xXAIHX2Tl2rPR9tSIWbBGJFZ8rTfCs0FskSAJ4Ev+rs=;
-        b=B+xi3/LEkVd7NPwBiiUPa2Lwa8maXGUFBTb+VF9Z+HqD1x5OqiRT+iDFRdmrItw5dP
-         jHlR9BYteBPZyjbTloYASQtYuO/v6FsNSU8NEegaltC8uk5716ZuwbOpXfWSd6cvMYoD
-         jIpx7CM9YnirMM9R5SnMcglHY7wh74QxKmNBWscemW/ag54+cP9Ddcycd22RHhEZouOa
-         2FuWYgxWUIk7ne6y8gWP7QQ/W9QaJMnCmH2nbF4D7aN4AXPnhWLtxZRGJhbfAFn5GwXI
-         M/MTATgH3+I8/v/2xkemhlZu/V8olAXpo2kuSKtwASqduWeX0hd7rRB3zDoT1PJSg4qO
-         uaBA==
-X-Gm-Message-State: APjAAAW1JD+sSrS3WT5CIQPyF7YFOZjVvtFULav/LzHRrr9m0AOXqFhX
-        E2AKn+V/XhMmoqnvBFpHgYhN+KRloIVPX6Ztop7sUq3l
-X-Google-Smtp-Source: APXvYqyrQa5IxPsi3G7rS21hAK95+jhiYLA+S1aXs4vPX3QHlvXrVWf1Du1CX8vCc3Xf7tA+IQXdPThfCc6L3uJSoDg=
-X-Received: by 2002:a9d:5511:: with SMTP id l17mr2306903oth.145.1573808066972;
- Fri, 15 Nov 2019 00:54:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20191024153756.31861-1-geert+renesas@glider.be>
- <20191115061554.532d29e9@collabora.com> <CAMuHMdWO=8sHn9wrEiuBGes0x_L2=Qkou=aPcHM7Mr9oDS74Qw@mail.gmail.com>
- <20191115094010.31acadf6@collabora.com>
-In-Reply-To: <20191115094010.31acadf6@collabora.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 15 Nov 2019 09:54:15 +0100
-Message-ID: <CAMuHMdVvycHZv6g-vem7Mu4fqVc9FBx2xrdER85Sjb+vVW0=sA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Mark linux-i3c mailing list moderated
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-i3c@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 15 Nov 2019 03:58:39 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id xAF8wWGt046218;
+        Fri, 15 Nov 2019 16:58:32 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
+        marek.vasut@gmail.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, vigneshr@ti.com,
+        bbrezillon@kernel.org, tudor.ambarus@microchip.com
+Cc:     juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH 0/4] mtd: spi-nor: Add support for Octal 8D-8D-8D mode
+Date:   Fri, 15 Nov 2019 16:58:04 +0800
+Message-Id: <1573808288-19365-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG3.macronix.com xAF8wWGt046218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Hello,
 
-On Fri, Nov 15, 2019 at 9:40 AM Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
-> On Fri, 15 Nov 2019 09:10:02 +0100
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> > Hi Boris,
-> >
-> > On Fri, Nov 15, 2019 at 6:16 AM Boris Brezillon
-> > <boris.brezillon@collabora.com> wrote:
-> > > On Thu, 24 Oct 2019 17:37:56 +0200
-> > > Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> > > > The linux-i3c mailing list is moderated for non-subscribers.
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >
-> > > Queued to i3c/next. It was actually queued 2 weeks ago but the
-> > > patchwork bot didn't send a notification for that one (one was sent for
-> > > your other patch) and I don't know why.
-> >
-> > It did:
->
-> Ok, perfect then. Looks like sometimes it doesn't work, but for this
-> patch I did receive a notification too (it was one notification for both
-> of your patches and I thought I was receiving one per patch).
+This is repost of patchset from Boris Brezillon's
+[RFC,00/18] mtd: spi-nor: Proposal for 8-8-8 mode support [1].
 
-It is one per patch, I did receive the other one, too:
+Background from cover letter for RFC[1].
 
-Subject: Re: [PATCH trivial] i3c: Spelling s/dicovered/discovered/
-From: patchwork-bot+linux-i3c@kernel.org
-Message-Id: <157251967168.27046.5733392327207757366.git-patchwork-notify@kernel.org>
+The trend has been around Octal NOR Flash lately and the latest mainline
+already supports 1-1-8 and 1-8-8 modes.
 
-Gr{oetje,eeting}s,
+Boris opened a discussion on how we should support stateful modes (X-X-X
+and XD-XD-XD, where X is the bus width and D means Double Transfer Rate).
 
-                        Geert
+JESD216C has defined specification for Octal 8-8-8 and 8D-8D-8D.
+It defined command and command extension in
+JEDEC Basic Flash Parameter Table(18th DWORD) as well as how to
+enable 8-8-8/8D-8D-8D mode sequences (Write CFG Reg 2).
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The first set of patches is according to JESD216C adding Double Transfer
+Rate(DTR) fields, extension command and command bytes number to the
+spi_mem_op struct.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The second set of patches define the relevant macrons and enum in spi-nor
+layer for Octal 8-8-8 and 8D-8D-8D mode operation.
+
+The last set of patches in the series are modifying spi_nor_fixups hook to
+tweak flash parameters for spi_nor_read/pp_setting() and then in a
+chip-specific way to enter 8-8-8 or 8D-8D-8D modes on a Macronix chip.
+
+Also patched spi-mxic driver for testing on Macronix's Zynq PicoZed board
+with Macronix's SPI controller (spi-mxic.c) and mx25uw51245g Octal flash.
+
+[1] https://patchwork.ozlabs.org/cover/982926/
+
+thnaks for your time and review.
+best regards,
+Mason
+
+
+Mason Yang (4):
+  spi: spi-mem: Add support for Octal 8D-8D-8D mode
+  mtd: spi-nor: Add support for Octal 8D-8D-8D mode
+  mtd: spi-nor: Add Octal 8D-8D-8D mode support for Macronix
+    mx25uw51245g
+  spi: mxic: Add support for Octal 8D-8D-8D mode
+
+ drivers/mtd/spi-nor/spi-nor.c | 273 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/spi/spi-mem.c         |   8 +-
+ drivers/spi/spi-mxic.c        |  98 ++++++++++-----
+ include/linux/mtd/spi-nor.h   |  61 +++++++++-
+ include/linux/spi/spi-mem.h   |  13 ++
+ 5 files changed, 410 insertions(+), 43 deletions(-)
+
+-- 
+1.9.1
+
