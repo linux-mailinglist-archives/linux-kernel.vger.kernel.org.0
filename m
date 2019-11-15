@@ -2,76 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F343FE286
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00295FE28B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfKOQRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 11:17:35 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51275 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727607AbfKOQRd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 11:17:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573834652;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=40njcb1TINFffgelqsMAQtxIER8NlLM+UpDcZ33cw5g=;
-        b=E94d6+7wJHaDJn01LkCr2V6thn/j8Qge4BcQMBB6SW8qFCptVqcT/0i6pJDivKX0zbjkB6
-        XHjG+ae5plTzHbI793Cm31qQZA0qaXARWlti9x6yJKWSYovMaRi33N2TCkopLx/Ud001l2
-        YLkcd1YEewv0tuOJrM8FiwoQbR/wiQQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-249-x79qK2ZyNNC5Sqc9yGdGCQ-1; Fri, 15 Nov 2019 11:17:28 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5B7AE477;
-        Fri, 15 Nov 2019 16:17:26 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-124-92.rdu2.redhat.com [10.10.124.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0CBD16764C;
-        Fri, 15 Nov 2019 16:17:24 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] x86/speculation: Fix incorrect MDS/TAA mitigation
- status
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>
-References: <20191115161445.30809-1-longman@redhat.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <87378a45-99af-c390-874a-23303e9b70f6@redhat.com>
-Date:   Fri, 15 Nov 2019 11:17:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727827AbfKOQRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 11:17:41 -0500
+Received: from mga07.intel.com ([134.134.136.100]:12461 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727799AbfKOQRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 11:17:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 08:17:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,308,1569308400"; 
+   d="scan'208";a="199242713"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
+  by orsmga008.jf.intel.com with ESMTP; 15 Nov 2019 08:17:34 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        tmricht@linux.ibm.com, alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH] perf: Fix the mlock accounting, again
+In-Reply-To: <20191115160818.6480-1-alexander.shishkin@linux.intel.com>
+References: <20191115160818.6480-1-alexander.shishkin@linux.intel.com>
+Date:   Fri, 15 Nov 2019 18:17:34 +0200
+Message-ID: <878sohdsgx.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191115161445.30809-1-longman@redhat.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: x79qK2ZyNNC5Sqc9yGdGCQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/19 11:14 AM, Waiman Long wrote:
->  v2:
->   - Update the documentation files accordingly
->   - Add an optional second patch to defer printing of MDS mitigation.
+Alexander Shishkin <alexander.shishkin@linux.intel.com> writes:
 
-Note that I consider the 2nd patch as optional. What is important is the
-first one.
+> Commit
+>
+>   5e6c3c7b1ec2 ("perf/aux: Fix tracking of auxiliary trace buffer allocation")
+>
+> tried to guess the correct combination of arithmetic operations that would
+> undo the AUX buffer's mlock accounting, and failed, leaking the bottom part
+> when an allocation needs to be changed partially to both user->locked_vm
 
-Cheers,
-Longman
-
-
+s/changed/charged/
