@@ -2,104 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33966FE3BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 18:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D90BFFE3CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 18:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfKORO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 12:14:59 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48378 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727548AbfKORO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 12:14:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573838098;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=i//VdLznyJQ1f9EYHUzbZrmnX/uwUJtCHfRMoEiRRFM=;
-        b=QUbG1FRkgiruETIr+rJqo4Q7IA89FwWUFX0oGpDRZiyB0khjdgglhnEOBOTF/xUDiikFTS
-        fkFl4TfdPeOPXPUqP3E8XNN+eO1qE/x3zz+s92U6BpKfeOzCUcsg+Gw+W1HQYPeeB7Kv4S
-        uIDRGj3uuq5B9ogg5xILALUQ2O8jcas=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-402-bn7BejAKOU--lJSVYPquaA-1; Fri, 15 Nov 2019 12:14:55 -0500
-Received: by mail-wm1-f69.google.com with SMTP id h191so7301474wme.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 09:14:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fkKZc7EVVIK/btwaEMMtK6umsKN2KQyJVj0fen7NWM4=;
-        b=KnuLg+GIbDkXHQByTygxYXvHguSZaLsYVEXJ42dZn2pwclIuKV23/9yBZYrux25fWQ
-         h1oTWtFgspEdUwYa3UI20EExT5289gSLh14xY1npmv6CYYnbsUDRA105EqTBAR50d4N5
-         gzX5a2/GD/7HoW3c2h/ALKfuHUFQftfnXRz0BUhia8OyrsCMjcJqzeD2jyMF8me2/t4V
-         mtQ/YqCkSV6xHAKmDV1DanBdQCIbTXvQShLg5caiUXtecI8i5CAVN2m7EVQySMz5SSQS
-         QB4c13YBPD7f0fX/wmEFiDDMlH3/sIlwoGej8qiW4SYsxTY5W4nrKSKo4DvE81NcAASx
-         A1Aw==
-X-Gm-Message-State: APjAAAUtb3FSZgpko1o+lEbjyhbfjfAdYdInUNtD3QY9ViohZPzT/5ju
-        /EX/OW/NQKKuwRC0E0tvhj/NB0AdjzPsrv6zMYvZ9yd4O37Wyah1SdTbcm4yEq4aW6H6Lee6XK5
-        44QGBSvCiMcg766cCBYWRGBLq
-X-Received: by 2002:a1c:7709:: with SMTP id t9mr15737398wmi.80.1573838093812;
-        Fri, 15 Nov 2019 09:14:53 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzFYsvAwIE6O5TRg5h8L4op6aHWHNgR4Qnu7Nap2afcKOa3ebQhqU+/jSY5LlHI0javOU1nhQ==
-X-Received: by 2002:a1c:7709:: with SMTP id t9mr15737362wmi.80.1573838093545;
-        Fri, 15 Nov 2019 09:14:53 -0800 (PST)
-Received: from localhost.localdomain ([151.29.177.194])
-        by smtp.gmail.com with ESMTPSA id a6sm13758352wrh.69.2019.11.15.09.14.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Nov 2019 09:14:52 -0800 (PST)
-Date:   Fri, 15 Nov 2019 18:14:50 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, will@kernel.org, oleg@redhat.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        bigeasy@linutronix.de, williams@redhat.com, bristot@redhat.com,
-        longman@redhat.com, dave@stgolabs.net, jack@suse.com
-Subject: Re: [PATCH 0/5] locking: Percpu-rwsem rewrite
-Message-ID: <20191115171450.GJ19129@localhost.localdomain>
-References: <20191113102115.116470462@infradead.org>
+        id S1727605AbfKORSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 12:18:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46116 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727531AbfKORSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 12:18:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 367BDAD20;
+        Fri, 15 Nov 2019 17:18:09 +0000 (UTC)
+Date:   Fri, 15 Nov 2019 18:18:07 +0100
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        lizefan@huawei.com, tj@kernel.org, hannes@cmpxchg.org,
+        mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
+        qperret@google.com
+Subject: Re: [PATCH v2] sched/topology, cpuset: Account for housekeeping CPUs
+ to avoid empty cpumasks
+Message-ID: <20191115171807.GH19372@blackbody.suse.cz>
+References: <20191104003906.31476-1-valentin.schneider@arm.com>
+ <d7ed40aa-1ac1-a42d-51eb-b1bd9f839fb1@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191113102115.116470462@infradead.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-MC-Unique: bn7BejAKOU--lJSVYPquaA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nFBW6CQlri5Qm8JQ"
 Content-Disposition: inline
+In-Reply-To: <d7ed40aa-1ac1-a42d-51eb-b1bd9f839fb1@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 13/11/19 11:21, Peter Zijlstra wrote:
-> Yet another version of the percpu-rwsem rewrite..
->=20
-> This one (ab)uses the waitqueue in an entirely different and unique way, =
-but no
-> longer shares it like it did. It retains the use of rcuwait for the
-> writer-waiting-for-readers-to-complete condition.
->=20
-> This one should be FIFO fair with writer-stealing.
->=20
-> It seems to pass locktorture torture_type=3Dpercpu_rwsem_lock. But as alw=
-ays,
-> this stuff is tricky, please look carefully.
+--nFBW6CQlri5Qm8JQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Backported this series to v5.2.21-rt13.
+Hello.
 
-locktorture looks good (running for several hours) and DEBUG_LOCKS splat
-[1] not reproducible anymore.
+On Thu, Nov 14, 2019 at 04:03:50PM +0000, Valentin Schneider <valentin.schn=
+eider@arm.com> wrote:
+> Michal, could I nag you for a reviewed-by? I'd feel a bit more confident
+> with any sort of approval from folks who actually do use cpusets.
+TL;DR I played with the v5.4-rc6 _without_ this fixup and I conclude it
+unnecessary (IOW my previous theoretical observation was wrong).
 
-Tested-by: Juri Lelli <juri.lelli@redhat.com>
 
-Thanks!
+The original problem is non-issue with v2 cpuset controller, because
+effective_cpus are never empty. isolcpus doesn't take out cpuset CPUs,
+hotplug does. In the case, no online CPU remains in the cpuset, it
+inherits ancestor's non-empty cpuset.
 
-Juri
+I reproduced the problem with v1 (before your fix). However, in v1
+effective =3D=3D allowed (we're destructive and overwrite allowed on
+hotunplug) and we already check the emptiness of=20
 
-1 - https://lore.kernel.org/lkml/20190326093421.GA29508@localhost.localdoma=
-in/
+  cpumask_intersects(cp->cpus_allowed, housekeeping_cpumask(HK_FLAG_DOMAIN)
 
+few lines higher. I.e. the fixup adds redundant check against the empty
+sched domain production.
+
+Sorry for the noise and HTH,
+Michal
+
+--nFBW6CQlri5Qm8JQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl3O3cgACgkQia1+riC5
+qSiGeA//dbxeLleRivvTRMu6ewhKeYA5GfAfmrsle+ZHgxKgu13LIa8eHLAWPu/Z
+YyHPHLctNpNYafHe47dMbAxduA4roPTtZzN8AMN4bRkrT85c1ZqCAVel6eZLU9Dj
+RIwV9vK3E6RBObG8W9Qq7b6Rhlty6mwnGpxil7oqJq/MxKe0DOYjYKsrl5JROc3G
+iywiIignt9izFFqK1z7R4TX4H9Q0ir/FEiu75CWMx7Ch5jSMgCUwcJiE1gTDognS
+vKIDIp0BD4nidnpLoP18iaywle6HbZOX6xT2GJXS5waCY6uKzHas++Jh/PdWYpTR
++fzCQDS9otWlwSPUj/GSKwJbRakmxMWsfJp2/QreiWWbcS9XBxEH56jD03PBIF8A
+3toQN5kLVu+kWf2v5v+avd6jaIXMRtm5uBigmkmmax/vjq9UtzWI8FzMhcx48BTI
+FHzWdwP3BcptZClp6O/4pLQ8doP/RINGtQgvYvnFvEDrJQGO2xxJ78FBRZ7WxQVU
+BuS3yDu8Ntxa8CuJBgFNJpN9yDu0rGHbknKDTHZ2vXWT6/v6B3B2UkdGGvmm4mQC
+RKoUjKoTQoLDCIvErQLI+PP62twGsz0lGJVm8WEPhVbs5AZIXPAJ8tx8LKngfXE8
+38cy25tQ+hKhVtf+jIclTTYaN3Nvh2MBUKpZYXAQwdvXeiGn3NI=
+=2oDh
+-----END PGP SIGNATURE-----
+
+--nFBW6CQlri5Qm8JQ--
