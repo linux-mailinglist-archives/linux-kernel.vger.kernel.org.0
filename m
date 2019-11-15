@@ -2,70 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56770FE1BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86632FE1F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfKOPqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 10:46:42 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:35763 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbfKOPql (ORCPT
+        id S1727737AbfKOPt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 10:49:57 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37818 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfKOPtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 10:46:41 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 42AC73C009C;
-        Fri, 15 Nov 2019 16:46:40 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id JOQJ0e7iD_R2; Fri, 15 Nov 2019 16:46:31 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id CEBDB3C04C0;
-        Fri, 15 Nov 2019 16:46:31 +0100 (CET)
-Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 15 Nov
- 2019 16:46:31 +0100
-Date:   Fri, 15 Nov 2019 16:46:27 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] checkpatch: whitelist Originally-by: signature
-Message-ID: <20191115154627.GA2187@lxhi-065.adit-jv.com>
-References: <20191115150202.15208-1-erosca@de.adit-jv.com>
- <05ba4e29fb78885cf9abf7bfc87e0a7bcda099fe.camel@perches.com>
+        Fri, 15 Nov 2019 10:49:43 -0500
+Received: by mail-io1-f66.google.com with SMTP id 1so10935532iou.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 07:49:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
+        b=T96mBsWswYjsm0w7ecYkWpV509ib/ulk9bHbI0Xwo0rzkePegh7rSfOcmzGbyf8vTc
+         lns/HOXyf4/6jOYDVIgZ/CZyIfN2m2y88qVdmXSABhNsP0MXDIRsHGSOOd7wWkwuGiQx
+         ehcoBpFXp6INIFq3jwmveina1L3fsWjpzHRhMvlhwo8OJ8Dy4xuFXwCrYZiL/Ja/dmiU
+         sEvBblBcC09ww5H/W1Li3rJXBc1TYjMn46kjeboNwYGUiqFeNnjz46iJxarBlBzUTpau
+         7EU4w1MkRxjhgPFrJ2/ipVqnuE4IawmENFYcW1JVUg9OFLrEKZvfb77T8+3XayPV4Zd+
+         KrHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
+        b=sWM48BJQRM+AhPdMGl3IWwZMi3eFbWyTcwgowWiYSEIGkcgymoxwHa3SXdMq/iHPKG
+         wgY3sSQsl8FvItYhWhIAFUBykT4YvN/JangAQDykP4lGqVe7ips3xka29tIUpoW+ZVRh
+         Y4SfHASPWhX97px0mC7DSDhsykHMpcFC5mkCnugIJpZHYzE7FqG+BD96zizfHRBCv5UF
+         kSvspfIrVOTPNdMdmLh+BYejql/+WrnbIXjo7m7LTRjJTy+bC2hpE/8mvlqsMT+gl+Rk
+         Ree1Yo6V3E0X8gGXXTLC5EVzOVMKexZ2Ro0wJwo1l80NejuQPMwsme6AOU9d5IrktYPK
+         6dEA==
+X-Gm-Message-State: APjAAAXw2maFhlU8+6683CdJ0EfACPH22miEyxsFG0b+MqDVAS83NeNw
+        ODoRIdSx3fooWSpCcf0DmXf5Pp2f4klA2Gv0eg==
+X-Google-Smtp-Source: APXvYqxEj1beLI6zhjihT/lmX2Dk324PGcIr8veC5c+0F/PFQKT7AeNYgljOGh72OwNqCMMZvqGkvMbSAqCkDjgGkjg=
+X-Received: by 2002:a5e:8e02:: with SMTP id a2mr1343031ion.269.1573832982053;
+ Fri, 15 Nov 2019 07:49:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <05ba4e29fb78885cf9abf7bfc87e0a7bcda099fe.camel@perches.com>
-X-Originating-IP: [10.72.93.66]
+Received: by 2002:a02:7749:0:0:0:0:0 with HTTP; Fri, 15 Nov 2019 07:49:41
+ -0800 (PST)
+Reply-To: moneygram.1820@outlook.fr
+From:   "Ms.Mary Coster" <info.zennitbankplcnigerian@gmail.com>
+Date:   Fri, 15 Nov 2019 16:49:41 +0100
+Message-ID: <CABHzvrkUQbbmg0Gr7foD3OjAJiY7Fd37=SW3mU=fnOPOcOyNdQ@mail.gmail.com>
+Subject: Goodnews, I have deposited your transfer total amount US$4.8million
+ Dollars with Money Gram this morning. we agreed you will be receiving it
+ $5000.00 daily.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
-
-On Fri, Nov 15, 2019 at 07:09:17AM -0800, Joe Perches wrote:
-> On Fri, 2019-11-15 at 16:02 +0100, Eugeniu Rosca wrote:
-> > Oftentimes [1], the contributor would like to honor or give credits [2]
-> > to somebody's original ideas in the submission/reviewing process. While
-> > "Co-developed-by:" and "Suggested-by:" (currently whitelisted) could be
-> > employed for this purpose, they are not ideal.
-> 
-> You need to get the use of this accepted into Documentation/process
-> before adding it to checkpatch
-
-If the change [*] makes sense to you, I can submit an update to
-Documentation/process/submitting-patches.rst
-
-[*] https://marc.info/?l=linux-kernel&m=157383014408527&w=2
-
--- 
-Best Regards,
-Eugeniu
+Attn, Dear
+Goodnews, I have deposited your transfer total amount US$4.8million
+Dollars with Money Gram this morning. we agreed you will be receiving
+it $5000.00 daily.
+Contact Mr. John Dave Director, Money Gram to pick up your first Money
+Gram payment $5000.00 today.
+Contact Person; Mr. John Dave Director, Money Gram,International
+Remittance-Benin
+Email; moneygram.1820@outlook.fr
+Telephone; +229 62619517
+Please re-confirm your address to him once again such as listed below.
+1.Your Full Name..............................
+2.Address.........................
+3.Country....................
+4.Sex.........................................
+5.Your telephone numbers..........................
+6. Copy of your ID...........................
+This is to avoid sending your funds to wrong person, He is waiting to
+hear from you urgent today.
+Let me know once you pick up your transfer $5000.00 today.
+Finally, Note I have paid for the service fees, but only money will
+send to him is $90.00 transfer fee before you can pick up the transfer
+today.
+Ask, Mr. John Dave Director, Money Gram to give you direction where to
+send your transfer fee $90.00 only to Him Immediately so that you can
+pick up $5000.00 us dollars today.
+Thanks for undrstanding.
+Mary Coster
+m.coster@aol.com
