@@ -2,144 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82CD3FDDC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:27:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA878FDDDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:29:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfKOM12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:27:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57670 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbfKOM12 (ORCPT
+        id S1727532AbfKOM3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:29:49 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:44447 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727196AbfKOM3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:27:28 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C99B46149A; Fri, 15 Nov 2019 12:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573820846;
-        bh=nn641KuPlVJ7M03lH48vK72IKsPONDRXYZbuLdODP+E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SgyG+3pLBf/epYtaBAk0ZRB50L2a8+58nD2VcCuqJ4KjPImZYadXXmTNp350yi0jj
-         QLsECcs55VPRM+eZbluH6JjBKPn/XtgCfFptwNXkffw1oqnjdi+BPX817W9GbuG2rI
-         KllDQKb3u7th/v9QKlr/JKUuSn4dxVCdN1XNO+8I=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id E5CFC61494;
-        Fri, 15 Nov 2019 12:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573820839;
-        bh=nn641KuPlVJ7M03lH48vK72IKsPONDRXYZbuLdODP+E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jaMs4OJkRDvrjtvA6b7JIjzUo1PVR1a9YeKe4NoVjt578d3wMaxMuiOj+l6brL5Nb
-         Teae1FX11ODMVsu13jt+iZP7Mp/KjuWL2Q1Ye+4MtB6gddDjRJpKjvVnSAXVcjL5u7
-         YP3akQeyW7AwCQRayChFmcUNP2zZMSoAwLg7w+hg=
+        Fri, 15 Nov 2019 07:29:49 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iVajP-0004hB-MN; Fri, 15 Nov 2019 13:29:43 +0100
+To:     Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] arm64: export =?UTF-8?Q?=5F=5Fhyp=5Fstub=5Fvector?=  =?UTF-8?Q?s?=
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
+Content-Type: text/plain; charset=UTF-8;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 15 Nov 2019 20:27:18 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Stanley Chu <stanley.chu@mediatek.com>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/7] scsi: ufs: Fix up auto hibern8 enablement
-In-Reply-To: <1573802311.4956.8.camel@mtkswgap22>
-References: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
- <1573798172-20534-4-git-send-email-cang@codeaurora.org>
- <1573799728.4956.5.camel@mtkswgap22>
- <2a925548b8ead7c3b5ddf2d7bf3de05d@codeaurora.org>
- <1573802311.4956.8.camel@mtkswgap22>
-Message-ID: <433afef33c8ca61aa299fa453c0d25d3@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Date:   Fri, 15 Nov 2019 12:29:43 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <catalin.marinas@arm.com>, <will@kernel.org>,
+        Alice Guo <alice.guo@nxp.com>, <jan.kiszka@siemens.com>,
+        <linux-kernel@vger.kernel.org>, <ralf.ramsauer@oth-regensburg.de>,
+        <james.morse@arm.com>, <allison@lohutok.net>, <tglx@linutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+In-Reply-To: <1573810972-2159-2-git-send-email-peng.fan@nxp.com>
+References: <1573810972-2159-1-git-send-email-peng.fan@nxp.com>
+ <1573810972-2159-2-git-send-email-peng.fan@nxp.com>
+Message-ID: <863d923961a505af307ba679fe3cbb32@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: peng.fan@nxp.com, catalin.marinas@arm.com, will@kernel.org, alice.guo@nxp.com, jan.kiszka@siemens.com, linux-kernel@vger.kernel.org, ralf.ramsauer@oth-regensburg.de, james.morse@arm.com, allison@lohutok.net, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-15 15:18, Stanley Chu wrote:
-> Hi Can,
-> 
-> On Fri, 2019-11-15 at 15:03 +0800, Can Guo wrote:
->> On 2019-11-15 14:35, Stanley Chu wrote:
->> > Hi Can,
->> >
->> > On Thu, 2019-11-14 at 22:09 -0800, Can Guo wrote:
->> >> +	if (hba->ahit != ahit)
->> >> +		hba->ahit = ahit;
->> >>  	spin_unlock_irqrestore(hba->host->host_lock, flags);
->> >> +	if (!pm_runtime_suspended(hba->dev)) {
->> >
->> > Always do pm_runtime_get_sync() here could avoid possible racing?
->> >
->> > And thus AH8 could be enabled regardless of runtime status.
->> >
->> >> +		pm_runtime_get_sync(hba->dev);
->> >> +		ufshcd_hold(hba, false);
->> >> +		ufshcd_auto_hibern8_enable(hba);
->> >> +		ufshcd_release(hba);
->> >> +		pm_runtime_put(hba->dev);
->> >> +	}
->> >>  }
->> >
->> > Thanks,
->> > Stanley
->> 
->> Hi Stanley,
->> 
->> if !pm_runtime_suspended() is true, hba->dev's runtime status, other
->> than RPM_ACTIVE,
->> may be RPM_SUSPENDING or RPM_RESUMING. So, here for safty, do
->> pm_runtime_get_sync() once
->> before access registers, in case we hit corner cases in which powers
->> and/or clocks are OFF.
->> 
-> 
-> Thanks for explanation.
-> 
-> I fully understand the intention of this patch.
-> 
-> Just wonder if "if (!pm_runtime_suspended(hba->dev))" could be removed
-> and then always do pm_runtime_get_sync() here.
-> 
-> This could avoid possible racing and enable AH8 regardless of current
-> runtime status.
-> 
->> Thanks,
->> Can Guo.
-> 
-> Thanks,
-> Stanley
+On 2019-11-15 09:45, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> External hypervisors, like Jailhouse, need this address when they are
+> deactivated, in order to restore original state.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  arch/arm64/include/asm/virt.h | 2 ++
+>  arch/arm64/kernel/hyp-stub.S  | 1 +
+>  2 files changed, 3 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/virt.h 
+> b/arch/arm64/include/asm/virt.h
+> index 0958ed6191aa..b1b48353e3b3 100644
+> --- a/arch/arm64/include/asm/virt.h
+> +++ b/arch/arm64/include/asm/virt.h
+> @@ -62,6 +62,8 @@
+>   */
+>  extern u32 __boot_cpu_mode[2];
+>
+> +extern char __hyp_stub_vectors[];
+> +
+>  void __hyp_set_vectors(phys_addr_t phys_vector_base);
+>  void __hyp_reset_vectors(void);
+>
+> diff --git a/arch/arm64/kernel/hyp-stub.S 
+> b/arch/arm64/kernel/hyp-stub.S
+> index f17af9a39562..22b728fb14bd 100644
+> --- a/arch/arm64/kernel/hyp-stub.S
+> +++ b/arch/arm64/kernel/hyp-stub.S
+> @@ -38,6 +38,7 @@ ENTRY(__hyp_stub_vectors)
+>  	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
+>  	ventry	el1_error_invalid		// Error 32-bit EL1
+>  ENDPROC(__hyp_stub_vectors)
+> +EXPORT_SYMBOL(__hyp_stub_vectors);
 
+NAK.
 
-Hi Stanley,
+There is no in-tree users of this. If you're using jailhouse, you're
+already patching your kernel, and you can carry this. Mainline doesn't
+need this at all.
 
-Actually, I thought about the way you reommand.
-
-But I guess the author's intention here is to update the AH8 timer
-only when current runtime status is RPM_ACTIVE. If it is not RPM_ACTIVE,
-we just update the hba->ahit and bail out, because the AH8 timer will be
-updated in ufshcd_reusme() eventually when hba is resumed. This can 
-avoid
-frequently waking up hba just for accessing a single register.
-How do you think?
-
-Thanks,
-Can Guo.
-
-
+         M.
+-- 
+Jazz is not dead. It just smells funny...
