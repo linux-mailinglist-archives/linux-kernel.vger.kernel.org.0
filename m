@@ -2,127 +2,481 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8CAFDDFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 016A8FDE05
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfKOMfK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 15 Nov 2019 07:35:10 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38854 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbfKOMfK (ORCPT
+        id S1727665AbfKOMgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:36:40 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58477 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727628AbfKOMgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:35:10 -0500
-Received: by mail-ot1-f67.google.com with SMTP id z25so7888900oti.5;
-        Fri, 15 Nov 2019 04:35:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=weseOzPMtZu2Zkh9G1J+5ddsMGjRBKSp1rgb8MnewWI=;
-        b=Y8gMEmARIyyPz+5yibhUCCzAPO8+umg05BceZRw1lhRNI3WYVX4DoF1CpYG3mIO79c
-         6spRqeeWPCv3nLKnZjfHWVKFCbI1V/1QkpKj7r+cQ1ywtGsD9Bhe6QC5rfYqoSoVb3h3
-         rsdGDLWMsjl58Zxwl3Nn4DNWBvAnQxQMxfpcVp0NV1EOiMTlI850NHBR3C+6jh0oWYDF
-         ezTQikj6OS1Sv+fYoYPvY0cYAjc6W3Rjlzk1HphvRjRBDNy7CAc35HGRlfr2YFa8UNr0
-         9avmZa0xoj+HQgi+UFCOy+1xkRxjHQlgZ69gjNNYrulWLFSQgjFQ4uLo9/h1BqI+H6+p
-         Q2nQ==
-X-Gm-Message-State: APjAAAVEGi2hyVQP1mXyBRULe4XhdpBdwmTMgmazAmkhvw4+RZq2abJ2
-        EhilzH4vCKDUF7YNzV1fbsIxU/WVhISlQhPzARc=
-X-Google-Smtp-Source: APXvYqxQbOJhyQwpGQWBZF1hmsyHYrJBcMAR+hAoTdODxyYX/u2VKxAy7/eJUh/M6a4TbETYPv02VjN0xr9BlR4aCVA=
-X-Received: by 2002:a9d:5511:: with SMTP id l17mr2945702oth.145.1573821307279;
- Fri, 15 Nov 2019 04:35:07 -0800 (PST)
+        Fri, 15 Nov 2019 07:36:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573821394;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Zv+Y9CxgauSzdlCsCDl/Q9xLcRyQJDitEYajtnl9yag=;
+        b=WB/rYisyR5KacpZ6ewM55zD+0bGFk9y/N5TlRyOCnvOh7Pv/yqhLKXzjD0L6wewuMzLRNC
+        WOdrLXhYMayn96UlcLlHcesa6Z6KurvBucEdPpLQZX961xSgM1ov6u4Jp5XNrHug9DNygJ
+        Cdee2MwZn85A1UyXJLpOgkcwctwaUUE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-401-xiC4is2ZNjuywst1whQX-A-1; Fri, 15 Nov 2019 07:36:31 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4F0F1005500;
+        Fri, 15 Nov 2019 12:36:29 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-116-116.ams2.redhat.com [10.36.116.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76CE05D6BE;
+        Fri, 15 Nov 2019 12:36:24 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Adrian Reber <areber@redhat.com>
+Subject: [PATCH v11 1/2] fork: extend clone3() to support setting a PID
+Date:   Fri, 15 Nov 2019 13:36:20 +0100
+Message-Id: <20191115123621.142252-1-areber@redhat.com>
 MIME-Version: 1.0
-References: <20191103013645.9856-3-afaerber@suse.de> <20191111045609.7026-1-afaerber@suse.de>
- <20191111052741.GB3176397@kroah.com> <586fa37c-6292-aca4-fa7c-73064858afaf@suse.de>
- <20191111064040.GA3502217@kroah.com> <a88442df-dc6b-07e5-8dee-9e308bdda450@suse.de>
- <20191112052347.GA1197504@kroah.com> <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
- <aff81b8e-f041-73a5-6a95-d308fa07842c@suse.de> <c8572f70-5550-8cee-4381-fd7de7ae5af0@baylibre.com>
- <CAMuHMdWOWWQoJh5=07VMRhtrFR_Gc_qNhjTV4tCsvwvMn0kYfA@mail.gmail.com> <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
-In-Reply-To: <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 15 Nov 2019 13:34:55 +0100
-Message-ID: <CAMuHMdU7EYHWRAR+s3ee4Wy6+6_MZON5xARszO7TDXZGyw8d5w@mail.gmail.com>
-Subject: Re: Sense of soc bus? (was: [PATCH] base: soc: Export
- soc_device_to_device() helper)
-To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-realtek-soc@lists.infradead.org,
-        Tony Lindgren <tony@atomide.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        boot-architecture@lists.linaro.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: xiC4is2ZNjuywst1whQX-A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+The main motivation to add set_tid to clone3() is CRIU.
 
-On Fri, Nov 15, 2019 at 1:01 PM Andreas Färber <afaerber@suse.de> wrote:
-> Am 15.11.19 um 09:58 schrieb Geert Uytterhoeven:
-> > On Fri, Nov 15, 2019 at 9:52 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >> On 12/11/2019 11:47, Andreas Färber wrote:
-> >>> For example, RTD1295 will support LSADC only from revision B00
-> >>> on (and it's not the first time I'm seeing such things in the industry).
-> >>> So if a user complains, it will be helpful to see that information.
-> >>>
-> >>> Referencing your Amlogic review, with all due respect for its authors,
-> >>> the common framework here just lets that information evaporate into the
-> >>> deeps of sysfs.
-> >>
-> >> Hopefully we never had the case where needed to use the soc info in drivers,
-> >> but now we have one and having such infrastructure already in-place will help.
-> >>
-> >> Renesas platforms makes a extensive usage of the soc info infrastructure to
-> >> figure out plenty of HW parameters at runtime and lower their DT changes.
-> >
-> > We do our best to use it solely for detecting quirks in early SoC revisions.
->
-> Got a pointer? I fail to immediately understand how sysfs would help
-> drivers (as opposed to userspace) detect quirks: Parsing strings back
-> doesn't sound efficient, and I don't see you exporting any custom APIs
-> in drivers/soc/renesas/renesas-soc.c?
+To restore a process with the same PID/TID CRIU currently uses
+/proc/sys/kernel/ns_last_pid. It writes the desired (PID - 1) to
+ns_last_pid and then (quickly) does a clone(). This works most of the
+time, but it is racy. It is also slow as it requires multiple syscalls.
 
-We use soc_device_match(), inside kernel drivers.
-Exposure through sysfs is a side-effect of using soc_device_register(),
-and welcomed, as it allows the user to find out quickly which SoC and
-revision is being used.
+Extending clone3() to support *set_tid makes it possible restore a
+process using CRIU without accessing /proc/sys/kernel/ns_last_pid and
+race free (as long as the desired PID/TID is available).
 
-FTR, lshw (Ubuntu 18.04 has v2.18, which does seem to be the latest
-upstream version) does not parse /sys/devices/soc0/.
+This clone3() extension places the same restrictions (CAP_SYS_ADMIN)
+on clone3() with *set_tid as they are currently in place for ns_last_pid.
 
-Gr{oetje,eeting}s,
+The original version of this change was using a single value for
+set_tid. At the 2019 LPC, after presenting set_tid, it was, however,
+decided to change set_tid to an array to enable setting the PID of a
+process in multiple PID namespaces at the same time. If a process is
+created in a PID namespace it is possible to influence the PID inside
+and outside of the PID namespace. Details also in the corresponding
+selftest.
 
-                        Geert
+To create a process with the following PIDs:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+      PID NS level         Requested PID
+        0 (host)              31496
+        1                        42
+        2                         1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+For that example the two newly introduced parameters to struct
+clone_args (set_tid and set_tid_size) would need to be:
+
+  set_tid[0] =3D 1;
+  set_tid[1] =3D 42;
+  set_tid[2] =3D 31496;
+  set_tid_size =3D 3;
+
+If only the PIDs of the two innermost nested PID namespaces should be
+defined it would look like this:
+
+  set_tid[0] =3D 1;
+  set_tid[1] =3D 42;
+  set_tid_size =3D 2;
+
+The PID of the newly created process would then be the next available
+free PID in the PID namespace level 0 (host) and 42 in the PID namespace
+at level 1 and the PID of the process in the innermost PID namespace
+would be 1.
+
+The set_tid array is used to specify the PID of a process starting
+from the innermost nested PID namespaces up to set_tid_size PID namespaces.
+
+set_tid_size cannot be larger then the current PID namespace level.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+v2:
+ - Removed (size < sizeof(struct clone_args)) as discussed with
+   Christian and Dmitry
+ - Added comment to ((set_tid !=3D 1) && idr_get_cursor() <=3D 1) (Oleg)
+ - Use idr_alloc() instead of idr_alloc_cyclic() (Oleg)
+
+v3:
+ - Return EEXIST if PID is already in use (Christian)
+ - Drop CLONE_SET_TID (Christian and Oleg)
+ - Use idr_is_empty() instead of idr_get_cursor() (Oleg)
+ - Handle different `struct clone_args` sizes (Dmitry)
+
+v4:
+ - Rework struct size check with defines (Christian)
+ - Reduce number of set_tid checks (Oleg)
+ - Less parentheses and more robust code (Oleg)
+ - Do ns_capable() on correct user_ns (Oleg, Christian)
+
+v5:
+ - make set_tid checks earlier in alloc_pid() (Christian)
+ - remove unnecessary comment and struct size check (Christian)
+
+v6:
+ - remove CLONE_SET_TID from description (Christian)
+ - add clone3() tests for different clone_args sizes (Christian)
+ - move more set_tid checks to alloc_pid() (Oleg)
+ - make all set_tid checks lockless (Oleg)
+
+v7:
+ - changed set_tid to be an array to set the PID of a process
+   in multiple nested PID namespaces at the same time as discussed
+   at LPC 2019 (container MC)
+
+v8:
+ - skip unnecessary memset() (Rasmus)
+ - replace set_tid copy loop with a single copy (Christian)
+ - more parameter error checking (Christian)
+ - cache set_tid in alloc_pid() (Oleg)
+ - move code in "else" branch (Oleg)
+
+v9:
+ - added kernel-doc to include/uapi/linux/sched.h (Christian)
+ - moved a variable to limit its scope; keep all set_tid_size
+   related changes in one place (Oleg)
+
+v10:
+ - added CLONE_ARGS_SIZE_VER1 to sched.h (Christian)
+
+v11:
+ - abort alloc_pid() correctly if one of the PIDs specified in
+   set_pid[] is invalid (Andrei)
+---
+ include/linux/pid.h           |  3 +-
+ include/linux/pid_namespace.h |  2 +
+ include/linux/sched/task.h    |  3 ++
+ include/uapi/linux/sched.h    | 53 +++++++++++++++++---------
+ kernel/fork.c                 | 24 +++++++++++-
+ kernel/pid.c                  | 72 +++++++++++++++++++++++++++--------
+ kernel/pid_namespace.c        |  2 -
+ 7 files changed, 122 insertions(+), 37 deletions(-)
+
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 034e3cd60dc0..998ae7d24450 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -124,7 +124,8 @@ extern struct pid *find_vpid(int nr);
+ extern struct pid *find_get_pid(int nr);
+ extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
+=20
+-extern struct pid *alloc_pid(struct pid_namespace *ns);
++extern struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
++=09=09=09     size_t set_tid_size);
+ extern void free_pid(struct pid *pid);
+ extern void disable_pid_allocation(struct pid_namespace *ns);
+=20
+diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+index 49538b172483..2ed6af88794b 100644
+--- a/include/linux/pid_namespace.h
++++ b/include/linux/pid_namespace.h
+@@ -12,6 +12,8 @@
+ #include <linux/ns_common.h>
+ #include <linux/idr.h>
+=20
++/* MAX_PID_NS_LEVEL is needed for limiting size of 'struct pid' */
++#define MAX_PID_NS_LEVEL 32
+=20
+ struct fs_pin;
+=20
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 4b1c3b664f51..f1879884238e 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -26,6 +26,9 @@ struct kernel_clone_args {
+ =09unsigned long stack;
+ =09unsigned long stack_size;
+ =09unsigned long tls;
++=09pid_t *set_tid;
++=09/* Number of elements in *set_tid */
++=09size_t set_tid_size;
+ };
+=20
+ /*
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 1d500ed03c63..2e649cfa07f4 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -39,24 +39,38 @@
+ #ifndef __ASSEMBLY__
+ /**
+  * struct clone_args - arguments for the clone3 syscall
+- * @flags:       Flags for the new process as listed above.
+- *               All flags are valid except for CSIGNAL and
+- *               CLONE_DETACHED.
+- * @pidfd:       If CLONE_PIDFD is set, a pidfd will be
+- *               returned in this argument.
+- * @child_tid:   If CLONE_CHILD_SETTID is set, the TID of the
+- *               child process will be returned in the child's
+- *               memory.
+- * @parent_tid:  If CLONE_PARENT_SETTID is set, the TID of
+- *               the child process will be returned in the
+- *               parent's memory.
+- * @exit_signal: The exit_signal the parent process will be
+- *               sent when the child exits.
+- * @stack:       Specify the location of the stack for the
+- *               child process.
+- * @stack_size:  The size of the stack for the child process.
+- * @tls:         If CLONE_SETTLS is set, the tls descriptor
+- *               is set to tls.
++ * @flags:        Flags for the new process as listed above.
++ *                All flags are valid except for CSIGNAL and
++ *                CLONE_DETACHED.
++ * @pidfd:        If CLONE_PIDFD is set, a pidfd will be
++ *                returned in this argument.
++ * @child_tid:    If CLONE_CHILD_SETTID is set, the TID of the
++ *                child process will be returned in the child's
++ *                memory.
++ * @parent_tid:   If CLONE_PARENT_SETTID is set, the TID of
++ *                the child process will be returned in the
++ *                parent's memory.
++ * @exit_signal:  The exit_signal the parent process will be
++ *                sent when the child exits.
++ * @stack:        Specify the location of the stack for the
++ *                child process.
++ * @stack_size:   The size of the stack for the child process.
++ * @tls:          If CLONE_SETTLS is set, the tls descriptor
++ *                is set to tls.
++ * @set_tid:      Pointer to an array of type *pid_t. The size
++ *                of the array is defined using @set_tid_size.
++ *                This array is used select PIDs/TIDs for newly
++ *                created processes. The first element in this
++ *                defines the PID in the most nested PID
++ *                namespace. Each additional element in the array
++ *                defines the PID in the parent PID namespace of
++ *                the original PID namespace. If the array has
++ *                less entries than the number of currently
++ *                nested PID namespaces only the PIDs in the
++ *                corresponding namespaces are set.
++ * @set_tid_size: This defines the size of the array referenced
++ *                in @set_tid. This cannot be larger than the
++ *                kernel's limit of nested PID namespaces.
+  *
+  * The structure is versioned by size and thus extensible.
+  * New struct members must go at the end of the struct and
+@@ -71,10 +85,13 @@ struct clone_args {
+ =09__aligned_u64 stack;
+ =09__aligned_u64 stack_size;
+ =09__aligned_u64 tls;
++=09__aligned_u64 set_tid;
++=09__aligned_u64 set_tid_size;
+ };
+ #endif
+=20
+ #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
++#define CLONE_ARGS_SIZE_VER1 80 /* sizeof second published struct */
+=20
+ /*
+  * Scheduling policies
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 954e875e72b1..417570263f1f 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2087,7 +2087,8 @@ static __latent_entropy struct task_struct *copy_proc=
+ess(
+ =09stackleak_task_init(p);
+=20
+ =09if (pid !=3D &init_struct_pid) {
+-=09=09pid =3D alloc_pid(p->nsproxy->pid_ns_for_children);
++=09=09pid =3D alloc_pid(p->nsproxy->pid_ns_for_children, args->set_tid,
++=09=09=09=09args->set_tid_size);
+ =09=09if (IS_ERR(pid)) {
+ =09=09=09retval =3D PTR_ERR(pid);
+ =09=09=09goto bad_fork_cleanup_thread;
+@@ -2590,6 +2591,7 @@ noinline static int copy_clone_args_from_user(struct =
+kernel_clone_args *kargs,
+ {
+ =09int err;
+ =09struct clone_args args;
++=09pid_t *kset_tid =3D kargs->set_tid;
+=20
+ =09if (unlikely(usize > PAGE_SIZE))
+ =09=09return -E2BIG;
+@@ -2600,6 +2602,15 @@ noinline static int copy_clone_args_from_user(struct=
+ kernel_clone_args *kargs,
+ =09if (err)
+ =09=09return err;
+=20
++=09if (unlikely(args.set_tid_size > MAX_PID_NS_LEVEL))
++=09=09return -EINVAL;
++
++=09if (unlikely(!args.set_tid && args.set_tid_size > 0))
++=09=09return -EINVAL;
++
++=09if (unlikely(args.set_tid && args.set_tid_size =3D=3D 0))
++=09=09return -EINVAL;
++
+ =09/*
+ =09 * Verify that higher 32bits of exit_signal are unset and that
+ =09 * it is a valid signal
+@@ -2617,8 +2628,16 @@ noinline static int copy_clone_args_from_user(struct=
+ kernel_clone_args *kargs,
+ =09=09.stack=09=09=3D args.stack,
+ =09=09.stack_size=09=3D args.stack_size,
+ =09=09.tls=09=09=3D args.tls,
++=09=09.set_tid_size=09=3D args.set_tid_size,
+ =09};
+=20
++=09if (args.set_tid &&
++=09=09copy_from_user(kset_tid, u64_to_user_ptr(args.set_tid),
++=09=09=09(kargs->set_tid_size * sizeof(pid_t))))
++=09=09return -EFAULT;
++
++=09kargs->set_tid =3D kset_tid;
++
+ =09return 0;
+ }
+=20
+@@ -2662,6 +2681,9 @@ SYSCALL_DEFINE2(clone3, struct clone_args __user *, u=
+args, size_t, size)
+ =09int err;
+=20
+ =09struct kernel_clone_args kargs;
++=09pid_t set_tid[MAX_PID_NS_LEVEL];
++
++=09kargs.set_tid =3D set_tid;
+=20
+ =09err =3D copy_clone_args_from_user(&kargs, uargs, size);
+ =09if (err)
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 7b5f6c963d72..2278e249141d 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -157,7 +157,8 @@ void free_pid(struct pid *pid)
+ =09call_rcu(&pid->rcu, delayed_put_pid);
+ }
+=20
+-struct pid *alloc_pid(struct pid_namespace *ns)
++struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
++=09=09      size_t set_tid_size)
+ {
+ =09struct pid *pid;
+ =09enum pid_type type;
+@@ -166,6 +167,17 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ =09struct upid *upid;
+ =09int retval =3D -ENOMEM;
+=20
++=09/*
++=09 * set_tid_size contains the size of the set_tid array. Starting at
++=09 * the most nested currently active PID namespace it tells alloc_pid()
++=09 * which PID to set for a process in that most nested PID namespace
++=09 * up to set_tid_size PID namespaces. It does not have to set the PID
++=09 * for a process in all nested PID namespaces but set_tid_size must
++=09 * never be greater than the current ns->level + 1.
++=09 */
++=09if (set_tid_size > ns->level + 1)
++=09=09return ERR_PTR(-EINVAL);
++
+ =09pid =3D kmem_cache_alloc(ns->pid_cachep, GFP_KERNEL);
+ =09if (!pid)
+ =09=09return ERR_PTR(retval);
+@@ -174,24 +186,54 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ =09pid->level =3D ns->level;
+=20
+ =09for (i =3D ns->level; i >=3D 0; i--) {
+-=09=09int pid_min =3D 1;
++=09=09int tid =3D 0;
++
++=09=09if (set_tid_size) {
++=09=09=09tid =3D set_tid[ns->level - i];
++
++=09=09=09retval =3D -EINVAL;
++=09=09=09if (tid < 1 || tid >=3D pid_max)
++=09=09=09=09goto out_free;
++=09=09=09/*
++=09=09=09 * Also fail if a PID !=3D 1 is requested and
++=09=09=09 * no PID 1 exists.
++=09=09=09 */
++=09=09=09if (tid !=3D 1 && !tmp->child_reaper)
++=09=09=09=09goto out_free;
++=09=09=09retval =3D -EPERM;
++=09=09=09if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
++=09=09=09=09goto out_free;
++=09=09=09set_tid_size--;
++=09=09}
+=20
+ =09=09idr_preload(GFP_KERNEL);
+ =09=09spin_lock_irq(&pidmap_lock);
+=20
+-=09=09/*
+-=09=09 * init really needs pid 1, but after reaching the maximum
+-=09=09 * wrap back to RESERVED_PIDS
+-=09=09 */
+-=09=09if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+-=09=09=09pid_min =3D RESERVED_PIDS;
+-
+-=09=09/*
+-=09=09 * Store a null pointer so find_pid_ns does not find
+-=09=09 * a partially initialized PID (see below).
+-=09=09 */
+-=09=09nr =3D idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+-=09=09=09=09      pid_max, GFP_ATOMIC);
++=09=09if (tid) {
++=09=09=09nr =3D idr_alloc(&tmp->idr, NULL, tid,
++=09=09=09=09       tid + 1, GFP_ATOMIC);
++=09=09=09/*
++=09=09=09 * If ENOSPC is returned it means that the PID is
++=09=09=09 * alreay in use. Return EEXIST in that case.
++=09=09=09 */
++=09=09=09if (nr =3D=3D -ENOSPC)
++=09=09=09=09nr =3D -EEXIST;
++=09=09} else {
++=09=09=09int pid_min =3D 1;
++=09=09=09/*
++=09=09=09 * init really needs pid 1, but after reaching the
++=09=09=09 * maximum wrap back to RESERVED_PIDS
++=09=09=09 */
++=09=09=09if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
++=09=09=09=09pid_min =3D RESERVED_PIDS;
++
++=09=09=09/*
++=09=09=09 * Store a null pointer so find_pid_ns does not find
++=09=09=09 * a partially initialized PID (see below).
++=09=09=09 */
++=09=09=09nr =3D idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
++=09=09=09=09=09      pid_max, GFP_ATOMIC);
++=09=09}
+ =09=09spin_unlock_irq(&pidmap_lock);
+ =09=09idr_preload_end();
+=20
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index a6a79f85c81a..d40017e79ebe 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -26,8 +26,6 @@
+=20
+ static DEFINE_MUTEX(pid_caches_mutex);
+ static struct kmem_cache *pid_ns_cachep;
+-/* MAX_PID_NS_LEVEL is needed for limiting size of 'struct pid' */
+-#define MAX_PID_NS_LEVEL 32
+ /* Write once array, filled from the beginning. */
+ static struct kmem_cache *pid_cache[MAX_PID_NS_LEVEL];
+=20
+
+base-commit: 7acdfe534e726450fe8051abc2f36380fb2c2c0e
+--=20
+2.23.0
+
