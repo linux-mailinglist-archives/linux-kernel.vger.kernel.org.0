@@ -2,78 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A08FD81A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3373FD82E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfKOIqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 03:46:46 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52074 "EHLO mail.skyhub.de"
+        id S1727002AbfKOI44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 03:56:56 -0500
+Received: from mail.monom.org ([188.138.9.77]:49562 "EHLO mail.monom.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfKOIqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 03:46:45 -0500
-Received: from zn.tnic (p200300EC2F0CC300B4C5AF24BE56B25A.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:c300:b4c5:af24:be56:b25a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BD0131EC0D02;
-        Fri, 15 Nov 2019 09:46:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1573807603;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=gzm0MsATgUeRf/cV4H3chmTT5kcyvLvkgX8Ha1pOZg4=;
-        b=hlR76+RevqugKg4NnWt0MSY1yG3p7Yzg4h0iZWDTl315fdJlRF38T83a4HXKzwNnW+njDH
-        My/PGVzkzqQaorJaVDDjc22AuoizeM+yazbhgzR78R2sUOUTw/JW7eo6CdeX+k5SiYCJ9I
-        7muzQIQe8j2aCDXsEYgJS0oIzE31kO8=
-Date:   Fri, 15 Nov 2019 09:46:43 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chen Yu <yu.c.chen@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
+        id S1725829AbfKOI4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 03:56:55 -0500
+X-Greylist: delayed 499 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Nov 2019 03:56:55 EST
+Received: from mail.monom.org (localhost [127.0.0.1])
+        by filter.mynetwork.local (Postfix) with ESMTP id D37BC50064D;
+        Fri, 15 Nov 2019 09:48:34 +0100 (CET)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.monom.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        MISSING_MID autolearn=no autolearn_force=no version=3.4.2
+Received: from localhost (b9168fab.cgn.dg-w.de [185.22.143.171])
+        by mail.monom.org (Postfix) with ESMTPSA id 535655004AF;
+        Fri, 15 Nov 2019 09:48:34 +0100 (CET)
+Date:   Fri, 15 Nov 2019 09:48:33 +0100
+From:   Daniel Wagner <wagi@monom.org>
+Subject: [ANNOUNCE] 4.4.201-rt189
+Data:   Fri, 15 Nov 2019 08:39:05 -0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Shakeel Butt <shakeelb@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2][v2] resctrl: Add CPU_RESCTRL
-Message-ID: <20191115084643.GE18929@zn.tnic>
-References: <cover.1573788882.git.yu.c.chen@intel.com>
- <a39663fd4ce167e65b6d41027c3433dc00bf54f0.1573788882.git.yu.c.chen@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a39663fd4ce167e65b6d41027c3433dc00bf54f0.1573788882.git.yu.c.chen@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Julia Cartwright <julia@ni.com>, Pavel Machek <pavel@denx.de>
+Message-Id: <20191115084834.D37BC50064D@mail.monom.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 01:24:20PM +0800, Chen Yu wrote:
-> Introduce a generic option called CPU_RESCTRL which
-> is selected by the arch-specific ones CONFIG_X86_RESCTRL
-> or CONFIG_ARM64_RESCTRL in the future. The generic one will
-> cover the resctrl filesystem and other generic and shared
-> bits of functionality.
-> 
-> Suggested-by: Borislav Petkov <bp@suse.de>
+Hello RT Folks!
 
-I don't remember suggesting adding a separate CONFIG option...
+I'm pleased to announce the 4.4.201-rt189 stable release.
 
--- 
-Regards/Gruss,
-    Boris.
+This release is just an update to the new stable 4.4.201 version and
+no RT specific changes have been made. -rt188 points to the tiny merge
+conflict in a Makefile, just in case you are wondering.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.4-rt
+  Head SHA1: fd812331da09b85713fdb0f3ce44640180dfad97
+
+Or to build 4.4.201-rt189 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.201.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patch-4.4.201-rt189.patch.xz
+
+Enjoy!
+   Daniel
