@@ -2,127 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60681FDB07
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:18:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7E5FDB13
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:18:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbfKOKSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:18:04 -0500
-Received: from mail-eopbgr10073.outbound.protection.outlook.com ([40.107.1.73]:60129
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727183AbfKOKR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:17:58 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fcnZklfBnrpJeaG1O034/vm8J/Zpl2JiVrQeTAPoDJcf9W402QS7lH3ccqlhsqPzjetO0ystHkqnNfU1qQOltUGX7twLwYlbmq1EbjKX3NHiXztQqAJuQxPJKGDImimKlDSF8U9mRtU89IHA8ZkEuhqai3fFsAtXyWPdib1fmiq8OwL7QUisWQapKOdlew4qX1FDA9ipHvk1R2WL3WLMp5622NJK2S2+jDHWpm1fcymeGfKrCgRCRfNLqbB2RAWdipjcbmD1CxT4kR9v8jzCIFK0sTfvD/pDFYDk6XfpCjECsimpqkrpULrcwI6Gx7XICPxWmPHDHqsyt+fLrocFVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ORHQ659aoEtcRnPnkP0sXH/YF5tOtOqc4+oMh2DDYs8=;
- b=LEB50cZmVNHpEgN/pV57q4z2cjNkX+2SmHm4Jk6y/7Yq8EgxKV9WlocFHLdmdwJo0syuumog3bEfwOgZfeWyFEWSRrQTYYpMWqKC40XAgPetqaFh2ejwYPcx80qUGLQ6j+BlSA2ToB/Um8Ry7W9GtG0+B167DBJFi5Y2WNnUymzDHkmiyUItX/8g86BC1LdGshCeVWJOBzd3nUeixa+MsUKt0YANT+zxRolRS8/8lTeWu+/fX+DYBuo/SgfKtYWoWBF+oLFqCu80uto3/pPAIHxHS5GJhuanBHiE9FUSNDKlrHK+G98vIF0N1csx3PnjIJ75cKfOUN9IBnJj2TDmog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ORHQ659aoEtcRnPnkP0sXH/YF5tOtOqc4+oMh2DDYs8=;
- b=UC5CBGGcJSKT6sOr0W5WuORevxedHRPn0u8HRNZ7bTTuOnOrRKMllhyb+tOVhD9b4Lec0bp0QNGpdTi3lr/sNyxcirBJd4HAe89Bike5l8DCWu484LNdWWv5TnL/rK/uh9LF5wn3w9Czr7UepcaQsckyKBA2t/YzKQRMkyaCGWw=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5395.eurprd04.prod.outlook.com (20.178.113.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.26; Fri, 15 Nov 2019 10:17:54 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.024; Fri, 15 Nov 2019
- 10:17:54 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alice Guo <alice.guo@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] clk: clkdev: Replace strlcpy with strscpy
-Thread-Topic: [PATCH] clk: clkdev: Replace strlcpy with strscpy
-Thread-Index: AQHVm53x+DXjeUQoqE+Ge0GGT57azw==
-Date:   Fri, 15 Nov 2019 10:17:53 +0000
-Message-ID: <1573812819-5030-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0031.apcprd03.prod.outlook.com
- (2603:1096:203:2f::19) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7f884cdf-06ce-4738-5d4f-08d769b513aa
-x-ms-traffictypediagnostic: AM0PR04MB5395:|AM0PR04MB5395:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB5395FCD25E55205FA00C276388700@AM0PR04MB5395.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3513;
-x-forefront-prvs: 02229A4115
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(396003)(366004)(346002)(199004)(189003)(66446008)(14454004)(2906002)(86362001)(52116002)(6116002)(3846002)(66066001)(7736002)(305945005)(14444005)(71200400001)(71190400001)(256004)(2501003)(6512007)(99286004)(6436002)(6486002)(478600001)(102836004)(110136005)(54906003)(386003)(6506007)(26005)(316002)(186003)(8936002)(25786009)(486006)(44832011)(36756003)(50226002)(4326008)(8676002)(81156014)(81166006)(66476007)(2616005)(476003)(64756008)(66556008)(5660300002)(66946007)(156123004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5395;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kMvi4djVH0GjPZ+Wzlu/K2CD7lMsQBhX6n51JJTh4RByGU6keid38QOu663jTgJHVm6WhwVoevgfGCluRuE8+y7UazMcrHDn01TAF8+KyjUaa5Qx8V8YCfN9trKnijW+RhuaEDzKIXKoQK3obsFKxw09Qigy3AlP3MMjbXTtHOG/PqwwXJXxa6K5eOKY/4pSQnM2/kpgXqhhaLpsCnMugrG9T7vG29F0ymUKQQ5J24lZGYcQA+JBP/8DpWMqKGOW9/UQ+v34p0K3P1nZazbAuY/6icMTKtB2vGTbcS4IgrFv7nZxG5we7ZWmNBFslhJc0pLxpDqGleXpg+9xGS9LKakWStk9MRFPlOvM+6tWzKnoJDiELxRfXWfK98XH567IFL5PmvlAeQVlEgrkBDaov2A9O4MI4fX7jaZgInsCHs5oxdiFd5t7V7Ip0UCkGxVM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727631AbfKOKSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:18:15 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36822 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbfKOKSO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 05:18:14 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k15so10108468lja.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 02:18:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pCyqOdp+ZndERcZb5iv1sm6YH8+z1aM4ycI4+c8RSn4=;
+        b=rcgSsPfU+Q97tOFNKOrVXTIZo5atGipqubSqP/Zb1Qy3QZH31sW7nEYJ/3pb294IST
+         tDNnwxKaF24pgsnVbJi7SCE/y42+d+VvKJdJbiuGRQciM7uSi/mtLQlkhqy8exd9vIhx
+         a56YtyxTQQn3tHCwIK5QMEa44XQ8nV5ZW3WYlEWLd4jMtaalMOF+NVU8VSU/oE+XQ/d3
+         nw1ySTNoE585b+1VAaDyZsbOkao9SFZIgIbYbS2gERD/c3P1Z8CiVdAZGuA3NRCSZ/6k
+         mCavaQR2o0D0s1ZJKWQN9pP6WcaK/fCllOY4pg4O/jiCvfBhgoNGlZ4JYUtefzD9zSYp
+         60eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pCyqOdp+ZndERcZb5iv1sm6YH8+z1aM4ycI4+c8RSn4=;
+        b=CdFOiLSdTEVfF2g/7Uu78KtT5wohW9RQ0r0uT6YDKPYNycbrQsVuat55YZZWrsz8Yj
+         smVWEObe05LSXs733ut0SOZ1eaZhAimxUR8Sdet006XDo/UalkQkJTdvocW+YdAIo142
+         y8a/3E7Skeu80QNYFbSdcftlJrs2PyeeWxynSOLnJQjvtlmpoPQWy/arFNXlTR/GdO3F
+         VF7muEYe0r4+R9lAOfltqHfN9+NaACg1wEoxAWooBh9439aiWHOtIw2dj2vswYlsYPle
+         tjj7+bE7bNYDBD9vZMvhvTunLBVkSfUo2dBiKMLjKSq/Fj9N4h3C5+ZWN7Bkbk+YKitO
+         B/XQ==
+X-Gm-Message-State: APjAAAXKkyyR8kvTToyLtuKXA6k5v4fNBeQ8XkH39ybndAYT7etjhlJ2
+        yvojHHSp9m3QSp3DVfnuDavkCDx7kuanR/sg8xLF6g==
+X-Google-Smtp-Source: APXvYqw4nG6xeDVRRT2y9ygXD8V2W7ROQTkc/+zE6SYLloLLqV10hMqTILv/0ihg/0vC+GzCo0u/uuerAQVwKblA97I=
+X-Received: by 2002:a2e:b0e3:: with SMTP id h3mr10133730ljl.193.1573813091777;
+ Fri, 15 Nov 2019 02:18:11 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f884cdf-06ce-4738-5d4f-08d769b513aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2019 10:17:54.0191
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jdJglKf7R/U4zV+fuVmD2OS+As4W3z+4ki+1K8hy5Drhi8cUhQKJaCRbl3gxPdtSzrSyPz6pkoP2UwgHn5iGIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5395
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org> <20191115095447.GU4114@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191115095447.GU4114@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 15 Nov 2019 11:18:00 +0100
+Message-ID: <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Fri, 15 Nov 2019 at 10:55, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
+> > update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
+> > which might be inefficient when cpufreq driver has rate limitation.
+> >
+> > When a task is attached on a CPU, we have call path:
+> >
+> > update_load_avg()
+> >   update_cfs_rq_load_avg()
+> >     cfs_rq_util_change -- > trig frequency update
+> >   attach_entity_load_avg()
+> >     cfs_rq_util_change -- > trig frequency update
+> >
+> > The 1st frequency update will not take into account the utilization of the
+> > newly attached task and the 2nd one might be discard because of rate
+> > limitation of the cpufreq driver.
+>
+> Doesn't this just show that a dumb rate limit in the driver is broken?
 
-The implementation of strscpy() is more robust and safer.
+But the rate limit may come from HW constraints that forces to wait
+let say 4ms or even 10ms between each frequency update.
 
-The strscpy was introduced to fix some API problems around strlcpy.
-strscpy is preferred to strlcpy() since the API doesn't require
-reading memory from the src string beyond the specified "count" bytes,
-and since the return value is easier to error-check than strlcpy()'s.
-In addition, the implementation is robust to the string changing out
-from underneath it, unlike the current strlcpy() implementation.
+>
+> > update_cfs_rq_load_avg() is only called by update_blocked_averages()
+> > and update_load_avg() so we can move the call to
+> > cfs_rq_util_change/cpufreq_update_util() into these 2 functions. It's also
+> > interesting to notice that update_load_avg() already calls directly
+> > cfs_rq_util_change() for !SMP case.
+> >
+> > This changes will also ensure that cpufreq_update_util() is called even
+> > when there is no more CFS rq in the leaf_cfs_rq_list to update but only
+> > irq, rt or dl pelt signals.
+>
+> I don't think it does that; that is, iirc the return value of
+> ___update_load_sum() is 1 every time a period lapses. So even if the avg
+> is 0 and doesn't change, it'll still return 1 on every period.
+>
+> Which is what that dumb rate-limit thing wants of course. But I'm still
+> thinking that it's stupid to do. If nothing changes, don't generate
+> events.
 
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/clkdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+When everything (irq, dl, rt, cfs) is 0, we don't generate events
+because update_blocked_averages is no more called because
+rq->has_blocked_load is clear
 
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 0f2e3fcf0f19..ee56109bc0b4 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -165,7 +165,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, co=
-nst char *dev_fmt,
-=20
- 	cla->cl.clk_hw =3D hw;
- 	if (con_id) {
--		strlcpy(cla->con_id, con_id, sizeof(cla->con_id));
-+		strscpy(cla->con_id, con_id, sizeof(cla->con_id));
- 		cla->cl.con_id =3D cla->con_id;
- 	}
-=20
---=20
-2.16.4
+With current implementation, if cfs is 0 but not irq, dl or rt, we
+don't call cpufreq_update_util because it is only called through cfs
 
+>
+> If anything, update_blocked_avgerages() should look at
+> @done/others_have_blocked() to emit events for rt,dl,irq.
+
+other_have_blocked can be set but no decay happened during the update
+and we don't need to call cpufreq_update_util
+
+>
+> So why are we making the scheduler code more ugly instead of fixing that
+> driver?
