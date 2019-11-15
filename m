@@ -2,74 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 748ECFD1EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 01:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE1CFD1F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 01:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfKOA0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 19:26:24 -0500
-Received: from mail-qt1-f172.google.com ([209.85.160.172]:41690 "EHLO
-        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfKOA0X (ORCPT
+        id S1727338AbfKOA1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 19:27:20 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:55252 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726852AbfKOA1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 19:26:23 -0500
-Received: by mail-qt1-f172.google.com with SMTP id o3so8929385qtj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 16:26:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=0tFAznP/o2VP74kg2CnbkybxNqllPHihT5bPzStJDZw=;
-        b=gHpgVYE7BklA5dff+/FV7O0g+fRSURY17JLB+bDgYYI/ULYrMLGXLVtkDm3WaUmTzW
-         3BJWsOf0KeIsLbFLz7WeJMYhF3EoWf2p5sGlaWaImptYaHx+nD/npZxIZ2bbxnuB9/Q7
-         VnVasKuq9iGMAPrU2lcqF4mtbvEuwO4uOQ7wC5WEeh7f8fbVwVCpPdvFAt5SG9Ve9wPz
-         6AGaX5Y17XDcMMX+gVtHiXtYgWY3eTueQ7KH+hbbz/pYkaf7+9vKm5LZLloba606odtZ
-         bQY1BV7qU/IkcjkJ22KjAK66OwybBtbHJukxQ4pH6mbHCY7ywayi02S7CbKQ981R0aTM
-         Vh+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=0tFAznP/o2VP74kg2CnbkybxNqllPHihT5bPzStJDZw=;
-        b=Vx49o5nTC8hehjcebacju/Omxf/35aTjpOe+gOZdOG70mpj3nrctB49AXhxmKvnXit
-         3FxkCinBQLTskuo8RN9WBjF89ZKDBLtrL75GvK48so6uHaBjiC2Gr02rnPiSeMhuooqY
-         HAREeurYzBEUm2TODDYOq6RwSJdAulVJoBF1y+RXPLOsCdKG3WCw6GgvQ0qty0XPHiOC
-         XpfEahhNH0mZ05AwHyT78Wn7c/OdjUMwTvLg66wyH1MVAx4OuxUZZEwD1rxnAiELVrYW
-         qLhtV4vVZHONpOJvtCCDURvy1M0ea++3Fjzpeaui1XAz2T9SvqG8uL69pLjz8JINjoDd
-         QCyA==
-X-Gm-Message-State: APjAAAVZ6drwwA8D6nK4Y3wVzQFP2MYdk+P11HiU7PJLcgs51VZ0LCnb
-        REK+6euEMtsNeSQWNkwCPw8Y5A==
-X-Google-Smtp-Source: APXvYqyPWcdxmbDJkLh4PF4RYWC5w7LaBpYgd9hxKsutZWpQWgJEpJsKfIh6RuJQ4NDIuohgyYqCpA==
-X-Received: by 2002:aed:3fc4:: with SMTP id w4mr11497978qth.120.1573777582450;
-        Thu, 14 Nov 2019 16:26:22 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id q8sm4302888qta.31.2019.11.14.16.26.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 16:26:21 -0800 (PST)
+        Thu, 14 Nov 2019 19:27:20 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xAF0RADX023679
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Nov 2019 19:27:11 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id DE1A24202FD; Thu, 14 Nov 2019 19:27:09 -0500 (EST)
+Date:   Thu, 14 Nov 2019 19:27:09 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Eric Whitney <enwlinux@gmail.com>
+Subject: Re: [PATCH] ext4: deaccount delayed allocations at freeing inode in
+ ext4_evict_inode()
+Message-ID: <20191115002709.GA9640@mit.edu>
+References: <157233344808.4027.17162642259754563372.stgit@buzz>
+ <20191108020827.15D1EAE056@d06av26.portsmouth.uk.ibm.com>
+ <d00c572b-66ae-42dc-746a-e2c365c9895a@yandex-team.ru>
+ <20191108115420.GI20863@quack2.suse.cz>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH -next] writeback: fix -Wformat compilation warnings
-Date:   Thu, 14 Nov 2019 19:26:21 -0500
-Message-Id: <9D52EBB0-BE48-4C59-9145-857C3247B20D@lca.pw>
-References: <20191114192118.GK4163745@devbig004.ftw2.facebook.com>
-Cc:     jack@suse.cz, gregkh@linuxfoundation.org, cgroups@vger.kernel.org,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, linux-s390@vger.kernel.org,
-        axboe@kernel.dk, linux-kernel@vger.kernel.org
-In-Reply-To: <20191114192118.GK4163745@devbig004.ftw2.facebook.com>
-To:     Tejun Heo <tj@kernel.org>
-X-Mailer: iPhone Mail (17A878)
+Content-Disposition: inline
+In-Reply-To: <20191108115420.GI20863@quack2.suse.cz>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+> From ee27836b579d3bf750d45cd7081d3433ea6fedd5 Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Fri, 8 Nov 2019 12:45:11 +0100
+> Subject: [PATCH] ext4: Fix leak of quota reservations
+> 
+> Commit 8fcc3a580651 ("ext4: rework reserved cluster accounting when
+> invalidating pages") moved freeing of delayed allocation reservations
+> from dirty page invalidation time to time when we evict corresponding
+> status extent from extent status tree. For inodes which don't have any
+> blocks allocated this may actually happen only in ext4_clear_blocks()
+> which is after we've dropped references to quota structures from the
+> inode. Thus reservation of quota leaked. Fix the problem by clearing
+> quota information from the inode only after evicting extent status tree
+> in ext4_clear_inode().
+> 
+> Reported-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Fixes: 8fcc3a580651 ("ext4: rework reserved cluster accounting when invalidating pages")
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-> On Nov 14, 2019, at 2:21 PM, Tejun Heo <tj@kernel.org> wrote:
->=20
-> Acked-by: Tejun Heo <tj@kernel.org>
+OK, I've applied this patch.
 
-Tejun, suppose you will take this patch via your tree together with the seri=
-es or should I Cc Andrew who normally handle this file?=
+    	     				- Ted
