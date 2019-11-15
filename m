@@ -2,178 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9961FD9B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0426FD9E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfKOJsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:48:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33122 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726920AbfKOJsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:48:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9E007B154;
-        Fri, 15 Nov 2019 09:48:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B5EE51E3BEA; Fri, 15 Nov 2019 10:48:42 +0100 (CET)
-Date:   Fri, 15 Nov 2019 10:48:42 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 2/2] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-Message-ID: <20191115094842.GA9043@quack2.suse.cz>
-References: <20191115001134.2489505-1-jhubbard@nvidia.com>
- <20191115001134.2489505-3-jhubbard@nvidia.com>
+        id S1727486AbfKOJue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:50:34 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37340 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727374AbfKOJu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:50:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id d5so10008786ljl.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 01:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x/UA8N9071Hs67JB/CtCLOKYsRujWaxB61T4BkLclrk=;
+        b=Uj//MN/eYpagIL5SFVK5o9mqojQITuF2XVCgryREyFOYqXwn9xWNIEKr/hnSu/yd37
+         OgcpwNqi83ryL9yGP1i3iNYM1NbRKkpytuLcvx7ux/H500d7XGmBTA1gGyjzvIoV1iEw
+         ld7CduY+HoP5HPEWtCzcfMm9I2Dm+Qz4o73G7hmWuJKiE/659BHe9isr8jEu6zfrXY5w
+         p6E8t5bh/a39/Z0Xs8X8yXae3wjaBpHdwtcjDJIrI75l11sES3dl5SnTE4LguB/l+0rp
+         l/TlA8QLOU8hAcIlE+mlbdA00awq8mAiygKQOZVYY63BinchNpYcFAYnxZkBzVC+ig3U
+         4gDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x/UA8N9071Hs67JB/CtCLOKYsRujWaxB61T4BkLclrk=;
+        b=HmVh4mEd/FqEVbC0YDQWtnKWbfBw3/lpfbZPz3/QYuiJCoSuAI4/Vk2YnygkCQA5M6
+         47gBga2UYwbr1xDygs2/Qz6Tmg0otFe0awd+ocxGMk7PpepM2ZfwHB0ej2wsSjPt7UDP
+         W4UjmhGHEa9DA4bghI7BAjo495DErxqP6CV7OuvwuyTghJuN+JaoaLM8MWjmkw7mQQej
+         NOMLLkTnxz2hlN8mas2Bdj1tqF6lvHFHGy+b0Kq3ZjBkaYnnhi41Lf+sja9+HnQ7AqIW
+         Xo2QsZOZjCr74rY31xJbdwRr6Gos+g3bu6EiXZN1P5dh1XcNcH+tfQhibtdfSH9OnhrA
+         B7qA==
+X-Gm-Message-State: APjAAAX48lPGYnjo0f5XcQ3rIlcDDZL/BZEonKoil4u8uy3We8uGxpIn
+        c8ltxbagLt07zqX3BH5uNW86+/fNVyB1GoDKUhelvg==
+X-Google-Smtp-Source: APXvYqzoH0lE2meSnOsWYn4w2Vnm6zFN87zG7pAIdO4qZpC8+1a/pUkOgr9YtQTghftKTYLC9GIcmmSSdCngI9weV+A=
+X-Received: by 2002:a2e:161b:: with SMTP id w27mr10500539ljd.183.1573811425820;
+ Fri, 15 Nov 2019 01:50:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191115001134.2489505-3-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191115062454.7025-1-hslester96@gmail.com>
+In-Reply-To: <20191115062454.7025-1-hslester96@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 15 Nov 2019 10:50:14 +0100
+Message-ID: <CACRpkdaXcas08jy+oZOi4fKuXZYkbFAOipqf49smSdGd6TmFag@mail.gmail.com>
+Subject: Re: [PATCH] net: gemini: add missed free_netdev
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        netdev <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 14-11-19 16:11:34, John Hubbard wrote:
-> An upcoming patch changes and complicates the refcounting and
-> especially the "put page" aspects of it. In order to keep
-> everything clean, refactor the devmap page release routines:
-> 
-> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
->   and limit the functionality to "read only": return a bool,
->   with no side effects.
-> 
-> * Add a new routine, put_devmap_managed_page(), to handle checking
->   what kind of page it is, and what kind of refcount handling it
->   requires.
-> 
-> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
->   and limit the functionality to unconditionally freeing a devmap
->   page.
-> 
-> This is originally based on a separate patch by Ira Weiny, which
-> applied to an early version of the put_user_page() experiments.
-> Since then, Jérôme Glisse suggested the refactoring described above.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Suggested-by: Jérôme Glisse <jglisse@redhat.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+On Fri, Nov 15, 2019 at 7:25 AM Chuhong Yuan <hslester96@gmail.com> wrote:
 
-Looks good to me. You can add:
+> This driver forgets to free allocated netdev in remove like
+> what is done in probe failure.
+> Add the free to fix it.
+>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Looks correct!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-								Honza
-
-> ---
->  include/linux/mm.h | 27 ++++++++++++++++++++++++---
->  mm/memremap.c      | 16 ++--------------
->  2 files changed, 26 insertions(+), 17 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a2adf95b3f9c..96228376139c 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -967,9 +967,10 @@ static inline bool is_zone_device_page(const struct page *page)
->  #endif
->  
->  #ifdef CONFIG_DEV_PAGEMAP_OPS
-> -void __put_devmap_managed_page(struct page *page);
-> +void free_devmap_managed_page(struct page *page);
->  DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
-> -static inline bool put_devmap_managed_page(struct page *page)
-> +
-> +static inline bool page_is_devmap_managed(struct page *page)
->  {
->  	if (!static_branch_unlikely(&devmap_managed_key))
->  		return false;
-> @@ -978,7 +979,6 @@ static inline bool put_devmap_managed_page(struct page *page)
->  	switch (page->pgmap->type) {
->  	case MEMORY_DEVICE_PRIVATE:
->  	case MEMORY_DEVICE_FS_DAX:
-> -		__put_devmap_managed_page(page);
->  		return true;
->  	default:
->  		break;
-> @@ -986,6 +986,27 @@ static inline bool put_devmap_managed_page(struct page *page)
->  	return false;
->  }
->  
-> +static inline bool put_devmap_managed_page(struct page *page)
-> +{
-> +	bool is_devmap = page_is_devmap_managed(page);
-> +
-> +	if (is_devmap) {
-> +		int count = page_ref_dec_return(page);
-> +
-> +		/*
-> +		 * devmap page refcounts are 1-based, rather than 0-based: if
-> +		 * refcount is 1, then the page is free and the refcount is
-> +		 * stable because nobody holds a reference on the page.
-> +		 */
-> +		if (count == 1)
-> +			free_devmap_managed_page(page);
-> +		else if (!count)
-> +			__put_page(page);
-> +	}
-> +
-> +	return is_devmap;
-> +}
-> +
->  #else /* CONFIG_DEV_PAGEMAP_OPS */
->  static inline bool put_devmap_managed_page(struct page *page)
->  {
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index e899fa876a62..2ba773859031 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -411,20 +411,8 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  EXPORT_SYMBOL_GPL(get_dev_pagemap);
->  
->  #ifdef CONFIG_DEV_PAGEMAP_OPS
-> -void __put_devmap_managed_page(struct page *page)
-> +void free_devmap_managed_page(struct page *page)
->  {
-> -	int count = page_ref_dec_return(page);
-> -
-> -	/* still busy */
-> -	if (count > 1)
-> -		return;
-> -
-> -	/* only triggered by the dev_pagemap shutdown path */
-> -	if (count == 0) {
-> -		__put_page(page);
-> -		return;
-> -	}
-> -
->  	/* notify page idle for dax */
->  	if (!is_device_private_page(page)) {
->  		wake_up_var(&page->_refcount);
-> @@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
->  	page->mapping = NULL;
->  	page->pgmap->ops->page_free(page);
->  }
-> -EXPORT_SYMBOL(__put_devmap_managed_page);
-> +EXPORT_SYMBOL(free_devmap_managed_page);
->  #endif /* CONFIG_DEV_PAGEMAP_OPS */
-> -- 
-> 2.24.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yours,
+Linus Walleij
