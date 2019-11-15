@@ -2,95 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DCBFE77B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:16:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84CBCFE7AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfKOWQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 17:16:02 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34081 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfKOWQC (ORCPT
+        id S1727414AbfKOWSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 17:18:54 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36696 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726661AbfKOWSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 17:16:02 -0500
-Received: by mail-oi1-f195.google.com with SMTP id l202so10023905oig.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 14:16:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VrwTiEGJlLLo81xG+S86aYgrEKB8cGFUXed3sRPs9qE=;
-        b=eB8wJcgdGhhyBcAt4UQTmjUOGFBU7OkqAgrkZGfp8JozZCZkqY7OROEpsordbzwzkv
-         4JIF00v4yJzmsVdFuOzdcuDEyz6VwbuPAdUduqa0BP03Z29k+PaI5bKdwzprwRrhaEd7
-         CFbNQJCtm3tgoBjrDWvh2rcAk8/kXJQPKxGy2F0YMxCNZSkqc0LJJoI13QgjwUXxFG1T
-         dugHUvn4F6sZlojrwJ/Y4pV+4r02QoSupqvcMZqqjY3c64cp3fFPY3umkKOsnOwk5V2I
-         4Rk3UMl6TSTKrs/HyxjepeXidehTuL/tLldnFiddeh/UERCEZNaLx6uWsfVdloHZf/mz
-         o4TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VrwTiEGJlLLo81xG+S86aYgrEKB8cGFUXed3sRPs9qE=;
-        b=bVvUwVw1S19UQvRwsotvkCmYylSNBgr3ienH4jQe45+yDOGBn3svH035oHxqU+EqCZ
-         Ylf3xoZxmcvKpDT63wy4cPM0o5ftocl2+OpJEFvFAXX7xBWBp5V36XKxuGolJqijqYf5
-         zfw2QBEjJXuSxTohcKokjoFqC8GvMta8ymaYzMnGsiF5Ngbyi10fipd4d1FgbQeoWw3I
-         AXyOLKAtNjQ4U3m7vUSgYYBSHUkL178TDTdPjFbTqviugJ8pYp0mTjbCTp6iDrkCJE3L
-         EzKwcnvhtRPRRKF92spWWtKpAdTNLLGG45QKxHuGKYTguFYVS485Wl3sdDlDAFJQXtfU
-         9VeQ==
-X-Gm-Message-State: APjAAAVl4Me4IyZC+en/J/L8JKU5H9kp1AF3jcFCDgH+79Sz4k9C2Ors
-        a+CMU5CTn6uSaFhrXWUYa4M41I2t6HUxG9btw35VPQ==
-X-Google-Smtp-Source: APXvYqy7mAtMxI3Pn+9esu39unW7sjkUaLc6FCEsywtYoQXoGbpJVLJ1jrXK/jfSSxC3nmtTbth86MiAe0XIzLcH//c=
-X-Received: by 2002:aca:f514:: with SMTP id t20mr9577132oih.24.1573856160984;
- Fri, 15 Nov 2019 14:16:00 -0800 (PST)
+        Fri, 15 Nov 2019 17:18:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573856332;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=AMgkoSicOFAnhjHIcwY0YsB6eNzSszo1NgSn0TnzlzY=;
+        b=gZS6RSm2h/Ch7hdaaCKtEMhuwrGlRkul5nlmgqTGQuJUALjKGDjXrZGz5Y4fnvQp/6zx3B
+        zKXmv9tBINRv8yBuj6zHsAEdgMNfYO4KcsCyIdmp2d6dnVfcrdL8QMEDUH4xy3z9ATCnGq
+        IsBzNNwpfcoOIt6Hc0QG1gg2QAFnWcU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-114-yj32-B_rPTua7VTcMSmtLg-1; Fri, 15 Nov 2019 17:18:50 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 496E31005500;
+        Fri, 15 Nov 2019 22:18:48 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73D9A608D2;
+        Fri, 15 Nov 2019 22:18:41 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     linux-input@vger.kernel.org
+Cc:     stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cole Rogers <colerogers@disroot.org>,
+        Joe Perches <joe@perches.com>, Teika Kazura <teika@gmx.com>,
+        Alexander Mikhaylenko <exalm7659@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: synaptics - enable RMI mode for X1 Extreme 2nd Generation
+Date:   Fri, 15 Nov 2019 17:18:13 -0500
+Message-Id: <20191115221814.31903-1-lyude@redhat.com>
 MIME-Version: 1.0
-References: <20191115045049.261104-1-saravanak@google.com> <20191115053201.GA800105@kroah.com>
- <20191115091035.GA2227@kunai>
-In-Reply-To: <20191115091035.GA2227@kunai>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 15 Nov 2019 14:15:25 -0800
-Message-ID: <CAGETcx9isTDaRW0KgdWVHxxTKdERB4DPeQyCa9QWXniNTpuZ_A@mail.gmail.com>
-Subject: Re: [PATCH v1] i2c: of: Populate fwnode in of_i2c_get_board_info()
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-i2c@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: yj32-B_rPTua7VTcMSmtLg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 1:10 AM Wolfram Sang <wsa@the-dreams.de> wrote:
->
-> On Fri, Nov 15, 2019 at 01:32:01PM +0800, Greg Kroah-Hartman wrote:
-> > On Thu, Nov 14, 2019 at 08:50:48PM -0800, Saravana Kannan wrote:
-> > > This allows the of_devlink feature to work across i2c devices too. This
-> > > avoid unnecessary probe deferrals of i2c devices, defers consumers of
-> > > i2c devices till the i2c devices probe, and allows i2c drivers to
-> > > implement sync_state() callbacks.
-> > >
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > ---
-> > > The of_devlink feature is present in driver-core-next branch. It started
-> > > off with [1] but it has been improving since then.
-> > >
-> > > [1] -- https://lore.kernel.org/linux-acpi/20190904211126.47518-1-saravanak@google.com/
-> > >
-> > >  drivers/i2c/i2c-core-of.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> >
-> > Wolfram, I can take this through my tree now if you have no objections
-> > to this.
->
-> What would be the advantage?
+Just got one of these for debugging some unrelated issues, and noticed
+that Lenovo seems to have gone back to using RMI4 over smbus with
+Synaptics touchpads on some of their new systems, particularly this one.
+So, let's enable RMI mode for the X1 Extreme 2nd Generation.
 
-Of the patch or of him picking it up?
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/input/mouse/synaptics.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Advantage of the patch is in the commit text. Details of of_devlink
-are also provided in the link I gave earlier.
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptic=
+s.c
+index 56fae3472114..704558d449a2 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -177,6 +177,7 @@ static const char * const smbus_pnp_ids[] =3D {
+ =09"LEN0096", /* X280 */
+ =09"LEN0097", /* X280 -> ALPS trackpoint */
+ =09"LEN009b", /* T580 */
++=09"LEN0402", /* X1 Extreme 2nd Generation */
+ =09"LEN200f", /* T450s */
+ =09"LEN2054", /* E480 */
+ =09"LEN2055", /* E580 */
+--=20
+2.21.0
 
-Advantage of Greg picking it up: This patch will get tested/seen with
-the set of changes (of_devlink) with which it'll have the biggest
-functional impact.
-
--Saravana
