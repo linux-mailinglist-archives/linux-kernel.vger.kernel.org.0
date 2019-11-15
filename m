@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E080FD712
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA55FD730
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfKOHkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 02:40:31 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42618 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOHk0 (ORCPT
+        id S1727192AbfKOHoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 02:44:05 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52886 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbfKOHoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 02:40:26 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVWDM-0002aC-PX; Fri, 15 Nov 2019 08:40:20 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 619B21C18CE;
-        Fri, 15 Nov 2019 08:40:19 +0100 (CET)
-Date:   Fri, 15 Nov 2019 07:40:19 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf map: Use map->dso->kernel + map__kmaps() in
- map__kmaps()
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <tip-bdbazuj4ggrmzxdviaqdrdwh@git.kernel.org>
-References: <tip-bdbazuj4ggrmzxdviaqdrdwh@git.kernel.org>
+        Fri, 15 Nov 2019 02:44:05 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAF7d7m2109375;
+        Fri, 15 Nov 2019 07:42:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=X0VNfringVRO9ZVRht9e5s3LnUQ2e+qgyFMElJYlBIg=;
+ b=FTkRFdQCWVcIB180H/MSBxHyx1lVnNNCof55N5Ov2f+txzz8Za5Gydrm+0xdStCJBxOP
+ 4TjQXY4sZnWI3iTduYZ/gS7Zy/ZBBd9tATAg/Uy7oQirEjzUefd+JqpmRRFB41YqVrCe
+ LQp9zTlFSuluEESaLQn00M4vzqOU0lIBr2Db49ie8wCOyuPnLjkJNhlS1eTUufJuy2rU
+ Qlm6xurzXjLkBeH1h/ew5b4+SxRCvaGTXNukltC7PqXNlzhDJ+N5TdAraVDnxuoWM/4S
+ ZZ8KyhMn+T23ILPwLM4ad+xOAfvMIsd09iCtIjQ0eRmlohDr9ISKh33mgnNwdGHUzilO nA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2w9gxphkbp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Nov 2019 07:42:44 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAF7cgfb006334;
+        Fri, 15 Nov 2019 07:42:43 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2w9h0jdu9v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Nov 2019 07:42:43 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAF7gh7n000598;
+        Fri, 15 Nov 2019 07:42:43 GMT
+Received: from kadam.lan (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Nov 2019 23:42:42 -0800
+Date:   Fri, 15 Nov 2019 10:42:35 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        Romain Perier <romain.perier@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH] staging: rtl*: Remove tasklet callback casts
+Message-ID: <20191115074235.GJ19079@kadam.lan>
+References: <201911142135.5656E23@keescook>
+ <20191115074003.GB19101@kadam.lan>
 MIME-Version: 1.0
-Message-ID: <157380361902.29467.3509690738885805245.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115074003.GB19101@kadam.lan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911150069
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911150069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+On Fri, Nov 15, 2019 at 10:40:03AM +0300, Dan Carpenter wrote:
+> On Thu, Nov 14, 2019 at 09:39:00PM -0800, Kees Cook wrote:
+> > In order to make the entire kernel usable under Clang's Control Flow
+> > Integrity protections, function prototype casts need to be avoided
+> > because this will trip CFI checks at runtime (i.e. a mismatch between
+> > the caller's expected function prototype and the destination function's
+> > prototype). Many of these cases can be found with -Wcast-function-type,
+> > which found that the rtl wifi drivers had a bunch of needless function
+> > casts. Remove function casts for tasklet callbacks in the various drivers.
+> > 
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
+> Clang should treat void pointers as a special case.  If void pointers
+> are bad, surely replacing them with unsigned long is even more ambigous
+> and worse.
 
-Commit-ID:     de90d513b2464d28a17fc4eaada97f4ad742ba00
-Gitweb:        https://git.kernel.org/tip/de90d513b2464d28a17fc4eaada97f4ad742ba00
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 04 Nov 2019 16:31:33 -03:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 12 Nov 2019 08:20:52 -03:00
+Wow...  Never mind.  I completely misread this patch.  I am ashamed.
 
-perf map: Use map->dso->kernel + map__kmaps() in map__kmaps()
+The patch is fine.
 
-Its equivalent to using map->groups to obtain the machine struct.
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-bdbazuj4ggrmzxdviaqdrdwh@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/map.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+regards,
+dan carpenter
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 466c9b0..a4d889c 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -244,18 +244,11 @@ struct map *map__new2(u64 start, struct dso *dso)
- 	return map;
- }
- 
--/*
-- * Use this and __map__is_kmodule() for map instances that are in
-- * machine->kmaps, and thus have map->groups->machine all properly set, to
-- * disambiguate between the kernel and modules.
-- *
-- * When the need arises, introduce map__is_{kernel,kmodule)() that
-- * checks (map->groups != NULL && map->groups->machine != NULL &&
-- * map->dso->kernel) before calling __map__is_{kernel,kmodule}())
-- */
- bool __map__is_kernel(const struct map *map)
- {
--	return machine__kernel_map(map->groups->machine) == map;
-+	if (!map->dso->kernel)
-+		return false;
-+	return machine__kernel_map(map__kmaps((struct map *)map)->machine) == map;
- }
- 
- bool __map__is_extra_kernel_map(const struct map *map)
