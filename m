@@ -2,156 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2CB8FD2CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 03:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE643FD2E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 03:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfKOCL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 21:11:27 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:34355 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfKOCL1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 21:11:27 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 205so6926714qkk.1;
-        Thu, 14 Nov 2019 18:11:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iwrIjV3rAOWSyJGG0/sIPU9f3LX/vsYsv+fodZVW0cU=;
-        b=B5q0wHOfASmZ2Lh14yogezn+rxmdrhLEqWhuNk93pGbwQbaO6sLoWN7peQg5V6zIB6
-         KHayoKlXplSk/aAY4eaN8FJ/LAw9ESKXao6PP24mYa/m6e90+PSSO74emOhetwN0BmXu
-         x4/s0wWLW7qZEQoT34tbAxMOASITbRC12NeR9YdqxBOuZcoQvxYgnFDcm9j6MATYT+L6
-         jXZi8EgW68Tv/u65e1Vh0dJ0TP4SInsfheo6NTaxtuF6qIk0orBHmmXtqCB5djpK2PBl
-         5IIP2SiNR3Z/SA2ocdB8O4KPAnhgDXzbHSYDOGXEhLIbfxrZXIrOrXRk3z8Y3LPaiICF
-         GjMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iwrIjV3rAOWSyJGG0/sIPU9f3LX/vsYsv+fodZVW0cU=;
-        b=NRzz+cBR/kuAcanpMgfleEk6pLGF5FydMMRTXW0he5C7leHwlI2gE1fmJTCsPD/O2D
-         E0MbhsyB4W0hjJxp/s/gsqe6JlVEFYAErIWJLuuKoNrGKaj+fakkxDHBgx9h0H3tvnG+
-         fv1fuxZssoaV5FNbGv1FWZdDL5enYjaFBZq1owR3gr6n+VXjJX8xgJzHXqrPhX/CfIg2
-         qxSVwJzsz3u0EzwSiQ0r53pg08YjaIcUNFLYjMhTGEIP8VhmBbXGYc8oEUNmVcehRbZo
-         3GlaX9zmlPZS5O7o6DD6hpA8N++JrnsNupAWEwwO72CoZliPRxKJ7OTp3ea66ykn+E9P
-         X4Vg==
-X-Gm-Message-State: APjAAAU/kHUgpsG3G9rCxgE5BaLIFZ0VVTuM0IOjDX0FYf1xs0dbAFmW
-        Ce/Oo7Q19ufhA3M9eHQvAzEsUz2racBNuxPub0CHM2ffnIfcgQ==
-X-Google-Smtp-Source: APXvYqzZHeRcZIgni1l1ogsgH8eDjDju0/cJCQTbsqWiKfxK9978qCLi+jtHTfqk6AqN7EAjBIsCUqRktKpqKTvt5gY=
-X-Received: by 2002:a37:a00f:: with SMTP id j15mr10776968qke.103.1573783886106;
- Thu, 14 Nov 2019 18:11:26 -0800 (PST)
+        id S1727021AbfKOCSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 21:18:09 -0500
+Received: from mga09.intel.com ([134.134.136.24]:50611 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726533AbfKOCSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 21:18:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 18:18:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,306,1569308400"; 
+   d="scan'208";a="199047942"
+Received: from guptapadev.jf.intel.com (HELO guptapadev.amr) ([10.7.198.56])
+  by orsmga008.jf.intel.com with ESMTP; 14 Nov 2019 18:18:07 -0800
+Date:   Thu, 14 Nov 2019 18:11:19 -0800
+From:   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Nadav Amit <nadav.amit@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        "Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [FYI PATCH 0/7] Mitigation for CVE-2018-12207
+Message-ID: <20191115021119.GB18745@guptapadev.amr>
+References: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
+ <23353382-53ea-8b20-7e30-763ef6df374c@siemens.com>
+ <ea5a084b-e047-6677-b8fe-d7bb6f8c0ef8@redhat.com>
+ <dffb19ab-daa2-a513-531e-c43279d8a4bf@intel.com>
+ <6C0513A5-6C73-4F17-B73B-6F19E7D9EAF0@gmail.com>
+ <6a317558-44c0-5a21-0310-4ae49048134f@intel.com>
 MIME-Version: 1.0
-References: <b1c922b3496020f611ecd6ea27d262369646d830.1573462647.git.shengjiu.wang@nxp.com>
- <20191114211237.GA25375@bogus>
-In-Reply-To: <20191114211237.GA25375@bogus>
-From:   Shengjiu Wang <shengjiu.wang@gmail.com>
-Date:   Fri, 15 Nov 2019 10:11:14 +0800
-Message-ID: <CAA+D8AOfPbS4dn=p+0f8icWBsZegUubJ21qsY7yFw2a=a3Mb_A@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH V3 1/2] ASoC: dt-bindings: fsl_asrc: add
- compatible string for imx8qm
-To:     Rob Herring <robh@kernel.org>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        timur@kernel.org, Xiubo.Lee@gmail.com,
-        linuxppc-dev@lists.ozlabs.org, tiwai@suse.com, lgirdwood@gmail.com,
-        Nicolin Chen <nicoleotsuka@gmail.com>, broonie@kernel.org,
-        festevam@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a317558-44c0-5a21-0310-4ae49048134f@intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob
+On Wed, Nov 13, 2019 at 09:26:24PM -0800, Dave Hansen wrote:
+> On 11/13/19 5:17 PM, Nadav Amit wrote:
+> > But is it always the case? Looking at __split_large_page(), it seems that the
+> > TLB invalidation is only done after the PMD is changed. Can't this leave a
+> > small time window in which a malicious actor triggers a machine-check on 
+> > another core than the one that runs __split_large_page()?
+> 
+> It's not just a split.  It has to be a change that results in
+> inconsistencies between two entries in the TLB.  A normal split doesn't
+> change the resulting final translations and is never inconsistent
+> between the two translations.
+> 
+> To have an inconsistency, you need to change the backing physical
+> address (or cache attributes?).  I'd need to go double-check the erratum
+> to be sure about the cache attributes.
+> 
+> In any case, that's why we decided that normal kernel mapping
+> split/merges don't need to be mitigated.  But, we should probably
+> document this somewhere if it's not clear.
+> 
+> Pawan, did we document the results of the audit you did anywhere?
 
-On Fri, Nov 15, 2019 at 5:14 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Nov 11, 2019 at 05:18:22PM +0800, Shengjiu Wang wrote:
-> > Add compatible string "fsl,imx8qm-asrc" for imx8qm platform.
-> >
-> > There are two asrc modules in imx8qm, the clock mapping is
-> > different for each other, so add new property "fsl,asrc-clk-map"
-> > to distinguish them.
->
-> What's the clock mapping?
->
-The two asrc have different clock source connected to it,  also
-the asrc in other platform, like imx6, has different clock source.
+Kirill Shutemov did the heavy lifting, thank you Kirill. Below were the
+major areas probed: 
 
-We collect all these clock source together, defined an enumerate
-format structure in driver, so for the asrc in each platform, we
-need to remap the clock source from the enumerate index to
-the real connection index in hardware.
+1. Can a non-privileged user application induce this erratum?
 
-The range of  the enumerate structure is 0-0x30, some index
-may not be used in this platform, but used in other platform
-the range of the real connection range is 0-0xf, so we do
-the remapping for [0, 0x30]  to [0, 0xf]
+	Userspace can trigger switching between 4k and 2M (in both
+	directions), but kernel already follows the protocol to avoid
+	this issue due to similar errata in AMD CPUs. [1][2]
 
->
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> > changes in v2
-> > -none
-> >
-> > changes in v3
-> > -use only one compatible string "fsl,imx8qm-asrc",
-> > -add new property "fsl,asrc-clk-map".
-> >
-> >  Documentation/devicetree/bindings/sound/fsl,asrc.txt | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > index 1d4d9f938689..02edab7cf3e0 100644
-> > --- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > +++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > @@ -8,7 +8,8 @@ three substreams within totally 10 channels.
-> >
-> >  Required properties:
-> >
-> > -  - compatible               : Contains "fsl,imx35-asrc" or "fsl,imx53-asrc".
-> > +  - compatible               : Contains "fsl,imx35-asrc", "fsl,imx53-asrc",
-> > +                       "fsl,imx8qm-asrc".
-> >
-> >    - reg                      : Offset and length of the register set for the device.
-> >
-> > @@ -35,6 +36,13 @@ Required properties:
-> >
-> >     - fsl,asrc-width  : Defines a mutual sample width used by DPCM Back Ends.
-> >
-> > +   - fsl,asrc-clk-map   : Defines clock map used in driver. which is required
-> > +                       by imx8qm/imx8qxp platform
-> > +                       <0> - select the map for asrc0 in imx8qm
-> > +                       <1> - select the map for asrc1 in imx8qm
-> > +                       <2> - select the map for asrc0 in imx8qxp
-> > +                       <3> - select the map for asrc1 in imx8qxp
->
-> Is this 4 modes of the h/w or just selecting 1 of 4 settings defined in
-> the driver? How does one decide? This seems strange.
+2. If kernel can accidentally induce this?
 
-The setting is defined in driver.  please see the following definition in
-driver.  This is some kind of hard code, for the asrc0 in imx8qm,
-we need to set fsl,asrc-clk-map = 0.
+	__split_large_page() in arch/x86/mm/pageattr.c was the suspect [3]. 
 
-+/**
-+ * i.MX8QM/i.MX8QXP uses the same map for input and output.
-+ * clk_map_imx8qm[0] is for i.MX8QM asrc0
-+ * clk_map_imx8qm[1] is for i.MX8QM asrc1
-+ * clk_map_imx8qm[2] is for i.MX8QXP asrc0
-+ * clk_map_imx8qm[3] is for i.MX8QXP asrc1
-+ */
-+static unsigned char clk_map_imx8qm[4][ASRC_CLK_MAP_LEN] = {
+	The locking scheme described in the comment only guarantees that
+	TLB entries for 4k and 2M/1G will have the same page attributes
+	until TLB flush. There is nothing that would protect from having
+	multiple TLB entries of different sizes with the same attributes.
 
+	But the erratum can be triggered only when:
 
->
-> imx8qxp should perhaps be a separate compatible. Then you only need 1 of
-> 2 modes...
->
-Yes, that is an option.  If you agree that we can use fsl,asrc-clk-map to
-distinguish the clock mapping defined in driver,  I can do this change that
-add new compatible string for imx8qxp.
+		Software modifies the paging structures so that the same
+		linear address is translated using a large page (2 MB, 4
+		MB, or 1 GB) with a different physical address or memory
+		type.
 
+	And in this case the physical address and memory type is
+	preserved until TLB is flushed, so it should be safe.
 
-Best Regards
-Wang Shengjiu
+Thanks,
+Pawan
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/huge_memory.c#n2190
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/khugepaged.c#n1038
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/mm/pageattr.c#n1020
