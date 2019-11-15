@@ -2,99 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 235D0FD6EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:29:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83472FD6F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:29:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfKOH3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 02:29:10 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42507 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbfKOH3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 02:29:10 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVW2L-0002Kz-Ah; Fri, 15 Nov 2019 08:28:57 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 00CE81C18B4;
-        Fri, 15 Nov 2019 08:28:57 +0100 (CET)
-Date:   Fri, 15 Nov 2019 07:28:56 -0000
-From:   "tip-bot2 for Cao jin" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/setup: Fix typos
-Cc:     Cao jin <caoj.fnst@cn.fujitsu.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191115050745.1941-1-ruansy.fnst@cn.fujitsu.com>
-References: <20191115050745.1941-1-ruansy.fnst@cn.fujitsu.com>
+        id S1727243AbfKOH3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 02:29:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51820 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726444AbfKOH3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 02:29:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C6613AD05;
+        Fri, 15 Nov 2019 07:29:36 +0000 (UTC)
+Subject: Re: [PATCH RFC 3/5] blk-mq: Facilitate a shared tags per tagset
+To:     Bart Van Assche <bvanassche@acm.org>,
+        John Garry <john.garry@huawei.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "chenxiang (M)" <chenxiang66@hisilicon.com>
+References: <1573652209-163505-1-git-send-email-john.garry@huawei.com>
+ <1573652209-163505-4-git-send-email-john.garry@huawei.com>
+ <32880159-86e8-5c48-1532-181fdea0df96@suse.de>
+ <2cbf591c-8284-8499-7804-e7078cf274d2@huawei.com>
+ <02056612-a958-7b05-3c54-bb2fa69bc493@suse.de>
+ <ace95bc5-7b89-9ed3-be89-8139f977984b@huawei.com>
+ <42b0bcd9-f147-76eb-dfce-270f77bca818@suse.de>
+ <89cd1985-39c7-2965-d25b-2ee2c183d057@huawei.com>
+ <c34c0ce2-40a8-e4fc-3366-1f7b906da5a3@acm.org>
+From:   Hannes Reinecke <hare@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+ azzYF4VRJsdl+d0MCaSy8mUh
+Message-ID: <3cda2c0a-1b09-afd3-e0d2-28f7587a085c@suse.de>
+Date:   Fri, 15 Nov 2019 08:29:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Message-ID: <157380293663.29467.6488649519680691401.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <c34c0ce2-40a8-e4fc-3366-1f7b906da5a3@acm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On 11/15/19 6:30 AM, Bart Van Assche wrote:
+> On 11/14/19 1:41 AM, John Garry wrote:
+>> On 13/11/2019 18:38, Hannes Reinecke wrote:
+>>>> Hi Hannes,
+>>>>
+>>>>> Oh, my. Indeed, that's correct.
+>>>>
+>>>> The tags could be kept in sync like this:
+>>>>
+>>>> shared_tag = blk_mq_get_tag(shared_tagset);
+>>>> if (shared_tag != -1)
+>>>>      sbitmap_set(hctx->tags, shared_tag);
+>>>>
+>>>> But that's obviously not ideal.
+>>>>
+>>> Actually, I _do_ prefer keeping both in sync.
+>>> We might want to check if the 'normal' tag is set (typically it would not, but then, who knows ...)
+>>> The beauty here is that both 'shared' and 'normal' tag are in sync, so if a driver would be wanting to use the tag as index into a command array it can do so without any surprises.
+>>>
+>>> Why do you think it's not ideal?
+>>
+>> A few points:
+>> - Getting a bit from one tagset and then setting it in another tagset is a bit clunky.
+>> - There may be an atomicity of the getting the shared tag bit and setting the hctx tag bit - I don't think that there is.
+>> - Consider that sometimes we may want to check if there is space on a hw queue - checking the hctx tags is not really proper any longer, as typically there would always be space on hctx, but not always the shared tags. We did delete blk_mq_can_queue() yesterday, which
+>> would be an example of that. Need to check if there are others.
+>>
+>> Having said all that, the obvious advantage is performance gain, can still use request.tag and so maybe less intrusive changes.
+>>
+>> I'll have a look at the implementation. The devil is mostly in the detail...
+> 
+> Wouldn't that approach trigger a deadlock if it is attempted to allocate the last
+> tag from two different hardware queues? How about sharing tag sets across hardware
+> queues, e.g. like in the (totally untested) patch below?
+> 
+Why should it?
+The shared tag map determines which tag should be allocated in the
+per-hctx map, and as the former is a strict superset of all hctx maps
+the bit _has_ to be free in the hctx map.
 
-Commit-ID:     0e1e9229ce790ce842fce50a0d8e684efcbf0f94
-Gitweb:        https://git.kernel.org/tip/0e1e9229ce790ce842fce50a0d8e684efcbf0f94
-Author:        Cao jin <caoj.fnst@cn.fujitsu.com>
-AuthorDate:    Fri, 15 Nov 2019 13:07:45 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 15 Nov 2019 08:26:07 +01:00
+Cheers,
 
-x86/setup: Fix typos
-
-BIOSen -> BIOSes; paing -> paging.
-And improve comments via 640"Kb".
-
-Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
-Cc: <bp@alien8.de>
-Cc: <hpa@zytor.com>
-Cc: <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20191115050745.1941-1-ruansy.fnst@cn.fujitsu.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/setup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 77ea96b..56ac9ff 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -459,7 +459,7 @@ static void __init memblock_x86_reserve_range_setup_data(void)
-  * due to mapping restrictions.
-  *
-  * On 64bit, kdump kernel need be restricted to be under 64TB, which is
-- * the upper limit of system RAM in 4-level paing mode. Since the kdump
-+ * the upper limit of system RAM in 4-level paging mode. Since the kdump
-  * jumping could be from 5-level to 4-level, the jumping will fail if
-  * kernel is put above 64TB, and there's no way to detect the paging mode
-  * of the kernel which will be loaded for dumping during the 1st kernel
-@@ -743,8 +743,8 @@ static void __init trim_bios_range(void)
- 	e820__range_update(0, PAGE_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
- 
- 	/*
--	 * special case: Some BIOSen report the PC BIOS
--	 * area (640->1Mb) as ram even though it is not.
-+	 * special case: Some BIOSes report the PC BIOS
-+	 * area (640Kb->1Mb) as ram even though it is not.
- 	 * take them out.
- 	 */
- 	e820__range_remove(BIOS_BEGIN, BIOS_END - BIOS_BEGIN, E820_TYPE_RAM, 1);
+Hannes
+-- 
+Dr. Hannes Reinecke		      Teamlead Storage & Networking
+hare@suse.de			                  +49 911 74053 688
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 247165 (AG München), GF: Felix Imendörffer
