@@ -2,203 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 144F5FDC61
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA56FDC77
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:45:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfKOLjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 06:39:16 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33888 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbfKOLjQ (ORCPT
+        id S1727325AbfKOLpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 06:45:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53555 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbfKOLpN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 06:39:16 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAFBdDEp104147;
-        Fri, 15 Nov 2019 05:39:13 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573817953;
-        bh=DEBO99vGzZiqzGLPACsrYr2rPMREEYd/ww5CNsIVt2w=;
-        h=From:To:CC:Subject:Date;
-        b=UfacSTFCA7emtxHwitX4x9vrePd9t5eippio0IbDMIBHy9DWiSSWnFe7hUZFRBVw0
-         MpMUF1Cg7EBywCQBVTOD643V5TeLgXv9uE39ALq1a7XNuw+Aeav3F+bptB4sAbwMFq
-         oZygmFDgu0L2aRw3BiUjFsLqZOHrZySyas7FJHDU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAFBdDUu092010;
-        Fri, 15 Nov 2019 05:39:13 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 15
- Nov 2019 05:39:12 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 15 Nov 2019 05:39:12 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAFBdAZt015936;
-        Fri, 15 Nov 2019 05:39:11 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH] mmc: sdhci_am654: Add Support for Command Queuing Engine to J721E
-Date:   Fri, 15 Nov 2019 17:10:09 +0530
-Message-ID: <20191115114009.20090-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Fri, 15 Nov 2019 06:45:13 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iVa1Z-0007QU-T6; Fri, 15 Nov 2019 12:44:25 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iVa1Q-0008K2-Ab; Fri, 15 Nov 2019 12:44:16 +0100
+Date:   Fri, 15 Nov 2019 12:44:16 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     mark.rutland@arm.com, alexandre.belloni@bootlin.com,
+        mhocko@suse.com, julien.thierry@arm.com, catalin.marinas@arm.com,
+        christoffer.dall@arm.com, dhowells@redhat.com,
+        yamada.masahiro@socionext.com, ryabinin.a.a@gmail.com,
+        glider@google.com, kvmarm@lists.cs.columbia.edu, corbet@lwn.net,
+        liuwenliang@huawei.com, daniel.lezcano@linaro.org,
+        linux@armlinux.org.uk, kasan-dev@googlegroups.com,
+        geert@linux-m68k.org, dvyukov@google.com,
+        bcm-kernel-feedback-list@broadcom.com, drjones@redhat.com,
+        vladimir.murzin@arm.com, keescook@chromium.org, arnd@arndb.de,
+        marc.zyngier@arm.com, andre.przywara@arm.com, pombredanne@nexb.com,
+        jinb.park7@gmail.com, tglx@linutronix.de, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, nico@fluxnic.net,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rob@landley.net, philip@cog.systems, akpm@linux-foundation.org,
+        thgarnie@google.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v6 0/6] KASan for arm
+Message-ID: <20191115114416.ba6lmwb7q4gmepzc@pengutronix.de>
+References: <20190617221134.9930-1-f.fainelli@gmail.com>
+ <20191114181243.q37rxoo3seds6oxy@pengutronix.de>
+ <7322163f-e08e-a6b7-b143-e9d59917ee5b@gmail.com>
+ <20191115070842.2x7psp243nfo76co@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115070842.2x7psp243nfo76co@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 12:28:52 up  2:47, 19 users,  load average: 0.00, 0.04, 0.03
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Support for CQHCI (Command Queuing Host Controller Interface)
-for each of the host controllers present in TI's J721E devices.
-Add cqhci_ops and a .irq() callback to handle cqhci specific interrupts.
+Hi Florian,
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/mmc/host/Kconfig       |  1 +
- drivers/mmc/host/sdhci_am654.c | 71 +++++++++++++++++++++++++++++++++-
- 2 files changed, 71 insertions(+), 1 deletion(-)
+On 19-11-15 08:08, Marco Felsch wrote:
+> Hi Florian,
+> 
+> On 19-11-14 15:01, Florian Fainelli wrote:
+> > Hello Marco,
+> > 
+> > On 11/14/19 10:12 AM, Marco Felsch wrote:
+> > > Hi Florian,
+> > > 
+> > > first of all, many thanks for your work on this series =) I picked your
+> > > and Arnd patches to make it compilable. Now it's compiling but my imx6q
+> > > board didn't boot anymore. I debugged the code and found that the branch
+> > > to 'start_kernel' won't be reached
+> > > 
+> > > 8<------- arch/arm/kernel/head-common.S -------
+> > > ....
+> > > 
+> > > #ifdef CONFIG_KASAN
+> > >         bl      kasan_early_init
+> > > #endif
+> > > 	mov     lr, #0
+> > > 	b       start_kernel
+> > > ENDPROC(__mmap_switched)
+> > > 
+> > > ....
+> > > 8<----------------------------------------------
+> > > 
+> > > Now, I found also that 'KASAN_SHADOW_OFFSET' isn't set due to missing
+> > > 'CONFIG_KASAN_SHADOW_OFFSET' and so no '-fasan-shadow-offset=xxxxx' is
+> > > added. Can that be the reason why my board isn't booted anymore?
+> > 
+> > The latest that I have is here, though not yet submitted since I needed
+> > to solve one issue on a specific platform with a lot of memory:
+> > 
+> > https://github.com/ffainelli/linux/pull/new/kasan-v7
+> 
+> Thanks for that hint, I will try this series too :) I read that you
+> wanna prepare a v7 but didn't found it ^^
+> 
+> > Can you share your branch as well? I did not pick all of Arnd's patches
+> > since some appeared to be seemingly independent from KASan on ARM. This
+> > is the KASAN related options that are set in my configuration:
+> 
+> Of course I will push it to github and inform you shortly.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 49ea02c467bf..25f12ef813ff 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -1011,6 +1011,7 @@ config MMC_SDHCI_AM654
- 	tristate "Support for the SDHCI Controller in TI's AM654 SOCs"
- 	depends on MMC_SDHCI_PLTFM && OF && REGMAP_MMIO
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select CONFIG_MMC_CQHCI
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in TI's AM654 SOCs. The controller supports
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index bb90757ecace..b8e897e31e2e 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -12,6 +12,7 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- 
-+#include "cqhci.h"
- #include "sdhci-pltfm.h"
- 
- /* CTL_CFG Registers */
-@@ -68,6 +69,9 @@
- 
- #define CLOCK_TOO_SLOW_HZ	400000
- 
-+/* Command Queue Host Controller Interface Base address */
-+#define SDHCI_AM654_CQE_BASE_ADDR 0x200
-+
- static struct regmap_config sdhci_am654_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
-@@ -259,6 +263,19 @@ static const struct sdhci_am654_driver_data sdhci_am654_drvdata = {
- 	.flags = IOMUX_PRESENT | FREQSEL_2_BIT | STRBSEL_4_BIT | DLL_PRESENT,
- };
- 
-+static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
-+
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
-+
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+
-+	return 0;
-+}
-+
- static struct sdhci_ops sdhci_j721e_8bit_ops = {
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
-@@ -267,6 +284,7 @@ static struct sdhci_ops sdhci_j721e_8bit_ops = {
- 	.set_power = sdhci_am654_set_power,
- 	.set_clock = sdhci_am654_set_clock,
- 	.write_b = sdhci_am654_write_b,
-+	.irq = sdhci_am654_cqhci_irq,
- 	.reset = sdhci_reset,
- };
- 
-@@ -290,6 +308,7 @@ static struct sdhci_ops sdhci_j721e_4bit_ops = {
- 	.set_power = sdhci_am654_set_power,
- 	.set_clock = sdhci_j721e_4bit_set_clock,
- 	.write_b = sdhci_am654_write_b,
-+	.irq = sdhci_am654_cqhci_irq,
- 	.reset = sdhci_reset,
- };
- 
-@@ -304,6 +323,40 @@ static const struct sdhci_am654_driver_data sdhci_j721e_4bit_drvdata = {
- 	.pdata = &sdhci_j721e_4bit_pdata,
- 	.flags = IOMUX_PRESENT,
- };
-+
-+static void sdhci_am654_dumpregs(struct mmc_host *mmc)
-+{
-+	sdhci_dumpregs(mmc_priv(mmc));
-+}
-+
-+static const struct cqhci_host_ops sdhci_am654_cqhci_ops = {
-+	.enable		= sdhci_cqe_enable,
-+	.disable	= sdhci_cqe_disable,
-+	.dumpregs	= sdhci_am654_dumpregs,
-+};
-+
-+static int sdhci_am654_cqe_add_host(struct sdhci_host *host)
-+{
-+	struct cqhci_host *cq_host;
-+	int ret;
-+
-+	cq_host = devm_kzalloc(host->mmc->parent, sizeof(struct cqhci_host),
-+			       GFP_KERNEL);
-+	if (!cq_host)
-+		return -ENOMEM;
-+
-+	cq_host->mmio = host->ioaddr + SDHCI_AM654_CQE_BASE_ADDR;
-+	cq_host->quirks |= CQHCI_QUIRK_SHORT_TXFR_DESC_SZ;
-+	cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-+	cq_host->ops = &sdhci_am654_cqhci_ops;
-+
-+	host->mmc->caps2 |= MMC_CAP2_CQE;
-+
-+	ret = cqhci_init(cq_host, host->mmc, 1);
-+
-+	return ret;
-+}
-+
- static int sdhci_am654_init(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -344,7 +397,23 @@ static int sdhci_am654_init(struct sdhci_host *host)
- 	regmap_update_bits(sdhci_am654->base, CTL_CFG_2, SLOTTYPE_MASK,
- 			   ctl_cfg_2);
- 
--	return sdhci_add_host(host);
-+	ret = sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	ret = sdhci_am654_cqe_add_host(host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	return 0;
-+
-+err_cleanup_host:
-+	sdhci_cleanup_host(host);
-+	return ret;
- }
- 
- static int sdhci_am654_get_of_property(struct platform_device *pdev,
--- 
-2.19.2
+Here comes the link:
+https://github.com/medude/linux/tree/v5.4/topic/kasan-arm.v7
 
+I just applied Arnds Patche which you didn't added into your v7.
+
+> > grep KASAN build/linux-custom/.config
+> > CONFIG_HAVE_ARCH_KASAN=y
+> > CONFIG_CC_HAS_KASAN_GENERIC=y
+> > CONFIG_KASAN=y
+> > CONFIG_KASAN_GENERIC=y
+> > CONFIG_KASAN_OUTLINE=y
+> > # CONFIG_KASAN_INLINE is not set
+> > CONFIG_KASAN_STACK=1
+> > CONFIG_TEST_KASAN=m
+> 
+> My config is:
+> 
+> CONFIG_HAVE_ARCH_KASAN=y
+> CONFIG_CC_HAS_KASAN_GENERIC=y
+> CONFIG_KASAN=y
+> CONFIG_KASAN_GENERIC=y
+> CONFIG_KASAN_OUTLINE=y
+> # CONFIG_KASAN_INLINE is not set
+> CONFIG_KASAN_STACK=1
+> # CONFIG_TEST_KASAN is not set
+> 
+> > are you using something different by any chance?
+> 
+> Unfortunately not.
+
+With your v7 it is working on my imx6 but unfortunately I can't run my
+gstreamer testcase. My CPU load goes to 100% after starting gstreamer
+and nothing happens.. But the test_kasan module works =) So I decided to
+check a imx6quadplus but this target did not boot.. I used another
+toolchain for the imx6quadplus gcc-9 instead of gcc-8. So it seems that
+something went wrong during compilation. Because you didn't changed
+something within the logic.
+
+I wonder why we must not define the CONFIG_KASAN_SHADOW_OFFSET for arm.
+
+Regards,
+  Marco
+
+> Regards,
+>   Marco
+> 
+> > -- 
+> > Florian
+> > 
+> 
