@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BFACFD877
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D89C7FD87F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKOJKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:10:39 -0500
-Received: from sauhun.de ([88.99.104.3]:56592 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfKOJKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:10:39 -0500
-Received: from localhost (p54B33606.dip0.t-ipconnect.de [84.179.54.6])
-        by pokefinder.org (Postfix) with ESMTPSA id 6C5462C03E3;
-        Fri, 15 Nov 2019 10:10:36 +0100 (CET)
-Date:   Fri, 15 Nov 2019 10:10:36 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: of: Populate fwnode in of_i2c_get_board_info()
-Message-ID: <20191115091035.GA2227@kunai>
-References: <20191115045049.261104-1-saravanak@google.com>
- <20191115053201.GA800105@kroah.com>
+        id S1727388AbfKOJLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:11:20 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:45865 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfKOJLR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:11:17 -0500
+Received: from mail-qv1-f48.google.com ([209.85.219.48]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MDgtl-1icvsi2c6h-00AlU4 for <linux-kernel@vger.kernel.org>; Fri, 15 Nov
+ 2019 10:11:15 +0100
+Received: by mail-qv1-f48.google.com with SMTP id v16so3513276qvq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 01:11:15 -0800 (PST)
+X-Gm-Message-State: APjAAAVjqbydbac4xom0StAO09hIeAg/dvWEtOyecID7iiI0cKdz/idp
+        dFf0F+/OM+S/sZfflUFAcoVpxrvo2+mmGk7j2BM=
+X-Google-Smtp-Source: APXvYqz9RK5z2XbGxnTimA2wUl2cP5ll+VAR0trY1cR79bAG3pFyzevcMug4bItRDzyMNcJ2iYh/QxZSQ7DloNuegIM=
+X-Received: by 2002:ad4:404e:: with SMTP id r14mr353152qvp.4.1573809074551;
+ Fri, 15 Nov 2019 01:11:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Content-Disposition: inline
-In-Reply-To: <20191115053201.GA800105@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191115084931.77161-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20191115084931.77161-1-andriy.shevchenko@linux.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 15 Nov 2019 10:10:58 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3pFDPa49rXT3hbkptvqsRk5NdVimUT=x8-tGoZKH0yRQ@mail.gmail.com>
+Message-ID: <CAK8P3a3pFDPa49rXT3hbkptvqsRk5NdVimUT=x8-tGoZKH0yRQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] mfd: syscon: Re-use resource_size() to count max_register
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:RMBoBhVAzRYQINMyKCb0z8GPuFQi7ldRheE99NyZNlZwDkXNoVJ
+ aa2qR0/AziRGgkvTXcqi53aJ3OcmbqMU2VbUNCyYcU2X+dY4TqHSYYWs0THsnJRFcX7QNNd
+ OT2UOXOaRKMzRVjb/mxQSY0dOzTbdGTKj29Bscj+ck4H9M50zkkOgaMlUm4uACeL92PaR0f
+ 8xMRbU59myf0TfealtxQg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PMJL2C6d9NI=:yVn+lU98cDU2O1lH8LC7o8
+ oSK7tnCIQLrNH+9HAnn46lGgfMroq188nY0KYbTzoJW2AJAXm8co8pIO77eQtNVTpYbX8PM2D
+ H3FLatiJO0MtlFt73PUnC5S9G2fdfjBSWkfcAK/2WNEYpe2TFlFbkPFDtIolAPZTX5UzZ7Lpa
+ 9cg21kMdKIp7edQvSVqurZmN2P0Vvk3Ey10EQ6sYF/D68D6Pvamk4/6EHVHVk4Zjt8IT7qFd5
+ l33MX6Vcv7v/K1OVhRLVbTIr8SFZ5EgEaOYDrZheh0XBmL8WFItLeEa0UeeU1sPAogfgTB5HT
+ Wk3MXOYrC55eZcBjM0Fze+t1TpNtsYBRNAm3w20gN2nwxkJVzNCA+3nMemx/CzuV9Uvkl4vUO
+ 6BSVz0qD2qonR9bfe3Q/mIZjIlJ4OoMXeuU7dTp25bZBegRP96V3Sodlrt7HDaPWqVAt1QGRE
+ 3HaJ5D0kdy3y8yjMUoUM129sE0HOjw50efQENH7ekA5A6gWiOBaP6wgfnfLBbBRcSv/B4oYTO
+ /qjglUIxst5jkGhRdd8zYzb22Z7A/T7DUO9O1/bLH4/NKiNmROEBduFlCFn3Z5QWxA3GQp38b
+ h5iaGsk4ixd+ge7jT2kHEw9m4sL9EipMX63BIFwo7owpg8mAX9N06g/tNM6RcbGfC/snr/Vv5
+ ZFBUb7O8mBE2f3XPx15nwhJxc7DvzSW1nxIAHy2zjfq+ZUjV5U6YKWofL2qy5WNtX42bKEhBa
+ 2U8ItA6C+U3oy4237qmj8gL6ZeXqxWZJn+OKWueL+9HxALdXDxE4aBfEi2VqXwaR6/MXktWFo
+ utpVqDQy6VtE4UbM43+pf1IfUPyuWqAI9xMNs2ND9hy89pxhIqXlko/iEM7eOXYE4quQkCZ3T
+ Comh5pBR2UfTDOTgmlZQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 15, 2019 at 9:49 AM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Instead of open coded variant use resource_size() and replace
+> weird '- 3' to more understandable '- 4'.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-On Fri, Nov 15, 2019 at 01:32:01PM +0800, Greg Kroah-Hartman wrote:
-> On Thu, Nov 14, 2019 at 08:50:48PM -0800, Saravana Kannan wrote:
-> > This allows the of_devlink feature to work across i2c devices too. This
-> > avoid unnecessary probe deferrals of i2c devices, defers consumers of
-> > i2c devices till the i2c devices probe, and allows i2c drivers to
-> > implement sync_state() callbacks.
-> >=20
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> > The of_devlink feature is present in driver-core-next branch. It started
-> > off with [1] but it has been improving since then.
-> >=20
-> > [1] -- https://lore.kernel.org/linux-acpi/20190904211126.47518-1-sarava=
-nak@google.com/
-> >=20
-> >  drivers/i2c/i2c-core-of.c | 1 +
-> >  1 file changed, 1 insertion(+)
->=20
-> Wolfram, I can take this through my tree now if you have no objections
-> to this.
-
-What would be the advantage? I can also apply it today if you ack it.
-
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl3Oa4cACgkQFA3kzBSg
-KbaZMhAAh1UZSZZXjji5ZsU0sxQOpgTLqO0m8PDgaHqtoQ8ASGngmutKDq6R9v8M
-6ChpmmIfUHgIFdqta87XH/xhnjpP94TAr0XdIl8Aryjj2xg8+pdUOwNpxofuQmQ+
-TG7gzSlRI2MAN2+nyiaObD42FlZrOoNjiwL2nZySsPlWRoIGdfT7CO0zX41qp16l
-f4E01AhfO6Irb94O1GJXtg3/EKoN91K7B25+BhXiCiv8PE0+MFZzWZ6BprKZCpae
-oy1pHgQpJbZJM1GvPEdXTfBQu5HHDxlnL50d1auAsJaTMcch0p4nTFKmTqg+tW0N
-7szlGfwVyVBnGatSCqwZrX8GALU+7pPPDMx5KT+sh6M/a28+G2qFX/3HrATRQvat
-omMHQkVtvNll2OZzo9EWIaWvElLqay1hpTzdO5Anbwj4/6fKUWgGwj+/TF0xkj06
-xA+nLKOn3kEcO8xoBCduWvShvmQDUADnVNXj6dbM6XyF/WmRH4dEcrgItcoUjqfn
-tsF1lmSlJIHlzrUwQ77BsJj1ZTziwnwrj+aBQkqmRUYw3K+qJrmJAAyfqvoPYcT4
-uh4U2sSxAw5s1TuzZFRqDY4drnQ6Spooquq6BE6CL21yqURKfENUiF63BUrMVobp
-vAwaflgkzGCP7XtJMRP86uFd2a9gtdSTjiLA3A54Qd/gmx5FJoM=
-=PpDn
------END PGP SIGNATURE-----
-
---2oS5YaxWCcQjTEyO--
+>  drivers/mfd/syscon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index e22197c832e8..13626bb2d432 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -245,7 +245,7 @@ static int syscon_probe(struct platform_device *pdev)
+>         if (!base)
+>                 return -ENOMEM;
+>
+> -       syscon_config.max_register = res->end - res->start - 3;
+> +       syscon_config.max_register = resource_size(res) - 4;
+>         if (pdata)
+>                 syscon_config.name = pdata->label;
+>         syscon->regmap = devm_regmap_init_mmio(dev, base, &syscon_config);
+> --
+> 2.24.0
+>
