@@ -2,119 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C43FDB4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:27:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53859FDB4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfKOK05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:26:57 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37548 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfKOK04 (ORCPT
+        id S1727365AbfKOK0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:26:53 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55180 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725829AbfKOK0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:26:56 -0500
-Received: by mail-ot1-f68.google.com with SMTP id d5so7605892otp.4;
-        Fri, 15 Nov 2019 02:26:54 -0800 (PST)
+        Fri, 15 Nov 2019 05:26:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573813611;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=2uI7uPLuRnONP7GjNCVwBtzrmnqY0NlUVSvuNw0sBt4=;
+        b=DcuWp7jsILJHZi4FwUHbcii2gyp7kIBrdFZKJwNRi7ABCpdTbHe/qcWFeqFD9Ul1CTEBaQ
+        s9JWlOSY8ONT1gwoL0EBSkQNa8VfHGM28gfLaZrYsXCe3pqBmH33b3lKeObyUNXeaWuG5I
+        xUaRGZXPXCDmIQJ/jVHiJrf1fQa/p+Q=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-16-l9pEvfemPvGuGAc4GgmmKQ-1; Fri, 15 Nov 2019 05:26:50 -0500
+Received: by mail-wr1-f72.google.com with SMTP id p4so7374270wrw.15
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 02:26:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pem47e68QsfR2xvNK79o7bq8NBfMBA9ulZTmR6QPBXQ=;
-        b=K1vHfbFJfFav1lGD0zptMCjxNGjlxHQMOTx24Z7vDAV4oGg6LhS7onR1GIpDJm9eew
-         OSAYPM64Lekp3X3ycoMo3UD4FYI7hh+16fK/1bYK08Vh4EIbxOSWNSiOMLjYTQIFfU4G
-         WqhhwBhtGiU/itI9TEAUspMcy21LbP33lncsFmv+0+jq1J0vfKK6OHM813aVJTS+eWG3
-         Am0nSyIyvHS/9gKX8VdtDQpl+fAiPQwo8e08BxwW9cWPgRnK6J4oMV2jbj+q85QcMqF7
-         Tsmdy0BtIAS3JYJTVpABZoFGqxiAX07DTTtTUfEiuEn9WPwecLSlyybRQk9MVKWMwDK5
-         jtUg==
-X-Gm-Message-State: APjAAAV04iwVukIyc2QvqA0K1HoYlIaPFw19vuTYAaWH6dqZwosyj8CO
-        B6mDNl1PWWmXDi1Ir0r6KoP0x3gF4O6I0Ym3+ew=
-X-Google-Smtp-Source: APXvYqztMO0pme2trK3Xq1OxPCXqw9OHvMhjZFp3BASCzEKVIw6hhkm5ZGbKg8xG2i1KfPlviXBRToiXidUY4AKPnF0=
-X-Received: by 2002:a9d:6b91:: with SMTP id b17mr10218038otq.189.1573813613955;
- Fri, 15 Nov 2019 02:26:53 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=acft+e5GVaOm9gL1F/GvBW+HVqPDv3uXhEV7pWu1UxM=;
+        b=piOpmHDWIjPCG5G7JW5RxCylUl+oZqJ2LpokrCt1ZPu0+AGwjybA7FTsmSTyscdNqp
+         zKTNf5LU8fRDWx22ZdeFi4WuFDsd4BpEHBAHr6VSLs9AodTG/YESGFgnk3GVDP5RXAw6
+         G1doSrSHZEzP7hgINoIkNBejAq5cUllnJuEMTtaGS2f+JUEjhRYe7DNuomecn20MiNz9
+         ElfyV6LTEfDbCjJzoZWJUPL1fhDE0epb5AqSgQdkaOd2AEv9rVyPHzBAU3YuqM//n+Sx
+         JGYdpNz9d2eiI2ejT3MHbrWA3PhskwAnP+uca4CROH/vBD6O1OlqmjAmRKJadIZufjc8
+         v05A==
+X-Gm-Message-State: APjAAAUkkWDqsHXfN65Zewtb7MJbfPBpQt3j1TGA5mdwmyuTy+6F3IW1
+        TrNbV4tcQ9O3Birh4FGJKXiMKKkfoqGlXdL2CD0BSwSueBIKa9YayacTMmC7KFJDUds2SVhTboj
+        uBmcc/6Z8hNbR+JYt0Ydnc5Wi
+X-Received: by 2002:a1c:a791:: with SMTP id q139mr13326251wme.155.1573813609420;
+        Fri, 15 Nov 2019 02:26:49 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwExwQL3OQvA5LaPYzHOAjOqe7Mx8KKnsDSwyYuInWa10ioYJUc6tY/7eWewSeXBq25GRzWvQ==
+X-Received: by 2002:a1c:a791:: with SMTP id q139mr13326229wme.155.1573813609152;
+        Fri, 15 Nov 2019 02:26:49 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:a15b:f753:1ac4:56dc? ([2001:b07:6468:f312:a15b:f753:1ac4:56dc])
+        by smtp.gmail.com with ESMTPSA id u2sm12362382wrg.52.2019.11.15.02.26.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2019 02:26:48 -0800 (PST)
+Subject: Re: [Patch v2 2/2] KVM: x86: deliver KVM IOAPIC scan request to
+ target vCPUs
+To:     Nitesh Narayan Lal <nitesh@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mtosatti@redhat.com,
+        rkrcmar@redhat.com, vkuznets@redhat.com,
+        sean.j.christopherson@intel.com, wanpengli@tencent.com,
+        jmattson@google.com, joro@8bytes.org
+References: <1573131223-5685-1-git-send-email-nitesh@redhat.com>
+ <1573131223-5685-3-git-send-email-nitesh@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <62be5025-374b-6837-77dd-05ab2148f295@redhat.com>
+Date:   Fri, 15 Nov 2019 11:26:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <1573041302-4904-1-git-send-email-zhenzhong.duan@oracle.com> <1573041302-4904-2-git-send-email-zhenzhong.duan@oracle.com>
-In-Reply-To: <1573041302-4904-2-git-send-email-zhenzhong.duan@oracle.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 15 Nov 2019 11:26:43 +0100
-Message-ID: <CAJZ5v0gyszPOvUxd8WX8gxc1OvX_nLUGh3vKn=aXWRj52L76yw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2 1/4] cpuidle-haltpoll: ensure grow start value
- is nonzero
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1573131223-5685-3-git-send-email-nitesh@redhat.com>
+Content-Language: en-US
+X-MC-Unique: l9pEvfemPvGuGAc4GgmmKQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 12:56 PM Zhenzhong Duan
-<zhenzhong.duan@oracle.com> wrote:
->
-> dev->poll_limit_ns could be zeroed in certain cases (e.g. by
-> guest_halt_poll_ns = 0). If guest_halt_poll_grow_start is zero,
-> dev->poll_limit_ns will never be bigger than zero.
+On 07/11/19 13:53, Nitesh Narayan Lal wrote:
+> In IOAPIC fixed delivery mode instead of flushing the scan
+> requests to all vCPUs, we should only send the requests to
+> vCPUs specified within the destination field.
+>=20
+> This patch introduces kvm_get_dest_vcpus_mask() API which
+> retrieves an array of target vCPUs by using
+> kvm_apic_map_get_dest_lapic() and then based on the
+> vcpus_idx, it sets the bit in a bitmap. However, if the above
+> fails kvm_get_dest_vcpus_mask() finds the target vCPUs by
+> traversing all available vCPUs. Followed by setting the
+> bits in the bitmap.
 
-I would rephrase this in the following way:
+Queued, thanks.  I just took the liberty of renaming the function to
+kvm_bitmap_or_dest_vcpus.
 
-"If guest_halt_poll_grow_start is zero and dev->poll_limit_ns becomes
-zero for any reason, it will never be greater than zero again, so use
-..."
+Paolo
 
-The patch itself looks OK to me.
-
-> Use param callback to avoid writing zero to guest_halt_poll_grow_start.
->
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> ---
->  drivers/cpuidle/governors/haltpoll.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/governors/haltpoll.c
-> index 7a703d2..660859d 100644
-> --- a/drivers/cpuidle/governors/haltpoll.c
-> +++ b/drivers/cpuidle/governors/haltpoll.c
-> @@ -20,6 +20,26 @@
->  #include <linux/module.h>
->  #include <linux/kvm_para.h>
->
-> +static int grow_start_set(const char *val, const struct kernel_param *kp)
-> +{
-> +       int ret;
-> +       unsigned int n;
-> +
-> +       if (!val)
-> +               return -EINVAL;
-> +
-> +       ret = kstrtouint(val, 0, &n);
-> +       if (ret || !n)
-> +               return -EINVAL;
-> +
-> +       return param_set_uint(val, kp);
-> +}
-> +
-> +static const struct kernel_param_ops grow_start_ops = {
-> +       .set = grow_start_set,
-> +       .get = param_get_uint,
-> +};
-> +
->  static unsigned int guest_halt_poll_ns __read_mostly = 200000;
->  module_param(guest_halt_poll_ns, uint, 0644);
->
-> @@ -33,7 +53,7 @@
->
->  /* value in us to start growing per-cpu halt_poll_ns */
->  static unsigned int guest_halt_poll_grow_start __read_mostly = 50000;
-> -module_param(guest_halt_poll_grow_start, uint, 0644);
-> +module_param_cb(guest_halt_poll_grow_start, &grow_start_ops, &guest_halt_poll_grow_start, 0644);
->
->  /* allow shrinking guest halt poll */
->  static bool guest_halt_poll_allow_shrink __read_mostly = true;
-> --
-> 1.8.3.1
->
