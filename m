@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF02FFE4E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 343E3FE4E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfKOSTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:19:55 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44321 "EHLO
+        id S1727315AbfKOSUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:20:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44304 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbfKOST1 (ORCPT
+        with ESMTP id S1726308AbfKOSTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 13:19:27 -0500
+        Fri, 15 Nov 2019 13:19:25 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVgBk-00059m-8k; Fri, 15 Nov 2019 19:19:20 +0100
+        id 1iVgBj-00059Q-PH; Fri, 15 Nov 2019 19:19:19 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DD21F1C18D0;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5A7AB1C18CD;
         Fri, 15 Nov 2019 19:19:19 +0100 (CET)
 Date:   Fri, 15 Nov 2019 18:19:19 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] futex: Sanitize exit state handling
+Subject: [tip: locking/core] futex: Provide distinct return value when owner
+ is exiting
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191106224556.645603214@linutronix.de>
-References: <20191106224556.645603214@linutronix.de>
+In-Reply-To: <20191106224556.935606117@linutronix.de>
+References: <20191106224556.935606117@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <157384195985.12247.4843110256427761171.tip-bot2@tip-bot2>
+Message-ID: <157384195933.12247.11433099250736652898.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,55 +49,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     8e9a078792b2025e92492431992e4c898b1be36b
-Gitweb:        https://git.kernel.org/tip/8e9a078792b2025e92492431992e4c898b1be36b
+Commit-ID:     8d4da5b197dc2aa3d10d9f1246d02e33b8f17acc
+Gitweb:        https://git.kernel.org/tip/8d4da5b197dc2aa3d10d9f1246d02e33b8f17acc
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 06 Nov 2019 22:55:42 +01:00
+AuthorDate:    Wed, 06 Nov 2019 22:55:45 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 15 Nov 2019 19:10:52 +01:00
+CommitterDate: Fri, 15 Nov 2019 19:10:54 +01:00
 
-futex: Sanitize exit state handling
+futex: Provide distinct return value when owner is exiting
 
-Instead of having a smp_mb() and an empty lock/unlock of task::pi_lock move
-the state setting into to the lock section.
+attach_to_pi_owner() returns -EAGAIN for various cases:
+
+ - Owner task is exiting
+ - Futex value has changed
+
+The caller drops the held locks (hash bucket, mmap_sem) and retries the
+operation. In case of the owner task exiting this can result in a live
+lock.
+
+As a preparatory step for seperating those cases, provide a distinct return
+value (EBUSY) for the owner exiting case.
+
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.645603214@linutronix.de
+Link: https://lkml.kernel.org/r/20191106224556.935606117@linutronix.de
 
 ---
- kernel/futex.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ kernel/futex.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/futex.c b/kernel/futex.c
-index 3488fb0..f618562 100644
+index 46a81e6..4f9d7a4 100644
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
-@@ -3703,16 +3703,19 @@ void futex_exit_recursive(struct task_struct *tsk)
+@@ -1182,11 +1182,11 @@ static int handle_exit_race(u32 __user *uaddr, u32 uval,
+ 	u32 uval2;
  
- void futex_exit_release(struct task_struct *tsk)
- {
--	tsk->futex_state = FUTEX_STATE_EXITING;
--	/*
--	 * Ensure that all new tsk->pi_lock acquisitions must observe
--	 * FUTEX_STATE_EXITING. Serializes against attach_to_pi_owner().
--	 */
--	smp_mb();
  	/*
--	 * Ensure that we must observe the pi_state in exit_pi_state_list().
-+	 * Switch the state to FUTEX_STATE_EXITING under tsk->pi_lock.
-+	 *
-+	 * This ensures that all subsequent checks of tsk->futex_state in
-+	 * attach_to_pi_owner() must observe FUTEX_STATE_EXITING with
-+	 * tsk->pi_lock held.
-+	 *
-+	 * It guarantees also that a pi_state which was queued right before
-+	 * the state change under tsk->pi_lock by a concurrent waiter must
-+	 * be observed in exit_pi_state_list().
+-	 * If the futex exit state is not yet FUTEX_STATE_DEAD, wait
+-	 * for it to finish.
++	 * If the futex exit state is not yet FUTEX_STATE_DEAD, tell the
++	 * caller that the alleged owner is busy.
  	 */
- 	raw_spin_lock_irq(&tsk->pi_lock);
-+	tsk->futex_state = FUTEX_STATE_EXITING;
- 	raw_spin_unlock_irq(&tsk->pi_lock);
+ 	if (tsk && tsk->futex_state != FUTEX_STATE_DEAD)
+-		return -EAGAIN;
++		return -EBUSY;
  
- 	futex_exec_release(tsk);
+ 	/*
+ 	 * Reread the user space value to handle the following situation:
+@@ -2092,12 +2092,13 @@ retry_private:
+ 			if (!ret)
+ 				goto retry;
+ 			goto out;
++		case -EBUSY:
+ 		case -EAGAIN:
+ 			/*
+ 			 * Two reasons for this:
+-			 * - Owner is exiting and we just wait for the
++			 * - EBUSY: Owner is exiting and we just wait for the
+ 			 *   exit to complete.
+-			 * - The user space value changed.
++			 * - EAGAIN: The user space value changed.
+ 			 */
+ 			double_unlock_hb(hb1, hb2);
+ 			hb_waiters_dec(hb2);
+@@ -2843,12 +2844,13 @@ retry_private:
+ 			goto out_unlock_put_key;
+ 		case -EFAULT:
+ 			goto uaddr_faulted;
++		case -EBUSY:
+ 		case -EAGAIN:
+ 			/*
+ 			 * Two reasons for this:
+-			 * - Task is exiting and we just wait for the
++			 * - EBUSY: Task is exiting and we just wait for the
+ 			 *   exit to complete.
+-			 * - The user space value changed.
++			 * - EAGAIN: The user space value changed.
+ 			 */
+ 			queue_unlock(hb);
+ 			put_futex_key(&q.key);
