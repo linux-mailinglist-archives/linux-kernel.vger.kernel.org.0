@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7CD3FDCD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0B0FDCCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfKOL6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 06:58:22 -0500
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:49613 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727183AbfKOL6W (ORCPT
+        id S1727520AbfKOL6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 06:58:23 -0500
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:58050 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfKOL6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Nov 2019 06:58:22 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id EBABD3F703;
-        Fri, 15 Nov 2019 12:58:18 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=EaF1pA0X;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 203053F603;
+        Fri, 15 Nov 2019 12:58:19 +0100 (CET)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=ent4YHLc;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,24 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qVsn6bKa468W; Fri, 15 Nov 2019 12:58:18 +0100 (CET)
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lt7waE584qmj; Fri, 15 Nov 2019 12:58:18 +0100 (CET)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id E4D233F59D;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id E08D73F52C;
         Fri, 15 Nov 2019 12:58:16 +0100 (CET)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 2637A3601D5;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 3FD1E360325;
         Fri, 15 Nov 2019 12:58:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1573819096; bh=biXbplT4Ss3tnjsfc08aEbyfLDVtox+O3ydwXnrP4Q8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EaF1pA0X3T5TLQmZ/lCJ10YK8/EoyB9GzPMO74bzPXrqr3mnMZUbxpjiJgVPOECWG
-         2Gt3jXbm/Zi8IXeH1cObF5Ft3Rri/Xnn4PbWpbX1gWSvnw4wvXQLs4iDhPGOCHMKMW
-         +b+n/NfbK0jrL3sm7xpv5+G2D85RH2arwV1tWeFw=
+        t=1573819096; bh=xVuLL/1vTl5ZKgjhLNPEJeY++MAr80mNmQBa2Hc4ZbU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ent4YHLcAnF69PXuJXOvYqTEWm0aLp7iTbKKDC4UgAZZ7kACAaxtdDLwiQ1Q4BcmR
+         TTkQkqf6Qnc52bHVgtIH5iahU56ptBz5rWliz9LYAVhqhoJopVmln3kuADITeD0LQK
+         s23gNUPyK5QcNcq5M5k1Qu2ldhPYMspyB/mxnvFo=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
@@ -51,11 +49,13 @@ Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Matthew Wilcox" <willy@infradead.org>
-Subject: [PATCH 1/2] mm: Move the backup x_devmap() functions to asm-generic/pgtable.h
-Date:   Fri, 15 Nov 2019 12:58:07 +0100
-Message-Id: <20191115115808.21181-1-thomas_os@shipmail.org>
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 2/2] mm: Fix a huge pud insertion race during faulting
+Date:   Fri, 15 Nov 2019 12:58:08 +0100
+Message-Id: <20191115115808.21181-2-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191115115808.21181-1-thomas_os@shipmail.org>
+References: <20191115115808.21181-1-thomas_os@shipmail.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,73 +65,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-The asm-generic/pgtable.h include file appears to be the correct place
-for the backup x_devmap() inline functions. Moving them here is also
-necessary if we want to include x_devmap() in the [pmd|pud]_unstable
-functions. So move the x_devmap() functions to asm-generic/pgtable.h
+A huge pud page can theoretically be faulted in racing with pmd_alloc()
+in __handle_mm_fault(). That will lead to pmd_alloc() returning an
+invalid pmd pointer. Fix this by adding a pud_trans_unstable() function
+similar to pmd_trans_unstable() and check whether the pud is really stable
+before using the pmd pointer.
+
+Race:
+Thread 1:             Thread 2:                 Comment
+create_huge_pud()                               Fallback - not taken.
+		      create_huge_pud()         Taken.
+pmd_alloc()                                     Returns an invalid pointer.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: "Matthew Wilcox" <willy@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Fixes: a00cc7d9dd93 ("mm, x86: add support for PUD-sized transparent hugepages")
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 ---
- include/asm-generic/pgtable.h | 15 +++++++++++++++
- include/linux/mm.h            | 15 ---------------
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ include/asm-generic/pgtable.h | 25 +++++++++++++++++++++++++
+ mm/memory.c                   |  6 ++++++
+ 2 files changed, 31 insertions(+)
 
 diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 818691846c90..8efa45580fd0 100644
+index 8efa45580fd0..c40a0ced53bd 100644
 --- a/include/asm-generic/pgtable.h
 +++ b/include/asm-generic/pgtable.h
-@@ -903,6 +903,21 @@ static inline int pud_write(pud_t pud)
+@@ -927,6 +927,31 @@ static inline int pud_trans_huge(pud_t pud)
  }
- #endif /* pud_write */
+ #endif
  
-+#if !defined(CONFIG_ARCH_HAS_PTE_DEVMAP) || !defined(CONFIG_TRANSPARENT_HUGEPAGE)
-+static inline int pmd_devmap(pmd_t pmd)
++/* See pmd_none_or_trans_huge_or_clear_bad for discussion. */
++static inline int pud_none_or_trans_huge_or_dev_or_clear_bad(pud_t *pud)
 +{
-+	return 0;
-+}
-+static inline int pud_devmap(pud_t pud)
-+{
-+	return 0;
-+}
-+static inline int pgd_devmap(pgd_t pgd)
-+{
-+	return 0;
-+}
-+#endif
++	pud_t pudval = READ_ONCE(*pud);
 +
- #if !defined(CONFIG_TRANSPARENT_HUGEPAGE) || \
- 	(defined(CONFIG_TRANSPARENT_HUGEPAGE) && \
- 	 !defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD))
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 4bc93477375e..78a09ff33cd7 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -564,21 +564,6 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
- struct mmu_gather;
- struct inode;
- 
--#if !defined(CONFIG_ARCH_HAS_PTE_DEVMAP) || !defined(CONFIG_TRANSPARENT_HUGEPAGE)
--static inline int pmd_devmap(pmd_t pmd)
--{
--	return 0;
--}
--static inline int pud_devmap(pud_t pud)
--{
--	return 0;
--}
--static inline int pgd_devmap(pgd_t pgd)
--{
--	return 0;
--}
--#endif
--
- /*
-  * FIXME: take this include out, include page-flags.h in
-  * files which need it (119 of them)
++	if (pud_none(pudval) || pud_trans_huge(pudval) || pud_devmap(pudval))
++		return 1;
++	if (unlikely(pud_bad(pudval))) {
++		pud_clear_bad(pud);
++		return 1;
++	}
++	return 0;
++}
++
++/* See pmd_trans_unstable for discussion. */
++static inline int pud_trans_unstable(pud_t *pud)
++{
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
++	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
++	return pud_none_or_trans_huge_or_dev_or_clear_bad(pud);
++#else
++	return 0;
++#endif
++}
++
+ #ifndef pmd_read_atomic
+ static inline pmd_t pmd_read_atomic(pmd_t *pmdp)
+ {
+diff --git a/mm/memory.c b/mm/memory.c
+index b1ca51a079f2..43ff372f4f07 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3914,6 +3914,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 	vmf.pud = pud_alloc(mm, p4d, address);
+ 	if (!vmf.pud)
+ 		return VM_FAULT_OOM;
++retry_pud:
+ 	if (pud_none(*vmf.pud) && __transparent_hugepage_enabled(vma)) {
+ 		ret = create_huge_pud(&vmf);
+ 		if (!(ret & VM_FAULT_FALLBACK))
+@@ -3940,6 +3941,11 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
+ 	if (!vmf.pmd)
+ 		return VM_FAULT_OOM;
++
++	/* Huge pud page fault raced with pmd_alloc? */
++	if (pud_trans_unstable(vmf.pud))
++		goto retry_pud;
++
+ 	if (pmd_none(*vmf.pmd) && __transparent_hugepage_enabled(vma)) {
+ 		ret = create_huge_pmd(&vmf);
+ 		if (!(ret & VM_FAULT_FALLBACK))
 -- 
 2.21.0
 
