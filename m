@@ -2,63 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC219FE0E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B06AFE0E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfKOPIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 10:08:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727406AbfKOPIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 10:08:05 -0500
-Received: from localhost (118-163-138-88.HINET-IP.hinet.net [118.163.138.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 259DB2073A;
-        Fri, 15 Nov 2019 15:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573830484;
-        bh=sk0qDzO8+JG88Qd8WBcHPVKJ3Xr/w7MRVKVMQ/Kc6TQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2FWnyoDz8XHneDEOj0n+kAAsxsYW1mEeIdrfX+e69sSfFBZ3kdzUeavA1BBW0e19b
-         PfwN+9ijr3hsPBXB+7zO2jd4XA95aFmZjfI8oHGtynSPv4aIGSkFkIopuqLmXLmMjP
-         odRmIE0bEUJc9rEecQcN0TstS+XhP/7yzVyISCG8=
-Date:   Fri, 15 Nov 2019 23:08:02 +0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/31] 4.9.202-stable review
-Message-ID: <20191115150802.GB375474@kroah.com>
-References: <20191115062009.813108457@linuxfoundation.org>
- <64c3a414-36d1-aa79-ad5d-75b5a57225cd@roeck-us.net>
+        id S1727540AbfKOPJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 10:09:40 -0500
+Received: from smtprelay0001.hostedemail.com ([216.40.44.1]:45530 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727406AbfKOPJj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 10:09:39 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 7F1888383F91;
+        Fri, 15 Nov 2019 15:09:38 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:979:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3872:3873:4321:4383:5007:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21450:21451:21611:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: death47_53dfe8b37a120
+X-Filterd-Recvd-Size: 1331
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 15 Nov 2019 15:09:36 +0000 (UTC)
+Message-ID: <05ba4e29fb78885cf9abf7bfc87e0a7bcda099fe.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: whitelist Originally-by: signature
+From:   Joe Perches <joe@perches.com>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Andy Whitcroft <apw@canonical.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>
+Date:   Fri, 15 Nov 2019 07:09:17 -0800
+In-Reply-To: <20191115150202.15208-1-erosca@de.adit-jv.com>
+References: <20191115150202.15208-1-erosca@de.adit-jv.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64c3a414-36d1-aa79-ad5d-75b5a57225cd@roeck-us.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 05:56:18AM -0800, Guenter Roeck wrote:
-> On 11/14/19 10:20 PM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.202 release.
-> > There are 31 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 17 Nov 2019 06:18:35 +0000.
-> > Anything received after that time might be too late.
-> > 
-> Build results:
-> 	total: 172 pass: 172 fail: 0
-> Qemu test results:
-> 	total: 356 pass: 356 fail: 0
+On Fri, 2019-11-15 at 16:02 +0100, Eugeniu Rosca wrote:
+> Oftentimes [1], the contributor would like to honor or give credits [2]
+> to somebody's original ideas in the submission/reviewing process. While
+> "Co-developed-by:" and "Suggested-by:" (currently whitelisted) could be
+> employed for this purpose, they are not ideal.
 
-Great, thanks for testing both of these and letting me know.
+You need to get the use of this accepted into Documentation/process
+before adding it to checkpatch
 
-greg k-h
+
