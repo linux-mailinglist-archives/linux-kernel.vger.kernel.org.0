@@ -2,134 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C6D8FD682
+	by mail.lfdr.de (Postfix) with ESMTP id EE2D5FD685
 	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:48:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfKOGrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:47:48 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37413 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfKOGrr (ORCPT
+        id S1727075AbfKOGsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:48:06 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:39901 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725848AbfKOGsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:47:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b17so9086053wmj.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 22:47:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=h6eijrK8cUxC8CXdJIBcySFLn2s6ouwc2eAMAO7Yyes=;
-        b=F7E4azdR9jYdXe9IJM6V6g32ncVAFgLfs5WJQff5l0YFLEhwd00g0L91wRPaLhN8NA
-         2RG4IL/h2dLth8xKeqwfuRWasWCOhr2Wq5N4rTq+RqWGo7Z2xTSx5/iRfK9jINGsgp5N
-         V3irs7/8A/mQb1GvLKWE7NZT5ZPtL2T3dgfh6N+fm5wdw116AgoslDwixkp5Vtd+9DJv
-         0QMpS77XlFxg6yxa/bfrp6iK518+NROIXwI62+w0s+hVu8rcW4cVQKTpx2svKLpXiXuE
-         rdJ2PmHAao9o4wuuu9c+JzVvUnvwL8TiKxLGelI7TDtChfH7U1poW11maB2nzD1biEGQ
-         8vLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=h6eijrK8cUxC8CXdJIBcySFLn2s6ouwc2eAMAO7Yyes=;
-        b=e+8A7ZauV8WGdVCG9msuXQsxSTOxJfJjYDAYdsuHKC9rX0Je9jc4M5/A0B3TqpoY5U
-         GL89yv7fE8IT56/5apBsUr/NZr9rph1lnjtOfPsshtVErfzve7UsUF67KNR2X2ws/NWu
-         OH09H7XFFidOdcBaYJ8hZcKP3cWrckagffyQYakDqRj24f8hqUkmkBzYvP2jOFeGbCOX
-         lxK8914C5wVUzRmHSob0WtNH0G7VoJUVkREXw9y+RDmF9MHRf1b84XIKdoTSsH/vlTnA
-         p1xX4bQZ06U1whBfKgg9rGlbZLfCv207LQO2LoY+lBSsYoMShPT/YEA7JrramBZ+dOE7
-         4F5A==
-X-Gm-Message-State: APjAAAWi9cbZiUh/nSX/lRUmG7ys0HOWdqWlNaM+5T6XNZIn4Ldg/od3
-        X62C3Z7mBTEWFRqglcOFz3zH1w==
-X-Google-Smtp-Source: APXvYqwGXJtQkCBTsweQQRswiTBThypUGLrtgVwXGSWzzCLlpWA9L/kHnXqlVPEQ8MPJE01QlngFZg==
-X-Received: by 2002:a05:600c:296:: with SMTP id 22mr12909062wmk.155.1573800465347;
-        Thu, 14 Nov 2019 22:47:45 -0800 (PST)
-Received: from [192.168.0.100] (84-33-69-45.dyn.eolo.it. [84.33.69.45])
-        by smtp.gmail.com with ESMTPSA id f14sm9916446wrv.17.2019.11.14.22.47.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Nov 2019 22:47:44 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: [PATCH] block,bfq: Skip tracing hooks if possible
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20191101131110.18356-1-dmonakhov@gmail.com>
-Date:   Fri, 15 Nov 2019 07:47:43 +0100
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>, axboe@kernel.dk
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A32330F0-ADD6-43F8-B0EE-89A0D0568867@linaro.org>
-References: <20191101131110.18356-1-dmonakhov@gmail.com>
-To:     Dmitry Monakhov <dmonakhov@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.8)
+        Fri, 15 Nov 2019 01:48:06 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Ti7ujx6_1573800472;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0Ti7ujx6_1573800472)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 15 Nov 2019 14:48:00 +0800
+From:   Shile Zhang <shile.zhang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org,
+        Shile Zhang <shile.zhang@linux.alibaba.com>
+Subject: [RFC PATCH v3 0/7] Speed booting by sorting ORC unwind tables at build time
+Date:   Fri, 15 Nov 2019 14:47:43 +0800
+Message-Id: <20191115064750.47888-1-shile.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.0.rc2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+I refactored the sortextable code and add ORC unwind tables sort
+support, for kernel boot speedup by sorting kernel tables at build time
+as much as possible.
 
-> Il giorno 1 nov 2019, alle ore 14:11, Dmitry Monakhov =
-<dmonakhov@gmail.com> ha scritto:
->=20
-> In most cases blk_tracing is not active, but  bfq_log_bfqq macro
-> generate pid_str unconditionally, which result in significant =
-overhead.
->=20
-> ## Test
-> modprobe null_blk
-> echo bfq > /sys/block/nullb0/queue/scheduler
-> fio --name=3Dt --ioengine=3Dlibaio --direct=3D1 --filename=3D/dev/nullb0=
- \
->   --runtime=3D30 --time_based=3D1 --rw=3Dwrite --iodepth=3D128 --bs=3D4k=
+Followed Peter's suggestion, I put ORC tables sort into a separated
+thread makes these tables sort concurrently. That helps to avoid
+kernel's link time as possible.
 
->=20
-> # Results
-> |        | baseline | w/ patch | gain |
-> | iops   | 113.19K  | 126.42K  | +11% |
->=20
+What I did:
+[1-4]	: refacorting code sortextable.{ch}, for more readable and
+	  extendable, prepare for further rework;
+[5]	: rename the sortextable to sorttable, and related Kconfig, for
+	  commonly extend.
+[6-7]	: Add ORC unwind tables sorting, and remove the runtime sort.
 
-Thank you very much for this simple yet effective improvement.
+Further works:
+Put more kernel tables be sorted at build time:
+- __jump_table:
+  I found jump table sort in jump_label_init() does not cost more boot
+  time, seems not more benefit to sort it at build time. Maybe can
+  consider it in future for more boot-time sensitive case.
+- .static_call_sites:
+  This tables not merged yet, needs to check the runtime sort cost in
+  future.
+  https://lore.kernel.org/lkml/20191007081716.07616230.8@infradead.org/
 
-Acked-by: Paolo Valente <paolo.valente@linaro.org>
+Thanks!
 
-> Signed-off-by: Dmitry Monakhov <dmonakhov@gmail.com>
-> ---
-> block/bfq-iosched.h | 4 ++++
-> 1 file changed, 4 insertions(+)
->=20
-> diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-> index 5d1a519..b320fe9 100644
-> --- a/block/bfq-iosched.h
-> +++ b/block/bfq-iosched.h
-> @@ -1062,6 +1062,8 @@ struct bfq_group *bfqq_group(struct bfq_queue =
-*bfqq);
->=20
-> #define bfq_log_bfqq(bfqd, bfqq, fmt, args...)	do {			=
-\
-> 	char pid_str[MAX_PID_STR_LENGTH];	\
-> +	if (likely(!blk_trace_note_message_enabled((bfqd)->queue)))	=
-\
-> +		break;							=
-\
-> 	bfq_pid_to_str((bfqq)->pid, pid_str, MAX_PID_STR_LENGTH);	=
-\
-> 	blk_add_cgroup_trace_msg((bfqd)->queue,				=
-\
-> 			bfqg_to_blkg(bfqq_group(bfqq))->blkcg,		=
-\
-> @@ -1078,6 +1080,8 @@ struct bfq_group *bfqq_group(struct bfq_queue =
-*bfqq);
->=20
-> #define bfq_log_bfqq(bfqd, bfqq, fmt, args...) do {	\
-> 	char pid_str[MAX_PID_STR_LENGTH];	\
-> +	if (likely(!blk_trace_note_message_enabled((bfqd)->queue)))	=
-\
-> +		break;							=
-\
-> 	bfq_pid_to_str((bfqq)->pid, pid_str, MAX_PID_STR_LENGTH);	=
-\
-> 	blk_add_trace_msg((bfqd)->queue, "bfq%s%c " fmt, pid_str,	=
-\
-> 			bfq_bfqq_sync((bfqq)) ? 'S' : 'A',		=
-\
-> --=20
-> 2.7.4
->=20
+Changes from RFC v3:
+- Discard new added sortorctable tool and related Kconfig changes.
+- Refactored sortextable, makes it more readable and extendable.
+- Rename 'sortextable' to 'sorttable', for more kernel tables extend.
+- Add ORC unwind tables sort into sorttable.
+- Remove the runtime ORC tables sort.
+
+Changes from RFC v2:
+- Removed new added Kconfig and runtime sort code, advised by Josh Poimboeuf.
+- Some minor refactoring.
+https://www.lkml.org/lkml/2019/11/8/56
+
+v1:
+- Added a new sortorctable tool to sort ORC unwind tables at build time,
+  same as sortextable.
+- Add a new Kconfigure to control if ORC unwind tables sort at build
+  time.
+https://www.lkml.org/lkml/2019/11/7/611
+
+Shile Zhang (7):
+  scripts/sortextable: Rewrite error/success handling
+  scripts/sortextable: kernel coding style formating
+  scripts/sortextable: Remove dead code
+  scripts/sortextable: refactor do_func() function
+  scripts/sorttable: rename sortextable to sorttable
+  scripts/sorttable: Add ORC unwind tables sort concurrently
+  x86/unwind/orc: remove run-time ORC unwind tables sort
+
+ arch/arc/Kconfig                       |   2 +-
+ arch/arm/Kconfig                       |   2 +-
+ arch/arm64/Kconfig                     |   2 +-
+ arch/microblaze/Kconfig                |   2 +-
+ arch/mips/Kconfig                      |   2 +-
+ arch/parisc/Kconfig                    |   2 +-
+ arch/parisc/kernel/vmlinux.lds.S       |   2 +-
+ arch/powerpc/Kconfig                   |   2 +-
+ arch/s390/Kconfig                      |   2 +-
+ arch/x86/Kconfig                       |   2 +-
+ arch/x86/kernel/unwind_orc.c           |   8 +-
+ arch/xtensa/Kconfig                    |   2 +-
+ init/Kconfig                           |   2 +-
+ scripts/.gitignore                     |   2 +-
+ scripts/Makefile                       |   9 +-
+ scripts/link-vmlinux.sh                |  10 +-
+ scripts/sortextable.h                  | 209 -------------
+ scripts/{sortextable.c => sorttable.c} | 299 ++++++++----------
+ scripts/sorttable.h                    | 412 +++++++++++++++++++++++++
+ 19 files changed, 578 insertions(+), 395 deletions(-)
+ delete mode 100644 scripts/sortextable.h
+ rename scripts/{sortextable.c => sorttable.c} (67%)
+ create mode 100644 scripts/sorttable.h
+
+-- 
+2.24.0.rc2
 
