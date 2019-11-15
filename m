@@ -2,67 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3373FD82E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:56:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56084FD81E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfKOI44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 03:56:56 -0500
-Received: from mail.monom.org ([188.138.9.77]:49562 "EHLO mail.monom.org"
+        id S1727064AbfKOIti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 03:49:38 -0500
+Received: from mga11.intel.com ([192.55.52.93]:59180 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfKOI4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 03:56:55 -0500
-X-Greylist: delayed 499 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Nov 2019 03:56:55 EST
-Received: from mail.monom.org (localhost [127.0.0.1])
-        by filter.mynetwork.local (Postfix) with ESMTP id D37BC50064D;
-        Fri, 15 Nov 2019 09:48:34 +0100 (CET)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.monom.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        MISSING_MID autolearn=no autolearn_force=no version=3.4.2
-Received: from localhost (b9168fab.cgn.dg-w.de [185.22.143.171])
-        by mail.monom.org (Postfix) with ESMTPSA id 535655004AF;
-        Fri, 15 Nov 2019 09:48:34 +0100 (CET)
-Date:   Fri, 15 Nov 2019 09:48:33 +0100
-From:   Daniel Wagner <wagi@monom.org>
-Subject: [ANNOUNCE] 4.4.201-rt189
-Data:   Fri, 15 Nov 2019 08:39:05 -0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Julia Cartwright <julia@ni.com>, Pavel Machek <pavel@denx.de>
-Message-Id: <20191115084834.D37BC50064D@mail.monom.org>
+        id S1726365AbfKOItf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 03:49:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 00:49:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,307,1569308400"; 
+   d="scan'208";a="208370306"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 15 Nov 2019 00:49:32 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id B4E0B12A; Fri, 15 Nov 2019 10:49:31 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/2] mfd: syscon: Re-use resource_size() to count max_register
+Date:   Fri, 15 Nov 2019 10:49:30 +0200
+Message-Id: <20191115084931.77161-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+Instead of open coded variant use resource_size() and replace
+weird '- 3' to more understandable '- 4'.
 
-I'm pleased to announce the 4.4.201-rt189 stable release.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mfd/syscon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This release is just an update to the new stable 4.4.201 version and
-no RT specific changes have been made. -rt188 points to the tiny merge
-conflict in a Makefile, just in case you are wondering.
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index e22197c832e8..13626bb2d432 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -245,7 +245,7 @@ static int syscon_probe(struct platform_device *pdev)
+ 	if (!base)
+ 		return -ENOMEM;
+ 
+-	syscon_config.max_register = res->end - res->start - 3;
++	syscon_config.max_register = resource_size(res) - 4;
+ 	if (pdata)
+ 		syscon_config.name = pdata->label;
+ 	syscon->regmap = devm_regmap_init_mmio(dev, base, &syscon_config);
+-- 
+2.24.0
 
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v4.4-rt
-  Head SHA1: fd812331da09b85713fdb0f3ce44640180dfad97
-
-Or to build 4.4.201-rt189 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.201.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patch-4.4.201-rt189.patch.xz
-
-Enjoy!
-   Daniel
