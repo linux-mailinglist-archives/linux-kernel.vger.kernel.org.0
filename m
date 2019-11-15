@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E07FD602
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D99D3FD619
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:22:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfKOGVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:21:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50346 "EHLO mail.kernel.org"
+        id S1727719AbfKOGW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:22:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727314AbfKOGVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:21:31 -0500
+        id S1727677AbfKOGWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 01:22:21 -0500
 Received: from localhost (unknown [104.132.150.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E1522073A;
-        Fri, 15 Nov 2019 06:21:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 702952053B;
+        Fri, 15 Nov 2019 06:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573798890;
-        bh=C7dR1W8QurBtd1kqmPyg6aORotiBHvWUlW5+2Pa41rw=;
+        s=default; t=1573798940;
+        bh=9V/Jv9iwum/k13rXvp2YhjrwQhGErFX5C09t020cIFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YyHg3PaZKj17CYf1lIuYiKEGO/chpyUQrDn5eoDcSYK4EhnZ7RI4UoIE/x71WaALH
-         2socNSfLSeTuxtV/pHc3acGK1dqjF+aVjomc64kWel3ISQrWnHKDYMOzZ9tQ1u8Jwl
-         +2ONfXXSwQVbqF7YjHAirllgaqoH7WWx2tJ3Anr0=
+        b=b65ZE/AHW72VH5981itB4SIQc+9SuAiRjYrtC8lLxmtRMwSRG2YTDqGweru2OjZuy
+         qp2ciJHGUuadTHeciw28Xfkyri0zVpbjA3p+jPeKDZ8MHXzBvVxByrxMQVj+l+U08A
+         r4xQsNbau0OtHNvudy9Gtwe1cKu0ew4FlkzwU2dQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 19/20] x86/speculation/taa: Fix printing of TAA_MSG_SMT on IBRS_ALL CPUs
-Date:   Fri, 15 Nov 2019 14:20:48 +0800
-Message-Id: <20191115062015.634529499@linuxfoundation.org>
+Subject: [PATCH 4.9 20/31] KVM: x86: make FNAME(fetch) and __direct_map more similar
+Date:   Fri, 15 Nov 2019 14:20:49 +0800
+Message-Id: <20191115062017.765973205@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191115062006.854443935@linuxfoundation.org>
-References: <20191115062006.854443935@linuxfoundation.org>
+In-Reply-To: <20191115062009.813108457@linuxfoundation.org>
+References: <20191115062009.813108457@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +43,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 012206a822a8b6ac09125bfaa210a95b9eb8f1c1 upstream.
+commit 3fcf2d1bdeb6a513523cb2c77012a6b047aa859c upstream.
 
-For new IBRS_ALL CPUs, the Enhanced IBRS check at the beginning of
-cpu_bugs_smt_update() causes the function to return early, unintentionally
-skipping the MDS and TAA logic.
+These two functions are basically doing the same thing through
+kvm_mmu_get_page, link_shadow_page and mmu_set_spte; yet, for historical
+reasons, their code looks very different.  This patch tries to take the
+best of each and make them very similar, so that it is easy to understand
+changes that apply to both of them.
 
-This is not a problem for MDS, because there appears to be no overlap
-between IBRS_ALL and MDS-affected CPUs.  So the MDS mitigation would be
-disabled and nothing would need to be done in this function anyway.
-
-But for TAA, the TAA_MSG_SMT string will never get printed on Cascade
-Lake and newer.
-
-The check is superfluous anyway: when 'spectre_v2_enabled' is
-SPECTRE_V2_IBRS_ENHANCED, 'spectre_v2_user' is always
-SPECTRE_V2_USER_NONE, and so the 'spectre_v2_user' switch statement
-handles it appropriately by doing nothing.  So just remove the check.
-
-Fixes: 1b42f017415b ("x86/speculation/taa: Add mitigation for TSX Async Abort")
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[bwh: Backported to 4.9: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/kvm/mmu.c         |   53 +++++++++++++++++++++------------------------
+ arch/x86/kvm/paging_tmpl.h |   30 +++++++++++--------------
+ 2 files changed, 39 insertions(+), 44 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -853,10 +853,6 @@ static void update_mds_branch_idle(void)
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -2757,40 +2757,39 @@ static void direct_pte_prefetch(struct k
+ 	__direct_pte_prefetch(vcpu, sp, sptep);
+ }
  
- void arch_smt_update(void)
+-static int __direct_map(struct kvm_vcpu *vcpu, int write, int map_writable,
+-			int level, gfn_t gfn, kvm_pfn_t pfn, bool prefault)
++static int __direct_map(struct kvm_vcpu *vcpu, gpa_t gpa, int write,
++			int map_writable, int level, kvm_pfn_t pfn,
++			bool prefault)
  {
--	/* Enhanced IBRS implies STIBP. No update required. */
--	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
--		return;
--
- 	mutex_lock(&spec_ctrl_mutex);
+-	struct kvm_shadow_walk_iterator iterator;
++	struct kvm_shadow_walk_iterator it;
+ 	struct kvm_mmu_page *sp;
+-	int emulate = 0;
+-	gfn_t pseudo_gfn;
++	int ret;
++	gfn_t gfn = gpa >> PAGE_SHIFT;
++	gfn_t base_gfn = gfn;
  
- 	switch (spectre_v2_user) {
+ 	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
+-		return 0;
++		return RET_PF_RETRY;
+ 
+-	for_each_shadow_entry(vcpu, (u64)gfn << PAGE_SHIFT, iterator) {
+-		if (iterator.level == level) {
+-			emulate = mmu_set_spte(vcpu, iterator.sptep, ACC_ALL,
+-					       write, level, gfn, pfn, prefault,
+-					       map_writable);
+-			direct_pte_prefetch(vcpu, iterator.sptep);
+-			++vcpu->stat.pf_fixed;
++	for_each_shadow_entry(vcpu, gpa, it) {
++		base_gfn = gfn & ~(KVM_PAGES_PER_HPAGE(it.level) - 1);
++		if (it.level == level)
+ 			break;
+-		}
+ 
+-		drop_large_spte(vcpu, iterator.sptep);
+-		if (!is_shadow_present_pte(*iterator.sptep)) {
+-			u64 base_addr = iterator.addr;
+-
+-			base_addr &= PT64_LVL_ADDR_MASK(iterator.level);
+-			pseudo_gfn = base_addr >> PAGE_SHIFT;
+-			sp = kvm_mmu_get_page(vcpu, pseudo_gfn, iterator.addr,
+-					      iterator.level - 1, 1, ACC_ALL);
++		drop_large_spte(vcpu, it.sptep);
++		if (!is_shadow_present_pte(*it.sptep)) {
++			sp = kvm_mmu_get_page(vcpu, base_gfn, it.addr,
++					      it.level - 1, true, ACC_ALL);
+ 
+-			link_shadow_page(vcpu, iterator.sptep, sp);
++			link_shadow_page(vcpu, it.sptep, sp);
+ 		}
+ 	}
+-	return emulate;
++
++	ret = mmu_set_spte(vcpu, it.sptep, ACC_ALL,
++			   write, level, base_gfn, pfn, prefault,
++			   map_writable);
++	direct_pte_prefetch(vcpu, it.sptep);
++	++vcpu->stat.pf_fixed;
++	return ret;
+ }
+ 
+ static void kvm_send_hwpoison_signal(unsigned long address, struct task_struct *tsk)
+@@ -3062,8 +3061,7 @@ static int nonpaging_map(struct kvm_vcpu
+ 	make_mmu_pages_available(vcpu);
+ 	if (likely(!force_pt_level))
+ 		transparent_hugepage_adjust(vcpu, &gfn, &pfn, &level);
+-	r = __direct_map(vcpu, write, map_writable, level, gfn, pfn, prefault);
+-
++	r = __direct_map(vcpu, v, write, map_writable, level, pfn, prefault);
+ out_unlock:
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
+ 	kvm_release_pfn_clean(pfn);
+@@ -3598,8 +3596,7 @@ static int tdp_page_fault(struct kvm_vcp
+ 	make_mmu_pages_available(vcpu);
+ 	if (likely(!force_pt_level))
+ 		transparent_hugepage_adjust(vcpu, &gfn, &pfn, &level);
+-	r = __direct_map(vcpu, write, map_writable, level, gfn, pfn, prefault);
+-
++	r = __direct_map(vcpu, gpa, write, map_writable, level, pfn, prefault);
+ out_unlock:
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
+ 	kvm_release_pfn_clean(pfn);
+--- a/arch/x86/kvm/paging_tmpl.h
++++ b/arch/x86/kvm/paging_tmpl.h
+@@ -579,6 +579,7 @@ static int FNAME(fetch)(struct kvm_vcpu
+ 	struct kvm_shadow_walk_iterator it;
+ 	unsigned direct_access, access = gw->pt_access;
+ 	int top_level, ret;
++	gfn_t base_gfn;
+ 
+ 	direct_access = gw->pte_access;
+ 
+@@ -623,31 +624,29 @@ static int FNAME(fetch)(struct kvm_vcpu
+ 			link_shadow_page(vcpu, it.sptep, sp);
+ 	}
+ 
+-	for (;
+-	     shadow_walk_okay(&it) && it.level > hlevel;
+-	     shadow_walk_next(&it)) {
+-		gfn_t direct_gfn;
++	base_gfn = gw->gfn;
+ 
++	for (; shadow_walk_okay(&it); shadow_walk_next(&it)) {
+ 		clear_sp_write_flooding_count(it.sptep);
++		base_gfn = gw->gfn & ~(KVM_PAGES_PER_HPAGE(it.level) - 1);
++		if (it.level == hlevel)
++			break;
++
+ 		validate_direct_spte(vcpu, it.sptep, direct_access);
+ 
+ 		drop_large_spte(vcpu, it.sptep);
+ 
+-		if (is_shadow_present_pte(*it.sptep))
+-			continue;
+-
+-		direct_gfn = gw->gfn & ~(KVM_PAGES_PER_HPAGE(it.level) - 1);
+-
+-		sp = kvm_mmu_get_page(vcpu, direct_gfn, addr, it.level-1,
+-				      true, direct_access);
+-		link_shadow_page(vcpu, it.sptep, sp);
++		if (!is_shadow_present_pte(*it.sptep)) {
++			sp = kvm_mmu_get_page(vcpu, base_gfn, addr,
++					      it.level - 1, true, direct_access);
++			link_shadow_page(vcpu, it.sptep, sp);
++		}
+ 	}
+ 
+-	clear_sp_write_flooding_count(it.sptep);
+ 	ret = mmu_set_spte(vcpu, it.sptep, gw->pte_access, write_fault,
+-			   it.level, gw->gfn, pfn, prefault, map_writable);
++			   it.level, base_gfn, pfn, prefault, map_writable);
+ 	FNAME(pte_prefetch)(vcpu, gw, it.sptep);
+-
++	++vcpu->stat.pf_fixed;
+ 	return ret;
+ 
+ out_gpte_changed:
+@@ -810,7 +809,6 @@ static int FNAME(page_fault)(struct kvm_
+ 		transparent_hugepage_adjust(vcpu, &walker.gfn, &pfn, &level);
+ 	r = FNAME(fetch)(vcpu, addr, &walker, write_fault,
+ 			 level, pfn, map_writable, prefault);
+-	++vcpu->stat.pf_fixed;
+ 	kvm_mmu_audit(vcpu, AUDIT_POST_PAGE_FAULT);
+ 
+ out_unlock:
 
 
