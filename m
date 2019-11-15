@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62AE7FD603
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:21:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7013DFD657
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfKOGVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:21:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50422 "EHLO mail.kernel.org"
+        id S1727812AbfKOGYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:24:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbfKOGVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:21:33 -0500
+        id S1727192AbfKOGVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 01:21:37 -0500
 Received: from localhost (unknown [104.132.150.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5155B20732;
-        Fri, 15 Nov 2019 06:21:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B52A420815;
+        Fri, 15 Nov 2019 06:21:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573798892;
-        bh=R/yEUO+q2waTOvNlrvQlDw37xD7IuqRvVUN46oEIu2w=;
+        s=default; t=1573798897;
+        bh=CkL0tDFA+Apaq1emDTVz2gK/dfHItz5GIQYcLZnx45g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I9dfC5DJ7MwRQDZZBbroOJqEqXenEYzbeD0N+e/lufCrrrkAGLkSNo2d9zhXfAvX/
-         Nbd96WLa8+kpxhUQIJzvNBKg3HTX49+zDPrQu3+rBZjOMiga9cHG+bsANLI++IiiGY
-         +y3P2CUyhLYTY4zK/kj8d+Tt87+wUJWuysCmoFtU=
+        b=clQw6Ick6MsAp4t8G62IZcobDuqogIuSqfYwh1Ttt2nDzFt8kydGMKWX4vlhS+abL
+         Eh3Pf23z9kYSKGmxijq1pIA7F/eLmAWsx/fSm3yEr73e52YKc6sKaDC6mYT5fBHlAv
+         hjTo2RnIKsiDX8MsK8ggKshW3j37vaLLBBQTpcnY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 02/20] MIPS: BCM63XX: fix switch core reset on BCM6368
-Date:   Fri, 15 Nov 2019 14:20:31 +0800
-Message-Id: <20191115062008.088360533@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>
+Subject: [PATCH 4.4 03/20] powerpc/Makefile: Use cflags-y/aflags-y for setting endian options
+Date:   Fri, 15 Nov 2019 14:20:32 +0800
+Message-Id: <20191115062008.666712711@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191115062006.854443935@linuxfoundation.org>
 References: <20191115062006.854443935@linuxfoundation.org>
@@ -47,38 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 8a38dacf87180738d42b058334c951eba15d2d47 upstream.
+commit 164af597ce945751e2dcd53d0a86e84203a6d117 upstream.
 
-The Ethernet Switch core mask was set to 0, causing the switch core to
-be not reset on BCM6368 on boot. Provide the proper mask so the switch
-core gets reset to a known good state.
+When we introduced the little endian support, we added the endian flags
+to CC directly using override. I don't know the history of why we did
+that, I suspect no one does.
 
-Fixes: 799faa626c71 ("MIPS: BCM63XX: add core reset helper")
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Although this mostly works, it has one bug, which is that CROSS32CC
+doesn't get -mbig-endian. That means when the compiler is little endian
+by default and the user is building big endian, vdso32 is incorrectly
+compiled as little endian and the kernel fails to build.
+
+Instead we can add the endian flags to cflags-y/aflags-y, and then
+append those to KBUILD_CFLAGS/KBUILD_AFLAGS.
+
+This has the advantage of being 1) less ugly, 2) the documented way of
+adding flags in the arch Makefile and 3) it fixes building vdso32 with a
+LE toolchain.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andrew Donnellan <ajd@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/bcm63xx/reset.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/Makefile |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/arch/mips/bcm63xx/reset.c
-+++ b/arch/mips/bcm63xx/reset.c
-@@ -119,7 +119,7 @@
- #define BCM6368_RESET_DSL	0
- #define BCM6368_RESET_SAR	SOFTRESET_6368_SAR_MASK
- #define BCM6368_RESET_EPHY	SOFTRESET_6368_EPHY_MASK
--#define BCM6368_RESET_ENETSW	0
-+#define BCM6368_RESET_ENETSW	SOFTRESET_6368_ENETSW_MASK
- #define BCM6368_RESET_PCM	SOFTRESET_6368_PCM_MASK
- #define BCM6368_RESET_MPI	SOFTRESET_6368_MPI_MASK
- #define BCM6368_RESET_PCIE	0
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -66,29 +66,28 @@ endif
+ UTS_MACHINE := $(OLDARCH)
+ 
+ ifeq ($(CONFIG_CPU_LITTLE_ENDIAN),y)
+-override CC	+= -mlittle-endian
+-ifneq ($(cc-name),clang)
+-override CC	+= -mno-strict-align
+-endif
+-override AS	+= -mlittle-endian
+ override LD	+= -EL
+-override CROSS32CC += -mlittle-endian
+ override CROSS32AS += -mlittle-endian
+ LDEMULATION	:= lppc
+ GNUTARGET	:= powerpcle
+ MULTIPLEWORD	:= -mno-multiple
+ KBUILD_CFLAGS_MODULE += $(call cc-option,-mno-save-toc-indirect)
+ else
+-ifeq ($(call cc-option-yn,-mbig-endian),y)
+-override CC	+= -mbig-endian
+-override AS	+= -mbig-endian
+-endif
+ override LD	+= -EB
+ LDEMULATION	:= ppc
+ GNUTARGET	:= powerpc
+ MULTIPLEWORD	:= -mmultiple
+ endif
+ 
++cflags-$(CONFIG_CPU_BIG_ENDIAN)		+= $(call cc-option,-mbig-endian)
++cflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mlittle-endian
++ifneq ($(cc-name),clang)
++  cflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mno-strict-align
++endif
++
++aflags-$(CONFIG_CPU_BIG_ENDIAN)		+= $(call cc-option,-mbig-endian)
++aflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mlittle-endian
++
+ ifeq ($(HAS_BIARCH),y)
+ override AS	+= -a$(CONFIG_WORD_SIZE)
+ override LD	+= -m elf$(CONFIG_WORD_SIZE)$(LDEMULATION)
+@@ -212,6 +211,9 @@ cpu-as-$(CONFIG_E200)		+= -Wa,-me200
+ KBUILD_AFLAGS += $(cpu-as-y)
+ KBUILD_CFLAGS += $(cpu-as-y)
+ 
++KBUILD_AFLAGS += $(aflags-y)
++KBUILD_CFLAGS += $(cflags-y)
++
+ head-y				:= arch/powerpc/kernel/head_$(CONFIG_WORD_SIZE).o
+ head-$(CONFIG_8xx)		:= arch/powerpc/kernel/head_8xx.o
+ head-$(CONFIG_40x)		:= arch/powerpc/kernel/head_40x.o
 
 
