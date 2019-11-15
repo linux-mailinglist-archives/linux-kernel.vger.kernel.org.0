@@ -2,72 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E90FE050
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BB6FE055
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfKOOnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 09:43:35 -0500
-Received: from sonic313-56.consmr.mail.ne1.yahoo.com ([66.163.185.31]:43884
-        "EHLO sonic313-56.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727496AbfKOOne (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 09:43:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1573829012; bh=E+ks7AydzaUb4ISZTuxin7s0E6gVmk5020fTLYVYB5E=; h=Date:From:Reply-To:Subject:From:Subject; b=dOi5MedBpN+QnK5dLEKsKBoT3yQUBy5HL0Ae+c/6jSk1dnnaUm8QLn9PD1kirch6t6x1lsVijRKXzVmbCsyFM1QgRxKlmBvEZhvn7Isd6vJXJXuyWQlzFAB2+dy2nk7PrsJ9SqpLShsHugLc+2Lb/ext/lZhNOokPjBeHrs60+bfQjOe/MwsDYmtO/vqbm3sEQIkqkZFr1+m48nVxWQj0HFbO1qCtSddStJm6HyNnUKRFVWn+ODRiNGxtV1P3m5y3tCXd5RBQp991w0xNliwCbenfG7s/TwduqRaq5T6BX7zWOl9fPqoCavRw7bZq0LtYpCX/jss58KSr4YrFBr+iA==
-X-YMail-OSG: WYokenIVM1nalX_m_2zrA0iqU05cNMxEPfhmflRS6R7Uf8vobyZ61mJECuONddJ
- eH6LfmVEFNn1ytDFV3_HtQUu2w3FvmDwBXBi3rwBtKpzrfOX27zhVpQVwPc4MIgvJroV6N9kMm3r
- nOFK4Pk5buOx6sGkKP4q9sd7MO4M4wWfHp9lusa3ApPsNgfv0sN0Jh.Zjhn7XhmtqFPD28r9x5zo
- cKjoHgsdBy5ftqeh87aGtkh4bI3pAzWHw6f7neFwuks7GU8aeyj.JxFs7mRG13cdi2bW04.ycde2
- 2_VJ85qvBWf67.nrrVbtmaTWKedOgtTjlp2ERuYG47YVx4gnAhdN78iBBfJy_fjf8.9QtwaH2O63
- IfbhmPPAuxibVtLR7j9a3nJcpLtFw8dA6jyQaWVdu2mOqM74yI4e6BqoxFLPluuiWnZy98tmaNAc
- _wUmhD87Wh22Wwik6VbU79x1PuE.gmSMScNFu8l.tLZ2t5plFP_X0_1V1uWWq4.FvFIliGvyV9Zh
- bMqcaCM9IP1IX827x3QU90bEYfjIq5sGFOZq5TzbRk9m6wsBqcRBn6Oh2q_wWEHT4TZWhLxV85Jb
- NumqKHKpAZsoJ3PvjG3bjh82pIqnxZzhggfgY8c5yCA6oeIhufdMnELoprqzibpATkDSV.zjcnZg
- ba2f7M9ly_JaQhAx2Wuq8wDvAEe9BgeUL.BDD5M3haDIz4DQujnhusbQIJgalnIE8Ml53cGKzkLp
- Ki3yxLc9HvoPwlsr93WSfdKxGY.cU4_zrqYUjN4nl6MSp5u86iScc1qyAL496lSxk2V6D0tEFedf
- 9DEKoXj16zhgOXzZmVLk1dELkNmq1aUb5iPWhhfeb0hqsCti5Cg.gFPcj621KUtDERLkZoyEEgVc
- gyYK.wdFtRHNYSjxqkdDlYm0jV.kwwbGG2g_d8Juc.Kynw7.oIjXPbMuEKIfiIHBwfX7sAKAqD0x
- RYg4bEre7WAyfUjVfgUYzA2EVbh3uLztvgkECEc_8JGNyGWUcn4IdK_hRYzCSswL3xqRKpxSOKWN
- INthv.XLvpM6RQdzuqyb7mxdG3MOMNKQTzKD1z1tAb6Z53G2lwyDhHhClx0.Qx0_OWUcE06FFeXC
- M88uqsZ6Z._VJo9.azAvdRCuX4DNMjZB3w0ezjtt04SZq3yi4qUAD8D5SCKM2qLg4ioPVtA_4bNW
- H9UTN6kY45N4U7u66UizqOdJS1_TkMEkhVN63pBQit3hCY5QX4uWTQCNtzDnjZkbCprw4G08MYoF
- ykoFMgQy5Jkj7x.jJufuSIYGxPGgAaA2JwdrBGqQG4wDrlW88DLwarKgrX0_W3i_TZzhliUe.A0b
- .vF8hrPyNSPm3sm103xw22cDqf0rhTOEpGBvO
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Nov 2019 14:43:32 +0000
-Date:   Fri, 15 Nov 2019 14:43:26 +0000 (UTC)
-From:   Aisha Gaddafi <agaddafibb@gmail.com>
-Reply-To: gaddafia504@gmail.com
-Message-ID: <1935439309.714771.1573829006936@mail.yahoo.com>
-Subject: Dear Friend,
+        id S1727728AbfKOOoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 09:44:04 -0500
+Received: from foss.arm.com ([217.140.110.172]:60396 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727496AbfKOOoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 09:44:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C4DF31B;
+        Fri, 15 Nov 2019 06:44:03 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4FC513F534;
+        Fri, 15 Nov 2019 06:44:01 -0800 (PST)
+Date:   Fri, 15 Nov 2019 14:43:59 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 12/14] arm64: vdso: disable Shadow Call Stack
+Message-ID: <20191115144358.GG41572@lakrids.cambridge.arm.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191105235608.107702-1-samitolvanen@google.com>
+ <20191105235608.107702-13-samitolvanen@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105235608.107702-13-samitolvanen@google.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Tue, Nov 05, 2019 at 03:56:06PM -0800, Sami Tolvanen wrote:
+> Shadow stacks are only available in the kernel, so disable SCS
+> instrumentation for the vDSO.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+I gave this a spin, looked at objdump, and found everything in the vDSO
+was a leaf function. I hacked the code around a bit to force a function
+call, and I see that just uses x29 and x30 as expected, with nothing
+touching x18.
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
+Mark.
 
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated.
-
-Best Regards
-Mrs Aisha Gaddafi
-(gaddafia504@gmail.com)
+> ---
+>  arch/arm64/kernel/vdso/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
+> index dd2514bb1511..a87a4f11724e 100644
+> --- a/arch/arm64/kernel/vdso/Makefile
+> +++ b/arch/arm64/kernel/vdso/Makefile
+> @@ -25,7 +25,7 @@ ccflags-y += -DDISABLE_BRANCH_PROFILING
+>  
+>  VDSO_LDFLAGS := -Bsymbolic
+>  
+> -CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os
+> +CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS)
+>  KBUILD_CFLAGS			+= $(DISABLE_LTO)
+>  KASAN_SANITIZE			:= n
+>  UBSAN_SANITIZE			:= n
+> -- 
+> 2.24.0.rc1.363.gb1bccd3e3d-goog
+> 
