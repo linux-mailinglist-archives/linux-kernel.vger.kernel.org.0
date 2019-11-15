@@ -2,63 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D69FDF10
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:38:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22F87FDF18
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:40:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfKONiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:38:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32864 "EHLO mail.kernel.org"
+        id S1727642AbfKONj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:39:56 -0500
+Received: from mga17.intel.com ([192.55.52.151]:22156 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727249AbfKONiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:38:16 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED34820732;
-        Fri, 15 Nov 2019 13:38:14 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 08:38:13 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, yu kuai <yukuai3@huawei.com>,
-        rafael@kernel.org, oleg@redhat.com, mchehab+samsung@kernel.org,
-        corbet@lwn.net, tytso@mit.edu, jmorris@namei.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        zhengbin13@huawei.com, yi.zhang@huawei.com,
-        chenxiang66@hisilicon.com, xiexiuqi@huawei.com
-Subject: Re: [PATCH 1/3] dcache: add a new enum type for
- 'dentry_d_lock_class'
-Message-ID: <20191115083813.65f5523c@gandalf.local.home>
-In-Reply-To: <20191115131625.GO26530@ZenIV.linux.org.uk>
-References: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
-        <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
-        <20191115032759.GA795729@kroah.com>
-        <20191115041243.GN26530@ZenIV.linux.org.uk>
-        <20191115072011.GA1203354@kroah.com>
-        <20191115131625.GO26530@ZenIV.linux.org.uk>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727401AbfKONjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 08:39:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 05:39:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,308,1569308400"; 
+   d="scan'208";a="217099332"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.25])
+  by orsmga002.jf.intel.com with ESMTP; 15 Nov 2019 05:39:55 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@redhat.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, eranian@google.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Avoid PEBS_ENABLE MSR access in PMI
+Date:   Fri, 15 Nov 2019 05:39:17 -0800
+Message-Id: <20191115133917.24424-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 13:16:25 +0000
-Al Viro <viro@zeniv.linux.org.uk> wrote:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> I want to understand the overall situation.  No argument, list_empty()
-> in there is BS, for many reasons.  But I wonder if trying to keep the
-> current structure of the iterator _and_ the use of simple_rmdir()/simple_unlink()
-> is the right approach.
+The perf PMI handler, intel_pmu_handle_irq(), currently does
+unnecessary MSR accesses when PEBS is enabled.
 
-My guess is that debugfs was written to be as simple as possible.
-Nothing too complex. And in doing so, may have issues as you are
-pointing out. Just a way to allow communications between user space and
-kernel space (as tracefs started out).
+When entering the handler, global ctrl is explicitly disabled. All
+counters do not count anymore. It doesn't matter if the PEBS is
+enabled or disabled. Furthermore, cpuc->pebs_enabled is not changed
+in PMI. The PEBS status doesn't change. The PEBS_ENABLE MSR doesn't need
+to be changed either.
 
-BTW, what do you mean by "can debugfs_remove_recursive() rely upon the
-lack of attempts to create new entries inside the subtree it's trying
-to kill?"
+When exiting the handler, only the active PMU will be restore.
+For active PMU, PEBS status is unchanged during the PMI handler.
+Avoiding PEBS MSR access is harmless.
+For inactive PMU, disable_all() will be called right after PMI handler,
+which will eventually disable PEBS. During the period between PMI
+handler exit and PEBS finally disabled, the global ctrl is always
+disabled since we don't restore PMU state for inactive PMU. This
+case is also harmless.
 
--- Steve
+Use ftrace to measure the duration of intel_pmu_handle_irq() on BDX.
+   #perf record -e cycles:P -- ./tchain_edit
+
+The average duration of intel_pmu_handle_irq()
+Without the patch	1.144 us
+With the patch		1.025 us
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index dc64b16e6b71..d715eb966334 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -1945,6 +1945,11 @@ static __initconst const u64 knl_hw_cache_extra_regs
+  * intel_bts events don't coexist with intel PMU's BTS events because of
+  * x86_add_exclusive(x86_lbr_exclusive_lbr); there's no need to keep them
+  * disabled around intel PMU's event batching etc, only inside the PMI handler.
++ *
++ * Avoid PEBS_ENABLE MSR access in PMIs
++ * The GLOBAL_CTRL has been disabled. All counters do not count anymore.
++ * It doesn't matter if the PEBS is enabled or disabled.
++ * Furthermore, PEBS status doesn't change in PMI.
+  */
+ static void __intel_pmu_disable_all(void)
+ {
+@@ -1954,13 +1959,12 @@ static void __intel_pmu_disable_all(void)
+ 
+ 	if (test_bit(INTEL_PMC_IDX_FIXED_BTS, cpuc->active_mask))
+ 		intel_pmu_disable_bts();
+-
+-	intel_pmu_pebs_disable_all();
+ }
+ 
+ static void intel_pmu_disable_all(void)
+ {
+ 	__intel_pmu_disable_all();
++	intel_pmu_pebs_disable_all();
+ 	intel_pmu_lbr_disable_all();
+ }
+ 
+@@ -1968,7 +1972,6 @@ static void __intel_pmu_enable_all(int added, bool pmi)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 
+-	intel_pmu_pebs_enable_all();
+ 	intel_pmu_lbr_enable_all(pmi);
+ 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL,
+ 			x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_guest_mask);
+@@ -1986,6 +1989,7 @@ static void __intel_pmu_enable_all(int added, bool pmi)
+ 
+ static void intel_pmu_enable_all(int added)
+ {
++	intel_pmu_pebs_enable_all();
+ 	__intel_pmu_enable_all(added, false);
+ }
+ 
+-- 
+2.17.1
+
