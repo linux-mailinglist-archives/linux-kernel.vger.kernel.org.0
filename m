@@ -2,99 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15DD7FDA04
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:55:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9A9FDA01
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfKOJzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:55:43 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58710 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOJzn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:55:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GtyCPw9XqiblXcSeWSKatoSztw4h8uQgEpbZa+XD5aU=; b=DLHHau4jKi+lKiykWEk5rBCJj
-        pAhYhQBbDOwb1w4sy/tXlvQ+Xy8HXvaSLxIWZvQy8f6vLKr5rpeBrv0fpRF6iMf4wDZ6iyvHjyMMX
-        i3Z4wXCJeRubxds/5mlieBaqon4tEkvamFVnDMpPuOu1uB7SoWtzcxYMkIeiXW/FELt8/jWeQD7NV
-        Gb4iOhUCbKRlmgVrlAGyRtkILykoYn9j0/AdsWCPTy5Ts+oXjyg9lIyAubzffFoW0CBjT6ZMbAUNa
-        ja+3zenTuQUwVxx36CadfaIk8LxtuYT1zmp0LLUzaJbI71qx/bnXEqtDN3mgp0QSQ5D0i69iv0zZe
-        NrVhB0yAQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iVYJY-0005qz-0D; Fri, 15 Nov 2019 09:54:52 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 371323006FB;
-        Fri, 15 Nov 2019 10:53:39 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2C10C29E4EBB3; Fri, 15 Nov 2019 10:54:47 +0100 (CET)
-Date:   Fri, 15 Nov 2019 10:54:47 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
+        id S1727415AbfKOJzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:55:20 -0500
+Received: from foss.arm.com ([217.140.110.172]:56030 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfKOJzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:55:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87A93328;
+        Fri, 15 Nov 2019 01:55:19 -0800 (PST)
+Received: from [10.0.2.15] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CF503F534;
+        Fri, 15 Nov 2019 01:55:18 -0800 (PST)
+Subject: Re: [PATCH] sched/uclamp: Fix overzealous type replacement
 To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, mgorman@suse.de, dsmythies@telus.net,
-        linux-pm@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, sargun@sargun.me, tj@kernel.org,
-        xiexiuqi@huawei.com, xiezhipeng1@huawei.com,
-        srinivas.pandruvada@linux.intel.com
-Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
-Message-ID: <20191115095447.GU4114@hirez.programming.kicks-ass.net>
-References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
+        Tejun Heo <tj@kernel.org>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Quentin Perret <qperret@google.com>
+References: <20191113165334.14291-1-valentin.schneider@arm.com>
+ <CAKfTPtCeGPS57wdyVjA7mnQTW4EeTrd0LX-_1f_+MWp--1FRNQ@mail.gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <b4fd586f-506f-dada-da02-bd5b918b074c@arm.com>
+Date:   Fri, 15 Nov 2019 09:55:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKfTPtCeGPS57wdyVjA7mnQTW4EeTrd0LX-_1f_+MWp--1FRNQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
-> update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
-> which might be inefficient when cpufreq driver has rate limitation.
+On 15/11/2019 08:12, Vincent Guittot wrote:
 > 
-> When a task is attached on a CPU, we have call path:
+> And static inline enum uclamp_id uclamp_none(enum uclamp_id clamp_id) ?
 > 
-> update_load_avg()
->   update_cfs_rq_load_avg()
->     cfs_rq_util_change -- > trig frequency update
->   attach_entity_load_avg()
->     cfs_rq_util_change -- > trig frequency update
+> Should it be fixed as well as it can return SCHED_CAPACITY_SCALE ?
 > 
-> The 1st frequency update will not take into account the utilization of the
-> newly attached task and the 2nd one might be discard because of rate
-> limitation of the cpufreq driver.
 
-Doesn't this just show that a dumb rate limit in the driver is broken?
-
-> update_cfs_rq_load_avg() is only called by update_blocked_averages()
-> and update_load_avg() so we can move the call to
-> cfs_rq_util_change/cpufreq_update_util() into these 2 functions. It's also
-> interesting to notice that update_load_avg() already calls directly
-> cfs_rq_util_change() for !SMP case.
-> 
-> This changes will also ensure that cpufreq_update_util() is called even
-> when there is no more CFS rq in the leaf_cfs_rq_list to update but only
-> irq, rt or dl pelt signals.
-
-I don't think it does that; that is, iirc the return value of
-___update_load_sum() is 1 every time a period lapses. So even if the avg
-is 0 and doesn't change, it'll still return 1 on every period.
-
-Which is what that dumb rate-limit thing wants of course. But I'm still
-thinking that it's stupid to do. If nothing changes, don't generate
-events.
-
-If anything, update_blocked_avgerages() should look at
-@done/others_have_blocked() to emit events for rt,dl,irq.
-
-So why are we making the scheduler code more ugly instead of fixing that
-driver?
+Right, thanks for staring at this. I'll go double check the diff and fix up
+any strays.
