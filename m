@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA6FFDD79
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:25:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F821FDD7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfKOMZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:25:15 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32832 "EHLO
+        id S1727740AbfKOMZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:25:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33046 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbfKOMZM (ORCPT
+        with ESMTP id S1727587AbfKOMZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:25:12 -0500
+        Fri, 15 Nov 2019 07:25:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=WhivmarhjnWVrpuxW2+0Mno7dKVQIUl8/k+Us9L6ZW0=; b=Y1lX6qjjYG+D
-        39zSRf/fkQPMr5uJhN+oiJiEqE0j8yzY8AolT5jHTIrrpJRE9avhmVSGqAuILtg2TfnaHaO29WsPi
-        me24IQ5zdJMSD2CH3J3Z16WvTiO7Q9VxmXXmjNTLClAzKyA85cr1Fp4P+1AmzgWHC45SOeESaCCsk
-        HwN7Y=;
+        List-Archive; bh=Re2hQTtNAD8CYEK6W+NpLcveT//8Obo4//e0YXTuxTc=; b=jFUZ7q7H99n3
+        xPQxQwwN0FSWoZ4uDzb52Mb2epbh5Dk1Pu4v30mUzg4m2Tg2ytDV1g9i9KMQcFA0tV4ikY96WpUep
+        tX7rbioDKzEJGCoLKywvVyc3NG+AnZxUhoiVokGz3Dua7cWzwUduasdtTK+DBdmn6tpeLNEJwsC0S
+        jakRc=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iVaey-0000Kz-Vt; Fri, 15 Nov 2019 12:25:09 +0000
+        id 1iVaf4-0000Lk-F0; Fri, 15 Nov 2019 12:25:14 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 79111274162A; Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
+        id EF8D427415A7; Fri, 15 Nov 2019 12:25:13 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     kernel-team@android.com, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: core: Don't try to remove device links if add failed" to the regulator tree
-In-Reply-To: <20191115000438.45970-1-saravanak@google.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     "Cc:"@sirena.co.uk, "Cc:"@sirena.co.uk,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Applied "spi: tegra20-slink: add missed clk_unprepare" to the spi tree
+In-Reply-To: <20191115083122.12278-1-hslester96@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191115122508.79111274162A@ypsilon.sirena.org.uk>
-Date:   Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
+Message-Id: <20191115122513.EF8D427415A7@ypsilon.sirena.org.uk>
+Date:   Fri, 15 Nov 2019 12:25:13 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,11 +49,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Don't try to remove device links if add failed
+   spi: tegra20-slink: add missed clk_unprepare
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -70,70 +74,51 @@ to this mail.
 Thanks,
 Mark
 
-From b59b654478093fa429ad4c7897ae29f201146a00 Mon Sep 17 00:00:00 2001
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 14 Nov 2019 16:04:38 -0800
-Subject: [PATCH] regulator: core: Don't try to remove device links if add
- failed
+From 04358e40ba96d687c0811c21d9dede73f5244a98 Mon Sep 17 00:00:00 2001
+From: Chuhong Yuan <hslester96@gmail.com>
+Date: Fri, 15 Nov 2019 16:31:22 +0800
+Subject: [PATCH] spi: tegra20-slink: add missed clk_unprepare
 
-device_link_add() might not always succeed depending on the type of
-device link and the rest of the dependencies in the system. If
-device_link_add() didn't succeed, then we shouldn't try to remove the
-link later on as it might remove a link someone else created.
+The driver misses calling clk_unprepare in probe failure and remove.
+Add the calls to fix it.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Link: https://lore.kernel.org/r/20191115000438.45970-1-saravanak@google.com
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Link: https://lore.kernel.org/r/20191115083122.12278-1-hslester96@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c     | 8 ++++++--
- drivers/regulator/internal.h | 1 +
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/spi/spi-tegra20-slink.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 51ce280c1ce1..df49f35ae20f 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1844,6 +1844,7 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
- 	struct regulator_dev *rdev;
- 	struct regulator *regulator;
- 	const char *devname = dev ? dev_name(dev) : "deviceless";
-+	struct device_link *link;
- 	int ret;
- 
- 	if (get_type >= MAX_GET_TYPE) {
-@@ -1951,7 +1952,9 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
- 			rdev->use_count = 0;
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 51573f41ed12..7f4d932dade7 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1072,7 +1072,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	ret = clk_enable(tspi->clk);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
+-		goto exit_free_master;
++		goto exit_clk_unprepare;
  	}
  
--	device_link_add(dev, &rdev->dev, DL_FLAG_STATELESS);
-+	link = device_link_add(dev, &rdev->dev, DL_FLAG_STATELESS);
-+	if (!IS_ERR_OR_NULL(link))
-+		regulator->device_link = true;
+ 	spi_irq = platform_get_irq(pdev, 0);
+@@ -1145,6 +1145,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	free_irq(spi_irq, tspi);
+ exit_clk_disable:
+ 	clk_disable(tspi->clk);
++exit_clk_unprepare:
++	clk_unprepare(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1158,6 +1160,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 	free_irq(tspi->irq, tspi);
  
- 	return regulator;
- }
-@@ -2046,7 +2049,8 @@ static void _regulator_put(struct regulator *regulator)
- 	debugfs_remove_recursive(regulator->debugfs);
+ 	clk_disable(tspi->clk);
++	clk_unprepare(tspi->clk);
  
- 	if (regulator->dev) {
--		device_link_remove(regulator->dev, &rdev->dev);
-+		if (regulator->device_link)
-+			device_link_remove(regulator->dev, &rdev->dev);
- 
- 		/* remove any sysfs entries */
- 		sysfs_remove_link(&rdev->dev.kobj, regulator->supply_name);
-diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
-index 83ae442f515b..2391b565ef11 100644
---- a/drivers/regulator/internal.h
-+++ b/drivers/regulator/internal.h
-@@ -36,6 +36,7 @@ struct regulator {
- 	struct list_head list;
- 	unsigned int always_on:1;
- 	unsigned int bypass:1;
-+	unsigned int device_link:1;
- 	int uA_load;
- 	unsigned int enable_count;
- 	unsigned int deferred_disables;
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
 -- 
 2.20.1
 
