@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A06FE479
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:01:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4482FE478
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfKOSBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:01:10 -0500
-Received: from mga07.intel.com ([134.134.136.100]:19982 "EHLO mga07.intel.com"
+        id S1727016AbfKOSBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:01:07 -0500
+Received: from mga04.intel.com ([192.55.52.120]:16528 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726992AbfKOSBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 13:01:05 -0500
+        id S1726910AbfKOSBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 13:01:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 10:01:04 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 10:00:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,309,1569308400"; 
-   d="scan'208";a="195460801"
+   d="scan'208";a="208487219"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 15 Nov 2019 10:00:56 -0800
+  by orsmga006.jf.intel.com with ESMTP; 15 Nov 2019 10:00:56 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 99C70EB; Fri, 15 Nov 2019 20:00:55 +0200 (EET)
+        id A9AAFD4; Fri, 15 Nov 2019 20:00:55 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH v1 1/5] memremap: Check for size parameter
-Date:   Fri, 15 Nov 2019 20:00:40 +0200
-Message-Id: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
+        Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH v1 2/5] dma-mapping: Drop duplicate check for size parameter of memremap()
+Date:   Fri, 15 Nov 2019 20:00:41 +0200
+Message-Id: <20191115180044.83659-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
+References: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,40 +41,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no use of memremap() to be called with size = 0.
-Simple return NULL pointer and allow callers to drop this check.
+Since memremap() returns NULL pointer for size = 0, there is no need
+to duplicate this check in the callers.
 
-Fixes: 92281dee825f ("arch: introduce memremap()")
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- kernel/iomem.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/dma/coherent.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/kernel/iomem.c b/kernel/iomem.c
-index 62c92e43aa0d..bf7a5fc32760 100644
---- a/kernel/iomem.c
-+++ b/kernel/iomem.c
-@@ -74,6 +74,9 @@ void *memremap(resource_size_t offset, size_t size, unsigned long flags)
- 				       IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE);
- 	void *addr = NULL;
+diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+index 551b0eb7028a..7e669c083324 100644
+--- a/kernel/dma/coherent.c
++++ b/kernel/dma/coherent.c
+@@ -42,16 +42,11 @@ static int dma_init_coherent_memory(phys_addr_t phys_addr,
+ 		struct dma_coherent_mem **mem)
+ {
+ 	struct dma_coherent_mem *dma_mem = NULL;
+-	void *mem_base = NULL;
++	void *mem_base;
+ 	int pages = size >> PAGE_SHIFT;
+ 	int bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
+ 	int ret;
  
-+	if (!size)
-+		return NULL;
-+
- 	if (!flags)
- 		return NULL;
- 
+-	if (!size) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+ 	mem_base = memremap(phys_addr, size, MEMREMAP_WC);
+ 	if (!mem_base) {
+ 		ret = -EINVAL;
 -- 
 2.24.0
 
