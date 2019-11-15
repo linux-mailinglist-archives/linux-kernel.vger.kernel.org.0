@@ -2,75 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B57DFDF64
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:54:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5100AFDF6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:55:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfKONye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:54:34 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34947 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbfKONyd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:54:33 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 6166C3C009C;
-        Fri, 15 Nov 2019 14:54:31 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jjwboKzUmcTj; Fri, 15 Nov 2019 14:54:26 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 75B393C04C1;
-        Fri, 15 Nov 2019 14:54:25 +0100 (CET)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 15 Nov
- 2019 14:54:25 +0100
-Date:   Fri, 15 Nov 2019 14:54:22 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Add MMC_CAP_ERASE to
- Gen3 SoCs
-Message-ID: <20191115135422.GA12691@vmlxhi-102.adit-jv.com>
-References: <20191112134808.23546-1-erosca@de.adit-jv.com>
- <20191112204952.GA2976@kunai>
- <CAPDyKFq8oVk26ruNA_R8HDXhMGKhDeHnL0q82xi40g1aeo109A@mail.gmail.com>
- <20191114113743.GA19656@vmlxhi-102.adit-jv.com>
- <CAPDyKFp5iqrFDM1EWnYBwFmQAiAA5FADDLAyuVVBgMu4Sx=x5w@mail.gmail.com>
- <20191114220744.GA17678@vmlxhi-102.adit-jv.com>
- <CAPDyKFoXEFbK_7-Nmkhz2_Sifc=hiPEGmUHKsp4=Baye86TCOg@mail.gmail.com>
- <20191115125109.GA32576@lxhi-065.adit-jv.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191115125109.GA32576@lxhi-065.adit-jv.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+        id S1727587AbfKONzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:55:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:11218 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727380AbfKONzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 08:55:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 05:55:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,308,1569308400"; 
+   d="scan'208";a="199205460"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.197])
+  by orsmga008.jf.intel.com with ESMTP; 15 Nov 2019 05:55:44 -0800
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     x86@kernel.org
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH 0/2] x86/insn: Add some Intel instructions to the opcode map
+Date:   Fri, 15 Nov 2019 15:54:45 +0200
+Message-Id: <20191115135447.6519-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[to facilitate version tracking]
+Hi
 
-Superseded by:
-https://lore.kernel.org/linux-renesas-soc/20191115134430.12621-1-erosca@de.adit-jv.com/
-("[PATCH v2] mmc: tmio: Add MMC_CAP_ERASE to allow erase/discard/trim requests")
+Here is a patch to update the x86 opcode map, and a patch to update the
+perf tools' "new instructions" test accordingly.
 
--- 
-Best Regards,
-Eugeniu
+There are still a lot of AVX instructions to add and also
+CET instructions, which Yu-cheng is adding.
+
+
+Adrian Hunter (2):
+      x86/insn: perf tools: Add some instructions to the new instructions test
+      x86/insn: Add some Intel instructions to the opcode map
+
+ arch/x86/lib/x86-opcode-map.txt              |  18 +++--
+ tools/arch/x86/lib/x86-opcode-map.txt        |  18 +++--
+ tools/perf/arch/x86/tests/insn-x86-dat-32.c  |  52 +++++++++++++
+ tools/perf/arch/x86/tests/insn-x86-dat-64.c  |  62 +++++++++++++++
+ tools/perf/arch/x86/tests/insn-x86-dat-src.c | 109 +++++++++++++++++++++++++++
+ 5 files changed, 247 insertions(+), 12 deletions(-)
+
+
+Regards
+Adrian
