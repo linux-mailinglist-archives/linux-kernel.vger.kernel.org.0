@@ -2,168 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37222FE86F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 00:05:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9DDAFE879
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 00:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfKOXFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 18:05:24 -0500
-Received: from mga03.intel.com ([134.134.136.65]:52452 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbfKOXFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 18:05:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 15:05:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,309,1569308400"; 
-   d="scan'208";a="217240238"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 15 Nov 2019 15:05:06 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 10/10] iommu/vt-d: Misc macro clean up for SVM
-Date:   Fri, 15 Nov 2019 15:09:37 -0800
-Message-Id: <1573859377-75924-11-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573859377-75924-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1573859377-75924-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1727152AbfKOXKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 18:10:48 -0500
+Received: from mail-pg1-f172.google.com ([209.85.215.172]:39484 "EHLO
+        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbfKOXKr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 18:10:47 -0500
+Received: by mail-pg1-f172.google.com with SMTP id 29so6656240pgm.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 15:10:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=tQ3lvrS3blm9KMnMM0Lci3Z1sGKOamHxljOn3CuMDbY=;
+        b=pT5JWBdCAjIGTWuNcLh+8kHAirWygCIcGtV+7SqbZj/KpGYc99JYbfhUZCrPPratnM
+         d7NlCrAWgnZkYYPP/J9uSONJcYTmnCOGFerQFynY2FPqUP/VNw3O0Fg4aSfLaxWV7jT3
+         mvNDuBPOIW1lnvAPSQCglBlVnkqnUtENac8bjo9rce6G4UdH4gZZNpP5lAjk2E5hZsD/
+         hvsKERBv4q+n1jMC8yVUXJrg4yFsCy1mDlAaEJMcwH4Ifq5LblyMrENIVjNsIZc2gY4T
+         ZI8FZc3Np0xPw6PHsAo9s7DE/jdxwkWaVvS8WijRM+KjiDH61HXyDJQg/n6CXZJ3CWmi
+         nmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=tQ3lvrS3blm9KMnMM0Lci3Z1sGKOamHxljOn3CuMDbY=;
+        b=XLiuboC6zgpGcCX7OWR/XTcRh/Wjmm5/0VkM46p8yoUf5Avr13tC9xeL26xJ4Wpavz
+         ShSY0r3VarKgBjF8NtQYwv3ih1G66GaedrAB//TzvjhnUmjI50YMbOX1YqWPLcdkjb0R
+         Evv8RzcUcGF+zk+QxNGN37PUSUh0Wi/AJViNr1hsRTRXg94cJ9zIeJNks1DprELiRVNf
+         OkXgYRwPJB16pC5uuLnE7eSfLf6m9SVynU3qz/UzJnkZn/2TnIr9Z1KUZSQ9GwiguXgD
+         k31Bi1wPzuRpVpIkKNxebOQ9na4uq16FLh81ffbuO4dB3eEkEQrfTtR76/o39axx87yG
+         epwQ==
+X-Gm-Message-State: APjAAAUwN0owGylRVhF8AkK+JcTxDOrST3N446Ccz75yIEklZRZSuUnb
+        XVEL9vz9XWSD9AqafNsRr6NWXiQr7aE=
+X-Google-Smtp-Source: APXvYqy+4lU01UeVkOSTSTAdSRd9AT8DW/Xp+4MWRX3F8hpid7A+dV0245Knc+YxZRpdcznwGa62/w==
+X-Received: by 2002:aa7:8210:: with SMTP id k16mr20243455pfi.84.1573859445210;
+        Fri, 15 Nov 2019 15:10:45 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1134::115d? ([2620:10d:c090:180::be7a])
+        by smtp.gmail.com with ESMTPSA id b26sm11209631pfo.158.2019.11.15.15.10.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Nov 2019 15:10:44 -0800 (PST)
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: Recent slowdown in single object builds
+Message-ID: <d60946a1-fde3-ee6f-683a-42a611768bbf@kernel.dk>
+Date:   Fri, 15 Nov 2019 16:10:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use combined macros for_each_svm_dev() to simplify SVM device iteration
-and error checking.
+Hi,
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
----
- drivers/iommu/intel-svm.c | 85 ++++++++++++++++++++++-------------------------
- 1 file changed, 40 insertions(+), 45 deletions(-)
+I've noticed that current -git is a lot slower at doing single object
+builds than earlier kernels. Here's an example, building the exact same
+file on 5.2 and -git:
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 189865501411..a7f67a9da3fc 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -226,6 +226,10 @@ static const struct mmu_notifier_ops intel_mmuops = {
- static DEFINE_MUTEX(pasid_mutex);
- static LIST_HEAD(global_svm_list);
- 
-+#define for_each_svm_dev(sdev, svm, dev)		\
-+	list_for_each_entry(sdev, &svm->devs, list)	\
-+		if (dev != sdev->dev) {} else
-+
- int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
- {
- 	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
-@@ -274,15 +278,13 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 				goto out;
- 			}
- 
--			list_for_each_entry(sdev, &svm->devs, list) {
--				if (dev == sdev->dev) {
--					if (sdev->ops != ops) {
--						ret = -EBUSY;
--						goto out;
--					}
--					sdev->users++;
--					goto success;
-+			for_each_svm_dev(sdev, svm, dev) {
-+				if (sdev->ops != ops) {
-+					ret = -EBUSY;
-+					goto out;
- 				}
-+				sdev->users++;
-+				goto success;
- 			}
- 
- 			break;
-@@ -427,45 +429,38 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 		goto out;
- 	}
- 
--	if (!svm)
--		goto out;
--
--	list_for_each_entry(sdev, &svm->devs, list) {
--		if (dev == sdev->dev) {
--			ret = 0;
--			sdev->users--;
--			if (!sdev->users) {
--				list_del_rcu(&sdev->list);
--				/* Flush the PASID cache and IOTLB for this device.
--				 * Note that we do depend on the hardware *not* using
--				 * the PASID any more. Just as we depend on other
--				 * devices never using PASIDs that they have no right
--				 * to use. We have a *shared* PASID table, because it's
--				 * large and has to be physically contiguous. So it's
--				 * hard to be as defensive as we might like. */
--				intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
--				intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
--				kfree_rcu(sdev, rcu);
--
--				if (list_empty(&svm->devs)) {
--					/* Clear private data so that free pass check */
--					ioasid_set_data(svm->pasid, NULL);
--					ioasid_free(svm->pasid);
--					if (svm->mm)
--						mmu_notifier_unregister(&svm->notifier, svm->mm);
--
--					list_del(&svm->list);
--
--					/* We mandate that no page faults may be outstanding
--					 * for the PASID when intel_svm_unbind_mm() is called.
--					 * If that is not obeyed, subtle errors will happen.
--					 * Let's make them less subtle... */
--					memset(svm, 0x6b, sizeof(*svm));
--					kfree(svm);
--				}
-+	for_each_svm_dev(sdev, svm, dev) {
-+		ret = 0;
-+		sdev->users--;
-+		if (!sdev->users) {
-+			list_del_rcu(&sdev->list);
-+			/* Flush the PASID cache and IOTLB for this device.
-+			 * Note that we do depend on the hardware *not* using
-+			 * the PASID any more. Just as we depend on other
-+			 * devices never using PASIDs that they have no right
-+			 * to use. We have a *shared* PASID table, because it's
-+			 * large and has to be physically contiguous. So it's
-+			 * hard to be as defensive as we might like. */
-+			intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
-+			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
-+			kfree_rcu(sdev, rcu);
-+
-+			if (list_empty(&svm->devs)) {
-+				/* Clear private data so that free pass check */
-+				ioasid_set_data(svm->pasid, NULL);
-+				ioasid_free(svm->pasid);
-+				if (svm->mm)
-+					mmu_notifier_unregister(&svm->notifier, svm->mm);
-+				list_del(&svm->list);
-+				/* We mandate that no page faults may be outstanding
-+				 * for the PASID when intel_svm_unbind_mm() is called.
-+				 * If that is not obeyed, subtle errors will happen.
-+				 * Let's make them less subtle... */
-+				memset(svm, 0x6b, sizeof(*svm));
-+				kfree(svm);
- 			}
--			break;
- 		}
-+		break;
- 	}
-  out:
- 	mutex_unlock(&pasid_mutex);
+$ time make fs/io_uring.o
+real    0m5.953s
+user    0m5.402s
+sys     0m0.649s
+
+vs 5.2 based (with all the backports, identical file):
+
+$ time make fs/io_uring.o
+real    0m3.218s
+user    0m2.968s
+sys     0m0.520s
+
+Any idea what's going on here? It's almost twice as slow, which is
+problematic...
+
 -- 
-2.7.4
+Jens Axboe
 
