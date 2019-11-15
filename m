@@ -2,50 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83BA1FDDB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F72FDDBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:26:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfKOMZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:25:16 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32884 "EHLO
+        id S1727957AbfKOM0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:26:33 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32830 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfKOMZO (ORCPT
+        with ESMTP id S1727641AbfKOMZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:25:14 -0500
+        Fri, 15 Nov 2019 07:25:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4AGPkKPSVyOTs5n0W0mJVA5CUUCsjeEv/AClqhuZzv4=; b=qzFKtRmxYbbx
-        bGe9vsc580IghowflZsvWJTvC4y/mPeSs+UAZrMoT0TpI0kL1zEYB+R3i2fIbx1d5k1c+1sve/Pnn
-        DMdcbZjd6l8oxtpDgVH3StavMUHRPNTEkuePI7ANTtBJjLR9y2uFYAyEiteMXaTQsWF6yDDDdoeUV
-        153rk=;
+        List-Archive; bh=daHt2+8Hmvwc3q4oviLYlwCDGGFI8F6MVXhLSm92SYw=; b=N37ZirmfJhdE
+        DgQuJBJ4gLC61qwuo3BGP1xiwQkaWamyFAVmkdIjZxA9mpEGb3CZnOaWqRWPs3sW5EWRcmdglRsva
+        nINkULePgpdGc8gadnhT4H7jsmr5RmSnffRbAQE4t54q67cZBVqEAAWi5crLbryK4Gqs2misrV6a2
+        VxGlo=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iVaex-0000Kk-OA; Fri, 15 Nov 2019 12:25:07 +0000
+        id 1iVaey-0000Ku-O8; Fri, 15 Nov 2019 12:25:08 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3CFBC27415A7; Fri, 15 Nov 2019 12:25:07 +0000 (GMT)
+        id 3BD982741609; Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Christoph Fritz <chf.fritz@googlemail.com>
-Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Applied "dt-bindings: mfd: da9062: describe buck modes" to the regulator tree
-In-Reply-To: <1573652416-9848-4-git-send-email-chf.fritz@googlemail.com>
+To:     Pascal Paillet <p.paillet@st.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, p.paillet@st.com
+Subject: Applied "regulator: core: Let boot-on regulators be powered off" to the regulator tree
+In-Reply-To: <20191113102737.27831-1-p.paillet@st.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191115122507.3CFBC27415A7@ypsilon.sirena.org.uk>
-Date:   Fri, 15 Nov 2019 12:25:07 +0000 (GMT)
+Message-Id: <20191115122508.3BD982741609@ypsilon.sirena.org.uk>
+Date:   Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dt-bindings: mfd: da9062: describe buck modes
+   regulator: core: Let boot-on regulators be powered off
 
 has been applied to the regulator tree at
 
@@ -78,42 +72,41 @@ to this mail.
 Thanks,
 Mark
 
-From a4bb429811bd4a5be94873ae218062c83c476ed9 Mon Sep 17 00:00:00 2001
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Wed, 13 Nov 2019 14:40:15 +0100
-Subject: [PATCH] dt-bindings: mfd: da9062: describe buck modes
+From 089b3f61ecfc43ca4ea26d595e1d31ead6de3f7b Mon Sep 17 00:00:00 2001
+From: Pascal Paillet <p.paillet@st.com>
+Date: Wed, 13 Nov 2019 11:27:37 +0100
+Subject: [PATCH] regulator: core: Let boot-on regulators be powered off
 
-This patch adds DT description of da9062 buck regulator modes.
+Boot-on regulators are always kept on because their use_count value
+is now incremented at boot time and never cleaned.
 
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
-Link: https://lore.kernel.org/r/1573652416-9848-4-git-send-email-chf.fritz@googlemail.com
+Only increment count value for alway-on regulators.
+regulator_late_cleanup() is now able to power off boot-on regulators
+when unused.
+
+Fixes: 05f224ca6693 ("regulator: core: Clean enabling always-on regulators + their supplies")
+Signed-off-by: Pascal Paillet <p.paillet@st.com>
+Link: https://lore.kernel.org/r/20191113102737.27831-1-p.paillet@st.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/mfd/da9062.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/regulator/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/da9062.txt b/Documentation/devicetree/bindings/mfd/da9062.txt
-index edca653a5777..bc4b59de6a55 100644
---- a/Documentation/devicetree/bindings/mfd/da9062.txt
-+++ b/Documentation/devicetree/bindings/mfd/da9062.txt
-@@ -66,6 +66,9 @@ Sub-nodes:
-   details of individual regulator device can be found in:
-   Documentation/devicetree/bindings/regulator/regulator.txt
- 
-+  regulator-initial-mode may be specified for buck regulators using mode values
-+  from include/dt-bindings/regulator/dlg,da9063-regulator.h.
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index a5b2a9b02108..5e6c629806e4 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1403,7 +1403,9 @@ static int set_machine_constraints(struct regulator_dev *rdev,
+ 			rdev_err(rdev, "failed to enable\n");
+ 			return ret;
+ 		}
+-		rdev->use_count++;
 +
- - rtc : This node defines settings required for the Real-Time Clock associated
-   with the DA9062. There are currently no entries in this binding, however
-   compatible = "dlg,da9062-rtc" should be added if a node is created.
-@@ -96,6 +99,7 @@ Example:
- 				regulator-max-microvolt = <1570000>;
- 				regulator-min-microamp = <500000>;
- 				regulator-max-microamp = <2000000>;
-+				regulator-initial-mode = <DA9063_BUCK_MODE_SYNC>;
- 				regulator-boot-on;
- 			};
- 			DA9062_LDO1: ldo1 {
++		if (rdev->constraints->always_on)
++			rdev->use_count++;
+ 	}
+ 
+ 	print_constraints(rdev);
 -- 
 2.20.1
 
