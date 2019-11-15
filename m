@@ -2,88 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0E5FD1E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 01:16:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74D86FD1F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 01:26:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfKOAQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 19:16:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58860 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726852AbfKOAQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 19:16:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26C1DAD78;
-        Fri, 15 Nov 2019 00:16:49 +0000 (UTC)
-Subject: Re: [PATCH 5/7] ARM: dts: rtd1195: Introduce r-bus
-To:     James Tai <james.tai@realtek.com>
-Cc:     "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191111030434.29977-1-afaerber@suse.de>
- <20191111030434.29977-6-afaerber@suse.de>
- <a43d184d74c34e269714858b2635c35e@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <960a80b9-b1bf-3709-bbb7-fc2a3c3ae1da@suse.de>
-Date:   Fri, 15 Nov 2019 01:16:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727315AbfKOA0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 19:26:33 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:49685 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726986AbfKOA0c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 19:26:32 -0500
+X-Greylist: delayed 572 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Nov 2019 19:26:32 EST
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id B38224CB;
+        Thu, 14 Nov 2019 19:16:58 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 14 Nov 2019 19:16:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        okg+pbQZMLAFIVAtOQnx13wD35th3oHFa3FunzYvg0Q=; b=I0Lm3AaL52mEZmyL
+        Ct1tTzrZt3urGFFppt1Cj0m3Psq12QTRbjr4Tt3x4GkJzq5MAdk0oe3DSQbCqN76
+        SLZBH7ncxPmMCn7NciDetSEcPkwU4QUYXT0teICMBD94QWZLTv1ifJk1JeY2vVwR
+        dQ3bIuXd5Bpo2C/akpho23Zsa7pasb8kTHBumIVFkhnavlVm2Mxxvd/KQ4Wc12Jv
+        KKM1OIgyKFMWkdbRrHOphLtJDRGUn8E+b5lS8LNDb+vqE6dxFuy4YEdOXsSt3FlI
+        TcZPfm58g2aeXXniqyNwqJUwwUTrJUxMmlYbcyGaQvcnF3WQ4taKK5KtovehY/xt
+        S1wFwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=okg+pbQZMLAFIVAtOQnx13wD35th3oHFa3FunzYvg
+        0Q=; b=NwUY9Z54rkbVbJErPqRaQiYQJYH1lzPmZa9q4XI4MFxWqeQV3zkMTbpG5
+        L2cOYHpbtYAEjQvbTOqRl/ft3gAnwyhcQNsXao+4/gpPrcjNJd/dXL8Nj0n/dv8j
+        /sqL7jMMb6ncc04YYYxB3gAyQnHAnlt8+zHF314IWr/nKlNOqR5EXKA6oVtYtTWn
+        85uFek20PWjSbrq4kPoxuYY+GvVd1/YPH6YVK/btPs09mJnjv7h1ttk4szGcE8Qv
+        BVXpUQ9gregPx4km5Zxrd+bi2qqpBfxNXAokVRW8ohhmZwBMkCA+1yLtAZZdVzSy
+        iZTxSsAH353R03l5BXDZvOBuqhogQ==
+X-ME-Sender: <xms:ee7NXfU9H8iv1Y_1UxcsrXR6cXM71lUwi42R_8QDCAZLUXW5wKaW_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudefgedgudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
+    drudekledrudeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgr
+    fidrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:ee7NXZ2Dodlsf4Nubf5iqxWeVIp5u7_H5jt5tCpROMDoRd7DH78uaA>
+    <xmx:ee7NXdrzAyz5s6hArGycAknWzhcJ80vlpuNjMF-t1yXuq1q4o9KvdQ>
+    <xmx:ee7NXQUebLKsclU5wP5QNAh3r_3yAJsGggdts2sxIss9yhxrQYyyAQ>
+    <xmx:eu7NXcTbo3sJKnvSNyHhr05A0qXAfQTnhbDXQWH4fP2THa_SVh7UhAQLffI>
+Received: from mickey.themaw.net (unknown [118.208.189.18])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 554108005C;
+        Thu, 14 Nov 2019 19:16:53 -0500 (EST)
+Message-ID: <1b33820317e577e6b2329b3e37edb9a7bf3b3983.camel@themaw.net>
+Subject: Re: [RFC PATCH] docs: filesystems: convert autofs.txt to reST
+From:   Ian Kent <raven@themaw.net>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Jaskaran Singh <jaskaransingh7654321@gmail.com>
+Cc:     akpm@linux-foundation.org, mchehab+samsung@kernel.org,
+        christian@brauner.io, neilb@suse.com, mszeredi@redhat.com,
+        willy@infradead.org, stefanha@redhat.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Date:   Fri, 15 Nov 2019 08:16:49 +0800
+In-Reply-To: <20191114093831.2ab8a077@lwn.net>
+References: <20191113073822.GA31926@localhost.localdomain>
+         <20191114093831.2ab8a077@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <a43d184d74c34e269714858b2635c35e@realtek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
-
-Am 13.11.19 um 03:53 schrieb James Tai:
->> +		rbus: r-bus@18000000 {
->> +			compatible = "simple-bus";
->> +			reg = <0x18000000 0x100000>;
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges = <0x0 0x18000000 0x100000>;
->> +
+On Thu, 2019-11-14 at 09:38 -0700, Jonathan Corbet wrote:
+> On Wed, 13 Nov 2019 13:08:22 +0530
+> Jaskaran Singh <jaskaransingh7654321@gmail.com> wrote:
 > 
-> The r-bus size of RTD1195 is 0x70000‬.
+> Thanks for doing this.  Naturally I have some requests :)
+> 
+> > This patch converts autofs.txt to reST.
+> 
+> Some subsystem maintainers react strongly to changelogs that read
+> "this
+> patch"; it's best to express things in the imperative form described
+> in
+> Documentation/process/submitting-patches.rst.
+> 
+> >  - Most of the changes pertain to reST formatting.
+> >  - Some of the code snippets are updated to reflect current source.
+> >  - A definition of the autofs packet header has been added in the
+> > chapter
+> > 	"Communicating with autofs: the event pipe".
+> >  - An indentation of an 8 space tab has been added wherever
+> > suitable, so
+> >    as to maintain consistency.
+> >  - Removed indentation of the description of the ioctls which are
+> > similar
+> >    to the AUTOFS_IOC ioctls, as it does not come out quite right in
+> > HTML.
+> 
+> These seems like good changes, but they are too much for a single
+> patch.
+> Please split this into multiple patches, separating the formatting
+> and
+> white-space changes from those that change the text.  That makes it
+> much
+> easier to review.
+> 
+> Some nits below.
+> 
+> > Signed-off-by: Jaskaran Singh <jaskaransingh7654321@gmail.com>
+> > ---
+> >  .../filesystems/{autofs.txt => autofs.rst}    | 258 ++++++++++--
+> > ------
+> >  Documentation/filesystems/index.rst           |   1 +
+> >  2 files changed, 140 insertions(+), 119 deletions(-)
+> >  rename Documentation/filesystems/{autofs.txt => autofs.rst} (77%)
+> > 
+> > diff --git a/Documentation/filesystems/autofs.txt
+> > b/Documentation/filesystems/autofs.rst
+> > similarity index 77%
+> > rename from Documentation/filesystems/autofs.txt
+> > rename to Documentation/filesystems/autofs.rst
+> > index 3af38c7fd26d..a130cba76f07 100644
+> > --- a/Documentation/filesystems/autofs.txt
+> > +++ b/Documentation/filesystems/autofs.rst
+> > @@ -1,12 +1,9 @@
+> > -<head>
+> > -<style> p { max-width:50em} ol, ul {max-width: 40em}</style>
+> > -</head>
+> 
+> Heh, yeah, I'm not sure why that's there, it should definitely go.
+> 
+> > +=====================
+> >  autofs - how it works
+> >  =====================
+> >  
+> >  Purpose
+> > --------
+> > +=======
+> >  
+> >  The goal of autofs is to provide on-demand mounting and race free
+> >  automatic unmounting of various other filesystems.  This provides
+> > two
+> > @@ -28,7 +25,7 @@ key advantages:
+> >     first accessed a name.
+> >  
+> >  Context
+> > --------
+> > +=======
+> >  
+> >  The "autofs" filesystem module is only one part of an autofs
+> > system.
+> >  There also needs to be a user-space program which looks up names
+> > @@ -43,7 +40,7 @@ filesystem type.  Several "autofs" filesystems
+> > can be mounted and they
+> >  can each be managed separately, or all managed by the same daemon.
+> >  
+> >  Content
+> > --------
+> > +=======
+> >  
+> >  An autofs filesystem can contain 3 sorts of objects: directories,
+> >  symbolic links and mount traps.  Mount traps are directories with
+> > @@ -52,7 +49,7 @@ extra properties as described in the next
+> > section.
+> >  Objects can only be created by the automount daemon: symlinks are
+> >  created with a regular `symlink` system call, while directories
+> > and
+> >  mount traps are created with `mkdir`.  The determination of
+> > whether a
+> > -directory should be a mount trap or not is quite _ad hoc_, largely
+> > for
+> > +directory should be a mount trap or not is quite _ad hoc\_,
+> > largely for
+> 
+> Remember that we want to preserve the readability of the plain-text
+> document; sprinkling that sort of escape doesn't really
+> help.  Recognize
+> that what's there now is a sort of informal markup; I'd either fix it
+> up or
+> take it out.  So "*ad hoc*" or just "ad hoc".
+> 
+> (Or rephrase it, since this doesn't actually seem to be an
+> appropriate use
+> of "ad hoc" but that's a separate issue :)
+> 
+> >  historical reasons, and is determined in part by the
+> >  *direct*/*indirect*/*offset* mount options, and the *maxproto*
+> > mount option.
 
-Fixed, also further above for the soc node. This now leaves a gap until
-0x18100000 - is that gap RAM or non-r-bus registers then?
+Yeah, this whole paragraph is not quite accurate.
 
-		ranges = <0x18000000 0x18000000 0x00070000>,
-		         <0x18100000 0x18100000 0x01000000>,
-		         <0x40000000 0x40000000 0xc0000000>;
+For autofs user space the determination of whether these mounts are
+trigger mounts (direct or offset mount option) or plain mount point
+directories (indirect mount top level sub-directory) is done based
+on the user supplied mount map syntax.
 
-Did you also review the other two ranges? The middle one was labeled NOR
-flash somewhere - are start and size correct? The final one depends on
-the maximum RAM size - does RTD1195 allow more than 1 GiB RAM? All
-non-RAM regions should be covered here.
+For other autofs users, such as systemd, the mount option (direct in
+this case) is chosen based on what semantics the user wants.
 
-So another question, applicable to all SoCs: This reserved Boot ROM area
-at the start of the address space, here of size 0xa800, is that copied
-into RAM, or is that the actual ROM overlapping RAM? If the latter, we
-should exclude it from /memory@0's reg (making it /memory@a800), and add
-it to soc's ranges here for correctness.
+Ian
 
-With the follow-up question: Is it correct that, given the size 0xa800,
-I have a gap between /memreserve/s from 0xa800 to 0xc000, or should we
-reserve that gap by extending the next /memreserve/ or inserting one?
-
-Thanks,
-Andreas
-
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
