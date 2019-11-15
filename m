@@ -2,76 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B958FE475
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CD0FE47A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:01:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfKOSBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:01:01 -0500
-Received: from mga18.intel.com ([134.134.136.126]:28695 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbfKOSA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727065AbfKOSBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:01:15 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34008 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfKOSA7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Nov 2019 13:00:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 10:00:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,309,1569308400"; 
-   d="scan'208";a="257824270"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 Nov 2019 10:00:56 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id CE859418; Fri, 15 Nov 2019 20:00:55 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH v1 5/5] vfio/pci: Drop duplicate check for size parameter of memremap()
-Date:   Fri, 15 Nov 2019 20:00:44 +0200
-Message-Id: <20191115180044.83659-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
-References: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
+Received: by mail-lf1-f67.google.com with SMTP id y186so8684429lfa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 10:00:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5aCfBkv+M9nZOLz7fNm+Z8ObZJ0f7JVb8LBMFaA2maU=;
+        b=aflnOer8LGcy4oWcFhsooSlWizrSOXBTFwCRCZr8HnA6SpVJpVT7maF179wOKP/EVL
+         qOe1CeRKHdvnPf7h63yGQDHWNv0tTzWGBUc4ZWkArPMSYt6CIiqNW2fOrX57xozBdTpF
+         GfV7C+C+fqGd79tY8MT3o7VQGPpfTULKI50edj+b5zJbcbPVgL317Sv1cbYj0zbCNNMN
+         yqGNngMUCRklNMmJiA7sF0LYzOHXM68Z3wC4CAqq6Zq/HS8PGMp1oAHu00yYxqQ5lAnl
+         S77ouO4LRAPZQrPAoxfW4YzVfhhVqDrufwR2gLdY9YXSxEsGjHi8TbE3MDXOQ0wKKmBU
+         xfFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5aCfBkv+M9nZOLz7fNm+Z8ObZJ0f7JVb8LBMFaA2maU=;
+        b=HUjTX8FXxmhePonOeG5Hn1ayNHZvicVIOjD7XhHuGpTIBXuNE2M3v3D7G9TyXn2qD7
+         N39fMrtiVqSFK3pAOPStACW9GgUJnE5y33S2DNMgyILs50s9pmQmMNj9s7m/AnTcGBKu
+         HPjF/mIyVWX89Zc9NwM30lEJus41jfp+j78O4QxXf9llcOKJfrGHCamw9IEhroWb2WNl
+         fqBSoxDAzf5k8nKL+B4/OlMd/O2SR8kMt9VpXbJouCe08w3aG/GoDr+uFnY3yZMkUyZb
+         +ows7pjK1joKFKU6GaGITaDUECqHrgwLD4RZpW91F8WDeVkb1Edn3zI6OZ3pBeH4yrqs
+         H0kA==
+X-Gm-Message-State: APjAAAV5/t/2s0WcVkC7eunmOwOppZVnU7sNunrIuS/eT46ma9gKBRgH
+        uCCPCy+rpd82zH791Zr7a4dzf9gcm4PQDmxPJnC0gQ==
+X-Google-Smtp-Source: APXvYqydaWJF/8/gFjWzkC8fRStPI7Uy/iax/4lLJPtlwMnpp1R9UvWn5+/BAwJKRcOt+DJ2eA5P7z6LE00uSs0nWcc=
+X-Received: by 2002:ac2:5685:: with SMTP id 5mr445503lfr.32.1573840856977;
+ Fri, 15 Nov 2019 10:00:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+ <20191115132520.GJ4131@hirez.programming.kicks-ass.net> <CAKfTPtB4UGmZ53iVRsOV+k4MiS=Dzqw2-6_sBhko0bHRMAed2g@mail.gmail.com>
+ <20191115151220.GO4131@hirez.programming.kicks-ass.net> <CAKfTPtCg-zEysYmGSFTa4bjh0D=sf1UsT0WpeWcVrb9SLt+VZw@mail.gmail.com>
+ <20191115174355.GP4131@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191115174355.GP4131@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 15 Nov 2019 19:00:45 +0100
+Message-ID: <CAKfTPtAKz5zGwyNUtEeM+2JJNBNVnoKmFkXdFu1hjWD52_BwFg@mail.gmail.com>
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since memremap() returns NULL pointer for size = 0, there is no need
-to duplicate this check in the callers.
+On Fri, 15 Nov 2019 at 18:44, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, Nov 15, 2019 at 04:31:35PM +0100, Vincent Guittot wrote:
+>
+> > > @@ -7476,10 +7477,14 @@ static void update_blocked_averages(int cpu)
+> > >          * list_add_leaf_cfs_rq() for details.
+> > >          */
+> > >         for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
+> > > +               bool last = cfs_rq == &rq->cfs;
+> > >                 struct sched_entity *se;
+> > >
+> > > -               if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq))
+> > > +               if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
+> > >                         update_tg_load_avg(cfs_rq, 0);
+> > > +                       if (last)
+> >
+> > using this last make code more readable
+> >
+> > > +                               decayed = true;
+> > > +               }
+> > >
+> > >                 /* Propagate pending load changes to the parent, if any: */
+> > >                 se = cfs_rq->tg->se[cpu];
+> > > @@ -7490,7 +7495,7 @@ static void update_blocked_averages(int cpu)
+> > >                  * There can be a lot of idle CPU cgroups.  Don't let fully
+> > >                  * decayed cfs_rqs linger on the list.
+> > >                  */
+> > > -               if (cfs_rq_is_decayed(cfs_rq))
+> > > +               if (!last && cfs_rq_is_decayed(cfs_rq))
+> > >                         list_del_leaf_cfs_rq(cfs_rq);
+> >
+> > Keeping root cfs in the list will not change anything now that
+> > cfs_rq_util_change is in update_load_avg()
+> > cfs_rq_util_change will not be called
+>
+> Oh but it does, since it will then keep triggering that hunk above on
+> every period.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/vfio/pci/vfio_pci_igd.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+indeed
 
-diff --git a/drivers/vfio/pci/vfio_pci_igd.c b/drivers/vfio/pci/vfio_pci_igd.c
-index 53d97f459252..3088a33af271 100644
---- a/drivers/vfio/pci/vfio_pci_igd.c
-+++ b/drivers/vfio/pci/vfio_pci_igd.c
-@@ -75,13 +75,7 @@ static int vfio_pci_igd_opregion_init(struct vfio_pci_device *vdev)
- 		return -EINVAL;
- 	}
- 
--	size = le32_to_cpu(*(__le32 *)(base + 16));
--	if (!size) {
--		memunmap(base);
--		return -EINVAL;
--	}
--
--	size *= 1024; /* In KB */
-+	size = le32_to_cpu(*(__le32 *)(base + 16)) * 1024; /* In KB */
- 
- 	if (size != OPREGION_SIZE) {
- 		memunmap(base);
--- 
-2.24.0
+>
+> > >
+> > >                 /* Don't need periodic decay once load/util_avg are null */
+> > > @@ -7498,6 +7503,9 @@ static void update_blocked_averages(int cpu)
+> > >                         done = false;
+> > >         }
+> > >
+> > > +       if (decayed || done)
+> >
+> > I'm not sure to get why you want to call cpufreq when done is true
+> > which means that everything reaches 0
+> > Why do you prefer to use done instead of ORing the decay of  rt, dl,
+> > irq and cfs ?
+> >
+> > > +               cpufreq_update_util(rq, 0);
+>
+> Because we don't care about the rt,dl,irq decay anywhere else either. We
+> only call cpufreq_update_util() for rq->cfs changes.
 
+cpufreq_update_util is called for each enqueue/dequeue of rt/dl tasks
+
+>
+> Also, as I argued, realistically rt,dl and cfs decay on the same edge,
+> so aside from some fuzz on the first period, they're all the same. But
+
+But the 1st period can be the only one for the next 4sec
+
+> even if they were not, why would we care about their exact edges here
+> when we do no anywhere else.
+>
+> Not caring reduces the number of cpufreq_update_util() calls to one per
+> period, instead of potentially many more.
+>
+> Doing the || done ensures never miss the all 0 case.
+
+How can we miss it  according to your explanation above ?
