@@ -2,99 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F27A0FDCB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56AFEFDCBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfKOLvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 06:51:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43211 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727521AbfKOLvo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 06:51:44 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVa8U-0006c7-Lz; Fri, 15 Nov 2019 12:51:34 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5250F1C08AC;
-        Fri, 15 Nov 2019 12:51:34 +0100 (CET)
-Date:   Fri, 15 Nov 2019 11:51:33 -0000
-From:   "tip-bot2 for Masahiro Yamada" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] x86/build/vdso: Remove meaningless CFLAGS_REMOVE_*.o
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191114154922.30365-1-yamada.masahiro@socionext.com>
-References: <20191114154922.30365-1-yamada.masahiro@socionext.com>
+        id S1727434AbfKOLyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 06:54:37 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35540 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbfKOLyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 06:54:37 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B8A7DB655DC9F9B2E37C;
+        Fri, 15 Nov 2019 19:54:34 +0800 (CST)
+Received: from A190218597.china.huawei.com (10.202.226.45) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 15 Nov 2019 19:54:26 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net] net: hns3: cleanup of stray struct hns3_link_mode_mapping
+Date:   Fri, 15 Nov 2019 11:52:32 +0000
+Message-ID: <20191115115232.18600-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Message-ID: <157381869387.29467.2747574809933300571.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/build branch of tip:
+This patch cleans-up the stray left over code. It has no
+functionality impact.
 
-Commit-ID:     66584ea6b70a6cbae661292702e56a07580dbbd4
-Gitweb:        https://git.kernel.org/tip/66584ea6b70a6cbae661292702e56a07580dbbd4
-Author:        Masahiro Yamada <yamada.masahiro@socionext.com>
-AuthorDate:    Fri, 15 Nov 2019 00:49:22 +09:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 15 Nov 2019 12:07:32 +01:00
-
-x86/build/vdso: Remove meaningless CFLAGS_REMOVE_*.o
-
-CFLAGS_REMOVE_*.o syntax is used to drop particular flags when
-building objects from C files. It has no effect for assembly files.
-
-vdso-note.o is compiled from the assembly file, vdso-note.S, hence
-CFLAGS_REMOVE_vdso-note.o is meaningless.
-
-Neither vvar.c nor vvar.S is found in the vdso directory. Since there
-is no source file to create vvar.o, CFLAGS_REMOVE_vvar.o is also
-meaningless.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191114154922.30365-1-yamada.masahiro@socionext.com
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- arch/x86/entry/vdso/Makefile | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 0f21541..2b75e80 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -87,11 +87,9 @@ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS
- #
- # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
- #
--CFLAGS_REMOVE_vdso-note.o = -pg
- CFLAGS_REMOVE_vclock_gettime.o = -pg
- CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
- CFLAGS_REMOVE_vgetcpu.o = -pg
--CFLAGS_REMOVE_vvar.o = -pg
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 680c3508876d..52c9d204fe3d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -70,11 +70,6 @@ static const struct hns3_stats hns3_rxq_stats[] = {
+ #define HNS3_NIC_LB_TEST_TX_CNT_ERR	2
+ #define HNS3_NIC_LB_TEST_RX_CNT_ERR	3
  
- #
- # X32 processes use x32 vDSO to access 64bit kernel data.
+-struct hns3_link_mode_mapping {
+-	u32 hns3_link_mode;
+-	u32 ethtool_link_mode;
+-};
+-
+ static int hns3_lp_setup(struct net_device *ndev, enum hnae3_loop loop, bool en)
+ {
+ 	struct hnae3_handle *h = hns3_get_handle(ndev);
+-- 
+2.17.1
+
+
