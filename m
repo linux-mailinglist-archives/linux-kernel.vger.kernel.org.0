@@ -2,72 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A43F1FD235
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 02:08:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED619FD23B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 02:10:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfKOBIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 20:08:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43692 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726996AbfKOBIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 20:08:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DDE13AEAB;
-        Fri, 15 Nov 2019 01:08:33 +0000 (UTC)
-Subject: Re: [PATCH] arm64: dts: realtek: Add Realtek rtd1619 and mjolnir
-To:     James Tai <james.tai@realtek.com>
-Cc:     "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <43B123F21A8CFE44A9641C099E4196FFCF91BEFA@RTITMBSVM04.realtek.com.tw>
- <25fdd8eb-f1a0-82ae-9c4b-22325b163b0e@suse.de>
- <43B123F21A8CFE44A9641C099E4196FFCF920024@RTITMBSVM04.realtek.com.tw>
- <7a05ac2c-00bc-b2ac-0a33-be0242d33188@suse.de>
- <309cd67da48e4702ae3dcc4ca8ab4309@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <279fd3a3-17dc-5796-f0b0-e39eb919081f@suse.de>
-Date:   Fri, 15 Nov 2019 02:08:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727386AbfKOBKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 20:10:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:51420 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726996AbfKOBKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 20:10:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 411DB31B;
+        Thu, 14 Nov 2019 17:10:31 -0800 (PST)
+Received: from [10.37.9.126] (unknown [10.37.9.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA0783F52E;
+        Thu, 14 Nov 2019 17:10:28 -0800 (PST)
+Subject: Re: [PATCH 0/5] arm64: Add workaround for Cortex-A77 erratum 1542418
+To:     will@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        james.morse@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
+        maz@kernel.org
+References: <20191114145918.235339-1-suzuki.poulose@arm.com>
+ <20191114163948.GA5158@willie-the-truck>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <14773d6b-96d5-b894-7fc4-17c54f15ee30@arm.com>
+Date:   Fri, 15 Nov 2019 01:14:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <309cd67da48e4702ae3dcc4ca8ab4309@realtek.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191114163948.GA5158@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Hi Will
 
-Am 11.11.19 um 03:58 schrieb James Tai:
->> How much? More than 0x98000000? The RTD1395 datasheet says up to 4 GB -
->> does that mean it continues in a second region beyond 0xffffffff? Those
->> locations should be excluded in the soc node ranges (which you sadly appear to
->> have dropped in v2).
+On 11/14/2019 04:39 PM, Will Deacon wrote:
+> Hi Suzuki,
 > 
-> Sorry for my misunderstanding. The RAM region don't require 
-> two cells for memory nodes, so I'll fix it in v3 patch.
+> On Thu, Nov 14, 2019 at 02:59:13PM +0000, Suzuki K Poulose wrote:
+>> This series adds workaround for Arm erratum 1542418 which affects
+> 
+> Searching for that erratum number doesn't find me a description :(
 
-Should I then also change RTD1395 to use only one cell, or does it
-support more RAM than RTD1619?
+I believe this was published in the Cortex-A77 SDEN v9.0. I will chase
+it internally.
 
-By my calculation 0x98000000 is less than 2.4 GiB! So, does RAM continue
-between r-bus and GIC, similar to how it does on RTD1195? Then we need
-to exclude those RAM ranges from the SoC node (adjusting 0x68000000).
+> 
+>> Cortex-A77 cores (r0p0 - r1p0). Affected cores may execute stale
+>> instructions from the L0 macro-op cache violating the
+>> prefetch-speculation-protection guaranteed by the architecture.
+>> This happens when the when the branch predictor bases its predictions
+>> on a branch at this address on the stale history due to ASID or VMID
+>> reuse.
+> 
+> Two immediate questions:
+> 
+>   1. Can we disable the L0 MOP cache?
+Yes, but it hurts performance.
 
-Regards,
-Andreas
+>   2. Can we invalidate the branch predictor? If Spectre-v2 taught us
+>      anything it's that removing those instructions was a mistake!
 
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+The workaround suggested is actually invalidating the branch history
+but in a costly way. I am unaware of any.
+> Moving on...
+> 
+> Have you reproduced this at top-level? If I recall the
+> prefetch-speculation-protection, it's designed to protect against the
+> case where you have a direct branch:
+
+No, see below.
+
+> 
+> addr:	B	foo
+> 
+> and another CPU writes out a new function:
+> 
+> bar:
+> 	insn0
+> 	...
+> 	insnN
+> 
+> before doing any necessary maintenance and then patches the original
+> branch to:
+> 
+> addr:	B	bar
+> 
+> The idea is that a concurrently executing CPU could mispredict the original
+> branch to point at 'bar', fetch the instructions before they've been written
+> out and then confirm the prediction by looking at the newly written branch
+> instruction. Even without the prefetch-speculation-protection, that's
+> fairly difficult to achieve in practice: you'd need to be doing something
+> like reusing memory to hold the instructions so that the initial
+> misprediction occurs.
+> 
+> How does A77 stop this from occurring when the ASID is not reallocated (e.g.
+> the example above)? Is the MOP cache flushed somehow?
+
+IIUC, The MOP cache is flushed on I-cache invalidate, thus it is fine.	
+
+> 
+> With this erratum, it sounds like you have to end up reusing an ASID from
+> a task that had a branch at 'addr' in its address space that branched to
+> the address of 'bar' (again. in its address space). Is that right? That
+> sounds super rare to me, particularly with ASLR: not only does the aliasing
+
+AFAICS, yes and on top of that, it should also miss "addr" in MOP-cache
+and hit "bar" before the I-cache invalidate is received. This may cause
+the "bar" to be fetched from mop (and is not canceled even though there
+was a mop-flush triggered by the i-cache invalidate after the hit) and
+"addr" should miss in I-cache, causing it to fetch the updated instruction.
+
+Also this means that the new context must not have executed "addr"
+(which would give a hit in MOP-cache) while "bar" was fetched. So,
+this adds on more constraints to actually hit it.
+
+> branch need to exist, but it needs to be held in the branch predictor while
+> we cycle through 64k ASIDs *and* the race with the writer needs to happen
+> so that we get stale instructions from the MOP cache.
+> 
+> Is there something I'm missing that makes this remotely plausible?
+
+No :-)
+
+Cheers
+Suzuki
+
