@@ -2,53 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80751FE41F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 18:35:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F50FE427
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 18:39:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfKORf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 12:35:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbfKORfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 12:35:08 -0500
-Subject: Re: [GIT PULL] sound fixes for 5.4-rc8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573839308;
-        bh=uuBj0hrrRydbd5DM5jCvpp2BUh+Tc5ewx2w5lTDSYOI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VaWZbCo2zxlvqBSVB7KWcxGINc693Hj7gfJ39E7YvrxMM9Xm4TTjLVlheDd5oRCLT
-         QxD9CbLAfrNJyEmh8ThXcgqYBcwBGNREnorqart/02ufHJp8avBymuR90GRrCnSUsg
-         OKIgxOI7cmt2QxdO+9v0Sdvmc1Z6SLDWO9hFHIk0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <s5hmucxjtsk.wl-tiwai@suse.de>
-References: <s5hmucxjtsk.wl-tiwai@suse.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <s5hmucxjtsk.wl-tiwai@suse.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
- tags/sound-5.4-rc8
-X-PR-Tracked-Commit-Id: 976a68f06b2ea49e2ab67a5f84919a8b105db8be
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 11ac7cc88b48130106c42c0dcaf8ba74fc9e7978
-Message-Id: <157383930809.31249.5290264274947599425.pr-tracker-bot@kernel.org>
-Date:   Fri, 15 Nov 2019 17:35:08 +0000
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1727647AbfKORjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 12:39:21 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47291 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727540AbfKORjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 12:39:21 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xAFHaY5K020802
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 15 Nov 2019 12:36:35 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 64D724202FD; Fri, 15 Nov 2019 12:36:34 -0500 (EST)
+Date:   Fri, 15 Nov 2019 12:36:34 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Sebastian Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [PATCH] fs/buffer: Make BH_Uptodate_Lock bit_spin_lock a regular
+ spinlock_t
+Message-ID: <20191115173634.GC23689@mit.edu>
+References: <20190820170818.oldsdoumzashhcgh@linutronix.de>
+ <20190820171721.GA4949@bombadil.infradead.org>
+ <alpine.DEB.2.21.1908201959240.2223@nanos.tec.linutronix.de>
+ <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
+ <20191115145638.GA5461@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115145638.GA5461@quack2.suse.cz>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 15 Nov 2019 11:52:27 +0100:
+On Fri, Nov 15, 2019 at 03:56:38PM +0100, Jan Kara wrote:
+> With some effort, we could even shrink struct buffer_head from 104 bytes
+> (on x86_64) to 96 bytes but I don't think that effort is worth it (I'd find
+> it better use of time to actually work on getting rid of buffer heads
+> completely).
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.4-rc8
+Is that really realistic?  All aside from the very large number of
+file systems which use buffer_heads that would have to be reworked,
+the concept of buffer heads is pretty fundamental to how jbd2 is
+architected.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/11ac7cc88b48130106c42c0dcaf8ba74fc9e7978
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+					- Ted
