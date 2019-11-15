@@ -2,128 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 976C4FD97C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 737AFFD981
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfKOJlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:41:52 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44904 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOJlw (ORCPT
+        id S1727387AbfKOJn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:43:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42939 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727325AbfKOJn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:41:52 -0500
-Received: by mail-wr1-f67.google.com with SMTP id f2so10205052wrs.11;
-        Fri, 15 Nov 2019 01:41:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=raVzr0tabM83QSHsfKixBwNELZO9Vyk/jj/E9lAiCR0=;
-        b=oFnfgMzxXOQxedprb3Mk34PO+0v/RYSoPBLuk85J7t79gw7Gi90N3jwImfyiwFBVZR
-         wpukRr0ql+txojQU66IGeSyxhfw60CPuVATdm1AHAVcHP/dQXo7bPGQwKnAbNNJtZ+eV
-         5q0grTb7nPGexVLjRRwpC2qyBoqLpskJ2+tYfTPFNPhuZ3QGLrI3yzhbwD1Hee+QK5uW
-         UrM/bxsLer/roM2ZXl4gW7SnHNkmFxWwPjw/5NPX1c4nNYdyrpStaohT+2nKIHNDhqW9
-         y/nPY2AlDO/mJtkdeKxxyIIpo6YbYay+LUkmmtKuRiomE59P39p3V6L1WHCsy3HobMqA
-         WkTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=raVzr0tabM83QSHsfKixBwNELZO9Vyk/jj/E9lAiCR0=;
-        b=FyfCN9FOj94EnmzNvCxoWWA5I0Uo9b4X+0dglHFPGl/8D/9sri+9rPwZzs4mwQymF3
-         EoKyWl2KWMptigRaIC1N3NmIZAd/0o+nQUQeb84HinXrP0F+7qyhnJT8HIsnTH+lZ21a
-         hoBjiypConNtceEtIez/bvi/BQOvntDzZYOic8PwpS5vW79+giW6HOBPA9h81UNxFR3e
-         B+WxkPS2TEEKu27QKMmgoZXuDwDbxNqcyVSa15tXYXeV3aG83204yBomNKSKGinWVwjw
-         kJ7j8/5WfaIedkeCoPTiuLQZoQJgB1HRO5lnlIwrbdwq2J7N2hmgisVqfbuFU6PqWDwM
-         OiBQ==
-X-Gm-Message-State: APjAAAVZCq+lus6mOJJ/tFEdFNzUOI7hjQLoCQ7KGh6qYRjVVuDqScbl
-        7xv+50EZzEUatqi2d81Z6Wk=
-X-Google-Smtp-Source: APXvYqx14cOUJJjazUVP2HLAukJO7YcUgUQgkmxMJqpI8QWaa3dfienDYjxLvA3edilyh0uFlMU+WQ==
-X-Received: by 2002:adf:fd91:: with SMTP id d17mr13829654wrr.214.1573810910077;
-        Fri, 15 Nov 2019 01:41:50 -0800 (PST)
-Received: from localhost ([46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id w81sm10504669wmg.5.2019.11.15.01.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 01:41:48 -0800 (PST)
-Date:   Fri, 15 Nov 2019 10:41:41 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Rob Herring <robherring2@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>
-Subject: Re: linux-next: manual merge of the pwm tree with the devicetree tree
-Message-ID: <20191115094141.GA825257@ulmo>
-References: <20191115154456.244c27e4@canb.auug.org.au>
+        Fri, 15 Nov 2019 04:43:26 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iVY8C-0004MX-UJ; Fri, 15 Nov 2019 10:43:09 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 870971C08AC;
+        Fri, 15 Nov 2019 10:43:08 +0100 (CET)
+Date:   Fri, 15 Nov 2019 09:43:08 -0000
+From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: core/kprobes] x86/alternative: Shrink text_poke_loc
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20191111132458.047052889@infradead.org>
+References: <20191111132458.047052889@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
-Content-Disposition: inline
-In-Reply-To: <20191115154456.244c27e4@canb.auug.org.au>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Message-ID: <157381098810.29467.5756130583510586766.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the core/kprobes branch of tip:
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     54d41ef26da6820cf31b243357108dbbf11c6129
+Gitweb:        https://git.kernel.org/tip/54d41ef26da6820cf31b243357108dbbf11c6129
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 09 Oct 2019 12:26:53 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 15 Nov 2019 09:07:43 +01:00
 
-On Fri, Nov 15, 2019 at 03:44:56PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the pwm tree got a conflict in:
->=20
->   Documentation/devicetree/bindings/pwm/pwm-stm32.txt
->=20
-> between commit:
->=20
->   56fb34d86e87 ("dt-bindings: mfd: Convert stm32 timers bindings to json-=
-schema")
->=20
-> from the devicetree tree and commit:
->=20
->   4205e356285e ("dt-bindings: pwm-stm32: Document pinctrl sleep state")
->=20
-> from the pwm tree.
->=20
-> I fixed it up (I just deleted the file - more fixup is probably required)
-> and can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+x86/alternative: Shrink text_poke_loc
 
-It should be trivial to rewrite the sleep state patch on top of the
-json-schema conversion and then take that version into the devicetree
-tree.
+Employ the fact that all text must be within a s32 displacement of one
+another to shrink the text_poke_loc::addr field. Make it relative to
+_stext.
 
-Fabrice, can you resend that patch based on the devicetree tree?
+This then shrinks struct text_poke_loc to 16 bytes, and consequently
+increases TP_VEC_MAX from 170 to 256.
 
-Thierry
+Tested-by: Alexei Starovoitov <ast@kernel.org>
+Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20191111132458.047052889@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/alternative.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3OctIACgkQ3SOs138+
-s6ERjA/+MZo1LpZ+YQB6Ncd81YjhN80RZ1LbNTpoDJYuCNYW7I/66ZiccYv8gQJo
-n34kwYW4tVMMP8Apj0hfB+t3P7Z/YEwkNlK9dvVZtt2fYVjBvbldtw6FloVfbKwH
-2ygGCJ/kse/Ginus9RjWWnLKpgDEODA34oyL5Ctf6sE2+RKhMUbPmsBCC2YSM1ZI
-4Zgu5rFY4BdYRzmjbk3gCNaSCy15lotIy/lO3GGmsQvesIMiFu+r6/7qufNyLrPS
-EjpPg1/ijacFClElyd5dtDUO8LplzO5T6VIIYNji/iG5GUVw1lrlRa467zTSa6Q7
-70/F9L1YnQMEZZo/NEt+4a2oN30ZTbkX7ARcnO61xqchwXEa+NO9YU6PGGo/7Loa
-k9l24F0+FNgQNraVCnPcXCYjC1D53DFfUAjDZIGMmeVDj6eDQztZShDJ9H1ObbMQ
-yNJNDn1LgwT+tC4ONL9qcu3Z5Hhd8exk6s1vhtKNT5hYm7FMxTNDpfeqGmTpZuDB
-w61zmQ1PIyywqV/G7YH6zgQKSDuxtxqZnntobsIR0KMsm53w8Ps8QvlFGz2Cjgh8
-KOqbnFNoEjSvzMYwHsIEuetfZtxj3bv9zJGX3a45GDMSThoAEkBIIv9FRLFllAYU
-Atmwfxg+tkaqg6ePpwa9G6ZkWAYXN0sH5noud56Ravh6uhNH9Bk=
-=Ancq
------END PGP SIGNATURE-----
-
---17pEHd4RhPHOinZp--
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 6e3ee73..526cc5f 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -937,7 +937,7 @@ static void do_sync_core(void *info)
+ }
+ 
+ struct text_poke_loc {
+-	void *addr;
++	s32 rel_addr; /* addr := _stext + rel_addr */
+ 	s32 rel32;
+ 	u8 opcode;
+ 	const u8 text[POKE_MAX_OPCODE_SIZE];
+@@ -948,13 +948,18 @@ static struct bp_patching_desc {
+ 	int nr_entries;
+ } bp_patching;
+ 
++static inline void *text_poke_addr(struct text_poke_loc *tp)
++{
++	return _stext + tp->rel_addr;
++}
++
+ static int notrace patch_cmp(const void *key, const void *elt)
+ {
+ 	struct text_poke_loc *tp = (struct text_poke_loc *) elt;
+ 
+-	if (key < tp->addr)
++	if (key < text_poke_addr(tp))
+ 		return -1;
+-	if (key > tp->addr)
++	if (key > text_poke_addr(tp))
+ 		return 1;
+ 	return 0;
+ }
+@@ -1000,7 +1005,7 @@ int notrace poke_int3_handler(struct pt_regs *regs)
+ 			return 0;
+ 	} else {
+ 		tp = bp_patching.vec;
+-		if (tp->addr != ip)
++		if (text_poke_addr(tp) != ip)
+ 			return 0;
+ 	}
+ 
+@@ -1078,7 +1083,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	 * First step: add a int3 trap to the address that will be patched.
+ 	 */
+ 	for (i = 0; i < nr_entries; i++)
+-		text_poke(tp[i].addr, &int3, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
+ 
+ 	on_each_cpu(do_sync_core, NULL, 1);
+ 
+@@ -1089,7 +1094,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 		int len = text_opcode_size(tp[i].opcode);
+ 
+ 		if (len - sizeof(int3) > 0) {
+-			text_poke((char *)tp[i].addr + sizeof(int3),
++			text_poke(text_poke_addr(&tp[i]) + sizeof(int3),
+ 				  (const char *)tp[i].text + sizeof(int3),
+ 				  len - sizeof(int3));
+ 			do_sync++;
+@@ -1113,7 +1118,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 		if (tp[i].text[0] == INT3_INSN_OPCODE)
+ 			continue;
+ 
+-		text_poke(tp[i].addr, tp[i].text, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), tp[i].text, sizeof(int3));
+ 		do_sync++;
+ 	}
+ 
+@@ -1143,7 +1148,7 @@ void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
+ 	BUG_ON(!insn_complete(&insn));
+ 	BUG_ON(len != insn.length);
+ 
+-	tp->addr = addr;
++	tp->rel_addr = addr - (void *)_stext;
+ 	tp->opcode = insn.opcode.bytes[0];
+ 
+ 	switch (tp->opcode) {
+@@ -1192,7 +1197,7 @@ static bool tp_order_fail(void *addr)
+ 		return true;
+ 
+ 	tp = &tp_vec[tp_vec_nr - 1];
+-	if ((unsigned long)tp->addr > (unsigned long)addr)
++	if ((unsigned long)text_poke_addr(tp) > (unsigned long)addr)
+ 		return true;
+ 
+ 	return false;
