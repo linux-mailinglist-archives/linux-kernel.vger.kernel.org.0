@@ -2,93 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88BA9FD6B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3993DFD6B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfKOHBF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 15 Nov 2019 02:01:05 -0500
-Received: from azteca-comunicaciones.com ([191.102.66.70]:52365 "EHLO semo.net"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726717AbfKOHBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 02:01:04 -0500
-Reply-To: yuval@free2312.com
-From:   "Yuval" <tstewart@semo.net>
-To:     linux-kernel@vger.kernel.org
-Subject: Business Proposal - Please Reply
-Date:   15 Nov 2019 02:01:03 -0500
-Message-ID: <20191115020103.393AFD2551B528F3@semo.net>
+        id S1727137AbfKOHDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 02:03:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58582 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfKOHDj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 02:03:39 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E06AD61069; Fri, 15 Nov 2019 07:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573801418;
+        bh=cXKB7/z8hKIcCs1csnbwGGQvhJZYZrYw+Be56PBlCDI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NyUEhUv8ts/nDu7Q0ClZ8xWYm4i9KztgjtFhp/gP9xiBba/jknAtjhEppiq592i2B
+         HDJUwjlAc6etxqE+O32/g0egtG28sgeG5UNzu8J/ZJbj5wR76MZyJ23sww9zO1U3Xx
+         m4nYgR7vbhlwsBvulvgjD8uSf8WZig3/aljjTCLw=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B18CE60F79;
+        Fri, 15 Nov 2019 07:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573801417;
+        bh=cXKB7/z8hKIcCs1csnbwGGQvhJZYZrYw+Be56PBlCDI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iATKS7iaEVRZOR1zD2uYbDqyi9VL7LHTyD+b44EEKNeZQoyLmbL/NK64TBzFlXNz6
+         t/BFWUgmCcUsDhjGCHS3tjTPGEV9NHxjhcO5pM9V5KaKr1WaPKur+mZjRXFdvdGwyG
+         eFCuCurus72s1f3Axmxtmxgo/UkJkw4MaMjml8Dk=
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 15 Nov 2019 15:03:37 +0800
+From:   Can Guo <cang@codeaurora.org>
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/7] scsi: ufs: Fix up auto hibern8 enablement
+In-Reply-To: <1573799728.4956.5.camel@mtkswgap22>
+References: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
+ <1573798172-20534-4-git-send-email-cang@codeaurora.org>
+ <1573799728.4956.5.camel@mtkswgap22>
+Message-ID: <2a925548b8ead7c3b5ddf2d7bf3de05d@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On 2019-11-15 14:35, Stanley Chu wrote:
+> Hi Can,
+> 
+> On Thu, 2019-11-14 at 22:09 -0800, Can Guo wrote:
+>> +	if (hba->ahit != ahit)
+>> +		hba->ahit = ahit;
+>>  	spin_unlock_irqrestore(hba->host->host_lock, flags);
+>> +	if (!pm_runtime_suspended(hba->dev)) {
+> 
+> Always do pm_runtime_get_sync() here could avoid possible racing?
+> 
+> And thus AH8 could be enabled regardless of runtime status.
+> 
+>> +		pm_runtime_get_sync(hba->dev);
+>> +		ufshcd_hold(hba, false);
+>> +		ufshcd_auto_hibern8_enable(hba);
+>> +		ufshcd_release(hba);
+>> +		pm_runtime_put(hba->dev);
+>> +	}
+>>  }
+> 
+> Thanks,
+> Stanley
 
-My name is Yuval Rose, a Client Relations officer at CoinMatic, A 
-crypto currency exchange company based in Canada and one of 
-Canada’s foremost Crypto-currency exchange platforms. I have an 
-urgent lucrative business opportunity for you. I got your details 
-on the internet when I was searching for a reliable person that 
-can handle this deal and I believe you can handle it because you 
-bears the same Last-Name with the dead investor of the business 
-am about to introduce to you. This is a private and confidential 
-message from me to you and I request that it be treated as such.
+Hi Stanley,
 
-I am contacting you with respect to an urgent issue regarding a 
-Bitcoin account belonging to a deceased account holder, I got 
-your contact in my quest for a Partner to stand in as a Next of 
-Kin to the deceased account holder, this was from the last 
-details she sent in to the company regarding liquidation of her 
-BTC account, since you might be aware that BTC transactions are 
-mostly anonymous. I contacted you so that you can apply to my 
-company as a relative of the deceased in order to claim the fund. 
-This is as easy as ABC since my company already took a decision 
-that the entire fund would be credited to any relative that comes 
-up for claim before the end of December this year.
+if !pm_runtime_suspended() is true, hba->dev's runtime status, other 
+than RPM_ACTIVE,
+may be RPM_SUSPENDING or RPM_RESUMING. So, here for safty, do 
+pm_runtime_get_sync() once
+before access registers, in case we hit corner cases in which powers 
+and/or clocks are OFF.
 
-The Bitcoin was sold and converted to cash at the request of the 
-late account holder for onward deposit to an account to be 
-advised by her. Upon liquidation, we waited for months for info 
-on the bank account for the deposit but never got a feedback. 
-Upon inquiry, it was confirmed that she passed away (died) after 
-a cancer related ailment.
-
-At a meeting held 2 weeks ago by my Company’s Management on the 
-matter, it was resolved that unless a Next of Kin or any relative 
-of the late account Holder comes forward for claim of the funds 
-on or before 30th of December 2019 (which is practically 
-impossible) the whole funds would be converted back to Bitcoin 
-and becomes part of the Company's portfolio.
-
-With the above in mind, I decided to quickly reach out to you so 
-that you can apply to my company for claim of this fund in the 
-capacity of a Next-of-Kin/Relative. Rest assured that this is a 
-straight forward process with no risks involved whatsoever. Start 
-to finish of the process with fund deposited in your nominated 
-bank account can be achieved within a space of 10 banking days or 
-less. All that I require from you is full cooperation and 
-sincerity.
-
-I am suggestion a sharing ratio of 50/50 split after fund is 
-credited to your account. We shall have to draft up an agreement 
-to that effect if agreed. If this is OK with you and wish to 
-continue with the claim process, I will draft a letter which you 
-would email to my Company as a formal request for claim of this 
-funds.
-
-I await your reply, please provide your private phone number in 
-your reply.
-
-
-Send reply to: yuval@free2312.com
-
-
-Best Regards
-Yuval
-
-
-Toronto-Canada
+Thanks,
+Can Guo.
