@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFC3FE7F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:35:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5B6FE7FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfKOWeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 17:34:06 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41580 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbfKOWeD (ORCPT
+        id S1727590AbfKOWfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 17:35:02 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42529 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfKOWeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 17:34:03 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p26so7327667pfq.8
+        Fri, 15 Nov 2019 17:34:05 -0500
+Received: by mail-pg1-f193.google.com with SMTP id q17so6617130pgt.9
         for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 14:34:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6V0ioyUbzQMXQMBXE7qcEPEwz5yqv4QBePomZ4UZPqc=;
-        b=k7kBlMxXsG6gA/UcmlwTDggZ65v+ipn3YUceSw3Oegz9WKEnqSckQYHfAT76F7fPjN
-         s7QKdRMaRPqZFZSI/xOc6FPxjFzbfDiSqxO16UNRWzwpNND4qj7rCnHyntrgf8gWE2+b
-         z31khVZDNGGcS5gNaQpHfSp84XhywQ1G5jrK5dsnXgm8xzY2Bttagju6GbfsQCuUz1t1
-         a1jGQru7049kf1xVk9PcTip/XRGMTQ3ZDi5E07+5EowNcQ7XYcGxNTDsz6/vv89SFEC4
-         rOkGhyiZz4rpSal4odmYlyBahCIUN9rZMet/cta0i71K0Th0xdUbgnAkFRClk3lff4d1
-         /chw==
+        bh=I8DYLlgbe7crhAhNbwNPqGy2McaZWO3AECdzJYJCCco=;
+        b=uq0Rvs0KPR5i9HtlAfbqJ09ftst7366sxovqlgQSCdSMlx7zsOEFlsXzxIZ/RFJepW
+         +xNmN50KWjZEmZ4ahwYGYncO2oNSlvlk9+bSZ0uJj5KwnzYGnYwwpJh3Z0U0CVVPUgeF
+         WBek2r2DnpcVe5urx/INF76BoO8wqFwuN86lGWJuCvpErfOgoUCoWWPI37s5pI2Uuw9X
+         OEj1WNleT7NOb7K1+oFm34vXUlCdixUaNsyhZrrKKyzZ34tRHBi5jpoqITPilNH4uc3A
+         cG9Aay+Ra1kWvl+WOeF5ifVv++jVQtvf2AnAcuQ92MtUnevyPsRG5Pf0brxRmVhP9TbT
+         u6bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6V0ioyUbzQMXQMBXE7qcEPEwz5yqv4QBePomZ4UZPqc=;
-        b=gtPjIjAIS0RoNd6B7kOaMSlpnGdV22uhzyTogsru+3wyINTwysI/+rG1Ahf/dYoylK
-         uIlOMVY2DYoSKtosa3e1Ezy2IrTYo/KiRI/PF8FNQdjpUL4uP8m/1pVCso29Wmwf2bYj
-         2JNkM7qX4xmTclwmVTBwYdCM9RoUMnJ+VAdpOCsvXAvFJLRvsZSUFxGDQ1fIaY2yIsNM
-         SPf/qJ+bCNOWGRlleHG35Rm1tXfe9E+7eC+PSMIW4j1O9oBj0b4nKoSzvUa19XkOH88q
-         MFuWXLuNvvrhPpe1Qr0LBlAzHYStOq2iq0WW2hktmUI0c6TDlO+CnbueubeSMq/VT6+5
-         r22w==
-X-Gm-Message-State: APjAAAVr4l+K50kXPZLjd9PWRoAbiJHFXK6yb2IWQf3LvEn+9PFDvFqS
-        KRnSFAGy08u92o8RBZgzOxeHag==
-X-Google-Smtp-Source: APXvYqwPDrxT0ltVk6U0vCs9B/kupiJwArvMyWvfpOn2zdkBUlstoIR7TdNRADNMqnuUZbeIdUbysg==
-X-Received: by 2002:a62:1c8:: with SMTP id 191mr20454995pfb.152.1573857242567;
-        Fri, 15 Nov 2019 14:34:02 -0800 (PST)
+        bh=I8DYLlgbe7crhAhNbwNPqGy2McaZWO3AECdzJYJCCco=;
+        b=V4vVRNPuxWWzblNOyTYR9WPR5e29OdO2kZniH1GJWhXRNpwi57vWbZ1ZoxElOmmPft
+         1FvH4MIPxlomyBACid3dpMH88JCdF1tZ8VFO4xX4jgcUtVzIdzmOON7gCa6ll6KRZ1f9
+         JHyxagTLWqwkTUrsLRvfDFhYkBfDBOwjujEkZFooFWMAxXkmAhvxSGynDOf0kvZoCt3c
+         s6Cgu7V/kFZjaYJEBgqyIIA03RBzJP2ieTgVNUt9osruSfkhnjAoxJT/nzRkYQaEg0eC
+         ph2ELxMNeb/+8o8UCE6P7oLDO9fRAijVfaPfKzEGa9LW/1CwvlO1OHWxQ1K4xvpuAU9L
+         eY/Q==
+X-Gm-Message-State: APjAAAXVu5TaSzNzapuSxdd6Rs83FV3eoFgpl/4XDlzYzdFGxLSwVZAH
+        d81iRaBfUss8YWEYozmL15dNCA==
+X-Google-Smtp-Source: APXvYqytHqdgYw+McewKp6L1IK0RR+uPnytQnNFy3RGnQfrkQ+RNzORO54L3aq41JZ6v3SKIJheJ4A==
+X-Received: by 2002:a63:2e01:: with SMTP id u1mr19770443pgu.25.1573857243342;
+        Fri, 15 Nov 2019 14:34:03 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m15sm11699724pfh.19.2019.11.15.14.34.01
+        by smtp.gmail.com with ESMTPSA id m15sm11699724pfh.19.2019.11.15.14.34.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 14:34:01 -0800 (PST)
+        Fri, 15 Nov 2019 14:34:02 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     stable@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19+][PATCH 06/20] media: stm32-dcmi: fix check of pm_runtime_get_sync return value
-Date:   Fri, 15 Nov 2019 15:33:42 -0700
-Message-Id: <20191115223356.27675-6-mathieu.poirier@linaro.org>
+Subject: [stable 4.19+][PATCH 07/20] hwrng: stm32 - fix unbalanced pm_runtime_enable
+Date:   Fri, 15 Nov 2019 15:33:43 -0700
+Message-Id: <20191115223356.27675-7-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191115223356.27675-1-mathieu.poirier@linaro.org>
 References: <20191115223356.27675-1-mathieu.poirier@linaro.org>
@@ -58,41 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hugues Fruchet <hugues.fruchet@st.com>
+From: Lionel Debieve <lionel.debieve@st.com>
 
-commit ab41b99e7e55c85f29ff7b54718ccbbe051905e7 upstream
+commit af0d4442dd6813de6e77309063beb064fa8e89ae upstream
 
-Start streaming was sometimes failing because of pm_runtime_get_sync()
-non-0 return value. In fact return value was not an error but a
-positive value (1), indicating that PM was already enabled.
-Fix this by going to error path only with negative return value.
+No remove function implemented yet in the driver.
+Without remove function, the pm_runtime implementation
+complains when removing and probing again the driver.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: stable <stable@vger.kernel.org> # 4.19+
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/char/hw_random/stm32-rng.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index d86944109cbf..18d0b5641789 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -584,9 +584,9 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	int ret;
+diff --git a/drivers/char/hw_random/stm32-rng.c b/drivers/char/hw_random/stm32-rng.c
+index 042860d97b15..37b338a76ba4 100644
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -169,6 +169,13 @@ static int stm32_rng_probe(struct platform_device *ofdev)
+ 	return devm_hwrng_register(dev, &priv->rng);
+ }
  
- 	ret = pm_runtime_get_sync(dcmi->dev);
--	if (ret) {
--		dev_err(dcmi->dev, "%s: Failed to start streaming, cannot get sync\n",
--			__func__);
-+	if (ret < 0) {
-+		dev_err(dcmi->dev, "%s: Failed to start streaming, cannot get sync (%d)\n",
-+			__func__, ret);
- 		goto err_release_buffers;
- 	}
++static int stm32_rng_remove(struct platform_device *ofdev)
++{
++	pm_runtime_disable(&ofdev->dev);
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM
+ static int stm32_rng_runtime_suspend(struct device *dev)
+ {
+@@ -210,6 +217,7 @@ static struct platform_driver stm32_rng_driver = {
+ 		.of_match_table = stm32_rng_match,
+ 	},
+ 	.probe = stm32_rng_probe,
++	.remove = stm32_rng_remove,
+ };
  
+ module_platform_driver(stm32_rng_driver);
 -- 
 2.17.1
 
