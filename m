@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C89BFDB6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98469FDB73
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfKOKcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:32:35 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33991 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfKOKcf (ORCPT
+        id S1727314AbfKOKdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:33:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60518 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfKOKdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:32:35 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y186so7661097lfa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 02:32:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=unikie-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=LEboKIm4XtYUXiW1Vq6xcXCe3zY0ylQ/Sqx7enK/HH0=;
-        b=kKgwjlUa0n1nWif0RELshhBBhRTkumivvKv5zGSPuMJXP0PGwQRe+V0QxOeL2/rbqP
-         /rUoBJlJLRf0/ER76UH6Ehiw1Gaek8IVIbWXvLqDdX+lcmylJVdZygdlx8yCdCc6K0Zd
-         WBS3NeSIrhK9DlrnmvfQ3Dw9ScQOwqvQ83frLLb16yhIfadkeqiGI6+WqrrbGmTmS8IR
-         wWBvYFCq9C0FN/gD8hPEaU6S6rzKLITZ4jI55LLNe4kG65y7FNZvlbZ7U18SGTE08Qb8
-         lae3dgXXh+z/VhLvDs6Mdhdp4q1wVyMdp8NPw42wuOWmP/AF+481TzuY4oeWIqnf9Qz/
-         oFUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version:content-transfer-encoding;
-        bh=LEboKIm4XtYUXiW1Vq6xcXCe3zY0ylQ/Sqx7enK/HH0=;
-        b=Yr05rts9H7IfddUs+EJuXjSJamCtpvl2A/1Hoziki6v99L4foKNxKFT79k9dGi4Tdf
-         lVgWsGTYlYbxGigj3WbfZMd/5g6PLu2iWQjUduaPxDpvHnF9GBXnlCRSniM6KG9Y8QKO
-         q+wuMSexTxLPzg+ayycplYtSQdQnwqCRblA5/XJH35GLk1SaumNb36l975A1V1hkPDeF
-         wBGJkswhrE1r620svB1KwCbdOTRMvngf7EooBsUQ1JWbXUC5tFblAayXlJZBsvLrWlVh
-         q6+kVydC1mTjlxZnS87HH3z9T/unTJy5wTlbAAvdrqm8PUWESaszKSHNvj0HiSkEkoAG
-         DArg==
-X-Gm-Message-State: APjAAAXClJDJblwHBFeju+/7/wIQ5YtFy4O/ZEjdNS/kfJTsTWtts12i
-        Cquu0PyOsrpYKGJwyq15d8abNQ==
-X-Google-Smtp-Source: APXvYqx4AjGfhwhLgmZVL/5isI0vcHIA+bgEWl38mBG43hAXzCmNi0w9qQFhMAYDmeYTWjP1IEdK3g==
-X-Received: by 2002:a19:790c:: with SMTP id u12mr11108700lfc.183.1573813953142;
-        Fri, 15 Nov 2019 02:32:33 -0800 (PST)
-Received: from GL-434 ([109.204.235.119])
-        by smtp.gmail.com with ESMTPSA id t12sm4030431lfc.73.2019.11.15.02.32.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Nov 2019 02:32:32 -0800 (PST)
-From:   jouni.hogander@unikie.com (Jouni =?utf-8?Q?H=C3=B6gander?=)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] drivers/base: Fix memory leak in error paths
-References: <20191114121840.5585-1-jouni.hogander@unikie.com>
-        <20191115032603.GG793701@kroah.com> <878soha7tc.fsf@unikie.com>
-        <20191115082022.GB55909@kroah.com> <8736epa202.fsf@unikie.com>
-        <20191115101902.GB337025@kroah.com>
-Date:   Fri, 15 Nov 2019 12:32:31 +0200
-In-Reply-To: <20191115101902.GB337025@kroah.com> (Greg Kroah-Hartman's message
-        of "Fri, 15 Nov 2019 18:19:02 +0800")
-Message-ID: <87y2wh8m68.fsf@unikie.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Fri, 15 Nov 2019 05:33:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BQq4rfhZ/qkZrjGi9VrRkJjPTU3IQASdxtk+py8db0M=; b=GmWz2UJQfoWTfLRQgXnDZvK+D
+        /bs80r9tjbY+/kCYcNsBmynTY3nzHl4LwSn/tKhnlJowKEWUJBn4kDT/B5x+cBVf44PHMQaqXPbUY
+        NEL5MZLwm6m8ByKuq9/K7MRpEbQU8tnkQpEaqZwPF0bNajkdwNcl69p8t2ISEkpHCDkFraGqZ5b9c
+        T87fCO8b9dZuXNBr/Y6P0UdHxpGs85fbRzrU/GjGkIFzzyMXqB2uwClJCxwc+5MgfxyHVshPH9LCW
+        FVC5aZuaSOomFoV56E4ak3eK7j/MOLQRbgefbN3y7zas1GJvJrf1Ukf8ty8negsSo4SYym/cE85oE
+        a2dlz4r5w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVYv5-0005ss-3g; Fri, 15 Nov 2019 10:33:39 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1412F303D9F;
+        Fri, 15 Nov 2019 11:32:28 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2622D2B128BE8; Fri, 15 Nov 2019 11:33:36 +0100 (CET)
+Date:   Fri, 15 Nov 2019 11:33:36 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Shile Zhang <shile.zhang@linux.alibaba.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [RFC PATCH v3 6/7] scripts/sorttable: Add ORC unwind tables sort
+ concurrently
+Message-ID: <20191115103336.GD4131@hirez.programming.kicks-ass.net>
+References: <20191115064750.47888-1-shile.zhang@linux.alibaba.com>
+ <20191115064750.47888-7-shile.zhang@linux.alibaba.com>
+ <20191115090723.GS4114@hirez.programming.kicks-ass.net>
+ <9594afbc-52bc-5ae7-4a19-8fc4b36a1abd@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9594afbc-52bc-5ae7-4a19-8fc4b36a1abd@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+On Fri, Nov 15, 2019 at 05:43:49PM +0800, Shile Zhang wrote:
+> On 2019/11/15 17:07, Peter Zijlstra wrote:
+> > On Fri, Nov 15, 2019 at 02:47:49PM +0800, Shile Zhang wrote:
 
->>=20
->> Ok, did some more debugging on
->> this. net/core/net-sysfs.c:netdev_register_kobject is doing
->> device_initialize(dev). This is in
->> drivers/base/core.c:device_initialize:
->>=20
->>  * NOTE: Use put_device() to give up your reference instead of freeing
->>  * @dev directly once you have called this function.
->>=20
->> My understanding is that remaining reference on error path is taken by
->> device_initialize and as instructed in the note above it should be given
->> up using put_device?
->
-> Yes, that is correct.
->
->> Tested this and it's fixing the memory leak I found in my Syzkaller
->> exercise. Addition to that it seems to be fixing also this one:
->>=20
->> https://syzkaller.appspot.com/bug?id=3Df5f4af9fb9ffb3112ad6e30f717f769de=
-cdccdfc
->
-> Great!  Care to submit a patch for this?
+> > > +/**
+> > > + * sort - sort an array of elements
+> > > + * @base: pointer to data to sort
+> > > + * @num: number of elements
+> > > + * @size: size of each element
+> > > + * @cmp_func: pointer to comparison function
+> > > + * @swap_func: pointer to swap function
+> > > + *
+> > > + * This function does a heapsort on the given array. You may provide a
+> > > + * swap_func function optimized to your element type.
+> > > + *
+> > > + * Sorting time is O(n log n) both on average and worst-case. While
+> > > + * qsort is about 20% faster on average, it suffers from exploitable
+> > > + * O(n*n) worst-case behavior and extra memory requirements that make
+> > > + * it less suitable for kernel use.
+> > > + *
+> > > + * This code token out of /lib/sort.c.
+> > > + */
+> > > +static void sort(void *base, size_t num, size_t size,
+> > > +	  int (*cmp_func)(const void *, const void *),
+> > > +	  void (*swap_func)(void *, void *, int size))
+> > > +{
 
-I will submit another patch and Cc you there. This patch should be ignored.
+> > > +}
 
-BR,
+> > Do we really need to copy the heapsort implementation? That is, why not
+> > use libc's qsort() ? This is userspace after all.
+> 
+> Yes, I think qsort is better choice than copy-paste here. But qsort does not
+> support customized swap func, which is needed for ORC unwind swap two tables
+> together.
+> I think it's hard to do with qsort, so I used sort same with original orc
+> unwind table sort.
 
-Jouni H=C3=B6gander
+Urgh, you're right. That's unforunate.
