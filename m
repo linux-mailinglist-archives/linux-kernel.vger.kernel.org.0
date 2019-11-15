@@ -2,113 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2849FE7EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:34:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E2EFE824
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbfKOWe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 17:34:29 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41347 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbfKOWeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 17:34:16 -0500
-Received: by mail-pl1-f196.google.com with SMTP id d29so5617431plj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 14:34:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FlA/WYoLeRABK4x8leOELB1KpW2VXeE/7KRkjFeheIs=;
-        b=EuCYF29XK/mB/F3BxjT3sWX6z88YjtNqs+w5TNJQP6w08JiRou935ewYfWNAW/g3Eg
-         FYlTO4DtoNdOTwlSxUFfeQtM32HB8UD4XiO9OLyVfO071D1lvVGMwJJWMxV7DW959l9H
-         3cEwLuybSJy5RgNBVbsk3HFrKrWbg+s5SFLxWWx6v5gjbraobv8BFodgs84RA1TUiybx
-         8wvlY+DBrzz7i+IYZ/fG8vjyNWly48fh5ZQWjCLhzQuBoYMt+ckcnb/GiIKLPGqHmTMR
-         H6s2ATHNqRlbPvsQBZJwh0jEIKkumM1yU/gS+DXe538ozDU9zHQll5wun9QYpe4w15+l
-         ifVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FlA/WYoLeRABK4x8leOELB1KpW2VXeE/7KRkjFeheIs=;
-        b=JSq591wB4XsoDBmkYo8fkPSfEjLwIjuTbAQVrbqYtnjyM4l2QL4dMVVH6iaDz4N2Nq
-         gIGSFXo7d/ILjAU9WdURmUDLOcjrZ02X2yUdv2FJQ6PNhwPQhHzaqtFNHahcDFfep0hW
-         UOIRT3Gku7g/qaBQtks7CwTc5okn6lzmqlYm7Xx2Rjbr58nWUhSV1SeHNc5kEWs5bkTj
-         3XVSPRoKO1W3NKuKDgR/SIsxcSHQcu+mNeQQvmyBXXW8CZs2dmA4ld+xYhq+P0D2bVAX
-         LIR/726I9i1DM1Kk4G9q6HtK+/1gLKuomPSEwp6UMB2McGKjJhc2xNbJr0uhdWkZ+Dui
-         YMNQ==
-X-Gm-Message-State: APjAAAV0hBHWI5Z4JXVPwWzS+9x4F+D30xurh5yZ8wXW6w9We5CPvAvb
-        EgnmoCo+/s8+Vk5IYpq1e7F1og==
-X-Google-Smtp-Source: APXvYqwrPgGdAOCHvG+Dr9yqtqFxSjTdBheEMm1jF9StVEaJaadS7qR9/JmFNyQStGJT1dxmYiuHuQ==
-X-Received: by 2002:a17:90a:2385:: with SMTP id g5mr22958192pje.117.1573857255728;
-        Fri, 15 Nov 2019 14:34:15 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m15sm11699724pfh.19.2019.11.15.14.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 14:34:15 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     stable@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19+][PATCH 20/20] dmaengine: stm32-dma: check whether length is aligned on FIFO threshold
-Date:   Fri, 15 Nov 2019 15:33:56 -0700
-Message-Id: <20191115223356.27675-20-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191115223356.27675-1-mathieu.poirier@linaro.org>
-References: <20191115223356.27675-1-mathieu.poirier@linaro.org>
+        id S1727078AbfKOWjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 17:39:24 -0500
+Received: from mga01.intel.com ([192.55.52.88]:32628 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726953AbfKOWjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 17:39:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 14:39:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,309,1569308400"; 
+   d="scan'208";a="214860788"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 15 Nov 2019 14:39:22 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iVkFN-000F3a-Vc; Sat, 16 Nov 2019 06:39:21 +0800
+Date:   Sat, 16 Nov 2019 06:38:34 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Bryan Whitehead <Bryan.Whitehead@microchip.com>
+Cc:     kbuild-all@lists.01.org, netdev@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mscc.c: fix semicolon.cocci warnings
+Message-ID: <20191115223834.ysp6nhb7mlhepdvl@4978f4969bb8>
+References: <201911160629.1h9COFsK%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201911160629.1h9COFsK%lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+From: kbuild test robot <lkp@intel.com>
 
-commit cc832dc8e32785a730ba07c3a357e17c201a5df8 upstream
+drivers/net/phy/mscc.c:1683:3-4: Unneeded semicolon
 
-When a period length is not multiple of FIFO some data may be stuck
-within FIFO.
 
-Burst/FIFO Threshold/Period or buffer length check has to be hardened
+ Remove unneeded semicolon.
 
-In any case DMA will grant any request from client but will degraded
-any parameters whether awkward.
+Generated by: scripts/coccinelle/misc/semicolon.cocci
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Cc: stable <stable@vger.kernel.org> # 4.19+
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: 75a1ccfe6c72 ("mscc.c: Add support for additional VSC PHYs")
+CC: Bryan Whitehead <Bryan.Whitehead@microchip.com>
+Signed-off-by: kbuild test robot <lkp@intel.com>
 ---
- drivers/dma/stm32-dma.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
-index 379e8d534e61..4903a408fc14 100644
---- a/drivers/dma/stm32-dma.c
-+++ b/drivers/dma/stm32-dma.c
-@@ -308,20 +308,12 @@ static bool stm32_dma_fifo_threshold_is_allowed(u32 burst, u32 threshold,
- 
- static bool stm32_dma_is_burst_possible(u32 buf_len, u32 threshold)
- {
--	switch (threshold) {
--	case STM32_DMA_FIFO_THRESHOLD_FULL:
--		if (buf_len >= STM32_DMA_MAX_BURST)
--			return true;
--		else
--			return false;
--	case STM32_DMA_FIFO_THRESHOLD_HALFFULL:
--		if (buf_len >= STM32_DMA_MAX_BURST / 2)
--			return true;
--		else
--			return false;
--	default:
--		return false;
--	}
-+	/*
-+	 * Buffer or period length has to be aligned on FIFO depth.
-+	 * Otherwise bytes may be stuck within FIFO at buffer or period
-+	 * length.
-+	 */
-+	return ((buf_len % ((threshold + 1) * 4)) == 0);
- }
- 
- static u32 stm32_dma_get_best_burst(u32 buf_len, u32 max_burst, u32 threshold,
--- 
-2.17.1
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+head:   a98cdaf73e32d1538cc225464fcf61310749471e
+commit: 75a1ccfe6c726ba33a2f9859d39deb2eba620583 [217/233] mscc.c: Add support for additional VSC PHYs
 
+ mscc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -1680,7 +1680,7 @@ static int vsc8584_config_init(struct ph
+ 		default:
+ 			ret = -EINVAL;
+ 			break;
+-		};
++		}
+ 
+ 		if (ret)
+ 			goto err;
