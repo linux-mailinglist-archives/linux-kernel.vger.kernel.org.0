@@ -2,97 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A36BAFDB79
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB7E9FDB84
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfKOKgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:36:21 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38427 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfKOKgU (ORCPT
+        id S1727412AbfKOKiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:38:14 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:59142 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbfKOKiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:36:20 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z19so9831110wmk.3;
-        Fri, 15 Nov 2019 02:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:subject:date:message-id;
-        bh=frWZkSD6sy+8xeYJ3Z3Dvc1ltroH4PVNYqHO9zC/gkU=;
-        b=oAaeCX6Lw4vTyv0tC3MmzjWCZ0wJwGhNiup8LtPqlbMwl4Tz0ld9uF9kAdkXbv0j1m
-         F/3MQx4qpNlS1NE/4ZuukATOeEbUzu+9ESR0W86lDELqojpGB7Ocsodi97F+PbTN4Ls7
-         5io2PJ2RgWlEThI3Yoh/Pcxe6cEN9tSmgOSaun0R3G0Mo5jBNK+NPU4XkWu6X4LztwJO
-         I4qtJYHR1ggCeMx9tUvzUXOAknQk7ogN7QcRf0yp553OqA8i8MmhHDIdK4kTokmxN0Ym
-         qliw4KqyhB0i8W9dsat0p9Wlin6ravgfbVCu7ekv/uXV71d+ffavN1IBZCSpKpI3SSpp
-         5BiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:subject:date:message-id;
-        bh=frWZkSD6sy+8xeYJ3Z3Dvc1ltroH4PVNYqHO9zC/gkU=;
-        b=RfCsLMhR7qjgGCZDyr5ML9ZD1byy49AYIJyG241QniH4wAMH/gHHeyjZTppAwsDm/W
-         2i5zMsau9wxc5k08h/0gIlMD7PBcFzEfrJcky5kvcECk9AYaFroWXrjJ+VecHAP4hvV0
-         LY1pDiwmzm/dmUwttxp3LVR/IxRiZJyhRSzCBAods9McmGOel+QPc5G8/1e/dN1vQzOM
-         y4FJ/sertNVQedEgyACMVWoLHr/7cbZuRGXQu4XjKZuuEm9wwF2yVIAKg2IZQ0TjBlhP
-         sxailiprI+j/Kbg8DjznClGyJgpTrfqaGh5NfnsC7JlwHUGZPhRZyMRqlKQRxKAZ65g9
-         Pv/Q==
-X-Gm-Message-State: APjAAAURzzYOwLGKBahtFwX4l6cOk2KnlT/G7pIgImF8kdW/kQcuP03e
-        y5OwjakZ2BDgPqQEA2zyIENbd6rf
-X-Google-Smtp-Source: APXvYqwR8q3zsqox2ep5AOsJj1majxWGrUKLw6Izp+EvrWGnzP7gzmSEyY6YmaYXu6FJDq4UwXpgnQ==
-X-Received: by 2002:a1c:4e1a:: with SMTP id g26mr14110733wmh.138.1573814178104;
-        Fri, 15 Nov 2019 02:36:18 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id b186sm8801138wmb.21.2019.11.15.02.36.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Nov 2019 02:36:17 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH] KVM: nVMX: mark functions in the header as "static inline"
-Date:   Fri, 15 Nov 2019 11:36:16 +0100
-Message-Id: <1573814176-28536-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 15 Nov 2019 05:38:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kF17KYqpXXxrOXvE5ZmPkjCvqdlqrYPD5aCNtqKBz40=; b=Ynvb5DGRQwGex8Q0NTJer5TLU
+        KlzMAbWWklLqeWAgE0WFxer4N5SAkywU6V6El8MJ1ylwwM4rQKYH6wU2YzqYQ7EB941XJ7jseH62B
+        uGh3Hl1VvE3HjmC8EWWC0y/rlsSLNjalUONSoHmPisftHOxBV0C3oScR+EhQdVX75aOwu0YN/Wuzj
+        uOOBcWME6abYJoXrPT02rwEnOTuRzPy7DDNSSj8pU+dLCIrMkGinOVgv1JA4DSBrNMUtFBMdZB5re
+        rT+3mIB0u/9//YqC2mNMaEgxxrMve9qZiycW0oskf54iG8Z3kcGFDFfdpHu0zrnwgp5I9yeVMxnlF
+        49GqRWJsg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVYyw-0006Pz-8Q; Fri, 15 Nov 2019 10:37:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8DCD2303D9F;
+        Fri, 15 Nov 2019 11:36:27 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 79AC42B0BC1FB; Fri, 15 Nov 2019 11:37:35 +0100 (CET)
+Date:   Fri, 15 Nov 2019 11:37:35 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+Message-ID: <20191115103735.GE4131@hirez.programming.kicks-ass.net>
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+ <20191115095447.GU4114@hirez.programming.kicks-ass.net>
+ <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correct a small inaccuracy in the shattering of vmx.c, which becomes
-visible now that pmu_intel.c includes nested.h.
+On Fri, Nov 15, 2019 at 11:18:00AM +0100, Vincent Guittot wrote:
+> On Fri, 15 Nov 2019 at 10:55, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
+> > > update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
+> > > which might be inefficient when cpufreq driver has rate limitation.
+> > >
+> > > When a task is attached on a CPU, we have call path:
+> > >
+> > > update_load_avg()
+> > >   update_cfs_rq_load_avg()
+> > >     cfs_rq_util_change -- > trig frequency update
+> > >   attach_entity_load_avg()
+> > >     cfs_rq_util_change -- > trig frequency update
+> > >
+> > > The 1st frequency update will not take into account the utilization of the
+> > > newly attached task and the 2nd one might be discard because of rate
+> > > limitation of the cpufreq driver.
+> >
+> > Doesn't this just show that a dumb rate limit in the driver is broken?
+> 
+> But the rate limit may come from HW constraints that forces to wait
+> let say 4ms or even 10ms between each frequency update.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/nested.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Sure, but then it can still remember the value passed in last and use
+that state later.
 
-diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
-index 19e6015722a9..b9e519840f28 100644
---- a/arch/x86/kvm/vmx/nested.h
-+++ b/arch/x86/kvm/vmx/nested.h
-@@ -246,7 +246,7 @@ static inline bool fixed_bits_valid(u64 val, u64 fixed0, u64 fixed1)
- 	return ((val & fixed1) | fixed0) == val;
- }
- 
--static bool nested_guest_cr0_valid(struct kvm_vcpu *vcpu, unsigned long val)
-+static inline bool nested_guest_cr0_valid(struct kvm_vcpu *vcpu, unsigned long val)
- {
- 	u64 fixed0 = to_vmx(vcpu)->nested.msrs.cr0_fixed0;
- 	u64 fixed1 = to_vmx(vcpu)->nested.msrs.cr0_fixed1;
-@@ -260,7 +260,7 @@ static bool nested_guest_cr0_valid(struct kvm_vcpu *vcpu, unsigned long val)
- 	return fixed_bits_valid(val, fixed0, fixed1);
- }
- 
--static bool nested_host_cr0_valid(struct kvm_vcpu *vcpu, unsigned long val)
-+static inline bool nested_host_cr0_valid(struct kvm_vcpu *vcpu, unsigned long val)
- {
- 	u64 fixed0 = to_vmx(vcpu)->nested.msrs.cr0_fixed0;
- 	u64 fixed1 = to_vmx(vcpu)->nested.msrs.cr0_fixed1;
-@@ -268,7 +268,7 @@ static bool nested_host_cr0_valid(struct kvm_vcpu *vcpu, unsigned long val)
- 	return fixed_bits_valid(val, fixed0, fixed1);
- }
- 
--static bool nested_cr4_valid(struct kvm_vcpu *vcpu, unsigned long val)
-+static inline bool nested_cr4_valid(struct kvm_vcpu *vcpu, unsigned long val)
- {
- 	u64 fixed0 = to_vmx(vcpu)->nested.msrs.cr4_fixed0;
- 	u64 fixed1 = to_vmx(vcpu)->nested.msrs.cr4_fixed1;
--- 
-1.8.3.1
+It doesn't _have_ to completely discard values.
 
+> > > update_cfs_rq_load_avg() is only called by update_blocked_averages()
+> > > and update_load_avg() so we can move the call to
+> > > cfs_rq_util_change/cpufreq_update_util() into these 2 functions. It's also
+> > > interesting to notice that update_load_avg() already calls directly
+> > > cfs_rq_util_change() for !SMP case.
+> > >
+> > > This changes will also ensure that cpufreq_update_util() is called even
+> > > when there is no more CFS rq in the leaf_cfs_rq_list to update but only
+> > > irq, rt or dl pelt signals.
+> >
+> > I don't think it does that; that is, iirc the return value of
+> > ___update_load_sum() is 1 every time a period lapses. So even if the avg
+> > is 0 and doesn't change, it'll still return 1 on every period.
+> >
+> > Which is what that dumb rate-limit thing wants of course. But I'm still
+> > thinking that it's stupid to do. If nothing changes, don't generate
+> > events.
+> 
+> When everything (irq, dl, rt, cfs) is 0, we don't generate events
+> because update_blocked_averages is no more called because
+> rq->has_blocked_load is clear
+
+Aah.. Ok, let me look at this thing again.
+
+> > If anything, update_blocked_avgerages() should look at
+> > @done/others_have_blocked() to emit events for rt,dl,irq.
+> 
+> other_have_blocked can be set but no decay happened during the update
+> and we don't need to call cpufreq_update_util
+
+True.
