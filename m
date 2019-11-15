@@ -2,87 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86632FE1F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7884CFE20A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 16:52:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbfKOPt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 10:49:57 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37818 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfKOPtn (ORCPT
+        id S1727645AbfKOPwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 10:52:20 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35741 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfKOPwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 10:49:43 -0500
-Received: by mail-io1-f66.google.com with SMTP id 1so10935532iou.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 07:49:43 -0800 (PST)
+        Fri, 15 Nov 2019 10:52:20 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so8406550lfl.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 07:52:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
-        b=T96mBsWswYjsm0w7ecYkWpV509ib/ulk9bHbI0Xwo0rzkePegh7rSfOcmzGbyf8vTc
-         lns/HOXyf4/6jOYDVIgZ/CZyIfN2m2y88qVdmXSABhNsP0MXDIRsHGSOOd7wWkwuGiQx
-         ehcoBpFXp6INIFq3jwmveina1L3fsWjpzHRhMvlhwo8OJ8Dy4xuFXwCrYZiL/Ja/dmiU
-         sEvBblBcC09ww5H/W1Li3rJXBc1TYjMn46kjeboNwYGUiqFeNnjz46iJxarBlBzUTpau
-         7EU4w1MkRxjhgPFrJ2/ipVqnuE4IawmENFYcW1JVUg9OFLrEKZvfb77T8+3XayPV4Zd+
-         KrHA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=N5trgeVD3EORLjGO+xA4b3sDYv5TwYpSjVCXBJ/A2b4=;
+        b=AGZ+i9Z/ANAdqhQDWmYJyNWnrUSkK00vBhoI5umuPoEVVrOLx7ThqiRnxpKrVNr8vn
+         vDNOsPAwv4Q3EfzZdqu3RCjFDz08ePAIRk+ebM6Lhry2zQcFQUKGUFI/IK3O2QnwnBWB
+         tsMv30MNEsAOnIKuZkYLb+xnTUkhG7sttw2zo9zsG1YzMXzy1bmEMNxl/JtG7Uvs9/AX
+         r5kQ1Bj5yOXt1wgkF/CZGuWo3OHHjMqMQOKgy8IoGfGltquaO3V/CdvYYvEbClixKu6M
+         xP5pDemcxadu5Rt0FygluglS72XuyRgYnFkpXtugDdFg8RivUEoEY4aJY6YJXt9mkURA
+         xq6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
-        b=sWM48BJQRM+AhPdMGl3IWwZMi3eFbWyTcwgowWiYSEIGkcgymoxwHa3SXdMq/iHPKG
-         wgY3sSQsl8FvItYhWhIAFUBykT4YvN/JangAQDykP4lGqVe7ips3xka29tIUpoW+ZVRh
-         Y4SfHASPWhX97px0mC7DSDhsykHMpcFC5mkCnugIJpZHYzE7FqG+BD96zizfHRBCv5UF
-         kSvspfIrVOTPNdMdmLh+BYejql/+WrnbIXjo7m7LTRjJTy+bC2hpE/8mvlqsMT+gl+Rk
-         Ree1Yo6V3E0X8gGXXTLC5EVzOVMKexZ2Ro0wJwo1l80NejuQPMwsme6AOU9d5IrktYPK
-         6dEA==
-X-Gm-Message-State: APjAAAXw2maFhlU8+6683CdJ0EfACPH22miEyxsFG0b+MqDVAS83NeNw
-        ODoRIdSx3fooWSpCcf0DmXf5Pp2f4klA2Gv0eg==
-X-Google-Smtp-Source: APXvYqxEj1beLI6zhjihT/lmX2Dk324PGcIr8veC5c+0F/PFQKT7AeNYgljOGh72OwNqCMMZvqGkvMbSAqCkDjgGkjg=
-X-Received: by 2002:a5e:8e02:: with SMTP id a2mr1343031ion.269.1573832982053;
- Fri, 15 Nov 2019 07:49:42 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=N5trgeVD3EORLjGO+xA4b3sDYv5TwYpSjVCXBJ/A2b4=;
+        b=gfHiSysrtIyUddslTkXLp3w6gApDVHU+hG8LEf0MPh9qwJOlVMtKTYHv/qUwDhqyII
+         08b35lDwHTAyXEicMVz/KjsS33iFqaimEWYNJSlCtR2ru9SsbqxGx4c4dMzWBktblVTI
+         ZMEuesPuZjN/UXHaHweu81IPexrjERh0v06m10FxA0Fxtgon+NmYPnWRbyLxc0iaDqUU
+         LSJUiVFAkYxyIeEDu2mCB8dwsyhQXNwWxy7Aq+UAcqv6jX+BE3Oz3k4V5/OiDDqMZk8n
+         gW36Aozqiv4JSeZlJkrvZ60iHZJ6WyXevjFq1mhAMsRGmVKUDbZbR4IhKDowHldeYo0j
+         BCvQ==
+X-Gm-Message-State: APjAAAWh5RH7kpLllXnE+7IIOnkH1wFomyrM5VA4j/9SvqWR55DeqJdn
+        H5kbnegib6kaGP4tDRsAxMixEZhM0OFPp52DwYuXoLRzd0M=
+X-Google-Smtp-Source: APXvYqzSzUr1x6b0VTnz7N/sjujRkdhPKmenqMTT9HLOsTJ53Vw7JoA2OGmtdseEAGLl+Iw/x6f4Rr8Li+VfM1A6Lfg=
+X-Received: by 2002:a19:f811:: with SMTP id a17mr11581671lff.132.1573833136685;
+ Fri, 15 Nov 2019 07:52:16 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:7749:0:0:0:0:0 with HTTP; Fri, 15 Nov 2019 07:49:41
- -0800 (PST)
-Reply-To: moneygram.1820@outlook.fr
-From:   "Ms.Mary Coster" <info.zennitbankplcnigerian@gmail.com>
-Date:   Fri, 15 Nov 2019 16:49:41 +0100
-Message-ID: <CABHzvrkUQbbmg0Gr7foD3OjAJiY7Fd37=SW3mU=fnOPOcOyNdQ@mail.gmail.com>
-Subject: Goodnews, I have deposited your transfer total amount US$4.8million
- Dollars with Money Gram this morning. we agreed you will be receiving it
- $5000.00 daily.
-To:     undisclosed-recipients:;
+References: <20191115062009.813108457@linuxfoundation.org>
+In-Reply-To: <20191115062009.813108457@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 15 Nov 2019 21:22:05 +0530
+Message-ID: <CA+G9fYt-y23nfB1gU_e8JoTU+n973QgJCtMcqGrugRQ7sVHUMg@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/31] 4.9.202-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attn, Dear
-Goodnews, I have deposited your transfer total amount US$4.8million
-Dollars with Money Gram this morning. we agreed you will be receiving
-it $5000.00 daily.
-Contact Mr. John Dave Director, Money Gram to pick up your first Money
-Gram payment $5000.00 today.
-Contact Person; Mr. John Dave Director, Money Gram,International
-Remittance-Benin
-Email; moneygram.1820@outlook.fr
-Telephone; +229 62619517
-Please re-confirm your address to him once again such as listed below.
-1.Your Full Name..............................
-2.Address.........................
-3.Country....................
-4.Sex.........................................
-5.Your telephone numbers..........................
-6. Copy of your ID...........................
-This is to avoid sending your funds to wrong person, He is waiting to
-hear from you urgent today.
-Let me know once you pick up your transfer $5000.00 today.
-Finally, Note I have paid for the service fees, but only money will
-send to him is $90.00 transfer fee before you can pick up the transfer
-today.
-Ask, Mr. John Dave Director, Money Gram to give you direction where to
-send your transfer fee $90.00 only to Him Immediately so that you can
-pick up $5000.00 us dollars today.
-Thanks for undrstanding.
-Mary Coster
-m.coster@aol.com
+On Fri, 15 Nov 2019 at 11:52, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.202 release.
+> There are 31 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 17 Nov 2019 06:18:35 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.202-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.202-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: d7f83e4f45e886d919bc985bd225b8355ddd9284
+git describe: v4.9.201-32-gd7f83e4f45e8
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.201-32-gd7f83e4f45e8
+
+No regressions (compared to build v4.9.201)
+
+No fixes (compared to build v4.9.201)
+
+Ran 23552 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* network-basic-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* prep-tmp-disk
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
