@@ -2,85 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C13BEFD345
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 04:26:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FCE4FD33A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 04:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfKOD0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 22:26:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbfKOD0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 22:26:07 -0500
-Received: from localhost (unknown [104.132.150.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49843206EF;
-        Fri, 15 Nov 2019 03:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573788366;
-        bh=in4Nnx88Okt+KpvaUkR9Q/qLvzFGmG47hGjfkSFHv8Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K+mXwz9J/5MdQ6cepQtOUF75lhBEi7KNVFNfzWGUeBUc83TTj/YVYegZhVO9smCmD
-         p1ws6/WqUgV3FvFB2p0UlHktimSkCcWOJygljE8HSqKW9aciNp7lMtGmXd+71GITHQ
-         3rGPV1uQYM/OulI29TsvcQB06Mb43Vs786TqvZ8E=
-Date:   Fri, 15 Nov 2019 11:26:03 +0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     jouni.hogander@unikie.com
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] drivers/base: Fix memory leak in error paths
-Message-ID: <20191115032603.GG793701@kroah.com>
-References: <20191114121840.5585-1-jouni.hogander@unikie.com>
+        id S1727334AbfKODUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 22:20:53 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6672 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727187AbfKODUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 22:20:41 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 251A92404E01104A0712;
+        Fri, 15 Nov 2019 11:20:38 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
+ 11:20:28 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <viro@zeniv.linux.org.uk>, <rostedt@goodmis.org>,
+        <oleg@redhat.com>, <mchehab+samsung@kernel.org>, <corbet@lwn.net>,
+        <tytso@mit.edu>, <jmorris@namei.org>
+CC:     <yukuai3@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>
+Subject: [PATCH 0/3] fix potential infinite loop in debugfs_remove_recursive
+Date:   Fri, 15 Nov 2019 11:27:49 +0800
+Message-ID: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191114121840.5585-1-jouni.hogander@unikie.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 02:18:40PM +0200, jouni.hogander@unikie.com wrote:
-> From: Jouni Hogander <jouni.hogander@unikie.com>
-> 
-> Currently error paths are using device_del to clean-up preparations
-> done by device_add. This is causing memory leak as free of dev->p
-> allocated in device_add is freed in device_release. This is fixed by
-> moving freeing dev->p to counterpart of device_add i.e. device_del.
+The first patch add a new enum type for 'dentry_d_lock_class'.The second
+patch use the new enum type in 'simple_empty' to avoid confusion for
+lockdep. The last patch fix potential infinite loop in
+debugfs_remove_recursive by using 'simple_empty' instead of 'list_empty'.
 
-Are you sure that is safe?  The device can still be "alive" after
-device_del() is called.  The only place you know that it should be freed
-is in the release callback.
+yu kuai (3):
+  dcache: add a new enum type for 'dentry_d_lock_class'
+  fs/libfs.c: use 'spin_lock_nested' when taking 'd_lock' for dentry in
+    simple_empty
+  debugfs: fix potential infinite loop in debugfs_remove_recursive
 
-> This memory leak was reported by Syzkaller:
-> 
-> BUG: memory leak unreferenced object 0xffff8880675ca008 (size 256):
->   comm "netdev_register", pid 281, jiffies 4294696663 (age 6.808s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
->   backtrace:
->     [<0000000058ca4711>] kmem_cache_alloc_trace+0x167/0x280
->     [<000000002340019b>] device_add+0x882/0x1750
->     [<000000001d588c3a>] netdev_register_kobject+0x128/0x380
->     [<0000000011ef5535>] register_netdevice+0xa1b/0xf00
->     [<000000007fcf1c99>] __tun_chr_ioctl+0x20d5/0x3dd0
->     [<000000006a5b7b2b>] tun_chr_ioctl+0x2f/0x40
->     [<00000000f30f834a>] do_vfs_ioctl+0x1c7/0x1510
->     [<00000000fba062ea>] ksys_ioctl+0x99/0xb0
->     [<00000000b1c1b8d2>] __x64_sys_ioctl+0x78/0xb0
->     [<00000000984cabb9>] do_syscall_64+0x16f/0x580
->     [<000000000bde033d>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
->     [<00000000e6ca2d9f>] 0xffffffffffffffff
+ fs/debugfs/inode.c     | 7 +++++--
+ fs/libfs.c             | 4 ++--
+ include/linux/dcache.h | 3 ++-
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-How is this a leak?  This is in device_add(), not removing the device.
-When the structure really is freed then it can be removed.
+-- 
+2.7.4
 
-Or are you triggering an error in device_add() somehow to trigger this
-callback?
-
-thanks,
-
-greg k-h
