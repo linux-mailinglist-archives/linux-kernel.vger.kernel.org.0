@@ -2,93 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D421FD72D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB77AFD723
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:41:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbfKOHnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 02:43:41 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52516 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbfKOHnk (ORCPT
+        id S1727437AbfKOHlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 02:41:03 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42602 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbfKOHkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 02:43:40 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAF7d6ib109361;
-        Fri, 15 Nov 2019 07:42:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=g8uThl8dkg+cj+2qFvpX4UHz2ZpNIXnP5NoBMB9GLqg=;
- b=ZH1elWzwIglBNSmcB5X+wP0yf/LmUt1gwQ+BKmeAdqrKDHpR/B3VCP4gZCn+KMqZMs9o
- VGHfMyBeXTtqPWxiohoxTx5o7AfdSifH5au/Bm2F7yVdLrt3SFvNiIu3Bmkqjm2Sh1FQ
- PezEvg+YOhnSG5jhEdCiE5XV3iqHQhA9DYdcDAsrS43yoJzICjQ8HGET00MD1DelpZ0X
- M+etngT3aPLHcBKyusqkOVVWdOf2MdHXjY7n+YHRfOY5MAx7YFmUmeiVh70iLUsFIgRv
- KCSZWILoTsg5EdUjbLSi1zTrjbonXuFcKjTLQm2+RS4ZrBxPO9YIBIsDHfdo4Swj/sjF Qg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2w9gxphk9u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Nov 2019 07:42:15 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAF7brgj141487;
-        Fri, 15 Nov 2019 07:40:14 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2w9h149024-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Nov 2019 07:40:14 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAF7eBZl031896;
-        Fri, 15 Nov 2019 07:40:12 GMT
-Received: from kadam.lan (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Nov 2019 23:40:11 -0800
-Date:   Fri, 15 Nov 2019 10:40:03 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        Romain Perier <romain.perier@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: [PATCH] staging: rtl*: Remove tasklet callback casts
-Message-ID: <20191115074003.GB19101@kadam.lan>
-References: <201911142135.5656E23@keescook>
+        Fri, 15 Nov 2019 02:40:24 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iVWDF-0002VX-2p; Fri, 15 Nov 2019 08:40:13 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9B48E1C08AC;
+        Fri, 15 Nov 2019 08:40:12 +0100 (CET)
+Date:   Fri, 15 Nov 2019 07:40:12 -0000
+From:   "tip-bot2 for Ian Rogers" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf parse: Use YYABORT to clear stack after
+ failure, plugging leaks
+Cc:     Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191109075840.181231-1-irogers@google.com>
+References: <20191109075840.181231-1-irogers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201911142135.5656E23@keescook>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911150069
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911150069
+Message-ID: <157380361217.29467.17950612808505016356.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 09:39:00PM -0800, Kees Cook wrote:
-> In order to make the entire kernel usable under Clang's Control Flow
-> Integrity protections, function prototype casts need to be avoided
-> because this will trip CFI checks at runtime (i.e. a mismatch between
-> the caller's expected function prototype and the destination function's
-> prototype). Many of these cases can be found with -Wcast-function-type,
-> which found that the rtl wifi drivers had a bunch of needless function
-> casts. Remove function casts for tasklet callbacks in the various drivers.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+The following commit has been merged into the perf/core branch of tip:
 
-Clang should treat void pointers as a special case.  If void pointers
-are bad, surely replacing them with unsigned long is even more ambigous
-and worse.
+Commit-ID:     e1e9b78d3957a267346a86c8f2c433f6a332af65
+Gitweb:        https://git.kernel.org/tip/e1e9b78d3957a267346a86c8f2c433f6a332af65
+Author:        Ian Rogers <irogers@google.com>
+AuthorDate:    Fri, 08 Nov 2019 23:58:40 -08:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Tue, 12 Nov 2019 08:34:16 -03:00
 
-regards,
-dan carpenter
+perf parse: Use YYABORT to clear stack after failure, plugging leaks
 
+Using return rather than YYABORT means that the stack isn't cleared up
+following a failure. The change to YYABORT means the return value is 1
+rather than -1, but the callers just check for a result of 0 (success).
+Add missing free of a list when an error occurs in event_pmu.
+
+Signed-off-by: Ian Rogers <irogers@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20191109075840.181231-1-irogers@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/parse-events.y | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index 4cac830..e2eea4e 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -284,6 +284,7 @@ PE_NAME opt_pmu_config
+ 	do {						\
+ 		parse_events_terms__delete($2);		\
+ 		parse_events_terms__delete(orig_terms);	\
++		free(list);				\
+ 		free($1);				\
+ 		free(pattern);				\
+ 		YYABORT;				\
+@@ -550,7 +551,7 @@ tracepoint_name opt_event_config
+ 	free($1.event);
+ 	if (err) {
+ 		free(list);
+-		return -1;
++		YYABORT;
+ 	}
+ 	$$ = list;
+ }
