@@ -2,194 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4A9FDF2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:44:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05219FDF39
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:46:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfKONoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:44:08 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38750 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727249AbfKONoH (ORCPT
+        id S1727506AbfKONqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:46:04 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33783 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727249AbfKONqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:44:07 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAFDhENw021665;
-        Fri, 15 Nov 2019 07:43:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573825394;
-        bh=0GMF8waTlZ/mMmEu9OdTiNMpJgRZ1U+24RV0VdCAq3s=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=fXpOKUavZPJUxNL9lEFn7zZNVLFYuhGojcJgORZ0h/BB4qyRFo6mrlCOsH4ERQeHs
-         h9leKq2A0Fj6bzJ4IDPmzVMYiipwgHWHf4mYsJ2/6ss1dHgt4T7A8cxc/hktAUYZHd
-         PabnC59jQNgb5DLLinNwWV5dTN5f0x+2iBMNsWMU=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAFDhELd079797
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Nov 2019 07:43:14 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 15
- Nov 2019 07:43:14 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 15 Nov 2019 07:43:14 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAFDhEow098885;
-        Fri, 15 Nov 2019 07:43:14 -0600
-Date:   Fri, 15 Nov 2019 07:45:30 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Cristian Birsan <cristian.birsan@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v2 05/13] usb: musb: create debugfs directory under usb
- root
-Message-ID: <20191115134530.GB12511@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Cristian Birsan <cristian.birsan@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Yangtao Li <tiny.windzz@gmail.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <1573541519-28488-1-git-send-email-chunfeng.yun@mediatek.com>
- <1573541519-28488-5-git-send-email-chunfeng.yun@mediatek.com>
- <20191112152857.GA5853@uda0271908>
- <20191114032018.GA122287@kroah.com>
- <20191114140234.GB5853@uda0271908>
- <20191115032153.GC793701@kroah.com>
+        Fri, 15 Nov 2019 08:46:04 -0500
+Received: by mail-qk1-f196.google.com with SMTP id 71so8123226qkl.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 05:46:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wFCQuQA85xWwryGtN7bWLtCWqMvfBLzKa2tYtAL7AJ4=;
+        b=CgSo0NTNilCZ9UpBcaBT8myQuQoFYxo5h+V58XxndAABs9C55u4LuPzUItpGOlj6ep
+         ao18BAsa/6UcWwseyHf0NRzSYIwH5jzJWStrm7YkezIogJr74NAx9B4el0fiAzH6ajrd
+         1aZ+Ae0Oh3qJBmT6lxUO88A/4n1+oeP5ioXxeii73CYKc9MeTf5BTRySfRUOwadDg5zj
+         kzfLpVBn7Yabje9zloMv+YZR4nzEd0tFcJxF23oFphJBS2ZdXKrduZrfpaBxJeEOntQy
+         WmHEUPmRZHuSuKEU3NOqVsD90+mgiBuHbUPxK0y+k7cC47i5sj0ZlaAOauAXPX+XvJoo
+         Ifog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wFCQuQA85xWwryGtN7bWLtCWqMvfBLzKa2tYtAL7AJ4=;
+        b=E7owfNe1hJxU8FX5cI2dMIMIsw6JvGgXVDb4Loykq930IYWyjMJoX1A1KSsKs/Rtxl
+         Ke9UJ7jFbH063GrGF5lLE4Kxc3rM5+1AZxwh48LpzP9I1XzmRpL9sua68gvKnnxOYOQA
+         QWkjt6ubhb5vFT9hXRfXJHr3QetyhUsU7fYBj4IXQuGXNBzy92Kzn4CnJWUDmuJRZcpQ
+         tcR4OuAzNbbWSyKBx02//oQzZdpvQ7U5X0nbqcBlZLE/SQMQJb0xhHDSpwsPpNW68g3i
+         DbLX9Vt7YeQ06riEF/rfhAOFxq8o6pVI1NLwgjgU4wdKTo0JV4TFCRqPPYt0F14lp3oB
+         xrww==
+X-Gm-Message-State: APjAAAWzcIeJw/BaCiK9USBT+rEf7p2u52A0jB1tZaJ5PO6tvHkIyCc9
+        e8T7FqWP9Xmx7ucQP5HS2xWfCOk=
+X-Google-Smtp-Source: APXvYqzcNMp11EFP0G06Wzv2aV49+XyU+j0nMoejGhjmqkUd4ovHzz42Zc2Ca34pxAZqkmfQbA81aw==
+X-Received: by 2002:a37:4c4a:: with SMTP id z71mr12563017qka.451.1573825563381;
+        Fri, 15 Nov 2019 05:46:03 -0800 (PST)
+Received: from [192.168.1.99] ([92.117.186.89])
+        by smtp.googlemail.com with ESMTPSA id v20sm4034817qkg.92.2019.11.15.05.46.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Nov 2019 05:46:02 -0800 (PST)
+Subject: Re: [for-next][PATCH] tracing: Add missing "inline" in stub function
+ of latency_fsnotify()
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+References: <20191115082719.4f2d11a0@gandalf.local.home>
+From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
+Message-ID: <45d969e0-cb51-507c-4a43-4ad2227d31d2@gmail.com>
+Date:   Fri, 15 Nov 2019 14:46:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191115032153.GC793701@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191115082719.4f2d11a0@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 11:21:53AM +0800, Greg Kroah-Hartman wrote:
-> On Thu, Nov 14, 2019 at 08:02:34AM -0600, Bin Liu wrote:
-> > On Thu, Nov 14, 2019 at 11:20:18AM +0800, Greg Kroah-Hartman wrote:
-> > > On Tue, Nov 12, 2019 at 09:28:57AM -0600, Bin Liu wrote:
-> > > > Hi,
-> > > > 
-> > > > On Tue, Nov 12, 2019 at 02:51:51PM +0800, Chunfeng Yun wrote:
-> > > > > Now the USB gadget subsystem can use the USB debugfs root directory,
-> > > > > so move musb's directory from the root of the debugfs filesystem into
-> > > > > the root of usb
-> > > > 
-> > > > My opinion is this move is unnecessary. I breaks existing debug tools or
-> > > > documentation which is already published on Internet. 
-> > > 
-> > > Having a "root" directory for a single random driver seems like you are
-> > > making your driver a "very important" thing in the overall scheme of the
-> > > kernel, right?  What's wrong with using the usb subdirectory like all
-> > 
-> > Agree, it wasn't the right thing to do at the first place. But now
-> > changing it adds support burden, because people very often refer to the
-> > old information on the internet which no longer matches to the new
-> > location. Basically, it is a cost of ABI change.
+On 11/15/19 2:27 PM, Steven Rostedt wrote:
+
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index 90cba68c8b50..2df8aed6a8f0 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -801,7 +801,7 @@ void latency_fsnotify(struct trace_array *tr);
+>   
+>   #else
+>   
+> -static void latency_fsnotify(struct trace_array *tr) { }
+> +static inline void latency_fsnotify(struct trace_array *tr) { }
+>   
+>   #endif
+>   
 > 
-> What information says that /sys/kernel/debug/mdev/ is the location for
-> this?  Is it in-kernel?
 
-No, they are not in-kernel, but many places mainly on https://e2e.ti.com
-and http://processors.wiki.ti.com. It basically says to get musb
-regdump, cat /sys/kernel/debug/musb-hdrc.{0,1}/regdump, or to enter test
-mode, do echo _testmode_ > /sys/kernel/debug/musb-hdrc.{0,1}/testmode...
+Looks good to me.
 
-> > > other USB drivers use (after this patch series is merged)?  That feels
-> > > like a much more "sane" way to handle the wide-open debugfs namespace.
-> > 
-> > Though I commented on this musb patch, my opinion is for this whole
-> > series, either drop the whole series or apply the whole series.
-> 
-> I've applied all but this one and 2 others that did not build properly.
+Thanks for fixing this.
 
-Okay.
+best regards,
 
-> > > Yes, there are no rules when it comes to debugfs file names and
-> > > locations, but let's try to be sane please.
-> > 
-> > Fine with me. I can still support questions such as "can't open
-> > /sys/kernel/debug/musb-hdrc.0/testmode: No such file or directory".
-> 
-> What tool looks for that?
-
-I wrote a usb diagnosis tool called chkusb.sh, which basically checks
-usb related information in
-  - /proc/config.gz
-  - /lib/modules/`uname -r`/kernel/drivers/
-  - /proc/device-tree/
-  - /sys/device/
-  - /sys/kernel/debug/
-
-So whenever I got a report on e2e.ti.com saying that usb doesn't work, I
-just post this script and get a log which would give a clue if there was
-any fundamental mistake in kernel configuration or deployment.
-
-But not a big issue here for this tool regarding this patch set, I can
-update the script to check both locations - /sys/kernel/debug/ and
-/sys/kernel/debug/usb/.
-
--Bin.
+Viktor
