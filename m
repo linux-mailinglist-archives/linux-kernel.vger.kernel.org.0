@@ -2,170 +2,405 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F00FD8DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70DDFFD8E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKOJ1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:27:51 -0500
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:63483 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725829AbfKOJ1v (ORCPT
+        id S1727137AbfKOJ3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:29:03 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:27098 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfKOJ3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:27:51 -0500
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 15 Nov 2019 01:27:45 -0800
-IronPort-SDR: XSPeWFqeddtga09FZDEpjbfSgtuLFrdb4IyaS7qWEX6x8rqX/kxnrUhptITFZDp9EL67Q/AJis
- oOrzNIUTs8/rCd7YjqlNf1iWCOtdNuQA2gN9MrMWkujTJUQIkDo4WQMC776Z3T6sGpE3go54Ls
- cAVpnOnGTQz9+sPUwCly9ja144YVyecnj0u5Cx7WgojJm+JjH6CD/yDCsVA21992wvw5bUaFB2
- KhZaFC+mDnHz3y9Mgb5mpirxi+WoeTV8EX5eQHf5sv0VPV2FPk8km0qfjCzOXcGqj1tSpnIN1K
- eVI7eh/4x4X4gT2vjo8BexZE
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 15 Nov 2019 01:27:45 -0800
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id 65CBB21F5; Fri, 15 Nov 2019 01:27:45 -0800 (PST)
-Date:   Fri, 15 Nov 2019 01:27:45 -0800
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-pwm@vger.kernel.org, kernel-team@android.com,
-        Mark Salyzyn <salyzyn@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] pwm: Convert period and duty cycle to u64
-Message-ID: <20191115092745.GA21025@codeaurora.org>
-References: <1571191899-6150-1-git-send-email-gurus@codeaurora.org>
- <1571191899-6150-2-git-send-email-gurus@codeaurora.org>
- <20191016101539.GC1303817@ulmo>
- <20191017060247.GA12487@codeaurora.org>
- <20191017104313.GA3122066@ulmo>
+        Fri, 15 Nov 2019 04:29:03 -0500
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAF9Sgqx014034;
+        Fri, 15 Nov 2019 18:28:42 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
+ Fri, 15 Nov 2019 18:28:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
+Received: from [192.168.1.2] (121.252.232.153.ap.dti.ne.jp [153.232.252.121])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAF9Sf3j014028
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 15 Nov 2019 18:28:41 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH] arm64: dts: rockchip: add analog audio nodes on
+ rk3399-rockpro64
+To:     Hugh Cole-Baker <sigmaris@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20190907174833.19957-1-katsuhiro@katsuster.net>
+ <CA+E=qVdvKxzFcU-09Ucn1Fr0FdkwSsPcLr8vPn2wsu6-DD1gqg@mail.gmail.com>
+ <abc648cc-0b5d-b407-b74b-639833ba196b@katsuster.net>
+ <CA+E=qVdy-wqmR+XOms5S2zMp+B0vM7Dj_fk9N=08-1WjfKDm0Q@mail.gmail.com>
+ <CA+E=qVdLzHbNTemMSmhA=-0dsNumQZJhjE-EnXBDu+j7sXTnVw@mail.gmail.com>
+ <81666aeb-f3d0-e653-6597-0711a05f9b8d@katsuster.net>
+ <CA+E=qVcgs=2T_9axUCJwTKgmKhjsJJ9mUfvYJbyjg59rGGjcTg@mail.gmail.com>
+ <CA+E=qVe5QmJ8-zSbKj23mb-GksjD+qN=aFaCT7OGUYPYc9Y_ow@mail.gmail.com>
+ <1ecd115a-1d33-020d-4a09-6fc451588920@katsuster.net>
+ <CA+E=qVcXcUJCa86ru+0=wwY7_3GFLJaGQtLeZ1wVZZqqG4-KrA@mail.gmail.com>
+ <FEA6221E-A09B-46F2-A3F3-3771CE2368B3@gmail.com>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <40193a79-6c64-19d8-6c55-b227bdb55e8f@katsuster.net>
+Date:   Fri, 15 Nov 2019 18:28:41 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017104313.GA3122066@ulmo>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <FEA6221E-A09B-46F2-A3F3-3771CE2368B3@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+Hello,
 
-On Thu, Oct 17, 2019 at 12:43:13PM +0200, Thierry Reding wrote:
-> On Wed, Oct 16, 2019 at 11:02:47PM -0700, Guru Das Srinagesh wrote:
-> > On Wed, Oct 16, 2019 at 12:15:39PM +0200, Thierry Reding wrote:
-> > > On Tue, Oct 15, 2019 at 07:11:39PM -0700, Guru Das Srinagesh wrote:
-> > > > Because period and duty cycle are defined as ints with units of
-> > > > nanoseconds, the maximum time duration that can be set is limited to
-> > > > ~2.147 seconds. Change their definitions to u64 so that higher durations
-> > > > may be set.
-> > > > 
-> > > > Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-> > > > ---
-> > > >  drivers/pwm/core.c  |  4 ++--
-> > > >  drivers/pwm/sysfs.c | 10 +++++-----
-> > > >  include/linux/pwm.h | 16 ++++++++--------
-> > > >  3 files changed, 15 insertions(+), 15 deletions(-)
-> > > 
-> > > Actually, we can't do that without further preparatory work. The reason
-> > > is that consumers use the period and duty_cycle members in computations
-> > > of their own, which lead to errors such as this:
-> > > 
-> > > 	armv7l-unknown-linux-gnueabihf-ld: drivers/video/backlight/pwm_bl.o: in function `pwm_backlight_probe':
-> > > 	pwm_bl.c:(.text+0x3b0): undefined reference to `__aeabi_uldivmod'
-> > > 
-> > > So I think we need to audit all consumers carefully and make sure that
-> > > they use do_div() where necessary to avoid such errors.
-> > > 
-> > > Thierry
-> > 
-> > Hi Thierry,
-> > 
-> > I would like to try doing the preparatory work by fixing the errors seen
-> > in consumers so that this u64 patch may be applied without issues.
-> > 
-> > Before sending the patch, I tried "make"-ing for arm, arm64 and i386
-> > architectures to check for compilation/linking errors and encountered
-> > none. I see that the above error arises from using a cross-compiler for
-> > arm v7, which I haven't tried yet.
-> > 
-> > Could you please provide details of the compile tests that you run at
-> > your end? I could then try to reproduce the errors you see in the
-> > consumer drivers and fix them. Please do share any other ideas or
-> > suggestions you may have in this regard.
+On 2019/11/14 0:02, Hugh Cole-Baker wrote:
 > 
-> I keep a set of scripts in the pwm/ subdirectory of the following
-> repository:
+>> On 12 Nov 2019, at 14:46, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>>
+>> On Tue, Nov 12, 2019 at 10:34 AM Katsuhiro Suzuki
+>> <katsuhiro@katsuster.net> wrote:
+>>>
+>>> On 2019/11/12 14:49, Vasily Khoruzhick wrote:
+>>>> On Mon, Nov 11, 2019 at 9:43 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>>>>>
+>>>>> On Mon, Nov 11, 2019 at 9:34 PM Katsuhiro Suzuki
+>>>>> <katsuhiro@katsuster.net> wrote:
+>>>>>>
+>>>>>> Hello Vasily,
+>>>>>>
+>>>>>> Thank you for valuable information.
+>>>>>>
+>>>>>> On 2019/11/12 4:25, Vasily Khoruzhick wrote:
+>>>>>>> On Sun, Nov 10, 2019 at 9:40 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>>>>>>>>
+>>>>>>>> On Sun, Nov 10, 2019 at 7:30 PM Katsuhiro Suzuki
+>>>>>>>> <katsuhiro@katsuster.net> wrote:
+>>>>>>>>>
+>>>>>>>>> Hello Vasily,
+>>>>>>>>
+>>>>>>>> Hi Katsuhiro,
+>>>>>>>>
+>>>>>>>> Thanks for response!
+>>>>>>>
+>>>>>>> Looks like on my board codec sits at address 0x10, and according to
+>>>>>>> schematics that's what its address is supposed to be.
+>>>>>>>
+>>>>>>> See http://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
+>>>>>>>
+>>>>>>> Codec address is selected by pin CE of ES8316, and on rockpro64 it
+>>>>>>> goes to GND through R226. So address should be 0x10.
+>>>>>>>
+>>>>>>
+>>>>>> Yes, I agree. The schematics both v2.0 and v2.1 say that ES8316
+>>>>>> address is 0x10. Thank you for pointing.
+>>>>>>
+>>>>>> But I wonder that my RockPro64 behavior is strange, he is in address
+>>>>>> 0x11. (R226 on my board is broken...??)
+>>>>>>
+>>>>>> root@rockpro64:~# i2cdetect 1
+>>>>>> WARNING! This program can confuse your I2C bus, cause data loss and worse!
+>>>>>> I will probe file /dev/i2c-1.
+>>>>>> I will probe address range 0x03-0x77.
+>>>>>> Continue? [Y/n] y
+>>>>>>        0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+>>>>>> 00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 10: -- UU -- -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+>>>>>> 70: -- -- -- -- -- -- -- --
+>>>>>>
+>>>>>> I plan to check R226 resistance value to judge R226 is broken or not
+>>>>>> after return to home. And share the result with you.
+>>>>>> Please give me a time.
+>>>>>
+>>>>> Thanks for confirming that on your board it's on address 0x11. I
+>>>>> checked with some other rockpro64 owners and they have it on 0x10, but
+>>>>> looks like we have boards with codec on different address in the wild.
+>>>>
+>>>> Another datapoint is that my board is 2.0. If yours is 2.1 it can be a
+>>>> difference between 2.0 and 2.1.
+>>>>
+>>>
+>>> I'm using v2.1 board.
+>>>
+>>>
+>>> I'll share the checking result. It's a little strange.
+>>>
+>>> 1) Voltage of CE pin of ES8316
+>>>
+>>> It is 1.8V when booting linux-next kernel.
+>>>
+>>>
+>>> 2) My board
+>>>
+>>> I can't find no crack nor broken parts on my board.
+>>>
+>>>
+>>> 2) R225, R226
+>>>
+>>> As you know, RockPro64 board has no silk print so we cannot know
+>>> perfectly which resistance is R226. So this is my assumption.
+>>>
+>>>         PCIe, SD card slot
+>>>            (top)
+>>> LAN (left)ES8316(right) USB, reset button
+>>>
+>>> On the left space of ES8316 there is no resistance, only a pattern.
+>>> This is maybe R225. And 10K resistance on the right side of a
+>>> pattern. I assume this is R226.
+>>>
+>>> If my assumption is correctly, board implementation and schematics
+>>> are different.
+>>>
+>>> schematics of v2.1 gets something wrong...??
+>>
+>> Guess we need few more RockPro64 v2.1 owners to confirm that it's
+>> indeed the case.
 > 
-> 	https://github.com/thierryreding/scripts
+> I also have a RockPro64 board v2.1, and my ES8316 codec is at address 0x11.
+> I'm using a kernel with Katsuhiro's patch and I can use alsamixer and play
+> sounds out of the analog jack. My i2cdetect output:
 > 
-> Typically what I do is run:
-> 
-> 	$ /path/to/scripts.git/pwm/build --jobs 13 --color
-> 
-> That requires a bit of setup for the cross-compilers. I have the
-> following in my ~/.cross-compile file:
-> 
-> 	path: $HOME/pbs-stage1/bin:$HOME/toolchain/avr32/bin:$HOME/toolchain/unicore32/bin
-> 	arm: armv7l-unknown-linux-gnueabihf-
-> 	arm64: aarch64-unknown-linux-gnu-
-> 	avr32: avr32-
-> 	blackfin: bfin-unknown-elf-
-> 	mips: mips-linux-gnu-
-> 	unicore32: unicore32-linux-
-> 	riscv: riscv64-linux-gnu-
-> 	x86:
-> 	x86_64:
-> 
-> The blackfin and unicore32 builds are expected to fail because the
-> blackfin architecture was removed and there's no recent enough kernel
-> publicly available for unicore32.
-> 
-> The last two entries in .cross-compile indicate that builds are native,
-> so regular gcc from the build system will be used.
-> 
-> Most of these compilers I've built from scratch using pbs-stage1:
-> 
-> 	https://github.com/thierryreding/pbs-stage1
-> 
-> Note that I don't guarantee that that build system works for anyone but
-> myself, but I'd be happy to hear feedback if you decide to use it. That
-> said, you can probably find prebuilt toolchains for all of the above in
-> a number of locations, like:
-> 
-> 	https://mirrors.edge.kernel.org/pub/tools/crosstool/
-> 
-> or:
-> 
-> 	https://toolchains.bootlin.com/
-> 
-> Thierry
+> root@kodi64:~# i2cdetect 1
+> WARNING! This program can confuse your I2C bus, cause data loss and worse!
+> I will probe file /dev/i2c-1.
+> I will probe address range 0x03-0x77.
+> Continue? [Y/n]
+>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> 00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+> 10: -- UU -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 70: -- -- -- -- -- -- -- —
 
-I tried replicating your compilation setup and found that it worked
-right out of the box with no serious issues. I decided to build the
-compilers from scratch and only had to update my make to the latest
-version and also install help2man and u-boot-tools on my Ubuntu machine.
+Thank you for great report. Hmm, it seems v2.0 and v2.1 are different,
+so we need to split device-tree for es8316 support...
 
-I found your setup very easy to use on the whole and very well designed.
-I added a "set -x" to the /path/to/scripts.git/build/pwm script in order
-to figure out how it worked initially. 
+Best Regards,
+Katsuhiro Suzuki
 
-I didn't add the lines for unicore32 and blackfin in my ~/.cross-compile
-file as you had indicated that they were expected to fail. It was very
-convenient for me to run the build command for a specific arch by
-appending its name to the end of the command you provided and thus
-verify that the compilation errors I was getting were getting fixed for
-that arch. Then by simply dropping the architecture's name from the end
-I could run the build command for all archs - very cool.
 
-That said, I wasn't able to compile-test avr32 and x86_64. I couldn't
-find avr32 in the targets folder of the pbs-stage1 git repo and so
-couldn't build it from scratch, and I couldn't find a pre-built version
-either. There isn't a config for x86_64 in
-/path/to/scripts.git/pwm/configs and so the build/pwm script wasn't
-picking it up even though I had added a blank line for it in
-~/.cross-compile. Those are the only two issues I encountered with
-replicating your setup.
+> 
+> Regards,
+> Hugh
+> 
+>>
+>>>
+>>>>>> Best Regards,
+>>>>>> Katsuhiro Suzuki
+>>>>>>
+>>>>>>
+>>>>>>>>> Thank you for reporting.
+>>>>>>>>>
+>>>>>>>>> On 2019/11/11 9:17, Vasily Khoruzhick wrote:
+>>>>>>>>>> On Sat, Sep 7, 2019 at 10:48 AM Katsuhiro Suzuki
+>>>>>>>>>> <katsuhiro@katsuster.net> wrote:
+>>>>>>>>>>>
+>>>>>>>>>>> This patch adds audio codec (Everest ES8316) and I2S audio nodes for
+>>>>>>>>>>> RK3399 RockPro64.
+>>>>>>>>>>
+>>>>>>>>>> Hi Katsuhiro,
+>>>>>>>>>>
+>>>>>>>>>> I tested your patch with my rockpro64 on 5.4-rc6 which has your other
+>>>>>>>>>> patches to es8316 driver, but apparently it doesn't work.
+>>>>>>>>>>
+>>>>>>>>>> 'alsamixer' complains 'cannot load mixer controls: No such device or
+>>>>>>>>>> address' and if I try to play audio with mpg123 it pretends that it
+>>>>>>>>>> plays something but there's no sound.
+>>>>>>>>>>
+>>>>>>>>>> Any idea what can be wrong?
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Do you use defconfig? If so I guess we need turn on more configs:
+>>>>>>>>>
+>>>>>>>>> - simple-graph-card driver (CONFIG_SND_AUDIO_GRAPH_CARD)
+>>>>>>>>> - ES8316 (SND_SOC_ES8316)
+>>>>>>>>
+>>>>>>>> I have these enabled, card is present in /proc/asound/cards, but
+>>>>>>>> alsamixer doesn't work with it.
+>>>>>>>>
+>>>>>>>>> FYI) ASoC related status or logs in my environment as follows:
+>>>>>>>>>
+>>>>>>>>> root@rockpro64:~# uname -a
+>>>>>>>>> Linux rockpro64 5.4.0-rc6-next-20191108 #169 SMP PREEMPT Mon Nov 11 12:21:44 JST 2019 aarch64 GNU/Linux
+>>>>>>>>
+>>>>>>>> I'm running 5.4.0-rc6  (commit
+>>>>>>>> 00aff6836241ae5654895dcea10e6d4fc5878ca6) with your patch "arm64: dts:
+>>>>>>>> rockchip: add analog audio nodes on rk3399-rockpro64" on top of it.
+>>>>>>>>
+>>>>>>>>> root@rockpro64:~# dmesg | grep -i asoc
+>>>>>>>>> [   21.509903] asoc-simple-card hdmi-sound: i2s-hifi <-> ff8a0000.i2s mapping ok
+>>>>>>>>> [   21.510550] asoc-simple-card hdmi-sound: ASoC: no DMI vendor name!
+>>>>>>>>> [   21.567906] asoc-audio-graph-card sound: ES8316 HiFi <-> ff890000.i2s mapping ok
+>>>>>>>>> [   21.568565] asoc-audio-graph-card sound: ASoC: no DMI vendor name!
+>>>>>>>>
+>>>>>>>> Similar here:
+>>>>>>>>
+>>>>>>>> [vasilykh@rockpro64 ~]$ dmesg | grep -i asoc
+>>>>>>>> [   15.627685] asoc-audio-graph-card sound: ES8316 HiFi <->
+>>>>>>>> ff890000.i2s mapping ok
+>>>>>>>> [   16.250196] asoc-simple-card hdmi-sound: i2s-hifi <-> ff8a0000.i2s mapping ok
+>>>>>>>>
+>>>>>>>>> root@rockpro64:~# cat /proc/asound/pcm
+>>>>>>>>> 00-00: ff8a0000.i2s-i2s-hifi i2s-hifi-0 : ff8a0000.i2s-i2s-hifi i2s-hifi-0 : playback 1
+>>>>>>>>> 01-00: ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : playback 1 : capture 1
+>>>>>>>>
+>>>>>>>> Same here:
+>>>>>>>>
+>>>>>>>> [vasilykh@rockpro64 ~]$ cat /proc/asound/pcm
+>>>>>>>> 00-00: ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : ff890000.i2s-ES8316
+>>>>>>>> HiFi ES8316 HiFi-0 : playback 1 : capture 1
+>>>>>>>> 01-00: ff8a0000.i2s-i2s-hifi i2s-hifi-0 : ff8a0000.i2s-i2s-hifi
+>>>>>>>> i2s-hifi-0 : playback
+>>>>>>>>
+>>>>>>>>> root@rockpro64:~# cat /sys/kernel/debug/asoc/components
+>>>>>>>>> hdmi-audio-codec.3.auto
+>>>>>>>>> ff8a0000.i2s
+>>>>>>>>> ff8a0000.i2s
+>>>>>>>>> ff890000.i2s
+>>>>>>>>> ff890000.i2s
+>>>>>>>>> ff880000.i2s
+>>>>>>>>> ff880000.i2s
+>>>>>>>>> es8316.1-0011
+>>>>>>>>> snd-soc-dummy
+>>>>>>>>> snd-soc-dummy
+>>>>>>>>
+>>>>>>>> Same here.
+>>>>>>>>
+>>>>>>>>> root@rockpro64:~# cat /sys/kernel/debug/asoc/dais
+>>>>>>>>> i2s-hifi
+>>>>>>>>> ff8a0000.i2s
+>>>>>>>>> ff890000.i2s
+>>>>>>>>> ff880000.i2s
+>>>>>>>>> ES8316 HiFi
+>>>>>>>>> snd-soc-dummy-dai
+>>>>>>>>
+>>>>>>>> Same here.
+>>>>>>>>
+>>>>>>>> Yet alsamixer doesn't work for me. It terminates with 'cannot load
+>>>>>>>> mixer controls: No such device or address'. Strace shows that fails
+>>>>>>>> here:
+>>>>>>>>
+>>>>>>>> openat(AT_FDCWD, "/dev/snd/controlC0", O_RDWR|O_CLOEXEC) = 3
+>>>>>>>> fcntl(3, F_SETFD, FD_CLOEXEC)           = 0
+>>>>>>>> ioctl(3, SNDRV_CTL_IOCTL_PVERSION, 0xfffffd3ad04c) = 0
+>>>>>>>> fcntl(3, F_GETFL)                       = 0x20002 (flags O_RDWR|O_LARGEFILE)
+>>>>>>>> fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK|O_LARGEFILE) = 0
+>>>>>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_LIST, 0xfffffd3ad228) = 0
+>>>>>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_LIST, 0xfffffd3ad228) = 0
+>>>>>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_INFO, 0xfffffd3ace38) = 0
+>>>>>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_READ, 0xfffffd3ac160) = -1 ENXIO (No
+>>>>>>>> such device or address)
+>>>>>>>>
+>>>>>>>> Looks like it fails to talk to the codec?
+>>>>>>>>
+>>>>>>>> mpg123 thinks that it's playing audio, but my headphones connected to
+>>>>>>>> 3.5mm output are silent.
+>>>>>>>>
+>>>>>>>> Regards,
+>>>>>>>> Vasily
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> Best Regards,
+>>>>>>>>> Katsuhiro Suzuki
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> Regards,
+>>>>>>>>>> Vasily
+>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>>>>>>>>>>> ---
+>>>>>>>>>>>     .../boot/dts/rockchip/rk3399-rockpro64.dts    | 28 +++++++++++++++++++
+>>>>>>>>>>>     1 file changed, 28 insertions(+)
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>>>>>>>>>> index 0401d4ec1f45..8b1e6382b140 100644
+>>>>>>>>>>> --- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>>>>>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>>>>>>>>>> @@ -81,6 +81,12 @@
+>>>>>>>>>>>                    reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+>>>>>>>>>>>            };
+>>>>>>>>>>>
+>>>>>>>>>>> +       sound {
+>>>>>>>>>>> +               compatible = "audio-graph-card";
+>>>>>>>>>>> +               label = "rockchip,rk3399";
+>>>>>>>>>>> +               dais = <&i2s1_p0>;
+>>>>>>>>>>> +       };
+>>>>>>>>>>> +
+>>>>>>>>>>>            vcc12v_dcin: vcc12v-dcin {
+>>>>>>>>>>>                    compatible = "regulator-fixed";
+>>>>>>>>>>>                    regulator-name = "vcc12v_dcin";
+>>>>>>>>>>> @@ -470,6 +476,20 @@
+>>>>>>>>>>>            i2c-scl-rising-time-ns = <300>;
+>>>>>>>>>>>            i2c-scl-falling-time-ns = <15>;
+>>>>>>>>>>>            status = "okay";
+>>>>>>>>>>> +
+>>>>>>>>>>> +       es8316: codec@11 {
+>>>>>>>>>>> +               compatible = "everest,es8316";
+>>>>>>>>>>> +               reg = <0x11>;
+>>>>>>>>>>> +               clocks = <&cru SCLK_I2S_8CH_OUT>;
+>>>>>>>>>>> +               clock-names = "mclk";
+>>>>>>>>>>> +               #sound-dai-cells = <0>;
+>>>>>>>>>>> +
+>>>>>>>>>>> +               port {
+>>>>>>>>>>> +                       es8316_p0_0: endpoint {
+>>>>>>>>>>> +                               remote-endpoint = <&i2s1_p0_0>;
+>>>>>>>>>>> +                       };
+>>>>>>>>>>> +               };
+>>>>>>>>>>> +       };
+>>>>>>>>>>>     };
+>>>>>>>>>>>
+>>>>>>>>>>>     &i2c3 {
+>>>>>>>>>>> @@ -505,6 +525,14 @@
+>>>>>>>>>>>            rockchip,playback-channels = <2>;
+>>>>>>>>>>>            rockchip,capture-channels = <2>;
+>>>>>>>>>>>            status = "okay";
+>>>>>>>>>>> +
+>>>>>>>>>>> +       i2s1_p0: port {
+>>>>>>>>>>> +               i2s1_p0_0: endpoint {
+>>>>>>>>>>> +                       dai-format = "i2s";
+>>>>>>>>>>> +                       mclk-fs = <256>;
+>>>>>>>>>>> +                       remote-endpoint = <&es8316_p0_0>;
+>>>>>>>>>>> +               };
+>>>>>>>>>>> +       };
+>>>>>>>>>>>     };
+>>>>>>>>>>>
+>>>>>>>>>>>     &i2s2 {
+>>>>>>>>>>> --
+>>>>>>>>>>> 2.23.0.rc1
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> _______________________________________________
+>>>>>>>>>>> linux-arm-kernel mailing list
+>>>>>>>>>>> linux-arm-kernel@lists.infradead.org
+>>>>>>>>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>
+>>>
+>>
+>> _______________________________________________
+>> Linux-rockchip mailing list
+>> Linux-rockchip@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
+> 
+> 
 
-Thank you.
-
-Guru Das.
