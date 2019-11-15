@@ -2,137 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A394AFD9A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EBDFD9A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:44:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbfKOJpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:45:05 -0500
-Received: from mail-eopbgr130042.outbound.protection.outlook.com ([40.107.13.42]:48980
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727183AbfKOJpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:45:04 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WpgJ/NX1P7YCV8c0WH8pJh2G/4aOhjEX+kfTZWSwxoHpYKESXde0Pu9nNIEqKcznRJ4+eU3pPlHmDHvn6w0W4uCkLH9koanuHheNmRyf+O8n35l5VE/XBeXkZhnocEaN3pH34WKVtR+tLUPE+OGSMw5X3GYqgoL+p7ch2TDezWon//cfz7A6pAfkci/A/xp7XxW9D6CWCuImC7SGEjIgPFHaHdbm2aH8RzzdajJ8QZGMkFKohNprbVHrAbXUBQ4elDBWjSLX/VrLe/HGjsH3Zg4EzKZkSpM2d9L28tEwNHc3H2aUbUdz1SEJrCq41c/64IDPVSFx9Mn07NOGxoELXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zsDiIsGKN1JZwMR0iGFgZl4Eiww48ALEr8hE1RkIRUs=;
- b=f+iG0TfN51ZteXJZ3+a0scSLpCcm5OYvZlBH1z8Ywwwp3GYi4kAv/7RiF6SI5yNeKkqZViGemSIj4HP5q2dmzn5XTjOjxb0tmiQlKQDqUVRsparcTgtGO2k2LP1VSJ4kIgvUBDqDVGnlWyRYE36coobu8Qky0dVCHc+CcH39iRbyYROvtLs6EgB1Dej7JfAVnvVVxT/wVHUUFThuamS0WNE4oo+bBeiInS88B91v2z106VqMunEra6SN2q+wXmfBRs70xSzZVuusSOm6ASoJWQKJ+qfCZTUnviRwWH1/BA0IYizzaVgH4Q/tNfT36ghUaDm2nufGwmMagn80ydhghQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zsDiIsGKN1JZwMR0iGFgZl4Eiww48ALEr8hE1RkIRUs=;
- b=RhuImplX2cbias9YgPdqiItdkBR3MPBou5SLOqZre9tg1OGDVEmQ4uxiEUzJSQ31FBJF/NvIpTfny7C+Rj3P06ksArAnCv4w1SQ6zUM6id2nhZcHS8ZBRbQ3rOckQnygxAzxIh6JSA4h7w3Cvou0OwKRZZ4t88BCeS/niGCuh6s=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4146.eurprd04.prod.outlook.com (52.134.93.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.24; Fri, 15 Nov 2019 09:45:00 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.024; Fri, 15 Nov 2019
- 09:45:00 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>
-CC:     "allison@lohutok.net" <allison@lohutok.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S1727601AbfKOJoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:44:22 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50428 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfKOJoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:44:21 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAF9i9cM070472;
+        Fri, 15 Nov 2019 03:44:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573811049;
+        bh=E0WzhltMB1uCqHukFqL7nvpsZ7Dg3L6LXU0D/M/afHk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nGQ4lsiTTMA/u3mYvQBGiCimGGu+zhohaFc7OZ7bIu+CWjxxF1eWkRUBFtOuyYeCa
+         OKc7HWEV9E2Vb0B10pGrfZ2BFSL/Q+m77cERWOeDxYFdTbhQd2autXTZqwz9BxfO+g
+         lJ4q4DWNpBtxmyRXdYJSyxkH7gWGik8yTMi/ByJI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAF9i9JV054404;
+        Fri, 15 Nov 2019 03:44:09 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 15
+ Nov 2019 03:44:08 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 15 Nov 2019 03:44:08 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAF9i55L081214;
+        Fri, 15 Nov 2019 03:44:05 -0600
+Subject: Re: [PATCH v4 08/15] dt-bindings: dma: ti: Add document for K3 UDMA
+To:     Rob Herring <robh@kernel.org>
+CC:     Vinod <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
-        "ralf.ramsauer@oth-regensburg.de" <ralf.ramsauer@oth-regensburg.de>,
-        Alice Guo <alice.guo@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 2/2] arm64: export __hyp_stub_vectors
-Thread-Topic: [PATCH 2/2] arm64: export __hyp_stub_vectors
-Thread-Index: AQHVm5lZpVu/s7W1Uk+l10ntkFA81g==
-Date:   Fri, 15 Nov 2019 09:45:00 +0000
-Message-ID: <1573810972-2159-2-git-send-email-peng.fan@nxp.com>
-References: <1573810972-2159-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1573810972-2159-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0010.apcprd03.prod.outlook.com
- (2603:1096:203:2e::22) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: dbeb9bce-553b-4ebf-d09b-08d769b07b4e
-x-ms-traffictypediagnostic: AM0PR04MB4146:|AM0PR04MB4146:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB41469FE5053B791FA359E81888700@AM0PR04MB4146.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:873;
-x-forefront-prvs: 02229A4115
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(136003)(346002)(366004)(39860400002)(199004)(189003)(476003)(14454004)(8936002)(66946007)(386003)(6506007)(5660300002)(305945005)(316002)(110136005)(76176011)(50226002)(102836004)(7736002)(66446008)(64756008)(66556008)(66476007)(8676002)(478600001)(256004)(186003)(14444005)(26005)(81156014)(81166006)(11346002)(446003)(86362001)(6512007)(6436002)(486006)(4326008)(54906003)(52116002)(44832011)(25786009)(6486002)(71200400001)(71190400001)(2501003)(6116002)(99286004)(2616005)(66066001)(3846002)(2906002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4146;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: v0ZUtZQFysbCIHv1zoN6NImCGM1eIjM6oo1IAqjfLV1nYlNiXpzHpcZv3XR3X400pcI/G4s0kTywzfvSdqhi99+Rt/dWG2kuaUdqrMzFnviIErdvtfmfTdl411YsRdgYF27ydeXzNVuBKsWxfSjHavmyLG3zyspGybVZr0VNeeJGey9oUtP7tnxlJ94oJ/4jEV3LKApwD9fKVWx6HsMwcIqw62cvS+XQJlJ7hzwut9B/gSmeMxuYB5Ifs7CfLXqYiFmfRmKl4tkqVZh2/vAruGzoK9qF8S93+XP4Usx2kxJauQ6h/3pCqk706/7BaeeHCn86YSHoLirTnrZdKOLfMdLQhF7R548SwqW6JUlVfy8gZda8b7jshazGV6DGmYS2kXr5JidRDTZFthFAjdnwgZ+gVAnKWkLyh9qMT9uHt2FVD1oBSNa5xdMZbHEYN2rE
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>
+References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
+ <20191101084135.14811-9-peter.ujfalusi@ti.com> <20191105021900.GA17829@bogus>
+ <fc1ea525-54f1-ff1a-7e1c-61b54f5be862@ti.com>
+ <CAL_JsqJbV7Zd40admW-x2SSveMqMkG0tM6RFTwjCJyYxX4Cxtw@mail.gmail.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <b4705f2e-b2fb-f00f-7d4d-bd440fe89135@ti.com>
+Date:   Fri, 15 Nov 2019 11:45:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbeb9bce-553b-4ebf-d09b-08d769b07b4e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2019 09:45:00.4225
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MqHSLQp6Lg6opJ9RvuacljAp6PfzCrkb7aDoa8fCAyue3l6/qZDLk4AJXCeQwHWsZQc9yVJE8BvPJv6a53T4/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4146
+In-Reply-To: <CAL_JsqJbV7Zd40admW-x2SSveMqMkG0tM6RFTwjCJyYxX4Cxtw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Rob,
 
-External hypervisors, like Jailhouse, need this address when they are
-deactivated, in order to restore original state.
+On 14/11/2019 19.53, Rob Herring wrote:
+> On Tue, Nov 5, 2019 at 4:07 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>>
+>>
+>>
+>> On 05/11/2019 4.19, Rob Herring wrote:
+>>> On Fri, Nov 01, 2019 at 10:41:28AM +0200, Peter Ujfalusi wrote:
+>>>> New binding document for
+>>>> Texas Instruments K3 NAVSS Unified DMA – Peripheral Root Complex (UDMA-P).
+>>>>
+>>>> UDMA-P is introduced as part of the K3 architecture and can be found in
+>>>> AM654 and j721e.
+>>>>
+>>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>>> ---
+>>>> Rob,
+>>>>
+>>>> can you give me some hint on how to fix these two warnings from dt_binding_check:
+>>>>
+>>>>   DTC     Documentation/devicetree/bindings/dma/ti/k3-udma.example.dt.yaml
+>>>> Documentation/devicetree/bindings/dma/ti/k3-udma.example.dts:23.13-72: Warning (ranges_format): /example-0/interconnect@30800000:ranges: "ranges" property has invalid length (24 bytes) (parent #address-cells == 1, child #address-cells == 2, #size-cells == 2)
+>>>>   CHECK   Documentation/devicetree/bindings/dma/ti/k3-udma.example.dt.yaml
+>>>
+>>> The default #address-cells is 1 for examples. So you need to
+>>> either override it or change ranges parent address size.
+>>
+>> wrapping the cbass_main_navss inside:
+>> cbass_main {
+>>     #address-cells = <2>;
+>>     #size-cells = <2>;
+>>     ...
+>> };
+>>
+>> fixes it.
+>>
+>>>>
+>>>> Documentation/devicetree/bindings/dma/ti/k3-udma.example.dt.yaml: interconnect@30800000: $nodename:0: 'interconnect@30800000' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+>>>
+>>> Use 'bus' for the node name of 'simple-bus'.
+>>
+>> I took the navss node from the upstream dts (I'm going to fix it there
+>> as well).
+>> It has simple-bus for the navss, which is not quite right as NAVSS is
+>> not a bus, but a big subsystem with multiple components (UDMAP, ringacc,
+>> INTA, INTR, timers, etc).
+>>
+>> What about to change the binding doc to simple-mfd like this
+> 
+> That's really for things not memory-mapped (I'm sure you can probably
+> find an example to contradict me), so better to keep simple-bus if all
+> the child nodes have addresses.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- arch/arm64/include/asm/virt.h | 2 ++
- arch/arm64/kernel/hyp-stub.S  | 1 +
- 2 files changed, 3 insertions(+)
+According to Documentation/devicetree/bindings/mfd/mfd.txt:
+- A range of memory registers containing "miscellaneous system
+  registers" also known as a system controller "syscon" or any other
+  memory range containing a mix of unrelated hardware devices.
 
-diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
-index 0958ed6191aa..b1b48353e3b3 100644
---- a/arch/arm64/include/asm/virt.h
-+++ b/arch/arm64/include/asm/virt.h
-@@ -62,6 +62,8 @@
-  */
- extern u32 __boot_cpu_mode[2];
-=20
-+extern char __hyp_stub_vectors[];
-+
- void __hyp_set_vectors(phys_addr_t phys_vector_base);
- void __hyp_reset_vectors(void);
-=20
-diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
-index f17af9a39562..22b728fb14bd 100644
---- a/arch/arm64/kernel/hyp-stub.S
-+++ b/arch/arm64/kernel/hyp-stub.S
-@@ -38,6 +38,7 @@ ENTRY(__hyp_stub_vectors)
- 	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
- 	ventry	el1_error_invalid		// Error 32-bit EL1
- ENDPROC(__hyp_stub_vectors)
-+EXPORT_SYMBOL(__hyp_stub_vectors);
-=20
- 	.align 11
-=20
---=20
-2.16.4
+NAVSS (NAVigator SubSystem) falls in the later case, it contains
+unrelated blocks, like the UDMAP, ringacc, mailboxes, spinlocks,
+interrupt aggregator, interrupt router, etc.
 
+- compatible : "simple-mfd" - this signifies that the operating system
+  should consider all subnodes of the MFD device as separate devices
+  akin to how "simple-bus" indicates when to see subnodes as children
+  for a simple memory-mapped bus.
+
+This is a bit confusing, but NAVSS is not really a bus, everything in it
+can be accessed by the CPU via memory mapped registers (some sub devices
+does not have registers defined, they are controlled via system firmware).
+
+> Do you need the node name to be 'navss' for some reason? If so, then
+> better have a compatible string in there to identify it. If not, just
+> use 'bus' and be done with it.
+
+We don't need unique compatible for the NAVSS itself as there is not
+much we can configure on the top level, it is 'just' a big subsystem
+with all sorts of things.
+
+I like to keep the 'navss' as node name as it gives human understandable
+representation of it in /sys for example, easier to see the topology.
+
+I just feel that the 'bus' does not really apply to what NAVSS is.
+Probably my view of simple-bus is not correct.
+
+>> cbass_main_navss: navss@30800000 {
+>>     compatible = "simple-mfd";
+>>     #address-cells = <2>;
+>>     #size-cells = <2>;
+>>     ...
+>> };
+>>
+>> and fix up the DT when I got to the point when I can send the patches to
+>> enable DMA for am654 and j721e?
+> 
+> There's no requirement yet for DTS files to not have warnings.
+
+Sure, but it does not hurt if they are clean ;)
+
+>>>> +  compatible:
+>>>> +    oneOf:
+>>>> +      - const: ti,am654-navss-main-udmap
+>>>> +      - const: ti,am654-navss-mcu-udmap
+>>>> +      - const: ti,j721e-navss-main-udmap
+>>>> +      - const: ti,j721e-navss-mcu-udmap
+>>>
+>>> enum works better than oneOf+const. Better error messages.
+>>
+>> Like this:
+>>   compatible:
+>>     oneOf:
+>>       - description: for AM654
+>>         items:
+>>           - enum:
+>>               - ti,am654-navss-main-udmap
+>>               - ti,am654-navss-mcu-udmap
+>>
+>>       - description: for J721E
+>>         items:
+>>           - enum:
+>>               - ti,j721e-navss-main-udmap
+>>               - ti,j721e-navss-mcu-udmap
+> 
+> If the 'description' was useful, but it's not. Just:
+> 
+> compatible:
+>   enum:
+>     - ti,am654-navss-main-udmap
+>     - ti,am654-navss-mcu-udmap
+>     - ti,j721e-navss-main-udmap
+>     - ti,j721e-navss-mcu-udmap
+
+OK, can I keep your Reviewed-by you have given to v5 if I do this change
+for v6?
+
+> 
+> 
+> Rob
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
