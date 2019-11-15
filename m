@@ -2,133 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C00BFE239
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE08FE241
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:07:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfKOQE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 11:04:57 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34208 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfKOQE4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 11:04:56 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n13so6902285pff.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 08:04:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7X39iuEEQRrxmI92P6s/GZH+4m80M8T5MHJlVSsI2c0=;
-        b=NmQ62U/efOi5Q+dGSGypGgXSwYq6cnrWAaEs9nIbFk2vRbt3pyz/afmdpaQ2OVhi6L
-         /Yogtu7bgKnRf6QlsiV70LJ1KDdshJwCON5o+gaT5g3dGyEU/H0+TYCYCRmEJHAJfWxm
-         3hs9K5Xv6oLdtgoSGv2Myn8RIjV6ZLyzgmJNAMuk0iaBCKjxxBbaRZMYU+yX4zgtRRf8
-         BlyqNOlIIri7H+HVBnvNuarGVuOp5LRxwUB6cnvJ7wWprLaRVRWKtVqzsCTx7QKE2lsF
-         yFWfAFsH+gG/nfSlpRcNkejToxHBXRGIQk8GvGiaM23DLAWcNTCS6to1HJVLdlubIUaU
-         eX+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7X39iuEEQRrxmI92P6s/GZH+4m80M8T5MHJlVSsI2c0=;
-        b=mOrIXRG4UMo6c7fk+NLmKMUT+mP1d+Wj6Q0igSvsmw17EK2J0m3Bm1he8m2Vm+hNpQ
-         BQltLgqXITdFEr+RonjCYB5PU602xAFcl1wFBsf6dReX9GhVyKtvbgmk7dMBSyw2mMqc
-         +nhDqT83mDnXnqQuM2KTT5a3V7uY65b1lizgPDC1MDufkY8APdexpBnClrUWJj/yhKbf
-         rnmX7XTxH5Lyi3HR5mx62hgAw1LlKHJ5/kmz10tSSwauCXDt0FMc2uc+9FuH3TJS5rGs
-         MzlmfmGiWRfPOHEr7/Q9yinnS3qp7FF7PN2DqhkHNAYLniAcgoX0jTRhuFPksckG1wVg
-         znMQ==
-X-Gm-Message-State: APjAAAX2NcdZIJVptn6prUbNt62Wdq7YAPXD/SRXxG+ePRHoCS78c/MW
-        J7AcIgQZZfk7kP6LvHrXqtY1DSCipLPcxXboDVdA/A==
-X-Google-Smtp-Source: APXvYqxE2W1uh+8VQ0IpBde7gToivOOn6cWl/jwI7WZIQR7Ezapoj5oZW8kYImmebuDLiqOFmmkF2/gtuDR31Kmnbe4=
-X-Received: by 2002:a63:c804:: with SMTP id z4mr17391908pgg.440.1573833894883;
- Fri, 15 Nov 2019 08:04:54 -0800 (PST)
+        id S1727620AbfKOQHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 11:07:05 -0500
+Received: from mga09.intel.com ([134.134.136.24]:10613 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727423AbfKOQHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 11:07:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 08:07:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,308,1569308400"; 
+   d="scan'208";a="214800600"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
+  by fmsmga001.fm.intel.com with ESMTP; 15 Nov 2019 08:06:59 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     tip-bot2 for Thomas Richter <tip-bot2@linutronix.de>,
+        linux-tip-commits@vger.kernel.org
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
+        gor@linux.ibm.com, hechaol@fb.com, heiko.carstens@de.ibm.com,
+        linux-perf-users@vger.kernel.org, songliubraving@fb.com,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
+Subject: Re: [tip: perf/urgent] perf/aux: Fix tracking of auxiliary trace buffer allocation
+In-Reply-To: <157165050422.29376.10692255781840811810.tip-bot2@tip-bot2>
+References: <20191021083354.67868-1-tmricht@linux.ibm.com> <157165050422.29376.10692255781840811810.tip-bot2@tip-bot2>
+Date:   Fri, 15 Nov 2019 18:06:59 +0200
+Message-ID: <87bltddsyk.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-References: <92f5a2a1ba986f149aecec02d6ffe110d11dcdfd.1573824989.git.andreyknvl@google.com>
- <Pine.LNX.4.44L0.1911151036310.1527-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1911151036310.1527-100000@iolanthe.rowland.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Fri, 15 Nov 2019 17:04:42 +0100
-Message-ID: <CAAeHK+y6mStjFJ-S0eN5qhBmik87ZMtnteRQVmjVbNRWRjLQUg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] usb: gadget: add raw-gadget interface
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     USB list <linux-usb@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Felipe Balbi <balbi@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 4:38 PM Alan Stern <stern@rowland.harvard.edu> wrote:
->
-> On Fri, 15 Nov 2019, Andrey Konovalov wrote:
->
-> > USB Raw Gadget is a kernel module that provides a userspace interface for
-> > the USB Gadget subsystem. Essentially it allows to emulate USB devices
-> > from userspace. Enabled with CONFIG_USB_RAW_GADGET. Raw Gadget is
-> > currently a strictly debugging feature and shouldn't be used in
-> > production.
-> >
-> > Raw Gadget is similar to GadgetFS, but provides a more low-level and
-> > direct access to the USB Gadget layer for the userspace. The key
-> > differences are:
-> >
-> > 1. Every USB request is passed to the userspace to get a response, while
-> >    GadgetFS responds to some USB requests internally based on the provided
-> >    descriptors. However note, that the UDC driver might respond to some
-> >    requests on its own and never forward them to the Gadget layer.
-> >
-> > 2. GadgetFS performs some sanity checks on the provided USB descriptors,
-> >    while Raw Gadget allows you to provide arbitrary data as responses to
-> >    USB requests.
-> >
-> > 3. Raw Gadget provides a way to select a UDC device/driver to bind to,
-> >    while GadgetFS currently binds to the first available UDC.
-> >
-> > 4. Raw Gadget uses predictable endpoint names (handles) across different
-> >    UDCs (as long as UDCs have enough endpoints of each required transfer
-> >    type).
-> >
-> > 5. Raw Gadget has ioctl-based interface instead of a filesystem-based one.
->
-> ...
->
-> > --- /dev/null
-> > +++ b/Documentation/usb/raw-gadget.rst
->
-> > +Userspace interface
-> > +~~~~~~~~~~~~~~~~~~~
-> > +
-> > +To create a Raw Gadget instance open /sys/kernel/debug/usb/raw-gadget
-> > +(debugfs should be enabled and mounted). Multiple raw-gadget instances
->
-> Looks like the documentation hasn't kept up with the more recent
-> changes to the driver.
+"tip-bot2 for Thomas Richter" <tip-bot2@linutronix.de> writes:
 
-Right, will fix in v3, thanks!
+>  		/* now it's safe to free the pages */
+> -		atomic_long_sub(rb->aux_nr_pages, &mmap_user->locked_vm);
+> -		atomic64_sub(rb->aux_mmap_locked, &vma->vm_mm->pinned_vm);
+> +		if (!rb->aux_mmap_locked)
+> +			atomic_long_sub(rb->aux_nr_pages, &mmap_user->locked_vm);
+> +		else
+> +			atomic64_sub(rb->aux_mmap_locked, &vma->vm_mm->pinned_vm);
 
->
-> > --- /dev/null
-> > +++ b/drivers/usb/gadget/legacy/raw.c
-> > @@ -0,0 +1,1057 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * USB Raw Gadget driver.
-> > + * See Documentation/usb/raw-gadget.rst for more details.
-> > + *
-> > + * Andrey Konovalov <andreyknvl@gmail.com>
-> > + */
-> > +
-> > +#define pr_fmt(fmt) "raw: %s: " fmt, __func__
->
-> This macro isn't used anywhere now.
+This only works correctly when rb->aux_mmap_locked is either equal to
+rb->aux_nr_pages or zero. Otherwise, it leaks
 
-It's used internally by pr_debug(). I didn't remove all of the
-debugging messages, I've left the ones that are printed in cases or
-errors, since ftrace might not always help to distinguish between some
-of those.
+  rb->aux_nr_pages - rb->aux_mmap_locked
+
+in the locked_vm permanently.
+
+Regards,
+--
+Alex
