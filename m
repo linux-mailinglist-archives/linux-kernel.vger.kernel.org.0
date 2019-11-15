@@ -2,134 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B1EFD743
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7959FD74E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfKOHpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 02:45:53 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59512 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfKOHpx (ORCPT
+        id S1727077AbfKOHr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 02:47:28 -0500
+Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25410 "EHLO
+        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfKOHr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 02:45:53 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2AB4F2915D1;
-        Fri, 15 Nov 2019 07:45:51 +0000 (GMT)
-Date:   Fri, 15 Nov 2019 08:45:48 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v2 09/10] media: uapi: h264: Add DPB entry field reference
- flags
-Message-ID: <20191115084548.45ea5b8d@collabora.com>
-In-Reply-To: <HE1PR06MB401159909AF49930BDD02658AC700@HE1PR06MB4011.eurprd06.prod.outlook.com>
-References: <HE1PR06MB401108289F09802C261374F8AC610@HE1PR06MB4011.eurprd06.prod.outlook.com>
-        <20191029012550.24628-1-jonas@kwiboo.se>
-        <HE1PR06MB401142C1E45B302094AD1149AC610@HE1PR06MB4011.eurprd06.prod.outlook.com>
-        <20191031112056.3442d6ac@collabora.com>
-        <HE1PR06MB401159909AF49930BDD02658AC700@HE1PR06MB4011.eurprd06.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 15 Nov 2019 02:47:28 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1573804039; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=RkD1wjSMYuglEclXubH6+ki/IFE6TU5X1zcTUc7mW5DmUJmIaJk0FmWkE7X3sQSUzBDky4fOUvsYlrGED6plYDFeXpaHk8eEDBRwVkk8zMZaoK72ITtNr5K+Dfs512DpN3zkDspq6yADy1WRy1dwhCFXSPTtq1XKLFfdWC5/KW8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1573804039; h=Cc:Date:From:Message-ID:Subject:To; 
+        bh=QljwlDhpzIWWDLQ1rPZdvPj7kPoH65XoXCVpfyB3Qvc=; 
+        b=aVDzIeAzlfDs9fH6mRhnF2JKzBL8M+fi6ZCos7sDD5ijeC++UJTyOymBxKKyEQd/1WvB5EkQ79VWwo3qtfP/dIZoR+QTYDWlXeYVDmy6oJdLLpIG0xNafMgSqoUOM6VON080wgeK/4zdDqx5D1fykzPkoy69SvG/vo8ffkHgs5I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=d475j8PU33xsZChp/64FWfUoSqM7Ru19uVzghf7ToDDSv5+2sfG1rsWyXcUAXNeZrHNCWddCPgT6
+    WAaxkJ/rapMmRd7GrLPUicBKPcsY1mQieiinmMb1nh7XkPtwwiG3  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1573804039;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=89;
+        bh=QljwlDhpzIWWDLQ1rPZdvPj7kPoH65XoXCVpfyB3Qvc=;
+        b=kKGzGUxuakKxrlAiHj0s+bSVqWhI2HbbB4PkLWF+trUSvkoJfq1yp/WcMgIelv+I
+        5JeAuJ1Fw6RJqayUF11ygINXUlVlqAGDVVBXPzdMuofIYAYVpqyX7NlnBNuGNcPsEdu
+        MhDIsqRhC7WrrAIxvxV8/Ply1swP74o3Cvs4QYt0=
+Received: from zhouyanjie-virtual-machine.lan (182.148.156.27 [182.148.156.27]) by mx.zohomail.com
+        with SMTPS id 1573804037679489.1531984968743; Thu, 14 Nov 2019 23:47:17 -0800 (PST)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, paul@crapouillou.net,
+        paul.burton@mips.com
+Subject: Fix bugs in X1000 and X1500 pinctrl drivers.
+Date:   Fri, 15 Nov 2019 15:46:50 +0800
+Message-Id: <1573804011-2176-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 06:26:54 +0000
-Jonas Karlman <jonas@kwiboo.se> wrote:
+Fix the wrong configuration of pull-up and pull-down,
+adjust some unreasonable naming.
 
-> On 2019-10-31 11:20, Boris Brezillon wrote:
-> > On Tue, 29 Oct 2019 01:26:01 +0000
-> > Jonas Karlman <jonas@kwiboo.se> wrote:
-> >  
-> >> Add DPB entry flags to help indicate when a reference frame is a field picture
-> >> and how the DPB entry is referenced, top or bottom field or full frame.
-> >>
-> >> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> >> ---
-> >>  Documentation/media/uapi/v4l/ext-ctrls-codec.rst | 12 ++++++++++++
-> >>  include/media/h264-ctrls.h                       |  4 ++++
-> >>  2 files changed, 16 insertions(+)
-> >>
-> >> diff --git a/Documentation/media/uapi/v4l/ext-ctrls-codec.rst b/Documentation/media/uapi/v4l/ext-ctrls-codec.rst
-> >> index 28313c0f4e7c..d472a54d1c4d 100644
-> >> --- a/Documentation/media/uapi/v4l/ext-ctrls-codec.rst
-> >> +++ b/Documentation/media/uapi/v4l/ext-ctrls-codec.rst
-> >> @@ -2028,6 +2028,18 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
-> >>      * - ``V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM``
-> >>        - 0x00000004
-> >>        - The DPB entry is a long term reference frame
-> >> +    * - ``V4L2_H264_DPB_ENTRY_FLAG_FIELD_PICTURE``
-> >> +      - 0x00000008
-> >> +      - The DPB entry is a field picture
-> >> +    * - ``V4L2_H264_DPB_ENTRY_FLAG_REF_TOP``
-> >> +      - 0x00000010
-> >> +      - The DPB entry is a top field reference
-> >> +    * - ``V4L2_H264_DPB_ENTRY_FLAG_REF_BOTTOM``
-> >> +      - 0x00000020
-> >> +      - The DPB entry is a bottom field reference
-> >> +    * - ``V4L2_H264_DPB_ENTRY_FLAG_REF_FRAME``
-> >> +      - 0x00000030
-> >> +      - The DPB entry is a reference frame
-> >>  
-> >>  ``V4L2_CID_MPEG_VIDEO_H264_DECODE_MODE (enum)``
-> >>      Specifies the decoding mode to use. Currently exposes slice-based and
-> >> diff --git a/include/media/h264-ctrls.h b/include/media/h264-ctrls.h
-> >> index e877bf1d537c..76020ebd1e6c 100644
-> >> --- a/include/media/h264-ctrls.h
-> >> +++ b/include/media/h264-ctrls.h
-> >> @@ -185,6 +185,10 @@ struct v4l2_ctrl_h264_slice_params {
-> >>  #define V4L2_H264_DPB_ENTRY_FLAG_VALID		0x01
-> >>  #define V4L2_H264_DPB_ENTRY_FLAG_ACTIVE		0x02
-> >>  #define V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM	0x04
-> >> +#define V4L2_H264_DPB_ENTRY_FLAG_FIELD_PICTURE	0x08
-> >> +#define V4L2_H264_DPB_ENTRY_FLAG_REF_TOP	0x10
-> >> +#define V4L2_H264_DPB_ENTRY_FLAG_REF_BOTTOM	0x20
-> >> +#define V4L2_H264_DPB_ENTRY_FLAG_REF_FRAME	0x30  
-> > I don't remember all the details, but do we really need 3 flags?
-> > Maybe I'm wrong, but it looks like the following combination doesn't
-> > make sense:
-> >
-> > - FIELD_PICTURE + REF_FRAME: if it's a full frame ref it should
-> >   contain both top and bottom fields right, so it's no longer a
-> >   FIELD_PICTURE, is it?
-> >
-> > Can't we just have 2 flags?
-> >
-> > FIELD_PICTURE		0x08
-> > FIELD_REF_TOP		0x10 (meaning that FIELD_REF_BOTTOM is
-> > 			      0x00)
-> >
-> > and then have the following combinations:
-> >
-> > top field ref => FIELD_PICTURE | FIELD_REF_TOP
-> > bottom field ref => FIELD_PICTURE
-> > full frame ref => 0x0  
-> 
-> I am not sure and will need to look closer at spec and what ffmpeg is doing.
-> These flags was mostly inspired by the information ffmpeg stores in
-> H264Picture->reference and H264Picture->field_picture.
-> 
-> I also believe that the new FLAG_REF_TOP/BOTTOM may make FLAG_ACTIVE obsolete.
-> 
-> active => flags & FLAG_REF_FRAME
-
-Can't we keep the ACTIVE flag and drop the REF_FRAME one then? AFAIU,
-all we need to know in addition to what we already have is:
-
-* is the reference a full-frame or a field?
-* if it is a field, which one (top or bottom)?
-
-Hence my suggestion to keep only 2 flags.
