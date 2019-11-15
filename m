@@ -2,56 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBBDFD7FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89392FD7FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKOIbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 03:31:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36373 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOIbV (ORCPT
+        id S1727347AbfKOIbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 03:31:37 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34428 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfKOIbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 03:31:21 -0500
-Received: by mail-pl1-f194.google.com with SMTP id d7so4132579pls.3;
-        Fri, 15 Nov 2019 00:31:20 -0800 (PST)
+        Fri, 15 Nov 2019 03:31:35 -0500
+Received: by mail-pf1-f195.google.com with SMTP id n13so6166728pff.1;
+        Fri, 15 Nov 2019 00:31:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=RnTVU3msasSGFVmLQ6w3HwKQq7iABYeW4r2PZszqmD0=;
-        b=UyApXg21rduT6941OYAxmxV6yDowZjbsIqLcSD7rlWy6kVOcgHvexsjgj5UDiJpD7F
-         hz7bwGEZ8HB1Ldr6JOXdIjb1JCfIxPcIHmJACnloTi5FuI9WXn0JrtN2FWPWAO56Mm1P
-         6TxjN2eM8S1NtjVNnQ1HPojLXZLIaTozP/5UJ0yj23tVe4mAw42syzutqN4R0cB0gHnW
-         s1/NQUL6H9jW1kR0JIQdBW85ILQSwtYgM8A5KN8OfZgg8lgIyBrHEFWqehMQ70I7eXUP
-         TV9qIHT0XzEa0Td6dRe5snuqkJJNLRQWARQC+xnZpe2dUhbJOBKQt9Mh0Rj5VmdwnBS0
-         UvqQ==
+        bh=q5lwtXD313rHZSqTsFu5Vpidw5xPFvZNMsGZjM8+wlc=;
+        b=NHudv3nyHz7Q+fs6X0XQGBlaj4WXkIqjOkTM26W0q/mer5tjJsjBBWBz8q6w4e03io
+         dVZzYUbjq+9f4RJBsqIJpkajljnPjdhC1z37Czg5pZ2+SRs4AR/y1PyUiTjoExtnPv7S
+         Dg26Ueye525NDpnN4B5XDoaTioYQ1YlCzy2AOUZ44bC8XPqgQZyYRRKFA3vmcDDAhuaE
+         BRrcomHoWkxuSNqWa9GivaMI0UR8KwwwHDM5R7lw3KKByt67b9meuxIfxJv+tgcAJUQJ
+         hR8QX9kTh2vR/sjCE6W21OF0Q6E6bfKMR3FFUEy/HsmFzJ/3ytQH+y+WYer1iT+4qAt8
+         OMWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=RnTVU3msasSGFVmLQ6w3HwKQq7iABYeW4r2PZszqmD0=;
-        b=Bch2xYkO4lZVZUjGEzYpDU4s5ulBjQM4mgbjR4/t9eUF4DoJPVqoHJgKn4MvOofoGt
-         tSM1trur4J5BbOS2MiUfQLva2AwdSFEWljaV5cPZLGXYkwubzqGkSjiRELr+jNKZL+WL
-         38+LlqWy1W4rL8jRQSyZjG8M0zgWPbB3DIBEeakXjU2kSSxhZwpwPV2AfaVCWk1lTjb6
-         /S50sMcf1V9LQWOl9OX4WloAFLSFX4uc51UvNfGOsN0uKmHQa8PIw/ngG1ry1Hlt4UPP
-         chvIDc27cb47GJcRK9zs7NcO2IY+PpUaeUhfZoH82FpRQ8CsyWvNSmc3NkVNmh5GxJ4x
-         3EDQ==
-X-Gm-Message-State: APjAAAUWhwrBvvGjZQm3hgxLG3h40nRvsiQwV2Pa5E3SXf+n/0at6mff
-        m/wMs/jzJNMCHtqV+pLbUHk=
-X-Google-Smtp-Source: APXvYqxgxpn5+ozBvP+tWX4FbyNK4npTxvNqQk9+ptchYUGRDCLEYH90309gfNmR/B9Dtwcmu5ymkw==
-X-Received: by 2002:a17:90a:b30b:: with SMTP id d11mr17869764pjr.25.1573806680591;
-        Fri, 15 Nov 2019 00:31:20 -0800 (PST)
+        bh=q5lwtXD313rHZSqTsFu5Vpidw5xPFvZNMsGZjM8+wlc=;
+        b=dBI9y+gP8zbGjoIXtGrVHR3OXLf7q3WcgrbumKCUGtV99lkKr2u7/WPRcKC5/NoOnN
+         kKjqjaj8gTdd21zpm/UYw+2+eAzGvgE18UeGY4y1ZDQJm3gfYWMIbJmXnoBo+fu8QaYm
+         n5aHYTwDZcnFHWU2+jdLN44qF57oMO6yhGP4SuPQMhZN6YNNz5vKNXHW7LN+1OYegUuu
+         mHlGrJsufE5Iq3jn6hywvj507L48dcmI8OAOVr67aH9ll7x8Phbz1VT2DcQ9PJbAdmov
+         KdU9NSwDGk2aKX4x4RCPCfU7RwpRvJDW09BNVc7AlK9wGUUJGQqDFO8SqMMKSLFwVn9T
+         wAag==
+X-Gm-Message-State: APjAAAW7Ebg++6cYxZoJjmSc/JpLZADMKoKBVjlR5bOXk8MO75o7V7yS
+        G9468lGwbpqfvsoLjgOZj80=
+X-Google-Smtp-Source: APXvYqxAkW2zAZmUz5kbEPeJkH3e1VcfN0GhpH8Dfh00dkZ0NgzY1AywWDmZHQR5RrXlG5Me3Pb+Lw==
+X-Received: by 2002:a63:e26:: with SMTP id d38mr14905201pgl.44.1573806694390;
+        Fri, 15 Nov 2019 00:31:34 -0800 (PST)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id 81sm11804997pfx.142.2019.11.15.00.31.15
+        by smtp.gmail.com with ESMTPSA id f13sm10739924pfa.57.2019.11.15.00.31.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 00:31:19 -0800 (PST)
+        Fri, 15 Nov 2019 00:31:33 -0800 (PST)
 From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 1/2] dmaengine: mmp_tdma: add missed of_dma_controller_free
-Date:   Fri, 15 Nov 2019 16:31:00 +0800
-Message-Id: <20191115083100.12220-1-hslester96@gmail.com>
+Subject: [PATCH] spi: tegra20-slink: add missed clk_unprepare
+Date:   Fri, 15 Nov 2019 16:31:22 +0800
+Message-Id: <20191115083122.12278-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -61,29 +64,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver calls of_dma_controller_register in probe but does not free
-it in remove.
-Add the call to fix it.
+The driver misses calling clk_unprepare in probe failure and remove.
+Add the calls to fix it.
 
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- drivers/dma/mmp_tdma.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi-tegra20-slink.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/mmp_tdma.c b/drivers/dma/mmp_tdma.c
-index e7d1e12bf464..10117f271b12 100644
---- a/drivers/dma/mmp_tdma.c
-+++ b/drivers/dma/mmp_tdma.c
-@@ -544,6 +544,9 @@ static void mmp_tdma_issue_pending(struct dma_chan *chan)
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 111fffc91435..374a2a32edcd 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1073,7 +1073,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	ret = clk_enable(tspi->clk);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
+-		goto exit_free_master;
++		goto exit_clk_unprepare;
+ 	}
  
- static int mmp_tdma_remove(struct platform_device *pdev)
- {
-+	if (pdev->dev.of_node)
-+		of_dma_controller_free(pdev->dev.of_node);
-+
- 	return 0;
- }
+ 	spi_irq = platform_get_irq(pdev, 0);
+@@ -1146,6 +1146,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	free_irq(spi_irq, tspi);
+ exit_clk_disable:
+ 	clk_disable(tspi->clk);
++exit_clk_unprepare:
++	clk_unprepare(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1159,6 +1161,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 	free_irq(tspi->irq, tspi);
  
+ 	clk_disable(tspi->clk);
++	clk_unprepare(tspi->clk);
+ 
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
 -- 
 2.24.0
 
