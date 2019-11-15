@@ -2,89 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10BD6FDD39
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D57FDD50
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfKOMRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:17:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:59740 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfKOMRv (ORCPT
+        id S1727466AbfKOMUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:20:07 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34885 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbfKOMUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:17:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qC9e/jFTs3ufey3dx1Bty3A4kgjYIAA6Ny/ShN4ed/8=; b=CpcoSzGCGDPB3GbYTEh6UU97c
-        V7w3+PV3+ceDma25/jw1+VHnpfkq1sDj48oGfPYLcEBQ8WjPGUODe4yLxgHwFpM3L/yDG9R7dhKam
-        UDnaxz6KUhU32T/ogM7YdbfSvknuR2o5P8RBKAorY+GnlWHcCvSSLEo8GZ/Rj+zgQ9xxGfbvfKBl3
-        hjgY9XemUkjcmRDUXqrtVZ55GWTBYDTcQvkHFvIsHutZlWC+ZibkPX5b5+Ka/aK8ru2cDs6KdPWWI
-        snPR0bff3fhAomXkloIQfih1b5SjCa1ANFQffwIs14wJAccn5DY3bRCH/y30aH9IJzTp3DTLD/I3b
-        HWHv8BZVw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iVaXN-0007Sq-7h; Fri, 15 Nov 2019 12:17:17 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D69F13006FB;
-        Fri, 15 Nov 2019 13:16:06 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E9AD52B12BF1D; Fri, 15 Nov 2019 13:17:14 +0100 (CET)
-Date:   Fri, 15 Nov 2019 13:17:14 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Doug Smythies <dsmythies@telus.net>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
-        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
-Message-ID: <20191115121714.GI4131@hirez.programming.kicks-ass.net>
-References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
- <20191115095447.GU4114@hirez.programming.kicks-ass.net>
- <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
- <20191115103735.GE4131@hirez.programming.kicks-ass.net>
- <CAKfTPtDi_-h6g+rhV04XXjqpWprC2vT6hgLZSrTW5rdD54PrQA@mail.gmail.com>
+        Fri, 15 Nov 2019 07:20:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s5so10783853wrw.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 04:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=NBITj17KIDDQ/wzdId3cQD3bmEwVbK2XADeS/shNAmE=;
+        b=aA0SMJqxZ5qcVRg+Rexn4IUDhZEFaMChYd9AwPuKUGLa9qL+xmKhDupbAKhCCvks4o
+         fCOKnxLnPDDOw/51wdM8v81Q2bCibCu6/z/9U2K8fnvi42KWtW0siAoAzx4s8j7aCIuU
+         0VCQRonwNfB0R2bQvytQKWcaeM7x8H3NwFQ8mw1BEx5T1Jv+hFDLAhbPQldkreXTshHC
+         FyrGdYBd17ZKus/LpSAsH9zscydFiIwAfcr3MR190/DirJIBMCtPeNyi+z+mLd0pDAIL
+         cFepH6QXLOvJmi3sDRtfqBdqQx76aZDwfKHAm6gxOGqpdQc02xqpuX6I+NoW2YMW0877
+         kk9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=NBITj17KIDDQ/wzdId3cQD3bmEwVbK2XADeS/shNAmE=;
+        b=E/qduidx1caxUbGEwIz83ynLf7RUDqjfQvesKz/A/J2qomfVR3MrWbxTLLFB3n7eL3
+         eULO9oHnMZYjgUjfAMDUznbiM1IpV2AszN0ssej0cazNFfCDIU/tI7LnjtLFDt5LN2w7
+         vsoXN3NhJHh2sH+zUpmKV3SxM3Sb/21N4RulNcb7wYLAisHEVfN95syqEBGDnof+Er/E
+         TO3mhaeFD9S45vhZv3a99y57TuGkQPP3oci2s2yG/nizAU32K3htRzg8ld5DqzDMbwfu
+         qIddyMgVMzqtbpYuAvR+IlivPwlzS5xI5bq2/3pFC+fOoD4K9l+ujWV6cfjsnfXtEMC+
+         KFDQ==
+X-Gm-Message-State: APjAAAUbXViDWfFc/qcRUrNvWIfIOdadbHURdp04cbXOxUKAd/o/UfWt
+        ikT3RZDYiqEL/JdHT3qeJma2/Q==
+X-Google-Smtp-Source: APXvYqyHejg2wpDCQ5Xb/fga24iRY4A1buPXc45rZpw01kmq5mw3Gd43YdLn2qDVw5DFt6a2GDzDmA==
+X-Received: by 2002:adf:e60e:: with SMTP id p14mr15982979wrm.249.1573820404646;
+        Fri, 15 Nov 2019 04:20:04 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id y16sm11276365wro.25.2019.11.15.04.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 04:20:03 -0800 (PST)
+Message-ID: <5dce97f3.1c69fb81.6633c.685c@mx.google.com>
+Date:   Fri, 15 Nov 2019 04:20:03 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDi_-h6g+rhV04XXjqpWprC2vT6hgLZSrTW5rdD54PrQA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.4.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.4.201-21-gb0074e36d782
+In-Reply-To: <20191115062006.854443935@linuxfoundation.org>
+References: <20191115062006.854443935@linuxfoundation.org>
+Subject: Re: [PATCH 4.4 00/20] 4.4.202-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 11:46:01AM +0100, Vincent Guittot wrote:
-> On Fri, 15 Nov 2019 at 11:37, Peter Zijlstra <peterz@infradead.org> wrote:
+stable-rc/linux-4.4.y boot: 80 boots: 1 failed, 75 passed with 3 offline, 1=
+ conflict (v4.4.201-21-gb0074e36d782)
 
-> > Sure, but then it can still remember the value passed in last and use
-> > that state later.
-> >
-> > It doesn't _have_ to completely discard values.
-> 
-> yes but it means that we run at the "wrong" frequency during this
-> period and also that the cpufreq must in this case set a kind of timer
-> to resubmit a new frequency change out of scheduler event
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.4.y/kernel/v4.4.201-21-gb0074e36d782/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
+/kernel/v4.4.201-21-gb0074e36d782/
 
-It always runs at the wrong frequency. Almost per definition. We're
-doing near future predictions based on recent past, and if we can only
-set the hardware once every N [ms] then there's really nothing better we
-can do. We'll _have_ to live with the value we 'randomly' pick at the
-start of those N [ms] for the whole period.
+Tree: stable-rc
+Branch: linux-4.4.y
+Git Describe: v4.4.201-21-gb0074e36d782
+Git Commit: b0074e36d782e84e6a2e08910103642762949d2b
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 41 unique boards, 17 SoC families, 13 builds out of 190
 
-And I'm not sure it needs to set a timer, it can simply probe the value
-when we go idle, if this is the kind of system that cares about OPP on
-idle.
+Boot Regressions Detected:
+
+arm:
+
+    exynos_defconfig:
+        gcc-8:
+          exynos5422-odroidxu3:
+              lab-collabora: new failure (last pass: v4.4.201)
+
+Boot Failure Detected:
+
+arm:
+    exynos_defconfig:
+        gcc-8:
+            exynos5422-odroidxu3: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    sunxi_defconfig:
+        gcc-8
+            sun7i-a20-bananapi: 1 offline lab
+
+    multi_v7_defconfig:
+        gcc-8
+            bcm4708-smartrg-sr400ac: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+Conflicting Boot Failure Detected: (These likely are not failures as other =
+labs are reporting PASS. Needs review.)
+
+i386:
+    i386_defconfig:
+        qemu_i386:
+            lab-baylibre: FAIL (gcc-8)
+            lab-collabora: PASS (gcc-8)
+
+---
+For more info write to <info@kernelci.org>
