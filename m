@@ -2,110 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C3C0FD9FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DD7FDA04
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:55:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfKOJys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:54:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42982 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbfKOJyq (ORCPT
+        id S1727497AbfKOJzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:55:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:58710 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfKOJzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:54:46 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVYJM-0004n4-0a; Fri, 15 Nov 2019 10:54:40 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id AB2131C08AC;
-        Fri, 15 Nov 2019 10:54:39 +0100 (CET)
-Date:   Fri, 15 Nov 2019 09:54:39 -0000
-From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irq_work: Fix IRQ_WORK_BUSY bit clearing
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191113171201.14032-1-frederic@kernel.org>
-References: <20191113171201.14032-1-frederic@kernel.org>
+        Fri, 15 Nov 2019 04:55:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GtyCPw9XqiblXcSeWSKatoSztw4h8uQgEpbZa+XD5aU=; b=DLHHau4jKi+lKiykWEk5rBCJj
+        pAhYhQBbDOwb1w4sy/tXlvQ+Xy8HXvaSLxIWZvQy8f6vLKr5rpeBrv0fpRF6iMf4wDZ6iyvHjyMMX
+        i3Z4wXCJeRubxds/5mlieBaqon4tEkvamFVnDMpPuOu1uB7SoWtzcxYMkIeiXW/FELt8/jWeQD7NV
+        Gb4iOhUCbKRlmgVrlAGyRtkILykoYn9j0/AdsWCPTy5Ts+oXjyg9lIyAubzffFoW0CBjT6ZMbAUNa
+        ja+3zenTuQUwVxx36CadfaIk8LxtuYT1zmp0LLUzaJbI71qx/bnXEqtDN3mgp0QSQ5D0i69iv0zZe
+        NrVhB0yAQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVYJY-0005qz-0D; Fri, 15 Nov 2019 09:54:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 371323006FB;
+        Fri, 15 Nov 2019 10:53:39 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2C10C29E4EBB3; Fri, 15 Nov 2019 10:54:47 +0100 (CET)
+Date:   Fri, 15 Nov 2019 10:54:47 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+        rostedt@goodmis.org, mgorman@suse.de, dsmythies@telus.net,
+        linux-pm@vger.kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, sargun@sargun.me, tj@kernel.org,
+        xiexiuqi@huawei.com, xiezhipeng1@huawei.com,
+        srinivas.pandruvada@linux.intel.com
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+Message-ID: <20191115095447.GU4114@hirez.programming.kicks-ass.net>
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Message-ID: <157381167919.29467.977752896796863165.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the irq/core branch of tip:
+On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
+> update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
+> which might be inefficient when cpufreq driver has rate limitation.
+> 
+> When a task is attached on a CPU, we have call path:
+> 
+> update_load_avg()
+>   update_cfs_rq_load_avg()
+>     cfs_rq_util_change -- > trig frequency update
+>   attach_entity_load_avg()
+>     cfs_rq_util_change -- > trig frequency update
+> 
+> The 1st frequency update will not take into account the utilization of the
+> newly attached task and the 2nd one might be discard because of rate
+> limitation of the cpufreq driver.
 
-Commit-ID:     e9838bd51169af87ae248336d4c3fc59184a0e46
-Gitweb:        https://git.kernel.org/tip/e9838bd51169af87ae248336d4c3fc59184a0e46
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Wed, 13 Nov 2019 18:12:01 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 15 Nov 2019 10:48:37 +01:00
+Doesn't this just show that a dumb rate limit in the driver is broken?
 
-irq_work: Fix IRQ_WORK_BUSY bit clearing
+> update_cfs_rq_load_avg() is only called by update_blocked_averages()
+> and update_load_avg() so we can move the call to
+> cfs_rq_util_change/cpufreq_update_util() into these 2 functions. It's also
+> interesting to notice that update_load_avg() already calls directly
+> cfs_rq_util_change() for !SMP case.
+> 
+> This changes will also ensure that cpufreq_update_util() is called even
+> when there is no more CFS rq in the leaf_cfs_rq_list to update but only
+> irq, rt or dl pelt signals.
 
-While attempting to clear the busy bit at the end of a work execution,
-atomic_cmpxchg() expects the value of the flags with the pending bit
-cleared as the old value. However by mistake the value of the flags is
-passed without clearing the pending bit first.
+I don't think it does that; that is, iirc the return value of
+___update_load_sum() is 1 every time a period lapses. So even if the avg
+is 0 and doesn't change, it'll still return 1 on every period.
 
-As a result, clearing the busy bit fails and irq_work_sync() may stall:
+Which is what that dumb rate-limit thing wants of course. But I'm still
+thinking that it's stupid to do. If nothing changes, don't generate
+events.
 
- watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [blktrace:4948]
- CPU: 0 PID: 4948 Comm: blktrace Not tainted 5.4.0-rc7-00003-gfeb4a51323bab #1
- RIP: 0010:irq_work_sync+0x4/0x10
- Call Trace:
-  relay_close_buf+0x19/0x50
-  relay_close+0x64/0x100
-  blk_trace_free+0x1f/0x50
-  __blk_trace_remove+0x1e/0x30
-  blk_trace_ioctl+0x11b/0x140
-  blkdev_ioctl+0x6c1/0xa40
-  block_ioctl+0x39/0x40
-  do_vfs_ioctl+0xa5/0x700
-  ksys_ioctl+0x70/0x80
-  __x64_sys_ioctl+0x16/0x20
-  do_syscall_64+0x5b/0x1d0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+If anything, update_blocked_avgerages() should look at
+@done/others_have_blocked() to emit events for rt,dl,irq.
 
-So clear the appropriate bit before passing the old flags to cmpxchg().
-
-Fixes: feb4a51323ba ("irq_work: Slightly simplify IRQ_WORK_PENDING clearing")
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Leonard Crestez <leonard.crestez@nxp.com>
-Link: https://lkml.kernel.org/r/20191113171201.14032-1-frederic@kernel.org
-
----
- kernel/irq_work.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-index 49c53f8..828cc30 100644
---- a/kernel/irq_work.c
-+++ b/kernel/irq_work.c
-@@ -158,6 +158,7 @@ static void irq_work_run_list(struct llist_head *list)
- 		 * Clear the BUSY bit and return to the free state if
- 		 * no-one else claimed it meanwhile.
- 		 */
-+		flags &= ~IRQ_WORK_PENDING;
- 		(void)atomic_cmpxchg(&work->flags, flags, flags & ~IRQ_WORK_BUSY);
- 	}
- }
+So why are we making the scheduler code more ugly instead of fixing that
+driver?
