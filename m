@@ -2,92 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B68DFE2F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E645FE304
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:42:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfKOQij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 11:38:39 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44608 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727543AbfKOQii (ORCPT
+        id S1727715AbfKOQmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 11:42:08 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33870 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbfKOQmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 11:38:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573835917;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6fENKbkRp6IkVJsqfQWI1tPw8ogr4wWzSPjFy8i7mms=;
-        b=ItJshpStFRX1cWzQp3Ayyvb1GjvrfKoyYPDDPnRpAsZu7L1ncHbS+Mbw2c2abDBHh3kS41
-        INIpjmpQh2kKnqfe+D+tcGKJLD4g9vUa9W7ddsbfYK3mpXYmAM959IIUkz5/bNuci5db4m
-        l/FTqXlTvSdGluI9GuTb9U4+9wcrKbg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-281-hWEbCo_AMMG0C_3DEUsPiQ-1; Fri, 15 Nov 2019 11:38:34 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 622D1107ACFA;
-        Fri, 15 Nov 2019 16:38:33 +0000 (UTC)
-Received: from treble (ovpn-120-26.rdu2.redhat.com [10.10.120.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 98BED60FC1;
-        Fri, 15 Nov 2019 16:38:32 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 10:38:30 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: Tree for Nov 15 (objtool)
-Message-ID: <20191115163830.g262y75w3sh535fm@treble>
-References: <20191115190525.77efdf6c@canb.auug.org.au>
- <c49752fe-4b47-2329-2cb8-caad44803e3a@infradead.org>
+        Fri, 15 Nov 2019 11:42:06 -0500
+Received: by mail-oi1-f196.google.com with SMTP id l202so9180340oig.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 08:42:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=UZSpFkKNVNV5BKs7QN+kq39SLlJrWMnwXj2a0zo8qnE=;
+        b=poDEPVm+GRR+otLxrdSAZ6RsFhwEqAB1QsJkDuE4KbprEHKb80CHLXH6PlYDj+gCJV
+         aHoGJ3u18gqjviqy7N0LoTBLO0V2sac4WD6sUmk1cxf7Sedhny0n6g52TAzu+xTL5zcX
+         tqsterSsgoqkXQTAK3rkgi24Qnqpvpccy1d9oiLUq5Jl0AXoSygIvE9v68gz5rB1E11H
+         AQNZMSqmOY8G/6aXzE1okGyyRJT0rVFrhEFiY+ce5br0jvhm2hC5K3JKJVYJ547eYn4a
+         fbU3FL4L9qINKtj5J6n+64VjPU/E93yKhOQa2y2aFvCUxcwPs94f7rvsImulrlR+aYaS
+         u5Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UZSpFkKNVNV5BKs7QN+kq39SLlJrWMnwXj2a0zo8qnE=;
+        b=EF4PSanThQkiu+AIVLnwE2Wiw4HGEqQEaNUB09Rvx//0IOqrrHBa5nlxp1CIxNnLpw
+         635590AEVHxmV6zF/lvGa0KW9ObB2Vg0bat6wDYoMvGiHbABmVxoU/OQVQlOb6lUrt3n
+         MbAGnJDQo8c2mpIQ8PTlnnk9+eCfK3s6Y75tGBQ6UNQ+ZQFzIe987V2X06GSOdWJVpjc
+         sEaKMGec/OQdS6r2HYIs0fAjzrlhAAeJ9ufvda+8PkZJQggJkS2KXjqIer2Y9Wehl93y
+         1uA6NFn8iHnEuHtE0pDLicucISdEo/nGuNH57bxl6bhflKraOUFuRZAoB5O7G85QcSBV
+         7Dfg==
+X-Gm-Message-State: APjAAAUkrZeMU1ZFtNdGiWcWZw5qVEFdh46LHWenYM+A92lrHleDqzAh
+        a8rpvUfU33qm8uxFnyWVhsJkTlkDoTMXSmGmuPvi497lhA0=
+X-Google-Smtp-Source: APXvYqwos7WvYIQqqWWqUogHfETfT35eaGRAWlExs8ZOoMOJeR3E1BLLqRkliqxSdDz2iG5PlZ1EhrthGVA+LQklxHU=
+X-Received: by 2002:aca:55c1:: with SMTP id j184mr9249378oib.105.1573836126000;
+ Fri, 15 Nov 2019 08:42:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c49752fe-4b47-2329-2cb8-caad44803e3a@infradead.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: hWEbCo_AMMG0C_3DEUsPiQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+References: <20191115001134.2489505-1-jhubbard@nvidia.com> <20191115001134.2489505-3-jhubbard@nvidia.com>
+In-Reply-To: <20191115001134.2489505-3-jhubbard@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 15 Nov 2019 08:41:55 -0800
+Message-ID: <CAPcyv4hWksbxM5h4b4hCfs_MSggDoEDoxiu4sw2uj1N=z+mOcg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 08:02:30AM -0800, Randy Dunlap wrote:
-> On 11/15/19 12:05 AM, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Changes since 20191114:
-> >=20
->=20
-> on x86_64:
->=20
-> already reported and Josh supplied a fix (yet unmerged),
-> but this is still around:
->=20
-> kernel/exit.o: warning: objtool: __x64_sys_exit_group()+0x14: unreachable=
- instruction
+On Thu, Nov 14, 2019 at 4:11 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> An upcoming patch changes and complicates the refcounting and
+> especially the "put page" aspects of it. In order to keep
+> everything clean, refactor the devmap page release routines:
+>
+> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
+>   and limit the functionality to "read only": return a bool,
+>   with no side effects.
+>
+> * Add a new routine, put_devmap_managed_page(), to handle checking
+>   what kind of page it is, and what kind of refcount handling it
+>   requires.
+>
+> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
+>   and limit the functionality to unconditionally freeing a devmap
+>   page.
+>
+> This is originally based on a separate patch by Ira Weiny, which
+> applied to an early version of the put_user_page() experiments.
+> Since then, J=C3=A9r=C3=B4me Glisse suggested the refactoring described a=
+bove.
+>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Suggested-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  include/linux/mm.h | 27 ++++++++++++++++++++++++---
+>  mm/memremap.c      | 16 ++--------------
+>  2 files changed, 26 insertions(+), 17 deletions(-)
 
-My apologies, I have a growing backlog of objtool fixes which I hope to
-post next week.
+Looks good,
 
->=20
-> new AFAIK:
->=20
-> drivers/gpu/drm/bridge/cdns-dsi.o: warning: objtool: cdns_dsi_bridge_enab=
-le()+0x3e0: unreachable instruction
->=20
-> obj file for latter one is attached.
-
-This seems fishy.  cdns_dsi_init_link() never returns, it always dies a
-with UD2.  I bet GCC decided that it always does a divide-by-zero, and
-so it forces a crash as a result.  Will try to dig deeper next week...
-
---=20
-Josh
-
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
