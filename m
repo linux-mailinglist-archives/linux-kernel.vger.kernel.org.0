@@ -2,72 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7481DFD9A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2587FD98F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:43:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfKOJoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:44:30 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56755 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbfKOJo3 (ORCPT
+        id S1727534AbfKOJnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:43:51 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35064 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbfKOJnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:44:29 -0500
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAF9hluQ013037;
-        Fri, 15 Nov 2019 18:43:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav102.sakura.ne.jp);
- Fri, 15 Nov 2019 18:43:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav102.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040052248.bbtec.net [126.40.52.248])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAF9hfEU013011
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 15 Nov 2019 18:43:46 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
-To:     =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@redhat.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>,
-        ddstreet@ieee.org, Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        bpf <bpf@vger.kernel.org>, Yonghong Song <yhs@fb.com>
-References: <00000000000056268e05737dcb95@google.com>
- <0000000000007d22100573d66078@google.com>
- <063a57ba-7723-6513-043e-ee99c5797271@I-love.SAKURA.ne.jp>
- <CAADnVQJ7BZMVSt9on4updWrWsFWq6b5J1qEGwTdGYV+BLqH7tg@mail.gmail.com>
- <87imopgere.fsf@toke.dk>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <6f69f704-b51d-c3cb-02c6-8e6eb93f4194@i-love.sakura.ne.jp>
-Date:   Fri, 15 Nov 2019 18:43:36 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Fri, 15 Nov 2019 04:43:50 -0500
+Received: by mail-wm1-f65.google.com with SMTP id 8so9640984wmo.0;
+        Fri, 15 Nov 2019 01:43:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wg7FNix1Jqxyd3+V87DQuRBKrAOq/JYYbkWOtaNuI44=;
+        b=qk71OzDyJKtSIFpughMpiWzoqWg79C5iZUEu8+2UgcBySK/DuDD2Kg/+/jjuqy0fdv
+         sxMpzhFtpOftP+jUOwfmqM6K2tkhJsDfBmmL2dMqwe4ZaN2QPj2/6N56f9wcFVrwn5Tg
+         5Nl2HkoVDAhf00UvFoPvnQaayBoXklmlbP1wlvY5R6ML+ixEvnNT1P5vDJl1nsODNkKs
+         d8rWlqb4+l80xZ/6uqOdGtyxQ5lmCUSTm8M4+l7sdx/KxD+IyjavKj7PQWsz4Sk+WIk4
+         PazD3Ekkz3sWUusC/FmIrifA2X5HO3JADrkEdQtsdkyuYdWnBUh55EKAp3S2LLYAbwSw
+         N7tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wg7FNix1Jqxyd3+V87DQuRBKrAOq/JYYbkWOtaNuI44=;
+        b=X4uG97LFA1UEmc8LRo/c6xq6sGIz2oJFR7Ngd3k2GT2uLKDvpAo+0+J+adQParA9lE
+         vOTeVcp+z0N1UMlX2mnDkTc3+xA8wCAS2x1k7K82nIs8JZeyqG/jia79uQqa6kc7MwvW
+         s0OjsHO7XEsqWvIfa9VptaiXl3PZGlYcnXvDkkhr36m3a1LUjx2YJfJIbHBYkP+NBk2v
+         itUQV2itqKfPb27h0qkWdnjkYquTld/08aWLeausG1NN86BLaIqc1Orhm4xiW/zRVxST
+         pFWIJLCO2mWvLehSvLQcIUWyq0kRSEquiUgK79TlMZQfSopO8UV+jdfCZev6asiFAzd6
+         4Tsw==
+X-Gm-Message-State: APjAAAXteZFxz4YycizyIDp/zbT+r0vFEqQdnW3Ad/hBW3rXHG4wZRjK
+        QABBfzfbaMSl/Ag4B67Kg3A=
+X-Google-Smtp-Source: APXvYqzze598Otbd7SSxMRO29UJcONoMxnqGrlWshCDotRgcF2WDEJEBLbpwZ77+8+a+qMwvZhHDqA==
+X-Received: by 2002:a1c:10a:: with SMTP id 10mr13539245wmb.17.1573811028238;
+        Fri, 15 Nov 2019 01:43:48 -0800 (PST)
+Received: from localhost ([46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id w18sm10881620wrp.31.2019.11.15.01.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 01:43:46 -0800 (PST)
+Date:   Fri, 15 Nov 2019 10:43:40 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: linux-next: manual merge of the clk tree with the tegra tree
+Message-ID: <20191115094340.GB825257@ulmo>
+References: <20191115092606.79a65342@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <87imopgere.fsf@toke.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="K8nIJk4ghYZn606h"
+Content-Disposition: inline
+In-Reply-To: <20191115092606.79a65342@canb.auug.org.au>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
 
-syzbot is still reporting that bpf(BPF_MAP_UPDATE_ELEM) causes
-unregister_netdevice() to hang. It seems that commit 546ac1ffb70d25b5
-("bpf: add devmap, a map for storing net device references") assigned
-dtab->netdev_map[i] at dev_map_update_elem() but commit 6f9d451ab1a33728
-("xdp: Add devmap_hash map type for looking up devices by hashed index")
-forgot to assign dtab->netdev_map[idx] at __dev_map_hash_update_elem()
-when dev is newly allocated by __dev_map_alloc_node(). As far as I and
-syzbot tested, https://syzkaller.appspot.com/x/patch.diff?x=140dd206e00000
-can avoid the problem, but I don't know whether this is right location to
-assign it. Please check and fix.
+--K8nIJk4ghYZn606h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 15, 2019 at 09:26:06AM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the clk tree got conflicts in:
+>=20
+>   include/linux/clk-provider.h
+>   drivers/clk/tegra/clk-super.c
+>   drivers/clk/tegra/clk-sdmmc-mux.c
+>   drivers/clk/tegra/clk-periph.c
+>   drivers/clk/clk.c
+>=20
+> between commits:
+>=20
+>   929490c73870 ("clk: tegra: periph: Add restore_context support")
+>   02ee6fe5e67a ("clk: tegra: clk-super: Fix to enable PLLP branches to CP=
+U")
+>   175ea1f93c33 ("clk: tegra: clk-super: Add restore-context support")
+>   837d3fa941cd ("clk: Add API to get index of the clock parent")
+>=20
+> from the tegra tree and commits:
+>=20
+>   68a14a5634da ("clk: tegra: clk-super: Fix to enable PLLP branches to CP=
+U")
+>   f8fd97521d63 ("clk: tegra: clk-super: Add restore-context support")
+>   2b8cfd6b52cb ("clk: tegra: periph: Add restore_context support")
+>   d9b86cc48283 ("clk: Add API to get index of the clock parent")
+>=20
+> from the clk tree.
+>=20
+> These are different version of the same patches (presumably).
+>=20
+> I fixed it up (I just used the versions from the clk tree (since even
+> though the commits have the smae author dates, the clk tree versions were
+> committed later) and can carry the fix as necessary. This is now fixed
+> as far as linux-next is concerned, but any non trivial conflicts should
+> be mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
+
+The versions from the clk tree are the correct ones. I forgot to rebuild
+the tegra/for-next branch based on the updated clk branches that Stephen
+merged.
+
+I've done that now, so the conflicts should be gone now.
+
+Thierry
+
+--K8nIJk4ghYZn606h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3Oc0wACgkQ3SOs138+
+s6F29g/+LMl2R3wiW/EyxGpgRsLMKFYrIBZ0bvqMohEANh7azORBUTeM+u155t+c
+WyL+e76+Zhgz9wL1mZdcqSswwrieJRUcliqluKM8laEcWO5AKGNVRq1sCzaViUlh
+WdHlRTueKWb3ggD55HkuBBC9JEGQVV4WMskzQlR4ILT1dI37vR15SLnZg8iNS76P
+yl+qjqyMOiiAcJDLLq0bkqSk7hnfdYSSF7X8V+CaXcotNzSRUn9fpbEblEPqQ8X6
+/Bu0hx+f/pUgZY5EMRDZ5Whm1660qhdmIOUmTEgGFLNEq4gChInrpNUsFCv9YFu+
+6e1swUH1xwYivSMhIsk/KceQSxa8zY1hyksTsvxqYdO659KLRZze+uO5ZNVeRn5J
+3EgQPywFSMHPgUK+OhC8St6UUaSnZpUSE8DKWrlppUnDNWsSWGSWPVR538J3gBDq
+GW7VHKLmS/5tshbjcc3KS1gPWXcsMvtpTFR3+aMNCOtryt6KLTRRPJTycj1dWCXr
+DpCLXsrcwNZs/7xsSR43lWgL+i8Hvu/O+v2yrPU+NknsgxdTIZGa/1pdVQZXoqdY
+/9/RyKqaYlcCjeWpndS1Thmgq9BeJrB4kQXsQyWdyd2e8UgFAP+Ra3xxfqniT51j
+c+ltdLMWIXSQoJqHrjeoG3OavWO1cy2j6LMLdZsH0PEw4FYP4lU=
+=ONGP
+-----END PGP SIGNATURE-----
+
+--K8nIJk4ghYZn606h--
