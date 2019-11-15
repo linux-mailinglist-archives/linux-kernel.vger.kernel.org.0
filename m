@@ -2,63 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 099BCFD32E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 04:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21778FD331
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 04:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfKODUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 22:20:15 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49538 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727065AbfKODUP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 22:20:15 -0500
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xAF3Jruj001765
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Nov 2019 22:19:54 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4F94B4202FD; Thu, 14 Nov 2019 22:19:53 -0500 (EST)
-Date:   Thu, 14 Nov 2019 22:19:53 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: Re: [PATCH v2] ext4: bio_alloc with __GFP_DIRECT_RECLAIM never fails
-Message-ID: <20191115031953.GA30252@mit.edu>
-References: <20191030161244.GB3953@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20191031092315.139267-1-gaoxiang25@huawei.com>
- <5f46684a-a435-1e15-0054-b708edfce487@huawei.com>
+        id S1727181AbfKODUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 22:20:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726549AbfKODUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 22:20:33 -0500
+Received: from localhost (unknown [104.132.150.99])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEBA5206F4;
+        Fri, 15 Nov 2019 03:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573788033;
+        bh=PiIS7yZbS9fEJm3OF/jynPajFSd2cFJT194PH0QlBWg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fKC/RQgwC7siUSag2RQgnJu+dgSU2VictpP0hSTbuf4pd3iVsuNtjQ34ue5Hl0ah9
+         RFm8uTwWp4JsK2Elkbq3JlaMAxLFK71zwNEGDcjI4NHV4UPA3dBVgaZTaEYXEoznAA
+         6bHYx4ahAGFmuaJgiY1gI9JnSfjm7EgYwdJfBYF8=
+Date:   Fri, 15 Nov 2019 11:20:30 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Felipe Balbi <balbi@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>
+Subject: Re: [PATCH 1/1] usb: gadget: add raw-gadget interface
+Message-ID: <20191115032030.GB793701@kroah.com>
+References: <cover.1573236684.git.andreyknvl@google.com>
+ <282c5da077ad53ce4e5ff9b4350bbf62b33bb6a9.1573236684.git.andreyknvl@google.com>
+ <20191108211745.GA1282512@kroah.com>
+ <CAAeHK+w-nB4MngSNhazkZAa-Ovdu1C45HaD6XCPoJ79qRo8keQ@mail.gmail.com>
+ <CAAeHK+y1O39gX5wDtF2j4jzpqKT8Z2c6cCHnZrh4hGWTS2Y65w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5f46684a-a435-1e15-0054-b708edfce487@huawei.com>
+In-Reply-To: <CAAeHK+y1O39gX5wDtF2j4jzpqKT8Z2c6cCHnZrh4hGWTS2Y65w@mail.gmail.com>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 05:29:58PM +0800, Chao Yu wrote:
-> On 2019/10/31 17:23, Gao Xiang wrote:
-> > Similar to [1] [2], bio_alloc with __GFP_DIRECT_RECLAIM flags
-> > guarantees bio allocation under some given restrictions, as
-> > stated in block/bio.c and fs/direct-io.c So here it's ok to
-> > not check for NULL value from bio_alloc().
-> > 
-> > [1] https://lore.kernel.org/r/20191030035518.65477-1-gaoxiang25@huawei.com
-> > [2] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> > Cc: Ritesh Harjani <riteshh@linux.ibm.com>
-> > Cc: Chao Yu <yuchao0@huawei.com>
-> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+On Thu, Nov 14, 2019 at 04:33:56PM +0100, Andrey Konovalov wrote:
+> On Thu, Nov 14, 2019 at 4:08 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+> > On Fri, Nov 8, 2019 at 10:17 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > > +static void gadget_reset(struct usb_gadget *gadget)
+> > > > +{
+> > > > +     pr_debug("ignoring\n");
+> > > > +}
+> > >
+> > > I think you don't even need functions for these, right?  If not, just
+> > > remove.  If you do, we should fix the gadget core to not require them :)
+> >
+> > Will do in v2.
 > 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Actually, I just hit that Dummy HCD/UDC requires a disconnect callback
+> to be present. And I assume other UDCs might do the same, so I'd
+> rather include the callbacks just in case. WDYT?
 
-Thanks, applied.
+If they require it to be present then yes, leave all of these.
 
-					- Ted
+thanks,
+
+greg k-h
