@@ -2,105 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 157F8FD6D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7E1FD6DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 08:21:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfKOHUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 02:20:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44262 "EHLO mail.kernel.org"
+        id S1727112AbfKOHVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 02:21:36 -0500
+Received: from mga18.intel.com ([134.134.136.126]:49781 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbfKOHUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 02:20:18 -0500
-Received: from localhost (unknown [104.132.150.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4825E2072D;
-        Fri, 15 Nov 2019 07:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573802417;
-        bh=iQd1pqyrReTRVECeogRn/0pT26bazl5tIx24X6aOZNM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U6JY7aPlxEKt5qe5AdRh2FPCIAFpALC2/VQZYcjtLtq8ZvVupQIpw2hg0GKpYyrEg
-         fxYB4dyC3QuTRzubZTwJIZ+Ley/8OLhOP2UvMpS+BGAI50lUAmrxkKgP64EI09EQQH
-         g0YRHDJDzeWDCW2ctxH3tXOV5bOPEoSpBFvNoLWg=
-Date:   Fri, 15 Nov 2019 15:20:11 +0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     yu kuai <yukuai3@huawei.com>, rafael@kernel.org,
-        rostedt@goodmis.org, oleg@redhat.com, mchehab+samsung@kernel.org,
-        corbet@lwn.net, tytso@mit.edu, jmorris@namei.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        zhengbin13@huawei.com, yi.zhang@huawei.com,
-        chenxiang66@hisilicon.com, xiexiuqi@huawei.com
-Subject: Re: [PATCH 1/3] dcache: add a new enum type for 'dentry_d_lock_class'
-Message-ID: <20191115072011.GA1203354@kroah.com>
-References: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
- <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
- <20191115032759.GA795729@kroah.com>
- <20191115041243.GN26530@ZenIV.linux.org.uk>
+        id S1725774AbfKOHVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 02:21:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 23:21:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,307,1569308400"; 
+   d="scan'208";a="235980233"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.197]) ([10.237.72.197])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Nov 2019 23:21:31 -0800
+Subject: Re: [PATCH v2 2/2] mmc: sdhci-of-aspeed: add inversion
+ sighttps://elixir.bootlin.com/linux/v4.6/ident/sdhci_opsnal presence
+To:     Ivan Mikhaylov <i.mikhaylov@yadro.com>
+Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, openbmc@lists.ozlabs.org
+References: <20191114125435.27756-1-i.mikhaylov@yadro.com>
+ <20191114125435.27756-3-i.mikhaylov@yadro.com>
+ <fcb5f8b5-40b9-6497-b24d-0b73e2525949@intel.com>
+ <b443738f5e2a3c7ba96b329a8347374f7f934483.camel@yadro.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <d177ef37-643e-442d-d536-750e0bb5e86d@intel.com>
+Date:   Fri, 15 Nov 2019 09:20:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191115041243.GN26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <b443738f5e2a3c7ba96b329a8347374f7f934483.camel@yadro.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 04:12:43AM +0000, Al Viro wrote:
-> On Fri, Nov 15, 2019 at 11:27:59AM +0800, Greg KH wrote:
-> > On Fri, Nov 15, 2019 at 11:27:50AM +0800, yu kuai wrote:
-> > > 'dentry_d_lock_class' can be used for spin_lock_nested in case lockdep
-> > > confused about two different dentry take the 'd_lock'.
-> > > 
-> > > However, a single 'DENTRY_D_LOCK_NESTED' may not be enough if more than
-> > > two dentry are involed. So, and in 'DENTRY_D_LOCK_NESTED_2'
-> > > 
-> > > Signed-off-by: yu kuai <yukuai3@huawei.com>
-> > > ---
-> > >  include/linux/dcache.h | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> > > index 10090f1..8eb84ef 100644
-> > > --- a/include/linux/dcache.h
-> > > +++ b/include/linux/dcache.h
-> > > @@ -129,7 +129,8 @@ struct dentry {
-> > >  enum dentry_d_lock_class
-> > >  {
-> > >  	DENTRY_D_LOCK_NORMAL, /* implicitly used by plain spin_lock() APIs. */
-> > > -	DENTRY_D_LOCK_NESTED
-> > > +	DENTRY_D_LOCK_NESTED,
-> > > +	DENTRY_D_LOCK_NESTED_2
-> > 
-> > You should document this, as "_2" does not make much sense to anyone
-> > only looking at the code :(
-> > 
-> > Or rename it better.
+On 14/11/19 7:19 PM, Ivan Mikhaylov wrote:
+> On Thu, 2019-11-14 at 15:10 +0200, Adrian Hunter wrote:
+>> On 14/11/19 2:54 PM, Ivan Mikhaylov wrote:
+>>> Change the default .get_cd callback. Add inverted signal card detection
+>>> check.
+>>>
+>>> Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-
+>>> aspeed.c
+>>> index 8962f6664381..186559ee8fcc 100644
+>>> --- a/drivers/mmc/host/sdhci-of-aspeed.c
+>>> +++ b/drivers/mmc/host/sdhci-of-aspeed.c
+>>> @@ -143,6 +143,19 @@ static inline int aspeed_sdhci_calculate_slot(struct
+>>> aspeed_sdhci *dev,
+>>>  	return (delta / 0x100) - 1;
+>>>  }
+>>>  
+>>> +static int aspeed_get_cd(struct mmc_host *mmc)
+>>> +{
+>>> +	struct sdhci_host *host = mmc_priv(mmc);
+>>> +
+>>> +	int present = !!(sdhci_readl(host, SDHCI_PRESENT_STATE)
+>>> +			 & SDHCI_CARD_PRESENT);
+>>> +
+>>> +	if (mmc->caps2 & MMC_CAP2_CD_ACTIVE_HIGH)
+>>> +		present = !present;
+>>
+>> Perhaps safer to flip the bit using CONFIG_MMC_SDHCI_IO_ACCESSORS and
+>> ->readl() callback
+>>
 > 
-> FWIW, I'm not sure it's a good solution.  What are the rules for callers
-> of that thing, anyway?  If it can be called when somebody is creating
-> more files in that subtree, we almost certainly will have massive
-> problems with the lifetimes of underlying objects...
+> Sorry, don't quite understand what you're saying. You want to instantiate
+> '.read_l' callback instead of '.get_cd' in sdhci_ops and substitute the real
+> value?
 > 
-> Could somebody familiar with debugfs explain how is that thing actually
-> used and what is required from/promised to its callers?  I can try and
-> grep through the tree and guess what the rules are, but I've way too
-> much on my platter right now and I don't want to get sidetracked into yet
-> another tree-wide search and analysis session ;-/
+> res = readl(base, reg);
+> if (reg == SDHCI_PRESENT_STATE)
+> 	if (mmc->caps2 & MMC_CAP2_CD_ACTIVE_HIGH)
+> 		return !res;
 
-Yu wants to use simple_empty() in debugfs_remove_recursive() instead of
-manually checking:
-	if (!list_empty(&child->d_subdirs)) {
+Presumably just flip the SDHCI_CARD_PRESENT bit i.e.
 
-See patch 3 of this series for that change and why they feel it is
-needed:
-	https://lore.kernel.org/lkml/1573788472-87426-4-git-send-email-yukuai3@huawei.com/
+		return res ^ SDHCI_CARD_PRESENT;
 
-As to if patch 3 really is needed, I'll leave that up to Yu given that I
-thought we had resolved these types of issues already a year or so ago.
+> return res;
+> 
+> Something like this?
 
-thanks,
+Yes
 
-greg k-h
+> 
+>>  
+>>> +	host->mmc_host_ops.get_cd = aspeed_get_cd;
+>>> +	if (of_property_read_bool(pdev->dev.of_node, "cd-inverted"))
+>>> +		dev_info(&pdev->dev, "aspeed: sdhci: presence signal inversion
+>>> enabled\n");
+>>
+>> Is this print really needed?
+>>
+> I can remove it if you think it's redundant.
+> 
+> Thanks.
+> 
+> 
+
