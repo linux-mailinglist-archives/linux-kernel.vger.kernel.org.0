@@ -2,78 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB85FDB49
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C43FDB4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfKOK0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:26:38 -0500
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:10733 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOK0i (ORCPT
+        id S1727442AbfKOK05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:26:57 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37548 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbfKOK04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:26:38 -0500
-Date:   Fri, 15 Nov 2019 10:26:26 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1573813594;
-        bh=k3OJKl6Q//tOkpTFQcDrmzzV/td0BvnBkKsNGaztsuU=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=A+5ysGdrIQUTbmhbZ9Afdc6sDWtmXEBDR2o8cbl5C4PzRyKTlDry8qQ0U3CyDWd5O
-         AAfYTmhqTe9kv0rydFYhkstfWuEZQOoHaK0XuK3dv+gBMRGWaGzj7+rHoCUblJp7FL
-         lCVwEzIfz4v5DNnVIttwUiSiaEezS2vV8hgvn38U=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: DS-X O.S. (was Fair Pay In Source Available Space)
-Message-ID: <nBujHT7ILDMX42b3CjgafB4OdCiYaIioC1XL2XZPPs_8Bjo4807_IFe72nRko6OW82Q_CQYqUEXAtAui7BsVkXqDIcFMrqfLWYiwcHeSUAU=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Fri, 15 Nov 2019 05:26:56 -0500
+Received: by mail-ot1-f68.google.com with SMTP id d5so7605892otp.4;
+        Fri, 15 Nov 2019 02:26:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pem47e68QsfR2xvNK79o7bq8NBfMBA9ulZTmR6QPBXQ=;
+        b=K1vHfbFJfFav1lGD0zptMCjxNGjlxHQMOTx24Z7vDAV4oGg6LhS7onR1GIpDJm9eew
+         OSAYPM64Lekp3X3ycoMo3UD4FYI7hh+16fK/1bYK08Vh4EIbxOSWNSiOMLjYTQIFfU4G
+         WqhhwBhtGiU/itI9TEAUspMcy21LbP33lncsFmv+0+jq1J0vfKK6OHM813aVJTS+eWG3
+         Am0nSyIyvHS/9gKX8VdtDQpl+fAiPQwo8e08BxwW9cWPgRnK6J4oMV2jbj+q85QcMqF7
+         Tsmdy0BtIAS3JYJTVpABZoFGqxiAX07DTTtTUfEiuEn9WPwecLSlyybRQk9MVKWMwDK5
+         jtUg==
+X-Gm-Message-State: APjAAAV04iwVukIyc2QvqA0K1HoYlIaPFw19vuTYAaWH6dqZwosyj8CO
+        B6mDNl1PWWmXDi1Ir0r6KoP0x3gF4O6I0Ym3+ew=
+X-Google-Smtp-Source: APXvYqztMO0pme2trK3Xq1OxPCXqw9OHvMhjZFp3BASCzEKVIw6hhkm5ZGbKg8xG2i1KfPlviXBRToiXidUY4AKPnF0=
+X-Received: by 2002:a9d:6b91:: with SMTP id b17mr10218038otq.189.1573813613955;
+ Fri, 15 Nov 2019 02:26:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+References: <1573041302-4904-1-git-send-email-zhenzhong.duan@oracle.com> <1573041302-4904-2-git-send-email-zhenzhong.duan@oracle.com>
+In-Reply-To: <1573041302-4904-2-git-send-email-zhenzhong.duan@oracle.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 15 Nov 2019 11:26:43 +0100
+Message-ID: <CAJZ5v0gyszPOvUxd8WX8gxc1OvX_nLUGh3vKn=aXWRj52L76yw@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2 1/4] cpuidle-haltpoll: ensure grow start value
+ is nonzero
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        kvm-devel <kvm@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Its been a long discussion on LKML, and the Source Available environment in=
- general. Much critisism of Stallman, and much critisism of lack of behavio=
-ural limits.
+On Wed, Nov 6, 2019 at 12:56 PM Zhenzhong Duan
+<zhenzhong.duan@oracle.com> wrote:
+>
+> dev->poll_limit_ns could be zeroed in certain cases (e.g. by
+> guest_halt_poll_ns = 0). If guest_halt_poll_grow_start is zero,
+> dev->poll_limit_ns will never be bigger than zero.
 
-And technically, things such as 1000hz timers have been much criticised, an=
-d I found a 10ms filter in sched.c myself, being absurd as jitter is below =
-200uS on a good config, and that has long ago happened with a 10ms(!) filte=
-r.
+I would rephrase this in the following way:
 
-It has been talk about "ricers", who config their kernel with unnecessary o=
-ptions, yet defer-pop is enabled in the standard config. (rather ofcourse -=
-fno-defer-pop)
+"If guest_halt_poll_grow_start is zero and dev->poll_limit_ns becomes
+zero for any reason, it will never be greater than zero again, so use
+..."
 
-And while talk about gods is supposedly not wanted, GNU is an "atheist" ver=
-sion of god, that requires no money.
+The patch itself looks OK to me.
 
-An O.S. fits perfectly to replace false deities, with an economic model. Th=
-at is mostly what they became in history.
-
-And ofcourse any acceptable paradigm of reality, to reality itself, should =
-be supported.
-
-DS-X O.S. supports all this, and inner loop optimization to the point of a =
-looping selfmodfyng JSR (with arguments if CPU supports it).
-
-And could be the ultimate cultural economic model, supporting all good 68er=
- politics up to now. (And replaces cannabis with cider, and el-mopeds, inli=
-ne with the same philosophy really.)
-
-(And weekendly pilgrimages to the club is not touched.)
-
-Ready for Society V2? Which means money to developers?
-
-Support and develop for DS-X OS, a direct streaming Unix-Derivative.
-
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
-Peace.
-Ywe.
-
+> Use param callback to avoid writing zero to guest_halt_poll_grow_start.
+>
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> ---
+>  drivers/cpuidle/governors/haltpoll.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/governors/haltpoll.c
+> index 7a703d2..660859d 100644
+> --- a/drivers/cpuidle/governors/haltpoll.c
+> +++ b/drivers/cpuidle/governors/haltpoll.c
+> @@ -20,6 +20,26 @@
+>  #include <linux/module.h>
+>  #include <linux/kvm_para.h>
+>
+> +static int grow_start_set(const char *val, const struct kernel_param *kp)
+> +{
+> +       int ret;
+> +       unsigned int n;
+> +
+> +       if (!val)
+> +               return -EINVAL;
+> +
+> +       ret = kstrtouint(val, 0, &n);
+> +       if (ret || !n)
+> +               return -EINVAL;
+> +
+> +       return param_set_uint(val, kp);
+> +}
+> +
+> +static const struct kernel_param_ops grow_start_ops = {
+> +       .set = grow_start_set,
+> +       .get = param_get_uint,
+> +};
+> +
+>  static unsigned int guest_halt_poll_ns __read_mostly = 200000;
+>  module_param(guest_halt_poll_ns, uint, 0644);
+>
+> @@ -33,7 +53,7 @@
+>
+>  /* value in us to start growing per-cpu halt_poll_ns */
+>  static unsigned int guest_halt_poll_grow_start __read_mostly = 50000;
+> -module_param(guest_halt_poll_grow_start, uint, 0644);
+> +module_param_cb(guest_halt_poll_grow_start, &grow_start_ops, &guest_halt_poll_grow_start, 0644);
+>
+>  /* allow shrinking guest halt poll */
+>  static bool guest_halt_poll_allow_shrink __read_mostly = true;
+> --
+> 1.8.3.1
+>
