@@ -2,120 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DBFFE73C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 22:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA286FE749
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 22:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKOVgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 16:36:46 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43284 "EHLO
+        id S1726953AbfKOVva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 16:51:30 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42974 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbfKOVgp (ORCPT
+        with ESMTP id S1726704AbfKOVva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 16:36:45 -0500
-Received: by mail-pl1-f195.google.com with SMTP id a18so5530106plm.10;
-        Fri, 15 Nov 2019 13:36:45 -0800 (PST)
+        Fri, 15 Nov 2019 16:51:30 -0500
+Received: by mail-pl1-f195.google.com with SMTP id j12so5554524plt.9
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 13:51:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4L2/iaYCHtQuZ1FhR25DdmhnGguSECxaN67Qc8cZeKo=;
+        b=Qk1bCJy1WvrzFblTFkc+1+/w0kBkwccSLO9sIssItCp9fSfmA4CqBOaxdvHW5M0cJ2
+         3CeYLyJmQPjgp5uXir+uyZS/70ANvaakNHBmckfkGaj0Z2mSPK6vnn7ymfWNlddm1QKM
+         tFE+KtnaPbDpspT56Do3I89+dp60r14cL3Svo1typn1bSALkyBpgJ9dYUSfncWa/9kJW
+         wXcvecKLIuLOl05+/cGvRy/UPeBbDRs6ev+8rrb96XmdAUNgZWt2EZjq3glPfqEJ2CK4
+         yPQ/1iuY6hIEXFU24V/4lUIMnBDIt2abkyTjMPDH/8doCWInp7McD7VPuy6yp7ZgXNsq
+         m68w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HKB+jFOHyqunil9vKc+eJ+fGW7O6CCFe80yOgJOM6R0=;
-        b=Yek8216+l3N9sznKB1W6Fco8bhNQfpnYdU5wWE0c/6K702QyuHifQJGCBHF9hFlIE8
-         Nz3Jc6jk8/6PWLbQDLuivi0hCJKuXCHdLgFA97kmZ3Ed1UiTwhq1sUjxQYmOV09CWn4i
-         1c3MyyLNJee/yd59hpP2bihkg+rofBGKb6wKGdN3GeFU/nbNK1IzoG9mEl2Mm/QHjKSw
-         /esQnxmkfpJbS5w4bRAhoXNmRJ39atc7AkxBbfwePmNRoZeayrDxaBwxn+ruJma/g10Z
-         Bt/cosLh0MfpxM6Ml/mphMI/xwYPs1EZspiNOxaF/2LHRmTW5ewA1aKvXuJz6ya1Z5xP
-         7FKg==
-X-Gm-Message-State: APjAAAWaUnJvs0UfrYQSU6H9FD0FkCMto5wTxYFEBPiWk9KlQZHnGAF1
-        AxAoW9Nt2/B2aQ5EIuh9ynkenMd8svolHg==
-X-Google-Smtp-Source: APXvYqz1E55aT4IEJUVM1IR5W+3NaNvT8YV1U2Il69k7jMPye3AS+BCw/RzvWHg95wp8lwBknrvoMg==
-X-Received: by 2002:a17:902:5985:: with SMTP id p5mr17934348pli.259.1573853804377;
-        Fri, 15 Nov 2019 13:36:44 -0800 (PST)
-Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
-        by smtp.gmail.com with ESMTPSA id p16sm11701614pfn.171.2019.11.15.13.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 13:36:43 -0800 (PST)
-Date:   Fri, 15 Nov 2019 13:37:16 -0800
-From:   Paul Burton <paulburton@kernel.org>
-To:     Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ralf@linux-mips.org, jhogan@kernel.org, gregkh@linuxfoundation.org,
-        paul.burton@mips.com, chenhc@lemote.com, paul@crapouillou.net,
-        tglx@linutronix.de, jiaxun.yang@flygoat.com
-Subject: Re: [PATCH 2/2] MIPS: Ingenic: Disable abandoned HPTLB function.
-Message-ID: <20191115213716.wt4wn2moj3fup4dc@lantea.localdomain>
-References: <1571909341-10108-1-git-send-email-zhouyanjie@zoho.com>
- <1571909341-10108-3-git-send-email-zhouyanjie@zoho.com>
+        bh=4L2/iaYCHtQuZ1FhR25DdmhnGguSECxaN67Qc8cZeKo=;
+        b=Hk3+U3s/gyxaslc/9NKf2nms0iyVqo+D860BkjWa1URnZ6KY81m047ElsqodvbGa/K
+         ZiV+Bku5a3aaIC7r5teQ9EByStkb61E/ruoQclGTWnFCYPfC4LddJdLUC1BQ5cC7VHoh
+         YsGqvyU2uArkGpBKwb36zw30qJVB0/F7FH7y4YhMjDJwUlIPB4i4A1JxghmQtSgab/+t
+         Dzntqu+q4M7e3NtWMeXwwxeqawgbn8kIggM0Yc3Vm/9RZH4iVI7WMy3AveP/I1Z56Buw
+         vzAgJdhv/2/LIYpDgtJbkCBaa72pmfSyIKTJWZcAnyPI16hJbByic+jqFpvLDcLvK43j
+         s5Iw==
+X-Gm-Message-State: APjAAAXKlyFxTgQfMlh7MdkBrGi77lp8mhUco34MkPQGpuJis7Z6fxjU
+        MA0zrxff1A+nL4kKCJa+xQtkHqBv
+X-Google-Smtp-Source: APXvYqxtfgTnumK0jEr0kda/qgqSxQm6Pcx8wr7zDduK8fb1e9qEK5EiHc+U5k5PmG/OhR+8vSSwAg==
+X-Received: by 2002:a17:90a:4fe6:: with SMTP id q93mr22395857pjh.88.1573854689313;
+        Fri, 15 Nov 2019 13:51:29 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::8ac1])
+        by smtp.gmail.com with ESMTPSA id q70sm14756115pjq.26.2019.11.15.13.51.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Nov 2019 13:51:28 -0800 (PST)
+Date:   Fri, 15 Nov 2019 13:51:26 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC][PATCH 1/2] ftrace: Add modify_ftrace_direct()
+Message-ID: <20191115215125.mbqv7taqnx376yed@ast-mbp.dhcp.thefacebook.com>
+References: <20191114194636.811109457@goodmis.org>
+ <20191114194738.938540273@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571909341-10108-3-git-send-email-zhouyanjie@zoho.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191114194738.938540273@goodmis.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhou,
-
-On Thu, Oct 24, 2019 at 05:29:01PM +0800, Zhou Yanjie wrote:
-> JZ4760/JZ4770/JZ4775/X1000/X1500 has an abandoned huge page
-> tlb, write 0xa9000000 to cp0 config5 sel4 to disable this
-> function to prevent getting stuck.
-
-Can you describe how we "get stuck"? What actually goes wrong on the
-affected CPUs? Do they misinterpret EntryLo values? Which bits do they
-misinterpret?
-
-> Confirmed by Ingenic,
-> this operation will not adversely affect processors
-> without HPTLB function.
+On Thu, Nov 14, 2019 at 02:46:37PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+> Add a new function modify_ftrace_direct() that will allow a user to update
+> an existing direct caller to a new trampoline, without missing hits due to
+> unregistering one and then adding another.
+> 
+> Link: https://lore.kernel.org/r/20191109022907.6zzo6orhxpt5n2sv@ast-mbp.dhcp.thefacebook.com
+> 
+> Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > ---
->  arch/mips/kernel/cpu-probe.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
+>  include/linux/ftrace.h |  6 ++++
+>  kernel/trace/ftrace.c  | 78 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 84 insertions(+)
 > 
-> diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-> index 16033a4..cfebf8c 100644
-> --- a/arch/mips/kernel/cpu-probe.c
-> +++ b/arch/mips/kernel/cpu-probe.c
-> @@ -1966,11 +1966,23 @@ static inline void cpu_probe_ingenic(struct cpuinfo_mips *c, unsigned int cpu)
->  	}
->  
->  	/*
-> -	 * The config0 register in the Xburst CPUs with a processor ID of
-> +	 * The config0 register in the XBurst CPUs with a processor ID of
-> +	 * PRID_COMP_INGENIC_D1 has an abandoned huge page tlb, write
-> +	 * 0xa9000000 to cp0 config5 sel4 to disable this function to
-
-Saying "config5" suggests $16 sel 5 to me - Config5 is after all an
-architecturally defined register & it's not this one. It'd be better to
-say "cop0 register 5 sel 4".
-
-> +	 * prevent getting stuck.
-> +	 */
-> +	if ((c->processor_id & PRID_COMP_MASK) == PRID_COMP_INGENIC_D1) {
-> +		__asm__ (
-> +			"li    $2, 0xa9000000 \n\t"
-> +			"mtc0  $2, $5, 4      \n\t"
-> +			"nop                  \n\t"
-> +			::"r"(2));
-
-I'd prefer that you add #defines to asm/mipsregs.h to provide a
-write_c0_X() function where X is replaced with whatever the name of this
-register is, and preferably also #define macros describing the fields
-present in the register. Writing a magic number isn't ideal.
-
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 55647e185141..73eb2e93593f 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -250,6 +250,7 @@ static inline void ftrace_free_mem(struct module *mod, void *start, void *end) {
+>  extern int ftrace_direct_func_count;
+>  int register_ftrace_direct(unsigned long ip, unsigned long addr);
+>  int unregister_ftrace_direct(unsigned long ip, unsigned long addr);
+> +int modify_ftrace_direct(unsigned long ip, unsigned long old_addr, unsigned long new_addr);
+>  struct ftrace_direct_func *ftrace_find_direct_func(unsigned long addr);
+>  #else
+>  # define ftrace_direct_func_count 0
+> @@ -261,6 +262,11 @@ static inline int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
+>  {
+>  	return -ENODEV;
+>  }
+> +static inline int modify_ftrace_direct(unsigned long ip,
+> +				       unsigned long old_addr, unsigned long new_addr)
+> +{
+> +	return -ENODEV;
+> +}
+>  static inline struct ftrace_direct_func *ftrace_find_direct_func(unsigned long addr)
+>  {
+>  	return NULL;
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 82ef8d60a42b..834f3556ea1e 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -5160,6 +5160,84 @@ int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(unregister_ftrace_direct);
+> +
+> +static struct ftrace_ops stub_ops = {
+> +	.func		= ftrace_stub,
+> +};
+> +
+> +/**
+> + * modify_ftrace_direct - Modify an existing direct call to call something else
+> + * @ip: The instruction pointer to modify
+> + * @old_addr: The address that the current @ip calls directly
+> + * @new_addr: The address that the @ip should call
+> + *
+> + * This modifies a ftrace direct caller at an instruction pointer without
+> + * having to disable it first. The direct call will switch over to the
+> + * @new_addr without missing anything.
+> + *
+> + * Returns: zero on success. Non zero on error, which includes:
+> + *  -ENODEV : the @ip given has no direct caller attached
+> + *  -EINVAL : the @old_addr does not match the current direct caller
+> + */
+> +int modify_ftrace_direct(unsigned long ip,
+> +			 unsigned long old_addr, unsigned long new_addr)
+> +{
+> +	struct ftrace_func_entry *entry;
+> +	struct dyn_ftrace *rec;
+> +	int ret = -ENODEV;
+> +
+> +	mutex_lock(&direct_mutex);
+> +	entry = __ftrace_lookup_ip(direct_functions, ip);
+> +	if (!entry) {
+> +		/* OK if it is off by a little */
+> +		rec = lookup_rec(ip, ip);
+> +		if (!rec || rec->ip == ip)
+> +			goto out_unlock;
+> +
+> +		entry = __ftrace_lookup_ip(direct_functions, rec->ip);
+> +		if (!entry)
+> +			goto out_unlock;
+> +
+> +		ip = rec->ip;
+> +		WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
+> +	}
+> +
+> +	ret = -EINVAL;
+> +	if (entry->direct != old_addr)
+> +		goto out_unlock;
+> +
 > +	/*
-> +	 * The config0 register in the XBurst CPUs with a processor ID of
->  	 * PRID_COMP_INGENIC_D0 report themselves as MIPS32r2 compatible,
->  	 * but they don't actually support this ISA.
->  	 */
-> -	if ((c->processor_id & PRID_COMP_MASK) == PRID_COMP_INGENIC_D0)
-> +	} else if ((c->processor_id & PRID_COMP_MASK) == PRID_COMP_INGENIC_D0)
+> +	 * By setting a stub function at the same address, we force
+> +	 * the code to call the iterator and the direct_ops helper.
+> +	 * This means that @ip does not call the direct call, and
+> +	 * we can simply modify it.
+> +	 */
+> +	ret = ftrace_set_filter_ip(&stub_ops, ip, 0, 0);
+> +	if (ret)
+> +		goto out_unlock;
+> +
+> +	ret = register_ftrace_function(&stub_ops);
+> +	if (ret) {
+> +		ftrace_set_filter_ip(&stub_ops, ip, 1, 0);
+> +		goto out_unlock;
+> +	}
+> +
+> +	entry->direct = new_addr;
+> +
+> +	/*
+> +	 * By removing the stub, we put back the direct call, calling
+> +	 * the @new_addr.
+> +	 */
+> +	unregister_ftrace_function(&stub_ops);
+> +	ftrace_set_filter_ip(&stub_ops, ip, 1, 0);
 
-It might be cleaner to use a switch statement rather than writing out
-the & PRID_COMP_MASK condition twice?
+Thanks a lot for implementing it.
+Switching to iterator just to modify the call.. hmm.
+So "call direct_bpf_A" gets replaced to "call ftrace_stub" to do the iterator
+only to patch "call direct_bpf_B" later. I'm struggling to see why do that when
+arch can provide call to call rewrite easily. x86 and others have such ability
+already. I don't understand why you want to sacrifice simplicity here.
+Anyway with all 3 apis (register, modify, unreg) it looks complete.
+I'll start playing with it on Monday.
 
-Thanks,
-    Paul
