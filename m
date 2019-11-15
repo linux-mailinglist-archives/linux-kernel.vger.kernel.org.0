@@ -2,114 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 338F2FDDBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D725FDD7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfKOM0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:26:31 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32826 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbfKOMZN (ORCPT
+        id S1727753AbfKOMZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:25:22 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36408 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbfKOMZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:25:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qICwKqMRm4yg2Mobp12iIzV+VQB/juSAmGwdio0/GME=; b=mnFynAlTrYRB
-        cytoaSOKA8ZeJoWK3vvwmFvrKNUY9ZiWEnWS+UayPDKvWfadrWpSR/5gxz7RrzJylzOLbiiUNMG6A
-        PZHb7dQEb6MO9D74N1r9Ye8sbV06EnROVXHdxr1ipo1K5uzrYW10wCccsPRWl64JPnYbgbnUABYdQ
-        eqKSw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iVaer-0000Jv-Ld; Fri, 15 Nov 2019 12:25:01 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 23ADF27415A7; Fri, 15 Nov 2019 12:25:01 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: tas2770: clean up an indentation issue" to the asoc tree
-In-Reply-To: <20191112190218.282337-1-colin.king@canonical.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191115122501.23ADF27415A7@ypsilon.sirena.org.uk>
-Date:   Fri, 15 Nov 2019 12:25:01 +0000 (GMT)
+        Fri, 15 Nov 2019 07:25:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15so10502941lja.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 04:25:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=a5dA1if5/dQUQeOTvdz3dJTa9SYokhdVUuKyxt1MvCE=;
+        b=yWCtHgRlb4JZrA50T4PvT54dR5u+qgTHvhqG+YCar+56kZzaBL1GHP4g9OKYRAiq3q
+         8yjgciJsyX4xve0vLX7QAOCUtaTNM6p58BmQDeip9IcENPnSCmpEmhqekYKAlZFxWAJo
+         d8/gD7pxEipb4Zqr0AJlDuCiaSVVkQl2ldBcVIfwCZ7CcczIILwMLvOZIQjiVMmTxkmO
+         Rbu4huZoF982p2IGm30Dyn22gJam6KHByalfJ+1lFQ33UCjNajxN9dALj3LTYcSB7hQP
+         t1RW37inWkg8hUugq+lFfKrQNQRMWsYKH6T8shNgx3L3Fez1L8InBtQgk+qF/XA/yKM9
+         ZuCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=a5dA1if5/dQUQeOTvdz3dJTa9SYokhdVUuKyxt1MvCE=;
+        b=i2hx7+bYeiSazDGlq8RU+/D6S0KqBDue6We5pF3cXbni5/9DAuZYo7vCloK9gRyV2a
+         jQ7m3NiQ3aV6g+3Pqz79esOePBEan5dEtLSmEsrPvpYQudbFM98W1pFYeiVXvZH/4VCu
+         rkzPx4EuO2SojPzWRhXQIaov/zU1jxEPR0hhRKpRW4eeQxZ3dOltp/3RlDNJuiYXCjL2
+         ZiyHP0wxvjtiTukYvic/KXtc3w/keLYowJ0AXNMMDol7tduoYN3t1i8O+cG1JhQIr84G
+         MOsMl1zEnVikv7nL0wIkva4QGRQZtgkfGhOTf/i+6ZmZEPyB3Ww+69dXfwobeDU3vT6t
+         7RAw==
+X-Gm-Message-State: APjAAAW07KdhFV+B/02sePq0os5GLqCs33QjHsNDSJVn5Mc3jQoTv4b4
+        4LosrPpwHJAiJDNkfGy8SL+dkn+rGcbXd4MaLOBw5w==
+X-Google-Smtp-Source: APXvYqx8XtWvU/urGTyHEcUEsNketHxIixjd/Ef3NbTOYU3Cg7krIvcGwOH3/8NFn7fsISi0vWBtOnn97sLIk8bgVhk=
+X-Received: by 2002:a2e:9695:: with SMTP id q21mr10562244lji.206.1573820716098;
+ Fri, 15 Nov 2019 04:25:16 -0800 (PST)
+MIME-Version: 1.0
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+ <20191115095447.GU4114@hirez.programming.kicks-ass.net> <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
+ <CAKfTPtA-up_9WHfTka33WRxXCatUZioYS0v5gY9jjzOGT98oLQ@mail.gmail.com> <20191115115935.GA27454@linaro.org>
+In-Reply-To: <20191115115935.GA27454@linaro.org>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 15 Nov 2019 13:25:04 +0100
+Message-ID: <CAKfTPtDzeFi7E3q-o7-KghKWm6eVgN4BLKKphQJYJyqCoVP5Yg@mail.gmail.com>
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, 15 Nov 2019 at 12:59, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> Le Friday 15 Nov 2019 =C3=A0 11:29:03 (+0100), Vincent Guittot a =C3=A9cr=
+it :
+> > On Fri, 15 Nov 2019 at 11:18, Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > >
+> > > On Fri, 15 Nov 2019 at 10:55, Peter Zijlstra <peterz@infradead.org> w=
+rote:
+> > > >
+> > > > On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
+> > > > > update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pel=
+t decays,
+> > > > > which might be inefficient when cpufreq driver has rate limitatio=
+n.
+> > > > >
+> > > > > When a task is attached on a CPU, we have call path:
+> > > > >
+> > > > > update_load_avg()
+> > > > >   update_cfs_rq_load_avg()
+> > > > >     cfs_rq_util_change -- > trig frequency update
+> > > > >   attach_entity_load_avg()
+> > > > >     cfs_rq_util_change -- > trig frequency update
+> > > > >
+> > > > > The 1st frequency update will not take into account the utilizati=
+on of the
+> > > > > newly attached task and the 2nd one might be discard because of r=
+ate
+> > > > > limitation of the cpufreq driver.
+> > > >
+> > > > Doesn't this just show that a dumb rate limit in the driver is brok=
+en?
+> > >
+> > > But the rate limit may come from HW constraints that forces to wait
+> > > let say 4ms or even 10ms between each frequency update.
+> > >
+> > > >
+> > > > > update_cfs_rq_load_avg() is only called by update_blocked_average=
+s()
+> > > > > and update_load_avg() so we can move the call to
+> > > > > cfs_rq_util_change/cpufreq_update_util() into these 2 functions. =
+It's also
+> > > > > interesting to notice that update_load_avg() already calls direct=
+ly
+> > > > > cfs_rq_util_change() for !SMP case.
+> > > > >
+> > > > > This changes will also ensure that cpufreq_update_util() is calle=
+d even
+> > > > > when there is no more CFS rq in the leaf_cfs_rq_list to update bu=
+t only
+> > > > > irq, rt or dl pelt signals.
+> > > >
+> > > > I don't think it does that; that is, iirc the return value of
+> > > > ___update_load_sum() is 1 every time a period lapses. So even if th=
+e avg
+> > > > is 0 and doesn't change, it'll still return 1 on every period.
+> > > >
+> > > > Which is what that dumb rate-limit thing wants of course. But I'm s=
+till
+> > > > thinking that it's stupid to do. If nothing changes, don't generate
+> > > > events.
+> > >
+> > > When everything (irq, dl, rt, cfs) is 0, we don't generate events
+> > > because update_blocked_averages is no more called because
+> > > rq->has_blocked_load is clear
+> > >
+> > > With current implementation, if cfs is 0 but not irq, dl or rt, we
+> > > don't call cpufreq_update_util because it is only called through cfs
+> > >
+> > > >
+> > > > If anything, update_blocked_avgerages() should look at
+> > > > @done/others_have_blocked() to emit events for rt,dl,irq.
+> > >
+> > > other_have_blocked can be set but no decay happened during the update
+> > > and we don't need to call cpufreq_update_util
+> > >
+> > > >
+> > > > So why are we making the scheduler code more ugly instead of fixing=
+ that
+> > > > driver?
+> >
+> > Also, I think that calling cfs_rq_util_change in
+> > attach_entity_load_avg is not optimal because the attach can happen at
+> > a child level before it has been propagated down to root
+> > So I'm working on trying to remove it from attach_entity_load_avg and
+> > keep it in update_load_avg. this would help cleaning the ugly
+> >
+> > -       } else if (decayed && (flags & UPDATE_TG))
+> > -               update_tg_load_avg(cfs_rq, 0);
+> > +       } else if (decayed) {
+> > +               cfs_rq_util_change(cfs_rq, 0);
+> > +
+> > +               if (flags & UPDATE_TG)
+> > +                       update_tg_load_avg(cfs_rq, 0);
+> > +       }
+> >  }
+> >
+>
+> we can also do this instead :
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index d377a3f..550b6bc 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -3614,15 +3614,15 @@ static inline void update_load_avg(struct cfs_rq =
+*cfs_rq, struct sched_entity *s
+>                  *
+>                  * IOW we're enqueueing a task on a new CPU.
+>                  */
+> -               attach_entity_load_avg(cfs_rq, se, SCHED_CPUFREQ_MIGRATIO=
+N);
+> +               attach_entity_load_avg(cfs_rq, se, 0);
+>                 update_tg_load_avg(cfs_rq, 0);
+> +               decayed =3D 1;
+>
+> -       } else if (decayed) {
+> -               cfs_rq_util_change(cfs_rq, 0);
+> +       } else if (decayed && (flags & UPDATE_TG))
+> +               update_tg_load_avg(cfs_rq, 0);
+>
+> -               if (flags & UPDATE_TG)
+> -                       update_tg_load_avg(cfs_rq, 0);
+> -       }
+> +       if (decayed)
+> +               cfs_rq_util_change(cfs_rq, 0);
+>  }
 
-   ASoC: tas2770: clean up an indentation issue
+Forget this ... It's not enough and will continue to generate spurious
+call when task is at root domain
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b26eb5173c85082eec7d6e18369f6f9d96bf0b21 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 12 Nov 2019 19:02:18 +0000
-Subject: [PATCH] ASoC: tas2770: clean up an indentation issue
-
-There is a block that is indented too deeply, remove
-the extraneous tabs.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20191112190218.282337-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/tas2770.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-index ad76f22fcfac..54c8135fe43c 100644
---- a/sound/soc/codecs/tas2770.c
-+++ b/sound/soc/codecs/tas2770.c
-@@ -761,12 +761,12 @@ static int tas2770_i2c_probe(struct i2c_client *client,
- 	tas2770->reset_gpio = devm_gpiod_get_optional(tas2770->dev,
- 							  "reset-gpio",
- 						      GPIOD_OUT_HIGH);
--		if (IS_ERR(tas2770->reset_gpio)) {
--			if (PTR_ERR(tas2770->reset_gpio) == -EPROBE_DEFER) {
--				tas2770->reset_gpio = NULL;
--				return -EPROBE_DEFER;
--			}
-+	if (IS_ERR(tas2770->reset_gpio)) {
-+		if (PTR_ERR(tas2770->reset_gpio) == -EPROBE_DEFER) {
-+			tas2770->reset_gpio = NULL;
-+			return -EPROBE_DEFER;
- 		}
-+	}
- 
- 	tas2770->channel_size = 0;
- 	tas2770->slot_width = 0;
--- 
-2.20.1
-
+>
+>
+>
+> >
