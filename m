@@ -2,108 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37D2CFE6BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 22:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9634FFE6C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 22:03:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfKOVCd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 15 Nov 2019 16:02:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfKOVCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 16:02:33 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03D3220723;
-        Fri, 15 Nov 2019 21:02:31 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 16:02:30 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: powerpc ftrace broken due to "manual merge of the ftrace tree
- with the arm64 tree"
-Message-ID: <20191115160230.78871d8f@gandalf.local.home>
-In-Reply-To: <1573849732.5937.136.camel@lca.pw>
-References: <1573849732.5937.136.camel@lca.pw>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1727004AbfKOVDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 16:03:05 -0500
+Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:56931 "EHLO
+        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726567AbfKOVDE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 16:03:04 -0500
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 15 Nov 2019 13:02:37 -0800
+IronPort-SDR: GZO1xmP+vwE6tRS0wMvCmVAmH8iiCxZNUgMWWzAO5aQAYwTpobVIkyciYCtGGLzbgyZS8DfjGo
+ N6+ceEUObPr34rBEPsWRRrSLc7eveuV2o=
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP; 15 Nov 2019 13:02:37 -0800
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 4626F47B8; Fri, 15 Nov 2019 13:02:37 -0800 (PST)
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     linux-pwm@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>, kernel-team@android.com,
+        Mark Salyzyn <salyzyn@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Guru Das Srinagesh <gurus@codeaurora.org>
+Subject: [PATCH v3 0/1] Convert period and duty cycle to u64
+Date:   Fri, 15 Nov 2019 13:02:31 -0800
+Message-Id: <cover.1573851299.git.gurus@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 15:28:52 -0500
-Qian Cai <cai@lca.pw> wrote:
+Reworked the change pushed upstream earlier [1] so as to not add an extension
+to an obsolete API. With this change, pwm_ops->apply() can be used to set
+pwm_state parameters as usual.
 
-> # echo function >/sys/kernel/debug/tracing/current_tracer
-> 
-> It hangs forever with today's linux-next on powerpc. Reverted the conflict fix
-> [1] as below fixes the issue.
-> 
-> [1] https://lore.kernel.org/linux-next/20191115135357.10386fac@canb.auug.org.au/
+[1] https://lore.kernel.org/lkml/20190916140048.GB7488@ulmo/
 
-What's your config file.
+Changes from v1:
+  - Fixed compilation errors seen when compiling for different archs.
 
-And can you test the two conflicting commits to see which one caused
-your error?
+Changes from v2:
+  - Fixed %u -> %llu in a dev_dbg in pwm-stm32-lp.c, thanks to kbuild test robot
+  - Added a couple of fixes to pwm-imx-tpm.c and pwm-sifive.c
 
-Test this commit please: b83b43ffc6e4b514ca034a0fbdee01322e2f7022
+Guru Das Srinagesh (1):
+  pwm: Convert period and duty cycle to u64
 
-And see if the issue is with that one, and not with the one without it.
+ drivers/clk/clk-pwm.c                      |  2 +-
+ drivers/gpu/drm/i915/display/intel_panel.c |  2 +-
+ drivers/hwmon/pwm-fan.c                    |  2 +-
+ drivers/media/rc/ir-rx51.c                 |  3 ++-
+ drivers/pwm/core.c                         |  4 ++--
+ drivers/pwm/pwm-clps711x.c                 |  2 +-
+ drivers/pwm/pwm-imx-tpm.c                  |  2 +-
+ drivers/pwm/pwm-imx27.c                    |  5 ++---
+ drivers/pwm/pwm-sifive.c                   |  2 +-
+ drivers/pwm/pwm-sti.c                      |  4 ++--
+ drivers/pwm/pwm-stm32-lp.c                 |  2 +-
+ drivers/pwm/pwm-sun4i.c                    |  2 +-
+ drivers/pwm/sysfs.c                        | 10 +++++-----
+ drivers/video/backlight/pwm_bl.c           |  3 ++-
+ include/linux/pwm.h                        | 16 ++++++++--------
+ 15 files changed, 31 insertions(+), 30 deletions(-)
 
--- Steve
-
-
-> 
-> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-
-> generic/vmlinux.lds.h
-> index 7d0d03a03d4d..a92222f79b53 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -136,29 +136,20 @@
->  #endif
->  
->  #ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> -/*
-> - * The ftrace call sites are logged to a section whose name depends on the
-> - * compiler option used. A given kernel image will only use one, AKA
-> - * FTRACE_CALLSITE_SECTION. We capture all of them here to avoid header
-> - * dependencies for FTRACE_CALLSITE_SECTION's definition.
-> - */
-> -/*
-> - * Need to also make ftrace_graph_stub point to ftrace_stub
-> - * so that the same stub location may have different protocols
-> - * and not mess up with C verifiers.
-> - */
-> -#define MCOUNT_REC()	. = ALIGN(8);				\
-> +#ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
-> +#define MCOUNT_REC()	. = ALIGN(8)				\
->  			__start_mcount_loc = .;			\
-> -			KEEP(*(__mcount_loc))			\
->  			KEEP(*(__patchable_function_entries))	\
->  			__stop_mcount_loc = .;			\
->  			ftrace_graph_stub = ftrace_stub;
->  #else
-> -# ifdef CONFIG_FUNCTION_TRACER
-> -#  define MCOUNT_REC()	ftrace_graph_stub = ftrace_stub;
-> -# else
-> -#  define MCOUNT_REC()
-> -# endif
-> +#define MCOUNT_REC()	. = ALIGN(8);				\
-> +			__start_mcount_loc = .;			\
-> +			KEEP(*(__mcount_loc))			\
-> +			__stop_mcount_loc = .;
-> +#endif
-> +#else
-> +#define MCOUNT_REC()
->  #endif
->  
->  #ifdef CONFIG_TRACE_BRANCH_PROFILING
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
