@@ -2,57 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC7FFE012
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63DE0FE01D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:31:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfKOO3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 09:29:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:60144 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727411AbfKOO3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 09:29:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71D9331B;
-        Fri, 15 Nov 2019 06:29:50 -0800 (PST)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03AD03F534;
-        Fri, 15 Nov 2019 06:29:48 -0800 (PST)
-Subject: Re: [PATCH v2] sched/uclamp: Fix overzealous type replacement
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Tejun Heo <tj@kernel.org>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Qais Yousef <qais.yousef@arm.com>
-References: <20191115103908.27610-1-valentin.schneider@arm.com>
- <CAKfTPtBoi_5sUiGrTpYuV_u2vPkBK+caUzgaKxY3Ck3PKJXZiw@mail.gmail.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <f4fcc45e-7609-3836-162a-0a1839134bcf@arm.com>
-Date:   Fri, 15 Nov 2019 14:29:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727635AbfKOObz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 09:31:55 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:32832 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727619AbfKOOby (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 09:31:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lFf6dMuZ+Z677Mu+atmNfBMTjTNBdV46hR58S1n03Bw=; b=fLdav0zx2sYSW0v3s7tI6JqhI
+        i7d9/vr4rYSEvqt/p7lCLO5nk4FjdEP/waWiqJFTEs4e7A3brAzpOhscHMxVCEEHx8WDQaY2fd8Gr
+        GK3TZyjntH4NZYVDHPPKRUN+AsgdOJw2Cm2ZA2fsSg2yhR1F8LWGZb3c8HNAHerseKwJPUt366auU
+        yXVDObbWRAX2R2xTnSjp74xVKH4/hcGL9VqcxEzgIIACyD2Q8xu6GqD9a9uiaEDpt8LXrHH8EkZVT
+        0q5wDIWmPdE6CFeLG/2Xak2uIEe2UlAm65b4AUoKrm1vQ3tMwtkUeiJT21GYinhobMjPfO3WOy2ow
+        IjCWf0kTQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVcd2-0000Es-S4; Fri, 15 Nov 2019 14:31:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2EA5D304637;
+        Fri, 15 Nov 2019 15:30:06 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 52A882B12E7AC; Fri, 15 Nov 2019 15:31:14 +0100 (CET)
+Date:   Fri, 15 Nov 2019 15:31:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: AMD TLB errata, (Was: [PATCH RFC] mm: add MAP_EXCLUSIVE to
+ create exclusive user mappings)
+Message-ID: <20191115143114.GN4131@hirez.programming.kicks-ass.net>
+References: <1572171452-7958-2-git-send-email-rppt@kernel.org>
+ <20191028123124.ogkk5ogjlamvwc2s@box>
+ <20191028130018.GA7192@rapoport-lnx>
+ <20191028131623.zwuwguhm4v4s5imh@box>
+ <CAA9_cmd7f2y2AAT6646S=tco3yfyLgCAC4Qp=1iTQaJqrQcOwQ@mail.gmail.com>
+ <20191029064318.s4n4gidlfjun3d47@box>
+ <20191029085602.GI4114@hirez.programming.kicks-ass.net>
+ <20191029110024.yjytp22lhd2vekrv@box>
+ <20191029123949.GL4114@hirez.programming.kicks-ass.net>
+ <1da1b025-cabc-6f04-bde5-e50830d1ecf0@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBoi_5sUiGrTpYuV_u2vPkBK+caUzgaKxY3Ck3PKJXZiw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1da1b025-cabc-6f04-bde5-e50830d1ecf0@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2019 14:07, Vincent Guittot wrote:
->> -static inline enum uclamp_id uclamp_none(enum uclamp_id clamp_id)
->> +static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
-> 
-> Out of curiosity why uclamp decided to use unsigned int to manipulate
-> utilization instead of unsigned long which is the type of util_avg ?
-> 
+On Fri, Nov 15, 2019 at 08:12:52AM -0600, Tom Lendacky wrote:
+> I talked with some of the hardware folks and if you maintain the same bits
+> in the large and small pages (aside from the large page bit) until the
+> flush, then the errata should not occur.
 
-I didn't stare at the discussion much, but I think it stems from the
-design choices behind struct uclamp_se: everything is crammed in an unsigned
-int bitfield. Let me see if I can find some relevant mails.
+Excellent!
+
+Thanks for digging that out Tom.
