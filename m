@@ -2,144 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB83FDAD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 064F3FDADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:13:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfKOKKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:10:19 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:59994 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727004AbfKOKKT (ORCPT
+        id S1727380AbfKOKNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:13:18 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:13802 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726930AbfKOKNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:10:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573812618;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=t1851B8N941Rz7PPSqrzu1Q1EGtwq1CeS2EBtMeagjk=;
-        b=PaCd/owgCiMcq4Rh/S3z8Y9AdcOPm+wY9a1scCZY3TY0urgqtfRELyfInnaa9eBc7/G3UW
-        WNPyDNBIOUP+5auwcRTXOa632Gt/pHNQpLiHc5jjyZxYUPx6Oya0UFbLDRtBDBjRLOx0Vb
-        v6iPPb51kV26gnno5unAHMZDlhHrd3E=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-405-_gpXsB-fMUmtaOelw55BCg-1; Fri, 15 Nov 2019 05:10:17 -0500
-Received: by mail-wr1-f70.google.com with SMTP id e10so7346821wrt.16
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 02:10:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4U1nnbDS2kVHJEcmz7eSjL6TcFduQzcJVf/OFeeGAfc=;
-        b=km2m/1i1o3xbXsarF6ZO9E0SnIO7qM2+O81fVlZvtVXyPTMFBUva3nBkAb91NWzMBq
-         prenKmrwritj4DvpEyrmwTBe8eH+nzjLXSmJbgLzwJ+DIggtjFaBhXJU15o5QuEYyxAG
-         O33eJkxNvLldQCtdn3D4VcvZ5OwqYulaXZhN5n42o5jdTLRiP6WoYCXt6FT0zDimOIcq
-         aXEE6JL8DEtmFfVU7ghmhLKLGXn2xhUs4pdA5/MMYgD9jhIz0YHTGmIYUEoUplgYEPH3
-         o0XLfboOcycxTbIXZz5vM1oOTNMk4+nniKGX32Xk2JDgF1uMcfZbDBxpNMVrvpOnBOhw
-         Y0JA==
-X-Gm-Message-State: APjAAAW0n+Iz5zwp/kvRgCUoW+UAlukD6lJoDaZLMZDulkbmu0XgJR3G
-        SbWXO8gKYl3QgtnzO7CG4KXeyGdsHxFY8I1+j4tTmwAyP+hd6HQmag1CUB8DPLmyVOHltUywmh+
-        W3osZa6VzKG7RMXII9BQlTqSh
-X-Received: by 2002:a7b:c743:: with SMTP id w3mr14127376wmk.165.1573812615825;
-        Fri, 15 Nov 2019 02:10:15 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy4+YFJJa1zYa8p4uLPA490Q+SVHWwfndQ8NVq+KvtXr8ExWMuCpRO+Fq2h1O6L/ggdjTt0CA==
-X-Received: by 2002:a7b:c743:: with SMTP id w3mr14127261wmk.165.1573812614644;
-        Fri, 15 Nov 2019 02:10:14 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:a15b:f753:1ac4:56dc? ([2001:b07:6468:f312:a15b:f753:1ac4:56dc])
-        by smtp.gmail.com with ESMTPSA id a11sm9640787wmh.40.2019.11.15.02.10.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2019 02:10:14 -0800 (PST)
-Subject: Re: [PATCH v2 05/16] KVM: VMX: Drop initialization of
- IA32_FEATURE_CONTROL MSR
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org
-References: <20191021234632.32363-1-sean.j.christopherson@intel.com>
- <20191022000820.1854-1-sean.j.christopherson@intel.com>
- <59cbc79a-fb06-f689-aa24-0ba923783345@redhat.com>
- <20191022151622.GA2343@linux.intel.com>
- <20191114183453.GI24045@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <b0148465-37ae-15c0-9520-8061c7983002@redhat.com>
-Date:   Fri, 15 Nov 2019 11:10:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 15 Nov 2019 05:13:17 -0500
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Horatiu.Vultur@microchip.com";
+  x-sender="Horatiu.Vultur@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Horatiu.Vultur@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 8EBBUfrGQD2b2Z1SJjYPxN469Rsz2UulpDa1/FmDuwh73qqXX9R83LiFhKHQnjcNWk48jDpKBz
+ 5WWJT/6Cihf2jnnYz0iMdeD9+JKZVVWMoRxx68LNl1RD/qQK8KMA3/4h7n6uXs1UN6DrE3vaf7
+ lGxR1Ynt+xN0K6ZWy7v2AoNF9Cb5DXo4QKcJi7/IQiEWIMGcWOinvJtzxD0G1Y9TCC1L+zGL26
+ 27At1rxFEzrtnbElaJ1sbSCnrAFxjScMCZ/mPvlU5V2SfTiGgRpUC0ybrf1c/7VSxmm5mrBALF
+ Dfc=
+X-IronPort-AV: E=Sophos;i="5.68,308,1569308400"; 
+   d="scan'208";a="54473512"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Nov 2019 03:13:17 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 15 Nov 2019 03:13:14 -0700
+Received: from soft-dev3.microsemi.net (10.10.85.251) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Fri, 15 Nov 2019 03:13:12 -0700
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     <alexandre.belloni@bootlin.com>, <UNGLinuxDriver@microchip.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Subject: [PATCH v2 net-next] net: mscc: ocelot: omit error check from of_get_phy_mode
+Date:   Fri, 15 Nov 2019 11:11:15 +0100
+Message-ID: <20191115101115.31392-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20191114183453.GI24045@linux.intel.com>
-Content-Language: en-US
-X-MC-Unique: _gpXsB-fMUmtaOelw55BCg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/11/19 19:34, Sean Christopherson wrote:
-> On Tue, Oct 22, 2019 at 08:16:22AM -0700, Sean Christopherson wrote:
->> On Tue, Oct 22, 2019 at 12:51:01PM +0200, Paolo Bonzini wrote:
->>> On 22/10/19 02:08, Sean Christopherson wrote:
->>>> Remove the code to initialize IA32_FEATURE_CONTROL MSR when KVM is
->>>> loaded now that the MSR is initialized during boot on all CPUs that
->>>> support VMX, i.e. can possibly load kvm_intel.
->>>>
->>>> Reviewed-by: Jim Mattson <jmattson@google.com>
->>>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->>>> ---
->>>>  arch/x86/kvm/vmx/vmx.c | 48 +++++++++++++++++------------------------=
--
->>>>  1 file changed, 19 insertions(+), 29 deletions(-)
->>>
->>> I am still not sure about this...  Enabling VMX is adding a possible
->>> attack vector for the kernel, we should not do it unless we plan to do =
-a
->>> VMXON.
->>
->> An attacker would need arbitrary cpl0 access to toggle CR4.VMXE and do
->> VMXON (and VMLAUNCH), would an extra WRMSR really slow them down?
->>
->> And practically speaking, how often do you encounter systems whose
->> firmware leaves IA32_FEATURE_CONTROL unlocked?
+The commit 0c65b2b90d13c ("net: of_get_phy_mode: Change API to solve
+int/unit warnings") updated the function of_get_phy_mode declaration.
+Now it returns an error code and in case the node doesn't contain the
+property 'phy-mode' or 'phy-connection-type' it returns -EINVAL and would
+set the phy_interface_t to PHY_INTERFACE_MODE_NA.
 
-I honestly don't know... always on nested virtualization probably
-doesn't count as an answer. :)
+Ocelot VSC7514 has 4 internal phys which have the phy interface
+PHY_INTERFACE_MODE_NA. So because of_get_phy_mode would assign
+PHY_INTERFACE_MODE_NA to phy_mode when there is an error, there is no need
+to add the error check.
 
-From a totally abstract point of view I like the idea of KVM being an
-independent driver and thus the only place that touches VMX stuff
-(including the relevant bit in IA32_FEATURE_CONTROL).  But I understand
-that this doesn't really make any concrete difference, so I guess you
-can go ahead with this.
+Updates for v2:
+ - drop error check because of_get_phy_mode already assigns phy_interface
+   to PHY_INTERFACE_MODE in case of error.
 
->>> Why is it so important to operate with locked
->>> IA32_FEATURE_CONTROL (so that KVM can enable VMX and the kernel can
->>> still enable SGX if desired).
->>
->> For simplicity.  The alternative that comes to mind is to compute the
->> desired MSR value and write/lock the MSR on demand, e.g. add a sequence
->> similar to KVM's hardware_enable_all() for SGX, but that's a fair amount
->> of complexity for marginal benefit (IMO).
->>
->> If a user really doesn't want VMX enabled, they can clear the feature bi=
-t
->> via the clearcpuid kernel param.=20
->>
->> That being said, enabling VMX in IA32_FEATURE_CONTROL if and only if
->> IS_ENABLED(CONFIG_KVM) is true would be an easy enhancement.
->=20
-> Paolo, any follow up thoughts on this approach?
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/net/ethernet/mscc/ocelot_board.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Yes, that would be a simple enhancement, useful at least for
-documentation purpose.
-
-Paolo
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index 811599f32910..7fe25cadc171 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -410,9 +410,7 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 		priv = container_of(ocelot_port, struct ocelot_port_private,
+ 				    port);
+ 
+-		err = of_get_phy_mode(portnp, &phy_mode);
+-		if (err && err != -ENODEV)
+-			goto out_put_ports;
++		of_get_phy_mode(portnp, &phy_mode);
+ 
+ 		priv->phy_mode = phy_mode;
+ 
+-- 
+2.17.1
 
