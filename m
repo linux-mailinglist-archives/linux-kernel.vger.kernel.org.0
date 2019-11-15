@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06DE7FE7E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDA8FE7ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:34:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfKOWeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 17:34:18 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34377 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbfKOWeN (ORCPT
+        id S1727517AbfKOWed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 17:34:33 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33839 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbfKOWeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 17:34:13 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n13so7346957pff.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 14:34:13 -0800 (PST)
+        Fri, 15 Nov 2019 17:34:15 -0500
+Received: by mail-pl1-f194.google.com with SMTP id h13so5643375plr.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 14:34:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K6EZMz28tei+A3Fv/t1+BOEFoAHrbvWtLCwNz1ul25g=;
-        b=K+EFQOwvuF5Ea8JFTFkHmNjxaOLY3h/RqojbKXq9i/HQlhlztvlHNcN78FEt9TXC6o
-         gSUamhTirK9XvaurkQpqxAGX9vGVxHMdQiaEQWdY4pU3qEj4HzoubKBVTea2SyfoaOJK
-         BPCTKzxPUfEL6BWFoVxIfRmwHA4tUCwpDJ2n4SjysulPcZeL7QSTvBqV9U6sa5+BoRxN
-         ByG3lYAWlD6MNyS7zATy/bbUyGMR05gPdPv2GsQzG7CJCDbPYpfG/4kCkSVGAS68F2K6
-         gbCm66gHeb8hSy4KH2drGGvctHA7MuK4Ym++2SmPIVbJl9j9cJZ4kkEEVL0bmc7yyJmw
-         rdUw==
+        bh=i5dPEh9y2ib6oOQnoQa1Apmmo+YJMTHG/tlqLO0haxk=;
+        b=kW+Yur0Hl2oWdZbkaM/sYlnrLMZqd7UJF+2HEJzbhpeG0T9E+DGIbgyiCtM6Rn8cwG
+         3TfxjWu0cq0O0Mq8seZ6SifvTMca6kTZcA5Q5IHZ+Vr7wi40pgdbQubrrP3lA716dYDT
+         QQ/hQ5oOCbIRfgmybqfrg2P8aBTK/8ir+9wnrhdvqU1LZfpySWWHgCvwVa7p6SqVvpQM
+         gD8BjoQhLQquamPA0i/EkkyiRTOOctidxeHXr7MaccD44rSjUXB4WVaBQMqEeDQCoqGs
+         A9kZyWu0cxRQ65f0H1+XxOfxGa349XPFVe1fz4McNJfopYkmqTQPeOF1J9eREE1Pb3EO
+         jrUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K6EZMz28tei+A3Fv/t1+BOEFoAHrbvWtLCwNz1ul25g=;
-        b=VXUDRTyv/LXNiKS2qg2M6TDZmWBsZWvbGzOv0YZS2u1FfC2nGV0mPfaQRwdxnO/Yqb
-         qwvbVrExeYRW6XNT7R2OPCOEOJQLyaVlmyjKK0Xn/sC93ExhLZsnQ+iQDmT6ZwSrFf4G
-         I+0kk5xDH9kahc+uEcxtvlaYebfxaIB2RK1Znmmzjo8YCat5wB7JVaZh2G76anzlcaYP
-         gXaUe5bNy8+AEYEC/7+ZikoKOKQfOMxVephadrvT+4pQYueqEBpnH5ntUTSe9LOMVZ/+
-         7UwRSNg5igUNz8UPN6Wt/HflaDo9tzQwAwbzucDVjcnm3eFPwGRvX+Ftz8LhKpULPpMA
-         XSPg==
-X-Gm-Message-State: APjAAAXJ5Eu+7twjj+nd2KRPFqaSwxGW6MDJpqw6Gm2gGIQPhhQcxeXh
-        krXdtGoH/sweBtmG0Lzv/NMd7jooeNw=
-X-Google-Smtp-Source: APXvYqwwG/XpWrw8NucKWEIVOJTEWpsvZTO9ZLZ6W3FY/qZdC0OPiY33DETIGgqjWtA92DNeccpTNQ==
-X-Received: by 2002:a62:447:: with SMTP id 68mr20154481pfe.70.1573857252596;
-        Fri, 15 Nov 2019 14:34:12 -0800 (PST)
+        bh=i5dPEh9y2ib6oOQnoQa1Apmmo+YJMTHG/tlqLO0haxk=;
+        b=FNG/rCud7GMPheacCjKlX6tKss9ewqFhnFy2g0tTDX0jPoqCimf0k6zqubfOP2jy3C
+         Q2bAJ2769Ue9fyjYKw8ZyacbbDNyoeWQnGryJo4I1SKnMgk4+HYWW7fypaooof57KufY
+         S3lFk5jenrS3TyArV2E45I9ciLAOdvWC3spl6kCy8AGVPd4p+gTTajmuWrRn79A5Z19y
+         QjzvmJ2n4Vvc6R/fGu8oN3/vFfpLbglsE6oMcjdIHbIUhiDbxLx2vB2HcqVk+zewrKmH
+         x0a4wmaE/kINWjfAuNTV27a40REY21KRrbsd2VPQN1GhVXqj5uEPFTQ5nlL+/YD29yvO
+         nLkQ==
+X-Gm-Message-State: APjAAAUoOeblGBNAe2ry7SewU94jTanPG7ulwcaUOZO/92zYg+HNPQj1
+        Q2ns3XZFF56ywFbWJpKGkDiaEQ==
+X-Google-Smtp-Source: APXvYqwHAc5twB501dJRqUfTBvKugpgHSSdUWAlfaFJMgzAPYdC8/2k7gHvhI3UOPNKl6RREJeuPVw==
+X-Received: by 2002:a17:90a:252d:: with SMTP id j42mr23137114pje.131.1573857253840;
+        Fri, 15 Nov 2019 14:34:13 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m15sm11699724pfh.19.2019.11.15.14.34.11
+        by smtp.gmail.com with ESMTPSA id m15sm11699724pfh.19.2019.11.15.14.34.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 14:34:11 -0800 (PST)
+        Fri, 15 Nov 2019 14:34:13 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     stable@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19+][PATCH 17/20] ASoC: stm32: i2s: fix IRQ clearing
-Date:   Fri, 15 Nov 2019 15:33:53 -0700
-Message-Id: <20191115223356.27675-17-mathieu.poirier@linaro.org>
+Subject: [stable 4.19+][PATCH 18/20] ASoC: stm32: sai: add missing put_device()
+Date:   Fri, 15 Nov 2019 15:33:54 -0700
+Message-Id: <20191115223356.27675-18-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191115223356.27675-1-mathieu.poirier@linaro.org>
 References: <20191115223356.27675-1-mathieu.poirier@linaro.org>
@@ -58,68 +58,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olivier Moysan <olivier.moysan@st.com>
+From: Wen Yang <yellowriver2010@hotmail.com>
 
-commit 8ba3c5215d69c09f5c39783ff3b78347769822ad upstream
+commit 1c3816a194870e7a6622345dab7fb56c7d708613 upstream
 
-Because of regmap cache, interrupts may not be cleared
-as expected.
-Declare IFCR register as write only and make writings
-to IFCR register unconditional.
+The of_find_device_by_node() takes a reference to the underlying device
+structure, we should release that reference.
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+Fixes: 7dd0d835582f ("ASoC: stm32: sai: simplify sync modes management")
+Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+Acked-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable <stable@vger.kernel.org> # 4.19+
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- sound/soc/stm/stm32_i2s.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ sound/soc/stm/stm32_sai.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
-index 004d83091505..aa2b1196171a 100644
---- a/sound/soc/stm/stm32_i2s.c
-+++ b/sound/soc/stm/stm32_i2s.c
-@@ -246,8 +246,8 @@ static irqreturn_t stm32_i2s_isr(int irq, void *devid)
- 		return IRQ_NONE;
+diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
+index f22654253c43..540c4a00405c 100644
+--- a/sound/soc/stm/stm32_sai.c
++++ b/sound/soc/stm/stm32_sai.c
+@@ -112,16 +112,21 @@ static int stm32_sai_set_sync(struct stm32_sai_data *sai_client,
+ 	if (!sai_provider) {
+ 		dev_err(&sai_client->pdev->dev,
+ 			"SAI sync provider data not found\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_put_dev;
  	}
  
--	regmap_update_bits(i2s->regmap, STM32_I2S_IFCR_REG,
--			   I2S_IFCR_MASK, flags);
-+	regmap_write_bits(i2s->regmap, STM32_I2S_IFCR_REG,
-+			  I2S_IFCR_MASK, flags);
+ 	/* Configure sync client */
+ 	ret = stm32_sai_sync_conf_client(sai_client, synci);
+ 	if (ret < 0)
+-		return ret;
++		goto out_put_dev;
  
- 	if (flags & I2S_SR_OVR) {
- 		dev_dbg(&pdev->dev, "Overrun\n");
-@@ -276,7 +276,6 @@ static bool stm32_i2s_readable_reg(struct device *dev, unsigned int reg)
- 	case STM32_I2S_CFG2_REG:
- 	case STM32_I2S_IER_REG:
- 	case STM32_I2S_SR_REG:
--	case STM32_I2S_IFCR_REG:
- 	case STM32_I2S_TXDR_REG:
- 	case STM32_I2S_RXDR_REG:
- 	case STM32_I2S_CGFR_REG:
-@@ -547,8 +546,8 @@ static int stm32_i2s_startup(struct snd_pcm_substream *substream,
- 	i2s->refcount++;
- 	spin_unlock(&i2s->lock_fd);
- 
--	return regmap_update_bits(i2s->regmap, STM32_I2S_IFCR_REG,
--				  I2S_IFCR_MASK, I2S_IFCR_MASK);
-+	return regmap_write_bits(i2s->regmap, STM32_I2S_IFCR_REG,
-+				 I2S_IFCR_MASK, I2S_IFCR_MASK);
+ 	/* Configure sync provider */
+-	return stm32_sai_sync_conf_provider(sai_provider, synco);
++	ret = stm32_sai_sync_conf_provider(sai_provider, synco);
++
++out_put_dev:
++	put_device(&pdev->dev);
++	return ret;
  }
  
- static int stm32_i2s_hw_params(struct snd_pcm_substream *substream,
-@@ -603,8 +602,8 @@ static int stm32_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 			return ret;
- 		}
- 
--		regmap_update_bits(i2s->regmap, STM32_I2S_IFCR_REG,
--				   I2S_IFCR_MASK, I2S_IFCR_MASK);
-+		regmap_write_bits(i2s->regmap, STM32_I2S_IFCR_REG,
-+				  I2S_IFCR_MASK, I2S_IFCR_MASK);
- 
- 		if (playback_flg) {
- 			ier = I2S_IER_UDRIE;
+ static int stm32_sai_probe(struct platform_device *pdev)
 -- 
 2.17.1
 
