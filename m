@@ -2,92 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ACD2FDB8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17F5FDB89
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:38:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbfKOKiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:38:50 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:35526 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfKOKiu (ORCPT
+        id S1727429AbfKOKij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:38:39 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52679 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727202AbfKOKii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:38:50 -0500
-Received: by mail-ua1-f67.google.com with SMTP id s14so2869995uad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 02:38:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sZ++OTuPO6CZ+10/YPxexGs+9BN/3XmrfWtpRIF0DC4=;
-        b=Jgtg2xpIT0dwdOdXRUAYtWgX6xEO5ERBK9nrN0ggu3CtBKZyQjYtKiHUsGK5GVzhTh
-         eC2rddyP1BAGqiR9Dq9KmLE5Ags9wbKtnfehJDcokXym2kuAImlsKmvbIpFNh4k59CRk
-         UDpOM5oNxENQNWJkLaTcA0OXRcQW2wxDUzgSMnUuwCY8+2OAt6aJbfS62hfAURhMZyF5
-         FWoRZBubYKZqZZh5/ov9OO47V+5UrdQLbNSiuCr/qiYxpB+60w63W8ww7aZ0Gh+gNpKn
-         nCpRGaYDRG1J5o5cubgni0VZshY747rWRrnGJ8JFkiGbi2pj96GMjOCNvMbiya9BfzD5
-         aBbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sZ++OTuPO6CZ+10/YPxexGs+9BN/3XmrfWtpRIF0DC4=;
-        b=f91O34gPth4VxegLN81VTyclEl6gdo805dTrf4atlZy1CZ+0i5pMHAFzosJL6NZ2wX
-         ftnA3dDpLCj3gCZag2Q1tgNKrztRltxI3G2KfDjzi+yg/q67/bF73cX7UvRT7Fglszcp
-         TFosrkV/tcao9asCpi5JapGHtPQgUfZQNx/dZl0A16NU84LIxiv4ISNrwx1ws3X5Q7FG
-         qij2r0NtMno9Mq2mtdJCfKSMoUZ6SJ2hxaK6QbWSY97AXIjQN97OS/5HTmCWvU5jtMXY
-         LEs9a1e+eU3AAKjTPNK5se9/vUFd1Sd+HPqlgCgJZ+IUrmvZphCXmZtaI3I2W1wf1IEd
-         Zr/w==
-X-Gm-Message-State: APjAAAWKm0d60/NcHys9c0e6pjWeV8nDCHFa9jf76npJ2klMNIyZOIcQ
-        8KimHy9GzBjHyVI49Rih3G4IHNul2VoGklFPTj1uuw==
-X-Google-Smtp-Source: APXvYqzd+TcmESt8dSevMJ24MEo4z4LNvcbauV1r1Id1E9/CXrpU0GUvOEVQEubjkyM1dRFh2E5eGC5q2ua8YIMUFFg=
-X-Received: by 2002:ab0:2042:: with SMTP id g2mr8430889ual.19.1573814328587;
- Fri, 15 Nov 2019 02:38:48 -0800 (PST)
+        Fri, 15 Nov 2019 05:38:38 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAFAVxM7004303;
+        Fri, 15 Nov 2019 11:38:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=uNLK9FoUA5Uss+jpUkWda+7Twp6fHYrxsRWlK1dQc7k=;
+ b=b3/P3/YJdE5ABYvTu4M/8G5LWbSOHe7NVUIOh0G6nfztZC2PUedEHt9lGZYO/z64cCcA
+ jrm3/jIuGq4rDQe+ktiqgc9KTUcQnvvkQ1/3gwVy8hka0bhUsn+LOUBN83tClhNhnljR
+ F8x2F+LRJhDcAD8usv0nP8Wef3IylQHfO9sNQ6tWRQVJ7yIOp2qe3LzUOn2N14raSrdv
+ UcKQ5jyfn1d5xRbd+9ufED+1xMcpV1fhTm+akC8aFkpxOk3pr8i1JWFFRWoLJwZjEK0B
+ btlEIBCmV6qufGQFex6GFCRmiREZQWS/twMyWO5Pvff6FQyFn9aKRp+1dZxo7+wJz74g 5A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2w7psbkg4j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 15 Nov 2019 11:38:26 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CB3C110002A;
+        Fri, 15 Nov 2019 11:38:25 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BC5902B3F87;
+        Fri, 15 Nov 2019 11:38:25 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 15 Nov
+ 2019 11:38:25 +0100
+Subject: Re: [PATCH] ARM: dts: stm32: add timers counter support on
+ stm32mp157c
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1573031484-18701-1-git-send-email-fabrice.gasnier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <64bc558b-d0d2-5477-7b6e-3399fbcd5bed@st.com>
+Date:   Fri, 15 Nov 2019 11:38:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191112134808.23546-1-erosca@de.adit-jv.com> <20191112204952.GA2976@kunai>
- <CAPDyKFq8oVk26ruNA_R8HDXhMGKhDeHnL0q82xi40g1aeo109A@mail.gmail.com>
- <20191114113743.GA19656@vmlxhi-102.adit-jv.com> <CAPDyKFp5iqrFDM1EWnYBwFmQAiAA5FADDLAyuVVBgMu4Sx=x5w@mail.gmail.com>
- <20191114201514.GA3058@kunai> <CAPDyKFpbu0tCWyUHRjVySRF3QR6Hzd8MXA+RhNeCjED1nPtkYg@mail.gmail.com>
- <20191115101205.GB2227@kunai>
-In-Reply-To: <20191115101205.GB2227@kunai>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 15 Nov 2019 11:38:12 +0100
-Message-ID: <CAPDyKFps4GbHYA7LkVXhhXyG_wUxH9U-2giap2Y1Qdk2ssfmWg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Add MMC_CAP_ERASE to
- Gen3 SoCs
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1573031484-18701-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-15_02:2019-11-15,2019-11-15 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 at 11:12, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->
-> > I think using a workqueue for scheduling a reset work with a timeout
-> > of 5 s, as in your case.
->
-> Sorry, I didn't get it. You think what exactly? Is it good / bad / ok
-> for now / ok in general?
+Hi Fabrice
 
-Sorry.
+On 11/6/19 10:11 AM, Fabrice Gasnier wrote:
+> Add counter support on stm32mp157c that provides quadrature encoder on
+> timers 1, 2, 3, 4, 5 and 8.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 30 ++++++++++++++++++++++++++++++
+>   1 file changed, 30 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index e0f3d4c6..a4ca23c 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -148,6 +148,11 @@
 
-It's good for now!
+Applied on stm32-next.
 
-If/when you start implementing support for HW busy detection, then you
-need to adjust to the timeout value according to cmd->busy_timeout
-from the core.
-
-Kind regards
-Uffe
+Thanks.
+Alex
