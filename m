@@ -2,153 +2,306 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D28FDD15
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62853FDD21
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:14:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfKOMKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:10:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26286 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727399AbfKOMKJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:10:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573819808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4SLCfbXrVulZogYj/s2/SbxodvpIYXr2n3EpWJPZhgM=;
-        b=PBLukaEqHyjPwXP2q6j15H7BHeAVqbBlnf8pqR/SfO3oi7mnbIN5PHvQZ7wyqc2EfUl+FH
-        N7N/LVB3nINFDe2OgJtQ2m2wjpldS/RNosMi7c7iPvlhrdgPaXRxjYkLtW8Hrv7bYtKulj
-        9zAmhzV6vybTkEYZkLMBdNfXWKjpnOs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-318-ZMKWNOMgPqCeaPhXKKHHmg-1; Fri, 15 Nov 2019 07:10:02 -0500
-Received: by mail-wm1-f71.google.com with SMTP id f14so5914200wmc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 04:10:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=s4+dQMXVTzdXBza6cpCVy4c3dq1dN1YlKsihA8W4Y8Y=;
-        b=HXNRW+yAoX+sXb3Qtx5VyQ+EF2NpnqNL4928M+DW2Z2FM2VMYI5n222Cyw4e32A5k9
-         92N0g9hixubMrRaXLFB5mwamwN5juu4Dn9wjqsKzXIwJT0NJTbG0mO2Zh9Beo3GPosFj
-         kPlV0WO4fVSJiDUlnPHg1LhsbrFEfvrOmJSmQF5hCM2ONafAJxyJ7KRWpe06/ys/j0NT
-         VEZEBtVV5dX4AFnQC9BpYO8liSR4uCMsa8qgzpRICxGzAHUMj1Xe1DMtQlXAradb/IJe
-         6nE3upVlU1+3DGy6BGk2rCt6vGj8kcN+IyAYpuxOzwOMVrSCftQoUawVg0K+laYcHsBp
-         qUtw==
-X-Gm-Message-State: APjAAAXKfzXrTggrPaAUpcC1R5uKgMQBI1jfTfmRWUSLkZUf7GMHgJMR
-        Ta8SM/97gsyURjptAqqHm4XfJJexu0fipTzFCzrN3fp9kZiEaXPV5VTjMmXwVFRodGn+45NqBmr
-        l5ZzJS31qnxmExnBNN7HbSUnr
-X-Received: by 2002:a1c:30b:: with SMTP id 11mr13131552wmd.171.1573819801059;
-        Fri, 15 Nov 2019 04:10:01 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxVn+PxOzHLWEYlmy0V5fELKmqUNxPX2dvbZL7DihUzDLfdB4tPBTsaLy1Ld99Eg+Qze1qseg==
-X-Received: by 2002:a1c:30b:: with SMTP id 11mr13131526wmd.171.1573819800855;
-        Fri, 15 Nov 2019 04:10:00 -0800 (PST)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id y8sm9103529wmi.9.2019.11.15.04.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2019 04:10:00 -0800 (PST)
-Subject: Re: [PATCH v7 2/8] efi: Add embedded peripheral firmware support
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org
-References: <20191004145056.43267-1-hdegoede@redhat.com>
- <20191004145056.43267-3-hdegoede@redhat.com>
- <20191011144834.GL16384@42.do-not-panic.com>
- <e7bd40ff-20d1-3aed-8516-9fffd4c3a207@redhat.com>
- <20191114194233.GE11244@42.do-not-panic.com>
- <f00804ae-e556-35e4-d0a3-cd9201fdd2d0@redhat.com>
- <9b0a0121-3e63-0602-6c0d-00547e389f76@redhat.com>
- <20191114215009.GF11244@42.do-not-panic.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d7546f63-5472-b867-4e79-912edf9cfa6c@redhat.com>
-Date:   Fri, 15 Nov 2019 13:09:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1727486AbfKOMN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:13:58 -0500
+Received: from mail-eopbgr790052.outbound.protection.outlook.com ([40.107.79.52]:25184
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbfKOMN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 07:13:57 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BKJnYedHE8aXxEuXwvEteZM8RcNQR1RhDwM81/643ROQs+Ela+NyazJ5WD62fboU+AQfkLvLu4iilxCikNENZ7wAevpaFOmyfSQTXHaepg0TvuiuMzht9+jbwg6MwR9CSn18wvWldWCpTmvoEZOaHBkmhlakTq8jkiuoW4LdzCHSVZF4c1k67xGDBVrmZGM4g2muiJYfgAHkqhUHFheOBO6/xWspbJaCR9wPZTeZ/7JZhovLG0iUQG1ft5neBMsyyI1CvYn9Q3+halN+IR+b/PyBusapGQ9yiInaSvneijS8i28KVkQJXcN6DRWls+9JLLfNT3VvNqyPQnrrM48QXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QcEmt8NxVLE7sSU0U/qd/lZSmQGTyMlbkItxAcY3C28=;
+ b=h6m8Mh9F7qbO4rhPfEY/4cghmsJHogaqP/P8grCMUYj6CeULr2TvAg/x6p1sgbufFG0LmWFIvV5X+i2qPWkZvbyhSOftvqjhCA63EdkyjR6Vu4QSHv9nfkBrfr/sXn9v20LfDpg7u/Sz+j8/OQeh43UYDB3T148Z3K73SJZdD2+yTxQ2Q+ldX+9PLEjyeBXopT/TD0zvXPUUeYbPAHcg24BIVncY+aTEgYcHaTsUHbYHXJUvt80MysdDM/mVrCNXv98YVoKq1PBVxPQDUCk1m2RNYZm30gQZsf0eAi0ChjkqUSH2+RiJ7TJcaZjFhtuQn19MUNbYToDbn7+u5oF0AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
+ dmarc=permerror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QcEmt8NxVLE7sSU0U/qd/lZSmQGTyMlbkItxAcY3C28=;
+ b=Il87WzvOSRdXTZAYm+s/IauryHZMfLGByLMkC2MRLB2prKzV9DaPtG8lt2+pG6/x6OighHliVWK2CwQQ1rmwUZJJ0TOAIMO+0vSLI6NtwyvIds8r0+EjC0n12SuQFtFy4xUbLmflYX8+SK+ZZW8VCXe3nc+XlYkJvDv52JoLYbk=
+Received: from DM3PR12CA0083.namprd12.prod.outlook.com (2603:10b6:0:57::27) by
+ DM6PR12MB3116.namprd12.prod.outlook.com (2603:10b6:5:38::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.27; Fri, 15 Nov 2019 12:12:12 +0000
+Received: from DM6NAM11FT023.eop-nam11.prod.protection.outlook.com
+ (2a01:111:f400:7eaa::207) by DM3PR12CA0083.outlook.office365.com
+ (2603:10b6:0:57::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2451.23 via Frontend
+ Transport; Fri, 15 Nov 2019 12:12:12 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXMB01.amd.com (165.204.84.17) by
+ DM6NAM11FT023.mail.protection.outlook.com (10.13.173.96) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.2451.23 via Frontend Transport; Fri, 15 Nov 2019 12:12:12 +0000
+Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB01.amd.com
+ (10.181.40.142) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 15 Nov
+ 2019 06:12:11 -0600
+Received: from vishnu-All-Series.amd.com (10.180.168.240) by
+ SATLEXMB02.amd.com (10.181.40.143) with Microsoft SMTP Server id 15.1.1713.5
+ via Frontend Transport; Fri, 15 Nov 2019 06:12:02 -0600
+From:   Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+CC:     <Alexander.Deucher@amd.com>, <djkurtz@google.com>,
+        <Akshu.Agrawal@amd.com>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "Takashi Iwai" <tiwai@suse.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        "Vijendar Mukunda" <Vijendar.Mukunda@amd.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 1/6] ASoC: amd:Create multiple I2S platform device endpoint
+Date:   Fri, 15 Nov 2019 17:40:18 +0530
+Message-ID: <1573819823-23731-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1573819823-23731-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+References: <1573819823-23731-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20191114215009.GF11244@42.do-not-panic.com>
-Content-Language: en-US
-X-MC-Unique: ZMKWNOMgPqCeaPhXKKHHmg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(376002)(136003)(39860400002)(428003)(199004)(189003)(53416004)(26005)(81156014)(70206006)(81166006)(186003)(51416003)(7696005)(8676002)(305945005)(76176011)(5660300002)(54906003)(70586007)(316002)(11346002)(47776003)(16586007)(478600001)(2616005)(476003)(446003)(426003)(336012)(2906002)(126002)(50466002)(50226002)(6666004)(356004)(48376002)(36756003)(4326008)(86362001)(8936002)(109986005)(1671002)(486006)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3116;H:SATLEXMB01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a89a0a8a-488d-4a5d-3ef2-08d769c50ba7
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3116:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB311616DDAB40644BFBEAD72EE7700@DM6PR12MB3116.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:182;
+X-Forefront-PRVS: 02229A4115
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ucb7Y2MdG5VnOaszH8N6wB4oh2l/sGsMxl0BOoPjTRxZWjbIqDRQpWejqFSDcN+pNn85TcczfqaVhnvkaYT9B5oNVKNgofctjyxY0mZ8n3dUdlK0DtvrbTyZBnEW9rWP5mOyTc2SB8rm6ZfsMbdXAuTrEo1oeS4yJfJmoskCtzoDAeQJi6COqlT5wfyQZ99gV49egw1O2Jjac27wAtaNnEXWWvmVFWfFzqvA2/I/WRmWzI3ZJn0JC3T+Kmj3H99g/sVJe+94XJv6AR01Z4NIVQ2yUhJxTyeKbA/t+qvi1Esa+8WaqYNFjsAK1GapQUcR7PFPw5seyiVfNqidg9RhX95PGsg9yDPSheMGORqO/MqDWZ2vrq7l69WKYQ9NtJFdfbspdFaFY4JNhY1Huj9cdgpUmh2u0fkycBdOgFpgMurcyJZRhrrHi0iQyx+fbmLb
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2019 12:12:12.0357
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a89a0a8a-488d-4a5d-3ef2-08d769c50ba7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3116
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Creates Platform Device endpoints for multiple
+I2S instances: SP and  BT endpoints device.
+Pass PCI resources like MMIO, irq to the platform devices.
 
-On 14-11-2019 22:50, Luis Chamberlain wrote:
-> On Thu, Nov 14, 2019 at 09:48:38PM +0100, Hans de Goede wrote:
+Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+---
+ sound/soc/amd/raven/acp3x.h     |  5 +++
+ sound/soc/amd/raven/pci-acp3x.c | 96 +++++++++++++++++++++++++++++------------
+ 2 files changed, 73 insertions(+), 28 deletions(-)
 
-<snip>
-
->> But I guess what you really want is some error to be thrown if someone
->> calls firmware_request_platform() before we are ready.
->=20
-> Yes.
->=20
->> I guess I could make efi_check_for_embedded_firmwares() which scans
->> for known firmwares and saved a copy set a flag that it has run.
->>
->> And then combine that with making efi_get_embedded_fw() (which underpins
->> firmware_request_platform()) print a warning when called if that flag
->> is not set yet.
-
-<snip>
-
-> That'd be great.
-
-So I've been working on this, my first though was to use WARN_ON as
-calling this too early would be a bug, but there is a bunch of
-normal circumstances where efi_check_for_embedded_firmwares() never
-runs. One of the being classic BIOS boot, but e.g. also when running
-paravirtualized in a paravirt env. using UEFI.
-
-Normally we should not end up calling efi_get_embedded_fw() in those
-cases, for one it is unlikely for any drivers using firmware_request_platfo=
-rm()
-to be used in such an environment, and if we somehow do end up with
-a case where firmware_request_platform() is called, since the EFI
-emebedded fw fallback then will not work I would expect a copy of
-the necessary fw to be under /lib/firmware so we never hit the fallback.
-
-This all makes efi_get_embedded_fw() getting called in cases where
-efi_check_for_embedded_firmwares() will never run unlikely, but not
-impossible. Making a WARN_ON the wrong thing to do so for v8 of this
-patch-set I will add a pr_warn for this.
-
-Note I've looked into detecting all the circumstances where it is normal
-for efi_check_for_embedded_firmwares() to never run, but after tracing
-the call path leading up to it getting called I've found that a check
-for that is complicated and more importantly error-prone and likely
-to get out of sync with reality if any of the functions higher up
-the call path ever change the conditions.
-
-So a pr_warn it is, and since as explained one would normally not
-expect to ever hit the fallback on systems where
-efi_check_for_embedded_firmwares() does not get called, I see no
-harm in simply always printing the warning if
-efi_check_for_embedded_firmwares() was not called.
-
-Regards,
-
-Hans
+diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
+index 4f2cadd..2f15fe1 100644
+--- a/sound/soc/amd/raven/acp3x.h
++++ b/sound/soc/amd/raven/acp3x.h
+@@ -7,10 +7,15 @@
+ 
+ #include "chip_offset_byte.h"
+ 
++#define ACP3x_DEVS		3
+ #define ACP3x_PHY_BASE_ADDRESS 0x1240000
+ #define	ACP3x_I2S_MODE	0
+ #define	ACP3x_REG_START	0x1240000
+ #define	ACP3x_REG_END	0x1250200
++#define ACP3x_I2STDM_REG_START	0x1242400
++#define ACP3x_I2STDM_REG_END	0x1242410
++#define ACP3x_BT_TDM_REG_START	0x1242800
++#define ACP3x_BT_TDM_REG_END	0x1242810
+ #define I2S_MODE	0x04
+ #define	BT_TX_THRESHOLD 26
+ #define	BT_RX_THRESHOLD 25
+diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
+index facec24..4c4601d 100644
+--- a/sound/soc/amd/raven/pci-acp3x.c
++++ b/sound/soc/amd/raven/pci-acp3x.c
+@@ -16,17 +16,17 @@ struct acp3x_dev_data {
+ 	void __iomem *acp3x_base;
+ 	bool acp3x_audio_mode;
+ 	struct resource *res;
+-	struct platform_device *pdev;
++	struct platform_device *pdev[ACP3x_DEVS];
+ };
+ 
+ static int snd_acp3x_probe(struct pci_dev *pci,
+ 			   const struct pci_device_id *pci_id)
+ {
+-	int ret;
+-	u32 addr, val;
+ 	struct acp3x_dev_data *adata;
+-	struct platform_device_info pdevinfo;
++	struct platform_device_info pdevinfo[ACP3x_DEVS];
+ 	unsigned int irqflags;
++	int ret;
++	u32 addr, val, i;
+ 
+ 	if (pci_enable_device(pci)) {
+ 		dev_err(&pci->dev, "pci_enable_device failed\n");
+@@ -43,7 +43,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 			     GFP_KERNEL);
+ 	if (!adata) {
+ 		ret = -ENOMEM;
+-		goto release_regions;
++		goto adata_free;
+ 	}
+ 
+ 	/* check for msi interrupt support */
+@@ -68,11 +68,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 	switch (val) {
+ 	case I2S_MODE:
+ 		adata->res = devm_kzalloc(&pci->dev,
+-					  sizeof(struct resource) * 2,
++					  sizeof(struct resource) * 4,
+ 					  GFP_KERNEL);
+ 		if (!adata->res) {
+ 			ret = -ENOMEM;
+-			goto unmap_mmio;
++			goto release_regions;
+ 		}
+ 
+ 		adata->res[0].name = "acp3x_i2s_iomem";
+@@ -80,28 +80,52 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		adata->res[0].start = addr;
+ 		adata->res[0].end = addr + (ACP3x_REG_END - ACP3x_REG_START);
+ 
+-		adata->res[1].name = "acp3x_i2s_irq";
+-		adata->res[1].flags = IORESOURCE_IRQ;
+-		adata->res[1].start = pci->irq;
+-		adata->res[1].end = pci->irq;
++		adata->res[1].name = "acp3x_i2s_sp";
++		adata->res[1].flags = IORESOURCE_MEM;
++		adata->res[1].start = addr + ACP3x_I2STDM_REG_START;
++		adata->res[1].end = addr + ACP3x_I2STDM_REG_END;
++
++		adata->res[2].name = "acp3x_i2s_bt";
++		adata->res[2].flags = IORESOURCE_MEM;
++		adata->res[2].start = addr + ACP3x_BT_TDM_REG_START;
++		adata->res[2].end = addr + ACP3x_BT_TDM_REG_END;
++
++		adata->res[3].name = "acp3x_i2s_irq";
++		adata->res[3].flags = IORESOURCE_IRQ;
++		adata->res[3].start = pci->irq;
++		adata->res[3].end = adata->res[3].start;
+ 
+ 		adata->acp3x_audio_mode = ACP3x_I2S_MODE;
+ 
+ 		memset(&pdevinfo, 0, sizeof(pdevinfo));
+-		pdevinfo.name = "acp3x_rv_i2s";
+-		pdevinfo.id = 0;
+-		pdevinfo.parent = &pci->dev;
+-		pdevinfo.num_res = 2;
+-		pdevinfo.res = adata->res;
+-		pdevinfo.data = &irqflags;
+-		pdevinfo.size_data = sizeof(irqflags);
+-
+-		adata->pdev = platform_device_register_full(&pdevinfo);
+-		if (IS_ERR(adata->pdev)) {
+-			dev_err(&pci->dev, "cannot register %s device\n",
+-				pdevinfo.name);
+-			ret = PTR_ERR(adata->pdev);
+-			goto unmap_mmio;
++		pdevinfo[0].name = "acp3x_rv_i2s_dma";
++		pdevinfo[0].id = 0;
++		pdevinfo[0].parent = &pci->dev;
++		pdevinfo[0].num_res = 4;
++		pdevinfo[0].res = &adata->res[0];
++		pdevinfo[0].data = &irqflags;
++		pdevinfo[0].size_data = sizeof(irqflags);
++
++		pdevinfo[1].name = "acp3x_i2s_playcap";
++		pdevinfo[1].id = 0;
++		pdevinfo[1].parent = &pci->dev;
++		pdevinfo[1].num_res = 1;
++		pdevinfo[1].res = &adata->res[1];
++
++		pdevinfo[2].name = "acp3x_i2s_playcap";
++		pdevinfo[2].id = 1;
++		pdevinfo[2].parent = &pci->dev;
++		pdevinfo[2].num_res = 1;
++		pdevinfo[2].res = &adata->res[2];
++		for (i = 0; i < ACP3x_DEVS ; i++) {
++			adata->pdev[i] =
++				platform_device_register_full(&pdevinfo[i]);
++			if (IS_ERR(adata->pdev[i])) {
++				dev_err(&pci->dev, "cannot register %s device\n",
++					pdevinfo[i].name);
++				ret = PTR_ERR(adata->pdev[i]);
++				goto unmap_mmio;
++			}
+ 		}
+ 		break;
+ 	default:
+@@ -112,10 +136,22 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 	return 0;
+ 
+ unmap_mmio:
+-	pci_disable_msi(pci);
++	for (i = 0 ; i < ACP3x_DEVS ; i++)
++		platform_device_unregister(adata->pdev[i]);
+ 	iounmap(adata->acp3x_base);
++	kfree(adata->res);
++	kfree(adata);
++	pci_disable_msi(pci);
++	pci_release_regions(pci);
++	pci_disable_device(pci);
+ release_regions:
++	kfree(adata);
++	pci_disable_msi(pci);
++	pci_release_regions(pci);
++	pci_disable_device(pci);
++adata_free:
+ 	pci_release_regions(pci);
++	pci_disable_device(pci);
+ disable_pci:
+ 	pci_disable_device(pci);
+ 
+@@ -125,10 +161,13 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ static void snd_acp3x_remove(struct pci_dev *pci)
+ {
+ 	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
++	int i;
+ 
+-	platform_device_unregister(adata->pdev);
++	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
++		for (i = 0 ; i <  ACP3x_DEVS ; i++)
++			platform_device_unregister(adata->pdev[i]);
++	}
+ 	iounmap(adata->acp3x_base);
+-
+ 	pci_disable_msi(pci);
+ 	pci_release_regions(pci);
+ 	pci_disable_device(pci);
+@@ -151,6 +190,7 @@ static struct pci_driver acp3x_driver  = {
+ 
+ module_pci_driver(acp3x_driver);
+ 
++MODULE_AUTHOR("Vishnuvardhanrao.Ravulapati@amd.com");
+ MODULE_AUTHOR("Maruthi.Bayyavarapu@amd.com");
+ MODULE_DESCRIPTION("AMD ACP3x PCI driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
 
