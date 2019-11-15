@@ -2,66 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F21EFDEE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA3BFDEE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:27:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfKON1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:27:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727223AbfKON1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:27:21 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61745206CC;
-        Fri, 15 Nov 2019 13:27:20 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 08:27:19 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [for-next][PATCH] tracing: Add missing "inline" in stub function of
- latency_fsnotify()
-Message-ID: <20191115082719.4f2d11a0@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727508AbfKON1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:27:42 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60600 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbfKON1m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 08:27:42 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVbdU-0000jT-R6; Fri, 15 Nov 2019 13:27:41 +0000
+Date:   Fri, 15 Nov 2019 13:27:40 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dieti.hahn@gmail.com
+Subject: Re: Kernel panic because of wrong contents in core_pattern
+Message-ID: <20191115132740.GP26530@ZenIV.linux.org.uk>
+References: <1856804.EHpamdVGlA@amur.mch.fsc.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1856804.EHpamdVGlA@amur.mch.fsc.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 15, 2019 at 02:01:55PM +0100, Dietmar Hahn wrote:
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> Later a user tool dumped with SIGSEGV and the linux system crashed.
+> I investigated the crash dump and found the cause.
+> 
+> Via format_corename() in fs/coredump.c the helper_argv[] with 3 entries is
+> created and helper_argv[0] == "" (because of the ' ' after the '|')
+> ispipe is set to 1.
+> Later in call_usermodehelper_setup():
+>   sub_info->path = path;  == helper_argv[0] == ""
+> This leads in call_usermodehelper_exec() to:
+>   if (strlen(sub_info->path) == 0)
+>                 goto out;
+> with a return value of 0.
+> But no pipe is created and thus cprm.file == NULL.
+> This leads in file_start_write() to the panic because of dereferencing
+>  file_inode(file)->i_mode)
+> 
+> I'am not sure what's the best way to fix this so I've no patch.
+> Thanks.
 
-The latency_fsnotify() stub when the function is not defined, was missing
-the "inline".
-
-Link: https://lore.kernel.org/r/20191115140213.74c5efe7@canb.auug.org.au
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 90cba68c8b50..2df8aed6a8f0 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -801,7 +801,7 @@ void latency_fsnotify(struct trace_array *tr);
- 
- #else
- 
--static void latency_fsnotify(struct trace_array *tr) { }
-+static inline void latency_fsnotify(struct trace_array *tr) { }
- 
- #endif
- 
--- 
-2.20.1
+Check in the caller of format_corename() for **argv being '\0' and fail
+if it is?  I mean, turn that
+                if (ispipe < 0) {
+                        printk(KERN_WARNING "format_corename failed\n");
+                        printk(KERN_WARNING "Aborting core\n");
+                        goto fail_unlock;
+                }   
+in there into
+		if (ispipe < 0 || !**argv) {
+                        printk(KERN_WARNING "format_corename failed\n");
+                        printk(KERN_WARNING "Aborting core\n");
+                        goto fail_unlock;
+                }
 
