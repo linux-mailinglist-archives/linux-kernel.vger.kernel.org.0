@@ -2,162 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15DFBFD44C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 06:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED41FD3EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 06:08:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfKOF3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 00:29:53 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33693 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfKOF3r (ORCPT
+        id S1727075AbfKOFH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 00:07:58 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:44347 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725773AbfKOFH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 00:29:47 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c184so5875862pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 21:29:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=C9I5FqW0z8fenw97nfBVEeoAsOoFr9Mv0e0uFaFX9H0=;
-        b=KdyazIcVt/KrZ4Q4dPukr55+0f+LWN3FdURkiejEjDxeIaipIHVsXos1gZ7NOv5oAC
-         nBCU6ZcNEllQVcTxPM68PAW4OKdhuUVgvhoaKG9dWWFK2T3anLrxqjrWgpudcjZfD4Mh
-         ArgbCrLslQ6DK1H1FpXuVXtZvw6Lu0L2HKHTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=C9I5FqW0z8fenw97nfBVEeoAsOoFr9Mv0e0uFaFX9H0=;
-        b=h7v8wIp+0xpkQhrL5ZbyuIrvZWzDYBLz4h//AWOVexlbvpQxoDmDNhMD0mAg4pMmH8
-         v8TAv0OG8raZnpIkHhuhPfygQeJ6m6T7yVSGgqcLZ77eauwgCj5bFEuvtPfkmTFLq5fk
-         9zpumRmemVdgqXqddCs+2XPjgNWp0hwmyFPd4VkN4zOPQ0E/JbsiOJUXCHjN6eq7tuLx
-         W2LFxdUotrWlwL7adX9oOk7EHyVw53rQyA6GI5KM+7wVwy1iag0GKRbDjVrfvpRO9R4C
-         L/d5DlCXH5tmX3TGJSAMXw/JbHPKZOoUvNwMVP0yNniIKvuR+wTHvAX+RaczF560+xcP
-         2LXg==
-X-Gm-Message-State: APjAAAU0BCsUepg5LX/5ilfc0I82hYZ0QAnWuoxX7gJ3nOam40LINwQq
-        xcnka7CDzALa5RPxXQYL4LavvFF8+9U=
-X-Google-Smtp-Source: APXvYqwc5nrGGxexFGky4nRCM5cHAELptoH7k4Z94evZphJre2euyv6XPNoAvpYGEjuz34jD3TFjNQ==
-X-Received: by 2002:a63:535c:: with SMTP id t28mr1441537pgl.173.1573795786355;
-        Thu, 14 Nov 2019 21:29:46 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r33sm8438101pjb.5.2019.11.14.21.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 21:29:42 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Ariel Elior <aelior@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        GR-everest-linux-l2@marvell.com,
-        Sami Tolvanen <samitolvanen@google.com>,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] bnx2x: Remove hw_reset_t function casts
-Date:   Thu, 14 Nov 2019 21:07:15 -0800
-Message-Id: <20191115050715.6247-6-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191115050715.6247-1-keescook@chromium.org>
-References: <20191115050715.6247-1-keescook@chromium.org>
+        Fri, 15 Nov 2019 00:07:58 -0500
+X-IronPort-AV: E=Sophos;i="5.68,307,1569254400"; 
+   d="scan'208";a="78485464"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 15 Nov 2019 13:07:56 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id B36324CE14FE;
+        Fri, 15 Nov 2019 12:59:44 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.140) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Fri, 15 Nov 2019 13:08:04 +0800
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, Cao jin <caoj.fnst@cn.fujitsu.com>
+Subject: [PATCH] x86/setup: Fix typos
+Date:   Fri, 15 Nov 2019 13:07:45 +0800
+Message-ID: <20191115050745.1941-1-ruansy.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.167.225.140]
+X-yoursite-MailScanner-ID: B36324CE14FE.A73FE
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All .rw_reset callbacks except bnx2x_84833_hw_reset_phy() use a
-void return type. No callers of .hw_reset check a return value and
-bnx2x_84833_hw_reset_phy() unconditionally returns 0. Remove all
-hw_reset_t casts and fix the return type to void.
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+BIOSen -> BIOSes; paing -> paging.
+And improve comments via 640"Kb".
+
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
 ---
- .../net/ethernet/broadcom/bnx2x/bnx2x_link.c  | 20 +++++++++----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ arch/x86/kernel/setup.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-index 7dd35aa75925..9638d65d8261 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -10201,8 +10201,8 @@ static u8 bnx2x_84833_get_reset_gpios(struct bnx2x *bp,
- 	return reset_gpios;
- }
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 77ea96b794bd..56ac9ff12461 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -459,7 +459,7 @@ static void __init memblock_x86_reserve_range_setup_data(void)
+  * due to mapping restrictions.
+  *
+  * On 64bit, kdump kernel need be restricted to be under 64TB, which is
+- * the upper limit of system RAM in 4-level paing mode. Since the kdump
++ * the upper limit of system RAM in 4-level paging mode. Since the kdump
+  * jumping could be from 5-level to 4-level, the jumping will fail if
+  * kernel is put above 64TB, and there's no way to detect the paging mode
+  * of the kernel which will be loaded for dumping during the 1st kernel
+@@ -743,8 +743,8 @@ static void __init trim_bios_range(void)
+ 	e820__range_update(0, PAGE_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
  
--static int bnx2x_84833_hw_reset_phy(struct bnx2x_phy *phy,
--				struct link_params *params)
-+static void bnx2x_84833_hw_reset_phy(struct bnx2x_phy *phy,
-+				     struct link_params *params)
- {
- 	struct bnx2x *bp = params->bp;
- 	u8 reset_gpios;
-@@ -10230,8 +10230,6 @@ static int bnx2x_84833_hw_reset_phy(struct bnx2x_phy *phy,
- 	udelay(10);
- 	DP(NETIF_MSG_LINK, "84833 hw reset on pin values 0x%x\n",
- 		reset_gpios);
--
--	return 0;
- }
- 
- static int bnx2x_8483x_disable_eee(struct bnx2x_phy *phy,
-@@ -11737,7 +11735,7 @@ static const struct bnx2x_phy phy_warpcore = {
- 	.link_reset	= bnx2x_warpcore_link_reset,
- 	.config_loopback = bnx2x_set_warpcore_loopback,
- 	.format_fw_ver	= NULL,
--	.hw_reset	= (hw_reset_t)bnx2x_warpcore_hw_reset,
-+	.hw_reset	= bnx2x_warpcore_hw_reset,
- 	.set_link_led	= NULL,
- 	.phy_specific_func = NULL
- };
-@@ -11768,7 +11766,7 @@ static const struct bnx2x_phy phy_7101 = {
- 	.link_reset	= bnx2x_common_ext_link_reset,
- 	.config_loopback = bnx2x_7101_config_loopback,
- 	.format_fw_ver	= bnx2x_7101_format_ver,
--	.hw_reset	= (hw_reset_t)bnx2x_7101_hw_reset,
-+	.hw_reset	= bnx2x_7101_hw_reset,
- 	.set_link_led	= bnx2x_7101_set_link_led,
- 	.phy_specific_func = NULL
- };
-@@ -11919,7 +11917,7 @@ static const struct bnx2x_phy phy_8727 = {
- 	.link_reset	= bnx2x_8727_link_reset,
- 	.config_loopback = NULL,
- 	.format_fw_ver	= bnx2x_format_ver,
--	.hw_reset	= (hw_reset_t)bnx2x_8727_hw_reset,
-+	.hw_reset	= bnx2x_8727_hw_reset,
- 	.set_link_led	= bnx2x_8727_set_link_led,
- 	.phy_specific_func = bnx2x_8727_specific_func
- };
-@@ -11954,7 +11952,7 @@ static const struct bnx2x_phy phy_8481 = {
- 	.link_reset	= bnx2x_8481_link_reset,
- 	.config_loopback = NULL,
- 	.format_fw_ver	= bnx2x_848xx_format_ver,
--	.hw_reset	= (hw_reset_t)bnx2x_8481_hw_reset,
-+	.hw_reset	= bnx2x_8481_hw_reset,
- 	.set_link_led	= bnx2x_848xx_set_link_led,
- 	.phy_specific_func = NULL
- };
-@@ -12026,7 +12024,7 @@ static const struct bnx2x_phy phy_84833 = {
- 	.link_reset	= bnx2x_848x3_link_reset,
- 	.config_loopback = NULL,
- 	.format_fw_ver	= bnx2x_848xx_format_ver,
--	.hw_reset	= (hw_reset_t)bnx2x_84833_hw_reset_phy,
-+	.hw_reset	= bnx2x_84833_hw_reset_phy,
- 	.set_link_led	= bnx2x_848xx_set_link_led,
- 	.phy_specific_func = bnx2x_848xx_specific_func
- };
-@@ -12060,7 +12058,7 @@ static const struct bnx2x_phy phy_84834 = {
- 	.link_reset	= bnx2x_848x3_link_reset,
- 	.config_loopback = NULL,
- 	.format_fw_ver	= bnx2x_848xx_format_ver,
--	.hw_reset	= (hw_reset_t)bnx2x_84833_hw_reset_phy,
-+	.hw_reset	= bnx2x_84833_hw_reset_phy,
- 	.set_link_led	= bnx2x_848xx_set_link_led,
- 	.phy_specific_func = bnx2x_848xx_specific_func
- };
-@@ -12094,7 +12092,7 @@ static const struct bnx2x_phy phy_84858 = {
- 	.link_reset	= bnx2x_848x3_link_reset,
- 	.config_loopback = NULL,
- 	.format_fw_ver	= bnx2x_8485x_format_ver,
--	.hw_reset	= (hw_reset_t)bnx2x_84833_hw_reset_phy,
-+	.hw_reset	= bnx2x_84833_hw_reset_phy,
- 	.set_link_led	= bnx2x_848xx_set_link_led,
- 	.phy_specific_func = bnx2x_848xx_specific_func
- };
+ 	/*
+-	 * special case: Some BIOSen report the PC BIOS
+-	 * area (640->1Mb) as ram even though it is not.
++	 * special case: Some BIOSes report the PC BIOS
++	 * area (640Kb->1Mb) as ram even though it is not.
+ 	 * take them out.
+ 	 */
+ 	e820__range_remove(BIOS_BEGIN, BIOS_END - BIOS_BEGIN, E820_TYPE_RAM, 1);
 -- 
-2.17.1
+2.21.0
+
+
 
