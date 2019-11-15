@@ -2,106 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65755FD786
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:02:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FB3CFD78D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 09:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbfKOIC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 03:02:26 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46935 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOIC0 (ORCPT
+        id S1727349AbfKOIE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 03:04:59 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:45916 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbfKOIE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 03:02:26 -0500
-Received: by mail-lf1-f67.google.com with SMTP id o65so7270054lff.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 00:02:24 -0800 (PST)
+        Fri, 15 Nov 2019 03:04:58 -0500
+Received: by mail-il1-f196.google.com with SMTP id o18so8378980ils.12
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 00:04:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NkI2txsxwbtlqaQrndweVOHL4hsJVxJJfIj4w7nA03s=;
-        b=Y2uFXds9tT3DS9fRaiy1e+sqff8E/w/n40//i9BE7YJRtY4a/zxnt4prChj6HmDkZe
-         53kNuZ7RKOe6R9belOvO02dJuDETkseyb4lR5MnM5sSJrn8JJzQPjkLVWd3zWK32Xgex
-         vLYldw29HcDkjBpGoTCurV3FTByh7Hfi1jzvLMJuHOLLN3gR4gfoVAzCeuWy79FWdIuU
-         edddQl5YgpNtBGxWAlwQ5yK2KuZ96XSbkqXxVthZYaof0TJPF1HC37Yn+c5uizjcvZ6m
-         Dmh41Yz6uO8GrOrV2i5KVcXeC0wAO9R9apJRXOQ9+Xp9XJmuDh4z3h/9ooGBDYYIFs0r
-         WSMg==
+        bh=oMbMATibPBM0co5FG9GFyuRV+GOBOh2GM3ufKgisCZ0=;
+        b=cJnEXn1F4OR1rTSnQMIv7C2EMxU1xW+Zg+K/s6Z3dxkxSuTPqdUAwX9FShcT5FxLdx
+         x1GNRtmS51ilDsI+waGr5hVlNuRnycYjTX9PQC9B/nHpzsNRnJCcEpFjkJ3LOEG+XAMd
+         YIj2j88AFsR4bvzt/AI7EhvvpWnGJoMaWvdL4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NkI2txsxwbtlqaQrndweVOHL4hsJVxJJfIj4w7nA03s=;
-        b=KdsmAOh3P7n7ZAqkzB+8jh/OXz1NQRBBhlZYn+Kncy/zWfqkNdoQlg2US4T2O5wamT
-         oVpk8OkwtLIgWa2wTFa7zOaiL3WYbGKWhFvGQ5BVzluuLIG6iHFDUTtkp3aiHK/j1OB3
-         GwNbs4W3Bo/zvQkfjc4WBacfc9YqIPBG6UNHIHtm8RClei2mDy2j/INkleuNrI8a2sMu
-         m6g8S1C8G/CJa74d2relrtt6OXBpNIzsAnkU67WZL9foYISPeEwTnXStrmmcfeiL/Cua
-         u72yXZ7J6HzbFFkDgmDU/jbKnBMdNi2lkyD/WEQ8WYp4bYt2TJui0+rDnnAoa1M5uy39
-         7IhQ==
-X-Gm-Message-State: APjAAAWHk0cx2fFIlXWqYBq2J4HUo6P0fgAIFD/KYk6e3zfmm9x+2oOq
-        BD8UTz7sPX4rupTU9bEYenbBEQregEzQood6EZ0s+Q==
-X-Google-Smtp-Source: APXvYqxoyLA9L2nsrx30EhpG1wDYkl+1HTSe1fWACWVrL4zBIhsGcISf5t6YmvT9WT6QGotTkg561hIqfTEeli8je0E=
-X-Received: by 2002:ac2:5589:: with SMTP id v9mr10812739lfg.32.1573804944102;
- Fri, 15 Nov 2019 00:02:24 -0800 (PST)
+        bh=oMbMATibPBM0co5FG9GFyuRV+GOBOh2GM3ufKgisCZ0=;
+        b=kwaPh5lkC+7QNCEbCdQLhKNuNHdL48Uw2KwVBWBqovg6aekBWPR88QFjSTZwDgq3tH
+         8mKjzw1URthKrhhpbSGzCqUiBb1bTjmLrOWlk8KAQ7p2WPasOfKQPKfxMQlW5nLb+mVt
+         HB3SQflxOdMlBOOUwdMHviIsT9HU90YM2pFxkCk95RNw197+6x0vZxfDXfFs7gVzEE2I
+         qorPpmYTvEJi7nvKZLDE17snACf6YOLiS2CEfCAZn9NVA5ftwOOttDnDs+fExE/+K5Su
+         +iPwv+sI7+EQiHMhGXO+KG6fNv48/Z7Vn/lkHJrcDraSwPMt5NUN2+CUHMeN8INfdQXB
+         HFSQ==
+X-Gm-Message-State: APjAAAXIScIsTEc4PeEG2uCtujzsFGXQI7u0uQapwkmcS+v/G33LBZku
+        Vm8Q8gh5ocVvETG25l+0rHjyrHo2Tuqng/rv677tMA==
+X-Google-Smtp-Source: APXvYqxhsEi3ITaM3ZAi2OAPrOgiRFPRnWgsQ5axIUBoPbmVzi82h6sr+qgbCiQ0Hm/G8dAOaZpQjW0vc8xwIraHzGw=
+X-Received: by 2002:a92:6407:: with SMTP id y7mr13745597ilb.285.1573805097714;
+ Fri, 15 Nov 2019 00:04:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20191114211052.15116-1-qais.yousef@arm.com>
-In-Reply-To: <20191114211052.15116-1-qais.yousef@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 15 Nov 2019 09:02:12 +0100
-Message-ID: <CAKfTPtCNjT8FKUF3=vAR6sa7pagvgHS5997KbUs9fGzr77unWA@mail.gmail.com>
-Subject: Re: [PATCH] sched/core: uclamp: fix wrong condition
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
+ <20191024023606.GA1884@infradead.org> <20191029160733.298c6539@canb.auug.org.au>
+ <514e220d-3f93-7ce3-27cd-49240b498114@plexistor.com> <CAJfpegtT-nX7H_-5xpkP+fp8LfdVGbSTfnNf-c=a_EfOd3R5tA@mail.gmail.com>
+ <e723e3cc-210a-4d6d-af86-b3a9c94cb379@plexistor.com>
+In-Reply-To: <e723e3cc-210a-4d6d-af86-b3a9c94cb379@plexistor.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 15 Nov 2019 09:04:46 +0100
+Message-ID: <CAJfpegsnuJANxUesWfWPBWw2pc+XtJJfRMfqxfYHB3ee1o2ZZA@mail.gmail.com>
+Subject: Re: Please add the zuf tree to linux-next
+To:     Boaz Harrosh <boaz@plexistor.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Nov 2019 at 22:10, Qais Yousef <qais.yousef@arm.com> wrote:
+On Thu, Nov 14, 2019 at 5:04 PM Boaz Harrosh <boaz@plexistor.com> wrote:
 >
-> uclamp_update_active() should perform the update when
-> p->uclamp[clamp_id].active is true. But when the logic was inverted in
-> [1], the if condition wasn't inverted correctly too.
+> On 14/11/2019 16:56, Miklos Szeredi wrote:
+> > On Thu, Nov 14, 2019 at 3:02 PM Boaz Harrosh <boaz@plexistor.com> wrote:
+> >
+> >> At the last LSF. Steven from Red-Hat asked me to talk with Miklos about the fuse vs zufs.
+> >> We had a long talk where I have explained to him in detail How we do the mounting, how
+> >> Kernel owns the multy-devices. How we do the PMEM API and our IO API in general. How
+> >> we do pigi-back operations to minimize latencies. How we do DAX and mmap. At the end of the
+> >> talk he said to me that he understands how this is very different from FUSE and he wished
+> >> me "good luck".
+> >>
+> >> Miklos - you have seen both projects; do you think that All these new subsystems from ZUFS
+> >> can have a comfortable place under FUSE, including the new IO API?
+> >
+> > It is quite true that ZUFS includes a lot of innovative ideas to
+> > improve the performance of a certain class of userspace filesystems.
+> > I think most, if not all of those ideas could be applied to the fuse
+> > implementation as well,
 >
-> [1] https://lore.kernel.org/lkml/20190902073836.GO2369@hirez.programming.kicks-ass.net/
+> This is not so:
 >
-> Fixes: babbe170e053 ("sched/uclamp: Update CPU's refcount on TG's clamp changes")
-> Reported-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> CC: Vincent Guittot <vincent.guittot@linaro.org>
-> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> CC: Steven Rostedt <rostedt@goodmis.org>
-> CC: Ben Segall <bsegall@google.com>
-> CC: Mel Gorman <mgorman@suse.de>
-> CC: Patrick Bellasi <patrick.bellasi@matbug.net>
-> CC: linux-kernel@vger.kernel.org
+> - The way we do the mount is very different. It is not the Server that does
+>   The mount but the Kernel. So auto bind mount works (same device different dir)
 
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+This is not a significant difference.  I.e. the following could be
+added to the fuse protocol to optionally operate this way:
 
-> ---
->  kernel/sched/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+- server registers filesystem at startup, does not perform any mount
+(sends FUSE_NOTIFY_REGISTER)
+- on mount kernel sends a FUSE_FS_LOOKUP message, server looks up or
+creates filesystem instance and returns a filesystem ID
+- filesystem ID is sent in further message headers (there's a 32bit
+spare field where this fits nicely)
+
+> - The way zuf owns the devices in the Kernel, and supports multi-devices.
+
+Same as above, one server process could handle as many filesystem
+instances (possibly of different type) as necessary.
+
+>   And has support for pmem devices as well as what we call t2 (regular) block
+>   devices. And the all API for transfer between them. (The all md.* thing).
+
+Extending the protocol to pass reference to pmem or any other device
+is certainly possible.  See the  FUSE2_DEV_IOC_MAP_OPEN in the
+prototype.
+
+>   Proper locking of devices.
+
+Care to explain?
+
+> - The way we are true zero-copy both pmem and t2.
+
+See FUSE_MAP request in fuse2 prototype.
+
+> - The way we are DAX both pwrite and mmap.
+
+This is not implemented yet in the prototype, but there's nothing
+preventing the mapping returned by the FUSE_MAP request to be cached
+and used for mmap and  I/O without any further exchanges with server.
+
+> - The way we are NUMA aware both Kernel and Server.
+
+I've tested the prototype on huge NUMA systems, and it certainly was
+very scalable.
+
+> - The way we use shared memory pools that are deep in the protocol between
+>   Server and Kernel for zero copy of meta-data as well as protocol buffers.
+
+Again, the fuse2 prototype uses shared memory for communication, and
+this helps (though not as much as CPU locality).
+
+> - The way we do pigy-back of operations to save round-trips.
+
+It is not difficult to extend the FUSE protocol to allow bundling of
+several requests and replies.
+
+> - The way we use cookies in Kernel of all Server objects so there are no
+>   i_ino hash tables or look-ups.
+
+I don't get that.  zuf_iget() calls iget_locked() which does the inode
+hash lookup.
+
+> - The way we use a single Server with loadable FS modules. That the ZUSD comes
+>   with the distro and only the FS-pluging comes from Vendor. So Kernel=Server API
+>   is in sync.
+
+Same abstraction is provided by libfuse.  Pluggable fs modules are
+also certainly possible, in fact libfuse already has something like
+that: fuse_register_module().
+
+> - The way ZUFS supports root filesystem.
+
+Why is that a unique feature?
+
+> - The way ZUFS supports VM-FS to SHARE same p-memory as HOST-FS
+> - The way we do Zero-copy IO, both pmem and bdevs
+
+I think these have been mentioned above already.
+
+> > One of the major issues that I brought up when originally reviewing
+> > ZUFS (but forgot to discuss at LSF) is about the userspace API.  I
+> > think it would make sense to reuse FUSE protocol definition and extend
+> > it where needed.   That does not mean ZUFS would need to be 100%
+> > backward compatible with FUSE, it would just mean that we'd have a
+> > common userspace API and each implementation could implement a subset
+> > of features.
 >
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0f2eb3629070..2de53489c909 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1065,7 +1065,7 @@ uclamp_update_active(struct task_struct *p, enum uclamp_id clamp_id)
->          * affecting a valid clamp bucket, the next time it's enqueued,
->          * it will already see the updated clamp bucket value.
->          */
-> -       if (!p->uclamp[clamp_id].active) {
-> +       if (p->uclamp[clamp_id].active) {
->                 uclamp_rq_dec_id(rq, p, clamp_id);
->                 uclamp_rq_inc_id(rq, p, clamp_id);
->         }
-> --
-> 2.17.1
+> This is easy to say. But believe me it is not possible. The shared structures
+> are maybe 20% and not 80% as the theory might feel about it. The projects are
+> really structured differently.
+
+Well, I'm not saying it would be an easy job, just sthat doing a
+rewrite with the already existing and well established API might well
+pay off in the long run.
+
+> I have looked at it long and hard, Many times. I do not know how to this.
+> If I knew how I would.
 >
+> These codes and systems do very different things. It will need tones of
+> if()s and operation changes. Sometimes you do a copy/paste of ext4 into
+> ffs2 and so on. Because the combination is not always the best and the
+> easiest.
+
+Again, I'm not suggesting that you add zufs features to fuse.   I'm
+suggesting that you implement zufs features with the fuse protocol,
+extending it where needed, but keeping the basic format the same.
+
+>
+> > I think this would be an immediate and significant
+> > boon for ZUFS, since it would give it an already existing user/tester
+> > base that it otherwise needs to build up.  It would also allow
+> > filesystem implementation to be more easily switchable between the
+> > kernel frameworks in case that's necessary.
+> >
+>
+> Thanks Miklos for your input. I have looked at this problems many times.
+> This is not something that is interesting for me. Because these two projects
+> come to solve different things.
+>
+> And it is not so easy to do as it sounds. There are fundamental difference
+> between the projects. For example in fuse main() belongs to the FS. That needs
+> to supply its own mount application. In ZUFS we do the regular Kernel's /sbin/mount.
+> Also ZUS User-mode server has a huge facility for allocating pages, mlocking,
+> per-cpu counters per-cpu variables, NUMA memory management. Thread management.
+> The API with zuf is very very particular about tons of things. Involving threads
+> and special files and mmap calls, and shared memory with Kernel. This will not be so
+> easily interchangeable.
+
+I hope to get around to do a review eventually.  API design is hard.
+I know how many times I got it wrong in fuse, and how much pain that
+has caused.
+
+Thanks,
+Miklos
