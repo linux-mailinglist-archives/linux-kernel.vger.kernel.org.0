@@ -2,66 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B33FDAED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 583D1FDAF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:17:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfKOKQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:16:58 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36460 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfKOKQ6 (ORCPT
+        id S1727514AbfKOKRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:17:11 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:58934 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727347AbfKOKRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:16:58 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f10so7594560oto.3;
-        Fri, 15 Nov 2019 02:16:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L31Kfs1iCtI5iVDCuelWcjeMJ55bO+AtIuo4wI7qu9U=;
-        b=B3sScFr8xItN+PCAKQAeRtJPGIG/pfOvxOmeRw2G6qAdfPkZj8qMwOJpELvgThUmt4
-         2aSkHajUnXFEAqLNao9XP/fVdop+7zeBwAJI8ZC9cPsEcG1XqO5j6ppGIP6XcK/L5RsS
-         hxdYR6nGSdtTUw+9HzQZItpH682WZn78HDdnRAmIE6St8Z0PbfyT6gtJgpxTuOB6+MjD
-         qT2gVoHP+BjEv/CSFGO5Yhwz9cGOVInHzLVuPXwLDaBqgu6HtJ9+Q7YtunJQwv/xAV79
-         wrQOVqj2xGvt9mvF4DSs+Qxtg4qfULjfH6wfzs2msdd/pvbG5OZ6kODKCi/lN9hHxsIv
-         rY6w==
-X-Gm-Message-State: APjAAAX3Vh4Xq/5l8/47MG55cxH8ZTiueF0Btt4y/sjgAFwAF6X7A7/d
-        F2GKQ+hKzVRqJpVUFSn78h6Id/NuNEVOsUwuMWc=
-X-Google-Smtp-Source: APXvYqxZ/bAtMq18l9mpuCAsg44KJyrcgmnqVoIIx4Mk+o7r4aPh25WzgicKYS/aWkTqw5pQAng03Fta3Cmam/OYkEQ=
-X-Received: by 2002:a9d:590f:: with SMTP id t15mr10089371oth.118.1573813017367;
- Fri, 15 Nov 2019 02:16:57 -0800 (PST)
+        Fri, 15 Nov 2019 05:17:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zVnMI/UTYlwDA1YdxIZ76WyrLjTckvFSUwJdOR6cRe0=; b=0K8frmXEYTzRoeIjlk+UtotAW
+        0nwOzbiVM3sKSI9TrSNJnNWk8dAONjiI8PG7qULXJmVJYJ0VufpK/tm+JKbtQTC5TI7Tu5cW0/bcn
+        nyq7LymBs9duyBhoOv6aFXOvFCv8gsMZqHuURzOZEiYf0Er4Zy4DjLAPj0dBn84jff7nBZizMW7hw
+        iDSKc5B8wHJ1xUk+fN+JwqTEgtbgCEovtnG8DrjUlbCmzDs38HQdhe6GrKHsosBnsRcGXPvFBGm/7
+        S4o7j5ptvVWgm7+T8q7dHbEHSv7fwuLzCC9Y1UDBLnxWQ3D3FJMxGTC8QJu3xKCS9ISY4dk9SDaCs
+        7ft5ht8Aw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVYeo-00069x-DS; Fri, 15 Nov 2019 10:16:50 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D78503006FB;
+        Fri, 15 Nov 2019 11:15:40 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E42AB2B128BE6; Fri, 15 Nov 2019 11:16:48 +0100 (CET)
+Date:   Fri, 15 Nov 2019 11:16:48 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 3/9] sched/vtime: Handle nice updates under vtime
+Message-ID: <20191115101648.GC4131@hirez.programming.kicks-ass.net>
+References: <20191106030807.31091-1-frederic@kernel.org>
+ <20191106030807.31091-4-frederic@kernel.org>
 MIME-Version: 1.0
-References: <1573041302-4904-1-git-send-email-zhenzhong.duan@oracle.com>
- <1573041302-4904-2-git-send-email-zhenzhong.duan@oracle.com> <2090510.mhlLnX9yIq@kreacher>
-In-Reply-To: <2090510.mhlLnX9yIq@kreacher>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 15 Nov 2019 11:16:46 +0100
-Message-ID: <CAJZ5v0i4b0hvGjSjSpBnZ-huJZGi3FmN1z5NVc_4V6CForaLfA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2 1/4] cpuidle-haltpoll: ensure grow start value
- is nonzero
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106030807.31091-4-frederic@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 11:06 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Wednesday, November 6, 2019 12:54:59 PM CET Zhenzhong Duan wrote:
-> > dev->poll_limit_ns could be zeroed in certain cases (e.g. by
-> > guest_halt_poll_ns = 0). If guest_halt_poll_grow_start is zero,
-> > dev->poll_limit_ns will never be bigger than zero.
->
-> Given that haltpoll_enable_device() sets dev->poll_limit_ns = 0 to start with,
-> I don't think that the statement above is correct.
+On Wed, Nov 06, 2019 at 04:08:01AM +0100, Frederic Weisbecker wrote:
+> The cputime niceness is determined while checking the target's nice value
+> at cputime accounting time. Under vtime this happens on context switches,
+> user exit and guest exit. But nice value updates while the target is
+> running are not taken into account.
+> 
+> So if a task runs tickless for 10 seconds in userspace but it has been
+> reniced after 5 seconds from -1 (not nice) to 1 (nice), on user exit
+> vtime will account the whole 10 seconds as CPUTIME_NICE because it only
+> sees the latest nice value at accounting time which is 1 here. Yet it's
+> wrong, 5 seconds should be accounted as CPUTIME_USER and 5 seconds as
+> CPUTIME_NICE.
+> 
+> In order to solve this, we now cover nice updates withing three cases:
+> 
+> * If the nice updater is the current task, although we are in kernel
+>   mode there can be pending user or guest time in the cache to flush
+>   under the prior nice state. Account these if any. Also toggle the
+>   vtime nice flag for further user/guest cputime accounting.
+> 
+> * If the target runs on a different CPU, we interrupt it with an IPI to
+>   update the vtime state in place. If the task is running in user or
+>   guest, the pending cputime is accounted under the prior nice state.
+>   Then the vtime nice flag is toggled for further user/guest cputime
+>   accounting.
 
-Scratch this, I misread it.
+But but but, I thought the idea was to _never_ send interrupts to
+NOHZ_FULL cpus ?!?
