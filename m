@@ -2,51 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34ABCFD5C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E9BFD5BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:06:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfKOGHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:07:14 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:49926 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727208AbfKOGHN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:07:13 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08837032|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0377916-0.00102263-0.961186;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=fuyao@allwinnertech.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.G-yTRwf_1573798030;
-Received: from localhost(mailfrom:fuyao@allwinnertech.com fp:SMTPD_---.G-yTRwf_1573798030)
-          by smtp.aliyun-inc.com(10.194.99.21);
-          Fri, 15 Nov 2019 14:07:10 +0800
-Date:   Fri, 15 Nov 2019 14:06:04 +0800
-From:   fuyao <fuyao@allwinnertech.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     =?utf-8?B?6bqm6ZSu5qif?= <maijianzhang@allwinnertech.com>,
-        =?utf-8?B?5p2O6Z2ZcHN3?= <lijingpsw@allwinnertech.com>
-Subject: [power supply]:missing definition without config
-Message-ID: <20191115060604.GE17312@AExdroid03>
-Mail-Followup-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        =?utf-8?B?6bqm6ZSu5qif?= <maijianzhang@allwinnertech.com>,
-        =?utf-8?B?5p2O6Z2ZcHN3?= <lijingpsw@allwinnertech.com>
+        id S1727170AbfKOGGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:06:44 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:57894 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfKOGGo (ORCPT <rfc822;linux-kernel@vger.kernel.orG>);
+        Fri, 15 Nov 2019 01:06:44 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1iVUkh-0004jq-F0; Fri, 15 Nov 2019 14:06:39 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1iVUke-00066Z-SN; Fri, 15 Nov 2019 14:06:36 +0800
+Date:   Fri, 15 Nov 2019 14:06:36 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Zhou Wang <wangzhou1@hisilicon.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: hisilicon: no need to check return value of
+ debugfs_create functions
+Message-ID: <20191115060636.7rzo7n6nxbj7gwvq@gondor.apana.org.au>
+References: <20191107085200.GB1274176@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Organization: fuyao_love_xxt.Allwinnertech.Technology
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191107085200.GB1274176@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linux-pm:
-hi, walk around the power_supply.h file. 
-call power_supply_get_by_name without the CONFIG_POWER_SUPPLY, cause
-error.
-if we should use:
+On Thu, Nov 07, 2019 at 09:52:00AM +0100, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Cc: Zhou Wang <wangzhou1@hisilicon.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/crypto/hisilicon/qm.c           | 19 +++++--------------
+>  drivers/crypto/hisilicon/zip/zip_main.c | 24 ++++++------------------
+>  2 files changed, 11 insertions(+), 32 deletions(-)
 
-#ifdef CONFIG_POWER_SUPPLY
-extern extern struct power_supply *power_supply_get_by_name(const char *name);
-#else
-static inline struct power_supply *
-power_supply_get_by_name(const char *name)
-{return NULL;}
-#endif
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
