@@ -2,96 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84360FE4B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5139BFE4BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:15:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKOSOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:14:53 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:54462 "EHLO gloria.sntech.de"
+        id S1726997AbfKOSPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:15:40 -0500
+Received: from foss.arm.com ([217.140.110.172]:34854 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbfKOSOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 13:14:52 -0500
-Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iVg7B-0001eB-99; Fri, 15 Nov 2019 19:14:37 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     matwey.kornilov@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Akash Gajjar <akash@openedev.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Rockchip SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Enable PCIe for Radxa Rock Pi 4 board
-Date:   Fri, 15 Nov 2019 19:14:36 +0100
-Message-ID: <1708909.MJzrS8JzXa@diego>
-In-Reply-To: <20191115180825.10526-1-matwey@sai.msu.ru>
-References: <20191115180825.10526-1-matwey@sai.msu.ru>
+        id S1726075AbfKOSPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 13:15:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4426C30E;
+        Fri, 15 Nov 2019 10:15:39 -0800 (PST)
+Received: from [10.0.2.15] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F38723F534;
+        Fri, 15 Nov 2019 10:15:36 -0800 (PST)
+Subject: Re: [tip: sched/urgent] sched/topology, cpuset: Account for
+ housekeeping CPUs to avoid empty cpumasks
+To:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Cc:     mkoutny@suse.com, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Dietmar.Eggemann@arm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, hannes@cmpxchg.org,
+        lizefan@huawei.com, morten.rasmussen@arm.com, qperret@google.com,
+        tj@kernel.org, vincent.guittot@linaro.org,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+References: <20191104003906.31476-1-valentin.schneider@arm.com>
+ <157384158622.12247.6135151696743651397.tip-bot2@tip-bot2>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <26624707-3913-5225-a7f9-f3cf9597d6f2@arm.com>
+Date:   Fri, 15 Nov 2019 18:15:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <157384158622.12247.6135151696743651397.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matwey,
-
-Am Freitag, 15. November 2019, 19:08:21 CET schrieb Matwey V. Kornilov:
-> Radxa Rock Pi 4 is equipped with M.2 PCIe slot,
-> so enable PCIe for the board.
+On 15/11/2019 18:13, tip-bot2 for Valentin Schneider wrote:
+> The following commit has been merged into the sched/urgent branch of tip:
 > 
-> The changes has been tested with Intel SSD 660p series device.
-> 
->     01:00.0 Class 0108: Device 8086:f1a8 (rev 03)
-> 
-> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-> index 1ae1ebd4efdd..9c2927faba41 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-> @@ -463,6 +463,20 @@
->  	pmu1830-supply = <&vcc_3v0>;
->  };
->  
-> +&pcie_phy {
-> +	status = "okay";
-> +};
-> +
-> +&pcie0 {
-> +	status = "okay";
-> +
-> +	ep-gpios = <&gpio4 RK_PD3 GPIO_ACTIVE_HIGH>;
-> +	num-lanes = <4>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_clkreqnb_cpm>;
-> +	max-link-speed = <2>;
+> Commit-ID:     48a723d23b0d957e5b5861b974864e53c6841de8
+> Gitweb:        https://git.kernel.org/tip/48a723d23b0d957e5b5861b974864e53c6841de8
+> Author:        Valentin Schneider <valentin.schneider@arm.com>
+> AuthorDate:    Mon, 04 Nov 2019 00:39:06 
+> Committer:     Ingo Molnar <mingo@kernel.org>
+> CommitterDate: Fri, 15 Nov 2019 11:02:20 +01:00
 
-the RockPi schematics should be available, so could you also check
-the supply regulators and add them please?
-
-Thanks
-Heiko
-
-
-> +};
-> +
->  &pinctrl {
->  	bt {
->  		bt_enable_h: bt-enable-h {
-> 
-
-
-
-
+Michal just noted this might actually *not* be required. I'm setting up some
+tests on qemu right now to convince myself.
