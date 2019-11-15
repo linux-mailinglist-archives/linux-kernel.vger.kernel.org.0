@@ -2,80 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F30A7FE841
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 244D5FE83B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 23:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfKOWqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 17:46:54 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:55598 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfKOWqx (ORCPT
+        id S1727276AbfKOWpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 17:45:14 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40611 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfKOWpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 17:46:53 -0500
-Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1iVkKM-0007zt-Nm; Fri, 15 Nov 2019 16:44:31 -0600
-Message-ID: <71e4f8797fa6e4a116a6d1cabcb63871d7a0c4e0.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Timur Tabi <timur@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
-Date:   Fri, 15 Nov 2019 16:44:29 -0600
-In-Reply-To: <02dd5acd-b81e-fde3-028c-16e754e846b5@kernel.org>
-References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
-         <20191108130123.6839-33-linux@rasmusvillemoes.dk>
-         <CAOZdJXU1ELqQh7TitAJW7bsmnj89wq3opJGVizC2B19nL_3_rQ@mail.gmail.com>
-         <9f1a846b-c303-92fa-9620-f492ef940de7@rasmusvillemoes.dk>
-         <02dd5acd-b81e-fde3-028c-16e754e846b5@kernel.org>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: timur@kernel.org, linux@rasmusvillemoes.dk, qiang.zhao@nxp.com, leoyang.li@nxp.com, christophe.leroy@c-s.fr, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
-X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-Subject: Re: [PATCH v4 32/47] serial: ucc_uart: use of_property_read_u32()
- in ucc_uart_probe()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Fri, 15 Nov 2019 17:45:14 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e3so5642976plt.7
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 14:45:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:to:subject:from:user-agent:date;
+        bh=7Lv3OlOPwc1itG1VgoAiwhDXhnQEj1MoRWBeTDRndG4=;
+        b=Nkqj7y10JNCu5K6kPudtI3lXHEwaZBSWUhX29HR/Abt8O2VfHSQU5mdiEVOiigMCw6
+         zsEj8MCsojhqm3YwGiyADl9ZPM0yX8rquJ1Z0q9RlkRg3Jr8td15JaCbE8CpRk/HgDm3
+         +tploRipqGjbIXjj7nLILijQjuVP6SsHpOJ5o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:to:subject:from
+         :user-agent:date;
+        bh=7Lv3OlOPwc1itG1VgoAiwhDXhnQEj1MoRWBeTDRndG4=;
+        b=EPoAK2P+u45z+txyaf/dD7tfOMXrks6A0k/gZWIyhJpe6NBDZsj870SFcAL66wfASg
+         V98pPEGOVOGF+BKv53AgrYFveQGylW5E+68Lzl9KwuLYAPvlODqpepLdmg2rGI/H3Rjk
+         fkEMkGuNjtOzLUDn+WKsfM/ro5rBawIf62mUTZ8q1zQJeCiU5Cd/abz5zct+F7m2dXx9
+         CsJfqPR4+GATcqQRlD/WCfedrXspX5XxoirlUzYe9QVZVtB5g31kQaVubsSreN2ZGLwC
+         zTMK5SJKrqp6fZJYz7A7iJeUiu/yMEGxPqqd+mqLP/DJbpebxlf2f5elVC5W/ZdrQ1MC
+         e2rw==
+X-Gm-Message-State: APjAAAXwe+d9IxSi717TpnWBtCQDPb+QS2T/emMjzY72+gd/9pXvSHuf
+        UcDF3a44eHMOjLHmv/ILKztkiQ==
+X-Google-Smtp-Source: APXvYqxKvvQFWUoIX8E+lfiE355scZNy4BpKhjdSk1Emyyc0LcYlxCPxZKzrkbThPxbIN4SfSJj3Zw==
+X-Received: by 2002:a17:90a:f496:: with SMTP id bx22mr22379458pjb.126.1573857912758;
+        Fri, 15 Nov 2019 14:45:12 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id k4sm11900933pfa.25.2019.11.15.14.45.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 14:45:12 -0800 (PST)
+Message-ID: <5dcf2a78.1c69fb81.f690a.481c@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1573593774-12539-5-git-send-email-eberman@codeaurora.org>
+References: <1573593774-12539-1-git-send-email-eberman@codeaurora.org> <1573593774-12539-5-git-send-email-eberman@codeaurora.org>
+Cc:     Elliot Berman <eberman@codeaurora.org>, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, psodagud@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Elliot Berman <eberman@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH v2 04/18] firmware: qcom_scm: Apply consistent naming scheme to command IDs
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 15 Nov 2019 14:45:11 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-11-15 at 08:35 -0600, Timur Tabi wrote:
-> On 11/15/19 2:01 AM, Rasmus Villemoes wrote:
-> > That would be a separate patch, this patch is only concerned with
-> > eliminating the implicit assumption of the host being big-endian. And
-> > there's already been some pushback to adding arch-specific ifdefs (which
-> > I agree with, but as I responded there see as the lesser evil), so
-> > unless there's a very good reason to add that complexity, I'd rather not.
-> 
-> We don't want to encourage people to introduce device trees that don't 
-> have the brg-frequency property in them.
+Quoting Elliot Berman (2019-11-12 13:22:40)
+> Create a consistent naming scheme for command IDs. The scheme is
+> QCOM_SCM_##svc_##cmd. Remove unused macros QCOM_SCM_FLAG_HLOS,
+> QCOM_SCM_FLAG_COLDBOOT_MC, QCOM_SCM_FLAG_WARMBOOT_MC,
+> QCOM_SCM_CMD_CORE_HOTPLUGGED, and QCOM_SCM_BOOT_ADDR_MC.
+>=20
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
+> ---
 
-Yeah, workarounds like this should be as targeted as possible.  If we knew the
-specific chips/boards on which U-Boot has this problem, then limiting it to
-those would have been even better (e.g. fix up the device tree from the
-platform code), but at this point containing the damage to PPC seems like the
-most reasonable approach.  It's not relevant to this specific patch, but it is
-relevant to a patchset expanding the set of platforms on which this code
-builds.
+Would be nice to state that the object file is the same before and after
+this patch is applied, confirmed by compiling the file before and after
+and diffing the output.
 
--Scott
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
