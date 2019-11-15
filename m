@@ -2,121 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86722FD87B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D0CFD905
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:30:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfKOJLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:11:11 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6677 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfKOJLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:11:10 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0F0E4234DB2A165C0FA1;
-        Fri, 15 Nov 2019 17:11:08 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
- 17:10:57 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>
-CC:     <linux-kernel@vger.kernel.org>, <oss@buserror.net>,
-        Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH 6/6] powerpc/fsl_booke/kaslr: rename kaslr-booke32.rst to kaslr-booke.rst and add 64bit part
-Date:   Fri, 15 Nov 2019 17:32:09 +0800
-Message-ID: <20191115093209.26434-7-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191115093209.26434-1-yanaijie@huawei.com>
-References: <20191115093209.26434-1-yanaijie@huawei.com>
+        id S1727361AbfKOJaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:30:25 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:42506 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727325AbfKOJaY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:30:24 -0500
+Received: by mail-ua1-f66.google.com with SMTP id 31so2792448uas.9
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 01:30:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U0K8GRiXqSgIpN48tBNHcV+jI/oiDgvDhl7ShZIVOhE=;
+        b=dms2AT6yjYIujdBp5vLXzT3QSWBUJdp+Ja/bHoPGCKS84bKo37q9DYAWmQ+OhvnX47
+         wQESQqhFjyBsKxLBW14sJM6Kkxy/Yvicy1Vttr/bmnfFi1qkmbGWwvZC6/I2T2hc0dc4
+         E6e4jsZ8R7HPGQj7VhbAeZXMKd4W+mV9z0NBs1wYV93Cw7drye59WzshJHguKEkNXCPt
+         fHF0ouNrAUlgmAVwGBwpW7V1N92+w5PRrvnambZTbfMnbWUBMJIPHZCBuMz5iDZ3km48
+         QxwxVl+99j/KVNaPgNldx2y1f+snHTdbPP0IYzr0FUgyc31xgzkXkCrLt9Puderh1g1W
+         O9fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U0K8GRiXqSgIpN48tBNHcV+jI/oiDgvDhl7ShZIVOhE=;
+        b=s0bCT6EPoYYY9Onnq2gYGB5s46MZfgPRYdGHPQMtZzkWOhmOjjGVDxY9ccaZyQYXkM
+         SLMHab88kjOid93xt9jZ3axFwq4u1PP61F09fNZY6o6g50po2E2IfXXxIVq/oJLOyWa1
+         9NldcZzWqOYX5btSxwcftsXD2zIuLPrswgShHw3YJglBEJ4hh2biyIcpIiN+9J6tzRPN
+         vAOJvCDO1goGy29BfHkW6AYmtIsE7vg1lfKuHcjOjiVpQhH9sp3gcJMwuIjnlkm5wRs2
+         9RE1Gm5YVAfqQGnzlvniwSboU2DBm5RdFcO0vEH4XTx/iN0XZGvFQliXW4pP/gTSsa+m
+         LP/g==
+X-Gm-Message-State: APjAAAWhFid+CatNMa8JA6WuCX4WZ2urWqa9VaXp1i6gL4b7gSmjrTD9
+        cz8xbRA16oXWl8iVfWNBNgxMzPgHU47TtIKDGI4tKQ==
+X-Google-Smtp-Source: APXvYqzU6WJnGjb2iLphku/+v8QsaQ8unugsql39hfm0KRqoySp6l08BYKltD9R0v8e99ePYA9xvGwkzshWggfN0FEM=
+X-Received: by 2002:ab0:74cd:: with SMTP id f13mr8348393uaq.104.1573810223324;
+ Fri, 15 Nov 2019 01:30:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+References: <cover.1573122644.git.hns@goldelico.com> <CAPDyKFrntf2Kd9Zf7uxRCUk_OrKD8B3xOKmvPaf04X21L5HwWA@mail.gmail.com>
+ <5F5A5FC0-8F91-4D5B-9EF6-AF36FE38B588@goldelico.com>
+In-Reply-To: <5F5A5FC0-8F91-4D5B-9EF6-AF36FE38B588@goldelico.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 15 Nov 2019 10:29:46 +0100
+Message-ID: <CAPDyKFr=Uk1i0c=3WvuOYCQ__Skpr-9mjVM2Yqst-hd8zY6OeQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] OpenPandora: make wl1251 connected to mmc3 sdio
+ port of OpenPandora work again
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Petr Mladek <pmladek@suse.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        kernel@pyra-handheld.com,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        David Sterba <dsterba@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now we support both 32 and 64 bit KASLR for fsl booke. Add document for
-64 bit part and rename kaslr-booke32.rst to kaslr-booke.rst.
+On Thu, 14 Nov 2019 at 16:16, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>
+> Hi Ulf,
+>
+> > Am 14.11.2019 um 15:18 schrieb Ulf Hansson <ulf.hansson@linaro.org>:
+> >
+> > On Thu, 7 Nov 2019 at 11:31, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> >>
+> >>
+> >> * add a revisit note for special wl1251 handling code because it should
+> >>  be solved more generic in mmc core - suggested by Ulf Hansson <ulf.hansson@linaro.org>
+> >> * remove init_card callback from platform_data/hsmmc-omap.h - suggested by Ulf Hansson <ulf.hansson@linaro.org>
+> >> * remove obstructive always-on for vwlan regulator - suggested by Ulf Hansson <ulf.hansson@linaro.org>
+> >> * rename DT node - suggested by Rob Herring <robh@kernel.org>
+> >> * fix ARM: dts: subject prefix - suggested by Tony Lindgren <tony@atomide.com>
+> >> * also remove omap2_hsmmc_info and obc-y line in Makefile - suggested by Tony Lindgren <tony@atomide.com>
+> >
+> > No further comments from my side. Let's just agree on how to deal with
+> > the ti,power-gpio, then I can apply this.
+>
+> I'd say it can be a separate patch since it does not fix the Pandora
+> issues, but is a new and independent optimization.
+>
+> And in case someone complains and uses it for some out-of tree purpose
+> it can be discussed or even be reverted easier if it is a separate patch.
+>
+> I can do it in the next days.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Cc: Scott Wood <oss@buserror.net>
-Cc: Diana Craciun <diana.craciun@nxp.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>
----
- .../{kaslr-booke32.rst => kaslr-booke.rst}    | 35 ++++++++++++++++---
- 1 file changed, 31 insertions(+), 4 deletions(-)
- rename Documentation/powerpc/{kaslr-booke32.rst => kaslr-booke.rst} (59%)
+Okay, that sounds reasonable.
 
-diff --git a/Documentation/powerpc/kaslr-booke32.rst b/Documentation/powerpc/kaslr-booke.rst
-similarity index 59%
-rename from Documentation/powerpc/kaslr-booke32.rst
-rename to Documentation/powerpc/kaslr-booke.rst
-index 8b259fdfdf03..42121fed8249 100644
---- a/Documentation/powerpc/kaslr-booke32.rst
-+++ b/Documentation/powerpc/kaslr-booke.rst
-@@ -1,15 +1,18 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
--===========================
--KASLR for Freescale BookE32
--===========================
-+=========================
-+KASLR for Freescale BookE
-+=========================
- 
- The word KASLR stands for Kernel Address Space Layout Randomization.
- 
- This document tries to explain the implementation of the KASLR for
--Freescale BookE32. KASLR is a security feature that deters exploit
-+Freescale BookE. KASLR is a security feature that deters exploit
- attempts relying on knowledge of the location of kernel internals.
- 
-+KASLR for Freescale BookE32
-+-------------------------
-+
- Since CONFIG_RELOCATABLE has already supported, what we need to do is
- map or copy kernel to a proper place and relocate. Freescale Book-E
- parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
-@@ -38,5 +41,29 @@ bit of the entropy to decide the index of the 64M zone. Then we chose a
- 
-                               kernstart_virt_addr
- 
-+
-+KASLR for Freescale BookE64
-+---------------------------
-+
-+The implementation for Freescale BookE64 is similar as BookE32. One
-+difference is that Freescale BookE64 set up a TLB mapping of 1G during
-+booting. Another difference is that ppc64 needs the kernel to be
-+64K-aligned. So we can randomize the kernel in this 1G mapping and make
-+it 64K-aligned. This can save some code to creat another TLB map at early
-+boot. The disadvantage is that we only have about 1G/64K = 16384 slots to
-+put the kernel in::
-+
-+    KERNELBASE
-+
-+          64K                     |--> kernel <--|
-+           |                      |              |
-+        +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
-+        |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
-+        +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
-+        |                         |                        1G
-+        |----->   offset    <-----|
-+
-+                              kernstart_virt_addr
-+
- To enable KASLR, set CONFIG_RANDOMIZE_BASE = y. If KASLR is enable and you
- want to disable it at runtime, add "nokaslr" to the kernel cmdline.
--- 
-2.17.2
+In the meantime, I have queued up the series on my next branch (for v5.5).
 
+I fixed up a couple of complaints from checkpatch, and also added
+stable tags for the first two patches in the series, as that what
+missing.
+
+Kind regards
+Uffe
+
+
+>
+> > Thanks a lot for fixing all this mess!
+>
+> I hope the users also appreciate our work.
+>
+> Best regards,
+> Nikolaus
+>
+> >
+> > Kind regards
+> > Uffe
+> >
+> >>
+> >> PATCH V2 2019-10-19 20:41:47:
+> >> * added acked-by for wl1251 patches - Kalle Valo <kvalo@codeaurora.org>
+> >> * really removed old pdata-quirks code (not through #if 0)
+> >> * splited out a partial revert of
+> >>        efdfeb079cc3b ("regulator: fixed: Convert to use GPIO descriptor only")
+> >>  because that was introduced after v4.19 and stops the removal of
+> >>  the pdata-quirks patch from cleanly applying to v4.9, v4.14, v4.19
+> >>  - reported by Sasha Levin <sashal@kernel.org>
+> >> * added a new patch to remove old omap hsmmc since pdata quirks
+> >>  were last user - suggested by Tony Lindgren <tony@atomide.com>
+> >>
+> >> PATCH V1 2019-10-18 22:25:39:
+> >> Here we have a set of scattered patches to make the OpenPandora WiFi work again.
+> >>
+> >> v4.7 did break the pdata-quirks which made the mmc3 interface
+> >> fail completely, because some code now assumes device tree
+> >> based instantiation.
+> >>
+> >> Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
+> >>
+> >> v4.11 did break the sdio qirks for wl1251 which made the driver no longer
+> >> load, although the device was found as an sdio client.
+> >>
+> >> Fixes: 884f38607897 ("mmc: core: move some sdio IDs out of quirks file")
+> >>
+> >> To solve these issues:
+> >> * we convert mmc3 and wl1251 initialization from pdata-quirks
+> >>  to device tree
+> >> * we make the wl1251 driver read properties from device tree
+> >> * we fix the mmc core vendor ids and quirks
+> >> * we fix the wl1251 (and wl1271) driver to use only vendor ids
+> >>  from header file instead of (potentially conflicting) local
+> >>  definitions
+> >>
+> >>
+> >> H. Nikolaus Schaller (12):
+> >>  Documentation: dt: wireless: update wl1251 for sdio
+> >>  net: wireless: ti: wl1251 add device tree support
+> >>  ARM: dts: pandora-common: define wl1251 as child node of mmc3
+> >>  mmc: host: omap_hsmmc: add code for special init of wl1251 to get rid
+> >>    of pandora_wl1251_init_card
+> >>  omap: pdata-quirks: revert pandora specific gpiod additions
+> >>  omap: pdata-quirks: remove openpandora quirks for mmc3 and wl1251
+> >>  omap: remove omap2_hsmmc_info in old hsmmc.[ch] and update Makefile
+> >>  mmc: host: omap-hsmmc: remove init_card pdata callback from pdata
+> >>  mmc: sdio: fix wl1251 vendor id
+> >>  mmc: core: fix wl1251 sdio quirks
+> >>  net: wireless: ti: wl1251 use new SDIO_VENDOR_ID_TI_WL1251 definition
+> >>  net: wireless: ti: remove local VENDOR_ID and DEVICE_ID definitions
+> >>
+> >> .../bindings/net/wireless/ti,wl1251.txt       |  26 +++
+> >> arch/arm/boot/dts/omap3-pandora-common.dtsi   |  36 +++-
+> >> arch/arm/mach-omap2/Makefile                  |   3 -
+> >> arch/arm/mach-omap2/common.h                  |   1 -
+> >> arch/arm/mach-omap2/hsmmc.c                   | 171 ------------------
+> >> arch/arm/mach-omap2/hsmmc.h                   |  32 ----
+> >> arch/arm/mach-omap2/pdata-quirks.c            | 105 -----------
+> >> drivers/mmc/core/quirks.h                     |   7 +
+> >> drivers/mmc/host/omap_hsmmc.c                 |  30 ++-
+> >> drivers/net/wireless/ti/wl1251/sdio.c         |  23 ++-
+> >> drivers/net/wireless/ti/wlcore/sdio.c         |   8 -
+> >> include/linux/mmc/sdio_ids.h                  |   2 +
+> >> include/linux/platform_data/hsmmc-omap.h      |   3 -
+> >> 13 files changed, 111 insertions(+), 336 deletions(-)
+> >> delete mode 100644 arch/arm/mach-omap2/hsmmc.c
+> >> delete mode 100644 arch/arm/mach-omap2/hsmmc.h
+> >>
+> >> --
+> >> 2.23.0
+> >>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
