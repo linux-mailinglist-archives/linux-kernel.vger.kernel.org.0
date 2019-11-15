@@ -2,177 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AEA3FD278
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 02:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B089FD27F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 02:35:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfKOBdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 20:33:25 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39220 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbfKOBdY (ORCPT
+        id S1727448AbfKOBfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 20:35:17 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38001 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbfKOBfR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 20:33:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3900961067; Fri, 15 Nov 2019 01:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573781604;
-        bh=VTBzwwJodLYvkUFlF5wil68XysauCwqW0WsHUJpxbKM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MOPBtNtjoP1TlyKvikj8jIMxAwLTij7v4JnLqyR0vG1hUlAGhirMKmHErtU+ad8aC
-         Msi4yb6ULOHwJfGSzc4ewOn10tKTPDmma1Zr+f9qe7R2VfNMl7sqXEJcRrpsfv0Snb
-         qCYyIX3i+UFxGiiIkp8SB+CCvDC/0ulSikjIdmvk=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id ED7F660A37;
-        Fri, 15 Nov 2019 01:33:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573781603;
-        bh=VTBzwwJodLYvkUFlF5wil68XysauCwqW0WsHUJpxbKM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TSccu8B15kPEbE0ljTxC+PMD9UjwyawQdv7yUHUePL6kbh5aZdh/QE8rSWcqB22zt
-         rhFWQszFVdqhiP8V4rBC6pDI5V/6K8lLR39JcqICLP0UVhErBcmkPotfV33eBxFkEK
-         oHVN6ge7/wNg7zl4GPsvhOhRfntC9EW42ffx2h/w=
+        Thu, 14 Nov 2019 20:35:17 -0500
+Received: by mail-wr1-f67.google.com with SMTP id i12so9156015wro.5;
+        Thu, 14 Nov 2019 17:35:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B2XNQuUR8Wh6kRLjMqlhXvwKQ8d9fAfymRV8s7wKrPI=;
+        b=oS+L4APaOZrpJXEc1LLhVdt8mkJ12CUna5vRiYhGh4GfIXHelKvs9BXZXdDQkJISzl
+         pFx9HsScYfYTw51MURxTbA7Z5Vku8km4XuZs5prR0VxkFNEMBO7j/Tdd3ufqo4S3ehas
+         0RjA21mxGrsYWpjnvT2vYkCh1NKOtz21qBr1KQACAZajhdd2VGjaI9ny1cJU6mJyHXWR
+         FOZzXQJts1qA0FZ8f6hEo52ulY+VGodgXRQVLsg0RGudlRovFOXdEoCi7Cs/zfVlmEwN
+         K9W/eA0EwgkQyNZXVpfb/BJXdjyft2a8KV/5H0a81JANtQwsdHMXKze+WIsz3Za5GNTW
+         tmpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B2XNQuUR8Wh6kRLjMqlhXvwKQ8d9fAfymRV8s7wKrPI=;
+        b=U4gwJL1VOlE5//2feZsggLKkGtGhZAkNSfLfO1K37lIHYcM9qPTxrH7NF6k8MjCKgW
+         hjqlkyS7/rnz4J1UW0h+Zm3L8xtgo8G6Mfs8I1/sIKg2/PohBpr+GUGnzc9VduEw4Sex
+         osMOLG6s5+iDCjTzcdazxRLKCqmqEWWSCKEqdFL7agsxz7rnLdJnVYJAzdtgmXRFD8HD
+         ot7rWLi0Jf4LpcbQ/A/HAojSFNxorMO5BoM91tNYIuvr93jr63fio4VoCuyziQDBEULn
+         xn9TLtqCql6g7JaTcFFg3ezXBfmwrRs9IA+vl28eedxpqPo0GVFQiYmMEKuFkh7o3Aih
+         zsNA==
+X-Gm-Message-State: APjAAAU36KlbreJ38/HMBI2TQAidANrJu5Fp7fxXF70yWXSQZ3uZE7Kj
+        FUh5/1MSUCQ3pg/yWiqk4/zBmUcwQbEQ8dsj/jg=
+X-Google-Smtp-Source: APXvYqwRXz+nyq3UvXDsIXwlYqr0wfbLRVw8mbwknO68m+ZoU3fcqdhkspiN8I/+JjRfETY84SFGP6yFGTBxFQ9aeik=
+X-Received: by 2002:adf:9786:: with SMTP id s6mr12669139wrb.188.1573781714445;
+ Thu, 14 Nov 2019 17:35:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 15 Nov 2019 09:33:22 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Avri Altman <Avri.Altman@wdc.com>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 7/7] scsi: ufs: Fix error handing during hibern8 enter
-In-Reply-To: <MN2PR04MB699130F410CDE9BFB5815CC0FC710@MN2PR04MB6991.namprd04.prod.outlook.com>
-References: <1573627552-12615-1-git-send-email-cang@codeaurora.org>
- <1573627552-12615-8-git-send-email-cang@codeaurora.org>
- <MN2PR04MB699130F410CDE9BFB5815CC0FC710@MN2PR04MB6991.namprd04.prod.outlook.com>
-Message-ID: <258c6c088cafb4c0b89e8e9439cfa06e@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20191111090230.3402-1-chunyan.zhang@unisoc.com>
+ <20191111090230.3402-3-chunyan.zhang@unisoc.com> <20191114205235.GA16668@bogus>
+In-Reply-To: <20191114205235.GA16668@bogus>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Fri, 15 Nov 2019 09:34:38 +0800
+Message-ID: <CAAfSe-s==xzeK_Y0rVezunR0T86b7ZcASo4HcW6g74qH7v-vbg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: serial: Convert sprd-uart to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-14 19:06, Avri Altman wrote:
->> 
->> 
->> From: Subhash Jadavani <subhashj@codeaurora.org>
->> 
->> During clock gating (ufshcd_gate_work()), we first put the link 
->> hibern8 by
->> calling ufshcd_uic_hibern8_enter() and if ufshcd_uic_hibern8_enter() 
->> returns
->> success (0) then we gate all the clocks.
->> Now let’s zoom in to what ufshcd_uic_hibern8_enter() does internally:
->> It calls __ufshcd_uic_hibern8_enter() which on detecting the 
->> LINERESET,
->> initiates the full recovery and puts the link back to highest HS gear 
->> and returns
->> success (0) to ufshcd_uic_hibern8_enter() which is the issue as link 
->> is still in
->> active state due to recovery!
->> Now ufshcd_uic_hibern8_enter() returns success to ufshcd_gate_work() 
->> and
->> hence it goes ahead with gating the UFS clock while link is still in 
->> active state
->> hence I believe controller would raise UIC error interrupts. But when 
->> we service
->> the interrupt, clocks might have already been disabled!
->> 
->> This change fixes for this by returning failure from
->> __ufshcd_uic_hibern8_enter() if recovery succeeds as link is still not 
->> in hibern8,
->> upon receiving the error ufshcd_hibern8_enter() would initiate retry 
->> to put the
->> link state back into hibern8.
->> 
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
->>  drivers/scsi/ufs/ufshcd.c | 19 ++++++++++++++-----
->>  1 file changed, 14 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c 
->> index
->> 7a5a904..934c27a 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -3891,15 +3891,24 @@ static int __ufshcd_uic_hibern8_enter(struct
->> ufs_hba *hba)
->>                              ktime_to_us(ktime_sub(ktime_get(), 
->> start)), ret);
->> 
->>         if (ret) {
->> +               int err;
->> +
->>                 dev_err(hba->dev, "%s: hibern8 enter failed. ret = 
->> %d\n",
->>                         __func__, ret);
->> 
->>                 /*
->> -                * If link recovery fails then return error so that 
->> caller
->> -                * don't retry the hibern8 enter again.
->> +                * If link recovery fails then return error code 
->> (-ENOLINK)
->> +                * returned ufshcd_link_recovery().
->> +                * If link recovery succeeds then return -EAGAIN to 
->> attempt
->> +                * hibern8 enter retry again.
-> You no longer returning -ENOLINK, and either way retrying, regardless
-> of the error code.
-> Better check that the commit log is still telling the correct story,
-> taking into consideration all those recent fixes and all.
-> 
+On Fri, 15 Nov 2019 at 04:52, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Nov 11, 2019 at 05:02:27PM +0800, Chunyan Zhang wrote:
+> >
+> > Convert the sprd-uart binding to DT schema using json-schema.
+> >
+> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > ---
+> >  .../devicetree/bindings/serial/sprd-uart.txt  | 32 ---------
+> >  .../devicetree/bindings/serial/sprd-uart.yaml | 69 +++++++++++++++++++
+> >  2 files changed, 69 insertions(+), 32 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/serial/sprd-uart.txt
+> >  create mode 100644 Documentation/devicetree/bindings/serial/sprd-uart.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/serial/sprd-uart.txt b/Documentation/devicetree/bindings/serial/sprd-uart.txt
+> > deleted file mode 100644
+> > index 9607dc616205..000000000000
+> > --- a/Documentation/devicetree/bindings/serial/sprd-uart.txt
+> > +++ /dev/null
+> > @@ -1,32 +0,0 @@
+> > -* Spreadtrum serial UART
+> > -
+> > -Required properties:
+> > -- compatible: must be one of:
+> > -  * "sprd,sc9836-uart"
+> > -  * "sprd,sc9860-uart", "sprd,sc9836-uart"
+> > -
+> > -- reg: offset and length of the register set for the device
+> > -- interrupts: exactly one interrupt specifier
+> > -- clock-names: Should contain following entries:
+> > -  "enable" for UART module enable clock,
+> > -  "uart" for UART clock,
+> > -  "source" for UART source (parent) clock.
+> > -- clocks: Should contain a clock specifier for each entry in clock-names.
+> > -  UART clock and source clock are optional properties, but enable clock
+> > -  is required.
+> > -
+> > -Optional properties:
+> > -- dma-names: Should contain "rx" for receive and "tx" for transmit channels.
+> > -- dmas: A list of dma specifiers, one for each entry in dma-names.
+> > -
+> > -Example:
+> > -     uart0: serial@0 {
+> > -             compatible = "sprd,sc9860-uart",
+> > -                          "sprd,sc9836-uart";
+> > -             reg = <0x0 0x100>;
+> > -             interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> > -             dma-names = "rx", "tx";
+> > -             dmas = <&ap_dma 19>, <&ap_dma 20>;
+> > -             clock-names = "enable", "uart", "source";
+> > -             clocks = <&clk_ap_apb_gates 9>, <&clk_uart0>, <&ext_26m>;
+> > -     };
+> > diff --git a/Documentation/devicetree/bindings/serial/sprd-uart.yaml b/Documentation/devicetree/bindings/serial/sprd-uart.yaml
+> > new file mode 100644
+> > index 000000000000..0cc4668a9b9c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/serial/sprd-uart.yaml
+> > @@ -0,0 +1,69 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+>
+> Dual license please. If you are okay with that on both patches, I can
+> fix them and apply patches 1-4.
 
-Thanks for pointing this.
+Sure, thanks for your help.
 
-Best Regards,
-Can Guo.
+Chunyan
 
->>                  */
->> -               if (ufshcd_link_recovery(hba))
->> -                       ret = -ENOLINK;
->> +               err = ufshcd_link_recovery(hba);
->> +               if (err) {
->> +                       dev_err(hba->dev, "%s: link recovery failed", 
->> __func__);
->> +                       ret = err;
->> +               } else {
->> +                       ret = -EAGAIN;
->> +               }
->>         } else
->>                 ufshcd_vops_hibern8_notify(hba, 
->> UIC_CMD_DME_HIBER_ENTER,
->>                                                                 
->> POST_CHANGE); @@ -3913,7 +3922,7 @@
->> static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
->> 
->>         for (retries = UIC_HIBERN8_ENTER_RETRIES; retries > 0; 
->> retries--) {
->>                 ret = __ufshcd_uic_hibern8_enter(hba);
->> -               if (!ret || ret == -ENOLINK)
->> +               if (!ret)
->>                         goto out;
->>         }
->>  out:
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
+>
+> Rob
