@@ -2,71 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754F8FD67C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:36:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB770FD697
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfKOGg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:36:26 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56494 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725774AbfKOGfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:35:43 -0500
-X-UUID: 4fd331558b9d414794818d6513d7117a-20191115
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=rk57yqGMmLCWAiKj3bUDvcywvFJ3T7OqD7JZ6VwhDU4=;
-        b=UB0SWHg95dooa4dydC6ecVveeXLMd9W9mOHNDhRUkv8P01rDr/YjQmJbZHIjAyts+4GsTaRZmHhL23GLl/M6J6/xIelgranoUFGDbxLiAQFxfRh+08Dc/d/59XRq+ZXEEO4xHXL5sCGx24TlBPGdzCVoVIXk6+2kLkGIzSJCiuU=;
-X-UUID: 4fd331558b9d414794818d6513d7117a-20191115
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 254854927; Fri, 15 Nov 2019 14:35:36 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 15 Nov 2019 14:35:27 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 15 Nov 2019 14:35:27 +0800
-Message-ID: <1573799728.4956.5.camel@mtkswgap22>
-Subject: Re: [PATCH v5 3/7] scsi: ufs: Fix up auto hibern8 enablement
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Can Guo <cang@codeaurora.org>
-CC:     <asutoshd@codeaurora.org>, <nguyenb@codeaurora.org>,
-        <rnayak@codeaurora.org>, <linux-scsi@vger.kernel.org>,
-        <kernel-team@android.com>, <saravanak@google.com>,
-        <salyzyn@google.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 15 Nov 2019 14:35:28 +0800
-In-Reply-To: <1573798172-20534-4-git-send-email-cang@codeaurora.org>
-References: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
-         <1573798172-20534-4-git-send-email-cang@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726996AbfKOGwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:52:10 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6676 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726182AbfKOGwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 01:52:09 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B10AEAB3986D6239ACFC;
+        Fri, 15 Nov 2019 14:36:03 +0800 (CST)
+Received: from huawei.com (10.175.105.18) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
+ 14:35:53 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <akpm@linux-foundation.org>, <richardw.yang@linux.intel.com>,
+        <sfr@canb.auug.org.au>, <rppt@linux.ibm.com>, <jannh@google.com>,
+        <steve.capper@arm.com>, <catalin.marinas@arm.com>,
+        <aarcange@redhat.com>, <chenjianhong2@huawei.com>,
+        <walken@google.com>, <dave.hansen@linux.intel.com>,
+        <tiny.windzz@gmail.com>
+CC:     <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] mm: get rid of odd jump label in find_mergeable_anon_vma
+Date:   Fri, 15 Nov 2019 14:36:08 +0800
+Message-ID: <1573799768-15650-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-Originating-IP: [10.175.105.18]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2FuLA0KDQpPbiBUaHUsIDIwMTktMTEtMTQgYXQgMjI6MDkgLTA4MDAsIENhbiBHdW8gd3Jv
-dGU6DQo+ICsJaWYgKGhiYS0+YWhpdCAhPSBhaGl0KQ0KPiArCQloYmEtPmFoaXQgPSBhaGl0Ow0K
-PiAgCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoaGJhLT5ob3N0LT5ob3N0X2xvY2ssIGZsYWdzKTsN
-Cj4gKwlpZiAoIXBtX3J1bnRpbWVfc3VzcGVuZGVkKGhiYS0+ZGV2KSkgew0KDQpBbHdheXMgZG8g
-cG1fcnVudGltZV9nZXRfc3luYygpIGhlcmUgY291bGQgYXZvaWQgcG9zc2libGUgcmFjaW5nPw0K
-DQpBbmQgdGh1cyBBSDggY291bGQgYmUgZW5hYmxlZCByZWdhcmRsZXNzIG9mIHJ1bnRpbWUgc3Rh
-dHVzLg0KDQo+ICsJCXBtX3J1bnRpbWVfZ2V0X3N5bmMoaGJhLT5kZXYpOw0KPiArCQl1ZnNoY2Rf
-aG9sZChoYmEsIGZhbHNlKTsNCj4gKwkJdWZzaGNkX2F1dG9faGliZXJuOF9lbmFibGUoaGJhKTsN
-Cj4gKwkJdWZzaGNkX3JlbGVhc2UoaGJhKTsNCj4gKwkJcG1fcnVudGltZV9wdXQoaGJhLT5kZXYp
-Ow0KPiArCX0NCj4gIH0NCg0KVGhhbmtzLA0KU3RhbmxleQ0KDQo=
+From: Miaohe Lin <linmiaohe@huawei.com>
+
+The odd jump label try_prev and none is not really need
+in func find_mergeable_anon_vma, eliminate them to
+improve readability.
+
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ mm/mmap.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 4d4db76a07da..ab980d468a10 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1276,25 +1276,21 @@ static struct anon_vma *reusable_anon_vma(struct vm_area_struct *old, struct vm_
+  */
+ struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *vma)
+ {
+-	struct anon_vma *anon_vma;
++	struct anon_vma *anon_vma = NULL;
+ 	struct vm_area_struct *near;
+ 
+ 	near = vma->vm_next;
+-	if (!near)
+-		goto try_prev;
+-
+-	anon_vma = reusable_anon_vma(near, vma, near);
++	if (near)
++		anon_vma = reusable_anon_vma(near, vma, near);
+ 	if (anon_vma)
+ 		return anon_vma;
+-try_prev:
+-	near = vma->vm_prev;
+-	if (!near)
+-		goto none;
+ 
+-	anon_vma = reusable_anon_vma(near, near, vma);
++	near = vma->vm_prev;
++	if (near)
++		anon_vma = reusable_anon_vma(near, near, vma);
+ 	if (anon_vma)
+ 		return anon_vma;
+-none:
++
+ 	/*
+ 	 * There's no absolute need to look only at touching neighbours:
+ 	 * we could search further afield for "compatible" anon_vmas.
+-- 
+2.19.1
 
