@@ -2,29 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29A81FE4EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD38FE4F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfKOSXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:23:37 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44352 "EHLO
+        id S1726605AbfKOS3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:29:24 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44357 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfKOSXh (ORCPT
+        with ESMTP id S1726131AbfKOS3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 13:23:37 -0500
+        Fri, 15 Nov 2019 13:29:24 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iVgFq-0005L4-VL; Fri, 15 Nov 2019 19:23:35 +0100
-Date:   Fri, 15 Nov 2019 19:23:29 +0100 (CET)
+        id 1iVgLO-0005NM-Ry; Fri, 15 Nov 2019 19:29:19 +0100
+Date:   Fri, 15 Nov 2019 19:29:17 +0100 (CET)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jonathan Corbet <corbet@lwn.net>
-cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] docs: Add request_irq() documentation
-In-Reply-To: <20191004163955.14419-3-corbet@lwn.net>
-Message-ID: <alpine.DEB.2.21.1911151922430.28787@nanos.tec.linutronix.de>
-References: <20191004163955.14419-1-corbet@lwn.net> <20191004163955.14419-3-corbet@lwn.net>
+To:     "Chang S. Bae" <chang.seok.bae@intel.com>
+cc:     linux-kernel@vger.kernel.org, bp@alien8.de, luto@kernel.org,
+        hpa@zytor.com, dave.hansen@intel.com, tony.luck@intel.com,
+        ak@linux.intel.com, ravi.v.shankar@intel.com
+Subject: Re: [PATCH v9 00/17] Enable FSGSBASE instructions
+In-Reply-To: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
+Message-ID: <alpine.DEB.2.21.1911151926380.28787@nanos.tec.linutronix.de>
+References: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -36,16 +38,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 Oct 2019, Jonathan Corbet wrote:
-
-> While checking the results of the :c:func: removal, I noticed that there
-> was no documentation for request_irq(), and request_threaded_irq() was not
-> mentioned at all.  Add a kerneldoc comment for request_irq() and add
-> request_threaded_irq() to the list of functions.
+On Fri, 4 Oct 2019, Chang S. Bae wrote:
 > 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> Updates from v8 [10]:
+> * Internalized the interrupt check in the helper functions (Andy L.)
+> * Simplified GS base helper functions (Tony L.)
+> * Changed the patch order to put the paranoid path changes before the
+>   context switch changes (Tony L.)
+> * Fixed typos (Randy D.) and massaged a few sentences in the documentation
+> * Massaged the FSGSBASE enablement message
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+That still lacks what Andy requested quite some time ago in the V8 thread:
 
-Which reminds me that this documentation really needs some thorough
-rewrite ...
+     https://lore.kernel.org/lkml/034aaf3a-a93d-ec03-0bbd-068e1905b774@kernel.org/
+
+  "I also think that, before this series can have my ack, it needs an 
+   actual gdb maintainer to chime in, publicly, and state that they have 
+   thought about and tested the ABI changes and that gdb still works on 
+   patched kernels with and without FSGSBASE enabled.  I realize that there 
+   were all kinds of discussions, but they were all quite theoretical, and 
+   I think that the actual patches need to be considered by people who 
+   understand the concerns.  Specific test cases would be nice, too."
+
+What's the state of this?
+
+Thanks,
+
+	tglx
