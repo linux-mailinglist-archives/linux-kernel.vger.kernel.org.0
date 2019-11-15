@@ -2,74 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0426FD9E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:51:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A72BCFD9F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:53:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfKOJue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:50:34 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37340 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727374AbfKOJu2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:50:28 -0500
-Received: by mail-lj1-f193.google.com with SMTP id d5so10008786ljl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 01:50:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x/UA8N9071Hs67JB/CtCLOKYsRujWaxB61T4BkLclrk=;
-        b=Uj//MN/eYpagIL5SFVK5o9mqojQITuF2XVCgryREyFOYqXwn9xWNIEKr/hnSu/yd37
-         OgcpwNqi83ryL9yGP1i3iNYM1NbRKkpytuLcvx7ux/H500d7XGmBTA1gGyjzvIoV1iEw
-         ld7CduY+HoP5HPEWtCzcfMm9I2Dm+Qz4o73G7hmWuJKiE/659BHe9isr8jEu6zfrXY5w
-         p6E8t5bh/a39/Z0Xs8X8yXae3wjaBpHdwtcjDJIrI75l11sES3dl5SnTE4LguB/l+0rp
-         l/TlA8QLOU8hAcIlE+mlbdA00awq8mAiygKQOZVYY63BinchNpYcFAYnxZkBzVC+ig3U
-         4gDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x/UA8N9071Hs67JB/CtCLOKYsRujWaxB61T4BkLclrk=;
-        b=HmVh4mEd/FqEVbC0YDQWtnKWbfBw3/lpfbZPz3/QYuiJCoSuAI4/Vk2YnygkCQA5M6
-         47gBga2UYwbr1xDygs2/Qz6Tmg0otFe0awd+ocxGMk7PpepM2ZfwHB0ej2wsSjPt7UDP
-         W4UjmhGHEa9DA4bghI7BAjo495DErxqP6CV7OuvwuyTghJuN+JaoaLM8MWjmkw7mQQej
-         NOMLLkTnxz2hlN8mas2Bdj1tqF6lvHFHGy+b0Kq3ZjBkaYnnhi41Lf+sja9+HnQ7AqIW
-         Xo2QsZOZjCr74rY31xJbdwRr6Gos+g3bu6EiXZN1P5dh1XcNcH+tfQhibtdfSH9OnhrA
-         B7qA==
-X-Gm-Message-State: APjAAAX48lPGYnjo0f5XcQ3rIlcDDZL/BZEonKoil4u8uy3We8uGxpIn
-        c8ltxbagLt07zqX3BH5uNW86+/fNVyB1GoDKUhelvg==
-X-Google-Smtp-Source: APXvYqzoH0lE2meSnOsWYn4w2Vnm6zFN87zG7pAIdO4qZpC8+1a/pUkOgr9YtQTghftKTYLC9GIcmmSSdCngI9weV+A=
-X-Received: by 2002:a2e:161b:: with SMTP id w27mr10500539ljd.183.1573811425820;
- Fri, 15 Nov 2019 01:50:25 -0800 (PST)
+        id S1727183AbfKOJxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:53:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35858 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbfKOJxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:53:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3AD6BB18D;
+        Fri, 15 Nov 2019 09:53:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 62F3C1E3BEA; Fri, 15 Nov 2019 10:53:00 +0100 (CET)
+Date:   Fri, 15 Nov 2019 10:53:00 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-mm <linux-mm@kvack.org>,
+        fsdev <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>
+Subject: Re: [RFC v2] writeback: add elastic bdi in cgwb bdp
+Message-ID: <20191115095300.GB9043@quack2.suse.cz>
+References: <20191026104656.15176-1-hdanton@sina.com>
+ <20191115033240.11236-1-hdanton@sina.com>
 MIME-Version: 1.0
-References: <20191115062454.7025-1-hslester96@gmail.com>
-In-Reply-To: <20191115062454.7025-1-hslester96@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 15 Nov 2019 10:50:14 +0100
-Message-ID: <CACRpkdaXcas08jy+oZOi4fKuXZYkbFAOipqf49smSdGd6TmFag@mail.gmail.com>
-Subject: Re: [PATCH] net: gemini: add missed free_netdev
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115033240.11236-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 7:25 AM Chuhong Yuan <hslester96@gmail.com> wrote:
+On Fri 15-11-19 11:32:40, Hillf Danton wrote:
+> 
+> On Thu, 14 Nov 2019 13:17:46 +0100 Jan Kara wrote:
+> > 
+> > On Sat 26-10-19 18:46:56, Hillf Danton wrote:
+> > > 
+> > > The elastic bdi is the mirror bdi of spinning disks, SSD, USB and
+> > > other storage devices/instruments on market. The performance of
+> > > ebdi goes up and down as the pattern of IO dispatched changes, as
+> > > approximately estimated as below.
+> > > 
+> > > 	P = j(..., IO pattern);
+> > > 
+> > > In ebdi's view, the bandwidth currently measured in balancing dirty
+> > > pages has close relation to its performance because the former is a
+> > > part of the latter.
+> > > 
+> > > 	B = y(P);
+> > > 
+> > > The functions above suggest there may be a layer violation if it
+> > > could be better measured somewhere below fs.
+> > > 
+> > > It is measured however to the extent that makes every judge happy,
+> > > and is playing a role in dispatching IO with the IO pattern entirely
+> > > ignored that is volatile in nature.
+> > > 
+> > > And it helps to throttle the dirty speed, with the figure ignored
+> > > that DRAM in general is x10 faster than ebdi. If B is half of P for
+> > > instance, then it is near 5% of dirty speed, just 2 points from the
+> > > figure in the snippet below.
+> > > 
+> > > /*
+> > >  * If ratelimit_pages is too high then we can get into dirty-data overload
+> > >  * if a large number of processes all perform writes at the same time.
+> > >  * If it is too low then SMP machines will call the (expensive)
+> > >  * get_writeback_state too often.
+> > >  *
+> > >  * Here we set ratelimit_pages to a level which ensures that when all CPUs are
+> > >  * dirtying in parallel, we cannot go more than 3% (1/32) over the dirty memory
+> > >  * thresholds.
+> > >  */
+> > > 
+> > > To prevent dirty speed from running away from laundry speed, ebdi
+> > > suggests the walk-dog method to put in bdp as a leash seems to
+> > > churn less in IO pattern.
+> > > 
+> > > V2 is based on next-20191025.
+> > 
+> > Honestly, the changelog is still pretty incomprehensible as Andrew already
+> > mentioned. Also I completely miss there, what are the benefits of this work
+> > compared to what we currently have.
+> > 
+> Hey Jan
+> 
+> In the room which has been somewhere between 3% and 5% for bdp since
+> 143dfe8611a6 ("writeback: IO-less balance_dirty_pages()") a bdp is
+> proposed with target of surviving tests like LTP without regressions
+> introduced, so overall the concerned benefit is that bdp is becoming
+> more diverse if the diversity under linux/fs is good for the 99%.
 
-> This driver forgets to free allocated netdev in remove like
-> what is done in probe failure.
-> Add the free to fix it.
->
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+What do you mean by "balance_dirty_pages() is becoming more diverse"?
 
-Looks correct!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
