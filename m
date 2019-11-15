@@ -2,92 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DD1FE0A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 005D9FE0B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfKOO4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 09:56:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40462 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727526AbfKOO4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 09:56:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3CBA7B15E;
-        Fri, 15 Nov 2019 14:56:39 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3ABBE1E4407; Fri, 15 Nov 2019 15:56:38 +0100 (CET)
-Date:   Fri, 15 Nov 2019 15:56:38 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Sebastian Siewior <bigeasy@linutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: Re: [PATCH] fs/buffer: Make BH_Uptodate_Lock bit_spin_lock a regular
- spinlock_t
-Message-ID: <20191115145638.GA5461@quack2.suse.cz>
-References: <20190820170818.oldsdoumzashhcgh@linutronix.de>
- <20190820171721.GA4949@bombadil.infradead.org>
- <alpine.DEB.2.21.1908201959240.2223@nanos.tec.linutronix.de>
- <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
+        id S1727809AbfKOO5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 09:57:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44181 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727599AbfKOO5h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 09:57:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id f2so11302033wrs.11
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 06:57:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flowbird.group; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=LhVSGfEhFzAltpE8aRiy3vpD2H1oU8Mhp/p8hqjjUJk=;
+        b=eFp7WM7WqUS0dAkxY6zmVayqvN0U6ecqQ2z9n4gKEkYjfdgWqfOUJ6SRplWsNH267a
+         GeHWvBzZMtMYR52ly7SOrP4Mfw16hJYy4r1l6lMJwNdXO2jJ95OFpcZRKt1MU5GXXycX
+         08wu9HCqA0m9nv2zsmbePJCDfeQwBhrp6wPFYkN9j9BeIxZmWyWEcgmOj8Vwz1LB03dH
+         3SbG7jA3F3X7uzg54TzU6pLSRmYdE6ts1OOsD4MoEEqbEI8kt+gNma+lKr0ux6RKbtX8
+         gC8cvNt6g7mSf1kvegxJlC2Judje44+s4PXXRWwYNr8c9cxAg1YNBwJth92O7is8ZrPP
+         YIog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=LhVSGfEhFzAltpE8aRiy3vpD2H1oU8Mhp/p8hqjjUJk=;
+        b=V/S+K1xLzxmpuaIwcjBPouoOSsh5NruF4+RzeKk5MrA+UaPH2nmReCMNHZW6OGP5fy
+         tbSF53UAhgNVcEGh7vfu6v7mLUTz1gzReALMpVSbOIvKbqOvwwYRHY8PTRtC4V7DBrte
+         YqsFn/TlCuAHMtt7J9RuP0mO1QwJKadh7BOngJY0R/DGlZkzSgCEc1R+fwGvNjpTNaEV
+         Qz4qB9Xade2KLi1TeKP1eR+PMyYpMP9r8LByBNYooro2OdZdVQVfK/CrEx9YuFSHiZDI
+         WX6ziWjPvrhO1UoIn5EXz0XH1gg1DzFg53CpR13qNUc+0MtpA6/C8c66d2hPC4tn8obL
+         2ipA==
+X-Gm-Message-State: APjAAAXrMMeyBsNBh2uhDdB+jzjiBd3eVv1ixbOSCVqzChiR/sey4UFH
+        3VjMrPCRSQA1EKOwF6wzXn+a0RBglKsbgw==
+X-Google-Smtp-Source: APXvYqwqOQ7MLMABPEV4GiRIClcn1AxUx+OW8p5Iv5Mb6AIt0bAoEipWbmZXhyVfMmLkxa6wYMd/bA==
+X-Received: by 2002:adf:aa92:: with SMTP id h18mr16585766wrc.150.1573829855230;
+        Fri, 15 Nov 2019 06:57:35 -0800 (PST)
+Received: from [10.32.51.158] ([185.149.63.251])
+        by smtp.gmail.com with ESMTPSA id q15sm11782035wrs.91.2019.11.15.06.57.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Nov 2019 06:57:34 -0800 (PST)
+Subject: Re: [PATCH v17 00/19] Multicolor Framework
+To:     Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191114133023.32185-1-dmurphy@ti.com>
+From:   Martin Fuzzey <martin.fuzzey@flowbird.group>
+Message-ID: <55c6a873-9ed7-0c00-b85b-7a0f7ae7046e@flowbird.group>
+Date:   Fri, 15 Nov 2019 15:57:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191114133023.32185-1-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: fr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 11-10-19 13:25:25, Sebastian Siewior wrote:
-> On 2019-08-20 20:01:14 [+0200], Thomas Gleixner wrote:
-> > On Tue, 20 Aug 2019, Matthew Wilcox wrote:
-> > > On Tue, Aug 20, 2019 at 07:08:18PM +0200, Sebastian Siewior wrote:
-> > > > Bit spinlocks are problematic if PREEMPT_RT is enabled, because they
-> > > > disable preemption, which is undesired for latency reasons and breaks when
-> > > > regular spinlocks are taken within the bit_spinlock locked region because
-> > > > regular spinlocks are converted to 'sleeping spinlocks' on RT. So RT
-> > > > replaces the bit spinlocks with regular spinlocks to avoid this problem.
-> > > > Bit spinlocks are also not covered by lock debugging, e.g. lockdep.
-> > > > 
-> > > > Substitute the BH_Uptodate_Lock bit spinlock with a regular spinlock.
-> > > > 
-> > > > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > > > [bigeasy: remove the wrapper and use always spinlock_t]
-> > > 
-> > > Uhh ... always grow the buffer_head, even for non-PREEMPT_RT?  Why?
-> > 
-> > Christoph requested that:
-> > 
-> >   https://lkml.kernel.org/r/20190802075612.GA20962@infradead.org
-> 
-> What do we do about this one?
+On 14/11/2019 14:30, Dan Murphy wrote:
+> Hello
+>
+> Simple fix in the multicolor code where the extended registration call was not
+> called in the devm_* function
+>
+> Thanks Martin F. for finding this issue.
+>
+> Hopefully this will be pulled in for the 5.5 merge window.
 
-I was thinking about this for quite some time. In the end I think the patch
-is almost fine but I'd name the lock b_update_lock and put it just after
-b_size element in struct buffer_head to use the hole there. That way we
-don't grow struct buffer_head.
+For patches 2, 3, 4
 
-With some effort, we could even shrink struct buffer_head from 104 bytes
-(on x86_64) to 96 bytes but I don't think that effort is worth it (I'd find
-it better use of time to actually work on getting rid of buffer heads
-completely).
+     Tested-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
 
-								Honza
+I have applied patch 1 to my tree too but, being just documentation, 
+it's not testable.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I don't have a lp50xx but have written my own multicolor driver on top 
+of this patchset (for a custom LED controller implemented in a MCU).
+
+
+Martin
+
+
