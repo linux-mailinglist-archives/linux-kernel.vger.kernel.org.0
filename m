@@ -2,207 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D725FDD7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B0CFFDDB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfKOMZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:25:22 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36408 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbfKOMZS (ORCPT
+        id S1727926AbfKOM0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:26:15 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32956 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727668AbfKOMZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:25:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k15so10502941lja.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 04:25:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=a5dA1if5/dQUQeOTvdz3dJTa9SYokhdVUuKyxt1MvCE=;
-        b=yWCtHgRlb4JZrA50T4PvT54dR5u+qgTHvhqG+YCar+56kZzaBL1GHP4g9OKYRAiq3q
-         8yjgciJsyX4xve0vLX7QAOCUtaTNM6p58BmQDeip9IcENPnSCmpEmhqekYKAlZFxWAJo
-         d8/gD7pxEipb4Zqr0AJlDuCiaSVVkQl2ldBcVIfwCZ7CcczIILwMLvOZIQjiVMmTxkmO
-         Rbu4huZoF982p2IGm30Dyn22gJam6KHByalfJ+1lFQ33UCjNajxN9dALj3LTYcSB7hQP
-         t1RW37inWkg8hUugq+lFfKrQNQRMWsYKH6T8shNgx3L3Fez1L8InBtQgk+qF/XA/yKM9
-         ZuCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=a5dA1if5/dQUQeOTvdz3dJTa9SYokhdVUuKyxt1MvCE=;
-        b=i2hx7+bYeiSazDGlq8RU+/D6S0KqBDue6We5pF3cXbni5/9DAuZYo7vCloK9gRyV2a
-         jQ7m3NiQ3aV6g+3Pqz79esOePBEan5dEtLSmEsrPvpYQudbFM98W1pFYeiVXvZH/4VCu
-         rkzPx4EuO2SojPzWRhXQIaov/zU1jxEPR0hhRKpRW4eeQxZ3dOltp/3RlDNJuiYXCjL2
-         ZiyHP0wxvjtiTukYvic/KXtc3w/keLYowJ0AXNMMDol7tduoYN3t1i8O+cG1JhQIr84G
-         MOsMl1zEnVikv7nL0wIkva4QGRQZtgkfGhOTf/i+6ZmZEPyB3Ww+69dXfwobeDU3vT6t
-         7RAw==
-X-Gm-Message-State: APjAAAW07KdhFV+B/02sePq0os5GLqCs33QjHsNDSJVn5Mc3jQoTv4b4
-        4LosrPpwHJAiJDNkfGy8SL+dkn+rGcbXd4MaLOBw5w==
-X-Google-Smtp-Source: APXvYqx8XtWvU/urGTyHEcUEsNketHxIixjd/Ef3NbTOYU3Cg7krIvcGwOH3/8NFn7fsISi0vWBtOnn97sLIk8bgVhk=
-X-Received: by 2002:a2e:9695:: with SMTP id q21mr10562244lji.206.1573820716098;
- Fri, 15 Nov 2019 04:25:16 -0800 (PST)
-MIME-Version: 1.0
-References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
- <20191115095447.GU4114@hirez.programming.kicks-ass.net> <CAKfTPtCTcrq1E1H8A3TL1xvALUrQ7ybPoERJ+C2O2+QXpVEZGQ@mail.gmail.com>
- <CAKfTPtA-up_9WHfTka33WRxXCatUZioYS0v5gY9jjzOGT98oLQ@mail.gmail.com> <20191115115935.GA27454@linaro.org>
-In-Reply-To: <20191115115935.GA27454@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 15 Nov 2019 13:25:04 +0100
-Message-ID: <CAKfTPtDzeFi7E3q-o7-KghKWm6eVgN4BLKKphQJYJyqCoVP5Yg@mail.gmail.com>
-Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Doug Smythies <dsmythies@telus.net>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
-        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Nov 2019 07:25:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=NoJQ/BiAhwJPJINl8oVLkVKiRSpmH92kSU++XZetC4w=; b=AX7xCxNoUWqj
+        vtQ7yCrfzLG7qoCLrx8SeqModvFHZhqGcXsHGU8f0pPjbTnSPNs7C88qKQ0OIVB6RRQ5noDvHyVNl
+        GyEVps9wjMmmyFD5WIQVNuKrmAr+kwtGtINtOUJYg+FFDbJVWyb9gFAYhb/W4Bttk+Y9/ceHShYaO
+        lsDOM=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iVaex-0000Km-W9; Fri, 15 Nov 2019 12:25:08 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 7C3AF2741609; Fri, 15 Nov 2019 12:25:07 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Christoph Fritz <chf.fritz@googlemail.com>
+Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Christian Hemp <c.hemp@phytec.de>, devicetree@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Riedmueller <s.riedmueller@phytec.de>,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: Applied "regulator: da9062: add of_map_mode support for bucks" to the regulator tree
+In-Reply-To: <1573652416-9848-3-git-send-email-chf.fritz@googlemail.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191115122507.7C3AF2741609@ypsilon.sirena.org.uk>
+Date:   Fri, 15 Nov 2019 12:25:07 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 at 12:59, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> Le Friday 15 Nov 2019 =C3=A0 11:29:03 (+0100), Vincent Guittot a =C3=A9cr=
-it :
-> > On Fri, 15 Nov 2019 at 11:18, Vincent Guittot
-> > <vincent.guittot@linaro.org> wrote:
-> > >
-> > > On Fri, 15 Nov 2019 at 10:55, Peter Zijlstra <peterz@infradead.org> w=
-rote:
-> > > >
-> > > > On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
-> > > > > update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pel=
-t decays,
-> > > > > which might be inefficient when cpufreq driver has rate limitatio=
-n.
-> > > > >
-> > > > > When a task is attached on a CPU, we have call path:
-> > > > >
-> > > > > update_load_avg()
-> > > > >   update_cfs_rq_load_avg()
-> > > > >     cfs_rq_util_change -- > trig frequency update
-> > > > >   attach_entity_load_avg()
-> > > > >     cfs_rq_util_change -- > trig frequency update
-> > > > >
-> > > > > The 1st frequency update will not take into account the utilizati=
-on of the
-> > > > > newly attached task and the 2nd one might be discard because of r=
-ate
-> > > > > limitation of the cpufreq driver.
-> > > >
-> > > > Doesn't this just show that a dumb rate limit in the driver is brok=
-en?
-> > >
-> > > But the rate limit may come from HW constraints that forces to wait
-> > > let say 4ms or even 10ms between each frequency update.
-> > >
-> > > >
-> > > > > update_cfs_rq_load_avg() is only called by update_blocked_average=
-s()
-> > > > > and update_load_avg() so we can move the call to
-> > > > > cfs_rq_util_change/cpufreq_update_util() into these 2 functions. =
-It's also
-> > > > > interesting to notice that update_load_avg() already calls direct=
-ly
-> > > > > cfs_rq_util_change() for !SMP case.
-> > > > >
-> > > > > This changes will also ensure that cpufreq_update_util() is calle=
-d even
-> > > > > when there is no more CFS rq in the leaf_cfs_rq_list to update bu=
-t only
-> > > > > irq, rt or dl pelt signals.
-> > > >
-> > > > I don't think it does that; that is, iirc the return value of
-> > > > ___update_load_sum() is 1 every time a period lapses. So even if th=
-e avg
-> > > > is 0 and doesn't change, it'll still return 1 on every period.
-> > > >
-> > > > Which is what that dumb rate-limit thing wants of course. But I'm s=
-till
-> > > > thinking that it's stupid to do. If nothing changes, don't generate
-> > > > events.
-> > >
-> > > When everything (irq, dl, rt, cfs) is 0, we don't generate events
-> > > because update_blocked_averages is no more called because
-> > > rq->has_blocked_load is clear
-> > >
-> > > With current implementation, if cfs is 0 but not irq, dl or rt, we
-> > > don't call cpufreq_update_util because it is only called through cfs
-> > >
-> > > >
-> > > > If anything, update_blocked_avgerages() should look at
-> > > > @done/others_have_blocked() to emit events for rt,dl,irq.
-> > >
-> > > other_have_blocked can be set but no decay happened during the update
-> > > and we don't need to call cpufreq_update_util
-> > >
-> > > >
-> > > > So why are we making the scheduler code more ugly instead of fixing=
- that
-> > > > driver?
-> >
-> > Also, I think that calling cfs_rq_util_change in
-> > attach_entity_load_avg is not optimal because the attach can happen at
-> > a child level before it has been propagated down to root
-> > So I'm working on trying to remove it from attach_entity_load_avg and
-> > keep it in update_load_avg. this would help cleaning the ugly
-> >
-> > -       } else if (decayed && (flags & UPDATE_TG))
-> > -               update_tg_load_avg(cfs_rq, 0);
-> > +       } else if (decayed) {
-> > +               cfs_rq_util_change(cfs_rq, 0);
-> > +
-> > +               if (flags & UPDATE_TG)
-> > +                       update_tg_load_avg(cfs_rq, 0);
-> > +       }
-> >  }
-> >
->
-> we can also do this instead :
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index d377a3f..550b6bc 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -3614,15 +3614,15 @@ static inline void update_load_avg(struct cfs_rq =
-*cfs_rq, struct sched_entity *s
->                  *
->                  * IOW we're enqueueing a task on a new CPU.
->                  */
-> -               attach_entity_load_avg(cfs_rq, se, SCHED_CPUFREQ_MIGRATIO=
-N);
-> +               attach_entity_load_avg(cfs_rq, se, 0);
->                 update_tg_load_avg(cfs_rq, 0);
-> +               decayed =3D 1;
->
-> -       } else if (decayed) {
-> -               cfs_rq_util_change(cfs_rq, 0);
-> +       } else if (decayed && (flags & UPDATE_TG))
-> +               update_tg_load_avg(cfs_rq, 0);
->
-> -               if (flags & UPDATE_TG)
-> -                       update_tg_load_avg(cfs_rq, 0);
-> -       }
-> +       if (decayed)
-> +               cfs_rq_util_change(cfs_rq, 0);
->  }
+The patch
 
-Forget this ... It's not enough and will continue to generate spurious
-call when task is at root domain
+   regulator: da9062: add of_map_mode support for bucks
 
->
->
->
-> >
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 844e7492ee3da1a8714bf3cc1dd54d777a5257c2 Mon Sep 17 00:00:00 2001
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Wed, 13 Nov 2019 14:40:14 +0100
+Subject: [PATCH] regulator: da9062: add of_map_mode support for bucks
+
+This patch adds of_map_mode support for bucks to set regulator modes
+from within regulator framework.
+
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+Signed-off-by: Christian Hemp <c.hemp@phytec.de>
+Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
+Link: https://lore.kernel.org/r/1573652416-9848-3-git-send-email-chf.fritz@googlemail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/da9062-regulator.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
+index 601002e3e012..29f4a60398a3 100644
+--- a/drivers/regulator/da9062-regulator.c
++++ b/drivers/regulator/da9062-regulator.c
+@@ -98,6 +98,20 @@ static const unsigned int da9062_buck_b_limits[] = {
+ 	2300000, 2400000, 2500000, 2600000, 2700000, 2800000, 2900000, 3000000
+ };
+ 
++static unsigned int da9062_map_buck_mode(unsigned int mode)
++{
++	switch (mode) {
++	case DA9063_BUCK_MODE_SLEEP:
++		return REGULATOR_MODE_STANDBY;
++	case DA9063_BUCK_MODE_SYNC:
++		return REGULATOR_MODE_FAST;
++	case DA9063_BUCK_MODE_AUTO:
++		return REGULATOR_MODE_NORMAL;
++	default:
++		return -EINVAL;
++	}
++}
++
+ static int da9062_buck_set_mode(struct regulator_dev *rdev, unsigned mode)
+ {
+ 	struct da9062_regulator *regl = rdev_get_drvdata(rdev);
+@@ -360,6 +374,7 @@ static const struct da9062_regulator_info local_da9061_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK1_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK1_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK1_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK1_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -396,6 +411,7 @@ static const struct da9062_regulator_info local_da9061_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK3_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK3_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK3_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK3_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -432,6 +448,7 @@ static const struct da9062_regulator_info local_da9061_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK4_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK4_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK4_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK4_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -604,6 +621,7 @@ static const struct da9062_regulator_info local_da9062_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK1_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK1_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK1_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK1_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -640,6 +658,7 @@ static const struct da9062_regulator_info local_da9062_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK2_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK2_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK2_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK2_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -676,6 +695,7 @@ static const struct da9062_regulator_info local_da9062_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK3_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK3_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK3_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK3_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -712,6 +732,7 @@ static const struct da9062_regulator_info local_da9062_regulator_info[] = {
+ 		.desc.vsel_reg = DA9062AA_VBUCK4_A,
+ 		.desc.vsel_mask = DA9062AA_VBUCK4_A_MASK,
+ 		.desc.linear_min_sel = 0,
++		.desc.of_map_mode = da9062_map_buck_mode,
+ 		.sleep = REG_FIELD(DA9062AA_VBUCK4_A,
+ 			__builtin_ffs((int)DA9062AA_BUCK4_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+-- 
+2.20.1
+
