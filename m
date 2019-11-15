@@ -2,146 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A821FD5E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A766FD5EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:16:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfKOGKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:10:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38798 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfKOGKe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:10:34 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6AA6261138; Fri, 15 Nov 2019 06:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573798232;
-        bh=WNEWdwZREdio4xxgu3pDdGhRebknE1NKUlrUVDdMD4E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nwHmypOgNRgWjVUIdWc3GFO0kfo3bsUDai94T4CSVX/OkEiarY9iUSV+/kpNlbO+r
-         6HoXgpUaWwipxGt7T08wnzRnCf1wchj+ndkYhciGV8dVKHk485atEirY2T93EZN6Dc
-         ZpZvVlyCW0MAbvKO13xDMvATAFTo5E5WI9iNkyiE=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727081AbfKOGQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:16:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726182AbfKOGQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 01:16:14 -0500
+Received: from localhost (unknown [104.132.150.99])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 52CF661250;
-        Fri, 15 Nov 2019 06:10:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573798226;
-        bh=WNEWdwZREdio4xxgu3pDdGhRebknE1NKUlrUVDdMD4E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1JI14MnWWvNHhPDVH2ubVseAwGTW/0RAKwyIrmnVJwPGP73Z76Sli7yO6WUPbUng
-         glTj5MOr2hZTNssSxh2WnHfvTSAOy14xVOk0eUjMkTJAudA2ite/js7K8f1A9puZC3
-         wPB9AF/OkWhwgTiQ4f5wueOi5w/S0AjRqMPU3lEU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52CF661250
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 7/7] scsi: ufs: Fix error handing during hibern8 enter
-Date:   Thu, 14 Nov 2019 22:09:30 -0800
-Message-Id: <1573798172-20534-8-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
-References: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 52F1D2072B;
+        Fri, 15 Nov 2019 06:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573798572;
+        bh=G+0cdXXTrcTHP5HHhkPRNjMmImcxewGysVtA+48G1lE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZuuMgLeFQzo5L2g7WgAd8skDAoeSdstO8NckalfM7LIkAEM/9Hkm9v9OWS7aNDVMH
+         OtEDWlLHRzX8nf8i/P3Qoya1aZItzH8IAlhpCw8c3oHc9SfuSpwkKgldI0DneCpe/+
+         97vWjyIfKOaEQpXgp5O1rBzfyL9oRxDYryelAJeY=
+Date:   Fri, 15 Nov 2019 14:16:10 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        Romain Perier <romain.perier@gmail.com>
+Subject: Re: [PATCH] staging: rtl*: Remove tasklet callback casts
+Message-ID: <20191115061610.GA1034830@kroah.com>
+References: <201911142135.5656E23@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201911142135.5656E23@keescook>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+On Thu, Nov 14, 2019 at 09:39:00PM -0800, Kees Cook wrote:
+> In order to make the entire kernel usable under Clang's Control Flow
+> Integrity protections, function prototype casts need to be avoided
+> because this will trip CFI checks at runtime (i.e. a mismatch between
+> the caller's expected function prototype and the destination function's
+> prototype). Many of these cases can be found with -Wcast-function-type,
+> which found that the rtl wifi drivers had a bunch of needless function
+> casts. Remove function casts for tasklet callbacks in the various drivers.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  drivers/staging/rtl8188eu/hal/rtl8188eu_recv.c        |  3 +--
+>  drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c        |  3 +--
+>  drivers/staging/rtl8188eu/include/rtl8188e_recv.h     |  2 +-
+>  drivers/staging/rtl8188eu/include/rtl8188e_xmit.h     |  2 +-
+>  drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c      |  4 ++--
+>  drivers/staging/rtl8192e/rtllib_softmac.c             |  7 +++----
+>  .../staging/rtl8192u/ieee80211/ieee80211_softmac.c    |  7 +++----
+>  drivers/staging/rtl8192u/r8192U_core.c                |  8 ++++----
+>  drivers/staging/rtl8712/rtl8712_recv.c                | 11 +++++------
+>  drivers/staging/rtl8712/rtl871x_xmit.c                |  5 ++---
+>  drivers/staging/rtl8712/rtl871x_xmit.h                |  2 +-
+>  drivers/staging/rtl8712/usb_ops_linux.c               |  4 ++--
+>  drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c        | 11 ++++-------
+>  13 files changed, 30 insertions(+), 39 deletions(-)
 
-During clock gating (ufshcd_gate_work()), we first put the link hibern8 by
-calling ufshcd_uic_hibern8_enter() and if ufshcd_uic_hibern8_enter()
-returns success (0) then we gate all the clocks.
-Now let’s zoom in to what ufshcd_uic_hibern8_enter() does internally:
-It calls __ufshcd_uic_hibern8_enter() and if failure is encountered,
-link recovery shall put the link back to the highest HS gear and
-returns success (0) to ufshcd_uic_hibern8_enter() which is the issue as
-link is still in active state due to recovery!
-Now ufshcd_uic_hibern8_enter() returns success to ufshcd_gate_work() and
-hence it goes ahead with gating the UFS clock while link is still in active
-state hence I believe controller would raise UIC error interrupts. But when
-we service the interrupt, clocks might have already been disabled!
+This fails to apply to my staging-next branch of staging.git.  Can you
+rebase and resend?
 
-This change fixes for this by returning failure from
-__ufshcd_uic_hibern8_enter() if recovery succeeds as link is still not in
-hibern8, upon receiving the error ufshcd_hibern8_enter() would initiate
-retry to put the link state back into hibern8.
+thanks,
 
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index d662641..e1ee961 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3891,15 +3891,24 @@ static int __ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
- 			     ktime_to_us(ktime_sub(ktime_get(), start)), ret);
- 
- 	if (ret) {
-+		int err;
-+
- 		dev_err(hba->dev, "%s: hibern8 enter failed. ret = %d\n",
- 			__func__, ret);
- 
- 		/*
--		 * If link recovery fails then return error so that caller
--		 * don't retry the hibern8 enter again.
-+		 * If link recovery fails then return error code returned from
-+		 * ufshcd_link_recovery().
-+		 * If link recovery succeeds then return -EAGAIN to attempt
-+		 * hibern8 enter retry again.
- 		 */
--		if (ufshcd_link_recovery(hba))
--			ret = -ENOLINK;
-+		err = ufshcd_link_recovery(hba);
-+		if (err) {
-+			dev_err(hba->dev, "%s: link recovery failed", __func__);
-+			ret = err;
-+		} else {
-+			ret = -EAGAIN;
-+		}
- 	} else
- 		ufshcd_vops_hibern8_notify(hba, UIC_CMD_DME_HIBER_ENTER,
- 								POST_CHANGE);
-@@ -3913,7 +3922,7 @@ static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
- 
- 	for (retries = UIC_HIBERN8_ENTER_RETRIES; retries > 0; retries--) {
- 		ret = __ufshcd_uic_hibern8_enter(hba);
--		if (!ret || ret == -ENOLINK)
-+		if (!ret)
- 			goto out;
- 	}
- out:
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+greg k-h
