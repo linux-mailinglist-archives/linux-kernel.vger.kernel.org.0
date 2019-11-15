@@ -2,376 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04FCFDAA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:06:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A1BDFDA7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbfKOKGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:06:18 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37918 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727761AbfKOKGQ (ORCPT
+        id S1727656AbfKOKF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:05:27 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35784 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727632AbfKOKFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:06:16 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3203B618E8; Fri, 15 Nov 2019 10:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573812375;
-        bh=uNnS8R/EMNiWGr3tJfYbc19MiV5WLgonbPR3WiCYx1A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e1Tvxezyu1q4OA1KBu4/wMpg/cx7WvvywoLl5P6P6RDHSCh6kV/IMBTRu5/LULq3i
-         9E6Rp3DMsnt2PhntNY0O3urOeva0gSRR/vTeUpnFqm/V+vfogYV42hEAaNkJ/gLH9j
-         Rb6r+Kc/S3MW7t3YiW8mkYUPPW7YIaNgQfO/sXoM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5F019618FD;
-        Fri, 15 Nov 2019 10:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573812367;
-        bh=uNnS8R/EMNiWGr3tJfYbc19MiV5WLgonbPR3WiCYx1A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IjRyq8rqvvQuX7AyJrEhCeVJAPDyjP6N/L0STftaeS+BOG1A+4FHARgMCkD+KkjH3
-         cbJPU7oX73EuogC8EDe4x971NmLQoc4yfqx59pszMSi6dyI3yH/Wut1OvyQ7adAGHI
-         5z/cnrQ2TL7wDgfqdVK6wkIlBu8vZ5ZGzmgugDmo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F019618FD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 8/8] clk: qcom: Add video clock controller driver for SC7180
-Date:   Fri, 15 Nov 2019 15:35:04 +0530
-Message-Id: <1573812304-24074-9-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
+        Fri, 15 Nov 2019 05:05:24 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r7so10073832ljg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 02:05:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=unikie-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=E3sXchnQK6r0cbCO41TzSdNyYDZO5b9qiU92SWHzyaY=;
+        b=GGQXyqfAOOdn2W+1sXwtBvsy92bU6TkWIfV4fpktp026z4PB3TSvxZ0SBhT8E7OlT6
+         Q0NPLYkSp6Ly+KCZ0MCiexwh4ckM7I+V5D/eNPIuOF+QJXEDzTa25PYbqdH3XS+QYyRT
+         xK0lc680H8iIyhT8xFqqYqJLoGbSe2S3PGPAlDbsEqKs0yKUCU1msu/kMU7uRfHP/nYE
+         EWYzNYe+dL5s9xxB5FsA14YsJeLZAShYgAhjgagOvHfMwGi47t72O4u5Nk085epZU8J1
+         w7Ms9aP3ZzLHfvR0YEPibjX+UzuHx5M3peE6Hz3bQVElSqHGtAYG8G/LqF6Zf/zBtbzB
+         fIpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
+         :message-id:user-agent:mime-version:content-transfer-encoding;
+        bh=E3sXchnQK6r0cbCO41TzSdNyYDZO5b9qiU92SWHzyaY=;
+        b=Vs8/oTD2YvLuhoT9CMaQVlxsSI539zwB4/qqNMKf8qomqEZRUIJ0cc7cJ1WdPGzcL9
+         4gOYsF/9V6Rr/+v/Kso2MBg0+MLtiDggJHfNWrhKNx2WZRYOPoH55ozJlCn6x14m1KvK
+         KX9+FVxqnZAcVJIDc5dnh6gJ5Y4CrmAdhj2/A/O20F65MWrC66dNa7lygN/ew254ymuX
+         EYtBqPsnDoQLusJ8OemOx8GAejT28p0DyxAd1pcKW9M06pJug+s7IDkEcPck6KkJan8d
+         MMFpLAMIN2VEgCnMS9BMeupEzlj8V0tNhz9eh8acmVeWI7j0PH7tiZwYC4j5ZUdxHd9G
+         PCJA==
+X-Gm-Message-State: APjAAAU5osjr0Y2SKfqc5pMWA579PQ2JTU1u5enYuR9RuFlaicviYx/Q
+        MHtDTCQ5QmUG3cSWhFkUKyZb6uFqnLfSLw==
+X-Google-Smtp-Source: APXvYqy4I4omiLNNVKrf3idEsLlQPggt3o4md59DtcnBbH4pie88Z1O31ITPk0/nYDiBggFn9sRPNA==
+X-Received: by 2002:a2e:7204:: with SMTP id n4mr9981244ljc.139.1573812318913;
+        Fri, 15 Nov 2019 02:05:18 -0800 (PST)
+Received: from GL-434 ([109.204.235.119])
+        by smtp.gmail.com with ESMTPSA id e14sm3727391ljb.75.2019.11.15.02.05.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Nov 2019 02:05:18 -0800 (PST)
+From:   jouni.hogander@unikie.com (Jouni =?utf-8?Q?H=C3=B6gander?=)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] drivers/base: Fix memory leak in error paths
+References: <20191114121840.5585-1-jouni.hogander@unikie.com>
+        <20191115032603.GG793701@kroah.com> <878soha7tc.fsf@unikie.com>
+        <20191115082022.GB55909@kroah.com>
+Date:   Fri, 15 Nov 2019 12:05:17 +0200
+In-Reply-To: <20191115082022.GB55909@kroah.com> (Greg Kroah-Hartman's message
+        of "Fri, 15 Nov 2019 16:20:22 +0800")
+Message-ID: <8736epa202.fsf@unikie.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the video clock controller found on SC7180
-based devices. This would allow video drivers to probe
-and control their clocks.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig          |   8 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 268 insertions(+)
- create mode 100644 drivers/clk/qcom/videocc-sc7180.c
+>> >> This memory leak was reported by Syzkaller:
+>> >>=20
+>> >> BUG: memory leak unreferenced object 0xffff8880675ca008 (size 256):
+>> >>   comm "netdev_register", pid 281, jiffies 4294696663 (age 6.808s)
+>> >>   hex dump (first 32 bytes):
+>> >>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+>> >>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+>> >>   backtrace:
+>> >>     [<0000000058ca4711>] kmem_cache_alloc_trace+0x167/0x280
+>> >>     [<000000002340019b>] device_add+0x882/0x1750
+>> >>     [<000000001d588c3a>] netdev_register_kobject+0x128/0x380
+>> >>     [<0000000011ef5535>] register_netdevice+0xa1b/0xf00
+>> >>     [<000000007fcf1c99>] __tun_chr_ioctl+0x20d5/0x3dd0
+>> >>     [<000000006a5b7b2b>] tun_chr_ioctl+0x2f/0x40
+>> >>     [<00000000f30f834a>] do_vfs_ioctl+0x1c7/0x1510
+>> >>     [<00000000fba062ea>] ksys_ioctl+0x99/0xb0
+>> >>     [<00000000b1c1b8d2>] __x64_sys_ioctl+0x78/0xb0
+>> >>     [<00000000984cabb9>] do_syscall_64+0x16f/0x580
+>> >>     [<000000000bde033d>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> >>     [<00000000e6ca2d9f>] 0xffffffffffffffff
+>> >
+>> > How is this a leak?  This is in device_add(), not removing the device.
+>> > When the structure really is freed then it can be removed.
+>>=20
+>> In net/core/net-sysfs.c:netdev_register_kobject device_add allocates
+>> dev->p. Now if register_queue_kobjects fails the error path is calling
+>> device_del and dev->p is never freed. Proper fix here could be to call
+>> put_device after device_del?
+>
+> Hm, this sounds like you have a reference count leak here, as
+> put_device() should be properly called already in this case.  You might
+> want to look further to see where exactly the register_queue_kobjects()
+> call fails in order to see if we grabbed a reference we forgot to put
+> back on an error path.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e648a60..cf21d5c 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -253,6 +253,14 @@ config SC_GPUCC_7180
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
+Ok, did some more debugging on
+this. net/core/net-sysfs.c:netdev_register_kobject is doing
+device_initialize(dev). This is in
+drivers/base/core.c:device_initialize:
 
-+config SC_VIDEOCC_7180
-+	tristate "SC7180 Video Clock Controller"
-+	select SC_GCC_7180
-+	help
-+	  Support for the video clock controller on SC7180 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SDM_CAMCC_845
- 	tristate "SDM845 Camera Clock Controller"
- 	select SDM_GCC_845
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 5477482..4cdd08f 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
- obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
- obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
-+obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-new file mode 100644
-index 0000000..0c60986
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -0,0 +1,259 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,videocc-sc7180.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "common.h"
-+#include "gdsc.h"
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CHIP_SLEEP_CLK,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_VIDEO_PLL0_OUT_EVEN,
-+	P_VIDEO_PLL0_OUT_MAIN,
-+	P_VIDEO_PLL0_OUT_ODD,
-+};
-+
-+static const struct pll_vco fabia_vco[] = {
-+	{ 249600000, 2000000000, 0 },
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x42c,
-+	.vco_table = fabia_vco,
-+	.num_vco = ARRAY_SIZE(fabia_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll0",
-+			.parent_data = &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .fw_name = "bi_tcxo" },
-+	{ .hw = &video_pll0.clkr.hw },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-+	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
-+	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_venus_clk_src = {
-+	.cmd_rcgr = 0x7f0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_venus_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_venus_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = 3,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_axi_clk = {
-+	.halt_reg = 0x9ec,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9ec,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_core_clk = {
-+	.halt_reg = 0x890,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x890,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ahb_clk = {
-+	.halt_reg = 0xa4c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xa4c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_axi_clk = {
-+	.halt_reg = 0x9cc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9cc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_core_clk = {
-+	.halt_reg = 0x850,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x850,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc venus_gdsc = {
-+	.gdscr = 0x814,
-+	.pd = {
-+		.name = "venus_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc vcodec0_gdsc = {
-+	.gdscr = 0x874,
-+	.pd = {
-+		.name = "vcodec0_gdsc",
-+	},
-+	.flags = HW_CTRL,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct clk_regmap *video_cc_sc7180_clocks[] = {
-+	[VIDEO_CC_VCODEC0_AXI_CLK] = &video_cc_vcodec0_axi_clk.clkr,
-+	[VIDEO_CC_VCODEC0_CORE_CLK] = &video_cc_vcodec0_core_clk.clkr,
-+	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
-+	[VIDEO_CC_VENUS_CLK_SRC] = &video_cc_venus_clk_src.clkr,
-+	[VIDEO_CC_VENUS_CTL_AXI_CLK] = &video_cc_venus_ctl_axi_clk.clkr,
-+	[VIDEO_CC_VENUS_CTL_CORE_CLK] = &video_cc_venus_ctl_core_clk.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+};
-+
-+static struct gdsc *video_cc_sc7180_gdscs[] = {
-+	[VENUS_GDSC] = &venus_gdsc,
-+	[VCODEC0_GDSC] = &vcodec0_gdsc,
-+};
-+
-+static const struct regmap_config video_cc_sc7180_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0xb94,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc video_cc_sc7180_desc = {
-+	.config = &video_cc_sc7180_regmap_config,
-+	.clks = video_cc_sc7180_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sc7180_clocks),
-+	.gdscs = video_cc_sc7180_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sc7180_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sc7180_match_table[] = {
-+	{ .compatible = "qcom,sc7180-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sc7180_match_table);
-+
-+static int video_cc_sc7180_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	struct alpha_pll_config video_pll0_config = {};
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sc7180_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	video_pll0_config.l = 0x1f;
-+	video_pll0_config.alpha = 0x4000;
-+	video_pll0_config.user_ctl_val = 0x00000001;
-+	video_pll0_config.user_ctl_hi_val = 0x00004805;
-+
-+	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+
-+	/* video_cc_xo_clk */
-+	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
-+
-+	return qcom_cc_really_probe(pdev, &video_cc_sc7180_desc, regmap);
-+}
-+
-+static struct platform_driver video_cc_sc7180_driver = {
-+	.probe = video_cc_sc7180_probe,
-+	.driver = {
-+		.name = "sc7180-videocc",
-+		.of_match_table = video_cc_sc7180_match_table,
-+	},
-+};
-+
-+static int __init video_cc_sc7180_init(void)
-+{
-+	return platform_driver_register(&video_cc_sc7180_driver);
-+}
-+subsys_initcall(video_cc_sc7180_init);
-+
-+static void __exit video_cc_sc7180_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sc7180_driver);
-+}
-+module_exit(video_cc_sc7180_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI VIDEOCC SC7180 Driver");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+ * NOTE: Use put_device() to give up your reference instead of freeing
+ * @dev directly once you have called this function.
 
+My understanding is that remaining reference on error path is taken by
+device_initialize and as instructed in the note above it should be given
+up using put_device? Tested this and it's fixing the memory leak I found
+in my Syzkaller exercise. Addition to that it seems to be fixing also
+this one:
+
+https://syzkaller.appspot.com/bug?id=3Df5f4af9fb9ffb3112ad6e30f717f769decdc=
+cdfc
+
+BR,
+
+Jouni H=C3=B6gander
