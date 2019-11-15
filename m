@@ -2,90 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75ABCFDF23
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:42:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7266FDF37
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:45:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfKONmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:42:38 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44037 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727249AbfKONmi (ORCPT
+        id S1727608AbfKONpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:45:14 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34869 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727314AbfKONpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:42:38 -0500
-Received: by mail-lf1-f67.google.com with SMTP id z188so8013150lfa.11
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 05:42:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7M8XWf+aSDuZ60G0e6vwA3UVsGqy52moHTICwgTGdKE=;
-        b=Xma2EgzKd5UJeq5rjgYO/fzDuIC/Z9BgtHLjQs9+P5c/7/SXXE2ft7Hh+9GwYMfTE+
-         9du2iMEIHbg/0YaeyOJHFdSyMe9GMWHFRsBrm9DXPfQ+JJIx7HZWZ8DNnGCQrqRN50pY
-         8CiCBcoL8DRIdBmVshEqN4b0TeAtXiVOcIOLs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7M8XWf+aSDuZ60G0e6vwA3UVsGqy52moHTICwgTGdKE=;
-        b=nYvyJpt7f63Y5hRrdgtWYHfMGNPtdUi9820yQsG4KMn4xDLiis7STN1FLdb1zvCXmX
-         ZHNfyf4U8I+EeGWr0AxLJ/4s1pV/76xSFXOKtZYBdbI1Sjgfkhk54vls8qs9dmcPTvpY
-         e3SfDrhVRNnSsXL50bFT0mGvQ2p2a8YvvmLVoxTTJ5JTBqxOWCUD683/2/aXuuXzsBBm
-         xJL7hUSuWTwKqpsYNQa93fOoTjofQDU5ySjVbVxemRAD5xenu+/jt9P1F5zSo8eo8B10
-         GvRrztKjv2/OgjeUcDZOzrc7920OKwcDmpl1as6VHxsKOoUkugcdZ/h+te7UMvUK2qNU
-         COCQ==
-X-Gm-Message-State: APjAAAUXCJsm/aJ7Sg6j92piU4Zl5C7jaWOun9a+mGHfDQIBTmDM/NPT
-        1Qt98Xh5JF6/o/4fKnW1u6PUkcfqzxiQ225t
-X-Google-Smtp-Source: APXvYqwHN2Yvm0PLT+a7BaSRp11SLB5XySfnSHH3TF13kuNUSwKuiAUR9T+ZHUG0/JfvfbuuNjwNSA==
-X-Received: by 2002:ac2:43a3:: with SMTP id t3mr11623097lfl.150.1573825355715;
-        Fri, 15 Nov 2019 05:42:35 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id u4sm4063165ljj.87.2019.11.15.05.42.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Nov 2019 05:42:35 -0800 (PST)
-Subject: Re: [PATCH v3 36/36] soc: fsl: qe: remove PPC32 dependency from
- CONFIG_QUICC_ENGINE
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Qiang Zhao <qiang.zhao@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>
-References: <20191101124210.14510-37-linux@rasmusvillemoes.dk>
- <201911152105.ojcD68ZC%lkp@intel.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <41765275-dbd5-406e-8ba1-bd0f92b737ee@rasmusvillemoes.dk>
-Date:   Fri, 15 Nov 2019 14:42:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 15 Nov 2019 08:45:14 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 170023C04C0;
+        Fri, 15 Nov 2019 14:45:12 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id THX1Eimu0o5R; Fri, 15 Nov 2019 14:45:06 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 64DC13C009C;
+        Fri, 15 Nov 2019 14:45:06 +0100 (CET)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 15 Nov
+ 2019 14:45:06 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     <linux-mmc@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>
+Subject: [PATCH v2] mmc: tmio: Add MMC_CAP_ERASE to allow erase/discard/trim requests
+Date:   Fri, 15 Nov 2019 14:44:30 +0100
+Message-ID: <20191115134430.12621-1-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <201911152105.ojcD68ZC%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2019 14.31, kbuild test robot wrote:
-> Hi Rasmus,
-> 
-> Thank you for the patch! Perhaps something to improve:
+Isolated initially to renesas_sdhi_internal_dmac [1], Ulf suggested
+adding MMC_CAP_ERASE to the TMIO mmc core:
 
-Hello kbuild
+On Fri, Nov 15, 2019 at 10:27:25AM +0100, Ulf Hansson wrote:
+ -- snip --
+ This test and due to the discussions with Wolfram and you in this
+ thread, I would actually suggest that you enable MMC_CAP_ERASE for all
+ tmio variants, rather than just for this particular one.
 
-Thanks for your reports, but this has already been fixed. Is there some
-way to indicate to the kbuild bot that it should stop using resources on
-a specific patch set? There's really no point in the bot doing lots of
-builds and sending out reports for a series that has already been
-superseded - and reviewers might easily think that the report concerns
-the latest revision. Perhaps something like
+ In other words, set the cap in tmio_mmc_host_probe() should be fine,
+ as it seems none of the tmio variants supports HW busy detection at
+ this point.
+ -- snip --
 
-kbuild-ignore: <msg id of cover letter of revision N-1>
+Testing on R-Car H3ULCB-KF doesn't reveal any issues (v5.4-rc7):
 
-in the cover-letter of revision N? Or is there some smarter (automatic)
-way of doing this?
+root@rcar-gen3:~# lsblk
+NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+mmcblk0      179:0    0 59.2G  0 disk  <--- eMMC
+mmcblk0boot0 179:8    0    4M  1 disk
+mmcblk0boot1 179:16   0    4M  1 disk
+mmcblk1      179:24   0   30G  0 disk  <--- SD card
 
-Rasmus
+root@rcar-gen3:~# time blkdiscard /dev/mmcblk0
+real    0m8.659s
+user    0m0.001s
+sys     0m1.920s
+
+root@rcar-gen3:~# time blkdiscard /dev/mmcblk1
+real    0m1.176s
+user    0m0.001s
+sys     0m0.124s
+
+[1] https://lore.kernel.org/linux-renesas-soc/20191112134808.23546-1-erosca@de.adit-jv.com/
+
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Originally-by: Harish Jenny K N <harish_kandiga@mentor.com>
+Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 9b6e1001e77c..dec5a99f52cf 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1184,7 +1184,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (ret == -EPROBE_DEFER)
+ 		return ret;
+ 
+-	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
++	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_4_BIT_DATA | pdata->capabilities;
+ 	mmc->caps2 |= pdata->capabilities2;
+ 	mmc->max_segs = pdata->max_segs ? : 32;
+ 	mmc->max_blk_size = TMIO_MAX_BLK_SIZE;
+-- 
+2.24.0
+
