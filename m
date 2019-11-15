@@ -2,117 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99656FE4A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:12:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25543FE4AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfKOSMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:12:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:34782 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbfKOSMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 13:12:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D89830E;
-        Fri, 15 Nov 2019 10:12:50 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B52B93F534;
-        Fri, 15 Nov 2019 10:12:49 -0800 (PST)
-Subject: Re: generic DMA bypass flag
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20191113133731.20870-1-hch@lst.de>
- <d27b7b29-df78-4904-8002-b697da5cb013@arm.com>
- <20191114074105.GC26546@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9c8f4d7b-43e0-a336-5d93-88aef8aae716@arm.com>
-Date:   Fri, 15 Nov 2019 18:12:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727065AbfKOSN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:13:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44272 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfKOSNZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 13:13:25 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iVg5j-00051n-7O; Fri, 15 Nov 2019 19:13:07 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CC5531C18CE;
+        Fri, 15 Nov 2019 19:13:06 +0100 (CET)
+Date:   Fri, 15 Nov 2019 18:13:06 -0000
+From:   "tip-bot2 for Qais Yousef" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/uclamp: Fix incorrect condition
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Qais Yousef <qais.yousef@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191114211052.15116-1-qais.yousef@arm.com>
+References: <20191114211052.15116-1-qais.yousef@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191114074105.GC26546@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Message-ID: <157384158679.12247.12347903056419517407.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/11/2019 7:41 am, Christoph Hellwig wrote:
-> On Wed, Nov 13, 2019 at 02:45:15PM +0000, Robin Murphy wrote:
->> In all honesty, this seems silly. If we can set a per-device flag to say
->> "oh, bypass these ops and use some other ops instead", then we can just as
->> easily simply give the device the appropriate ops in the first place.
->> Because, y'know, the name of the game is "per-device ops".
-> 
-> Except that we can't do it _that_ easily.  The problem is that for both
-> the powerpc and intel case the selection is dynamic.  If a device is in
-> the identify domain with intel-iommu (or the equivalent on powerpc which
-> doesn't use the normal iommu framework), we still want to use the iommu
-> to be able to map memory for devices with a too small dma mask using
-> the iommu instead of using swiotlb bouncing.  So to "just" use the
-> per-device dma ops we'd need:
-> 
->    a) a hook in dma_direct_supported to pick another set of ops for
->       small dma masks
->    b) a hook in the IOMMU ops to propagate to the direct ops for full
->       64-bit masks
+The following commit has been merged into the sched/urgent branch of tip:
 
-And is that any different from where you would choose to "just" set a 
-generic bypass flag?
+Commit-ID:     6e1ff0773f49c7d38e8b4a9df598def6afb9f415
+Gitweb:        https://git.kernel.org/tip/6e1ff0773f49c7d38e8b4a9df598def6afb9f415
+Author:        Qais Yousef <qais.yousef@arm.com>
+AuthorDate:    Thu, 14 Nov 2019 21:10:52 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 15 Nov 2019 11:02:18 +01:00
 
+sched/uclamp: Fix incorrect condition
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index d658c7c6a2ab..40e096d3dbc5 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2242,12 +2242,14 @@ request_default_domain_for_dev(struct device 
-*dev, unsigned long type)
-  /* Request that a device is direct mapped by the IOMMU */
-  int iommu_request_dm_for_dev(struct device *dev)
-  {
-+	set_dma_ops(dev, NULL);
-  	return request_default_domain_for_dev(dev, IOMMU_DOMAIN_IDENTITY);
-  }
+uclamp_update_active() should perform the update when
+p->uclamp[clamp_id].active is true. But when the logic was inverted in
+[1], the if condition wasn't inverted correctly too.
 
-  /* Request that a device can't be direct mapped by the IOMMU */
-  int iommu_request_dma_domain_for_dev(struct device *dev)
-  {
-+	set_dma_ops(dev, &iommu_dma_ops);
-  	return request_default_domain_for_dev(dev, IOMMU_DOMAIN_DMA);
-  }
+[1] https://lore.kernel.org/lkml/20190902073836.GO2369@hirez.programming.kicks-ass.net/
 
+Reported-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Patrick Bellasi <patrick.bellasi@matbug.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: babbe170e053 ("sched/uclamp: Update CPU's refcount on TG's clamp changes")
+Link: https://lkml.kernel.org/r/20191114211052.15116-1-qais.yousef@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If intel-iommu gets fully converted such that everyone using default 
-domains is also using iommu-dma, that should be it as far as the generic 
-DMA ops are concerned (ultimately we might even be able to do it in 
-__iommu_attach_device() based on the domain type). Like I said, the hard 
-part is deciding when to make *these* calls, but apparently intel-iommu 
-can already do that.
-
-> I looked into that for powerpc a while ago and it wasn't pretty at all.
-> Compared to that just checking another flag for the DMA direct calls
-> is relatively clean and trivial as seens in the diffstat for this series
-> alone.
-> 
->> I don't see a great benefit to pulling legacy cruft out into common code
->> instead of just working to get rid of it in-place, when said cruft pulls in
->> the opposite direction to where we're taking the common code (i.e. it's
->> inherently based on the premise of global ops).
-> 
-> I'm not sure what legacy cruft it pull in.  I think it actually fits very
-> much into a mental model of "direct mapping is the default, to be overriden
-> if needed" which is pretty close to what we have at the moment.  Just
-> with a slightly more complicated processing of the override.
-
-Because the specific "slightly more complicated" currently used by the 
-existing powerpc code will AFAICS continue to be needed only by the 
-existing powerpc code, thus I don't see any benefit to cluttering up the 
-common code with it today. You may as well just refactor powerpc to 
-swizzle its own ops to obviate archdata.iommu_bypass, and delete a fair 
-chunk of old code.
-
-Robin.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 33cd250..44123b4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1065,7 +1065,7 @@ uclamp_update_active(struct task_struct *p, enum uclamp_id clamp_id)
+ 	 * affecting a valid clamp bucket, the next time it's enqueued,
+ 	 * it will already see the updated clamp bucket value.
+ 	 */
+-	if (!p->uclamp[clamp_id].active) {
++	if (p->uclamp[clamp_id].active) {
+ 		uclamp_rq_dec_id(rq, p, clamp_id);
+ 		uclamp_rq_inc_id(rq, p, clamp_id);
+ 	}
