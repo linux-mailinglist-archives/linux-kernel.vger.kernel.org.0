@@ -2,116 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46288FE279
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B51CFE274
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:16:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbfKOQQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 11:16:32 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24507 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727700AbfKOQQ2 (ORCPT
+        id S1727589AbfKOQQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 11:16:04 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35492 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfKOQQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 11:16:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573834588;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GkpOzaHuUb6phZ8PlQrh1XGmuCXgq4ilnADtFE4rutU=;
-        b=YrFKFjgrxn4pyq0DVnH/2mGt7AcDNrJZj4ujvyt07d542uhyNq99L8GYrF5kbP3Csnuj5A
-        xuUAGZ9iDBlQ6rR4PH+a9KzVbsrNfI57OhxI4eiRwEzRlE7IXeFEEJmNClXV2998iuubZp
-        R58EPEXT/Nquzu0nuNd+VHhIq3grujc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-241-c9Vxz79sNrqwvD0tmxnkSg-1; Fri, 15 Nov 2019 11:16:24 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA9931005510;
-        Fri, 15 Nov 2019 16:16:22 +0000 (UTC)
-Received: from llong.com (ovpn-124-92.rdu2.redhat.com [10.10.124.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 668B49D54;
-        Fri, 15 Nov 2019 16:16:21 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Fri, 15 Nov 2019 11:16:03 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s5so11613648wrw.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 08:16:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4luxsISSnCBqbzNTIVaYf8SLEEQ3p09RVfNsyHSAmEQ=;
+        b=JAd4UxKPFZPCjgRodJj4niKQ8jsOZobx9jfLQUg9CVwzDrQWRSnWts4bZfE97FudZR
+         xIInMWMrOROwc5Ccpngr7MKtFMGcBvwl2VOyaB/l586VL2oUg+F+BAJABgcmE3K6boGe
+         6X1b+F2mrJRB4IUEyXM+PDjY2dEZBoAqgYliu/0Pe72ora0F+CVG16T1nPpDGBeU3u5S
+         SogqlDTN7wo/wben8inQ7N2kRzFPREaNCx7Gi7radMtCuXaspUkCvVopUfKRTvs5P9La
+         wKrrvna+HomAFvN5ozoO12Vg1o97WXwPfg5tKLAAb7hII5bCWvHdRZP7KQ9oOiAuN99F
+         /mZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4luxsISSnCBqbzNTIVaYf8SLEEQ3p09RVfNsyHSAmEQ=;
+        b=UUTpd7N4dWvkt3C+ND97nFtGAliI54E/Wx7wFg0yE2SWB8OX3KrPL0mk7+v3ok65hj
+         A/YdKkUQPV4o4zlCccBIt7KNi4ODnZk6oYvL7fHUD1AFzrIb8j60NcZdHBDA96z7ucHO
+         Z60ketaWIGW5fKf3nQUBnRwq0GkIB3usSkXnFEP7ATX52NppY9ZJls8ycE+1tcnScSkT
+         cTHzFzR0aaJuQ5Q40a7tYIBDMpRlXBJkpZxbRHUDaivjdU8cbn7Lus3HlARVn0sytebL
+         bynjRKgH5+M/m1NNmuTyKIwD+BGq396DelWr25b1AxBp4sF/lXxTUT0eYUgQZJrXccfd
+         tGsg==
+X-Gm-Message-State: APjAAAWQzVFQJw8qBKAov/76hyIU5yGh42s3VmvAFBfxGZNkNi8RwsVW
+        vvyGUzI1lt4zSyNvArXJDBV+AhEqATq3Issx
+X-Google-Smtp-Source: APXvYqzA2m9PGnyAs+D2GCqGYrakvFSw+HzfLJ/YHGwHYzKL2C/HTGlOYzyJ0V1uXWkIs3vJl12YRw==
+X-Received: by 2002:adf:c449:: with SMTP id a9mr5872354wrg.240.1573834559976;
+        Fri, 15 Nov 2019 08:15:59 -0800 (PST)
+Received: from rudolphp.sr1.9esec.dev (ip-94-114-101-228.unity-media.net. [94.114.101.228])
+        by smtp.gmail.com with ESMTPSA id o5sm11637467wrx.15.2019.11.15.08.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 08:15:59 -0800 (PST)
+From:   patrick.rudolph@9elements.com
+To:     linux-kernel@vger.kernel.org
+Cc:     coreboot@coreboot.org,
+        Patrick Rudolph <patrick.rudolph@9elements.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 2/2] x86/speculation: Fix redundant MDS mitigation message
-Date:   Fri, 15 Nov 2019 11:14:45 -0500
-Message-Id: <20191115161445.30809-3-longman@redhat.com>
-In-Reply-To: <20191115161445.30809-1-longman@redhat.com>
-References: <20191115161445.30809-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: c9Vxz79sNrqwvD0tmxnkSg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH 0/2] firmware: google: Expose coreboot tables and CBMEM
+Date:   Fri, 15 Nov 2019 17:15:14 +0100
+Message-Id: <20191115161524.23738-1-patrick.rudolph@9elements.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since MDS and TAA mitigations are inter-related for processors that are
-affected by both vulnerabilities, the followiing confusing messages can
-be printed in the kernel log:
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-  MDS: Vulnerable
-  MDS: Mitigation: Clear CPU buffers
+As user land tools currently use /dev/mem to access coreboot tables and
+CBMEM, provide a better way by using sysfs attributes.
 
-To avoid the first incorrect message, the printing of MDS mitigation
-is now deferred after the TAA mitigation selection has been done.
-However, that has the side effect of printing TAA mitigation first
-before MDS mitigation.
+Unconditionally expose all tables and buffers making future changes in
+coreboot possible without modifying a kernel driver.
 
-Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- arch/x86/kernel/cpu/bugs.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Patrick Rudolph (2):
+  firmware: google: Expose CBMEM over sysfs
+  firmware: google: Expose coreboot tables over sysfs
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index cb513eaa0df1..5966a52b359f 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -39,6 +39,7 @@ static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- static void __init mds_select_mitigation(void);
-+static void __init mds_print_mitigation(void);
- static void __init taa_select_mitigation(void);
-=20
- /* The base value of the SPEC_CTRL MSR that always has to be preserved. */
-@@ -108,6 +109,12 @@ void __init check_bugs(void)
- =09mds_select_mitigation();
- =09taa_select_mitigation();
-=20
-+=09/*
-+=09 * As MDS and TAA mitigations are inter-related, defer printing MDS
-+=09 * mitigation until after TAA mitigation selection is done.
-+=09 */
-+=09mds_print_mitigation();
-+
- =09arch_smt_update();
-=20
- #ifdef CONFIG_X86_32
-@@ -245,7 +252,10 @@ static void __init mds_select_mitigation(void)
- =09=09    (mds_nosmt || cpu_mitigations_auto_nosmt()))
- =09=09=09cpu_smt_disable(false);
- =09}
-+}
-=20
-+static void __init mds_print_mitigation(void)
-+{
- =09pr_info("%s\n", mds_strings[mds_mitigation]);
- }
-=20
---=20
-2.18.1
+ drivers/firmware/google/Kconfig          |   6 +
+ drivers/firmware/google/Makefile         |   1 +
+ drivers/firmware/google/cbmem-coreboot.c | 164 +++++++++++++++++++++++
+ drivers/firmware/google/coreboot_table.c |  59 ++++++++
+ drivers/firmware/google/coreboot_table.h |  13 ++
+ 5 files changed, 243 insertions(+)
+ create mode 100644 drivers/firmware/google/cbmem-coreboot.c
+
+-- 
+2.21.0
 
