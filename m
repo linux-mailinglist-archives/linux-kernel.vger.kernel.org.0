@@ -2,81 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B11DFE63F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 21:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BCEBFE643
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 21:14:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfKOUNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 15:13:40 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35554 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfKOUNk (ORCPT
+        id S1727151AbfKOUOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 15:14:22 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47421 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfKOUOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 15:13:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U04AK+OppLVeV3O4pLzN/YFK2FxmH5fvNNCh3MF92IY=; b=KLlt0GWj6whouRd+kp6oFHl+D
-        Ej7uCVDEWwpmYgi1CuUy5ZPt4CSESoygcANnBUp+FylIfcx8PPNchrIElja8DG5PgRxvTVxbva91r
-        eXKYgGugBmZsrVp6eYvXJVghy/Al6Zlc+5vATGmz4ksfuLstcAJUN4KPT7X6gKQX3XM7OumtCivB9
-        jjTOxs1YffJtEKFKN3WoQTSR3DgCKKD1PMXpnOuoivG3gFMtKoZ+bOz0n04eMOKAERlQglZB6/UBZ
-        F5vqDh1JcH1j8bmCDBNyEI+n9Xyv0bz0OA+0bZWU07VL5bkLBDDR3bBrFZUmR5/l7AdkRgBQdqvFE
-        ryAGRW+eg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iVhxm-00048n-Ot; Fri, 15 Nov 2019 20:13:03 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F0A3C3056C8;
-        Fri, 15 Nov 2019 21:11:48 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id ECE222B12EE0A; Fri, 15 Nov 2019 21:12:56 +0100 (CET)
-Date:   Fri, 15 Nov 2019 21:12:56 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Doug Smythies <dsmythies@telus.net>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
-        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
-Message-ID: <20191115201256.GQ4131@hirez.programming.kicks-ass.net>
-References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
- <20191115132520.GJ4131@hirez.programming.kicks-ass.net>
- <CAKfTPtB4UGmZ53iVRsOV+k4MiS=Dzqw2-6_sBhko0bHRMAed2g@mail.gmail.com>
- <20191115151220.GO4131@hirez.programming.kicks-ass.net>
- <CAKfTPtCg-zEysYmGSFTa4bjh0D=sf1UsT0WpeWcVrb9SLt+VZw@mail.gmail.com>
- <20191115174355.GP4131@hirez.programming.kicks-ass.net>
- <CAKfTPtAKz5zGwyNUtEeM+2JJNBNVnoKmFkXdFu1hjWD52_BwFg@mail.gmail.com>
+        Fri, 15 Nov 2019 15:14:17 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iVhys-0000VS-Rp; Fri, 15 Nov 2019 21:14:10 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iVhyr-0000NS-RY; Fri, 15 Nov 2019 21:14:09 +0100
+Date:   Fri, 15 Nov 2019 21:14:09 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc:     shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: imx25: fix usbhost1 node
+Message-ID: <20191115201409.5ztt7vrhf2btpoed@pengutronix.de>
+References: <20191111114655.9583-1-m.grzeschik@pengutronix.de>
+ <20191115083415.28976-1-m.grzeschik@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtAKz5zGwyNUtEeM+2JJNBNVnoKmFkXdFu1hjWD52_BwFg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191115083415.28976-1-m.grzeschik@pengutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 07:00:45PM +0100, Vincent Guittot wrote:
-> On Fri, 15 Nov 2019 at 18:44, Peter Zijlstra <peterz@infradead.org> wrote:
+Hello Michael,
 
-> > Because we don't care about the rt,dl,irq decay anywhere else either. We
-> > only call cpufreq_update_util() for rq->cfs changes.
-> 
-> cpufreq_update_util is called for each enqueue/dequeue of rt/dl tasks
+On Fri, Nov 15, 2019 at 09:34:15AM +0100, Michael Grzeschik wrote:
+> The usb port represented by &usbhost1 uses an USB phy internal to the
+> SoC. We add the phy_type to the base dtsi so the board dts only have to
+> overwrite it if they use a different configuration. While at it we also
+> pin the usbhost port to host mode and limit the speed of the phy to
+> full-speed only, which it is only capable of.
 
-Oh indeed.. OK, so then I suppose rt,dl,cfs makes some sense.
+The subject line suggests this is a fix but the commit log and the
+actual change don't support this. Maybe better:
 
-Let me sleep on it.
+	ARM: dts: imx25: consolidate properties of usbhost1 in dtsi file
+
+? 
+
+> diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
+> index 9a097ef014af5..40b95a290bd6b 100644
+> --- a/arch/arm/boot/dts/imx25.dtsi
+> +++ b/arch/arm/boot/dts/imx25.dtsi
+> @@ -570,6 +570,9 @@
+>  				clock-names = "ipg", "ahb", "per";
+>  				fsl,usbmisc = <&usbmisc 1>;
+>  				fsl,usbphy = <&usbphy1>;
+> +				maximum-speed = "full-speed";
+> +				phy_type = "serial";
+> +				dr_mode = "host";
+
+Would it make sense to split this patch in two? One that moves phy_type
+and dr_mode from the dts files using imx25.dtsi (which has no effects on
+the resulting dtb files). And another that adds maximum-speed.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
