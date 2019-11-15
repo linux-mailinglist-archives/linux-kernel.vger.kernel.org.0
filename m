@@ -2,114 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A839FD1F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 01:30:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B6E1FD208
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 01:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfKOAaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 19:30:24 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36524 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbfKOAaX (ORCPT
+        id S1727178AbfKOAi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 19:38:28 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33383 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfKOAi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 19:30:23 -0500
-Received: by mail-pg1-f194.google.com with SMTP id k13so4856209pgh.3;
-        Thu, 14 Nov 2019 16:30:21 -0800 (PST)
+        Thu, 14 Nov 2019 19:38:27 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a17so8833043wmb.0;
+        Thu, 14 Nov 2019 16:38:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=V+xyAyokSVdG2YJZBQsiL4UYdt3E6o24h3s6g0fTDHQ=;
+        b=alMS8AvtcH2tnUO26K5nS7zSK+98v4P5mFBkv5HzrpQRFZdrUnC08/d/o+dCvZF771
+         PIxw8+RRGzhcv5JtqMhmNFK00a7GHIvyNyHTmJs084SQkIENknsGDyc4PuV1ARIIeqSB
+         ztUx3sBVVVX/MJScjB/cJQknV4L1rNX8tWcFY7qb3MpX0EUOpFtT7YCkp5i9Rr9iZFbc
+         8npg3kUuCrQ7lVnCaivW3205Pj2eKwC/fXKO6Rd427N2IIPs1BJBVh327D4JM1GG/RqY
+         ueb40XzyXltLWlprmaL0Eun06GDo1jZ3JWyORxThL/yCXFXzPoAUqbgzPF8FlCHAeLYF
+         v9eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bRROesaeb887xsfxVtqXv2u2WV15FLCC+kH5tjbZrG4=;
-        b=rahj838TYFEVrCmHe0gH4QiWTRk4J4HGu0pIFSvO5x1a0HQZovDk8FQtaidt4Rw5YG
-         5vJ+jYIyP6CcJWTHsoAhuGuJ7Q7Kp3WojhPmVBDOj+B7GjmkLe94jwetzhrziI0VBQhZ
-         xkoAhVkKbDnuex2tvVLA40/+BwknEownVEZJXVsXjOXommRCUwsIyMNRL5MzaMZBlJLK
-         aUbMocugarGvpBA/OKTBv3CDnwG4S//9c9WMRu8ZoBiPJw+8FM2MhBJiblyfh631ptBp
-         es6NqZsP/4ApwJKQq1sMSjhGP5GOyNbv9K4b1797ta8Jd0AMSQBHK3WTo6ZHUxQY7+fi
-         UY7g==
-X-Gm-Message-State: APjAAAW7QiPpVxz/uCMkp4uyv97nhqBMN4VYHrSorV/4G7x4BDzFj+9t
-        N3yBb5A/DjnhCEyiQBzdS+Q=
-X-Google-Smtp-Source: APXvYqxRCiDHNwOwz8S2vHv+Vw1KysxP6MjchfjJ8RJjB+G4iXLq5xzmRwKDSWDpgbgjjVU/9UyUpw==
-X-Received: by 2002:a65:528b:: with SMTP id y11mr13072963pgp.420.1573777820863;
-        Thu, 14 Nov 2019 16:30:20 -0800 (PST)
-Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
-        by smtp.gmail.com with ESMTPSA id y24sm9046884pfr.116.2019.11.14.16.30.18
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=V+xyAyokSVdG2YJZBQsiL4UYdt3E6o24h3s6g0fTDHQ=;
+        b=jTJWD5dyOzO2DErh8K4cAYUyf53XZjqieqE0KjJ6U0ST9asHLjhC6SYLLIJA7fhdDC
+         DF3759Fo9EWYE0WnnNVQZ0iq/jzEeROyPwKLBWa7Achg6s5jjCcZWAFgN4VHlDcUyY+J
+         ffIQjIWIs+o0MXLQ5XNzTeQzppWeIKFrMm1jQxXHnKs9EJR7yxnrLC8FEueDUA6Fn9TZ
+         7sqoEhcVQA9kMqxr2k9Z97lOVCdDg8dLu571ddzbtf0OrTr4f/G3XWemv4C/oEE2DF+5
+         BXdQK8g4ycTpOc79tVq8SMkR99b/ykrf7PRrAj5aCqyZACFiomXJ4oZmZ69H5cp+02De
+         LITw==
+X-Gm-Message-State: APjAAAW57VIqgpBdYFts1w4Zu7c/X26h0DTo+1XFswrA9NbPjCCNA+Nj
+        4dsyV3hJuyShS+5wtk5vvJU=
+X-Google-Smtp-Source: APXvYqw+jrTZ3N3Sm7eZpuhockFOKaDrAq0PEkEBLyklk7eKmoF21L840DTBnyz29dOFz0ycSxS9pA==
+X-Received: by 2002:a1c:64d6:: with SMTP id y205mr10714765wmb.136.1573778303928;
+        Thu, 14 Nov 2019 16:38:23 -0800 (PST)
+Received: from ltop.local ([2a02:a03f:40e1:9900:b41c:b7ad:6b56:89fb])
+        by smtp.gmail.com with ESMTPSA id g133sm7856389wme.42.2019.11.14.16.38.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 16:30:19 -0800 (PST)
-Date:   Thu, 14 Nov 2019 16:30:51 -0800
-From:   Paul Burton <paulburton@kernel.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        qiaochong@loongson.cn, kgdb-bugreport@lists.sourceforge.net,
-        ralf@linux-mips.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        James Hogan <jhogan@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/5] MIPS: kdb: Remove old workaround for backtracing on
- other CPUs
-Message-ID: <20191115003051.blbbwr7hmuqyzjwb@lantea.localdomain>
-References: <20191109191644.191766-1-dianders@chromium.org>
- <20191109111623.1.I30a0cac4d9880040c8d41495bd9a567fe3e24989@changeid>
- <20191114105125.t3jma3ghwj2wtv6w@holly.lan>
+        Thu, 14 Nov 2019 16:38:23 -0800 (PST)
+Date:   Fri, 15 Nov 2019 01:38:21 +0100
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     kbuild test robot <lkp@intel.com>, linux-sparse@vger.kernel.org,
+        kbuild-all@lists.01.org, linux@armlinux.org.uk,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        will.deacon@arm.com, arnd@arndb.de, longman@redhat.com,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
+        jglauber@marvell.com, steven.sistare@oracle.com,
+        daniel.m.jordan@oracle.com, dave.dice@oracle.com,
+        rahul.x.yadav@oracle.com
+Subject: Re: [PATCH v6 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+Message-ID: <20191115003821.raskzlj7hscz7vax@ltop.local>
+References: <20191107174622.61718-4-alex.kogan@oracle.com>
+ <201911110540.8p3UoQAR%lkp@intel.com>
+ <58623E4A-973B-46CC-8FA8-29E68DB5EFF4@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191114105125.t3jma3ghwj2wtv6w@holly.lan>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <58623E4A-973B-46CC-8FA8-29E68DB5EFF4@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-On Thu, Nov 14, 2019 at 10:51:25AM +0000, Daniel Thompson wrote:
-> On Sat, Nov 09, 2019 at 11:16:40AM -0800, Douglas Anderson wrote:
-> > As of commit 2277b492582d ("kdb: Fix stack crawling on 'running' CPUs
-> > that aren't the master") we no longer need any special case for doing
-> > stack dumps on CPUs that are not the kdb master.  Let's remove.
-> > 
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > I have no way to test this personally, so hopefully someone who uses
-> > kdb/kgdb on MIPS can.
+On Thu, Nov 14, 2019 at 03:57:34PM -0500, Alex Kogan wrote:
+> + linux-sparse mailing list
 > 
-> I took this as a hint to add mips support to kgdbtest ;-)
+> It seems like a bug in the way sparse handles “pure” functions that return
+> a pointer.
 
-Wonderful! :)
-
-> Support is added and working well. Unfortunately lack of familiarity
-> with mips means I have not yet figured out which mips defconfig gives
-> us working SMP (and what the corresponding qemu invocation should be).
-
-You can build 64r6el_defconfig & boot it something like this:
-
-$ qemu-system-mips64el \
-    -M boston -cpu I6500 -smp 4 \
-    -kernel arch/mips/boot/vmlinux.gz.itb \
-    -serial stdio \
-    -hda my-disk-image.bin \
-    -append "root=/dev/sda"
-
-Linux should see the system as a single core with 4 hardware threads
-(VPs or Virtual Processors in MIPS terminology).
-
-> > Ideally this patch should be Acked by MIPS folks and then land through
-> > the kdb/kgdb tree since the next patch in the series, ("kdb:
-> > kdb_current_regs should be private") depends on it.
+Yes, it's a bug in sparse.
+ 
+> The warnings can be eliminated by adding an explicit cast, e.g.:
 > 
-> An Acked-by from a MIPS maintainer would be very welcome. Perhaps
-> with a bit of extra work on the above I might be able to provide
-> a Tested-by:.
+> 	node = (struct mcs_spinlock *)grab_mcs_node(node, idx);
+> 
+> but this seems wrong (unnecessary) to me.
 
-The patches look reasonable to me; I was hoping to test them before
-giving an ack but haven't had the time yet. It seems you may be making
-that easier :)
+Indeed, it would be wrong.
 
-Thanks,
-    Paul
+Thanks for analyzing and reporting this,
+-- Luc 
