@@ -2,96 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA98CFD964
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 092C5FD9BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 10:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfKOJdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 04:33:50 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:44295 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfKOJdt (ORCPT
+        id S1727264AbfKOJuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 04:50:21 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40488 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKOJuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:33:49 -0500
-Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1My2pz-1hfdsh0DyZ-00zV17; Fri, 15 Nov 2019 10:33:48 +0100
-Received: by mail-qk1-f170.google.com with SMTP id d13so7589673qko.3;
-        Fri, 15 Nov 2019 01:33:47 -0800 (PST)
-X-Gm-Message-State: APjAAAXS/EV5BsFcJFwN5VESTmD3xzK1lo4Tpyx3tZDu3ZV4vc/th8Iq
-        tbAJcCQrU1iJ+99PiZZyUU0NGuiczPNXYO+vloI=
-X-Google-Smtp-Source: APXvYqyHs9ad/+3HaWdqKuzJptVRHCVwDklMrgq5Mkioy7i8IrZPX+/M8dSz9o3BBSnMlS0BE9d05Ry9BXPIzZIB7/k=
-X-Received: by 2002:a37:58d:: with SMTP id 135mr11660269qkf.394.1573810426879;
- Fri, 15 Nov 2019 01:33:46 -0800 (PST)
+        Fri, 15 Nov 2019 04:50:21 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e3so4304450plt.7
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 01:50:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yHK3NwHDuyMXQHGzp6/50XMxDMlIuMMyQ5piOVpvkxM=;
+        b=ZuuS3UkOo3apEXPYARBEVlHQfRIAxokV9/5NCCh9cL6r/iNm0L7thB/wfxz+PoptCn
+         i8WjSOWERzekExknbYH4522ivmq/08ub4G5MUCBlu6gV341tyqN/43pFsWGvs+Ep8jpX
+         YDhzcgxH3gn9rs8jY3iEvxIrgIurnho89LrgE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yHK3NwHDuyMXQHGzp6/50XMxDMlIuMMyQ5piOVpvkxM=;
+        b=puPxI+GJ4DPJqMppb5h1bwPte1/H3FT4q5d89iYkrxVzFQV/yKgKXXlb8RkXTEebMj
+         vzhu+IcyBDHDWBFrD1OYL7K9JJga0t+8KkmKLT9LO8WwzdpTrkf3N2iP5R17mJqX3cOl
+         oKU6xLobiWoqlBH7JV1Wk2Ueg4BebB7DCBJ81qsmiwobCdEUf4BNJuxDg6i9Gql51ULY
+         +MS02Xs0UDKYaihoad4LyfSRu8+fdQQOifHN2qP0i5UiCE7uHNDTUJcW2NY5wpmLjspU
+         EfVa2oBryv8nhS0ut2AnlG80tWMTTROZ+lLz0ZzczGACy7VoP/0oqArXrDclvf0MjKvh
+         qFDQ==
+X-Gm-Message-State: APjAAAV7Vpbi9flh7mYTFdIqp+KYupUbzJBtkGXfLuwvpmFoutoKkHkZ
+        AMKSK8pcwmhU6r0hWfCLPFHRuw==
+X-Google-Smtp-Source: APXvYqxbvWA3/NAdQnMqBSJECBtN4fg0wT+GRe8cyTzynYQUMxKJ0M7M3MiBWpusD3992fJnD1snzw==
+X-Received: by 2002:a17:90a:5895:: with SMTP id j21mr19092775pji.129.1573811419250;
+        Fri, 15 Nov 2019 01:50:19 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
+        by smtp.gmail.com with ESMTPSA id d25sm10665819pfq.70.2019.11.15.01.50.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2019 01:50:18 -0800 (PST)
+From:   Gwendal Grignou <gwendal@chromium.org>
+To:     dmitry.torokhov@gmail.com, groeck@chromium.org,
+        briannorris@chromium.org, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, lee.jones@linaro.org,
+        bleung@chromium.org, enric.balletbo@collabora.com,
+        dianders@chromium.org, fabien.lahoudere@collabora.com
+Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>
+Subject: [PATCH v5 00/18] cros_ec: Add sensorhub driver and FIFO processing
+Date:   Fri, 15 Nov 2019 01:33:54 -0800
+Message-Id: <20191115093412.144922-1-gwendal@chromium.org>
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
 MIME-Version: 1.0
-References: <20191114114525.12675-1-orson.zhai@unisoc.com> <20191114114525.12675-2-orson.zhai@unisoc.com>
-In-Reply-To: <20191114114525.12675-2-orson.zhai@unisoc.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 15 Nov 2019 10:33:30 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a23jcNgFErik1PFr=tG6n8kc8Pj9fARw47n=ou8t8iV+Q@mail.gmail.com>
-Message-ID: <CAK8P3a23jcNgFErik1PFr=tG6n8kc8Pj9fARw47n=ou8t8iV+Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: Add syscon-names support
-To:     Orson Zhai <orson.zhai@unisoc.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        steven.tang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:eAMMgYvcgQoIgeVOJdJnUY/zP11VckfLtwFUG99sJIU8dAsgB97
- u+/vqG/j8y5hJiZP05FZJmsBaHHVRdgp9Q2pj1HvCU31AbH3QMzT8Obj4hvoDVfdDciCdb7
- q1RpMPtr/0FgtjxpBbA/2vqCJnA9sos/rT3tomqcs9pcjTXG0WfEja+K5ZeeLJkDfxvL40O
- 4KgiVz2t3zMISXv1BBgjA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3zhn3xOu5SQ=:XN5QE8YqU9AxAkLLOGzELj
- 4WN0CHJacEG2b4cF2W6VXmxgTitnHkllDhz/1eu+tPDjFN1BiN8Nuihcf8qpksrRt+S1CNNqx
- 5+PK+riuhCsyA68T9d0c8d+0pA3cPwMLn/TWTBNa6VdTRjbsUMBf1dtKMB7XgMh4iiOna2DG8
- yxqPyk3FUt8YgMjezbKmtrRR/cds8G1YukNhPCrqUyBr3dq1GXpJCMh+g41OC9rv4dL4Oak82
- oTHaNfmY2QBks8HF1Om7CIYdX7flDfflMqxrHV+MHjGQIkyvL9TKkXqSzVFFZNmVQVpLJDhEK
- hvYm0Twf3eVvtBnZRPasrmTXIJtrDrqQb5kZq1I2kvT0vAWHK+kwwoF6tNrAsvEMbgcEVDklA
- TfiDaBh/evD6CTycBB5CPhPXFAWa0sT/E06l9HGTjvFe6yEdbf/k4yG7YfqNZJX8oTpjY0T4A
- /2B+fokO01pGeOuN+VmpqTWsQ101KCMRBRAiHrihbFHNqukh2+sBb+SfePfYycjC3rZyDJhiB
- oLzUEABLr64u9YOx5qvU1BYqGru4ywTTgaVXBlf1tcc0YugZSrMG98zz6YuEBTEYYvtE7pNpe
- 0EFU9P5YUe9mG2wwOpV2tccUHirhRnPYIVgKoemx0UEuX2E0/znFTM1jFiPU/YGbEFKu9IsSL
- 8OEDh7cX0xAXLNStwMlsgrnnxRML7VSfEjDoLL4ytIgoTCR+cYbHwkf1m1BlJo4sX5iixltLk
- As5QXXSM5aiqufpyOCg8IPNMt80iHkHckfk9uijT1jHMB42DgANNavX9Z/Y9g6Mg9i27mWYs7
- +jINjnKPIBskDGPI20MYah/jEqecwbmrzPVefrpl0QO+V95Z74TPPaKppM43UDs3j8PZPL0zs
- vVCdoq8csaWrQQhrVJeA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 12:48 PM Orson Zhai <orson.zhai@unisoc.com> wrote:
->
->
-> Make life easier when syscon consumer want to access multiple syscon
-> nodes.
-> Add syscon-names and relative properties to help manage complicated
-> cases when accessing more one syscon node.
->
-> Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+This patchset adds a sensorhub driver for spreading sensor
+events coming from the Embedded controller sensor FIFO:
 
-Hi Orson,
+       +---------------+ +--------------+ +----
+       | cros_ec_accel | | cros_ec_gyro | | ...
+       +---------------+ +--------------+ +----
+           id:0       \        id:1 |       / id:..
+                 +------------------------------+
+                 |       cros_ec_sensorhub      |
+                 +------------------------------+
+                 |           cros_ec_dev        |
+                 +------------------------------+
+                 | cros_ec_i2c, cros_ec_lpc, .. |
+                 +------------------------------+
+                                 |
+                                 EC
 
-Can you explain why the number of cells in this binding is specific
-to the syscon node rather than the node referencing it?
+When new sensors events are present, the EC raises and interrupt,
+sensorhub reads the FIFO and uses the 'id' field to spread the event to
+the proper IIO sensors. This stack is similar to the HID sensor input
+stack.
 
-In most other bindings that follow the same scheme, the additional
-arguments are interpreted by the subsystem that is being referenced,
-but the syscon driver is just a simple driver with no subsystem and no
-code to interpret those arguments.
+The first patch move cros_ec_proto functions documentations into the
+code to prevent rot.
 
-The way would otherwise handle the example from your binding
-would be with two separate properties in the display node, like
+The inext 3 patches add a primitive cros_ec_sensorhub. MFD just have to
+register this driver if at least one sensor is presented by the EC.
+cros_ec_sensorhub retrieves more information from the EC to find out
+which sensors are actually present:
+  mfd: cros_ec: Add sensor_count and make check_features public
+  platform: cros_ec: Add cros_ec_sensor_hub driver
+  platform/mfd:iio: cros_ec: Register sensor through sensorhub
 
-syscon-enable = <&ap_apb_regs 0x4 0xf00>;
-syscon-power = <&aon_regs 0x8>;
+The next 3 patches prepare for FIFO support:
+  platform: chrome: cros-ec: record event timestamp in the hard irq
+  platform: chrome: cros_ec: Do not attempt to register a non-positive
+  platform: chrome: cros_ec: handle MKBP more events flag
 
-in which case, the syscon driver does not need to know anything
-about how it's being used, and the display driver is the one making
-sense of the arguments according to its own binding.
+That last patch fixes a regression that changes event processing.
+Revert the patches that fixed that regression.
 
-I assume you have some good reason for introducing the other
-approach, but I don't understand it from your submission.
+The next 3 patches add FIFO support. An interface is added to connect
+the IIO sensors with cros_ec_sensorhub, and filters are needed to spread
+the timestamp when the EC send batches of events and deal with variation
+in interrupt delay.
+  platform: chrome: sensorhub: Add FIFO support
+  platform: chrome: sensorhub: Add code to spread timestmap
+  platform: chrome: sensorhub: Add median filter
 
-       Arnd
+The remaining patches update IIO cros_ec drivers:
+The first patch moves cros_ec_sensor_core functions documentation into
+the .c file.
+The second one exports iio_device_set_clock, so that the timestamp
+generated by the FIFO matches the default timestamp exposed by the IIO
+devices.
+Then we can use the FIFO function exposed by cros_ec_sensorhub:
+  iio: cros_ec: Use triggered buffer only when EC does not support FIFO
+
+The power management functions are not necessary anymore, since we
+shutoff the FIFO from cros_ec_sensorhub:
+  iio: cros_ec: Register to cros_ec_sensorhub when EC supports FIFO
+
+Finally, the last 3 patches present sensor information following the IIO
+ABI:
+-  Configurable EC timeout to allow batch mode in buffer/hwfifo_timeout,
+  in seconds.
+-  Hard coded EC FIFO size in buffer/hwfifo_watermark_max
+-  Sensor sampling frequency in hertz at sampling_frequency:
+  iio: cros_ec: Expose hwfifo_timeout
+  iio: cros_ec: Report hwfifo_watermark_max
+  iio: cros_ec: Use Hertz as unit for sampling frequency
+
+For testing, libiio test tools can be used:
+A iio device link looks like:
+iio:device1 ->
+...09:00/GOOG0004:00/cros-ec-dev.6.auto/cros-ec-sensorhub.7.auto/
+                     cros-ec-accel.15.auto/iio:device1
+
+When FIFO is available, no trigger are presented. Once
+sampling_freqeuncy and hwfifo_timeout are set, sensor events flow
+when listening to /dev/iio:device1:
+echo 12 > sampling_frequency   # Set ODR to at least 12Hz
+echo .100 > buffer/hwfifo_timeout  # do not wait more than 100ms to
+                                   # to send samples
+iio_readdev -b 2 -T 1000 -s 2 iio:device1 2>/dev/null| od -x
+0000000 ffd0 2e20 d990 0000 8630 b56c 07ea 0000
+0000020 ffc0 2e10 d970 0000 877e b56c 07ea 0000
+0000040`
+
+When FIFO is not supported by the EC, a trigger is present in the
+directory. After registering a trigger, setting sampling_frequency,
+the latest data collected by the sensor will be retrieved by the host
+when the trigger expires.
+
+When cros_ec_accel_legacy driver is used, no FIFO is supported and the
+sampling frequency for the accelerometers is hard coded at 10Hz.
+
+This set is built upon the master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+Enrico Granata (2):
+  platform: chrome: cros_ec: Do not attempt to register a non-positive
+    IRQ number
+  platform: chrome: cros_ec: handle MKBP more events flag
+
+Gwendal Grignou (16):
+  mfd: cros_ec: Add sensor_count and make check_features public
+  platform: cros_ec: Add cros_ec_sensor_hub driver
+  platform/mfd:iio: cros_ec: Register sensor through sensorhub
+  platform: chrome: cros-ec: record event timestamp in the hard irq
+  Revert "Input: cros_ec_keyb - add back missing mask for event_type"
+  Revert "Input: cros_ec_keyb: mask out extra flags in event_type"
+  platform: chrome: sensorhub: Add FIFO support
+  platform: chrome: sensorhub: Add code to spread timestmap
+  platform: chrome: sensorhub: Add median filter
+  iio: cros_ec: Move function description to .c file
+  iio: expose iio_device_set_clock
+  iio: cros_ec: Register to cros_ec_sensorhub when EC supports FIFO
+  iio: cros_ec: Remove pm function
+  iio: cros_ec: Expose hwfifo_timeout
+  iio: cros_ec: Report hwfifo_watermark_max
+  iio: cros_ec: Use Hertz as unit for sampling frequency
+
+ drivers/iio/accel/cros_ec_accel_legacy.c      |  14 +-
+ drivers/iio/common/cros_ec_sensors/Kconfig    |   2 +-
+ .../cros_ec_sensors/cros_ec_lid_angle.c       |   3 +-
+ .../common/cros_ec_sensors/cros_ec_sensors.c  |  19 +-
+ .../cros_ec_sensors/cros_ec_sensors_core.c    | 359 +++++--
+ drivers/iio/industrialio-core.c               |   8 +-
+ drivers/iio/light/cros_ec_light_prox.c        |  21 +-
+ drivers/iio/pressure/cros_ec_baro.c           |  14 +-
+ drivers/input/keyboard/cros_ec_keyb.c         |   6 +-
+ drivers/mfd/cros_ec_dev.c                     | 235 +----
+ drivers/platform/chrome/Kconfig               |  12 +
+ drivers/platform/chrome/Makefile              |   2 +
+ drivers/platform/chrome/cros_ec.c             |  51 +-
+ drivers/platform/chrome/cros_ec_ishtp.c       |  25 +-
+ drivers/platform/chrome/cros_ec_lpc.c         |  17 +-
+ drivers/platform/chrome/cros_ec_proto.c       | 197 +++-
+ drivers/platform/chrome/cros_ec_rpmsg.c       |  19 +-
+ drivers/platform/chrome/cros_ec_sensorhub.c   | 249 +++++
+ .../platform/chrome/cros_ec_sensorhub_ring.c  | 987 ++++++++++++++++++
+ .../linux/iio/common/cros_ec_sensors_core.h   | 104 +-
+ include/linux/iio/iio.h                       |   2 +
+ include/linux/platform_data/cros_ec_proto.h   |  41 +-
+ .../linux/platform_data/cros_ec_sensorhub.h   | 196 ++++
+ 23 files changed, 2054 insertions(+), 529 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_sensorhub.c
+ create mode 100644 drivers/platform/chrome/cros_ec_sensorhub_ring.c
+ create mode 100644 include/linux/platform_data/cros_ec_sensorhub.h
+
+-- 
+2.24.0.432.g9d3f5f5b63-goog
+
