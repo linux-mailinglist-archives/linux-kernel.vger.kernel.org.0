@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A259BFE414
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 18:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6709DFE421
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 18:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfKORfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 12:35:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45748 "EHLO mail.kernel.org"
+        id S1727843AbfKORfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 12:35:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727626AbfKORfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 12:35:06 -0500
-Subject: Re: [git pull] drm fixes for 5.4-rc8
+        id S1727718AbfKORfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 12:35:07 -0500
+Subject: Re: [GIT PULL] More KVM fixes for 5.4-rc8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573839306;
-        bh=qRUpeut5kwGB05XEdaCmELLksALookGgKdjeXYvSEIo=;
+        s=default; t=1573839307;
+        bh=6uhqrn3Os1/XNjxcZCalQTem+EZ16y4aWUfR5yeVMGc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=f+Fb9w3XaZLUlDF34lXlewqZuVfPQTqhD28a7/M3frMHm4+TSRMY63pdz38092JF0
-         zTZef3tOOyKonRrvf0NrDu/X2362E+VwTolj4VwPy0P3su9kZvIl3XI4p4kUyajyxe
-         qWx1frAeml2TBJcLkAwUF0nq42JCeuIqgA/DHWTA=
+        b=CiVN4sUOvwxz/qHaVnig89D6TLmCpvrI59TEecFHopwRn+9Gf/LWdecW9Cn4NqOcb
+         lNpNFxNGVQvzQmBsXn1grfcI+IeEeVIdVA3XLsC/88cSIkzDy4jdJn44UwbAaD2QKE
+         HAeaJkuoEZEmg5VCFmMmELd7E+ATKVt4WmFIHyrg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9twvcfHPb4nrAQnHaEWhQrbByR0CfGXbWo_479c3YR47uw@mail.gmail.com>
-References: <CAPM=9twvcfHPb4nrAQnHaEWhQrbByR0CfGXbWo_479c3YR47uw@mail.gmail.com>
+In-Reply-To: <1573811092-12834-1-git-send-email-pbonzini@redhat.com>
+References: <1573811092-12834-1-git-send-email-pbonzini@redhat.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9twvcfHPb4nrAQnHaEWhQrbByR0CfGXbWo_479c3YR47uw@mail.gmail.com>
-X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
- tags/drm-fixes-2019-11-15
-X-PR-Tracked-Commit-Id: 07ceccacfb27be0e151b876caeda3a556cef099c
+X-PR-Tracked-Message-Id: <1573811092-12834-1-git-send-email-pbonzini@redhat.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
+ tags/for-linus
+X-PR-Tracked-Commit-Id: 9cb09e7c1c9af2968d5186ef9085f05641ab65d9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 37b49f31e800b563ed7a601816ea4b6fc3c5d165
-Message-Id: <157383930603.31249.14123556472751707976.pr-tracker-bot@kernel.org>
-Date:   Fri, 15 Nov 2019 17:35:06 +0000
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 74bc8acd6cb4f5cee25fcfe4e9afb06f75949081
+Message-Id: <157383930726.31249.8445509197480847010.pr-tracker-bot@kernel.org>
+Date:   Fri, 15 Nov 2019 17:35:07 +0000
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        rkrcmar@redhat.com, kvm@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 15 Nov 2019 11:18:16 +1000:
+The pull request you sent on Fri, 15 Nov 2019 10:44:52 +0100:
 
-> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-11-15
+> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/37b49f31e800b563ed7a601816ea4b6fc3c5d165
+https://git.kernel.org/torvalds/c/74bc8acd6cb4f5cee25fcfe4e9afb06f75949081
 
 Thank you!
 
