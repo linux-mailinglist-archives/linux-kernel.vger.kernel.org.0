@@ -2,201 +2,311 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6476FE687
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 21:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF0FFE68D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 21:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfKOUnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 15:43:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbfKOUnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 15:43:22 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E23C720733;
-        Fri, 15 Nov 2019 20:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573850602;
-        bh=7XTMTgU8+B0uQyNYUJBOYdr7zGvpllXWcyC/sguK6hk=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=0DyWlLJkk91PYkcyDb9tI51ib2jd7bMIklGNwry7D1D/8wVHsrfhfZ0AZNvnpMpQ6
-         nvNjKzIt4hHG1/+sWL/R/6LJ5mVPfAPSuObYpMe0hZK4tKo0PxlVskA7pBrGNuOcMR
-         4/AgCtSuyij3pCKVAKqaJCxbPOPD70XVqbEbakhk=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 47B2A35207BD; Fri, 15 Nov 2019 12:43:21 -0800 (PST)
-Date:   Fri, 15 Nov 2019 12:43:21 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Marco Elver <elver@google.com>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [PATCH v4 00/10] Add Kernel Concurrency Sanitizer (KCSAN)
-Message-ID: <20191115204321.GX2865@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191114180303.66955-1-elver@google.com>
- <20191114195046.GP2865@paulmck-ThinkPad-P72>
- <20191114213303.GA237245@google.com>
- <20191114221559.GS2865@paulmck-ThinkPad-P72>
- <CANpmjNPxAOUAxXHd9tka5gCjR_rNKmBk+k5UzRsXT0a0CtNorw@mail.gmail.com>
- <20191115164159.GU2865@paulmck-ThinkPad-P72>
- <CANpmjNPy2RDBUhV-j-APzwYr-_x2V9QwgPTYZph36rCpEVqZSQ@mail.gmail.com>
+        id S1726796AbfKOUqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 15:46:00 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39360 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfKOUqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 15:46:00 -0500
+Received: by mail-pl1-f196.google.com with SMTP id o9so5454077plk.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 12:45:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:to:subject:from:user-agent:date;
+        bh=YmzpnFwOPgE0XZ0FUKK1QiXjMq4DEEA521y7+3+D1hE=;
+        b=lV77Si8nf2rXnKOCZ7xW/oNAjBaiKIpNXZbMMwU1n8akZpCF32VndeJKQLLKESGbc0
+         FVEBoR9AaNNczGbyvQTyHhD3uwBwUVRdpgomdJGwEQKqajEQRWBmY6gylgqN7hF+nU3U
+         XONheAr8E/Hf5vsoKksCLUWZMQs1f8aUnnwkU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:to:subject:from
+         :user-agent:date;
+        bh=YmzpnFwOPgE0XZ0FUKK1QiXjMq4DEEA521y7+3+D1hE=;
+        b=p55BoN9Edg/VVIfeAGOIb8V3NLsVF4F0OKYH4xwOfoyNOwtDijFBoFl2lsYj7PSq5r
+         Z3xHgsH4IhqCcnHwnWPeyCdWUWofZC6rydaZURIc3D7jMNpMA+oMxty1LzNPAPTLte8g
+         Pmq2LkjnRfMUCpFlsQLAA/5H18/njSUfivb6mwSIObmS+7bGwfAFuz8Xij0a3HUO45hY
+         3nkmxsK2iZVfmvdSqMWDVkPDvrgqMgU+e+9MwbwwvMElJcuGLs0b08KfvLesy/i+aad/
+         TfsX6Ki/z9PDCZVp2KKRhZgtBriUy3mWy1+WIlrODwuZQS1wjh6nTSv36K0gfQfAAp/3
+         1vDQ==
+X-Gm-Message-State: APjAAAVvv4acDFl1kCpdeu2rCUATryjIYKy4l8axIt+qbOUJr1VMiAdc
+        OauxQEgzJjjKYdV4g0fTYNyIkA==
+X-Google-Smtp-Source: APXvYqxWgTk3dfmmxcbJQlCuJDpAzbvz/Iv7KkuGI4ThtNhdpvGb1tothE1ZO7Y75zNdr9ezEoDZ1g==
+X-Received: by 2002:a17:902:40a:: with SMTP id 10mr16904603ple.306.1573850758695;
+        Fri, 15 Nov 2019 12:45:58 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id f19sm13178941pfk.109.2019.11.15.12.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 12:45:58 -0800 (PST)
+Message-ID: <5dcf0e86.1c69fb81.a126f.5beb@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPy2RDBUhV-j-APzwYr-_x2V9QwgPTYZph36rCpEVqZSQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1573039165-30435-1-git-send-email-mkshah@codeaurora.org>
+References: <1573039165-30435-1-git-send-email-mkshah@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, bjorn.andersson@linaro.org,
+        evgreen@chromium.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+To:     Maulik Shah <mkshah@codeaurora.org>, agross@kernel.org,
+        david.brown@linaro.org, rafael@kernel.org
+Subject: Re: [v3] soc: qcom: Introduce subsystem sleep stats driver
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 15 Nov 2019 12:45:56 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 06:14:46PM +0100, Marco Elver wrote:
-> On Fri, 15 Nov 2019 at 17:42, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Fri, Nov 15, 2019 at 01:02:08PM +0100, Marco Elver wrote:
-> > > On Thu, 14 Nov 2019 at 23:16, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > >
-> > > > On Thu, Nov 14, 2019 at 10:33:03PM +0100, Marco Elver wrote:
-> > > > > On Thu, 14 Nov 2019, Paul E. McKenney wrote:
-> > > > >
-> > > > > > On Thu, Nov 14, 2019 at 07:02:53PM +0100, Marco Elver wrote:
-> > > > > > > This is the patch-series for the Kernel Concurrency Sanitizer (KCSAN).
-> > > > > > > KCSAN is a sampling watchpoint-based *data race detector*. More details
-> > > > > > > are included in **Documentation/dev-tools/kcsan.rst**. This patch-series
-> > > > > > > only enables KCSAN for x86, but we expect adding support for other
-> > > > > > > architectures is relatively straightforward (we are aware of
-> > > > > > > experimental ARM64 and POWER support).
-> > > > > > >
-> > > > > > > To gather early feedback, we announced KCSAN back in September, and have
-> > > > > > > integrated the feedback where possible:
-> > > > > > > http://lkml.kernel.org/r/CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com
-> > > > > > >
-> > > > > > > The current list of known upstream fixes for data races found by KCSAN
-> > > > > > > can be found here:
-> > > > > > > https://github.com/google/ktsan/wiki/KCSAN#upstream-fixes-of-data-races-found-by-kcsan
-> > > > > > >
-> > > > > > > We want to point out and acknowledge the work surrounding the LKMM,
-> > > > > > > including several articles that motivate why data races are dangerous
-> > > > > > > [1, 2], justifying a data race detector such as KCSAN.
-> > > > > > >
-> > > > > > > [1] https://lwn.net/Articles/793253/
-> > > > > > > [2] https://lwn.net/Articles/799218/
-> > > > > >
-> > > > > > I queued this and ran a quick rcutorture on it, which completed
-> > > > > > successfully with quite a few reports.
-> > > > >
-> > > > > Great. Many thanks for queuing this in -rcu. And regarding merge window
-> > > > > you mentioned, we're fine with your assumption to targeting the next
-> > > > > (v5.6) merge window.
-> > > > >
-> > > > > I've just had a look at linux-next to check what a future rebase
-> > > > > requires:
-> > > > >
-> > > > > - There is a change in lib/Kconfig.debug and moving KCSAN to the
-> > > > >   "Generic Kernel Debugging Instruments" section seems appropriate.
-> > > > > - bitops-instrumented.h was removed and split into 3 files, and needs
-> > > > >   re-inserting the instrumentation into the right places.
-> > > > >
-> > > > > Otherwise there are no issues. Let me know what you recommend.
-> > > >
-> > > > Sounds good!
-> > > >
-> > > > I will be rebasing onto v5.5-rc1 shortly after it comes out.  My usual
-> > > > approach is to fix any conflicts during that rebasing operation.
-> > > > Does that make sense, or would you prefer to send me a rebased stack at
-> > > > that point?  Either way is fine for me.
-> > >
-> > > That's fine with me, thanks!  To avoid too much additional churn on
-> > > your end, I just replied to the bitops patch with a version that will
-> > > apply with the change to bitops-instrumented infrastructure.
-> >
-> > My first thought was to replace 8/10 of the previous version of your
-> > patch in -rcu (047ca266cfab "asm-generic, kcsan: Add KCSAN instrumentation
-> > for bitops"), but this does not apply.  So I am guessing that I instead
-> > do this substitution when a rebase onto -rc1..
-> >
-> > Except...
-> >
-> > > Also considering the merge window, we had a discussion and there are
-> > > some arguments for targeting the v5.5 merge window:
-> > > - we'd unblock ARM and POWER ports;
-> > > - we'd unblock people wanting to use the data_race macro;
-> > > - we'd unblock syzbot just tracking upstream;
-> > > Unless there are strong reasons to not target v5.5, I leave it to you
-> > > if you think it's appropriate.
-> >
-> > My normal process is to send the pull request shortly after -rc5 comes
-> > out, but you do call out some benefits of getting it in sooner, so...
-> >
-> > What I will do is to rebase your series onto (say) -rc7, test it, and
-> > see about an RFC pull request.
-> >
-> > One possible complication is the new 8/10 patch.  But maybe it will
-> > apply against -rc7?
-> >
-> > Another possible complication is this:
-> >
-> > scripts/kconfig/conf  --syncconfig Kconfig
-> > *
-> > * Restart config...
-> > *
-> > *
-> > * KCSAN: watchpoint-based dynamic data race detector
-> > *
-> > KCSAN: watchpoint-based dynamic data race detector (KCSAN) [N/y/?] (NEW)
-> >
-> > Might be OK in this case because it is quite obvious what it is doing.
-> > (Avoiding pain from this is the reason that CONFIG_RCU_EXPERT exists.)
-> >
-> > But I will just mention this in the pull request.
-> >
-> > If there is a -rc8, there is of course a higher probability of making it
-> > into the next merge window.
-> >
-> > Fair enough?
-> 
-> Totally fine with that, sounds like a good plan, thanks!
-> 
-> If it helps, in theory we can also drop and delay the bitops
-> instrumentation patch until the new bitops instrumentation
-> infrastructure is in 5.5-rc1. There won't be any false positives if
-> this is missing, we might just miss a few data races until we have it.
+Quoting Maulik Shah (2019-11-06 03:19:25)
+> diff --git a/Documentation/ABI/testing/sysfs-power b/Documentation/ABI/te=
+sting/sysfs-power
+> index 6f87b9d..e095eae 100644
+> --- a/Documentation/ABI/testing/sysfs-power
+> +++ b/Documentation/ABI/testing/sysfs-power
+> @@ -288,6 +288,16 @@ Description:
+>                 writing a "0" (default) to it disables them.  Reads from
+>                 this file return the current value.
+> =20
+> +What:          /sys/power/subsystem_sleep/stats
+> +Date:          December 2017
+> +Contact:       Maulik Shah <mkshah@codeaurora.org>
+> +Description:
+> +               The /sys/power/subsystem_sleep/stats file prints the subs=
+ystem
+> +               sleep information on Qualcomm Technologies, Inc. (QTI) So=
+Cs.
+> +
+> +               Reading from this file will display subsystem level low p=
+ower
+> +               mode statistics.
 
-That sounds advisable for an attempt to hit this coming merge window.
+I still don't understand what this has to do with the kernel's power
+management support.
 
-So just to make sure I understand, I drop 8/10 and keep the rest during
-a rebase to 5.4-rc7, correct?
+> +
+>  What:          /sys/power/resume_offset
+>  Date:          April 2018
+>  Contact:       Mario Limonciello <mario.limonciello@dell.com>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 79d8265..bed0704 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -185,6 +185,15 @@ config QCOM_SOCINFO
+>          Say yes here to support the Qualcomm socinfo driver, providing
+>          information about the SoC to user space.
+> =20
+> +config QCOM_SS_SLEEP_STATS
+> +       tristate "Qualcomm Technologies Inc. Subsystem Sleep Stats driver"
+> +       depends on QCOM_SMEM
+> +       help
+> +         Say y here to enable support for the Qualcomm Technologies Inc =
+(QTI)
 
-							Thanx, Paul
+This 'Inc' is missing the full stop like in the summary above. Please be
+consistent.
+
+> +         SS sleep stats driver to read the sleep stats of various subsys=
+tems
+
+what is 'SS'?
+
+> +         from SMEM. The stats are exported to sysfs. The driver also mai=
+ntains
+> +         application processor sleep stats.
+> +
+>  config QCOM_WCNSS_CTRL
+>         tristate "Qualcomm WCNSS control driver"
+>         depends on ARCH_QCOM || COMPILE_TEST
+> diff --git a/drivers/soc/qcom/subsystem_sleep_stats.c b/drivers/soc/qcom/=
+subsystem_sleep_stats.c
+> new file mode 100644
+> index 00000000..724b213
+> --- /dev/null
+> +++ b/drivers/soc/qcom/subsystem_sleep_stats.c
+> @@ -0,0 +1,143 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +/*
+> + * Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#define pr_fmt(fmt) "%s: " fmt, KBUILD_MODNAME
+> +
+> +#include <linux/errno.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+
+I think we need to include linux/kernel.h for scnprintf() too.
+
+> +
+> +#include <linux/soc/qcom/smem.h>
+> +
+> +enum subsystem_item_id {
+> +       MODEM =3D 605,
+> +       ADSP,
+> +       CDSP,
+> +       SLPI,
+> +       GPU,
+> +       DISPLAY,
+> +};
+> +
+> +enum subsystem_pid {
+> +       PID_APSS =3D 0,
+> +       PID_MODEM =3D 1,
+> +       PID_ADSP =3D 2,
+> +       PID_SLPI =3D 3,
+> +       PID_CDSP =3D 5,
+> +       PID_GPU =3D PID_APSS,
+> +       PID_DISPLAY =3D PID_APSS,
+> +};
+
+Can these just be defines? There seems to be no value in enum because
+we're not testing these in switch statements and they're randomly
+assigned values.
+
+> +
+> +struct subsystem_data {
+> +       char *name;
+> +       enum subsystem_item_id item_id;
+> +       enum subsystem_pid pid;
+> +};
+> +
+> +static const struct subsystem_data subsystems[] =3D {
+> +       { "MODEM", MODEM, PID_MODEM },
+> +       { "ADSP", ADSP, PID_ADSP },
+> +       { "CDSP", CDSP, PID_CDSP },
+> +       { "SLPI", SLPI, PID_SLPI },
+> +       { "GPU", GPU, PID_GPU },
+> +       { "DISPLAY", DISPLAY, PID_DISPLAY },
+> +};
+> +
+> +struct subsystem_stats {
+> +       uint32_t version_id;
+> +       uint32_t count;
+> +       uint64_t last_entered;
+> +       uint64_t last_exited;
+> +       uint64_t accumulated_duration;
+
+We use u32 and u64 in kernel code. Also, is this the value in shared
+memory? Probably it's little endian so needs to be __le32 an __le64.
+
+> +};
+> +
+> +struct subsystem_stats_prv_data {
+> +       struct kobj_attribute ka;
+> +       struct kobject *kobj;
+> +};
+> +
+> +static struct subsystem_stats_prv_data *prvdata;
+> +
+> +static inline ssize_t subsystem_stats_print(char *prvbuf, ssize_t length,
+> +                                           struct subsystem_stats *recor=
+d,
+> +                                           const char *name)
+> +{
+> +       return scnprintf(prvbuf, length, "%s\n\tVersion:0x%x\n"
+> +                       "\tSleep Count:0x%x\n"
+> +                       "\tSleep Last Entered At:0x%llx\n"
+> +                       "\tSleep Last Exited At:0x%llx\n"
+> +                       "\tSleep Accumulated Duration:0x%llx\n\n",
+> +                       name, record->version_id, record->count,
+> +                       record->last_entered, record->last_exited,
+> +                       record->accumulated_duration);
+
+This isn't one value per file as per sysfs rules. Why can't this go to
+debugfs? Otherwise, it would be better to split it up into multiple
+files.
+
+And it still looks like something that should be plumbed into the remote
+proc subsystem so we can see from userspace what remote processors are
+1) present in the system and 2) how long they've been in a sleep state.
+
+> +}
+> +
+> +static ssize_t subsystem_stats_show(struct kobject *kobj,
+> +                                   struct kobj_attribute *attr, char *bu=
+f)
+> +{
+> +       ssize_t length =3D 0;
+> +       int i =3D 0;
+
+Drop assignment to i here.
+
+> +       size_t size =3D 0;
+
+Why assign size to 0? It looks unused in this function besides to store
+the size in qcom_smem_get(). It looks like we can pass NULL for that
+argument if we don't care to actually look at the size of what is
+returned.
+
+> +       struct subsystem_stats *record =3D NULL;
+
+Please don't assign to NULL and then overwrite it without testing in
+between.
+
+> +
+> +       /* Read SMEM data written by other subsystems */
+> +       for (i =3D 0; i < ARRAY_SIZE(subsystems); i++) {
+> +               record =3D (struct subsystem_stats *) qcom_smem_get(
+
+The cast is unnecessary, it returns a void * already.
+
+> +                         subsystems[i].pid, subsystems[i].item_id, &size=
+);
+> +
+> +               if (!IS_ERR(record) && (PAGE_SIZE - length > 0))
+> +                       length +=3D subsystem_stats_print(buf + length,
+> +                                                       PAGE_SIZE - lengt=
+h,
+> +                                                       record,
+> +                                                       subsystems[i].nam=
+e);
+> +       }
+> +
+> +       return length;
+> +}
+> +
+> +static int __init subsystem_sleep_stats_init(void)
+> +{
+> +       struct kobject *ss_stats_kobj;
+> +       int ret;
+> +
+> +       prvdata =3D kzalloc(sizeof(*prvdata), GFP_KERNEL);
+> +       if (!prvdata)
+> +               return -ENOMEM;
+> +
+> +       ss_stats_kobj =3D kobject_create_and_add("subsystem_sleep",
+> +                                              power_kobj);
+
+If this module is loaded on non-qcom platforms we'll create
+subsystem_sleep directory still. Please don't do that. If this was
+connected to remote proc it would be easier to avoid this problem.
+
+> +       if (!ss_stats_kobj)
+> +               return -ENOMEM;
+> +
+> +       prvdata->kobj =3D ss_stats_kobj;
+> +
+> +       sysfs_attr_init(&prvdata->ka.attr);
+> +       prvdata->ka.attr.mode =3D 0444;
+> +       prvdata->ka.attr.name =3D "stats";
+> +       prvdata->ka.show =3D subsystem_stats_show;
+> +
+> +       ret =3D sysfs_create_file(prvdata->kobj, &prvdata->ka.attr);
+> +       if (ret) {
+> +               kobject_put(prvdata->kobj);
+> +               kfree(prvdata);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
