@@ -2,114 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88CA1FDF99
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0663FFDF9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 15:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfKOOFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 09:05:39 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:42540 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbfKOOFj (ORCPT
+        id S1727567AbfKOOGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 09:06:41 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:60810 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbfKOOGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 09:05:39 -0500
-Received: by mail-qv1-f67.google.com with SMTP id n4so688762qvq.9
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 06:05:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=yP6sLpOI5gMHsWCnZ/lSHS0qOmzpZuHlPWbPumaUgRc=;
-        b=oD+ifSS2SKqGImF4vBVAx87ixxYxtspxZw6PhenI10A2wEXjPO29zGqx1N9Wd0+4LH
-         +xUQZe/Gxq2fg34qiWpzCEYKWDRugT8UF4ruFaaMeU3kgMdXOrvzhHfSXkhocNp3OOQO
-         xoH/JYJv0F7hUkK4xTYbb+0j/2Xu9syfn9BagNvtVCCxUkg+GubztuWtiThoFt8EGcEr
-         ARxbR1SyJ2MAChtAe3EuiQ73LUxk0DMdKlP/801OcACVB2F5UwVqXNjAJEPK+hW2SKf+
-         V51cNhtnRuomj1wKxenCSgk/3EBwiWMKKaqpRQQVtyJUXOiHCh/k9+MIhcijTCxodZSK
-         iK7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yP6sLpOI5gMHsWCnZ/lSHS0qOmzpZuHlPWbPumaUgRc=;
-        b=tc8NLj6xyr1A4isGD876fzGyymMWW1NSGTaOqlsB2MJWB3Of0QvVF+jRJpn17BBA0M
-         PyNtV4L4GwXwMx81PEnfD532Iao1Gbx2X4uU9lramBtDDDfV/Mlijrl+Y5UfpMbAKOQE
-         O5keOk979KYa6OSuH/LEeo7e1DTEkx5aY3W//DVwQwc8n94upSJrC0wFUcLjc0u6AcYD
-         QpkZdeQiTbGUQVanIfmnDtjLBVP2detTiVUZBwTetnB5AY28TDmmtEcSLJrwVkYqnRog
-         BLcn2FO9uu+C9oY+gzjTc+w8VINPS2xzS09ysI0i9JKKo31PuwCaF/Gaf0gw6GbB29Vy
-         k4sQ==
-X-Gm-Message-State: APjAAAVWjvkFHp1DmR1I/GJPTbJ9ZDqhQoGuK6YLPUm1wzoyzzk7/GrM
-        B9BoO0hyYRwJNHQyxlYf2P3xeQ==
-X-Google-Smtp-Source: APXvYqxx+BgTj06EwM9BZfvsjh6JPSIXQtx4APEYcMMw1ZXobyEcgnrGVoKzFyNUCOpPdoBzLYnVQQ==
-X-Received: by 2002:ad4:42a8:: with SMTP id e8mr13473546qvr.217.1573826738297;
-        Fri, 15 Nov 2019 06:05:38 -0800 (PST)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id j10sm4989769qtb.34.2019.11.15.06.05.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Nov 2019 06:05:37 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     hannes@cmpxchg.org, surenb@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] mm/vmscan: fix some -Wenum-conversion warnings
-Date:   Fri, 15 Nov 2019 09:04:57 -0500
-Message-Id: <1573826697-869-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 15 Nov 2019 09:06:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EESgAJ1TE14/ilPJDdeHT/O0bpBL1CggBzBhGTo6EWE=; b=nNcoGdvPpOOcrwHD4iBeEos0Z
+        5SdalHvw7KysG2cLC6tdPL5DFTCV0pHbDR+8q1XfA8vh+/NGLfXEmN62JKgw08OCt32TQLFUxxGbi
+        DimiCNSsn86tm0YraVMI5gInN9S2R8B+izsblgDyZsroEwlQ39D8FLIOoPKskG+O04/6JL4Tq4YXe
+        ftWhl0ley4MkYw8lLfEJHY8fNKrnHZWLvzTjxguL+xd1yCcelOXqEtlY7J5y9zCq2F8fuT6wTOHPt
+        +KVUxcvM77HydlF7OLSi7JE6NxvFR0eCQEf2OCEPSj0rbvSq2rXn2bq7qL+wKmGYxrVjIssf2FI0B
+        OqEBbxw1g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVcEZ-0008V3-42; Fri, 15 Nov 2019 14:05:59 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4433F304637;
+        Fri, 15 Nov 2019 15:04:47 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6691E2B12E78E; Fri, 15 Nov 2019 15:05:55 +0100 (CET)
+Date:   Fri, 15 Nov 2019 15:05:55 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sargun Dhillon <sargun@sargun.me>, Tejun Heo <tj@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v4] sched/freq: move call to cpufreq_update_util
+Message-ID: <20191115140555.GL4131@hirez.programming.kicks-ass.net>
+References: <1573751251-3505-1-git-send-email-vincent.guittot@linaro.org>
+ <20191115132520.GJ4131@hirez.programming.kicks-ass.net>
+ <CAKfTPtB4UGmZ53iVRsOV+k4MiS=Dzqw2-6_sBhko0bHRMAed2g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtB4UGmZ53iVRsOV+k4MiS=Dzqw2-6_sBhko0bHRMAed2g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The -next commit "mm: vmscan: enforce inactive:active ratio at the
-reclaim root" [1] introduced some GCC -Wenum-conversion warnings,
+On Fri, Nov 15, 2019 at 02:37:27PM +0100, Vincent Guittot wrote:
+> On Fri, 15 Nov 2019 at 14:25, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Nov 14, 2019 at 06:07:31PM +0100, Vincent Guittot wrote:
 
-mm/vmscan.c:2216:39: warning: implicit conversion from enumeration type
-'enum lru_list' to different enumeration type 'enum node_stat_item'
-[-Wenum-conversion]
-        inactive = lruvec_page_state(lruvec, inactive_lru);
-                   ~~~~~~~~~~~~~~~~~         ^~~~~~~~~~~~
-mm/vmscan.c:2217:37: warning: implicit conversion from enumeration type
-'enum lru_list' to different enumeration type 'enum node_stat_item'
-[-Wenum-conversion]
-        active = lruvec_page_state(lruvec, active_lru);
-                 ~~~~~~~~~~~~~~~~~         ^~~~~~~~~~
-mm/vmscan.c:2746:42: warning: implicit conversion from enumeration type
-'enum lru_list' to different enumeration type 'enum node_stat_item'
-[-Wenum-conversion]
-        file = lruvec_page_state(target_lruvec, LRU_INACTIVE_FILE);
-               ~~~~~~~~~~~~~~~~~                ^~~~~~~~~~~~~~~~~
+> > > +     decayed = update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
+> > > +     decayed |= update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
+> > > +     decayed |= update_irq_load_avg(rq, 0);
+> >
+> > Should not all 3 have their windows aligned and thus alway return the
+> > exact same value?
+> 
+> rt and dl yes but not irq
 
-Fix them by adding casts where it is safe.
+Any reason for IRQ not to be aligned?
 
-[1] http://lkml.kernel.org/r/20191107205334.158354-4-hannes@cmpxchg.org
+> But having aligned window doesn't mean that they will all decay.
+> One can have been updated just before (during a dequeue as an example)
+> or at least less than 1ms before
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/vmscan.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 122b3920aaa4..16c005ddfd9e 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2213,8 +2213,9 @@ static bool inactive_is_low(struct lruvec *lruvec, enum lru_list inactive_lru)
- 	unsigned long inactive_ratio;
- 	unsigned long gb;
- 
--	inactive = lruvec_page_state(lruvec, inactive_lru);
--	active = lruvec_page_state(lruvec, active_lru);
-+	inactive = lruvec_page_state(lruvec,
-+				     (enum node_stat_item)inactive_lru);
-+	active = lruvec_page_state(lruvec, (enum node_stat_item)active_lru);
- 
- 	gb = (inactive + active) >> (30 - PAGE_SHIFT);
- 	if (gb)
-@@ -2743,7 +2744,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 	 * thrashing, try to reclaim those first before touching
- 	 * anonymous pages.
- 	 */
--	file = lruvec_page_state(target_lruvec, LRU_INACTIVE_FILE);
-+	file = lruvec_page_state(target_lruvec,
-+				 (enum node_stat_item)LRU_INACTIVE_FILE);
- 	if (file >> sc->priority && !(sc->may_deactivate & DEACTIVATE_FILE))
- 		sc->cache_trim_mode = 1;
- 	else
--- 
-1.8.3.1
-
+Bah... true.
