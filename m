@@ -2,136 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C056FD27D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 02:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46AF7FD282
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 02:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfKOBfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 20:35:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbfKOBfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 20:35:00 -0500
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 367FB20723;
-        Fri, 15 Nov 2019 01:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573781699;
-        bh=FM7mYg/6+NiEj2ej8cWPQVFxq0x2k6N9T/icEBkFu64=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UB35JLpwUaKnERFQx86p21dIIYJB+YknS2gzLIPiUbT/8zQRoZU5VhpBNGJvmnUUA
-         FjwYM60dyXKAniIivnhD5Wclp17WYbrNzimtZtYI5N6MXXeU44g2+fzdDt4zNCQH81
-         a6PiJZkQKQsplLdttcQYe5Eyv7zbWKKX1HTYpios=
-Received: by mail-qk1-f169.google.com with SMTP id d13so6856155qko.3;
-        Thu, 14 Nov 2019 17:34:59 -0800 (PST)
-X-Gm-Message-State: APjAAAWBcbcRvkwriI/b2A1bQxfp4vljle1On6m1UyoMAdNJjaFhOMPw
-        KtiVZqd/Tb6zGkqwBTrWR8bYCffBSPP+7EoUvw==
-X-Google-Smtp-Source: APXvYqxz9j05GwmaTCc16w66GIq0s+n5kpdf5ngLzlrlw5UuuM6/wKEBRGfv34b1gB5ITk95f4T0wiJFCdroySKtY6k=
-X-Received: by 2002:a37:30b:: with SMTP id 11mr10622838qkd.254.1573781698329;
- Thu, 14 Nov 2019 17:34:58 -0800 (PST)
+        id S1727290AbfKOBkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 20:40:14 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40151 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbfKOBkN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 20:40:13 -0500
+Received: by mail-lf1-f65.google.com with SMTP id j26so6686001lfh.7
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 17:40:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rFskqtLP2N2VaZi1tFqSAtlpsDvGGv7YPwSPEpuMZEo=;
+        b=bNsKgL/vFHp5Dmh3egwCsmkq3RAyW9y/VBXFH8UbShDrDwtrKHLz34Pn4zFWo7NY3z
+         5PTmOWxwXywEvoxu/SVKs/6hilrCcEjC1tkbXU0MpRa0Kjf7gd9thLWv7a4NNgMTEhjy
+         R+PXiaXD6Fumb4JQVKY6gBby+WxozAtLDvBfgUxDFoXKVSVk/i0026CQAfFbbcVENqUv
+         nXeDS56UsnuKqn3R+tKNQBxYvYuZ5LuP2VlicTTUdzTi6YuDc/FFH2zGkx6Wyd5uRiC9
+         rZ15dZyUHKKwXmGVMqaYnwBITAFeEPy2k0xgOebCWOX4T2HsIZT7P1/Hr8okT67PFkqB
+         09qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rFskqtLP2N2VaZi1tFqSAtlpsDvGGv7YPwSPEpuMZEo=;
+        b=A+u1oETw/GEDJ2yCVLVXO2zWxD8gpwXl0a9NcTX2aXxMHwEd8Bt06zj+XSDPFWui7M
+         Oe2tXXr7yHH2rr0qV/u1YYmQOOc1gXN2Ka7JRs4v/HYK+XEdORischXVO7i9N/+nslbd
+         d0wJrAWsvGaVtWVZmbJFSYk/Nnblwx7mwy8CwnpPs1AnBhiMDY2XdwoAC9HhF/slGVWD
+         IWW0QVC48O6WOHVVNYIMBb3/GEXRazuZlQGVWJkqEUlSoRvsD/0kzfKp7N+robmiOsGm
+         l2NHxa+8xfmpFN/eC9P49DjM+rc/u1OOAnZzrQIoek4EEHRt0zbSbJNSFvfTMWotlMFn
+         Is6g==
+X-Gm-Message-State: APjAAAWNOEl/xYlrAd68/1MoTg1mVlLBnFEgpHd8UBDEtARyOVxAfesQ
+        YmNhV3bciDTqlwDHIUQuJ6IFn1rsbOegg1WHdF0fsg==
+X-Google-Smtp-Source: APXvYqz60nURqcP+ihfir96vZTjjr0ZAN8WS3qlm2R92Tk9C+zIRN/Bzmh5fMkWjRsuUPdRJxDb2bptiDaojJBCZVYY=
+X-Received: by 2002:a19:c790:: with SMTP id x138mr9439033lff.61.1573782011720;
+ Thu, 14 Nov 2019 17:40:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20191111030434.29977-1-afaerber@suse.de> <20191111030434.29977-6-afaerber@suse.de>
-In-Reply-To: <20191111030434.29977-6-afaerber@suse.de>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 14 Nov 2019 19:34:47 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+fdksCHQ1_NaizkM6dVWT1h2wocJpD4NB8K2dOO-yZ4Q@mail.gmail.com>
-Message-ID: <CAL_Jsq+fdksCHQ1_NaizkM6dVWT1h2wocJpD4NB8K2dOO-yZ4Q@mail.gmail.com>
-Subject: Re: [PATCH 5/7] ARM: dts: rtd1195: Introduce r-bus
-To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+References: <20190710201244.25195-1-brijesh.singh@amd.com> <20190710201244.25195-12-brijesh.singh@amd.com>
+ <CABayD+ctvNszs6gVdjP+geJTk1RN3Ko-RWaRTdeU6-7G1=F=Mw@mail.gmail.com>
+In-Reply-To: <CABayD+ctvNszs6gVdjP+geJTk1RN3Ko-RWaRTdeU6-7G1=F=Mw@mail.gmail.com>
+From:   Steve Rutherford <srutherford@google.com>
+Date:   Thu, 14 Nov 2019 17:39:35 -0800
+Message-ID: <CABayD+fnnyLxh1Nak9vskKQpLBOXROvaaj5Q64Ksx_qHB0DE5g@mail.gmail.com>
+Subject: Re: [PATCH v3 11/11] KVM: x86: Introduce KVM_SET_PAGE_ENC_BITMAP ioctl
+To:     "Singh, Brijesh" <brijesh.singh@amd.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 9:04 PM Andreas F=C3=A4rber <afaerber@suse.de> wrot=
-e:
+On Thu, Nov 14, 2019 at 5:22 PM Steve Rutherford <srutherford@google.com> wrote:
 >
-> Model Realtek's register bus in DT.
+> On Wed, Jul 10, 2019 at 1:13 PM Singh, Brijesh <brijesh.singh@amd.com> wrote:
+> >
+> >  struct kvm_arch_async_pf {
+> > diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> > index e675fd89bb9a..31653e8d5927 100644
+> > --- a/arch/x86/kvm/svm.c
+> > +++ b/arch/x86/kvm/svm.c
+> > @@ -7466,6 +7466,47 @@ static int svm_get_page_enc_bitmap(struct kvm *kvm,
+> >         return ret;
+> >  }
+> >
+> > +static int svm_set_page_enc_bitmap(struct kvm *kvm,
+> > +                                  struct kvm_page_enc_bitmap *bmap)
+> > +{
+> > +       struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+> > +       unsigned long gfn_start, gfn_end;
+> > +       unsigned long *bitmap;
+> > +       unsigned long sz, i;
+> > +       int ret;
+> > +
+> > +       if (!sev_guest(kvm))
+> > +               return -ENOTTY;
+> > +
+> > +       gfn_start = bmap->start_gfn;
+> > +       gfn_end = gfn_start + bmap->num_pages;
+> > +
+> > +       sz = ALIGN(bmap->num_pages, BITS_PER_LONG) / 8;
+> > +       bitmap = kmalloc(sz, GFP_KERNEL);
 >
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  This could be squashed into the original RTD1195 patch.
+> This kmalloc should probably be either a vmalloc or kvmalloc. The max
+> size, if I'm reading kmalloc correctly, is 2^10 pages. That's 4MB,
+> which should correspond to a bitmap for a 128GB VM, which is a
+> plausible VM size.
 >
->  arch/arm/boot/dts/rtd1195.dtsi | 52 ++++++++++++++++++++++++------------=
-------
->  1 file changed, 30 insertions(+), 22 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.d=
-tsi
-> index a8cc2d23e7ef..3439647ecf97 100644
-> --- a/arch/arm/boot/dts/rtd1195.dtsi
-> +++ b/arch/arm/boot/dts/rtd1195.dtsi
-> @@ -92,28 +92,36 @@
->                          <0x18100000 0x18100000 0x01000000>,
->                          <0x40000000 0x40000000 0xc0000000>;
->
-> -               wdt: watchdog@18007680 {
-> -                       compatible =3D "realtek,rtd1295-watchdog";
-> -                       reg =3D <0x18007680 0x100>;
-> -                       clocks =3D <&osc27M>;
-> -               };
-> -
-> -               uart0: serial@18007800 {
-> -                       compatible =3D "snps,dw-apb-uart";
-> -                       reg =3D <0x18007800 0x400>;
-> -                       reg-shift =3D <2>;
-> -                       reg-io-width =3D <4>;
-> -                       clock-frequency =3D <27000000>;
-> -                       status =3D "disabled";
-> -               };
-> -
-> -               uart1: serial@1801b200 {
-> -                       compatible =3D "snps,dw-apb-uart";
-> -                       reg =3D <0x1801b200 0x100>;
-> -                       reg-shift =3D <2>;
-> -                       reg-io-width =3D <4>;
-> -                       clock-frequency =3D <27000000>;
-> -                       status =3D "disabled";
-> +               rbus: r-bus@18000000 {
+> --Steve
 
-Following node names should be generic: bus@...
-
-> +                       compatible =3D "simple-bus";
-> +                       reg =3D <0x18000000 0x100000>;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
-> +                       ranges =3D <0x0 0x18000000 0x100000>;
-> +
-> +                       wdt: watchdog@7680 {
-> +                               compatible =3D "realtek,rtd1295-watchdog"=
-;
-> +                               reg =3D <0x7680 0x100>;
-> +                               clocks =3D <&osc27M>;
-> +                       };
-> +
-> +                       uart0: serial@7800 {
-> +                               compatible =3D "snps,dw-apb-uart";
-> +                               reg =3D <0x7800 0x400>;
-> +                               reg-shift =3D <2>;
-> +                               reg-io-width =3D <4>;
-> +                               clock-frequency =3D <27000000>;
-> +                               status =3D "disabled";
-> +                       };
-> +
-> +                       uart1: serial@1b200 {
-> +                               compatible =3D "snps,dw-apb-uart";
-> +                               reg =3D <0x1b200 0x100>;
-> +                               reg-shift =3D <2>;
-> +                               reg-io-width =3D <4>;
-> +                               clock-frequency =3D <27000000>;
-> +                               status =3D "disabled";
-> +                       };
->                 };
->
->                 gic: interrupt-controller@ff011000 {
-> --
-> 2.16.4
->
+Ignore this, you are clearly never going to copy that much in one
+call, and the backing bitmap correctly uses kvmalloc.
