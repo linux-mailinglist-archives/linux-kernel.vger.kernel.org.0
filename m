@@ -2,89 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B974FDC2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:21:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D2FFDC32
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 12:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfKOLV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 06:21:26 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41162 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfKOLV0 (ORCPT
+        id S1727265AbfKOLYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 06:24:11 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45288 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfKOLYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 06:21:26 -0500
-Received: by mail-lf1-f68.google.com with SMTP id j14so7726335lfb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 03:21:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=cJflpzCPJdkWDTbOvCGCC6+JPLVbVg8O4/hMfApt5sY=;
-        b=Nhaujhujwk1xlb0XrKpaA+oEpy8weMjrI0zA8gZk3H92I6tZvwx52+YlvXQ0W3kRQr
-         kKsWPwU/l4zC0VU7M7JJQv8AA437n5etGXUlav/lKqU8DqhpPUbtBnO3TyGqmO5qG3VB
-         pE9GFgThCC8ZbI28XAb0nLQHt3Eg8yes+Xae8QS24NYLOfhofpgyKEQ097ARN4z0Wyfh
-         b51Hl0aW78tuOHhLTHJdQZsRhhb2IApo0rv7f6bKigUdgvlkx6k9eNoSzbaT9EeZc6EH
-         ci/avewgV6lQpf9p9idpe1SZc0zGSk+0tz4jcYX/yGwAO/dSGAo5GkGSmCUStx5cBoJ4
-         qX5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=cJflpzCPJdkWDTbOvCGCC6+JPLVbVg8O4/hMfApt5sY=;
-        b=YamXhC8eY8lHL3gYajiUyIk4SZOiI+6YTPiSqzya3MM5Oal0yF2RosVhsOZR3b+KQK
-         Ugh2+nQqB6t6tC1Ih2CbzaB2+mFaK3KdHU/6Kz/qFenIJIPXup5ZQlOIwmjaHzQqIYkv
-         GORFU/ovwQtECJpuzTLth3nqQQJxDlHibDqNZy0YXOq53hfOk3bM5aX5elSr1iIGvcME
-         CuQkwTXYahWuDKGmtER6FZFruKKgJB/WephKzmNPzJou32DabCJiP8NsWvUb+x7Fx4gV
-         mPQu6YiPDTgnkQkefBZ+szuxjfyO9VEZmh+q7vwvc7x5cvWSBULQJo0UnQWkG1BQtoez
-         5XXQ==
-X-Gm-Message-State: APjAAAUwZcEx2HDbo60MHor6GejkcKgyMFFMZ5nqEhNPXIuGjgM+bUVG
-        Emvtx2zjt8+QDKEB+7wyTC1D7GnWLwcuV7NhoXQ=
-X-Google-Smtp-Source: APXvYqwtQ6nhe6tAZe5jaGhGkgsEfkYOHqWEqHUvqmHAXvg8XtMKHqE8yL+M3oc0tdBNRBf2jLsFLhWP3njkVnoEzGo=
-X-Received: by 2002:ac2:4856:: with SMTP id 22mr979999lfy.131.1573816884389;
- Fri, 15 Nov 2019 03:21:24 -0800 (PST)
+        Fri, 15 Nov 2019 06:24:10 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9926B60FCF; Fri, 15 Nov 2019 11:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573817049;
+        bh=jhlsJfa/CIIKPDu4dgmeIauTYrE/caZ2o/tn2eCcBe0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ROuTp1LNy63IKm6kmUk3thTaxwTGxOSrvqGt2GSE2l7+9CyFBbQkbLldX5ujNlhJj
+         zSYz9X70UrOxHxYyBZfzvZGFMdIVomFIGulj1vn4PUAeYtKx3TzTAaWCVWsfvIxPnq
+         mx6kKQOcnV1mMoABn0cl8xVmGjnVOcO+/YXNOMTM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 727D260FCF;
+        Fri, 15 Nov 2019 11:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573817048;
+        bh=jhlsJfa/CIIKPDu4dgmeIauTYrE/caZ2o/tn2eCcBe0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=msJryt5hn5MPERKvMvZWQoBAWnONKUFt7c8OC3TVaXyGlZwxFXM2RHEUr5jeROvxk
+         SJJKEAWWBagr739vq4UmUHFq68ZI8rJb/tjN8XgfzT3auExBPBAZciKXlE7Wvt0uvG
+         momPPozBWI+0lZmyvtJl1QovRS9wTNZ35PzYk8M8=
 MIME-Version: 1.0
-Reply-To: oliviaeorge@hotmail.com
-Received: by 2002:a19:5f09:0:0:0:0:0 with HTTP; Fri, 15 Nov 2019 03:21:24
- -0800 (PST)
-From:   George Olivia <oliviaeorge@gmail.com>
-Date:   Fri, 15 Nov 2019 04:21:24 -0700
-X-Google-Sender-Auth: LgVTHycOWzR27rVVZ57s4rNYMWo
-Message-ID: <CAEfcCEfOy9Aqw7bFMb9OCu7TjqjU6bL5NvK6VpB6GVZXvH8hnQ@mail.gmail.com>
-Subject: I am looking forward to hear from you
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 15 Nov 2019 16:54:08 +0530
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCHv2 0/3] Add LLCC support for SC7180 SoC
+In-Reply-To: <5dcd8588.1c69fb81.2528a.3460@mx.google.com>
+References: <cover.1571484439.git.saiprakash.ranjan@codeaurora.org>
+ <20191021033220.GG4500@tuxbook-pro>
+ <CAL_JsqLzRRQe8UZCxgXArVNhNry7PgMCthAR2aZNcm6CCEpvDA@mail.gmail.com>
+ <2fbab8bc38be37fba976d34b2f89e720@codeaurora.org>
+ <CAL_Jsq+5p7gQzDfGipNFr1ry-Pc3pDJpcXnAqdX9eo0HLETATQ@mail.gmail.com>
+ <81f57dc623fe8705cea52b5cb2612b32@codeaurora.org>
+ <1565197bda60573937453e95dcafbe68@codeaurora.org>
+ <5dcd8588.1c69fb81.2528a.3460@mx.google.com>
+Message-ID: <139c37cbf267fcc6b363f04c6b5d1256@codeaurora.org>
+X-Sender: saiprakash.ranjan@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Greetings
-With due respect, I am Mrs. George Olivia; I have decided to donate
-what I have to you / Motherless babies/Less privileged/Widows' because
-I am dying and diagnosed for cancer for about 2 years ago. I have been
-touched by God Almighty to donate from what I have inherited from my
-late husband to you for good work of God Almighty. I have asked
-Almighty God to forgive me and believe he has, because he is a
-Merciful God I will be going in for an operation surgery soon.
-I decided to will/donate the sum of ($ 8.1 million DOLLARS) to you for
-the good work of God Almighty, and also to help the motherless and
-less privilege and also forth assistance of the widows. At the moment
-I cannot take any telephone calls right now due to the fact that my
-relatives (that have squandered the funds gave them for this purpose
-before) are around me and my health status also. I have adjusted my
-will and my lawyer is aware.
+On 2019-11-14 22:19, Stephen Boyd wrote:
+> Quoting Sai Prakash Ranjan (2019-11-13 07:00:40)
+>> Hello Rob,
+>> 
+>> On 2019-10-25 13:24, Sai Prakash Ranjan wrote:
+>> > On 2019-10-25 04:03, Rob Herring wrote:
+>> >> On Thu, Oct 24, 2019 at 6:00 AM Sai Prakash Ranjan
+>> >> <saiprakash.ranjan@codeaurora.org> wrote:
+>> >>>
+>> >>> Hi Rob,
+>> >>>
+>> >>> On 2019-10-24 01:19, Rob Herring wrote:
+>> >>> > On Sun, Oct 20, 2019 at 10:32 PM Bjorn Andersson
+>> >>> > <bjorn.andersson@linaro.org> wrote:
+>> >>> >>
+>> >>> >> On Sat 19 Oct 04:37 PDT 2019, Sai Prakash Ranjan wrote:
+>> >>> >>
+>> >>> >> > LLCC behaviour is controlled by the configuration data set
+>> >>> >> > in the llcc-qcom driver, add the same for SC7180 SoC.
+>> >>> >> > Also convert the existing bindings to json-schema and add
+>> >>> >> > the compatible for SC7180 SoC.
+>> >>> >> >
+>> >>> >>
+>> >>> >> Thanks for the patches and thanks for the review Stephen. Series
+>> >>> >> applied
+>> >>> >
+>> >>> > And they break dt_binding_check. Please fix.
+>> >>> >
+>> >>>
+>> >>> I did check this and think that the error log from dt_binding_check
+>> >>> is
+>> >>> not valid because it says cache-level is a required property [1], but
+>> >>> there is no such property in LLCC bindings.
+>> >>
+>> >> Then you should point out the issue and not just submit stuff ignoring
+>> >> it. It has to be resolved one way or another.
+>> >>
+>> >
+>> > I did not ignore it. When I ran the dt-binding check locally, it did
+>> > not
+>> > error out and just passed on [1] and it was my bad that I did not check
+>> > the entire build logs to see if llcc dt binding check had some warning
+>> > or
+>> > not. But this is the usual case where most of us don't look at the
+>> > entire
+>> > build logs to check if there is a warning or not. We notice if there is
+>> > an
+>> > immediate exit/fail in case of some warning/error. So it would be good
+>> > if
+>> > we fail the dt-binding check build if there is some warning/error or
+>> > atleast
+>> > provide some option to strict build to fail on warning, maybe there is
+>> > already
+>> > a flag to do this?
+>> >
+>> > After submitting the patch, I noticed this build failure on
+>> > patchwork.ozlabs.org and was waiting for your reply.
+>> >
+>> > [1] https://paste.ubuntu.com/p/jNK8yfVkMG/
+>> >
+>> >> If you refer to the DT spec[1], cache-level is required. The schema is
+>> >> just enforcing that now. It's keying off the node name of
+>> >> 'cache-controller'.
+>> >>
+>> >
+>> > This is not L2 or L3 cache, this is a system cache (last level cache)
+>> > shared by
+>> > clients other than just CPU. So I don't know how do we specify
+>> > cache-level for
+>> > this, let me know if you have some pointers.
+>> >
+>> 
+>> Any ideas on specifying the cache-level for system cache? Does
+>> dt-binding-check
+>> needs to be updated for this case?
+>> 
+> 
+> I don't see how 'cache-level' fits here. Maybe the node name should be
+> changed to 'system-cache-controller' and then the schema checker can
+> skip it?
 
-I wish you all the best and May the good Lord bless you abundantly,
-and please use the funds judiciously and always extend the good work
-to others. As soon as you get back to me, I shall give you info on
-what I need from you, then you will contact the bank and tell them I
-have willed those properties to you by quoting my personal file
-routing and account information. And I have also notified the bank
-that I am willing that properties to you for a good, effective and
-prudent work. I know I don't know you but I have been directed to do
-this by God Almighty.
-I Have all my Hospital document which i can send to you as prove to
-what am tell you and my seriousness to this.
-If you are interested in carrying out this task, get back to me for
-more details on this noble project of mine.
+Sounds good and correct. I made this change and ran the dt binding check
+and no warning was observed.
 
-Yours Faithfully,
-Mrs. George Olivia
+Sent a patch - 
+https://lore.kernel.org/lkml/cover.1573814758.git.saiprakash.ranjan@codeaurora.org/
+
+-Sai
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member
+of Code Aurora Forum, hosted by The Linux Foundation
