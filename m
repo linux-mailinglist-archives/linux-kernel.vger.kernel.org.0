@@ -2,27 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B14FFD471
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 06:33:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 361FBFD478
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 06:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfKOFdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 00:33:54 -0500
-Received: from muru.com ([72.249.23.125]:42414 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfKOFdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 00:33:53 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id C7FA980E7;
-        Fri, 15 Nov 2019 05:34:29 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH] phy: cpcap-usb: Fix error path when no host driver is loaded
-Date:   Thu, 14 Nov 2019 21:33:50 -0800
-Message-Id: <20191115053350.20004-1-tony@atomide.com>
-X-Mailer: git-send-email 2.23.0
+        id S1727096AbfKOFgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 00:36:50 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38609 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfKOFgt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 00:36:49 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 15so5277840pgh.5;
+        Thu, 14 Nov 2019 21:36:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jq+NcdnyD4uXSFNngY13nScnZ6L+zxq0uI02vlWPylI=;
+        b=VqkyIVqvJrPZDtdXGg0Hmpxp/EO/bgquARkROY8lDUY0G+aww7QAf6j3YtSMq4NfS/
+         UlXJNwtdVyXJzEHEAx6QcCJd4CtQai/8PZ27DyWR5ZZ76Y85u+aFXeq9o9rZsMtSFyhm
+         eZxAM3PuKkJ3/jlVO6QKkvbRyLgVVuJqg5jFhT3lKEDpEJt6lDD4jjuA2Lx+hKjrMQJK
+         k6dXZSThiaQJoM11ayiNc/v0Nyud6bTinMTxX2ptBmQrejjvIA8ZWY8qUSt+E3Z6j32O
+         xIqlNCNpQzI0aCHEOtpOT6PZOiRDGBfsYwixp70FrahCJX3aTIonrsEuq5J4866i5BaK
+         +f8Q==
+X-Gm-Message-State: APjAAAUmlBJKxXgKXPhWtl7MvPqX9ZosvetMU98ybYtBihLquNawU634
+        G93fAbzKu6phIpZSiHIT640=
+X-Google-Smtp-Source: APXvYqz+sH25cah2cIgJnfrsEaJ696abhQoJpa8A12rE4BupCaP9ujWJrC1dpt0jpHCVHTkMk4KTvg==
+X-Received: by 2002:a63:f48:: with SMTP id 8mr14575436pgp.329.1573796208771;
+        Thu, 14 Nov 2019 21:36:48 -0800 (PST)
+Received: from localhost (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
+        by smtp.gmail.com with ESMTPSA id d6sm8513192pfn.32.2019.11.14.21.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 21:36:47 -0800 (PST)
+From:   You-Sheng Yang <vicamo.yang@canonical.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hui Wang <hui.wang@canonical.com>
+Cc:     You-Sheng Yang <vicamo.yang@canonical.com>,
+        HungNien Chen <hn.chen@weidahitech.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: i2c-hid: remove orphaned member sleep_delay
+Date:   Fri, 15 Nov 2019 13:36:46 +0800
+Message-Id: <20191115053646.3107290-1-vicamo.yang@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -30,87 +53,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If musb_mailbox() returns an error, we must still continue to finish
-configuring the phy.
+This was introduced in commit 00b790ea545b ("HID: i2c-hid: Add a small
+delay after sleep command for Raydium touchpanel") which has been
+effectively reverted by commit 67b18dfb8cfc ("HID: i2c-hid: Remove
+runtime power management").
 
-Otherwise the phy state may end up only half initialized, and this can
-cause the debug serial console to stop working. And this will happen if the
-usb driver musb controller is not loaded.
-
-Let's fix the issue by adding helper for cpcap_usb_try_musb_mailbox().
-
-Fixes: 6d6ce40f63af ("phy: cpcap-usb: Add CPCAP PMIC USB support")
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: You-Sheng Yang <vicamo.yang@canonical.com>
 ---
- drivers/phy/motorola/phy-cpcap-usb.c | 29 ++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid-core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
---- a/drivers/phy/motorola/phy-cpcap-usb.c
-+++ b/drivers/phy/motorola/phy-cpcap-usb.c
-@@ -207,6 +207,19 @@ static int cpcap_phy_get_ints_state(struct cpcap_phy_ddata *ddata,
- static int cpcap_usb_set_uart_mode(struct cpcap_phy_ddata *ddata);
- static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata);
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index 04c088131e04..adfe344bc786 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -157,8 +157,6 @@ struct i2c_hid {
  
-+static void cpcap_usb_try_musb_mailbox(struct cpcap_phy_ddata *ddata,
-+				       enum musb_vbus_id_status status)
-+{
-+	int error;
-+
-+	error = musb_mailbox(status);
-+	if (!error)
-+		return;
-+
-+	dev_dbg(ddata->dev, "%s: musb_mailbox failed: %i\n",
-+		__func__, error);
-+}
-+
- static void cpcap_usb_detect(struct work_struct *work)
- {
- 	struct cpcap_phy_ddata *ddata;
-@@ -226,9 +239,7 @@ static void cpcap_usb_detect(struct work_struct *work)
- 		if (error)
- 			goto out_err;
+ 	bool			irq_wake_enabled;
+ 	struct mutex		reset_lock;
+-
+-	unsigned long		sleep_delay;
+ };
  
--		error = musb_mailbox(MUSB_ID_GROUND);
--		if (error)
--			goto out_err;
-+		cpcap_usb_try_musb_mailbox(ddata, MUSB_ID_GROUND);
- 
- 		error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC3,
- 					   CPCAP_BIT_VBUSSTBY_EN |
-@@ -257,9 +268,7 @@ static void cpcap_usb_detect(struct work_struct *work)
- 			error = cpcap_usb_set_usb_mode(ddata);
- 			if (error)
- 				goto out_err;
--			error = musb_mailbox(MUSB_ID_GROUND);
--			if (error)
--				goto out_err;
-+			cpcap_usb_try_musb_mailbox(ddata, MUSB_ID_GROUND);
- 
- 			return;
- 		}
-@@ -269,16 +278,12 @@ static void cpcap_usb_detect(struct work_struct *work)
- 		error = cpcap_usb_set_usb_mode(ddata);
- 		if (error)
- 			goto out_err;
--		error = musb_mailbox(MUSB_VBUS_VALID);
--		if (error)
--			goto out_err;
-+		cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_VALID);
- 
- 		return;
- 	}
- 
--	error = musb_mailbox(MUSB_VBUS_OFF);
--	if (error)
--		goto out_err;
-+	cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_OFF);
- 
- 	/* Default to debug UART mode */
- 	error = cpcap_usb_set_uart_mode(ddata);
+ static const struct i2c_hid_quirks {
 -- 
-2.23.0
+2.24.0
+
