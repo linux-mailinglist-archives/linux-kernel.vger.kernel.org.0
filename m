@@ -2,86 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD2CFE504
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:39:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE097FE508
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 19:42:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKOSjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 13:39:45 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:41010 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfKOSjp (ORCPT
+        id S1726828AbfKOSms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 13:42:48 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37926 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfKOSms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 13:39:45 -0500
-Received: by mail-ua1-f66.google.com with SMTP id o9so3302987uat.8
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 10:39:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bV2myfTUpz0CRJJzgk898nsegVBK706DjRFlK59PguM=;
-        b=m+L1dD7DHAoqoFPkWS4f+BNnvPYPE9XHcSqCYVyMx0c+a1MWv5B2TY/7T8BOZaL1s5
-         +vIAKqP3eSwDZBkR4whM1COVoYPLhTboSVtYVavsvQHhcE3BCGy6WMEFEC2fDWVd70HE
-         OFhXVx+1nd2oVHFa8C8xsrP9VnVxvO7aylKw54njPk1dKNiijEDK7NV7wqfjKMFg7PSP
-         wnHOBwfkZawEWSViQKsQGbRBc0CbbEtPJXGQfd1l6MWgTGTqXZs914IDyyTM0R82ejR9
-         KLdZ0Id83YIX04xikE1J6N90jB2iz9ac5sHcI4A8QECIGGeB+xAcz7dLqsMLxn4rNsEZ
-         K6gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bV2myfTUpz0CRJJzgk898nsegVBK706DjRFlK59PguM=;
-        b=KaDZ9OeaFbwNhVAnX8rfEJvCC+Haz1ESRYjl5XZEMNI9QV40E1kbZO6V2Vfec2lo+n
-         EHkL5ZevSeCD+eHRD2DnjQHWfA2loTZq+GB9W2wI1WJQQy+T2JYXiSLaqJVfd6m8JUfR
-         4hpmhWgt9hIGvsR2rKTgZV/ESx+f+bG0wRnP5QMDLlysHbBKi3FJnh1KBkcjjqcS6bF1
-         NXzp70mdv7WWO16Ncb7zulLqOpP+8yGqthu6j6nrScqh4c628IKutbtHEWGh2SGJgZmm
-         UaSrXpvdyFCCENeC4ZofaZWje1xpD1rPqIDsgKu9Hr8yt5lK6LVi+ad7fGHZkjcP6Yts
-         8qCw==
-X-Gm-Message-State: APjAAAWk4Avrt5PIoFwe4FyvVTaQotqFF9aTdl1KgZGdpuj+TQsL8mhm
-        pUW8jflXFJADEelINkKa5FDWB9bf3ly3+QsnU5A=
-X-Google-Smtp-Source: APXvYqz/+B5/7vOeF44jPGMtbH299xhEPCR27z4T3xxKJV5F6OEavJ0VioPYov6QfZkmxnjSucv5N4F/ROowt8aFNmI=
-X-Received: by 2002:a9f:3c2c:: with SMTP id u44mr10152334uah.2.1573843183656;
- Fri, 15 Nov 2019 10:39:43 -0800 (PST)
+        Fri, 15 Nov 2019 13:42:48 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVgXp-0001lF-OQ; Fri, 15 Nov 2019 18:42:09 +0000
+Date:   Fri, 15 Nov 2019 18:42:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, yu kuai <yukuai3@huawei.com>,
+        rafael@kernel.org, oleg@redhat.com, mchehab+samsung@kernel.org,
+        corbet@lwn.net, tytso@mit.edu, jmorris@namei.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        zhengbin13@huawei.com, yi.zhang@huawei.com,
+        chenxiang66@hisilicon.com, xiexiuqi@huawei.com
+Subject: [RFC] simple_recursive_removal()
+Message-ID: <20191115184209.GT26530@ZenIV.linux.org.uk>
+References: <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
+ <20191115032759.GA795729@kroah.com>
+ <20191115041243.GN26530@ZenIV.linux.org.uk>
+ <20191115072011.GA1203354@kroah.com>
+ <20191115131625.GO26530@ZenIV.linux.org.uk>
+ <20191115083813.65f5523c@gandalf.local.home>
+ <20191115134823.GQ26530@ZenIV.linux.org.uk>
+ <20191115085805.008870cb@gandalf.local.home>
+ <20191115141754.GR26530@ZenIV.linux.org.uk>
+ <20191115175423.GS26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20191114142707.1608679-1-areber@redhat.com> <20191114142707.1608679-2-areber@redhat.com>
- <20191114183421.GA171963@gmail.com> <20191115151420.GC20767@dcbz.redhat.com>
-In-Reply-To: <20191115151420.GC20767@dcbz.redhat.com>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Fri, 15 Nov 2019 10:39:32 -0800
-Message-ID: <CANaxB-wWfXmFaFD7GuXe6GaOnEQhTCS-7cPa24L00dxux5YtOQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] selftests: add tests for clone3() with *set_tid
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115175423.GS26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 7:14 AM Adrian Reber <areber@redhat.com> wrote:
->
-> On Thu, Nov 14, 2019 at 10:34:21AM -0800, Andrei Vagin wrote:
->
-> > > +   snprintf(proc_path, sizeof(proc_path), "/proc/%d/status", pid);
-> > > +   f = fopen(proc_path, "r");
-> > > +   if (f == NULL)
-> > > +           ksft_exit_fail_msg(
-> > > +                   "%s - Could not open %s\n",
-> > > +                   strerror(errno), proc_path);
->
-> If the child does not exist anymore, the test will fail here and exit.
->
-> Besides this while() I tried to address all your comments in v11. Any
-> further comments on the test?
+On Fri, Nov 15, 2019 at 05:54:23PM +0000, Al Viro wrote:
+> Anyway, AFAICS removal could be done this way:
+> 
+> // parent is held exclusive, after is NULL or a child of parent
+> find_next_child(parent, prev)
+> 	child = NULL
+> 	node = prev ? &prev->d_child : &parent->d_subdirs;
+> 	grab parent->d_lock
+> 	for each entry in the list starting at node->next
+> 		d = container_of(entry, struct dentry, d_child)
+> 		grab d->d_lock
+> 		if simple_positive(d)
+> 			bump d->d_count
+> 			child = d
+> 		drop d->d_lock
+> 		if child
+> 			break
+> 	drop parent->d_lock
+> 	dput(prev);
+> 	return child
+> 
+> kill_it(victim, parent)
+> 	if simple_positive(victim)
+> 		d_invalidate(victim);	// needed to avoid lost mounts
+> 		if victim is a directory
+> 			fsnotify_rmdir
+> 		else
+> 			fsnotify_unlink
+> 		if victim is regular
+> 			__debugfs_file_removed(victim)
+> 		dput(victim)		// unpin it
+> 
+> recursive_removal(dentry)
+> 	this = dentry;
+> 	while (true) {
+> 		victim = NULL;
+> 		inode = this->d_inode;
+> 		inode_lock(inode);
+> 		if (d_is_dir(this))
+> 			mark this doomed
+> 		while ((child = find_next_child(this, victim)) == NULL) {
+> 			// no children (left); kill and ascend
+> 			// update metadata while it's still locked
+> 			inode->i_ctime = current_time(inode);
+> 			clear_nlink(inode);
+> 			inode_unlock(inode);
+> 			victim = this;
+> 			this = this->d_parent;
+> 			inode = this->d_inode;
+> 			inode_lock(inode);
+> 			kill_it(victim, this);
+> 			if (victim == dentry) {
+> 				inode->i_ctime = inode->i_mtime = current_time(inode);
+> 				if (d_is_dir(dentry))
+> 					drop_nlink(inode);
+> 				inode_unlock(inode);
+> 				dput(dentry);
+> 				return;
+> 			}
+> 		}
+> 		inode_unlock(inode);
+> 		this = child;
+> 	}
 
-No, I don't have any other comments.
+Come to think of that, if we use IS_DEADDIR as "no more additions" marking,
+that looks like a good candidate for all in-kernel rm -rf on ramfs-style
+filesystems without cross-directory renames.  This bit in kill_it() above
+ 		if victim is regular
+ 			__debugfs_file_removed(victim)
+would be an fs-specific callback passed by the caller, turning the whole
+thing into this:
 
-Thanks,
-Andrei
+void simple_recursive_removal(struct dentry *dentry,
+			      void (*callback)(struct dentry *))
+{
+	struct dentry *this = dentry;
+	while (true) {
+		struct dentry *victim = NULL, *child;
+		struct inode *inode = this->d_inode;
+
+		inode_lock(inode);
+		if (d_is_dir(this))
+			inode->i_flags |= S_DEAD;
+		while ((child = find_next_child(this, victim)) == NULL) {
+			// kill and ascend
+			// update metadata while it's still locked
+			inode->i_ctime = current_time(inode);
+			clear_nlink(inode);
+			inode_unlock(inode);
+			victim = this;
+			this = this->d_parent;
+			inode = this->d_inode;
+			inode_lock(inode);
+			if (simple_positive(victim)) {
+		 		d_invalidate(victim);	// avoid lost mounts
+				if (is_dir(victim))
+					fsnotify_rmdir(inode, victim);
+				else
+					fsnotify_unlink(inode, victim);
+				if (callback)
+					callback(victim);
+				dput(victim)		// unpin it
+			}
+			if (victim == dentry) {
+				inode->i_ctime = inode->i_mtime =
+					current_time(inode);
+				if (d_is_dir(dentry))
+					drop_nlink(inode);
+				inode_unlock(inode);
+				dput(dentry);
+				return;
+			}
+		}
+		inode_unlock(inode);
+		this = child;
+	}
+}
+
+with find_next_child() easily implemented via scan_positives() already
+in libfs.c...  Objections?  The above is obviously completely untested,
+and I've got nowhere near enough sleep, so there may be any number of
+brown paperbag bugs in it.  Review would be very welcome...
