@@ -2,77 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15A7AFDF3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4FEFDF41
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:49:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfKONqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:46:51 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51915 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727249AbfKONqu (ORCPT
+        id S1727548AbfKONs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:48:56 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60950 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbfKONs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:46:50 -0500
-X-UUID: 1c05cd0800e04c98ad7dd221599a2afb-20191115
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=IbsqhxtLdyCG5Eu6AnHMONmNOpBKJGZF2K32LR2u4vY=;
-        b=rTojZOWXCfHQ2mdXVjUTfvSyMuORbgW7VMXEhXkBqcI+6vldfYepfKemCsjAPDZKHyV0ks/6aVZttdB6gqRXXDOPxs7kwq+f63p/nZD4Lrz1WG73MRUR/M7BbwWyfvfHnLDbU09zaHJ4LUx7XaN+VAzlVjTbGYC81jCtoTuwo6E=;
-X-UUID: 1c05cd0800e04c98ad7dd221599a2afb-20191115
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1409881764; Fri, 15 Nov 2019 21:46:43 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by mtkexhb02.mediatek.inc
- (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Nov
- 2019 21:46:42 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 15 Nov 2019 21:46:40 +0800
-Message-ID: <1573825602.4956.11.camel@mtkswgap22>
-Subject: Re: [PATCH v5 3/7] scsi: ufs: Fix up auto hibern8 enablement
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Can Guo <cang@codeaurora.org>
-CC:     <asutoshd@codeaurora.org>, <nguyenb@codeaurora.org>,
-        <rnayak@codeaurora.org>, <linux-scsi@vger.kernel.org>,
-        <kernel-team@android.com>, <saravanak@google.com>,
-        <salyzyn@google.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 15 Nov 2019 21:46:42 +0800
-In-Reply-To: <433afef33c8ca61aa299fa453c0d25d3@codeaurora.org>
-References: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
-         <1573798172-20534-4-git-send-email-cang@codeaurora.org>
-         <1573799728.4956.5.camel@mtkswgap22>
-         <2a925548b8ead7c3b5ddf2d7bf3de05d@codeaurora.org>
-         <1573802311.4956.8.camel@mtkswgap22>
-         <433afef33c8ca61aa299fa453c0d25d3@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Fri, 15 Nov 2019 08:48:56 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVbxX-0001U0-6B; Fri, 15 Nov 2019 13:48:23 +0000
+Date:   Fri, 15 Nov 2019 13:48:23 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, yu kuai <yukuai3@huawei.com>,
+        rafael@kernel.org, oleg@redhat.com, mchehab+samsung@kernel.org,
+        corbet@lwn.net, tytso@mit.edu, jmorris@namei.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        zhengbin13@huawei.com, yi.zhang@huawei.com,
+        chenxiang66@hisilicon.com, xiexiuqi@huawei.com
+Subject: Re: [PATCH 1/3] dcache: add a new enum type for 'dentry_d_lock_class'
+Message-ID: <20191115134823.GQ26530@ZenIV.linux.org.uk>
+References: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
+ <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
+ <20191115032759.GA795729@kroah.com>
+ <20191115041243.GN26530@ZenIV.linux.org.uk>
+ <20191115072011.GA1203354@kroah.com>
+ <20191115131625.GO26530@ZenIV.linux.org.uk>
+ <20191115083813.65f5523c@gandalf.local.home>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115083813.65f5523c@gandalf.local.home>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2FuLA0KDQpPbiBGcmksIDIwMTktMTEtMTUgYXQgMjA6MjcgKzA4MDAsIENhbiBHdW8gd3Jv
-dGU6DQoNCj4gSGkgU3RhbmxleSwNCj4gDQo+IEFjdHVhbGx5LCBJIHRob3VnaHQgYWJvdXQgdGhl
-IHdheSB5b3UgcmVvbW1hbmQuDQo+IA0KPiBCdXQgSSBndWVzcyB0aGUgYXV0aG9yJ3MgaW50ZW50
-aW9uIGhlcmUgaXMgdG8gdXBkYXRlIHRoZSBBSDggdGltZXINCj4gb25seSB3aGVuIGN1cnJlbnQg
-cnVudGltZSBzdGF0dXMgaXMgUlBNX0FDVElWRS4gSWYgaXQgaXMgbm90IFJQTV9BQ1RJVkUsDQo+
-IHdlIGp1c3QgdXBkYXRlIHRoZSBoYmEtPmFoaXQgYW5kIGJhaWwgb3V0LCBiZWNhdXNlIHRoZSBB
-SDggdGltZXIgd2lsbCBiZQ0KPiB1cGRhdGVkIGluIHVmc2hjZF9yZXVzbWUoKSBldmVudHVhbGx5
-IHdoZW4gaGJhIGlzIHJlc3VtZWQuIFRoaXMgY2FuIA0KPiBhdm9pZA0KPiBmcmVxdWVudGx5IHdh
-a2luZyB1cCBoYmEganVzdCBmb3IgYWNjZXNzaW5nIGEgc2luZ2xlIHJlZ2lzdGVyLg0KPiBIb3cg
-ZG8geW91IHRoaW5rPw0KPiANCj4gVGhhbmtzLA0KPiBDYW4gR3VvLg0KPiANCj4gDQoNCkFncmVl
-IHdpdGggeW91Lg0KDQpUaGFua3MgOikNCg0KUmV2aWV3ZWQtYnk6IFN0YW5sZXkgQ2h1IDxzdGFu
-bGV5LmNodUBtZWRpYXRlay5jb20+DQo=
+On Fri, Nov 15, 2019 at 08:38:13AM -0500, Steven Rostedt wrote:
+> On Fri, 15 Nov 2019 13:16:25 +0000
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
+> 
+> > I want to understand the overall situation.  No argument, list_empty()
+> > in there is BS, for many reasons.  But I wonder if trying to keep the
+> > current structure of the iterator _and_ the use of simple_rmdir()/simple_unlink()
+> > is the right approach.
+> 
+> My guess is that debugfs was written to be as simple as possible.
+> Nothing too complex. And in doing so, may have issues as you are
+> pointing out. Just a way to allow communications between user space and
+> kernel space (as tracefs started out).
+> 
+> BTW, what do you mean by "can debugfs_remove_recursive() rely upon the
+> lack of attempts to create new entries inside the subtree it's trying
+> to kill?"
 
+Is it possible for something to call e.g. debugfs_create_dir() (or any
+similar primitive) with parent inside the subtree that has been
+passed to debugfs_remove_recursive() call that is still in progress?
+
+If debugfs needs to cope with that, debugfs_remove_recursive() needs
+considerably heavier locking, to start with.
