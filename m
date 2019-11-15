@@ -2,61 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C180FFDF40
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C74FDF49
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:50:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfKONs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbfKONs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:48:29 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81E8E20715;
-        Fri, 15 Nov 2019 13:48:28 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 08:48:27 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with the arm64 tree
-Message-ID: <20191115084827.6e04ec9f@gandalf.local.home>
-In-Reply-To: <20191115122513.GB41572@lakrids.cambridge.arm.com>
-References: <20191115135357.10386fac@canb.auug.org.au>
-        <20191115122513.GB41572@lakrids.cambridge.arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727603AbfKONt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:49:56 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39737 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbfKONt4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 08:49:56 -0500
+Received: by mail-wr1-f66.google.com with SMTP id l7so11055919wrp.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 05:49:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=di5ZAsLuTIIhhKKfoi7B5tnpw3+Xa/5YL8AqSuLLL7k=;
+        b=XmFl+gBhZeLvUb2d8jXf3fLeWTwF7ficul6IAAUE8/FP2ZrAMJx5nbXZtMnt+VQn7P
+         HNRoFbXyCkjZZrio9veq95E3F2ovlTTTn7oGM2SfYWdZUDKxJd3t/YjtsUJ83XrDjWVQ
+         bgZvfAkUuMMe4lE312T1HsV7q7WsWIK3ZhMNQnW4O9aQfmPEXdJbw+SzBWsHwfvrB3Aj
+         P1EV0Xp6Eu1pAXoyg+7ycz+gaksmx6S59Q2j/Wr5iTeu03t4DGGJ0d70qWVmZmAAH0Uu
+         GzN2jNNPuSOrM4qHQdY/xPZOW2dQ2GeEeWd6s1F3lhKs/+R2aFO2igIqQwgIxwiCqw8h
+         xeuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=di5ZAsLuTIIhhKKfoi7B5tnpw3+Xa/5YL8AqSuLLL7k=;
+        b=MFSmTGB5I1LWaaO/xeBV0DLENIiFXTTDZ3HtB+abkZ4ADml+dwAT9TmE9qOmPpNh2n
+         Su8TR/a4YR+byPz1gb2Rvdz6XlHpk+c/+3+vI5wZBBcBtF/WJX8LoVGE7AAvGIaFgNka
+         D2allZ6SBKyUXYV5faJSHWD2cLO0gkuZZu0kfYSoDFqpDxBhCX4gACCoAv1aVlhiDi7l
+         9Cjuhjh+SUKrmDtqp7Kw9nGjCkenoJtdoka+3YH+QXyLOmxAkq9AGv0gO//esTHbkBpk
+         60k2yqejfj7vYVUbm1EdYWNjhyx8vGiZQsi2z94QAvJupHuLEGJJdrTvm5lqfM3CIW1f
+         wKRw==
+X-Gm-Message-State: APjAAAXYsoaIcBXzRYneSz0CTXh+Dp590P7VIkS8ePFhDRC8Hh2pOW+T
+        /ISQ3esOdq3GBZymEtO4mgbYO+xh3/QZ36dN
+X-Google-Smtp-Source: APXvYqwg/bJ7jthZrm4jSuLYtex5y9Gfpio/AZpih1C9EmMqoxdvlmGaaFhs4tfl5S9cyyD/Yv4z+A==
+X-Received: by 2002:adf:e701:: with SMTP id c1mr2185435wrm.166.1573825793847;
+        Fri, 15 Nov 2019 05:49:53 -0800 (PST)
+Received: from localhost.localdomain (ip-94-114-101-228.unity-media.net. [94.114.101.228])
+        by smtp.gmail.com with ESMTPSA id f14sm11119906wrv.17.2019.11.15.05.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 05:49:52 -0800 (PST)
+From:   patrick.rudolph@9elements.com
+To:     linux-kernel@vger.kernel.org
+Cc:     coreboot@coreboot.org, patrick.rudolph@9elements.com,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arthur Heymans <arthur@aheymans.xyz>
+Subject: [PATCH 0/3] firmware: google: Fix minor bugs
+Date:   Fri, 15 Nov 2019 14:48:36 +0100
+Message-Id: <20191115134842.17013-1-patrick.rudolph@9elements.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 12:25:14 +0000
-Mark Rutland <mark.rutland@arm.com> wrote:
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-> Thanks Stephen!
-> 
-> Steven (Rostedt), what's your preference for handling this?
-> 
-> We can drop revert the arm64 change to vmlinux.lds.h for now (and I can
-> send it as a subsequent cleanup), or you could merge my
-> arm64/ftrace-with-regs branch and fix this up in the ftrace tree.
+This patch series fixes 3 independent bugs in the google firmware
+drivers.
 
-Or we can just make a note of this, and mention it in our pull requests
-to Linus.
+Patch 1-2 do proper cleanup at kernel module unloading.
 
-We could make a single branch where we merged the two branches, fix it
-up (as I believe Stephen did it correctly) and tell Linus "here's the
-fix up".
+Patch 3 adds a check if the optional GSMI SMM handler is actually
+present in the firmware and responses to the driver.
 
-This is a common occurrence and Linus has no problems with this. As
-long as he's given a heads up.
+Arthur Heymans (2):
+  firmware: google: Unregister driver_info on failure and exit in gsmi
+  firmware: google: Probe for a GSMI handler in firmware
 
--- Steve
+Patrick Rudolph (1):
+  firmware: google: Release devices before unregistering the bus
+
+ drivers/firmware/google/coreboot_table.c |  6 ++++++
+ drivers/firmware/google/gsmi.c           | 24 ++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+-- 
+2.21.0
+
