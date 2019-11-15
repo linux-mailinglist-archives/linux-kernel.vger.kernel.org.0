@@ -2,175 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DFBBFE276
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C1F0FE27E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 17:17:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfKOQQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 11:16:25 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50507 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfKOQQZ (ORCPT
+        id S1727753AbfKOQR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 11:17:29 -0500
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:34771 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727461AbfKOQR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 11:16:25 -0500
-Received: by mail-wm1-f68.google.com with SMTP id l17so10203776wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 08:16:23 -0800 (PST)
+        Fri, 15 Nov 2019 11:17:27 -0500
+Received: by mail-pf1-f171.google.com with SMTP id n13so6918656pff.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 08:17:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MVxHSx/minQx5d0tJI7s0eZgBU80i8rjqDZ6K3QTLuc=;
-        b=PmFLvl34Ywer4Wi+BfDYl4JasRk9hvc+CVeCSzTbzSUY8ons28GoXPXrCaQ5fkiCo1
-         jcx9b+Flgnv1ERWX9hMnls1XE4KhqCoZTeuFtMlM1VVP6uIef5yX4g03j6jUBhB+LSOg
-         8tHjIiItg312SB8bZ7lTk2vJQAgIuFr1W4AAHP1+pR52GMXM57x8LiXVTuW/nyPytOKO
-         gV7kZfj5gSrf8gqlcYCzA5jLbPYYX8HrzvRJIUmEzzNk0RhOqC+8RqcsDUzAKpObxxSo
-         vXGmUx3qIazJp6jvkRPsq8A0keQ0r7zX/5243sZ+xBOQDC/5HJl2e7dnONWr26Kwc1Jm
-         ZrKQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Pbqn4UOLsCUmS2w+1MSU94yBFEcgWrVd3oXN3b1LEx8=;
+        b=BRKC2o/FBEZKJP3PrSUWqd+44yMTJCJlrFCYjmuyln3cjvp9ytyil6MuMCNP4gSUzm
+         dPNz9pehbWI9TUuYKmOK7p2nx0+bVWhzxgSaSOul9QphVp1gkcX1gBSaIS1jxYo4SJnd
+         uQaIw7rPbRJOLVYMpOMO5h5jideGs00NibYy8oj2ctly/HKRUKWOPMCsZpfD7P/8mYFr
+         96tVb9N69jh03s36MWT6Rokbs47yNDuS66OH2IcINuNaAVIN3W1xDIJQMxpjsYC+ADU7
+         T+AOIwmgVTqpu4EESHTVdU+yOvW+uerH6aNPRfBaKBXQDyWiWORRrtS/U0sEznq43lZh
+         TUPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MVxHSx/minQx5d0tJI7s0eZgBU80i8rjqDZ6K3QTLuc=;
-        b=IsJhNT1RPKCORpJYJiYKBdeyk389ROKqFZtQfTxNBuwzsUnM75dYBVORop6rVJ0HUF
-         aOVyFPK4eEtxcYpZgZKSv7zRO0RVhWleV2t2QMCeZnR9CFJrMIvzig7yE63ae81ICRjB
-         xg5B6Tbu4qs9Si89cZk4Egng7be3ZjCknWz/MdxWAgY/DiM1K0RQ9AQSs9VaTUdrerKh
-         CejlQ6eOOCWrtb/V9ANZlrhURa/lFLrdyPc94OBfV6fIrkmy7V3bf0IB/Puo6+9BjS+E
-         HzC99Ou2/blb3p+kzWpl/2ax4zn+KO1by+TNk9HxHlcdLdV062aVo9ToK2GR5hXtxCO4
-         S9qg==
-X-Gm-Message-State: APjAAAXxAyiUUkiq4Fm5n5UCIVLZo4GlUKKy7EVJ8p+5XyisOd4nIbEa
-        f1OSswbvGVc4lNmAKRK6gz0Pn9Fm8H7eQ8Eg
-X-Google-Smtp-Source: APXvYqxOJPwnQnfs2DiWf+oCvT22TYgRLoTMNkeru2+85IdMaQItnEz5r7r5Ry3s+GEjZiKKGiFipg==
-X-Received: by 2002:a1c:6405:: with SMTP id y5mr16534329wmb.175.1573834582334;
-        Fri, 15 Nov 2019 08:16:22 -0800 (PST)
-Received: from rudolphp.sr1.9esec.dev (ip-94-114-101-228.unity-media.net. [94.114.101.228])
-        by smtp.gmail.com with ESMTPSA id o5sm11637467wrx.15.2019.11.15.08.16.21
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pbqn4UOLsCUmS2w+1MSU94yBFEcgWrVd3oXN3b1LEx8=;
+        b=S4J46sS9IBR0H0aU/9mdQBzahWQ9qodzYCsEqI+n3wNrotMgy/MXnzGmDiemr6tqnE
+         ofIwBKodw53LSAVEZKOnL8B0tKofrdcUBCxAvHvPq2FlupYZEPQKsBILrFyWJ1aspCS6
+         DlnrVQMgyu3CVquEhp16cv18hnwz8Gw8wEG9DdhZdZzIc4E+rZg6spVFcwm2hj04HzD6
+         Ao3JNJ9V3nuqxrZvPZyUHR2FnlAUNh+xI72u7uQSmWCSQ9fcLtgj57eFUmsMDyEr3dCD
+         IO+XJkpjGP+zAEWUgKyTKHeXCsX0jcFkIKpbPiNVAfQHjynhithAEGV6BxI9xMOGiFK3
+         lUtg==
+X-Gm-Message-State: APjAAAWKYIDx3S9NsIoEyyOlNGtq5RUqKiMbFAjVXlE6sgQ5wfffoYuu
+        RcV4Lefa4MTBQjzvPgMq7CD8cbVtLlV3tQ==
+X-Google-Smtp-Source: APXvYqxmi24iXu0LREAQssFRJC9yqoJHNzorfijmEqsFdQKPjMycC0crWL0/VvNTKiXaajs6SsaZ8w==
+X-Received: by 2002:a63:3cd:: with SMTP id 196mr10683792pgd.150.1573834646139;
+        Fri, 15 Nov 2019 08:17:26 -0800 (PST)
+Received: from localhost ([2620:10d:c090:180::a9db])
+        by smtp.gmail.com with ESMTPSA id c3sm10597891pfi.91.2019.11.15.08.17.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 08:16:21 -0800 (PST)
-From:   patrick.rudolph@9elements.com
-To:     linux-kernel@vger.kernel.org
-Cc:     coreboot@coreboot.org,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Samuel Holland <samuel@sholland.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH 2/2] firmware: google: Expose coreboot tables over sysfs
-Date:   Fri, 15 Nov 2019 17:15:16 +0100
-Message-Id: <20191115161524.23738-3-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191115161524.23738-1-patrick.rudolph@9elements.com>
-References: <20191115161524.23738-1-patrick.rudolph@9elements.com>
+        Fri, 15 Nov 2019 08:17:25 -0800 (PST)
+Date:   Fri, 15 Nov 2019 11:17:23 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, surenb@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm/vmscan: fix some -Wenum-conversion warnings
+Message-ID: <20191115161723.GB309754@cmpxchg.org>
+References: <1573826697-869-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573826697-869-1-git-send-email-cai@lca.pw>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
+On Fri, Nov 15, 2019 at 09:04:57AM -0500, Qian Cai wrote:
+> The -next commit "mm: vmscan: enforce inactive:active ratio at the
+> reclaim root" [1] introduced some GCC -Wenum-conversion warnings,
+> 
+> mm/vmscan.c:2216:39: warning: implicit conversion from enumeration type
+> 'enum lru_list' to different enumeration type 'enum node_stat_item'
+> [-Wenum-conversion]
+>         inactive = lruvec_page_state(lruvec, inactive_lru);
+>                    ~~~~~~~~~~~~~~~~~         ^~~~~~~~~~~~
+> mm/vmscan.c:2217:37: warning: implicit conversion from enumeration type
+> 'enum lru_list' to different enumeration type 'enum node_stat_item'
+> [-Wenum-conversion]
+>         active = lruvec_page_state(lruvec, active_lru);
+>                  ~~~~~~~~~~~~~~~~~         ^~~~~~~~~~
+> mm/vmscan.c:2746:42: warning: implicit conversion from enumeration type
+> 'enum lru_list' to different enumeration type 'enum node_stat_item'
+> [-Wenum-conversion]
+>         file = lruvec_page_state(target_lruvec, LRU_INACTIVE_FILE);
 
-Make all coreboot table entries available to userland. This is useful for
-tools that are currently using /dev/mem.
+Interesting, it doesn't show these for me with gcc-9.2.0.
 
-Besides the tag and size also expose the raw table data itself.
+We should definitely fix these!
 
-Tools can easily scan for the right coreboot table by reading
-/sys/bus/coreboot/devices/coreboot*/attributes/id
-The binary table data can then be read from
-/sys/bus/coreboot/devices/coreboot*/attributes/data
+> @@ -2213,8 +2213,9 @@ static bool inactive_is_low(struct lruvec *lruvec, enum lru_list inactive_lru)
+>  	unsigned long inactive_ratio;
+>  	unsigned long gb;
+>  
+> -	inactive = lruvec_page_state(lruvec, inactive_lru);
+> -	active = lruvec_page_state(lruvec, active_lru);
+> +	inactive = lruvec_page_state(lruvec,
+> +				     (enum node_stat_item)inactive_lru);
+> +	active = lruvec_page_state(lruvec, (enum node_stat_item)active_lru);
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
----
- drivers/firmware/google/coreboot_table.c | 60 ++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+This is fragile, as it relies on the absolute values being identical,
+which we don't guarantee. However, we do guarantee the relative order
+between the LRU items, and we use NR_LRU_BASE for the translation.
 
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 8d132e4f008a..baddf28a2103 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -6,6 +6,7 @@
-  *
-  * Copyright 2017 Google Inc.
-  * Copyright 2017 Samuel Holland <samuel@sholland.org>
-+ * Copyright 2019 9elements Agency GmbH
-  */
- 
- #include <linux/acpi.h>
-@@ -84,6 +85,63 @@ void coreboot_driver_unregister(struct coreboot_driver *driver)
- }
- EXPORT_SYMBOL(coreboot_driver_unregister);
- 
-+static ssize_t id_show(struct device *dev,
-+		       struct device_attribute *attr, char *buffer)
-+{
-+	struct coreboot_device *device = CB_DEV(dev);
-+
-+	return sprintf(buffer, "%08x\n", device->entry.tag);
-+}
-+
-+static ssize_t size_show(struct device *dev,
-+			 struct device_attribute *attr, char *buffer)
-+{
-+	struct coreboot_device *device = CB_DEV(dev);
-+
-+	return sprintf(buffer, "%u\n", device->entry.size);
-+}
-+
-+static DEVICE_ATTR_RO(id);
-+static DEVICE_ATTR_RO(size);
-+
-+static struct attribute *cb_dev_attrs[] = {
-+	&dev_attr_id.attr,
-+	&dev_attr_size.attr,
-+	NULL
-+};
-+
-+static ssize_t table_data_read(struct file *filp, struct kobject *kobj,
-+			       struct bin_attribute *bin_attr,
-+			       char *buffer, loff_t offset, size_t count)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct coreboot_device *device = CB_DEV(dev);
-+
-+	return memory_read_from_buffer(buffer, count, &offset,
-+				       &device->entry, device->entry.size);
-+}
-+
-+static struct bin_attribute coreboot_attr_data = {
-+	.attr = { .name = "data", .mode = 0444 },
-+	.read = table_data_read,
-+};
-+
-+static struct bin_attribute *cb_dev_bin_attrs[] = {
-+	&coreboot_attr_data,
-+	NULL
-+};
-+
-+static const struct attribute_group cb_dev_attr_group = {
-+	.name = "attributes",
-+	.attrs = cb_dev_attrs,
-+	.bin_attrs = cb_dev_bin_attrs,
-+};
-+
-+static const struct attribute_group *cb_dev_attr_groups[] = {
-+	&cb_dev_attr_group,
-+	NULL
-+};
-+
- static int coreboot_table_populate(struct device *dev, void *ptr)
- {
- 	int i, ret;
-@@ -104,6 +162,8 @@ static int coreboot_table_populate(struct device *dev, void *ptr)
- 		device->dev.parent = dev;
- 		device->dev.bus = &coreboot_bus_type;
- 		device->dev.release = coreboot_device_release;
-+		device->dev.groups = cb_dev_attr_groups;
-+
- 		memcpy(&device->entry, ptr_entry, entry->size);
- 
- 		ret = device_register(&device->dev);
--- 
-2.21.0
+Please use NR_LRU_BASE + (in)active_lru here.
 
+> @@ -2743,7 +2744,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>  	 * thrashing, try to reclaim those first before touching
+>  	 * anonymous pages.
+>  	 */
+> -	file = lruvec_page_state(target_lruvec, LRU_INACTIVE_FILE);
+> +	file = lruvec_page_state(target_lruvec,
+> +				 (enum node_stat_item)LRU_INACTIVE_FILE);
+
+This should just directly use NR_INACTIVE_FILE instead.
+
+Thanks
