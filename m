@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0F72FDDBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA6FFDD79
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:25:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfKOM0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:26:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32830 "EHLO
+        id S1727673AbfKOMZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:25:15 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32832 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727641AbfKOMZM (ORCPT
+        with ESMTP id S1727640AbfKOMZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Nov 2019 07:25:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,27 +18,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=daHt2+8Hmvwc3q4oviLYlwCDGGFI8F6MVXhLSm92SYw=; b=N37ZirmfJhdE
-        DgQuJBJ4gLC61qwuo3BGP1xiwQkaWamyFAVmkdIjZxA9mpEGb3CZnOaWqRWPs3sW5EWRcmdglRsva
-        nINkULePgpdGc8gadnhT4H7jsmr5RmSnffRbAQE4t54q67cZBVqEAAWi5crLbryK4Gqs2misrV6a2
-        VxGlo=;
+        List-Archive; bh=WhivmarhjnWVrpuxW2+0Mno7dKVQIUl8/k+Us9L6ZW0=; b=Y1lX6qjjYG+D
+        39zSRf/fkQPMr5uJhN+oiJiEqE0j8yzY8AolT5jHTIrrpJRE9avhmVSGqAuILtg2TfnaHaO29WsPi
+        me24IQ5zdJMSD2CH3J3Z16WvTiO7Q9VxmXXmjNTLClAzKyA85cr1Fp4P+1AmzgWHC45SOeESaCCsk
+        HwN7Y=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iVaey-0000Ku-O8; Fri, 15 Nov 2019 12:25:08 +0000
+        id 1iVaey-0000Kz-Vt; Fri, 15 Nov 2019 12:25:09 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3BD982741609; Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
+        id 79111274162A; Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Pascal Paillet <p.paillet@st.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Mark Brown <broonie@kernel.org>, p.paillet@st.com
-Subject: Applied "regulator: core: Let boot-on regulators be powered off" to the regulator tree
-In-Reply-To: <20191113102737.27831-1-p.paillet@st.com>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     kernel-team@android.com, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: core: Don't try to remove device links if add failed" to the regulator tree
+In-Reply-To: <20191115000438.45970-1-saravanak@google.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191115122508.3BD982741609@ypsilon.sirena.org.uk>
+Message-Id: <20191115122508.79111274162A@ypsilon.sirena.org.uk>
 Date:   Fri, 15 Nov 2019 12:25:08 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,11 +45,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Let boot-on regulators be powered off
+   regulator: core: Don't try to remove device links if add failed
 
 has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -72,41 +70,70 @@ to this mail.
 Thanks,
 Mark
 
-From 089b3f61ecfc43ca4ea26d595e1d31ead6de3f7b Mon Sep 17 00:00:00 2001
-From: Pascal Paillet <p.paillet@st.com>
-Date: Wed, 13 Nov 2019 11:27:37 +0100
-Subject: [PATCH] regulator: core: Let boot-on regulators be powered off
+From b59b654478093fa429ad4c7897ae29f201146a00 Mon Sep 17 00:00:00 2001
+From: Saravana Kannan <saravanak@google.com>
+Date: Thu, 14 Nov 2019 16:04:38 -0800
+Subject: [PATCH] regulator: core: Don't try to remove device links if add
+ failed
 
-Boot-on regulators are always kept on because their use_count value
-is now incremented at boot time and never cleaned.
+device_link_add() might not always succeed depending on the type of
+device link and the rest of the dependencies in the system. If
+device_link_add() didn't succeed, then we shouldn't try to remove the
+link later on as it might remove a link someone else created.
 
-Only increment count value for alway-on regulators.
-regulator_late_cleanup() is now able to power off boot-on regulators
-when unused.
-
-Fixes: 05f224ca6693 ("regulator: core: Clean enabling always-on regulators + their supplies")
-Signed-off-by: Pascal Paillet <p.paillet@st.com>
-Link: https://lore.kernel.org/r/20191113102737.27831-1-p.paillet@st.com
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+Link: https://lore.kernel.org/r/20191115000438.45970-1-saravanak@google.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/regulator/core.c     | 8 ++++++--
+ drivers/regulator/internal.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index a5b2a9b02108..5e6c629806e4 100644
+index 51ce280c1ce1..df49f35ae20f 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -1403,7 +1403,9 @@ static int set_machine_constraints(struct regulator_dev *rdev,
- 			rdev_err(rdev, "failed to enable\n");
- 			return ret;
- 		}
--		rdev->use_count++;
-+
-+		if (rdev->constraints->always_on)
-+			rdev->use_count++;
+@@ -1844,6 +1844,7 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
+ 	struct regulator_dev *rdev;
+ 	struct regulator *regulator;
+ 	const char *devname = dev ? dev_name(dev) : "deviceless";
++	struct device_link *link;
+ 	int ret;
+ 
+ 	if (get_type >= MAX_GET_TYPE) {
+@@ -1951,7 +1952,9 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
+ 			rdev->use_count = 0;
  	}
  
- 	print_constraints(rdev);
+-	device_link_add(dev, &rdev->dev, DL_FLAG_STATELESS);
++	link = device_link_add(dev, &rdev->dev, DL_FLAG_STATELESS);
++	if (!IS_ERR_OR_NULL(link))
++		regulator->device_link = true;
+ 
+ 	return regulator;
+ }
+@@ -2046,7 +2049,8 @@ static void _regulator_put(struct regulator *regulator)
+ 	debugfs_remove_recursive(regulator->debugfs);
+ 
+ 	if (regulator->dev) {
+-		device_link_remove(regulator->dev, &rdev->dev);
++		if (regulator->device_link)
++			device_link_remove(regulator->dev, &rdev->dev);
+ 
+ 		/* remove any sysfs entries */
+ 		sysfs_remove_link(&rdev->dev.kobj, regulator->supply_name);
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index 83ae442f515b..2391b565ef11 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -36,6 +36,7 @@ struct regulator {
+ 	struct list_head list;
+ 	unsigned int always_on:1;
+ 	unsigned int bypass:1;
++	unsigned int device_link:1;
+ 	int uA_load;
+ 	unsigned int enable_count;
+ 	unsigned int deferred_disables;
 -- 
 2.20.1
 
