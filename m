@@ -2,244 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC50DFD643
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90ED9FD62C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 07:23:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbfKOGXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 01:23:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727925AbfKOGXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 01:23:01 -0500
-Received: from localhost (unknown [104.132.150.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70ADE20637;
-        Fri, 15 Nov 2019 06:22:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573798979;
-        bh=i8eMNl+f+lf65lXu6rfiVgo7iExiLMaCuUh6yGCBirU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mPG4qF/xLo8GG4Fdwc66ci7RiO86hxBmyYimpyq2HDtRDOv5tcrDWtCxVdmHmEiia
-         nQ8BcCzOMLML3B5XSjKES6etg8L2mT5PrMazW52klAAClTvZ+OziUCrR0rmd2PJV/M
-         0JKGGh6ko8bg7sGnOOpnO7UmpDGB8KglgvF73Ue4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Antonio Gomez Iglesias <antonio.gomez.iglesias@intel.com>,
-        Nelson DSouza <nelson.dsouza@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.9 31/31] Documentation: Add ITLB_MULTIHIT documentation
-Date:   Fri, 15 Nov 2019 14:21:00 +0800
-Message-Id: <20191115062020.451931132@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191115062009.813108457@linuxfoundation.org>
-References: <20191115062009.813108457@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727987AbfKOGXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 01:23:11 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6233 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727953AbfKOGXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 01:23:07 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 95A67377791EE37F876E;
+        Fri, 15 Nov 2019 14:23:03 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.12) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
+ 14:22:57 +0800
+From:   "wangxiaogang (F)" <wangxiaogang3@huawei.com>
+To:     <dsahern@kernel.org>, <shrijeet@gmail.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <hujunwei4@huawei.com>, <xuhanbing@huawei.com>
+Subject: [PATCH] vrf: Fix possible NULL pointer oops when delete nic
+Message-ID: <60e827cb-2bba-2b7e-55dc-651103e9905f@huawei.com>
+Date:   Fri, 15 Nov 2019 14:22:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.222.12]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gomez Iglesias, Antonio" <antonio.gomez.iglesias@intel.com>
+From: XiaoGang Wang <wangxiaogang3@huawei.com>
 
-commit 7f00cc8d4a51074eb0ad4c3f16c15757b1ddfb7d upstream.
+Recently we get a crash when access illegal address (0xc0),
+which will occasionally appear when deleting a physical NIC with vrf.
 
-Add the initial ITLB_MULTIHIT documentation.
+[166603.826737]hinic 0000:43:00.4 eth-s3: Failed to cycle device eth-s3;
+route tables might be wrong!
+.....
+[166603.828018]WARNING: CPU: 135 PID: 15382at net/core/dev.c:6875
+__netdev_adjacent_dev_remove.constprop.40+0x1e0/0x1e8
+......
+[166603.828169]pc : __netdev_adjacent_dev_remove.constprop.40+0x1e0/0x1e8
+[166603.828171]lr : __netdev_adjacent_dev_remove.constprop.40+0x1e0/0x1e8
+[166603.828172]sp : ffff000031efb810
+[166603.828173]x29: ffff000031efb810 x28: 0000000000002710
+[166603.828175]x27: 0000000000000001 x26: ffffa021f4095d88
+[166603.828177]x25: ffff000008d30de8 x24: ffff0000092d75d6
+[166603.828179]x23: 0000000000000006 x22: ffffa021e1edc480
+[166603.828181]x21: 0000000000000000 x20: ffffa021e1edc530
+[166603.828183]x19: ffffa021e1edc518 x18: ffffffffffffffff
+[166603.828185]x17: 0000000000000000 x16: 0000000000000000
+[166603.828186]x15: ffff0000091d9708 x14: 776620746567206f
+[166603.828188]x13: 742064656c696146 x12: ffff800040801004
+[166603.828190]x11: ffff80004080100c x10: ffff0000091dbae0
+[166603.828192]x9 : 0000000000000001 x8 : 0000000006a60f9c
+[166603.828194]x7 : ffff0000093b6fc0 x6 : 0000000000000001
+[166603.828196]x5 : 0000000000000001 x4 : ffffa020560383c0
+[166603.828198]x3 : ffffa020560383c0 x2 : 371cb5224b539100
+[166603.828200]x1 : 0000000000000000 x0 : 0000000000000036
+[166603.828202]Call trace:
+[166603.828204] __netdev_adjacent_dev_remove.constprop.40+0x1e0/0x1e8
+[166603.828205] __netdev_adjacent_dev_unlink_neighbour+0x2c/0x48
+[166603.828207] netdev_upper_dev_unlink+0x7c/0xe8
+[166603.828215] vrf_device_event+0x58/0x80 [vrf]
+[166603.828221] notifier_call_chain+0x5c/0xa0
+[166603.828222] raw_notifier_call_chain+0x3c/0x50
+[166603.828224] call_netdevice_notifiers_info+0x3c/0x80
+[166603.828229] rollback_registered_many+0x35c/0x568
+[166603.828233] rollback_registered+0x68/0xb0
+[166603.828234] unregister_netdevice_queue+0xc0/0x110
+[166603.828239] unregister_netdev+0x28/0x38
+[166603.828425] nic_remove+0x58/0xc0 [hinic]
+[166603.828442] detach_uld+0xd8/0x1a8 [hinic]
+[166603.828458] hinic_ulds_deinit+0x54/0x68 [hinic]
+[166603.828473] hinic_remove+0x218/0x240 [hinic]
+[166603.828481] pci_device_remove+0x48/0xd8
+[166603.828490] device_release_driver_internal+0x1b4/0x250
+[166603.828492] device_release_driver+0x28/0x38
+[166603.828499] pci_stop_bus_device+0x84/0xb8
+[166603.828500] pci_stop_bus_device+0x40/0xb8
+[166603.828502] pci_stop_bus_device+0x40/0xb8
+[166603.828503] pci_stop_and_remove_bus_device+0x20/0x38
+[166603.828557] PCIEMGT_KNL_DelPciDev+0xc0/0x198 [pciemgtagent]
+[166603.828564] PCIEMGT_KNL_DelDev+0xac/0x1d8 [pciemgtagent]
+[166603.828573] PCIEMGT_DelKnlDev+0x50/0x180 [pciemgtagent]
+[166603.828579] PCIEMGT_KAGENT_DevEventHandle+0x94/0x168 [pciemgtagent]
+[166603.828585] PCIEMGT_KAGENT_EventHandleThread+0xb8/0x1a0 [pciemgtagent]
+[166603.828594] kthread+0x134/0x138
+[166603.828599] ret_from_fork+0x10/0x18
+[166603.828601]---[ end trace 5052903cb62d99f0 ]---
+[166603.828612]Unable to handle kernel NULL pointer dereference at virtual address 00000000000000c0
+[166603.828613]Mem abort info:
+[166603.828614]  ESR = 0x96000006
+[166603.828616]  Exception class = DABT (current EL), IL = 32 bits
+[166603.828617]  SET = 0, FnV = 0
+[166603.828618]  EA = 0, S1PTW = 0
+[166603.828618]Data abort info:
+[166603.828619]  ISV = 0, ISS = 0x00000006
+[166603.828620]  CM = 0, WnR = 0
+[166603.828622]user pgtable: 4k pages, 48-bit VAs, pgdp = 000000003c6ab870
+[166603.828623][00000000000000c0] pgd=00002022651d1003, pud=000020226bd6a003, pmd=0000000000000000
+[166603.828628]Internal error: Oops: 96000006 [#1] SMP
+[166603.828630]Process PCIE40:c.0 (pid: 15382, stack limit = 0x00000000d24f8167)
+[166603.828632]CPU: 135 PID: 15382 Comm: PCIE40:c.0 Kdump: loaded Tainted: PF       WC OE     4.19.36-vhulk1907.1.0.h453.eulerosv2r8.aarch64 #1
+[166603.828633]Hardware name: Huawei Technologies Co., Ltd. PANGEA/STL6SPCB, BIOS TA BIOS Pangea3P CS - 11.01.60T31 05/26/2019
+[166603.828634]pstate: 40c00009 (nZcv daif +PAN +UAO)
+[166603.828636]pc : __netdev_adjacent_dev_remove.constprop.40+0x28/0x1e8
+[166603.828638]lr : __netdev_adjacent_dev_unlink_neighbour+0x3c/0x48
+[166603.828639]sp : ffff000031efb810
+[166603.828639]x29: ffff000031efb810 x28: 0000000000002710
+[166603.828641]x27: 0000000000000001 x26: ffffa021f4095d88
+[166603.828643]x25: ffff000008d30de8 x24: ffff0000092d75d6
+[166603.828645]x23: 0000000000000006 x22: 0000000000000000
+[166603.828647]x21: ffffa021e1edc480 x20: 00000000000000c0
+[166603.828649]x19: 0000000000000000 x18: ffffffffffffffff
+[166603.828651]x17: 0000000000000000 x16: 0000000000000000
+[166603.828653]x15: ffff0000091d9708 x14: 776620746567206f
+[166603.828654]x13: 742064656c696146 x12: ffff800040801004
+[166603.828656]x11: ffff80004080100c x10: ffff0000091dbae0
+[166603.828658]x9 : 0000000000000001 x8 : 0000000006a60f9c
+[166603.828660]x7 : ffff0000093b6fc0 x6 : 0000000000000001
+[166603.828662]x5 : 0000000000000001 x4 : ffffa020560383c0
+[166603.828664]x3 : ffffa020560383c0 x2 : 00000000000000c0
+[166603.828666]x1 : ffffa021e1edc480 x0 : ffff000008879f7c
+[166603.828668]Call trace:
+[166603.828669] __netdev_adjacent_dev_remove.constprop.40+0x28/0x1e8
+[166603.828670] __netdev_adjacent_dev_unlink_neighbour+0x3c/0x48
+[166603.828672] netdev_upper_dev_unlink+0x7c/0xe8
+[166603.828674] vrf_device_event+0x58/0x80 [vrf]
+[166603.828675] notifier_call_chain+0x5c/0xa0
+[166603.828676] raw_notifier_call_chain+0x3c/0x50
+[166603.828678] call_netdevice_notifiers_info+0x3c/0x80
+[166603.828679] rollback_registered_many+0x35c/0x568
+[166603.828681] rollback_registered+0x68/0xb0
+[166603.828682] unregister_netdevice_queue+0xc0/0x110
+[166603.828684] unregister_netdev+0x28/0x38
+[166603.828699] nic_remove+0x58/0xc0 [hinic]
+[166603.828714] detach_uld+0xd8/0x1a8 [hinic]
+[166603.828729] hinic_ulds_deinit+0x54/0x68 [hinic]
+[166603.828743] hinic_remove+0x218/0x240 [hinic]
+[166603.828745] pci_device_remove+0x48/0xd8
+[166603.828747] device_release_driver_internal+0x1b4/0x250
+[166603.828748] device_release_driver+0x28/0x38
+[166603.828750] pci_stop_bus_device+0x84/0xb8
+[166603.828751] pci_stop_bus_device+0x40/0xb8
+[166603.828752] pci_stop_bus_device+0x40/0xb8
+[166603.828753] pci_stop_and_remove_bus_device+0x20/0x38
+[166603.828760] PCIEMGT_KNL_DelPciDev+0xc0/0x198 [pciemgtagent]
+[166603.828765] PCIEMGT_KNL_DelDev+0xac/0x1d8 [pciemgtagent]
+[166603.828771] PCIEMGT_DelKnlDev+0x50/0x180 [pciemgtagent]
+[166603.828776] PCIEMGT_KAGENT_DevEventHandle+0x94/0x168 [pciemgtagent]
+[166603.828782] PCIEMGT_KAGENT_EventHandleThread+0xb8/0x1a0 [pciemgtagent]
+[166603.828784] kthread+0x134/0x138
+[166603.828785] ret_from_fork+0x10/0x18
+[166603.828788]Code: aa0203f4 aa1e03e0 d503201f d503201f (f9400280)
+[166603.828789]kernel fault(0x1) notification starting on CPU 135
 
-[ tglx: Add it to the index so it gets actually built. ]
+set vrf nomaster function vrf_del_slave() and del nic function
+vrf_device_event() concurrent execution will occasionally oops.
 
-Signed-off-by: Antonio Gomez Iglesias <antonio.gomez.iglesias@intel.com>
-Signed-off-by: Nelson D'Souza <nelson.dsouza@linux.intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 4.9: adjust filenames]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+thread1                     thread2
+
+do_vrf_del_slave
+netdev_upper_dev_unlink()   vrf_device_event
+ 	
+                            vrf_device_event
+                            netif_is_l3_slave(dev)
+                            //IFF_L3MDEV_SLAVE is not cleaned
+                            //so function return 1
+                            netdev_master_upper_dev_get()
+                            //return vrf_dev is NULL
+                            ....	
+                            __netdev_adjacent_dev_remove()
+                            //adj pointer is NULL cause WARN_ON
+                            __netdev_adjacent_dev_remove()
+                            //down_list is NULL cause OOPS
+
+port_dev->priv_flags &= ~IFF_L3MDEV_SLAVE;
+
+why oops did not happen in __netdev_adjacent_dev_unlink_lists()'s
+parameter “&upper_dev->adj_list.lower”.
+we Disassemble __netdev_adjacent_dev_unlink_neighbour:
+.....
+ <__netdev_adjacent_dev_unlink_neighbour+44>: add     x2, x19, #0xc0
+ <__netdev_adjacent_dev_unlink_neighbour+48>: mov     x1, x20
+ <__netdev_adjacent_dev_unlink_neighbour+52>: mov     x0, x19
+....
+upper_dev->adj_list.lower is compiled to be optimized to
+upper_dev pointer offset 0xc0.
+
+this patch adds vrf_dev NULL pointer judgment to resolve the above problem.
+
+Signed-off-by: XiaoGang Wang <wangxiaogang3@huawei.com>
+Reviewed-by: JunWei Hu <hujunwei4@huawei.com>
 ---
- Documentation/hw-vuln/index.rst    |    1 
- Documentation/hw-vuln/multihit.rst |  163 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 164 insertions(+)
- create mode 100644 Documentation/hw-vuln/multihit.rst
+ drivers/net/vrf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/Documentation/hw-vuln/index.rst
-+++ b/Documentation/hw-vuln/index.rst
-@@ -12,3 +12,4 @@ are configurable at compile, boot or run
-    l1tf
-    mds
-    tsx_async_abort
-+   multihit.rst
---- /dev/null
-+++ b/Documentation/hw-vuln/multihit.rst
-@@ -0,0 +1,163 @@
-+iTLB multihit
-+=============
-+
-+iTLB multihit is an erratum where some processors may incur a machine check
-+error, possibly resulting in an unrecoverable CPU lockup, when an
-+instruction fetch hits multiple entries in the instruction TLB. This can
-+occur when the page size is changed along with either the physical address
-+or cache type. A malicious guest running on a virtualized system can
-+exploit this erratum to perform a denial of service attack.
-+
-+
-+Affected processors
-+-------------------
-+
-+Variations of this erratum are present on most Intel Core and Xeon processor
-+models. The erratum is not present on:
-+
-+   - non-Intel processors
-+
-+   - Some Atoms (Airmont, Bonnell, Goldmont, GoldmontPlus, Saltwell, Silvermont)
-+
-+   - Intel processors that have the PSCHANGE_MC_NO bit set in the
-+     IA32_ARCH_CAPABILITIES MSR.
-+
-+
-+Related CVEs
-+------------
-+
-+The following CVE entry is related to this issue:
-+
-+   ==============  =================================================
-+   CVE-2018-12207  Machine Check Error Avoidance on Page Size Change
-+   ==============  =================================================
-+
-+
-+Problem
-+-------
-+
-+Privileged software, including OS and virtual machine managers (VMM), are in
-+charge of memory management. A key component in memory management is the control
-+of the page tables. Modern processors use virtual memory, a technique that creates
-+the illusion of a very large memory for processors. This virtual space is split
-+into pages of a given size. Page tables translate virtual addresses to physical
-+addresses.
-+
-+To reduce latency when performing a virtual to physical address translation,
-+processors include a structure, called TLB, that caches recent translations.
-+There are separate TLBs for instruction (iTLB) and data (dTLB).
-+
-+Under this errata, instructions are fetched from a linear address translated
-+using a 4 KB translation cached in the iTLB. Privileged software modifies the
-+paging structure so that the same linear address using large page size (2 MB, 4
-+MB, 1 GB) with a different physical address or memory type.  After the page
-+structure modification but before the software invalidates any iTLB entries for
-+the linear address, a code fetch that happens on the same linear address may
-+cause a machine-check error which can result in a system hang or shutdown.
-+
-+
-+Attack scenarios
-+----------------
-+
-+Attacks against the iTLB multihit erratum can be mounted from malicious
-+guests in a virtualized system.
-+
-+
-+iTLB multihit system information
-+--------------------------------
-+
-+The Linux kernel provides a sysfs interface to enumerate the current iTLB
-+multihit status of the system:whether the system is vulnerable and which
-+mitigations are active. The relevant sysfs file is:
-+
-+/sys/devices/system/cpu/vulnerabilities/itlb_multihit
-+
-+The possible values in this file are:
-+
-+.. list-table::
-+
-+     * - Not affected
-+       - The processor is not vulnerable.
-+     * - KVM: Mitigation: Split huge pages
-+       - Software changes mitigate this issue.
-+     * - KVM: Vulnerable
-+       - The processor is vulnerable, but no mitigation enabled
-+
-+
-+Enumeration of the erratum
-+--------------------------------
-+
-+A new bit has been allocated in the IA32_ARCH_CAPABILITIES (PSCHANGE_MC_NO) msr
-+and will be set on CPU's which are mitigated against this issue.
-+
-+   =======================================   ===========   ===============================
-+   IA32_ARCH_CAPABILITIES MSR                Not present   Possibly vulnerable,check model
-+   IA32_ARCH_CAPABILITIES[PSCHANGE_MC_NO]    '0'           Likely vulnerable,check model
-+   IA32_ARCH_CAPABILITIES[PSCHANGE_MC_NO]    '1'           Not vulnerable
-+   =======================================   ===========   ===============================
-+
-+
-+Mitigation mechanism
-+-------------------------
-+
-+This erratum can be mitigated by restricting the use of large page sizes to
-+non-executable pages.  This forces all iTLB entries to be 4K, and removes
-+the possibility of multiple hits.
-+
-+In order to mitigate the vulnerability, KVM initially marks all huge pages
-+as non-executable. If the guest attempts to execute in one of those pages,
-+the page is broken down into 4K pages, which are then marked executable.
-+
-+If EPT is disabled or not available on the host, KVM is in control of TLB
-+flushes and the problematic situation cannot happen.  However, the shadow
-+EPT paging mechanism used by nested virtualization is vulnerable, because
-+the nested guest can trigger multiple iTLB hits by modifying its own
-+(non-nested) page tables.  For simplicity, KVM will make large pages
-+non-executable in all shadow paging modes.
-+
-+Mitigation control on the kernel command line and KVM - module parameter
-+------------------------------------------------------------------------
-+
-+The KVM hypervisor mitigation mechanism for marking huge pages as
-+non-executable can be controlled with a module parameter "nx_huge_pages=".
-+The kernel command line allows to control the iTLB multihit mitigations at
-+boot time with the option "kvm.nx_huge_pages=".
-+
-+The valid arguments for these options are:
-+
-+  ==========  ================================================================
-+  force       Mitigation is enabled. In this case, the mitigation implements
-+              non-executable huge pages in Linux kernel KVM module. All huge
-+              pages in the EPT are marked as non-executable.
-+              If a guest attempts to execute in one of those pages, the page is
-+              broken down into 4K pages, which are then marked executable.
-+
-+  off	      Mitigation is disabled.
-+
-+  auto        Enable mitigation only if the platform is affected and the kernel
-+              was not booted with the "mitigations=off" command line parameter.
-+	      This is the default option.
-+  ==========  ================================================================
-+
-+
-+Mitigation selection guide
-+--------------------------
-+
-+1. No virtualization in use
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+   The system is protected by the kernel unconditionally and no further
-+   action is required.
-+
-+2. Virtualization with trusted guests
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+   If the guest comes from a trusted source, you may assume that the guest will
-+   not attempt to maliciously exploit these errata and no further action is
-+   required.
-+
-+3. Virtualization with untrusted guests
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+   If the guest comes from an untrusted source, the guest host kernel will need
-+   to apply iTLB multihit mitigation via the kernel command line or kvm
-+   module parameter.
+diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
+index b8228f5..86c4b8c 100644
+--- a/drivers/net/vrf.c
++++ b/drivers/net/vrf.c
+@@ -1427,6 +1427,9 @@ static int vrf_device_event(struct notifier_block *unused,
+ 			goto out;
 
+ 		vrf_dev = netdev_master_upper_dev_get(dev);
++		if (!vrf_dev)
++			goto out;
++
+ 		vrf_del_slave(vrf_dev, dev);
+ 	}
+ out:
+-- 
+1.7.12.4
 
