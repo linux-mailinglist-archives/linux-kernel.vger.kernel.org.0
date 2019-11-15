@@ -2,91 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583D1FDAF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60681FDB07
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbfKOKRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:17:11 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58934 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbfKOKRK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:17:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zVnMI/UTYlwDA1YdxIZ76WyrLjTckvFSUwJdOR6cRe0=; b=0K8frmXEYTzRoeIjlk+UtotAW
-        0nwOzbiVM3sKSI9TrSNJnNWk8dAONjiI8PG7qULXJmVJYJ0VufpK/tm+JKbtQTC5TI7Tu5cW0/bcn
-        nyq7LymBs9duyBhoOv6aFXOvFCv8gsMZqHuURzOZEiYf0Er4Zy4DjLAPj0dBn84jff7nBZizMW7hw
-        iDSKc5B8wHJ1xUk+fN+JwqTEgtbgCEovtnG8DrjUlbCmzDs38HQdhe6GrKHsosBnsRcGXPvFBGm/7
-        S4o7j5ptvVWgm7+T8q7dHbEHSv7fwuLzCC9Y1UDBLnxWQ3D3FJMxGTC8QJu3xKCS9ISY4dk9SDaCs
-        7ft5ht8Aw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iVYeo-00069x-DS; Fri, 15 Nov 2019 10:16:50 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D78503006FB;
-        Fri, 15 Nov 2019 11:15:40 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E42AB2B128BE6; Fri, 15 Nov 2019 11:16:48 +0100 (CET)
-Date:   Fri, 15 Nov 2019 11:16:48 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH 3/9] sched/vtime: Handle nice updates under vtime
-Message-ID: <20191115101648.GC4131@hirez.programming.kicks-ass.net>
-References: <20191106030807.31091-1-frederic@kernel.org>
- <20191106030807.31091-4-frederic@kernel.org>
+        id S1727586AbfKOKSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:18:04 -0500
+Received: from mail-eopbgr10073.outbound.protection.outlook.com ([40.107.1.73]:60129
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727183AbfKOKR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 05:17:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fcnZklfBnrpJeaG1O034/vm8J/Zpl2JiVrQeTAPoDJcf9W402QS7lH3ccqlhsqPzjetO0ystHkqnNfU1qQOltUGX7twLwYlbmq1EbjKX3NHiXztQqAJuQxPJKGDImimKlDSF8U9mRtU89IHA8ZkEuhqai3fFsAtXyWPdib1fmiq8OwL7QUisWQapKOdlew4qX1FDA9ipHvk1R2WL3WLMp5622NJK2S2+jDHWpm1fcymeGfKrCgRCRfNLqbB2RAWdipjcbmD1CxT4kR9v8jzCIFK0sTfvD/pDFYDk6XfpCjECsimpqkrpULrcwI6Gx7XICPxWmPHDHqsyt+fLrocFVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ORHQ659aoEtcRnPnkP0sXH/YF5tOtOqc4+oMh2DDYs8=;
+ b=LEB50cZmVNHpEgN/pV57q4z2cjNkX+2SmHm4Jk6y/7Yq8EgxKV9WlocFHLdmdwJo0syuumog3bEfwOgZfeWyFEWSRrQTYYpMWqKC40XAgPetqaFh2ejwYPcx80qUGLQ6j+BlSA2ToB/Um8Ry7W9GtG0+B167DBJFi5Y2WNnUymzDHkmiyUItX/8g86BC1LdGshCeVWJOBzd3nUeixa+MsUKt0YANT+zxRolRS8/8lTeWu+/fX+DYBuo/SgfKtYWoWBF+oLFqCu80uto3/pPAIHxHS5GJhuanBHiE9FUSNDKlrHK+G98vIF0N1csx3PnjIJ75cKfOUN9IBnJj2TDmog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ORHQ659aoEtcRnPnkP0sXH/YF5tOtOqc4+oMh2DDYs8=;
+ b=UC5CBGGcJSKT6sOr0W5WuORevxedHRPn0u8HRNZ7bTTuOnOrRKMllhyb+tOVhD9b4Lec0bp0QNGpdTi3lr/sNyxcirBJd4HAe89Bike5l8DCWu484LNdWWv5TnL/rK/uh9LF5wn3w9Czr7UepcaQsckyKBA2t/YzKQRMkyaCGWw=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5395.eurprd04.prod.outlook.com (20.178.113.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.26; Fri, 15 Nov 2019 10:17:54 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.024; Fri, 15 Nov 2019
+ 10:17:54 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alice Guo <alice.guo@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] clk: clkdev: Replace strlcpy with strscpy
+Thread-Topic: [PATCH] clk: clkdev: Replace strlcpy with strscpy
+Thread-Index: AQHVm53x+DXjeUQoqE+Ge0GGT57azw==
+Date:   Fri, 15 Nov 2019 10:17:53 +0000
+Message-ID: <1573812819-5030-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0031.apcprd03.prod.outlook.com
+ (2603:1096:203:2f::19) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7f884cdf-06ce-4738-5d4f-08d769b513aa
+x-ms-traffictypediagnostic: AM0PR04MB5395:|AM0PR04MB5395:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5395FCD25E55205FA00C276388700@AM0PR04MB5395.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
+x-forefront-prvs: 02229A4115
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(396003)(366004)(346002)(199004)(189003)(66446008)(14454004)(2906002)(86362001)(52116002)(6116002)(3846002)(66066001)(7736002)(305945005)(14444005)(71200400001)(71190400001)(256004)(2501003)(6512007)(99286004)(6436002)(6486002)(478600001)(102836004)(110136005)(54906003)(386003)(6506007)(26005)(316002)(186003)(8936002)(25786009)(486006)(44832011)(36756003)(50226002)(4326008)(8676002)(81156014)(81166006)(66476007)(2616005)(476003)(64756008)(66556008)(5660300002)(66946007)(156123004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5395;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kMvi4djVH0GjPZ+Wzlu/K2CD7lMsQBhX6n51JJTh4RByGU6keid38QOu663jTgJHVm6WhwVoevgfGCluRuE8+y7UazMcrHDn01TAF8+KyjUaa5Qx8V8YCfN9trKnijW+RhuaEDzKIXKoQK3obsFKxw09Qigy3AlP3MMjbXTtHOG/PqwwXJXxa6K5eOKY/4pSQnM2/kpgXqhhaLpsCnMugrG9T7vG29F0ymUKQQ5J24lZGYcQA+JBP/8DpWMqKGOW9/UQ+v34p0K3P1nZazbAuY/6icMTKtB2vGTbcS4IgrFv7nZxG5we7ZWmNBFslhJc0pLxpDqGleXpg+9xGS9LKakWStk9MRFPlOvM+6tWzKnoJDiELxRfXWfK98XH567IFL5PmvlAeQVlEgrkBDaov2A9O4MI4fX7jaZgInsCHs5oxdiFd5t7V7Ip0UCkGxVM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106030807.31091-4-frederic@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f884cdf-06ce-4738-5d4f-08d769b513aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2019 10:17:54.0191
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jdJglKf7R/U4zV+fuVmD2OS+As4W3z+4ki+1K8hy5Drhi8cUhQKJaCRbl3gxPdtSzrSyPz6pkoP2UwgHn5iGIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5395
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 04:08:01AM +0100, Frederic Weisbecker wrote:
-> The cputime niceness is determined while checking the target's nice value
-> at cputime accounting time. Under vtime this happens on context switches,
-> user exit and guest exit. But nice value updates while the target is
-> running are not taken into account.
-> 
-> So if a task runs tickless for 10 seconds in userspace but it has been
-> reniced after 5 seconds from -1 (not nice) to 1 (nice), on user exit
-> vtime will account the whole 10 seconds as CPUTIME_NICE because it only
-> sees the latest nice value at accounting time which is 1 here. Yet it's
-> wrong, 5 seconds should be accounted as CPUTIME_USER and 5 seconds as
-> CPUTIME_NICE.
-> 
-> In order to solve this, we now cover nice updates withing three cases:
-> 
-> * If the nice updater is the current task, although we are in kernel
->   mode there can be pending user or guest time in the cache to flush
->   under the prior nice state. Account these if any. Also toggle the
->   vtime nice flag for further user/guest cputime accounting.
-> 
-> * If the target runs on a different CPU, we interrupt it with an IPI to
->   update the vtime state in place. If the task is running in user or
->   guest, the pending cputime is accounted under the prior nice state.
->   Then the vtime nice flag is toggled for further user/guest cputime
->   accounting.
+From: Peng Fan <peng.fan@nxp.com>
 
-But but but, I thought the idea was to _never_ send interrupts to
-NOHZ_FULL cpus ?!?
+The implementation of strscpy() is more robust and safer.
+
+The strscpy was introduced to fix some API problems around strlcpy.
+strscpy is preferred to strlcpy() since the API doesn't require
+reading memory from the src string beyond the specified "count" bytes,
+and since the return value is easier to error-check than strlcpy()'s.
+In addition, the implementation is robust to the string changing out
+from underneath it, unlike the current strlcpy() implementation.
+
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/clkdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 0f2e3fcf0f19..ee56109bc0b4 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -165,7 +165,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, co=
+nst char *dev_fmt,
+=20
+ 	cla->cl.clk_hw =3D hw;
+ 	if (con_id) {
+-		strlcpy(cla->con_id, con_id, sizeof(cla->con_id));
++		strscpy(cla->con_id, con_id, sizeof(cla->con_id));
+ 		cla->cl.con_id =3D cla->con_id;
+ 	}
+=20
+--=20
+2.16.4
+
