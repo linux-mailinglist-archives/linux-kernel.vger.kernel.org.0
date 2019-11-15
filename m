@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3196FFE704
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 22:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE571FE6F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 22:13:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbfKOVNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 16:13:41 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44608 "EHLO
+        id S1727354AbfKOVNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 16:13:13 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44637 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfKOVMi (ORCPT
+        with ESMTP id S1727118AbfKOVMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 16:12:38 -0500
+        Fri, 15 Nov 2019 16:12:42 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVitN-0007Qq-SH; Fri, 15 Nov 2019 22:12:34 +0100
+        id 1iVitR-0007Tb-UX; Fri, 15 Nov 2019 22:12:38 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2528B1C18D3;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C27731C18D8;
         Fri, 15 Nov 2019 22:12:30 +0100 (CET)
 Date:   Fri, 15 Nov 2019 21:12:30 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/iopl] x86/ioperm: Avoid bitmap allocation if no permissions are set
+Subject: [tip: x86/iopl] x86/ptrace: Prevent truncation of bitmap size
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191113210104.404509322@linutronix.de>
-References: <20191113210104.404509322@linutronix.de>
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <20191113210103.819769574@linutronix.de>
+References: <20191113210103.819769574@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <157385235012.12247.1247139198046995586.tip-bot2@tip-bot2>
+Message-ID: <157385235077.12247.4923575564089714664.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,38 +49,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/iopl branch of tip:
 
-Commit-ID:     5487da6bf0775d996352442b89a8defbd671b4ae
-Gitweb:        https://git.kernel.org/tip/5487da6bf0775d996352442b89a8defbd671b4ae
+Commit-ID:     c5d623b17c2424272b3355a524b094ff02cfd9aa
+Gitweb:        https://git.kernel.org/tip/c5d623b17c2424272b3355a524b094ff02cfd9aa
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 13 Nov 2019 21:42:47 +01:00
+AuthorDate:    Wed, 13 Nov 2019 21:42:41 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 14 Nov 2019 20:15:02 +01:00
+CommitterDate: Thu, 14 Nov 2019 20:14:59 +01:00
 
-x86/ioperm: Avoid bitmap allocation if no permissions are set
+x86/ptrace: Prevent truncation of bitmap size
 
-If ioperm() is invoked the first time and the @turn_on argument is 0, then
-there is no point to allocate a bitmap just to clear permissions which are
-not set.
+The active() callback of the IO bitmap regset divides the IO bitmap size by
+the word size (32/64 bit). As the I/O bitmap size is in bytes the active
+check fails for bitmap sizes of 1-3 bytes on 32bit and 1-7 bytes on 64bit.
+
+Use DIV_ROUND_UP() instead.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191113210104.404509322@linutronix.de
+Link: https://lkml.kernel.org/r/20191113210103.819769574@linutronix.de
+
+
 
 ---
- arch/x86/kernel/ioport.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/ptrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index ca6aa1e..80fa36b 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -36,6 +36,9 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
- 	 */
- 	bitmap = t->io_bitmap_ptr;
- 	if (!bitmap) {
-+		/* No point to allocate a bitmap just to clear permissions */
-+		if (!turn_on)
-+			return 0;
- 		bitmap = kmalloc(IO_BITMAP_BYTES, GFP_KERNEL);
- 		if (!bitmap)
- 			return -ENOMEM;
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 3c5bbe8..7c52674 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -697,7 +697,7 @@ static int ptrace_set_debugreg(struct task_struct *tsk, int n,
+ static int ioperm_active(struct task_struct *target,
+ 			 const struct user_regset *regset)
+ {
+-	return target->thread.io_bitmap_max / regset->size;
++	return DIV_ROUND_UP(target->thread.io_bitmap_max, regset->size);
+ }
+ 
+ static int ioperm_get(struct task_struct *target,
