@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48F71FDD9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD981FDD82
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:25:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfKOM0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:26:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33488 "EHLO
+        id S1727829AbfKOMZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:25:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33520 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbfKOMZ3 (ORCPT
+        with ESMTP id S1727771AbfKOMZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Nov 2019 07:25:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,23 +18,22 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QN4aYBjvPkYWcAEdyVdCD60J+0aOlMsoc1odzZylDvY=; b=HlDYky63BVWE
-        xiYEScODyHPKkmDKxC9aQ84WkNBRAde9qVkfxAYoRwTD5rGqehP9jdghXR85TOTcbH2RlotY95xj4
-        xLRqZ4guJty9FOhO0IZRRRjd6IDIFIDmoJ9nUXDqrlpqlPwkSHnbu1biwEQF3sgMgQx96Du8U2Zc8
-        udpqE=;
+        List-Archive; bh=zQlcfRuhMf4DnEeKX3LiRwpF1ZNWngPsA1ocfsQAJzE=; b=bWUKS8m+8B1X
+        DdqO6H42DLaoYP49wf9+0PyLicG8abC5BI6AIdeLf34DSogA1Zif9eDhsW7CBzvieHDqa75qL0NiS
+        3smsu664CVVZNzjrgO93U/z92JDUwhl4q4Gz1Z6X+3gduj1q4xams7XVgsrwVhGXOYvoUrhWHnKnU
+        ZSVKQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iVaf5-0000Lw-FI; Fri, 15 Nov 2019 12:25:15 +0000
+        id 1iVaf5-0000M0-Om; Fri, 15 Nov 2019 12:25:15 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id E3EF42741609; Fri, 15 Nov 2019 12:25:14 +0000 (GMT)
+        id 3521B27415A7; Fri, 15 Nov 2019 12:25:15 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
 Cc:     agross@kernel.org, alexandre.belloni@bootlin.com, andi@etezian.org,
-        Andi Shyti <andi@etezian.org>, bjorn.andersson@linaro.org,
-        broonie@kernel.org, jonathanh@nvidia.com, kgene@kernel.org,
-        krzk@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        bjorn.andersson@linaro.org, broonie@kernel.org,
+        jonathanh@nvidia.com, kgene@kernel.org, krzk@kernel.org,
         ldewangan@nvidia.com, linus.walleij@linaro.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -42,11 +41,11 @@ Cc:     agross@kernel.org, alexandre.belloni@bootlin.com, andi@etezian.org,
         Mark Brown <broonie@kernel.org>, radu_nicolae.pirea@upb.ro,
         s.hauer@pengutronix.de, shawnguo@kernel.org,
         thierry.reding@gmail.com, vkoul@kernel.org
-Subject: Applied "spi: s3c64xx: Use dma_request_chan() directly for channel request" to the spi tree
-In-Reply-To: <20191113094256.1108-8-peter.ujfalusi@ti.com>
+Subject: Applied "spi: qup: Use dma_request_chan() directly for channel request" to the spi tree
+In-Reply-To: <20191113094256.1108-7-peter.ujfalusi@ti.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191115122514.E3EF42741609@ypsilon.sirena.org.uk>
-Date:   Fri, 15 Nov 2019 12:25:14 +0000 (GMT)
+Message-Id: <20191115122515.3521B27415A7@ypsilon.sirena.org.uk>
+Date:   Fri, 15 Nov 2019 12:25:15 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -54,7 +53,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: s3c64xx: Use dma_request_chan() directly for channel request
+   spi: qup: Use dma_request_chan() directly for channel request
 
 has been applied to the spi tree at
 
@@ -79,47 +78,40 @@ to this mail.
 Thanks,
 Mark
 
-From df1b0141788527c032a9851c0589a1712d7e46b8 Mon Sep 17 00:00:00 2001
+From 194e1d4bc262c2d23ba9a8a5c03855c372ea1b5c Mon Sep 17 00:00:00 2001
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Wed, 13 Nov 2019 11:42:54 +0200
-Subject: [PATCH] spi: s3c64xx: Use dma_request_chan() directly for channel
- request
+Date: Wed, 13 Nov 2019 11:42:53 +0200
+Subject: [PATCH] spi: qup: Use dma_request_chan() directly for channel request
 
 dma_request_slave_channel_reason() is:
 #define dma_request_slave_channel_reason(dev, name) \
 	dma_request_chan(dev, name)
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Andi Shyti <andi@etezian.org>
-Link: https://lore.kernel.org/r/20191113094256.1108-8-peter.ujfalusi@ti.com
+Link: https://lore.kernel.org/r/20191113094256.1108-7-peter.ujfalusi@ti.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-s3c64xx.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/spi/spi-qup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 7b7151ec14c8..cf67ea60dc0e 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1154,15 +1154,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index 2f559e531100..dd3434a407ea 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -932,11 +932,11 @@ static int spi_qup_init_dma(struct spi_master *master, resource_size_t base)
+ 	int ret;
  
- 	if (!is_polling(sdd)) {
- 		/* Acquire DMA channels */
--		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
--								  "rx");
-+		sdd->rx_dma.ch = dma_request_chan(&pdev->dev, "rx");
- 		if (IS_ERR(sdd->rx_dma.ch)) {
- 			dev_err(&pdev->dev, "Failed to get RX DMA channel\n");
- 			ret = PTR_ERR(sdd->rx_dma.ch);
- 			goto err_disable_io_clk;
- 		}
--		sdd->tx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
--								  "tx");
-+		sdd->tx_dma.ch = dma_request_chan(&pdev->dev, "tx");
- 		if (IS_ERR(sdd->tx_dma.ch)) {
- 			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
- 			ret = PTR_ERR(sdd->tx_dma.ch);
+ 	/* allocate dma resources, if available */
+-	master->dma_rx = dma_request_slave_channel_reason(dev, "rx");
++	master->dma_rx = dma_request_chan(dev, "rx");
+ 	if (IS_ERR(master->dma_rx))
+ 		return PTR_ERR(master->dma_rx);
+ 
+-	master->dma_tx = dma_request_slave_channel_reason(dev, "tx");
++	master->dma_tx = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(master->dma_tx)) {
+ 		ret = PTR_ERR(master->dma_tx);
+ 		goto err_tx;
 -- 
 2.20.1
 
