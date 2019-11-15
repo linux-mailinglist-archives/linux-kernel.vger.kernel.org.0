@@ -2,46 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B6EFDE76
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D93EFDE7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfKOM6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:58:16 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24400 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727223AbfKOM6P (ORCPT
+        id S1727476AbfKONA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:00:26 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50312 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727223AbfKONAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:58:15 -0500
+        Fri, 15 Nov 2019 08:00:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573822694;
+        s=mimecast20190719; t=1573822824;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=u5KXcGCEMZfiigcHpMQdUQ5I3O0+rZRjoxr5UASBB8A=;
-        b=gM/mm74KAIhxEGMi6OYvScLQ4J6R4rq+y0C9jYzAMl7kwoyQP4R3iEcwn3u6f/3/qKwk45
-        2FOVxglFUUKQ02NsUbT1qrZiFoc760pZoxSTSjLBrrhhGHmIw+K+Kni0j+ILJhHBtWwHJe
-        hxSxo6rh10Un3WwfJolIpD8b+ChC4As=
+        bh=opjxBIdjqRYStXm6xLlZyo/PrHfu0eRA2CiR78Zq6DE=;
+        b=JJvlkSk+HDsVU7HQfV1vdDJLj+enQxuXKdE9mM+GPolnqf2dKfVAo9Ij78peO6soR0+d5z
+        q6stchCk7u8mTB3PmlJtIBjZZiQ0YJW7MYGNdGWCOayO9xT8e3wo0rIXdonzvQXjSC0mtY
+        POj5Du5KevEqJamOzads+jNHO4vMl8s=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-62-S9QpeGMtP9WKFGt1sQgWIA-1; Fri, 15 Nov 2019 07:58:11 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-209-E9dR3uf8NBajDh9DRgkgYA-1; Fri, 15 Nov 2019 08:00:16 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CD703802682;
-        Fri, 15 Nov 2019 12:58:08 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 847A2801FD2;
+        Fri, 15 Nov 2019 13:00:12 +0000 (UTC)
 Received: from [10.36.118.87] (unknown [10.36.118.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B5A45ED3B;
-        Fri, 15 Nov 2019 12:58:03 +0000 (UTC)
-Subject: Re: [PATCH] mm: get rid of odd jump label in find_mergeable_anon_vma
-To:     linmiaohe <linmiaohe@huawei.com>, akpm@linux-foundation.org,
-        richardw.yang@linux.intel.com, sfr@canb.auug.org.au,
-        rppt@linux.ibm.com, jannh@google.com, steve.capper@arm.com,
-        catalin.marinas@arm.com, aarcange@redhat.com,
-        chenjianhong2@huawei.com, walken@google.com,
-        dave.hansen@linux.intel.com, tiny.windzz@gmail.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1573799768-15650-1-git-send-email-linmiaohe@huawei.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 431F960470;
+        Fri, 15 Nov 2019 13:00:07 +0000 (UTC)
+Subject: Re: [PATCH v2 0/2] mm: remove the memory isolate notifier
+To:     linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Arun KS <arunks@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richardw.yang@linux.intel.com>
+References: <20191114131911.11783-1-david@redhat.com>
 From:   David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  mQINBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -87,102 +99,40 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <5277de34-ecb3-831e-c697-1fd3f66b45ba@redhat.com>
-Date:   Fri, 15 Nov 2019 13:58:02 +0100
+Message-ID: <863ad08e-6a9d-cf8a-1e24-a554d5ba00c2@redhat.com>
+Date:   Fri, 15 Nov 2019 14:00:05 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <1573799768-15650-1-git-send-email-linmiaohe@huawei.com>
+In-Reply-To: <20191114131911.11783-1-david@redhat.com>
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: S9QpeGMtP9WKFGt1sQgWIA-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: E9dR3uf8NBajDh9DRgkgYA-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.11.19 07:36, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
-
-I'm pro removing unnecessary jump labels.
-
-Subject: "mm: get rid of jump labels in find_mergeable_anon_vma()"
-
+On 14.11.19 14:19, David Hildenbrand wrote:
+> This is the MM part of
+> =09https://lkml.org/lkml/2019/10/31/487
 >=20
-> The odd jump label try_prev and none is not really need
-
-s/odd jump label/jump labels/
-
-s/is/are/
-
-> in func find_mergeable_anon_vma, eliminate them to
-> improve readability.
+> "We can get rid of the memory isolate notifier by switching to balloon
+> compaction in powerpc's CMM (Collaborative Memory Management). The memory
+> isolate notifier was only necessary to allow to offline memory blocks tha=
+t
+> contain inflated/"loaned" pages - which also possible when the inflated
+> pages are movable (via balloon compaction). [...]"
 >=20
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  mm/mmap.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
->=20
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 4d4db76a07da..ab980d468a10 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1276,25 +1276,21 @@ static struct anon_vma *reusable_anon_vma(struct =
-vm_area_struct *old, struct vm_
->   */
->  struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *vma)
->  {
-> -=09struct anon_vma *anon_vma;
-> +=09struct anon_vma *anon_vma =3D NULL;
->  =09struct vm_area_struct *near;
-> =20
->  =09near =3D vma->vm_next;
-> -=09if (!near)
-> -=09=09goto try_prev;
-> -
-> -=09anon_vma =3D reusable_anon_vma(near, vma, near);
-> +=09if (near)
-> +=09=09anon_vma =3D reusable_anon_vma(near, vma, near);>  =09if (anon_vma=
-)
->  =09=09return anon_vma;
+> Michael queued the POWERPC bits that remove the single user, but I am
+> missing ACKs for the MM bits. I think it makes sense to let these two
+> patches also go via Michael's tree, to avoid collissions. Thoughts?
 
-Let me suggest the following instead:
-
-/* Try next first */
-near =3D vma->vm_next;
-if (near) {
-=09anon_vma =3D reusable_anon_vma(near, vma, near);
-=09if (anon_vma)
-=09=09return anon_vma;
-}
-/* Try prev next */
-near =3D vma->vm_prev;
-if (near) {
-=09anon_vma =3D reusable_anon_vma(near, vma, near);
-=09if (anon_vma)
-=09=09return anon_vma;
-}
-
-> -try_prev:
-> -=09near =3D vma->vm_prev;
-> -=09if (!near)
-> -=09=09goto none;
-> =20
-> -=09anon_vma =3D reusable_anon_vma(near, near, vma);
-> +=09near =3D vma->vm_prev;
-> +=09if (near)
-> +=09=09anon_vma =3D reusable_anon_vma(near, near, vma);
->  =09if (anon_vma)
->  =09=09return anon_vma;
-> -none:
-> +
->  =09/*
->  =09 * There's no absolute need to look only at touching neighbours:
->  =09 * we could search further afield for "compatible" anon_vmas.
->=20
+@Michael, the ACKs from Michal should be sufficient to take these two
+patches via your tree. Fine with you? Thanks!
 
 
 --=20
