@@ -2,141 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C9AFDAE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:15:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A295BFDAF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 11:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfKOKP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 05:15:26 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58896 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfKOKP0 (ORCPT
+        id S1727439AbfKOKRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 05:17:02 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:40658 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfKOKRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 05:15:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=307qxf8AxoabXpqNRvrAYs2m8iYuBBrAOgYyTa1heOo=; b=dX+DPbwJ/5/OPPy+fQ5FFPbu5
-        Zxjadry4/6ee0PzWOMkANVSJZgTFQosJJqQf2lzNVJb4RkktbNJnA6grnzDJFuGA8HrwWzl/Vac66
-        dsmVlfOKD255Ch72I3GMHvkpdRD0nTxm9XNyaCWN8pTE98BHBDS6EiSb9gsE6ejC80hlNfP3GoZb/
-        tnx7V4GVzW+bIwjlqdg2YJDJBLb58ZV0jdxQKxAl42Pebv7mbET3Uu8i1Tq24Alef1IyYABb8cn/V
-        3yDemq9jMq6WuGxjDiy6Kqg36RJCaCHcKFleGtCOJfg+olmQw0X2Z1eTesvXAn4ziJLmrzRaoT/tY
-        I3eJgVXmg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iVYcq-00068R-Rx; Fri, 15 Nov 2019 10:14:49 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 970493006FB;
-        Fri, 15 Nov 2019 11:13:37 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A7CC52B128BE4; Fri, 15 Nov 2019 11:14:45 +0100 (CET)
-Date:   Fri, 15 Nov 2019 11:14:45 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH 3/9] sched/vtime: Handle nice updates under vtime
-Message-ID: <20191115101445.GB4131@hirez.programming.kicks-ass.net>
-References: <20191106030807.31091-1-frederic@kernel.org>
- <20191106030807.31091-4-frederic@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106030807.31091-4-frederic@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 15 Nov 2019 05:17:01 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAFAEDUw039024;
+        Fri, 15 Nov 2019 10:16:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=CF76dqOjLnDtVQlj2rFziNpDdLSq1Rr16rBQHbvLv6Y=;
+ b=oz2J5i6SWla6EFKSOlRg/p9BdA+ThBZTvWPdbMKB1MZi4F8LGeQ8zoEorL+9r4JuRVau
+ LGefioAdpod/CqI0I1YmeD3soK98CM/pCqtZZeUObqXDSKMgrUipqZ8v8nsi3a52Ur9L
+ XBsibtJOjIGoeT5XxRQCsb1UQkRpljWQR6g1ha+HFOtY6V3gPtDYWFT5DcpNyOdK2/lo
+ vHZ+Da1AXrlqKfFrFcdrJfATcuBv9J5ePQ9djRKYDMXU82laEltokpss7ZsRI9DKVQI7
+ FjH0PvkT2ThMXaJZceEOBr31hITRSGWu63akOpV+85r+2/ILoj6sIzVS/7pxSIccgF9R 0g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2w9gxpjd2f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Nov 2019 10:16:34 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAFADLCv120961;
+        Fri, 15 Nov 2019 10:16:33 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2w9h17s1v4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Nov 2019 10:16:33 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAFAGPlf016278;
+        Fri, 15 Nov 2019 10:16:25 GMT
+Received: from dhcp-10-175-208-51.vpn.oracle.com (/10.175.208.51)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Nov 2019 02:16:24 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     brendanhiggins@google.com, skhan@linuxfoundation.org,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
+        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
+        corbet@lwn.net, tytso@mit.edu, adilger.kernel@dilger.ca,
+        mcgrof@kernel.org, changbin.du@intel.com,
+        linux-ext4@vger.kernel.org, linux-doc@vger.kernel.org,
+        sboyd@kernel.org, Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH v4 linux-kselftest-test 0/6] kunit: support building core/tests as modules
+Date:   Fri, 15 Nov 2019 10:16:06 +0000
+Message-Id: <1573812972-10529-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911150096
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911150096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 04:08:01AM +0100, Frederic Weisbecker wrote:
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7880f4f64d0e..fa56a1bdd5d8 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4488,6 +4488,7 @@ void set_user_nice(struct task_struct *p, long nice)
->  	int old_prio, delta;
->  	struct rq_flags rf;
->  	struct rq *rq;
-> +	int old_static;
->  
->  	if (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
->  		return;
-> @@ -4498,6 +4499,8 @@ void set_user_nice(struct task_struct *p, long nice)
->  	rq = task_rq_lock(p, &rf);
->  	update_rq_clock(rq);
->  
-> +	old_static = p->static_prio;
-> +
->  	/*
->  	 * The RT priorities are set via sched_setscheduler(), but we still
->  	 * allow the 'normal' nice value to be set - but as expected
-> @@ -4532,7 +4535,9 @@ void set_user_nice(struct task_struct *p, long nice)
->  	}
->  	if (running)
->  		set_next_task(rq, p);
-> +
->  out_unlock:
-> +	vtime_set_nice(rq, p, old_static);
->  	task_rq_unlock(rq, p, &rf);
->  }
->  EXPORT_SYMBOL(set_user_nice);
-> @@ -4668,8 +4673,8 @@ static struct task_struct *find_process_by_pid(pid_t pid)
->   */
->  #define SETPARAM_POLICY	-1
->  
-> -static void __setscheduler_params(struct task_struct *p,
-> -		const struct sched_attr *attr)
-> +static void __setscheduler_params(struct rq *rq, struct task_struct *p,
-> +				  const struct sched_attr *attr)
->  {
->  	int policy = attr->sched_policy;
->  
-> @@ -4680,8 +4685,11 @@ static void __setscheduler_params(struct task_struct *p,
->  
->  	if (dl_policy(policy))
->  		__setparam_dl(p, attr);
-> -	else if (fair_policy(policy))
-> +	else if (fair_policy(policy)) {
-> +		int old_prio = p->static_prio;
->  		p->static_prio = NICE_TO_PRIO(attr->sched_nice);
-> +		vtime_set_nice(rq, p, old_prio);
-> +	}
->  
->  	/*
->  	 * __sched_setscheduler() ensures attr->sched_priority == 0 when
-> @@ -4704,7 +4712,7 @@ static void __setscheduler(struct rq *rq, struct task_struct *p,
->  	if (attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)
->  		return;
->  
-> -	__setscheduler_params(p, attr);
-> +	__setscheduler_params(rq, p, attr);
->  
->  	/*
->  	 * Keep a potential priority boosting if called from
+The current kunit execution model is to provide base kunit functionality
+and tests built-in to the kernel.  The aim of this series is to allow
+building kunit itself and tests as modules.  This in turn allows a
+simple form of selective execution; load the module you wish to test.
+In doing so, kunit itself (if also built as a module) will be loaded as
+an implicit dependency.
 
-Would it make sense to add a helper like:
+Because this requires a core API modification - if a module delivers
+multiple suites, they must be declared with the kunit_test_suites()
+macro - we're proposing this patch set as a candidate to be applied to the
+test tree before too many kunit consumers appear.  We attempt to deal
+with existing consumers in patch 3.
 
-static void
-__sched_set_nice(struct rq *rq, struct task_struct *t, long nice)
-{
-	int old_prio;
+Changes since v3:
+ - removed symbol lookup patch for separate submission later
+ - removed use of sysctl_hung_task_timeout_seconds (patch 4, as discussed
+   with Brendan and Stephen)
+ - disabled build of string-stream-test when CONFIG_KUNIT_TEST=m; this
+   is to avoid having to deal with symbol lookup issues
+ - changed string-stream-impl.h back to string-stream.h (Brendan)
+ - added module build support to new list, ext4 tests
 
-	old_prio = t->static_prio;
-	t->static_prio = NICE_TO_PRIO(nice);
-	vtime_set_nice(rq, t, old_prio);
-}
+Changes since v2:
+ - moved string-stream.h header to lib/kunit/string-stream-impl.h (Brendan)
+   (patch 1)
+ - split out non-exported interfaces in try-catch-impl.h (Brendan)
+   (patch 2)
+ - added kunit_find_symbol() and KUNIT_INIT_SYMBOL to lookup non-exported
+   symbols (patches 3, 4)
+ - removed #ifdef MODULE around module licenses (Randy, Brendan, Andy)
+   (patch 4)
+ - replaced kunit_test_suite() with kunit_test_suites() rather than
+   supporting both (Brendan) (patch 4)
+ - lookup sysctl_hung_task_timeout_secs as kunit may be built as a module
+   and the symbol may not be available (patch 5)
+
+Alan Maguire (6):
+  kunit: move string-stream.h to lib/kunit
+  kunit: hide unexported try-catch interface in try-catch-impl.h
+  kunit: allow kunit tests to be loaded as a module
+  kunit: remove timeout dependence on sysctl_hung_task_timeout_seconds
+  kunit: allow kunit to be loaded as a module
+  kunit: update documentation to describe module-based build
+
+ Documentation/dev-tools/kunit/faq.rst   |   3 +-
+ Documentation/dev-tools/kunit/index.rst |   3 +
+ Documentation/dev-tools/kunit/usage.rst |  16 ++
+ fs/ext4/Kconfig                         |   2 +-
+ fs/ext4/Makefile                        |   5 +
+ fs/ext4/inode-test.c                    |   4 +-
+ include/kunit/assert.h                  |   3 +-
+ include/kunit/string-stream.h           |  51 -----
+ include/kunit/test.h                    |  35 +++-
+ include/kunit/try-catch.h               |  10 -
+ kernel/sysctl-test.c                    |   4 +-
+ lib/Kconfig.debug                       |   4 +-
+ lib/kunit/Kconfig                       |   6 +-
+ lib/kunit/Makefile                      |  14 +-
+ lib/kunit/assert.c                      |  10 +
+ lib/kunit/example-test.c                |  88 ---------
+ lib/kunit/kunit-example-test.c          |  90 +++++++++
+ lib/kunit/kunit-test.c                  | 334 ++++++++++++++++++++++++++++++++
+ lib/kunit/string-stream-test.c          |   5 +-
+ lib/kunit/string-stream.c               |   3 +-
+ lib/kunit/string-stream.h               |  51 +++++
+ lib/kunit/test-test.c                   | 331 -------------------------------
+ lib/kunit/test.c                        |  25 ++-
+ lib/kunit/try-catch-impl.h              |  28 +++
+ lib/kunit/try-catch.c                   |  37 +---
+ lib/list-test.c                         |   4 +-
+ 26 files changed, 628 insertions(+), 538 deletions(-)
+ delete mode 100644 include/kunit/string-stream.h
+ delete mode 100644 lib/kunit/example-test.c
+ create mode 100644 lib/kunit/kunit-example-test.c
+ create mode 100644 lib/kunit/kunit-test.c
+ create mode 100644 lib/kunit/string-stream.h
+ delete mode 100644 lib/kunit/test-test.c
+ create mode 100644 lib/kunit/try-catch-impl.h
+
+-- 
+1.8.3.1
 
