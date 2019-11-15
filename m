@@ -2,78 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85627FDEF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A24FDEFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:34:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfKONbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:31:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727314AbfKONbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:31:45 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727428AbfKONeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:34:46 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45447 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727314AbfKONep (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 08:34:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573824884;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Kmf9p24G+e2nuURDCB0V07M/DkvoNVwYc9ExgJ2ml0=;
+        b=EXuU2lqc4mWCqPjnH+VFvhChdoihagIjNjL0gwFirNIJkwq/kiA4xVSfyBcUQ3WijVnbjy
+        364nOuHbfYAodCcGZKqXxghXOB9EDTgGe1KiQhaDLpBZW1jWG5sn9zjv40RsImPdTBn7gz
+        dwj2E+dAwmW0hCayiAIuE7MVkKJk41w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-323-SC2msJGjPwevHWfciSARpQ-1; Fri, 15 Nov 2019 08:34:42 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4037206D3;
-        Fri, 15 Nov 2019 13:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573824704;
-        bh=0mEy+vTE2NKp+0FpbmD77dCc1obSZTMQf07nHTB35X4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=b+jqg4WGDuApN3mmoZ66wqccYiNLMXXggBPiKnocz71XvO3l9QtLDklSDtm+Uqykr
-         +CTBdJno2bm/yzLh1fYOMVGinltDUSBOhoEB9DTSCO6rZabG3T+bCQBN5/OgQZaFjf
-         oQ/wG9GnN4if+Ca+CpnUPmP8P1/sV8dP9X/jJ2jA=
-Received: by mail-qk1-f174.google.com with SMTP id m4so8043303qke.9;
-        Fri, 15 Nov 2019 05:31:44 -0800 (PST)
-X-Gm-Message-State: APjAAAVTiXNyRqQ6P+lHDzD/BtaPjJiyfxBgJmXHg4yKEwxkFnIyunET
-        c3qOyRCo4gi1lb7QOKXEBowA6gH2uOjgU5q92A==
-X-Google-Smtp-Source: APXvYqzMPS3VKClIHmA0E8VehZ9+If+oxr1JeZ4huF9uwrJVhe9UxpXgWgnTse8IOpV5dfbE7pg3Dh5zmVck4EhBbJU=
-X-Received: by 2002:a05:620a:205d:: with SMTP id d29mr12519950qka.152.1573824703941;
- Fri, 15 Nov 2019 05:31:43 -0800 (PST)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1A9D0102C8BE;
+        Fri, 15 Nov 2019 13:34:41 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 254206364A;
+        Fri, 15 Nov 2019 13:34:38 +0000 (UTC)
+Date:   Fri, 15 Nov 2019 14:34:38 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 2/2] perf report: Jump to symbol source view from
+ total cycles view
+Message-ID: <20191115133438.GA25491@krava>
+References: <20191113004852.21265-1-yao.jin@linux.intel.com>
+ <20191113004852.21265-2-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-References: <20191111090230.3402-1-chunyan.zhang@unisoc.com>
- <20191111090230.3402-3-chunyan.zhang@unisoc.com> <CAAfSe-sCM7T2TZ25hgXSdqOCWzXN2J4qeoSRi8bveqnwGy3vBw@mail.gmail.com>
-In-Reply-To: <CAAfSe-sCM7T2TZ25hgXSdqOCWzXN2J4qeoSRi8bveqnwGy3vBw@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 15 Nov 2019 07:31:31 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJOC_b+urTESd4tLaacJ8gV3upyxHeGGngY2_3m0oJaLA@mail.gmail.com>
-Message-ID: <CAL_JsqJOC_b+urTESd4tLaacJ8gV3upyxHeGGngY2_3m0oJaLA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] dt-bindings: serial: Convert sprd-uart to json-schema
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191113004852.21265-2-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: SC2msJGjPwevHWfciSARpQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 5:15 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->
-> Hi Rob,
->
-> On Mon, 11 Nov 2019 at 17:03, Chunyan Zhang <chunyan.zhang@unisoc.com> wrote:
->
-> [cut]
->
-> > +
-> > +examples:
-> > +  - |
-> > +    serial@0 {
-> > +      compatible = "sprd,sc9860-uart", "sprd,sc9836-uart";
-> > +      reg = <0x0 0x100>;
-> > +      interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
->
-> Seems this setence cannot pass dt_binding_check, it need to be changed to:
-> interrupts = <0 2 4>;
->
-> Do you need me to send another patch, or you can help to fix that on
-> your tree :)
+On Wed, Nov 13, 2019 at 08:48:52AM +0800, Jin Yao wrote:
+> This patch supports jumping from tui total cycles view to symbol
+> source view.
+>=20
+> For example,
+>=20
+> perf record -b ./div
+> perf report --total-cycles
+>=20
+> In total cycles view, we can select one entry and press 'a' or
+> press ENTER key to jump to symbol source view.
+>=20
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/builtin-report.c    |  9 ++++++---
+>  tools/perf/ui/browsers/hists.c | 25 +++++++++++++++++++++++--
+>  tools/perf/util/block-info.c   |  6 ++++--
+>  tools/perf/util/block-info.h   |  3 ++-
+>  tools/perf/util/hist.h         |  7 +++++--
+>  5 files changed, 40 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> index 1e81985b7d56..ceebea4013ca 100644
+> --- a/tools/perf/builtin-report.c
+> +++ b/tools/perf/builtin-report.c
+> @@ -493,7 +493,9 @@ static int perf_evlist__tui_block_hists_browse(struct=
+ evlist *evlist,
+> =20
+>  =09evlist__for_each_entry(evlist, pos) {
+>  =09=09ret =3D report__browse_block_hists(&rep->block_reports[i++].hist,
+> -=09=09=09=09=09=09 rep->min_percent, pos);
+> +=09=09=09=09=09=09 rep->min_percent, pos,
+> +=09=09=09=09=09=09 &rep->session->header.env,
+> +=09=09=09=09=09=09 &rep->annotation_opts);
+>  =09=09if (ret !=3D 0)
+>  =09=09=09return ret;
+>  =09}
+> @@ -525,7 +527,8 @@ static int perf_evlist__tty_browse_hists(struct evlis=
+t *evlist,
+> =20
+>  =09=09if (rep->total_cycles_mode) {
+>  =09=09=09report__browse_block_hists(&rep->block_reports[i++].hist,
+> -=09=09=09=09=09=09   rep->min_percent, pos);
+> +=09=09=09=09=09=09   rep->min_percent, pos,
+> +=09=09=09=09=09=09   NULL, NULL);
+>  =09=09=09continue;
+>  =09=09}
+> =20
+> @@ -1418,7 +1421,7 @@ int cmd_report(int argc, const char **argv)
+>  =09=09if (sort__mode !=3D SORT_MODE__BRANCH)
+>  =09=09=09report.total_cycles_mode =3D false;
+>  =09=09else
+> -=09=09=09sort_order =3D "sym";
+> +=09=09=09sort_order =3D NULL;
 
-I've fixed it up. You need the include file.
+hum, how is this related to this change?
 
-Rob
+jirka
+
