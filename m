@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 253FDFF275
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC59FF203
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:16:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbfKPQS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:18:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52690 "EHLO mail.kernel.org"
+        id S1728874AbfKPPrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:47:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729356AbfKPPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:21 -0500
+        id S1728005AbfKPPqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:24 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3534D20855;
-        Sat, 16 Nov 2019 15:46:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A24CE2077B;
+        Sat, 16 Nov 2019 15:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919181;
-        bh=huh3IRdKqGi5hDvKHS1LXuAEpu3NxCzkYXsQqRKcB2I=;
+        s=default; t=1573919184;
+        bh=2Wlb3YZLDLsri+AOZgu2/8+1BzXQy5enQQEq+o4T+ec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MYdPWd+31hBcaRVJKysLtxBgKpnrlyjREWww4B/py2LFt1/ZtQLuZP9VZxYXXZ5ZC
-         T3mm5z2xh8JZL4Qb3ZTl76ITv2QEvdghSkYjaXK1FtRBO+5j0AUUWoSIUvZlL7GlQJ
-         Ss4GtYEWN8OTiinQsg8SV9Q2f/StEfU+Z/hUxxUc=
+        b=sqoSDrdJ+xpHDojuI2ZxA8eoqYTJpyMwjJYDrnkv/rUCQ4qrthsYBnfKyh/mNdJ3e
+         m3nprN5a7pHTZBtyq0Z37Ty/XSFgIaf1f3pIi6t2i1palCiNemEFIJY/ddDK9gG5I/
+         mjD3KDyUrjRd1Vu9Yrn9LgYtkKux8u/PRw9hvIjM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 190/237] audit: print empty EXECVE args
-Date:   Sat, 16 Nov 2019 10:40:25 -0500
-Message-Id: <20191116154113.7417-190-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 192/237] net: bpfilter: fix iptables failure if bpfilter_umh is disabled
+Date:   Sat, 16 Nov 2019 10:40:27 -0500
+Message-Id: <20191116154113.7417-192-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -43,47 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Guy Briggs <rgb@redhat.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit ea956d8be91edc702a98b7fe1f9463e7ca8c42ab ]
+[ Upstream commit 97adaddaa6db7a8af81b9b11e30cbe3628cd6700 ]
 
-Empty executable arguments were being skipped when printing out the list
-of arguments in an EXECVE record, making it appear they were somehow
-lost.  Include empty arguments as an itemized empty string.
+When iptables command is executed, ip_{set/get}sockopt() try to upload
+bpfilter.ko if bpfilter is enabled. if it couldn't find bpfilter.ko,
+command is failed.
+bpfilter.ko is generated if CONFIG_BPFILTER_UMH is enabled.
+ip_{set/get}sockopt() only checks CONFIG_BPFILTER.
+So that if CONFIG_BPFILTER is enabled and CONFIG_BPFILTER_UMH is disabled,
+iptables command is always failed.
 
-Reproducer:
-	autrace /bin/ls "" "/etc"
-	ausearch --start recent -m execve -i | grep EXECVE
-	type=EXECVE msg=audit(10/03/2018 13:04:03.208:1391) : argc=3 a0=/bin/ls a2=/etc
+test config:
+   CONFIG_BPFILTER=y
+   # CONFIG_BPFILTER_UMH is not set
 
-With fix:
-	type=EXECVE msg=audit(10/03/2018 21:51:38.290:194) : argc=3 a0=/bin/ls a1= a2=/etc
-	type=EXECVE msg=audit(1538617898.290:194): argc=3 a0="/bin/ls" a1="" a2="/etc"
+test command:
+   %iptables -L
+   iptables: No chain/target/match by that name.
 
-Passes audit-testsuite.  GH issue tracker at
-https://github.com/linux-audit/audit-kernel/issues/99
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-[PM: cleaned up the commit metadata]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/auditsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_sockglue.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index b2d1f043f17fb..1513873e23bd1 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1107,7 +1107,7 @@ static void audit_log_execve_info(struct audit_context *context,
- 		}
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index b7a26120d5521..82f341e84faec 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1244,7 +1244,7 @@ int ip_setsockopt(struct sock *sk, int level,
+ 		return -ENOPROTOOPT;
  
- 		/* write as much as we can to the audit log */
--		if (len_buf > 0) {
-+		if (len_buf >= 0) {
- 			/* NOTE: some magic numbers here - basically if we
- 			 *       can't fit a reasonable amount of data into the
- 			 *       existing audit buffer, flush it and start with
+ 	err = do_ip_setsockopt(sk, level, optname, optval, optlen);
+-#ifdef CONFIG_BPFILTER
++#if IS_ENABLED(CONFIG_BPFILTER_UMH)
+ 	if (optname >= BPFILTER_IPT_SO_SET_REPLACE &&
+ 	    optname < BPFILTER_IPT_SET_MAX)
+ 		err = bpfilter_ip_set_sockopt(sk, optname, optval, optlen);
+@@ -1557,7 +1557,7 @@ int ip_getsockopt(struct sock *sk, int level,
+ 	int err;
+ 
+ 	err = do_ip_getsockopt(sk, level, optname, optval, optlen, 0);
+-#ifdef CONFIG_BPFILTER
++#if IS_ENABLED(CONFIG_BPFILTER_UMH)
+ 	if (optname >= BPFILTER_IPT_SO_GET_INFO &&
+ 	    optname < BPFILTER_IPT_GET_MAX)
+ 		err = bpfilter_ip_get_sockopt(sk, optname, optval, optlen);
+@@ -1594,7 +1594,7 @@ int compat_ip_getsockopt(struct sock *sk, int level, int optname,
+ 	err = do_ip_getsockopt(sk, level, optname, optval, optlen,
+ 		MSG_CMSG_COMPAT);
+ 
+-#ifdef CONFIG_BPFILTER
++#if IS_ENABLED(CONFIG_BPFILTER_UMH)
+ 	if (optname >= BPFILTER_IPT_SO_GET_INFO &&
+ 	    optname < BPFILTER_IPT_GET_MAX)
+ 		err = bpfilter_ip_get_sockopt(sk, optname, optval, optlen);
 -- 
 2.20.1
 
