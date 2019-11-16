@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE84FFEB27
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 08:49:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7AACFEB31
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 08:52:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfKPHtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 02:49:25 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54834 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfKPHtZ (ORCPT
+        id S1727448AbfKPHwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 02:52:37 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51354 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfKPHwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 02:49:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id z26so11820146wmi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 23:49:23 -0800 (PST)
+        Sat, 16 Nov 2019 02:52:37 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q70so11844138wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 23:52:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wrU9oNm+m55B0W8NFjsrIht/+mTQtS5ufyY+zIn4ZzU=;
-        b=OnqqB6zAgc0Kl4pYd4aSiHtVcXDvOOaDYZL8BfRbDyf87Bz8JAIboY3pjGD6m4KxZz
-         +aEWt/iLz1tKtlWkCZ/so6OuGR+Y0b6s65hv50pzubV+f9RXxz0tG1AaKrp5pPoEd4il
-         H7FueI9GwiPAMVw+6T8oWgLMIyAwp6DjMMJp/njT43JIpiSLX9Qy3MJmD66xt1HB0rew
-         6+fYjfT/yWAWlNSTEheboxtNmZiCMvqes4ml9D8lVC8hjo/RNilG+NkkxyiqndAyDItL
-         nllDS0YtVTT/cawjQ2Na7nNNqcjXmETZiLu0ZGsoo53HUWBczht9Z2Impz8Fz7gK4GOf
-         CZDQ==
+        bh=2MJkGFAo2CploiZjzVMIvSSTxLbNNOQ2kJ94c7MrbvQ=;
+        b=qWPCg5BumT1Hbc7j6nLO10sM8hrkENDcXbA2pqixSQKBLNV+oRCDyBt8yH3YtcFsPf
+         aEl6G+Ww2FAcPv4dEhzPDUO0qR4V5LT3JnTpEtwQQHiwlkQGq/aXf8/eCL3LaaW11p+v
+         WRxJxZY1qMEMgIsqZ9QWdA9RZjp+wQsZ594CcA7/Zb45ZdfdQ/9SZB9DFYitsEyqH4T+
+         UDMgnkmqQuHZATfGnhxdNVXuItAzBtjOeM/Tfu8aDB/1ddOvWNe3KRwWSkEMUvST3DlC
+         NoltePsWcmb9AvW4p2bTfnhAKCFUvqU8EBZDqUdThqP7nVWyU30K7qv1Bg6ZpaEnttMg
+         YrWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wrU9oNm+m55B0W8NFjsrIht/+mTQtS5ufyY+zIn4ZzU=;
-        b=FDRJBxko4/V6Lrm8qrbz5YGhdkc5YWgdo/dJWUy13eTo9cS0gzYyineOQ8SPlv8l3W
-         B5Hi5lpqPTPG8l9XTnZIDRCCiJcb4/pglEcyc1Ns4Oj7K79tnLfACDUa9o1es3lNuv3g
-         llY9eI41zonovP9PQc36U2nes1uGR4cDOGO4gMd6ROFnLl+s/LkEAgA+/KX1uN/BhGxR
-         YPHe07QxU/pqyL0ILxMGjc/4UyjfALiHxI7nMSojNj7Y+GICxnp8FXL8twW7EYPJLkU3
-         /gsQdm4MFwDmYrBiQcxz2iCfvEp7l0tExeuUjv8ahtlksRreyKiPWrdYu+UYuQCfIUwk
-         HcHA==
-X-Gm-Message-State: APjAAAWTHBQoSI2+1Fksedf/meQUhoWtQcQKn8TNl7XF9oPm1JrzptdY
-        LntaPZjW1s2Mv3lUzBywJ0fKwpE8isFgZktZuWyT7A==
-X-Google-Smtp-Source: APXvYqxN9tEkdJJjcZLwbRx7aPwN6Bp5OBx7h7U4ZY1KJj5bVXNsCVyqUfMiNg5LRjCPKVJeKHHR3LZiNgn4KRenY3U=
-X-Received: by 2002:a05:600c:218c:: with SMTP id e12mr14565355wme.30.1573890562501;
- Fri, 15 Nov 2019 23:49:22 -0800 (PST)
+        bh=2MJkGFAo2CploiZjzVMIvSSTxLbNNOQ2kJ94c7MrbvQ=;
+        b=gmzZsjcoGGafjWiRe9iE2EGCpABFTz+M34RXL7kJLNzU2oPX81P03f13YHvCrq7Q6+
+         ZYDH6PILhLOr83DcfGYpnl3jEYVQQszqPuN9CU8NR4UbUKX9sOj4VzsAao8bA/QWiDhA
+         iBO9XDf+cNUq91Jl8kQPJv36Vyl1UcuFMZSqYlAHPoI/aToYogkH8sjed/j2IWQ9lOoi
+         ZNkH0hWGb4vApRMrRCll+lVvN7m4H8RxmQVXftY7P+1aigK01YNBxrAABDsPzjgjEHVa
+         Z1eJqbIgaP43/Qa9dePHysj4S47Fxnq8ENlto/rOWXQEwB17W4vybb0uJBclgFIu9+z5
+         ckCA==
+X-Gm-Message-State: APjAAAVYrBsJtCrTlbvfWapiZ5U0XEbvm4boCAoFC97vbVo8i7A65AdV
+        nsZ5dIZi+P/22738AomvOcEDbYypSeGWVZA4boJvrg==
+X-Google-Smtp-Source: APXvYqzQIyjsfoLiraXOh4QeOG0tTjmTBM2OXTT8L+tVLBM9jZONnR13Ut11tGfISahFI0HlkMN7XNcVR5mVKhG2vv0=
+X-Received: by 2002:a1c:6641:: with SMTP id a62mr18481618wmc.54.1573890754483;
+ Fri, 15 Nov 2019 23:52:34 -0800 (PST)
 MIME-Version: 1.0
 References: <20191107222315.GA7261@kernel.org> <20191108181533.222053-1-irogers@google.com>
- <20191111120220.GC9791@krava>
-In-Reply-To: <20191111120220.GC9791@krava>
+ <20191111120230.GD9791@krava>
+In-Reply-To: <20191111120230.GD9791@krava>
 From:   Ian Rogers <irogers@google.com>
-Date:   Fri, 15 Nov 2019 23:49:10 -0800
-Message-ID: <CAP-5=fUyVyg888bB-4K3o73kQbqo=G=8T9OFy0C=qtWTJjCOrw@mail.gmail.com>
+Date:   Fri, 15 Nov 2019 23:52:23 -0800
+Message-ID: <CAP-5=fVA6y-osb6EHAU50FybpOeFC6x0e7QLk2XmyMfQPnAWDQ@mail.gmail.com>
 Subject: Re: [PATCH] perf tools: report initial event parsing error
 To:     Jiri Olsa <jolsa@redhat.com>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -77,33 +77,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Mon, Nov 11, 2019 at 4:02 AM Jiri Olsa <jolsa@redhat.com> wrote:
 >
 > On Fri, Nov 08, 2019 at 10:15:33AM -0800, Ian Rogers wrote:
->
-> SNIP
->
-> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > index 43c05eae1768..46a72ecac427 100644
-> > --- a/tools/perf/builtin-trace.c
-> > +++ b/tools/perf/builtin-trace.c
-> > @@ -3016,11 +3016,18 @@ static bool evlist__add_vfs_getname(struct evlist *evlist)
-> >  {
-> >       bool found = false;
-> >       struct evsel *evsel, *tmp;
-> > -     struct parse_events_error err = { .idx = 0, };
-> > -     int ret = parse_events(evlist, "probe:vfs_getname*", &err);
-> > +     struct parse_events_error err;
-> > +     int ret;
+> > Record the first event parsing error and report. Implementing feedback
+> > from Jiri Olsa:
+> > https://lkml.org/lkml/2019/10/28/680
 > >
-> > -     if (ret)
-> > +     bzero(&err, sizeof(err));
+> > An example error is:
+> >
+> > $ tools/perf/perf stat -e c/c/
+> > WARNING: multiple event parsing errors
+> > event syntax error: 'c/c/'
+> >                        \___ unknown term
+> >
+> > valid terms: event,filter_rem,filter_opc0,edge,filter_isoc,filter_tid,filter_loc,filter_nc,inv,umask,filter_opc1,tid_en,thresh,filter_all_op,filter_not_nm,filter_state,filter_nm,config,config1,config2,name,period,percore
+> >
+> > Initial error:
+> > event syntax error: 'c/c/'
+> >                     \___ Cannot find PMU `c'. Missing kernel support?
 >
-> hum, what's the problem with the zero init above?
+> not sure where this got lost or if it was there before,
+> but the index should point to zero to have the 'arrow' aligned
 
-There are 3 patterns for initializing parse_events_error in the code,
-bzero, memset and {.idx =0,}. I made all instances use bzero for
-consistency.
+This happened in:
+448d732cefb3 perf parse: Add parse events handle error
+When the code wasn't clear on the value of idx it was set to -1.
+Fixed in v2 but perhaps there are other instances from 448d732cefb3
+that should be addressed.
 
 Thanks,
 Ian
 
 > jirka
+>
+>
+> ---
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index a369bbc289b2..6bae9d6edc12 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1366,7 +1366,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>                 if (asprintf(&err_str,
+>                                 "Cannot find PMU `%s'. Missing kernel support?",
+>                                 name) >= 0)
+> -                       parse_events__handle_error(err, -1, err_str, NULL);
+> +                       parse_events__handle_error(err, 0, err_str, NULL);
+>                 return -EINVAL;
+>         }
+>
 >
