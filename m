@@ -2,147 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 828F6FEC6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 14:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6A3FEC75
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 14:38:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfKPNQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 08:16:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45469 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbfKPNQX (ORCPT
+        id S1727593AbfKPNfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 08:35:12 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:39293 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727550AbfKPNfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 08:16:23 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z10so13908000wrs.12
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 05:16:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fBRrOeFjzqnzfONE7OUt/W61tGgjVczN6HnwGIweIMY=;
-        b=cDvYjLtSsqqISLupyBqRuzfoSBOW3mxJFlXdyx1Unip7m5FZH48Kkg/f7grqZn13QW
-         qeHa72WXEHUifndhqySQZsiRK+iRvTG+DAZV2oqKFKS4Ca4GxV5dgGKWkKXVS3u102+O
-         ZXdGtFhk8xwb1kPwzG+pOLiUYI3Y34FAdlWZYx0c8NB8J4lGPoGUVD5gcY0aR6umhP7n
-         e/7GunXSLOK7fi58FbbDsN3P10gJFd93CWJUL4oKk/e4EvkBRD4cbuwcPwCZ1vNrJiCE
-         NrTqNDmOgtCCZNuH6EKGUdYwHaSsz4y6qZnb6ayjUDK/Yhcb8fxyxeHlYRDPxgHpcjkS
-         hYcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=fBRrOeFjzqnzfONE7OUt/W61tGgjVczN6HnwGIweIMY=;
-        b=Lq7ds6ONHXs+ecT93NH69VG7Y5UeAjNLXdtsHg7LPtTrFivFNZ3cDX+TMBP4tn+c0d
-         PrGXyL5aucn7FdgQqqbjks071zKK5mtgnVEDZfBFhWasSVuH96GPNZjWxNVwuJOg2fhr
-         TUbRo0cwau0LPDxG3Iv5WbnhHEzKBEaMYXaP4rlEvaHAw2LxcPVRac9MK0abBbYWBreK
-         6QDw60Vp44ZJNup+BZZJVa64znVLFjq4KEZslPJaRDaf1JuSfXADOk0iLCxRJjLme2VL
-         2D1HzxZRfNWZahi6U/1P+ynN36BdX90y1H9GsK6vRbs5MeF62rmVgf73bCWpvTcvxKky
-         oZEA==
-X-Gm-Message-State: APjAAAWdNE68N6qrlKbuSNlxzyeWyz6u6WsuIz0SFNCOMwHTxy8B3+sJ
-        d9SKYYK4pePQyVdGcGyJ/rzexw==
-X-Google-Smtp-Source: APXvYqxU+Ce984OIm+gEBSmPBiLEdlT1QPAD52gaDJ94Lrikl70nHZBdVaaGDkqzmNzdcHbIPoBUVQ==
-X-Received: by 2002:adf:db41:: with SMTP id f1mr19862644wrj.351.1573910180899;
-        Sat, 16 Nov 2019 05:16:20 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e34:ed2f:f020:b462:d85e:9aab:bc1d])
-        by smtp.gmail.com with ESMTPSA id r2sm11128914wma.44.2019.11.16.05.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2019 05:16:20 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rafael@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org
-Subject: [PATCH V2 2/2] cpuidle: Use the latency to call find_deepest_idle_state
-Date:   Sat, 16 Nov 2019 14:16:13 +0100
-Message-Id: <20191116131613.15733-2-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191116131613.15733-1-daniel.lezcano@linaro.org>
-References: <20191116131613.15733-1-daniel.lezcano@linaro.org>
+        Sat, 16 Nov 2019 08:35:11 -0500
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iVyEH-0002yS-Dr; Sat, 16 Nov 2019 14:35:09 +0100
+Date:   Sat, 16 Nov 2019 13:35:08 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH] irqchip/gic: Check interrupt type validity
+Message-ID: <20191116133508.25234f26@why>
+In-Reply-To: <20191023195620.23415-1-f.fainelli@gmail.com>
+References: <20191023195620.23415-1-f.fainelli@gmail.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: f.fainelli@gmail.com, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, tglx@linutronix.de, jason@lakedaemon.net
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the dev->forced_idle_latency_limit_ns is filled with the latency
-value when this function is called, use it as a parameter to the
-find_deepest_idle_state() function.
+On Wed, 23 Oct 2019 12:56:19 -0700
+Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/cpuidle/cpuidle.c | 7 +++++--
- include/linux/cpuidle.h   | 6 ++++--
- kernel/sched/idle.c       | 8 +++++++-
- 3 files changed, 16 insertions(+), 5 deletions(-)
+> In case the interrupt property specifies a type parameter that is not
+> GIC_SPI (0) or GIC_PPIC (1), do not attempt to translate the interrupt
+> and return -EINVAL instead.
+> 
+> Fixes: f833f57ff254 ("irqchip: Convert all alloc/xlate users from of_node to fwnode")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+> Marc,
+> 
+> Regardless of whether my attempt to use SGI moves any further, this
+> seems appropriate to do since we should not be trying to translate
+> incorrectly specified interrupts. Thanks!
+> 
+>  drivers/irqchip/irq-gic.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index 30ab623343d3..fc47e655618d 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -1005,6 +1005,9 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+>  		if (fwspec->param_count < 3)
+>  			return -EINVAL;
+>  
+> +		if (fwspec->param[0] > 1)
+> +			return -EINVAL;
+> +
+>  		/* Get the interrupt number and add 16 to skip over SGIs */
+>  		*hwirq = fwspec->param[1] + 16;
+>  
 
-diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-index 62226fadc02d..a02b701fc289 100644
---- a/drivers/cpuidle/cpuidle.c
-+++ b/drivers/cpuidle/cpuidle.c
-@@ -122,9 +122,12 @@ void cpuidle_use_deepest_state(u64 latency_limit_ns)
-  * @dev: cpuidle device for the given CPU.
-  */
- int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
--			       struct cpuidle_device *dev)
-+			       struct cpuidle_device *dev,
-+			       u64 latency_limit_ns)
- {
--	return find_deepest_state(drv, dev, UINT_MAX, 0, false);
-+	return find_deepest_state(drv, dev,
-+				  div_u64(latency_limit_ns, NSEC_PER_USEC),
-+				  0, false);
- }
- 
- #ifdef CONFIG_SUSPEND
-diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-index 1f3f4dd01e48..b60f35b7d53e 100644
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -207,13 +207,15 @@ static inline struct cpuidle_device *cpuidle_get_device(void) {return NULL; }
- 
- #ifdef CONFIG_CPU_IDLE
- extern int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
--				      struct cpuidle_device *dev);
-+				      struct cpuidle_device *dev,
-+				      u64 latency_limit_ns);
- extern int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
- 				struct cpuidle_device *dev);
- extern void cpuidle_use_deepest_state(u64 latency_limit_ns);
- #else
- static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
--					     struct cpuidle_device *dev)
-+					     struct cpuidle_device *dev,
-+					     u64 latency_limit_ns)
- {return -ENODEV; }
- static inline int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
- 				       struct cpuidle_device *dev)
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 0a817e907192..fd4a8747e602 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -166,6 +166,9 @@ static void cpuidle_idle_call(void)
- 	 */
- 
- 	if (idle_should_enter_s2idle() || dev->forced_idle_latency_limit_ns) {
-+
-+		u64 latency_limit_ns = dev->forced_idle_latency_limit_ns;
-+
- 		if (idle_should_enter_s2idle()) {
- 			rcu_idle_enter();
- 
-@@ -176,12 +179,15 @@ static void cpuidle_idle_call(void)
- 			}
- 
- 			rcu_idle_exit();
-+
-+			latency_limit_ns = U64_MAX;
- 		}
- 
- 		tick_nohz_idle_stop_tick();
- 		rcu_idle_enter();
- 
--		next_state = cpuidle_find_deepest_state(drv, dev);
-+		next_state = cpuidle_find_deepest_state(drv, dev,
-+							latency_limit_ns);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
- 		bool stop_tick = true;
+I'm in two minds about this.
+
+The usual stance is that the kernel is not a validation suite for DT
+files, but on the other hand we already do some of that two lines above
+(a consequence of kernel and DT binding lockstep development...). Do we
+really want to add more of this? Or should we put more effort in static
+validation of DT files and actually remove these checks?
+
+	M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
