@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DC9FF323
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA92FF317
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:23:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfKPPmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46308 "EHLO mail.kernel.org"
+        id S1728483AbfKPPmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:42:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728363AbfKPPmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:42:36 -0500
+        id S1728406AbfKPPmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:42:43 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD4DC2083E;
-        Sat, 16 Nov 2019 15:42:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6794620740;
+        Sat, 16 Nov 2019 15:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918956;
-        bh=ItMXgs/Q9kt+48rsthlnVhaH6dBjICpKcSlbQsKI+IQ=;
+        s=default; t=1573918962;
+        bh=xOiN5LjMgBp//ENnSVzIBfa6sOV/4n1mY+so8re9zjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VQb7alXoAUWQ221mFX5hlZe2Pm0PP4gW6viRWnEA149MWFqltC+Qu00ApFVeAFdK8
-         68fKtCCMfISeRp3F+sAuHMWVAEvlcRfY7CQT/sOfzPbQMW6iK20ZrR8Bm++7NxONqw
-         29OSiOztYO3wkcLhVp0b1yxlODMG+gud94NfrjWI=
+        b=E8zArXVsmtluBE6PoR6z8IFFe5pSFkWwSUJWoyCRV5uzajvoq42KGrML3f8dE60n5
+         OJVgQnTN3c2+TlrvbVmhzJMEGAAK0tDtBtO+glwj5s8W+pe9LIZea1enEuDR55oSNi
+         /a0Hh3LfdfOGzpkLtEzdIOUAqpIxidngDJqfnQIc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Philipp Klocke <philipp97kl@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 074/237] ALSA: i2c/cs8427: Fix int to char conversion
-Date:   Sat, 16 Nov 2019 10:38:29 -0500
-Message-Id: <20191116154113.7417-74-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 078/237] usbip: tools: fix atoi() on non-null terminated string
+Date:   Sat, 16 Nov 2019 10:38:33 -0500
+Message-Id: <20191116154113.7417-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -43,43 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philipp Klocke <philipp97kl@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit eb7ebfa3c1989aa8e59d5e68ab3cddd7df1bfb27 ]
+[ Upstream commit e325808c0051b16729ffd472ff887c6cae5c6317 ]
 
-Compiling with clang yields the following warning:
+Currently the call to atoi is being passed a single char string
+that is not null terminated, so there is a potential read overrun
+along the stack when parsing for an integer value.  Fix this by
+instead using a 2 char string that is initialized to all zeros
+to ensure that a 1 char read into the string is always terminated
+with a \0.
 
-sound/i2c/cs8427.c:140:31: warning: implicit conversion from 'int'
-to 'char' changes value from 160 to -96 [-Wconstant-conversion]
-    data[0] = CS8427_REG_AUTOINC | CS8427_REG_CORU_DATABUF;
-            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+Detected by cppcheck:
+"Invalid atoi() argument nr 1. A nul-terminated string is required."
 
-Because CS8427_REG_AUTOINC is defined as 128, it is too big for a
-char field.
-So change data from char to unsigned char, that it can hold the value.
-
-This patch does not change the generated code.
-
-Signed-off-by: Philipp Klocke <philipp97kl@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/i2c/cs8427.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/i2c/cs8427.c b/sound/i2c/cs8427.c
-index 2647309bc6757..8afa2f8884660 100644
---- a/sound/i2c/cs8427.c
-+++ b/sound/i2c/cs8427.c
-@@ -118,7 +118,7 @@ static int snd_cs8427_send_corudata(struct snd_i2c_device *device,
- 	struct cs8427 *chip = device->private_data;
- 	char *hw_data = udata ?
- 		chip->playback.hw_udata : chip->playback.hw_status;
--	char data[32];
-+	unsigned char data[32];
- 	int err, idx;
+diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
+index dc93fadbee963..d79c7581b175f 100644
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 	int size;
+ 	int fd;
+ 	int length;
+-	char status;
++	char status[2] = { 0 };
+ 	int value = 0;
  
- 	if (!memcmp(hw_data, ndata, count))
+ 	size = snprintf(status_attr_path, sizeof(status_attr_path),
+@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 		return -1;
+ 	}
+ 
+-	length = read(fd, &status, 1);
++	length = read(fd, status, 1);
+ 	if (length < 0) {
+ 		err("error reading attribute %s", status_attr_path);
+ 		close(fd);
+ 		return -1;
+ 	}
+ 
+-	value = atoi(&status);
++	value = atoi(status);
+ 
+ 	return value;
+ }
 -- 
 2.20.1
 
