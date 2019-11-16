@@ -2,88 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45953FF39F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:27:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D135EFF3E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbfKPQ0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48318 "EHLO mail.kernel.org"
+        id S1728173AbfKPQ3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:29:42 -0500
+Received: from verein.lst.de ([213.95.11.211]:49370 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727912AbfKPQ0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 11:26:46 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB264214DE;
-        Sat, 16 Nov 2019 16:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573921606;
-        bh=u+xBCALwba5ux8lkBspkQlgCbUB0P91PtT6vi6b6KE4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PYMNe0NsWDQoRleJ+awapTwkV7w48mmVOZRnH7hzc1CE5BHI10gb/HJ2RzsNGcvho
-         a16xCTubXSMeU3/Xm+0Zhr6Uh0pebkBRqu/dDDKM6lOWwXtlUCJl3as2cVG+U4r0r0
-         Xsdu5ZdggMH7rO5LHhED5VMJAs6vR9CjFvxw5t44=
-Date:   Sat, 16 Nov 2019 16:26:41 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Mircea Caprioru <mircea.caprioru@analog.com>
-Cc:     <Michael.Hennerich@analog.com>, <stefan.popa@analog.com>,
-        <lars@metafoo.de>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: ad7124: Enable internal reference
-Message-ID: <20191116162641.45c9a557@archlinux>
-In-Reply-To: <20191114092426.21631-1-mircea.caprioru@analog.com>
-References: <20191114092426.21631-1-mircea.caprioru@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727606AbfKPQ3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 11:29:41 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id CE9D568BE1; Sat, 16 Nov 2019 17:29:37 +0100 (CET)
+Date:   Sat, 16 Nov 2019 17:29:37 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [PATCH v1 1/5] memremap: Check for size parameter
+Message-ID: <20191116162937.GA23951@lst.de>
+References: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115180044.83659-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Nov 2019 11:24:26 +0200
-Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+On Fri, Nov 15, 2019 at 08:00:40PM +0200, Andy Shevchenko wrote:
+> There is no use of memremap() to be called with size = 0.
+> Simple return NULL pointer and allow callers to drop this check.
 
-> When the internal reference was selected by a channel it was not enabled.
-> This patch fixes that and enables it.
-> 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-
-Probably want to clearly mark this as a fix in the patch title and
-give a fixes tag here.
-
-Seems like it would be awfully broken without this!
-
-Jonathan
-
-> ---
->  drivers/iio/adc/ad7124.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index edc6f1cc90b2..3f03abf100b5 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -39,6 +39,8 @@
->  #define AD7124_STATUS_POR_FLAG_MSK	BIT(4)
->  
->  /* AD7124_ADC_CONTROL */
-> +#define AD7124_ADC_CTRL_REF_EN_MSK	BIT(8)
-> +#define AD7124_ADC_CTRL_REF_EN(x)	FIELD_PREP(AD7124_ADC_CTRL_REF_EN_MSK, x)
->  #define AD7124_ADC_CTRL_PWR_MSK	GENMASK(7, 6)
->  #define AD7124_ADC_CTRL_PWR(x)		FIELD_PREP(AD7124_ADC_CTRL_PWR_MSK, x)
->  #define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
-> @@ -424,7 +426,10 @@ static int ad7124_init_channel_vref(struct ad7124_state *st,
->  		break;
->  	case AD7124_INT_REF:
->  		st->channel_config[channel_number].vref_mv = 2500;
-> -		break;
-> +		st->adc_control &= ~AD7124_ADC_CTRL_REF_EN_MSK;
-> +		st->adc_control |= AD7124_ADC_CTRL_REF_EN(1);
-> +		return ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL,
-> +				      2, st->adc_control);
->  	default:
->  		dev_err(&st->sd.spi->dev, "Invalid reference %d\n", refsel);
->  		return -EINVAL;
-
+Given that this really is an error condition, maybe a WARN_ON_ONCE
+would fit here?
