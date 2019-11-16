@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16203FEE3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB7EFEE3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730444AbfKPPuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:50:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57958 "EHLO mail.kernel.org"
+        id S1730455AbfKPPuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:50:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730415AbfKPPuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:50:07 -0500
+        id S1729313AbfKPPuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:50:12 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25DE1208A1;
-        Sat, 16 Nov 2019 15:50:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F8E121479;
+        Sat, 16 Nov 2019 15:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919406;
-        bh=J0/R4Z5BY+02R0pbRuvu0OdHWnNZFRHfN+3UcXMO7bk=;
+        s=default; t=1573919411;
+        bh=EXrFZR95aAwcDSeymXCCjFEvcW5PY/VBzSqJopYtqCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LJr7BlBgL0W2gVGZwGVazD5NIZY5Hk5p9iamJESK+q2umdDF02kJdlH72BTW5Paug
-         5FApyGPoJIOEnq3G1NfxNjCITOZx/mm4mzoZpk0T4HCGsK0NUNO4J0fIYNEdThYPEp
-         ELZQmGA3j+EYFi70KKC2MbAO6+ZII5xS2kEem4oQ=
+        b=lkkBuissade6iWIYJa6GRUX1S3Y7to6pbFuETQ7YL2thErTGKqfsBQIaS2h6VMs6D
+         vA6WYS7O7d3dhztI6EUuCVJ0EkFZMhYbVCMrL+WIO2frwW+vCwGKXQFUBpdpIsb+tQ
+         fOEPRcjD4DmvE9Zp57dM2K4JVX5vkXaKLQFfxOkg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miroslav Lichvar <mlichvar@redhat.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 105/150] igb: shorten maximum PHC timecounter update interval
-Date:   Sat, 16 Nov 2019 10:46:43 -0500
-Message-Id: <20191116154729.9573-105-sashal@kernel.org>
+Cc:     Victor Kamensky <kamensky@cisco.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 110/150] arm64: makefile fix build of .i file in external module case
+Date:   Sat, 16 Nov 2019 10:46:48 -0500
+Message-Id: <20191116154729.9573-110-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -47,54 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miroslav Lichvar <mlichvar@redhat.com>
+From: Victor Kamensky <kamensky@cisco.com>
 
-[ Upstream commit 094bf4d0e9657f6ea1ee3d7e07ce3970796949ce ]
+[ Upstream commit 98356eb0ae499c63e78073ccedd9a5fc5c563288 ]
 
-The timecounter needs to be updated at least once per ~550 seconds in
-order to avoid a 40-bit SYSTIM timestamp to be misinterpreted as an old
-timestamp.
+After 'a66649dab350 arm64: fix vdso-offsets.h dependency' if
+one will try to build .i file in case of external kernel module,
+build fails complaining that prepare0 target is missing. This
+issue came up with SystemTap when it tries to build variety
+of .i files for its own generated kernel modules trying to
+figure given kernel features/capabilities.
 
-Since commit 500462a9d ("timers: Switch to a non-cascading wheel"),
-scheduling of delayed work seems to be less accurate and a requested
-delay of 540 seconds may actually be longer than 550 seconds. Shorten
-the delay to 480 seconds to be sure the timecounter is updated in time.
+The issue is that prepare0 is defined in top level Makefile
+only if KBUILD_EXTMOD is not defined. .i file rule depends
+on prepare and in case KBUILD_EXTMOD defined top level Makefile
+contains empty rule for prepare. But after mentioned commit
+arch/arm64/Makefile would introduce dependency on prepare0
+through its own prepare target.
 
-This fixes an issue with HW timestamps on 82580/I350/I354 being off by
-~1100 seconds for few seconds every ~9 minutes.
+Fix it to put proper ifdef KBUILD_EXTMOD around code introduced
+by mentioned commit. It matches what top level Makefile does.
 
-Cc: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Acked-by: Kevin Brodsky <kevin.brodsky@arm.com>
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_ptp.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_ptp.c b/drivers/net/ethernet/intel/igb/igb_ptp.c
-index 0746b19ec6d37..295d27f331042 100644
---- a/drivers/net/ethernet/intel/igb/igb_ptp.c
-+++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
-@@ -65,9 +65,15 @@
-  *
-  * The 40 bit 82580 SYSTIM overflows every
-  *   2^40 * 10^-9 /  60  = 18.3 minutes.
-+ *
-+ * SYSTIM is converted to real time using a timecounter. As
-+ * timecounter_cyc2time() allows old timestamps, the timecounter
-+ * needs to be updated at least once per half of the SYSTIM interval.
-+ * Scheduling of delayed work is not very accurate, so we aim for 8
-+ * minutes to be sure the actual interval is shorter than 9.16 minutes.
-  */
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 0c5f70e6d5cfa..8c4bc5a2c61f4 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -149,6 +149,7 @@ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
+ 	$(Q)$(MAKE) $(clean)=$(boot)/dts
  
--#define IGB_SYSTIM_OVERFLOW_PERIOD	(HZ * 60 * 9)
-+#define IGB_SYSTIM_OVERFLOW_PERIOD	(HZ * 60 * 8)
- #define IGB_PTP_TX_TIMEOUT		(HZ * 15)
- #define INCPERIOD_82576			BIT(E1000_TIMINCA_16NS_SHIFT)
- #define INCVALUE_82576_MASK		GENMASK(E1000_TIMINCA_16NS_SHIFT - 1, 0)
++ifeq ($(KBUILD_EXTMOD),)
+ # We need to generate vdso-offsets.h before compiling certain files in kernel/.
+ # In order to do that, we should use the archprepare target, but we can't since
+ # asm-offsets.h is included in some files used to generate vdso-offsets.h, and
+@@ -158,6 +159,7 @@ archclean:
+ prepare: vdso_prepare
+ vdso_prepare: prepare0
+ 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
++endif
+ 
+ define archhelp
+   echo  '* Image.gz      - Compressed kernel image (arch/$(ARCH)/boot/Image.gz)'
 -- 
 2.20.1
 
