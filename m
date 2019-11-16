@@ -2,92 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EEFAFEAFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14679FEAFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbfKPGoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 01:44:21 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46176 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbfKPGoU (ORCPT
+        id S1727088AbfKPGpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 01:45:52 -0500
+Received: from smtprelay0209.hostedemail.com ([216.40.44.209]:48953 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726814AbfKPGpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 01:44:20 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 193so7701600pfc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 22:44:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=83mOzCZrk2hLeBIavxFW02Ub7zgigDrZgcfo7Rp02xE=;
-        b=etF6/auczY/PHyj2EW/5m9MAfa7+4KhKO2DKDAQqUiiJ/HJycDvebsWhFyy7ltErNz
-         GPdUetQoCqDTxijT0aZPIe5TPLoBcuI/HcwwSLoQvfsRwKrEcXKyfNi58/nXbyswpqjH
-         BprxdonwAHRWF6P4gsThGhzKQh/Py9iApmDHlM3sQN6OXVP0V9y6jMAMLR3TIIUCIAOs
-         wiAUpDM/MxLmyKx/CsTNelNQqSJLaS4PsRhsYQm37K7kVfWPrj01BPVG5X/0yGHts/rX
-         wRCVlVZ2lrtpKQbhURCDfqzz26gKxLE7PQlrRpXzosM17VsQnO3aK56Z84Nzqk9noZcq
-         43eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=83mOzCZrk2hLeBIavxFW02Ub7zgigDrZgcfo7Rp02xE=;
-        b=lVLj7FZbZnDhySyQJILgT0PG+Y9NTwihfusZEvvIEQgZm4xuOMLlGrgH5ENPlR8mCM
-         GqSVq2e1+cfMASzAitLFnTh62u6NEIYTNvXtpV1udpLhiBMntll3QS99bGkKyZsf8R7l
-         +eJe81K+BKiSZcC8D6QqV2gNBlIeCZ7faFacoxoC1nCiuWqdFL4/OxPdQZzwC3k86wxK
-         Xj4YhXzejh2T+wJLdoWLCKpLoNehu3B8OHBze4djhP0fs6miisJEVGP8v3bCYukXJu8q
-         0PzoqpbLHe5HRBT7O3MhIIaYpZEX8Ye646Gj+tcL+NfVka3Pv29j/aRFU7pc3coAVBFy
-         J4jg==
-X-Gm-Message-State: APjAAAUiZUQdvzaQDTNU27bAyyzb7TG8nezRAFbSQALwb1hRi9JmL8Dy
-        sEjbmG4v+k6dqOEQHcA6DPiXLQ==
-X-Google-Smtp-Source: APXvYqwkM4lZh6cRGZMVmRD+7muqSOChY7AWDb7zXeO/JwqTvRigHw1HpZUm08pwffapf4Vo4sOuEg==
-X-Received: by 2002:a63:5164:: with SMTP id r36mr7664120pgl.143.1573886659746;
-        Fri, 15 Nov 2019 22:44:19 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f26sm10985615pgf.22.2019.11.15.22.44.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2019 22:44:18 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: msm8998-mtp: Add alias for blsp1_uart3
-Date:   Fri, 15 Nov 2019 22:44:15 -0800
-Message-Id: <20191116064415.159899-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        Sat, 16 Nov 2019 01:45:52 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 9DED6181D3417;
+        Sat, 16 Nov 2019 06:45:49 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3874:4250:4321:4823:5007:6119:7576:7903:8957:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21099:21627:21740:30054:30083:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: wall56_6cf4312ecd835
+X-Filterd-Recvd-Size: 2631
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 16 Nov 2019 06:45:48 +0000 (UTC)
+Message-ID: <3fd995ebb9ec87b202942fa1f000755c2d3cc4cb.camel@perches.com>
+Subject: Re: [PATCH] staging: rtl8192u: fix indentation issue
+From:   Joe Perches <joe@perches.com>
+To:     Colin King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 15 Nov 2019 22:45:29 -0800
+In-Reply-To: <20191114095430.132120-1-colin.king@canonical.com>
+References: <20191114095430.132120-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The msm_serial driver uses a simple counter to determine which port to
-use when no alias is defined, but there's no logic to prevent this from
-not colliding with what's defined by the aliases. As a result either
-none or all of the active msm_serial instances must be listed as
-aliases.
+On Thu, 2019-11-14 at 09:54 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a block of statements that are indented
+> too deeply, remove the extraneous tabs.
+[]
+> diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+[]
+> @@ -169,19 +169,20 @@ static void cmdpkt_beacontimerinterrupt_819xusb(struct net_device *dev)
+>  {
+>  	struct r8192_priv *priv = ieee80211_priv(dev);
+>  	u16 tx_rate;
+> -		/* 87B have to S/W beacon for DTM encryption_cmn. */
+> -		if (priv->ieee80211->current_network.mode == IEEE_A ||
+> -		    priv->ieee80211->current_network.mode == IEEE_N_5G ||
+> -		    (priv->ieee80211->current_network.mode == IEEE_N_24G &&
+> -		     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
+> -			tx_rate = 60;
+> -			DMESG("send beacon frame  tx rate is 6Mbpm\n");
+> -		} else {
+> -			tx_rate = 10;
+> -			DMESG("send beacon frame  tx rate is 1Mbpm\n");
+> -		}
+>  
+> -		rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
+> +	/* 87B have to S/W beacon for DTM encryption_cmn. */
+> +	if (priv->ieee80211->current_network.mode == IEEE_A ||
+> +	    priv->ieee80211->current_network.mode == IEEE_N_5G ||
+> +	    (priv->ieee80211->current_network.mode == IEEE_N_24G &&
+> +	     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
+> +		tx_rate = 60;
+> +		DMESG("send beacon frame  tx rate is 6Mbpm\n");
+> +	} else {
+> +		tx_rate = 10;
+> +		DMESG("send beacon frame  tx rate is 1Mbpm\n");
+> +	}
+> +
+> +	rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
 
-Define blsp1_uart3 as "serial1" to mitigate this problem.
+This function might as well be deleted instead as
+rtl819xusb_beacon_tx is a noop function in
+drivers/staging/rtl8192u/r8192U_core.c
 
-Fixes: 4cffb9f2c700 ("arm64: dts: qcom: msm8998-mtp: Enable bluetooth")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+void rtl819xusb_beacon_tx(struct net_device *dev, u16  tx_rate)
+{
+}
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 5f101a20a20a..e08fcb426bbf 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -9,6 +9,7 @@
- / {
- 	aliases {
- 		serial0 = &blsp2_uart1;
-+		serial1 = &blsp1_uart3;
- 	};
- 
- 	chosen {
--- 
-2.23.0
 
