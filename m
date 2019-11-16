@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A11FED51
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 780CAFED53
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfKPPnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:43:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
+        id S1728739AbfKPPn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:43:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728684AbfKPPnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:43:19 -0500
+        id S1728697AbfKPPnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:43:23 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26ECA2073B;
-        Sat, 16 Nov 2019 15:43:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F75D20815;
+        Sat, 16 Nov 2019 15:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918999;
-        bh=+Gp/Ucoi8x7JyealqIPzKeZooLRZaL/FpBDtaJX4OzU=;
+        s=default; t=1573919002;
+        bh=dP+PCoNwoOWfPuFe01TtS/TXqgxB3zZdYBB2ROF1FZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qq2UlGPneYgu563krDdGtZvoOdMTOECvjhmcRFXVfYtcnyON6YiLoJq9r4Rwt3nWm
-         XWnKGG7UIR5DS9FN3PpuBXfyjNnOkbjVnfFpL1U+ve8Y6guvi4psmAftZ3f8FgRBXp
-         r5uK2eKUJ8oNmK+1If44RyDIL9rUTqJf+GXiXjb4=
+        b=SLBdnPd5GxETlQbsYBgk4PnGHg02YNm6jE+1t93yvnHsTu+DYWTo6V0X96UnTrLYl
+         UYHv2LDMMOTR9A7nhrgW0zqiGWm/EeZ13vYb+NnF/YNohoJ74o8BrUhd8UJBqHeBJq
+         uNuvscSfo7szQe8XIj6n+3IR0hMZVRbnzMAoA8/g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vincent Chen <vincentc@andestech.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 102/237] RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
-Date:   Sat, 16 Nov 2019 10:38:57 -0500
-Message-Id: <20191116154113.7417-102-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 106/237] mISDN: Fix type of switch control variable in ctrl_teimanager
+Date:   Sat, 16 Nov 2019 10:39:01 -0500
+Message-Id: <20191116154113.7417-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -45,36 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Chen <vincentc@andestech.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 827a438156e4c423b6875a092e272933952a2910 ]
+[ Upstream commit aeb5e02aca91522733eb1db595ac607d30c87767 ]
 
-For 32bit, the upper 32-bit of phys_addr_t will be flushed to zero
-after AND with PAGE_MASK because the data type of PAGE_MASK is
-unsigned long. To fix this problem, the page alignment is done by
-subtracting the page offset instead of AND with PAGE_MASK.
+Clang warns (trimmed for brevity):
 
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+drivers/isdn/mISDN/tei.c:1193:7: warning: overflow converting case value
+to switch condition type (2147764552 to 18446744071562348872) [-Wswitch]
+        case IMHOLD_L1:
+             ^
+drivers/isdn/mISDN/tei.c:1187:7: warning: overflow converting case value
+to switch condition type (2147764550 to 18446744071562348870) [-Wswitch]
+        case IMCLEAR_L2:
+             ^
+2 warnings generated.
+
+The root cause is that the _IOC macro can generate really large numbers,
+which don't find into type int. My research into how GCC and Clang are
+handling this at a low level didn't prove fruitful and surveying the
+kernel tree shows that aside from here and a few places in the scsi
+subsystem, everything that uses _IOC is at least of type 'unsigned int'.
+Make that change here because as nothing in this function cares about
+the signedness of the variable and it removes ambiguity, which is never
+good when dealing with compilers.
+
+While we're here, remove the unnecessary local variable ret (just return
+-EINVAL and 0 directly).
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/67
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/mm/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/isdn/mISDN/tei.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/mm/ioremap.c b/arch/riscv/mm/ioremap.c
-index 70ef2724cdf61..bd2f2db557cc5 100644
---- a/arch/riscv/mm/ioremap.c
-+++ b/arch/riscv/mm/ioremap.c
-@@ -42,7 +42,7 @@ static void __iomem *__ioremap_caller(phys_addr_t addr, size_t size,
+diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
+index 12d9e5f4beb1f..58635b5f296f0 100644
+--- a/drivers/isdn/mISDN/tei.c
++++ b/drivers/isdn/mISDN/tei.c
+@@ -1180,8 +1180,7 @@ static int
+ ctrl_teimanager(struct manager *mgr, void *arg)
+ {
+ 	/* currently we only have one option */
+-	int	*val = (int *)arg;
+-	int	ret = 0;
++	unsigned int *val = (unsigned int *)arg;
  
- 	/* Page-align mappings */
- 	offset = addr & (~PAGE_MASK);
--	addr &= PAGE_MASK;
-+	addr -= offset;
- 	size = PAGE_ALIGN(size + offset);
+ 	switch (val[0]) {
+ 	case IMCLEAR_L2:
+@@ -1197,9 +1196,9 @@ ctrl_teimanager(struct manager *mgr, void *arg)
+ 			test_and_clear_bit(OPTION_L1_HOLD, &mgr->options);
+ 		break;
+ 	default:
+-		ret = -EINVAL;
++		return -EINVAL;
+ 	}
+-	return ret;
++	return 0;
+ }
  
- 	area = get_vm_area_caller(size, VM_IOREMAP, caller);
+ /* This function does create a L2 for fixed TEI in NT Mode */
 -- 
 2.20.1
 
