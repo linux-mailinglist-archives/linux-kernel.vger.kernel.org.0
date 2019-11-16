@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 198CBFF053
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A5DFF05E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbfKPPvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:51:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
+        id S1731573AbfKPQFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:05:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729874AbfKPPv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:26 -0500
+        id S1729196AbfKPPv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:27 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAEF4214E0;
-        Sat, 16 Nov 2019 15:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C251F20895;
+        Sat, 16 Nov 2019 15:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919486;
-        bh=wUt4D1DEg1f6rjOKaBENefHuGSbzJpjSw8JuUHmPraw=;
+        s=default; t=1573919487;
+        bh=F/ryplOLoyCK6W19sBZaQN24wr2gWrf1Q6aRTNdpz2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VabG4pgXcXmPcyVrvueFo2zYAUz6BSTUsywyAEhnZKB7TndJg65/iE1zQZ0zwdz4Y
-         Vg3MEQ1Vcu6rJNlU4ZACAhqIRLpsRpLHWwamYQC2Nn4qcbc29jL4wWwvEOEPCA4hJy
-         JzS7jH5HijzyVBMttkWBSI5+4CZcXHzT0V25gIps=
+        b=eX7JdxP2pp6JizjXU1QWlsz6o0MSuRsOMeIk6CxpP5lhlinFyCLgC5uGnph768RcY
+         ZLqeZh3EDVtzK9yIIRSjZxynPfOOn4yI+rhNIbqW0fTRyP1aCMumdO8I8McvP+X9HG
+         /2ZkcxqnFxI2cTcyGumhZ7z/s7paeAleCHJ4BzoM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Uros Bizjak <ubizjak@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 17/99] KVM/x86: Fix invvpid and invept register operand size in 64-bit mode
-Date:   Sat, 16 Nov 2019 10:49:40 -0500
-Message-Id: <20191116155103.10971-17-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.9 18/99] scsi: isci: Use proper enumerated type in atapi_d2h_reg_frame_handler
+Date:   Sat, 16 Nov 2019 10:49:41 -0500
+Message-Id: <20191116155103.10971-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -43,43 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uros Bizjak <ubizjak@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 5ebb272b2ea7e02911a03a893f8d922d49f9bb4a ]
+[ Upstream commit e9e9a103528c7e199ead6e5374c9c52cf16b5802 ]
 
-Register operand size of invvpid and invept instruction in 64-bit mode
-has always 64 bits. Adjust inline function argument type to reflect
-correct size.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+drivers/scsi/isci/request.c:1629:13: warning: implicit conversion from
+enumeration type 'enum sci_io_status' to different enumeration type
+'enum sci_status' [-Wenum-conversion]
+                        status = SCI_IO_FAILURE_RESPONSE_VALID;
+                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/isci/request.c:1631:12: warning: implicit conversion from
+enumeration type 'enum sci_io_status' to different enumeration type
+'enum sci_status' [-Wenum-conversion]
+                status = SCI_IO_FAILURE_RESPONSE_VALID;
+                       ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+status is of type sci_status but SCI_IO_FAILURE_RESPONSE_VALID is of
+type sci_io_status. Use SCI_FAILURE_IO_RESPONSE_VALID, which is from
+sci_status and has SCI_IO_FAILURE_RESPONSE_VALID's exact value since
+that is what SCI_IO_FAILURE_RESPONSE_VALID is mapped to in the isci.h
+file.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/153
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c | 4 ++--
+ drivers/scsi/isci/request.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 6b66d1f0d1859..b33d6f27399c8 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1547,7 +1547,7 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
- 	return -1;
- }
+diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
+index b709d2b208809..7d71ca421751d 100644
+--- a/drivers/scsi/isci/request.c
++++ b/drivers/scsi/isci/request.c
+@@ -1626,9 +1626,9 @@ static enum sci_status atapi_d2h_reg_frame_handler(struct isci_request *ireq,
  
--static inline void __invvpid(int ext, u16 vpid, gva_t gva)
-+static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
- {
-     struct {
- 	u64 vpid : 16;
-@@ -1561,7 +1561,7 @@ static inline void __invvpid(int ext, u16 vpid, gva_t gva)
- 		  : : "a"(&operand), "c"(ext) : "cc", "memory");
- }
+ 	if (status == SCI_SUCCESS) {
+ 		if (ireq->stp.rsp.status & ATA_ERR)
+-			status = SCI_IO_FAILURE_RESPONSE_VALID;
++			status = SCI_FAILURE_IO_RESPONSE_VALID;
+ 	} else {
+-		status = SCI_IO_FAILURE_RESPONSE_VALID;
++		status = SCI_FAILURE_IO_RESPONSE_VALID;
+ 	}
  
--static inline void __invept(int ext, u64 eptp, gpa_t gpa)
-+static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
- {
- 	struct {
- 		u64 eptp, gpa;
+ 	if (status != SCI_SUCCESS) {
 -- 
 2.20.1
 
