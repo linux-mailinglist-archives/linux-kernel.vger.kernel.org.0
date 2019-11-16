@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF50AFF04C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C321FF048
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:04:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731435AbfKPQEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:04:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60392 "EHLO mail.kernel.org"
+        id S1731367AbfKPQE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:04:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729234AbfKPPvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:38 -0500
+        id S1728857AbfKPPvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:45 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DF9120854;
-        Sat, 16 Nov 2019 15:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7441621906;
+        Sat, 16 Nov 2019 15:51:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919498;
-        bh=05CNfXklO5AkLQeHnG44yjPSeuDjG6GdgTpsbdsJ3LU=;
+        s=default; t=1573919504;
+        bh=pz831w1FYuAKytC2tJGnO7bVucvEVuEDHUgUhpkzv/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZsYC00iAtdlmq0jRwLtkGi6MURZwmfvqZsQUhdyV6L9x9Av+C3qlNBUR/4WG1E/F
-         T/VbussOGfL1/UWYILuu+coC8uFBN0F0Ch+D0MUXSz+Cy4eziRhtNJhk9FhZgK2UhC
-         1v34SGtOk6+83DVjFBPd+3KNnKuiv10OFPQeCK8Q=
+        b=PyPyYJU5hbfrSDlY6qK5QeqrWxVWA9LoVXFYGNFcu+NGyJjc/FLP8XR45K9ndjSTl
+         aQiwGHvI0vxivBDhDCL1CBHdqN/xAMponn6Do50Fui+RSmvxfCLcfvH6IPQFi9sey6
+         a9edHqQakSEOX2M/ToPFh+YsXn9a+bcqYlJlvzZQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kyeongdon Kim <kyeongdon.kim@lge.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 25/99] net: fix warning in af_unix
-Date:   Sat, 16 Nov 2019 10:49:48 -0500
-Message-Id: <20191116155103.10971-25-sashal@kernel.org>
+Cc:     Philipp Klocke <philipp97kl@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.9 29/99] ALSA: i2c/cs8427: Fix int to char conversion
+Date:   Sat, 16 Nov 2019 10:49:52 -0500
+Message-Id: <20191116155103.10971-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -43,35 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kyeongdon Kim <kyeongdon.kim@lge.com>
+From: Philipp Klocke <philipp97kl@gmail.com>
 
-[ Upstream commit 33c4368ee2589c165aebd8d388cbd91e9adb9688 ]
+[ Upstream commit eb7ebfa3c1989aa8e59d5e68ab3cddd7df1bfb27 ]
 
-This fixes the "'hash' may be used uninitialized in this function"
+Compiling with clang yields the following warning:
 
-net/unix/af_unix.c:1041:20: warning: 'hash' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  addr->hash = hash ^ sk->sk_type;
+sound/i2c/cs8427.c:140:31: warning: implicit conversion from 'int'
+to 'char' changes value from 160 to -96 [-Wconstant-conversion]
+    data[0] = CS8427_REG_AUTOINC | CS8427_REG_CORU_DATABUF;
+            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Because CS8427_REG_AUTOINC is defined as 128, it is too big for a
+char field.
+So change data from char to unsigned char, that it can hold the value.
+
+This patch does not change the generated code.
+
+Signed-off-by: Philipp Klocke <philipp97kl@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/unix/af_unix.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/i2c/cs8427.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index cecf51a5aec4f..32ae82a5596d9 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -224,6 +224,8 @@ static inline void unix_release_addr(struct unix_address *addr)
+diff --git a/sound/i2c/cs8427.c b/sound/i2c/cs8427.c
+index 7e21621e492a4..7fd1b40008838 100644
+--- a/sound/i2c/cs8427.c
++++ b/sound/i2c/cs8427.c
+@@ -118,7 +118,7 @@ static int snd_cs8427_send_corudata(struct snd_i2c_device *device,
+ 	struct cs8427 *chip = device->private_data;
+ 	char *hw_data = udata ?
+ 		chip->playback.hw_udata : chip->playback.hw_status;
+-	char data[32];
++	unsigned char data[32];
+ 	int err, idx;
  
- static int unix_mkname(struct sockaddr_un *sunaddr, int len, unsigned int *hashp)
- {
-+	*hashp = 0;
-+
- 	if (len <= sizeof(short) || len > sizeof(*sunaddr))
- 		return -EINVAL;
- 	if (!sunaddr || sunaddr->sun_family != AF_UNIX)
+ 	if (!memcmp(hw_data, ndata, count))
 -- 
 2.20.1
 
