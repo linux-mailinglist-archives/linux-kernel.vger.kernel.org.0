@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC59FF203
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99FB2FF25E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:18:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbfKPPrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:47:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52736 "EHLO mail.kernel.org"
+        id S1729381AbfKPQSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:18:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728005AbfKPPqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:24 -0500
+        id S1728733AbfKPPq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:26 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A24CE2077B;
-        Sat, 16 Nov 2019 15:46:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A970A2077B;
+        Sat, 16 Nov 2019 15:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919184;
-        bh=2Wlb3YZLDLsri+AOZgu2/8+1BzXQy5enQQEq+o4T+ec=;
+        s=default; t=1573919185;
+        bh=xdFKgEX7Pl/f6BxecuW2mYaqqpQDVVagDCzXcf2Qhhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sqoSDrdJ+xpHDojuI2ZxA8eoqYTJpyMwjJYDrnkv/rUCQ4qrthsYBnfKyh/mNdJ3e
-         m3nprN5a7pHTZBtyq0Z37Ty/XSFgIaf1f3pIi6t2i1palCiNemEFIJY/ddDK9gG5I/
-         mjD3KDyUrjRd1Vu9Yrn9LgYtkKux8u/PRw9hvIjM=
+        b=GpT5NiT8iRaA1/QPLJzQ/Yt+B3gnhAFSRhFS2xa9A5kx562G7/LbwCaXTnyGfhCab
+         aaC71vb9w8vTpRz5VTAMCLnymMXSOX9Yw/MB4CAU0GBowkBQgsypJBgm8Po+TONX28
+         6Q+8W0Zz3e9jqsJY0KBXOfItei47tr9dpPLD4B2s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 192/237] net: bpfilter: fix iptables failure if bpfilter_umh is disabled
-Date:   Sat, 16 Nov 2019 10:40:27 -0500
-Message-Id: <20191116154113.7417-192-sashal@kernel.org>
+Cc:     Nickhu <nickhu@andestech.com>,
+        Greentime Hu <greentime@andestech.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 193/237] nds32: Fix bug in bitfield.h
+Date:   Sat, 16 Nov 2019 10:40:28 -0500
+Message-Id: <20191116154113.7417-193-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -44,65 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Nickhu <nickhu@andestech.com>
 
-[ Upstream commit 97adaddaa6db7a8af81b9b11e30cbe3628cd6700 ]
+[ Upstream commit 9aaafac8cffa1c1edb66e19a63841b7c86be07ca ]
 
-When iptables command is executed, ip_{set/get}sockopt() try to upload
-bpfilter.ko if bpfilter is enabled. if it couldn't find bpfilter.ko,
-command is failed.
-bpfilter.ko is generated if CONFIG_BPFILTER_UMH is enabled.
-ip_{set/get}sockopt() only checks CONFIG_BPFILTER.
-So that if CONFIG_BPFILTER is enabled and CONFIG_BPFILTER_UMH is disabled,
-iptables command is always failed.
+There two bitfield bug for perfomance counter
+in bitfield.h:
 
-test config:
-   CONFIG_BPFILTER=y
-   # CONFIG_BPFILTER_UMH is not set
+	PFM_CTL_offSEL1		21 --> 16
+	PFM_CTL_offSEL2		27 --> 22
 
-test command:
-   %iptables -L
-   iptables: No chain/target/match by that name.
+This commit fix it.
 
-Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nickhu <nickhu@andestech.com>
+Acked-by: Greentime Hu <greentime@andestech.com>
+Signed-off-by: Greentime Hu <greentime@andestech.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/ip_sockglue.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/nds32/include/asm/bitfield.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index b7a26120d5521..82f341e84faec 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -1244,7 +1244,7 @@ int ip_setsockopt(struct sock *sk, int level,
- 		return -ENOPROTOOPT;
+diff --git a/arch/nds32/include/asm/bitfield.h b/arch/nds32/include/asm/bitfield.h
+index 8e84fc385b946..19b2841219adf 100644
+--- a/arch/nds32/include/asm/bitfield.h
++++ b/arch/nds32/include/asm/bitfield.h
+@@ -692,8 +692,8 @@
+ #define PFM_CTL_offKU1		13	/* Enable user mode event counting for PFMC1 */
+ #define PFM_CTL_offKU2		14	/* Enable user mode event counting for PFMC2 */
+ #define PFM_CTL_offSEL0		15	/* The event selection for PFMC0 */
+-#define PFM_CTL_offSEL1		21	/* The event selection for PFMC1 */
+-#define PFM_CTL_offSEL2		27	/* The event selection for PFMC2 */
++#define PFM_CTL_offSEL1		16	/* The event selection for PFMC1 */
++#define PFM_CTL_offSEL2		22	/* The event selection for PFMC2 */
+ /* bit 28:31 reserved */
  
- 	err = do_ip_setsockopt(sk, level, optname, optval, optlen);
--#ifdef CONFIG_BPFILTER
-+#if IS_ENABLED(CONFIG_BPFILTER_UMH)
- 	if (optname >= BPFILTER_IPT_SO_SET_REPLACE &&
- 	    optname < BPFILTER_IPT_SET_MAX)
- 		err = bpfilter_ip_set_sockopt(sk, optname, optval, optlen);
-@@ -1557,7 +1557,7 @@ int ip_getsockopt(struct sock *sk, int level,
- 	int err;
- 
- 	err = do_ip_getsockopt(sk, level, optname, optval, optlen, 0);
--#ifdef CONFIG_BPFILTER
-+#if IS_ENABLED(CONFIG_BPFILTER_UMH)
- 	if (optname >= BPFILTER_IPT_SO_GET_INFO &&
- 	    optname < BPFILTER_IPT_GET_MAX)
- 		err = bpfilter_ip_get_sockopt(sk, optname, optval, optlen);
-@@ -1594,7 +1594,7 @@ int compat_ip_getsockopt(struct sock *sk, int level, int optname,
- 	err = do_ip_getsockopt(sk, level, optname, optval, optlen,
- 		MSG_CMSG_COMPAT);
- 
--#ifdef CONFIG_BPFILTER
-+#if IS_ENABLED(CONFIG_BPFILTER_UMH)
- 	if (optname >= BPFILTER_IPT_SO_GET_INFO &&
- 	    optname < BPFILTER_IPT_GET_MAX)
- 		err = bpfilter_ip_get_sockopt(sk, optname, optval, optlen);
+ #define PFM_CTL_mskEN0		( 0x01  << PFM_CTL_offEN0 )
 -- 
 2.20.1
 
