@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D74FF02D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42881FF028
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730883AbfKPPv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:51:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60768 "EHLO mail.kernel.org"
+        id S1730928AbfKPPwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:52:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730867AbfKPPvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:55 -0500
+        id S1728153AbfKPPv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:57 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8269D20857;
-        Sat, 16 Nov 2019 15:51:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E07020857;
+        Sat, 16 Nov 2019 15:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919514;
-        bh=2pRONMT9Wb0FmlOGGCaXMgsOEB5HUk+wXh22ByjWyUo=;
+        s=default; t=1573919517;
+        bh=k/shd09n9VEVvxmHDs9M6T7FrVTmb5hzEyPpUP7pW9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rfrrxFnkfqiFmxaPtXFKfkON7+WMg5A5YHk29ObSGJUaDPucRlqzKLHvWb3U8fX8L
-         N3Dfx19JhbldyV3v83cmMIAdBGsfUVZ6fizImur34bjEofYFfaekLgxx+bBfcpyueH
-         v33RJToIV1uFr1v+ffqUTpC8EME1vLAfivXCtokQ=
+        b=HvVYr8mVDM/0J6WcgVSSyqrXyP3io0ss3E+2IEL7mT88mJMqP0xg3N9GrTgYCGuxd
+         izYiXjbq7iz3Iwk6OSj7dKaRzfgT8RJSPJGNGBaHbrJ8hEmWZ8XuxUipYwPt1v5Q+c
+         LZ9d9beufNEzUPN5Lx5GLMt+jnH9rEWnTHjEU4AY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 36/99] s390/perf: Return error when debug_register fails
-Date:   Sat, 16 Nov 2019 10:49:59 -0500
-Message-Id: <20191116155103.10971-36-sashal@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 38/99] sparc: Fix parport build warnings.
+Date:   Sat, 16 Nov 2019 10:50:01 -0500
+Message-Id: <20191116155103.10971-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,54 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit ec0c0bb489727de0d4dca6a00be6970ab8a3b30a ]
+[ Upstream commit 46b8306480fb424abd525acc1763da1c63a27d8a ]
 
-Return an error when the function debug_register() fails allocating
-the debug handle.
-Also remove the registered debug handle when the initialization fails
-later on.
+If PARPORT_PC_FIFO is not enabled, do not provide the dma lock
+macros and lock definition.  Otherwise:
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+./arch/sparc/include/asm/parport.h:24:24: warning: ‘dma_spin_lock’ defined but not used [-Wunused-variable]
+ static DEFINE_SPINLOCK(dma_spin_lock);
+                        ^~~~~~~~~~~~~
+./include/linux/spinlock_types.h:81:39: note: in definition of macro ‘DEFINE_SPINLOCK’
+ #define DEFINE_SPINLOCK(x) spinlock_t x = __SPIN_LOCK_UNLOCKED(x)
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_sf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/sparc/include/asm/parport.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 96e4fcad57bf7..f46e5c0cb6d95 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -1611,14 +1611,17 @@ static int __init init_cpum_sampling_pmu(void)
- 	}
+diff --git a/arch/sparc/include/asm/parport.h b/arch/sparc/include/asm/parport.h
+index f005ccac91cc9..e87c0f81b700e 100644
+--- a/arch/sparc/include/asm/parport.h
++++ b/arch/sparc/include/asm/parport.h
+@@ -20,6 +20,7 @@
+  */
+ #define HAS_DMA
  
- 	sfdbg = debug_register(KMSG_COMPONENT, 2, 1, 80);
--	if (!sfdbg)
-+	if (!sfdbg) {
- 		pr_err("Registering for s390dbf failed\n");
-+		return -ENOMEM;
-+	}
- 	debug_register_view(sfdbg, &debug_sprintf_view);
++#ifdef CONFIG_PARPORT_PC_FIFO
+ static DEFINE_SPINLOCK(dma_spin_lock);
  
- 	err = register_external_irq(EXT_IRQ_MEASURE_ALERT,
- 				    cpumf_measurement_alert);
- 	if (err) {
- 		pr_cpumsf_err(RS_INIT_FAILURE_ALRT);
-+		debug_unregister(sfdbg);
- 		goto out;
- 	}
+ #define claim_dma_lock() \
+@@ -30,6 +31,7 @@ static DEFINE_SPINLOCK(dma_spin_lock);
  
-@@ -1627,6 +1630,7 @@ static int __init init_cpum_sampling_pmu(void)
- 		pr_cpumsf_err(RS_INIT_FAILURE_PERF);
- 		unregister_external_irq(EXT_IRQ_MEASURE_ALERT,
- 					cpumf_measurement_alert);
-+		debug_unregister(sfdbg);
- 		goto out;
- 	}
+ #define release_dma_lock(__flags) \
+ 	spin_unlock_irqrestore(&dma_spin_lock, __flags);
++#endif
  
+ static struct sparc_ebus_info {
+ 	struct ebus_dma_info info;
 -- 
 2.20.1
 
