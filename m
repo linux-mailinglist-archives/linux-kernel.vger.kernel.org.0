@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E9DFED7C
+	by mail.lfdr.de (Postfix) with ESMTP id 9D22BFED7D
 	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbfKPPom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:44:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49572 "EHLO mail.kernel.org"
+        id S1729061AbfKPPoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:44:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728057AbfKPPog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:44:36 -0500
+        id S1728105AbfKPPol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:44:41 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D69572072D;
-        Sat, 16 Nov 2019 15:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 034392072D;
+        Sat, 16 Nov 2019 15:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919076;
-        bh=8NzhWQdmgAYi75Syl7w/F0X2VA0psKoEI0KYAzgnHuw=;
+        s=default; t=1573919081;
+        bh=pDHn+HksLh2BBFaUeCFU7cSKTlRwKXjRdFc2nsgwYLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wP1CN14DuR/OInosbLHgXDP39KEfTauAt26bPWm5p+LR3kI7VE2jbOO/fO/zun0du
-         Hp56NamJRhF3sDFplqkEaBq8L1Y0hcWc77t6KrFHhR6DUts2rb7Vn9wuI6qb3YUdwJ
-         ErLnNV0fGc8tzgeuM/rxqDKuRauK7c1GPvNEgcec=
+        b=ecYt9noIbwejYJ5IRSz1ANQCSV7hvS1R6whPlewxDX/pU1DUY5XacdLgotDylIQk6
+         6Z+LYFUnpbUkIb/RD7GHLvBRi4uD2sUdQ3N4Au2LA6HAgn99RTww5wbPozCl8B5J3L
+         ZUb2CsUk6GA0F9bfJfJ/TmwLPIb0mJovAPWtkdZI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 144/237] selftests/powerpc/ptrace: Fix out-of-tree build
-Date:   Sat, 16 Nov 2019 10:39:39 -0500
-Message-Id: <20191116154113.7417-144-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 146/237] selftests/powerpc/switch_endian: Fix out-of-tree build
+Date:   Sat, 16 Nov 2019 10:39:41 -0500
+Message-Id: <20191116154113.7417-146-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -44,56 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit c39b79082a38a4f8c801790edecbbb4d62ed2992 ]
+[ Upstream commit 266bac361d5677e61a6815bd29abeb3bdced2b07 ]
 
-We should use TEST_GEN_PROGS, not TEST_PROGS. That tells the selftests
-makefile (lib.mk) that those tests are generated (built), and so it
-adds the $(OUTPUT) prefix for us, making the out-of-tree build work
-correctly.
+For the out-of-tree build to work we need to tell switch_endian_test
+to look for check-reversed.S in $(OUTPUT).
 
-It also means we don't need our own clean rule, lib.mk does it.
-
-We also have to update the ptrace-pkey and core-pkey rules to use
-$(OUTPUT).
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/ptrace/Makefile | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ tools/testing/selftests/powerpc/switch_endian/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/powerpc/ptrace/Makefile b/tools/testing/selftests/powerpc/ptrace/Makefile
-index 923d531265f8c..9f9423430059e 100644
---- a/tools/testing/selftests/powerpc/ptrace/Makefile
-+++ b/tools/testing/selftests/powerpc/ptrace/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--TEST_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
-+TEST_GEN_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
-               ptrace-tar ptrace-tm-tar ptrace-tm-spd-tar ptrace-vsx ptrace-tm-vsx \
-               ptrace-tm-spd-vsx ptrace-tm-spr ptrace-hwbreak ptrace-pkey core-pkey \
-               perf-hwbreak
-@@ -7,14 +7,9 @@ TEST_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
+diff --git a/tools/testing/selftests/powerpc/switch_endian/Makefile b/tools/testing/selftests/powerpc/switch_endian/Makefile
+index fcd2dcb8972ba..bdc081afedb0f 100644
+--- a/tools/testing/selftests/powerpc/switch_endian/Makefile
++++ b/tools/testing/selftests/powerpc/switch_endian/Makefile
+@@ -8,6 +8,7 @@ EXTRA_CLEAN = $(OUTPUT)/*.o $(OUTPUT)/check-reversed.S
  top_srcdir = ../../../../..
  include ../../lib.mk
  
--all: $(TEST_PROGS)
--
- CFLAGS += -m64 -I../../../../../usr/include -I../tm -mhtm -fno-pie
++$(OUTPUT)/switch_endian_test: ASFLAGS += -I $(OUTPUT)
+ $(OUTPUT)/switch_endian_test: $(OUTPUT)/check-reversed.S
  
--ptrace-pkey core-pkey: child.h
--ptrace-pkey core-pkey: LDLIBS += -pthread
--
--$(TEST_PROGS): ../harness.c ../utils.c ../lib/reg.S ptrace.h
-+$(OUTPUT)/ptrace-pkey $(OUTPUT)/core-pkey: child.h
-+$(OUTPUT)/ptrace-pkey $(OUTPUT)/core-pkey: LDLIBS += -pthread
- 
--clean:
--	rm -f $(TEST_PROGS) *.o
-+$(TEST_GEN_PROGS): ../harness.c ../utils.c ../lib/reg.S ptrace.h
+ $(OUTPUT)/check-reversed.o: $(OUTPUT)/check.o
 -- 
 2.20.1
 
