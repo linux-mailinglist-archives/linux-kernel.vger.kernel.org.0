@@ -2,122 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93BEFEAF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EEFAFEAFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:44:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbfKPGbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 01:31:34 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45958 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfKPGbe (ORCPT
+        id S1726053AbfKPGoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 01:44:21 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46176 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbfKPGoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 01:31:34 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r24so9979067otk.12
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 22:31:33 -0800 (PST)
+        Sat, 16 Nov 2019 01:44:20 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 193so7701600pfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 22:44:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mpODNTcWa+A401urYWGM84SXXQR7l3TKPlFdQmVBzs0=;
-        b=gF5tsuVznJqnYWo56MgDxdPAGHHFgIvh1vwSch7ES7KJAJagvN85gQi55vmuMMjr8g
-         fAl9TmJtGOhmH9KI53u2YV33HKDJ8GTzQJbR3olwc6IyhHVNXyxed7HTw3rcbH4O5lXg
-         DFBWyLdLVZMA+dXLRbjIYwehUYEqK7HGAZdwGwaXyMuFMJEDQbOtHMaVrIC4JoOFEdrD
-         FtnKLpPZy5bsGy7UUfNuL1Tdyd/MRvKuAOQJSQIf8kI9Mmr9deFM9R29KE4nATXS8TTA
-         T9Afm2+ns3B0dWXdhrrPyZZ0VPSd/wl9QL8b4RH2Lv7wLMh5fKb1HP5Vpcak//Q3Ps9F
-         jZoA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=83mOzCZrk2hLeBIavxFW02Ub7zgigDrZgcfo7Rp02xE=;
+        b=etF6/auczY/PHyj2EW/5m9MAfa7+4KhKO2DKDAQqUiiJ/HJycDvebsWhFyy7ltErNz
+         GPdUetQoCqDTxijT0aZPIe5TPLoBcuI/HcwwSLoQvfsRwKrEcXKyfNi58/nXbyswpqjH
+         BprxdonwAHRWF6P4gsThGhzKQh/Py9iApmDHlM3sQN6OXVP0V9y6jMAMLR3TIIUCIAOs
+         wiAUpDM/MxLmyKx/CsTNelNQqSJLaS4PsRhsYQm37K7kVfWPrj01BPVG5X/0yGHts/rX
+         wRCVlVZ2lrtpKQbhURCDfqzz26gKxLE7PQlrRpXzosM17VsQnO3aK56Z84Nzqk9noZcq
+         43eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mpODNTcWa+A401urYWGM84SXXQR7l3TKPlFdQmVBzs0=;
-        b=M+kJhoAI0wLz0uct2IT1S/P7X+Aw8WRUn3n3OBoY17HSy15SwzrcdmeHwQhaQn7kJy
-         AJjlZ9UkAz2hcRM8ahfEzqE9gZxxvXSA35V2CgdcRI55YCBESpyttO4QjELedTHHV3Ah
-         POhnw/3bSogF7maRIhb9iJZw3nyd/7EBALObmhvD7R2Mt48U6/5Qq+O1QDnFRQHi5PCw
-         TepEe8jDg6kP6RY7ewLNd8yiAWKHZQ/Zy0C31Qx8iZOjs+o5z24S2buDwCTCCHqfIlSs
-         N0xZrk2B3KkMK/RWkzESt4Bn6qfo7FFpo6w8TMkGttqY0FjlrwFPynNxmKpajhY//Cbg
-         WbtQ==
-X-Gm-Message-State: APjAAAVvlhwMZUt7yQbP5g/uofWRu32HIH9SYoujoBNXOjK7auG9ax+G
-        BSHrnLsBRIRucU+yN+FqHiTS8il+66J+K2MyRedMGj4mqrc=
-X-Google-Smtp-Source: APXvYqy+ZtE/c62xax1ax1pMapTf40gQj6BeNbMWYRA6Pe8p/qNZ7oGWKtS/5hg4q9wMQECRwkR+6tYjUMuHgQwxl6I=
-X-Received: by 2002:a9d:400d:: with SMTP id m13mr13658836ote.360.1573885893136;
- Fri, 15 Nov 2019 22:31:33 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=83mOzCZrk2hLeBIavxFW02Ub7zgigDrZgcfo7Rp02xE=;
+        b=lVLj7FZbZnDhySyQJILgT0PG+Y9NTwihfusZEvvIEQgZm4xuOMLlGrgH5ENPlR8mCM
+         GqSVq2e1+cfMASzAitLFnTh62u6NEIYTNvXtpV1udpLhiBMntll3QS99bGkKyZsf8R7l
+         +eJe81K+BKiSZcC8D6QqV2gNBlIeCZ7faFacoxoC1nCiuWqdFL4/OxPdQZzwC3k86wxK
+         Xj4YhXzejh2T+wJLdoWLCKpLoNehu3B8OHBze4djhP0fs6miisJEVGP8v3bCYukXJu8q
+         0PzoqpbLHe5HRBT7O3MhIIaYpZEX8Ye646Gj+tcL+NfVka3Pv29j/aRFU7pc3coAVBFy
+         J4jg==
+X-Gm-Message-State: APjAAAUiZUQdvzaQDTNU27bAyyzb7TG8nezRAFbSQALwb1hRi9JmL8Dy
+        sEjbmG4v+k6dqOEQHcA6DPiXLQ==
+X-Google-Smtp-Source: APXvYqwkM4lZh6cRGZMVmRD+7muqSOChY7AWDb7zXeO/JwqTvRigHw1HpZUm08pwffapf4Vo4sOuEg==
+X-Received: by 2002:a63:5164:: with SMTP id r36mr7664120pgl.143.1573886659746;
+        Fri, 15 Nov 2019 22:44:19 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f26sm10985615pgf.22.2019.11.15.22.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 22:44:18 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: msm8998-mtp: Add alias for blsp1_uart3
+Date:   Fri, 15 Nov 2019 22:44:15 -0800
+Message-Id: <20191116064415.159899-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <1573874106-23802-1-git-send-email-alex.shi@linux.alibaba.com> <1573874106-23802-3-git-send-email-alex.shi@linux.alibaba.com>
-In-Reply-To: <1573874106-23802-3-git-send-email-alex.shi@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 15 Nov 2019 22:31:22 -0800
-Message-ID: <CALvZod5xuetOb8Vunhgjp69-HcrnHgGHZKKyjVBo3tmoc3WqaA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] mm/lruvec: add irqsave flags into lruvec struct
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Tejun Heo <tj@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Arun KS <arunks@codeaurora.org>,
-        Rong Chen <rong.a.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 7:15 PM Alex Shi <alex.shi@linux.alibaba.com> wrote:
->
-> We need a irqflags vaiable to save state when do irqsave action, declare
-> it here would make code more clear/clean.
->
-> Rong Chen <rong.a.chen@intel.com> reported the 'irqflags' variable need
-> move to the tail of lruvec struct otherwise it causes 18% regressions of
-> vm-scalability testing on his machine. So add the flags and lru_lock to
-> both near struct tail, even I have no clue of this perf losing.
+The msm_serial driver uses a simple counter to determine which port to
+use when no alias is defined, but there's no logic to prevent this from
+not colliding with what's defined by the aliases. As a result either
+none or all of the active msm_serial instances must be listed as
+aliases.
 
-Regressions compared to what? Also no need to have a separate patch.
+Define blsp1_uart3 as "serial1" to mitigate this problem.
 
->
-> Originally-from: Hugh Dickins <hughd@google.com>
-> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Wei Yang <richard.weiyang@gmail.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Arun KS <arunks@codeaurora.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> CC: Rong Chen <rong.a.chen@intel.com>
-> Cc: cgroups@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  include/linux/mmzone.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index a13b8a602ee5..9b8b8daf4e03 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -269,6 +269,8 @@ struct lruvec {
->         unsigned long                   flags;
->         /* per lruvec lru_lock for memcg */
->         spinlock_t                      lru_lock;
-> +       /* flags for irqsave */
-> +       unsigned long                   irqflags;
->  #ifdef CONFIG_MEMCG
->         struct pglist_data *pgdat;
->  #endif
-> --
-> 1.8.3.1
->
+Fixes: 4cffb9f2c700 ("arm64: dts: qcom: msm8998-mtp: Enable bluetooth")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+index 5f101a20a20a..e08fcb426bbf 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+@@ -9,6 +9,7 @@
+ / {
+ 	aliases {
+ 		serial0 = &blsp2_uart1;
++		serial1 = &blsp1_uart3;
+ 	};
+ 
+ 	chosen {
+-- 
+2.23.0
+
