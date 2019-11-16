@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28FFFFEC1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EE9FEC05
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfKPLwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 06:52:37 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45241 "EHLO
+        id S1727698AbfKPLvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 06:51:39 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:45274 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbfKPLv1 (ORCPT
+        with ESMTP id S1727615AbfKPLvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 06:51:27 -0500
+        Sat, 16 Nov 2019 06:51:33 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVwbs-00027S-Lg; Sat, 16 Nov 2019 12:51:24 +0100
+        id 1iVwbw-00028N-Td; Sat, 16 Nov 2019 12:51:29 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 078761C1902;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4593A1C1906;
         Sat, 16 Nov 2019 12:51:23 +0100 (CET)
-Date:   Sat, 16 Nov 2019 11:51:22 -0000
+Date:   Sat, 16 Nov 2019 11:51:23 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/iopl] x86/ioperm: Remove bitmap if all permissions dropped
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
+Subject: [tip: x86/iopl] x86/ioperm: Add bitmap sequence number
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157390508298.12247.1768616194723624483.tip-bot2@tip-bot2>
+Message-ID: <157390508324.12247.190386660621612786.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,111 +46,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/iopl branch of tip:
 
-Commit-ID:     ea5f1cd7ab494f65f50f338299eabb40ad6a1767
-Gitweb:        https://git.kernel.org/tip/ea5f1cd7ab494f65f50f338299eabb40ad6a1767
+Commit-ID:     060aa16fdb7c5078a4159a76e5dc87d6a493af9b
+Gitweb:        https://git.kernel.org/tip/060aa16fdb7c5078a4159a76e5dc87d6a493af9b
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 11 Nov 2019 23:03:24 +01:00
+AuthorDate:    Mon, 11 Nov 2019 23:03:22 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 16 Nov 2019 11:24:03 +01:00
+CommitterDate: Sat, 16 Nov 2019 11:24:02 +01:00
 
-x86/ioperm: Remove bitmap if all permissions dropped
+x86/ioperm: Add bitmap sequence number
 
-If ioperm() results in a bitmap with all bits set (no permissions to any
-I/O port), then handling that bitmap on context switch and exit to user
-mode is pointless. Drop it.
+Add a globally unique sequence number which is incremented when ioperm() is
+changing the I/O bitmap of a task. Store the new sequence number in the
+io_bitmap structure and compare it with the sequence number of the I/O
+bitmap which was last loaded on a CPU. Only update the bitmap if the
+sequence is different.
 
-Move the bitmap exit handling to the ioport code and reuse it for both the
-thread exit path and dropping it. This allows to reuse this code for the
-upcoming iopl() emulation.
+That should further reduce the overhead of I/O bitmap scheduling when there
+are only a few I/O bitmap users on the system.
 
+The 64bit sequence counter is sufficient. A wraparound of the sequence
+counter assuming an ioperm() call every nanosecond would require about 584
+years of uptime.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Lutomirski <luto@kernel.org>
+
 ---
- arch/x86/include/asm/io_bitmap.h |  2 ++
- arch/x86/kernel/ioport.c         | 19 ++++++++++++++++++-
- arch/x86/kernel/process.c        | 17 +++--------------
- 3 files changed, 23 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/io_bitmap.h |  1 +-
+ arch/x86/include/asm/processor.h |  3 ++-
+ arch/x86/kernel/cpu/common.c     |  1 +-
+ arch/x86/kernel/ioport.c         |  5 ++++-
+ arch/x86/kernel/process.c        | 38 ++++++++++++++++++++++---------
+ 5 files changed, 38 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/include/asm/io_bitmap.h b/arch/x86/include/asm/io_bitmap.h
-index 6d82a37..784a88e 100644
+index 1a12b9f..d63bd5a 100644
 --- a/arch/x86/include/asm/io_bitmap.h
 +++ b/arch/x86/include/asm/io_bitmap.h
-@@ -11,6 +11,8 @@ struct io_bitmap {
+@@ -5,6 +5,7 @@
+ #include <asm/processor.h>
+ 
+ struct io_bitmap {
++	u64		sequence;
+ 	/* The maximum number of bytes to copy so all zero bits are covered */
+ 	unsigned int	max;
  	unsigned long	bitmap[IO_BITMAP_LONGS];
- };
- 
-+void io_bitmap_exit(void);
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index c949e0e..40bb0f7 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -361,6 +361,9 @@ struct entry_stack_page {
+  * All IO bitmap related data stored in the TSS:
+  */
+ struct x86_io_bitmap {
++	/* The sequence number of the last active bitmap. */
++	u64			prev_sequence;
 +
- void tss_update_io_bitmap(void);
+ 	/*
+ 	 * Store the dirty size of the last io bitmap offender. The next
+ 	 * one will have to do the cleanup as the switch out to a non io
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 3aee167..79dd544 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1862,6 +1862,7 @@ void cpu_init(void)
+ 	tss_setup_ist(tss);
+ 	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
+ 	tss->io_bitmap.prev_max = 0;
++	tss->io_bitmap.prev_sequence = 0;
+ 	memset(tss->io_bitmap.bitmap, 0xff, sizeof(tss->io_bitmap.bitmap));
+ 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
  
- #endif
 diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index 198bead..f9fc69a 100644
+index 05f77f3..7c1ab5c 100644
 --- a/arch/x86/kernel/ioport.c
 +++ b/arch/x86/kernel/ioport.c
-@@ -16,6 +16,18 @@
+@@ -14,6 +14,8 @@
+ #include <asm/io_bitmap.h>
+ #include <asm/desc.h>
  
- static atomic64_t io_bitmap_sequence;
- 
-+void io_bitmap_exit(void)
-+{
-+	struct io_bitmap *iobm = current->thread.io_bitmap;
-+
-+	current->thread.io_bitmap = NULL;
-+	clear_thread_flag(TIF_IO_BITMAP);
-+	preempt_disable();
-+	tss_update_io_bitmap();
-+	preempt_enable();
-+	kfree(iobm);
-+}
++static atomic64_t io_bitmap_sequence;
 +
  /*
   * this changes the io permissions bitmap in the current task.
   */
-@@ -61,11 +73,16 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
- 	 * Search for a (possibly new) maximum. This is simple and stupid,
- 	 * to keep it obviously correct:
- 	 */
--	max_long = 0;
-+	max_long = UINT_MAX;
- 	for (i = 0; i < IO_BITMAP_LONGS; i++) {
- 		if (iobm->bitmap[i] != ~0UL)
- 			max_long = i;
- 	}
-+	/* All permissions dropped? */
-+	if (max_long == UINT_MAX) {
-+		io_bitmap_exit();
-+		return 0;
-+	}
+@@ -72,6 +74,9 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
  
- 	iobm->max = (max_long + 1) * sizeof(unsigned long);
- 
+ 	/* Update the thread data */
+ 	iobm->max = bytes;
++	/* Update the sequence number to force an update in switch_to() */
++	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
++
+ 	/*
+ 	 * Store the bitmap pointer (might be the same if the task already
+ 	 * head one). Set the TIF flag, just in case this is the first
 diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 108af91..7ba4d54 100644
+index 1504fd2..7c49be9 100644
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -102,21 +102,10 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- void exit_thread(struct task_struct *tsk)
- {
- 	struct thread_struct *t = &tsk->thread;
--	struct io_bitmap *iobm = t->io_bitmap;
- 	struct fpu *fpu = &t->fpu;
--	struct tss_struct *tss;
--
--	if (iobm) {
--		preempt_disable();
--		tss = this_cpu_ptr(&cpu_tss_rw);
--
--		t->io_bitmap = NULL;
--		clear_thread_flag(TIF_IO_BITMAP);
--		/* Invalidate the io bitmap base in the TSS */
--		tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
--		preempt_enable();
--		kfree(iobm);
--	}
+@@ -360,6 +360,28 @@ void arch_setup_new_exec(void)
+ 	}
+ }
+ 
++static void switch_to_update_io_bitmap(struct tss_struct *tss,
++				       struct io_bitmap *iobm)
++{
++	/*
++	 * Copy at least the byte range of the incoming tasks bitmap which
++	 * covers the permitted I/O ports.
++	 *
++	 * If the previous task which used an I/O bitmap had more bits
++	 * permitted, then the copy needs to cover those as well so they
++	 * get turned off.
++	 */
++	memcpy(tss->io_bitmap.bitmap, iobm->bitmap,
++	       max(tss->io_bitmap.prev_max, iobm->max));
 +
-+	if (test_thread_flag(TIF_IO_BITMAP))
-+		io_bitmap_exit();
++	/*
++	 * Store the new max and the sequence number of this bitmap
++	 * and a pointer to the bitmap itself.
++	 */
++	tss->io_bitmap.prev_max = iobm->max;
++	tss->io_bitmap.prev_sequence = iobm->sequence;
++}
++
+ static inline void switch_to_bitmap(struct thread_struct *next,
+ 				    unsigned long tifp, unsigned long tifn)
+ {
+@@ -369,18 +391,14 @@ static inline void switch_to_bitmap(struct thread_struct *next,
+ 		struct io_bitmap *iobm = next->io_bitmap;
  
- 	free_vm86(t);
+ 		/*
+-		 * Copy at least the size of the incoming tasks bitmap
+-		 * which covers the last permitted I/O port.
+-		 *
+-		 * If the previous task which used an io bitmap had more
+-		 * bits permitted, then the copy needs to cover those as
+-		 * well so they get turned off.
++		 * Only copy bitmap data when the sequence number
++		 * differs. The update time is accounted to the incoming
++		 * task.
+ 		 */
+-		memcpy(tss->io_bitmap.bitmap, next->io_bitmap->bitmap,
+-		       max(tss->io_bitmap.prev_max, next->io_bitmap->max));
++		if (tss->io_bitmap.prev_sequence != iobm->sequence)
++			switch_to_update_io_bitmap(tss, iobm);
  
+-		/* Store the new max and set io_bitmap_base valid */
+-		tss->io_bitmap.prev_max = next->io_bitmap->max;
++		/* Enable the bitmap */
+ 		tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
+ 
+ 		/*
