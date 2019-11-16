@@ -2,96 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FDC9FF46E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 126FBFF468
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:42:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfKPRmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 12:42:49 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:40018 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727684AbfKPRms (ORCPT
+        id S1728019AbfKPRmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 12:42:02 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:36223 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727895AbfKPRmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 12:42:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1573925781; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2cbYuCgLlNTwc6PuVhvUunFsMN6Y7kI5a1YouN7/v5c=;
-        b=GthUwsVMbie+Q2wcqsFqIz642g6QkdIg3iOZ0YQifvcFTAGhXjGtqWpWdi6/xVmfCLsD7S
-        iRe+wBVP1NlqomlCGIg5Z5BrutDX0qbJ6wCCjEwUHnDMw1dLiFgYZ9bmp4391c4DhupZZx
-        HPxAjga783h+oq3LjDv6cuWFTVzKuQI=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     od@zcrc.me, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH v2 3/3] pwm: jz4740: Allow selection of PWM channels 0 and 1
-Date:   Sat, 16 Nov 2019 18:36:13 +0100
-Message-Id: <20191116173613.72647-4-paul@crapouillou.net>
-In-Reply-To: <20191116173613.72647-1-paul@crapouillou.net>
-References: <20191116173613.72647-1-paul@crapouillou.net>
+        Sat, 16 Nov 2019 12:42:01 -0500
+Received: by mail-io1-f72.google.com with SMTP id z12so9908628iop.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 09:42:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=EWN//L91CyTslFFeakj+mgyvWWWFpOQoVBvfSDcuags=;
+        b=foFv1SwBHViZAsNThg82FxZSXdMnCGcO6vUARgXCEKLoumCSZ0SXrvjzJvsDTT7yyC
+         k3agOmrpIhUiks+HswKSDbxYuWV0Tn33zYBnhkQBBsMPHzrMYM066kLOD0r6Idl7k9jH
+         v6TyVoKj3Ei+XbCwaOcxD9CnBPl1k20gQcOAcLoHFyIB634swbchW21az7RdILSqPJIC
+         29avf4+I21P0f289La4WK/OscGQWxj2r6LEP3bWhYrQqW9qou1sAovEOEYWd+35RbD47
+         OHLxcxj6t1AWo7QVaVy++PQFIKCdkwldUZiSJcGmZTcuRrTK7nDAYK+/p6it+qB7+TUF
+         koYg==
+X-Gm-Message-State: APjAAAUBPr0FbBrHec3WmjF9qycgAqXBQM5OD2HHnk2ZAIfwTWK06lS2
+        YEBEfFufyGxmygwRmmXVyT5Z216thK34nzkvSy7raLKPWX+U
+X-Google-Smtp-Source: APXvYqyPXHr27XD9qFJx9csZgs2fVi5n7W3qz+3U4f6wnRc6QocEac5JBhTcWn6Bcp6WcLpjvOUYRZWSU1CzyYJ7kWmiELv609xh
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:dd12:: with SMTP id n18mr7609659ilm.9.1573926120871;
+ Sat, 16 Nov 2019 09:42:00 -0800 (PST)
+Date:   Sat, 16 Nov 2019 09:42:00 -0800
+In-Reply-To: <000000000000675cea057e201cbb@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000056b92d05977a3b19@google.com>
+Subject: Re: BUG: unable to handle kernel paging request in slhc_free
+From:   syzbot <syzbot+6c5d567447bfa30f78e2@syzkaller.appspotmail.com>
+To:     akinobu.mita@gmail.com, akpm@linux-foundation.org,
+        davem@davemloft.net, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, mhocko@kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tejaswit@codeaurora.org, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TCU channels 0 and 1 were previously reserved for system tasks, and
-thus unavailable for PWM.
+syzbot has bisected this bug to:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
----
+commit e41d58185f1444368873d4d7422f7664a68be61d
+Author: Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed Jul 12 21:34:35 2017 +0000
 
-Notes:
-    v2: No change
+     fault-inject: support systematic fault injection
 
- drivers/pwm/pwm-jz4740.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144b8772e00000
+start commit:   8fe28cb5 Linux 4.20
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=164b8772e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=124b8772e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d581260bae0899a
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c5d567447bfa30f78e2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136130fd400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1607c563400000
 
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index a5368b98652d..801dfabfa6f4 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -33,6 +33,19 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
- 	return container_of(chip, struct jz4740_pwm_chip, chip);
- }
- 
-+static bool jz4740_pwm_can_use_chn(struct jz4740_pwm_chip *jz,
-+				   unsigned int channel)
-+{
-+	/* Enable all TCU channels for PWM use by default except channels 0/1 */
-+	u32 pwm_channels_mask = GENMASK(NUM_PWM - 1, 2);
-+
-+	device_property_read_u32(jz->chip.dev->parent,
-+				 "ingenic,pwm-channels-mask",
-+				 &pwm_channels_mask);
-+
-+	return !!(pwm_channels_mask & BIT(channel));
-+}
-+
- static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
- 	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-@@ -40,11 +53,7 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 	char clk_name[16];
- 	int ret;
- 
--	/*
--	 * Timers 0 and 1 are used for system tasks, so they are unavailable
--	 * for use as PWMs.
--	 */
--	if (pwm->hwpwm < 2)
-+	if (!jz4740_pwm_can_use_chn(jz, pwm->hwpwm))
- 		return -EBUSY;
- 
- 	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
--- 
-2.24.0
+Reported-by: syzbot+6c5d567447bfa30f78e2@syzkaller.appspotmail.com
+Fixes: e41d58185f14 ("fault-inject: support systematic fault injection")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
