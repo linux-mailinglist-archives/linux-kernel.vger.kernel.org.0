@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05BF2FED70
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E004FED75
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbfKPPoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:44:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48698 "EHLO mail.kernel.org"
+        id S1728973AbfKPPo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:44:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727948AbfKPPoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:44:13 -0500
+        id S1727880AbfKPPoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:44:24 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5E242072D;
-        Sat, 16 Nov 2019 15:44:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60A832072D;
+        Sat, 16 Nov 2019 15:44:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919053;
-        bh=d9nxKcst+qQU3OV1rFInKjs+FqAyZY6FfLLPYATbVhY=;
+        s=default; t=1573919063;
+        bh=cgHiA7DDTWxGxz5X7SG64ZBTuO5N5bph52IcLJ9ZLyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MJpahdwDRw4kEcMdqPMtCEcOKt8Ht5zr6xxmKknL4uXHA0RSHw8igCIHJCGaOMHL/
-         ItDQtdDBgVALVxqoCRw1fVRL/uxWseic0YTgcrZeljprCA4vcpLpgbeRP9Z5lTSmjF
-         3jtbTBc2ZcmWOGM3J4MhoSzx2cuYUbW5YCDJmfxk=
+        b=MhIRfMLC+U4vkLRgXNKPXrJZIiXYt3XEWFpZLNCpYaRheOTIvGn2C715vTwbCXVd1
+         ehwOITNUKqCdaOh+MuOy1KiOHxS7PAQvr+PlOfsZTopYzYIvHek8trJSsbg3keSbAO
+         SGd/bIJEN/IOoN/Cy/Liw0LkJSrKAN7CZSDQoP0Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 129/237] fs/ocfs2/dlm/dlmdebug.c: fix a sleep-in-atomic-context bug in dlm_print_one_mle()
-Date:   Sat, 16 Nov 2019 10:39:24 -0500
-Message-Id: <20191116154113.7417-129-sashal@kernel.org>
+Cc:     Sabrina Dubroca <sd@queasysnail.net>,
+        Radu Rendec <radu.rendec@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 135/237] macsec: let the administrator set UP state even if lowerdev is down
+Date:   Sat, 16 Nov 2019 10:39:30 -0500
+Message-Id: <20191116154113.7417-135-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -49,58 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 999865764f5f128896402572b439269acb471022 ]
+[ Upstream commit 07bddef9839378bd6f95b393cf24c420529b4ef1 ]
 
-The kernel module may sleep with holding a spinlock.
+Currently, the kernel doesn't let the administrator set a macsec device
+up unless its lower device is currently up. This is inconsistent, as a
+macsec device that is up won't automatically go down when its lower
+device goes down.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+Now that linkstate propagation works, there's really no reason for this
+limitation, so let's remove it.
 
-[FUNC] get_zeroed_page(GFP_NOFS)
-fs/ocfs2/dlm/dlmdebug.c, 332: get_zeroed_page in dlm_print_one_mle
-fs/ocfs2/dlm/dlmmaster.c, 240: dlm_print_one_mle in __dlm_put_mle
-fs/ocfs2/dlm/dlmmaster.c, 255: __dlm_put_mle in dlm_put_mle
-fs/ocfs2/dlm/dlmmaster.c, 254: spin_lock in dlm_put_ml
-
-[FUNC] get_zeroed_page(GFP_NOFS)
-fs/ocfs2/dlm/dlmdebug.c, 332: get_zeroed_page in dlm_print_one_mle
-fs/ocfs2/dlm/dlmmaster.c, 240: dlm_print_one_mle in __dlm_put_mle
-fs/ocfs2/dlm/dlmmaster.c, 222: __dlm_put_mle in dlm_put_mle_inuse
-fs/ocfs2/dlm/dlmmaster.c, 219: spin_lock in dlm_put_mle_inuse
-
-To fix this bug, GFP_NOFS is replaced with GFP_ATOMIC.
-
-This bug is found by my static analysis tool DSAC.
-
-Link: http://lkml.kernel.org/r/20180901112528.27025-1-baijiaju1990@gmail.com
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
+Reported-by: Radu Rendec <radu.rendec@gmail.com>
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/dlm/dlmdebug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/macsec.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/ocfs2/dlm/dlmdebug.c b/fs/ocfs2/dlm/dlmdebug.c
-index 9b984cae4c4e0..1d6dc8422899b 100644
---- a/fs/ocfs2/dlm/dlmdebug.c
-+++ b/fs/ocfs2/dlm/dlmdebug.c
-@@ -329,7 +329,7 @@ void dlm_print_one_mle(struct dlm_master_list_entry *mle)
- {
- 	char *buf;
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 50acd8c9d7f53..10a8ef2d025a1 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -2813,9 +2813,6 @@ static int macsec_dev_open(struct net_device *dev)
+ 	struct net_device *real_dev = macsec->real_dev;
+ 	int err;
  
--	buf = (char *) get_zeroed_page(GFP_NOFS);
-+	buf = (char *) get_zeroed_page(GFP_ATOMIC);
- 	if (buf) {
- 		dump_mle(mle, buf, PAGE_SIZE - 1);
- 		free_page((unsigned long)buf);
+-	if (!(real_dev->flags & IFF_UP))
+-		return -ENETDOWN;
+-
+ 	err = dev_uc_add(real_dev, dev->dev_addr);
+ 	if (err < 0)
+ 		return err;
 -- 
 2.20.1
 
