@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E767FF058
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 198CBFF053
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:04:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730763AbfKPPv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:51:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60042 "EHLO mail.kernel.org"
+        id S1729943AbfKPPvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:51:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbfKPPvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:25 -0500
+        id S1729874AbfKPPv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:26 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AB91214DE;
+        by mail.kernel.org (Postfix) with ESMTPSA id BAEF4214E0;
         Sat, 16 Nov 2019 15:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919485;
-        bh=Y5oiB7530wepLPGyawlMUGIb28+HF8HLGv0HAT+h6v4=;
+        s=default; t=1573919486;
+        bh=wUt4D1DEg1f6rjOKaBENefHuGSbzJpjSw8JuUHmPraw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wHh3YxAuHxsYdkYvgJvyXfFT0eK+Y5GIdUpuVv8NT3Bj1eYKbEUbtlT9uKkXApS+f
-         t1F9VKJy3/pBylgTA4/DJM+BcAt7kzmXu0x8zDCJ5UOxgLxj8PKLRBrunQ4AJkSOhj
-         I67a2qUNERtNM5DZrX8Y07w6gcxZwkBZG3XbIL3Q=
+        b=VabG4pgXcXmPcyVrvueFo2zYAUz6BSTUsywyAEhnZKB7TndJg65/iE1zQZ0zwdz4Y
+         Vg3MEQ1Vcu6rJNlU4ZACAhqIRLpsRpLHWwamYQC2Nn4qcbc29jL4wWwvEOEPCA4hJy
+         JzS7jH5HijzyVBMttkWBSI5+4CZcXHzT0V25gIps=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 16/99] scsi: ips: fix missing break in switch
-Date:   Sat, 16 Nov 2019 10:49:39 -0500
-Message-Id: <20191116155103.10971-16-sashal@kernel.org>
+Cc:     Uros Bizjak <ubizjak@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 17/99] KVM/x86: Fix invvpid and invept register operand size in 64-bit mode
+Date:   Sat, 16 Nov 2019 10:49:40 -0500
+Message-Id: <20191116155103.10971-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -43,34 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
 
-[ Upstream commit 5d25ff7a544889bc4b749fda31778d6a18dddbcb ]
+[ Upstream commit 5ebb272b2ea7e02911a03a893f8d922d49f9bb4a ]
 
-Add missing break statement in order to prevent the code from falling
-through to case TEST_UNIT_READY.
+Register operand size of invvpid and invept instruction in 64-bit mode
+has always 64 bits. Adjust inline function argument type to reflect
+correct size.
 
-Addresses-Coverity-ID: 1357338 ("Missing break in switch")
-Suggested-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/ips.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/ips.c b/drivers/scsi/ips.c
-index 02cb76fd44208..6bbf2945a3e00 100644
---- a/drivers/scsi/ips.c
-+++ b/drivers/scsi/ips.c
-@@ -3500,6 +3500,7 @@ ips_send_cmd(ips_ha_t * ha, ips_scb_t * scb)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 6b66d1f0d1859..b33d6f27399c8 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1547,7 +1547,7 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
+ 	return -1;
+ }
  
- 		case START_STOP:
- 			scb->scsi_cmd->result = DID_OK << 16;
-+			break;
+-static inline void __invvpid(int ext, u16 vpid, gva_t gva)
++static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
+ {
+     struct {
+ 	u64 vpid : 16;
+@@ -1561,7 +1561,7 @@ static inline void __invvpid(int ext, u16 vpid, gva_t gva)
+ 		  : : "a"(&operand), "c"(ext) : "cc", "memory");
+ }
  
- 		case TEST_UNIT_READY:
- 		case INQUIRY:
+-static inline void __invept(int ext, u64 eptp, gpa_t gpa)
++static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
+ {
+ 	struct {
+ 		u64 eptp, gpa;
 -- 
 2.20.1
 
