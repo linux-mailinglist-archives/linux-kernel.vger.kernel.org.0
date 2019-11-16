@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E039AFED79
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E9DFED7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfKPPoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:44:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49264 "EHLO mail.kernel.org"
+        id S1729052AbfKPPom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:44:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728968AbfKPPo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:44:27 -0500
+        id S1728057AbfKPPog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:44:36 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30A5C2072D;
-        Sat, 16 Nov 2019 15:44:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D69572072D;
+        Sat, 16 Nov 2019 15:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919066;
-        bh=by66fafWIkFfkatStvHYRKlIhFEru2T56686wGJEHj4=;
+        s=default; t=1573919076;
+        bh=8NzhWQdmgAYi75Syl7w/F0X2VA0psKoEI0KYAzgnHuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M732/L/InWX7ylwULntQBASo+DgSH3XomiCAHcmyr97R9JNQEdk7qD6Me17SY+jV0
-         r9cCzuogJeDc9NGJlQL2l3jrYCzheWRV8CxTnuBxzithYgUFZnCym8KGaJ6/H1AoEs
-         SYvVsANqyWreL6WckIA9RMwrVtYzD9cBb//coQ0I=
+        b=wP1CN14DuR/OInosbLHgXDP39KEfTauAt26bPWm5p+LR3kI7VE2jbOO/fO/zun0du
+         Hp56NamJRhF3sDFplqkEaBq8L1Y0hcWc77t6KrFHhR6DUts2rb7Vn9wuI6qb3YUdwJ
+         ErLnNV0fGc8tzgeuM/rxqDKuRauK7c1GPvNEgcec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 139/237] i2c: uniphier-f: fix race condition when IRQ is cleared
-Date:   Sat, 16 Nov 2019 10:39:34 -0500
-Message-Id: <20191116154113.7417-139-sashal@kernel.org>
+Cc:     Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 144/237] selftests/powerpc/ptrace: Fix out-of-tree build
+Date:   Sat, 16 Nov 2019 10:39:39 -0500
+Message-Id: <20191116154113.7417-144-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -43,70 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Joel Stanley <joel@jms.id.au>
 
-[ Upstream commit eaba68785c2d24ebf1f0d46c24e11b79cc2f94c7 ]
+[ Upstream commit c39b79082a38a4f8c801790edecbbb4d62ed2992 ]
 
-The current IRQ handler clears all the IRQ status bits when it bails
-out. This is dangerous because it might clear away the status bits
-that have just been set while processing the current handler. If this
-happens, the IRQ event for the latest transfer is lost forever.
+We should use TEST_GEN_PROGS, not TEST_PROGS. That tells the selftests
+makefile (lib.mk) that those tests are generated (built), and so it
+adds the $(OUTPUT) prefix for us, making the out-of-tree build work
+correctly.
 
-The IRQ status bits must be cleared *before* the next transfer is
-kicked.
+It also means we don't need our own clean rule, lib.mk does it.
 
-Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+We also have to update the ptrace-pkey and core-pkey rules to use
+$(OUTPUT).
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ tools/testing/selftests/powerpc/ptrace/Makefile | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index bbd5b137aa216..928ea9930d17e 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -143,9 +143,10 @@ static void uniphier_fi2c_set_irqs(struct uniphier_fi2c_priv *priv)
- 	writel(priv->enabled_irqs, priv->membase + UNIPHIER_FI2C_IE);
- }
+diff --git a/tools/testing/selftests/powerpc/ptrace/Makefile b/tools/testing/selftests/powerpc/ptrace/Makefile
+index 923d531265f8c..9f9423430059e 100644
+--- a/tools/testing/selftests/powerpc/ptrace/Makefile
++++ b/tools/testing/selftests/powerpc/ptrace/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-TEST_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
++TEST_GEN_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
+               ptrace-tar ptrace-tm-tar ptrace-tm-spd-tar ptrace-vsx ptrace-tm-vsx \
+               ptrace-tm-spd-vsx ptrace-tm-spr ptrace-hwbreak ptrace-pkey core-pkey \
+               perf-hwbreak
+@@ -7,14 +7,9 @@ TEST_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
+ top_srcdir = ../../../../..
+ include ../../lib.mk
  
--static void uniphier_fi2c_clear_irqs(struct uniphier_fi2c_priv *priv)
-+static void uniphier_fi2c_clear_irqs(struct uniphier_fi2c_priv *priv,
-+				     u32 mask)
- {
--	writel(-1, priv->membase + UNIPHIER_FI2C_IC);
-+	writel(mask, priv->membase + UNIPHIER_FI2C_IC);
- }
- 
- static void uniphier_fi2c_stop(struct uniphier_fi2c_priv *priv)
-@@ -172,6 +173,8 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
- 		"interrupt: enabled_irqs=%04x, irq_status=%04x\n",
- 		priv->enabled_irqs, irq_status);
- 
-+	uniphier_fi2c_clear_irqs(priv, irq_status);
-+
- 	if (irq_status & UNIPHIER_FI2C_INT_STOP)
- 		goto complete;
- 
-@@ -250,8 +253,6 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
- 	}
- 
- handled:
--	uniphier_fi2c_clear_irqs(priv);
+-all: $(TEST_PROGS)
 -
- 	spin_unlock(&priv->lock);
+ CFLAGS += -m64 -I../../../../../usr/include -I../tm -mhtm -fno-pie
  
- 	return IRQ_HANDLED;
-@@ -340,7 +341,7 @@ static int uniphier_fi2c_master_xfer_one(struct i2c_adapter *adap,
- 		priv->flags |= UNIPHIER_FI2C_STOP;
+-ptrace-pkey core-pkey: child.h
+-ptrace-pkey core-pkey: LDLIBS += -pthread
+-
+-$(TEST_PROGS): ../harness.c ../utils.c ../lib/reg.S ptrace.h
++$(OUTPUT)/ptrace-pkey $(OUTPUT)/core-pkey: child.h
++$(OUTPUT)/ptrace-pkey $(OUTPUT)/core-pkey: LDLIBS += -pthread
  
- 	reinit_completion(&priv->comp);
--	uniphier_fi2c_clear_irqs(priv);
-+	uniphier_fi2c_clear_irqs(priv, U32_MAX);
- 	writel(UNIPHIER_FI2C_RST_TBRST | UNIPHIER_FI2C_RST_RBRST,
- 	       priv->membase + UNIPHIER_FI2C_RST);	/* reset TX/RX FIFO */
- 
+-clean:
+-	rm -f $(TEST_PROGS) *.o
++$(TEST_GEN_PROGS): ../harness.c ../utils.c ../lib/reg.S ptrace.h
 -- 
 2.20.1
 
