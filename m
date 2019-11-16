@@ -2,184 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2414BFEC67
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 14:05:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F0BFEC6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 14:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbfKPNFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 08:05:03 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:42316 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727437AbfKPNFD (ORCPT
+        id S1727617AbfKPNQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 08:16:26 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46163 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbfKPNQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 08:05:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TiEXByO_1573909496;
-Received: from C02XQCBJJG5H.local(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0TiEXByO_1573909496)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 16 Nov 2019 21:04:57 +0800
-From:   Lai Jiangshan <laijs@linux.alibaba.com>
-Subject: Re: [PATCH 08/11] rcu: don't use negative ->rcu_read_lock_nesting
-To:     paulmck@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-References: <20191031100806.1326-1-laijs@linux.alibaba.com>
- <20191031100806.1326-9-laijs@linux.alibaba.com>
- <20191101123323.GC17910@paulmck-ThinkPad-P72>
-Message-ID: <3437ee3f-2807-16eb-5e9b-77189fa31cdf@linux.alibaba.com>
-Date:   Sat, 16 Nov 2019 21:04:56 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191101123323.GC17910@paulmck-ThinkPad-P72>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 16 Nov 2019 08:16:24 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b3so13910043wrs.13
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 05:16:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=tg11cTivSk8CuEqGhmHmDNWvHOysA3jwYAGlqgKbG4c=;
+        b=GirAD+vKxjyd5OFXVVcD73825caTPpQT3zyFYDhPJmQP2+wOrhtIH3Doi0c7zREGmj
+         p1x6DfxjpOLX2Ec/MslH8bQpMTPbvFPrhqstclENzGsx0jJYmeY5UEyKA6dHgIiY//JO
+         qaPC2I+05TfMDm+138SK6j7be0b1aPpocydbxi9HCLMjnzIn4mMkLZM9ZnCFo5suca69
+         ACNkNHfQ9WqlB2ALMDyfuZxiVeCeo59RziqRDnhbm2dRmRDJz0+puD1RaeHpMVQqaa7I
+         8jXOn8UpiFOcHYJF2dF+w3bE/PCL00vm7vWt1xjNkRbUrosteggtbrGXWf3hxv8RpxPS
+         cI2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tg11cTivSk8CuEqGhmHmDNWvHOysA3jwYAGlqgKbG4c=;
+        b=J37VPDK6F+CRei9Mmn05M2431DAM7LU5NLwMFmYB7oCAwBalPdqLPg4UKf/tsGKjdn
+         FGuBUCQBlkLfFQHYjIw1V1sdeRPfZRwEMi/wtAILE+JQ+RYq6ny16hs3NvURcBKx3XWR
+         AOH6tCht7F368p/NkQNCrdp02CKMGI1mULbON372Ia5aC2OXczN9kg20+bx7N0tO4+pr
+         YpcIbf0bpsK2byswWm1uivpBy0+KH2KkGkCsSQw2BKkX7G2gpxBh0wyjC1dgxPu4N6gp
+         CaBG3OaUMNVJgPInz5iU/SdOy85T6aGQ/TTWL1syen/SVqeJJY6NSDPSWmdCAWxotHXi
+         Oclw==
+X-Gm-Message-State: APjAAAVy/w14sSOKXU7Wh6AD2vfVgWlN3DP2BAreFVaN2XKZz/BAGlTZ
+        8YtXmMZPPqlqEFxr5zc4J5b0ag==
+X-Google-Smtp-Source: APXvYqyHW5ijIPfL2Ep4+ox47SbxoujUX+av53dHNyM6NeuTcEWIcEELLwtuNXkWHbejHNtn0zWz/Q==
+X-Received: by 2002:a05:6000:110a:: with SMTP id z10mr19691490wrw.291.1573910180022;
+        Sat, 16 Nov 2019 05:16:20 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e34:ed2f:f020:b462:d85e:9aab:bc1d])
+        by smtp.gmail.com with ESMTPSA id r2sm11128914wma.44.2019.11.16.05.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2019 05:16:19 -0800 (PST)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rafael@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org
+Subject: [PATCH V2 1/2] cpuidle: Replace use_deepest_state flag by forced_idle_latency_limit_ns
+Date:   Sat, 16 Nov 2019 14:16:12 +0100
+Message-Id: <20191116131613.15733-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We want to specify a latency constraint when choosing an idle state at
+play_idle time. Instead of duplicating the information in the
+structure or propagate the latency in the call stack, change the
+use_deepest_state by forced_latency_limit_ns to introduce this
+constraint. The idea being that when it is set, idle is forced
+(i.e. no governors), but there is a latency limit for the state to
+use.
 
+A zero latency constraint means "do not use the deepest idle state
+path" as the 'use_deepest_state' boolean was used in the
+cpuidle_idle_call.
 
-On 2019/11/1 8:33 下午, Paul E. McKenney wrote:
-> On Thu, Oct 31, 2019 at 10:08:03AM +0000, Lai Jiangshan wrote:
->> Negative ->rcu_read_lock_nesting was introduced to prevent
->> scheduler deadlock which was just prevented by deferred qs.
->> So negative ->rcu_read_lock_nesting is useless now and
->> rcu_read_unlock() can be simplified.
->>
->> And negative ->rcu_read_lock_nesting is bug-prone,
->> it is good to kill it.
->>
->> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
->> ---
->>   kernel/rcu/tree_exp.h    | 30 ++----------------------------
->>   kernel/rcu/tree_plugin.h | 21 +++++----------------
->>   2 files changed, 7 insertions(+), 44 deletions(-)
->>
->> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
->> index c0d06bce35ea..9dcbd2734620 100644
->> --- a/kernel/rcu/tree_exp.h
->> +++ b/kernel/rcu/tree_exp.h
->> @@ -621,11 +621,11 @@ static void rcu_exp_handler(void *unused)
->>   	 * report the quiescent state, otherwise defer.
->>   	 */
->>   	if (!t->rcu_read_lock_nesting) {
->> +		rdp->exp_deferred_qs = true;
->>   		if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
->>   		    rcu_dynticks_curr_cpu_in_eqs()) {
->> -			rcu_report_exp_rdp(rdp);
->> +			rcu_preempt_deferred_qs(t);
->>   		} else {
->> -			rdp->exp_deferred_qs = true;
->>   			set_tsk_need_resched(t);
->>   			set_preempt_need_resched();
->>   		}
->> @@ -646,32 +646,6 @@ static void rcu_exp_handler(void *unused)
->>   		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
->>   		return;
->>   	}
->> -
->> -	/*
->> -	 * The final and least likely case is where the interrupted
->> -	 * code was just about to or just finished exiting the RCU-preempt
->> -	 * read-side critical section, and no, we can't tell which.
->> -	 * So either way, set ->deferred_qs to flag later code that
->> -	 * a quiescent state is required.
->> -	 *
->> -	 * If the CPU is fully enabled (or if some buggy RCU-preempt
->> -	 * read-side critical section is being used from idle), just
->> -	 * invoke rcu_preempt_deferred_qs() to immediately report the
->> -	 * quiescent state.  We cannot use rcu_read_unlock_special()
->> -	 * because we are in an interrupt handler, which will cause that
->> -	 * function to take an early exit without doing anything.
->> -	 *
->> -	 * Otherwise, force a context switch after the CPU enables everything.
->> -	 */
->> -	rdp->exp_deferred_qs = true;
->> -	if (rcu_preempt_need_deferred_qs(t) &&
->> -	    (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
->> -	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))) {
->> -		rcu_preempt_deferred_qs(t);
->> -	} else {
->> -		set_tsk_need_resched(t);
->> -		set_preempt_need_resched();
->> -	}
->>   }
->>   
->>   /* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
->> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
->> index dbded2b8c792..c62631c79463 100644
->> --- a/kernel/rcu/tree_plugin.h
->> +++ b/kernel/rcu/tree_plugin.h
->> @@ -344,8 +344,6 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
->>   }
->>   
->>   /* Bias and limit values for ->rcu_read_lock_nesting. */
->> -#define RCU_NEST_BIAS INT_MAX
->> -#define RCU_NEST_NMAX (-INT_MAX / 2)
->>   #define RCU_NEST_PMAX (INT_MAX / 2)
->>   
->>   /*
->> @@ -373,21 +371,15 @@ void __rcu_read_unlock(void)
->>   {
->>   	struct task_struct *t = current;
->>   
->> -	if (t->rcu_read_lock_nesting != 1) {
->> -		--t->rcu_read_lock_nesting;
->> -	} else {
->> +	if (--t->rcu_read_lock_nesting == 0) {
->>   		barrier();  /* critical section before exit code. */
->> -		t->rcu_read_lock_nesting = -RCU_NEST_BIAS;
->> -		barrier();  /* assign before ->rcu_read_unlock_special load */
-> 
-> But if we take an interrupt here, and the interrupt handler contains
-> an RCU read-side critical section, don't we end up in the same hole
-> that resulted in this article when the corresponding rcu_read_unlock()
-> executes?  https://lwn.net/Articles/453002/
-> 
-> 
+In addition add the play_idle_precise() function getting a nanosec
+base latency constraint as parameter. The play_idle() function becomes
+a wrapper passing an U64_MAX to play_idle_precise().
 
-Hello, Paul
+Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/cpuidle/cpuidle.c | 10 +++++-----
+ include/linux/cpu.h       |  6 +++++-
+ include/linux/cpuidle.h   |  6 +++---
+ kernel/sched/idle.c       | 14 +++++++-------
+ 4 files changed, 20 insertions(+), 16 deletions(-)
 
-I'm replying the email of V1, which is relying on deferred_qs changes
-in [PATCH 07/11] (V1).
-([PATCH 04/11](V1) relies on it too as you pointed out)
-
-I hope I can answer the question wrt https://lwn.net/Articles/453002/
-maybe partially.
-
-With the help of deferred_qs mechanism and the special.b.deferred_qs
-bit, I HOPED rcu_read_unlock_special() can find if itself is
-risking in scheduler locks via special.b.deferred_qs bit.
-
---t->rcu_read_lock_nesting;
-//outmost rcu c.s, rcu_read_lock_nesting is 0. but special is not zero
-INTERRUPT
-  // the fallowing code will normally be in_interrupt()
-  // or NOT in_interrupt() when wakeup_softirqd() in invoke_softirq()
-  // or NOT in_interrupt() when preempt_shedule_irq()
-  // or other cases I missed.
-  scheduler_lock()
-  rcu_read_lock()
-  rcu_read_unlock()
-   // special has been set but with no special.b.deferred_qs
-   rcu_read_unlock_special()
-    raise_softirq_irqoff()
-     wake_up() when !in_interrupt() // dead lock
-
-preempt_shedule_irq() is guaranteed to clear rcu_read_unlock_special
-when rcu_read_lock_nesting = 0 before calling into scheduler locks.
-
-But, at least, what caused my hope to be failed was the case
-wakeup_softirqd() in invoke_softirq() (which was once protected by
-softirq in about 2 years between ec433f0c5152 and facd8b80c67a).
-I don't think it is hard to fix it if we keep using
-special.b.deferred_qs as this V1 series.
-
-Thanks
-Lai
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 44ae39f2b47a..62226fadc02d 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -100,19 +100,19 @@ static int find_deepest_state(struct cpuidle_driver *drv,
+ 
+ /**
+  * cpuidle_use_deepest_state - Set/clear governor override flag.
+- * @enable: New value of the flag.
++ * @latency_limit_ns: A latency limit constraint
+  *
+- * Set/unset the current CPU to use the deepest idle state (override governors
+- * going forward if set).
++ * Set/unset the current CPU to use the deepest idle state with the exit
++ * latency within @latency_limit_ns
+  */
+-void cpuidle_use_deepest_state(bool enable)
++void cpuidle_use_deepest_state(u64 latency_limit_ns)
+ {
+ 	struct cpuidle_device *dev;
+ 
+ 	preempt_disable();
+ 	dev = cpuidle_get_device();
+ 	if (dev)
+-		dev->use_deepest_state = enable;
++		dev->forced_idle_latency_limit_ns = latency_limit_ns;
+ 	preempt_enable();
+ }
+ 
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index d0633ebdaa9c..4c9694e209a5 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -179,7 +179,11 @@ void arch_cpu_idle_dead(void);
+ int cpu_report_state(int cpu);
+ int cpu_check_up_prepare(int cpu);
+ void cpu_set_state_online(int cpu);
+-void play_idle(unsigned long duration_us);
++void play_idle_precise(u64 duration_ns, u64 latency_ns);
++static inline void play_idle(unsigned long duration_us)
++{
++	play_idle_precise(duration_us * NSEC_PER_USEC, U64_MAX);
++}
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+ bool cpu_wait_death(unsigned int cpu, int seconds);
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index d23a3b1ddcf6..1f3f4dd01e48 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -83,7 +83,6 @@ struct cpuidle_driver_kobj;
+ struct cpuidle_device {
+ 	unsigned int		registered:1;
+ 	unsigned int		enabled:1;
+-	unsigned int		use_deepest_state:1;
+ 	unsigned int		poll_time_limit:1;
+ 	unsigned int		cpu;
+ 	ktime_t			next_hrtimer;
+@@ -91,6 +90,7 @@ struct cpuidle_device {
+ 	int			last_state_idx;
+ 	int			last_residency;
+ 	u64			poll_limit_ns;
++	u64			forced_idle_latency_limit_ns;
+ 	struct cpuidle_state_usage	states_usage[CPUIDLE_STATE_MAX];
+ 	struct cpuidle_state_kobj *kobjs[CPUIDLE_STATE_MAX];
+ 	struct cpuidle_driver_kobj *kobj_driver;
+@@ -210,7 +210,7 @@ extern int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+ 				      struct cpuidle_device *dev);
+ extern int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
+ 				struct cpuidle_device *dev);
+-extern void cpuidle_use_deepest_state(bool enable);
++extern void cpuidle_use_deepest_state(u64 latency_limit_ns);
+ #else
+ static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+ 					     struct cpuidle_device *dev)
+@@ -218,7 +218,7 @@ static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+ static inline int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
+ 				       struct cpuidle_device *dev)
+ {return -ENODEV; }
+-static inline void cpuidle_use_deepest_state(bool enable)
++static inline void cpuidle_use_deepest_state(u64 latency_limit_ns)
+ {
+ }
+ #endif
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index 8dad5aa600ea..0a817e907192 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -165,7 +165,7 @@ static void cpuidle_idle_call(void)
+ 	 * until a proper wakeup interrupt happens.
+ 	 */
+ 
+-	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
++	if (idle_should_enter_s2idle() || dev->forced_idle_latency_limit_ns) {
+ 		if (idle_should_enter_s2idle()) {
+ 			rcu_idle_enter();
+ 
+@@ -311,7 +311,7 @@ static enum hrtimer_restart idle_inject_timer_fn(struct hrtimer *timer)
+ 	return HRTIMER_NORESTART;
+ }
+ 
+-void play_idle(unsigned long duration_us)
++void play_idle_precise(u64 duration_ns, u64 latency_ns)
+ {
+ 	struct idle_timer it;
+ 
+@@ -323,29 +323,29 @@ void play_idle(unsigned long duration_us)
+ 	WARN_ON_ONCE(current->nr_cpus_allowed != 1);
+ 	WARN_ON_ONCE(!(current->flags & PF_KTHREAD));
+ 	WARN_ON_ONCE(!(current->flags & PF_NO_SETAFFINITY));
+-	WARN_ON_ONCE(!duration_us);
++	WARN_ON_ONCE(!duration_ns);
+ 
+ 	rcu_sleep_check();
+ 	preempt_disable();
+ 	current->flags |= PF_IDLE;
+-	cpuidle_use_deepest_state(true);
++	cpuidle_use_deepest_state(latency_ns);
+ 
+ 	it.done = 0;
+ 	hrtimer_init_on_stack(&it.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 	it.timer.function = idle_inject_timer_fn;
+-	hrtimer_start(&it.timer, ns_to_ktime(duration_us * NSEC_PER_USEC),
++	hrtimer_start(&it.timer, ns_to_ktime(duration_ns),
+ 		      HRTIMER_MODE_REL_PINNED);
+ 
+ 	while (!READ_ONCE(it.done))
+ 		do_idle();
+ 
+-	cpuidle_use_deepest_state(false);
++	cpuidle_use_deepest_state(0);
+ 	current->flags &= ~PF_IDLE;
+ 
+ 	preempt_fold_need_resched();
+ 	preempt_enable();
+ }
+-EXPORT_SYMBOL_GPL(play_idle);
++EXPORT_SYMBOL_GPL(play_idle_precise);
+ 
+ void cpu_startup_entry(enum cpuhp_state state)
+ {
+-- 
+2.17.1
 
