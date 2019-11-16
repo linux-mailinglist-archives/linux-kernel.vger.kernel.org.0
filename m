@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5138FEE62
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85EF9FEE64
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730720AbfKPPvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:51:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59546 "EHLO mail.kernel.org"
+        id S1730743AbfKPPvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:51:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730664AbfKPPvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:05 -0500
+        id S1730732AbfKPPvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:22 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4DB220891;
-        Sat, 16 Nov 2019 15:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB9D1214DE;
+        Sat, 16 Nov 2019 15:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919465;
-        bh=RLiTEN33ipYxT5RyWjY9r8DijsPzOFT9xk6mek4F8j8=;
+        s=default; t=1573919482;
+        bh=XP4W78k7tWdh+OxHKfg/hOgoXSYlnsAKcT0blXHT8RY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HqaYxggq+wvW3L/nTmP6xRkZ3xQnzciSiKckMXpMCUv+6taNduqpwojrI/t+zpZqU
-         4KN8vJ4dRgIkxAJfSe2Ma9DsVAPqvKa3dy9j6qVRqCQQs8bz8sx1Lij68iAsXZRleR
-         QiFiIP5EJgdXi1R3cYa+G4WRU+jNuWeHAqxmpX34=
+        b=MT4dV/5SC8c4lu8P478DZp95Zq04ym0CpVpv/9mwjTazcfLTbNOU88IDmQyqWFf5K
+         kiy/fe/dwhWs5EPEIcwgEbjr5cnpdZAEH1w/kjulK2hJN5YYmnn73pMcvzc492HkF/
+         NItIylfT38UO9skLh//Dx3W63N5Qmx6jhMmiqBjA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 02/99] printk: fix integer overflow in setup_log_buf()
-Date:   Sat, 16 Nov 2019 10:49:25 -0500
-Message-Id: <20191116155103.10971-2-sashal@kernel.org>
+Cc:     Wenwen Wang <wang6495@umn.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 13/99] misc: mic: fix a DMA pool free failure
+Date:   Sat, 16 Nov 2019 10:49:36 -0500
+Message-Id: <20191116155103.10971-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -43,59 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit d2130e82e9454304e9b91ba9da551b5989af8c27 ]
+[ Upstream commit 6b995f4eec34745f6cb20d66d5277611f0b3c3fa ]
 
-The way we calculate logbuf free space percentage overflows signed
-integer:
+In _scif_prog_signal(), the boolean variable 'x100' is used to indicate
+whether the MIC Coprocessor is X100. If 'x100' is true, the status
+descriptor will be used to write the value to the destination. Otherwise, a
+DMA pool will be allocated for this purpose. Specifically, if the DMA pool
+is allocated successfully, two memory addresses will be returned. One is
+for the CPU and the other is for the device to access the DMA pool. The
+former is stored to the variable 'status' and the latter is stored to the
+variable 'src'. After the allocation, the address in 'src' is saved to
+'status->src_dma_addr', which is actually in the DMA pool, and 'src' is
+then modified.
 
-	int free;
+Later on, if an error occurs, the execution flow will transfer to the label
+'dma_fail', which will check 'x100' and free up the allocated DMA pool if
+'x100' is false. The point here is that 'status->src_dma_addr' is used for
+freeing up the DMA pool. As mentioned before, 'status->src_dma_addr' is in
+the DMA pool. And thus, the device is able to modify this data. This can
+potentially cause failures when freeing up the DMA pool because of the
+modified device address.
 
-	free = __LOG_BUF_LEN - log_next_idx;
-	pr_info("early log buf free: %u(%u%%)\n",
-		free, (free * 100) / __LOG_BUF_LEN);
+This patch avoids the above issue by using the variable 'src' (with
+necessary calculation) to free up the DMA pool.
 
-We support LOG_BUF_LEN of up to 1<<25 bytes. Since setup_log_buf() is
-called during early init, logbuf is mostly empty, so
-
-	__LOG_BUF_LEN - log_next_idx
-
-is close to 1<<25. Thus when we multiply it by 100, we overflow signed
-integer value range: 100 is 2^6 + 2^5 + 2^2.
-
-Example, booting with LOG_BUF_LEN 1<<25 and log_buf_len=2G
-boot param:
-
-[    0.075317] log_buf_len: -2147483648 bytes
-[    0.075319] early log buf free: 33549896(-28%)
-
-Make "free" unsigned integer and use appropriate printk() specifier.
-
-Link: http://lkml.kernel.org/r/20181010113308.9337-1-sergey.senozhatsky@gmail.com
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 2 +-
+ drivers/misc/mic/scif/scif_fence.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 6607d77afe55a..63528399dc25d 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1044,7 +1044,7 @@ void __init setup_log_buf(int early)
- {
- 	unsigned long flags;
- 	char *new_log_buf;
--	int free;
-+	unsigned int free;
- 
- 	if (log_buf != __log_buf)
- 		return;
+diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
+index cac3bcc308a7e..7bb929f05d852 100644
+--- a/drivers/misc/mic/scif/scif_fence.c
++++ b/drivers/misc/mic/scif/scif_fence.c
+@@ -272,7 +272,7 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+ dma_fail:
+ 	if (!x100)
+ 		dma_pool_free(ep->remote_dev->signal_pool, status,
+-			      status->src_dma_addr);
++			      src - offsetof(struct scif_status, val));
+ alloc_fail:
+ 	return err;
+ }
 -- 
 2.20.1
 
