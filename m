@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C88FED0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:41:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 665C7FED0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:41:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfKPPlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:41:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44896 "EHLO mail.kernel.org"
+        id S1728027AbfKPPlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:41:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbfKPPlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:41:40 -0500
+        id S1728001AbfKPPlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:41:47 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C120320729;
-        Sat, 16 Nov 2019 15:41:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EB8720740;
+        Sat, 16 Nov 2019 15:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918900;
-        bh=1Y55KVJFBoohB1r9B+QbKqjxNBNey+IOHMAq3LWOavs=;
+        s=default; t=1573918906;
+        bh=XP4W78k7tWdh+OxHKfg/hOgoXSYlnsAKcT0blXHT8RY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0tcXMB9oYbRLNWlBoRLV2UYSFAToC8Um/wRjAlhO4VhIsqu4ZECeV7p/Jq90R0uXH
-         YMEvcMUkHSKwUtrXdTSDLKKv2AzZdylwXBkSXdQ29uAWdEfUjxlvG86wWxo7eJXxCD
-         hGz7N054Z3OVglDl5G1AavqHxXOFV7MM5L6lNsfk=
+        b=nYzMVJm2bfYsaUA6rgO7kyVIU+A8E0ivRSTG2/ahPCBOSAhNg/qUag1UWA/7WzuMP
+         0bv0FR5NX5oEK7vSh537IZFKU4Mu+EnMKW1vb5A/jjvi/wnCXvn6V8l7simAtILZTx
+         ZvKLRBhoAhV9Kx3tOaJBLB0SMKWPaGeHJgEUa1ic=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 028/237] Btrfs: fix alignment in declaration and prototype of btrfs_get_extent
-Date:   Sat, 16 Nov 2019 10:37:43 -0500
-Message-Id: <20191116154113.7417-28-sashal@kernel.org>
+Cc:     Wenwen Wang <wang6495@umn.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 031/237] misc: mic: fix a DMA pool free failure
+Date:   Sat, 16 Nov 2019 10:37:46 -0500
+Message-Id: <20191116154113.7417-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -42,59 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit de2c6615dcddf2af868c5cbd1db2e9e73b4beb58 ]
+[ Upstream commit 6b995f4eec34745f6cb20d66d5277611f0b3c3fa ]
 
-This fixes btrfs_get_extent to be consistent with our existing
-declaration style.
+In _scif_prog_signal(), the boolean variable 'x100' is used to indicate
+whether the MIC Coprocessor is X100. If 'x100' is true, the status
+descriptor will be used to write the value to the destination. Otherwise, a
+DMA pool will be allocated for this purpose. Specifically, if the DMA pool
+is allocated successfully, two memory addresses will be returned. One is
+for the CPU and the other is for the device to access the DMA pool. The
+former is stored to the variable 'status' and the latter is stored to the
+variable 'src'. After the allocation, the address in 'src' is saved to
+'status->src_dma_addr', which is actually in the DMA pool, and 'src' is
+then modified.
 
-Note: For the record, indentation styles that are accepted are both,
-aligning under the opening ( and tab or double tab indentation on the
-next line.  Preferrably not spliting the type or long expressions in the
-argument lists.
+Later on, if an error occurs, the execution flow will transfer to the label
+'dma_fail', which will check 'x100' and free up the allocated DMA pool if
+'x100' is false. The point here is that 'status->src_dma_addr' is used for
+freeing up the DMA pool. As mentioned before, 'status->src_dma_addr' is in
+the DMA pool. And thus, the device is able to modify this data. This can
+potentially cause failures when freeing up the DMA pool because of the
+modified device address.
 
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-[ add note ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+This patch avoids the above issue by using the variable 'src' (with
+necessary calculation) to free up the DMA pool.
+
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/ctree.h | 4 ++--
- fs/btrfs/inode.c | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/misc/mic/scif/scif_fence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index cc2d268e2cd7a..3a5a09e8e20e2 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3183,8 +3183,8 @@ struct inode *btrfs_iget_path(struct super_block *s, struct btrfs_key *location,
- struct inode *btrfs_iget(struct super_block *s, struct btrfs_key *location,
- 			 struct btrfs_root *root, int *was_new);
- struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
--		struct page *page, size_t pg_offset,
--		u64 start, u64 end, int create);
-+				    struct page *page, size_t pg_offset,
-+				    u64 start, u64 end, int create);
- int btrfs_update_inode(struct btrfs_trans_handle *trans,
- 			      struct btrfs_root *root,
- 			      struct inode *inode);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index f0f7bc5d2e4a0..62a7c6a88c3e8 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6862,9 +6862,9 @@ static noinline int uncompress_inline(struct btrfs_path *path,
-  * This also copies inline extents directly into the page.
-  */
- struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
--		struct page *page,
--	    size_t pg_offset, u64 start, u64 len,
--		int create)
-+				    struct page *page,
-+				    size_t pg_offset, u64 start, u64 len,
-+				    int create)
- {
- 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 	int ret;
+diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
+index cac3bcc308a7e..7bb929f05d852 100644
+--- a/drivers/misc/mic/scif/scif_fence.c
++++ b/drivers/misc/mic/scif/scif_fence.c
+@@ -272,7 +272,7 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+ dma_fail:
+ 	if (!x100)
+ 		dma_pool_free(ep->remote_dev->signal_pool, status,
+-			      status->src_dma_addr);
++			      src - offsetof(struct scif_status, val));
+ alloc_fail:
+ 	return err;
+ }
 -- 
 2.20.1
 
