@@ -2,133 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2D3FEAEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:28:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD8AFEAF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbfKPG2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 01:28:46 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33658 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfKPG2q (ORCPT
+        id S1726794AbfKPGbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 01:31:35 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28200 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726053AbfKPGbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 01:28:46 -0500
-Received: by mail-oi1-f195.google.com with SMTP id m193so10709825oig.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 22:28:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x6J0isZQHyJs2DrQydkqyktOVewrDtoAG6sLNljnc8o=;
-        b=ds/yTXh6/ej0deTlmg0Wf+HJq81afq++LbAIEYRM1Io96xJ1ODG3OqvHeBWHEo/T4z
-         VfTFsAUv3uuHun2bhemwzDi/b38W+LPrMfTK5Jp4QR5O1vp6FQkBjWuYX6DRVNMUVlpg
-         pGlhm2Ln8qOyjhYoMS7ObVBR+eOZ/ampFt04oQFB02vv3mbRm9Wp3grLqtgSXBgQD/ZI
-         33QsdPlRHlq/68ChvEMO7PgA8fCDWU3WG4RnVUqvlqjcY97h5D+vkvDi2obaO0dzz7db
-         RRev2gKBaWw/p8OYK3k/1s/tnj8k1wg0+55J3eeV+ck2KgFXOU31HceFgAUDxi+x4yMZ
-         33Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x6J0isZQHyJs2DrQydkqyktOVewrDtoAG6sLNljnc8o=;
-        b=Az+aFk3GD77KQpu1VvGiV/y4j7qFp86FdHc2TvxkPVm5NRf5a5PBYINGMlQqp5ORxQ
-         v4WSjm6S4LnTNGzQhPBx9qX2aOxBSYOpB19Wpo6VhnoYj1lI8C0+C3FMdnK6qoU1+omL
-         DeT3ndi/9/uLQTI3/6r1oxVeoB3LCvLrgn2xrHIT+LwL7K+pLagrwRaiUo1tZafLKzhE
-         1AyXXCYsldejG9vf7th5u+WLue38ppyYjSdl9cshvwTErQ1JuUvcKHZ93mhrUBMe5wTM
-         yS3h3pFbF/emQDVDCULdnb7/O6x1FtJz+xiGL7W0r6u2pXc7fNBiKk2F633zeWe0nrsV
-         EYjw==
-X-Gm-Message-State: APjAAAUxhBGVQHPGSwTwKoz9m6DxpfcSX9sPy1poplOaZLSpJJ17M0oE
-        jzq7gKIduaxmrgodFOK4bNzZCcDrUhSFlKJLR7ZmNQ==
-X-Google-Smtp-Source: APXvYqx5m4pdYig8DD+m1t7wvcy1mCcaITh+t2RzgZY7YOJ9ckjbLoiqINDaze7TlNWJVZuCzupzggJ79vL1ja/dT9w=
-X-Received: by 2002:aca:f1c5:: with SMTP id p188mr10735867oih.125.1573885725077;
- Fri, 15 Nov 2019 22:28:45 -0800 (PST)
+        Sat, 16 Nov 2019 01:31:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573885894;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=URLGBy0jbWCpZ5Oji1iU0vanCkzWQRPQdGmQYj3K+G0=;
+        b=IkSXVvRErlHQv1Nqo0YfjsDaqUZdgQGIYHtWBuE5t80W7feSii9UYOiBGapizv4rF6MfFv
+        d1SI8YMSm6R1QD63ThJNnAEjwgqUjH2U01mmdcKSGITOEuQ3wdG5gBjbt3VdsxeQr1yHQu
+        TUDM9xrOC9BHsiuV4TNf2kGwvtu8Vb8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-oMPLbFuQNrWyZmNUOJNcOA-1; Sat, 16 Nov 2019 01:31:31 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B82011005500;
+        Sat, 16 Nov 2019 06:31:29 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6AF54608D8;
+        Sat, 16 Nov 2019 06:31:12 +0000 (UTC)
+Date:   Sat, 16 Nov 2019 14:31:06 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Message-ID: <20191116063106.GA18194@ming.t460p>
+References: <20191114113153.GB4213@ming.t460p>
+ <20191114235415.GL4614@dread.disaster.area>
+ <20191115010824.GC4847@ming.t460p>
+ <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p>
+ <20191115234005.GO4614@dread.disaster.area>
 MIME-Version: 1.0
-References: <1573874106-23802-1-git-send-email-alex.shi@linux.alibaba.com> <1573874106-23802-2-git-send-email-alex.shi@linux.alibaba.com>
-In-Reply-To: <1573874106-23802-2-git-send-email-alex.shi@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 15 Nov 2019 22:28:34 -0800
-Message-ID: <CALvZod77568+TozRXpERDDap__jbj+oJBY8zD=UBd40XNJC2zg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/7] mm/lru: add per lruvec lock for memcg
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Tejun Heo <tj@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Arun KS <arunks@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191115234005.GO4614@dread.disaster.area>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: oMPLbFuQNrWyZmNUOJNcOA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 7:15 PM Alex Shi <alex.shi@linux.alibaba.com> wrote:
->
-> Currently memcg still use per node pgdat->lru_lock to guard its lruvec.
-> That causes some lru_lock contention in a high container density system.
->
-> If we can use per lruvec lock, that could relief much of the lru_lock
-> contention.
->
-> The later patches will replace the pgdat->lru_lock with lruvec->lru_lock
-> and show the performance benefit by benchmarks.
+On Sat, Nov 16, 2019 at 10:40:05AM +1100, Dave Chinner wrote:
+> On Fri, Nov 15, 2019 at 03:08:43PM +0800, Ming Lei wrote:
+> > On Fri, Nov 15, 2019 at 03:56:34PM +1100, Dave Chinner wrote:
+> > > On Fri, Nov 15, 2019 at 09:08:24AM +0800, Ming Lei wrote:
+> > I can reproduce the issue with 4k block size on another RH system, and
+> > the login info of that system has been shared to you in RH BZ.
+> >=20
+> > 1)
+> > sysctl kernel.sched_min_granularity_ns=3D10000000
+> > sysctl kernel.sched_wakeup_granularity_ns=3D15000000
+>=20
+> So, these settings definitely influence behaviour.
+>=20
+> If these are set to kernel defaults (4ms and 3ms each):
+>=20
+> sysctl kernel.sched_min_granularity_ns=3D4000000
+> sysctl kernel.sched_wakeup_granularity_ns=3D3000000
+>=20
+> The migration problem largely goes away - the fio task migration
+> event count goes from ~2,000 a run down to 200/run.
+>=20
+> That indicates that the migration trigger is likely load/timing
+> based. The analysis below is based on the 10/15ms numbers above,
+> because it makes it so much easier to reproduce.
 
-Merge this patch with actual usage. No need to have a separate patch.
+On another machine, './xfs_complete 512' may be migrated 11~12K/sec,
+which don't need to change the above two kernel sched defaults, however
+the fio io thread only takes 40% CPU.=20
 
->
-> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Wei Yang <richard.weiyang@gmail.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Arun KS <arunks@codeaurora.org>
-> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: cgroups@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  include/linux/mmzone.h | 2 ++
->  mm/mmzone.c            | 1 +
->  2 files changed, 3 insertions(+)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 07b784ffbb14..a13b8a602ee5 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -267,6 +267,8 @@ struct lruvec {
->         unsigned long                   refaults;
->         /* Various lruvec state flags (enum lruvec_flags) */
->         unsigned long                   flags;
-> +       /* per lruvec lru_lock for memcg */
-> +       spinlock_t                      lru_lock;
->  #ifdef CONFIG_MEMCG
->         struct pglist_data *pgdat;
->  #endif
-> diff --git a/mm/mmzone.c b/mm/mmzone.c
-> index 4686fdc23bb9..3750a90ed4a0 100644
-> --- a/mm/mmzone.c
-> +++ b/mm/mmzone.c
-> @@ -91,6 +91,7 @@ void lruvec_init(struct lruvec *lruvec)
->         enum lru_list lru;
->
->         memset(lruvec, 0, sizeof(struct lruvec));
-> +       spin_lock_init(&lruvec->lru_lock);
->
->         for_each_lru(lru)
->                 INIT_LIST_HEAD(&lruvec->lists[lru]);
-> --
-> 1.8.3.1
->
+'./xfs_complete 4k' on this machine, the fio IO CPU utilization is >=3D 98%=
+.
+
+
+Thanks,
+Ming
+
