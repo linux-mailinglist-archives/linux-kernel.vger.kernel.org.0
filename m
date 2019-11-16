@@ -2,211 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD19FF43F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D4EFF429
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:08:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbfKPRMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 12:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbfKPRME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 12:12:04 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9D2D21844;
-        Sat, 16 Nov 2019 17:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573924323;
-        bh=5b8Ufx8oh2X8ebi2bINVkqFdvDAre3XapyO1yYnh2U8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uMv8ocVa6IgjukUFeuqTxhGF9Ccgo/LBglKZ7E/vgc6OCIkMde0FvTd3rbOig+ZIF
-         2qQFMheldVNhbswTwOiJ4WOHgsGr+8rDUzsmdL87owaQu712IotaB8KajK+959YcVF
-         haIyfaahHy9zuutFDkWfQ6+WLkmhd8O9lo3zJpR0=
-Date:   Sat, 16 Nov 2019 17:06:19 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Beniamin Bia <beniamin.bia@analog.com>
-Cc:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <pmeerw@pmeerw.net>, <gregkh@linuxfoundation.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <biabeniamin@outlook.com>,
-        <knaack.h@gmx.de>, <robh+dt@kernel.org>,
-        Paul Cercueil <paul.cercueil@analog.com>
-Subject: Re: [PATCH v5 2/4] iio: adc: ad7091r5: Add scale and external VREF
- support
-Message-ID: <20191116170619.72710b94@archlinux>
-In-Reply-To: <20191115135723.12219-2-beniamin.bia@analog.com>
-References: <20191115135723.12219-1-beniamin.bia@analog.com>
-        <20191115135723.12219-2-beniamin.bia@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727852AbfKPRI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 12:08:56 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:39550 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727568AbfKPRIz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 12:08:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1573924132; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=H4fn2K8qNbR81iqS2OPnELmE3eh646O9s3d/5Chkcoo=;
+        b=GUnnAwXp5Msy6zoKocdrgp1NzW2BfJyvXJ0Usr23BxB4SWnoUgtB0/20CPCugjOvpv+fEC
+        iNBDZQ4+T0ww/FXSHcNcw6QDPaTn4oh4CACGwZR9lmOnwZcWOtdZmgCE8pOMsN1Zuskl1O
+        MGyNXN18X3jWcsl0MZVEbruXl3LyjWw=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     od@zcrc.me, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 1/4] dt-bindings: Document JZ47xx VPU auxiliary processor
+Date:   Sat, 16 Nov 2019 18:08:43 +0100
+Message-Id: <20191116170846.67220-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 15:57:21 +0200
-Beniamin Bia <beniamin.bia@analog.com> wrote:
+Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
+Ingenic is a second Xburst MIPS CPU very similar to the main core.
+This document describes the devicetree bindings for this auxiliary
+processor.
 
-> From: Paul Cercueil <paul.cercueil@analog.com>
-> 
-> The scale can now be obtained with the "in_voltage_scale" file.
-> By default, the scale returned corresponds to the internal VREF of 2.5V.
-> 
-> It is possible to use an external VREF (through the REFIN/REFOUT pin of
-> the chip), by passing a regulator to the driver. The scale will then be
-> calculated according to the voltage reported by the regulator.
-> 
-> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
-> Co-developed-by: Beniamin Bia <beniamin.bia@analog.com>
-> Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-Doesn't build.  However I've fixed it up and applied
-to the togreg branch of iio.git pushed out as testing so the
-build bots can run more tests.
+Notes:
+    v2: Update TCSM0 address in example
+    v3: Change node name to 'video-decoder'
 
-Please check the result.
+ .../bindings/remoteproc/ingenic,vpu.txt       | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
 
-Jonathan
-
-> ---
-> Changes in v5:
-> -check if error is -eprobe instead of eprobe
-> -one bracket aligned
-> 
->  drivers/iio/adc/ad7091r-base.c | 38 ++++++++++++++++++++++++++++++++++
->  drivers/iio/adc/ad7091r-base.h |  1 +
->  drivers/iio/adc/ad7091r5.c     |  5 +++++
->  3 files changed, 44 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/ad7091r-base.c b/drivers/iio/adc/ad7091r-base.c
-> index 854de7c654c2..58fcf1ff8c76 100644
-> --- a/drivers/iio/adc/ad7091r-base.c
-> +++ b/drivers/iio/adc/ad7091r-base.c
-> @@ -11,6 +11,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #include "ad7091r-base.h"
->  
-> @@ -42,6 +43,7 @@ enum ad7091r_mode {
->  struct ad7091r_state {
->  	struct device *dev;
->  	struct regmap *map;
-> +	struct regulator *vref;
->  	const struct ad7091r_chip_info *chip_info;
->  	enum ad7091r_mode mode;
->  	struct mutex lock; /*lock to prevent concurent reads */
-> @@ -141,6 +143,21 @@ static int ad7091r_read_raw(struct iio_dev *iio_dev,
->  		ret = IIO_VAL_INT;
->  		break;
->  
-> +	case IIO_CHAN_INFO_SCALE:
-> +		if (st->vref) {
-> +			ret = regulator_get_voltage(st->vref);
-> +			if (ret < 0)
-> +				goto unlock;
-> +
-> +			*val = ret / 1000;
-> +		} else {
-> +			*val = st->chip_info->vref_mV;
-> +		}
-> +
-> +		*val2 = chan->scan_type.realbits;
-> +		ret = IIO_VAL_FRACTIONAL_LOG2;
-> +		break;
-> +
->  	default:
->  		ret = -EINVAL;
->  		break;
-> @@ -183,6 +200,13 @@ static irqreturn_t ad7091r_event_handler(int irq, void *private)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void ad7091r_remove(void *data)
-> +{
-> +	struct ad7091r_state *st = data;
-> +
-> +	regulator_disable(st->vref);
-> +}
-> +
->  int ad7091r_probe(struct device *dev, const char *name,
->  		const struct ad7091r_chip_info *chip_info,
->  		struct regmap *map, int irq)
-> @@ -216,6 +240,20 @@ int ad7091r_probe(struct device *dev, const char *name,
->  			return ret;
->  	}
->  
-> +	st->vref = devm_regulator_get_optional(dev, "vref");
-> +	if (IS_ERR(st->vref)) {
-> +		if (PTR_ERR(st->reg) == -EPROBE_DEFER)
-
-I'm going to optimistically hope this was a last minute edit and
-you have tested this driver thoroughly.
-
-st->vref?
-
-> +			return -EPROBE_DEFER;
-> +		st->vref = NULL;
-> +	} else {
-> +		ret = regulator_enable(st->vref);
-> +		if (ret)
-> +			return ret;
-> +		ret = devm_add_action_or_reset(dev, ad7091r_remove, st);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	/* Use command mode by default to convert only desired channels*/
->  	ret = ad7091r_set_mode(st, AD7091R_MODE_COMMAND);
->  	if (ret)
-> diff --git a/drivers/iio/adc/ad7091r-base.h b/drivers/iio/adc/ad7091r-base.h
-> index b0b4fe01a681..509748aef9b1 100644
-> --- a/drivers/iio/adc/ad7091r-base.h
-> +++ b/drivers/iio/adc/ad7091r-base.h
-> @@ -14,6 +14,7 @@ struct ad7091r_state;
->  struct ad7091r_chip_info {
->  	unsigned int num_channels;
->  	const struct iio_chan_spec *channels;
-> +	unsigned int vref_mV;
->  };
->  
->  extern const struct regmap_config ad7091r_regmap_config;
-> diff --git a/drivers/iio/adc/ad7091r5.c b/drivers/iio/adc/ad7091r5.c
-> index 30ff0108a6ed..9665679c3ea6 100644
-> --- a/drivers/iio/adc/ad7091r5.c
-> +++ b/drivers/iio/adc/ad7091r5.c
-> @@ -35,10 +35,13 @@ static const struct iio_event_spec ad7091r5_events[] = {
->  #define AD7091R_CHANNEL(idx, bits, ev, num_ev) { \
->  	.type = IIO_VOLTAGE, \
->  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE), \
->  	.indexed = 1, \
->  	.channel = idx, \
->  	.event_spec = ev, \
->  	.num_event_specs = num_ev, \
-> +	.scan_type.storagebits = 16, \
-> +	.scan_type.realbits = bits, \
->  }
->  static const struct iio_chan_spec ad7091r5_channels_irq[] = {
->  	AD7091R_CHANNEL(0, 12, ad7091r5_events, ARRAY_SIZE(ad7091r5_events)),
-> @@ -57,11 +60,13 @@ static const struct iio_chan_spec ad7091r5_channels_noirq[] = {
->  static const struct ad7091r_chip_info ad7091r5_chip_info_irq = {
->  	.channels = ad7091r5_channels_irq,
->  	.num_channels = ARRAY_SIZE(ad7091r5_channels_irq),
-> +	.vref_mV = 2500,
->  };
->  
->  static const struct ad7091r_chip_info ad7091r5_chip_info_noirq = {
->  	.channels = ad7091r5_channels_noirq,
->  	.num_channels = ARRAY_SIZE(ad7091r5_channels_noirq),
-> +	.vref_mV = 2500,
->  };
->  
->  static int ad7091r5_i2c_probe(struct i2c_client *i2c,
+diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+new file mode 100644
+index 000000000000..54566e941869
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+@@ -0,0 +1,36 @@
++* Ingenic JZ47xx auxiliary processor
++
++Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from Ingenic
++is a second Xburst MIPS CPU very similar to the main core.
++This document describes the devicetree bindings for this auxiliary processor.
++
++Required properties:
++- compatible: Should be "ingenic,jz4770-vpu-rproc"
++- reg: Must contain the registers location and length for:
++  * the auxiliary processor,
++  * the Tightly Coupled Shared Memory 0 (TCSM0),
++  * the Tightly Coupled Shared Memory 1 (TCSM1),
++  * the shared SRAM.
++- reg-names: Must contain "aux", "tcsm0", "tcsm1", "sram".
++- clocks: Clock specifier for the AUX and VPU clocks.
++- clock-names: Must contain "aux", "vpu".
++- interrupts: Interrupt specifier for the VPU hardware block.
++
++Example:
++
++vpu: video-decoder@132a0000 {
++	compatible = "ingenic,jz4770-vpu-rproc";
++
++	reg = <0x132a0000 0x20 /* AUX */
++		   0x132b0000 0x4000 /* TCSM0 */
++		   0x132c0000 0xc000 /* TCSM1 */
++		   0x132f0000 0x7000 /* SRAM */
++	>;
++	reg-names = "aux", "tcsm0", "tcsm1", "sram";
++
++	clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
++	clock-names = "aux", "vpu";
++
++	interrupt-parent = <&cpuintc>;
++	interrupts = <3>;
++};
+-- 
+2.24.0
 
