@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77690FEDFA
+	by mail.lfdr.de (Postfix) with ESMTP id EBEF8FEDFB
 	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:48:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbfKPPsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:48:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54518 "EHLO mail.kernel.org"
+        id S1729940AbfKPPsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:48:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729774AbfKPPro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:47:44 -0500
+        id S1729853AbfKPPrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:47:55 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFE3B208E3;
-        Sat, 16 Nov 2019 15:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F7EE208C0;
+        Sat, 16 Nov 2019 15:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919264;
-        bh=wk9K6+R12aMkBHHoJ+8wPEfa30a10Re55114L6oEtzQ=;
+        s=default; t=1573919274;
+        bh=Fy1mQC6OBqM/+t1UI6JtqQ78tdA90l/4ZXB8fuX08j8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x+mhpQOs08cu0O4AUYN1jyGqurCQKKZnFBN5G3+pdNknS5VNqHlQJ33YNYOW5+vVs
-         UnpAQm9VNUhy/1V7+HGs63PGOfgPvHZFNHZw/e6Uflllcm2KxXMf68IWGOPDC5PLl4
-         nCv3zR/DREhbFa/2pPZ7ppCS3GavwS4qpPPIMEUo=
+        b=yMATsJMEY2Zofg4Du3MxHvDQYxpJaiInlpKal7c6EgIqc4d7ccxBlicSUjKuJyoxw
+         PoUeLUNK5iKecLH8VnGxfJ8DhfGbw18YhU124HNYfEagkv8t5LyYVsoMNZrkKNwbV/
+         aGUxricrzRGRA9ocg/Jz2ZNdPI585skNcTYUJ4uI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 015/150] mmc: mediatek: fix cannot receive new request when msdc_cmd_is_ready fail
-Date:   Sat, 16 Nov 2019 10:45:13 -0500
-Message-Id: <20191116154729.9573-15-sashal@kernel.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 023/150] pinctrl: sunxi: Fix a memory leak in 'sunxi_pinctrl_build_state()'
+Date:   Sat, 16 Nov 2019 10:45:21 -0500
+Message-Id: <20191116154729.9573-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -43,43 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chaotian Jing <chaotian.jing@mediatek.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit f38a9774ddde9d79b3487dd888edd8b8623552af ]
+[ Upstream commit a93a676b079144009f55fff2ab0e34c3b7258c8a ]
 
-when msdc_cmd_is_ready return fail, the req_timeout work has not been
-inited and cancel_delayed_work() will return false, then, the request
-return directly and never call mmc_request_done().
+If 'krealloc()' fails, 'pctl->functions' is set to NULL.
+We should instead use a temp variable in order to be able to free the
+previously allocated memeory, in case of OOM.
 
-so need call mod_delayed_work() before msdc_cmd_is_ready()
-
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/mtk-sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 267f7ab08420e..a2ac9938d9459 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -885,6 +885,7 @@ static void msdc_start_command(struct msdc_host *host,
- 	WARN_ON(host->cmd);
- 	host->cmd = cmd;
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 52edf3b5988d5..cc8b86a16da0d 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1039,6 +1039,7 @@ static int sunxi_pinctrl_add_function(struct sunxi_pinctrl *pctl,
+ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ {
+ 	struct sunxi_pinctrl *pctl = platform_get_drvdata(pdev);
++	void *ptr;
+ 	int i;
  
-+	mod_delayed_work(system_wq, &host->req_timeout, DAT_TIMEOUT);
- 	if (!msdc_cmd_is_ready(host, mrq, cmd))
- 		return;
+ 	/*
+@@ -1105,13 +1106,15 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 	}
  
-@@ -896,7 +897,6 @@ static void msdc_start_command(struct msdc_host *host,
+ 	/* And now allocated and fill the array for real */
+-	pctl->functions = krealloc(pctl->functions,
+-				   pctl->nfunctions * sizeof(*pctl->functions),
+-				   GFP_KERNEL);
+-	if (!pctl->functions) {
++	ptr = krealloc(pctl->functions,
++		       pctl->nfunctions * sizeof(*pctl->functions),
++		       GFP_KERNEL);
++	if (!ptr) {
+ 		kfree(pctl->functions);
++		pctl->functions = NULL;
+ 		return -ENOMEM;
+ 	}
++	pctl->functions = ptr;
  
- 	cmd->error = 0;
- 	rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
--	mod_delayed_work(system_wq, &host->req_timeout, DAT_TIMEOUT);
- 
- 	sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
- 	writel(cmd->arg, host->base + SDC_ARG);
+ 	for (i = 0; i < pctl->desc->npins; i++) {
+ 		const struct sunxi_desc_pin *pin = pctl->desc->pins + i;
 -- 
 2.20.1
 
