@@ -2,88 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D5FFEE33
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED363FEDD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:47:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbfKPPt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:49:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57602 "EHLO mail.kernel.org"
+        id S1729669AbfKPPrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:47:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729351AbfKPPtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:49:55 -0500
-Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728040AbfKPPqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:39 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67FAF20855;
-        Sat, 16 Nov 2019 15:49:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AEE9206C0;
+        Sat, 16 Nov 2019 15:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919394;
-        bh=UuqkYwaEdKSFRzNCtzmdbILIkT501RlWETeJr5f1rEk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tVtrZIUQpQWBm3ykj9M+/1W0gkczQ0z9vrhI3JRG8PbJkt4a3eVESesiWtqsKtMLe
-         +lZR5jqBG4Lh+sLFEdueV3XvR9fBjvdh9w0h9Aw1Um3OhFukziKj8A4UEpYDSJ3n7g
-         nGBLfIvaFKoTrOx3/Mj5UdefCP+xVTPwY61qkXKw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 099/150] hfsplus: fix return value of hfsplus_get_block()
-Date:   Sat, 16 Nov 2019 10:46:37 -0500
-Message-Id: <20191116154729.9573-99-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
-References: <20191116154729.9573-1-sashal@kernel.org>
+        s=default; t=1573919199;
+        bh=7GFp+EbyWmYurQDv+T49zggTrgHydUT8pa/zUfGkjr8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=vPhGJSFFQQ6w1PJw7x3ARlFXMiCLYq4f8jxbFTW43pIqkBVSKaCymtNTGymgrk0y7
+         fAMlubwbKF8YER2QP64Qqu6LELDfafQdrQx/6PkJE1nOBZJhKZmReLEbATg5BIqXGl
+         Gy3xg5V7pHMNxTAhzseJ4ns2QsOJSMoITtXQRBqk=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id DE05335227AD; Sat, 16 Nov 2019 07:46:38 -0800 (PST)
+Date:   Sat, 16 Nov 2019 07:46:38 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH V2 6/7] rcu: clear the special.b.need_qs in
+ rcu_note_context_switch()
+Message-ID: <20191116154638.GD2865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191102124559.1135-1-laijs@linux.alibaba.com>
+ <20191102124559.1135-7-laijs@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191102124559.1135-7-laijs@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+On Sat, Nov 02, 2019 at 12:45:58PM +0000, Lai Jiangshan wrote:
+> It is better to clear the special.b.need_qs when it is
+> replaced by special.b.blocked or it is really fulfill its
+> goal in rcu_preempt_deferred_qs_irqrestore().
+> 
+> It makes rcu_qs() easier to be understood, and also prepares for
+> the percpu rcu_preempt_depth patch, which reqires rcu_special
+> bits to be clearred in irq-disable context.
+> 
+> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
 
-[ Upstream commit 839c3a6a5e1fbc8542d581911b35b2cb5cd29304 ]
+This one is a (possible) optimization.
 
-Direct writes to empty inodes fail with EIO.  The generic direct-io code
-is in part to blame (a patch has been submitted as "direct-io: allow
-direct writes to empty inodes"), but hfsplus is worse affected than the
-other filesystems because the fallback to buffered I/O doesn't happen.
+Right now, when the CPU actually passes through the quiescent state,
+we clear this field.  The quiescent state is not reported until later.
+Waiting to clear it until later might cause extra unneeded quiescent-state
+work to happen.  But your point is that the current code might leave
+->rcu_read_unlock_special momentarily zero, causing possible trouble
+with the remainder of this series, right?
 
-The problem is the return value of hfsplus_get_block() when called with
-!create.  Change it to be more consistent with the other modules.
+Hmmm...
 
-Link: http://lkml.kernel.org/r/2cd1301404ec7cf1e39c8f11a01a4302f1460ad6.1539195310.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/hfsplus/extents.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The "right" way to do this would be to have another flag saying
+"quiescent state encountered but not yet reported".  This would keep
+->rcu_read_unlock_special non-zero throughout, and would avoid useless
+work looking for additional unneeded quiescent states.  Or perhaps have
+need_qs be zero for don't need, one for need, and two for have but not
+yet reported.
 
-diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
-index 284d7fb73e863..58f296bfd4380 100644
---- a/fs/hfsplus/extents.c
-+++ b/fs/hfsplus/extents.c
-@@ -237,7 +237,9 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
- 	ablock = iblock >> sbi->fs_shift;
- 
- 	if (iblock >= hip->fs_blocks) {
--		if (iblock > hip->fs_blocks || !create)
-+		if (!create)
-+			return 0;
-+		if (iblock > hip->fs_blocks)
- 			return -EIO;
- 		if (ablock >= hip->alloc_blocks) {
- 			res = hfsplus_file_extend(inode, false);
--- 
-2.20.1
+Thoughts?  Other approaches?
 
+							Thanx, Paul
+
+> ---
+>  kernel/rcu/tree_plugin.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index eb5906c55c8d..e16c3867d2ff 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -264,8 +264,6 @@ static void rcu_qs(void)
+>  				       __this_cpu_read(rcu_data.gp_seq),
+>  				       TPS("cpuqs"));
+>  		__this_cpu_write(rcu_data.cpu_no_qs.b.norm, false);
+> -		barrier(); /* Coordinate with rcu_flavor_sched_clock_irq(). */
+> -		WRITE_ONCE(current->rcu_read_unlock_special.b.need_qs, false);
+>  	}
+>  }
+>  
+> @@ -297,6 +295,7 @@ void rcu_note_context_switch(bool preempt)
+>  		/* Possibly blocking in an RCU read-side critical section. */
+>  		rnp = rdp->mynode;
+>  		raw_spin_lock_rcu_node(rnp);
+> +		t->rcu_read_unlock_special.b.need_qs = false;
+>  		t->rcu_read_unlock_special.b.blocked = true;
+>  		t->rcu_blocked_node = rnp;
+>  
+> -- 
+> 2.20.1
+> 
