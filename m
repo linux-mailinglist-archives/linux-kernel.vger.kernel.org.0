@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42CD6FF0CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D7DCFF0A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730937AbfKPQHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:07:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58318 "EHLO mail.kernel.org"
+        id S1730583AbfKPPuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:50:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730486AbfKPPuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:50:20 -0500
+        id S1729581AbfKPPuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:50:25 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AFCB21783;
-        Sat, 16 Nov 2019 15:50:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39ACA208A1;
+        Sat, 16 Nov 2019 15:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919419;
-        bh=ZdfIT4acldax/0aBpIDoPq29X7aqh95wXh2ik/TGRMs=;
+        s=default; t=1573919424;
+        bh=JFkH838InWF4Uk6kpUipLTfcZq+Or1Xb9dh4tiaBm7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gMlxn9gIUIyRYJ3Oc21pqsMJjn9Sq4KrfL/iJunzISbyRR/kAShXXaq029vnBLKAk
-         Qm6gNEYzIOFjq33TI9VSACyts/LYvS26BqwVmHZtnLfBzfNF9Ij5iALyzEUP9wjE0D
-         BfN33oKqYN6t63kyJaeu9pSwE3i/Ns8XkCQkDHsY=
+        b=tyIYieQF5HpazwYdveFlpukoOWmr2U7zTmOk/1bEWIzf7ipfwvAyhU8iVhuzGXeY0
+         0xiAwvEIYU4Y5OW+FB9QO+q/YxNDRQtyIZHyLSkjLxDrNfInsfdsEkyyevPuvHdlrx
+         EmrD68NC16Z1C9c2heNYn5JInFJWC80T76mVgspw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lior David <liord@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
+Cc:     Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 120/150] wil6210: fix locking in wmi_call
-Date:   Sat, 16 Nov 2019 10:46:58 -0500
-Message-Id: <20191116154729.9573-120-sashal@kernel.org>
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 123/150] brcmsmac: never log "tid x is not agg'able" by default
+Date:   Sat, 16 Nov 2019 10:47:01 -0500
+Message-Id: <20191116154729.9573-123-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -46,58 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lior David <liord@codeaurora.org>
+From: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
 
-[ Upstream commit dc57731dbd535880fe6ced31c229262c34df7d64 ]
+[ Upstream commit 96fca788e5788b7ea3b0050eb35a343637e0a465 ]
 
-Switch from spin_lock to spin_lock_irqsave, because
-wmi_ev_lock is used inside interrupt handler.
+This message greatly spams the log under heavy Tx of frames with BK access
+class which is especially true when operating as AP. It is also not informative
+as the "agg'ablity" of TIDs are set once and never change.
+Fix this by logging only in debug mode.
 
-Signed-off-by: Lior David <liord@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/wmi.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ .../net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c    | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
-index d63d7c3268018..798516f42f2f9 100644
---- a/drivers/net/wireless/ath/wil6210/wmi.c
-+++ b/drivers/net/wireless/ath/wil6210/wmi.c
-@@ -1002,15 +1002,16 @@ int wmi_call(struct wil6210_priv *wil, u16 cmdid, void *buf, u16 len,
- {
- 	int rc;
- 	unsigned long remain;
-+	ulong flags;
- 
- 	mutex_lock(&wil->wmi_mutex);
- 
--	spin_lock(&wil->wmi_ev_lock);
-+	spin_lock_irqsave(&wil->wmi_ev_lock, flags);
- 	wil->reply_id = reply_id;
- 	wil->reply_buf = reply;
- 	wil->reply_size = reply_size;
- 	reinit_completion(&wil->wmi_call);
--	spin_unlock(&wil->wmi_ev_lock);
-+	spin_unlock_irqrestore(&wil->wmi_ev_lock, flags);
- 
- 	rc = __wmi_send(wil, cmdid, buf, len);
- 	if (rc)
-@@ -1030,11 +1031,11 @@ int wmi_call(struct wil6210_priv *wil, u16 cmdid, void *buf, u16 len,
- 	}
- 
- out:
--	spin_lock(&wil->wmi_ev_lock);
-+	spin_lock_irqsave(&wil->wmi_ev_lock, flags);
- 	wil->reply_id = 0;
- 	wil->reply_buf = NULL;
- 	wil->reply_size = 0;
--	spin_unlock(&wil->wmi_ev_lock);
-+	spin_unlock_irqrestore(&wil->wmi_ev_lock, flags);
- 
- 	mutex_unlock(&wil->wmi_mutex);
- 
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
+index 257968fb3111f..66f1f41b13803 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
+@@ -846,8 +846,8 @@ brcms_ops_ampdu_action(struct ieee80211_hw *hw,
+ 		status = brcms_c_aggregatable(wl->wlc, tid);
+ 		spin_unlock_bh(&wl->lock);
+ 		if (!status) {
+-			brcms_err(wl->wlc->hw->d11core,
+-				  "START: tid %d is not agg\'able\n", tid);
++			brcms_dbg_ht(wl->wlc->hw->d11core,
++				     "START: tid %d is not agg\'able\n", tid);
+ 			return -EINVAL;
+ 		}
+ 		ieee80211_start_tx_ba_cb_irqsafe(vif, sta->addr, tid);
 -- 
 2.20.1
 
