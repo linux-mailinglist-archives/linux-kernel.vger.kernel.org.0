@@ -2,112 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED363FEDD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9D79FEE36
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbfKPPrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:47:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53128 "EHLO mail.kernel.org"
+        id S1730409AbfKPPuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:50:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbfKPPqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:39 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728865AbfKPPuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:50:00 -0500
+Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AEE9206C0;
-        Sat, 16 Nov 2019 15:46:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA2CF20729;
+        Sat, 16 Nov 2019 15:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919199;
-        bh=7GFp+EbyWmYurQDv+T49zggTrgHydUT8pa/zUfGkjr8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=vPhGJSFFQQ6w1PJw7x3ARlFXMiCLYq4f8jxbFTW43pIqkBVSKaCymtNTGymgrk0y7
-         fAMlubwbKF8YER2QP64Qqu6LELDfafQdrQx/6PkJE1nOBZJhKZmReLEbATg5BIqXGl
-         Gy3xg5V7pHMNxTAhzseJ4ns2QsOJSMoITtXQRBqk=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id DE05335227AD; Sat, 16 Nov 2019 07:46:38 -0800 (PST)
-Date:   Sat, 16 Nov 2019 07:46:38 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH V2 6/7] rcu: clear the special.b.need_qs in
- rcu_note_context_switch()
-Message-ID: <20191116154638.GD2865@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191102124559.1135-1-laijs@linux.alibaba.com>
- <20191102124559.1135-7-laijs@linux.alibaba.com>
+        s=default; t=1573919400;
+        bh=vf9NyO1jwL7+plQ/TeTCa2N+JhzY6AVedPGnUsDRKW0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HLC82lgocl46u1gvfADlHfxQkdbLY2x3GLl9cfTNQMyTT2kHm5P7pX3+2gG85D7lH
+         HCuVKrNs3bfkgGhjJarCA9WN5fML1hJQqh/Nr1+mwrhvdwexSFKHCIq0uHzh9Ag+CT
+         IWDiVg7f8mbZyLWEtZd5J4iqEj7YZ2HOOrQD4w0Y=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 102/150] hfs: update timestamp on truncate()
+Date:   Sat, 16 Nov 2019 10:46:40 -0500
+Message-Id: <20191116154729.9573-102-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
+References: <20191116154729.9573-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191102124559.1135-7-laijs@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 02, 2019 at 12:45:58PM +0000, Lai Jiangshan wrote:
-> It is better to clear the special.b.need_qs when it is
-> replaced by special.b.blocked or it is really fulfill its
-> goal in rcu_preempt_deferred_qs_irqrestore().
-> 
-> It makes rcu_qs() easier to be understood, and also prepares for
-> the percpu rcu_preempt_depth patch, which reqires rcu_special
-> bits to be clearred in irq-disable context.
-> 
-> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-This one is a (possible) optimization.
+[ Upstream commit 8cd3cb5061730af085a3f9890a3352f162b4e20c ]
 
-Right now, when the CPU actually passes through the quiescent state,
-we clear this field.  The quiescent state is not reported until later.
-Waiting to clear it until later might cause extra unneeded quiescent-state
-work to happen.  But your point is that the current code might leave
-->rcu_read_unlock_special momentarily zero, causing possible trouble
-with the remainder of this series, right?
+The vfs takes care of updating mtime on ftruncate(), but on truncate() it
+must be done by the module.
 
-Hmmm...
+Link: http://lkml.kernel.org/r/e1611eda2985b672ed2d8677350b4ad8c2d07e8a.1539316825.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/hfs/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The "right" way to do this would be to have another flag saying
-"quiescent state encountered but not yet reported".  This would keep
-->rcu_read_unlock_special non-zero throughout, and would avoid useless
-work looking for additional unneeded quiescent states.  Or perhaps have
-need_qs be zero for don't need, one for need, and two for have but not
-yet reported.
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 2538b49cc349e..350afd67bd69e 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -642,6 +642,8 @@ int hfs_inode_setattr(struct dentry *dentry, struct iattr * attr)
+ 
+ 		truncate_setsize(inode, attr->ia_size);
+ 		hfs_file_truncate(inode);
++		inode->i_atime = inode->i_mtime = inode->i_ctime =
++						  current_time(inode);
+ 	}
+ 
+ 	setattr_copy(inode, attr);
+-- 
+2.20.1
 
-Thoughts?  Other approaches?
-
-							Thanx, Paul
-
-> ---
->  kernel/rcu/tree_plugin.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index eb5906c55c8d..e16c3867d2ff 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -264,8 +264,6 @@ static void rcu_qs(void)
->  				       __this_cpu_read(rcu_data.gp_seq),
->  				       TPS("cpuqs"));
->  		__this_cpu_write(rcu_data.cpu_no_qs.b.norm, false);
-> -		barrier(); /* Coordinate with rcu_flavor_sched_clock_irq(). */
-> -		WRITE_ONCE(current->rcu_read_unlock_special.b.need_qs, false);
->  	}
->  }
->  
-> @@ -297,6 +295,7 @@ void rcu_note_context_switch(bool preempt)
->  		/* Possibly blocking in an RCU read-side critical section. */
->  		rnp = rdp->mynode;
->  		raw_spin_lock_rcu_node(rnp);
-> +		t->rcu_read_unlock_special.b.need_qs = false;
->  		t->rcu_read_unlock_special.b.blocked = true;
->  		t->rcu_blocked_node = rnp;
->  
-> -- 
-> 2.20.1
-> 
