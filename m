@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D92AAFF280
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7698FF23C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:17:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732048AbfKPQTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:19:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
+        id S1729448AbfKPPqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:46:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729306AbfKPPqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:09 -0500
+        id S1728592AbfKPPqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:10 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 275CF2086A;
-        Sat, 16 Nov 2019 15:46:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A4112083B;
+        Sat, 16 Nov 2019 15:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919168;
-        bh=iLeu/7+A59mHww5wMPQ7+f/gfyrQdTMOJFAQRguBkd0=;
+        s=default; t=1573919169;
+        bh=9LCI/pUJ619qOl/wn7bYyo2lDa06P71DoVqYJwBe8X0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GKnIuVN5+bvLWzD2MSCnXJpfOgeMH2FO6qQ/ZfW2zvmu3H1sq+c+0QyPugSJqgyVw
-         jOKcDOhWex0NbNfBv09PpiR1ESQHMY+a7qJHxpdhxkTDz4El9yKomOyS4FPPb5K+w8
-         jy5FZvTOFDGZaCbNo/MfySuLuC0KcNlHhLVQ5oyQ=
+        b=zTZr9xYNGgbNWFsO3FrBIWd8hxitd0JTSxp2ZvBhBl4EU4u7bz9mTLE1YES3Wwgqa
+         xK2rnfaKsj5CrGE5R+m1ZsmS/OhYsLuCoqD12JCUOJ0r2uYGFJp8Di9huLIYe2Zjp6
+         Xr+StaHp+hfS3r5P+jYOSE0EJ7vU5fsz3ixjZcA0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roman Gushchin <guro@fb.com>, Mike Galbraith <efault@gmx.de>,
-        Rik van Riel <riel@surriel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
+Cc:     Guozhonghua <guozhonghua@h3c.com>, Jan Kara <jack@suse.cz>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 178/237] mm: handle no memcg case in memcg_kmem_charge() properly
-Date:   Sat, 16 Nov 2019 10:40:13 -0500
-Message-Id: <20191116154113.7417-178-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 179/237] ocfs2: without quota support, avoid calling quota recovery
+Date:   Sat, 16 Nov 2019 10:40:14 -0500
+Message-Id: <20191116154113.7417-179-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -50,66 +49,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Guozhonghua <guozhonghua@h3c.com>
 
-[ Upstream commit e68599a3c3ad0f3171a7cb4e48aa6f9a69381902 ]
+[ Upstream commit 21158ca85b73ddd0088076a5209cfd040513a8b5 ]
 
-Mike Galbraith reported a regression caused by the commit 9b6f7e163cd0
-("mm: rework memcg kernel stack accounting") on a system with
-"cgroup_disable=memory" boot option: the system panics with the following
-stack trace:
+During one dead node's recovery by other node, quota recovery work will
+be queued.  We should avoid calling quota when it is not supported, so
+check the quota flags.
 
-  BUG: unable to handle kernel NULL pointer dereference at 00000000000000f8
-  PGD 0 P4D 0
-  Oops: 0002 [#1] PREEMPT SMP PTI
-  CPU: 0 PID: 1 Comm: systemd Not tainted 4.19.0-preempt+ #410
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180531_142017-buildhw-08.phx2.fed4
-  RIP: 0010:page_counter_try_charge+0x22/0xc0
-  Code: 41 5d c3 c3 0f 1f 40 00 0f 1f 44 00 00 48 85 ff 0f 84 a7 00 00 00 41 56 48 89 f8 49 89 fe 49
-  Call Trace:
-   try_charge+0xcb/0x780
-   memcg_kmem_charge_memcg+0x28/0x80
-   memcg_kmem_charge+0x8b/0x1d0
-   copy_process.part.41+0x1ca/0x2070
-   _do_fork+0xd7/0x3d0
-   do_syscall_64+0x5a/0x180
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The problem occurs because get_mem_cgroup_from_current() returns the NULL
-pointer if memory controller is disabled.  Let's check if this is a case
-at the beginning of memcg_kmem_charge() and just return 0 if
-mem_cgroup_disabled() returns true.  This is how we handle this case in
-many other places in the memory controller code.
-
-Link: http://lkml.kernel.org/r/20181029215123.17830-1-guro@fb.com
-Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Reported-by: Mike Galbraith <efault@gmx.de>
-Acked-by: Rik van Riel <riel@surriel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Shakeel Butt <shakeelb@google.com>
+Link: http://lkml.kernel.org/r/71604351584F6A4EBAE558C676F37CA401071AC9FB@H3CMLB12-EX.srv.huawei-3com.com
+Signed-off-by: guozhonghua <guozhonghua@h3c.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ocfs2/journal.c | 51 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 17 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e0f7b94a4e9bc..b3220d2102461 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2678,7 +2678,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
- 	struct mem_cgroup *memcg;
- 	int ret = 0;
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index c492cbb2410f6..babb0ec76d676 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -1379,15 +1379,23 @@ static int __ocfs2_recovery_thread(void *arg)
+ 	int rm_quota_used = 0, i;
+ 	struct ocfs2_quota_recovery *qrec;
  
--	if (memcg_kmem_bypass())
-+	if (mem_cgroup_disabled() || memcg_kmem_bypass())
- 		return 0;
++	/* Whether the quota supported. */
++	int quota_enabled = OCFS2_HAS_RO_COMPAT_FEATURE(osb->sb,
++			OCFS2_FEATURE_RO_COMPAT_USRQUOTA)
++		|| OCFS2_HAS_RO_COMPAT_FEATURE(osb->sb,
++			OCFS2_FEATURE_RO_COMPAT_GRPQUOTA);
++
+ 	status = ocfs2_wait_on_mount(osb);
+ 	if (status < 0) {
+ 		goto bail;
+ 	}
  
- 	memcg = get_mem_cgroup_from_current();
+-	rm_quota = kcalloc(osb->max_slots, sizeof(int), GFP_NOFS);
+-	if (!rm_quota) {
+-		status = -ENOMEM;
+-		goto bail;
++	if (quota_enabled) {
++		rm_quota = kcalloc(osb->max_slots, sizeof(int), GFP_NOFS);
++		if (!rm_quota) {
++			status = -ENOMEM;
++			goto bail;
++		}
+ 	}
+ restart:
+ 	status = ocfs2_super_lock(osb, 1);
+@@ -1423,9 +1431,14 @@ static int __ocfs2_recovery_thread(void *arg)
+ 		 * then quota usage would be out of sync until some node takes
+ 		 * the slot. So we remember which nodes need quota recovery
+ 		 * and when everything else is done, we recover quotas. */
+-		for (i = 0; i < rm_quota_used && rm_quota[i] != slot_num; i++);
+-		if (i == rm_quota_used)
+-			rm_quota[rm_quota_used++] = slot_num;
++		if (quota_enabled) {
++			for (i = 0; i < rm_quota_used
++					&& rm_quota[i] != slot_num; i++)
++				;
++
++			if (i == rm_quota_used)
++				rm_quota[rm_quota_used++] = slot_num;
++		}
+ 
+ 		status = ocfs2_recover_node(osb, node_num, slot_num);
+ skip_recovery:
+@@ -1453,16 +1466,19 @@ static int __ocfs2_recovery_thread(void *arg)
+ 	/* Now it is right time to recover quotas... We have to do this under
+ 	 * superblock lock so that no one can start using the slot (and crash)
+ 	 * before we recover it */
+-	for (i = 0; i < rm_quota_used; i++) {
+-		qrec = ocfs2_begin_quota_recovery(osb, rm_quota[i]);
+-		if (IS_ERR(qrec)) {
+-			status = PTR_ERR(qrec);
+-			mlog_errno(status);
+-			continue;
++	if (quota_enabled) {
++		for (i = 0; i < rm_quota_used; i++) {
++			qrec = ocfs2_begin_quota_recovery(osb, rm_quota[i]);
++			if (IS_ERR(qrec)) {
++				status = PTR_ERR(qrec);
++				mlog_errno(status);
++				continue;
++			}
++			ocfs2_queue_recovery_completion(osb->journal,
++					rm_quota[i],
++					NULL, NULL, qrec,
++					ORPHAN_NEED_TRUNCATE);
+ 		}
+-		ocfs2_queue_recovery_completion(osb->journal, rm_quota[i],
+-						NULL, NULL, qrec,
+-						ORPHAN_NEED_TRUNCATE);
+ 	}
+ 
+ 	ocfs2_super_unlock(osb, 1);
+@@ -1484,7 +1500,8 @@ static int __ocfs2_recovery_thread(void *arg)
+ 
+ 	mutex_unlock(&osb->recovery_lock);
+ 
+-	kfree(rm_quota);
++	if (quota_enabled)
++		kfree(rm_quota);
+ 
+ 	/* no one is callint kthread_stop() for us so the kthread() api
+ 	 * requires that we call do_exit().  And it isn't exported, but
 -- 
 2.20.1
 
