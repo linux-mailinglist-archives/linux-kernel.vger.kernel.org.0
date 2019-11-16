@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E622FEC17
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF8BFEC07
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:52:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfKPLw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 06:52:26 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45252 "EHLO
+        id S1727725AbfKPLvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 06:51:42 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:45284 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbfKPLva (ORCPT
+        with ESMTP id S1727586AbfKPLve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 06:51:30 -0500
+        Sat, 16 Nov 2019 06:51:34 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVwbu-00029U-Qg; Sat, 16 Nov 2019 12:51:26 +0100
+        id 1iVwby-0002Bb-Bf; Sat, 16 Nov 2019 12:51:30 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7CDC91C1905;
-        Sat, 16 Nov 2019 12:51:23 +0100 (CET)
-Date:   Sat, 16 Nov 2019 11:51:23 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1572A1C190A;
+        Sat, 16 Nov 2019 12:51:24 +0100 (CET)
+Date:   Sat, 16 Nov 2019 11:51:24 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/iopl] x86/tss: Move I/O bitmap data into a seperate struct
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+Subject: [tip: x86/iopl] x86/tss: Fix and move VMX BUILD_BUG_ON()
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157390508347.12247.16150961072567277571.tip-bot2@tip-bot2>
+Message-ID: <157390508404.12247.9112539095572004762.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,142 +47,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/iopl branch of tip:
 
-Commit-ID:     f5848e5fd2f813c3a8009a642dfbcf635287c199
-Gitweb:        https://git.kernel.org/tip/f5848e5fd2f813c3a8009a642dfbcf635287c199
+Commit-ID:     6b546e1c9ad2a25f874f8bc6077d0f55f9446414
+Gitweb:        https://git.kernel.org/tip/6b546e1c9ad2a25f874f8bc6077d0f55f9446414
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 12 Nov 2019 18:45:29 +01:00
+AuthorDate:    Mon, 11 Nov 2019 23:03:18 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 16 Nov 2019 11:24:01 +01:00
+CommitterDate: Sat, 16 Nov 2019 11:24:00 +01:00
 
-x86/tss: Move I/O bitmap data into a seperate struct
+x86/tss: Fix and move VMX BUILD_BUG_ON()
 
-Move the non hardware portion of I/O bitmap data into a seperate struct for
-readability sake.
+The BUILD_BUG_ON(IO_BITMAP_OFFSET - 1 == 0x67) in the VMX code is bogus in
+two aspects:
 
-Originally-by: Ingo Molnar <mingo@kernel.org>
+1) This wants to be in generic x86 code simply to catch issues even when
+   VMX is disabled in Kconfig.
+
+2) The IO_BITMAP_OFFSET is not the right thing to check because it makes
+   asssumptions about the layout of tss_struct. Nothing requires that the
+   I/O bitmap is placed right after x86_tss, which is the hardware mandated
+   tss structure. It pointlessly makes restrictions on the struct
+   tss_struct layout.
+
+The proper thing to check is:
+
+    - Offset of x86_tss in tss_struct is 0
+    - Size of x86_tss == 0x68
+
+Move it to the other build time TSS checks and make it do the right thing.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/include/asm/processor.h | 35 ++++++++++++++++++-------------
- arch/x86/kernel/cpu/common.c     |  4 ++--
- arch/x86/kernel/ioport.c         |  4 ++--
- arch/x86/kernel/process.c        |  6 ++---
- 4 files changed, 28 insertions(+), 21 deletions(-)
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Acked-by: Andy Lutomirski <luto@kernel.org>
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 6d0059c..cd7cd7d 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -328,11 +328,11 @@ struct x86_hw_tss {
-  * IO-bitmap sizes:
-  */
- #define IO_BITMAP_BITS			65536
--#define IO_BITMAP_BYTES			(IO_BITMAP_BITS/8)
--#define IO_BITMAP_LONGS			(IO_BITMAP_BYTES/sizeof(long))
-+#define IO_BITMAP_BYTES			(IO_BITMAP_BITS / BITS_PER_BYTE)
-+#define IO_BITMAP_LONGS			(IO_BITMAP_BYTES / sizeof(long))
+---
+ arch/x86/kvm/vmx/vmx.c       | 8 --------
+ arch/x86/mm/cpu_entry_area.c | 8 ++++++++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 5d21a4a..311fd48 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1338,14 +1338,6 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
+ 			    (unsigned long)&get_cpu_entry_area(cpu)->tss.x86_tss);
+ 		vmcs_writel(HOST_GDTR_BASE, (unsigned long)gdt);   /* 22.2.4 */
  
--#define IO_BITMAP_OFFSET_VALID				\
--	(offsetof(struct tss_struct, io_bitmap) -	\
-+#define IO_BITMAP_OFFSET_VALID					\
-+	(offsetof(struct tss_struct, io_bitmap.bitmap) -	\
- 	 offsetof(struct tss_struct, x86_tss))
- 
- /*
-@@ -356,14 +356,10 @@ struct entry_stack_page {
- 	struct entry_stack stack;
- } __aligned(PAGE_SIZE);
- 
--struct tss_struct {
--	/*
--	 * The fixed hardware portion.  This must not cross a page boundary
--	 * at risk of violating the SDM's advice and potentially triggering
--	 * errata.
--	 */
--	struct x86_hw_tss	x86_tss;
+-		/*
+-		 * VM exits change the host TR limit to 0x67 after a VM
+-		 * exit.  This is okay, since 0x67 covers everything except
+-		 * the IO bitmap and have have code to handle the IO bitmap
+-		 * being lost after a VM exit.
+-		 */
+-		BUILD_BUG_ON(IO_BITMAP_OFFSET - 1 != 0x67);
 -
-+/*
-+ * All IO bitmap related data stored in the TSS:
-+ */
-+struct x86_io_bitmap {
- 	/*
- 	 * Store the dirty size of the last io bitmap offender. The next
- 	 * one will have to do the cleanup as the switch out to a non io
-@@ -371,7 +367,7 @@ struct tss_struct {
- 	 * outside of the TSS limit. So for sane tasks there is no need to
- 	 * actually touch the io_bitmap at all.
- 	 */
--	unsigned int		io_bitmap_prev_max;
-+	unsigned int		prev_max;
+ 		rdmsrl(MSR_IA32_SYSENTER_ESP, sysenter_esp);
+ 		vmcs_writel(HOST_IA32_SYSENTER_ESP, sysenter_esp); /* 22.2.3 */
  
- 	/*
- 	 * The extra 1 is there because the CPU will access an
-@@ -379,7 +375,18 @@ struct tss_struct {
- 	 * bitmap. The extra byte must be all 1 bits, and must
- 	 * be within the limit.
- 	 */
--	unsigned long		io_bitmap[IO_BITMAP_LONGS + 1];
-+	unsigned long		bitmap[IO_BITMAP_LONGS + 1];
-+};
-+
-+struct tss_struct {
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index 752ad11..2c1d422 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -161,6 +161,14 @@ static void __init setup_cpu_entry_area(unsigned int cpu)
+ 	BUILD_BUG_ON((offsetof(struct tss_struct, x86_tss) ^
+ 		      offsetofend(struct tss_struct, x86_tss)) & PAGE_MASK);
+ 	BUILD_BUG_ON(sizeof(struct tss_struct) % PAGE_SIZE != 0);
 +	/*
-+	 * The fixed hardware portion.  This must not cross a page boundary
-+	 * at risk of violating the SDM's advice and potentially triggering
-+	 * errata.
++	 * VMX changes the host TR limit to 0x67 after a VM exit. This is
++	 * okay, since 0x67 covers the size of struct x86_hw_tss. Make sure
++	 * that this is correct.
 +	 */
-+	struct x86_hw_tss	x86_tss;
++	BUILD_BUG_ON(offsetof(struct tss_struct, x86_tss) != 0);
++	BUILD_BUG_ON(sizeof(struct x86_hw_tss) != 0x68);
 +
-+	struct x86_io_bitmap	io_bitmap;
- } __aligned(PAGE_SIZE);
+ 	cea_map_percpu_pages(&cea->tss, &per_cpu(cpu_tss_rw, cpu),
+ 			     sizeof(struct tss_struct) / PAGE_SIZE, tss_prot);
  
- DECLARE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw);
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8c1000a..3aee167 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1861,8 +1861,8 @@ void cpu_init(void)
- 	/* Initialize the TSS. */
- 	tss_setup_ist(tss);
- 	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
--	tss->io_bitmap_prev_max = 0;
--	memset(tss->io_bitmap, 0xff, sizeof(tss->io_bitmap));
-+	tss->io_bitmap.prev_max = 0;
-+	memset(tss->io_bitmap.bitmap, 0xff, sizeof(tss->io_bitmap.bitmap));
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
- 
- 	load_TR_desc();
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index eed218a..80d99bb 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -81,9 +81,9 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
- 
- 	/* Update the TSS */
- 	tss = this_cpu_ptr(&cpu_tss_rw);
--	memcpy(tss->io_bitmap, t->io_bitmap_ptr, bytes_updated);
-+	memcpy(tss->io_bitmap.bitmap, t->io_bitmap_ptr, bytes_updated);
- 	/* Store the new end of the zero bits */
--	tss->io_bitmap_prev_max = bytes;
-+	tss->io_bitmap.prev_max = bytes;
- 	/* Make the bitmap base in the TSS valid */
- 	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
- 	/* Make sure the TSS limit covers the I/O bitmap. */
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 2444fe2..35f1c80 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -374,11 +374,11 @@ static inline void switch_to_bitmap(struct thread_struct *next,
- 		 * bits permitted, then the copy needs to cover those as
- 		 * well so they get turned off.
- 		 */
--		memcpy(tss->io_bitmap, next->io_bitmap_ptr,
--		       max(tss->io_bitmap_prev_max, next->io_bitmap_max));
-+		memcpy(tss->io_bitmap.bitmap, next->io_bitmap_ptr,
-+		       max(tss->io_bitmap.prev_max, next->io_bitmap_max));
- 
- 		/* Store the new max and set io_bitmap_base valid */
--		tss->io_bitmap_prev_max = next->io_bitmap_max;
-+		tss->io_bitmap.prev_max = next->io_bitmap_max;
- 		tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
- 
- 		/*
