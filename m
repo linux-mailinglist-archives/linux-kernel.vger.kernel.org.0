@@ -2,91 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14679FEAFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:45:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D1EBFEAFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 07:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfKPGpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 01:45:52 -0500
-Received: from smtprelay0209.hostedemail.com ([216.40.44.209]:48953 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726814AbfKPGpw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 01:45:52 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 9DED6181D3417;
-        Sat, 16 Nov 2019 06:45:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3874:4250:4321:4823:5007:6119:7576:7903:8957:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21099:21627:21740:30054:30083:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: wall56_6cf4312ecd835
-X-Filterd-Recvd-Size: 2631
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 16 Nov 2019 06:45:48 +0000 (UTC)
-Message-ID: <3fd995ebb9ec87b202942fa1f000755c2d3cc4cb.camel@perches.com>
-Subject: Re: [PATCH] staging: rtl8192u: fix indentation issue
-From:   Joe Perches <joe@perches.com>
-To:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 15 Nov 2019 22:45:29 -0800
-In-Reply-To: <20191114095430.132120-1-colin.king@canonical.com>
-References: <20191114095430.132120-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1726752AbfKPGoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 01:44:23 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60154 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726154AbfKPGoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 01:44:22 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 98ECDBF089C18B1D5264;
+        Sat, 16 Nov 2019 14:44:18 +0800 (CST)
+Received: from localhost.localdomain (10.90.53.225) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 16 Nov 2019 14:44:09 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH] crypto: essiv: remove redundant null pointer check before kfree
+Date:   Sat, 16 Nov 2019 14:51:00 +0800
+Message-ID: <1573887060-100725-1-git-send-email-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-11-14 at 09:54 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a block of statements that are indented
-> too deeply, remove the extraneous tabs.
-[]
-> diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-[]
-> @@ -169,19 +169,20 @@ static void cmdpkt_beacontimerinterrupt_819xusb(struct net_device *dev)
->  {
->  	struct r8192_priv *priv = ieee80211_priv(dev);
->  	u16 tx_rate;
-> -		/* 87B have to S/W beacon for DTM encryption_cmn. */
-> -		if (priv->ieee80211->current_network.mode == IEEE_A ||
-> -		    priv->ieee80211->current_network.mode == IEEE_N_5G ||
-> -		    (priv->ieee80211->current_network.mode == IEEE_N_24G &&
-> -		     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
-> -			tx_rate = 60;
-> -			DMESG("send beacon frame  tx rate is 6Mbpm\n");
-> -		} else {
-> -			tx_rate = 10;
-> -			DMESG("send beacon frame  tx rate is 1Mbpm\n");
-> -		}
->  
-> -		rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
-> +	/* 87B have to S/W beacon for DTM encryption_cmn. */
-> +	if (priv->ieee80211->current_network.mode == IEEE_A ||
-> +	    priv->ieee80211->current_network.mode == IEEE_N_5G ||
-> +	    (priv->ieee80211->current_network.mode == IEEE_N_24G &&
-> +	     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
-> +		tx_rate = 60;
-> +		DMESG("send beacon frame  tx rate is 6Mbpm\n");
-> +	} else {
-> +		tx_rate = 10;
-> +		DMESG("send beacon frame  tx rate is 1Mbpm\n");
-> +	}
-> +
-> +	rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
+kfree has taken null pointer check into account. so it is safe to
+remove the unnecessary check.
 
-This function might as well be deleted instead as
-rtl819xusb_beacon_tx is a noop function in
-drivers/staging/rtl8192u/r8192U_core.c
+Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+---
+ crypto/essiv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-void rtl819xusb_beacon_tx(struct net_device *dev, u16  tx_rate)
-{
-}
-
+diff --git a/crypto/essiv.c b/crypto/essiv.c
+index efea5af..75d810d 100644
+--- a/crypto/essiv.c
++++ b/crypto/essiv.c
+@@ -188,8 +188,7 @@ static void essiv_aead_done(struct crypto_async_request *areq, int err)
+ 	struct aead_request *req = areq->data;
+ 	struct essiv_aead_request_ctx *rctx = aead_request_ctx(req);
+ 
+-	if (rctx->assoc)
+-		kfree(rctx->assoc);
++	kfree(rctx->assoc);
+ 	aead_request_complete(req, err);
+ }
+ 
+-- 
+2.7.4
 
