@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43615FEDC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B421AFEDCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:47:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbfKPPqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:46:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52636 "EHLO mail.kernel.org"
+        id S1728496AbfKPPq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:46:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728698AbfKPPqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:18 -0500
+        id S1729358AbfKPPqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:23 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ABA620857;
-        Sat, 16 Nov 2019 15:46:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E28F4207FA;
+        Sat, 16 Nov 2019 15:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919177;
-        bh=KG7jFFleSrAXnKXJdxb/7eBupZkKjYHi6r78Y7FcSD0=;
+        s=default; t=1573919183;
+        bh=RFeDsKAaoKwlp4/tSmQK0sxDKUceFFliSMPVIObqmk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bbv51ljuPkk7PaiSEd1cr5M2cr8B4iDUFBpvaBP38ZEV/ncpFc1VryZDvh2eU9unT
-         6eC+8tSeEpSqarDWHMP183dR41/SC249ZuuhCPDPs6/HIFKBD9YuXo8ym/lcwU6fvZ
-         YN2sK0y0QeQ3Hk1r1ViP0L3t9RDIQ/CPU+33s1HI=
+        b=JiXUAvgmoWkSYjqNBGKMI1i5Y5ouvx5XB10UEoAnMToRtmxxazVJEJb3leDwY+hMX
+         cPQqafRlNd/LGShMw9iJj+sEYsHCKxzkCdTZxD7IZsg8Mc8XbYqRM6L+RHzJJSeT7w
+         5To9CE1jLcrCj7dRiXuZOVdApvmLz4v56Lxi0JpI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+Cc:     Andrei Vagin <avagin@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        dev@openvswitch.org
-Subject: [PATCH AUTOSEL 4.19 186/237] openvswitch: fix linking without CONFIG_NF_CONNTRACK_LABELS
-Date:   Sat, 16 Nov 2019 10:40:21 -0500
-Message-Id: <20191116154113.7417-186-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 191/237] sock_diag: fix autoloading of the raw_diag module
+Date:   Sat, 16 Nov 2019 10:40:26 -0500
+Message-Id: <20191116154113.7417-191-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -44,41 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Andrei Vagin <avagin@gmail.com>
 
-[ Upstream commit a277d516de5f498c91d91189717ef7e01102ad27 ]
+[ Upstream commit c34c1287778b080ed692c0a46a8e345206cc29e6 ]
 
-When CONFIG_CC_OPTIMIZE_FOR_DEBUGGING is enabled, the compiler
-fails to optimize out a dead code path, which leads to a link failure:
+IPPROTO_RAW isn't registred as an inet protocol, so
+inet_protos[protocol] is always NULL for it.
 
-net/openvswitch/conntrack.o: In function `ovs_ct_set_labels':
-conntrack.c:(.text+0x2e60): undefined reference to `nf_connlabels_replace'
-
-In this configuration, we can take a shortcut, and completely
-remove the contrack label code. This may also help the regular
-optimization.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Xin Long <lucien.xin@gmail.com>
+Fixes: bf2ae2e4bf93 ("sock_diag: request _diag module only when the family or proto has been registered")
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/openvswitch/conntrack.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/core/sock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/openvswitch/conntrack.c b/net/openvswitch/conntrack.c
-index 35ae64cbef33f..46aa1aa51db41 100644
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -1199,7 +1199,8 @@ static int ovs_ct_commit(struct net *net, struct sw_flow_key *key,
- 					 &info->labels.mask);
- 		if (err)
- 			return err;
--	} else if (labels_nonzero(&info->labels.mask)) {
-+	} else if (IS_ENABLED(CONFIG_NF_CONNTRACK_LABELS) &&
-+		   labels_nonzero(&info->labels.mask)) {
- 		err = ovs_ct_set_labels(ct, key, &info->labels.value,
- 					&info->labels.mask);
- 		if (err)
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 6c11078217769..ba4f843cdd1d1 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -3347,6 +3347,7 @@ int sock_load_diag_module(int family, int protocol)
+ 
+ #ifdef CONFIG_INET
+ 	if (family == AF_INET &&
++	    protocol != IPPROTO_RAW &&
+ 	    !rcu_access_pointer(inet_protos[protocol]))
+ 		return -ENOENT;
+ #endif
 -- 
 2.20.1
 
