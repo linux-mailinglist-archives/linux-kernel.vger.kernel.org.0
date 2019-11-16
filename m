@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1056FF0E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:08:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DC08FF0DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbfKPQIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:08:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58160 "EHLO mail.kernel.org"
+        id S1731815AbfKPQIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:08:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbfKPPuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:50:13 -0500
+        id S1729534AbfKPPuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:50:16 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E83F20885;
-        Sat, 16 Nov 2019 15:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4509A2168B;
+        Sat, 16 Nov 2019 15:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919413;
-        bh=Z5a/og1bx1sz2Y6k8bJubC1q/duzlsbMbgSblkYn4a0=;
+        s=default; t=1573919415;
+        bh=IM1t6g1nMjKWhDLnyHsa0pI2DuK8mSYSBKumetio6Ws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lbPktFAmpuUe83nz4+NFfQFO/NGR1hJbplpycNwMIKiSYMUr/dmEZgMQ3kR2/uLsl
-         wf6MVdtb38kV/Rt6IVtktEawraajOhbf3e2EdWKY1GYV82vv6MLQ4/ZqMZF9JN6L4U
-         Q8uXvK/fSvLEdwLPDxU1MmeLFokYplRoQ5J/4pA0=
+        b=eLEJez6CgxCJj84+RH5Kp2aHhRuLXBF1w0iUtkq0RdL9gpD75P53q0sZoS/y4vLsH
+         90HyMNzuJsoCR+Gpp18oQnVcsbghVUi/QQebQl5d67I8IsgHGFCPxMwiEniMRWpq9m
+         PwhPeZHeAqoLwT0ySIfhjdHz0whpVsq7OBjv56T4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Larry Chen <lchen@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 112/150] ocfs2: fix clusters leak in ocfs2_defrag_extent()
-Date:   Sat, 16 Nov 2019 10:46:50 -0500
-Message-Id: <20191116154729.9573-112-sashal@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 114/150] sched/topology: Fix off by one bug
+Date:   Sat, 16 Nov 2019 10:46:52 -0500
+Message-Id: <20191116154729.9573-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -49,82 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Chen <lchen@suse.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 6194ae4242dec0c9d604bc05df83aa9260a899e4 ]
+[ Upstream commit 993f0b0510dad98b4e6e39506834dab0d13fd539 ]
 
-ocfs2_defrag_extent() might leak allocated clusters.  When the file
-system has insufficient space, the number of claimed clusters might be
-less than the caller wants.  If that happens, the original code might
-directly commit the transaction without returning clusters.
+With the addition of the NUMA identity level, we increased @level by
+one and will run off the end of the array in the distance sort loop.
 
-This patch is based on code in ocfs2_add_clusters_in_btree().
-
-[akpm@linux-foundation.org: include localalloc.h, reduce scope of data_ac]
-Link: http://lkml.kernel.org/r/20180904041621.16874-3-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixed: 051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/move_extents.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ kernel/sched/topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index f55f82ca34250..1565dd8e8856e 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -25,6 +25,7 @@
- #include "ocfs2_ioctl.h"
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 9dcd80ed9d4c1..867d173dab482 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1347,7 +1347,7 @@ void sched_init_numa(void)
+ 	int level = 0;
+ 	int i, j, k;
  
- #include "alloc.h"
-+#include "localalloc.h"
- #include "aops.h"
- #include "dlmglue.h"
- #include "extent_map.h"
-@@ -222,6 +223,7 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 	struct ocfs2_refcount_tree *ref_tree = NULL;
- 	u32 new_phys_cpos, new_len;
- 	u64 phys_blkno = ocfs2_clusters_to_blocks(inode->i_sb, phys_cpos);
-+	int need_free = 0;
+-	sched_domains_numa_distance = kzalloc(sizeof(int) * nr_node_ids, GFP_KERNEL);
++	sched_domains_numa_distance = kzalloc(sizeof(int) * (nr_node_ids + 1), GFP_KERNEL);
+ 	if (!sched_domains_numa_distance)
+ 		return;
  
- 	if ((ext_flags & OCFS2_EXT_REFCOUNTED) && *len) {
- 		BUG_ON(!ocfs2_is_refcount_inode(inode));
-@@ -312,6 +314,7 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		if (!partial) {
- 			context->range->me_flags &= ~OCFS2_MOVE_EXT_FL_COMPLETE;
- 			ret = -ENOSPC;
-+			need_free = 1;
- 			goto out_commit;
- 		}
- 	}
-@@ -336,6 +339,20 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		mlog_errno(ret);
- 
- out_commit:
-+	if (need_free && context->data_ac) {
-+		struct ocfs2_alloc_context *data_ac = context->data_ac;
-+
-+		if (context->data_ac->ac_which == OCFS2_AC_USE_LOCAL)
-+			ocfs2_free_local_alloc_bits(osb, handle, data_ac,
-+					new_phys_cpos, new_len);
-+		else
-+			ocfs2_free_clusters(handle,
-+					data_ac->ac_inode,
-+					data_ac->ac_bh,
-+					ocfs2_clusters_to_blocks(osb->sb, new_phys_cpos),
-+					new_len);
-+	}
-+
- 	ocfs2_commit_trans(osb, handle);
- 
- out_unlock_mutex:
 -- 
 2.20.1
 
