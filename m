@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 780CAFED53
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5654AFED55
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfKPPn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:43:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47362 "EHLO mail.kernel.org"
+        id S1728766AbfKPPnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:43:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728697AbfKPPnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:43:23 -0500
+        id S1728697AbfKPPn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:43:29 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F75D20815;
-        Sat, 16 Nov 2019 15:43:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5436D2072D;
+        Sat, 16 Nov 2019 15:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919002;
-        bh=dP+PCoNwoOWfPuFe01TtS/TXqgxB3zZdYBB2ROF1FZs=;
+        s=default; t=1573919008;
+        bh=rh03igqzqmJ/spz57UkA4AWPIpnxHGzKIwHeAdn90AY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SLBdnPd5GxETlQbsYBgk4PnGHg02YNm6jE+1t93yvnHsTu+DYWTo6V0X96UnTrLYl
-         UYHv2LDMMOTR9A7nhrgW0zqiGWm/EeZ13vYb+NnF/YNohoJ74o8BrUhd8UJBqHeBJq
-         uNuvscSfo7szQe8XIj6n+3IR0hMZVRbnzMAoA8/g=
+        b=EHzk+czqRZQEJvNraXnIwfIyte+A04FBpHsU3XSVvBAyHWWZVxH7k1dLrsXpAo/zV
+         bg6VsygGvqMScPoDy/zJgLg7Oj158cvuW4VfT7EFyxc7t3lCuTuwpk2N9lty9y1caC
+         Ei1xUy60ZAOpJNyq2BVZheJ5A6/8wNEO02mMOlkU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 106/237] mISDN: Fix type of switch control variable in ctrl_teimanager
-Date:   Sat, 16 Nov 2019 10:39:01 -0500
-Message-Id: <20191116154113.7417-106-sashal@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 111/237] mfd: intel_soc_pmic_bxtwc: Chain power button IRQs as well
+Date:   Sat, 16 Nov 2019 10:39:06 -0500
+Message-Id: <20191116154113.7417-111-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -44,68 +44,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit aeb5e02aca91522733eb1db595ac607d30c87767 ]
+[ Upstream commit 9f8ddee1dab836ca758ca8fc555ab5a3aaa5d3fd ]
 
-Clang warns (trimmed for brevity):
+Power button IRQ actually has a second level of interrupts to
+distinguish between UI and POWER buttons. Moreover, current
+implementation looks awkward in approach to handle second level IRQs by
+first level related IRQ chip.
 
-drivers/isdn/mISDN/tei.c:1193:7: warning: overflow converting case value
-to switch condition type (2147764552 to 18446744071562348872) [-Wswitch]
-        case IMHOLD_L1:
-             ^
-drivers/isdn/mISDN/tei.c:1187:7: warning: overflow converting case value
-to switch condition type (2147764550 to 18446744071562348870) [-Wswitch]
-        case IMCLEAR_L2:
-             ^
-2 warnings generated.
+To address above issues, split power button IRQ to be chained as well.
 
-The root cause is that the _IOC macro can generate really large numbers,
-which don't find into type int. My research into how GCC and Clang are
-handling this at a low level didn't prove fruitful and surveying the
-kernel tree shows that aside from here and a few places in the scsi
-subsystem, everything that uses _IOC is at least of type 'unsigned int'.
-Make that change here because as nothing in this function cares about
-the signedness of the variable and it removes ambiguity, which is never
-good when dealing with compilers.
-
-While we're here, remove the unnecessary local variable ret (just return
--EINVAL and 0 directly).
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/67
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/mISDN/tei.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/mfd/intel_soc_pmic_bxtwc.c | 41 ++++++++++++++++++++++--------
+ include/linux/mfd/intel_soc_pmic.h |  1 +
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
-index 12d9e5f4beb1f..58635b5f296f0 100644
---- a/drivers/isdn/mISDN/tei.c
-+++ b/drivers/isdn/mISDN/tei.c
-@@ -1180,8 +1180,7 @@ static int
- ctrl_teimanager(struct manager *mgr, void *arg)
- {
- 	/* currently we only have one option */
--	int	*val = (int *)arg;
--	int	ret = 0;
-+	unsigned int *val = (unsigned int *)arg;
+diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+index 15bc052704a6d..9ca1f8c015de9 100644
+--- a/drivers/mfd/intel_soc_pmic_bxtwc.c
++++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+@@ -31,8 +31,8 @@
  
- 	switch (val[0]) {
- 	case IMCLEAR_L2:
-@@ -1197,9 +1196,9 @@ ctrl_teimanager(struct manager *mgr, void *arg)
- 			test_and_clear_bit(OPTION_L1_HOLD, &mgr->options);
- 		break;
- 	default:
--		ret = -EINVAL;
-+		return -EINVAL;
+ /* Interrupt Status Registers */
+ #define BXTWC_IRQLVL1		0x4E02
+-#define BXTWC_PWRBTNIRQ		0x4E03
+ 
++#define BXTWC_PWRBTNIRQ		0x4E03
+ #define BXTWC_THRM0IRQ		0x4E04
+ #define BXTWC_THRM1IRQ		0x4E05
+ #define BXTWC_THRM2IRQ		0x4E06
+@@ -47,10 +47,9 @@
+ 
+ /* Interrupt MASK Registers */
+ #define BXTWC_MIRQLVL1		0x4E0E
+-#define BXTWC_MPWRTNIRQ		0x4E0F
+-
+ #define BXTWC_MIRQLVL1_MCHGR	BIT(5)
+ 
++#define BXTWC_MPWRBTNIRQ	0x4E0F
+ #define BXTWC_MTHRM0IRQ		0x4E12
+ #define BXTWC_MTHRM1IRQ		0x4E13
+ #define BXTWC_MTHRM2IRQ		0x4E14
+@@ -66,9 +65,7 @@
+ /* Whiskey Cove PMIC share same ACPI ID between different platforms */
+ #define BROXTON_PMIC_WC_HRV	4
+ 
+-/* Manage in two IRQ chips since mask registers are not consecutive */
+ enum bxtwc_irqs {
+-	/* Level 1 */
+ 	BXTWC_PWRBTN_LVL1_IRQ = 0,
+ 	BXTWC_TMU_LVL1_IRQ,
+ 	BXTWC_THRM_LVL1_IRQ,
+@@ -77,9 +74,11 @@ enum bxtwc_irqs {
+ 	BXTWC_CHGR_LVL1_IRQ,
+ 	BXTWC_GPIO_LVL1_IRQ,
+ 	BXTWC_CRIT_LVL1_IRQ,
++};
+ 
+-	/* Level 2 */
+-	BXTWC_PWRBTN_IRQ,
++enum bxtwc_irqs_pwrbtn {
++	BXTWC_PWRBTN_IRQ = 0,
++	BXTWC_UIBTN_IRQ,
+ };
+ 
+ enum bxtwc_irqs_bcu {
+@@ -113,7 +112,10 @@ static const struct regmap_irq bxtwc_regmap_irqs[] = {
+ 	REGMAP_IRQ_REG(BXTWC_CHGR_LVL1_IRQ, 0, BIT(5)),
+ 	REGMAP_IRQ_REG(BXTWC_GPIO_LVL1_IRQ, 0, BIT(6)),
+ 	REGMAP_IRQ_REG(BXTWC_CRIT_LVL1_IRQ, 0, BIT(7)),
+-	REGMAP_IRQ_REG(BXTWC_PWRBTN_IRQ, 1, 0x03),
++};
++
++static const struct regmap_irq bxtwc_regmap_irqs_pwrbtn[] = {
++	REGMAP_IRQ_REG(BXTWC_PWRBTN_IRQ, 0, 0x01),
+ };
+ 
+ static const struct regmap_irq bxtwc_regmap_irqs_bcu[] = {
+@@ -125,7 +127,7 @@ static const struct regmap_irq bxtwc_regmap_irqs_adc[] = {
+ };
+ 
+ static const struct regmap_irq bxtwc_regmap_irqs_chgr[] = {
+-	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 0, BIT(5)),
++	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 0, 0x20),
+ 	REGMAP_IRQ_REG(BXTWC_CHGR0_IRQ, 0, 0x1f),
+ 	REGMAP_IRQ_REG(BXTWC_CHGR1_IRQ, 1, 0x1f),
+ };
+@@ -144,7 +146,16 @@ static struct regmap_irq_chip bxtwc_regmap_irq_chip = {
+ 	.mask_base = BXTWC_MIRQLVL1,
+ 	.irqs = bxtwc_regmap_irqs,
+ 	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs),
+-	.num_regs = 2,
++	.num_regs = 1,
++};
++
++static struct regmap_irq_chip bxtwc_regmap_irq_chip_pwrbtn = {
++	.name = "bxtwc_irq_chip_pwrbtn",
++	.status_base = BXTWC_PWRBTNIRQ,
++	.mask_base = BXTWC_MPWRBTNIRQ,
++	.irqs = bxtwc_regmap_irqs_pwrbtn,
++	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_pwrbtn),
++	.num_regs = 1,
+ };
+ 
+ static struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
+@@ -472,6 +483,16 @@ static int bxtwc_probe(struct platform_device *pdev)
+ 		return ret;
  	}
--	return ret;
-+	return 0;
- }
  
- /* This function does create a L2 for fixed TEI in NT Mode */
++	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
++					 BXTWC_PWRBTN_LVL1_IRQ,
++					 IRQF_ONESHOT,
++					 &bxtwc_regmap_irq_chip_pwrbtn,
++					 &pmic->irq_chip_data_pwrbtn);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add PWRBTN IRQ chip\n");
++		return ret;
++	}
++
+ 	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+ 					 BXTWC_TMU_LVL1_IRQ,
+ 					 IRQF_ONESHOT,
+diff --git a/include/linux/mfd/intel_soc_pmic.h b/include/linux/mfd/intel_soc_pmic.h
+index 5aacdb017a9f6..806a4f095312b 100644
+--- a/include/linux/mfd/intel_soc_pmic.h
++++ b/include/linux/mfd/intel_soc_pmic.h
+@@ -25,6 +25,7 @@ struct intel_soc_pmic {
+ 	int irq;
+ 	struct regmap *regmap;
+ 	struct regmap_irq_chip_data *irq_chip_data;
++	struct regmap_irq_chip_data *irq_chip_data_pwrbtn;
+ 	struct regmap_irq_chip_data *irq_chip_data_tmu;
+ 	struct regmap_irq_chip_data *irq_chip_data_bcu;
+ 	struct regmap_irq_chip_data *irq_chip_data_adc;
 -- 
 2.20.1
 
