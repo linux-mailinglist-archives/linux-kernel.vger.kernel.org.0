@@ -2,269 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BE55FF464
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AB0FF470
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:43:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfKPRgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 12:36:24 -0500
-Received: from pietrobattiston.it ([92.243.7.39]:55350 "EHLO
-        jauntuale.pietrobattiston.it" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727532AbfKPRgX (ORCPT
+        id S1728145AbfKPRm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 12:42:56 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:40058 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727684AbfKPRmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 12:36:23 -0500
-Received: from amalgama (94.105.105.79.dyn.edpnet.net [94.105.105.79])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: giovanni)
-        by jauntuale.pietrobattiston.it (Postfix) with ESMTPSA id 638F7E1E22;
-        Sat, 16 Nov 2019 18:36:21 +0100 (CET)
-Received: by amalgama (Postfix, from userid 1000)
-        id C58C53C0340; Sat, 16 Nov 2019 18:36:20 +0100 (CET)
-From:   Giovanni Mascellani <gio@debian.org>
-To:     =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Giovanni Mascellani <gio@debian.org>
-Subject: [PATCH v3] dell-smm-hwmon: Add support for disabling automatic BIOS fan control
-Date:   Sat, 16 Nov 2019 18:36:10 +0100
-Message-Id: <20191116173610.208358-1-gio@debian.org>
-X-Mailer: git-send-email 2.24.0
+        Sat, 16 Nov 2019 12:42:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1573925779; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UZyanXzXls4c19uG65qfb6hEzWSLmlkAYeotsvvQuKU=;
+        b=W/j+ivnvYfLvDfeciI3NN6+1V8w4+JO5y6xgM2xqPomEqohdZRJfftPftEaj9m+8XU5xUL
+        t7oz4ukRliqPyfSsbRy6moh24P/vrb5Qjhx+nuPFRyFRyQmxWQj/wq3kyUzfDvzfvlwRWC
+        6SDdGd31vrY/Pk4UM09pwvgophh8euA=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     od@zcrc.me, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: [PATCH v2 1/3] pwm: jz4740: Use clocks from TCU driver
+Date:   Sat, 16 Nov 2019 18:36:11 +0100
+Message-Id: <20191116173613.72647-2-paul@crapouillou.net>
+In-Reply-To: <20191116173613.72647-1-paul@crapouillou.net>
+References: <20191116173613.72647-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports standard hwmon pwmX_enable sysfs attribute for
-enabling or disabling automatic fan control by BIOS. Standard value
-"1" is for disabling automatic BIOS fan control and value "2" for
-enabling.
+The ingenic-timer "TCU" driver provides us with clocks, that can be
+(un)gated, reparented or reclocked from devicetree, instead of having
+these settings hardcoded in this driver.
 
-By default BIOS auto mode is enabled by laptop firmware.
+While this driver is devicetree-compatible, it is never (as of now)
+probed from devicetree, so this change does not introduce a ABI problem
+with current devicetree files.
 
-When BIOS auto mode is enabled, custom fan speed value (set via hwmon
-pwmX sysfs attribute) is overwritten by SMM in few seconds and
-therefore any custom settings are without effect. So this is reason
-why implementing option for disabling BIOS auto mode is needed.
-
-So finally this patch allows kernel to set and control fan speed on
-laptops, but it can be dangerous (like setting speed of other fans).
-
-The SMM commands to enable or disable automatic fan control are not
-documented and are not the same on all Dell laptops. Therefore a
-whitelist is used to send the correct codes only on laptopts for which
-they are known.
-
-This patch was originally developed by Pali Rohár; later Giovanni
-Mascellani implemented the whitelist.
-
-Signed-off-by: Giovanni Mascellani <gio@debian.org>
-Co-Developer-by: Pali Rohár <pali.rohar@gmail.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Tested-by: Artur Rojek <contact@artur-rojek.eu>
 ---
- drivers/hwmon/dell-smm-hwmon.c | 119 ++++++++++++++++++++++++++++++---
- 1 file changed, 109 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
-index 4212d022d253..87f88896cc79 100644
---- a/drivers/hwmon/dell-smm-hwmon.c
-+++ b/drivers/hwmon/dell-smm-hwmon.c
-@@ -68,6 +68,8 @@ static uint i8k_pwm_mult;
- static uint i8k_fan_max = I8K_FAN_HIGH;
- static bool disallow_fan_type_call;
- static bool disallow_fan_support;
-+static unsigned int manual_fan;
-+static unsigned int auto_fan;
+Notes:
+    v2: This patch is now before the patch introducing regmap, so the code
+        has changed a bit.
+
+ drivers/pwm/Kconfig      |  1 +
+ drivers/pwm/pwm-jz4740.c | 45 ++++++++++++++++++++++++++++------------
+ 2 files changed, 33 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index e3a2518503ed..e998e5cb01b0 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -225,6 +225,7 @@ config PWM_IMX_TPM
+ config PWM_JZ4740
+ 	tristate "Ingenic JZ47xx PWM support"
+ 	depends on MACH_INGENIC
++	depends on COMMON_CLK
+ 	help
+ 	  Generic PWM framework driver for Ingenic JZ47xx based
+ 	  machines.
+diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+index 9d78cc21cb12..fd83644f9323 100644
+--- a/drivers/pwm/pwm-jz4740.c
++++ b/drivers/pwm/pwm-jz4740.c
+@@ -24,7 +24,6 @@
  
- #define I8K_HWMON_HAVE_TEMP1	(1 << 0)
- #define I8K_HWMON_HAVE_TEMP2	(1 << 1)
-@@ -300,6 +302,20 @@ static int i8k_get_fan_nominal_speed(int fan, int speed)
- 	return i8k_smm(&regs) ? : (regs.eax & 0xffff) * i8k_fan_mult;
- }
- 
-+/*
-+ * Enable or disable automatic BIOS fan control support
-+ */
-+static int i8k_enable_fan_auto_mode(bool enable)
-+{
-+	struct smm_regs regs = { };
-+
-+	if (disallow_fan_support)
-+		return -EINVAL;
-+
-+	regs.eax = enable ? auto_fan : manual_fan;
-+	return i8k_smm(&regs);
-+}
-+
- /*
-  * Set the fan speed (off, low, high). Returns the new fan status.
-  */
-@@ -726,6 +742,35 @@ static ssize_t i8k_hwmon_pwm_store(struct device *dev,
- 	return err < 0 ? -EIO : count;
- }
- 
-+static ssize_t i8k_hwmon_pwm_enable_store(struct device *dev,
-+					  struct device_attribute *attr,
-+					  const char *buf, size_t count)
-+{
-+	int err;
-+	bool enable;
-+	unsigned long val;
-+
-+	if (!auto_fan)
-+		return -ENODEV;
-+
-+	err = kstrtoul(buf, 10, &val);
-+	if (err)
-+		return err;
-+
-+	if (val == 1)
-+		enable = false;
-+	else if (val == 2)
-+		enable = true;
-+	else
-+		return -EINVAL;
-+
-+	mutex_lock(&i8k_mutex);
-+	err = i8k_enable_fan_auto_mode(enable);
-+	mutex_unlock(&i8k_mutex);
-+
-+	return err ? -EIO : count;
-+}
-+
- static SENSOR_DEVICE_ATTR_RO(temp1_input, i8k_hwmon_temp, 0);
- static SENSOR_DEVICE_ATTR_RO(temp1_label, i8k_hwmon_temp_label, 0);
- static SENSOR_DEVICE_ATTR_RO(temp2_input, i8k_hwmon_temp, 1);
-@@ -749,12 +794,15 @@ static SENSOR_DEVICE_ATTR_RO(temp10_label, i8k_hwmon_temp_label, 9);
- static SENSOR_DEVICE_ATTR_RO(fan1_input, i8k_hwmon_fan, 0);
- static SENSOR_DEVICE_ATTR_RO(fan1_label, i8k_hwmon_fan_label, 0);
- static SENSOR_DEVICE_ATTR_RW(pwm1, i8k_hwmon_pwm, 0);
-+static SENSOR_DEVICE_ATTR_WO(pwm1_enable, i8k_hwmon_pwm_enable, 0);
- static SENSOR_DEVICE_ATTR_RO(fan2_input, i8k_hwmon_fan, 1);
- static SENSOR_DEVICE_ATTR_RO(fan2_label, i8k_hwmon_fan_label, 1);
- static SENSOR_DEVICE_ATTR_RW(pwm2, i8k_hwmon_pwm, 1);
-+static SENSOR_DEVICE_ATTR_WO(pwm2_enable, i8k_hwmon_pwm_enable, 0);
- static SENSOR_DEVICE_ATTR_RO(fan3_input, i8k_hwmon_fan, 2);
- static SENSOR_DEVICE_ATTR_RO(fan3_label, i8k_hwmon_fan_label, 2);
- static SENSOR_DEVICE_ATTR_RW(pwm3, i8k_hwmon_pwm, 2);
-+static SENSOR_DEVICE_ATTR_WO(pwm3_enable, i8k_hwmon_pwm_enable, 0);
- 
- static struct attribute *i8k_attrs[] = {
- 	&sensor_dev_attr_temp1_input.dev_attr.attr,	/* 0 */
-@@ -780,12 +828,15 @@ static struct attribute *i8k_attrs[] = {
- 	&sensor_dev_attr_fan1_input.dev_attr.attr,	/* 20 */
- 	&sensor_dev_attr_fan1_label.dev_attr.attr,	/* 21 */
- 	&sensor_dev_attr_pwm1.dev_attr.attr,		/* 22 */
--	&sensor_dev_attr_fan2_input.dev_attr.attr,	/* 23 */
--	&sensor_dev_attr_fan2_label.dev_attr.attr,	/* 24 */
--	&sensor_dev_attr_pwm2.dev_attr.attr,		/* 25 */
--	&sensor_dev_attr_fan3_input.dev_attr.attr,	/* 26 */
--	&sensor_dev_attr_fan3_label.dev_attr.attr,	/* 27 */
--	&sensor_dev_attr_pwm3.dev_attr.attr,		/* 28 */
-+	&sensor_dev_attr_pwm1_enable.dev_attr.attr,	/* 23 */
-+	&sensor_dev_attr_fan2_input.dev_attr.attr,	/* 24 */
-+	&sensor_dev_attr_fan2_label.dev_attr.attr,	/* 25 */
-+	&sensor_dev_attr_pwm2.dev_attr.attr,		/* 26 */
-+	&sensor_dev_attr_pwm2_enable.dev_attr.attr,	/* 27 */
-+	&sensor_dev_attr_fan3_input.dev_attr.attr,	/* 28 */
-+	&sensor_dev_attr_fan3_label.dev_attr.attr,	/* 29 */
-+	&sensor_dev_attr_pwm3.dev_attr.attr,		/* 30 */
-+	&sensor_dev_attr_pwm3_enable.dev_attr.attr,	/* 31 */
- 	NULL
+ struct jz4740_pwm_chip {
+ 	struct pwm_chip chip;
+-	struct clk *clk;
  };
  
-@@ -828,16 +879,20 @@ static umode_t i8k_is_visible(struct kobject *kobj, struct attribute *attr,
- 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_TEMP10))
- 		return 0;
+ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
+@@ -34,6 +33,11 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
  
--	if (index >= 20 && index <= 22 &&
-+	if (index >= 20 && index <= 23 &&
- 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN1))
- 		return 0;
--	if (index >= 23 && index <= 25 &&
-+	if (index >= 24 && index <= 27 &&
- 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN2))
- 		return 0;
--	if (index >= 26 && index <= 28 &&
-+	if (index >= 28 && index <= 31 &&
- 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN3))
- 		return 0;
- 
-+	if ((index == 23 || index == 27 || index == 31) &&
-+	    !auto_fan)
-+		return 0;
-+
- 	return attr->mode;
- }
- 
-@@ -1135,12 +1190,48 @@ static struct dmi_system_id i8k_blacklist_fan_support_dmi_table[] __initdata = {
- 	{ }
- };
- 
-+struct i8k_fan_control_data {
-+	unsigned int manual_fan;
-+	unsigned int auto_fan;
-+};
-+
-+enum i8k_fan_controls {
-+	I8K_FAN_34A3_35A3,
-+};
-+
-+static const struct i8k_fan_control_data i8k_fan_control_data[] = {
-+	[I8K_FAN_34A3_35A3] = {
-+		.manual_fan = 0x34a3,
-+		.auto_fan = 0x35a3,
-+	},
-+};
-+
-+static struct dmi_system_id i8k_whitelist_fan_control[] __initdata = {
-+	{
-+		.ident = "Dell Precision 5530",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Precision 5530"),
-+		},
-+		.driver_data = (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
-+	},
-+	{
-+		.ident = "Dell Latitude E6440",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Latitude E6440"),
-+		},
-+		.driver_data = (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
-+	},
-+	{ }
-+};
-+
- /*
-  * Probe for the presence of a supported laptop.
-  */
- static int __init i8k_probe(void)
+ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
  {
--	const struct dmi_system_id *id;
-+	const struct dmi_system_id *id, *fan_control;
- 	int fan, ret;
- 
++	struct jz4740_pwm_chip *jz = to_jz4740(chip);
++	struct clk *clk;
++	char clk_name[16];
++	int ret;
++
  	/*
-@@ -1200,6 +1291,14 @@ static int __init i8k_probe(void)
- 	i8k_fan_max = fan_max ? : I8K_FAN_HIGH;	/* Must not be 0 */
- 	i8k_pwm_mult = DIV_ROUND_UP(255, i8k_fan_max);
+ 	 * Timers 0 and 1 are used for system tasks, so they are unavailable
+ 	 * for use as PWMs.
+@@ -41,16 +45,31 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	if (pwm->hwpwm < 2)
+ 		return -EBUSY;
  
-+	fan_control = dmi_first_match(i8k_whitelist_fan_control);
-+	if (fan_control && fan_control->driver_data) {
-+		const struct i8k_fan_control_data *fan_control_data = fan_control->driver_data;
-+		manual_fan = fan_control_data->manual_fan;
-+		auto_fan = fan_control_data->auto_fan;
-+		pr_info("enabling experimental BIOS fan control support\n");
+-	jz4740_timer_start(pwm->hwpwm);
++	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
++
++	clk = clk_get(chip->dev, clk_name);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	ret = clk_prepare_enable(clk);
++	if (ret) {
++		clk_put(clk);
++		return ret;
 +	}
 +
- 	if (!fan_mult) {
- 		/*
- 		 * Autodetect fan multiplier based on nominal rpm
++	pwm_set_chip_data(pwm, clk);
+ 
+ 	return 0;
+ }
+ 
+ static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
++	struct clk *clk = pwm_get_chip_data(pwm);
++
+ 	jz4740_timer_set_ctrl(pwm->hwpwm, 0);
+ 
+-	jz4740_timer_stop(pwm->hwpwm);
++	clk_disable_unprepare(clk);
++	clk_put(clk);
+ }
+ 
+ static int jz4740_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+@@ -91,17 +110,21 @@ static int jz4740_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    const struct pwm_state *state)
+ {
+ 	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
++	struct clk *clk = pwm_get_chip_data(pwm),
++		   *parent_clk = clk_get_parent(clk);
++	unsigned long rate, period, duty;
+ 	unsigned long long tmp;
+-	unsigned long period, duty;
+ 	unsigned int prescaler = 0;
+ 	uint16_t ctrl;
+ 
+-	tmp = (unsigned long long)clk_get_rate(jz4740->clk) * state->period;
++	rate = clk_get_rate(parent_clk);
++	tmp = (unsigned long long)rate * state->period;
+ 	do_div(tmp, 1000000000);
+ 	period = tmp;
+ 
+ 	while (period > 0xffff && prescaler < 6) {
+ 		period >>= 2;
++		rate >>= 2;
+ 		++prescaler;
+ 	}
+ 
+@@ -117,14 +140,14 @@ static int jz4740_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 
+ 	jz4740_pwm_disable(chip, pwm);
+ 
++	clk_set_rate(clk, rate);
++
+ 	jz4740_timer_set_count(pwm->hwpwm, 0);
+ 	jz4740_timer_set_duty(pwm->hwpwm, duty);
+ 	jz4740_timer_set_period(pwm->hwpwm, period);
+ 
+-	ctrl = JZ_TIMER_CTRL_PRESCALER(prescaler) | JZ_TIMER_CTRL_SRC_EXT |
+-		JZ_TIMER_CTRL_PWM_ABBRUPT_SHUTDOWN;
+-
+-	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
++	ctrl = jz4740_timer_get_ctrl(pwm->hwpwm);
++	ctrl |= JZ_TIMER_CTRL_PWM_ABBRUPT_SHUTDOWN;
+ 
+ 	switch (state->polarity) {
+ 	case PWM_POLARITY_NORMAL:
+@@ -158,10 +181,6 @@ static int jz4740_pwm_probe(struct platform_device *pdev)
+ 	if (!jz4740)
+ 		return -ENOMEM;
+ 
+-	jz4740->clk = devm_clk_get(&pdev->dev, "ext");
+-	if (IS_ERR(jz4740->clk))
+-		return PTR_ERR(jz4740->clk);
+-
+ 	jz4740->chip.dev = &pdev->dev;
+ 	jz4740->chip.ops = &jz4740_pwm_ops;
+ 	jz4740->chip.npwm = NUM_PWM;
 -- 
 2.24.0
 
