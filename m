@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D54A6FF219
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:17:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F5DFF215
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:17:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731987AbfKPQRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:17:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53476 "EHLO mail.kernel.org"
+        id S1731976AbfKPQQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:16:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfKPPqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:51 -0500
+        id S1728839AbfKPPqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:54 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23D8E2089D;
-        Sat, 16 Nov 2019 15:46:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56188208A3;
+        Sat, 16 Nov 2019 15:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919211;
-        bh=ec5cu6iX0BJxkuAKCLot3vx4SnlxHWGsD52ZwXxIf8k=;
+        s=default; t=1573919212;
+        bh=uCtfQYjOEF+Ola4zzI7wHRjLy+CCdvWIVjXr1R9YjH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T/vSchYIi3GaaNAi4zA18NctxMfDkkizyAd1mIl40jvd3acPbPwAR/179GmGtiQ2e
-         bFYqXOHKpV4EA6s76D7h2N8xExluRTDnY2RKvu8PdEEnejLdzE1FZL/Z+cCPXmdK/R
-         6oLXayuVqna8Vk+Aw6rbXcicWs9c6wUl53fFIxeY=
+        b=F8d1gIbpkzESl3HQ+w8FXTwb2oJCKZABcWxD9ehTmmj3/hOAr92B+lcBbdzklrM/v
+         0zamAH64CU5E3LPvIfQSSKex/YR6eAtWg6IfN5aPNg8WoUSfuxOya153+qQXrcPzmh
+         CKHoxg+WZT9mCvdPtXAcHjlH/kLLII4L3lcV279M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        David Teigland <teigland@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
-Subject: [PATCH AUTOSEL 4.19 217/237] dlm: don't leak kernel pointer to userspace
-Date:   Sat, 16 Nov 2019 10:40:52 -0500
-Message-Id: <20191116154113.7417-217-sashal@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 219/237] clk: tegra20: Turn EMC clock gate into divider
+Date:   Sat, 16 Nov 2019 10:40:54 -0500
+Message-Id: <20191116154113.7417-219-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -43,42 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@tycho.ws>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 9de30f3f7f4d31037cfbb7c787e1089c1944b3a7 ]
+[ Upstream commit 514fddba845ed3a1b17e01e99cb3a2a52256a88a ]
 
-In copy_result_to_user(), we first create a struct dlm_lock_result, which
-contains a struct dlm_lksb, the last member of which is a pointer to the
-lvb. Unfortunately, we copy the entire struct dlm_lksb to the result
-struct, which is then copied to userspace at the end of the function,
-leaking the contents of sb_lvbptr, which is a valid kernel pointer in some
-cases (indeed, later in the same function the data it points to is copied
-to userspace).
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
-It is an error to leak kernel pointers to userspace, as it undermines KASLR
-protections (see e.g. 65eea8edc31 ("floppy: Do not copy a kernel pointer to
-user memory in FDGETPRM ioctl") for another example of this).
-
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-diff --git a/fs/dlm/user.c b/fs/dlm/user.c
-index 2a669390cd7f6..13f29409600bb 100644
---- a/fs/dlm/user.c
-+++ b/fs/dlm/user.c
-@@ -702,7 +702,7 @@ static int copy_result_to_user(struct dlm_user_args *ua, int compat,
- 	result.version[0] = DLM_DEVICE_VERSION_MAJOR;
- 	result.version[1] = DLM_DEVICE_VERSION_MINOR;
- 	result.version[2] = DLM_DEVICE_VERSION_PATCH;
--	memcpy(&result.lksb, &ua->lksb, sizeof(struct dlm_lksb));
-+	memcpy(&result.lksb, &ua->lksb, offsetof(struct dlm_lksb, sb_lvbptr));
- 	result.user_lksb = ua->user_lksb;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86e..68551effb5ca2 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+ };
  
- 	/* FIXME: dlm1 provides for the user's bastparam/addr to not be updated
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
+ 
++static void __init tegra20_emc_clk_init(void)
++{
++	struct clk *clk;
++
++	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
++			       ARRAY_SIZE(mux_pllmcp_clkm),
++			       CLK_SET_RATE_NO_REPARENT,
++			       clk_base + CLK_SOURCE_EMC,
++			       30, 2, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
++	/*
++	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
++	 * the same time due to a HW bug, this won't happen because we're
++	 * defining 'emc_mux' and 'emc' as distinct clocks.
++	 */
++	clk = tegra_clk_register_divider("emc", "emc_mux",
++				clk_base + CLK_SOURCE_EMC, CLK_IS_CRITICAL,
++				TEGRA_DIVIDER_INT, 0, 8, 1, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
++
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
++	tegra20_emc_clk_init();
+ 
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
 -- 
 2.20.1
 
