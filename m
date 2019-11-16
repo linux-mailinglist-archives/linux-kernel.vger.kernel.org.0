@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 948D3FF1A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39DB9FF19C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731020AbfKPQNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:13:35 -0500
+        id S1731884AbfKPQNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:13:23 -0500
 Received: from mail.kernel.org ([198.145.29.99]:54878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729768AbfKPPr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:47:59 -0500
+        id S1729892AbfKPPsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:48:00 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8122620729;
-        Sat, 16 Nov 2019 15:47:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C21D72086A;
+        Sat, 16 Nov 2019 15:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919278;
-        bh=nmvde+ljFulYf6/7LnCn9UVguBbRoL7WmjxVtLajoyY=;
+        s=default; t=1573919280;
+        bh=RUmIk2AyAHnF+oOB0qFKnfPjkDLo8tbmg3+ir3tzxSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tBlf6j+foTzNpIEZR0kD7Rxjv42sWCPaH16ipE+ssfc/i8drjLGwCgqPQ/mTECJee
-         /wxYrXWPzYlxi1zWEByN5cM5vwJoDRz0jis95kXUk9wylpt4eqFkZvAvz+hnEJF0y9
-         xUY23wld7tl7tbCWMe+8O2hghTb52T96tkOZV6l8=
+        b=LBLiB9xfpSMWdUw5Ppvg40PFL0LjN48cmCCEKHVfv3EApoeFdQcnuCiMnS3jGeX3P
+         +dmfpxzIibWQ+MidvhIAlftl1RtzOrzcvLau8z5shLEWKEZosoojX5bSHF2x1HgnC7
+         Bqokmkekar/iMf1VnKd+mo3Y2xYSs6y+1gB3qY7w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 029/150] KVM: nVMX: move check_vmentry_postreqs() call to nested_vmx_enter_non_root_mode()
-Date:   Sat, 16 Nov 2019 10:45:27 -0500
-Message-Id: <20191116154729.9573-29-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.14 031/150] scsi: isci: Use proper enumerated type in atapi_d2h_reg_frame_handler
+Date:   Sat, 16 Nov 2019 10:45:29 -0500
+Message-Id: <20191116154729.9573-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -44,64 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 7671ce21b13b9596163a29f4712cb2451a9b97dc ]
+[ Upstream commit e9e9a103528c7e199ead6e5374c9c52cf16b5802 ]
 
-In preparation of supporting checkpoint/restore for nested state,
-commit ca0bde28f2ed ("kvm: nVMX: Split VMCS checks from nested_vmx_run()")
-modified check_vmentry_postreqs() to only perform the guest EFER
-consistency checks when nested_run_pending is true.  But, in the
-normal nested VMEntry flow, nested_run_pending is only set after
-check_vmentry_postreqs(), i.e. the consistency check is being skipped.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Alternatively, nested_run_pending could be set prior to calling
-check_vmentry_postreqs() in nested_vmx_run(), but placing the
-consistency checks in nested_vmx_enter_non_root_mode() allows us
-to split prepare_vmcs02() and interleave the preparation with
-the consistency checks without having to change the call sites
-of nested_vmx_enter_non_root_mode().  In other words, the rest
-of the consistency check code in nested_vmx_run() will be joining
-the postreqs checks in future patches.
+drivers/scsi/isci/request.c:1629:13: warning: implicit conversion from
+enumeration type 'enum sci_io_status' to different enumeration type
+'enum sci_status' [-Wenum-conversion]
+                        status = SCI_IO_FAILURE_RESPONSE_VALID;
+                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/isci/request.c:1631:12: warning: implicit conversion from
+enumeration type 'enum sci_io_status' to different enumeration type
+'enum sci_status' [-Wenum-conversion]
+                status = SCI_IO_FAILURE_RESPONSE_VALID;
+                       ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: ca0bde28f2ed ("kvm: nVMX: Split VMCS checks from nested_vmx_run()")
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Jim Mattson <jmattson@google.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+status is of type sci_status but SCI_IO_FAILURE_RESPONSE_VALID is of
+type sci_io_status. Use SCI_FAILURE_IO_RESPONSE_VALID, which is from
+sci_status and has SCI_IO_FAILURE_RESPONSE_VALID's exact value since
+that is what SCI_IO_FAILURE_RESPONSE_VALID is mapped to in the isci.h
+file.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/153
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/scsi/isci/request.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index bba42eb3cc124..ae34b482e9109 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -11427,6 +11427,9 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, bool from_vmentry)
- 	u32 msr_entry_idx;
- 	u32 exit_qual;
+diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
+index ed197bc8e801a..2f151708b59ae 100644
+--- a/drivers/scsi/isci/request.c
++++ b/drivers/scsi/isci/request.c
+@@ -1626,9 +1626,9 @@ static enum sci_status atapi_d2h_reg_frame_handler(struct isci_request *ireq,
  
-+	if (from_vmentry && check_vmentry_postreqs(vcpu, vmcs12, exit_qual))
-+		return EXIT_REASON_INVALID_STATE;
-+
- 	enter_guest_mode(vcpu);
+ 	if (status == SCI_SUCCESS) {
+ 		if (ireq->stp.rsp.status & ATA_ERR)
+-			status = SCI_IO_FAILURE_RESPONSE_VALID;
++			status = SCI_FAILURE_IO_RESPONSE_VALID;
+ 	} else {
+-		status = SCI_IO_FAILURE_RESPONSE_VALID;
++		status = SCI_FAILURE_IO_RESPONSE_VALID;
+ 	}
  
- 	if (!(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
-@@ -11525,13 +11528,6 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 	 */
- 	skip_emulated_instruction(vcpu);
- 
--	ret = check_vmentry_postreqs(vcpu, vmcs12, &exit_qual);
--	if (ret) {
--		nested_vmx_entry_failure(vcpu, vmcs12,
--					 EXIT_REASON_INVALID_STATE, exit_qual);
--		return 1;
--	}
--
- 	/*
- 	 * We're finally done with prerequisite checking, and can start with
- 	 * the nested entry.
+ 	if (status != SCI_SUCCESS) {
 -- 
 2.20.1
 
