@@ -2,92 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6533FEA10
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 02:19:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9214FEA14
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 02:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfKPBTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 20:19:16 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56578 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbfKPBTO (ORCPT
+        id S1727585AbfKPBUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 20:20:02 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41962 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbfKPBUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 20:19:14 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BE25761060; Sat, 16 Nov 2019 01:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573867153;
-        bh=LFJEZ89g9PtHzr8dEUbLwSgKkc9eHaTVdtduLL6yNhQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X8fF3kdKLWt5NcPJYOzjxQNs/X3VQ58qCsECnzNs853fcEHqMHkUDp8LvWRrny/Pd
-         CUuiWROVGC/74NI27lvj8bhJ/TsowflobwcP0ySfuHPUgD7CniX6Vovk37HCywk3XW
-         6tt65uAG2iIz6583JEZ3PnqqUaIIq2/TtAlETn28=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1D96761015;
-        Sat, 16 Nov 2019 01:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573867153;
-        bh=LFJEZ89g9PtHzr8dEUbLwSgKkc9eHaTVdtduLL6yNhQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X8fF3kdKLWt5NcPJYOzjxQNs/X3VQ58qCsECnzNs853fcEHqMHkUDp8LvWRrny/Pd
-         CUuiWROVGC/74NI27lvj8bhJ/TsowflobwcP0ySfuHPUgD7CniX6Vovk37HCywk3XW
-         6tt65uAG2iIz6583JEZ3PnqqUaIIq2/TtAlETn28=
+        Fri, 15 Nov 2019 20:20:02 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b18so11402223wrj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 17:20:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QTpUnVTihwBZz4hpsJtod/7VpEMVOsKpXr22lx70xUo=;
+        b=JnOR++G16eQtJ0Wq/tVSl+kCJk7giA7NfFLOOMF2kubJJvffrEPbhOAeCuJxzwSsTA
+         3AY2P7DloE5nLc5KPpp6xhwWy2ysrEXvYzqHRX/QTKyDyKAgpAt6SbGNZ9Do8t4MrH/3
+         ERU9hDn3YgzqP6e57q1VHF4mK08o6V3vkwh5iX7+aMiy/soeTqeZj68Ak6DCY6wEn89d
+         plk+ViIm35JnI4oXnS10lb90W62H0gXfU3MMjLrojeTAPXJ3mDTvQAZ3YUpYQ+NwfnKk
+         Q7muZ8HGgTQZhAYcDMNbqZqeesHn9JyYjpMU+75rYpPASWXnoSblqJJQhZEX2WuF/urs
+         1FfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QTpUnVTihwBZz4hpsJtod/7VpEMVOsKpXr22lx70xUo=;
+        b=lhG9V1Uv5Jhpp2KSHYIIXQ40QcNKOn174PLXhzFeRi91WPQmYF4sVGyem+JWrG+6Oj
+         +pE6MVCqZ9MwBi9xPFA04HA6qblkSLeo61nu6MCdgG6IOzw7/70ssfnzZRLJmnS+rdE2
+         S1qtFyNkASDSd6APMO+3IUYFZet7PE2aNRN5OyQo9EGcTfcDbvjSSK/UgFHagnVg++Yh
+         kLv0JVv90XQRxIsNpJZ0AVbmIfx+BZ+6cUs4O+oLz5kAaCX+s/nDr+ihOlD75JZ/wK1h
+         DRcuei+TpcuSyOcnnY8VGg5wdwB741nAzisGkWNOAGw8uVxqLlFf/5RTVFWp/9gZ4Lb2
+         e71Q==
+X-Gm-Message-State: APjAAAUvGOmnvzRyUoEv5ah1wiv6FVAW6vT+Fr+h/OmccxRtVILFVvsN
+        4lJWwOzxRrtFlamqNHooAkM5Oq/iwjm4H9JcBAXTBQ==
+X-Google-Smtp-Source: APXvYqwJn0IGSoa08aCMkQ1CK0/l8R0gRJBD+7+IkLJrE8vH4x8owInRwB2Sw7jhFU8ODvW6Apr4ez56VqT3V8UBYVI=
+X-Received: by 2002:adf:91e1:: with SMTP id 88mr19864673wri.16.1573867199840;
+ Fri, 15 Nov 2019 17:19:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 15 Nov 2019 17:19:13 -0800
-From:   eberman@codeaurora.org
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        saiprakash.ranjan@codeaurora.org, tsoni@codeaurora.org,
-        sidgup@codeaurora.org, psodagud@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/18] firmware: qcom_scm: Rename macros and structures
-In-Reply-To: <5dcf345b.1c69fb81.df1ea.f7f6@mx.google.com>
-References: <1573593774-12539-1-git-send-email-eberman@codeaurora.org>
- <1573593774-12539-2-git-send-email-eberman@codeaurora.org>
- <5dcf345b.1c69fb81.df1ea.f7f6@mx.google.com>
-Message-ID: <4b63daf69f7b49ce8304b5cd85e39b22@codeaurora.org>
-X-Sender: eberman@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20191114003042.85252-1-irogers@google.com> <20191114003042.85252-5-irogers@google.com>
+ <20191114095114.GP4131@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191114095114.GP4131@hirez.programming.kicks-ass.net>
+From:   Ian Rogers <irogers@google.com>
+Date:   Fri, 15 Nov 2019 17:19:48 -0800
+Message-ID: <CAP-5=fVj42gS8oQAG+jp3A+VJQcAHTexaO_4mNvLhdopf6B8vg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] perf: Add per perf_cpu_context min_heap storage
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Qian Cai <cai@lca.pw>, Joe Lawrence <joe.lawrence@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Gary Hook <Gary.Hook@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-15 15:27, Stephen Boyd wrote:
-> ... to here I don't understand why any of it needs to change. It looks
-> like a bunch of churn and it conflates qcom SCM calls with SMCCC which
-> is not desirable. Those two concepts are different.
+On Thu, Nov 14, 2019 at 1:51 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Nov 13, 2019 at 04:30:36PM -0800, Ian Rogers wrote:
+> > +     if (cpuctx) {
+> > +             event_heap = (struct min_max_heap){
+> > +                     .data = cpuctx->itr_storage,
+> > +                     .size = 0,
+>
+> C guarantees that unnamed fields get to be 0
 
-I can see the confusion. The goal with this patch is to make it more 
-clear which
-macros and structures are for SCM interface from those which deal with 
-the
-implementation of how an SCM call is implemented with the smc 
-instruction. It's
-not presently clear that struct qcom_scm_response (for instance) is only
-relevant in the context of legacy convention.
+Agreed, this is kept here to aid readability. Do you feel strongly
+about not having this? It appears to be kept elsewhere for clarity
+too:
+$ grep -r "\..*= 0," arch/ kernel/ tools/|wc -l
+2528
 
-I choose the name "legacy" since only older firmwares use it and having
-"scm_buffer_get_command_buffer" seems even more confusing to me! "SMCCC" 
-was
-chosen for lack of a better name.
+> > +                     .cap = cpuctx->itr_storage_cap,
+> > +             };
+> > +     } else {
+> > +             event_heap = (struct min_max_heap){
+> > +                     .data = itrs,
+> > +                     .size = 0,
+>
+> idem.
+>
+> > +                     .cap = ARRAY_SIZE(itrs),
+> > +             };
+> > +             /* Events not within a CPU context may be on any CPU. */
+> > +             __heap_add(&event_heap, perf_event_groups_first(groups, -1));
+> > +
+>
+> suprious whitespace
 
-Additionally, the concern with having qcom_scm_ prefix on these 
-functions
-(especially legacy_get_*_buffer()) is you get long function names which 
-didn't
-seem desirable. If the long names are preferable, I can update series 
-with the
-longer form of the names.
+Done.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-a Linux Foundation Collaborative Project
+
+
+> > +     }
+> > +     evt = event_heap.data;
+> > +
+> >       __heap_add(&event_heap, perf_event_groups_first(groups, cpu));
