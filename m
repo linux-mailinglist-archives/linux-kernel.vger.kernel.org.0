@@ -2,82 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33600FF555
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 20:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0A1FF55E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 21:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbfKPTry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 14:47:54 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36006 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfKPTrx (ORCPT
+        id S1727672AbfKPUGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 15:06:06 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43722 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727115AbfKPUGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 14:47:53 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so14956323wrx.3;
-        Sat, 16 Nov 2019 11:47:52 -0800 (PST)
+        Sat, 16 Nov 2019 15:06:06 -0500
+Received: by mail-io1-f68.google.com with SMTP id r2so9120861iot.10;
+        Sat, 16 Nov 2019 12:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kF8bADSuYOyZZ04T0VZZ38WxPOWk9q6i2kAOnZ54aEI=;
-        b=eG8Ac8nL9fJJ4dAxSlZ5w1mlOPQ/aZ44+2vKtS/iCw26fv8FTKt6AqpoUMiPu3pOBr
-         Wm46KJ9wUiA9nhrMoDOjF80R3DNyRC8bbZ/wono9/fKwCBzuAqiDb20MjxrXNtAsY6De
-         xhEIgdFubj2LpSMBCDZZAdpMbZAbYZhggITGNS/o+rMfp0jaNipFl4Hq+nFiJVhl+1Uh
-         0JpZbxWG3JUXhbZZ4U7Huzleg/97V3LYFyoVYvXQYTG120n8YyULMVrGXOmtuuBGJeoT
-         qlr2Fgp4DE3rpVMiXtX2fj8CKHK2833jMMxeacBhAk5/2WzPrTakAsOuIGzxz3DJPKcy
-         1KuQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wY1wH3qJgZtpNtkLWPMs/Hx5JZ/6TSGVFBrFCFyrP5o=;
+        b=zziXcq55OlVOLuZm7MpRDSXWx30fu7+5Cc3euyCJwYEaWyc2g7+EtTnm9Id9niU/Nm
+         W+EZ8rWp14SISd2GKzLLAkXRwHYdzns3wsabAHX56ZN/2qTHNkqyCj9tymnEF1k3LUg4
+         EtoLos0XdYzH0kq5sHpkiHLGBE7DKzR8NXHoiHIcTuZjlyRDZCb1AhH+U8F82bVIZQ1e
+         604IsRtqHo7qfhCQh7bcBA6SoF1auC3TKjHgdDQkis2vYgvBQ/IHcG45+GUAoz1yyJVR
+         0zPjpZWXLipG/qtReTR432LKjQdmnyUA7ZNQI4Q0IAXm2uTiNzzqici4JwcEQOLnrocm
+         52bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kF8bADSuYOyZZ04T0VZZ38WxPOWk9q6i2kAOnZ54aEI=;
-        b=BHMW4R5RfhWANla4+AW2CN3TKIbko+oBe+Vpfc7jk0Jbhlj0pIA178x8Aisuwc74XN
-         I3HpXaaKZ2wD0WgZg4vP5hTwqPeb0IGdG49zqaBGxJZlcdiMdlfRtlIn8A2DcsUo9zQm
-         KtsRMqWQ1AQm//bmdcpPvsJG/bL9sBHfVzMGopwViEYhLFABGtaQK11zawbTFk703gk5
-         DrNh/mYxiFG5s6kDJh/KUEgfryAG2odr2TKS+EmD1g/+i6mQocwgVHQWduY/7ggGMwOr
-         IMQQuW0HETh+/NtOPC0kaPp1XL/MVb3ELyH7vAmV5E+2kbSXLLv9VjEFpzkLcPabPOt5
-         laOg==
-X-Gm-Message-State: APjAAAWqnyutIzTALx0eKB45Lg6EP5KygeLTV5GaoAvf/DntzU/S0vd0
-        O3ZxzkOOWproGaA7Mg4B5oc=
-X-Google-Smtp-Source: APXvYqx1+kz8MC/TEjt8V8DXDIvq8MBgjf1a9D6+6mE2GxlbPdRhZqxKarPwAbTsKLoRZIFBdux2BA==
-X-Received: by 2002:adf:8543:: with SMTP id 61mr13202158wrh.171.1573933671822;
-        Sat, 16 Nov 2019 11:47:51 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id 76sm15319821wma.0.2019.11.16.11.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2019 11:47:51 -0800 (PST)
-Date:   Sat, 16 Nov 2019 20:47:48 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 -next] crypto: sun8i-ce - Fix memdup.cocci warnings
-Message-ID: <20191116194748.GA23118@Red>
-References: <20191109024403.47106-1-yuehaibing@huawei.com>
- <20191112072314.145064-1-yuehaibing@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wY1wH3qJgZtpNtkLWPMs/Hx5JZ/6TSGVFBrFCFyrP5o=;
+        b=e/ngN2sabzG5ipZh3vnOYTIYSNlK7N5u0iCTHMbgeQAxO++DpJYt3NOGTqjewlkwNN
+         ZleMDPxbGbW3gxBTjm4Q87gK9q5SaC2l84A6WE72LIVZMzgo/5Ay4b9GT6xdRW9fYEkm
+         1Uq+eYkeHZdb6Q731hcSBNci2KD8mLbtdUBRD2qcT6roPZOo+2RpB1sLBjlrsegOqWE8
+         W75ec3Rl9xcpLQdEHjQOXL8n5SRycJPL5znF8pdNug/nMnmiPx7qPOu1CNHy51dRkhjc
+         q6FQIsCEUyBztDGiOZXyV50CccA5i+TPRk6SCNSK2mf53V0j9DFZQN+EkhMDL/H1JgHK
+         p55g==
+X-Gm-Message-State: APjAAAU+1cA/CH2IOrJZVava/CSwgQmyin5Y1JJpsYi0AlYhdsYlzGDV
+        yWB6Ol6DAYj7BaBjw2L16kshX4njm99qqmwWYnM=
+X-Google-Smtp-Source: APXvYqx/zTFaPfH9YteLnu1EegAq+Mr8e+ZMVdTnplK5tVIaEmn8DSRFW46uUDNs1gEkx9QMYUmrpUzKv4qefTtH9jQ=
+X-Received: by 2002:a6b:b58b:: with SMTP id e133mr543469iof.86.1573934763525;
+ Sat, 16 Nov 2019 12:06:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112072314.145064-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cc03ba18-4949-9244-639c-94f461f03361@huawei.com>
+In-Reply-To: <cc03ba18-4949-9244-639c-94f461f03361@huawei.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 16 Nov 2019 12:05:52 -0800
+Message-ID: <CAA9_cmc7BuWkBHadHRAxfch43KWovb6rSr2AR9y3bVue0M9EhQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: sysfs: Change ACPI_MASKABLE_GPE_MAX to 0x100
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 07:23:14AM +0000, YueHaibing wrote:
-> Use kmemdup rather than duplicating its implementation
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Nov 13, 2019 at 11:17 PM Yunfeng Ye <yeyunfeng@huawei.com> wrote:
+>
+> The commit 0f27cff8597d ("ACPI: sysfs: Make ACPI GPE mask kernel
+> parameter cover all GPEs") says:
+>   "Use a bitmap of size 0xFF instead of a u64 for the GPE mask so 256
+>    GPEs can be masked"
+>
+> But the masking of GPE 0xFF it not supported and the check condition
+> "gpe > ACPI_MASKABLE_GPE_MAX" is not valid because the type of gpe is
+> u8.
+>
+> So modify the macro ACPI_MASKABLE_GPE_MAX to 0x100, and drop the "gpe >
+> ACPI_MASKABLE_GPE_MAX" check. In addition, update the docs "Format" for
+> acpi_mask_gpe parameter.
+>
+> Fixes: 0f27cff8597d ("ACPI: sysfs: Make ACPI GPE mask kernel parameter cover all GPEs")
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
 > ---
-> v2: fix patch title 'sun8i-ss' -> 'sun8i-ce'
-> ---
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
+> v1 -> v2:
+>  - drop the "gpe > ACPI_MASKABLE_GPE_MAX" check
+>  - update the docs "Format" from <int> to <byte> for acpi_mask_gpe parameter
+>  - update the commit comment
+>
+>  Documentation/admin-guide/kernel-parameters.txt | 2 +-
+>  drivers/acpi/sysfs.c                            | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Bisect flags commit eb09878e1301 "ACPI: sysfs: Change
+ACPI_MASKABLE_GPE_MAX to 0x100" in -next as the reason for a boot
+regression in my qemu-kvm test environment. It spews:
 
-Thanks
+[    1.456728] ACPI: Masking GPE 0x0.
+...
+[  161.721420] ACPI: Masking GPE 0x0.
+
+...and then hangs.
+
+A straight revert gets the configuration back on its feet.
+
+qemu-system-x86_64 --version
+QEMU emulator version 4.0.50 (v4.0.0-928-g49c6c6ac0cd8)
