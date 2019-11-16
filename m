@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A329FEFE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:02:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36FD1FEFAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbfKPPxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:53:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
+        id S1731132AbfKPPxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:53:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731102AbfKPPxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730352AbfKPPxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Nov 2019 10:53:01 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8A3521826;
-        Sat, 16 Nov 2019 15:52:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96D7C2182A;
+        Sat, 16 Nov 2019 15:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919580;
-        bh=XfDiQjvwi/dxFwd5jdxe7CZGUs6C2zCSTVXvUAaR0ic=;
+        s=default; t=1573919581;
+        bh=AOzwc6nHGmg4oVDPLB8ouoaKqwdKAmVHFY5iyrSIGYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PoOcClXjnMWEtsPBLiqlzl5Qv8W930ea5NOuetNCTk9jeUxrDOUfwW7BvPLMwrLl6
-         m3354RIOJDR0J9bynW4edyhBbHxCIjLnWT8ycva7D2yrL3lJk8X2/m1La7hEhFLDee
-         LxXvDrUglU3fiTFdfnJobmV9BiaDUvj8yHe4cFpY=
+        b=R0WcHKEFiIkap4WluH5kyRo7tpjSK2U1cCFpmRKOPutu9KlH366eaR7eau0U08p+g
+         Y0gGL5xhBeIgqRFklxboGrxHagXkg1cBHSrVLvPCbFxVnADn65NN5seJ2HKwszW6jp
+         7fG7lSEmqbQreVwXZuTFy21166s4eAaPYA9MT4Hg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Victor Kamensky <kamensky@cisco.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+Cc:     Changwei Ge <ge.changwei@h3c.com>,
+        Guozhonghua <guozhonghua@h3c.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 72/99] arm64: makefile fix build of .i file in external module case
-Date:   Sat, 16 Nov 2019 10:50:35 -0500
-Message-Id: <20191116155103.10971-72-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 73/99] ocfs2: don't put and assigning null to bh allocated outside
+Date:   Sat, 16 Nov 2019 10:50:36 -0500
+Message-Id: <20191116155103.10971-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -44,55 +48,214 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Victor Kamensky <kamensky@cisco.com>
+From: Changwei Ge <ge.changwei@h3c.com>
 
-[ Upstream commit 98356eb0ae499c63e78073ccedd9a5fc5c563288 ]
+[ Upstream commit cf76c78595ca87548ca5e45c862ac9e0949c4687 ]
 
-After 'a66649dab350 arm64: fix vdso-offsets.h dependency' if
-one will try to build .i file in case of external kernel module,
-build fails complaining that prepare0 target is missing. This
-issue came up with SystemTap when it tries to build variety
-of .i files for its own generated kernel modules trying to
-figure given kernel features/capabilities.
+ocfs2_read_blocks() and ocfs2_read_blocks_sync() are both used to read
+several blocks from disk.  Currently, the input argument *bhs* can be
+NULL or NOT.  It depends on the caller's behavior.  If the function
+fails in reading blocks from disk, the corresponding bh will be assigned
+to NULL and put.
 
-The issue is that prepare0 is defined in top level Makefile
-only if KBUILD_EXTMOD is not defined. .i file rule depends
-on prepare and in case KBUILD_EXTMOD defined top level Makefile
-contains empty rule for prepare. But after mentioned commit
-arch/arm64/Makefile would introduce dependency on prepare0
-through its own prepare target.
+Obviously, above process for non-NULL input bh is not appropriate.
+Because the caller doesn't even know its bhs are put and re-assigned.
 
-Fix it to put proper ifdef KBUILD_EXTMOD around code introduced
-by mentioned commit. It matches what top level Makefile does.
+If buffer head is managed by caller, ocfs2_read_blocks and
+ocfs2_read_blocks_sync() should not evaluate it to NULL.  It will cause
+caller accessing illegal memory, thus crash.
 
-Acked-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Link: http://lkml.kernel.org/r/HK2PR06MB045285E0F4FBB561F9F2F9B3D5680@HK2PR06MB0452.apcprd06.prod.outlook.com
+Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Guozhonghua <guozhonghua@h3c.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ocfs2/buffer_head_io.c | 77 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 59 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index ee94597773fab..8d469aa5fc987 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -134,6 +134,7 @@ archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
- 	$(Q)$(MAKE) $(clean)=$(boot)/dts
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index 935bac253991b..1403c88f2b053 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -98,25 +98,34 @@ int ocfs2_write_block(struct ocfs2_super *osb, struct buffer_head *bh,
+ 	return ret;
+ }
  
-+ifeq ($(KBUILD_EXTMOD),)
- # We need to generate vdso-offsets.h before compiling certain files in kernel/.
- # In order to do that, we should use the archprepare target, but we can't since
- # asm-offsets.h is included in some files used to generate vdso-offsets.h, and
-@@ -143,6 +144,7 @@ archclean:
- prepare: vdso_prepare
- vdso_prepare: prepare0
- 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
-+endif
++/* Caller must provide a bhs[] with all NULL or non-NULL entries, so it
++ * will be easier to handle read failure.
++ */
+ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			   unsigned int nr, struct buffer_head *bhs[])
+ {
+ 	int status = 0;
+ 	unsigned int i;
+ 	struct buffer_head *bh;
++	int new_bh = 0;
  
- define archhelp
-   echo  '* Image.gz      - Compressed kernel image (arch/$(ARCH)/boot/Image.gz)'
+ 	trace_ocfs2_read_blocks_sync((unsigned long long)block, nr);
+ 
+ 	if (!nr)
+ 		goto bail;
+ 
++	/* Don't put buffer head and re-assign it to NULL if it is allocated
++	 * outside since the caller can't be aware of this alternation!
++	 */
++	new_bh = (bhs[0] == NULL);
++
+ 	for (i = 0 ; i < nr ; i++) {
+ 		if (bhs[i] == NULL) {
+ 			bhs[i] = sb_getblk(osb->sb, block++);
+ 			if (bhs[i] == NULL) {
+ 				status = -ENOMEM;
+ 				mlog_errno(status);
+-				goto bail;
++				break;
+ 			}
+ 		}
+ 		bh = bhs[i];
+@@ -156,9 +165,26 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 		submit_bh(REQ_OP_READ, 0, bh);
+ 	}
+ 
++read_failure:
+ 	for (i = nr; i > 0; i--) {
+ 		bh = bhs[i - 1];
+ 
++		if (unlikely(status)) {
++			if (new_bh && bh) {
++				/* If middle bh fails, let previous bh
++				 * finish its read and then put it to
++				 * aovoid bh leak
++				 */
++				if (!buffer_jbd(bh))
++					wait_on_buffer(bh);
++				put_bh(bh);
++				bhs[i - 1] = NULL;
++			} else if (bh && buffer_uptodate(bh)) {
++				clear_buffer_uptodate(bh);
++			}
++			continue;
++		}
++
+ 		/* No need to wait on the buffer if it's managed by JBD. */
+ 		if (!buffer_jbd(bh))
+ 			wait_on_buffer(bh);
+@@ -168,8 +194,7 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			 * so we can safely record this and loop back
+ 			 * to cleanup the other buffers. */
+ 			status = -EIO;
+-			put_bh(bh);
+-			bhs[i - 1] = NULL;
++			goto read_failure;
+ 		}
+ 	}
+ 
+@@ -177,6 +202,9 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 	return status;
+ }
+ 
++/* Caller must provide a bhs[] with all NULL or non-NULL entries, so it
++ * will be easier to handle read failure.
++ */
+ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		      struct buffer_head *bhs[], int flags,
+ 		      int (*validate)(struct super_block *sb,
+@@ -186,6 +214,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 	int i, ignore_cache = 0;
+ 	struct buffer_head *bh;
+ 	struct super_block *sb = ocfs2_metadata_cache_get_super(ci);
++	int new_bh = 0;
+ 
+ 	trace_ocfs2_read_blocks_begin(ci, (unsigned long long)block, nr, flags);
+ 
+@@ -211,6 +240,11 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		goto bail;
+ 	}
+ 
++	/* Don't put buffer head and re-assign it to NULL if it is allocated
++	 * outside since the caller can't be aware of this alternation!
++	 */
++	new_bh = (bhs[0] == NULL);
++
+ 	ocfs2_metadata_cache_io_lock(ci);
+ 	for (i = 0 ; i < nr ; i++) {
+ 		if (bhs[i] == NULL) {
+@@ -219,7 +253,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				ocfs2_metadata_cache_io_unlock(ci);
+ 				status = -ENOMEM;
+ 				mlog_errno(status);
+-				goto bail;
++				/* Don't forget to put previous bh! */
++				break;
+ 			}
+ 		}
+ 		bh = bhs[i];
+@@ -313,16 +348,27 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		}
+ 	}
+ 
+-	status = 0;
+-
++read_failure:
+ 	for (i = (nr - 1); i >= 0; i--) {
+ 		bh = bhs[i];
+ 
+ 		if (!(flags & OCFS2_BH_READAHEAD)) {
+-			if (status) {
+-				/* Clear the rest of the buffers on error */
+-				put_bh(bh);
+-				bhs[i] = NULL;
++			if (unlikely(status)) {
++				/* Clear the buffers on error including those
++				 * ever succeeded in reading
++				 */
++				if (new_bh && bh) {
++					/* If middle bh fails, let previous bh
++					 * finish its read and then put it to
++					 * aovoid bh leak
++					 */
++					if (!buffer_jbd(bh))
++						wait_on_buffer(bh);
++					put_bh(bh);
++					bhs[i] = NULL;
++				} else if (bh && buffer_uptodate(bh)) {
++					clear_buffer_uptodate(bh);
++				}
+ 				continue;
+ 			}
+ 			/* We know this can't have changed as we hold the
+@@ -340,9 +386,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				 * uptodate. */
+ 				status = -EIO;
+ 				clear_buffer_needs_validate(bh);
+-				put_bh(bh);
+-				bhs[i] = NULL;
+-				continue;
++				goto read_failure;
+ 			}
+ 
+ 			if (buffer_needs_validate(bh)) {
+@@ -352,11 +396,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				BUG_ON(buffer_jbd(bh));
+ 				clear_buffer_needs_validate(bh);
+ 				status = validate(sb, bh);
+-				if (status) {
+-					put_bh(bh);
+-					bhs[i] = NULL;
+-					continue;
+-				}
++				if (status)
++					goto read_failure;
+ 			}
+ 		}
+ 
 -- 
 2.20.1
 
