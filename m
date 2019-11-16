@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC509FF265
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 717B6FF286
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbfKPPp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:45:57 -0500
+        id S1732061AbfKPQTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:19:52 -0500
 Received: from mail.kernel.org ([198.145.29.99]:51874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728488AbfKPPpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:45:53 -0500
+        id S1729240AbfKPPpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:45:54 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7198920857;
-        Sat, 16 Nov 2019 15:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 054DD20859;
+        Sat, 16 Nov 2019 15:45:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919153;
-        bh=IX6ejNhOzqzCr1fBgCEaKvxLcJCK6m+OsCxX9zF9tQ0=;
+        s=default; t=1573919154;
+        bh=1St0IB4d/J+sBqQdxP+OYlthiRbpI303Kf15KzA281M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXv7DaEQ/db2b0Np8a9HAYPwkfxOh3XQAp9GQu/ISPcJTy4j1AZZmZEmNGOOv1WMF
-         DaN3Zm0KjL42r6kuHaCz7TGf/rGSgv4UlkEleyY48j4Qh9Y317AJQ/iKgRSPE9qCMv
-         vaGR3Ie1xCmgPp/IRxlrDrsx7z1IedDHzRdwRMPQ=
+        b=h6+FSHTAr0yDklp9tcWpKqBTZSVJTvhI85DwSKYOy1/P4tJg9GCDI6g359b8KAj8o
+         X2Byre9DC3mDm2kH+PtSKOousF96pbfHghVjgB1W4CHuy3pZpcIauGutogK9VHMd3w
+         CeHJmnx478mzo7/51AUdzFu+Fl2sxD7eyvUpksP8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miroslav Lichvar <mlichvar@redhat.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 166/237] igb: shorten maximum PHC timecounter update interval
-Date:   Sat, 16 Nov 2019 10:40:01 -0500
-Message-Id: <20191116154113.7417-166-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 168/237] net: hns3: bugfix for buffer not free problem during resetting
+Date:   Sat, 16 Nov 2019 10:40:03 -0500
+Message-Id: <20191116154113.7417-168-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -47,54 +43,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miroslav Lichvar <mlichvar@redhat.com>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit 094bf4d0e9657f6ea1ee3d7e07ce3970796949ce ]
+[ Upstream commit 73b907a083b8a8c1c62cb494bc9fbe6ae086c460 ]
 
-The timecounter needs to be updated at least once per ~550 seconds in
-order to avoid a 40-bit SYSTIM timestamp to be misinterpreted as an old
-timestamp.
+When hns3_get_ring_config()/hns3_queue_to_ring()/
+hns3_get_vector_ring_chain() failed during resetting, the allocated
+memory has not been freed before these three functions return. So
+this patch adds error handler in these functions to fix it.
 
-Since commit 500462a9d ("timers: Switch to a non-cascading wheel"),
-scheduling of delayed work seems to be less accurate and a requested
-delay of 540 seconds may actually be longer than 550 seconds. Shorten
-the delay to 480 seconds to be sure the timecounter is updated in time.
-
-This fixes an issue with HW timestamps on 82580/I350/I354 being off by
-~1100 seconds for few seconds every ~9 minutes.
-
-Cc: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_ptp.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 24 ++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_ptp.c b/drivers/net/ethernet/intel/igb/igb_ptp.c
-index 9f4d700e09df3..29ced6b74d364 100644
---- a/drivers/net/ethernet/intel/igb/igb_ptp.c
-+++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
-@@ -51,9 +51,15 @@
-  *
-  * The 40 bit 82580 SYSTIM overflows every
-  *   2^40 * 10^-9 /  60  = 18.3 minutes.
-+ *
-+ * SYSTIM is converted to real time using a timecounter. As
-+ * timecounter_cyc2time() allows old timestamps, the timecounter
-+ * needs to be updated at least once per half of the SYSTIM interval.
-+ * Scheduling of delayed work is not very accurate, so we aim for 8
-+ * minutes to be sure the actual interval is shorter than 9.16 minutes.
-  */
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 0ccfa6a845353..c1873e04b0fb6 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2558,7 +2558,7 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
+ 			chain = devm_kzalloc(&pdev->dev, sizeof(*chain),
+ 					     GFP_KERNEL);
+ 			if (!chain)
+-				return -ENOMEM;
++				goto err_free_chain;
  
--#define IGB_SYSTIM_OVERFLOW_PERIOD	(HZ * 60 * 9)
-+#define IGB_SYSTIM_OVERFLOW_PERIOD	(HZ * 60 * 8)
- #define IGB_PTP_TX_TIMEOUT		(HZ * 15)
- #define INCPERIOD_82576			BIT(E1000_TIMINCA_16NS_SHIFT)
- #define INCVALUE_82576_MASK		GENMASK(E1000_TIMINCA_16NS_SHIFT - 1, 0)
+ 			cur_chain->next = chain;
+ 			chain->tqp_index = tx_ring->tqp->tqp_index;
+@@ -2588,7 +2588,7 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
+ 	while (rx_ring) {
+ 		chain = devm_kzalloc(&pdev->dev, sizeof(*chain), GFP_KERNEL);
+ 		if (!chain)
+-			return -ENOMEM;
++			goto err_free_chain;
+ 
+ 		cur_chain->next = chain;
+ 		chain->tqp_index = rx_ring->tqp->tqp_index;
+@@ -2603,6 +2603,16 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
+ 	}
+ 
+ 	return 0;
++
++err_free_chain:
++	cur_chain = head->next;
++	while (cur_chain) {
++		chain = cur_chain->next;
++		devm_kfree(&pdev->dev, chain);
++		cur_chain = chain;
++	}
++
++	return -ENOMEM;
+ }
+ 
+ static void hns3_free_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
+@@ -2847,8 +2857,10 @@ static int hns3_queue_to_ring(struct hnae3_queue *tqp,
+ 		return ret;
+ 
+ 	ret = hns3_ring_get_cfg(tqp, priv, HNAE3_RING_TYPE_RX);
+-	if (ret)
++	if (ret) {
++		devm_kfree(priv->dev, priv->ring_data[tqp->tqp_index].ring);
+ 		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -2875,6 +2887,12 @@ static int hns3_get_ring_config(struct hns3_nic_priv *priv)
+ 
+ 	return 0;
+ err:
++	while (i--) {
++		devm_kfree(priv->dev, priv->ring_data[i].ring);
++		devm_kfree(priv->dev,
++			   priv->ring_data[i + h->kinfo.num_tqps].ring);
++	}
++
+ 	devm_kfree(&pdev->dev, priv->ring_data);
+ 	return ret;
+ }
 -- 
 2.20.1
 
