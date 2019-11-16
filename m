@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7698FF23C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92332FF27D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbfKPPqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:46:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52360 "EHLO mail.kernel.org"
+        id S1731920AbfKPQTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:19:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbfKPPqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:10 -0500
+        id S1729317AbfKPPqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:12 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4112083B;
-        Sat, 16 Nov 2019 15:46:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74E7520871;
+        Sat, 16 Nov 2019 15:46:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919169;
-        bh=9LCI/pUJ619qOl/wn7bYyo2lDa06P71DoVqYJwBe8X0=;
+        s=default; t=1573919172;
+        bh=Vt4u48HOCbcz3ybOMB9dVcvqoXTpvruV+PEMafpIE0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zTZr9xYNGgbNWFsO3FrBIWd8hxitd0JTSxp2ZvBhBl4EU4u7bz9mTLE1YES3Wwgqa
-         xK2rnfaKsj5CrGE5R+m1ZsmS/OhYsLuCoqD12JCUOJ0r2uYGFJp8Di9huLIYe2Zjp6
-         Xr+StaHp+hfS3r5P+jYOSE0EJ7vU5fsz3ixjZcA0=
+        b=AX4ZXBZajY9K7W4de4zIrVZQYnF7hjB4BRpjyjqOnigNVC0w6M0GsAlauxztUioX3
+         2orTYC0fOtqO+dt4TIVMF4oF8UiZsTXYXpeWMJlWjV6Ntqk4obsK+0C9uhABJltsyc
+         zvU4++TkOPiL+ovWalEHcQbJRx9TdqfcratCyceU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guozhonghua <guozhonghua@h3c.com>, Jan Kara <jack@suse.cz>,
-        Mark Fasheh <mark@fasheh.com>,
+Cc:     Changwei Ge <ge.changwei@h3c.com>,
+        Guozhonghua <guozhonghua@h3c.com>, Mark Fasheh <mark@fasheh.com>,
         Joel Becker <jlbec@evilplan.org>,
         Junxiao Bi <junxiao.bi@oracle.com>,
         Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 179/237] ocfs2: without quota support, avoid calling quota recovery
-Date:   Sat, 16 Nov 2019 10:40:14 -0500
-Message-Id: <20191116154113.7417-179-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 181/237] ocfs2: don't put and assigning null to bh allocated outside
+Date:   Sat, 16 Nov 2019 10:40:16 -0500
+Message-Id: <20191116154113.7417-181-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -49,17 +48,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guozhonghua <guozhonghua@h3c.com>
+From: Changwei Ge <ge.changwei@h3c.com>
 
-[ Upstream commit 21158ca85b73ddd0088076a5209cfd040513a8b5 ]
+[ Upstream commit cf76c78595ca87548ca5e45c862ac9e0949c4687 ]
 
-During one dead node's recovery by other node, quota recovery work will
-be queued.  We should avoid calling quota when it is not supported, so
-check the quota flags.
+ocfs2_read_blocks() and ocfs2_read_blocks_sync() are both used to read
+several blocks from disk.  Currently, the input argument *bhs* can be
+NULL or NOT.  It depends on the caller's behavior.  If the function
+fails in reading blocks from disk, the corresponding bh will be assigned
+to NULL and put.
 
-Link: http://lkml.kernel.org/r/71604351584F6A4EBAE558C676F37CA401071AC9FB@H3CMLB12-EX.srv.huawei-3com.com
-Signed-off-by: guozhonghua <guozhonghua@h3c.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Obviously, above process for non-NULL input bh is not appropriate.
+Because the caller doesn't even know its bhs are put and re-assigned.
+
+If buffer head is managed by caller, ocfs2_read_blocks and
+ocfs2_read_blocks_sync() should not evaluate it to NULL.  It will cause
+caller accessing illegal memory, thus crash.
+
+Link: http://lkml.kernel.org/r/HK2PR06MB045285E0F4FBB561F9F2F9B3D5680@HK2PR06MB0452.apcprd06.prod.outlook.com
+Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Guozhonghua <guozhonghua@h3c.com>
 Cc: Mark Fasheh <mark@fasheh.com>
 Cc: Joel Becker <jlbec@evilplan.org>
 Cc: Junxiao Bi <junxiao.bi@oracle.com>
@@ -69,98 +77,185 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/journal.c | 51 ++++++++++++++++++++++++++++++----------------
- 1 file changed, 34 insertions(+), 17 deletions(-)
+ fs/ocfs2/buffer_head_io.c | 77 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 59 insertions(+), 18 deletions(-)
 
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index c492cbb2410f6..babb0ec76d676 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -1379,15 +1379,23 @@ static int __ocfs2_recovery_thread(void *arg)
- 	int rm_quota_used = 0, i;
- 	struct ocfs2_quota_recovery *qrec;
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index 9f8250df99f1f..f9b84f7a3e4bb 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -99,25 +99,34 @@ int ocfs2_write_block(struct ocfs2_super *osb, struct buffer_head *bh,
+ 	return ret;
+ }
  
-+	/* Whether the quota supported. */
-+	int quota_enabled = OCFS2_HAS_RO_COMPAT_FEATURE(osb->sb,
-+			OCFS2_FEATURE_RO_COMPAT_USRQUOTA)
-+		|| OCFS2_HAS_RO_COMPAT_FEATURE(osb->sb,
-+			OCFS2_FEATURE_RO_COMPAT_GRPQUOTA);
++/* Caller must provide a bhs[] with all NULL or non-NULL entries, so it
++ * will be easier to handle read failure.
++ */
+ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			   unsigned int nr, struct buffer_head *bhs[])
+ {
+ 	int status = 0;
+ 	unsigned int i;
+ 	struct buffer_head *bh;
++	int new_bh = 0;
+ 
+ 	trace_ocfs2_read_blocks_sync((unsigned long long)block, nr);
+ 
+ 	if (!nr)
+ 		goto bail;
+ 
++	/* Don't put buffer head and re-assign it to NULL if it is allocated
++	 * outside since the caller can't be aware of this alternation!
++	 */
++	new_bh = (bhs[0] == NULL);
 +
- 	status = ocfs2_wait_on_mount(osb);
- 	if (status < 0) {
+ 	for (i = 0 ; i < nr ; i++) {
+ 		if (bhs[i] == NULL) {
+ 			bhs[i] = sb_getblk(osb->sb, block++);
+ 			if (bhs[i] == NULL) {
+ 				status = -ENOMEM;
+ 				mlog_errno(status);
+-				goto bail;
++				break;
+ 			}
+ 		}
+ 		bh = bhs[i];
+@@ -157,9 +166,26 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 		submit_bh(REQ_OP_READ, 0, bh);
+ 	}
+ 
++read_failure:
+ 	for (i = nr; i > 0; i--) {
+ 		bh = bhs[i - 1];
+ 
++		if (unlikely(status)) {
++			if (new_bh && bh) {
++				/* If middle bh fails, let previous bh
++				 * finish its read and then put it to
++				 * aovoid bh leak
++				 */
++				if (!buffer_jbd(bh))
++					wait_on_buffer(bh);
++				put_bh(bh);
++				bhs[i - 1] = NULL;
++			} else if (bh && buffer_uptodate(bh)) {
++				clear_buffer_uptodate(bh);
++			}
++			continue;
++		}
++
+ 		/* No need to wait on the buffer if it's managed by JBD. */
+ 		if (!buffer_jbd(bh))
+ 			wait_on_buffer(bh);
+@@ -169,8 +195,7 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			 * so we can safely record this and loop back
+ 			 * to cleanup the other buffers. */
+ 			status = -EIO;
+-			put_bh(bh);
+-			bhs[i - 1] = NULL;
++			goto read_failure;
+ 		}
+ 	}
+ 
+@@ -178,6 +203,9 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 	return status;
+ }
+ 
++/* Caller must provide a bhs[] with all NULL or non-NULL entries, so it
++ * will be easier to handle read failure.
++ */
+ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		      struct buffer_head *bhs[], int flags,
+ 		      int (*validate)(struct super_block *sb,
+@@ -187,6 +215,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 	int i, ignore_cache = 0;
+ 	struct buffer_head *bh;
+ 	struct super_block *sb = ocfs2_metadata_cache_get_super(ci);
++	int new_bh = 0;
+ 
+ 	trace_ocfs2_read_blocks_begin(ci, (unsigned long long)block, nr, flags);
+ 
+@@ -212,6 +241,11 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  		goto bail;
  	}
  
--	rm_quota = kcalloc(osb->max_slots, sizeof(int), GFP_NOFS);
--	if (!rm_quota) {
--		status = -ENOMEM;
--		goto bail;
-+	if (quota_enabled) {
-+		rm_quota = kcalloc(osb->max_slots, sizeof(int), GFP_NOFS);
-+		if (!rm_quota) {
-+			status = -ENOMEM;
-+			goto bail;
-+		}
- 	}
- restart:
- 	status = ocfs2_super_lock(osb, 1);
-@@ -1423,9 +1431,14 @@ static int __ocfs2_recovery_thread(void *arg)
- 		 * then quota usage would be out of sync until some node takes
- 		 * the slot. So we remember which nodes need quota recovery
- 		 * and when everything else is done, we recover quotas. */
--		for (i = 0; i < rm_quota_used && rm_quota[i] != slot_num; i++);
--		if (i == rm_quota_used)
--			rm_quota[rm_quota_used++] = slot_num;
-+		if (quota_enabled) {
-+			for (i = 0; i < rm_quota_used
-+					&& rm_quota[i] != slot_num; i++)
-+				;
++	/* Don't put buffer head and re-assign it to NULL if it is allocated
++	 * outside since the caller can't be aware of this alternation!
++	 */
++	new_bh = (bhs[0] == NULL);
 +
-+			if (i == rm_quota_used)
-+				rm_quota[rm_quota_used++] = slot_num;
-+		}
- 
- 		status = ocfs2_recover_node(osb, node_num, slot_num);
- skip_recovery:
-@@ -1453,16 +1466,19 @@ static int __ocfs2_recovery_thread(void *arg)
- 	/* Now it is right time to recover quotas... We have to do this under
- 	 * superblock lock so that no one can start using the slot (and crash)
- 	 * before we recover it */
--	for (i = 0; i < rm_quota_used; i++) {
--		qrec = ocfs2_begin_quota_recovery(osb, rm_quota[i]);
--		if (IS_ERR(qrec)) {
--			status = PTR_ERR(qrec);
--			mlog_errno(status);
--			continue;
-+	if (quota_enabled) {
-+		for (i = 0; i < rm_quota_used; i++) {
-+			qrec = ocfs2_begin_quota_recovery(osb, rm_quota[i]);
-+			if (IS_ERR(qrec)) {
-+				status = PTR_ERR(qrec);
-+				mlog_errno(status);
-+				continue;
-+			}
-+			ocfs2_queue_recovery_completion(osb->journal,
-+					rm_quota[i],
-+					NULL, NULL, qrec,
-+					ORPHAN_NEED_TRUNCATE);
+ 	ocfs2_metadata_cache_io_lock(ci);
+ 	for (i = 0 ; i < nr ; i++) {
+ 		if (bhs[i] == NULL) {
+@@ -220,7 +254,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				ocfs2_metadata_cache_io_unlock(ci);
+ 				status = -ENOMEM;
+ 				mlog_errno(status);
+-				goto bail;
++				/* Don't forget to put previous bh! */
++				break;
+ 			}
  		}
--		ocfs2_queue_recovery_completion(osb->journal, rm_quota[i],
--						NULL, NULL, qrec,
--						ORPHAN_NEED_TRUNCATE);
+ 		bh = bhs[i];
+@@ -314,16 +349,27 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 		}
  	}
  
- 	ocfs2_super_unlock(osb, 1);
-@@ -1484,7 +1500,8 @@ static int __ocfs2_recovery_thread(void *arg)
+-	status = 0;
+-
++read_failure:
+ 	for (i = (nr - 1); i >= 0; i--) {
+ 		bh = bhs[i];
  
- 	mutex_unlock(&osb->recovery_lock);
+ 		if (!(flags & OCFS2_BH_READAHEAD)) {
+-			if (status) {
+-				/* Clear the rest of the buffers on error */
+-				put_bh(bh);
+-				bhs[i] = NULL;
++			if (unlikely(status)) {
++				/* Clear the buffers on error including those
++				 * ever succeeded in reading
++				 */
++				if (new_bh && bh) {
++					/* If middle bh fails, let previous bh
++					 * finish its read and then put it to
++					 * aovoid bh leak
++					 */
++					if (!buffer_jbd(bh))
++						wait_on_buffer(bh);
++					put_bh(bh);
++					bhs[i] = NULL;
++				} else if (bh && buffer_uptodate(bh)) {
++					clear_buffer_uptodate(bh);
++				}
+ 				continue;
+ 			}
+ 			/* We know this can't have changed as we hold the
+@@ -341,9 +387,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				 * uptodate. */
+ 				status = -EIO;
+ 				clear_buffer_needs_validate(bh);
+-				put_bh(bh);
+-				bhs[i] = NULL;
+-				continue;
++				goto read_failure;
+ 			}
  
--	kfree(rm_quota);
-+	if (quota_enabled)
-+		kfree(rm_quota);
+ 			if (buffer_needs_validate(bh)) {
+@@ -353,11 +397,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				BUG_ON(buffer_jbd(bh));
+ 				clear_buffer_needs_validate(bh);
+ 				status = validate(sb, bh);
+-				if (status) {
+-					put_bh(bh);
+-					bhs[i] = NULL;
+-					continue;
+-				}
++				if (status)
++					goto read_failure;
+ 			}
+ 		}
  
- 	/* no one is callint kthread_stop() for us so the kthread() api
- 	 * requires that we call do_exit().  And it isn't exported, but
 -- 
 2.20.1
 
