@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 990F9FEDF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:48:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6B2FEDF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:48:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbfKPPry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:47:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54334 "EHLO mail.kernel.org"
+        id S1728852AbfKPPr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:47:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729724AbfKPPrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:47:35 -0500
+        id S1729768AbfKPPrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:47:43 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B37F3208C0;
-        Sat, 16 Nov 2019 15:47:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B8F22083E;
+        Sat, 16 Nov 2019 15:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919254;
-        bh=gLtelvidJmu/jlsBQOJ2hGDX/2Qcy3X0HMoFKf8YEr4=;
+        s=default; t=1573919262;
+        bh=A6r981WiwlLsuLjXzBrf8L+e7ByY9YU5xFewKaitogw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oOcmbnFJMNO9mMj0FDVHA+rnqWeu5NiZcznLAamH6iyWBd4uMNsqsugXaY/dXg2wA
-         CFyzk1tAXO0OrHU7jydeJqbAdAcwLM1elS5NLxIeT0A65BhRyhEhROLvI2cpy86TOh
-         T2Uy9dqD6x1QFFXKMXDlaktazY1/SeEy9OgONYUU=
+        b=PMahVZGZUSG0KR999dMyr/XtP2yS6l1xJs2F1onPD1LTOzUr/5SVuBUV7tDhnkiZW
+         szMuV8mYESU1uir/Hka+8hXH84yxiq8/IuEru3reJhfgDR/8hWV+8V4vsjpDfddFDn
+         eI26SzUob0zTXuC1f9KscnkS9LyrrfeNy8+TBy2I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 007/150] powerpc/boot: Disable vector instructions
-Date:   Sat, 16 Nov 2019 10:45:05 -0500
-Message-Id: <20191116154729.9573-7-sashal@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Ondrej Zary <linux@rainbow-software.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 013/150] cdrom: don't attempt to fiddle with cdo->capability
+Date:   Sat, 16 Nov 2019 10:45:11 -0500
+Message-Id: <20191116154729.9573-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -43,42 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit e8e132e6885962582784b6fa16a80d07ea739c0f ]
+[ Upstream commit 8f94004e2a51a3ea195cf3447eb5d5906f36d8b3 ]
 
-This will avoid auto-vectorisation when building with higher
-optimisation levels.
+We can't modify cdo->capability as it is defined as a const.
+Change the modification hack to just WARN_ON_ONCE() if we hit
+any of the invalid combinations.
 
-We don't know if the machine can support VSX and even if it's present
-it's probably not going to be enabled at this point in boot.
+This fixes a regression for pcd, which doesn't work after the
+constify patch.
 
-These flag were both added prior to GCC 4.6 which is the minimum
-compiler version supported by upstream, thanks to Segher for the
-details.
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 853fe1bf7554 ("cdrom: Make device operations read-only")
+Tested-by: Ondrej Zary <linux@rainbow-software.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/cdrom/cdrom.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-index e2a5a932c24a8..5807c9d8e56d5 100644
---- a/arch/powerpc/boot/Makefile
-+++ b/arch/powerpc/boot/Makefile
-@@ -24,8 +24,8 @@ compress-$(CONFIG_KERNEL_GZIP) := CONFIG_KERNEL_GZIP
- compress-$(CONFIG_KERNEL_XZ)   := CONFIG_KERNEL_XZ
+diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+index ea6558d4864c0..90dd8e7291dab 100644
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -410,10 +410,10 @@ static int cdrom_get_disc_info(struct cdrom_device_info *cdi,
+  * hack to have the capability flags defined const, while we can still
+  * change it here without gcc complaining at every line.
+  */
+-#define ENSURE(call, bits)			\
+-do {						\
+-	if (cdo->call == NULL)			\
+-		*change_capability &= ~(bits);	\
++#define ENSURE(cdo, call, bits)					\
++do {								\
++	if (cdo->call == NULL)					\
++		WARN_ON_ONCE((cdo)->capability & (bits));	\
+ } while (0)
  
- BOOTCFLAGS    := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
--		 -fno-strict-aliasing -Os -msoft-float -pipe \
--		 -fomit-frame-pointer -fno-builtin -fPIC -nostdinc \
-+		 -fno-strict-aliasing -Os -msoft-float -mno-altivec -mno-vsx \
-+		 -pipe -fomit-frame-pointer -fno-builtin -fPIC -nostdinc \
- 		 -D$(compress-y)
+ /*
+@@ -589,7 +589,6 @@ int register_cdrom(struct cdrom_device_info *cdi)
+ {
+ 	static char banner_printed;
+ 	const struct cdrom_device_ops *cdo = cdi->ops;
+-	int *change_capability = (int *)&cdo->capability; /* hack */
  
- BOOTCC := $(CC)
+ 	cd_dbg(CD_OPEN, "entering register_cdrom\n");
+ 
+@@ -601,16 +600,16 @@ int register_cdrom(struct cdrom_device_info *cdi)
+ 		cdrom_sysctl_register();
+ 	}
+ 
+-	ENSURE(drive_status, CDC_DRIVE_STATUS);
++	ENSURE(cdo, drive_status, CDC_DRIVE_STATUS);
+ 	if (cdo->check_events == NULL && cdo->media_changed == NULL)
+-		*change_capability = ~(CDC_MEDIA_CHANGED | CDC_SELECT_DISC);
+-	ENSURE(tray_move, CDC_CLOSE_TRAY | CDC_OPEN_TRAY);
+-	ENSURE(lock_door, CDC_LOCK);
+-	ENSURE(select_speed, CDC_SELECT_SPEED);
+-	ENSURE(get_last_session, CDC_MULTI_SESSION);
+-	ENSURE(get_mcn, CDC_MCN);
+-	ENSURE(reset, CDC_RESET);
+-	ENSURE(generic_packet, CDC_GENERIC_PACKET);
++		WARN_ON_ONCE(cdo->capability & (CDC_MEDIA_CHANGED | CDC_SELECT_DISC));
++	ENSURE(cdo, tray_move, CDC_CLOSE_TRAY | CDC_OPEN_TRAY);
++	ENSURE(cdo, lock_door, CDC_LOCK);
++	ENSURE(cdo, select_speed, CDC_SELECT_SPEED);
++	ENSURE(cdo, get_last_session, CDC_MULTI_SESSION);
++	ENSURE(cdo, get_mcn, CDC_MCN);
++	ENSURE(cdo, reset, CDC_RESET);
++	ENSURE(cdo, generic_packet, CDC_GENERIC_PACKET);
+ 	cdi->mc_flags = 0;
+ 	cdi->options = CDO_USE_FFLAGS;
+ 
 -- 
 2.20.1
 
