@@ -2,262 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56DDCFF475
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 18:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E2B0FF48C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 19:09:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfKPRvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 12:51:02 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:47022 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbfKPRvB (ORCPT
+        id S1727646AbfKPSJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 13:09:35 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40317 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbfKPSJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 12:51:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1573926659; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FRWQ/fXo5t1wv9SzvepviIDnjYcOVgkgSPX8UFl2H6s=;
-        b=pX1odAgpr3wBWpKK/fzoJzvb/Fm8x96HARhU8hDGnPF7yvWVQprkobueR+IydgE7fMkmqZ
-        e531wmimSQ2VrBuFjwB1nwYJm9+O5lZKv6XUe8YeZhth7NnnjgbBMwLoamz8+TdXxnB9+a
-        pKGKpbYrc6RYLL1tLM7/Nj2Wz2ib8pU=
-Date:   Sat, 16 Nov 2019 18:50:53 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 1/3] watchdog: jz4740: Use WDT clock provided by TCU
- driver
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1573926653.3.0@crapouillou.net>
-In-Reply-To: <20191023174714.14362-1-paul@crapouillou.net>
-References: <20191023174714.14362-1-paul@crapouillou.net>
+        Sat, 16 Nov 2019 13:09:35 -0500
+Received: by mail-oi1-f195.google.com with SMTP id d22so4652910oic.7
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 10:09:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qrMbgYVfZEtHoZFiDZ3fpmazBC6XO24Xvng1lx97mZg=;
+        b=dQ/Yo/q5OVoe7BPhWT1tOqQh+SH3TGgHhM/nLUaLkCqMr6xSSTWCmqrib5uXcaox2C
+         uW06MhggNU1zm6gknE2kFgSafTkWT26qQ5MIPAYhd9QokUOcuJ4sTrCgtQ3ynYr3YP2l
+         YyIvomu4kwNCrIuqp7AbmfVnlZKNwFQ+2dLFSB8m7uLhBtACjOMBKKnxCDpHhuAXRBoW
+         Cb2Iju4kaSkSX411s/OkDyIDvTDEXwmjc+Avw0Nbwofi9iimBiqBShjISpwg6RRDirB6
+         uFRsTbEgJ7aQKFlNqt6IKEhZZmjrS/LG+TFtbRwFk53aRGmAWjvdN+ggpLmzn06nAxHi
+         ATzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qrMbgYVfZEtHoZFiDZ3fpmazBC6XO24Xvng1lx97mZg=;
+        b=Y+Q8ULKNF5RL4yAX6Md2BbQBLKBaCzZESiIIBfq7/00YXhrihvkryj3Zib9OycLVzJ
+         SdcuCmdbBIESinHjoGTPzyhIyTXCuUMmPUxF6+rwgxp3mJi2555b/UNEyO1PIZ2HIaKe
+         UY5wt0RnjMPi96sZ0GP4aff5oFk8NUt64kAm9XjiGocZ2XS8IwxILB1APjlI4bUfnHk5
+         kuT/i+IhlOThU/l1NGtLulO5BAMdQLIdoiylTrAKnbrC8GcPAd3zfaZU9kJKL3UDHl4R
+         7RBXtV4rfqsaAgP33oRurLRY56W1SPoJTjl8klgfEP80aB6+m1AeJRILTyeWg3WsHoko
+         wvGw==
+X-Gm-Message-State: APjAAAVFoebEfg7o9D69myKqcbPo7IxikpJirpxFWg1PQFptSAEpo0Bd
+        cPX3Ql3gTz/M0bwrNH13oA25nIx6YckngQ1OiV3ndg==
+X-Google-Smtp-Source: APXvYqwugNfU6EJH7e5aKNl0wSkrKhP2JsKWINFGT5ekrDolt+qg5exbMeLoW+IDveVrlUsK4FePdvM/RiFcKXbaOVw=
+X-Received: by 2002:aca:d80b:: with SMTP id p11mr9329370oig.83.1573927773330;
+ Sat, 16 Nov 2019 10:09:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <20191114180303.66955-1-elver@google.com> <20191114195046.GP2865@paulmck-ThinkPad-P72>
+ <20191114213303.GA237245@google.com> <20191114221559.GS2865@paulmck-ThinkPad-P72>
+ <CANpmjNPxAOUAxXHd9tka5gCjR_rNKmBk+k5UzRsXT0a0CtNorw@mail.gmail.com>
+ <20191115164159.GU2865@paulmck-ThinkPad-P72> <CANpmjNPy2RDBUhV-j-APzwYr-_x2V9QwgPTYZph36rCpEVqZSQ@mail.gmail.com>
+ <20191115204321.GX2865@paulmck-ThinkPad-P72> <CANpmjNN0JCgEOC=AhKN7pH9OpmzbNB94mioP0FN9ueCQUfKzBQ@mail.gmail.com>
+ <20191116153454.GC2865@paulmck-ThinkPad-P72>
+In-Reply-To: <20191116153454.GC2865@paulmck-ThinkPad-P72>
+From:   Marco Elver <elver@google.com>
+Date:   Sat, 16 Nov 2019 19:09:21 +0100
+Message-ID: <CANpmjNM6NT3bA07h5L9HNMzFY83Nd-yZRzum9-ykd4pW58kNOQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] Add Kernel Concurrency Sanitizer (KCSAN)
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alexander Potapenko <glider@google.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-efi@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+On Sat, 16 Nov 2019 at 16:34, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> On Sat, Nov 16, 2019 at 09:20:54AM +0100, Marco Elver wrote:
+> > On Fri, 15 Nov 2019 at 21:43, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > >
+> > > On Fri, Nov 15, 2019 at 06:14:46PM +0100, Marco Elver wrote:
+> > > > On Fri, 15 Nov 2019 at 17:42, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > > >
+> > > > > On Fri, Nov 15, 2019 at 01:02:08PM +0100, Marco Elver wrote:
+> > > > > > On Thu, 14 Nov 2019 at 23:16, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Thu, Nov 14, 2019 at 10:33:03PM +0100, Marco Elver wrote:
+> > > > > > > > On Thu, 14 Nov 2019, Paul E. McKenney wrote:
+> > > > > > > >
+> > > > > > > > > On Thu, Nov 14, 2019 at 07:02:53PM +0100, Marco Elver wrote:
+> > > > > > > > > > This is the patch-series for the Kernel Concurrency Sanitizer (KCSAN).
+> > > > > > > > > > KCSAN is a sampling watchpoint-based *data race detector*. More details
+> > > > > > > > > > are included in **Documentation/dev-tools/kcsan.rst**. This patch-series
+> > > > > > > > > > only enables KCSAN for x86, but we expect adding support for other
+> > > > > > > > > > architectures is relatively straightforward (we are aware of
+> > > > > > > > > > experimental ARM64 and POWER support).
+> > > > > > > > > >
+> > > > > > > > > > To gather early feedback, we announced KCSAN back in September, and have
+> > > > > > > > > > integrated the feedback where possible:
+> > > > > > > > > > http://lkml.kernel.org/r/CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com
+> > > > > > > > > >
+> > > > > > > > > > The current list of known upstream fixes for data races found by KCSAN
+> > > > > > > > > > can be found here:
+> > > > > > > > > > https://github.com/google/ktsan/wiki/KCSAN#upstream-fixes-of-data-races-found-by-kcsan
+> > > > > > > > > >
+> > > > > > > > > > We want to point out and acknowledge the work surrounding the LKMM,
+> > > > > > > > > > including several articles that motivate why data races are dangerous
+> > > > > > > > > > [1, 2], justifying a data race detector such as KCSAN.
+> > > > > > > > > >
+> > > > > > > > > > [1] https://lwn.net/Articles/793253/
+> > > > > > > > > > [2] https://lwn.net/Articles/799218/
+> > > > > > > > >
+> > > > > > > > > I queued this and ran a quick rcutorture on it, which completed
+> > > > > > > > > successfully with quite a few reports.
+> > > > > > > >
+> > > > > > > > Great. Many thanks for queuing this in -rcu. And regarding merge window
+> > > > > > > > you mentioned, we're fine with your assumption to targeting the next
+> > > > > > > > (v5.6) merge window.
+> > > > > > > >
+> > > > > > > > I've just had a look at linux-next to check what a future rebase
+> > > > > > > > requires:
+> > > > > > > >
+> > > > > > > > - There is a change in lib/Kconfig.debug and moving KCSAN to the
+> > > > > > > >   "Generic Kernel Debugging Instruments" section seems appropriate.
+> > > > > > > > - bitops-instrumented.h was removed and split into 3 files, and needs
+> > > > > > > >   re-inserting the instrumentation into the right places.
+> > > > > > > >
+> > > > > > > > Otherwise there are no issues. Let me know what you recommend.
+> > > > > > >
+> > > > > > > Sounds good!
+> > > > > > >
+> > > > > > > I will be rebasing onto v5.5-rc1 shortly after it comes out.  My usual
+> > > > > > > approach is to fix any conflicts during that rebasing operation.
+> > > > > > > Does that make sense, or would you prefer to send me a rebased stack at
+> > > > > > > that point?  Either way is fine for me.
+> > > > > >
+> > > > > > That's fine with me, thanks!  To avoid too much additional churn on
+> > > > > > your end, I just replied to the bitops patch with a version that will
+> > > > > > apply with the change to bitops-instrumented infrastructure.
+> > > > >
+> > > > > My first thought was to replace 8/10 of the previous version of your
+> > > > > patch in -rcu (047ca266cfab "asm-generic, kcsan: Add KCSAN instrumentation
+> > > > > for bitops"), but this does not apply.  So I am guessing that I instead
+> > > > > do this substitution when a rebase onto -rc1..
+> > > > >
+> > > > > Except...
+> > > > >
+> > > > > > Also considering the merge window, we had a discussion and there are
+> > > > > > some arguments for targeting the v5.5 merge window:
+> > > > > > - we'd unblock ARM and POWER ports;
+> > > > > > - we'd unblock people wanting to use the data_race macro;
+> > > > > > - we'd unblock syzbot just tracking upstream;
+> > > > > > Unless there are strong reasons to not target v5.5, I leave it to you
+> > > > > > if you think it's appropriate.
+> > > > >
+> > > > > My normal process is to send the pull request shortly after -rc5 comes
+> > > > > out, but you do call out some benefits of getting it in sooner, so...
+> > > > >
+> > > > > What I will do is to rebase your series onto (say) -rc7, test it, and
+> > > > > see about an RFC pull request.
+> > > > >
+> > > > > One possible complication is the new 8/10 patch.  But maybe it will
+> > > > > apply against -rc7?
+> > > > >
+> > > > > Another possible complication is this:
+> > > > >
+> > > > > scripts/kconfig/conf  --syncconfig Kconfig
+> > > > > *
+> > > > > * Restart config...
+> > > > > *
+> > > > > *
+> > > > > * KCSAN: watchpoint-based dynamic data race detector
+> > > > > *
+> > > > > KCSAN: watchpoint-based dynamic data race detector (KCSAN) [N/y/?] (NEW)
+> > > > >
+> > > > > Might be OK in this case because it is quite obvious what it is doing.
+> > > > > (Avoiding pain from this is the reason that CONFIG_RCU_EXPERT exists.)
+> > > > >
+> > > > > But I will just mention this in the pull request.
+> > > > >
+> > > > > If there is a -rc8, there is of course a higher probability of making it
+> > > > > into the next merge window.
+> > > > >
+> > > > > Fair enough?
+> > > >
+> > > > Totally fine with that, sounds like a good plan, thanks!
+> > > >
+> > > > If it helps, in theory we can also drop and delay the bitops
+> > > > instrumentation patch until the new bitops instrumentation
+> > > > infrastructure is in 5.5-rc1. There won't be any false positives if
+> > > > this is missing, we might just miss a few data races until we have it.
+> > >
+> > > That sounds advisable for an attempt to hit this coming merge window.
+> > >
+> > > So just to make sure I understand, I drop 8/10 and keep the rest during
+> > > a rebase to 5.4-rc7, correct?
+> >
+> > Yes, that's right.
+>
+> Very good, I just now pushed a "kcsan" branch on -rcu, and am running
+> rcutorture, first without KCSAN enabled and then with it turned on.
+> If all that works out, I set my -next branch to that point and see what
+> -next testing and kbuild test robot think about it.  If all goes well,
+> an RFC pull request.
+>
+> Look OK?
 
-I noticed you already acked all the patches in the V1 but expected them=20
-to go through the MIPS tree; could you take them into your tree instead?
+Looks good to me, many thanks!
 
-Cheers,
--Paul
-
-
-Le mer., oct. 23, 2019 at 19:47, Paul Cercueil <paul@crapouillou.net> a=20
-=E9crit :
-> Instead of requesting the "ext" clock and handling the watchdog clock
-> divider and gating in the watchdog driver, we now request and use the
-> "wdt" clock that is supplied by the ingenic-timer "TCU" driver.
->=20
-> The major benefit is that the watchdog's clock rate and parent can now
-> be specified from within devicetree, instead of hardcoded in the=20
-> driver.
->=20
-> Also, this driver won't poke anymore into the TCU registers to
-> enable/disable the clock, as this is now handled by the TCU driver.
->=20
-> On the bad side, we break the ABI with devicetree - as we now request=20
-> a
-> different clock. In this very specific case it is still okay, as every
-> Ingenic JZ47xx-based board out there compile the devicetree within the
-> kernel; so it's still time to push breaking changes, in order to get a
-> clean devicetree that won't break once it musn't.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Mathieu Malaterre <malat@debian.org>
-> Tested-by: Artur Rojek <contact@artur-rojek.eu>
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->=20
-> Notes:
->     v2: Rebase on top of 5.4-rc4
->=20
->  drivers/watchdog/Kconfig      |  1 +
->  drivers/watchdog/jz4740_wdt.c | 75=20
-> ++++++++++++++---------------------
->  2 files changed, 31 insertions(+), 45 deletions(-)
->=20
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 58e7c100b6ad..6421187769cf 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -1642,6 +1642,7 @@ config INDYDOG
->  config JZ4740_WDT
->  	tristate "Ingenic jz4740 SoC hardware watchdog"
->  	depends on MACH_JZ4740 || MACH_JZ4780
-> +	depends on COMMON_CLK
->  	select WATCHDOG_CORE
->  	help
->  	  Hardware driver for the built-in watchdog timer on Ingenic jz4740=20
-> SoCs.
-> diff --git a/drivers/watchdog/jz4740_wdt.c=20
-> b/drivers/watchdog/jz4740_wdt.c
-> index c6052ae54f32..72920f09f4a7 100644
-> --- a/drivers/watchdog/jz4740_wdt.c
-> +++ b/drivers/watchdog/jz4740_wdt.c
-> @@ -18,19 +18,6 @@
->  #include <linux/err.h>
->  #include <linux/of.h>
->=20
-> -#include <asm/mach-jz4740/timer.h>
-> -
-> -#define JZ_WDT_CLOCK_PCLK 0x1
-> -#define JZ_WDT_CLOCK_RTC  0x2
-> -#define JZ_WDT_CLOCK_EXT  0x4
-> -
-> -#define JZ_WDT_CLOCK_DIV_1    (0 << TCU_TCSR_PRESCALE_LSB)
-> -#define JZ_WDT_CLOCK_DIV_4    (1 << TCU_TCSR_PRESCALE_LSB)
-> -#define JZ_WDT_CLOCK_DIV_16   (2 << TCU_TCSR_PRESCALE_LSB)
-> -#define JZ_WDT_CLOCK_DIV_64   (3 << TCU_TCSR_PRESCALE_LSB)
-> -#define JZ_WDT_CLOCK_DIV_256  (4 << TCU_TCSR_PRESCALE_LSB)
-> -#define JZ_WDT_CLOCK_DIV_1024 (5 << TCU_TCSR_PRESCALE_LSB)
-> -
->  #define DEFAULT_HEARTBEAT 5
->  #define MAX_HEARTBEAT     2048
->=20
-> @@ -50,7 +37,8 @@ MODULE_PARM_DESC(heartbeat,
->  struct jz4740_wdt_drvdata {
->  	struct watchdog_device wdt;
->  	void __iomem *base;
-> -	struct clk *rtc_clk;
-> +	struct clk *clk;
-> +	unsigned long clk_rate;
->  };
->=20
->  static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
-> @@ -65,32 +53,14 @@ static int jz4740_wdt_set_timeout(struct=20
-> watchdog_device *wdt_dev,
->  				    unsigned int new_timeout)
->  {
->  	struct jz4740_wdt_drvdata *drvdata =3D watchdog_get_drvdata(wdt_dev);
-> -	unsigned int rtc_clk_rate;
-> -	unsigned int timeout_value;
-> -	unsigned short clock_div =3D JZ_WDT_CLOCK_DIV_1;
-> +	u16 timeout_value =3D (u16)(drvdata->clk_rate * new_timeout);
->  	u8 tcer;
->=20
-> -	rtc_clk_rate =3D clk_get_rate(drvdata->rtc_clk);
-> -
-> -	timeout_value =3D rtc_clk_rate * new_timeout;
-> -	while (timeout_value > 0xffff) {
-> -		if (clock_div =3D=3D JZ_WDT_CLOCK_DIV_1024) {
-> -			/* Requested timeout too high;
-> -			* use highest possible value. */
-> -			timeout_value =3D 0xffff;
-> -			break;
-> -		}
-> -		timeout_value >>=3D 2;
-> -		clock_div +=3D (1 << TCU_TCSR_PRESCALE_LSB);
-> -	}
-> -
->  	tcer =3D readb(drvdata->base + TCU_REG_WDT_TCER);
->  	writeb(0x0, drvdata->base + TCU_REG_WDT_TCER);
-> -	writew(clock_div, drvdata->base + TCU_REG_WDT_TCSR);
->=20
->  	writew((u16)timeout_value, drvdata->base + TCU_REG_WDT_TDR);
->  	writew(0x0, drvdata->base + TCU_REG_WDT_TCNT);
-> -	writew(clock_div | JZ_WDT_CLOCK_RTC, drvdata->base +=20
-> TCU_REG_WDT_TCSR);
->=20
->  	if (tcer & TCU_WDT_TCER_TCEN)
->  		writeb(TCU_WDT_TCER_TCEN, drvdata->base + TCU_REG_WDT_TCER);
-> @@ -102,11 +72,15 @@ static int jz4740_wdt_set_timeout(struct=20
-> watchdog_device *wdt_dev,
->  static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
->  {
->  	struct jz4740_wdt_drvdata *drvdata =3D watchdog_get_drvdata(wdt_dev);
-> +	int ret;
->  	u8 tcer;
->=20
-> +	ret =3D clk_prepare_enable(drvdata->clk);
-> +	if (ret)
-> +		return ret;
-> +
->  	tcer =3D readb(drvdata->base + TCU_REG_WDT_TCER);
->=20
-> -	jz4740_timer_enable_watchdog();
->  	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
->=20
->  	/* Start watchdog if it wasn't started already */
-> @@ -121,7 +95,7 @@ static int jz4740_wdt_stop(struct watchdog_device=20
-> *wdt_dev)
->  	struct jz4740_wdt_drvdata *drvdata =3D watchdog_get_drvdata(wdt_dev);
->=20
->  	writeb(0x0, drvdata->base + TCU_REG_WDT_TCER);
-> -	jz4740_timer_disable_watchdog();
-> +	clk_disable_unprepare(drvdata->clk);
->=20
->  	return 0;
->  }
-> @@ -162,21 +136,38 @@ static int jz4740_wdt_probe(struct=20
-> platform_device *pdev)
->  	struct device *dev =3D &pdev->dev;
->  	struct jz4740_wdt_drvdata *drvdata;
->  	struct watchdog_device *jz4740_wdt;
-> +	long rate;
-> +	int ret;
->=20
->  	drvdata =3D devm_kzalloc(dev, sizeof(struct jz4740_wdt_drvdata),
->  			       GFP_KERNEL);
->  	if (!drvdata)
->  		return -ENOMEM;
->=20
-> -	if (heartbeat < 1 || heartbeat > MAX_HEARTBEAT)
-> -		heartbeat =3D DEFAULT_HEARTBEAT;
-> +	drvdata->clk =3D devm_clk_get(&pdev->dev, "wdt");
-> +	if (IS_ERR(drvdata->clk)) {
-> +		dev_err(&pdev->dev, "cannot find WDT clock\n");
-> +		return PTR_ERR(drvdata->clk);
-> +	}
-> +
-> +	/* Set smallest clock possible */
-> +	rate =3D clk_round_rate(drvdata->clk, 1);
-> +	if (rate < 0)
-> +		return rate;
-> +
-> +	ret =3D clk_set_rate(drvdata->clk, rate);
-> +	if (ret)
-> +		return ret;
->=20
-> +	drvdata->clk_rate =3D rate;
->  	jz4740_wdt =3D &drvdata->wdt;
->  	jz4740_wdt->info =3D &jz4740_wdt_info;
->  	jz4740_wdt->ops =3D &jz4740_wdt_ops;
-> -	jz4740_wdt->timeout =3D heartbeat;
->  	jz4740_wdt->min_timeout =3D 1;
-> -	jz4740_wdt->max_timeout =3D MAX_HEARTBEAT;
-> +	jz4740_wdt->max_timeout =3D 0xffff / rate;
-> +	jz4740_wdt->timeout =3D clamp(heartbeat,
-> +				    jz4740_wdt->min_timeout,
-> +				    jz4740_wdt->max_timeout);
->  	jz4740_wdt->parent =3D dev;
->  	watchdog_set_nowayout(jz4740_wdt, nowayout);
->  	watchdog_set_drvdata(jz4740_wdt, drvdata);
-> @@ -185,12 +176,6 @@ static int jz4740_wdt_probe(struct=20
-> platform_device *pdev)
->  	if (IS_ERR(drvdata->base))
->  		return PTR_ERR(drvdata->base);
->=20
-> -	drvdata->rtc_clk =3D devm_clk_get(dev, "rtc");
-> -	if (IS_ERR(drvdata->rtc_clk)) {
-> -		dev_err(dev, "cannot find RTC clock\n");
-> -		return PTR_ERR(drvdata->rtc_clk);
-> -	}
-> -
->  	return devm_watchdog_register_device(dev, &drvdata->wdt);
->  }
->=20
-> --
-> 2.23.0
->=20
-
-=
-
+-- Marco
