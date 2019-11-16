@@ -2,121 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6C2FFF242
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3C6FF2B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731616AbfKPQSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:18:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729820AbfKPQR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 11:17:58 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AE0021844;
-        Sat, 16 Nov 2019 16:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573921078;
-        bh=PoAjATiyMw59a4B+QqOkZq9Qem/RNBGHAwCV08vIXVA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NiwuN3cA5wNzoy+x+tLZQfyxvfyWNPzhLN6tZr4PAOrsYM5JegUavQuoUHPsTD8xk
-         W7IrhDvv90baPuGBVxR33GKjGPY8OXFsepKcSuvuzXQLvaYJLs80YkOCVDbTnX6Z8u
-         dH145/up7L911obt7v5ID9W3H/3IcMgPi51jqtx0=
-Date:   Sat, 16 Nov 2019 16:17:53 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Tachici <alexandru.tachici@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lars@metafoo.de>
-Subject: Re: [PATCH] iio: dac: ad7303: use regulator get optional to check
- for ext supply
-Message-ID: <20191116161753.24d620df@archlinux>
-In-Reply-To: <20191113083303.2229-1-alexandru.tachici@analog.com>
-References: <20191113083303.2229-1-alexandru.tachici@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731978AbfKPQU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:20:58 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33654 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729652AbfKPQUx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 11:20:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id h27so7430030pgn.0;
+        Sat, 16 Nov 2019 08:20:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3ThCOn+QwgspJ3kxAATKe5mgdC4dFBHT7/R2+FrM5uE=;
+        b=Ydq+ryFHXyCcCndRf0G9/AN0hFrn0rS9hynpb848hB82abgjXFz2z4BqEgRkNB9xXP
+         Ob7eqFO/Xq8K6kEL6fRe6Hc1dPEmOsQRmAby1ZRPGsNckUFgRusxiNKgizyKLm02Yxjq
+         iQwbo5HmHuT/iIlj/nGvHRgATRwG8PzwQpp0yT0WfqBlMhOiEclEC/gpEKQr52HlAJZ3
+         +Hq9I4na89H0lpGnirkHvAUIEole4l1UnFUE12jNCVFWEulvMT1wPRyjvOOacmaPnuwd
+         DXyYCwz/a9FToDYFTJJODt3VvIsxakpbROqhhyc3I4RJph+XpkV7wfGv1JhfTbzdFX/j
+         GidA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3ThCOn+QwgspJ3kxAATKe5mgdC4dFBHT7/R2+FrM5uE=;
+        b=fZDHWvAmusrKa6WejNPXltzVdQ0uhgWrTvtjOIdT3wZWGYtH94SyiAu91vS/IqGtxa
+         bHymMpu2ou12vp1dGhL3Zeu3mj4IyoPom8WybMNH/O4pjZ6Xwk9t1kduCa1O22sk7Mi8
+         P2fsmclwThL3Fcb3Lz7cUSst+nvYuUwccmFc4k7WKpkUCURSC2xsylVMPaD6NhemEbTU
+         fa70C3+CmVk1vXIUB4B+b81UDJQ4IcPHVG3S3W+f8u9CiV8yJJqCG2v9aNPwv56ANqar
+         mDuw3k+Pl5luirfgtRnUnGbliOcGVG+tza4ZuNFoQaxeplSP7W68GRG8/QHAucTV6s57
+         NiGw==
+X-Gm-Message-State: APjAAAVy5qQn63u/k+a7qU/yz3VCdfgeyi8PyOTeooGlplbIgukbGWvz
+        BxenY1BTgdqu+p7QsQe54HZmwer3
+X-Google-Smtp-Source: APXvYqw8+YtA13X+2DcbFCm2WNiq/03l8qtmNPUJkbuUIVpNhKs1oVxFoW7yPNZWmSTRPhkaZHB4YA==
+X-Received: by 2002:a63:e70f:: with SMTP id b15mr22797805pgi.116.1573921252799;
+        Sat, 16 Nov 2019 08:20:52 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id em16sm12577766pjb.21.2019.11.16.08.20.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Nov 2019 08:20:52 -0800 (PST)
+Date:   Sat, 16 Nov 2019 08:20:51 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Eugen.Hristev@microchip.com
+Cc:     wim@linux-watchdog.org, robh+dt@kernel.org,
+        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nicolas.Ferre@microchip.com, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] watchdog: sama5d4_wdt: addition of sam9x60
+ compatible watchdog
+Message-ID: <20191116162051.GA23056@roeck-us.net>
+References: <1573806579-7981-1-git-send-email-eugen.hristev@microchip.com>
+ <1573806579-7981-3-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573806579-7981-3-git-send-email-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Nov 2019 10:33:03 +0200
-Alexandru Tachici <alexandru.tachici@analog.com> wrote:
-
-> Previously, the code was using the of_read_property_bool() to check if
-> an external regulator was provided. However, this is redundant, as it's
-> more simple/direct to just ask the regulator is provided, via a
-> `devm_regulator_get_optional()` call.
+On Fri, Nov 15, 2019 at 08:30:18AM +0000, Eugen.Hristev@microchip.com wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
 > 
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
+> Add support for SAM9X60 WDT into sama5d4_wdt.
+> This means that this driver gets a flag inside the data struct
+> that represents the sam9x60 support.
+> This flag differentiates between the two hardware blocks, and is set
+> according to the compatible of the driver instantiation.
+> 
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> ---
+> Changes in v4:
+> - check compatible with different of_ function
+> - call irq parse and map only if need_irq
+> - changed tabbing in struct defintion
+> 
+> Changes in v3:
+> - changed need_irq to bool, instead of a single bit variable.
+> - the platform data config struct is gone now, changed to a pointer to a bool
+> to have the sam9x60_support as 'true', pointing to a static bool with true value.
+> Can have a better solution than this ?
+> - the specific sam9x60_support flag is assigned at probe time, corresponding
+> to the flag value in .data
+> 
+>  drivers/watchdog/at91sam9_wdt.h |  14 ++++++
+>  drivers/watchdog/sama5d4_wdt.c  | 109 +++++++++++++++++++++++++++++++---------
+>  2 files changed, 98 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/watchdog/at91sam9_wdt.h b/drivers/watchdog/at91sam9_wdt.h
+> index abfe34d..4b3bd1d 100644
+> --- a/drivers/watchdog/at91sam9_wdt.h
+> +++ b/drivers/watchdog/at91sam9_wdt.h
+> @@ -24,7 +24,10 @@
+>  #define AT91_WDT_MR		0x04			/* Watchdog Mode Register */
+>  #define  AT91_WDT_WDV		(0xfffUL << 0)		/* Counter Value */
+>  #define  AT91_WDT_SET_WDV(x)	((x) & AT91_WDT_WDV)
+> +#define  AT91_SAM9X60_PERIODRST	BIT(4)		/* Period Reset */
+> +#define  AT91_SAM9X60_RPTHRST	BIT(5)		/* Minimum Restart Period */
+>  #define  AT91_WDT_WDFIEN	BIT(12)		/* Fault Interrupt Enable */
+> +#define  AT91_SAM9X60_WDDIS	BIT(12)		/* Watchdog Disable */
+>  #define  AT91_WDT_WDRSTEN	BIT(13)		/* Reset Processor */
+>  #define  AT91_WDT_WDRPROC	BIT(14)		/* Timer Restart */
+>  #define  AT91_WDT_WDDIS		BIT(15)		/* Watchdog Disable */
+> @@ -37,4 +40,15 @@
+>  #define  AT91_WDT_WDUNF		BIT(0)		/* Watchdog Underflow */
+>  #define  AT91_WDT_WDERR		BIT(1)		/* Watchdog Error */
+>  
+> +#define AT91_SAM9X60_VR		0x08			/* Watchdog Timer Value Register */
+> +
+> +#define AT91_SAM9X60_WLR		0x0c
+> +#define  AT91_SAM9X60_COUNTER	(0xfffUL << 0)		/* Watchdog Period Value */
+> +#define  AT91_SAM9X60_SET_COUNTER(x)	((x) & AT91_SAM9X60_COUNTER)
+> +
+> +#define AT91_SAM9X60_IER		0x14		/* Interrupt Enable Register */
+> +#define  AT91_SAM9X60_PERINT		BIT(0)		/* Period Interrupt Enable */
+> +#define AT91_SAM9X60_IDR		0x18		/* Interrupt Disable Register */
+> +#define AT91_SAM9X60_ISR		0x1c		/* Interrupt Status Register */
+> +
 
-Hi.
-I agree in principle but I don't think devm_regulator_get_optional
-returns NULL when a regulator isn't supplied.
+Lots of line-too-long checkpatch warnings. Please avoid.
 
 Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/dac/ad7303.c | 23 +++++------------------
->  1 file changed, 5 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/ad7303.c b/drivers/iio/dac/ad7303.c
-> index 14bbac6bee98..e0c5fed4475c 100644
-> --- a/drivers/iio/dac/ad7303.c
-> +++ b/drivers/iio/dac/ad7303.c
-> @@ -12,7 +12,6 @@
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
->  #include <linux/regulator/consumer.h>
-> -#include <linux/of.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -202,7 +201,6 @@ static int ad7303_probe(struct spi_device *spi)
->  	const struct spi_device_id *id = spi_get_device_id(spi);
->  	struct iio_dev *indio_dev;
->  	struct ad7303_state *st;
-> -	bool ext_ref;
->  	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> @@ -224,24 +222,13 @@ static int ad7303_probe(struct spi_device *spi)
->  	if (ret)
->  		return ret;
->  
-> -	if (spi->dev.of_node) {
-> -		ext_ref = of_property_read_bool(spi->dev.of_node,
-> -				"REF-supply");
-> -	} else {
-> -		struct ad7303_platform_data *pdata = spi->dev.platform_data;
-> -		if (pdata && pdata->use_external_ref)
-> -			ext_ref = true;
-> -		else
-> -		    ext_ref = false;
-> +	st->vref_reg = devm_regulator_get_optional(&spi->dev, "REF");
-> +	if (IS_ERR(st->vref_reg)) {
-> +		ret = PTR_ERR(st->vref_reg);
-
-devm_regulator_get_optional returns a ptr  encoding -ENODEV if the
-regulator is not supplied.  That isn't an error here so needs to be
-handled differently from other error codes.
-
-> +		goto err_disable_vdd_reg;
->  	}
->  
-> -	if (ext_ref) {
-> -		st->vref_reg = devm_regulator_get(&spi->dev, "REF");
-> -		if (IS_ERR(st->vref_reg)) {
-> -			ret = PTR_ERR(st->vref_reg);
-> -			goto err_disable_vdd_reg;
-> -		}
-> -
-> +	if (st->vref_reg) {
->  		ret = regulator_enable(st->vref_reg);
->  		if (ret)
->  			goto err_disable_vdd_reg;
-
+Guenter
