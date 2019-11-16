@@ -2,144 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5762CFF173
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB45BFF1A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731872AbfKPQMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:12:09 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46399 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728735AbfKPQMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 11:12:07 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 193so8111751pfc.13;
-        Sat, 16 Nov 2019 08:12:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DLBwNS04s3vTncd8h6wYjqP9/zqj5Hw6C3ovDZPMJNw=;
-        b=aWDwUslpmIQVa4GYtfBvd2CMsrtdrtzAXSurvFxn9mgpdxN5BKh64sYvKAAbYDKfSj
-         4YMXLI9Fua6OvuYxk9aWHHjKqdWTtquxgyU2Ekugjx0AhH0B2lhuJMJVRi+yk65QDRdh
-         CoQCd0F3l4D53DhJkRKl2tlal42XOJ5NtiyXPDIMbxtijjHPxUlqeCwzdUwgjDihryL/
-         CJ5cwucFeg0xSf4TYkBeyf3doCOFGOg+Q1odrSMKSHCCaWOwWiJ4brhdjJUtyYBT8cDS
-         0TMlKeK9t/aA+6JqhkkAPhqn1+7XTFmvaVvt4Y/wY6Y5CY47hgLvCakN7MxAv9gtLu9L
-         ul6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DLBwNS04s3vTncd8h6wYjqP9/zqj5Hw6C3ovDZPMJNw=;
-        b=cfeqYPL+SoFf8U+8bvoEg5s0TeoI9o4k36GLDONPzR0BwGYnJP7nmBFUu0erfxWaQ+
-         8pLM0Xmey4i3Uod/d29auQhK+IJqeJb+Z+UHlFFh681PzBaW9IF1dUgPD5RYMQJPSzdV
-         cEx+DOX66IiHJrGt0vGXZhBNAc6EcDsSojlQ/p5jHJ9vmLOk6YKUsa9kcjpRuLaHwzjq
-         39Db13FJAzWbpdPp0u/uITIUlOWcgoG5Y3bq+oO97SNAUCPylU1366HeT02bNMFjMpHm
-         uNMWsjC4C47WzxLfIzFdJUzlLx+Ztwcu946HDTp8vW1ts2s0niEW3lapdy8l0pVzyfDi
-         k2Zg==
-X-Gm-Message-State: APjAAAXOf5eyRQ09S+fFTmZjGRMvwZrOeq3U8Qjr50yeJoz9Yw9t0ARm
-        Ss8ZZf1YHbMDweYoB9Z91yeJvutk
-X-Google-Smtp-Source: APXvYqyUjaIuhyaRHuw7HuQ7JdypEFfmmQ6CWLzYfMZsoL54sdj1Me9cxMFnQnrWwYl56ebRbcqIPA==
-X-Received: by 2002:a63:e156:: with SMTP id h22mr7865038pgk.266.1573920726128;
-        Sat, 16 Nov 2019 08:12:06 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 83sm14198063pgh.86.2019.11.16.08.12.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Nov 2019 08:12:05 -0800 (PST)
-Date:   Sat, 16 Nov 2019 08:12:04 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eugen.Hristev@microchip.com
-Cc:     wim@linux-watchdog.org, robh+dt@kernel.org,
-        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nicolas.Ferre@microchip.com, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] watchdog: sama5d4_wdt: cleanup the bit definitions
-Message-ID: <20191116161204.GA22568@roeck-us.net>
-References: <1573806579-7981-1-git-send-email-eugen.hristev@microchip.com>
+        id S1731892AbfKPQN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:13:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:22745 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729892AbfKPQNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 11:13:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2019 08:13:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,312,1569308400"; 
+   d="scan'208";a="214979599"
+Received: from xshen14-mobl.ccr.corp.intel.com (HELO [10.254.215.65]) ([10.254.215.65])
+  by fmsmga001.fm.intel.com with ESMTP; 16 Nov 2019 08:13:21 -0800
+Subject: Re: [PATCH] x86/resctrl: Fix potential lockdep warning
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        tony.luck@intel.com, fenghua.yu@intel.com,
+        reinette.chatre@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, pei.p.jia@intel.com,
+        Xiaochen Shen <xiaochen.shen@intel.com>
+References: <1573079796-11713-1-git-send-email-xiaochen.shen@intel.com>
+ <20191113114334.GA1647@zn.tnic>
+From:   Xiaochen Shen <xiaochen.shen@intel.com>
+Message-ID: <ec0f21ce-17a8-5038-4e69-565a28ca041d@intel.com>
+Date:   Sun, 17 Nov 2019 00:13:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573806579-7981-1-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191113114334.GA1647@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 08:30:13AM +0000, Eugen.Hristev@microchip.com wrote:
-> From: Eugen Hristev <eugen.hristev@microchip.com>
-> 
-> Cleanup the macro definitions to use BIT and align with two spaces.
-> 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Hi Boris,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Thank you for your kind code review. Please find my comments inline.
 
-> ---
-> Changes in v4:
-> - added UL suffix to value macros to avoid compile warnings
-> - modified file header to include new copyright and datasheet
-> - include linux/bits.h
+On 11/13/2019 19:44, Borislav Petkov wrote:
+> On Thu, Nov 07, 2019 at 06:36:36AM +0800, Xiaochen Shen wrote:
+>> rdtgroup_cpus_write() and mkdir_rdt_prepare() call
+>> rdtgroup_kn_lock_live() -> kernfs_to_rdtgroup() to get 'rdtgrp', and
+>> then call rdt_last_cmd_xxx() functions which will check if
 > 
-> Changes in v3:
-> - new patch as requested from review on ML
+> Write those names like this:
 > 
->  drivers/watchdog/at91sam9_wdt.h | 34 +++++++++++++++++++---------------
->  1 file changed, 19 insertions(+), 15 deletions(-)
+> rdt_last_cmd_{clear,puts,...} but not with an "xxx" which confuses
+> people unfamiliar with the code.
+
+OK. I got it. rdt_last_cmd_{clear,puts,printf}().
+
 > 
-> diff --git a/drivers/watchdog/at91sam9_wdt.h b/drivers/watchdog/at91sam9_wdt.h
-> index 390941c..abfe34d 100644
-> --- a/drivers/watchdog/at91sam9_wdt.h
-> +++ b/drivers/watchdog/at91sam9_wdt.h
-> @@ -4,33 +4,37 @@
->   *
->   * Copyright (C) 2007 Andrew Victor
->   * Copyright (C) 2007 Atmel Corporation.
-> + * Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries
->   *
->   * Watchdog Timer (WDT) - System peripherals regsters.
->   * Based on AT91SAM9261 datasheet revision D.
-> + * Based on SAM9X60 datasheet.
->   *
->   */
->  
->  #ifndef AT91_WDT_H
->  #define AT91_WDT_H
->  
-> +#include <linux/bits.h>
-> +
->  #define AT91_WDT_CR		0x00			/* Watchdog Control Register */
-> -#define		AT91_WDT_WDRSTT		(1    << 0)		/* Restart */
-> -#define		AT91_WDT_KEY		(0xa5 << 24)		/* KEY Password */
-> +#define  AT91_WDT_WDRSTT	BIT(0)			/* Restart */
-> +#define  AT91_WDT_KEY		(0xa5UL << 24)		/* KEY Password */
->  
->  #define AT91_WDT_MR		0x04			/* Watchdog Mode Register */
-> -#define		AT91_WDT_WDV		(0xfff << 0)		/* Counter Value */
-> -#define			AT91_WDT_SET_WDV(x)	((x) & AT91_WDT_WDV)
-> -#define		AT91_WDT_WDFIEN		(1     << 12)		/* Fault Interrupt Enable */
-> -#define		AT91_WDT_WDRSTEN	(1     << 13)		/* Reset Processor */
-> -#define		AT91_WDT_WDRPROC	(1     << 14)		/* Timer Restart */
-> -#define		AT91_WDT_WDDIS		(1     << 15)		/* Watchdog Disable */
-> -#define		AT91_WDT_WDD		(0xfff << 16)		/* Delta Value */
-> -#define			AT91_WDT_SET_WDD(x)	(((x) << 16) & AT91_WDT_WDD)
-> -#define		AT91_WDT_WDDBGHLT	(1     << 28)		/* Debug Halt */
-> -#define		AT91_WDT_WDIDLEHLT	(1     << 29)		/* Idle Halt */
-> +#define  AT91_WDT_WDV		(0xfffUL << 0)		/* Counter Value */
-> +#define  AT91_WDT_SET_WDV(x)	((x) & AT91_WDT_WDV)
-> +#define  AT91_WDT_WDFIEN	BIT(12)		/* Fault Interrupt Enable */
-> +#define  AT91_WDT_WDRSTEN	BIT(13)		/* Reset Processor */
-> +#define  AT91_WDT_WDRPROC	BIT(14)		/* Timer Restart */
-> +#define  AT91_WDT_WDDIS		BIT(15)		/* Watchdog Disable */
-> +#define  AT91_WDT_WDD		(0xfffUL << 16)		/* Delta Value */
-> +#define  AT91_WDT_SET_WDD(x)	(((x) << 16) & AT91_WDT_WDD)
-> +#define  AT91_WDT_WDDBGHLT	BIT(28)		/* Debug Halt */
-> +#define  AT91_WDT_WDIDLEHLT	BIT(29)		/* Idle Halt */
->  
-> -#define AT91_WDT_SR		0x08			/* Watchdog Status Register */
-> -#define		AT91_WDT_WDUNF		(1 << 0)		/* Watchdog Underflow */
-> -#define		AT91_WDT_WDERR		(1 << 1)		/* Watchdog Error */
-> +#define AT91_WDT_SR		0x08		/* Watchdog Status Register */
-> +#define  AT91_WDT_WDUNF		BIT(0)		/* Watchdog Underflow */
-> +#define  AT91_WDT_WDERR		BIT(1)		/* Watchdog Error */
->  
->  #endif
+>> rdtgroup_mutex is held/requires its caller to hold rdtgroup_mutex.
+>> But if 'rdtgrp' returned from kernfs_to_rdtgroup() is NULL,
+>> rdtgroup_mutex is not held and calling rdt_last_cmd_xxx() will result
+>> in a lockdep warning.
+> 
+> That's more of a self-incurred lockdep warning. You can't be calling
+> lockdep_assert_held() after a function which doesn't always grab the
+> mutex. Looks like the design needs changing here...
+
+Actually this fix covers all the cases of an audit of the calling paths
+of rdt_last_cmd_{clear,puts,printf}(), to make sure we only have the
+lockdep_assert_held() in places where we are sure that it must be held.
+Please find more background details as below.
+
+> 
+>> Remove rdt_last_cmd_xxx() in these two paths. Just returning error
+>> should be sufficient to report to the user that the entry doesn't exist
+>> any more.
+> 
+> ... or that.
+> 
+> In any case, you should consider fixing such patterns in the code as it
+> looks sub-optimal from where I'm standing.
+
+I would like to provide more of the background details in the commit
+comment in v2 patch:
+
+-------------------
+x86/resctrl: Fix potential lockdep warning
+
+rdt_last_cmd_{clear,puts,printf}() call lockdep_assert_held() to assert
+that rdtgroup_mutex is held.
+
+During internal review of some other changes we found that there are
+code paths that call rdt_last_cmd_{clear,puts}() when the rdtgroup_mutex
+is not held.
+
+An audit of calling sequences identified two different cases in
+rdtgroup_kn_lock_live() which both returning NULL:
+1.'rdtgrp' returned from kernfs_to_rdtgroup() is NULL, rdtgroup_mutex
+is not held.
+2.'rdtgrp' is being deleted, rdtgroup_mutex is held.
+
+Checking all call sites of rdt_last_cmd_{clear,puts,printf}() found two
+code paths where rdtgroup_mutex is not held: rdtgroup_cpus_write() and
+mkdir_rdt_prepare().
+
+Fix by removing rdt_last_cmd_{clear,puts}() in these two paths. Just
+returning error should be sufficient to report to the user that the
+entry doesn't exist any more.
+
+Fixes: 94457b36e8a5 ("x86/intel_rdt: Add diagnostics when writing the 
+cpus file")
+Fixes: cfd0f34e4cd5 ("x86/intel_rdt: Add diagnostics when making 
+directories")
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+-------------------
+Updated commit comment to provide additional context on how these were
+found.
+
+> 
+> Thx.
+> 
+
+-- 
+Best regards,
+Xiaochen
