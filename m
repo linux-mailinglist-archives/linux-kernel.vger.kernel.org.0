@@ -2,74 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858F3FEA76
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 04:47:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20607FEA6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 04:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbfKPDrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 22:47:46 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:35238 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfKPDrk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 22:47:40 -0500
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 6FCFE2A71E; Fri, 15 Nov 2019 22:47:39 -0500 (EST)
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     "Michael Schmitz" <schmitzmic@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <993b17545990f31f9fa5a98202b51102a68e7594.1573875417.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH] NCR5380: Add disconnect_mask module parameter
-Date:   Sat, 16 Nov 2019 14:36:57 +1100
+        id S1727386AbfKPDgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 22:36:35 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6239 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727290AbfKPDgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 22:36:35 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 459D3232D7737EC5CC9D;
+        Sat, 16 Nov 2019 11:36:33 +0800 (CST)
+Received: from localhost.localdomain (10.90.53.225) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 16 Nov 2019 11:36:27 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <alexander.deucher@amd.com>, <evan.quan@amd.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH] drm/amd/powerplay: remove variable 'result' set but not used
+Date:   Sat, 16 Nov 2019 11:43:19 +0800
+Message-ID: <1573875799-83572-1-git-send-email-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a module parameter to inhibit disconnect/reselect for individual
-targets. This gains compatibility with Aztec PowerMonster SCSI/SATA
-adapters with buggy firmware. (No fix is available from the vendor.)
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Apparently these adapters pass-through the product/vendor of the
-attached SATA device. Since they can't be identified from the response
-to an INQUIRY command, a device blacklist flag won't work.
+drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/vegam_smumgr.c: In function vegam_populate_smc_boot_level:
+drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/vegam_smumgr.c:1364:6: warning: variable result set but not used [-Wunused-but-set-variable]
 
-Cc: Michael Schmitz <schmitzmic@gmail.com>
-Reviewed-and-tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Chen Wandun <chenwandun@huawei.com>
 ---
-This should be a per-host or per-bus setting and not per-driver
-(though in the case of atari_scsi there is only one host).
-Is there a better way?
----
- drivers/scsi/NCR5380.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 536426f25e86..d4401c768a0c 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -129,6 +129,9 @@
- #define NCR5380_release_dma_irq(x)
- #endif
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+index 2068eb0..fad78bf 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+@@ -1361,20 +1361,19 @@ static int vegam_populate_smc_uvd_level(struct pp_hwmgr *hwmgr,
+ static int vegam_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
+ 		struct SMU75_Discrete_DpmTable *table)
+ {
+-	int result = 0;
+ 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
  
-+static unsigned int disconnect_mask = ~0;
-+module_param(disconnect_mask, int, 0444);
-+
- static int do_abort(struct Scsi_Host *);
- static void do_reset(struct Scsi_Host *);
- static void bus_reset_cleanup(struct Scsi_Host *);
-@@ -954,7 +957,8 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
- 	int err;
- 	bool ret = true;
- 	bool can_disconnect = instance->irq != NO_IRQ &&
--			      cmd->cmnd[0] != REQUEST_SENSE;
-+			      cmd->cmnd[0] != REQUEST_SENSE &&
-+			      (disconnect_mask & BIT(scmd_id(cmd)));
+ 	table->GraphicsBootLevel = 0;
+ 	table->MemoryBootLevel = 0;
  
- 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
- 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
+ 	/* find boot level from dpm table */
+-	result = phm_find_boot_level(&(data->dpm_table.sclk_table),
+-			data->vbios_boot_state.sclk_bootup_value,
+-			(uint32_t *)&(table->GraphicsBootLevel));
++	phm_find_boot_level(&(data->dpm_table.sclk_table),
++			    data->vbios_boot_state.sclk_bootup_value,
++			    (uint32_t *)&(table->GraphicsBootLevel));
+ 
+-	result = phm_find_boot_level(&(data->dpm_table.mclk_table),
+-			data->vbios_boot_state.mclk_bootup_value,
+-			(uint32_t *)&(table->MemoryBootLevel));
++	phm_find_boot_level(&(data->dpm_table.mclk_table),
++			    data->vbios_boot_state.mclk_bootup_value,
++			    (uint32_t *)&(table->MemoryBootLevel));
+ 
+ 	table->BootVddc  = data->vbios_boot_state.vddc_bootup_value *
+ 			VOLTAGE_SCALE;
 -- 
-2.23.0
+2.7.4
 
