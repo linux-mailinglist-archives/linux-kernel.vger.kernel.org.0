@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4C4FED7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 448B0FED91
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfKPPov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49870 "EHLO mail.kernel.org"
+        id S1728271AbfKPPpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:45:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729064AbfKPPor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:44:47 -0500
+        id S1729067AbfKPPos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:44:48 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8EF82072D;
-        Sat, 16 Nov 2019 15:44:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB405207FA;
+        Sat, 16 Nov 2019 15:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919086;
-        bh=w0/xY84kePr1FeSz8bEq9jbc2HkpuXp4oF3+DxCx8oU=;
+        s=default; t=1573919087;
+        bh=/X42qqck8nkLc0mAmS/qSEjM3OBOAqD15gc7gZhyWjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rDTTG/aZIq2/5jXH/1DudVwjMVsMUooueRqkQzOkN+sL5hXqZQcx+bjQTmxgj+E7j
-         6xz22EChGC+83GY242U9NdHXRyPvWS/lvASRyko4ff4fTAH8wkoFj4A7GJJXxX5xkg
-         T53KgIDPsNdncgF7UOTvznHWLSR3BoTXMy4pPFC0=
+        b=Ue3wTW4bGDhHFAl9i7h2KsOf0DL2XOD9FxydrFnJyTLMWSbbnzwemvB4ZpL8cbVIT
+         KhR4xBB2tLr1URar4G4MAkU5bAoT7tAaeuWpWCzen7NzDu89gPpQUXV2fMWClYpKA5
+         +4aUMv0IlQTg70zxLxKNSE+K5RAdMa2Zns8D1Y+Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>, Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 148/237] block: call rq_qos_exit() after queue is frozen
-Date:   Sat, 16 Nov 2019 10:39:43 -0500
-Message-Id: <20191116154113.7417-148-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Keith Busch <keith.busch@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 149/237] mm/gup_benchmark.c: prevent integer overflow in ioctl
+Date:   Sat, 16 Nov 2019 10:39:44 -0500
+Message-Id: <20191116154113.7417-149-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -43,52 +50,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c57cdf7a9e51d97a43e29b8f4a04157875104000 ]
+[ Upstream commit 4b408c74ee5a0b74fc9265c2fe39b0e7dec7c056 ]
 
-rq_qos_exit() removes the current q->rq_qos, this action has to be
-done after queue is frozen, otherwise the IO queue path may never
-be waken up, then IO hang is caused.
+The concern here is that "gup->size" is a u64 and "nr_pages" is unsigned
+long.  On 32 bit systems we could trick the kernel into allocating fewer
+pages than expected.
 
-So fixes this issue by moving rq_qos_exit() after queue is frozen.
-
-Cc: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Link: http://lkml.kernel.org/r/20181025061546.hnhkv33diogf2uis@kili.mountain
+Fixes: 64c349f4ae78 ("mm: add infrastructure for get_user_pages_fast() benchmarking")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-core.c  | 3 +++
- block/blk-sysfs.c | 2 --
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ mm/gup_benchmark.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 074ae9376189b..ea33d6abdcfc9 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -784,6 +784,9 @@ void blk_cleanup_queue(struct request_queue *q)
- 	 * prevent that q->request_fn() gets invoked after draining finished.
- 	 */
- 	blk_freeze_queue(q);
-+
-+	rq_qos_exit(q);
-+
- 	spin_lock_irq(lock);
- 	queue_flag_set(QUEUE_FLAG_DEAD, q);
- 	spin_unlock_irq(lock);
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index bab47a17b96f4..8286640d4d663 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -997,8 +997,6 @@ void blk_unregister_queue(struct gendisk *disk)
- 	kobject_del(&q->kobj);
- 	blk_trace_remove_sysfs(disk_to_dev(disk));
+diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+index 7405c9d89d651..7e6f2d2dafb55 100644
+--- a/mm/gup_benchmark.c
++++ b/mm/gup_benchmark.c
+@@ -23,6 +23,9 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+ 	int nr;
+ 	struct page **pages;
  
--	rq_qos_exit(q);
--
- 	mutex_lock(&q->sysfs_lock);
- 	if (q->request_fn || (q->mq_ops && q->elevator))
- 		elv_unregister_queue(q);
++	if (gup->size > ULONG_MAX)
++		return -EINVAL;
++
+ 	nr_pages = gup->size / PAGE_SIZE;
+ 	pages = kvcalloc(nr_pages, sizeof(void *), GFP_KERNEL);
+ 	if (!pages)
 -- 
 2.20.1
 
