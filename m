@@ -2,36 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE8CFF252
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D92AAFF280
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbfKPPq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:46:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
+        id S1732048AbfKPQTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:19:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729280AbfKPPqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:07 -0500
+        id S1729306AbfKPPqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:09 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDB0D20869;
-        Sat, 16 Nov 2019 15:46:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 275CF2086A;
+        Sat, 16 Nov 2019 15:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919167;
-        bh=kJetW/Z6Ckzen/8njzEpaOOotsP1WWeBNpmitgi3smI=;
+        s=default; t=1573919168;
+        bh=iLeu/7+A59mHww5wMPQ7+f/gfyrQdTMOJFAQRguBkd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjNB+hvQ5fDLzIaRzEyarAQI0ab6lS/UbEQn6CBChKGooS2KsJz503vSx2DiAvCxP
-         cdWVEz6vosLOxz41IjLM+uqzdyih5lySvPltU2UVFjAJEe6TfylQmGsY+w7I/VgBUU
-         sEtZFbSkbuwqEIc4T68ldvxn51nXEx6sP9P6DZvY=
+        b=GKnIuVN5+bvLWzD2MSCnXJpfOgeMH2FO6qQ/ZfW2zvmu3H1sq+c+0QyPugSJqgyVw
+         jOKcDOhWex0NbNfBv09PpiR1ESQHMY+a7qJHxpdhxkTDz4El9yKomOyS4FPPb5K+w8
+         jy5FZvTOFDGZaCbNo/MfySuLuC0KcNlHhLVQ5oyQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Victor Kamensky <kamensky@cisco.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 176/237] arm64: makefile fix build of .i file in external module case
-Date:   Sat, 16 Nov 2019 10:40:11 -0500
-Message-Id: <20191116154113.7417-176-sashal@kernel.org>
+Cc:     Roman Gushchin <guro@fb.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@surriel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, cgroups@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 178/237] mm: handle no memcg case in memcg_kmem_charge() properly
+Date:   Sat, 16 Nov 2019 10:40:13 -0500
+Message-Id: <20191116154113.7417-178-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -44,55 +50,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Victor Kamensky <kamensky@cisco.com>
+From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit 98356eb0ae499c63e78073ccedd9a5fc5c563288 ]
+[ Upstream commit e68599a3c3ad0f3171a7cb4e48aa6f9a69381902 ]
 
-After 'a66649dab350 arm64: fix vdso-offsets.h dependency' if
-one will try to build .i file in case of external kernel module,
-build fails complaining that prepare0 target is missing. This
-issue came up with SystemTap when it tries to build variety
-of .i files for its own generated kernel modules trying to
-figure given kernel features/capabilities.
+Mike Galbraith reported a regression caused by the commit 9b6f7e163cd0
+("mm: rework memcg kernel stack accounting") on a system with
+"cgroup_disable=memory" boot option: the system panics with the following
+stack trace:
 
-The issue is that prepare0 is defined in top level Makefile
-only if KBUILD_EXTMOD is not defined. .i file rule depends
-on prepare and in case KBUILD_EXTMOD defined top level Makefile
-contains empty rule for prepare. But after mentioned commit
-arch/arm64/Makefile would introduce dependency on prepare0
-through its own prepare target.
+  BUG: unable to handle kernel NULL pointer dereference at 00000000000000f8
+  PGD 0 P4D 0
+  Oops: 0002 [#1] PREEMPT SMP PTI
+  CPU: 0 PID: 1 Comm: systemd Not tainted 4.19.0-preempt+ #410
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180531_142017-buildhw-08.phx2.fed4
+  RIP: 0010:page_counter_try_charge+0x22/0xc0
+  Code: 41 5d c3 c3 0f 1f 40 00 0f 1f 44 00 00 48 85 ff 0f 84 a7 00 00 00 41 56 48 89 f8 49 89 fe 49
+  Call Trace:
+   try_charge+0xcb/0x780
+   memcg_kmem_charge_memcg+0x28/0x80
+   memcg_kmem_charge+0x8b/0x1d0
+   copy_process.part.41+0x1ca/0x2070
+   _do_fork+0xd7/0x3d0
+   do_syscall_64+0x5a/0x180
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fix it to put proper ifdef KBUILD_EXTMOD around code introduced
-by mentioned commit. It matches what top level Makefile does.
+The problem occurs because get_mem_cgroup_from_current() returns the NULL
+pointer if memory controller is disabled.  Let's check if this is a case
+at the beginning of memcg_kmem_charge() and just return 0 if
+mem_cgroup_disabled() returns true.  This is how we handle this case in
+many other places in the memory controller code.
 
-Acked-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Link: http://lkml.kernel.org/r/20181029215123.17830-1-guro@fb.com
+Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Reported-by: Mike Galbraith <efault@gmx.de>
+Acked-by: Rik van Riel <riel@surriel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/memcontrol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 5d8787f0ca5f9..9a5e281412116 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -148,6 +148,7 @@ archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
- 	$(Q)$(MAKE) $(clean)=$(boot)/dts
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e0f7b94a4e9bc..b3220d2102461 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2678,7 +2678,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
+ 	struct mem_cgroup *memcg;
+ 	int ret = 0;
  
-+ifeq ($(KBUILD_EXTMOD),)
- # We need to generate vdso-offsets.h before compiling certain files in kernel/.
- # In order to do that, we should use the archprepare target, but we can't since
- # asm-offsets.h is included in some files used to generate vdso-offsets.h, and
-@@ -157,6 +158,7 @@ archclean:
- prepare: vdso_prepare
- vdso_prepare: prepare0
- 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
-+endif
+-	if (memcg_kmem_bypass())
++	if (mem_cgroup_disabled() || memcg_kmem_bypass())
+ 		return 0;
  
- define archhelp
-   echo  '* Image.gz      - Compressed kernel image (arch/$(ARCH)/boot/Image.gz)'
+ 	memcg = get_mem_cgroup_from_current();
 -- 
 2.20.1
 
