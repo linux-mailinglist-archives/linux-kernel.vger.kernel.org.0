@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4C5FEA0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 02:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52835FEA13
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 02:19:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfKPBTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 20:19:14 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:35304 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbfKPBTM (ORCPT
+        id S1727569AbfKPBT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 20:19:28 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:38527 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbfKPBTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 20:19:12 -0500
-Received: by mail-pl1-f202.google.com with SMTP id x9so7461419plv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 17:19:10 -0800 (PST)
+        Fri, 15 Nov 2019 20:19:13 -0500
+Received: by mail-pf1-f202.google.com with SMTP id m1so9090492pfh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 17:19:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=2V31ewpXP+zkJsFFrpc7efvRnfpfbj2wFZXIFE+x5qo=;
-        b=lHfEkHgi0/8bfzk5iA8SAtltDDytnHl9nmjvr0M65RyzndIDBc9z7O1qpbQw7cxj9T
-         YYsJ59n9mQeced2aGDJWem659iKyfJOcHYv+vZydQVQucVX/p+2nliEZwlyrSF902fV0
-         ZsApXpkA/s+E+JPR26aD1LB0uWCv5YXTQucyKoxGx7XuWmjt7+g4iiumhL0esf512nAv
-         MebPd0lDT7SHdtQ1oYi0K/B7127q8cANPTzyce9bD+oB3uVn0ILn3/L+8+cZ9eXbW0hN
-         CahNhP601rba2r154yffP5VkeEgq3vkZBYnx0NO89blHwoU2IvAdpWHrAm7vwZtCWyCB
-         Acuw==
+        bh=YNPtFzER6KXZ2R7pBEXKU8wWSWDes8JU2W1nei7Z8qE=;
+        b=Bv3P61RakIE/TPYroUhzffK08Q1KijwQXCUTSVZ4LyVYd9Rjd9yskulRkYnuL8SWFQ
+         Dhx2bRQuwvp6ZhhsRJlOVDs8SxPsOrQFhWp5oIIiRxAeF4ldJPI7Ea+9uxXoEpPlOZSi
+         oZWXhOnMLGcu+e7p5gkQ8sd4I59wCH07gcypvCwhy/nZXf4XRfGUewcxpaDHWr1A/3Gh
+         yURHKXelY2er9X3aqpk45hp+Nn/ELNgFdVNX3gUn0ym1fz7DrHsLWt6Tv1pHmT/7+l1I
+         +wr15M8PTIIptJrNRzE/SQzrIVLGsSDlacih+QQejMNUqxQ1YUq3wLva1PnINfXUHtQg
+         tMHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=2V31ewpXP+zkJsFFrpc7efvRnfpfbj2wFZXIFE+x5qo=;
-        b=XBE4ggWT9tiJGPLgL3lW2EGBKW0Bz/YrRyJxoHUPRQBXlU1OAUck6h+Vr2sAEmjH17
-         m8xQfa4JNv2cxEzBPjEbjSXOgUkE0skq5EXZNDNS9Ar/bFpng/Dc/kQ3Aa9gBDLxGIHW
-         9D0WP6ZsGZYOiXSeG7qdxG10tFtXya7PhVdiJqyCF1F2YTqU39jmdOwKaqRM/EPKt0uW
-         jIWlTdfNFNb5rppNfeNdZ0OexUD4Zfo8Qox2CEkXG3NypkEhiN0g29PCMwberRv6xb2r
-         8ON+Rd86+KbEFuXLxkY4cUArNJEguZZGktm9NMTkmm5fnTzp46SLy8ACZR97hqc2mbkz
-         gHHQ==
-X-Gm-Message-State: APjAAAVTNvCJNiUv6fHDV4r3SO5uHF1Um1MuCXSf+GsiE1Hr9NAwIRAG
-        ZtRkp2Hubk45Wen3/hyuive8jCOKu8+9
-X-Google-Smtp-Source: APXvYqzRM+j8LtppcKhcQakbQ2Q4KjhcQsnx9EQW24lSE7/ZkLNEfmTwEUpfcZLhCgHLGHcgiCVHNdDgSUHI
-X-Received: by 2002:a63:7cf:: with SMTP id 198mr19633264pgh.372.1573867149402;
- Fri, 15 Nov 2019 17:19:09 -0800 (PST)
-Date:   Fri, 15 Nov 2019 17:18:42 -0800
+        bh=YNPtFzER6KXZ2R7pBEXKU8wWSWDes8JU2W1nei7Z8qE=;
+        b=O8+bkllNjp+UarST1apfb1O6iRnb4DEFJ009oqfUfgNZw0mEM1ejTS1Thpfz9VdaM5
+         GY2wvNnSGul+xsZgeCU8J8UKEJePIxlgEEDfa6k6R8uIZmXc8f2tVNTYQIEztI4Dd+2j
+         H/e2xFZun0X5fh06NuDZk5bx8GjLtYUkfaL3xeFBGP33nhzZYHbYx7hYwZi9lCHyLdsF
+         9NxhbYEM7Y8g598WaiWaZogm29IGu7D9ATJEDCCZd6uDIiVkkUispAZyeu+E0FC8/8QD
+         LwwXKwllrSuPE2bBjrd1dMYuW5wyEtVTz5If60KM7S6iwJK93wyo/I6uOoWM1/uxpx+w
+         aYBw==
+X-Gm-Message-State: APjAAAXRztsRGW/gyO986rm4+WwHIjI44azvRjFgR9phRkelo4QoahaO
+        j1kRpBz1zZQUrXh/3jIFa0/scNjnlNCt
+X-Google-Smtp-Source: APXvYqw3CvKLUSGF+snsVfZlw1e2g5xZPdjB3qEiAOOTOCJ/FQqRldvjCkck66ekshlc3dpK+IrPyC4eW6cn
+X-Received: by 2002:a63:f812:: with SMTP id n18mr19993935pgh.109.1573867152396;
+ Fri, 15 Nov 2019 17:19:12 -0800 (PST)
+Date:   Fri, 15 Nov 2019 17:18:43 -0800
 In-Reply-To: <20191116011845.177150-1-irogers@google.com>
-Message-Id: <20191116011845.177150-8-irogers@google.com>
+Message-Id: <20191116011845.177150-9-irogers@google.com>
 Mime-Version: 1.0
 References: <20191114003042.85252-1-irogers@google.com> <20191116011845.177150-1-irogers@google.com>
 X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH v4 07/10] perf: simplify and rename visit_groups_merge
+Subject: [PATCH v4 08/10] perf: cache perf_event_groups_first for cgroups
 From:   Ian Rogers <irogers@google.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -81,226 +81,180 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable a future caching optimization, pass in whether
-visit_groups_merge is operating on pinned or flexible groups. The
-is_pinned argument makes the func argument redundant, rename the
-function to ctx_groups_sched_in as it just schedules pinned or flexible
-groups in. Compute the cpu and groups arguments locally to reduce the
-argument list size. Remove sched_in_data as it repeats arguments already
-passed in. Merge pinned_sched_in and flexible_sched_in and use the
-pinned argument to determine the active list.
+Add a per-CPU cache of the pinned and flexible perf_event_groups_first
+value for a cgroup avoiding an O(log(#perf events)) searches during
+sched_in.
 
+Based-on-work-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- kernel/events/core.c | 149 ++++++++++++++-----------------------------
- 1 file changed, 49 insertions(+), 100 deletions(-)
+ include/linux/perf_event.h |  7 ++++
+ kernel/events/core.c       | 84 ++++++++++++++++++++++++++++++++++----
+ 2 files changed, 82 insertions(+), 9 deletions(-)
 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index b3580afbf358..be3ca69b3f69 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -877,6 +877,13 @@ struct perf_cgroup_info {
+ struct perf_cgroup {
+ 	struct cgroup_subsys_state	css;
+ 	struct perf_cgroup_info	__percpu *info;
++	/*
++	 * A cache of the first event with the perf_cpu_context's
++	 * perf_event_context for the first event in pinned_groups or
++	 * flexible_groups. Avoids an rbtree search during sched_in.
++	 */
++	struct perf_event * __percpu    *pinned_event;
++	struct perf_event * __percpu    *flexible_event;
+ };
+ 
+ /*
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f26871ef352a..948a66967eb5 100644
+index 948a66967eb5..37abfca18bd3 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -2118,7 +2118,6 @@ static void perf_group_detach(struct perf_event *event)
+@@ -1638,6 +1638,27 @@ perf_event_groups_insert(struct perf_event_groups *groups,
  
- 		if (!RB_EMPTY_NODE(&event->group_node)) {
- 			add_event_to_groups(sibling, event->ctx);
--
- 			if (sibling->state == PERF_EVENT_STATE_ACTIVE) {
- 				struct list_head *list = sibling->attr.pinned ?
- 					&ctx->pinned_active : &ctx->flexible_active;
-@@ -2441,6 +2440,8 @@ event_sched_in(struct perf_event *event,
- {
- 	int ret = 0;
- 
-+	WARN_ON_ONCE(event->ctx != ctx);
+ 	rb_link_node(&event->group_node, parent, node);
+ 	rb_insert_color(&event->group_node, &groups->tree);
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		struct perf_event **cgrp_event;
 +
- 	lockdep_assert_held(&ctx->lock);
- 
- 	if (event->state <= PERF_EVENT_STATE_OFF)
-@@ -3509,10 +3510,42 @@ static void __heap_add(struct min_max_heap *heap, struct perf_event *event)
- 	}
- }
- 
--static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
--				struct perf_event_groups *groups, int cpu,
--				int (*func)(struct perf_event *, void *),
--				void *data)
-+static int merge_sched_in(struct perf_event_context *ctx,
-+			struct perf_cpu_context *cpuctx,
-+			struct perf_event *event,
-+			bool is_pinned,
-+			int *can_add_hw)
-+{
-+	WARN_ON_ONCE(event->ctx != ctx);
-+
-+	if (event->state <= PERF_EVENT_STATE_OFF)
-+		return 0;
-+
-+	if (!event_filter_match(event))
-+		return 0;
-+
-+	if (group_can_go_on(event, cpuctx, 1)) {
-+		if (!group_sched_in(event, cpuctx, ctx)) {
-+			list_add_tail(&event->active_list, is_pinned
-+				? &ctx->pinned_active
-+				: &ctx->flexible_active);
++		if (event->attr.pinned) {
++			cgrp_event = per_cpu_ptr(event->cgrp->pinned_event,
++						event->cpu);
++		} else {
++			cgrp_event = per_cpu_ptr(event->cgrp->flexible_event,
++						event->cpu);
 +		}
++		/*
++		 * Remember smallest, left-most, group index event. The
++		 * less-than condition is only possible if the group_index
++		 * overflows.
++		 */
++		if (!*cgrp_event ||
++			event->group_index < (*cgrp_event)->group_index)
++			*cgrp_event = event;
 +	}
++#endif
+ }
+ 
+ /*
+@@ -1652,6 +1673,9 @@ add_event_to_groups(struct perf_event *event, struct perf_event_context *ctx)
+ 	perf_event_groups_insert(groups, event);
+ }
+ 
++static struct perf_event *
++perf_event_groups_next(struct perf_event *event);
 +
-+	if (event->state == PERF_EVENT_STATE_INACTIVE) {
-+		if (is_pinned)
-+			perf_event_set_state(event, PERF_EVENT_STATE_ERROR);
+ /*
+  * Delete a group from a tree.
+  */
+@@ -1662,6 +1686,22 @@ perf_event_groups_delete(struct perf_event_groups *groups,
+ 	WARN_ON_ONCE(RB_EMPTY_NODE(&event->group_node) ||
+ 		     RB_EMPTY_ROOT(&groups->tree));
+ 
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		struct perf_event **cgrp_event;
 +
-+		*can_add_hw = 0;
-+		ctx->rotate_necessary = 1;
++		if (event->attr.pinned) {
++			cgrp_event = per_cpu_ptr(event->cgrp->pinned_event,
++						event->cpu);
++		} else {
++			cgrp_event = per_cpu_ptr(event->cgrp->flexible_event,
++						event->cpu);
++		}
++		if (*cgrp_event == event)
++			*cgrp_event = perf_event_groups_next(event);
 +	}
++#endif
 +
-+	return 0;
-+}
-+
-+static int ctx_groups_sched_in(struct perf_event_context *ctx,
-+			struct perf_cpu_context *cpuctx,
-+			bool is_pinned)
- {
+ 	rb_erase(&event->group_node, &groups->tree);
+ 	init_event_group(event);
+ }
+@@ -1679,7 +1719,8 @@ del_event_from_groups(struct perf_event *event, struct perf_event_context *ctx)
+ }
+ 
+ /*
+- * Get the leftmost event in the cpu/cgroup subtree.
++ * Get the leftmost event in the cpu subtree without a cgroup (ie task or
++ * system-wide).
+  */
+ static struct perf_event *
+ perf_event_groups_first(struct perf_event_groups *groups, int cpu,
+@@ -3581,8 +3622,8 @@ static int ctx_groups_sched_in(struct perf_event_context *ctx,
+ 			.cap = ARRAY_SIZE(itrs),
+ 		};
+ 		/* Events not within a CPU context may be on any CPU. */
+-		__heap_add(&event_heap, perf_event_groups_first(groups, -1,
+-									NULL));
++		__heap_add(&event_heap,
++			perf_event_groups_first(groups, -1, NULL));
+ 	}
+ 	evt = event_heap.data;
+ 
+@@ -3590,8 +3631,16 @@ static int ctx_groups_sched_in(struct perf_event_context *ctx,
+ 
  #ifdef CONFIG_CGROUP_PERF
- 	struct cgroup_subsys_state *css = NULL;
-@@ -3522,9 +3555,13 @@ static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
- 	struct min_max_heap event_heap;
- 	struct perf_event **evt;
- 	struct perf_event *next;
--	int ret;
-+	int ret, can_add_hw = 1;
-+	int cpu = smp_processor_id();
-+	struct perf_event_groups *groups = is_pinned
-+		? &ctx->pinned_groups
-+		: &ctx->flexible_groups;
- 
--	if (cpuctx) {
-+	if (ctx == &cpuctx->ctx) {
- 		event_heap = (struct min_max_heap){
- 			.data = cpuctx->itr_storage,
- 			.size = 0,
-@@ -3561,7 +3598,8 @@ static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
- 	min_max_heapify_all(&event_heap, &perf_min_heap);
- 
- 	while (event_heap.size) {
--		ret = func(*evt, data);
-+		ret = merge_sched_in(ctx, cpuctx, *evt, is_pinned, &can_add_hw);
+ 	for (; css; css = css->parent) {
+-		__heap_add(&event_heap, perf_event_groups_first(groups, cpu,
+-								css->cgroup));
++		struct perf_cgroup *cgrp;
 +
- 		if (ret)
- 			return ret;
++		/* root cgroup doesn't have events */
++		if (css->id == 1)
++			break;
++
++		cgrp = container_of(css, struct perf_cgroup, css);
++		__heap_add(&event_heap, is_pinned
++			? *per_cpu_ptr(cgrp->pinned_event, cpu)
++			: *per_cpu_ptr(cgrp->flexible_event, cpu));
+ 	}
+ #endif
  
-@@ -3576,96 +3614,6 @@ static noinline int visit_groups_merge(struct perf_cpu_context *cpuctx,
- 	return 0;
+@@ -12493,18 +12542,35 @@ perf_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	jc->info = alloc_percpu(struct perf_cgroup_info);
+-	if (!jc->info) {
+-		kfree(jc);
+-		return ERR_PTR(-ENOMEM);
+-	}
++	if (!jc->info)
++		goto free_jc;
++
++	jc->pinned_event = alloc_percpu(struct perf_event *);
++	if (!jc->pinned_event)
++		goto free_jc_info;
++
++	jc->flexible_event = alloc_percpu(struct perf_event *);
++	if (!jc->flexible_event)
++		goto free_jc_pinned;
+ 
+ 	return &jc->css;
++
++free_jc_pinned:
++	free_percpu(jc->pinned_event);
++free_jc_info:
++	free_percpu(jc->info);
++free_jc:
++	kfree(jc);
++
++	return ERR_PTR(-ENOMEM);
  }
  
--struct sched_in_data {
--	struct perf_event_context *ctx;
--	struct perf_cpu_context *cpuctx;
--	int can_add_hw;
--};
--
--static int pinned_sched_in(struct perf_event *event, void *data)
--{
--	struct sched_in_data *sid = data;
--
--	if (event->state <= PERF_EVENT_STATE_OFF)
--		return 0;
--
--	if (!event_filter_match(event))
--		return 0;
--
--	if (group_can_go_on(event, sid->cpuctx, sid->can_add_hw)) {
--		if (!group_sched_in(event, sid->cpuctx, sid->ctx))
--			list_add_tail(&event->active_list, &sid->ctx->pinned_active);
--	}
--
--	/*
--	 * If this pinned group hasn't been scheduled,
--	 * put it in error state.
--	 */
--	if (event->state == PERF_EVENT_STATE_INACTIVE)
--		perf_event_set_state(event, PERF_EVENT_STATE_ERROR);
--
--	return 0;
--}
--
--static int flexible_sched_in(struct perf_event *event, void *data)
--{
--	struct sched_in_data *sid = data;
--
--	if (event->state <= PERF_EVENT_STATE_OFF)
--		return 0;
--
--	if (!event_filter_match(event))
--		return 0;
--
--	if (group_can_go_on(event, sid->cpuctx, sid->can_add_hw)) {
--		int ret = group_sched_in(event, sid->cpuctx, sid->ctx);
--		if (ret) {
--			sid->can_add_hw = 0;
--			sid->ctx->rotate_necessary = 1;
--			return 0;
--		}
--		list_add_tail(&event->active_list, &sid->ctx->flexible_active);
--	}
--
--	return 0;
--}
--
--static void
--ctx_pinned_sched_in(struct perf_event_context *ctx,
--		    struct perf_cpu_context *cpuctx)
--{
--	struct sched_in_data sid = {
--		.ctx = ctx,
--		.cpuctx = cpuctx,
--		.can_add_hw = 1,
--	};
--
--	if (ctx != &cpuctx->ctx)
--		cpuctx = NULL;
--
--	visit_groups_merge(cpuctx, &ctx->pinned_groups,
--			   smp_processor_id(),
--			   pinned_sched_in, &sid);
--}
--
--static void
--ctx_flexible_sched_in(struct perf_event_context *ctx,
--		      struct perf_cpu_context *cpuctx)
--{
--	struct sched_in_data sid = {
--		.ctx = ctx,
--		.cpuctx = cpuctx,
--		.can_add_hw = 1,
--	};
--
--	if (ctx != &cpuctx->ctx)
--		cpuctx = NULL;
--
--	visit_groups_merge(cpuctx, &ctx->flexible_groups,
--			   smp_processor_id(),
--			   flexible_sched_in, &sid);
--}
--
- static void
- ctx_sched_in(struct perf_event_context *ctx,
- 	     struct perf_cpu_context *cpuctx,
-@@ -3702,11 +3650,12 @@ ctx_sched_in(struct perf_event_context *ctx,
- 	 * in order to give them the best chance of going on.
- 	 */
- 	if (is_active & EVENT_PINNED)
--		ctx_pinned_sched_in(ctx, cpuctx);
-+		ctx_groups_sched_in(ctx, cpuctx, /*is_pinned=*/true);
-+
+ static void perf_cgroup_css_free(struct cgroup_subsys_state *css)
+ {
+ 	struct perf_cgroup *jc = container_of(css, struct perf_cgroup, css);
  
- 	/* Then walk through the lower prio flexible groups */
- 	if (is_active & EVENT_FLEXIBLE)
--		ctx_flexible_sched_in(ctx, cpuctx);
-+		ctx_groups_sched_in(ctx, cpuctx, /*is_pinned=*/false);
++	free_percpu(jc->pinned_event);
++	free_percpu(jc->flexible_event);
+ 	free_percpu(jc->info);
+ 	kfree(jc);
  }
- 
- static void cpu_ctx_sched_in(struct perf_cpu_context *cpuctx,
 -- 
 2.24.0.432.g9d3f5f5b63-goog
 
