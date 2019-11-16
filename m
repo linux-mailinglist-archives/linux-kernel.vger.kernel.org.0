@@ -2,109 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81BCCFDEF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E01FDEE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 14:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfKONaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 08:30:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727421AbfKONaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 08:30:04 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2422C206CC;
-        Fri, 15 Nov 2019 13:30:02 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 08:30:00 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, saiprakash.ranjan@codeaurora.org
-Subject: Re: [RFC 1/2] docs: ftrace: Clarify the RAM impact of
- buffer_size_kb
-Message-ID: <20191115083000.76f89785@gandalf.local.home>
-In-Reply-To: <20191115042428.6xxiqbzhgoko6vyk@ubuntu1804-desktop>
-References: <cover.1573661658.git.frank@generalsoftwareinc.com>
-        <0e4a803c3e24140172855748b4a275c31920e208.1573661658.git.frank@generalsoftwareinc.com>
-        <20191113113730.213ddd72@gandalf.local.home>
-        <20191114202059.GC186056@google.com>
-        <20191114163639.4727e3ed@gandalf.local.home>
-        <20191115042428.6xxiqbzhgoko6vyk@ubuntu1804-desktop>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727442AbfKONXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 08:23:49 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6238 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727223AbfKONXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 08:23:49 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6A39DA0FE08CF0868D82;
+        Fri, 15 Nov 2019 21:23:46 +0800 (CST)
+Received: from huawei.com (10.175.104.132) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
+ 21:23:36 +0800
+From:   Chen Jun <chenjun102@huawei.com>
+To:     Hugh Dickins <hughd@google.com>, <linux-mm@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+Subject: [PATCH] mm: Cast the type of unmap_start to u64
+Date:   Fri, 15 Nov 2019 20:24:24 -0500
+Message-ID: <1573867464-5107-1-git-send-email-chenjun102@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Nov 2019 23:24:28 -0500
-"Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:
+In 64bit system. sb->s_maxbytes of shmem filesystem is MAX_LFS_FILESIZE,
+which equal LLONG_MAX.
+If offset > LLONG_MAX - PAGE_SIZE, offset + len < LLONG_MAX in
+shmem_fallocate, which will pass the checking in vfs_fallocate.
+	/* Check for wrap through zero too */
+	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
+		return -EFBIG;
 
-> On Thu, Nov 14, 2019 at 04:36:39PM -0500, Steven Rostedt wrote:
-> > On Thu, 14 Nov 2019 15:20:59 -0500
-> > Joel Fernandes <joel@joelfernandes.org> wrote:
-> >   
-> > > On Wed, Nov 13, 2019 at 11:37:30AM -0500, Steven Rostedt wrote:  
-> > > > On Wed, 13 Nov 2019 11:32:36 -0500
-> > > > "Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:    
-> > > [snip]  
-> > > > > +
-> > > > > +        The number of pages allocated for each CPU buffer may not
-> > > > > +        be the same than the round up of the division:
-> > > > > +        buffer_size_kb / PAGE_SIZE. This is because part of each page is
-> > > > > +        used to store a page header with metadata. E.g. with
-> > > > > +        buffer_size_kb=4096 (kilobytes), a PAGE_SIZE=4096 bytes and a
-> > > > > +        BUF_PAGE_HDR_SIZE=16 bytes (BUF_PAGE_HDR_SIZE is the size of the
-> > > > > +        page header with metadata) the number of pages allocated for each
-> > > > > +        CPU buffer is 1029, not 1024. The formula for calculating the
-> > > > > +        number of pages allocated for each CPU buffer is the round up of:
-> > > > > +        buffer_size_kb / (PAGE_SIZE - BUF_PAGE_HDR_SIZE).    
-> > > > 
-> > > > I have no problem with this patch, but the concern of documenting the
-> > > > implementation here, which will most likely not be updated if the
-> > > > implementation is ever changed, which is why I was vague to begin with.
-> > > > 
-> > > > But it may never be changed as that code has been like that for a
-> > > > decade now.    
-> > > 
-> > > Agreed. To give some context, Frank is an outreachy intern I am working with and
-> > > one of his starter tasks was to understand the ring buffer's basics.  I asked
-> > > him to send a patch since I thought he mentioned there was an error in the
-> > > documnentation. It looks like all that was missing is some explanation which
-> > > the deleted text in brackets above should already cover.
-> > >   
-> 
-> Not exactly in my opinion ;) The deleted text was not the problem. I
-> just deleted it because with the added text it turns to be redundant.
-> 
-> The issue that I found with the documentation (maybe just to my
-> newbie's eyes) is in this part:
-> 
-> "The trace buffers are allocated in pages (blocks of memory that the
-> kernel uses for allocation, usually 4 KB in size). If the last page
-> allocated has room for more bytes than requested, the rest of the
-> page will be used, making the actual allocation bigger than requested
-> or shown."
-> 
-> For me that "suggests" the interpretation that the number of pages
-> allocated in the current implementation correspond with the round
-> integer division of buffer_size_kb / PAGE_SIZE, which is inaccurate
-> (for 5 pages in the example that I mentioned).
+loff_t unmap_start = round_up(offset, PAGE_SIZE) in shmem_fallocate
+causes a overflow.
 
-If you would like, you could reword that to something more accurate,
-but still not detailing the implementation.
+Syzkaller reports a overflow problem in mm/shmem:
+UBSAN: Undefined behaviour in mm/shmem.c:2014:10
+signed integer overflow:
+'9223372036854775807 + 1' cannot be represented in type 'long long int'
+CPU: 0 PID:17076 Comm: syz-executor0 Not tainted 4.1.46+ #1
+Hardware name: linux, dummy-virt (DT)
+Call trace:
+[<ffff800000092150>] dump_backtrace+0x0/0x2c8 arch/arm64/kernel/traps.c:100
+[<ffff800000092438>] show_stack+0x20/0x30 arch/arm64/kernel/traps.c:238
+[<ffff800000f9b134>] __dump_stack lib/dump_stack.c:15 [inline]
+[<ffff800000f9b134>] ubsan_epilogue+0x18/0x70 lib/ubsan.c:164
+[<ffff800000f9b468>] handle_overflow+0x158/0x1b0 lib/ubsan.c:195
+[<ffff800000341280>] shmem_fallocate+0x6d0/0x820 mm/shmem.c:2104
+[<ffff8000003ee008>] vfs_fallocate+0x238/0x428 fs/open.c:312
+[<ffff8000003ef72c>] SYSC_fallocate fs/open.c:335 [inline]
+[<ffff8000003ef72c>] SyS_fallocate+0x54/0xc8 fs/open.c:239
 
-> Understood and agreed. It is funny that what I spotted as "a problem"
-> was precisely an incomplete description of the implementation (the
-> sentences that I quoted above). What do you think about removing
-> those two sentences?
+The highest bit of unmap_start will be appended with sign bit 1 (overflow)
+when calculate shmem_falloc.start:
+shmem_falloc.start = unmap_start >> PAGE_SHIFT.
 
-I wouldn't remove them, just reword them to something you find more
-accurate.
+Fix it by casting the type of unmap_start to u64, when right shifted.
 
--- Steve
+This bug is found in LTS Linux 4.1. It also seems to exist in mainline.
+
+Signed-off-by: Chen Jun <chenjun102@huawei.com>
+---
+ mm/shmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index e9342c3..82cebbc 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2717,7 +2717,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		}
+ 
+ 		shmem_falloc.waitq = &shmem_falloc_waitq;
+-		shmem_falloc.start = unmap_start >> PAGE_SHIFT;
++		shmem_falloc.start = (u64)unmap_start >> PAGE_SHIFT;
+ 		shmem_falloc.next = (unmap_end + 1) >> PAGE_SHIFT;
+ 		spin_lock(&inode->i_lock);
+ 		inode->i_private = &shmem_falloc;
+-- 
+2.7.4
+
