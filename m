@@ -2,42 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48025FEE09
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEF0FEE10
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730069AbfKPPsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:48:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55278 "EHLO mail.kernel.org"
+        id S1730127AbfKPPsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:48:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbfKPPsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:48:19 -0500
+        id S1730055AbfKPPs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:48:29 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06EA620729;
-        Sat, 16 Nov 2019 15:48:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F511207FA;
+        Sat, 16 Nov 2019 15:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919298;
-        bh=vnCu/V9D8J4DpVhq+k0f5Tb8Dw2UQb5m9O0vRb9Y5dg=;
+        s=default; t=1573919308;
+        bh=KzaYq/ZxefBgTK1mWLIBUbunCDUrWNx+9I10MwP1UNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ap3HdyeULlLWYJ3Z2f95qcTJfwNZeN+GLebl5tIqYpc1Q0F7Xdc+4I4KDgTtliEZZ
-         HE11bh78KGU9sKsXvwuA0VAarZ9XleOxyCeOEG7QoLIxWyIfix0Ev42H0dQkA8KRFS
-         RuFbgdEln11zWNDo5UPbYu7Zjn1wD4Bw2/lQripU=
+        b=gSxvpbz9hBBcVpARK0ayyIqJwwhlQenSsa82/mWHkijnEwL7nG7VgFHAbruoxsu1y
+         +tO4shHVp+OUSmijF3VOUcKiZYdLsgQF2Cqyn8l0uJMm7VhmOqof8nQ8klB7OUXBms
+         T0TwTSBCVzAKyqzF21rsZ7FQVjhq5OChJ6jYROiY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 045/150] kprobes, x86/ptrace.h: Make regs_get_kernel_stack_nth() not fault on bad stack
-Date:   Sat, 16 Nov 2019 10:45:43 -0500
-Message-Id: <20191116154729.9573-45-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 051/150] usbip: tools: fix atoi() on non-null terminated string
+Date:   Sat, 16 Nov 2019 10:45:49 -0500
+Message-Id: <20191116154729.9573-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -50,100 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit c2712b858187f5bcd7b042fe4daa3ba3a12635c0 ]
+[ Upstream commit e325808c0051b16729ffd472ff887c6cae5c6317 ]
 
-Andy had some concerns about using regs_get_kernel_stack_nth() in a new
-function regs_get_kernel_argument() as if there's any error in the stack
-code, it could cause a bad memory access. To be on the safe side, call
-probe_kernel_read() on the stack address to be extra careful in accessing
-the memory. A helper function, regs_get_kernel_stack_nth_addr(), was added
-to just return the stack address (or NULL if not on the stack), that will be
-used to find the address (and could be used by other functions) and read the
-address with kernel_probe_read().
+Currently the call to atoi is being passed a single char string
+that is not null terminated, so there is a potential read overrun
+along the stack when parsing for an integer value.  Fix this by
+instead using a 2 char string that is initialized to all zeros
+to ensure that a 1 char read into the string is always terminated
+with a \0.
 
-Requested-by: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181017165951.09119177@gandalf.local.home
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Detected by cppcheck:
+"Invalid atoi() argument nr 1. A nul-terminated string is required."
+
+Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/ptrace.h | 42 +++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 7 deletions(-)
+ tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
-index 14131dd06b290..8603d127f73c7 100644
---- a/arch/x86/include/asm/ptrace.h
-+++ b/arch/x86/include/asm/ptrace.h
-@@ -231,24 +231,52 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
- 		(kernel_stack_pointer(regs) & ~(THREAD_SIZE - 1)));
- }
+diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
+index 6ff7b601f8545..f5ad219a324e8 100644
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 	int size;
+ 	int fd;
+ 	int length;
+-	char status;
++	char status[2] = { 0 };
+ 	int value = 0;
  
-+/**
-+ * regs_get_kernel_stack_nth_addr() - get the address of the Nth entry on stack
-+ * @regs:	pt_regs which contains kernel stack pointer.
-+ * @n:		stack entry number.
-+ *
-+ * regs_get_kernel_stack_nth() returns the address of the @n th entry of the
-+ * kernel stack which is specified by @regs. If the @n th entry is NOT in
-+ * the kernel stack, this returns NULL.
-+ */
-+static inline unsigned long *regs_get_kernel_stack_nth_addr(struct pt_regs *regs, unsigned int n)
-+{
-+	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
-+
-+	addr += n;
-+	if (regs_within_kernel_stack(regs, (unsigned long)addr))
-+		return addr;
-+	else
-+		return NULL;
-+}
-+
-+/* To avoid include hell, we can't include uaccess.h */
-+extern long probe_kernel_read(void *dst, const void *src, size_t size);
-+
- /**
-  * regs_get_kernel_stack_nth() - get Nth entry of the stack
-  * @regs:	pt_regs which contains kernel stack pointer.
-  * @n:		stack entry number.
-  *
-  * regs_get_kernel_stack_nth() returns @n th entry of the kernel stack which
-- * is specified by @regs. If the @n th entry is NOT in the kernel stack,
-+ * is specified by @regs. If the @n th entry is NOT in the kernel stack
-  * this returns 0.
-  */
- static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
- 						      unsigned int n)
- {
--	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
--	addr += n;
--	if (regs_within_kernel_stack(regs, (unsigned long)addr))
--		return *addr;
--	else
--		return 0;
-+	unsigned long *addr;
-+	unsigned long val;
-+	long ret;
-+
-+	addr = regs_get_kernel_stack_nth_addr(regs, n);
-+	if (addr) {
-+		ret = probe_kernel_read(&val, addr, sizeof(val));
-+		if (!ret)
-+			return val;
-+	}
-+	return 0;
- }
+ 	size = snprintf(status_attr_path, sizeof(status_attr_path),
+@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 		return -1;
+ 	}
  
- #define arch_has_single_step()	(1)
+-	length = read(fd, &status, 1);
++	length = read(fd, status, 1);
+ 	if (length < 0) {
+ 		err("error reading attribute %s", status_attr_path);
+ 		close(fd);
+ 		return -1;
+ 	}
+ 
+-	value = atoi(&status);
++	value = atoi(status);
+ 
+ 	return value;
+ }
 -- 
 2.20.1
 
