@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A856FFED48
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 934A8FED4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbfKPPm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:42:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46626 "EHLO mail.kernel.org"
+        id S1728557AbfKPPnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:43:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728477AbfKPPmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:42:51 -0500
+        id S1728528AbfKPPm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:42:59 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2658620740;
-        Sat, 16 Nov 2019 15:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E152A2073B;
+        Sat, 16 Nov 2019 15:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918970;
-        bh=gjuzvXyhWRsXKjSOSgKr4qFWVX5/LvmJynn27rqTZCU=;
+        s=default; t=1573918978;
+        bh=GSCFckh0COSe5QATUp9lJMLCywara0keVaTL3MvZHLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KST8cLQvvEOeTaMOFk0K1Jy/FOLdYYZSfxSgNn+K3KO794RZa9ThxnmSlKoCeE+bR
-         LSWu6d5ul6GgOhFtH4dYTkKhL0mxEHSRkAP5xFBuiPiNrxdtH2F6ywemPSbUk/4B7e
-         uOrWAxcPirZOFuxr5jRBDCJfZpQC8L51Yolsv43A=
+        b=L9W0+BN2mcfL/1zBZdOJZS20GqAjPoDKuQInrf4N0yDTWmrL9HZQ9NKzDQZGhIlJU
+         X7cFsPG9cFqfX5Uz8AnvwsB2Z7xUVlc2vjrIxR4vLnVeOfHb/xT5gi7Alz1I69VKmU
+         b/gkbjKReWpKBMa7cph4Sn1imKVodnsndX4mp3Jk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 085/237] s390/perf: Return error when debug_register fails
-Date:   Sat, 16 Nov 2019 10:38:40 -0500
-Message-Id: <20191116154113.7417-85-sashal@kernel.org>
+Cc:     Jithu Joseph <jithu.joseph@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, fenghua.yu@intel.com,
+        tony.luck@intel.com, gavin.hindman@intel.com, hpa@zytor.com,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 088/237] x86/intel_rdt: Prevent pseudo-locking from using stale pointers
+Date:   Sat, 16 Nov 2019 10:38:43 -0500
+Message-Id: <20191116154113.7417-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -44,54 +45,186 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Jithu Joseph <jithu.joseph@intel.com>
 
-[ Upstream commit ec0c0bb489727de0d4dca6a00be6970ab8a3b30a ]
+[ Upstream commit b61b8bba18fe2b63d38fdaf9b83de25e2d787dfe ]
 
-Return an error when the function debug_register() fails allocating
-the debug handle.
-Also remove the registered debug handle when the initialization fails
-later on.
+When the last CPU in an rdt_domain goes offline, its rdt_domain struct gets
+freed. Current pseudo-locking code is unaware of this scenario and tries to
+dereference the freed structure in a few places.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Add checks to prevent pseudo-locking code from doing this.
+
+While further work is needed to seamlessly restore resource groups (not
+just pseudo-locking) to their configuration when the domain is brought back
+online, the immediate issue of invalid pointers is addressed here.
+
+Fixes: f4e80d67a5274 ("x86/intel_rdt: Resctrl files reflect pseudo-locked information")
+Fixes: 443810fe61605 ("x86/intel_rdt: Create debugfs files for pseudo-locking testing")
+Fixes: 746e08590b864 ("x86/intel_rdt: Create character device exposing pseudo-locked region")
+Fixes: 33dc3e410a0d9 ("x86/intel_rdt: Make CPU information accessible for pseudo-locked regions")
+Signed-off-by: Jithu Joseph <jithu.joseph@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: gavin.hindman@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/231f742dbb7b00a31cc104416860e27dba6b072d.1539384145.git.reinette.chatre@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_sf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt.c             |  7 ++++
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 12 +++++--
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 10 ++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 38 +++++++++++++++------
+ 4 files changed, 55 insertions(+), 12 deletions(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 44404836e9d11..df92c2af99b69 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -2045,14 +2045,17 @@ static int __init init_cpum_sampling_pmu(void)
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index abb71ac704433..4025fc6dd8f62 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -610,6 +610,13 @@ static void domain_remove_cpu(int cpu, struct rdt_resource *r)
+ 			cancel_delayed_work(&d->cqm_limbo);
+ 		}
+ 
++		/*
++		 * rdt_domain "d" is going to be freed below, so clear
++		 * its pointer from pseudo_lock_region struct.
++		 */
++		if (d->plr)
++			d->plr->d = NULL;
++
+ 		kfree(d->ctrl_val);
+ 		kfree(d->mbps_val);
+ 		kfree(d->rmid_busy_llc);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 627e5c809b33d..efa4a519f5e55 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -408,8 +408,16 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			for_each_alloc_enabled_rdt_resource(r)
+ 				seq_printf(s, "%s:uninitialized\n", r->name);
+ 		} else if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
+-			seq_printf(s, "%s:%d=%x\n", rdtgrp->plr->r->name,
+-				   rdtgrp->plr->d->id, rdtgrp->plr->cbm);
++			if (!rdtgrp->plr->d) {
++				rdt_last_cmd_clear();
++				rdt_last_cmd_puts("Cache domain offline\n");
++				ret = -ENODEV;
++			} else {
++				seq_printf(s, "%s:%d=%x\n",
++					   rdtgrp->plr->r->name,
++					   rdtgrp->plr->d->id,
++					   rdtgrp->plr->cbm);
++			}
+ 		} else {
+ 			closid = rdtgrp->closid;
+ 			for_each_alloc_enabled_rdt_resource(r) {
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 912d53939f4f4..a999a58ca3318 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -1116,6 +1116,11 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 		goto out;
  	}
  
- 	sfdbg = debug_register(KMSG_COMPONENT, 2, 1, 80);
--	if (!sfdbg)
-+	if (!sfdbg) {
- 		pr_err("Registering for s390dbf failed\n");
-+		return -ENOMEM;
++	if (!plr->d) {
++		ret = -ENODEV;
++		goto out;
 +	}
- 	debug_register_view(sfdbg, &debug_sprintf_view);
++
+ 	plr->thread_done = 0;
+ 	cpu = cpumask_first(&plr->d->cpu_mask);
+ 	if (!cpu_online(cpu)) {
+@@ -1429,6 +1434,11 @@ static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
  
- 	err = register_external_irq(EXT_IRQ_MEASURE_ALERT,
- 				    cpumf_measurement_alert);
- 	if (err) {
- 		pr_cpumsf_err(RS_INIT_FAILURE_ALRT);
-+		debug_unregister(sfdbg);
+ 	plr = rdtgrp->plr;
+ 
++	if (!plr->d) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENODEV;
++	}
++
+ 	/*
+ 	 * Task is required to run with affinity to the cpus associated
+ 	 * with the pseudo-locked region. If this is not the case the task
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 2013699a5c54a..4f099b48d1ece 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -268,17 +268,27 @@ static int rdtgroup_cpus_show(struct kernfs_open_file *of,
+ 			      struct seq_file *s, void *v)
+ {
+ 	struct rdtgroup *rdtgrp;
++	struct cpumask *mask;
+ 	int ret = 0;
+ 
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
+ 
+ 	if (rdtgrp) {
+-		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)
+-			seq_printf(s, is_cpu_list(of) ? "%*pbl\n" : "%*pb\n",
+-				   cpumask_pr_args(&rdtgrp->plr->d->cpu_mask));
+-		else
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++			if (!rdtgrp->plr->d) {
++				rdt_last_cmd_clear();
++				rdt_last_cmd_puts("Cache domain offline\n");
++				ret = -ENODEV;
++			} else {
++				mask = &rdtgrp->plr->d->cpu_mask;
++				seq_printf(s, is_cpu_list(of) ?
++					   "%*pbl\n" : "%*pb\n",
++					   cpumask_pr_args(mask));
++			}
++		} else {
+ 			seq_printf(s, is_cpu_list(of) ? "%*pbl\n" : "%*pb\n",
+ 				   cpumask_pr_args(&rdtgrp->cpu_mask));
++		}
+ 	} else {
+ 		ret = -ENOENT;
+ 	}
+@@ -1180,6 +1190,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 	struct rdt_resource *r;
+ 	struct rdt_domain *d;
+ 	unsigned int size;
++	int ret = 0;
+ 	bool sep;
+ 	u32 ctrl;
+ 
+@@ -1190,11 +1201,18 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 	}
+ 
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
+-		seq_printf(s, "%*s:", max_name_width, rdtgrp->plr->r->name);
+-		size = rdtgroup_cbm_to_size(rdtgrp->plr->r,
+-					    rdtgrp->plr->d,
+-					    rdtgrp->plr->cbm);
+-		seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id, size);
++		if (!rdtgrp->plr->d) {
++			rdt_last_cmd_clear();
++			rdt_last_cmd_puts("Cache domain offline\n");
++			ret = -ENODEV;
++		} else {
++			seq_printf(s, "%*s:", max_name_width,
++				   rdtgrp->plr->r->name);
++			size = rdtgroup_cbm_to_size(rdtgrp->plr->r,
++						    rdtgrp->plr->d,
++						    rdtgrp->plr->cbm);
++			seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id, size);
++		}
  		goto out;
  	}
  
-@@ -2061,6 +2064,7 @@ static int __init init_cpum_sampling_pmu(void)
- 		pr_cpumsf_err(RS_INIT_FAILURE_PERF);
- 		unregister_external_irq(EXT_IRQ_MEASURE_ALERT,
- 					cpumf_measurement_alert);
-+		debug_unregister(sfdbg);
- 		goto out;
- 	}
+@@ -1224,7 +1242,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ out:
+ 	rdtgroup_kn_unlock(of->kn);
  
+-	return 0;
++	return ret;
+ }
+ 
+ /* rdtgroup information files for one cache resource. */
 -- 
 2.20.1
 
