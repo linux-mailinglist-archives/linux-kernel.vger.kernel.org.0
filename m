@@ -2,320 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7185FEC11
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC6D1FEC2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:58:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfKPLwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 06:52:05 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45291 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbfKPLvf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 06:51:35 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVwc0-0002Bi-KC; Sat, 16 Nov 2019 12:51:32 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2FB241C190B;
-        Sat, 16 Nov 2019 12:51:24 +0100 (CET)
-Date:   Sat, 16 Nov 2019 11:51:24 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/iopl] x86/cpu: Unify cpu_init()
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        id S1727540AbfKPL63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 06:58:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727331AbfKPL62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 06:58:28 -0500
+Received: from localhost (unknown [84.241.192.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D8AA206D3;
+        Sat, 16 Nov 2019 11:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573905507;
+        bh=G6B0AxgbXFr3HFRlfs/FptCB7nlL5xT03ZBsPb83aRs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zJEPORk44GaBau/3juxveA5ed2FkR+sse4+BMIGaZQd+P4hDOAvyzywPtfVkF8KC3
+         jGaMZA0MYczrl0W0HDX8QPr+hpcgpmk/oSNYsESo2G+vk2LBQstkiClmfO+x+Tg3FH
+         wnIDoz3R/iDueylaG2sfcjR3aZziEIOWK0sZC5s0=
+Date:   Sat, 16 Nov 2019 12:58:24 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-kernel@vger.kernel.org
+Subject: Re: [char-misc-next] mei: bus: add more client attributes to sysfs
+Message-ID: <20191116115824.GB425445@kroah.com>
+References: <20191116142136.17535-1-tomas.winkler@intel.com>
 MIME-Version: 1.0
-Message-ID: <157390508416.12247.4958936496922077860.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191116142136.17535-1-tomas.winkler@intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/iopl branch of tip:
+On Sat, Nov 16, 2019 at 04:21:36PM +0200, Tomas Winkler wrote:
+> From: Alexander Usyskin <alexander.usyskin@intel.com>
+> 
+> Export more client attributes via sysfs that are usually obtained
+> upon connection. In some cases, for example a monitoring application
+> may wish to know the attributes without actually performing the connection.
+> Added attributes:
+> max number of connections, fixed address, max message length.
+> 
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-mei | 21 +++++++++++++++
+>  drivers/misc/mei/bus.c                  | 33 +++++++++++++++++++++++
+>  drivers/misc/mei/client.h               | 36 +++++++++++++++++++++++++
+>  3 files changed, 90 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-mei b/Documentation/ABI/testing/sysfs-bus-mei
+> index 3f8701e8fa24..3d37e2796d5a 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-mei
+> +++ b/Documentation/ABI/testing/sysfs-bus-mei
+> @@ -26,3 +26,24 @@ KernelVersion:	4.3
+>  Contact:	Tomas Winkler <tomas.winkler@intel.com>
+>  Description:	Stores mei client protocol version
+>  		Format: %d
+> +
+> +What:		/sys/bus/mei/devices/.../max_conn
+> +Date:		Nov 2019
+> +KernelVersion:	5.5
+> +Contact:	Tomas Winkler <tomas.winkler@intel.com>
+> +Description:	Stores mei client maximum number of connections
+> +		Format: %d
+> +
+> +What:		/sys/bus/mei/devices/.../fixed
+> +Date:		Nov 2019
+> +KernelVersion:	5.5
+> +Contact:	Tomas Winkler <tomas.winkler@intel.com>
+> +Description:	Stores mei client fixed address, if any
+> +		Format: %d
+> +
+> +What:		/sys/bus/mei/devices/.../max_len
+> +Date:		Nov 2019
+> +KernelVersion:	5.5
+> +Contact:	Tomas Winkler <tomas.winkler@intel.com>
+> +Description:	Stores mei client maximum message length
+> +		Format: %d
+> diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+> index 53bb394ccba6..a0a495c95e3c 100644
+> --- a/drivers/misc/mei/bus.c
+> +++ b/drivers/misc/mei/bus.c
+> @@ -791,11 +791,44 @@ static ssize_t modalias_show(struct device *dev, struct device_attribute *a,
+>  }
+>  static DEVICE_ATTR_RO(modalias);
+>  
+> +static ssize_t max_conn_show(struct device *dev, struct device_attribute *a,
+> +			     char *buf)
+> +{
+> +	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+> +	u8 maxconn = mei_me_cl_max_conn(cldev->me_cl);
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%d", maxconn);
 
-Commit-ID:     505b789996f64bdbfcc5847dd4b5076fc7c50274
-Gitweb:        https://git.kernel.org/tip/505b789996f64bdbfcc5847dd4b5076fc7c50274
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 11 Nov 2019 23:03:17 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 16 Nov 2019 11:23:59 +01:00
+Nit, you can just do sprintf() for sysfs file attributes as you "know"
+the buffer is big enough and your variable will fit.
 
-x86/cpu: Unify cpu_init()
+Not a bit deal, but something to do in the future.
 
-Similar to copy_thread_tls() the 32bit and 64bit implementations of
-cpu_init() are very similar and unification avoids duplicate changes in the
-future.
+thanks,
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Lutomirski <luto@kernel.org>
-
----
- arch/x86/kernel/cpu/common.c | 173 ++++++++++++----------------------
- 1 file changed, 65 insertions(+), 108 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 9ae7d1b..d52ec1a 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -53,10 +53,7 @@
- #include <asm/microcode_intel.h>
- #include <asm/intel-family.h>
- #include <asm/cpu_device_id.h>
--
--#ifdef CONFIG_X86_LOCAL_APIC
- #include <asm/uv/uv.h>
--#endif
- 
- #include "cpu.h"
- 
-@@ -1749,7 +1746,7 @@ static void wait_for_master_cpu(int cpu)
- }
- 
- #ifdef CONFIG_X86_64
--static void setup_getcpu(int cpu)
-+static inline void setup_getcpu(int cpu)
- {
- 	unsigned long cpudata = vdso_encode_cpunode(cpu, early_cpu_to_node(cpu));
- 	struct desc_struct d = { };
-@@ -1769,7 +1766,43 @@ static void setup_getcpu(int cpu)
- 
- 	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPUNODE, &d, DESCTYPE_S);
- }
-+
-+static inline void ucode_cpu_init(int cpu)
-+{
-+	if (cpu)
-+		load_ucode_ap();
-+}
-+
-+static inline void tss_setup_ist(struct tss_struct *tss)
-+{
-+	/* Set up the per-CPU TSS IST stacks */
-+	tss->x86_tss.ist[IST_INDEX_DF] = __this_cpu_ist_top_va(DF);
-+	tss->x86_tss.ist[IST_INDEX_NMI] = __this_cpu_ist_top_va(NMI);
-+	tss->x86_tss.ist[IST_INDEX_DB] = __this_cpu_ist_top_va(DB);
-+	tss->x86_tss.ist[IST_INDEX_MCE] = __this_cpu_ist_top_va(MCE);
-+}
-+
-+static inline void gdt_setup_doublefault_tss(int cpu) { }
-+
-+#else /* CONFIG_X86_64 */
-+
-+static inline void setup_getcpu(int cpu) { }
-+
-+static inline void ucode_cpu_init(int cpu)
-+{
-+	show_ucode_info_early();
-+}
-+
-+static inline void tss_setup_ist(struct tss_struct *tss) { }
-+
-+static inline void gdt_setup_doublefault_tss(int cpu)
-+{
-+#ifdef CONFIG_DOUBLEFAULT
-+	/* Set up the doublefault TSS pointer in the GDT */
-+	__set_tss_desc(cpu, GDT_ENTRY_DOUBLEFAULT_TSS, &doublefault_tss);
- #endif
-+}
-+#endif /* !CONFIG_X86_64 */
- 
- /*
-  * cpu_init() initializes state that is per-CPU. Some data is already
-@@ -1777,21 +1810,15 @@ static void setup_getcpu(int cpu)
-  * and IDT. We reload them nevertheless, this function acts as a
-  * 'CPU state barrier', nothing should get across.
-  */
--#ifdef CONFIG_X86_64
--
- void cpu_init(void)
- {
-+	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
-+	struct task_struct *cur = current;
- 	int cpu = raw_smp_processor_id();
--	struct task_struct *me;
--	struct tss_struct *t;
--	int i;
- 
- 	wait_for_master_cpu(cpu);
- 
--	if (cpu)
--		load_ucode_ap();
--
--	t = &per_cpu(cpu_tss_rw, cpu);
-+	ucode_cpu_init(cpu);
- 
- #ifdef CONFIG_NUMA
- 	if (this_cpu_read(numa_node) == 0 &&
-@@ -1800,63 +1827,48 @@ void cpu_init(void)
- #endif
- 	setup_getcpu(cpu);
- 
--	me = current;
--
- 	pr_debug("Initializing CPU#%d\n", cpu);
- 
--	cr4_clear_bits(X86_CR4_VME|X86_CR4_PVI|X86_CR4_TSD|X86_CR4_DE);
-+	if (IS_ENABLED(CONFIG_X86_64) || cpu_feature_enabled(X86_FEATURE_VME) ||
-+	    boot_cpu_has(X86_FEATURE_TSC) || boot_cpu_has(X86_FEATURE_DE))
-+		cr4_clear_bits(X86_CR4_VME|X86_CR4_PVI|X86_CR4_TSD|X86_CR4_DE);
- 
- 	/*
- 	 * Initialize the per-CPU GDT with the boot GDT,
- 	 * and set up the GDT descriptor:
- 	 */
--
- 	switch_to_new_gdt(cpu);
--	loadsegment(fs, 0);
--
- 	load_current_idt();
- 
--	memset(me->thread.tls_array, 0, GDT_ENTRY_TLS_ENTRIES * 8);
--	syscall_init();
-+	if (IS_ENABLED(CONFIG_X86_64)) {
-+		loadsegment(fs, 0);
-+		memset(cur->thread.tls_array, 0, GDT_ENTRY_TLS_ENTRIES * 8);
-+		syscall_init();
- 
--	wrmsrl(MSR_FS_BASE, 0);
--	wrmsrl(MSR_KERNEL_GS_BASE, 0);
--	barrier();
-+		wrmsrl(MSR_FS_BASE, 0);
-+		wrmsrl(MSR_KERNEL_GS_BASE, 0);
-+		barrier();
- 
--	x86_configure_nx();
--	x2apic_setup();
--
--	/*
--	 * set up and load the per-CPU TSS
--	 */
--	if (!t->x86_tss.ist[0]) {
--		t->x86_tss.ist[IST_INDEX_DF] = __this_cpu_ist_top_va(DF);
--		t->x86_tss.ist[IST_INDEX_NMI] = __this_cpu_ist_top_va(NMI);
--		t->x86_tss.ist[IST_INDEX_DB] = __this_cpu_ist_top_va(DB);
--		t->x86_tss.ist[IST_INDEX_MCE] = __this_cpu_ist_top_va(MCE);
-+		x2apic_setup();
- 	}
- 
--	t->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET;
--
--	/*
--	 * <= is required because the CPU will access up to
--	 * 8 bits beyond the end of the IO permission bitmap.
--	 */
--	for (i = 0; i <= IO_BITMAP_LONGS; i++)
--		t->io_bitmap[i] = ~0UL;
--
- 	mmgrab(&init_mm);
--	me->active_mm = &init_mm;
--	BUG_ON(me->mm);
-+	cur->active_mm = &init_mm;
-+	BUG_ON(cur->mm);
- 	initialize_tlbstate_and_flush();
--	enter_lazy_tlb(&init_mm, me);
-+	enter_lazy_tlb(&init_mm, cur);
- 
--	/*
--	 * Initialize the TSS.  sp0 points to the entry trampoline stack
--	 * regardless of what task is running.
--	 */
-+	/* Initialize the TSS. */
-+	tss_setup_ist(tss);
-+	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET;
-+	memset(tss->io_bitmap, 0xff, sizeof(tss->io_bitmap));
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
-+
- 	load_TR_desc();
-+	/*
-+	 * sp0 points to the entry trampoline stack regardless of what task
-+	 * is running.
-+	 */
- 	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
- 
- 	load_mm_ldt(&init_mm);
-@@ -1864,6 +1876,8 @@ void cpu_init(void)
- 	clear_all_debug_regs();
- 	dbg_restore_debug_regs();
- 
-+	gdt_setup_doublefault_tss(cpu);
-+
- 	fpu__init_cpu();
- 
- 	if (is_uv_system())
-@@ -1872,63 +1886,6 @@ void cpu_init(void)
- 	load_fixmap_gdt(cpu);
- }
- 
--#else
--
--void cpu_init(void)
--{
--	int cpu = smp_processor_id();
--	struct task_struct *curr = current;
--	struct tss_struct *t = &per_cpu(cpu_tss_rw, cpu);
--
--	wait_for_master_cpu(cpu);
--
--	show_ucode_info_early();
--
--	pr_info("Initializing CPU#%d\n", cpu);
--
--	if (cpu_feature_enabled(X86_FEATURE_VME) ||
--	    boot_cpu_has(X86_FEATURE_TSC) ||
--	    boot_cpu_has(X86_FEATURE_DE))
--		cr4_clear_bits(X86_CR4_VME|X86_CR4_PVI|X86_CR4_TSD|X86_CR4_DE);
--
--	load_current_idt();
--	switch_to_new_gdt(cpu);
--
--	/*
--	 * Set up and load the per-CPU TSS and LDT
--	 */
--	mmgrab(&init_mm);
--	curr->active_mm = &init_mm;
--	BUG_ON(curr->mm);
--	initialize_tlbstate_and_flush();
--	enter_lazy_tlb(&init_mm, curr);
--
--	/*
--	 * Initialize the TSS.  sp0 points to the entry trampoline stack
--	 * regardless of what task is running.
--	 */
--	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
--	load_TR_desc();
--	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
--
--	load_mm_ldt(&init_mm);
--
--	t->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET;
--
--#ifdef CONFIG_DOUBLEFAULT
--	/* Set up doublefault TSS pointer in the GDT */
--	__set_tss_desc(cpu, GDT_ENTRY_DOUBLEFAULT_TSS, &doublefault_tss);
--#endif
--
--	clear_all_debug_regs();
--	dbg_restore_debug_regs();
--
--	fpu__init_cpu();
--
--	load_fixmap_gdt(cpu);
--}
--#endif
--
- /*
-  * The microcode loader calls this upon late microcode load to recheck features,
-  * only when microcode has been updated. Caller holds microcode_mutex and CPU
+greg k-h
