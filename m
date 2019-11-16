@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E27BFF35D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26277FF361
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:25:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbfKPPmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:42:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45650 "EHLO mail.kernel.org"
+        id S1729651AbfKPQZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:25:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728191AbfKPPmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:42:09 -0500
+        id S1728194AbfKPPmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:42:10 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13F362075B;
-        Sat, 16 Nov 2019 15:42:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29F89207FA;
+        Sat, 16 Nov 2019 15:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918928;
-        bh=OKqeG2P+tPeyHFAyZKVWcBe8xkMu2lCZ2qbbeu6ZUeo=;
+        s=default; t=1573918929;
+        bh=bPTlPH2rYRCi56/K0e6IaVB93IuksRjPjxYZGiewy/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qt/cUn+ClZmPMPrzTlTuQcXjh847Zqv5VWk+meyQ82KW9GgAwzr7v/cQlLIE1V2Cn
-         kN8kOKEuz+qZ270ZGqeEY0T8Pl/35filyFx/BDjxSWtU0lLEYf8zxmq1I/SxvJ9CfV
-         JZfA58Z/TMCDUizFFH0xSfhDUFTNoji+GQy+6lIw=
+        b=RHe3//EQ/1SNGxor22kzmam5vcOebnSrY53VSA3jDRG98+BywzvSxuexnX2ehur45
+         2FGbvA493+wfDfcxBmP8jbjqWPrxN8n4EKZa1M8iSGbjtbLl4/qptficvKyzAkdL5P
+         nz+z0hJtmJBogyWb1sVtBG+kkILnkkotpOS/0BFY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 055/237] crypto: ccree - avoid implicit enum conversion
-Date:   Sat, 16 Nov 2019 10:38:10 -0500
-Message-Id: <20191116154113.7417-55-sashal@kernel.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 056/237] nvmet: avoid integer overflow in the discard code
+Date:   Sat, 16 Nov 2019 10:38:11 -0500
+Message-Id: <20191116154113.7417-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -46,69 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 18e732b8035d175181aae2ded127994cb01694f7 ]
+[ Upstream commit 8eacd1bd21d6913ec27e6120e9a8733352e191d3 ]
 
-Clang warns when one enumerated type is implicitly converted to another
-and this happens in several locations in this driver, ultimately related
-to the set_cipher_{mode,config0} functions. set_cipher_mode expects a mode
-of type drv_cipher_mode and set_cipher_config0 expects a mode of type
-drv_crypto_direction.
+Although I'm not sure whether it is a good idea to support large discard
+commands, I think integer overflow for discard ranges larger than 4 GB
+should be avoided. This patch avoids that smatch reports the following:
 
-drivers/crypto/ccree/cc_ivgen.c:58:35: warning: implicit conversion from
-enumeration type 'enum cc_desc_direction' to different enumeration type
-'enum drv_crypto_direction' [-Wenum-conversion]
-        set_cipher_config0(&iv_seq[idx], DESC_DIRECTION_ENCRYPT_ENCRYPT);
+drivers/nvme/target/io-cmd-file.c:249:1 nvmet_file_execute_discard() warn: should '((range.nlb)) << req->ns->blksize_shift' be a 64 bit type?
 
-drivers/crypto/ccree/cc_hash.c:99:28: warning: implicit conversion from
-enumeration type 'enum cc_hash_conf_pad' to different enumeration type
-'enum drv_crypto_direction' [-Wenum-conversion]
-                set_cipher_config0(desc, HASH_DIGEST_RESULT_LITTLE_ENDIAN);
-
-drivers/crypto/ccree/cc_aead.c:1643:30: warning: implicit conversion
-from enumeration type 'enum drv_hash_hw_mode' to different enumeration
-type 'enum drv_cipher_mode' [-Wenum-conversion]
-        set_cipher_mode(&desc[idx], DRV_HASH_HW_GHASH);
-
-Since this fundamentally isn't a problem because these values just
-represent simple integers for a shift operation, make it clear to Clang
-that this is okay by making the mode parameter in both functions an int.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/46
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: d5eff33ee6f8 ("nvmet: add simple file backed ns support")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ccree/cc_hw_queue_defs.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/nvme/target/io-cmd-file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/ccree/cc_hw_queue_defs.h b/drivers/crypto/ccree/cc_hw_queue_defs.h
-index a091ae57f9024..45985b955d2c8 100644
---- a/drivers/crypto/ccree/cc_hw_queue_defs.h
-+++ b/drivers/crypto/ccree/cc_hw_queue_defs.h
-@@ -449,8 +449,7 @@ static inline void set_flow_mode(struct cc_hw_desc *pdesc,
-  * @pdesc: pointer HW descriptor struct
-  * @mode:  Any one of the modes defined in [CC7x-DESC]
-  */
--static inline void set_cipher_mode(struct cc_hw_desc *pdesc,
--				   enum drv_cipher_mode mode)
-+static inline void set_cipher_mode(struct cc_hw_desc *pdesc, int mode)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_MODE, mode);
- }
-@@ -461,8 +460,7 @@ static inline void set_cipher_mode(struct cc_hw_desc *pdesc,
-  * @pdesc: pointer HW descriptor struct
-  * @mode: Any one of the modes defined in [CC7x-DESC]
-  */
--static inline void set_cipher_config0(struct cc_hw_desc *pdesc,
--				      enum drv_crypto_direction mode)
-+static inline void set_cipher_config0(struct cc_hw_desc *pdesc, int mode)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_CONF0, mode);
- }
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index 81a9dc5290a87..39d972e2595f0 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -246,7 +246,8 @@ static void nvmet_file_execute_discard(struct nvmet_req *req)
+ 			break;
+ 
+ 		offset = le64_to_cpu(range.slba) << req->ns->blksize_shift;
+-		len = le32_to_cpu(range.nlb) << req->ns->blksize_shift;
++		len = le32_to_cpu(range.nlb);
++		len <<= req->ns->blksize_shift;
+ 		if (offset + len > req->ns->size) {
+ 			ret = NVME_SC_LBA_RANGE | NVME_SC_DNR;
+ 			break;
 -- 
 2.20.1
 
