@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5C8FF363
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:25:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB570FF35C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:25:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbfKPQZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:25:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45592 "EHLO mail.kernel.org"
+        id S1728223AbfKPPmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:42:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728152AbfKPPmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:42:07 -0500
+        id S1728168AbfKPPmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:42:08 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C22602075B;
-        Sat, 16 Nov 2019 15:42:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 425A520815;
+        Sat, 16 Nov 2019 15:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918926;
-        bh=RePkeaheWKE+ZnVrEGtOO+X4ZsfaVqbtPRO0k4Nlf8s=;
+        s=default; t=1573918927;
+        bh=0kjC/bhYkd5uVA3EYta0Z8i5/4EmS3pkzPHQm41NAXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I0ZPuJPdB0reNl80Uci6AEXhYNOEWmBTU1E2QSETlVb9XazJR7wwBYH8IiLjQkbD2
-         tlAniOadOqvxLEnqkQIguE43agQ64D/5hbwokLVbI7Jk2sD8ylEhxmQEsGdA9ULOKQ
-         Eo9KqHeDN+xU7Fw9n6a8F/em4jDx2OCoBdlQi/rA=
+        b=hX0PBoM8HJQK/5/49MCl7WJmMYSs8fzuljEdJvtlVuWvnugttNdEXcDQYq+iGeCtu
+         RiJqFfVogwb7fQ9EySFyoa939O1jj5EIv+i8LnmbsiEbVlCiTMAh0ov6NyUJ3Rd6HL
+         0Y2OqNy9evgVwnWwUnUTmDq1F5wM6nmMowNXC42s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 052/237] scsi: isci: Change sci_controller_start_task's return type to sci_status
-Date:   Sat, 16 Nov 2019 10:38:07 -0500
-Message-Id: <20191116154113.7417-52-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 054/237] scsi: iscsi_tcp: Explicitly cast param in iscsi_sw_tcp_host_get_param
+Date:   Sat, 16 Nov 2019 10:38:09 -0500
+Message-Id: <20191116154113.7417-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -46,102 +47,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 362b5da3dfceada6e74ecdd7af3991bbe42c0c0f ]
+[ Upstream commit 20054597f169090109fc3f0dfa1a48583f4178a4 ]
 
-Clang warns when an enumerated type is implicitly converted to another.
+Clang warns when one enumerated type is implicitly converted to another.
 
-drivers/scsi/isci/request.c:3476:13: warning: implicit conversion from
-enumeration type 'enum sci_task_status' to different enumeration type
-'enum sci_status' [-Wenum-conversion]
-                        status = sci_controller_start_task(ihost,
-                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/isci/host.c:2744:10: warning: implicit conversion from
-enumeration type 'enum sci_status' to different enumeration type 'enum
-sci_task_status' [-Wenum-conversion]
-                return SCI_SUCCESS;
-                ~~~~~~ ^~~~~~~~~~~
-drivers/scsi/isci/host.c:2753:9: warning: implicit conversion from
-enumeration type 'enum sci_status' to different enumeration type 'enum
-sci_task_status' [-Wenum-conversion]
-        return status;
-        ~~~~~~ ^~~~~~
+drivers/scsi/iscsi_tcp.c:803:15: warning: implicit conversion from
+enumeration type 'enum iscsi_host_param' to different enumeration type
+'enum iscsi_param' [-Wenum-conversion]
+                                                 &addr, param, buf);
+                                                        ^~~~~
+1 warning generated.
 
-Avoid all of these implicit conversion by just making
-sci_controller_start_task use sci_status. This silences
-Clang and has no functional change since sci_task_status
-has all of its values mapped to something in sci_status.
+iscsi_conn_get_addr_param handles ISCSI_HOST_PARAM_IPADDRESS just fine
+so add an explicit cast to iscsi_param to make it clear to Clang that
+this is expected behavior.
 
 Link: https://github.com/ClangBuiltLinux/linux/issues/153
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/host.c | 8 ++++----
- drivers/scsi/isci/host.h | 2 +-
- drivers/scsi/isci/task.c | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/scsi/iscsi_tcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
-index 1ee3868ade079..7b5deae68d33b 100644
---- a/drivers/scsi/isci/host.c
-+++ b/drivers/scsi/isci/host.c
-@@ -2717,9 +2717,9 @@ enum sci_status sci_controller_continue_io(struct isci_request *ireq)
-  *    the task management request.
-  * @task_request: the handle to the task request object to start.
-  */
--enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
--					       struct isci_remote_device *idev,
--					       struct isci_request *ireq)
-+enum sci_status sci_controller_start_task(struct isci_host *ihost,
-+					  struct isci_remote_device *idev,
-+					  struct isci_request *ireq)
- {
- 	enum sci_status status;
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index b025a0b743417..23354f206533b 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -800,7 +800,8 @@ static int iscsi_sw_tcp_host_get_param(struct Scsi_Host *shost,
+ 			return rc;
  
-@@ -2728,7 +2728,7 @@ enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
- 			 "%s: SCIC Controller starting task from invalid "
- 			 "state\n",
- 			 __func__);
--		return SCI_TASK_FAILURE_INVALID_STATE;
-+		return SCI_FAILURE_INVALID_STATE;
+ 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
+-						 &addr, param, buf);
++						 &addr,
++						 (enum iscsi_param)param, buf);
+ 	default:
+ 		return iscsi_host_get_param(shost, param, buf);
  	}
- 
- 	status = sci_remote_device_start_task(ihost, idev, ireq);
-diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
-index b3539928073c6..6bc3f022630a2 100644
---- a/drivers/scsi/isci/host.h
-+++ b/drivers/scsi/isci/host.h
-@@ -489,7 +489,7 @@ enum sci_status sci_controller_start_io(
- 	struct isci_remote_device *idev,
- 	struct isci_request *ireq);
- 
--enum sci_task_status sci_controller_start_task(
-+enum sci_status sci_controller_start_task(
- 	struct isci_host *ihost,
- 	struct isci_remote_device *idev,
- 	struct isci_request *ireq);
-diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
-index 6dcaed0c1fc8c..fb6eba331ac6e 100644
---- a/drivers/scsi/isci/task.c
-+++ b/drivers/scsi/isci/task.c
-@@ -258,7 +258,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
- 				 struct isci_tmf *tmf, unsigned long timeout_ms)
- {
- 	DECLARE_COMPLETION_ONSTACK(completion);
--	enum sci_task_status status = SCI_TASK_FAILURE;
-+	enum sci_status status = SCI_FAILURE;
- 	struct isci_request *ireq;
- 	int ret = TMF_RESP_FUNC_FAILED;
- 	unsigned long flags;
-@@ -301,7 +301,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
- 	/* start the TMF io. */
- 	status = sci_controller_start_task(ihost, idev, ireq);
- 
--	if (status != SCI_TASK_SUCCESS) {
-+	if (status != SCI_SUCCESS) {
- 		dev_dbg(&ihost->pdev->dev,
- 			 "%s: start_io failed - status = 0x%x, request = %p\n",
- 			 __func__,
 -- 
 2.20.1
 
