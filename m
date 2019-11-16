@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D39FFF1E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:16:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7BFFF234
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:17:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbfKPPrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:47:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53028 "EHLO mail.kernel.org"
+        id S1732009AbfKPQRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:17:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729445AbfKPPqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:37 -0500
+        id S1729461AbfKPPqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:44 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C44A2084E;
-        Sat, 16 Nov 2019 15:46:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FC932089D;
+        Sat, 16 Nov 2019 15:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919196;
-        bh=/qskU+Rb0nZDn2tSBNtS2ClPWcweMC/WHlCVXemRU+M=;
+        s=default; t=1573919203;
+        bh=9uyfzauE58ZzV9qho2Uq/YQRYCXqOI53XmSwiLS9fDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oA3jqOl4+3YnaSIJ30E+THgBtmlALltw+E93LkJjBml2cLHq60Whg/UEebsFCFBUN
-         J+5K4Z05hSel1TBjZsFc7/IFJrS1WSqIyBGfxOYvBSExsTLqmc78n9dpZwdW0OLAKb
-         Iufxan+0hkrYa2yUPWlGD3RQ1XfdKycwaIvJYtBQ=
+        b=sYkZsYT1FG72hrdW9PICtjdz27y0ivASTwI5YdACbG7yH4erdo4pMWz9yujNO3LYO
+         cX6lx9lUSVCbgcpcbPAwYYRASLd6fCRhVEehJsR22PKsAKxFbHQ8YdfaQ4mqYA+6i2
+         5XWNiaNPs5WtK5VKki4WVt1kVZgwlao07YsbaITA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 203/237] brcmsmac: never log "tid x is not agg'able" by default
-Date:   Sat, 16 Nov 2019 10:40:38 -0500
-Message-Id: <20191116154113.7417-203-sashal@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 206/237] net: dsa: bcm_sf2: Turn on PHY to allow successful registration
+Date:   Sat, 16 Nov 2019 10:40:41 -0500
+Message-Id: <20191116154113.7417-206-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -46,37 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 96fca788e5788b7ea3b0050eb35a343637e0a465 ]
+[ Upstream commit c04a17d2a9ccf1eaba1c5a56f83e997540a70556 ]
 
-This message greatly spams the log under heavy Tx of frames with BK access
-class which is especially true when operating as AP. It is also not informative
-as the "agg'ablity" of TIDs are set once and never change.
-Fix this by logging only in debug mode.
+We are binding to the PHY using the SF2 slave MDIO bus that we create,
+binding involves reading the PHY's MII_PHYSID1/2 which won't be possible
+if the PHY is turned off. Temporarily turn it on/off for the bus probing
+to succeeed. This fixes unbind/bind problems where the port connecting
+to that PHY would be in error since it could not connect to it.
 
-Signed-off-by: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c    | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/dsa/bcm_sf2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-index 23118207b661e..9657b992f90e1 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-@@ -846,8 +846,8 @@ brcms_ops_ampdu_action(struct ieee80211_hw *hw,
- 		status = brcms_c_aggregatable(wl->wlc, tid);
- 		spin_unlock_bh(&wl->lock);
- 		if (!status) {
--			brcms_err(wl->wlc->hw->d11core,
--				  "START: tid %d is not agg\'able\n", tid);
-+			brcms_dbg_ht(wl->wlc->hw->d11core,
-+				     "START: tid %d is not agg\'able\n", tid);
- 			return -EINVAL;
- 		}
- 		ieee80211_start_tx_ba_cb_irqsafe(vif, sta->addr, tid);
+diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+index ca3655d28e00f..17cec68e56b4f 100644
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -1099,12 +1099,16 @@ static int bcm_sf2_sw_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	bcm_sf2_gphy_enable_set(priv->dev->ds, true);
++
+ 	ret = bcm_sf2_mdio_register(ds);
+ 	if (ret) {
+ 		pr_err("failed to register MDIO bus\n");
+ 		return ret;
+ 	}
+ 
++	bcm_sf2_gphy_enable_set(priv->dev->ds, false);
++
+ 	ret = bcm_sf2_cfp_rst(priv);
+ 	if (ret) {
+ 		pr_err("failed to reset CFP\n");
 -- 
 2.20.1
 
