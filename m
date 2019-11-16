@@ -2,105 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFC90FEBCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:25:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 357E4FEBD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:37:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbfKPLZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 06:25:36 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45185 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfKPLZg (ORCPT
+        id S1727524AbfKPLht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 06:37:49 -0500
+Received: from smtpq3.tb.mail.iss.as9143.net ([212.54.42.166]:43306 "EHLO
+        smtpq3.tb.mail.iss.as9143.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726794AbfKPLht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 06:25:36 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iVwCh-0001hJ-05; Sat, 16 Nov 2019 12:25:23 +0100
-Date:   Sat, 16 Nov 2019 12:25:21 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        zhangjs <zachary@baishancloud.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        Nicolai Stange <nstange@suse.de>,
-        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        Roman Drahtmueller <draht@schaltsekun.de>,
-        Neil Horman <nhorman@redhat.com>
-Subject: Re: [PATCH v25 01/12] Linux Random Number Generator
-In-Reply-To: <2645285.kI0haNqfm4@positron.chronox.de>
-Message-ID: <alpine.DEB.2.21.1911161216540.14348@nanos.tec.linutronix.de>
-References: <6157374.ptSnyUpaCn@positron.chronox.de> <2787174.DQlWHN5GGo@positron.chronox.de> <2645285.kI0haNqfm4@positron.chronox.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 16 Nov 2019 06:37:49 -0500
+X-Greylist: delayed 1201 seconds by postgrey-1.27 at vger.kernel.org; Sat, 16 Nov 2019 06:37:48 EST
+Received: from [212.54.42.137] (helo=smtp6.tb.mail.iss.as9143.net)
+        by smtpq3.tb.mail.iss.as9143.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <jongk@linux-m68k.org>)
+        id 1iVw5K-0001uT-Ao; Sat, 16 Nov 2019 12:17:46 +0100
+Received: from mail-wr1-f49.google.com ([209.85.221.49])
+        by smtp6.tb.mail.iss.as9143.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <jongk@linux-m68k.org>)
+        id 1iVw5K-0002In-6g; Sat, 16 Nov 2019 12:17:46 +0100
+Received: by mail-wr1-f49.google.com with SMTP id z10so13713397wrs.12;
+        Sat, 16 Nov 2019 03:17:46 -0800 (PST)
+X-Gm-Message-State: APjAAAUdkn0Ngv2jDyck1lAK/7xwHBF07YKWZrVL97tedxHaaE18o93m
+        5nO044Czncv3fD/U4jZTj6tCLi6DTZJ5/CdXB3g=
+X-Google-Smtp-Source: APXvYqw/7lcFxT9yyKE9hWbxK5yt8guWAVH+vLioGfHCfHYgbjwitQxb/z5XuyfCKtxcES40TIOGkaHEdv0M6kJVLIk=
+X-Received: by 2002:a05:6000:14a:: with SMTP id r10mr9800680wrx.310.1573903065942;
+ Sat, 16 Nov 2019 03:17:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-279224958-1573903523=:14348"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20191116110548.8562-1-jongk@linux-m68k.org>
+In-Reply-To: <20191116110548.8562-1-jongk@linux-m68k.org>
+From:   Kars de Jong <jongk@linux-m68k.org>
+Date:   Sat, 16 Nov 2019 12:17:34 +0100
+X-Gmail-Original-Message-ID: <CACz-3rhCfnvHALYx75-aUyJWTHh3Cb9=KLfVuGh+L=FR6cJ33A@mail.gmail.com>
+Message-ID: <CACz-3rhCfnvHALYx75-aUyJWTHh3Cb9=KLfVuGh+L=FR6cJ33A@mail.gmail.com>
+Subject: Re: [PATCH] rtc: msm6242: Fix reading of 10-hour digit
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+X-SourceIP: 209.85.221.49
+X-Authenticated-Sender: karsdejong@home.nl (via SMTP)
+X-Ziggo-spambar: /
+X-Ziggo-spamscore: 0.0
+X-Ziggo-spamreport: CMAE Analysis: v=2.3 cv=WMwBoUkR c=1 sm=1 tr=0 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=MeAgGD-zjQ4A:10 a=tBb2bbeoAAAA:8 a=b38HSYhmjrW_fiXeJ8EA:9 a=QEXdDO2ut3YA:10 a=Oj-tNtZlA1e06AYgeCfH:22
+X-Ziggo-Spam-Status: No
+X-Spam-Status: No
+X-Spam-Flag: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Forgot to add:
 
---8323329-279224958-1573903523=:14348
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Fixes: 4f9b9bba1dd1 ("rtc: Add an RTC driver for the Oki MSM6242")
 
-On Sat, 16 Nov 2019, Stephan Müller wrote:
-> +/**
-> + * Hot code path - Callback for interrupt handler
-> + */
-> +void add_interrupt_randomness(int irq, int irq_flags)
-> +{
-> +	lrng_time_process();
-> +
-> +	if (!lrng_pool_highres_timer()) {
-> +		struct pt_regs *regs = get_irq_regs();
-> +		static atomic_t reg_idx = ATOMIC_INIT(0);
-> +		u64 ip;
-> +
-> +		lrng_pool_lfsr_u32(jiffies);
-> +		lrng_pool_lfsr_u32(irq);
-> +		lrng_pool_lfsr_u32(irq_flags);
-> +
-> +		if (regs) {
-> +			u32 *ptr = (u32 *)regs;
-> +			int reg_ptr = atomic_add_return_relaxed(1, &reg_idx);
-> +			size_t n = (sizeof(struct pt_regs) / sizeof(u32));
-> +
-> +			ip = instruction_pointer(regs);
-> +			lrng_pool_lfsr_u32(*(ptr + (reg_ptr % n)));
-> +		} else
-> +			ip = _RET_IP_;
-> +
-> +		lrng_pool_lfsr_u32(ip >> 32);
-> +		lrng_pool_lfsr_u32(ip);
-> +	}
-
-Is there a way to avoid all that processing right in the interrupt hot
-path and just store the raw data for later processing?
-
-Thanks,
-
-	tglx
-
-     
---8323329-279224958-1573903523=:14348--
+Op za 16 nov. 2019 om 12:06 schreef Kars de Jong <jongk@linux-m68k.org>:
+>
+> The driver was reading the wrong register as the 10-hour digit due to
+> a misplaced ')'. It was in fact reading the 1-second digit register due
+> to this bug.
+>
+> Also remove the use of a magic number for the hour mask and use the define
+> for it which was already present.
+>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Tested-by: Kars de Jong <jongk@linux-m68k.org>
+> Signed-off-by: Kars de Jong <jongk@linux-m68k.org>
