@@ -2,107 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DC1FECCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:03:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0737FECD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:13:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfKPPDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:03:15 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44087 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbfKPPDP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:03:15 -0500
-Received: by mail-wr1-f68.google.com with SMTP id f2so14112553wrs.11;
-        Sat, 16 Nov 2019 07:03:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ts/Cau9oznV84QKj9dFCVAYvzPmUjunHN+Y97FI+mBs=;
-        b=vY1igBXZRByDldpJLifqIVJ9g1gaOPLjqrsOdaOwznC8QWDmvF88gQgWaUJElqppxv
-         vxLG9W3LCH1VdZsjaW5cfTjKC1FIHFIovqLeV0JBK9jMlTu70auTpdczF88JGNLHiBA7
-         5g8sROuwUoj/tyyqjTgZCchq11oW7RqjDWkDGqlq4FVHCq1IIoF3ZMpC03Dt046V/IWG
-         2FlR9DdnRr+7zhkRpwd8cuCJH2czgUdoBkHNvyWqUvfUnf6pGzs6J1F531YXjbQo/CaZ
-         GfN0nIlpTcbXrmeLB6OW4SanlJyyKqzg9uWZ0CtgA2GpMUJZEvM67d+aarvhq0qlWePu
-         sgjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ts/Cau9oznV84QKj9dFCVAYvzPmUjunHN+Y97FI+mBs=;
-        b=T6ehTn+KdpNZ6/w5A+H5dyD6C/jsauK7Tce/of6+0RmyD4Po2bME0/wOu6h1Ad+Cwy
-         Nz+ySMK8ypg8ZpyiENqnyGcZiUjxGKBtEzyfp1UvZYdb28/BTAJzEMb4OafmfQsQP05N
-         CCqOm3lyhFQoCQdjFvOnDcpTjiOnTHINq/AcsgHUqgTILohKJ0OpVClpuYsb6ZpyZ5zr
-         OF5n6oXdCXxtF450p1oeiF4FnUxvgT5ZShPe0b2Z7SifX0z6ZEcPUuEcvc2rUT0WRDJJ
-         SG1tVBM0dNAR2WOU0HbrQ65RscQ12IU+iJnebiRde1gKYm7fZZv9gCzhNUw2MiWjA/cm
-         3fmA==
-X-Gm-Message-State: APjAAAWty9fP3oJ70TlLE0J3mc4oHmmiuwvvUx9KSN+o2YY/x+BfGsyi
-        EKzXKsECGbZuG4znQfQBLMA=
-X-Google-Smtp-Source: APXvYqwhXdR402iqMvF8f/j3Zulop2bF3MFttatFbIkCn1lzVFrLzQ4dLrgzNllrMYhcZnxmpE6E5g==
-X-Received: by 2002:a5d:660b:: with SMTP id n11mr22071427wru.146.1573916592737;
-        Sat, 16 Nov 2019 07:03:12 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id x205sm15663732wmb.5.2019.11.16.07.03.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Nov 2019 07:03:11 -0800 (PST)
-Date:   Sat, 16 Nov 2019 16:03:10 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Giovanni Mascellani <gio@debian.org>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (dell-smm-hwmon) Disable BIOS fan control on
- SET_FAN
-Message-ID: <20191116150310.dlhjrr3kyh7fsykf@pali>
-References: <20191114211408.22123-1-gio@debian.org>
+        id S1727795AbfKPPNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:13:52 -0500
+Received: from smtp.uniroma2.it ([160.80.6.23]:54160 "EHLO smtp.uniroma2.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727123AbfKPPNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:13:52 -0500
+Received: from localhost.localdomain ([160.80.103.126])
+        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id xAGF6Rd9011419
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Sat, 16 Nov 2019 16:06:27 +0100
+From:   Andrea Mayer <andrea.mayer@uniroma2.it>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Lebrun <dav.lebrun@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Andrea Mayer <andrea.mayer@uniroma2.it>
+Subject: [net, 0/2] seg6: fixes to Segment Routing in IPv6
+Date:   Sat, 16 Nov 2019 16:05:51 +0100
+Message-Id: <20191116150553.17497-1-andrea.mayer@uniroma2.it>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7tkusd6mbxqavr5z"
-Content-Disposition: inline
-In-Reply-To: <20191114211408.22123-1-gio@debian.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset is divided in 2 patches and it introduces some fixes
+to Segment Routing in IPv6, which are:
 
---7tkusd6mbxqavr5z
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+- in function get_srh() fix the srh pointer after calling
+  pskb_may_pull();
 
-On Thursday 14 November 2019 22:14:08 Giovanni Mascellani wrote:
-> +#define I8K_SMM_DISABLE_BIOS	0x30a3
-> +#define I8K_SMM_ENABLE_BIOS	0x31a3
+- fix the skb->transport_header after calling decap_and_validate()
+  function;
 
-In my old notes I have written these two comments:
+Any comments on the patchset are welcome.
 
-0x30a3  disable the Fn- key combinations (except the volume functions) key =
-and disable BIOS auto fan control (no args)
-0x31a3  enable the Fn- key combinations (except the volume functions) key a=
-nd enable BIOS auto fan control (no args)
+Thanks.
 
-So seems that these two commands have some side effect on some
-machines.
+Andrea Mayer (2):
+  seg6: fix srh pointer in get_srh()
+  seg6: fix skb transport_header after decap_and_validate()
 
-For 0x34a3/0x35a3 I have only these comments:
+ net/ipv6/seg6_local.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-0x34a3  disable BIOS auto fan control (no args)
-0x35a3  enable BIOS auto fan control (no args)
+-- 
+2.20.1
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---7tkusd6mbxqavr5z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXdAPrAAKCRCL8Mk9A+RD
-UjJRAJ95ij/W/aSdbiOocV6rkc/yhSY40gCbBACMEV+fSdVywC+gLlNb25KF7nQ=
-=MQjG
------END PGP SIGNATURE-----
-
---7tkusd6mbxqavr5z--
