@@ -2,94 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73E17FECD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8940FECDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:15:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfKPPNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:13:30 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41220 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfKPPN3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:13:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 207so917pge.8;
-        Sat, 16 Nov 2019 07:13:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1NR0lZBfSAsF9PTcWhdjtOR0vndWuNhvYIvZ0O6q/gY=;
-        b=t2Fixbx8FrbucKGgmC0xyNorjg8XHYcKKOvOb8d4MqBkw4RSLbRua9PFBL0WqPxO0S
-         vzDvoPgs9fsNawm1/nDoQKxbYxRICBGkFkcfS7fuYJaPFxrncKHsrBhSmQ0NoZs00GtC
-         XPESdybY3jw3R/zj4Y2fTrDBHkIufqP6WxPogUcFDZKmSox1lRiVh9GXFryLXUCs1Fba
-         +isMDFrscgXvX88Oib81T5jkgiraCTz5X8H9n3iKvL4VsT+dCUtFHaL1v0CAqwMfnEmH
-         RpTXmNjRo4JByPO7ElefkJDkchq5mfKDrHCresVem8NOzbla+YCV+OIMM7J8v8VK/fJY
-         umnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1NR0lZBfSAsF9PTcWhdjtOR0vndWuNhvYIvZ0O6q/gY=;
-        b=BDyqXegdY0MEHePyupPTKv+YCDpOtVdiTdZkeknnV4gAk1snbuDfV9tCJZUwDAvtfZ
-         Rn1iLDEG/hdVYBAprawY80EEJKAu7bh3Qt5DSE6/253UgIj1HJCbpSpX87lNs1OKh13u
-         7zfAu1HBo+e+qzHvYC7IArpEglKMvpkGuPeWEkiSEGKw2KEAjSziOC/cp2QCPFOvv/X4
-         AHG6YCmOvu4A8FcmMt6NnbPDEWyjpkOHqYAqkuNYdmDFg/oQgy4kp58eNSzaCVXLfNOF
-         0EN1Ecf3nmZgy2xKShLpEMo9S7jPq0FmF6SRWCZZZ5i8LJbU3mAxplIndJhF391OWU9J
-         A9RA==
-X-Gm-Message-State: APjAAAVtpvoE7S3rvsHypjpblb3j303ly9dZaBSJSOXepabgVxFkFPJf
-        CddjkcdS1jJfjoiVZImxUCE=
-X-Google-Smtp-Source: APXvYqwLV+Q22WHhBCIyjc4XfkdYQHcDZZlOf6JUEe1X4D7cOUaa++BL8PFFUkrqKStocMzbnbRfew==
-X-Received: by 2002:a63:ea17:: with SMTP id c23mr22941078pgi.85.1573917207501;
-        Sat, 16 Nov 2019 07:13:27 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id m6sm7250201pgl.42.2019.11.16.07.13.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2019 07:13:26 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] video: fbdev: vesafb: add missed release_region
-Date:   Sat, 16 Nov 2019 23:13:18 +0800
-Message-Id: <20191116151318.17874-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727837AbfKPPPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:15:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727691AbfKPPPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:15:32 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC92820723;
+        Sat, 16 Nov 2019 15:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573917331;
+        bh=sfswPkLkh/RNYHt16XH+PrtY9jP4ASLZcJsAC/YIzwA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZKJyUylVCN+a9iXLtHG8+ZWDhyNIvfOY8eNyWefAn1vTJiJ7+0AEXw0LW7gEaOPNV
+         hFK++8da/MVnZQjEU+SjYrim4yrndm0TtaxZ7aqbjL9HyJCTt4JadQD/uNR4ElTVTF
+         grVEIrpVmkAFOLQLPJ0aIo6IqNTXTfLCf1rIVOAo=
+Date:   Sat, 16 Nov 2019 15:15:25 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Sa, Nuno" <Nuno.Sa@analog.com>
+Cc:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: temperature: ltc2983: fix u32 read into a unsigned
+ long long
+Message-ID: <20191116151516.5c7a7555@archlinux>
+In-Reply-To: <20191110114823.2bbe87b0@archlinux>
+References: <20191105202818.90065-1-colin.king@canonical.com>
+        <dab9cfd93e6affa5d94f078154c3e181303bbf47.camel@analog.com>
+        <20191110114823.2bbe87b0@archlinux>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver calls request_region in probe but forgets to call
-release_region in probe failure and remove.
-Add the missed calls to fix it.
+On Sun, 10 Nov 2019 11:48:23 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/video/fbdev/vesafb.c | 2 ++
- 1 file changed, 2 insertions(+)
+> On Wed, 6 Nov 2019 14:19:52 +0000
+> "Sa, Nuno" <Nuno.Sa@analog.com> wrote:
+>=20
+> > On Tue, 2019-11-05 at 20:28 +0000, Colin King wrote: =20
+> > >=20
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > >=20
+> > > Currently the read of temp using of_property_read_u32_index is
+> > > reading
+> > > a u32 value into a unsigned long long.  This relies on machine
+> > > endianness
+> > > to work correctly, so fix this by reading a u32 value and setting
+> > > temp
+> > > to this value.
+> > >=20
+> > > Addresses-Coverity: ("Reliance on integer endianness")
+> > > Fixes: f110f3188e56 ("iio: temperature: Add support for LTC2983")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > ---
+> > >  drivers/iio/temperature/ltc2983.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/drivers/iio/temperature/ltc2983.c
+> > > b/drivers/iio/temperature/ltc2983.c
+> > > index ddf47023364b..d39c0d6b77f1 100644
+> > > --- a/drivers/iio/temperature/ltc2983.c
+> > > +++ b/drivers/iio/temperature/ltc2983.c
+> > > @@ -444,8 +444,10 @@ static struct ltc2983_custom_sensor
+> > > *__ltc2983_custom_sensor_new(
+> > >  			else
+> > >  				temp =3D __convert_to_raw(temp,
+> > > resolution);
+> > >  		} else {
+> > > -			of_property_read_u32_index(np, propname, index,
+> > > -						   (u32 *)&temp);
+> > > +			u32 t32;
+> > > +
+> > > +			of_property_read_u32_index(np, propname, index,
+> > > &t32);
+> > > +			temp =3D t32;
+> > >  		}
+> > > =20
+> > >  		for (j =3D 0; j < n_size; j++)   =20
+> >=20
+> > Acked-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> >  =20
+>=20
+> A slight complexity around this one. I'm not sure I'll have time for a pu=
+ll
+> before the merge window (as Greg will only take them to about 1 week befo=
+re
+> that opens so we get some exposure in Linux next).
+>=20
+> As a result I'll have to sit on this one until Linus comments on rc7, pro=
+bably
+> later today.  Otherwise it'll be material for stable post release.
+>=20
+> If I seem to have lost it give me a poke and we'll make sure it goes into=
+=20
+> an early rc instead of at the merge window.
+I forgot about it when I sent the final pull request out.  Sorry about that,
+will have to wait for post merge window.
 
-diff --git a/drivers/video/fbdev/vesafb.c b/drivers/video/fbdev/vesafb.c
-index d9c08f6c2155..fbb196a8bbf6 100644
---- a/drivers/video/fbdev/vesafb.c
-+++ b/drivers/video/fbdev/vesafb.c
-@@ -468,6 +468,7 @@ static int vesafb_probe(struct platform_device *dev)
- 	fb_info(info, "%s frame buffer device\n", info->fix.id);
- 	return 0;
- err:
-+	release_region(0x3c0, 32);
- 	arch_phys_wc_del(par->wc_cookie);
- 	if (info->screen_base)
- 		iounmap(info->screen_base);
-@@ -480,6 +481,7 @@ static int vesafb_remove(struct platform_device *pdev)
- {
- 	struct fb_info *info = platform_get_drvdata(pdev);
- 
-+	release_region(0x3c0, 32);
- 	unregister_framebuffer(info);
- 	framebuffer_release(info);
- 
--- 
-2.24.0
+Applied to the fixes-togreg branch of iio.git.
+
+Thanks,
+
+Jonathan
+
+>=20
+> Thanks,
+>=20
+> Jonathan
+>=20
+> > Thanks,
+> > Nuno S=C3=A1 =20
+>=20
 
