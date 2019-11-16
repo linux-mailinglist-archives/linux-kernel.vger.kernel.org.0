@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B79E6FEE81
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:52:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26789FEE84
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbfKPPwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:52:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60780 "EHLO mail.kernel.org"
+        id S1730933AbfKPPwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:52:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729101AbfKPPv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:56 -0500
+        id S1730887AbfKPPv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:59 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DC8520871;
-        Sat, 16 Nov 2019 15:51:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2612320854;
+        Sat, 16 Nov 2019 15:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919515;
-        bh=s2LUJTlH2b8bor8yGbp1D5PinA4o68e3evDwW893gJo=;
+        s=default; t=1573919519;
+        bh=yMANsvQR7BaNAKga85VnyLz+nzo9WorfhVnnC6PD6AA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k4fIYSS2LGN9lB/bKn68vu8um7Buxq66UqQN8jscgnUo2Ud1HJusZUsSzuAEpku7O
-         W7N22BbCBmh5GoqSsmjO9dcYBVlUkuWz8RHxQRDPaiIRJVioCOutlbaJJ8wHEYNttv
-         e4f6IP8GH6EyBg/YLzCLmQZVEJ592LN65/OTrT8A=
+        b=0a88smUh47QQk4z2Whyvlbr2tD7zEDQlRKw57UNrATu0FRmZRGuwBSbILtJSibVbK
+         t8+4hUGSHk1SVyXBowy95/NSg5K1NSFefXnk55iyUf/D3iWDvU0s2Nyya6f44uRe9I
+         +xv0nHpe4DYJok2Fb6h5LVoxB08ShjGcw1mGF4jk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vignesh R <vigneshr@ti.com>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 37/99] spi: omap2-mcspi: Set FIFO DMA trigger level to word length
-Date:   Sat, 16 Nov 2019 10:50:00 -0500
-Message-Id: <20191116155103.10971-37-sashal@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Weichao Guo <guoweichao@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.9 41/99] f2fs: fix to spread clear_cold_data()
+Date:   Sat, 16 Nov 2019 10:50:04 -0500
+Message-Id: <20191116155103.10971-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -42,110 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vignesh R <vigneshr@ti.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit b682cffa3ac6d9d9e16e9b413c45caee3b391fab ]
+[ Upstream commit 2baf07818549c8bb8d7b3437e889b86eab56d38e ]
 
-McSPI has 32 byte FIFO in Transmit-Receive mode. Current code tries to
-configuration FIFO watermark level for DMA trigger to be GCD of transfer
-length and max FIFO size which would mean trigger level may be set to 32
-for transmit-receive mode if length is aligned. This does not work in
-case of SPI slave mode where FIFO always needs to have data ready
-whenever master starts the clock. With DMA trigger size of 32 there will
-be a small window during slave TX where DMA is still putting data into
-FIFO but master would have started clock for next byte, resulting in
-shifting out of stale data. Similarly, on Slave RX side there may be RX
-FIFO overflow
-Fix this by setting FIFO watermark for DMA trigger to word
-length. This means DMA is triggered as soon as FIFO has space for word
-length bytes and DMA would make sure FIFO is almost always full
-therefore improving FIFO occupancy in both master and slave mode.
+We need to drop PG_checked flag on page as well when we clear PG_uptodate
+flag, in order to avoid treating the page as GCing one later.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-omap2-mcspi.c | 26 +++++++-------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+ fs/f2fs/data.c    | 8 +++++++-
+ fs/f2fs/dir.c     | 1 +
+ fs/f2fs/segment.c | 4 +++-
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index a47cf638460a6..bc136fe3a2829 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -298,7 +298,7 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
- 	struct omap2_mcspi_cs *cs = spi->controller_state;
- 	struct omap2_mcspi *mcspi;
- 	unsigned int wcnt;
--	int max_fifo_depth, fifo_depth, bytes_per_word;
-+	int max_fifo_depth, bytes_per_word;
- 	u32 chconf, xferlevel;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9041805096e0c..0206c8c20784c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1201,6 +1201,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	/* This page is already truncated */
+ 	if (fio->old_blkaddr == NULL_ADDR) {
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
+ 		goto out_writepage;
+ 	}
  
- 	mcspi = spi_master_get_devdata(master);
-@@ -314,10 +314,6 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
- 		else
- 			max_fifo_depth = OMAP2_MCSPI_MAX_FIFODEPTH;
+@@ -1337,8 +1338,10 @@ static int f2fs_write_data_page(struct page *page,
+ 	clear_cold_data(page);
+ out:
+ 	inode_dec_dirty_pages(inode);
+-	if (err)
++	if (err) {
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
++	}
  
--		fifo_depth = gcd(t->len, max_fifo_depth);
--		if (fifo_depth < 2 || fifo_depth % bytes_per_word != 0)
--			goto disable_fifo;
--
- 		wcnt = t->len / bytes_per_word;
- 		if (wcnt > OMAP2_MCSPI_MAX_FIFOWCNT)
- 			goto disable_fifo;
-@@ -325,16 +321,17 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
- 		xferlevel = wcnt << 16;
- 		if (t->rx_buf != NULL) {
- 			chconf |= OMAP2_MCSPI_CHCONF_FFER;
--			xferlevel |= (fifo_depth - 1) << 8;
-+			xferlevel |= (bytes_per_word - 1) << 8;
- 		}
+ 	if (wbc->for_reclaim) {
+ 		f2fs_submit_merged_bio_cond(sbi, NULL, page, 0, DATA, WRITE);
+@@ -1821,6 +1824,8 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 			inode_dec_dirty_pages(inode);
+ 	}
+ 
++	clear_cold_data(page);
 +
- 		if (t->tx_buf != NULL) {
- 			chconf |= OMAP2_MCSPI_CHCONF_FFET;
--			xferlevel |= fifo_depth - 1;
-+			xferlevel |= bytes_per_word - 1;
- 		}
- 
- 		mcspi_write_reg(master, OMAP2_MCSPI_XFERLEVEL, xferlevel);
- 		mcspi_write_chconf0(spi, chconf);
--		mcspi->fifo_depth = fifo_depth;
-+		mcspi->fifo_depth = max_fifo_depth;
- 
+ 	/* This is atomic written page, keep Private */
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
  		return;
+@@ -1839,6 +1844,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
+ 		return 0;
+ 
++	clear_cold_data(page);
+ 	set_page_private(page, 0);
+ 	ClearPagePrivate(page);
+ 	return 1;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index af719d93507e8..b414892be08b7 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -772,6 +772,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 		clear_page_dirty_for_io(page);
+ 		ClearPagePrivate(page);
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
+ 		inode_dec_dirty_pages(dir);
  	}
-@@ -601,7 +598,6 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	struct dma_slave_config	cfg;
- 	enum dma_slave_buswidth width;
- 	unsigned es;
--	u32			burst;
- 	void __iomem		*chstat_reg;
- 	void __iomem            *irqstat_reg;
- 	int			wait_res;
-@@ -623,22 +619,14 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	}
- 
- 	count = xfer->len;
--	burst = 1;
--
--	if (mcspi->fifo_depth > 0) {
--		if (count > mcspi->fifo_depth)
--			burst = mcspi->fifo_depth / es;
--		else
--			burst = count / es;
--	}
- 
- 	memset(&cfg, 0, sizeof(cfg));
- 	cfg.src_addr = cs->phys + OMAP2_MCSPI_RX0;
- 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
- 	cfg.src_addr_width = width;
- 	cfg.dst_addr_width = width;
--	cfg.src_maxburst = burst;
--	cfg.dst_maxburst = burst;
-+	cfg.src_maxburst = es;
-+	cfg.dst_maxburst = es;
- 
- 	rx = xfer->rx_buf;
- 	tx = xfer->tx_buf;
+ 	f2fs_put_page(page, 1);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1d5a352138109..c4c84af1ec17a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -227,8 +227,10 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		}
+ next:
+ 		/* we don't need to invalidate this in the sccessful status */
+-		if (drop || recover)
++		if (drop || recover) {
+ 			ClearPageUptodate(page);
++			clear_cold_data(page);
++		}
+ 		set_page_private(page, 0);
+ 		ClearPagePrivate(page);
+ 		f2fs_put_page(page, 1);
 -- 
 2.20.1
 
