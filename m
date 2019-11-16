@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46976FEE49
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:50:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B037FEE54
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:50:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730563AbfKPPuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:50:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58390 "EHLO mail.kernel.org"
+        id S1730636AbfKPPuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:50:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730495AbfKPPuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:50:23 -0500
+        id S1730492AbfKPPud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:50:33 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33934208C0;
-        Sat, 16 Nov 2019 15:50:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66C0321823;
+        Sat, 16 Nov 2019 15:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919422;
-        bh=nkllnDBXf4AfaxLJlPMIAIRxCjsdEuPwlVE+x4bcaHM=;
+        s=default; t=1573919432;
+        bh=8b+zj0+DXJml/xNJPstz9a1AxF/molanvs40WN1AvBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J/rcnoFx1KBERbzQbl8sP6GDxA7ep441KfmxmQPc6MPxVDXB6APw7E6GSd1gkqayO
-         SEGW5fepeYHyjiUOJmVbq5H96aL0qIFCox6+kr77DO4gBEITCppCSGjP8WqEW9zBg3
-         D8j61ECHWnJCArm0uT3mB2fqSRvmZ5LQNe2+347I=
+        b=iL0g21mLW89stI6Ytw5Ilb77HsU/FVEJt0dfiV1L74nyjDqYWsP2hHzFOTZinbyWj
+         KN3oVwlE6DbcCYEb+BazZAN5rp5YnDYNoLHxJ24tmNfapwL+rFoQ9ImnRBXWvDhUp+
+         gXce6WmmSDTe2eoKIZvAio4fCWYE4IdMShAgTaVs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 122/150] rtl8xxxu: Fix missing break in switch
-Date:   Sat, 16 Nov 2019 10:47:00 -0500
-Message-Id: <20191116154729.9573-122-sashal@kernel.org>
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 130/150] scsi: megaraid_sas: Fix msleep granularity
+Date:   Sat, 16 Nov 2019 10:47:08 -0500
+Message-Id: <20191116154729.9573-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -44,33 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-[ Upstream commit 307b00c5e695857ca92fc6a4b8ab6c48f988a1b1 ]
+[ Upstream commit 9155cf30a3c4ef97e225d6daddf9bd4b173267e8 ]
 
-Add missing break statement in order to prevent the code from falling
-through to the default case.
+In megasas_transition_to_ready() driver waits 180seconds for controller to
+change FW state. Here we are calling msleep(1) in a loop for this.  As
+explained in timers-howto.txt, msleep(1) will actually sleep longer than
+1ms. If a faulty controller is connected, we will end up waiting for much
+more than 180 seconds causing unnecessary delays during load.
 
-Fixes: 26f1fad29ad9 ("New driver: rtl8xxxu (mac80211)")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Change the granularity of msleep() call from 1ms to 1000ms.
+
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 7806a4d2b1fcd..91b01ca32e752 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -5691,6 +5691,7 @@ static int rtl8xxxu_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
- 		break;
- 	case WLAN_CIPHER_SUITE_TKIP:
- 		key->flags |= IEEE80211_KEY_FLAG_GENERATE_MMIC;
-+		break;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 8595d83229b77..23a9f0777fa62 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -3823,12 +3823,12 @@ megasas_transition_to_ready(struct megasas_instance *instance, int ocr)
+ 		/*
+ 		 * The cur_state should not last for more than max_wait secs
+ 		 */
+-		for (i = 0; i < (max_wait * 1000); i++) {
++		for (i = 0; i < max_wait; i++) {
+ 			curr_abs_state = instance->instancet->
+ 				read_fw_status_reg(instance->reg_set);
+ 
+ 			if (abs_state == curr_abs_state) {
+-				msleep(1);
++				msleep(1000);
+ 			} else
+ 				break;
+ 		}
 -- 
 2.20.1
 
