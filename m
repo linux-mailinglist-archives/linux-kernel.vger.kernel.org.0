@@ -2,43 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B50FF06B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:05:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E52FF064
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731288AbfKPQFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:05:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59918 "EHLO mail.kernel.org"
+        id S1731562AbfKPQFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:05:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727829AbfKPPvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:20 -0500
+        id S1730737AbfKPPvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:24 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54CFB208CE;
-        Sat, 16 Nov 2019 15:51:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCC93208CE;
+        Sat, 16 Nov 2019 15:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919479;
-        bh=x6hLt6z0ctPoVuvek0M26yoPRBeU6LO5WwNb4a7OFWs=;
+        s=default; t=1573919484;
+        bh=uf/SQX7gvex7V0ZjiMgcVzRM39CtftIlMt1fKTjPSYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HU8umuJVVCuBeAFP9ZjEBzCp0PxOt9exApRUB5XTf8rYTz8qCnSlCLHAH4B8Dg+km
-         MnTR48hrySHKXFxyRgnpG4Z9qcM6kIHRhbXXmlvEoUSJXMlHzdsmMQibCBJzGRBkMk
-         tHKQxSG5845X5S585+TULAsizrgTaL2P7hpX5D/s=
+        b=SOqwaifXf4C8rU+4Pf6X0w0HrU/9YhxlufD01eg+ZvT5ARMe2MTNulfEBy8+vJFeS
+         JmZ127ruzHQb4OcEN9s74wpGwzrH6zlxRybuSZRdHR74g+DvFF4O2O6ukIp/lt0Alk
+         Wf4ktZ2QZhdtBs7acymNqAE+wB2QgYWebqo/n+34=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Duncan Laurie <dlaurie@chromium.org>,
-        Vadim Bendebury <vbendeb@chromium.org>,
-        Stefan Reinauer <reinauer@chromium.org>,
-        Furquan Shaikh <furquan@google.com>,
-        Furquan Shaikh <furquan@chromium.org>,
-        Aaron Durbin <adurbin@chromium.org>,
-        Justin TerAvest <teravest@chromium.org>,
-        Ross Zwisler <zwisler@google.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 12/99] gsmi: Fix bug in append_to_eventlog sysfs handler
-Date:   Sat, 16 Nov 2019 10:49:35 -0500
-Message-Id: <20191116155103.10971-12-sashal@kernel.org>
+Cc:     Angelo Dureghello <angelo@sysam.it>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-m68k@lists.linux-m68k.org
+Subject: [PATCH AUTOSEL 4.9 14/99] m68k: fix command-line parsing when passed from u-boot
+Date:   Sat, 16 Nov 2019 10:49:37 -0500
+Message-Id: <20191116155103.10971-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -51,76 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Duncan Laurie <dlaurie@chromium.org>
+From: Angelo Dureghello <angelo@sysam.it>
 
-[ Upstream commit 655603de68469adaff16842ac17a5aec9c9ce89b ]
+[ Upstream commit 381fdd62c38344a771aed06adaf14aae65c47454 ]
 
-The sysfs handler should return the number of bytes consumed, which in the
-case of a successful write is the entire buffer.  Also fix a bug where
-param.data_len was being set to (count - (2 * sizeof(u32))) instead of just
-(count - sizeof(u32)).  The latter is correct because we skip over the
-leading u32 which is our param.type, but we were also incorrectly
-subtracting sizeof(u32) on the line where we were actually setting
-param.data_len:
+This patch fixes command_line array zero-terminated
+one byte over the end of the array, causing boot to hang.
 
-	param.data_len = count - sizeof(u32);
-
-This meant that for our example event.kernel_software_watchdog with total
-length 10 bytes, param.data_len was just 2 prior to this change.
-
-To test, successfully append an event to the log with gsmi sysfs.
-This sample event is for a "Kernel Software Watchdog"
-
-> xxd -g 1 event.kernel_software_watchdog
-0000000: 01 00 00 00 ad de 06 00 00 00
-
-> cat event.kernel_software_watchdog > /sys/firmware/gsmi/append_to_eventlog
-
-> mosys eventlog list | tail -1
-14 | 2012-06-25 10:14:14 | Kernl Event | Software Watchdog
-
-Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
-Reviewed-by: Vadim Bendebury <vbendeb@chromium.org>
-Reviewed-by: Stefan Reinauer <reinauer@chromium.org>
-Signed-off-by: Furquan Shaikh <furquan@google.com>
-Tested-by: Furquan Shaikh <furquan@chromium.org>
-Reviewed-by: Aaron Durbin <adurbin@chromium.org>
-Reviewed-by: Justin TerAvest <teravest@chromium.org>
-[zwisler: updated changelog for 2nd bug fix and upstream]
-Signed-off-by: Ross Zwisler <zwisler@google.com>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Angelo Dureghello <angelo@sysam.it>
+Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/google/gsmi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/m68k/kernel/uboot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index c463871609764..98cdfc2ee0dff 100644
---- a/drivers/firmware/google/gsmi.c
-+++ b/drivers/firmware/google/gsmi.c
-@@ -480,11 +480,10 @@ static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
- 	if (count < sizeof(u32))
- 		return -EINVAL;
- 	param.type = *(u32 *)buf;
--	count -= sizeof(u32);
- 	buf += sizeof(u32);
+diff --git a/arch/m68k/kernel/uboot.c b/arch/m68k/kernel/uboot.c
+index b3536a82a2620..e002084af1012 100644
+--- a/arch/m68k/kernel/uboot.c
++++ b/arch/m68k/kernel/uboot.c
+@@ -103,5 +103,5 @@ __init void process_uboot_commandline(char *commandp, int size)
+ 	}
  
- 	/* The remaining buffer is the data payload */
--	if (count > gsmi_dev.data_buf->length)
-+	if ((count - sizeof(u32)) > gsmi_dev.data_buf->length)
- 		return -EINVAL;
- 	param.data_len = count - sizeof(u32);
- 
-@@ -504,7 +503,7 @@ static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
- 
- 	spin_unlock_irqrestore(&gsmi_dev.lock, flags);
- 
--	return rc;
-+	return (rc == 0) ? count : rc;
- 
+ 	parse_uboot_commandline(commandp, len);
+-	commandp[size - 1] = 0;
++	commandp[len - 1] = 0;
  }
- 
 -- 
 2.20.1
 
