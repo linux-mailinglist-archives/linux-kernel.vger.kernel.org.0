@@ -2,140 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF7EFE9C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 01:37:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5278FE9D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 01:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfKPAhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 19:37:38 -0500
-Received: from mga03.intel.com ([134.134.136.65]:57789 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727151AbfKPAhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 19:37:38 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 16:37:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,310,1569308400"; 
-   d="scan'208";a="203534864"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Nov 2019 16:37:35 -0800
-Date:   Sat, 16 Nov 2019 08:37:25 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linmiaohe <linmiaohe@huawei.com>, akpm@linux-foundation.org,
-        richardw.yang@linux.intel.com, sfr@canb.auug.org.au,
-        rppt@linux.ibm.com, jannh@google.com, steve.capper@arm.com,
-        catalin.marinas@arm.com, aarcange@redhat.com,
-        chenjianhong2@huawei.com, walken@google.com,
-        dave.hansen@linux.intel.com, tiny.windzz@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: get rid of odd jump label in find_mergeable_anon_vma
-Message-ID: <20191116003725.GA18271@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <1573799768-15650-1-git-send-email-linmiaohe@huawei.com>
- <5277de34-ecb3-831e-c697-1fd3f66b45ba@redhat.com>
+        id S1727325AbfKPAlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 19:41:36 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42640 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbfKPAlf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 19:41:35 -0500
+Received: by mail-pl1-f194.google.com with SMTP id j12so5796355plt.9
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 16:41:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:to:subject:from:user-agent:date;
+        bh=9yDnCue+dWr9HxY0N6Q2Pch2FE87EcvqUib0TtR7pSQ=;
+        b=SS09XMCCT188I3/yk/6QftNMC9IzPDYnQmdpD8FJApyiRworrCIHWetparqWbZqWfh
+         sE82EvbhMwpgbLEHsZ261itWPBv2wNpDGEFunxQYMSVby8PR3RU1562IzkkAROSbXOjn
+         IyKeUAD0YV6+aWB43jPUxzP0vmTiJL/RssgK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:to:subject:from
+         :user-agent:date;
+        bh=9yDnCue+dWr9HxY0N6Q2Pch2FE87EcvqUib0TtR7pSQ=;
+        b=qZzOsTR9nRQ0xvNvOAu0Z1YZreoDhpqcISsMC6vrXu3zmyIMObV8MhN6EeML4G11nC
+         knw7PXSbJOY7OoM562bxv+X/ppj6Q4nbh+XhGEdztrsQSQ6ksFDdGvcXw1PTIh/XiI7K
+         7GFPqbfrgK9VIEmwsX+pJ/NgY7amECtfHzW1QBxwej05drGjWi5N0H7Z5rtTNsI7NFuZ
+         z4gs0YEYc2ffXp86XDQVETTnzpJ3a4+M01ua6k2AooXdKfOrPwFkLKbWiTfEm7zzD/C4
+         gqqUwEYxbSfhw8CYaOqbmGE3N/ZBoLx7F7K3DIAG8F/EypfYiy/7clATiPSkBH6B8/jO
+         Z7Ug==
+X-Gm-Message-State: APjAAAXMSxwrpJ30adb7NdN4FOytM2/ifO8ooyY0sZbNaII6WNIuQhB7
+        sKexQB1HhxAD4lpmH5LfkBnoxZuj9Mw=
+X-Google-Smtp-Source: APXvYqyvjrTceDeetKzJjeqQs3diL1hZzZJ5Y8qhrrcMn2HLl3bmepesp6jkH4039XhUy5/6ptKlmQ==
+X-Received: by 2002:a17:90a:35d0:: with SMTP id r74mr23276348pjb.47.1573864894228;
+        Fri, 15 Nov 2019 16:41:34 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 193sm13872761pfv.18.2019.11.15.16.41.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 16:41:33 -0800 (PST)
+Message-ID: <5dcf45bd.1c69fb81.297bb.9cb9@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5277de34-ecb3-831e-c697-1fd3f66b45ba@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1573593774-12539-12-git-send-email-eberman@codeaurora.org>
+References: <1573593774-12539-1-git-send-email-eberman@codeaurora.org> <1573593774-12539-12-git-send-email-eberman@codeaurora.org>
+Cc:     Elliot Berman <eberman@codeaurora.org>, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, psodagud@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Elliot Berman <eberman@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH v2 11/18] firmware: qcom_scm-32: Use SMC arch wrappers
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 15 Nov 2019 16:41:32 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 01:58:02PM +0100, David Hildenbrand wrote:
->On 15.11.19 07:36, linmiaohe wrote:
->> From: Miaohe Lin <linmiaohe@huawei.com>
->
->I'm pro removing unnecessary jump labels.
->
->Subject: "mm: get rid of jump labels in find_mergeable_anon_vma()"
->
->> 
->> The odd jump label try_prev and none is not really need
->
->s/odd jump label/jump labels/
->
->s/is/are/
->
->> in func find_mergeable_anon_vma, eliminate them to
->> improve readability.
->> 
->> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
->> ---
->>  mm/mmap.c | 18 +++++++-----------
->>  1 file changed, 7 insertions(+), 11 deletions(-)
->> 
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index 4d4db76a07da..ab980d468a10 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -1276,25 +1276,21 @@ static struct anon_vma *reusable_anon_vma(struct vm_area_struct *old, struct vm_
->>   */
->>  struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *vma)
->>  {
->> -	struct anon_vma *anon_vma;
->> +	struct anon_vma *anon_vma = NULL;
->>  	struct vm_area_struct *near;
->>  
->>  	near = vma->vm_next;
->> -	if (!near)
->> -		goto try_prev;
->> -
->> -	anon_vma = reusable_anon_vma(near, vma, near);
->> +	if (near)
->> +		anon_vma = reusable_anon_vma(near, vma, near);>  	if (anon_vma)
->>  		return anon_vma;
->
->Let me suggest the following instead:
->
->/* Try next first */
->near = vma->vm_next;
->if (near) {
->	anon_vma = reusable_anon_vma(near, vma, near);
->	if (anon_vma)
->		return anon_vma;
->}
->/* Try prev next */
->near = vma->vm_prev;
->if (near) {
->	anon_vma = reusable_anon_vma(near, vma, near);
->	if (anon_vma)
->		return anon_vma;
->}
->
+Quoting Elliot Berman (2019-11-12 13:22:47)
+> Use SMC arch wrappers instead of inline assembly.
+>=20
+> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
+> ---
 
-Can we have an array with vma->vm_next and vma->vm_prev, then iterate on the
-array?
+Nice. Can this come earlier in the series?
 
->> -try_prev:
->> -	near = vma->vm_prev;
->> -	if (!near)
->> -		goto none;
->>  
->> -	anon_vma = reusable_anon_vma(near, near, vma);
->> +	near = vma->vm_prev;
->> +	if (near)
->> +		anon_vma = reusable_anon_vma(near, near, vma);
->>  	if (anon_vma)
->>  		return anon_vma;
->> -none:
->> +
->>  	/*
->>  	 * There's no absolute need to look only at touching neighbours:
->>  	 * we could search further afield for "compatible" anon_vmas.
->> 
->
->
->-- 
->
->Thanks,
->
->David / dhildenb
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
--- 
-Wei Yang
-Help you, Help me
+> diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-3=
+2.c
+> index e06d59b..c3aeccf 100644
+> --- a/drivers/firmware/qcom_scm-32.c
+> +++ b/drivers/firmware/qcom_scm-32.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/err.h>
+>  #include <linux/qcom_scm.h>
+> +#include <linux/arm-smccc.h>
+>  #include <linux/dma-mapping.h>
+> =20
+>  #include "qcom_scm.h"
+> @@ -124,25 +125,13 @@ static inline void *legacy_get_response_buffer(
+>  static u32 __qcom_scm_call_do(u32 cmd_addr)
+>  {
+>         int context_id;
+> -       register u32 r0 asm("r0") =3D 1;
+> -       register u32 r1 asm("r1") =3D (u32)&context_id;
+> -       register u32 r2 asm("r2") =3D cmd_addr;
+> +       struct arm_smccc_res res;
+>         do {
+> -               asm volatile(
+> -                       __asmeq("%0", "r0")
+> -                       __asmeq("%1", "r0")
+> -                       __asmeq("%2", "r1")
+> -                       __asmeq("%3", "r2")
+> -#ifdef REQUIRES_SEC
+> -                       ".arch_extension sec\n"
+> -#endif
+> -                       "smc    #0      @ switch to secure world\n"
+> -                       : "=3Dr" (r0)
+> -                       : "r" (r0), "r" (r1), "r" (r2)
+> -                       : "r3", "r12");
+
+I assume that the clobber list is not a problem? i.e. r12 is going to
+get clobbered and that's not a problem.
+
+> -       } while (r0 =3D=3D QCOM_SCM_INTERRUPTED);
+> -
+> -       return r0;
+> +               arm_smccc_smc(1, (unsigned long)&context_id, cmd_addr,
+> +                             0, 0, 0, 0, 0, &res);
