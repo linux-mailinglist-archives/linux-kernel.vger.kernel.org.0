@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70374FECA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 15:23:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 907AAFECAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 15:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfKPOXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 09:23:24 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38400 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727593AbfKPOXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 09:23:24 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c13so8062829pfp.5;
-        Sat, 16 Nov 2019 06:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XVDv/5DN1klovyqx6S50PzD+TGU+3UYBGPqk460As+k=;
-        b=tjq8TIQvs0HedOdt08m2MgrCDE0kLDWx9aYuvVlHKWht5gipmGTdSrU3CshxBVAMSH
-         eS4wFt6IG5+RgZvqvIJCiZmkLV5bojaJiSBQZhp3/8iLV538LpQUB4wODaBPsQx1JCyC
-         YHo1l5lgiOU9kDCQkXrFrkjpuAMSv9QGig7NdNln2fni7UiopdTY/9fpQDlekWV9TDWo
-         a7abtuJexA1OaSYejnPBkGTqTDo9H+nXW/1RCfz6XNOTqM7I2iB5BOLt8feIm4Q4EQ0d
-         x3MSEZXM1faAM9AOWJdzafRl2BS7Xu9tFjxl/Ts84e2PjlsiaCqRZLd/tTARDqxfpALa
-         UbpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XVDv/5DN1klovyqx6S50PzD+TGU+3UYBGPqk460As+k=;
-        b=eqBWavxPjvPxc1CdbdJXge4iKK7mVjCZMjSZvmpBNs1f9yJzcKOaBiwT8cXiVAJw9x
-         UkjNB/fpctxFQz4UXIe5MwFDeY1E1afNpgTIcMK9mDzAMQL8VEsEJm9JmG1V1oXxk3pV
-         OTzv1jNC8Zz+9uhPngmNl8INrBnNwxCQ2mB2AVfwxlaZdT0mKS8h4/OwL5Quoy+T6cbn
-         FYY1DCFY3/O8g4VGBLOdymeIpoB5tQghyNBfHqdZKdemA+yC3gLq8gf9MAPd6dLXgYIL
-         GrXcPe7uiAqTqD+sRY4w8ImEmgk1zWJqiO2QkqzQABL8XOSJZjfMLIagRTSRaqB5UAs0
-         uSbg==
-X-Gm-Message-State: APjAAAV7EYZuSzMSk9LewZgVY6Ra146LZnmbSpSS4cIgQhmhOJEsUUnj
-        2ejJoaNirhVbnOIwMXrd94g=
-X-Google-Smtp-Source: APXvYqzgJHXk8opO3uQzaOlcz9dxdwBsCgPliRhtburTOfHBkRKmih2AJ4ayuul5+9eiAQLkvhLAPQ==
-X-Received: by 2002:a65:558a:: with SMTP id j10mr22504706pgs.269.1573914203334;
-        Sat, 16 Nov 2019 06:23:23 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id w2sm15678178pfj.22.2019.11.16.06.23.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2019 06:23:22 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH net-next v2] net: macb: add missed tasklet_kill
-Date:   Sat, 16 Nov 2019 22:23:10 +0800
-Message-Id: <20191116142310.13770-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727723AbfKPOYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 09:24:18 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:59528 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727593AbfKPOYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 09:24:18 -0500
+Received: from zn.tnic (p200300EC2F1E69009CF23ABF0AA6C103.dip0.t-ipconnect.de [IPv6:2003:ec:2f1e:6900:9cf2:3abf:aa6:c103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D40991EC0C5C;
+        Sat, 16 Nov 2019 15:24:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1573914257;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=mVHxODPQpxGa+buj2UWjBl+JSGZIf7irvuA/EnFq9zM=;
+        b=XCVBsyzX7X5lK77Hyqm92qJVAs3AqabuY6Y9oC9Rj3ta1xbQ4wR5j0O0Cv2fk+myzOu+M4
+        l3aMoIo70TmXXElpEsV/iq63zr3jsL40FtkMU8tQJXrXwVnW6Tg1Z5hFzCMst+kXPtc10k
+        Rl2coDD/oKKMfGcrByfsRNB7533hO/0=
+Date:   Sat, 16 Nov 2019 15:24:11 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Waiman Long <longman@redhat.com>
+Cc:     linux-tip-commits@vger.kernel.org,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Waiman Long <longman@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Tyler Hicks <tyhicks@canonical.com>, x86-ml <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [tip: x86/pti] x86/speculation: Fix redundant MDS mitigation
+ message
+Message-ID: <20191116142411.GA23231@zn.tnic>
+References: <20191115161445.30809-3-longman@redhat.com>
+ <157390711921.12247.3084878540998345444.tip-bot2@tip-bot2>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <157390711921.12247.3084878540998345444.tip-bot2@tip-bot2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver forgets to kill tasklet in remove.
-Add the call to fix it.
+On Sat, Nov 16, 2019 at 12:25:19PM -0000, tip-bot2 for Waiman Long wrote:
+> +static void __init mds_print_mitigation(void)
+> +{
+>  	pr_info("%s\n", mds_strings[mds_mitigation]);
+>  }
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Almost. This causes
+
+MDS: Vulnerable
+
+to be printed on an in-order 32-bit Atom here, which is wrong. I've
+fixed it up to:
+
 ---
-Changes in v2:
-  - Rebase on net-next.
-
- drivers/net/ethernet/cadence/macb_main.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 8fc2e21f0bb1..7bf86b84b143 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -4418,6 +4418,7 @@ static int macb_remove(struct platform_device *pdev)
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index cb2fbd93ef4d..8bf64899f56a 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -256,6 +256,9 @@ static void __init mds_select_mitigation(void)
  
- 	if (dev) {
- 		bp = netdev_priv(dev);
-+		tasklet_kill(&bp->hresp_err_tasklet);
- 		mdiobus_unregister(bp->mii_bus);
- 		mdiobus_free(bp->mii_bus);
+ static void __init mds_print_mitigation(void)
+ {
++	if (!boot_cpu_has_bug(X86_BUG_MDS) || cpu_mitigations_off())
++		return;
++
+ 	pr_info("%s\n", mds_strings[mds_mitigation]);
+ }
  
+
 -- 
-2.24.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
