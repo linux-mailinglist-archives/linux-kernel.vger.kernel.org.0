@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74B36FEDB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19241FEDB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:46:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbfKPPqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:46:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52200 "EHLO mail.kernel.org"
+        id S1728629AbfKPPqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:46:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729229AbfKPPqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:05 -0500
+        id S1727972AbfKPPqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:06 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BB4220857;
-        Sat, 16 Nov 2019 15:46:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93A8020862;
+        Sat, 16 Nov 2019 15:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919164;
-        bh=HUmds+9b5PGZVPdZ+yxdGP7APAcPSnss65fij7jLvqg=;
+        s=default; t=1573919165;
+        bh=O+KNYKwrYXlnpwO1GIlUFnzRl1BQrKkUD6M9YTg3B08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DYpt+74JiTYRynxon1wbtIkFhcyv3BLIvkjfSXasGF2O+5uXQgqRMumtE256O/Yv/
-         tF2FdVzI4jgiEQjpo2GgW7P5fOFEf19MDddRgIRpYME6qvIrA7Nv2+d7scDNAZ42PW
-         gDYMLBfypECepKOBEsxFSx0Gst5aViR8c7ACw67g=
+        b=Er3rUtXv+Y1+XVmsvMFWTRe8OvQAb1eVO1C/ofNlm6zPc57NcnCahrIT2VnKjkW1t
+         MpANyNsjwesOQFZBMNWrTFn0CnNJHtZjax7qrsFcWXaImyattNF/IND4OuDiCSNw3t
+         yKG97VIioXgxWN2nVz970L3JbLmRh3kYIi3s6o/s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jon Mason <jdmason@kudzu.us>,
-        "Gerd W . Haeussler" <gerd.haeussler@cesys-it.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-ntb@googlegroups.com,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 172/237] ntb_netdev: fix sleep time mismatch
-Date:   Sat, 16 Nov 2019 10:40:07 -0500
-Message-Id: <20191116154113.7417-172-sashal@kernel.org>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        KY Srinivasan <kys@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 174/237] irq/matrix: Fix memory overallocation
+Date:   Sat, 16 Nov 2019 10:40:09 -0500
+Message-Id: <20191116154113.7417-174-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -45,36 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Mason <jdmason@kudzu.us>
+From: Michael Kelley <mikelley@microsoft.com>
 
-[ Upstream commit a861594b1b7ffd630f335b351c4e9f938feadb8e ]
+[ Upstream commit 57f01796f14fecf00d330fe39c8d2477ced9cd79 ]
 
-The tx_time should be in usecs (according to the comment above the
-variable), but the setting of the timer during the rearming is done in
-msecs.  Change it to match the expected units.
+IRQ_MATRIX_SIZE is the number of longs needed for a bitmap, multiplied by
+the size of a long, yielding a byte count. But it is used to size an array
+of longs, which is way more memory than is needed.
 
-Fixes: e74bfeedad08 ("NTB: Add flow control to the ntb_netdev")
-Suggested-by: Gerd W. Haeussler <gerd.haeussler@cesys-it.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
-Acked-by: Dave Jiang <dave.jiang@intel.com>
+Change IRQ_MATRIX_SIZE so it is just the number of longs needed and the
+arrays come out the correct size.
+
+Fixes: 2f75d9e1c905 ("genirq: Implement bitmap matrix allocator")
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: KY Srinivasan <kys@microsoft.com>
+Link: https://lkml.kernel.org/r/1541032428-10392-1-git-send-email-mikelley@microsoft.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ntb_netdev.c | 2 +-
+ kernel/irq/matrix.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ntb_netdev.c b/drivers/net/ntb_netdev.c
-index b12023bc2cab5..df8d49ad48c38 100644
---- a/drivers/net/ntb_netdev.c
-+++ b/drivers/net/ntb_netdev.c
-@@ -236,7 +236,7 @@ static void ntb_netdev_tx_timer(struct timer_list *t)
- 	struct net_device *ndev = dev->ndev;
+diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
+index 92337703ca9fd..30cc217b86318 100644
+--- a/kernel/irq/matrix.c
++++ b/kernel/irq/matrix.c
+@@ -8,7 +8,7 @@
+ #include <linux/cpu.h>
+ #include <linux/irq.h>
  
- 	if (ntb_transport_tx_free_entry(dev->qp) < tx_stop) {
--		mod_timer(&dev->tx_timer, jiffies + msecs_to_jiffies(tx_time));
-+		mod_timer(&dev->tx_timer, jiffies + usecs_to_jiffies(tx_time));
- 	} else {
- 		/* Make sure anybody stopping the queue after this sees the new
- 		 * value of ntb_transport_tx_free_entry()
+-#define IRQ_MATRIX_SIZE	(BITS_TO_LONGS(IRQ_MATRIX_BITS) * sizeof(unsigned long))
++#define IRQ_MATRIX_SIZE	(BITS_TO_LONGS(IRQ_MATRIX_BITS))
+ 
+ struct cpumap {
+ 	unsigned int		available;
 -- 
 2.20.1
 
