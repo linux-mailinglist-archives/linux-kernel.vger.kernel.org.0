@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E1EFF027
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5994DFF029
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:03:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730952AbfKPPwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:52:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60842 "EHLO mail.kernel.org"
+        id S1730929AbfKPQDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:03:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730881AbfKPPv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:59 -0500
+        id S1730910AbfKPPwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:52:01 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E2DF20871;
-        Sat, 16 Nov 2019 15:51:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CA2620B7C;
+        Sat, 16 Nov 2019 15:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919518;
-        bh=MAOsExUO1LX6olohxHbtXv7sXIynRIuvN8sG2DMYCAI=;
+        s=default; t=1573919520;
+        bh=QGsz8Ks1Tojt059lcycjgRGYNsiZ059yMmZcprWBtGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L2tfFxWQFMJHmHA+rMv4dola2FaeKn5V8snW3FAugl/VKwluBWoVCK6Pid4b6X+fA
-         kwKQA4oRG6vtC5eeroKWp4oXcuKycQ7tmoul8kG++rUzr2afO1rpSwAvPM3oD1Py5F
-         1jXj5nFR8o/BWcB7vQqeMstkQE4KyzlVD7UyZ+00=
+        b=Tf74yPFdh1wdRbDCzUIYbKyba6Rg4qmwSeOxFz6HlL4UazdAiX1QEVJ6ZWt1AQ4JM
+         L9fISmJK6zSeWQLkQqlJjn361iJ2KWNPWOjfQxtKGpGACGAjqr3qZzA8I8d9GQFucr
+         adE79+/x3d4/qZhvMjxhsa0wjHhnjedXh00wKadA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.9 40/99] rtc: s35390a: Change buf's type to u8 in s35390a_init
-Date:   Sat, 16 Nov 2019 10:50:03 -0500
-Message-Id: <20191116155103.10971-40-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 43/99] qlcnic: fix a return in qlcnic_dcb_get_capability()
+Date:   Sat, 16 Nov 2019 10:50:06 -0500
+Message-Id: <20191116155103.10971-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -44,42 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit ef0f02fd69a02b50e468a4ddbe33e3d81671e248 ]
+[ Upstream commit c94f026fb742b2d3199422751dbc4f6fc0e753d8 ]
 
-Clang warns:
+These functions are supposed to return one on failure and zero on
+success.  Returning a zero here could cause uninitialized variable
+bugs in several of the callers.  For example:
 
-drivers/rtc/rtc-s35390a.c:124:27: warning: implicit conversion from
-'int' to 'char' changes value from 192 to -64 [-Wconstant-conversion]
-        buf = S35390A_FLAG_RESET | S35390A_FLAG_24H;
-            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
-1 warning generated.
+    drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:1660 get_iscsi_dcb_priority()
+    error: uninitialized symbol 'caps'.
 
-Update buf to be an unsigned 8-bit integer, which matches the buf member
-in struct i2c_msg.
-
-https://github.com/ClangBuiltLinux/linux/issues/145
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 48365e485275 ("qlcnic: dcb: Add support for CEE Netlink interface.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-s35390a.c | 2 +-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
-index 5dab4665ca3bd..3e0eea3aa876d 100644
---- a/drivers/rtc/rtc-s35390a.c
-+++ b/drivers/rtc/rtc-s35390a.c
-@@ -106,7 +106,7 @@ static int s35390a_get_reg(struct s35390a *s35390a, int reg, char *buf, int len)
-  */
- static int s35390a_reset(struct s35390a *s35390a, char *status1)
- {
--	char buf;
-+	u8 buf;
- 	int ret;
- 	unsigned initcount = 0;
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+index 4b76c69fe86d2..834208e55f7b8 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+@@ -883,7 +883,7 @@ static u8 qlcnic_dcb_get_capability(struct net_device *netdev, int capid,
+ 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
  
+ 	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
+-		return 0;
++		return 1;
+ 
+ 	switch (capid) {
+ 	case DCB_CAP_ATTR_PG:
 -- 
 2.20.1
 
