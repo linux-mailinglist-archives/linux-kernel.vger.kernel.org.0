@@ -2,107 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF6C1FEDF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:48:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A94FED78
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfKPPrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:47:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729654AbfKPPrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:47:12 -0500
-Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D97C2088F;
-        Sat, 16 Nov 2019 15:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919231;
-        bh=5Pdak+JPJzVEhoD/8rcgc5m8LdWqf4v8nm3VoE3IvzQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XxTUeGBtQno2/GyHBn/Q5+d4Y6ybRImKJB3WlcSUQVR3LOdrzuctuuiEgRYe2KVpX
-         2r/gI0OplJpSdeyqWWj2sO4E6oD5ruQrER8rAatQOJVU+/USDMFzo3d1apkI99MPC5
-         350/jI+CT4W8xzBsREcPT0LGECVZq7hrFnnDBrnY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 237/237] cfg80211: call disconnect_wk when AP stops
-Date:   Sat, 16 Nov 2019 10:41:12 -0500
-Message-Id: <20191116154113.7417-237-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
-References: <20191116154113.7417-1-sashal@kernel.org>
+        id S1729008AbfKPPod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:44:33 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45222 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728969AbfKPPo1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:44:27 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w7so6805214plz.12;
+        Sat, 16 Nov 2019 07:44:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WnvmRD6ZDU2PlgS2OgMDPMW99DMkDnT5Nicaq9xaRVQ=;
+        b=LpBNNZt3Jm05bbw8HoNK2SAm9Xpy31GRwHQQXSZ+v3eYIJAnw2O3albN2ikQKCYRoB
+         zAl6lFR3Ok1VyDqRhV6FxUTdIWanQdEzO/UcfeT9FmJrPPIIOr137DcCUMHus1ot1kgx
+         3iQ6TJQbCgHAsv7AiCHYpC5OPCoviKev0hhjOvAPdnTt8tN+8y/IDLNkTvoA5ljDRq/M
+         OR5yPfz7oHn5okKYPKIgAPciL7L0aorvCzk0iQVDcADOumuD9qCX7AtfnzlDQlFLSS4Q
+         TIdo0Qrh03y3Yn8X4QAWFXJal08aAu2UWi4RuTjtGJf6QecR+aICzyZmoqpm7ILnPl4n
+         KSSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WnvmRD6ZDU2PlgS2OgMDPMW99DMkDnT5Nicaq9xaRVQ=;
+        b=pMm6RvAPBlTLpjQ+Yin6FD2QaL0m58Ntd4CWkQHDHuff/yCpL3GQvDzYBYRVqqReX9
+         VEOU2XTkbvIYKBC3RWOsrqq1MqM8dKHrYjqNj9LuQvvdqlUDCof2VsUvx3uRI3JvzWek
+         fMQvDZqU8doM5tAtUh/Gh9nJplffzUJHHxGoyrlFIGoQmnp7xwNETRudRilChDCS46NY
+         aa9rrQzLIesQvPbrRn8eDC/13pdn9Z2rC4r6RnokoSM+KHPy9wzIdMs/tGccXWM7EKtv
+         6yW4/yhu1uyWxJAFpa2XpuZPjgYzdGgGsUl7Q+Wsw3V4luh4gSCgenKrqsrrCoQ6b3Zj
+         +aKw==
+X-Gm-Message-State: APjAAAVB5+3B/QGJxzsn6/SFjHC9kyqR5ueeToTCZ4TqFnLQFqwAoac1
+        JlMns4giGOcgwWPEYc9+7Rs=
+X-Google-Smtp-Source: APXvYqxk3rWsL025XsJDd7R3JFwPwf78EUZFbORx+GvXHfQxAI3D8GG9l9evRVq16ywqnzyxDRPvOQ==
+X-Received: by 2002:a17:902:5988:: with SMTP id p8mr20737410pli.131.1573919066482;
+        Sat, 16 Nov 2019 07:44:26 -0800 (PST)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id i2sm14306327pgt.34.2019.11.16.07.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2019 07:44:25 -0800 (PST)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Jaya Kumar <jayalk@intworks.biz>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] video: fbdev: arcfb: add missed free_irq
+Date:   Sat, 16 Nov 2019 23:44:16 +0800
+Message-Id: <20191116154416.19390-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+The driver forgets to free irq in remove which is requested in
+probe.
+Add the missed call to fix it.
 
-[ Upstream commit e005bd7ddea06784c1eb91ac5bb6b171a94f3b05 ]
-
-Since we now prevent regulatory restore during STA disconnect
-if concurrent AP interfaces are active, we need to reschedule
-this check when the AP state changes. This fixes never doing
-a restore when an AP is the last interface to stop. Or to put
-it another way: we need to re-check after anything we check
-here changes.
-
-Cc: stable@vger.kernel.org
-Fixes: 113f3aaa81bd ("cfg80211: Prevent regulatory restore during STA disconnect in concurrent interfaces")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- net/wireless/ap.c   | 2 ++
- net/wireless/core.h | 2 ++
- net/wireless/sme.c  | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/arcfb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/wireless/ap.c b/net/wireless/ap.c
-index 882d97bdc6bfd..550ac9d827fe7 100644
---- a/net/wireless/ap.c
-+++ b/net/wireless/ap.c
-@@ -41,6 +41,8 @@ int __cfg80211_stop_ap(struct cfg80211_registered_device *rdev,
- 		cfg80211_sched_dfs_chan_update(rdev);
- 	}
+diff --git a/drivers/video/fbdev/arcfb.c b/drivers/video/fbdev/arcfb.c
+index a48741aab240..7aed01f001a4 100644
+--- a/drivers/video/fbdev/arcfb.c
++++ b/drivers/video/fbdev/arcfb.c
+@@ -590,8 +590,11 @@ static int arcfb_probe(struct platform_device *dev)
+ static int arcfb_remove(struct platform_device *dev)
+ {
+ 	struct fb_info *info = platform_get_drvdata(dev);
++	struct arcfb_par *par = info->par;
  
-+	schedule_work(&cfg80211_disconnect_work);
-+
- 	return err;
- }
- 
-diff --git a/net/wireless/core.h b/net/wireless/core.h
-index 7f52ef5693203..f5d58652108dd 100644
---- a/net/wireless/core.h
-+++ b/net/wireless/core.h
-@@ -430,6 +430,8 @@ void cfg80211_process_wdev_events(struct wireless_dev *wdev);
- bool cfg80211_does_bw_fit_range(const struct ieee80211_freq_range *freq_range,
- 				u32 center_freq_khz, u32 bw_khz);
- 
-+extern struct work_struct cfg80211_disconnect_work;
-+
- /**
-  * cfg80211_chandef_dfs_usable - checks if chandef is DFS usable
-  * @wiphy: the wiphy to validate against
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index c7047c7b4e80f..07c2196e9d573 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -667,7 +667,7 @@ static void disconnect_work(struct work_struct *work)
- 	rtnl_unlock();
- }
- 
--static DECLARE_WORK(cfg80211_disconnect_work, disconnect_work);
-+DECLARE_WORK(cfg80211_disconnect_work, disconnect_work);
- 
- 
- /*
+ 	if (info) {
++		if (irq)
++			free_irq(par->irq, info);
+ 		unregister_framebuffer(info);
+ 		vfree((void __force *)info->screen_base);
+ 		framebuffer_release(info);
 -- 
-2.20.1
+2.24.0
 
