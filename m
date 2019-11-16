@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FF2CFF155
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:11:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB0D8FF170
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbfKPPsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:48:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55584 "EHLO mail.kernel.org"
+        id S1731840AbfKPQMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:12:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729967AbfKPPs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:48:27 -0500
+        id S1728735AbfKPPs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:48:29 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C73282086A;
-        Sat, 16 Nov 2019 15:48:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 262442081E;
+        Sat, 16 Nov 2019 15:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919307;
-        bh=EAxCQth2ZKk/kGjhKRAbSAUj7vT5Dv3HrY5a2a8j1CI=;
+        s=default; t=1573919309;
+        bh=3mBeHU26KDoJnerDrK7TIAfbbYuBh2vF/7RxufJMUZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F0pmk9HOa1QWcwzEW/U34jHBn98cZAU0FRjUmCvYoDFhdR3bVHgRtc8wGkFbAUu/Q
-         zF69HSKHD03ghfDFZ45Sbb2qCT9ZITWykx7daQ93UE1MAnM3ceo8akHzoMR5xw9MCj
-         1db1s5NoUUilBI5rnavhEBOKH2+5I92m2q0pJg8k=
+        b=m5FrDMJWjdpJ0BWoI/IfI32LA5WwdEVKXxEWZTdoSEmMOlhcXjyAEj3+O3EMzxeCG
+         VhnORyuPSATJ1JLOez4eBM2ho7DLly5Ajq5DD0InoBKuhGKG/6PI57chWf4sZcp69V
+         hqxS9I4Xtfn04vY1D9BSAzt3A+Z6eWrzAhL+cwug=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mattias Jacobsson <2pi@mok.nu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 050/150] USB: misc: appledisplay: fix backlight update_status return code
-Date:   Sat, 16 Nov 2019 10:45:48 -0500
-Message-Id: <20191116154729.9573-50-sashal@kernel.org>
+Cc:     Heinz Mauelshagen <heinzm@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 052/150] dm raid: avoid bitmap with raid4/5/6 journal device
+Date:   Sat, 16 Nov 2019 10:45:50 -0500
+Message-Id: <20191116154729.9573-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -43,48 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mattias Jacobsson <2pi@mok.nu>
+From: Heinz Mauelshagen <heinzm@redhat.com>
 
-[ Upstream commit 090158555ff8d194a98616034100b16697dd80d0 ]
+[ Upstream commit d857ad75edf3c0066fcd920746f9dc75382b3324 ]
 
-Upon success the update_status handler returns a positive number
-corresponding to the number of bytes transferred by usb_control_msg.
-However the return code of the update_status handler should indicate if
-an error occurred(negative) or how many bytes of the user's input to sysfs
-that was consumed. Return code zero indicates all bytes were consumed.
+With raid4/5/6, journal device and write intent bitmap are mutually exclusive.
 
-The bug can for example result in the update_status handler being called
-twice, the second time with only the "unconsumed" part of the user's input
-to sysfs. Effectively setting an incorrect brightness.
-
-Change the update_status handler to return zero for all successful
-transactions and forward usb_control_msg's error code upon failure.
-
-Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/appledisplay.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/md/dm-raid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
-index 03be7c75c5be7..3b59eaf81eefc 100644
---- a/drivers/usb/misc/appledisplay.c
-+++ b/drivers/usb/misc/appledisplay.c
-@@ -160,8 +160,11 @@ static int appledisplay_bl_update_status(struct backlight_device *bd)
- 		pdata->msgdata, 2,
- 		ACD_USB_TIMEOUT);
- 	mutex_unlock(&pdata->sysfslock);
--	
--	return retval;
-+
-+	if (retval < 0)
-+		return retval;
-+	else
-+		return 0;
- }
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index 151211b4cb1ba..2c5912e755148 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -2441,7 +2441,7 @@ static int super_validate(struct raid_set *rs, struct md_rdev *rdev)
+ 	}
  
- static int appledisplay_bl_get_brightness(struct backlight_device *bd)
+ 	/* Enable bitmap creation for RAID levels != 0 */
+-	mddev->bitmap_info.offset = rt_is_raid0(rs->raid_type) ? 0 : to_sector(4096);
++	mddev->bitmap_info.offset = (rt_is_raid0(rs->raid_type) || rs->journal_dev.dev) ? 0 : to_sector(4096);
+ 	mddev->bitmap_info.default_offset = mddev->bitmap_info.offset;
+ 
+ 	if (!test_and_clear_bit(FirstUse, &rdev->flags)) {
 -- 
 2.20.1
 
