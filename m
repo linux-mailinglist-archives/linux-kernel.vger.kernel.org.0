@@ -2,110 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2146FEF9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC815FF0FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731541AbfKPP7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:59:55 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40288 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728604AbfKPP7t (ORCPT
+        id S1731259AbfKPQJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:09:16 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46758 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731085AbfKPQJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:59:49 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f3so13696943wmc.5;
-        Sat, 16 Nov 2019 07:59:47 -0800 (PST)
+        Sat, 16 Nov 2019 11:09:13 -0500
+Received: by mail-pl1-f194.google.com with SMTP id l4so6831246plt.13
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 08:09:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rbOTnsUq/9DEZdmIKLuf6krWrS7q2mSNEM5xgQhX8+0=;
-        b=NFhcLuXrnAq0OYYyA7z8C9bZXa0hHJ+dtzhQ+5umQq2VHZZ5w7c+aeghDO4l677kdG
-         eoDpyAbJyngxzbIeVQ29ZCp/ejPP+M+SlTI81bkcBxIgYtG2JqhKNCkbSyWp4AD1JhVp
-         3oDXzKFoC5LBtDZait63JpszzFrRh9Phf3YzaJUANIhQ9KI1ON11YQkPUf3QIZyz7wBl
-         pTel5NKFmPVS7sorHS0bZrLVIfFG1i5zwUpjT7/L9cao+hEej/9EwNIghcuHWAlF2gxn
-         bpMw5WmkvlgPrOOVqj02xFCNTiGEYhPI73+ppPrEgLxpNDf9m6gh84ZU/xaOOemM0Bl9
-         KFEg==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=rbbVOSmMuRnIGDknBjXXfC0fBPASDKYoYUrmo5eNFgM=;
+        b=bS92H15s+5qWORaPy/KpGyd9SsgC655KqQYuSsU9pKNGfk9SJTLqRih+4XIq+ZkOS2
+         +/poIX3KAggHJsmIL0jJM+EurfmUKZRoJ9Bb5rc9SAaN4mUnuVL0u4psU6cMne+FN7vp
+         37n6UpKt+0TZ3XSqaIb7jbEgq6pL0UEzQ6MkRCpb5Id5hwADu+fONtfsT2zYci08+irc
+         miWPM6cogv/xFmoqjRR41ZkQlbnm7Oql0Oxp4oS3u9d+DJyiLsEyCDgbacdlxGsCwHWr
+         ZGwZtccBiL2U/y9DsrLyrdaGrRPsceSG8ipedytZVQBCAmEN0NK/dNnPTzzBSvM1VLxH
+         9XgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rbOTnsUq/9DEZdmIKLuf6krWrS7q2mSNEM5xgQhX8+0=;
-        b=j8k4z7lb0TOiqM5HiPa1bNMj/ZgjxlF06OR+fomlyIc8HtIY62S0gie5+p+tZcauSy
-         XWr2lDfcogplGB+giYIw74jODZW5zADqQoe2RZYd2vF5AY9IdHEiyyQ9pkz4MJPM3JlB
-         7+7dUC+CIHkDg9S0h6i4IPIB24ZE7kpGZM66DD51x8UY3LM8W5osgliHVOabTvmHxqQC
-         W3+ey1MyFH3fUaVBn9QcloPmyhSIstebbPAMY87wVaB32jxIqryVEhuLBf2B8bDC4m5H
-         ZYTkgLoMNWT5nwZ7biyrJrCxpofRUBu7lPcXCcx6+jgSavDXST81+qhQ1eogx+IHPc++
-         e3HQ==
-X-Gm-Message-State: APjAAAUaQXD1oskilJjFxCLGpIfQkx6NbbajR9GBuuXHx8wBSNN5OecR
-        I+Eqfl6ZzPMHiCo2O5dip+PJDtMd
-X-Google-Smtp-Source: APXvYqxsbrRwKJb01nFAnlpTmPL2gVoiHHhMbXxmTojWd+YmwhEjp4ie7IGLxxmhf1RhvFHHAk2v9A==
-X-Received: by 2002:a1c:7215:: with SMTP id n21mr21833868wmc.129.1573919987194;
-        Sat, 16 Nov 2019 07:59:47 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id m3sm15472137wrw.20.2019.11.16.07.59.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Nov 2019 07:59:46 -0800 (PST)
-Date:   Sat, 16 Nov 2019 16:59:45 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Giovanni Mascellani <gio@debian.org>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dell-smm-hwmon: Add support for disabling automatic
- BIOS fan control
-Message-ID: <20191116155945.tivygva3rbbdolgz@pali>
-References: <20191116140649.114592-1-gio@debian.org>
- <20191116145845.xmhki3ckza26eoln@pali>
- <7bc8ec9a-f559-96c8-36fd-6e11a1420626@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="flg5b24ackzt24u5"
-Content-Disposition: inline
-In-Reply-To: <7bc8ec9a-f559-96c8-36fd-6e11a1420626@roeck-us.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=rbbVOSmMuRnIGDknBjXXfC0fBPASDKYoYUrmo5eNFgM=;
+        b=F57FyZTnqn6CC30lMfx1naGBjDG16NU1HDsR8OCnaEw/y9MWeQjOkpTlwqUGA73q72
+         KUlPZluqOpIHSwf77zRddrdOpQQnY1ePWkfy8FsG04Isd4Fyw7NGtzBFFm4pVUxFFT3y
+         Hrn5FKwozAhfWqANh14JQFymWba6Pm53++hN7L0GnnT3Mne3b/BF9Ozapx6XBgRWl1DT
+         +Guefmyxgg/2KDvjamOXEi62AK9PmzlzoAi6xQ58TCNtELDL7D1JCU6+BvbcvVq3ZkFQ
+         WMzc2w42aOE0WQ7r3krgqWTsbe5vA7PxaaDeKQLhnKsh/DjAlvICGCnTXOWBxAiwFqgo
+         d0Qw==
+X-Gm-Message-State: APjAAAVNdaxBkJHXb6ipgj+z+J8fVlBajUMaCqTF/tXTgfthWHaWcg6x
+        T7qDwbZ3HZfrREWeKkyexSYzMk1RMtRRyQ==
+X-Google-Smtp-Source: APXvYqzE6Pi8rl2FiPhLgHMfAfWxumnilALnvG8Q4I2VlRDOhJtY5abcO5MMFPuq46JoQGSuS01GjA==
+X-Received: by 2002:a17:90b:3015:: with SMTP id hg21mr27434228pjb.96.1573920552189;
+        Sat, 16 Nov 2019 08:09:12 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:1ef2:28e6:fc7a:c382:8b6f? ([2601:646:c200:1ef2:28e6:fc7a:c382:8b6f])
+        by smtp.gmail.com with ESMTPSA id r33sm13936396pjb.5.2019.11.16.08.09.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Nov 2019 08:09:11 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v25 10/12] LRNG - add TRNG support
+Date:   Sat, 16 Nov 2019 08:09:09 -0800
+Message-Id: <DDB907EA-3FCC-40C7-B55B-A84BC77FD7A1@amacapital.net>
+References: <5390778.VeFRgus4bQ@positron.chronox.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>
+In-Reply-To: <5390778.VeFRgus4bQ@positron.chronox.de>
+To:     =?utf-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---flg5b24ackzt24u5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Saturday 16 November 2019 07:53:10 Guenter Roeck wrote:
-> On 11/16/19 6:58 AM, Pali Roh=C3=A1r wrote:
-> > On Saturday 16 November 2019 15:06:49 Giovanni Mascellani wrote:
-> > > diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-=
-hwmon.c
-> > > index 4212d022d253..67b8c0adede8 100644
-> > > --- a/drivers/hwmon/dell-smm-hwmon.c
-> > > +++ b/drivers/hwmon/dell-smm-hwmon.c
-> > > @@ -68,6 +68,8 @@ static uint i8k_pwm_mult;
-> > >   static uint i8k_fan_max =3D I8K_FAN_HIGH;
-> > >   static bool disallow_fan_type_call;
-> > >   static bool disallow_fan_support;
-> > > +static unsigned int smm_manual_fan;
-> > > +static unsigned int smm_auto_fan;
+> On Nov 16, 2019, at 1:40 AM, Stephan M=C3=BCller <smueller@chronox.de> wro=
+te:
 >=20
-> The "smm_" prefix does not have any value here.
+> =EF=BB=BFThe True Random Number Generator (TRNG) provides a random number
+> generator with prediction resistance (SP800-90A terminology) or an NTG.1
+> (AIS 31 terminology).
+>=20
 
-These variables store SMM command numbers and seems that in this patch
-they were converted from macros "#define I8K_SMM_MANUAL_FAN	0x34a3"
+...
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+> The secondary DRNGs seed from the TRNG if it is present. In addition,
+> the /dev/random device accesses the TRNG.
+>=20
+> If the TRNG is disabled, the secondary DRNGs seed from the entropy pool
+> and /dev/random behaves like getrandom(2).
 
---flg5b24ackzt24u5
-Content-Type: application/pgp-signature; name="signature.asc"
+As mentioned before, I don=E2=80=99t like this API.  An application that, fo=
+r some reason, needs a TRNG, should have an API by which it either gets a TR=
+NG or an error. Similarly, an application that wants cryptographically secur=
+e random numbers efficiently should have an API that does that.  With your d=
+esign, /dev/random tries to cater to both use cases, but one of the use case=
+s fails depending on kernel config.
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXdAc7wAKCRCL8Mk9A+RD
-UsfEAJoDKRkxM6QIFvf1qBY9lV2BcXUc7wCgzBCg1avUGdNJmdcQX1Q7gmPz7Sk=
-=J3Ov
------END PGP SIGNATURE-----
-
---flg5b24ackzt24u5--
+I think /dev/random should wait for enough entropy to initialize the system b=
+ut should not block after that. A TRNG should have an entirely new API that i=
+s better than /dev/random.
