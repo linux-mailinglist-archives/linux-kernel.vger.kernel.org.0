@@ -2,34 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E97CFF308
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B11CFF2FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730921AbfKPQW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:22:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46996 "EHLO mail.kernel.org"
+        id S1728645AbfKPQWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 11:22:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728589AbfKPPnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:43:08 -0500
+        id S1728614AbfKPPnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:43:12 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4365B2073B;
-        Sat, 16 Nov 2019 15:43:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C92C52072D;
+        Sat, 16 Nov 2019 15:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918987;
-        bh=JBQjh57E1Ndhk4dCtXRsycP+umjDUfzghAGmYQhFalo=;
+        s=default; t=1573918992;
+        bh=XR5WvofJzj0e2g0fbgE8Wpx6sS5fNscbX+8F20oWjZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DiCle8aVQ1+TFNBe0ZGRZPqYP4/raLrYW0l2u6KLVSQl0cp1rmn2Uf7DCsgz8WU8J
-         wjmdOfT2XldSn1JGK88lG8dt+yAhEkTISCLTQauaM4XLaHDdS0XITE9kzUO752iy/S
-         NHwOo+QPdJuqMIr6dgH2vzTMoSLjx7OAushChkzw=
+        b=DBsb5JGL9l6T+mNo9dPTIdP0v56UCCxHCRSwg2U+XtzSbSV4vYs9AL3BQkporfnXB
+         9G0CX3/graOZk6G8NEuntMxU2oVcXjk5JC6+LYneGwKXBZh7YEiUGoIDdcfcUTctJ2
+         JSk75SJQc8d69aQpRIMRwq2cQK0RUWQ303D6bFUM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 093/237] powerpc/mm/radix: Fix overuse of small pages in splitting logic
-Date:   Sat, 16 Nov 2019 10:38:48 -0500
-Message-Id: <20191116154113.7417-93-sashal@kernel.org>
+Cc:     Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 096/237] selftests/bpf: fix return value comparison for tests in test_libbpf.sh
+Date:   Sat, 16 Nov 2019 10:38:51 -0500
+Message-Id: <20191116154113.7417-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -42,65 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Quentin Monnet <quentin.monnet@netronome.com>
 
-[ Upstream commit 3b5657ed5b4e27ccf593a41ff3c5aa27dae8df18 ]
+[ Upstream commit c5fa5d602221362f8341ecd9e32d83194abf5bd9 ]
 
-When we have CONFIG_STRICT_KERNEL_RWX enabled, we want to split the
-linear mapping at the text/data boundary so we can map the kernel text
-read only.
+The return value for each test in test_libbpf.sh is compared with
 
-But the current logic uses small pages for the entire text section,
-regardless of whether a larger page size would fit. eg. with the
-boundary at 16M we could use 2M pages, but instead we use 64K pages up
-to the 16M boundary:
+    if (( $? == 0 )) ; then ...
 
-  Mapped 0x0000000000000000-0x0000000001000000 with 64.0 KiB pages
-  Mapped 0x0000000001000000-0x0000000040000000 with 2.00 MiB pages
-  Mapped 0x0000000040000000-0x0000000100000000 with 1.00 GiB pages
+This works well with bash, but not with dash, that /bin/sh is aliased to
+on some systems (such as Ubuntu).
 
-This is because the test is checking if addr is < __init_begin
-and addr + mapping_size is >= _stext. But that is true for all pages
-between _stext and __init_begin.
+Let's replace this comparison by something that works on both shells.
 
-Instead what we want to check is if we are crossing the text/data
-boundary, which is at __init_begin. With that fixed we see:
-
-  Mapped 0x0000000000000000-0x0000000000e00000 with 2.00 MiB pages
-  Mapped 0x0000000000e00000-0x0000000001000000 with 64.0 KiB pages
-  Mapped 0x0000000001000000-0x0000000040000000 with 2.00 MiB pages
-  Mapped 0x0000000040000000-0x0000000100000000 with 1.00 GiB pages
-
-ie. we're correctly using 2MB pages below __init_begin, but we still
-drop down to 64K pages unnecessarily at the boundary.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/pgtable-radix.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/bpf/test_libbpf.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/pgtable-radix.c b/arch/powerpc/mm/pgtable-radix.c
-index 24a2eadc8c21a..b387c7b917b7e 100644
---- a/arch/powerpc/mm/pgtable-radix.c
-+++ b/arch/powerpc/mm/pgtable-radix.c
-@@ -295,14 +295,14 @@ static int __meminit create_physical_mapping(unsigned long start,
- 
- 		if (split_text_mapping && (mapping_size == PUD_SIZE) &&
- 			(addr < __pa_symbol(__init_begin)) &&
--			(addr + mapping_size) >= __pa_symbol(_stext)) {
-+			(addr + mapping_size) >= __pa_symbol(__init_begin)) {
- 			max_mapping_size = PMD_SIZE;
- 			goto retry;
- 		}
- 
- 		if (split_text_mapping && (mapping_size == PMD_SIZE) &&
- 		    (addr < __pa_symbol(__init_begin)) &&
--		    (addr + mapping_size) >= __pa_symbol(_stext)) {
-+		    (addr + mapping_size) >= __pa_symbol(__init_begin)) {
- 			mapping_size = PAGE_SIZE;
- 			psize = mmu_virtual_psize;
- 		}
+diff --git a/tools/testing/selftests/bpf/test_libbpf.sh b/tools/testing/selftests/bpf/test_libbpf.sh
+index 8b1bc96d8e0cc..2989b2e2d856d 100755
+--- a/tools/testing/selftests/bpf/test_libbpf.sh
++++ b/tools/testing/selftests/bpf/test_libbpf.sh
+@@ -6,7 +6,7 @@ export TESTNAME=test_libbpf
+ # Determine selftest success via shell exit code
+ exit_handler()
+ {
+-	if (( $? == 0 )); then
++	if [ $? -eq 0 ]; then
+ 		echo "selftests: $TESTNAME [PASS]";
+ 	else
+ 		echo "$TESTNAME: failed at file $LAST_LOADED" 1>&2
 -- 
 2.20.1
 
