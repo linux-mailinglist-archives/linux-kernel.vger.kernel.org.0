@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D8DFEE58
+	by mail.lfdr.de (Postfix) with ESMTP id DD144FEE59
 	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:51:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730655AbfKPPu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:50:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58784 "EHLO mail.kernel.org"
+        id S1729404AbfKPPvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:51:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfKPPug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:50:36 -0500
+        id S1728895AbfKPPuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:50:37 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE94E20729;
-        Sat, 16 Nov 2019 15:50:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BA0C21826;
+        Sat, 16 Nov 2019 15:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919436;
-        bh=XRbu216x41VlCbMrwQejgg8e7awRwMdwlAm6BBlFN/k=;
+        s=default; t=1573919437;
+        bh=J8nLv1zzZihBjk9Qf7MzVMFSXvKTV4N1SPSE8aD/4sA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/9olmtIKOjkubydXzt6BJlDFyVJV7M8d5wpgBBKTYuo+4yPPP7txi4I5kyVv74I4
-         YkeGtTXiDR5I4KrCY67d2aI4oEZ15j4uOf3hI1bnrEqYqOhLqGQRlmfD/PWbiNOfiy
-         fa4+fAnZ9jQoxszc51+Y4lueYT+kCoGOzF/lXy6k=
+        b=M4oN34CRscBUNuzo+SWpGe5qJh/A8oNkWrK8nzZpTkgVNz6X9fiGTZyqiamHSgbCx
+         N+vpzCKiDVKPmLozJle2BObN2u4g4hFk/JZhYQGNvJdvLlk+4lX05LEG69B/79Fu9F
+         3/4qYKzAlOP+1DsTIPbPXLyTYhjykvhHWH/U4KZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        David Teigland <teigland@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
-Subject: [PATCH AUTOSEL 4.14 135/150] dlm: don't leak kernel pointer to userspace
-Date:   Sat, 16 Nov 2019 10:47:13 -0500
-Message-Id: <20191116154729.9573-135-sashal@kernel.org>
+Cc:     Mike Manning <mmanning@vyatta.att-mail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 136/150] vrf: mark skb for multicast or link-local as enslaved to VRF
+Date:   Sat, 16 Nov 2019 10:47:14 -0500
+Message-Id: <20191116154729.9573-136-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -43,42 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@tycho.ws>
+From: Mike Manning <mmanning@vyatta.att-mail.com>
 
-[ Upstream commit 9de30f3f7f4d31037cfbb7c787e1089c1944b3a7 ]
+[ Upstream commit 6f12fa775530195a501fb090d092c637f32d0cc5 ]
 
-In copy_result_to_user(), we first create a struct dlm_lock_result, which
-contains a struct dlm_lksb, the last member of which is a pointer to the
-lvb. Unfortunately, we copy the entire struct dlm_lksb to the result
-struct, which is then copied to userspace at the end of the function,
-leaking the contents of sb_lvbptr, which is a valid kernel pointer in some
-cases (indeed, later in the same function the data it points to is copied
-to userspace).
+The skb for packets that are multicast or to a link-local address are
+not marked as being enslaved to a VRF, if they are received on a socket
+bound to the VRF. This is needed for ND and it is preferable for the
+kernel not to have to deal with the additional use-cases if ll or mcast
+packets are handled as enslaved. However, this does not allow service
+instances listening on unbound and bound to VRF sockets to distinguish
+the VRF used, if packets are sent as multicast or to a link-local
+address. The fix is for the VRF driver to also mark these skb as being
+enslaved to the VRF.
 
-It is an error to leak kernel pointers to userspace, as it undermines KASLR
-protections (see e.g. 65eea8edc31 ("floppy: Do not copy a kernel pointer to
-user memory in FDGETPRM ioctl") for another example of this).
-
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Mike Manning <mmanning@vyatta.att-mail.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Tested-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/vrf.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/fs/dlm/user.c b/fs/dlm/user.c
-index d18e7a539f116..1f0c071d4a861 100644
---- a/fs/dlm/user.c
-+++ b/fs/dlm/user.c
-@@ -702,7 +702,7 @@ static int copy_result_to_user(struct dlm_user_args *ua, int compat,
- 	result.version[0] = DLM_DEVICE_VERSION_MAJOR;
- 	result.version[1] = DLM_DEVICE_VERSION_MINOR;
- 	result.version[2] = DLM_DEVICE_VERSION_PATCH;
--	memcpy(&result.lksb, &ua->lksb, sizeof(struct dlm_lksb));
-+	memcpy(&result.lksb, &ua->lksb, offsetof(struct dlm_lksb, sb_lvbptr));
- 	result.user_lksb = ua->user_lksb;
+diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
+index 03e4fcdfeab73..e0cea5c05f0e2 100644
+--- a/drivers/net/vrf.c
++++ b/drivers/net/vrf.c
+@@ -996,24 +996,23 @@ static struct sk_buff *vrf_ip6_rcv(struct net_device *vrf_dev,
+ 				   struct sk_buff *skb)
+ {
+ 	int orig_iif = skb->skb_iif;
+-	bool need_strict;
++	bool need_strict = rt6_need_strict(&ipv6_hdr(skb)->daddr);
++	bool is_ndisc = ipv6_ndisc_frame(skb);
  
- 	/* FIXME: dlm1 provides for the user's bastparam/addr to not be updated
+-	/* loopback traffic; do not push through packet taps again.
+-	 * Reset pkt_type for upper layers to process skb
++	/* loopback, multicast & non-ND link-local traffic; do not push through
++	 * packet taps again. Reset pkt_type for upper layers to process skb
+ 	 */
+-	if (skb->pkt_type == PACKET_LOOPBACK) {
++	if (skb->pkt_type == PACKET_LOOPBACK || (need_strict && !is_ndisc)) {
+ 		skb->dev = vrf_dev;
+ 		skb->skb_iif = vrf_dev->ifindex;
+ 		IP6CB(skb)->flags |= IP6SKB_L3SLAVE;
+-		skb->pkt_type = PACKET_HOST;
++		if (skb->pkt_type == PACKET_LOOPBACK)
++			skb->pkt_type = PACKET_HOST;
+ 		goto out;
+ 	}
+ 
+-	/* if packet is NDISC or addressed to multicast or link-local
+-	 * then keep the ingress interface
+-	 */
+-	need_strict = rt6_need_strict(&ipv6_hdr(skb)->daddr);
+-	if (!ipv6_ndisc_frame(skb) && !need_strict) {
++	/* if packet is NDISC then keep the ingress interface */
++	if (!is_ndisc) {
+ 		vrf_rx_stats(vrf_dev, skb->len);
+ 		skb->dev = vrf_dev;
+ 		skb->skb_iif = vrf_dev->ifindex;
 -- 
 2.20.1
 
