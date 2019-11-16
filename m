@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB2DCFF2CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 186E0FF2B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732074AbfKPQVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:21:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47696 "EHLO mail.kernel.org"
+        id S1728821AbfKPPnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:43:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728777AbfKPPng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:43:36 -0500
+        id S1727830AbfKPPnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:43:43 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7135620729;
-        Sat, 16 Nov 2019 15:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D86720729;
+        Sat, 16 Nov 2019 15:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919015;
-        bh=QapvbyAR0UCwp5TQJRgpF5BAlHZWPUtIxkqmXmTEBlI=;
+        s=default; t=1573919022;
+        bh=S3hOXPcM+w0k/7va/5THvsyB8gokQ9VS9+1IN4YV+Lg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HfT59ara3/2VtDWsfvuSZwURMpD3v2RHpJTGp53pzDt0mZDtt4ahZRfZj3Ylg9G0M
-         LgqsXadZdA2RM0WPFeQx4CngxYv8YwhkCbmPRCzSRJiHir7M7Eey3pDDEeyIhhO+Ch
-         /jDYQs0ibWkTdJHdSrupbs0wC3dFXU/FactJ4nsE=
+        b=wnMe1cMnvrWVIZatEDP+2TRffjD6G7UtdNN93bFc4YzyJQoOOOmvmr0hTmgu5iuor
+         i0bGkn84BcyWp4NKABrKCI88vSJooecDyotQ0XFensS7b11/3Sk0o7dPCoEv7ZD0+I
+         x6Zbx1bMaODo8pkYHoia68byGS7qr3JOjoOBXGHo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Peng Hao <peng.hao2@zte.com.cn>, Shuah Khan <shuah@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 117/237] selftests: watchdog: fix message when /dev/watchdog open fails
-Date:   Sat, 16 Nov 2019 10:39:12 -0500
-Message-Id: <20191116154113.7417-117-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 120/237] selftests: fix warning: "_GNU_SOURCE" redefined
+Date:   Sat, 16 Nov 2019 10:39:15 -0500
+Message-Id: <20191116154113.7417-120-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -43,41 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Peng Hao <peng.hao2@zte.com.cn>
 
-[ Upstream commit 9a244229a4b850b11952a0df79607c69b18fd8df ]
+[ Upstream commit 0387662d1b6c5ad2950d8e94d5e380af3f15c05c ]
 
-When /dev/watchdog open fails, watchdog exits with "watchdog not enabled"
-message. This is incorrect when open fails due to insufficient privilege.
+Makefile contains -D_GNU_SOURCE. remove define "_GNU_SOURCE"
+in c files.
 
-Fix message to clearly state the reason when open fails with EACCESS when
-a non-root user runs it.
-
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/watchdog/watchdog-test.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ tools/testing/selftests/proc/fd-001-lookup.c  | 2 +-
+ tools/testing/selftests/proc/fd-003-kthread.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index 6e290874b70e2..e029e2017280f 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -89,7 +89,13 @@ int main(int argc, char *argv[])
- 	fd = open("/dev/watchdog", O_WRONLY);
- 
- 	if (fd == -1) {
--		printf("Watchdog device not enabled.\n");
-+		if (errno == ENOENT)
-+			printf("Watchdog device not enabled.\n");
-+		else if (errno == EACCES)
-+			printf("Run watchdog as root.\n");
-+		else
-+			printf("Watchdog device open failed %s\n",
-+				strerror(errno));
- 		exit(-1);
- 	}
- 
+diff --git a/tools/testing/selftests/proc/fd-001-lookup.c b/tools/testing/selftests/proc/fd-001-lookup.c
+index a2010dfb21104..60d7948e7124f 100644
+--- a/tools/testing/selftests/proc/fd-001-lookup.c
++++ b/tools/testing/selftests/proc/fd-001-lookup.c
+@@ -14,7 +14,7 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ // Test /proc/*/fd lookup.
+-#define _GNU_SOURCE
++
+ #undef NDEBUG
+ #include <assert.h>
+ #include <dirent.h>
+diff --git a/tools/testing/selftests/proc/fd-003-kthread.c b/tools/testing/selftests/proc/fd-003-kthread.c
+index 1d659d55368c2..dc591f97b63d4 100644
+--- a/tools/testing/selftests/proc/fd-003-kthread.c
++++ b/tools/testing/selftests/proc/fd-003-kthread.c
+@@ -14,7 +14,7 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ // Test that /proc/$KERNEL_THREAD/fd/ is empty.
+-#define _GNU_SOURCE
++
+ #undef NDEBUG
+ #include <sys/syscall.h>
+ #include <assert.h>
 -- 
 2.20.1
 
