@@ -2,98 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADEAFFEACA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 06:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7067FEACE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 06:52:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726257AbfKPFvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 00:51:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59198 "EHLO mail.kernel.org"
+        id S1726855AbfKPFwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 00:52:45 -0500
+Received: from mga02.intel.com ([134.134.136.20]:7020 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbfKPFvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 00:51:19 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FCD120729;
-        Sat, 16 Nov 2019 05:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573883478;
-        bh=3glp16+H5Slzp2YEAa7YPPALJxZr7iGRwioZPJUYpxU=;
-        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=DyMApAvuBt1DmHYQwaweWiSlfZhcvWyMbqHWlqdlNwXIJ2HO7W04RG0PyEQsW33ot
-         cWIOO+AcvOLWQbrmNJPiu0C6gmrqEteA5EHV4DmpjB7lSMJi6VnY6ywMKh6nnoI/uj
-         5P6bEnCUnP4PSs0pKkO72mJjaKTPiMKRBr5pbgy0=
-Content-Type: text/plain; charset="utf-8"
+        id S1725962AbfKPFwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 00:52:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 21:52:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,311,1569308400"; 
+   d="scan'208";a="203760165"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by fmsmga007.fm.intel.com with ESMTP; 15 Nov 2019 21:52:43 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id CF7D7300FC4; Fri, 15 Nov 2019 21:52:43 -0800 (PST)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org
+Subject: Optimize perf stat for large number of events/cpus
+Date:   Fri, 15 Nov 2019 21:52:17 -0800
+Message-Id: <20191116055229.62002-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <80e79595-0672-1d16-f251-717dbe449c57@codeaurora.org>
-References: <1572524473-19344-1-git-send-email-tdas@codeaurora.org> <1572524473-19344-8-git-send-email-tdas@codeaurora.org> <20191106003944.1BDAE2178F@mail.kernel.org> <80e79595-0672-1d16-f251-717dbe449c57@codeaurora.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 7/7] clk: qcom: Add video clock controller driver for SC7180
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Fri, 15 Nov 2019 21:51:17 -0800
-Message-Id: <20191116055118.2FCD120729@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2019-11-15 00:11:31)
-> Hi Stephen,
->=20
-> Thanks for the review.
->=20
-> On 11/6/2019 6:09 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-10-31 05:21:13)
-> >> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/vide=
-occ-sc7180.c
-> >> new file mode 100644
-> >> index 0000000..bef034b
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/videocc-sc7180.c
-> >> @@ -0,0 +1,263 @@
-> >=20
-> >> +       video_pll0_config.alpha =3D 0x4000;
-> >> +       video_pll0_config.user_ctl_val =3D 0x00000001;
-> >> +       video_pll0_config.user_ctl_hi_val =3D 0x00004805;
-> >=20
-> > Same question, why on stack?
-> >=20
->=20
-> Will update the same.
+[v7: Address review feedback. Fix python script problem
+reported by 0day. Drop merged patches.]
 
-Sounds like nothing to do.
+This patch kit optimizes perf stat for a large number of events 
+on systems with many CPUs and PMUs.
 
->=20
-> >> +
-> >> +       clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_confi=
-g);
-> >> +
-> >> +       /* video_cc_xo_clk */
-> >=20
-> > What are we doing? Enabling it?
-> >=20
->=20
-> yes, enabling it. Did not model and mark it CRITICAL.
+Some profiling shows that the most overhead is doing IPIs to
+all the target CPUs. We can optimize this by using sched_setaffinity
+to set the affinity to a target CPU once and then doing
+the perf operation for all events on that CPU. This requires
+some restructuring, but cuts the set up time quite a bit.
 
-Ok. Please describe that in the comment.
+In theory we could go further by parallelizing these setups
+too, but that would be much more complicated and for now just batching it
+per CPU seems to be sufficient. At some point with many more cores 
+parallelization or a better bulk perf setup API might be needed though.
 
-> >> +}
-> >> +module_exit(video_cc_sc7180_exit);
-> >=20
-> > Same question, module platform driver perhaps?
-> >=20
->=20
-> I will move it to subsys_initcall().
->=20
+In addition perf does a lot of redundant /sys accesses with
+many PMUs, which can be also expensve. This is also optimized.
 
-Hmm ok.
+On a large test case (>700 events with many weak groups) on a 94 CPU
+system I go from
+
+real	0m8.607s
+user	0m0.550s
+sys	0m8.041s
+
+to 
+
+real	0m3.269s
+user	0m0.760s
+sys	0m1.694s
+
+so shaving ~6 seconds of system time, at slightly more cost
+in perf stat itself. On a 4 socket system with the savings
+are more dramatic:
+
+real	0m15.641s
+user	0m0.873s
+sys	0m14.729s
+
+to 
+
+real	0m4.493s
+user	0m1.578s
+sys	0m2.444s
+
+so 11s difference in the user visible set up time.
+
+Also available in 
+
+git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/stat-scale-10
+
+v1: Initial post.
+v2: Rebase. Fix some minor issues.
+v3: Rebase. Address review feedback. Fix one minor issue
+v4: Modified based on review feedback. Now it maintains
+all_cpus per evlist. There is still a need for cpu_index iteration
+to get the correct index for indexing the file descriptors.
+Fix bug with unsorted cpu maps, now they are always sorted.
+Some cleanups and refactoring.
+v5: Split patches. Redo loop iteration again. Fix cpu map
+merging for uncore. Remove duplicates from cpumaps. Add unit
+tests.
+v6: Address review feedback. Fix some bugs. Add more comments.
+Merge one invalid patch split.
+v7: Address review feedback. Fix python scripting (thanks 0day)
+Minor updates.
+
+-Andi
 
