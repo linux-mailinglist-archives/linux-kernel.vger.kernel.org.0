@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E321FF18A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7544CFF16D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730341AbfKPQMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 11:12:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55124 "EHLO mail.kernel.org"
+        id S1729111AbfKPPsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:48:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729249AbfKPPsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:48:10 -0500
+        id S1729078AbfKPPsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:48:13 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A17B520729;
-        Sat, 16 Nov 2019 15:48:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 621592088F;
+        Sat, 16 Nov 2019 15:48:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919289;
-        bh=oMoPkCwY6kDzGS2Li0xLQGa17DHyFG0V1ZNnzIwiQfU=;
+        s=default; t=1573919292;
+        bh=zVi3l48Dj1pEq/lXVT7CWip3HEIXhUTRhaX6jVURMJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k12CItOjUV08dsTgrMxl0bqZicoE59VSvymxEZHFwwIqYdTY4neJ6ZkzKr6qhTulP
-         9MHPMLAGhp60Y8qZfK/ZZ1SCC7K26pDRNxdsQuFwHHdBk/JkMRRLD9pCrutwFmriOP
-         YJIFX9y+s1qmURo/WzqhPXFV5zV/AGR8tUu+DszA=
+        b=mpdXb26m2kOK372hMUbWpehWywo2WzVe9khhOOkZ+ue5kZX6CO+euP/DjJkEgxVbk
+         9F74Rke83Fq65Ier/ICx+1Cgv0abU7ykr3dJKLP3fl165ca3UDK4rvW6trpEGKSEiE
+         edyjdk1dSkmFGqsbYYignzOx9iuuLqExUdNCmPV8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 037/150] clk: at91: audio-pll: fix audio pmc type
-Date:   Sat, 16 Nov 2019 10:45:35 -0500
-Message-Id: <20191116154729.9573-37-sashal@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, dc395x@twibble.org,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 039/150] scsi: dc395x: fix dma API usage in srb_done
+Date:   Sat, 16 Nov 2019 10:45:37 -0500
+Message-Id: <20191116154729.9573-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
 References: <20191116154729.9573-1-sashal@kernel.org>
@@ -43,35 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit 7fa75007b7d7421aea59ff2b12ab1bd65a5abfa6 ]
+[ Upstream commit 3a5bd7021184dec2946f2a4d7a8943f8a5713e52 ]
 
-The allocation for the audio pmc is using the size of struct clk_audio_pad
-instead of struct clk_audio_pmc. This works fine because the former is
-larger than the latter but it is safer to be correct.
+We can't just transfer ownership to the CPU and then unmap, as this will
+break with swiotlb.
 
-Fixes: ("0865805d82d4 clk: at91: add audio pll clock drivers")
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Instead unmap the command and sense buffer a little earlier in the I/O
+completion handler and get rid of the pci_dma_sync_sg_for_cpu call
+entirely.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/clk-audio-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/dc395x.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index da7bafcfbe706..b3eaf654fac98 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -509,7 +509,7 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
+diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
+index 5ee7f44cf869b..9da0ac360848f 100644
+--- a/drivers/scsi/dc395x.c
++++ b/drivers/scsi/dc395x.c
+@@ -3450,14 +3450,12 @@ static void srb_done(struct AdapterCtlBlk *acb, struct DeviceCtlBlk *dcb,
+ 		}
+ 	}
  
- static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
- {
--	struct clk_audio_pad *apmc_ck;
-+	struct clk_audio_pmc *apmc_ck;
- 	struct clk_init_data init = {};
+-	if (dir != PCI_DMA_NONE && scsi_sg_count(cmd))
+-		pci_dma_sync_sg_for_cpu(acb->dev, scsi_sglist(cmd),
+-					scsi_sg_count(cmd), dir);
+-
+ 	ckc_only = 0;
+ /* Check Error Conditions */
+       ckc_e:
  
- 	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
++	pci_unmap_srb(acb, srb);
++
+ 	if (cmd->cmnd[0] == INQUIRY) {
+ 		unsigned char *base = NULL;
+ 		struct ScsiInqData *ptr;
+@@ -3511,7 +3509,6 @@ static void srb_done(struct AdapterCtlBlk *acb, struct DeviceCtlBlk *dcb,
+ 			cmd, cmd->result);
+ 		srb_free_insert(acb, srb);
+ 	}
+-	pci_unmap_srb(acb, srb);
+ 
+ 	cmd->scsi_done(cmd);
+ 	waiting_process_next(acb);
 -- 
 2.20.1
 
