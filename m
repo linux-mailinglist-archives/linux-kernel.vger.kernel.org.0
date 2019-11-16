@@ -2,161 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F03FEB32
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 08:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE84FFEB27
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 08:49:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfKPHwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 02:52:51 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6240 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726034AbfKPHwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 02:52:51 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9D016F1133B732AF9015;
-        Sat, 16 Nov 2019 15:52:48 +0800 (CST)
-Received: from localhost.localdomain (10.67.165.24) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 16 Nov 2019 15:52:40 +0800
-From:   lqqq341 <liuqi115@hisilicon.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <ak@linux.intel.com>
-CC:     <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-        <linuxarm@huawei.com>, <john.garry@huawei.com>,
-        <zhangshaokun@hisilicon.com>, <huangdaode@hisilicon.com>,
-        <linyunsheng@huawei.com>, <liuqi115@hisilicon.com>
-Subject: [PATCH] Perf stat: Fix the ratio comments of miss-events
-Date:   Sat, 16 Nov 2019 15:48:41 +0800
-Message-ID: <1573890521-56450-1-git-send-email-liuqi115@hisilicon.com>
-X-Mailer: git-send-email 2.8.1
+        id S1727111AbfKPHtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 02:49:25 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54834 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfKPHtZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 02:49:25 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z26so11820146wmi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2019 23:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wrU9oNm+m55B0W8NFjsrIht/+mTQtS5ufyY+zIn4ZzU=;
+        b=OnqqB6zAgc0Kl4pYd4aSiHtVcXDvOOaDYZL8BfRbDyf87Bz8JAIboY3pjGD6m4KxZz
+         +aEWt/iLz1tKtlWkCZ/so6OuGR+Y0b6s65hv50pzubV+f9RXxz0tG1AaKrp5pPoEd4il
+         H7FueI9GwiPAMVw+6T8oWgLMIyAwp6DjMMJp/njT43JIpiSLX9Qy3MJmD66xt1HB0rew
+         6+fYjfT/yWAWlNSTEheboxtNmZiCMvqes4ml9D8lVC8hjo/RNilG+NkkxyiqndAyDItL
+         nllDS0YtVTT/cawjQ2Na7nNNqcjXmETZiLu0ZGsoo53HUWBczht9Z2Impz8Fz7gK4GOf
+         CZDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wrU9oNm+m55B0W8NFjsrIht/+mTQtS5ufyY+zIn4ZzU=;
+        b=FDRJBxko4/V6Lrm8qrbz5YGhdkc5YWgdo/dJWUy13eTo9cS0gzYyineOQ8SPlv8l3W
+         B5Hi5lpqPTPG8l9XTnZIDRCCiJcb4/pglEcyc1Ns4Oj7K79tnLfACDUa9o1es3lNuv3g
+         llY9eI41zonovP9PQc36U2nes1uGR4cDOGO4gMd6ROFnLl+s/LkEAgA+/KX1uN/BhGxR
+         YPHe07QxU/pqyL0ILxMGjc/4UyjfALiHxI7nMSojNj7Y+GICxnp8FXL8twW7EYPJLkU3
+         /gsQdm4MFwDmYrBiQcxz2iCfvEp7l0tExeuUjv8ahtlksRreyKiPWrdYu+UYuQCfIUwk
+         HcHA==
+X-Gm-Message-State: APjAAAWTHBQoSI2+1Fksedf/meQUhoWtQcQKn8TNl7XF9oPm1JrzptdY
+        LntaPZjW1s2Mv3lUzBywJ0fKwpE8isFgZktZuWyT7A==
+X-Google-Smtp-Source: APXvYqxN9tEkdJJjcZLwbRx7aPwN6Bp5OBx7h7U4ZY1KJj5bVXNsCVyqUfMiNg5LRjCPKVJeKHHR3LZiNgn4KRenY3U=
+X-Received: by 2002:a05:600c:218c:: with SMTP id e12mr14565355wme.30.1573890562501;
+ Fri, 15 Nov 2019 23:49:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.165.24]
-X-CFilter-Loop: Reflected
+References: <20191107222315.GA7261@kernel.org> <20191108181533.222053-1-irogers@google.com>
+ <20191111120220.GC9791@krava>
+In-Reply-To: <20191111120220.GC9791@krava>
+From:   Ian Rogers <irogers@google.com>
+Date:   Fri, 15 Nov 2019 23:49:10 -0800
+Message-ID: <CAP-5=fUyVyg888bB-4K3o73kQbqo=G=8T9OFy0C=qtWTJjCOrw@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: report initial event parsing error
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qi Liu <liuqi115@hisilicon.com>
+On Mon, Nov 11, 2019 at 4:02 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Fri, Nov 08, 2019 at 10:15:33AM -0800, Ian Rogers wrote:
+>
+> SNIP
+>
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index 43c05eae1768..46a72ecac427 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -3016,11 +3016,18 @@ static bool evlist__add_vfs_getname(struct evlist *evlist)
+> >  {
+> >       bool found = false;
+> >       struct evsel *evsel, *tmp;
+> > -     struct parse_events_error err = { .idx = 0, };
+> > -     int ret = parse_events(evlist, "probe:vfs_getname*", &err);
+> > +     struct parse_events_error err;
+> > +     int ret;
+> >
+> > -     if (ret)
+> > +     bzero(&err, sizeof(err));
+>
+> hum, what's the problem with the zero init above?
 
-Perf stat displays miss ratio of L1-dcache, L1-icache, dTLB cache,
-iTLB cache and LL-cache. Take L1-dcache for example, its miss ratio
-is caculated as "L1-dcache-load-misses/L1-dcache-loads". So "of all
-L1-dcache hits" is unsuitable to describe it, and "of all L1-dcache
-accesses" seems better. The comments of L1-icache, dTLB cache, iTLB
-cache and LL-cache are fixed in the same way.
+There are 3 patterns for initializing parse_events_error in the code,
+bzero, memset and {.idx =0,}. I made all instances use bzero for
+consistency.
 
-Signed-off-by: Qi Liu <liuqi115@hisilicon.com>
----
- tools/perf/util/stat-shadow.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+Thanks,
+Ian
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 2c41d47..a3bdf2b 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -506,7 +506,8 @@ static void print_l1_dcache_misses(struct perf_stat_config *config,
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
- 
--	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%",
-+			  "of all L1-dcache accesses", ratio);
- }
- 
- static void print_l1_icache_misses(struct perf_stat_config *config,
-@@ -527,7 +528,8 @@ static void print_l1_icache_misses(struct perf_stat_config *config,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-icache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%",
-+			  "of all L1-icache accesses", ratio);
- }
- 
- static void print_dtlb_cache_misses(struct perf_stat_config *config,
-@@ -547,7 +549,8 @@ static void print_dtlb_cache_misses(struct perf_stat_config *config,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all dTLB cache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%",
-+			  "of all dTLB cache accesses", ratio);
- }
- 
- static void print_itlb_cache_misses(struct perf_stat_config *config,
-@@ -567,7 +570,8 @@ static void print_itlb_cache_misses(struct perf_stat_config *config,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all iTLB cache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%",
-+			  "of all iTLB cache accesses", ratio);
- }
- 
- static void print_ll_cache_misses(struct perf_stat_config *config,
-@@ -587,7 +591,8 @@ static void print_ll_cache_misses(struct perf_stat_config *config,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all LL-cache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%",
-+			  "of all LL-cache accesses", ratio);
- }
- 
- /*
-@@ -872,7 +877,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 		if (runtime_stat_n(st, STAT_L1_DCACHE, ctx, cpu) != 0)
- 			print_l1_dcache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(config, ctxp, NULL, NULL, "of all L1-dcache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL,
-+				     "of all L1-dcache accesses", 0);
- 	} else if (
- 		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_L1I |
-@@ -882,7 +888,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 		if (runtime_stat_n(st, STAT_L1_ICACHE, ctx, cpu) != 0)
- 			print_l1_icache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(config, ctxp, NULL, NULL, "of all L1-icache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL,
-+				     "of all L1-icache accesses", 0);
- 	} else if (
- 		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_DTLB |
-@@ -892,7 +899,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 		if (runtime_stat_n(st, STAT_DTLB_CACHE, ctx, cpu) != 0)
- 			print_dtlb_cache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(config, ctxp, NULL, NULL, "of all dTLB cache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL,
-+				     "of all dTLB cache accesses", 0);
- 	} else if (
- 		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_ITLB |
-@@ -902,7 +910,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 		if (runtime_stat_n(st, STAT_ITLB_CACHE, ctx, cpu) != 0)
- 			print_itlb_cache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(config, ctxp, NULL, NULL, "of all iTLB cache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL,
-+				     "of all iTLB cache accesses", 0);
- 	} else if (
- 		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_LL |
-@@ -912,7 +921,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 		if (runtime_stat_n(st, STAT_LL_CACHE, ctx, cpu) != 0)
- 			print_ll_cache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(config, ctxp, NULL, NULL, "of all LL-cache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL,
-+				     "of all LL-cache accesses", 0);
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_CACHE_MISSES)) {
- 		total = runtime_stat_avg(st, STAT_CACHEREFS, ctx, cpu);
- 
--- 
-2.8.1
-
+> jirka
+>
