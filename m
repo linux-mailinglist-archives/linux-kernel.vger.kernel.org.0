@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40125FEF00
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF594FF3D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 17:28:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731037AbfKPPzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:55:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37810 "EHLO mail.kernel.org"
+        id S1727834AbfKPPlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:41:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731618AbfKPPzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:55:37 -0500
+        id S1727763AbfKPPlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:41:16 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7528B21844;
-        Sat, 16 Nov 2019 15:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 493F220733;
+        Sat, 16 Nov 2019 15:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919736;
-        bh=awQvIKTfUYWNu69iro6jB5+ZflEGxlK8ruMsEgXoNEc=;
+        s=default; t=1573918875;
+        bh=a3atx0pDJ6BtMgQLn3IDaJgOpT1UTvSQakhdCHeRKyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xNagl4Lx2cJMaeOghVcJoo/GgO40a9t7tPMXVvrjQBffCS9VrYLvVapgAUyD5OviO
-         8+00ugnZmaDmOOMvshhuuxaBydfSw6npGfwXM8BUlqz6c69ykQv0Hna6XlMar5BndS
-         VuPtyxpaFulhuDZVK8YbFvIlvFltaUf/cA9z7i4A=
+        b=LNqG2zevJiQaJAVKOa2Ta9dY9h6Pu04D8qyjXO6i/TW/xT/JF5KTFM0IkGPzDC3cQ
+         UNKlUXFM9LVtTEeYJtBGZ6JbiiorwMu3v1/UKP19p5SnuqjSUo0UuDSAsQyN4PMbyq
+         j704dUngPPQVf+mC8l42kU58ILxJkUilN4TWBZRw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vignesh R <vigneshr@ti.com>, David Lechner <david@lechnology.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 77/77] spi: omap2-mcspi: Fix DMA and FIFO event trigger size mismatch
-Date:   Sat, 16 Nov 2019 10:53:39 -0500
-Message-Id: <20191116155339.11909-77-sashal@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 003/237] printk: lock/unlock console only for new logbuf entries
+Date:   Sat, 16 Nov 2019 10:37:18 -0500
+Message-Id: <20191116154113.7417-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116155339.11909-1-sashal@kernel.org>
-References: <20191116155339.11909-1-sashal@kernel.org>
+In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
+References: <20191116154113.7417-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,47 +48,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vignesh R <vigneshr@ti.com>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-[ Upstream commit baf8b9f8d260c55a86405f70a384c29cda888476 ]
+[ Upstream commit 3ac37a93fa9217e576bebfd4ba3e80edaaeb2289 ]
 
-Commit b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
-broke SPI transfers where bits_per_word != 8. This is because of
-mimsatch between McSPI FIFO level event trigger size (SPI word length) and
-DMA request size(word length * maxburst). This leads to data
-corruption, lockup and errors like:
+Prior to commit 5c2992ee7fd8a29 ("printk: remove console flushing special
+cases for partial buffered lines") we would do console_cont_flush()
+for each pr_cont() to print cont fragments, so console_unlock() would
+actually print data:
 
-	spi1.0: EOW timed out
+	pr_cont();
+	 console_lock();
+	 console_unlock()
+	  console_cont_flush(); // print cont fragment
+	...
+	pr_cont();
+	 console_lock();
+	 console_unlock()
+	  console_cont_flush(); // print cont fragment
 
-Fix this by setting DMA maxburst size to 1 so that
-McSPI FIFO level event trigger size matches DMA request size.
+We don't do console_cont_flush() anymore, so when we do pr_cont()
+console_unlock() does nothing (unless we flushed the cont buffer):
 
-Fixes: b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
-Cc: stable@vger.kernel.org
-Reported-by: David Lechner <david@lechnology.com>
-Tested-by: David Lechner <david@lechnology.com>
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+	pr_cont();
+	 console_lock();
+	 console_unlock();      // noop
+	...
+	pr_cont();
+	 console_lock();
+	 console_unlock();      // noop
+	...
+	pr_cont();
+	  cont_flush();
+	    console_lock();
+	    console_unlock();   // print data
+
+We also wakeup klogd purposelessly for pr_cont() output - un-flushed
+cont buffer is not stored in log_buf; there is nothing to pull.
+
+Thus we can console_lock()/console_unlock()/wake_up_klogd() only when
+we know that we log_store()-ed a message and there is something to
+print to the consoles/syslog.
+
+Link: http://lkml.kernel.org/r/20181002023836.4487-3-sergey.senozhatsky@gmail.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dmitriy Vyukov <dvyukov@google.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-omap2-mcspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/printk/printk.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 2e35fc735ba6a..79fa237f76c42 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -593,8 +593,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
- 	cfg.src_addr_width = width;
- 	cfg.dst_addr_width = width;
--	cfg.src_maxburst = es;
--	cfg.dst_maxburst = es;
-+	cfg.src_maxburst = 1;
-+	cfg.dst_maxburst = 1;
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index d0d03223b45b1..9ee6016a19fc8 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1894,8 +1894,9 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 			    const char *fmt, va_list args)
+ {
+ 	int printed_len;
+-	bool in_sched = false;
++	bool in_sched = false, pending_output;
+ 	unsigned long flags;
++	u64 curr_log_seq;
  
- 	rx = xfer->rx_buf;
- 	tx = xfer->tx_buf;
+ 	if (level == LOGLEVEL_SCHED) {
+ 		level = LOGLEVEL_DEFAULT;
+@@ -1907,11 +1908,13 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 
+ 	/* This stops the holder of console_sem just where we want him */
+ 	logbuf_lock_irqsave(flags);
++	curr_log_seq = log_next_seq;
+ 	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
++	pending_output = (curr_log_seq != log_next_seq);
+ 	logbuf_unlock_irqrestore(flags);
+ 
+ 	/* If called from the scheduler, we can not call up(). */
+-	if (!in_sched) {
++	if (!in_sched && pending_output) {
+ 		/*
+ 		 * Disable preemption to avoid being preempted while holding
+ 		 * console_sem which would prevent anyone from printing to
+@@ -1928,7 +1931,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		preempt_enable();
+ 	}
+ 
+-	wake_up_klogd();
++	if (pending_output)
++		wake_up_klogd();
+ 	return printed_len;
+ }
+ EXPORT_SYMBOL(vprintk_emit);
 -- 
 2.20.1
 
