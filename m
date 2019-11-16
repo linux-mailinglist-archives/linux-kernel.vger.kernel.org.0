@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6818FEE9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D535FEEA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 16:53:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbfKPPw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 10:52:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33684 "EHLO mail.kernel.org"
+        id S1731151AbfKPPxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 10:53:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbfKPPwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:52:54 -0500
+        id S1731102AbfKPPxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:53:05 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B7D620859;
-        Sat, 16 Nov 2019 15:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE7520859;
+        Sat, 16 Nov 2019 15:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919573;
-        bh=Ubzdtado8qpF9VSRmYdGAtTkvjECdbzj1U/T/2pUfco=;
+        s=default; t=1573919585;
+        bh=MrLJ86T+smoGDf0HCCf+yJ1xZ8hW11ko/jhzYVfFags=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xn+gbUI8x6iVR6FvRM0f4HawiJabggGEz8NpmEb4iFVctpi1Y3VJzgS2bEIMN14LB
-         hWcg7NiqHI8nBLjIx35jIte1XtFGQt9QO60yRiqCd6bJTcknyfScEaCiLSUeME+BjG
-         DhhofQrGUDPYqpJaTxAQ8T9ogKeXidUmRgBzRHD8=
+        b=A9kOQjq8pgCYeqoVwu0ny/VQEkMb+UG7cosKYKUBCJ3bHPNGRFJRXanCKfVJzz0uH
+         dizyESoQIzphsXiZXJ5wlpo+uXQ85inR8AsROyNqvXPniuxEWyk4VFPVmLBMjYjrzR
+         TcKDwidlpeOKghfozkW/z8In2/4qz169Lh+vab70=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        "Ernesto A . Fernndez" <ernesto.mnd.fernandez@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Hin-Tak Leung <htl10@users.sourceforge.net>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar.Eggemann@arm.com,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 67/99] fs/hfs/extent.c: fix array out of bounds read of array extent
-Date:   Sat, 16 Nov 2019 10:50:30 -0500
-Message-Id: <20191116155103.10971-67-sashal@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>, patrick.bellasi@arm.com,
+        vincent.guittot@linaro.org, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 76/99] sched/fair: Don't increase sd->balance_interval on newidle balance
+Date:   Sat, 16 Nov 2019 10:50:39 -0500
+Message-Id: <20191116155103.10971-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -49,56 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
 
-[ Upstream commit 6c9a3f843a29d6894dfc40df338b91dbd78f0ae3 ]
+[ Upstream commit 3f130a37c442d5c4d66531b240ebe9abfef426b5 ]
 
-Currently extent and index i are both being incremented causing an array
-out of bounds read on extent[i].  Fix this by removing the extraneous
-increment of extent.
+When load_balance() fails to move some load because of task affinity,
+we end up increasing sd->balance_interval to delay the next periodic
+balance in the hopes that next time we look, that annoying pinned
+task(s) will be gone.
 
-Ernesto said:
+However, idle_balance() pays no attention to sd->balance_interval, yet
+it will still lead to an increase in balance_interval in case of
+pinned tasks.
 
-: This is only triggered when deleting a file with a resource fork.  I
-: may be wrong because the documentation isn't clear, but I don't think
-: you can create those under linux.  So I guess nobody was testing them.
-:
-: > A disk space leak, perhaps?
-:
-: That's what it looks like in general.  hfs_free_extents() won't do
-: anything if the block count doesn't add up, and the error will be
-: ignored.  Now, if the block count randomly does add up, we could see
-: some corruption.
+If we're going through several newidle balances (e.g. we have a
+periodic task), this can lead to a huge increase of the
+balance_interval in a very small amount of time.
 
-Detected by CoverityScan, CID#711541 ("Out of bounds read")
+To prevent that, don't increase the balance interval when going
+through a newidle balance.
 
-Link: http://lkml.kernel.org/r/20180831140538.31566-1-colin.king@canonical.com
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Ernesto A. Fernndez <ernesto.mnd.fernandez@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Hin-Tak Leung <htl10@users.sourceforge.net>
-Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This is a similar approach to what is done in commit 58b26c4c0257
+("sched: Increment cache_nice_tries only on periodic lb"), where we
+disregard newidle balance and rely on periodic balance for more stable
+results.
+
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar.Eggemann@arm.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: patrick.bellasi@arm.com
+Cc: vincent.guittot@linaro.org
+Link: http://lkml.kernel.org/r/1537974727-30788-2-git-send-email-valentin.schneider@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/extent.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 16819d2a978b4..cbe4fca96378a 100644
---- a/fs/hfs/extent.c
-+++ b/fs/hfs/extent.c
-@@ -304,7 +304,7 @@ int hfs_free_fork(struct super_block *sb, struct hfs_cat_file *file, int type)
- 		return 0;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d8afae1bd5c5e..b765a58cf20f1 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7950,13 +7950,22 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+ 	sd->nr_balance_failed = 0;
  
- 	blocks = 0;
--	for (i = 0; i < 3; extent++, i++)
-+	for (i = 0; i < 3; i++)
- 		blocks += be16_to_cpu(extent[i].count);
- 
- 	res = hfs_free_extents(sb, extent, blocks, blocks);
+ out_one_pinned:
++	ld_moved = 0;
++
++	/*
++	 * idle_balance() disregards balance intervals, so we could repeatedly
++	 * reach this code, which would lead to balance_interval skyrocketting
++	 * in a short amount of time. Skip the balance_interval increase logic
++	 * to avoid that.
++	 */
++	if (env.idle == CPU_NEWLY_IDLE)
++		goto out;
++
+ 	/* tune up the balancing interval */
+ 	if (((env.flags & LBF_ALL_PINNED) &&
+ 			sd->balance_interval < MAX_PINNED_INTERVAL) ||
+ 			(sd->balance_interval < sd->max_interval))
+ 		sd->balance_interval *= 2;
+-
+-	ld_moved = 0;
+ out:
+ 	return ld_moved;
+ }
 -- 
 2.20.1
 
