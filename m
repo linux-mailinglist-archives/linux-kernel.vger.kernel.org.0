@@ -2,103 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAC5FEBE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7885FFEBE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2019 12:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfKPLla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 06:41:30 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35916 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbfKPLl2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 06:41:28 -0500
-Received: by mail-wm1-f66.google.com with SMTP id c22so13211387wmd.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 03:41:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fyZmBKcSsP1bjro74AAm7I1X0iJjVg8/a1KtBSbgjHA=;
-        b=VE4bZXsLrwAphnxBM8KjcExuC86t7mBgqn2W3oJdvMspYfHJbuMtJsBh19Zl2l9joI
-         tY/8N9P/9bJiEH3MQ7IqZmSWxquqB8SlY9lq6tdjbVJQuljhktuJoUZbCdrucRtaSi7E
-         vFj7kvDcIRVg2bq4HtHZ12MrodgFND+/HKr+s2KRAHM08HNdS4TJnq8R2PiycrOtvAaL
-         niYprLwLypbHzazbpqFoPNo/PiHTKxSddYt+7BhPNRqqP5FhHHcYEAPdn0ZYE78krJkS
-         kdUNmrQzAxMt/w6p/YmKi0x9wNquzSRpQ6FXeZuCSCqhY+Y7WwzXV3aJrz5cqqBvzRUd
-         BB5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fyZmBKcSsP1bjro74AAm7I1X0iJjVg8/a1KtBSbgjHA=;
-        b=FcEywwWkrr6dNCx5GevO2D+5xHWuNQC9pImsQcuZUB1R6apbPvNpup40k5L8Y/lBZO
-         cZBHIBzORvmSuH1MS776VG1Zdjzfmt5kbHuvQoua4GrzwRMm/io5t4FqYFGrhjHmB6KR
-         9ygSUJsD5SNnkTU/R3mx8+Tl5e1ICdyIRJ2iKGHVZjYie6UrryR2h9x8yM00fVk6Oc9F
-         3L/yRjZZp7seRQvlYEVGn+LK/E+YL6SPBFWrOyl36rPFs5T0Q6GJSZEA8apwYx9C8ywi
-         HkgnY9ejZ6IuSp9zW7ZUB3ULe82qJFm3MOvhW/poNkZUg2AePu/NkRw5XmIObh9At9Rs
-         +3Dw==
-X-Gm-Message-State: APjAAAX6SrP+ZOq52dYBBQ4jgI3CovfZE5PzmkayjNWul6oM/UIUoxVs
-        GZcnDU2LBPFWYwV1aTJqZ7h8AQ==
-X-Google-Smtp-Source: APXvYqy27qRYzRac5x1AMY19+A/S4MLoXMsT8wAnfE9JRrwtPgSjJJnVX3Rh2SYvj90R1XobwU9oMw==
-X-Received: by 2002:a7b:c94e:: with SMTP id i14mr18944185wml.174.1573904486618;
-        Sat, 16 Nov 2019 03:41:26 -0800 (PST)
-Received: from localhost.localdomain ([213.220.153.21])
-        by smtp.gmail.com with ESMTPSA id x5sm12539189wmj.7.2019.11.16.03.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2019 03:41:25 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     mtk.manpages@gmail.com
-Cc:     adrian@lisas.de, akpm@linux-foundation.org, arnd@arndb.de,
-        avagin@gmail.com, christian.brauner@ubuntu.com,
-        dhowells@redhat.com, fweimer@redhat.com, jannh@google.com,
-        keescook@chromium.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
-        mingo@elte.hu, oleg@redhat.com, xemul@virtuozzo.com
-Subject: [PATCH 3/3] clone.2: Use pid_t for clone3() {child,parent}_tid
-Date:   Sat, 16 Nov 2019 12:41:14 +0100
-Message-Id: <20191116114114.7066-3-christian@brauner.io>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191116114114.7066-1-christian@brauner.io>
-References: <20191116114114.7066-1-christian@brauner.io>
+        id S1727593AbfKPLmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 06:42:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727518AbfKPLmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 06:42:14 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872EA206D6;
+        Sat, 16 Nov 2019 11:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573904534;
+        bh=xwWEZmLdfRvFjBKrfuUpm0w5tnQ2hcrbT7NWa3O7GEs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YyN2HWxD1+mTBTF8wF3GsjpzIebVgsUbDcg/SlWKfRFqB/930697YHP/BsIkJGHEo
+         O7NsTHTF3E0pD+rOGWtcEZGTh4LZSUDnCCZOJT5OvtIodIuiw7me5tmA0HLomsqJtb
+         BpZUjL2a76vnXsv/UTUPMTcUssSRFwivyX18ZhH4=
+Date:   Sat, 16 Nov 2019 11:42:08 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Gwendal Grignou <gwendal@chromium.org>
+Cc:     dmitry.torokhov@gmail.com, groeck@chromium.org,
+        briannorris@chromium.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, lee.jones@linaro.org, bleung@chromium.org,
+        enric.balletbo@collabora.com, dianders@chromium.org,
+        fabien.lahoudere@collabora.com, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v5 13/18] iio: expose iio_device_set_clock
+Message-ID: <20191116114208.1f92d4c4@archlinux>
+In-Reply-To: <20191115093412.144922-14-gwendal@chromium.org>
+References: <20191115093412.144922-1-gwendal@chromium.org>
+        <20191115093412.144922-14-gwendal@chromium.org>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Fri, 15 Nov 2019 01:34:07 -0800
+Gwendal Grignou <gwendal@chromium.org> wrote:
 
-Advertise to userspace that they should use proper pid_t types for
-arguments returning a pid.
-The kernel-internal struct kernel_clone_args currently uses int as type
-and since POSIX mandates that pid_t is a signed integer type and glibc
-and friends use int this is not an issue. After the merge window for
-v5.5 closes we can switch struct kernel_clone_args over to using pid_t
-as well without any danger in regressing current userspace.
-Also note, that the new set tid feature which will be merged for v5.5
-uses pid_t types as well.
+> Some IIO devices may want to override the default (realtime) to another
+> clock source by default.
+> It can beneficial when timestamps coming from the hardware or underlying
+> drivers are already in that format.
+> It can always be overridden by attribute current_timestamp_clock.
+> 
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+Definitely a step in the right direction.  We may want to also
+consider a 'lock' on the value to prevent userspace overriding it, or
+to perhaps limit the available choices.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- man2/clone.2 | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+For now though this lets you move forwards
 
-diff --git a/man2/clone.2 b/man2/clone.2
-index faff2ada6..bf2d7c731 100644
---- a/man2/clone.2
-+++ b/man2/clone.2
-@@ -183,9 +183,9 @@ is a structure of the following form:
- struct clone_args {
-     u64 flags;        /* Flags bit mask */
-     u64 pidfd;        /* Where to store PID file descriptor
--                         (\fIint *\fP) */
-+                         (\fIpid_t *\fP) */
-     u64 child_tid;    /* Where to store child TID,
--                         in child's memory (\fIint *\fP) */
-+                         in child's memory (\fIpid_t *\fP) */
-     u64 parent_tid;   /* Where to store child TID,
-                          in parent's memory (\fIint *\fP) */
-     u64 exit_signal;  /* Signal to deliver to parent on
--- 
-2.24.0
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  drivers/iio/industrialio-core.c | 8 +++++++-
+>  include/linux/iio/iio.h         | 2 ++
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index a46cdf2d8833..92815bdc14ee 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -188,7 +188,12 @@ ssize_t iio_read_const_attr(struct device *dev,
+>  }
+>  EXPORT_SYMBOL(iio_read_const_attr);
+>  
+> -static int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
+> +/**
+> + * iio_device_set_clock() - Set current timestamping clock for the device
+> + * @indio_dev: IIO device structure containing the device
+> + * @clock_id: timestamping clock posix identifier to set.
+> + */
+> +int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
+>  {
+>  	int ret;
+>  	const struct iio_event_interface *ev_int = indio_dev->event_interface;
+> @@ -206,6 +211,7 @@ static int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(iio_device_set_clock);
+>  
+>  /**
+>   * iio_get_time_ns() - utility function to get a time stamp for events etc
+> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> index 862ce0019eba..b18f34a8901f 100644
+> --- a/include/linux/iio/iio.h
+> +++ b/include/linux/iio/iio.h
+> @@ -627,6 +627,8 @@ static inline clockid_t iio_device_get_clock(const struct iio_dev *indio_dev)
+>  	return indio_dev->clock_id;
+>  }
+>  
+> +int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id);
+> +
+>  /**
+>   * dev_to_iio_dev() - Get IIO device struct from a device struct
+>   * @dev: 		The device embedded in the IIO device
 
