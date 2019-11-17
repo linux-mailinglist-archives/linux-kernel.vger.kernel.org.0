@@ -2,50 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5430DFFC9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 01:58:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F23BEFFCB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 02:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfKRA6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 19:58:42 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:40224 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbfKRA6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 19:58:41 -0500
-Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iWVNF-0003hD-Gj; Mon, 18 Nov 2019 01:58:37 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-rockchip@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        christoph.muellner@theobroma-systems.com,
-        kever.yang@rock-chips.com, cl@rock-chips.com
-Subject: Re: [PATCH] arm64: dts: rockchip: remove 408MHz operating point from px30
-Date:   Mon, 18 Nov 2019 01:58:36 +0100
-Message-ID: <4318673.vLX1ueDYfg@phil>
-In-Reply-To: <20191116095220.31122-1-heiko@sntech.de>
-References: <20191116095220.31122-1-heiko@sntech.de>
+        id S1726551AbfKRBKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 20:10:43 -0500
+Received: from proxy.kru.ru ([94.137.254.140]:25438 "EHLO proxy-xen.kru.kem"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725905AbfKRBKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 20:10:42 -0500
+Received: from mail.kru.ru (localhost [127.0.0.1])
+        by proxy-xen.kru.kem (Postfix) with ESMTP id D5D9676DE1B;
+        Mon, 18 Nov 2019 06:39:12 +0700 (+07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 18 Nov 2019 00:39:12 +0100
+From:   FRANK KALUNGA <office@kru.ru>
+To:     undisclosed-recipients:;
+Subject: Re: REMADE FROM MY LAST EMAILl TO YOU
+Reply-To: frkal20@gmail.com
+Mail-Reply-To: frkal20@gmail.com
+Message-ID: <731d5acd1c598bda66e8c2a8ad2634bd@kru.ru>
+X-Sender: office@kru.ru
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 16. November 2019, 10:52:20 CET schrieb Heiko Stuebner:
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> 
-> It looks like the px30 is running unstable at this 408MHz operating point.
-> This shows in stalled threads and other big numbers of kernel exception.
-> 
-> At 600MHz and above it instead works stable and as expected. As the 408MHz
-> point doesn't even decrease the voltage compared to 600MHz, just drop this
-> 408MHz operating point for now.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-
-applied
 
 
+-- 
+Good Day,
+
+FYI, this is the second mail am sending to you yet no response from your 
+side.Reference private investors who are seeking investments in your 
+Country/Company. I had also sent you earlier their basic information for 
+your consideration but yet to hear from you. Kindly confirm that you got 
+my message as I await for your response
+
+Sincere regards,
+FRANK KALUNGA
