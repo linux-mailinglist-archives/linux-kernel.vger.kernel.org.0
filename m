@@ -2,128 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1F9FF63F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 02:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C7C8FF640
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 02:01:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfKQBAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 20:00:55 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:35577 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfKQBAy (ORCPT
+        id S1726765AbfKQBBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 20:01:37 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33884 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfKQBBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 20:00:54 -0500
-Received: by mail-yb1-f194.google.com with SMTP id h23so5672416ybg.2;
-        Sat, 16 Nov 2019 17:00:54 -0800 (PST)
+        Sat, 16 Nov 2019 20:01:37 -0500
+Received: by mail-io1-f68.google.com with SMTP id q83so14729077iod.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2019 17:01:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1KZD/D+ITfpzGjs6DVMtpV8mRW5uG0idJZBpcTB84Go=;
-        b=BvuOjV9V+dVpP0IQAE3P/Eb6Rrk8j9j+nDkewdjuy4DViDZ9VKm0fpLRlGfEaw13cN
-         Fkj46mSmLwexhT+VKQQ/H4sqKhrXjmGfFo/xh1M0u9S4cT4wW4YFxFnGljRE5gZ6nEQ1
-         IS3Ft+b5JXDeznJOWFkSQKhB+zrWWbfLQFlJZlD5m/jj5rRrFRgyUvzwyA9/QtaUMdEd
-         msCwOsAJjx9kCjq/5xprJL6Gq2G4EMNPmWL/RR7MlTy0vmhB2yBwo2pDrO5jTky39mMO
-         B2lwTjQrBS7cm0UDHpCHLL4ED0+/tJ5So2S9VZ57qzxQszYFH7TxlsX93Ju+PANDxb1L
-         ayGQ==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=vAqt0FCs57kn9Ukf4LvAgXoTKM8qBPaUrRNF+376ajQ=;
+        b=Rc4IjR2l0nM6Eu0SxUtXaflW2dO+G7X+lWrWL0/5sPe5OCWwK3Nc4181C718stHooB
+         qh9VGwxNeTHJbRgCl+BrKeSTJm+7j34Syr6U4nMREfk1MviR10cCeYVBlggE7eAuIvlK
+         wBHhENWTbKm+VemvofantvEZUKegPDwBPJINHaA7tD7FNayMa7BjM8xwyLaur3zA5Ybc
+         63AI7fyuEP9WXRDCsYexQbmeOsTlleuo25X7nqaSoiy+dxptlGomlf8Lge/6igiSi6bB
+         S5S6BK6kW/3gK9LvHhvb+stShgW7LUQVSm1Uqy9m+4wcsedzuOw8HpD0MpUGohx5ydsC
+         +3ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1KZD/D+ITfpzGjs6DVMtpV8mRW5uG0idJZBpcTB84Go=;
-        b=ReW7qUrRO8C5H/Tj3/azpymFCxtg6Uxz/ui1dDmmx7/wHUqwCElyRcl3Jkl04nU9UV
-         X2oN9KL/TSCv0e8Z0Vb2NNngHiCZDKCYdbW4qljl1in9RphyIb1FdD/k8k0dqUKjlwLr
-         Haia+5+agiJrrJpEIQfXBjbWr0sM5jjyJQHe9G2YidlZ0fCASGaI1DqM7op+ZsSXR+jA
-         ZE1WtFlX55RGvmXyurbhPOQtfYf2FT3lAOfosfzMhY7oPWRWzyQ3xW4aX+uYk+STS/fW
-         qhnWslbidtjWqYGr68IZXYwpBw+DELkbyb7l7FhRSlkadAjTaOz8sODavVCNWBi3DcCd
-         +7Gw==
-X-Gm-Message-State: APjAAAX7+c0UErZiz+SD/gjyjZOHsMw2Qz7oDxNDyoQ3Rpn1abLTx6Mg
-        yeEnUFEeMLcwIhReGAJVD2wrRdCulio=
-X-Google-Smtp-Source: APXvYqxZ80SmwZHAhq0UXG3+UE6Rc3pCkQyQI4MEJmcJ5bDoCp7m7yejyfbJgHZDKicPsp+Sg7D/9A==
-X-Received: by 2002:a5b:78d:: with SMTP id b13mr17221605ybq.157.1573952453404;
-        Sat, 16 Nov 2019 17:00:53 -0800 (PST)
-Received: from bonecrusher.natcky.rr.com ([2605:a000:1707:c42b:7331:4754:500a:5064])
-        by smtp.gmail.com with ESMTPSA id j188sm6386386ywd.50.2019.11.16.17.00.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Nov 2019 17:00:52 -0800 (PST)
-From:   Bradley Bolen <bradleybolen@gmail.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
-        kstewart@linuxfoundation.org, tglx@linutronix.de, info@metux.net,
-        hongjiefang@asrmicro.com, avri.altman@wdc.com,
-        wsa+renesas@sang-engineering.com, yinbo.zhu@nxp.com,
-        Bradley Bolen <bradleybolen@gmail.com>
-Subject: [PATCH v3] mmc: core: Fix size overflow for mmc partitions
-Date:   Sat, 16 Nov 2019 20:00:45 -0500
-Message-Id: <20191117010045.4902-1-bradleybolen@gmail.com>
-X-Mailer: git-send-email 2.9.5
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=vAqt0FCs57kn9Ukf4LvAgXoTKM8qBPaUrRNF+376ajQ=;
+        b=NTf4HBbgdp2btWw8yxc1CsZSNpM3zYDq25ozWUkVwuHGtJsF0OXLITeZQyk5FikjJU
+         yQ4WX6xR30NzWexwo8qV13WAOzN/DmvBs5RpM0/HwY7gzIQUBAVTuX6c1DMySNTDZfFE
+         Gb4Ru1+fZYCuXtmC+xLIgs9i7qjrRdc+SsWH3q7IFeKc6lTnHLVQ+My3sRbeYRuker2O
+         YAzTDuiQbxtF7U94gM/kFYXNfg5Q2glWYRVKcPgsjVHe4J9FCs8ZZRv24uQu6TdVpPOe
+         Z/GjqemA76Kh19/auiVmrr/Fz1Yy4mXWJCsjGIMjkdqM5jWpwt98COzzQ0rNbove636f
+         z5ug==
+X-Gm-Message-State: APjAAAXgYPAgMH2mKuIhc4Gf/n+edrSsILdQ1dlUaFmzvUFeZi+/YEWk
+        BmMgWwMT4fwU1nhnpZWpbj+UdyCUH2vGMqxHUXR/sMdv
+X-Google-Smtp-Source: APXvYqwQQ8GSLwLAIOoYxNo5CDVYDMr3fNpfHan4mc6rq0+MqeTvCju3i3OfLOpXo+jLKNs9ld93Le8T0jMSMBcXiz8=
+X-Received: by 2002:a02:c85b:: with SMTP id r27mr7616612jao.9.1573952494720;
+ Sat, 16 Nov 2019 17:01:34 -0800 (PST)
+MIME-Version: 1.0
+From:   Siavash Arya <siavash.arya89@gmail.com>
+Date:   Sun, 17 Nov 2019 02:00:59 +0100
+Message-ID: <CADuSoB_7uQ47+P2Ws7s41yOpjvcaYC9zZ89+zG=5MDDYmHSwxw@mail.gmail.com>
+Subject: 
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With large eMMC cards, it is possible to create general purpose
-partitions that are bigger than 4GB.  The size member of the mmc_part
-struct is only an unsigned int which overflows for gp partitions larger
-than 4GB.  Change this to a u64 to handle the overflow.
+Hi,
 
-Signed-off-by: Bradley Bolen <bradleybolen@gmail.com>
----
- drivers/mmc/core/mmc.c   | 9 ++++-----
- include/linux/mmc/card.h | 2 +-
- 2 files changed, 5 insertions(+), 6 deletions(-)
+When I use any ubuntu (probably any Linux) version that is running on
+a kernel that is of version 5 or higher, I have an issue where my
+computer hangs completely when reading from any of my hard drives.
+When this happens not even the caps lock button on my keyboard is
+working anymore. I know that it happens on reading because I got help
+at the freenode channels and tried a dd command that would read from
+any of my 3 hard drives. I first detected the problem when I tried to
+copy files. Anytime I got to copying between 2,5 GB -> 3 GB this
+happened and I had to long press my hardware button to shutdown the
+computer.
+Today I'm not even able to run the ubuntu 18.04 installer because this
+happens at "copying files" during installation. If I run the installer
+live, this problem exists.
+When I had ubuntu installed some days ago, I had to use grub to boot
+with an older kernel version in order to copy my files to my backup
+drive so that I could try to reinstall ubuntu. But I'm not able to
+install ubuntu anymore so I'm using Linux Mint and I don't like it at
+all compared to ubuntu so please please solve this fatal bug soon ! :)
+Please let me know what you need ot know and how I can help you solve this.
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index c8804895595f..f6912ded652d 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -297,7 +297,7 @@ static void mmc_manage_enhanced_area(struct mmc_card *card, u8 *ext_csd)
- 	}
- }
- 
--static void mmc_part_add(struct mmc_card *card, unsigned int size,
-+static void mmc_part_add(struct mmc_card *card, u64 size,
- 			 unsigned int part_cfg, char *name, int idx, bool ro,
- 			 int area_type)
- {
-@@ -313,7 +313,7 @@ static void mmc_manage_gp_partitions(struct mmc_card *card, u8 *ext_csd)
- {
- 	int idx;
- 	u8 hc_erase_grp_sz, hc_wp_grp_sz;
--	unsigned int part_size;
-+	u64 part_size;
- 
- 	/*
- 	 * General purpose partition feature support --
-@@ -343,8 +343,7 @@ static void mmc_manage_gp_partitions(struct mmc_card *card, u8 *ext_csd)
- 				(ext_csd[EXT_CSD_GP_SIZE_MULT + idx * 3 + 1]
- 				<< 8) +
- 				ext_csd[EXT_CSD_GP_SIZE_MULT + idx * 3];
--			part_size *= (size_t)(hc_erase_grp_sz *
--				hc_wp_grp_sz);
-+			part_size *= (hc_erase_grp_sz * hc_wp_grp_sz);
- 			mmc_part_add(card, part_size << 19,
- 				EXT_CSD_PART_CONFIG_ACC_GP0 + idx,
- 				"gp%d", idx, false,
-@@ -362,7 +361,7 @@ static void mmc_manage_gp_partitions(struct mmc_card *card, u8 *ext_csd)
- static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
- {
- 	int err = 0, idx;
--	unsigned int part_size;
-+	u64 part_size;
- 	struct device_node *np;
- 	bool broken_hpi = false;
- 
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 9b6336ad3266..b59d35bb50ba 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -226,7 +226,7 @@ struct mmc_queue_req;
-  * MMC Physical partitions
-  */
- struct mmc_part {
--	unsigned int	size;	/* partition size (in bytes) */
-+	u64		size;	/* partition size (in bytes) */
- 	unsigned int	part_cfg;	/* partition type */
- 	char	name[MAX_MMC_PART_NAME_LEN];
- 	bool	force_ro;	/* to make boot parts RO by default */
--- 
-2.17.1
-
+Best,
+Siavash
