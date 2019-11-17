@@ -2,94 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29567FF851
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 08:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7116FF85F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 08:21:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbfKQHV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 02:21:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40824 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726134AbfKQHVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 02:21:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9E238B317;
-        Sun, 17 Nov 2019 07:21:22 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-realtek-soc@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v3 8/8] ARM: realtek: Enable RTD1195 arch timer
-Date:   Sun, 17 Nov 2019 08:21:09 +0100
-Message-Id: <20191117072109.20402-9-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191117072109.20402-1-afaerber@suse.de>
-References: <20191117072109.20402-1-afaerber@suse.de>
+        id S1726352AbfKQHVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 02:21:55 -0500
+Received: from sauhun.de ([88.99.104.3]:60248 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbfKQHVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 02:21:53 -0500
+Received: from localhost (unknown [94.230.152.199])
+        by pokefinder.org (Postfix) with ESMTPSA id 08BD12C01C5;
+        Sun, 17 Nov 2019 08:21:50 +0100 (CET)
+Date:   Sun, 17 Nov 2019 08:21:50 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jean Delvare <jdelvare@suse.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: remove helpers for ref-counting clients
+Message-ID: <20191117072150.GA885@kunai>
+References: <20191109212615.9254-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Content-Disposition: inline
+In-Reply-To: <20191109212615.9254-1-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this magic write the timer doesn't work and boot gets stuck.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- What is the name of the register 0xff018000?
- Is 0x1 a BIT(0) write, or how are the register bits defined?
- Is this a reset or a clock gate? How should we model it in DT?
- 
- v2 -> v3: Unchanged
- 
- v2: New
- 
- arch/arm/mach-realtek/rtd1195.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-realtek/rtd1195.c b/arch/arm/mach-realtek/rtd1195.c
-index b31a4066be87..0532379c74f5 100644
---- a/arch/arm/mach-realtek/rtd1195.c
-+++ b/arch/arm/mach-realtek/rtd1195.c
-@@ -5,6 +5,9 @@
-  * Copyright (c) 2017-2019 Andreas Färber
-  */
- 
-+#include <linux/clk-provider.h>
-+#include <linux/clocksource.h>
-+#include <linux/io.h>
- #include <linux/memblock.h>
- #include <asm/mach/arch.h>
- 
-@@ -24,6 +27,18 @@ static void __init rtd1195_reserve(void)
- 	rtd1195_memblock_remove(0x18100000, 0x01000000);
- }
- 
-+static void __init rtd1195_init_time(void)
-+{
-+	void __iomem *base;
-+
-+	base = ioremap(0xff018000, 4);
-+	writel(0x1, base);
-+	iounmap(base);
-+
-+	of_clk_init(NULL);
-+	timer_probe();
-+}
-+
- static const char *const rtd1195_dt_compat[] __initconst = {
- 	"realtek,rtd1195",
- 	NULL
-@@ -31,6 +46,7 @@ static const char *const rtd1195_dt_compat[] __initconst = {
- 
- DT_MACHINE_START(rtd1195, "Realtek RTD1195")
- 	.dt_compat = rtd1195_dt_compat,
-+	.init_time = rtd1195_init_time,
- 	.reserve = rtd1195_reserve,
- 	.l2c_aux_val = 0x0,
- 	.l2c_aux_mask = ~0x0,
--- 
-2.16.4
+On Sat, Nov 09, 2019 at 10:26:15PM +0100, Wolfram Sang wrote:
+> There are no in-tree users of these helpers anymore, and there
+> shouldn't. Most use cases went away once the driver model started to
+> refcount for us. There have been users like the media subsystem, but
+> they all switched to better refcounting methods meanwhile. Media did
+> this in 2008. Last user (IPMI) left 2018. Remove this cruft.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Applied to for-next, thanks!
+
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl3Q9OkACgkQFA3kzBSg
+KbYxiA//U0A4/LrM166YRQn5IKHVVc9zXi/J0DCXl9kE4Luo/Lexd8sKF1J+D33J
+t2Q+Qiw++MiFF2+lLnrAU+sfJGj4pRSU5874CVF56oUdGygQ+FI9u2sEt+UG4aFE
+wEiLySOebVUProNKIlsbb1h0nQ6fR01TGHNMAKqRvNiqTJxi+AWOJCSoCN3he8l5
+Y2kg3s8a2gNefJ8BQRPuARHYAcysNaHtIcZFT8G8tCCPNI08UlQU+eSHYW021cVn
+rfkctvIDjjTQOnoa4QX4EjvKIqDJcNMy4OWHbGRpdDquFW524ZXsKdGYCe70o9G0
+X1GltUR126aQgf1BSR/gwmKar/KrIas01ysfXI7pbH1BO1hv6kVGZi6cpWw86Dmm
+vz9STNMMaPW31ky9hv6pHMZu5RkrvuiCeYXySber4bdggSzbm5ILDtYByG+T1ctQ
+iT7viLWwnFuBXzZIruNZDdN1T81oriTNG897roP/n4hc5yzrOdjr1oaMOD6IeoB+
+jnlTagm3YZd7EUzEVRc4orW+QVNt96DCK+EsEpraXRAQz0Dsc3K/VvTlKdI+xTzd
+TlGm/e8DKBLVhad2AQZqSky9Ovo7Rst0ZD7YQG+YkrLHLtBPGjarRq9J1gQMXDhT
+6IQmIfblmdrc+Zpi9A1CvN48VmJgKz6Q0elrSa9567JrEf6apHk=
+=XZ/m
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
