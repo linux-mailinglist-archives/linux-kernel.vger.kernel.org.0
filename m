@@ -2,73 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC40FF936
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 12:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A15FF953
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 13:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfKQLqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 06:46:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:43003 "EHLO mga04.intel.com"
+        id S1726096AbfKQMMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 07:12:06 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56468 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbfKQLqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 06:46:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726063AbfKQMMG (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 07:12:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2019 03:46:52 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2019 04:12:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,316,1569308400"; 
-   d="scan'208";a="236612084"
-Received: from xsang-optiplex-9020.sh.intel.com (HELO xsang-OptiPlex-9020) ([10.239.159.135])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Nov 2019 03:46:51 -0800
-Date:   Sun, 17 Nov 2019 19:54:07 +0800
-From:   Oliver Sang <oliver.sang@intel.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        kernel test robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@lists.01.org
-Subject: Re: [LKP] Re: [scsi] 9393c8de62: Initramfs_unpacking_failed
-Message-ID: <20191117115407.GA9578@xsang-OptiPlex-9020>
-References: <20191108072255.GX29418@shao2-debian>
- <alpine.LNX.2.21.1.1911091123280.9@nippy.intranet>
- <6ad8eeef-101e-58ba-734d-1725c998a909@gmail.com>
- <yq1v9rtvlv8.fsf@oracle.com>
+   d="scan'208";a="215102915"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.212.51]) ([10.254.212.51])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Nov 2019 04:12:03 -0800
+Subject: Re: [PATCH v1 2/2] perf report: Jump to symbol source view from total
+ cycles view
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191113004852.21265-1-yao.jin@linux.intel.com>
+ <20191113004852.21265-2-yao.jin@linux.intel.com>
+ <20191115133438.GA25491@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <cbf51f14-dc76-9030-2dce-6d83122a15c4@linux.intel.com>
+Date:   Sun, 17 Nov 2019 20:12:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1v9rtvlv8.fsf@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191115133438.GA25491@krava>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 09:12:27PM -0500, Martin K. Petersen wrote:
-> 
-> Michael,
-> 
-> >>> [    1.278970] Trying to unpack rootfs image as initramfs...
-> >>> [    4.011404] Initramfs unpacking failed: broken padding
-> >>
-> >> Was this test failure unrelated to commit 9393c8de62?
-> >
-> > Seems to be unrelated - a m68k kernel with that commit included, SCSI
-> > core included but low-level driver built as a module(*)  boots into
-> > the initramfs just fine.
-> >
-> > (*) well-known emulator bug.
-> 
-> I'm scratching my head too. I have tested a variety of systems and all
-> of them boot and work fine.
 
-sorry, it's our fault. the kernel built automatically seems broken at some stage.
-After we recomplied the kernel, the issue gone. Sorry for any inconvenience.
 
+On 11/15/2019 9:34 PM, Jiri Olsa wrote:
+> On Wed, Nov 13, 2019 at 08:48:52AM +0800, Jin Yao wrote:
+>> This patch supports jumping from tui total cycles view to symbol
+>> source view.
+>>
+>> For example,
+>>
+>> perf record -b ./div
+>> perf report --total-cycles
+>>
+>> In total cycles view, we can select one entry and press 'a' or
+>> press ENTER key to jump to symbol source view.
+>>
+>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>> ---
+>>   tools/perf/builtin-report.c    |  9 ++++++---
+>>   tools/perf/ui/browsers/hists.c | 25 +++++++++++++++++++++++--
+>>   tools/perf/util/block-info.c   |  6 ++++--
+>>   tools/perf/util/block-info.h   |  3 ++-
+>>   tools/perf/util/hist.h         |  7 +++++--
+>>   5 files changed, 40 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+>> index 1e81985b7d56..ceebea4013ca 100644
+>> --- a/tools/perf/builtin-report.c
+>> +++ b/tools/perf/builtin-report.c
+>> @@ -493,7 +493,9 @@ static int perf_evlist__tui_block_hists_browse(struct evlist *evlist,
+>>   
+>>   	evlist__for_each_entry(evlist, pos) {
+>>   		ret = report__browse_block_hists(&rep->block_reports[i++].hist,
+>> -						 rep->min_percent, pos);
+>> +						 rep->min_percent, pos,
+>> +						 &rep->session->header.env,
+>> +						 &rep->annotation_opts);
+>>   		if (ret != 0)
+>>   			return ret;
+>>   	}
+>> @@ -525,7 +527,8 @@ static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+>>   
+>>   		if (rep->total_cycles_mode) {
+>>   			report__browse_block_hists(&rep->block_reports[i++].hist,
+>> -						   rep->min_percent, pos);
+>> +						   rep->min_percent, pos,
+>> +						   NULL, NULL);
+>>   			continue;
+>>   		}
+>>   
+>> @@ -1418,7 +1421,7 @@ int cmd_report(int argc, const char **argv)
+>>   		if (sort__mode != SORT_MODE__BRANCH)
+>>   			report.total_cycles_mode = false;
+>>   		else
+>> -			sort_order = "sym";
+>> +			sort_order = NULL;
 > 
-> -- 
-> Martin K. Petersen	Oracle Linux Engineering
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
+> hum, how is this related to this change?
+> 
+> jirka
+> 
+
+Hi Jiri,
+
+If we set the sort_order to NULL, it will use the default branch sort 
+order. The percent value in new annotate view will be consistent with 
+the percent in annotate view which is switched from perf report.
+
+I observed the original percent gap with previous patches and then I 
+decide to use the default sort order. Now the test result looks good.
+
+Thanks
+Jin Yao
+
+
+
+
