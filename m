@@ -2,82 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1624107FB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 18:59:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46458107FD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 19:15:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfKWR73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 12:59:29 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44417 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfKWR73 (ORCPT
+        id S1726920AbfKWSPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 13:15:00 -0500
+Received: from sender4-pp-o97.zoho.com ([136.143.188.97]:25725 "EHLO
+        sender4-pp-o97.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfKWSPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 12:59:29 -0500
-Received: by mail-oi1-f193.google.com with SMTP id s71so9442492oih.11
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 09:59:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tiHa8wg0xKw8eHEQWFxtmRKRM2wgS5M3VjCm3UfWPpQ=;
-        b=Au+ll1GNHOI0ui+2SH8xUU7Q2fUqX7N7w7z3ix1gDEngW+8K0ZQthLlqvfVLVJpigs
-         S7uKjAIuy574UxD6tTtoMT7XeLnlYYUnvKf263VAGkNHavJb/7NknVkof2kMvTnOzATy
-         wndR772MlAAdJRaYmDUTBx9Rl2Jfy7KreAfNSnkzKnDRmii6zc2aw0gmhLP9mqXTGH1e
-         AhW7K5A2P3PQa2fHK+ClbeUvy7Zr3edrb5/pxEa0aIbD+zgj345zSaOUHk8YBALuMeK4
-         oDJEXF0FUOjbrLOCWHOcRgcblBXJ2JWxEjUuy1AGuUSGvBJGR4wzXYFtD5bguxyyG4WX
-         tVyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tiHa8wg0xKw8eHEQWFxtmRKRM2wgS5M3VjCm3UfWPpQ=;
-        b=YXu4uDvtDQWWw9SoHzgHRM0bYp2htmDzeIMlNz2AeNEW7tYjPg1xE8w/hb+7aSsYc1
-         9uekzFvGRI/DcaFTSZGLtHKtsqpn8Z7udzEtuzCDbxS/kEL1pJw917qjaFtOYY5kjtNF
-         UbxMGAxHclD8+mCREkrjy6UO+YDI/XaypYWZLnj2MKGQBYyll8n9+QCB/rv+pAt4g8vW
-         HXSk0f0mcC4G2LKTTOhYLMIqER1R3pYTPrcRCjczwbDxBetNScJ1f7eEG9lTGl8CQcmr
-         3MBlARcGXKiPA6hffL6f+dpko0in75HEo/wpCb4XTm/1mNikXiCqU/o9Xv3WFj53ZC3S
-         aL6Q==
-X-Gm-Message-State: APjAAAUoBaGwHTY78fAZbtNduuSWRzq5UDRSSQtCSRslkKEU1L1//wRT
-        m7BgQaJZ+mk3e5U9tmN/tPEgxzDl
-X-Google-Smtp-Source: APXvYqxWn+kG92vxuUPUBaYTcvrqHSIX0vD5Lb7dUjrtna43YdZpa7ZiaF9Eaqj2meDo3GhdR4Zt+w==
-X-Received: by 2002:aca:f495:: with SMTP id s143mr1892013oih.118.1574531968172;
-        Sat, 23 Nov 2019 09:59:28 -0800 (PST)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id u22sm664113oiv.36.2019.11.23.09.59.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2019 09:59:27 -0800 (PST)
-Subject: Re: [PATCH 1/3] staging: rtl8188eu: remove unnecessary parentheses in
- rtw_pwrctrl.c
-To:     Michael Straube <straube.linux@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20191123151635.155138-1-straube.linux@gmail.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <fdfb10ff-b9e1-d5e0-e5ae-484847570a27@lwfinger.net>
-Date:   Sat, 23 Nov 2019 11:59:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191123151635.155138-1-straube.linux@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 23 Nov 2019 13:15:00 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574532890; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=FJJjui7nV/ZNN1Rx8QvVjgMhJk4ZoeEJov7UXfqcdi0QrfZ4cYxG5o+ljylp3sxZ3JpryTVplgX/s5fRhs5KlYtm0hwfooh/1dYqHp9UPut2c0TEeR/1b7DRBWt6kKp5Wn+HGAMiv98ouRJTaLQu5i7EJdS3WyXudu+XxYQqRCk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574532890; h=Cc:Date:From:Message-ID:Subject:To; 
+        bh=H94x1tfJHQJNFBM0ErsvL0Uudwa/ZEgpUH9VtK3qs9s=; 
+        b=DgsarA3B5bEEcVfEOcoZgbk5WUbmVNE31CCOAgw0B0ZTAPEoV+aki/YkMqsoiFnmxQguNXdJG8amai8mt8SH++YzkOEe2NsRiukwmkrlMGDi2ml+mO+zTm/xGLr/hAUBbuRtKl2h0ftFCpqOJXKn/Kbenmn/BvkpP86pOtxUwDY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=m3TfuYGY062VoEhYG7TyUWNj6+/aobs7c2tUYh2qAuwLC866iT3BQN3+Fo5ovyaVYojvu/4bb85p
+    EFxyZu65T67KSnSz4dbb3a7enM8zPG+0HJ5W4NtzJws92p2K47iS  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574532890;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        bh=H94x1tfJHQJNFBM0ErsvL0Uudwa/ZEgpUH9VtK3qs9s=;
+        b=osuOmhvSAwafp/ZI9m0Y4Iwmkp665XB7x85IQgLbYuSpoUPUeZyn2WIuzJqNmC8f
+        N6bOsEfv6tbgtehR+IFOZ3QXgE7YD6YbkRdOQ0ZYW/IQnH1HpQFJJrz/qrB6d6OwfM3
+        TwuHbLoUAYgh3QZ8T3yoZjn9A+WfWwqH5SWlOsnQ=
+Received: from localhost.localdomain (171.221.112.247 [171.221.112.247]) by mx.zohomail.com
+        with SMTPS id 1574532888652420.3861808291093; Sat, 23 Nov 2019 10:14:48 -0800 (PST)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, paulburton@kernel.org, mark.rutland@arm.com,
+        linus.walleij@linaro.org, paul@crapouillou.net
+Subject: Fix bugs in X1000/X1500 and add X1830 pinctrl driver v4.
+Date:   Mon, 18 Nov 2019 02:14:05 +0800
+Message-Id: <1574014449-112057-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/19 9:16 AM, Michael Straube wrote:
-> Remove unnecessary parentheses reported by checkpatch.
-> 
-> Signed-off-by: Michael Straube <straube.linux@gmail.com>
-> ---
->   drivers/staging/rtl8188eu/core/rtw_pwrctrl.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
+v3->v4:
+1.Use local variables to streamline code.
+2.Prevents processors older than X1830 from being
+  configured in HiZ mode.
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-
-Thanks,
-
-Larry
 
