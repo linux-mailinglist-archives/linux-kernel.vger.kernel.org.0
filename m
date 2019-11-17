@@ -2,142 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ACA5FFBD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 23:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E900FFBE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 23:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfKQWNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 17:13:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726278AbfKQWNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 17:13:12 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1726818AbfKQWQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 17:16:56 -0500
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:59611 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbfKQWQ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 17:16:56 -0500
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 75A8A2B478;
+        Sun, 17 Nov 2019 17:16:54 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:message-id:mime-version:content-type; s=sasl; bh=wcY
+        WHxFEdPGu96zhB6XLRqRXRqk=; b=FLYYwMN7PWljVMfb0l23CeKQyzUEqe997DP
+        BfXUNMQuc1G9fVLaUCMgqgJCXXBUbV3f5hbJbcoQLKGEwN8ASS39ItDll9PZn7Ia
+        abUGpQmR76R9/KFLQKSpfD2x+Cua90smpuoHQdypkDJpIgQKf6Om38Zy+FijuxVz
+        46keSIQM=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 6D81D2B477;
+        Sun, 17 Nov 2019 17:16:54 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=darkphysics.net;
+ h=date:from:to:cc:subject:message-id:mime-version:content-type;
+ s=2019-09.pbsmtp; bh=VPUiBA0m2ubsMx0l7aIsQYg5aaKSCZSBG+kwg8bHAWQ=;
+ b=CExqKagde+GJpexnUSG56A0r1F8TzfqHDB0GTfIf3urZfqyEOZXgRNtTAk4YJuvPk7QkTmFdd6Tf3mhAPl3jwOVntzOx3rakg/kbVQrDj7FBe2EI2WyEdfTjWHQLXQDjZE0RcLRJ5WaVp45t0Bd7DyyFgK7rzIhUDLda2+pmzEE=
+Received: from Cheese (unknown [24.19.107.226])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E87D720740;
-        Sun, 17 Nov 2019 22:13:11 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iWSn9-0002so-5b; Sun, 17 Nov 2019 17:13:11 -0500
-Message-Id: <20191117221311.056891660@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Sun, 17 Nov 2019 17:13:03 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 7/7] ftrace: Add helper find_direct_entry() to consolidate code
-References: <20191117221256.228674565@goodmis.org>
+        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 4C3772B476;
+        Sun, 17 Nov 2019 17:16:53 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+Date:   Sun, 17 Nov 2019 14:16:47 -0800
+From:   Travis Davies <tdavies@darkphysics.net>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] net: Fix comment block per style guide
+Message-ID: <20191117221647.GA10337@Cheese>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Pobox-Relay-ID: F5D151CE-0987-11EA-A2C8-D1361DBA3BAF-64344220!pb-smtp2.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+This patch places /* and */ on sepperate lines for a
+multiline block comment, in order to keep code style
+consistant with majority of blocks throughout the file.
 
-Both unregister_ftrace_direct() and modify_ftrace_direct() needs to
-normalize the ip passed in to match the rec->ip, as it is acceptable to have
-the ip on the ftrace call site but not the start. There are also common
-validity checks with the record found by the ip, these should be done for
-both unregister_ftrace_direct() and modify_ftrace_direct().
+This will prevent a checkpatch.pl warning:
+'Block comments use a trailing */ on a separate line'
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Travis Davies <tdavies@darkphysics.net>
+
 ---
- kernel/trace/ftrace.c | 59 +++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 30 deletions(-)
+ include/linux/netdevice.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 9fe33ebaf914..ef79c8393f53 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5112,30 +5112,40 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
- }
- EXPORT_SYMBOL_GPL(register_ftrace_direct);
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..a2605e043fa2 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define NET_XMIT_CN		0x02	/* congestion notification	*/
+ #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
  
--int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
-+static struct ftrace_func_entry *find_direct_entry(unsigned long *ip)
- {
- 	struct ftrace_func_entry *entry;
--	struct ftrace_direct_func *direct;
- 	struct dyn_ftrace *rec;
--	int ret = -ENODEV;
+-/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
++/*
++ * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
+  * indicates that the device will soon be dropping packets, or already drops
+- * some packets of the same priority; prompting us to send less aggressively. */
++ * some packets of the same priority; prompting us to send less aggressively.
++ */
+ #define net_xmit_eval(e)	((e) == NET_XMIT_CN ? 0 : (e))
+ #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
  
--	mutex_lock(&direct_mutex);
-+	rec = lookup_rec(*ip, *ip);
-+	if (!rec)
-+		return NULL;
- 
--	entry = __ftrace_lookup_ip(direct_functions, ip);
-+	entry = __ftrace_lookup_ip(direct_functions, rec->ip);
- 	if (!entry) {
--		/* OK if it is off by a little */
--		rec = lookup_rec(ip, ip);
--		if (!rec || rec->ip == ip)
--			goto out_unlock;
-+		WARN_ON(rec->flags & FTRACE_FL_DIRECT);
-+		return NULL;
-+	}
- 
--		entry = __ftrace_lookup_ip(direct_functions, rec->ip);
--		if (!entry) {
--			WARN_ON(rec->flags & FTRACE_FL_DIRECT);
--			goto out_unlock;
--		}
-+	WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
- 
--		WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
--	}
-+	/* Passed in ip just needs to be on the call site */
-+	*ip = rec->ip;
-+
-+	return entry;
-+}
-+
-+int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
-+{
-+	struct ftrace_direct_func *direct;
-+	struct ftrace_func_entry *entry;
-+	int ret = -ENODEV;
-+
-+	mutex_lock(&direct_mutex);
-+
-+	entry = find_direct_entry(&ip);
-+	if (!entry)
-+		goto out_unlock;
- 
- 	if (direct_functions->count == 1)
- 		unregister_ftrace_function(&direct_ops);
-@@ -5187,24 +5197,13 @@ int modify_ftrace_direct(unsigned long ip,
- 			 unsigned long old_addr, unsigned long new_addr)
- {
- 	struct ftrace_func_entry *entry;
--	struct dyn_ftrace *rec;
- 	int ret = -ENODEV;
- 
- 	mutex_lock(&direct_mutex);
--	entry = __ftrace_lookup_ip(direct_functions, ip);
--	if (!entry) {
--		/* OK if it is off by a little */
--		rec = lookup_rec(ip, ip);
--		if (!rec || rec->ip == ip)
--			goto out_unlock;
--
--		entry = __ftrace_lookup_ip(direct_functions, rec->ip);
--		if (!entry)
--			goto out_unlock;
- 
--		ip = rec->ip;
--		WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
--	}
-+	entry = find_direct_entry(&ip);
-+	if (!entry)
-+		goto out_unlock;
- 
- 	ret = -EINVAL;
- 	if (entry->direct != old_addr)
 -- 
-2.24.0
-
+2.21.0
 
