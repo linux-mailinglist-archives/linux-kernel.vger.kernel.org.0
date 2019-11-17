@@ -2,268 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44532FF8CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 11:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53917FF8D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 12:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfKQKrb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 17 Nov 2019 05:47:31 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:55570 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725974AbfKQKrb (ORCPT
+        id S1726183AbfKQLC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 06:02:29 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:16703 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfKQLC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 05:47:31 -0500
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.80)
-        (envelope-from <maz@misterjones.org>)
-        id 1iWI5Y-0002Ib-5M; Sun, 17 Nov 2019 11:47:28 +0100
-Date:   Sun, 17 Nov 2019 10:47:26 +0000
-From:   Marc Zyngier <maz@misterjones.org>
-To:     Andreas =?UTF-8?Q?F=C3=A4rber?= <afaerber@suse.de>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/8] ARM: dts: Prepare Realtek RTD1195 and MeLE X1000
-Message-ID: <20191117104726.2b1fccb8@why>
-In-Reply-To: <20191117072109.20402-4-afaerber@suse.de>
-References: <20191117072109.20402-1-afaerber@suse.de>
-        <20191117072109.20402-4-afaerber@suse.de>
-Organization: Metropolis
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 17 Nov 2019 06:02:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573988546;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=CLtEbrqUYKD2wQNQMuHkpIC0PxqzpBsG0RbyF4DIpxI=;
+        b=EelJndJnzMGtFwrCoFBJHQi94kJFv3h6YGN+jWEXmhzovP02CGELJG64I46RAARcAm
+        wuWtUTvsCqu0acPaqGD7Qpy5FQExJEh16nzCxMRpgHBKRzgPflGq2cAy0GFiV5++Mbqy
+        w82Rm2PEokvjW8n3H8owuHV+rX38IUJkr59YiuEU47C1DRXoxw7iBP9vdVdOLFAvF4SP
+        4mxKzVTCAZ0bAHofYUAfsXf6TIxz/KdHZvxh+yyTLfJj/Z/r+4q3sikFc7Juc7VKe8Zt
+        kDcIaL0w+wADO9ZNt1anhGjrCVtNudQe015zCT/jlIUgV4eIB5ZcXhDowi0F4i2unu3m
+        rcSw==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDbIvSfb0y2"
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
+        with ESMTPSA id N09a57vAHB1FVSv
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 17 Nov 2019 12:01:15 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>
+Subject: Re: [PATCH v25 01/12] Linux Random Number Generator
+Date:   Sun, 17 Nov 2019 12:01:15 +0100
+Message-ID: <4567011.rgkcMjRUIa@positron.chronox.de>
+In-Reply-To: <87mucvadvg.fsf@suse.de>
+References: <6157374.ptSnyUpaCn@positron.chronox.de> <2645285.kI0haNqfm4@positron.chronox.de> <87mucvadvg.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: afaerber@suse.de, linux-realtek-soc@lists.infradead.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@misterjones.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 17 Nov 2019 08:21:04 +0100
-Andreas Färber <afaerber@suse.de> wrote:
+Am Samstag, 16. November 2019, 19:13:23 CET schrieb Nicolai Stange:
 
-Hi Andreas,
+Hi Nicolai,
 
-> Add Device Trees for Realtek RTD1195 SoC and MeLE X1000 TV box.
-> 
-> Reuse the existing RTD1295 watchdog compatible for now.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> [AF: Fixed r-bus size, fixed GIC CPU mask, updated memreserve]
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> ---
->  v2 -> v3:
->  * Fixed r-bus size in /soc ranges from 0x1000000 to 0x70000 (James)
->  * Adjusted /memreserve/ to close gap from 0xa800 to 0xc000 for full 0x100000
->  * Changed arch timer from GIC_CPU_MASK_RAW(0xf) to GIC_CPU_MASK_SIMPLE(2)
->    squashed from RTD1395 v1 series
->  
->  v1 -> v2:
->  * Dropped /memreserve/ and reserved-memory nodes for peripherals and NOR (Rob)
->  * Carved them out from memory reg instead (Rob)
->  * Converted some /memreserve/s to reserved-memory nodes
->  
->  arch/arm/boot/dts/Makefile               |   2 +
->  arch/arm/boot/dts/rtd1195-mele-x1000.dts |  31 ++++++++
->  arch/arm/boot/dts/rtd1195.dtsi           | 127 +++++++++++++++++++++++++++++++
->  3 files changed, 160 insertions(+)
->  create mode 100644 arch/arm/boot/dts/rtd1195-mele-x1000.dts
->  create mode 100644 arch/arm/boot/dts/rtd1195.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 08011dc8c7a6..4853a13c8cf2 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -865,6 +865,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->  dtb-$(CONFIG_ARCH_RDA) += \
->  	rda8810pl-orangepi-2g-iot.dtb \
->  	rda8810pl-orangepi-i96.dtb
-> +dtb-$(CONFIG_ARCH_REALTEK) += \
-> +	rtd1195-mele-x1000.dtb
->  dtb-$(CONFIG_ARCH_REALVIEW) += \
->  	arm-realview-pb1176.dtb \
->  	arm-realview-pb11mp.dtb \
-> diff --git a/arch/arm/boot/dts/rtd1195-mele-x1000.dts b/arch/arm/boot/dts/rtd1195-mele-x1000.dts
-> new file mode 100644
-> index 000000000000..834b430e6250
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/rtd1195-mele-x1000.dts
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-> +/*
-> + * Copyright (c) 2017-2019 Andreas Färber
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "rtd1195.dtsi"
-> +
-> +/ {
-> +	compatible = "mele,x1000", "realtek,rtd1195";
-> +	model = "MeLE X1000";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x18000000>,
-> +		      <0x19100000 0x26f00000>;
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.dtsi
-> new file mode 100644
-> index 000000000000..4e3866fe8f6e
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/rtd1195.dtsi
-> @@ -0,0 +1,127 @@
-> +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-> +/*
-> + * Copyright (c) 2017-2019 Andreas Färber
-> + */
-> +
-> +/memreserve/ 0x00000000 0x0000a800; /* boot code */
-> +/memreserve/ 0x0000a800 0x000f5800;
-> +/memreserve/ 0x17fff000 0x00001000;
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	compatible = "realtek,rtd1195";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0x0>;
-> +			clock-frequency = <1000000000>;
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0x1>;
-> +			clock-frequency = <1000000000>;
-> +		};
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		rpc_comm: rpc@b000 {
-> +			reg = <0x0000b000 0x1000>;
-> +		};
-> +
-> +		audio@1b00000 {
-> +			reg = <0x01b00000 0x400000>;
-> +		};
-> +
-> +		rpc_ringbuf: rpc@1ffe000 {
-> +			reg = <0x01ffe000 0x4000>;
-> +		};
-> +
-> +		secure@10000000 {
-> +			reg = <0x10000000 0x100000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	arm-pmu {
-> +		compatible = "arm,cortex-a7-pmu";
-> +		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity = <&cpu0>, <&cpu1>;
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv7-timer";
-> +		interrupts = <GIC_PPI 13
-> +			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14
-> +			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11
-> +			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10
-> +			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-> +		clock-frequency = <27000000>;
+> Hi Stephan,
+>=20
+> Stephan M=FCller <smueller@chronox.de> writes:
+> > +/* Initialize the default DRNG during boot */
+>=20
+> I think that this can get called a bit too early through the
+> get_random_bytes() invoked from e.g. boot_init_stack_canary(): in
+> start_kernel(), there is
+>=20
+> 	boot_init_stack_canary();
+>=20
+> 	time_init();
+>=20
+> On ARM (at least with arm_arch_timer.c), get_cycles() would return 0
+> until
+>=20
+>   time_init() =3D> timer_probe() =3D> arch_timer_of_init() =3D>
+>   arch_timer_common_init() =3D> arch_timer_arch_init() =3D>
+>   arch_timer_delay_timer_register() =3D> register_current_timer_delay()
+>=20
+> has executed and thus, ...
+>=20
+> > +void lrng_drngs_init_cc20(void)
+> > +{
+> > +	unsigned long flags =3D 0;
+> > +
+> > +	if (lrng_get_available())
+> > +		return;
+> > +
+> > +	lrng_sdrng_lock(&lrng_sdrng_init, &flags);
+> > +	if (lrng_get_available()) {
+> > +		lrng_sdrng_unlock(&lrng_sdrng_init, &flags);
+> > +		return;
+> > +	}
+> > +
+> > +	if (random_get_entropy() || random_get_entropy()) {
+> > +		/*
+> > +		 * As the highres timer is identified here, previous interrupts
+> > +		 * obtained during boot time are treated like a lowres-timer
+> > +		 * would have been present.
+> > +		 */
+> > +		lrng_pool_configure(true, LRNG_IRQ_ENTROPY_BITS);
+> > +	} else {
+> > +		lrng_health_disable();
+> > +		lrng_pool_configure(false, LRNG_IRQ_ENTROPY_BITS *
+> > +					   LRNG_IRQ_OVERSAMPLING_FACTOR);
+> > +		pr_warn("operating without high-resolution timer and applying "
+> > +			"IRQ oversampling factor %u\n",
+> > +			LRNG_IRQ_OVERSAMPLING_FACTOR);
+>=20
+> ... LRNG thinks that no high-res timer is available even though there
+> is:
+>=20
+> [    0.000000] lrng_sdrng: operating without high-resolution timer and
+> applying IRQ oversampling factor 10 [    0.000000] lrng_chacha20: ChaCha20
+> core initialized
+> [    0.000000] lrng_chacha20: ChaCha20 core initialized
+> [    0.000014] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps
+> every 2147483647500ns [    0.000036] clocksource: timer: mask: 0xffffffff
+> max_cycles: 0xffffffff, max_idle_ns: 1911260446275 ns [    0.000114]
+> bcm2835: system timer (irq =3D 27)
+> [    0.000594] arch_timer: cp15 timer(s) running at 19.20MHz (phys).
+> [    0.000613] clocksource: arch_sys_counter: mask: 0xffffffffffffff
+> max_cycles: 0x46d987e47, max_idle_ns: 440795202767 ns [    0.000631]
+> sched_clock: 56 bits at 19MHz, resolution 52ns, wraps every 4398046511078=
+ns
+> [    0.000645] Switching to timer-based delay loop, resolution 52ns
+>=20
+> Note that this last line comes from aforementioned
+> register_current_timer_delay().
+>=20
+> Similarly, get_random_bytes() can get called quite early through
+> WARN() =3D> warn_slowpath_fmt() =3D> __warn() =3D> print_oops_end_marker(=
+) =3D>
+> init_oops_id().
+>=20
+> Perhaps it would make sense not to do the (pool + health test)
+> initalization "on-demand", but rather make sure it happens at some
+> well-defined point after time_init()? Or at least that the pool +
+> the health tests get reconfigured eventually?
 
-This is 2019, and yet it feels like 2011. This should be setup in the
-bootloader, not in DT...
 
-> +	};
-> +
-> +	osc27M: osc {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <27000000>;
-> +		#clock-cells = <0>;
-> +		clock-output-names = "osc27M";
-> +	};
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x18000000 0x18000000 0x00070000>,
-> +		         <0x18100000 0x18100000 0x01000000>,
-> +		         <0x40000000 0x40000000 0xc0000000>;
-> +
-> +		wdt: watchdog@18007680 {
-> +			compatible = "realtek,rtd1295-watchdog";
-> +			reg = <0x18007680 0x100>;
-> +			clocks = <&osc27M>;
-> +		};
-> +
-> +		uart0: serial@18007800 {
-> +			compatible = "snps,dw-apb-uart";
-> +			reg = <0x18007800 0x400>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			clock-frequency = <27000000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart1: serial@1801b200 {
-> +			compatible = "snps,dw-apb-uart";
-> +			reg = <0x1801b200 0x100>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			clock-frequency = <27000000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		gic: interrupt-controller@ff011000 {
-> +			compatible = "arm,cortex-a7-gic";
-> +			reg = <0xff011000 0x1000>,
-> +			      <0xff012000 0x2000>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
+Thank you very much for testing this and reporting it.
 
-You know what I'm going to say: GICH and GIV are missing, as well as
-the maintenance interrupt. This is all bog-standard HW (most probably a
-GIC400), so there is no reason for this information not to be present.
+I have extracted the initialization of the time source into its own functio=
+n=20
+and execute it with core_initcall. With that, the DRNG is initialized at th=
+e=20
+time it needs initialization.
 
-	M.
--- 
-Without deviation from the norm, progress is not possible.
+But the time source check is now done when time_init is completed as first=
+=20
+time_init is called and then arch_call_rest_init -> rest_init -> kernel_ini=
+t -
+> kernel_init_freeable -> do_basic_setup -> do_initcalls where the initcall=
+s=20
+registered with the core_initcall callback are now executed as the first=20
+batch.
+
+
+>=20
+>=20
+> Thanks,
+>=20
+> Nicolai
+>=20
+> P.S: include/linux/lrng.h needs an #include <linux/errno.h> for
+>      CONFIG_LRNG_DRNG_SWITCH=3Dn
+
+Thank you, added.
+>=20
+> > +	}
+> > +
+> > +	lrng_sdrng_reset(&lrng_sdrng_init);
+> > +	lrng_cc20_init_state(&secondary_chacha20);
+> > +	lrng_state_init_seed_work();
+> > +	lrng_sdrng_unlock(&lrng_sdrng_init, &flags);
+> > +
+> > +	lrng_sdrng_lock(&lrng_sdrng_atomic, &flags);
+> > +	lrng_sdrng_reset(&lrng_sdrng_atomic);
+> > +	/*
+> > +	 * We do not initialize the state of the atomic DRNG as it is identic=
+al
+> > +	 * to the secondary DRNG at this point.
+> > +	 */
+> > +	lrng_sdrng_unlock(&lrng_sdrng_atomic, &flags);
+> > +
+> > +	lrng_trng_init();
+> > +
+> > +	lrng_set_available();
+> > +}
+> > +
+> > +/* Reset LRNG such that all existing entropy is gone */
+
+
+Ciao
+Stephan
+
+
