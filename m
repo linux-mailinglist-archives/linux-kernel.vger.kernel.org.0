@@ -2,68 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E580FFFB9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 21:43:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA470FFBA2
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 21:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfKQUng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 15:43:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:54056 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbfKQUnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 15:43:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EE8C31B;
-        Sun, 17 Nov 2019 12:43:35 -0800 (PST)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 152803F6C4;
-        Sun, 17 Nov 2019 12:43:33 -0800 (PST)
-Subject: Re: [GIT PULL] scheduler fixes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20191116213742.GA7450@gmail.com>
- <ab6f2b5a-57f0-6723-c62f-91a8ce6eddac@arm.com>
- <20191117094549.GB126325@gmail.com>
- <4e4b0828-abba-e27d-53f6-135df06eba1a@arm.com>
- <CAHk-=wiEz7kG8YSbmAAALdP3Vnna_f4+LY4TPM0NQczeh3mviQ@mail.gmail.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <dbcc8947-3164-1202-a21e-ebd2a609d997@arm.com>
-Date:   Sun, 17 Nov 2019 20:43:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726271AbfKQUzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 15:55:36 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:27289 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfKQUzg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 15:55:36 -0500
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXsMvvtBRRPA=="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 44.29.0 AUTH)
+        with ESMTPSA id e07688vAHKtXb36
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 17 Nov 2019 21:55:33 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH] pinctrl: nomadik: db8500: Add mc0_a_2 pin group without direction control
+Date:   Sun, 17 Nov 2019 21:54:39 +0100
+Message-Id: <20191117205439.239211-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiEz7kG8YSbmAAALdP3Vnna_f4+LY4TPM0NQczeh3mviQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/11/2019 16:29, Linus Torvalds wrote:
-> Gcc can - and does - narrow enums to smaller integer types with the
-> '-fshort-enums' flag.
-> 
-> However, in practice nobody uses that, and it can cause interop
-> problems. So I think for us, enums are always at least 'int' (they can
-> be bigger).
-> 
-> That said, mixing enums and values that are bigger than the enumerated
-> ones is just a bad idea
-> 
-> It will, for example, cause us to miss compiler warnings (eg switch
-> statements with an enum will warn if you don't handle all cases, but
-> the 'all cases' is based on the actual enum range, not on the
-> _possible_ invalid values).
-> 
+Some devices do not make use of the CMD0/DAT0/DAT2 direction control
+pins of the MMC/SD card 0 interface. In this case we should leave
+those pins unconfigured.
 
-Oh, yet another gcc flag... 
+A similar case already exists for "mc1_a_1" vs "mc1_a_2"
+when the MC1_FBCLK pin is not used.
 
-Thanks for the detailed write-up.
+Add a new "mc0_a_2" pin group which is equal to "mc0_a_1" except
+with the MC0_CMDDIR, MC0_DAT0DIR and MC0_DAT2DIR pins removed.
 
->                      Linus
-> 
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
+index 726c0b5501fa..b9246e0b4fe2 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
+@@ -391,6 +391,15 @@ static const unsigned mc0_a_1_pins[] = { DB8500_PIN_AC2, /* MC0_CMDDIR */
+ 					 DB8500_PIN_AA2, /* MC0_DAT2 */
+ 					 DB8500_PIN_AA1  /* MC0_DAT3 */
+ };
++/* MMC/SD card 0 interface without CMD/DAT0/DAT2 direction control */
++static const unsigned mc0_a_2_pins[] = { DB8500_PIN_AA3, /* MC0_FBCLK */
++					 DB8500_PIN_AA4, /* MC0_CLK */
++					 DB8500_PIN_AB2, /* MC0_CMD */
++					 DB8500_PIN_Y4,  /* MC0_DAT0 */
++					 DB8500_PIN_Y2,  /* MC0_DAT1 */
++					 DB8500_PIN_AA2, /* MC0_DAT2 */
++					 DB8500_PIN_AA1  /* MC0_DAT3 */
++};
+ /* Often only 4 bits are used, then these are not needed (only used for MMC) */
+ static const unsigned mc0_dat47_a_1_pins[] = { DB8500_PIN_W2, /* MC0_DAT4 */
+ 					       DB8500_PIN_W3, /* MC0_DAT5 */
+@@ -670,6 +679,7 @@ static const struct nmk_pingroup nmk_db8500_groups[] = {
+ 	DB8500_PIN_GROUP(msp0tfstck_a_1, NMK_GPIO_ALT_A),
+ 	DB8500_PIN_GROUP(msp0rfsrck_a_1, NMK_GPIO_ALT_A),
+ 	DB8500_PIN_GROUP(mc0_a_1, NMK_GPIO_ALT_A),
++	DB8500_PIN_GROUP(mc0_a_2, NMK_GPIO_ALT_A),
+ 	DB8500_PIN_GROUP(mc0_dat47_a_1, NMK_GPIO_ALT_A),
+ 	DB8500_PIN_GROUP(mc0dat31dir_a_1, NMK_GPIO_ALT_A),
+ 	DB8500_PIN_GROUP(msp1txrx_a_1, NMK_GPIO_ALT_A),
+@@ -828,7 +838,7 @@ DB8500_FUNC_GROUPS(ipi2c, "ipi2c_a_1", "ipi2c_a_2");
+  */
+ DB8500_FUNC_GROUPS(msp0, "msp0txrx_a_1", "msp0tfstck_a_1", "msp0rfstck_a_1",
+ 		   "msp0txrx_b_1", "msp0sck_b_1");
+-DB8500_FUNC_GROUPS(mc0, "mc0_a_1", "mc0_dat47_a_1", "mc0dat31dir_a_1");
++DB8500_FUNC_GROUPS(mc0, "mc0_a_1", "mc0_a_2", "mc0_dat47_a_1", "mc0dat31dir_a_1");
+ /* MSP0 can swap RX/TX like MSP0 but has no SCK pin available */
+ DB8500_FUNC_GROUPS(msp1, "msp1txrx_a_1", "msp1_a_1", "msp1txrx_b_1");
+ DB8500_FUNC_GROUPS(lcdb, "lcdb_a_1");
+-- 
+2.23.0
+
