@@ -2,177 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5C1FF66D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 02:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C43FF70C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 02:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfKQBT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 16 Nov 2019 20:19:27 -0500
-Received: from mga11.intel.com ([192.55.52.93]:34838 "EHLO mga11.intel.com"
+        id S1726290AbfKQB1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 16 Nov 2019 20:27:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726067AbfKQBT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Nov 2019 20:19:26 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2019 17:19:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,314,1569308400"; 
-   d="scan'208";a="380302666"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 16 Nov 2019 17:19:23 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iW9Dm-000E0F-T3; Sun, 17 Nov 2019 09:19:22 +0800
-Date:   Sun, 17 Nov 2019 09:18:33 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     patrick.rudolph@9elements.com
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        coreboot@coreboot.org,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH 1/2] firmware: google: Expose CBMEM over sysfs
-Message-ID: <201911170909.p3H1NF75%lkp@intel.com>
-References: <20191115161524.23738-2-patrick.rudolph@9elements.com>
+        id S1725978AbfKQB1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Nov 2019 20:27:38 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CED5B20730;
+        Sun, 17 Nov 2019 01:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573954057;
+        bh=WMkeJv3q5bUl85sh9gModNvIoSzCz/gQ/694afjwMgs=;
+        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
+        b=EVcaj6wpCi9unJKKeJODG0e586Le4su7PRPyInDh4YMLIzxP4dOSXMJq9uC9WBeTp
+         6c0HQcn2f9tqiHbsmLdn4TtiWxCyl4c1RpQb1bDdxz/jXHgR37A4Cmw2sIOfDwRpzA
+         /+51AHFxmp7gIKRwnG4N1pwkXd1fmWR9QL+YhZGs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191115161524.23738-2-patrick.rudolph@9elements.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191116185457.GA11601@onstation.org>
+References: <20191115123931.18919-1-masneyb@onstation.org> <20191116185457.GA11601@onstation.org>
+Cc:     mturquette@baylibre.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        jonathan@marek.ca
+To:     Brian Masney <masneyb@onstation.org>
+Subject: Re: [PATCH] clk: qcom: mmcc8974: move gfx3d_clk_src from the mmcc to rpm
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Sat, 16 Nov 2019 17:27:36 -0800
+Message-Id: <20191117012737.CED5B20730@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Quoting Brian Masney (2019-11-16 10:54:57)
+> > diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-ms=
+m8974.c
+> > index bcb0a397ef91..015426262d08 100644
+> > --- a/drivers/clk/qcom/mmcc-msm8974.c
+> > +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> > @@ -2411,7 +2399,6 @@ static struct clk_regmap *mmcc_msm8974_clocks[] =
+=3D {
+> >       [VFE0_CLK_SRC] =3D &vfe0_clk_src.clkr,
+> >       [VFE1_CLK_SRC] =3D &vfe1_clk_src.clkr,
+> >       [MDP_CLK_SRC] =3D &mdp_clk_src.clkr,
+> > -     [GFX3D_CLK_SRC] =3D &gfx3d_clk_src.clkr,
+> >       [JPEG0_CLK_SRC] =3D &jpeg0_clk_src.clkr,
+> >       [JPEG1_CLK_SRC] =3D &jpeg1_clk_src.clkr,
+> >       [JPEG2_CLK_SRC] =3D &jpeg2_clk_src.clkr,
+>=20
+> I just realized that I also need to remove the GFX3D_CLK_SRC #define
+> from include/dt-bindings/clock/qcom,mmcc-msm8974.h. I'll send out a v2
+> tomorrow evening.
+>=20
 
-Thank you for the patch! Perhaps something to improve:
+Please don't change the binding. In reality the define will never be
+used but also in reality the clk exists, so it's fine to leave it in the
+binding.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.4-rc7 next-20191115]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/patrick-rudolph-9elements-com/firmware-google-Expose-coreboot-tables-and-CBMEM/20191116-033417
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 96b95eff4a591dbac582c2590d067e356a18aacb
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-32-g233d4e1-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/firmware/google/cbmem-coreboot.c:79:44: sparse: sparse: incorrect type in argument 4 (different address spaces) @@    expected void const *from @@    got void [noderef] <asvoid const *from @@
->> drivers/firmware/google/cbmem-coreboot.c:79:44: sparse:    expected void const *from
->> drivers/firmware/google/cbmem-coreboot.c:79:44: sparse:    got void [noderef] <asn:2> *const remap
->> drivers/firmware/google/cbmem-coreboot.c:110:21: sparse: sparse: incorrect type in assignment (different address spaces) @@    expected void [noderef] <asn:2> *remap @@    got n:2> *remap @@
->> drivers/firmware/google/cbmem-coreboot.c:110:21: sparse:    expected void [noderef] <asn:2> *remap
->> drivers/firmware/google/cbmem-coreboot.c:110:21: sparse:    got void *
->> drivers/firmware/google/cbmem-coreboot.c:120:30: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *addr @@    got void [noderef] <asvoid *addr @@
->> drivers/firmware/google/cbmem-coreboot.c:120:30: sparse:    expected void *addr
->> drivers/firmware/google/cbmem-coreboot.c:120:30: sparse:    got void [noderef] <asn:2> *remap
->> drivers/firmware/google/cbmem-coreboot.c:142:30: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *addr @@    got void [noderef] <asn:2> *void *addr @@
-   drivers/firmware/google/cbmem-coreboot.c:142:30: sparse:    expected void *addr
-   drivers/firmware/google/cbmem-coreboot.c:142:30: sparse:    got void [noderef] <asn:2> *const remap
-
-vim +79 drivers/firmware/google/cbmem-coreboot.c
-
-    68	
-    69	static ssize_t cbmem_data_read(struct file *filp, struct kobject *kobj,
-    70				       struct bin_attribute *bin_attr,
-    71				       char *buffer, loff_t offset, size_t count)
-    72	{
-    73		struct device *dev = kobj_to_dev(kobj);
-    74		const struct cb_priv *priv;
-    75	
-    76		priv = (const struct cb_priv *)dev_get_platdata(dev);
-    77	
-    78		return memory_read_from_buffer(buffer, count, &offset,
-  > 79					       priv->remap, priv->entry.size);
-    80	}
-    81	
-    82	static struct bin_attribute coreboot_attr_data = {
-    83		.attr = { .name = "data", .mode = 0444 },
-    84		.read = cbmem_data_read,
-    85	};
-    86	
-    87	static struct bin_attribute *cb_mem_bin_attrs[] = {
-    88		&coreboot_attr_data,
-    89		NULL
-    90	};
-    91	
-    92	static struct attribute_group cb_mem_attr_group = {
-    93		.name = "cbmem_attributes",
-    94		.attrs = cb_mem_attrs,
-    95		.bin_attrs = cb_mem_bin_attrs,
-    96	};
-    97	
-    98	static int cbmem_probe(struct coreboot_device *cdev)
-    99	{
-   100		struct device *dev = &cdev->dev;
-   101		struct cb_priv *priv;
-   102		int err;
-   103	
-   104		priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-   105		if (!priv)
-   106			return -ENOMEM;
-   107	
-   108		memcpy(&priv->entry, &cdev->cbmem_entry, sizeof(priv->entry));
-   109	
- > 110		priv->remap = memremap(priv->entry.address,
-   111				       priv->entry.entry_size, MEMREMAP_WB);
-   112		if (!priv->remap) {
-   113			err = -ENOMEM;
-   114			goto failure;
-   115		}
-   116	
-   117		err = sysfs_create_group(&dev->kobj, &cb_mem_attr_group);
-   118		if (err) {
-   119			dev_err(dev, "failed to create sysfs attributes: %d\n", err);
- > 120			memunmap(priv->remap);
-   121			goto failure;
-   122		}
-   123	
-   124		dev->platform_data = priv;
-   125	
-   126		return 0;
-   127	failure:
-   128		kfree(priv);
-   129		return err;
-   130	}
-   131	
-   132	static int cbmem_remove(struct coreboot_device *cdev)
-   133	{
-   134		struct device *dev = &cdev->dev;
-   135		const struct cb_priv *priv;
-   136	
-   137		priv = (const struct cb_priv *)dev_get_platdata(dev);
-   138	
-   139		sysfs_remove_group(&dev->kobj, &cb_mem_attr_group);
-   140	
-   141		if (priv)
- > 142			memunmap(priv->remap);
-   143		kfree(priv);
-   144	
-   145		dev->platform_data = NULL;
-   146	
-   147		return 0;
-   148	}
-   149	
-
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
