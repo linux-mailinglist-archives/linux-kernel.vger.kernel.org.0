@@ -2,196 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6939FFC2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 00:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5247BFFC1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 00:00:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfKQXPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 18:15:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbfKQXPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 18:15:41 -0500
-Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AD9620727;
-        Sun, 17 Nov 2019 23:15:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574032539;
-        bh=5LLOZx13gw+mpOTgUjg5Y1D3Ju4jWNlY0E33O2DSs/8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=h/wGXScgvRUk3b8oBjiphMgJuvqsRAdGUkdLlgeIU1W87g7+Ee0gx6kmne3WmdH/K
-         fLwc9uoalybPtht/cmnva8e3+M93aLwfiQrqxxkCd8bMtNRKGhIFPMGok0giEqsfDN
-         +XkIIWUA6mrQq3U1z3QIGedkkd8i2sYFscyUvmB8=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id B535A35229EF; Sun, 17 Nov 2019 13:53:39 -0800 (PST)
-Date:   Sun, 17 Nov 2019 13:53:39 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH 08/11] rcu: don't use negative ->rcu_read_lock_nesting
-Message-ID: <20191117215339.GD2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191031100806.1326-1-laijs@linux.alibaba.com>
- <20191031100806.1326-9-laijs@linux.alibaba.com>
- <20191101123323.GC17910@paulmck-ThinkPad-P72>
- <3437ee3f-2807-16eb-5e9b-77189fa31cdf@linux.alibaba.com>
+        id S1726435AbfKQXAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 18:00:33 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:43199 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbfKQXAc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 18:00:32 -0500
+Received: by mail-il1-f193.google.com with SMTP id r9so14230816ilq.10
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 15:00:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d/1Y1QsI93gAHAKWqh4KEcte8aqnaRPIZE1b5kmVqj0=;
+        b=0+akr7oqEpeSO2u3AMLVbtvvWyYay1wmJK9jgvoxAvQHfv6K0sf07DlcIcnsrq9TT4
+         yEYe3e9WgTta6rK2pHa1RQJzSonqANR2Pu62/k522iBij0i3EX1MsfVSJgHfIIk6iq9Q
+         2e3hlLPWuGiveuqjs+9Xi3E/ElfVs5vmilEMN7HgTo/VTH0cJp0Ktb9LCZ84B4LbSoKQ
+         lh8l0cKzQKJ2OYfcyJJq8TU6aC5/WXnK/oz2cn1W/5gLamgrSGUehMTdliEVx13cnD76
+         CTmxp1cHU6tL6gO0eHgBD+ziLaMOvLo0OOAzrCkFhdN5xe/rggFHr88x5FoZzRuBBiVj
+         qdaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d/1Y1QsI93gAHAKWqh4KEcte8aqnaRPIZE1b5kmVqj0=;
+        b=oLBKQash+F00twJNVmLgQ8CS/lG+F2MFBJjwFFX8cZ8U9nz2ryIKqdPt2s+HJFlUUR
+         jwUU4I/RgPdCdBYhYNGAGLY+WoVeOtVEu65n9UxFE0rbymAb3pjMuGeAXhlJ9NylxQ4y
+         B1RkGJ57Djy4OaWjuUKycZBpRUkBQjKeuHMUUF6I0LXk4Ub7wt/2R+YADJSgzazn41jz
+         BJerlbIjvf1ShnXA7VUyyRbdtl4I514hVuIryV8grrYF/B8O6EXNwK6ZGBcgpO/T6J3b
+         6L9joevVPsuYmnuO1h/pe6rvp/2MqRxONxBRPpNCQIiLHciP9XySS2E/zIiSTtlo+Lgo
+         bMsw==
+X-Gm-Message-State: APjAAAX2EUAzxpLbCH6EqA7/G8lCjsx/XKxrxNcH9DsclNz1HAB1StgG
+        oCxhJGINJWDNltoUYKRu3BJZy167AIc200RwLLhlFw==
+X-Google-Smtp-Source: APXvYqwWdy6zFjXkz0tCZCsaU/pcQL2aDpb3eh5HwQqdwpJhIQ195TtZ+VfqQFr+VhwLVGAEVyjVaDm+UpscebhFvXc=
+X-Received: by 2002:a92:46c9:: with SMTP id d70mr11936574ilk.159.1574031631207;
+ Sun, 17 Nov 2019 15:00:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3437ee3f-2807-16eb-5e9b-77189fa31cdf@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
+In-Reply-To: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
+From:   Jon Mason <jdmason@kudzu.us>
+Date:   Sun, 17 Nov 2019 18:00:17 -0500
+Message-ID: <CAPoiz9wAJz=Hqb6Os=9AHHv_NGpZ8uCaAuOC=aUTkASKdfs9WQ@mail.gmail.com>
+Subject: Re: [PATCH] NTB: Fix an error in get link status
+To:     Jiasen Lin <linjiasen@hygon.cn>
+Cc:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-ntb <linux-ntb@googlegroups.com>, linjiasen007@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 16, 2019 at 09:04:56PM +0800, Lai Jiangshan wrote:
-> On 2019/11/1 8:33 下午, Paul E. McKenney wrote:
-> > On Thu, Oct 31, 2019 at 10:08:03AM +0000, Lai Jiangshan wrote:
-> > > Negative ->rcu_read_lock_nesting was introduced to prevent
-> > > scheduler deadlock which was just prevented by deferred qs.
-> > > So negative ->rcu_read_lock_nesting is useless now and
-> > > rcu_read_unlock() can be simplified.
-> > > 
-> > > And negative ->rcu_read_lock_nesting is bug-prone,
-> > > it is good to kill it.
-> > > 
-> > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> > > ---
-> > >   kernel/rcu/tree_exp.h    | 30 ++----------------------------
-> > >   kernel/rcu/tree_plugin.h | 21 +++++----------------
-> > >   2 files changed, 7 insertions(+), 44 deletions(-)
-> > > 
-> > > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> > > index c0d06bce35ea..9dcbd2734620 100644
-> > > --- a/kernel/rcu/tree_exp.h
-> > > +++ b/kernel/rcu/tree_exp.h
-> > > @@ -621,11 +621,11 @@ static void rcu_exp_handler(void *unused)
-> > >   	 * report the quiescent state, otherwise defer.
-> > >   	 */
-> > >   	if (!t->rcu_read_lock_nesting) {
-> > > +		rdp->exp_deferred_qs = true;
-> > >   		if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
-> > >   		    rcu_dynticks_curr_cpu_in_eqs()) {
-> > > -			rcu_report_exp_rdp(rdp);
-> > > +			rcu_preempt_deferred_qs(t);
-> > >   		} else {
-> > > -			rdp->exp_deferred_qs = true;
-> > >   			set_tsk_need_resched(t);
-> > >   			set_preempt_need_resched();
-> > >   		}
-> > > @@ -646,32 +646,6 @@ static void rcu_exp_handler(void *unused)
-> > >   		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
-> > >   		return;
-> > >   	}
-> > > -
-> > > -	/*
-> > > -	 * The final and least likely case is where the interrupted
-> > > -	 * code was just about to or just finished exiting the RCU-preempt
-> > > -	 * read-side critical section, and no, we can't tell which.
-> > > -	 * So either way, set ->deferred_qs to flag later code that
-> > > -	 * a quiescent state is required.
-> > > -	 *
-> > > -	 * If the CPU is fully enabled (or if some buggy RCU-preempt
-> > > -	 * read-side critical section is being used from idle), just
-> > > -	 * invoke rcu_preempt_deferred_qs() to immediately report the
-> > > -	 * quiescent state.  We cannot use rcu_read_unlock_special()
-> > > -	 * because we are in an interrupt handler, which will cause that
-> > > -	 * function to take an early exit without doing anything.
-> > > -	 *
-> > > -	 * Otherwise, force a context switch after the CPU enables everything.
-> > > -	 */
-> > > -	rdp->exp_deferred_qs = true;
-> > > -	if (rcu_preempt_need_deferred_qs(t) &&
-> > > -	    (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
-> > > -	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))) {
-> > > -		rcu_preempt_deferred_qs(t);
-> > > -	} else {
-> > > -		set_tsk_need_resched(t);
-> > > -		set_preempt_need_resched();
-> > > -	}
-> > >   }
-> > >   /* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
-> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > index dbded2b8c792..c62631c79463 100644
-> > > --- a/kernel/rcu/tree_plugin.h
-> > > +++ b/kernel/rcu/tree_plugin.h
-> > > @@ -344,8 +344,6 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
-> > >   }
-> > >   /* Bias and limit values for ->rcu_read_lock_nesting. */
-> > > -#define RCU_NEST_BIAS INT_MAX
-> > > -#define RCU_NEST_NMAX (-INT_MAX / 2)
-> > >   #define RCU_NEST_PMAX (INT_MAX / 2)
-> > >   /*
-> > > @@ -373,21 +371,15 @@ void __rcu_read_unlock(void)
-> > >   {
-> > >   	struct task_struct *t = current;
-> > > -	if (t->rcu_read_lock_nesting != 1) {
-> > > -		--t->rcu_read_lock_nesting;
-> > > -	} else {
-> > > +	if (--t->rcu_read_lock_nesting == 0) {
-> > >   		barrier();  /* critical section before exit code. */
-> > > -		t->rcu_read_lock_nesting = -RCU_NEST_BIAS;
-> > > -		barrier();  /* assign before ->rcu_read_unlock_special load */
-> > 
-> > But if we take an interrupt here, and the interrupt handler contains
-> > an RCU read-side critical section, don't we end up in the same hole
-> > that resulted in this article when the corresponding rcu_read_unlock()
-> > executes?  https://lwn.net/Articles/453002/
-> 
-> Hello, Paul
-> 
-> I'm replying the email of V1, which is relying on deferred_qs changes
-> in [PATCH 07/11] (V1).
-> ([PATCH 04/11](V1) relies on it too as you pointed out)
-> 
-> I hope I can answer the question wrt https://lwn.net/Articles/453002/
-> maybe partially.
-> 
-> With the help of deferred_qs mechanism and the special.b.deferred_qs
-> bit, I HOPED rcu_read_unlock_special() can find if itself is
-> risking in scheduler locks via special.b.deferred_qs bit.
-> 
-> --t->rcu_read_lock_nesting;
-> //outmost rcu c.s, rcu_read_lock_nesting is 0. but special is not zero
-> INTERRUPT
->  // the fallowing code will normally be in_interrupt()
->  // or NOT in_interrupt() when wakeup_softirqd() in invoke_softirq()
->  // or NOT in_interrupt() when preempt_shedule_irq()
->  // or other cases I missed.
->  scheduler_lock()
->  rcu_read_lock()
->  rcu_read_unlock()
->   // special has been set but with no special.b.deferred_qs
->   rcu_read_unlock_special()
->    raise_softirq_irqoff()
->     wake_up() when !in_interrupt() // dead lock
-> 
-> preempt_shedule_irq() is guaranteed to clear rcu_read_unlock_special
-> when rcu_read_lock_nesting = 0 before calling into scheduler locks.
-> 
-> But, at least, what caused my hope to be failed was the case
-> wakeup_softirqd() in invoke_softirq() (which was once protected by
-> softirq in about 2 years between ec433f0c5152 and facd8b80c67a).
-> I don't think it is hard to fix it if we keep using
-> special.b.deferred_qs as this V1 series.
+On Thu, Nov 7, 2019 at 4:37 AM Jiasen Lin <linjiasen@hygon.cn> wrote:
+>
+> The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
+> but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
+> It is offset of Device Capabilities Reg rather than Link Control Reg.
+>
+> This code trigger an error in get link statsus:
+>
+>         cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+>                 LNK STA -               0x8fa1
+>                 Link Status -           Up
+>                 Link Speed -            PCI-E Gen 0
+>                 Link Width -            x0
+>
+> This patch use pcie_capability_read_dword to get link status.
+> After fix this issue, we can get link status accurately:
+>
+>         cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+>                 LNK STA -               0x11030042
+>                 Link Status -           Up
+>                 Link Speed -            PCI-E Gen 3
+>                 Link Width -            x16
 
-It is quite possible that special.b.deferred_qs might be useful
-for debugging.  But it should now be possible to take care of the
-nohz_full issue for expedited grace periods, which might in turn allow
-rcu_read_unlock_special() to avoid acquiring scheduler locks.
+No response from AMD maintainers, but it looks like you are correct.
 
-This could avoid the need for negative ->rcu_read_lock_nesting,
-in turn allowing your simplified _rcu_read_unlock().
+This needs a "Fixes:" line here.  I took the liberty of adding one to
+this patch.
 
-Would you like to do the expedited grace-period modifications, or
-would you rather that I do so?
+> Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
+> ---
+>  drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
+>  drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
+> index 156c2a1..ae91105 100644
+> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
+> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+> @@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
+>
+>         ndev->cntl_sta = reg;
+>
+> -       rc = pci_read_config_dword(ndev->ntb.pdev,
+> -                                  AMD_LINK_STATUS_OFFSET, &stat);
+> +       rc = pcie_capability_read_dword(ndev->ntb.pdev,
+> +                                  PCI_EXP_LNKCTL, &stat);
+>         if (rc)
+>                 return 0;
+>         ndev->lnk_sta = stat;
+> @@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
+>  static const struct pci_device_id amd_ntb_pci_tbl[] = {
+>         { PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
+>         { PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
+> +       { PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
 
-						Thanx, Paul
+This should be a separate patch.  I took the liberty of splitting it
+off into a unique patch and attributing it to you.  I've pushed them
+to the ntb-next branch on
+https://github.com/jonmason/ntb
+
+Please verify everything looks acceptable to you (given the changes I
+did above that are attributed to you).  Also, testing of the latest
+code is always appreciated.
+
+Thanks,
+Jon
+
+
+>         { 0, }
+>  };
+>  MODULE_DEVICE_TABLE(pci, amd_ntb_pci_tbl);
+> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_amd.h
+> index 139a307..39e5d18 100644
+> --- a/drivers/ntb/hw/amd/ntb_hw_amd.h
+> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
+> @@ -53,7 +53,6 @@
+>  #include <linux/pci.h>
+>
+>  #define AMD_LINK_HB_TIMEOUT    msecs_to_jiffies(1000)
+> -#define AMD_LINK_STATUS_OFFSET 0x68
+>  #define NTB_LIN_STA_ACTIVE_BIT 0x00000002
+>  #define NTB_LNK_STA_SPEED_MASK 0x000F0000
+>  #define NTB_LNK_STA_WIDTH_MASK 0x03F00000
+> --
+> 2.7.4
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/1573119336-107732-1-git-send-email-linjiasen%40hygon.cn.
