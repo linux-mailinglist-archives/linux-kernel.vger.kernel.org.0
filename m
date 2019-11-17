@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22B91FF858
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 08:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49ED5FF84F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 08:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbfKQHVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 02:21:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40782 "EHLO mx1.suse.de"
+        id S1726201AbfKQHVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 02:21:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40790 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726047AbfKQHVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 02:21:22 -0500
+        id S1725901AbfKQHVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 02:21:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5C95B25F;
-        Sun, 17 Nov 2019 07:21:20 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 6C145B2FD;
+        Sun, 17 Nov 2019 07:21:21 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v3 4/8] ARM: dts: rtd1195: Introduce r-bus
-Date:   Sun, 17 Nov 2019 08:21:05 +0100
-Message-Id: <20191117072109.20402-5-afaerber@suse.de>
+Subject: [PATCH v3 5/8] dt-bindings: reset: Add Realtek RTD1195
+Date:   Sun, 17 Nov 2019 08:21:06 +0100
+Message-Id: <20191117072109.20402-6-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191117072109.20402-1-afaerber@suse.de>
 References: <20191117072109.20402-1-afaerber@suse.de>
@@ -35,80 +36,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Model Realtek's register bus in DT.
+Add a header with symbolic reset indices for Realtek RTD1195 SoC.
+Naming was derived from BSP register description headers.
 
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- v3: from RTD1395 v1
- * Fixed r-bus size from 0x100000 to 0x70000 in reg and ranges (James)
- * Renamed bus node from r-bus to bus (Rob)
+ v3: Unchanged from RTD1295 reset v2
  
- arch/arm/boot/dts/rtd1195.dtsi | 52 ++++++++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+ include/dt-bindings/reset/realtek,rtd1195.h | 74 +++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 include/dt-bindings/reset/realtek,rtd1195.h
 
-diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.dtsi
-index 4e3866fe8f6e..f5174f828a28 100644
---- a/arch/arm/boot/dts/rtd1195.dtsi
-+++ b/arch/arm/boot/dts/rtd1195.dtsi
-@@ -92,28 +92,36 @@
- 		         <0x18100000 0x18100000 0x01000000>,
- 		         <0x40000000 0x40000000 0xc0000000>;
- 
--		wdt: watchdog@18007680 {
--			compatible = "realtek,rtd1295-watchdog";
--			reg = <0x18007680 0x100>;
--			clocks = <&osc27M>;
--		};
--
--		uart0: serial@18007800 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x18007800 0x400>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			clock-frequency = <27000000>;
--			status = "disabled";
--		};
--
--		uart1: serial@1801b200 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x1801b200 0x100>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			clock-frequency = <27000000>;
--			status = "disabled";
-+		rbus: bus@18000000 {
-+			compatible = "simple-bus";
-+			reg = <0x18000000 0x70000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0x18000000 0x70000>;
+diff --git a/include/dt-bindings/reset/realtek,rtd1195.h b/include/dt-bindings/reset/realtek,rtd1195.h
+new file mode 100644
+index 000000000000..27902abf935b
+--- /dev/null
++++ b/include/dt-bindings/reset/realtek,rtd1195.h
+@@ -0,0 +1,74 @@
++/* SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause) */
++/*
++ * Realtek RTD1195 reset controllers
++ *
++ * Copyright (c) 2017 Andreas Färber
++ */
++#ifndef DT_BINDINGS_RESET_RTD1195_H
++#define DT_BINDINGS_RESET_RTD1195_H
 +
-+			wdt: watchdog@7680 {
-+				compatible = "realtek,rtd1295-watchdog";
-+				reg = <0x7680 0x100>;
-+				clocks = <&osc27M>;
-+			};
++/* soft reset 1 */
++#define RTD1195_RSTN_MISC		0
++#define RTD1195_RSTN_RNG		1
++#define RTD1195_RSTN_USB3_POW		2
++#define RTD1195_RSTN_GSPI		3
++#define RTD1195_RSTN_USB3_P0_MDIO	4
++#define RTD1195_RSTN_VE_H265		5
++#define RTD1195_RSTN_USB		6
++#define RTD1195_RSTN_USB_PHY0		8
++#define RTD1195_RSTN_USB_PHY1		9
++#define RTD1195_RSTN_HDMIRX		11
++#define RTD1195_RSTN_HDMI		12
++#define RTD1195_RSTN_ETN		14
++#define RTD1195_RSTN_AIO		15
++#define RTD1195_RSTN_GPU		16
++#define RTD1195_RSTN_VE_H264		17
++#define RTD1195_RSTN_VE_JPEG		18
++#define RTD1195_RSTN_TVE		19
++#define RTD1195_RSTN_VO			20
++#define RTD1195_RSTN_LVDS		21
++#define RTD1195_RSTN_SE			22
++#define RTD1195_RSTN_DCU		23
++#define RTD1195_RSTN_DC_PHY		24
++#define RTD1195_RSTN_CP			25
++#define RTD1195_RSTN_MD			26
++#define RTD1195_RSTN_TP			27
++#define RTD1195_RSTN_AE			28
++#define RTD1195_RSTN_NF			29
++#define RTD1195_RSTN_MIPI		30
 +
-+			uart0: serial@7800 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x7800 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				clock-frequency = <27000000>;
-+				status = "disabled";
-+			};
++/* soft reset 2 */
++#define RTD1195_RSTN_ACPU		0
++#define RTD1195_RSTN_VCPU		1
++#define RTD1195_RSTN_PCR		9
++#define RTD1195_RSTN_CR			10
++#define RTD1195_RSTN_EMMC		11
++#define RTD1195_RSTN_SDIO		12
++#define RTD1195_RSTN_I2C_5		18
++#define RTD1195_RSTN_RTC		20
++#define RTD1195_RSTN_I2C_4		23
++#define RTD1195_RSTN_I2C_3		24
++#define RTD1195_RSTN_I2C_2		25
++#define RTD1195_RSTN_I2C_1		26
++#define RTD1195_RSTN_UR1		28
 +
-+			uart1: serial@1b200 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b200 0x100>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				clock-frequency = <27000000>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		gic: interrupt-controller@ff011000 {
++/* soft reset 3 */
++#define RTD1195_RSTN_SB2		0
++
++/* iso soft reset */
++#define RTD1195_ISO_RSTN_VFD		0
++#define RTD1195_ISO_RSTN_IR		1
++#define RTD1195_ISO_RSTN_CEC0		2
++#define RTD1195_ISO_RSTN_CEC1		3
++#define RTD1195_ISO_RSTN_DP		4
++#define RTD1195_ISO_RSTN_CBUSTX		5
++#define RTD1195_ISO_RSTN_CBUSRX		6
++#define RTD1195_ISO_RSTN_EFUSE		7
++#define RTD1195_ISO_RSTN_UR0		8
++#define RTD1195_ISO_RSTN_GMAC		9
++#define RTD1195_ISO_RSTN_GPHY		10
++#define RTD1195_ISO_RSTN_I2C_0		11
++#define RTD1195_ISO_RSTN_I2C_6		12
++#define RTD1195_ISO_RSTN_CBUS		13
++
++#endif
 -- 
 2.16.4
 
