@@ -2,87 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A2FFF9D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 14:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6389EFF9D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 14:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfKQNMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 08:12:53 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43641 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfKQNMw (ORCPT
+        id S1726127AbfKQNOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 08:14:31 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.218]:19072 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfKQNOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 08:12:52 -0500
-Received: by mail-pl1-f195.google.com with SMTP id a18so8064188plm.10
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 05:12:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
-        b=QaVaTZMQ9stC0bY9wY+C8rKKdQyYTDedLVIr6btZyw0sFZceSVVNOIALcddTIhQb+/
-         XWGF0x306kshX8XsUca4zmV7wHTe3oZKagriBXeiV+jQ4vvfzBrFRo/OODK23wb9GE3Y
-         rwHsuRx7n/jBP6LoWsB/nbNvy5iwYS/0luZG8Al5aH0FPsRWzARXMcVpk2d8KlsvS6fh
-         hc0P0/UtPJ6c7i2U2CzJYJf1/CbkyGND7r327HBBD4BkxsfR2539m/wamW9TnBjL0wmr
-         4w1tcuJ/bpQRycY8hMpwEJ9gQmzT4PVT9H3s+UpvNA/MPNyuyE6PW+vpHW8bcpphmz+3
-         i7Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
-        b=S54OvjYGv8ybx/IY9F5akuq4aoywWYwMb1oU8KVSPxRvlvZaqLkknoHRKxIEWsAtk7
-         L6UbkMe0fu17WrBbaEaj1vHDfDzMFd4HWNvsoWsqLCyF69HTInGQFF1SY79rXQDuwopi
-         7tIF0Oms6LWtpaIwtpb47s4N1qa7hCKZl0b7ZPriw98NmASoe42tYhFr/oSHuZbqO7nA
-         ZPJIAOzB1GM5dxqVBoXfuqJTTpzDfje90BPg/fPHHwj6kAKYZcg/8y5umIQ20f0NQbAX
-         Jnhry1J0BCaSJFq88BlQKWDj8Kb0EZlZaP1YuvCoQQMbi0Thksr3ESNmB4vwrkK8YNEy
-         3SeA==
-X-Gm-Message-State: APjAAAUOy6aOjq7qZxwY7Au8JBXPeUfYr9doG/2NeqmAVrUqbleu6XU1
-        UeVf/frlDa/nlTlFFfQ6k5YpD9v8terGHIxpENc=
-X-Google-Smtp-Source: APXvYqxtwG9l5yLT+8c9a3DUlmTsSVCyu++q1AnmQ3g5I8Kb16k3KheE+0Vpon75wbB8Zwocyd2zKfvAxdvmSLODfGQ=
-X-Received: by 2002:a17:902:be14:: with SMTP id r20mr23836943pls.297.1573996372045;
- Sun, 17 Nov 2019 05:12:52 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:192:0:0:0:0 with HTTP; Sun, 17 Nov 2019 05:12:51
- -0800 (PST)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <crepinak.vainqueur@gmail.com>
-Date:   Sun, 17 Nov 2019 14:12:51 +0100
-Message-ID: <CAHwNn8+hcyP2FMNgjEdH97dKDbiVewcCWR_yDQv2bR0WfTr8pQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 17 Nov 2019 08:14:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573996463;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=z7TwVxZs2EnNaRI5O7Pgh8WK4q6ghIyxAhe6RiJYSDo=;
+        b=irFK3+Gu7YEHrOEywGRndlHrH+ua5WHFXS/QB/9gZ3pUiuqh9EaAKDm5NVWP/4Ja1c
+        XH/Om2I6qzy7USRA3KZidQe0a4gf5wEihNQ4hFN9pV2BNwvcqLyJr0i8KFe7N4d4GPqr
+        4LgtMKxNWH8ngp+WZoQjDNwEWcGZUxE2lDXnFXrQtF3NL0chb79y0aI9OLYwiQQpKQrL
+        rqDHtmAX4s+v7gqVKl5Wsgj8TgVo7YEbKTwnT+4AVW+ezNmEjU6OYcQnqyYYq1iRpkzJ
+        mJ8MKMcFK0aHFeHDL4woQSWiUThPL6GSf4U46gIGJUqwmaNLK70GMongfnN1pWUsYDop
+        ud7Q==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSaXA4JLWE="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
+        with ESMTPSA id L09db3vAHDEEOai
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 17 Nov 2019 14:14:14 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: MIPS: bug: gettimeofday syscall broken on CI20 board
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <18788C50-F29B-4BD7-89F6-B056FF490214@goldelico.com>
+Date:   Sun, 17 Nov 2019 14:14:14 +0100
+Cc:     linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        MIPS Creator CI20 Development 
+        <mips-creator-ci20-dev@googlegroups.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <703DC004-96E8-463D-8870-3CC410FE1C5E@goldelico.com>
+References: <18788C50-F29B-4BD7-89F6-B056FF490214@goldelico.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day, dear
+Hi Vincenzo,
 
-My name is Mr. Joe Akaba ESQ, Working with one of the best
-chambers and I write to inform you about the death of my client who
-dead as a result of an accident with his family .On the 19th day of August
-2017, My late client died as a result of deadly accident without him be
-register any of his family member as next of kin to bank where he deposited
-a huge amount of money and He died with his family and i have searched for
-any other members of his
-nearby relative without any fruitful result and it was when the bank
-here sent me a notice of their resolution to confiscate he=E2=80=99s estate=
- in line
-with their abandoned property.
+> Am 07.11.2019 um 17:21 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+> Hi,
+> I am trying to run v5.4-rc6 on the CI20 board (jz4780) and it
+> is almost ok. Except one strange thing.
+>=20
+> If I install a v4.19.81 kernel I can initialize the
+> ethernet interface and dhclient works.
+>=20
+> If I install a v5.4-rc6 kernel on exactly the same
+> rootfs dhclient fails with
+>=20
+> root@letux:~# dhclient
+> ../../../../lib/isc/unix/time.c:200: Operation not permitted
+> root@letux:~#
+>=20
+> I have done some strace and the first significant difference
+> is that with v5.4-rc6 there is no gettimeofday syscall.
+>=20
+> Another symptom pointing in the same direction is that
+> after manually assigning an IP address I can run ping
+> but get strange time values.
+>=20
+> So it may be that
+>=20
+> 24640f233b46 mips: Add support for generic vDSO
+>=20
+> did break gettimeofday when used with latest Debian Stretch
+> libraries. I tried to git revert but there are conflicts.
+>=20
+> Just a side-note: both kernels work with Debian Jessie,
+> which likely has an older gettimeofday wrapper that
+> is not influenced by some subtle change.
 
-This is to bring your attention by seeking your consent to present
-your name as My late client next of Kin to the bank where he
-deposited a huge amount of money before his death Eight million Five
-hundred thousand United State dollar .$8.5 million Usd
+I finally found time to do a bisect and it confirms:
 
-I have unsuccessfully made several attempts to locate any of my
-clients extended relatives, but all to no avail. Please i need your urgent
- respond so that we can move to the bank where the fund is deposited .
+24640f233b466051ad3a5d2786d2951e43026c9d is the first bad commit
+commit 24640f233b466051ad3a5d2786d2951e43026c9d
+Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Date:   Fri Jun 21 10:52:46 2019 +0100
 
-Thanks and regards,
-Barrister Joe Akaba (Esq)
-Principal attorney of
-dominion associates
-chambers barristers & solicitors
-Call +22890-33-26-71
+    mips: Add support for generic vDSO
+   =20
+    The mips vDSO library requires some adaptations to take advantage of =
+the
+    newly introduced generic vDSO library.
+   =20
+    Introduce the following changes:
+     - Modification of vdso.c to be compliant with the common vdso =
+datapage
+     - Use of lib/vdso for gettimeofday
+   =20
+    Cc: Ralf Baechle <ralf@linux-mips.org>
+    Cc: Paul Burton <paul.burton@mips.com>
+    Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+    [paul.burton@mips.com: Prepend $(src) to config-n32-o32-env.c path.]
+    Signed-off-by: Paul Burton <paul.burton@mips.com>
+
+ arch/mips/Kconfig                         |   2 +
+ arch/mips/include/asm/vdso.h              |  78 +--------------
+ arch/mips/include/asm/vdso/gettimeofday.h | 151 =
+++++++++++++++++++++++++++++++
+ arch/mips/include/asm/vdso/vdso.h         |  85 +++++++++++++++++
+ arch/mips/include/asm/vdso/vsyscall.h     |  43 +++++++++
+ arch/mips/kernel/vdso.c                   |  37 ++------
+ arch/mips/vdso/Makefile                   |  33 ++++++-
+ arch/mips/vdso/config-n32-o32-env.c       |  17 ++++
+ arch/mips/vdso/elf.S                      |   2 +-
+ arch/mips/vdso/sigreturn.S                |   2 +-
+ arch/mips/vdso/vdso.h                     |  85 -----------------
+ arch/mips/vdso/vgettimeofday.c            |  40 ++++++++
+ 12 files changed, 378 insertions(+), 197 deletions(-)
+ create mode 100644 arch/mips/include/asm/vdso/gettimeofday.h
+ create mode 100644 arch/mips/include/asm/vdso/vdso.h
+ create mode 100644 arch/mips/include/asm/vdso/vsyscall.h
+ create mode 100644 arch/mips/vdso/config-n32-o32-env.c
+ delete mode 100644 arch/mips/vdso/vdso.h
+ create mode 100644 arch/mips/vdso/vgettimeofday.c
+
+So this patch intoruced in v5.4-rc1 breaks compatibility with Debian 9.9
+user space assumptions.
+
+One thing seems strange to me:
+
+-/**
+- * union mips_vdso_data - Data provided by the kernel for the VDSO.
+- * @xtime_sec:         Current real time (seconds part).
+- * @xtime_nsec:                Current real time (nanoseconds part, =
+shifted).
+- * @wall_to_mono_sec:  Wall-to-monotonic offset (seconds part).
+- * @wall_to_mono_nsec: Wall-to-monotonic offset (nanoseconds part).
+- * @seq_count:         Counter to synchronise updates (odd =3D =
+updating).
+- * @cs_shift:          Clocksource shift value.
+- * @clock_mode:                Clocksource to use for time functions.
+- * @cs_mult:           Clocksource multiplier value.
+- * @cs_cycle_last:     Clock cycle value at last update.
+- * @cs_mask:           Clocksource mask value.
+- * @tz_minuteswest:    Minutes west of Greenwich (from timezone).
+- * @tz_dsttime:                Type of DST correction (from timezone).
+- *
+- * This structure contains data needed by functions within the VDSO. It =
+is
+- * populated by the kernel and mapped read-only into user memory. The =
+time
+- * fields are mirrors of internal data from the timekeeping =
+infrastructure.
+- *
+- * Note: Care should be taken when modifying as the layout must remain =
+the same
+- * for both 64- and 32-bit (for 32-bit userland on 64-bit kernel).
+- */
+ union mips_vdso_data {
+-       struct {
+-               u64 xtime_sec;
+-               u64 xtime_nsec;
+-               u64 wall_to_mono_sec;
+-               u64 wall_to_mono_nsec;
+-               u32 seq_count;
+-               u32 cs_shift;
+-               u8 clock_mode;
+-               u32 cs_mult;
+-               u64 cs_cycle_last;
+-               u64 cs_mask;
+-               s32 tz_minuteswest;
+-               s32 tz_dsttime;
+-       };
+-
++       struct vdso_data data[CS_BASES];
+        u8 page[PAGE_SIZE];
+ };
+
+If I look at the definition of vdso_data it *is* significantly differen
+from mips_vdso_data.
+
+What I would assume is that the struct mips_vdso_data is embossed in =
+user
+space code and therefore using vdso_data instead is breaking API.
+
+Please advise what I should try or check to narrow down further.
+
+BR and thanks,
+Nikolaus Schaller
+
