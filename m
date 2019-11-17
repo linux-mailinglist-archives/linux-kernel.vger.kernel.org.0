@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F847FF9EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 15:00:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65D35FF9F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 15:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfKQOAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 09:00:00 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32796 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfKQN77 (ORCPT
+        id S1726315AbfKQOAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 09:00:03 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35272 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfKQOAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 08:59:59 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w9so16397827wrr.0;
-        Sun, 17 Nov 2019 05:59:58 -0800 (PST)
+        Sun, 17 Nov 2019 09:00:02 -0500
+Received: by mail-wm1-f68.google.com with SMTP id 8so15870245wmo.0;
+        Sun, 17 Nov 2019 05:59:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wYheJOg1NZzECr658le7NqXjuqImUz/Kw+GoeDiCAg0=;
-        b=Ci1s6DmFUtw7M7Vs9pzJsGsOCzUinirsXZj6J48Hg0YKhROz57Hk+s2q26eJHg/1wV
-         Lxr97WsLsrpsjq4IftTRlxBdkWZFGdlywbdBYglWo7hZUsHJQtv3K0+dONSpIDEiZ8dR
-         xXIhJc+PuHWryoprmGQbzxZuys59fqmsUhvHIPjImnGbMw6LSPUNGeci0fY/V8wbVkJu
-         LsRdB2CI547U+UWOPQhbVuLQ0enwHFK3UfxmVWA2DNyBmTRVQigHVdBFzOJX1mUHd0kI
-         4dx1U0yy8uq1NXaQxMAYJbyRlhXkk7ilZtwuJ021OnjnM5Mc2zVNwofMuS53WMtSzfAb
-         ZsPQ==
+        bh=VK1JO8dp501rCEWUDhaKb+5p4cyh/6ctrMeXSGi6/vI=;
+        b=uX3kkks5u09MSU6+9FB6NjV7WG1co9tZzINsNjFFrAuUPaeY/LpqjaxYBKw1rgs2ci
+         AtRVoMgC/7mQXqQaxeNAjmEBgaq8AlfvbgG6GN17hSWOKG8XpuN9qVxgbaGXLMMjmWG9
+         T9UlDdy5XnqdavAM+l6CY+nHHTMpTnCfwXb9P0s0kSycGW3T8J9W3ppong8i+YvXPvio
+         9pu2FQpHTpOYG3YHJWhg37Pe5S9Ty03Z6WAz0fqMWszAFPYokzm1iqPTUWD9Jy1hBZx/
+         F++OWtatB0jXOEZMXmS3MlK2rkhcjPH4o/LTvaHQko2TRMyVwf8QZcOgydXrTP90crJK
+         X2VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wYheJOg1NZzECr658le7NqXjuqImUz/Kw+GoeDiCAg0=;
-        b=m7mnupKcweuCLLqDfiBEefmaL7eykZJ2CR61+6RO8BVFYpjKZPMOhu4jnhuY0TRLx8
-         RDu5ImSQbJbmO3nTpYvQKbctNL3ifpfWIgUTJyl5zf6m1EZbCH41oWxjK/iLM6fqCoEj
-         i0G5nDJCInWleFvV8gVMaoQ+iiXnRiSy3SZdgAQ43kxqNewvCJs8qrkrETz7FE0TvBI6
-         hhRxABVsI8NSKrjOuQOcZ1A7cgCU4ArMn1WB6DYVjW1nmQJhVJaPNNE8dnPf5W3abx+W
-         r+2aBJb/gxLxT1nEhDndNNKAbnsBC/jCPAXsDWONiqIQcaDPtZhIH7QabIhmLYhuvPTp
-         IUZg==
-X-Gm-Message-State: APjAAAWl+qYUWlFzAiqXskxk0UdG2dDHll2kbnnSyLbgyYJEmDIHiEIj
-        VwGcRW/7LWbwGcGnypPkwMU=
-X-Google-Smtp-Source: APXvYqzuRu/LHBhYR7+sZR5cemFrtpnOuzCWp3HT/9ni5iw/xVQKsmBZEyrmCCUYY4F2wIxyjxefCQ==
-X-Received: by 2002:adf:c50a:: with SMTP id q10mr26940232wrf.374.1573999197651;
-        Sun, 17 Nov 2019 05:59:57 -0800 (PST)
+        bh=VK1JO8dp501rCEWUDhaKb+5p4cyh/6ctrMeXSGi6/vI=;
+        b=VTqt8O9qFzx+EH+0E5EMJL/SE98F0+HtB8rgByIvDFkOEFHni5MSN0Q4Ee08/8WIBo
+         LnTOX5T4jNltgYwyH88bo0SggpATU8mqxfy7MdN0oRKCfXJmJdVjSHp62BTpbWXKIFRP
+         YiEEYqceY7HtxIoUHeqIs7ZhG1Q4jCX7wQOQmc2+uLcbQdDkQAI3mUn/bkfyP1P9eVSU
+         AAE5VsuIjX3/Yj/MUfj7ifAOaMdFRiuCjiDBSGmAt1iZf9HWbwpmyoOVxNOTsd0E/vZH
+         KJBRgOQeyy399P78v2L3DQuDRfsUL3fGZV+LjNV4GrLAke/P2w1ddQzxGpvr3gMUq+rk
+         SjnQ==
+X-Gm-Message-State: APjAAAW+n4ailROEncf2lgCHvw0UZsCbfGyMHJG9OIj2Am0NrvyES+QW
+        QgnSx/M+djhRI2U05xhAd4s=
+X-Google-Smtp-Source: APXvYqz2ho4QekV3NNoeQpC90s5YyGanfRKJwSw4FD4KLJzoleyj2nZK5zI9GOyuKLXdGsv2ZtMcOg==
+X-Received: by 2002:a05:600c:21d5:: with SMTP id x21mr19273737wmj.162.1573999198652;
+        Sun, 17 Nov 2019 05:59:58 -0800 (PST)
 Received: from localhost.localdomain (p200300F1371CB100428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:371c:b100:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id n65sm18004803wmf.28.2019.11.17.05.59.56
+        by smtp.googlemail.com with ESMTPSA id n65sm18004803wmf.28.2019.11.17.05.59.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 05:59:57 -0800 (PST)
+        Sun, 17 Nov 2019 05:59:58 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
         linux-amlogic@lists.infradead.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 2/5] clk: meson: meson8b: use clk_hw_set_parent in the CPU clock notifier
-Date:   Sun, 17 Nov 2019 14:59:24 +0100
-Message-Id: <20191117135927.135428-3-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 3/5] clk: meson: meson8b: change references to the XTAL clock to use [fw_]name
+Date:   Sun, 17 Nov 2019 14:59:25 +0100
+Message-Id: <20191117135927.135428-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191117135927.135428-1-martin.blumenstingl@googlemail.com>
 References: <20191117135927.135428-1-martin.blumenstingl@googlemail.com>
@@ -64,74 +64,181 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch from clk_set_parent() to clk_hw_set_parent() now that we have a
-way to configure a mux clock based on clk_hw pointers. This simplifies
-the meson8b_cpu_clk_notifier_cb logic. No functional changes.
+The XTAL clock is an actual crystal which is mounted on the PCB. Thus
+the meson8b clock controller driver should not provide the XTAL clock.
+
+The meson8b clock controller driver must not use references to
+the meson8b_xtal clock anymore before we can provide the XTAL clock
+via OF. Replace the references to the meson8b_xtal.hw by using
+clk_parent_data's .fw_name and .name = "xtal" (along with index = -1).
+This makes the common clock framework use the clock provided via OF and
+if that's not available it falls back to getting the clock by it's name
+(which is then the clk_fixed_rate which we register in our driver).
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/meson/meson8b.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ drivers/clk/meson/meson8b.c | 78 +++++++++++++++++++++----------------
+ 1 file changed, 44 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 67e6691e080c..d376f80e806d 100644
+index d376f80e806d..f857a2c4d025 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -3585,7 +3585,7 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
- 
- struct meson8b_nb_data {
- 	struct notifier_block nb;
--	struct clk_hw_onecell_data *onecell_data;
-+	struct clk_hw *cpu_clk;
+@@ -97,8 +97,10 @@ static struct clk_regmap meson8b_fixed_pll_dco = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "fixed_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal",
++			.name = "xtal",
++			.index = -1,
+ 		},
+ 		.num_parents = 1,
+ 	},
+@@ -162,8 +164,10 @@ static struct clk_regmap meson8b_hdmi_pll_dco = {
+ 		/* sometimes also called "HPLL" or "HPLL PLL" */
+ 		.name = "hdmi_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal",
++			.name = "xtal",
++			.index = -1,
+ 		},
+ 		.num_parents = 1,
+ 	},
+@@ -237,8 +241,10 @@ static struct clk_regmap meson8b_sys_pll_dco = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "sys_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal",
++			.name = "xtal",
++			.index = -1,
+ 		},
+ 		.num_parents = 1,
+ 	},
+@@ -631,9 +637,9 @@ static struct clk_regmap meson8b_cpu_in_sel = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cpu_in_sel",
+ 		.ops = &clk_regmap_mux_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw,
+-			&meson8b_sys_pll.hw,
++		.parent_data = (const struct clk_parent_data[]) {
++			{ .fw_name = "xtal", .name = "xtal", .index = -1, },
++			{ .hw = &meson8b_sys_pll.hw, },
+ 		},
+ 		.num_parents = 2,
+ 		.flags = (CLK_SET_RATE_PARENT |
+@@ -736,9 +742,9 @@ static struct clk_regmap meson8b_cpu_clk = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cpu_clk",
+ 		.ops = &clk_regmap_mux_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw,
+-			&meson8b_cpu_scale_out_sel.hw,
++		.parent_data = (const struct clk_parent_data[]) {
++			{ .fw_name = "xtal", .name = "xtal", .index = -1, },
++			{ .hw = &meson8b_cpu_scale_out_sel.hw, },
+ 		},
+ 		.num_parents = 2,
+ 		.flags = (CLK_SET_RATE_PARENT |
+@@ -758,12 +764,12 @@ static struct clk_regmap meson8b_nand_clk_sel = {
+ 		.name = "nand_clk_sel",
+ 		.ops = &clk_regmap_mux_ops,
+ 		/* FIXME all other parents are unknown: */
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_fclk_div4.hw,
+-			&meson8b_fclk_div3.hw,
+-			&meson8b_fclk_div5.hw,
+-			&meson8b_fclk_div7.hw,
+-			&meson8b_xtal.hw,
++		.parent_data = (const struct clk_parent_data[]) {
++			{ .hw = &meson8b_fclk_div4.hw, },
++			{ .hw = &meson8b_fclk_div3.hw, },
++			{ .hw = &meson8b_fclk_div5.hw, },
++			{ .hw = &meson8b_fclk_div7.hw, },
++			{ .fw_name = "xtal", .name = "xtal", .index = -1, },
+ 		},
+ 		.num_parents = 5,
+ 		.flags = CLK_SET_RATE_PARENT,
+@@ -1721,8 +1727,10 @@ static struct clk_regmap meson8b_hdmi_sys_sel = {
+ 		.name = "hdmi_sys_sel",
+ 		.ops = &clk_regmap_mux_ro_ops,
+ 		/* FIXME: all other parents are unknown */
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal",
++			.name = "xtal",
++			.index = -1,
+ 		},
+ 		.num_parents = 1,
+ 		.flags = CLK_SET_RATE_NO_REPARENT,
+@@ -1767,14 +1775,14 @@ static struct clk_regmap meson8b_hdmi_sys = {
+  * muxed by a glitch-free switch on Meson8b and Meson8m2. Meson8 only
+  * has mali_0 and no glitch-free mux.
+  */
+-static const struct clk_hw *meson8b_mali_0_1_parent_hws[] = {
+-	&meson8b_xtal.hw,
+-	&meson8b_mpll2.hw,
+-	&meson8b_mpll1.hw,
+-	&meson8b_fclk_div7.hw,
+-	&meson8b_fclk_div4.hw,
+-	&meson8b_fclk_div3.hw,
+-	&meson8b_fclk_div5.hw,
++static const struct clk_parent_data meson8b_mali_0_1_parent_data[] = {
++	{ .fw_name = "xtal", .name = "xtal", .index = -1, },
++	{ .hw = &meson8b_mpll2.hw, },
++	{ .hw = &meson8b_mpll1.hw, },
++	{ .hw = &meson8b_fclk_div7.hw, },
++	{ .hw = &meson8b_fclk_div4.hw, },
++	{ .hw = &meson8b_fclk_div3.hw, },
++	{ .hw = &meson8b_fclk_div5.hw, },
  };
  
- static int meson8b_cpu_clk_notifier_cb(struct notifier_block *nb,
-@@ -3593,30 +3593,25 @@ static int meson8b_cpu_clk_notifier_cb(struct notifier_block *nb,
- {
- 	struct meson8b_nb_data *nb_data =
- 		container_of(nb, struct meson8b_nb_data, nb);
--	struct clk_hw **hws = nb_data->onecell_data->hws;
--	struct clk_hw *cpu_clk_hw, *parent_clk_hw;
--	struct clk *cpu_clk, *parent_clk;
-+	struct clk_hw *parent_clk;
- 	int ret;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
--		parent_clk_hw = hws[CLKID_XTAL];
-+		/* xtal */
-+		parent_clk = clk_hw_get_parent_by_index(nb_data->cpu_clk, 0);
- 		break;
- 
- 	case POST_RATE_CHANGE:
--		parent_clk_hw = hws[CLKID_CPU_SCALE_OUT_SEL];
-+		/* cpu_scale_out_sel */
-+		parent_clk = clk_hw_get_parent_by_index(nb_data->cpu_clk, 1);
- 		break;
- 
- 	default:
- 		return NOTIFY_DONE;
- 	}
- 
--	cpu_clk_hw = hws[CLKID_CPUCLK];
--	cpu_clk = __clk_lookup(clk_hw_get_name(cpu_clk_hw));
--
--	parent_clk = __clk_lookup(clk_hw_get_name(parent_clk_hw));
--
--	ret = clk_set_parent(cpu_clk, parent_clk);
-+	ret = clk_hw_set_parent(nb_data->cpu_clk, parent_clk);
- 	if (ret)
- 		return notifier_from_errno(ret);
- 
-@@ -3695,7 +3690,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
- 			return;
- 	}
- 
--	meson8b_cpu_nb_data.onecell_data = clk_hw_onecell_data;
-+	meson8b_cpu_nb_data.cpu_clk = clk_hw_onecell_data->hws[CLKID_CPUCLK];
- 
- 	/*
- 	 * FIXME we shouldn't program the muxes in notifier handlers. The
+ static u32 meson8b_mali_0_1_mux_table[] = { 0, 2, 3, 4, 5, 6, 7 };
+@@ -1789,8 +1797,8 @@ static struct clk_regmap meson8b_mali_0_sel = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mali_0_sel",
+ 		.ops = &clk_regmap_mux_ops,
+-		.parent_hws = meson8b_mali_0_1_parent_hws,
+-		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_hws),
++		.parent_data = meson8b_mali_0_1_parent_data,
++		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_data),
+ 		/*
+ 		 * Don't propagate rate changes up because the only changeable
+ 		 * parents are mpll1 and mpll2 but we need those for audio and
+@@ -1844,8 +1852,8 @@ static struct clk_regmap meson8b_mali_1_sel = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mali_1_sel",
+ 		.ops = &clk_regmap_mux_ops,
+-		.parent_hws = meson8b_mali_0_1_parent_hws,
+-		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_hws),
++		.parent_data = meson8b_mali_0_1_parent_data,
++		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_data),
+ 		/*
+ 		 * Don't propagate rate changes up because the only changeable
+ 		 * parents are mpll1 and mpll2 but we need those for audio and
+@@ -1944,8 +1952,10 @@ static struct clk_regmap meson8m2_gp_pll_dco = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "gp_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&meson8b_xtal.hw
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal",
++			.name = "xtal",
++			.index = -1,
+ 		},
+ 		.num_parents = 1,
+ 	},
 -- 
 2.24.0
 
