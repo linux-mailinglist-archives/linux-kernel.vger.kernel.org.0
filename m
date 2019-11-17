@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 795F8FFAE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 18:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E10C0FFAE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 18:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbfKQRZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 12:25:23 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41634 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfKQRZX (ORCPT
+        id S1726346AbfKQRZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 12:25:32 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39506 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfKQRZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 12:25:23 -0500
-Received: by mail-pl1-f193.google.com with SMTP id d29so8281708plj.8;
-        Sun, 17 Nov 2019 09:25:23 -0800 (PST)
+        Sun, 17 Nov 2019 12:25:31 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 29so8423300pgm.6;
+        Sun, 17 Nov 2019 09:25:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Av+HK2/LnryCPXE2pMFULV8E1x0dPwk+5aKFWr2QtjI=;
-        b=Mf0+ba82SJuPDW/KRGoJ39qEHaJN1XyFmnTe/sOHGfrL/G03s5sXKSh636lcKRh/A2
-         6f85D4EHRB7ZJiv8318Mo5zm4amTsR104icW1n+9iIJTYZnK4f/rZQ8HniteumeBacW1
-         Sy6pH5BCjfW+XSgZzGLRfofHtkiC6OHGiGo/mBGtzAfUf46g8rU3e6+ugDO/u5b2H7He
-         9Z0NV3LlVgJEa0/hfrbv1elnOG48S2hDBTUqxer6zl46RvHc9z2ay5nfsHlK6ZRWhrTb
-         aK7T7SlO8WRlnd+HX+hS8D2XzbPUYyBrGiI3Lm5L/mJElj4EAya1RS2iXH52GFhtAcUS
-         ui8g==
+        bh=fS+44pmIjjlReJvbKvVLf0765f8adwUSGR73BlaFD/U=;
+        b=gN1Mo5UmYrqC9LVg7cuxwT9kHbAX4e9U8sAkLsBuYdVSrFUFqw22QS1Z/B8wbneb7d
+         dLQfmhuY5Crymhhqhb6vUeTI8BFIw1Wxa0rac8lgf5qTfdytIz3NK5k8BUW/77UIdyi5
+         DPoKy5aUe9ugU6Agh65jSohH5pngDGQVlceKbTsf9WC1ppcqJAb3j2epOKqkWoDfcZSN
+         DgK3GxfRnjO2JabyVnKwF/L7w60u1hXnm0pRxRRB4BR4UexWd5x80qfJ/bLCmmDrFfRR
+         mmHO+S8JGg/SonGAnUVDMsnmzmzzkerj4TYxOZnvll8hoSfrQvC8qZigbXWhiq62zl5D
+         JPnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Av+HK2/LnryCPXE2pMFULV8E1x0dPwk+5aKFWr2QtjI=;
-        b=Dk91wfpGbXQSHqvjacirDHE4tyzYkhnMAm0GPZCorMCAy6IZVwYcDQhnw62GwDXxc/
-         DbBigLJ59zDLcHZ8NG/XBEyHcqWG2Tyw8GIRSqsSHxFQO0wDakFzo35gGIAmUjNzJZNO
-         dsZTREJRtKgnieyFxTWC988tr8goYKOYc5flNsDI0Ge4ErhLjpWcrcs3h1Wvn2kjKv3L
-         Pswq2lAwoSFQnv1iS3pePSzP+o72xu01+UGGCqKbeHbF3hYz/HNGcTnzISCYy7QJCGJ7
-         DGjOpWfJCDu7BU3TPe87CLJYo6jwYKFtK5HOCr2p4r3gBuf79QiW4wO1zPryoFjv9IUl
-         ZSCw==
-X-Gm-Message-State: APjAAAUazL7/lk7LwI921SWrPvuto2vfkhHfgkjE8xBfY7AnfbqRQtBO
-        6Il1BECtI6qWeT0GjJk/rfY=
-X-Google-Smtp-Source: APXvYqzqvLaGSfdo9LbLHMOc1Z7izkzBhpQYaSmZrWQF98SMARgzygYTo/2wpu3igIOVsfjsI9ETBQ==
-X-Received: by 2002:a17:902:760d:: with SMTP id k13mr12997470pll.28.1574011522589;
-        Sun, 17 Nov 2019 09:25:22 -0800 (PST)
+        bh=fS+44pmIjjlReJvbKvVLf0765f8adwUSGR73BlaFD/U=;
+        b=X7eOSBhfld1jsDgnIKRz6heXooPPwICXgBVZB6pNIi2EuNgz+ZujYWhbz4QhC344/v
+         zDVOK/uO8rHjOGALtqzI8WL0QgFu2zKSHS+5K1pWFSv7SQayVuEcRRX8Nsvc0Bs+/DTL
+         vcLZ2cM39EyMTD/weymWutFRpaIeTtjQxecuDowk44TFQcpzHeFcOwRiU3ukj1YH9SIH
+         WqvF4JolQnP5i84bL1+hhJDvWn5fIvsJP4lt3NUadLEy2fTrr5jSLMQH/wzRU+Gm24T7
+         MHrEweUyp5k1rxWzW4h00XRF5kb5zxcWlJWy6KbHPvpwN3ncfqMFIbD5zFeRGh4Ji4X+
+         izGA==
+X-Gm-Message-State: APjAAAVD7KRU6d8lXo3n6aBYZUWal6wgIBYVtBcYEZ9Jh3OlYfoiCYD2
+        22HVaCXc1W0pxLy3Kw56QAw=
+X-Google-Smtp-Source: APXvYqyzrnexkyZ2/csroq2Iu4YbCPUaAAitUKHbQ2dotMRGlWPLNDiu39qgc2cFVDa9qI92h1npfQ==
+X-Received: by 2002:a63:395:: with SMTP id 143mr7407475pgd.93.1574011530823;
+        Sun, 17 Nov 2019 09:25:30 -0800 (PST)
 Received: from localhost.localdomain ([2402:3a80:1662:ba74:f9a6:2aa3:8a9a:5581])
-        by smtp.googlemail.com with ESMTPSA id x13sm18146302pfc.46.2019.11.17.09.25.13
+        by smtp.googlemail.com with ESMTPSA id x13sm18146302pfc.46.2019.11.17.09.25.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 09:25:22 -0800 (PST)
+        Sun, 17 Nov 2019 09:25:30 -0800 (PST)
 From:   Jaskaran Singh <jaskaransingh7654321@gmail.com>
 To:     corbet@lwn.net
 Cc:     raven@themaw.net, akpm@linux-foundation.org,
@@ -54,9 +54,9 @@ Cc:     raven@themaw.net, akpm@linux-foundation.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         skhan@linuxfoundation.org
-Subject: [PATCH v2 2/3] docs: filesystems: Update code snippets in autofs.rst
-Date:   Sun, 17 Nov 2019 22:54:35 +0530
-Message-Id: <20191117172436.8831-3-jaskaransingh7654321@gmail.com>
+Subject: [PATCH v2 3/3] docs: filesystems: Add mount map description in Content
+Date:   Sun, 17 Nov 2019 22:54:36 +0530
+Message-Id: <20191117172436.8831-4-jaskaransingh7654321@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191117172436.8831-1-jaskaransingh7654321@gmail.com>
 References: <20191117172436.8831-1-jaskaransingh7654321@gmail.com>
@@ -67,53 +67,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the struct definitions now have an autofs packet header.
-Reflect these changes by adding a definition of this header and
-place it wherever suitable.
+The second paragraph of the content section does not properly
+describe how mount points are determined by autofs.
+
+Replace the lines detailing how the determination of these mount
+points is "ad hoc" by a short description of the mount map syntax
+used by autofs.
 
 Signed-off-by: Jaskaran Singh <jaskaransingh7654321@gmail.com>
 ---
- Documentation/filesystems/autofs.rst | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ Documentation/filesystems/autofs.rst | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/filesystems/autofs.rst b/Documentation/filesystems/autofs.rst
-index 6702a5f61f50..2f704e9c5dc0 100644
+index 2f704e9c5dc0..c17f6bf0eb5d 100644
 --- a/Documentation/filesystems/autofs.rst
 +++ b/Documentation/filesystems/autofs.rst
-@@ -322,8 +322,7 @@ notification messages to this pipe for the daemon to respond to.
- For version 5, the format of the message is::
+@@ -49,9 +49,10 @@ extra properties as described in the next section.
+ Objects can only be created by the automount daemon: symlinks are
+ created with a regular `symlink` system call, while directories and
+ mount traps are created with `mkdir`.  The determination of whether a
+-directory should be a mount trap or not is quite ad hoc, largely for
+-historical reasons, and is determined in part by the
+-*direct*/*indirect*/*offset* mount options, and the *maxproto* mount option.
++directory should be a mount trap is based on a master map. This master
++map is consulted by autofs to determine which directories are mount
++points. Mount points can be *direct*/*indirect*/*offset*.
++On most systems, the default master map is located at */etc/auto.master*.
  
- 	struct autofs_v5_packet {
--		int proto_version;		/* Protocol version */
--		int type;			/* Type of packet */
-+		struct autofs_packet_hdr hdr;
- 		autofs_wqt_t wait_queue_token;
- 		__u32 dev;
- 		__u64 ino;
-@@ -335,6 +334,13 @@ For version 5, the format of the message is::
- 		char name[NAME_MAX+1];
-         };
- 
-+And the format of the header is::
-+
-+	struct autofs_packet_hdr {
-+		int proto_version;		/* Protocol version */
-+		int type;			/* Type of packet */
-+	};
-+
- where the type is one of ::
- 
- 	autofs_ptype_missing_indirect
-@@ -395,8 +401,7 @@ The available ioctl commands are:
- 	anything suitable to expire.  A pointer to a packet::
- 
- 		struct autofs_packet_expire_multi {
--			int proto_version;		/* Protocol version */
--			int type;			/* Type of packet */
-+			struct autofs_packet_hdr hdr;
- 			autofs_wqt_t wait_queue_token;
- 			int len;
- 			char name[NAME_MAX+1];
+ If neither the *direct* or *offset* mount options are given (so the
+ mount is considered to be *indirect*), then the root directory is
 -- 
 2.21.0
 
