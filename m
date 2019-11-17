@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4801FFBDA
+	by mail.lfdr.de (Postfix) with ESMTP id 3ACA5FFBD9
 	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2019 23:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfKQWNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726518AbfKQWNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 17 Nov 2019 17:13:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40160 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:40170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbfKQWNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726278AbfKQWNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 17 Nov 2019 17:13:12 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF0E82084C;
+        by mail.kernel.org (Postfix) with ESMTPSA id E87D720740;
         Sun, 17 Nov 2019 22:13:11 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iWSn9-0002sK-14; Sun, 17 Nov 2019 17:13:11 -0500
-Message-Id: <20191117221310.917990004@goodmis.org>
+        id 1iWSn9-0002so-5b; Sun, 17 Nov 2019 17:13:11 -0500
+Message-Id: <20191117221311.056891660@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 17 Nov 2019 17:13:02 -0500
+Date:   Sun, 17 Nov 2019 17:13:03 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 6/7] ftrace: Add another check for match in register_ftrace_direct()
+Subject: [for-next][PATCH 7/7] ftrace: Add helper find_direct_entry() to consolidate code
 References: <20191117221256.228674565@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -37,36 +37,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-As an instruction pointer passed into register_ftrace_direct() may just
-exist on the ftrace call site, but may not be the start of the call site
-itself, register_ftrace_direct() still needs to update test if a direct call
-exists on the normalized site, as only one direct call is allowed at any one
-time.
+Both unregister_ftrace_direct() and modify_ftrace_direct() needs to
+normalize the ip passed in to match the rec->ip, as it is acceptable to have
+the ip on the ftrace call site but not the start. There are also common
+validity checks with the record found by the ip, these should be done for
+both unregister_ftrace_direct() and modify_ftrace_direct().
 
-Fixes: 763e34e74bb7d ("ftrace: Add register_ftrace_direct()")
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ kernel/trace/ftrace.c | 59 +++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 30 deletions(-)
 
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 32e4e5ffdd97..9fe33ebaf914 100644
+index 9fe33ebaf914..ef79c8393f53 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
-@@ -5030,7 +5030,12 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
- 		goto out_unlock;
+@@ -5112,30 +5112,40 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
+ }
+ EXPORT_SYMBOL_GPL(register_ftrace_direct);
  
- 	/* Make sure the ip points to the exact record */
--	ip = rec->ip;
-+	if (ip != rec->ip) {
-+		ip = rec->ip;
-+		/* Need to check this ip for a direct. */
-+		if (find_rec_direct(ip))
-+			goto out_unlock;
+-int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
++static struct ftrace_func_entry *find_direct_entry(unsigned long *ip)
+ {
+ 	struct ftrace_func_entry *entry;
+-	struct ftrace_direct_func *direct;
+ 	struct dyn_ftrace *rec;
+-	int ret = -ENODEV;
+ 
+-	mutex_lock(&direct_mutex);
++	rec = lookup_rec(*ip, *ip);
++	if (!rec)
++		return NULL;
+ 
+-	entry = __ftrace_lookup_ip(direct_functions, ip);
++	entry = __ftrace_lookup_ip(direct_functions, rec->ip);
+ 	if (!entry) {
+-		/* OK if it is off by a little */
+-		rec = lookup_rec(ip, ip);
+-		if (!rec || rec->ip == ip)
+-			goto out_unlock;
++		WARN_ON(rec->flags & FTRACE_FL_DIRECT);
++		return NULL;
 +	}
  
- 	ret = -ENOMEM;
- 	if (ftrace_hash_empty(direct_functions) ||
+-		entry = __ftrace_lookup_ip(direct_functions, rec->ip);
+-		if (!entry) {
+-			WARN_ON(rec->flags & FTRACE_FL_DIRECT);
+-			goto out_unlock;
+-		}
++	WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
+ 
+-		WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
+-	}
++	/* Passed in ip just needs to be on the call site */
++	*ip = rec->ip;
++
++	return entry;
++}
++
++int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
++{
++	struct ftrace_direct_func *direct;
++	struct ftrace_func_entry *entry;
++	int ret = -ENODEV;
++
++	mutex_lock(&direct_mutex);
++
++	entry = find_direct_entry(&ip);
++	if (!entry)
++		goto out_unlock;
+ 
+ 	if (direct_functions->count == 1)
+ 		unregister_ftrace_function(&direct_ops);
+@@ -5187,24 +5197,13 @@ int modify_ftrace_direct(unsigned long ip,
+ 			 unsigned long old_addr, unsigned long new_addr)
+ {
+ 	struct ftrace_func_entry *entry;
+-	struct dyn_ftrace *rec;
+ 	int ret = -ENODEV;
+ 
+ 	mutex_lock(&direct_mutex);
+-	entry = __ftrace_lookup_ip(direct_functions, ip);
+-	if (!entry) {
+-		/* OK if it is off by a little */
+-		rec = lookup_rec(ip, ip);
+-		if (!rec || rec->ip == ip)
+-			goto out_unlock;
+-
+-		entry = __ftrace_lookup_ip(direct_functions, rec->ip);
+-		if (!entry)
+-			goto out_unlock;
+ 
+-		ip = rec->ip;
+-		WARN_ON(!(rec->flags & FTRACE_FL_DIRECT));
+-	}
++	entry = find_direct_entry(&ip);
++	if (!entry)
++		goto out_unlock;
+ 
+ 	ret = -EINVAL;
+ 	if (entry->direct != old_addr)
 -- 
 2.24.0
 
