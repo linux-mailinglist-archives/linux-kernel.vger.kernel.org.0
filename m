@@ -2,280 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEA16100375
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B04A9100385
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfKRLDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:03:04 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34349 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfKRLDD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:03:03 -0500
-Received: by mail-pl1-f196.google.com with SMTP id h13so9624813plr.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:03:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VeawawUi5g0FfCTDEqJ5MvcxHdxdB9dBz92ffBaoMAw=;
-        b=vE1W3sHhoL/g1XDHkWsw1urllydBJJ1q2dvEuhlzBOxwkuq0i5CwahCJlI06NaoGPo
-         iauR3qHs50+aLvD1VkmN1wVJdqN5jAVym9oUICZEuyH2QECT7kYRs+iB+NzGcRv4/cTn
-         Kp73sCDSOqHlfzKgQ5CTlwEFVBaLSNwbJVv4mGHK/0lsx+atW/SYJ00TpXP9hQshljUf
-         WvLsjxHZ3LJQItQDoPcl3mjmR4ND5iUBG6Ye2aJwdCa9cTEWiU4L20QwCcyxjj0RDHTU
-         sOG3iWp5wRB34g/fMPZMuZt035TGFoc4XtjktmJqZvdVeNDh5/AR7uZ4klvno6vvC09V
-         hJvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VeawawUi5g0FfCTDEqJ5MvcxHdxdB9dBz92ffBaoMAw=;
-        b=Q6wqRPJAf6NVv3WpFiN9bod6nYFQPzSVQ79t1xk1jM/Q9uGxYHv3fTW4q1+B5NiuY9
-         yOZl/QR6zzVfNsst92/t3gOKmucmmfyZSAf+IHDESHIUGE/d1WmLW3dYtuYj7i4AHinY
-         zfNJ+H7hQh2ZLcyYFjw7UdfiIAkRUaDW8+2W9qJ3JQPfBj7kmiX6/t/uOP0sKiNz0yjj
-         RDpaUPwQCYUQFCa9YnOKjZsGa21MgGvwcnIuqZ3Z5osMFVeYADdgn8Qsta4rzu4hv/lL
-         cVSyBuhodTV/1O6OBSxI1ZO3e0jAAA89K4HCJkvA+xEe3UsPkRaPPvdPZwYojhfx0hOy
-         i/1A==
-X-Gm-Message-State: APjAAAUn7fZGleZ4/5jWtvg2JWO63SG9try2QcN5Si5G2Gf3/H+5VIG8
-        GxUHhlzSg64Uo4msJ7c0MnpZQQ==
-X-Google-Smtp-Source: APXvYqxFsYI+UYZKTbw1T621cq6Iam/b5vsDkEu/WyX9IyZQ+Nvg7ntahhKNSBeZ/JRcdvfxISzGcA==
-X-Received: by 2002:a17:90b:30cc:: with SMTP id hi12mr38477303pjb.80.1574074980611;
-        Mon, 18 Nov 2019 03:03:00 -0800 (PST)
-Received: from localhost ([223.226.74.76])
-        by smtp.gmail.com with ESMTPSA id b7sm18966026pjo.3.2019.11.18.03.02.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Nov 2019 03:03:00 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] opp: Replace list_kref with a local counter
-Date:   Mon, 18 Nov 2019 16:32:50 +0530
-Message-Id: <bc5326ca95314cbebc3ffed8d476dd2e815f8382.1574074666.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
-In-Reply-To: <befccaf76d647f30e03c115ed7a096ebd5384ecd.1574074666.git.viresh.kumar@linaro.org>
-References: <befccaf76d647f30e03c115ed7a096ebd5384ecd.1574074666.git.viresh.kumar@linaro.org>
+        id S1726627AbfKRLGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:06:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726461AbfKRLGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:06:44 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E708C2071B;
+        Mon, 18 Nov 2019 11:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574075203;
+        bh=YoYaR1M+lDGoxsiTxlkwf8DP5q8rsGTY5JiNj2sqbTE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WvOTFqZH2Tm1IT+xFFdw4YD99+QWWIdABD05lu0lHbZBaBKCA/Ywwd570/CiD6Gst
+         t/0k/2k9OU1IVNON0R9u22AYCXnxTTTY4vvIVhOBU/Rah0/yagTbbfE2PvBE3aUb3V
+         QYibqUrEB0TinljLpUp9D0s8kmzVi/hnd/c/Whw4=
+Date:   Mon, 18 Nov 2019 12:06:40 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 1/8] dt-bindings: pwm: allwinner: Add H6 PWM
+ description
+Message-ID: <20191118110640.GE4345@gilmour.lan>
+References: <20191118110034.19444-1-peron.clem@gmail.com>
+ <20191118110034.19444-2-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YE4mVuFar47/lB0E"
+Content-Disposition: inline
+In-Reply-To: <20191118110034.19444-2-peron.clem@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A kref or refcount isn't the right tool to be used here for counting
-number of devices that are sharing the static OPPs created for the OPP
-table. For example, we are reinitializing the kref again, after it
-reaches a value of 0 and frees the resources, if the static OPPs get
-added for the same OPP table structure (as the OPP table structure was
-never freed). That is messy and very unclear.
 
-This patch makes parsed_static_opps an unsigned integer and uses it to
-count the number of users of the static OPPs. The increment and
-decrement to parsed_static_opps is done under opp_table->lock now to
-make sure no races are possible if the OPP table is getting added and
-removed in parallel (which doesn't happen in practice, but can in
-theory).
+--YE4mVuFar47/lB0E
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/opp/core.c | 48 ++++++++++++++++++----------------------------
- drivers/opp/of.c   | 26 +++++++++++--------------
- drivers/opp/opp.h  |  6 ++----
- 3 files changed, 32 insertions(+), 48 deletions(-)
+Hi,
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index be7a7d332332..ba43e6a3dc0a 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -988,7 +988,6 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
- 	BLOCKING_INIT_NOTIFIER_HEAD(&opp_table->head);
- 	INIT_LIST_HEAD(&opp_table->opp_list);
- 	kref_init(&opp_table->kref);
--	kref_init(&opp_table->list_kref);
- 
- 	/* Secure the device table modification */
- 	list_add(&opp_table->node, &opp_tables);
-@@ -1072,33 +1071,6 @@ static void _opp_table_kref_release(struct kref *kref)
- 	mutex_unlock(&opp_table_lock);
- }
- 
--void _opp_remove_all_static(struct opp_table *opp_table)
--{
--	struct dev_pm_opp *opp, *tmp;
--
--	list_for_each_entry_safe(opp, tmp, &opp_table->opp_list, node) {
--		if (!opp->dynamic)
--			dev_pm_opp_put(opp);
--	}
--
--	opp_table->parsed_static_opps = false;
--}
--
--static void _opp_table_list_kref_release(struct kref *kref)
--{
--	struct opp_table *opp_table = container_of(kref, struct opp_table,
--						   list_kref);
--
--	_opp_remove_all_static(opp_table);
--	mutex_unlock(&opp_table_lock);
--}
--
--void _put_opp_list_kref(struct opp_table *opp_table)
--{
--	kref_put_mutex(&opp_table->list_kref, _opp_table_list_kref_release,
--		       &opp_table_lock);
--}
--
- void dev_pm_opp_put_opp_table(struct opp_table *opp_table)
- {
- 	kref_put_mutex(&opp_table->kref, _opp_table_kref_release,
-@@ -1202,6 +1174,24 @@ void dev_pm_opp_remove(struct device *dev, unsigned long freq)
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_remove);
- 
-+void _opp_remove_all_static(struct opp_table *opp_table)
-+{
-+	struct dev_pm_opp *opp, *tmp;
-+
-+	mutex_lock(&opp_table->lock);
-+
-+	if (!opp_table->parsed_static_opps || --opp_table->parsed_static_opps)
-+		goto unlock;
-+
-+	list_for_each_entry_safe(opp, tmp, &opp_table->opp_list, node) {
-+		if (!opp->dynamic)
-+			dev_pm_opp_put_unlocked(opp);
-+	}
-+
-+unlock:
-+	mutex_unlock(&opp_table->lock);
-+}
-+
- /**
-  * dev_pm_opp_remove_all_dynamic() - Remove all dynamically created OPPs
-  * @dev:	device for which we do this operation
-@@ -2276,7 +2266,7 @@ void _dev_pm_opp_find_and_remove_table(struct device *dev)
- 		return;
- 	}
- 
--	_put_opp_list_kref(opp_table);
-+	_opp_remove_all_static(opp_table);
- 
- 	/* Drop reference taken by _find_opp_table() */
- 	dev_pm_opp_put_opp_table(opp_table);
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 1e5fcdee043c..9cd8f0adacae 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -658,17 +658,15 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 	struct dev_pm_opp *opp;
- 
- 	/* OPP table is already initialized for the device */
-+	mutex_lock(&opp_table->lock);
- 	if (opp_table->parsed_static_opps) {
--		kref_get(&opp_table->list_kref);
-+		opp_table->parsed_static_opps++;
-+		mutex_unlock(&opp_table->lock);
- 		return 0;
- 	}
- 
--	/*
--	 * Re-initialize list_kref every time we add static OPPs to the OPP
--	 * table as the reference count may be 0 after the last tie static OPPs
--	 * were removed.
--	 */
--	kref_init(&opp_table->list_kref);
-+	opp_table->parsed_static_opps = 1;
-+	mutex_unlock(&opp_table->lock);
- 
- 	/* We have opp-table node now, iterate over it and add OPPs */
- 	for_each_available_child_of_node(opp_table->np, np) {
-@@ -678,7 +676,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 			dev_err(dev, "%s: Failed to add OPP, %d\n", __func__,
- 				ret);
- 			of_node_put(np);
--			goto put_list_kref;
-+			goto remove_static_opp;
- 		} else if (opp) {
- 			count++;
- 		}
-@@ -687,7 +685,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 	/* There should be one of more OPP defined */
- 	if (WARN_ON(!count)) {
- 		ret = -ENOENT;
--		goto put_list_kref;
-+		goto remove_static_opp;
- 	}
- 
- 	list_for_each_entry(opp, &opp_table->opp_list, node)
-@@ -698,18 +696,16 @@ static int _of_add_opp_table_v2(struct device *dev, struct opp_table *opp_table)
- 		dev_err(dev, "Not all nodes have performance state set (%d: %d)\n",
- 			count, pstate_count);
- 		ret = -ENOENT;
--		goto put_list_kref;
-+		goto remove_static_opp;
- 	}
- 
- 	if (pstate_count)
- 		opp_table->genpd_performance_state = true;
- 
--	opp_table->parsed_static_opps = true;
--
- 	return 0;
- 
--put_list_kref:
--	_put_opp_list_kref(opp_table);
-+remove_static_opp:
-+	_opp_remove_all_static(opp_table);
- 
- 	return ret;
- }
-@@ -746,7 +742,7 @@ static int _of_add_opp_table_v1(struct device *dev, struct opp_table *opp_table)
- 		if (ret) {
- 			dev_err(dev, "%s: Failed to add OPP %ld (%d)\n",
- 				__func__, freq, ret);
--			_put_opp_list_kref(opp_table);
-+			_opp_remove_all_static(opp_table);
- 			return ret;
- 		}
- 		nr -= 2;
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 01a500e2c40a..d14e27102730 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -127,11 +127,10 @@ enum opp_table_access {
-  * @dev_list:	list of devices that share these OPPs
-  * @opp_list:	table of opps
-  * @kref:	for reference count of the table.
-- * @list_kref:	for reference count of the OPP list.
-  * @lock:	mutex protecting the opp_list and dev_list.
-  * @np:		struct device_node pointer for opp's DT node.
-  * @clock_latency_ns_max: Max clock latency in nanoseconds.
-- * @parsed_static_opps: True if OPPs are initialized from DT.
-+ * @parsed_static_opps: Count of devices for which OPPs are initialized from DT.
-  * @shared_opp: OPP is shared between multiple devices.
-  * @suspend_opp: Pointer to OPP to be used during device suspend.
-  * @genpd_virt_dev_lock: Mutex protecting the genpd virtual device pointers.
-@@ -167,7 +166,6 @@ struct opp_table {
- 	struct list_head dev_list;
- 	struct list_head opp_list;
- 	struct kref kref;
--	struct kref list_kref;
- 	struct mutex lock;
- 
- 	struct device_node *np;
-@@ -176,7 +174,7 @@ struct opp_table {
- 	/* For backward compatibility with v1 bindings */
- 	unsigned int voltage_tolerance_v1;
- 
--	bool parsed_static_opps;
-+	unsigned int parsed_static_opps;
- 	enum opp_table_access shared_opp;
- 	struct dev_pm_opp *suspend_opp;
- 
--- 
-2.21.0.rc0.269.g1a574e7a288b
+On Mon, Nov 18, 2019 at 12:00:27PM +0100, Cl=E9ment P=E9ron wrote:
+> From: Jernej Skrabec <jernej.skrabec@siol.net>
+>
+> H6 PWM block is basically the same as A20 PWM, except that it also has
+> bus clock and reset line which needs to be handled accordingly.
+>
+> Expand Allwinner PWM binding with H6 PWM specifics.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
+> ---
+>  .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pw=
+m.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
+> index 0ac52f83a58c..1bae446febbb 100644
+> --- a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
+> @@ -30,13 +30,51 @@ properties:
+>        - items:
+>            - const: allwinner,sun50i-h5-pwm
+>            - const: allwinner,sun5i-a13-pwm
+> +      - const: allwinner,sun50i-h6-pwm
+>
+>    reg:
+>      maxItems: 1
+>
+>    clocks:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - description: Module Clock
+> +      - description: Bus Clock
+> +
+> +  # Even though it only applies to subschemas under the conditionals,
+> +  # not listing them here will trigger a warning because of the
+> +  # additionalsProperties set to false.
+> +  clock-names: true
+> +
+> +  resets:
+>      maxItems: 1
+>
+> +  if:
+> +    properties:
+> +      compatible:
+> +        contains:
+> +          const: allwinner,sun50i-h6-pwm
+> +
+> +  then:
+> +    properties:
+> +      clocks:
+> +        maxItems: 2
+> +
+> +      clock-names:
+> +        items:
+> +          - const: mod
+> +          - const: bus
+> +
+> +    required:
+> +      - clock-names
+> +      - resets
+> +
+> +  else:
+> +    properties:
+> +      clocks:
+> +        maxItems: 1
+> +
 
+Sorry for not noticing this earlier, but this should be at the topmost
+level
+
+Maxime
+
+--YE4mVuFar47/lB0E
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXdJ7QAAKCRDj7w1vZxhR
+xUZpAQDf57xL+KiMJD5aQ0XQT0XHFOYAwW8cCUu/FgXYpgJmjwEAqJZh4AHN3JSQ
+09PXO0+LTVk76RQKjiW46/vLtI+iIgo=
+=u4lN
+-----END PGP SIGNATURE-----
+
+--YE4mVuFar47/lB0E--
