@@ -2,82 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8445FFFD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:53:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1500FFFEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfKRHxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 02:53:30 -0500
-Received: from mga07.intel.com ([134.134.136.100]:29559 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfKRHxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 02:53:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2019 23:53:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,319,1569308400"; 
-   d="scan'208";a="196047576"
-Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.255.29.39]) ([10.255.29.39])
-  by orsmga007.jf.intel.com with ESMTP; 17 Nov 2019 23:53:24 -0800
-Subject: Re: [LKP] Re: [pipe] d60337eff1:
- BUG:kernel_NULL_pointer_dereference,address
-To:     David Howells <dhowells@redhat.com>,
-        kernel test robot <lkp@intel.com>
-Cc:     torvalds@linux-foundation.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        id S1726654AbfKRH7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 02:59:21 -0500
+Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21401 "EHLO
+        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbfKRH7V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 02:59:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574063909; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=Rc/20lkRyjUTL1pXtxaJuUuGL6Qy5iJf9domOrYQzp0dV7kTzUIId9MgtxymtHz8eW9RxfivYILm4WAx5Jvckm1YzecjcOeIHzE6SdnH6/okt9b/VJImBA0kry/OiihPLM1rSa6P8/slgkqAQkAO9rQmx2/fjQEeMmkoysH9gQ4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574063909; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=cfu4tgSh/ZEFa8HY5V7AvfFEMPP8yuNAhIRi2KmoYKY=; 
+        b=BATyhYXAZYAvgFtIi7Dds4pzApisEa2g0tbZSqJYoVJ9brOEazPmFpws7HMzPPzMZbDN2I/HSjycg1Uhv3rTVIoE64o9Cnr/qb946pR80D8WUsSEjaXNu3ir98oDNqNoruFkZfetGNHNMO0o0qOQUF05shLaPF9sFv5EOkuQb5o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=brennan.io;
+        spf=pass  smtp.mailfrom=stephen@brennan.io;
+        dmarc=pass header.from=<stephen@brennan.io> header.from=<stephen@brennan.io>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574063909;
+        s=selector01; d=brennan.io; i=stephen@brennan.io;
+        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        l=881; bh=cfu4tgSh/ZEFa8HY5V7AvfFEMPP8yuNAhIRi2KmoYKY=;
+        b=a33RF1a+B9CYq7VVkL5/b8DhfRPEp5pkdGOtbev4kuka5D2uuM2xocwxcS961KUD
+        SO3U4qTgJ3+23IuCXVYkAgSx2xpVaMwiF0QYGMXPGNRVC5wqg1rg9xzDJGod4d7T8E8
+        B+AoMbzrEPmEHnJk17ZEa3ioxzfoLDe74N8WQfHo=
+Received: from localhost (195.173.24.136.in-addr.arpa [136.24.173.195]) by mx.zohomail.com
+        with SMTPS id 1574063908686965.880928958745; Sun, 17 Nov 2019 23:58:28 -0800 (PST)
+From:   Stephen Brennan <stephen@brennan.io>
+To:     stephen@brennan.io
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lkp@lists.01.org
-References: <9279.1573824532@warthog.procyon.org.uk>
- <20191110031348.GE29418@shao2-debian>
- <6853.1573834946@warthog.procyon.org.uk>
-From:   kernel test robot <rong.a.chen@intel.com>
-Message-ID: <35daca93-ff2b-2c7d-b837-72396ca0677a@intel.com>
-Date:   Mon, 18 Nov 2019 15:53:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+Message-ID: <20191118075807.165126-2-stephen@brennan.io>
+Subject: [PATCH 1/3] dt-bindings: rng: add BCM2711 RNG compatible
+Date:   Sun, 17 Nov 2019 23:58:05 -0800
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191118075807.165126-1-stephen@brennan.io>
+References: <20191118075807.165126-1-stephen@brennan.io>
 MIME-Version: 1.0
-In-Reply-To: <6853.1573834946@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+From: Stefan Wahren <wahrenst@gmx.net>
 
-Yes, it can fix the problem.
+The BCM2711 has a RNG200 block, so document its compatible string.
 
-Best Regards,
-Rong Chen
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Stephen Brennan <stephen@brennan.io>
+---
+ Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 11/16/2019 12:22 AM, David Howells wrote:
-> Actually, no, this is the fix:
->
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 7006b5b2106d..be2fc5793ddd 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -537,7 +537,7 @@ static size_t push_pipe(struct iov_iter *i, size_t size,
->   		buf->ops = &default_pipe_buf_ops;
->   		buf->page = page;
->   		buf->offset = 0;
-> -		buf->len = max_t(ssize_t, left, PAGE_SIZE);
-> +		buf->len = min_t(ssize_t, left, PAGE_SIZE);
->   		left -= buf->len;
->   		iter_head++;
->   		pipe->head = iter_head;
->
-> David
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
+diff --git a/Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt b/=
+Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt
+index c223e54452da..802523196ee5 100644
+--- a/Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt
++++ b/Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt
+@@ -2,6 +2,7 @@ HWRNG support for the iproc-rng200 driver
+=20
+ Required properties:
+ - compatible : Must be one of:
++=09       "brcm,bcm2711-rng200"
+ =09       "brcm,bcm7211-rng200"
+ =09       "brcm,bcm7278-rng200"
+ =09       "brcm,iproc-rng200"
+--=20
+2.24.0
+
+
 
