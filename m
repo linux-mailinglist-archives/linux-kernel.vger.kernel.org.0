@@ -2,122 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC6B100819
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD22610081C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:25:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbfKRPYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 10:24:44 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:34246 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726578AbfKRPYo (ORCPT
+        id S1727301AbfKRPZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 10:25:08 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56728 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726578AbfKRPZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 10:24:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574090682;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DLGi9fY1vNkBVsN98gcHesJsA6BDlVXAshm64cOSSz4=;
-        b=hC0pYwsvDkCiqXlusZlLNS3pgZtv88W536o1JO+a3TkC5L3pQXVk5cPjN9Y7mmYdLj4Pq1
-        Mt2FSyPPAG+fi6QpRf9BOml9t2DwbjlHwUCSsJ0GwtAUl49+Uf/+KBV+ESLsFTdJd/aopG
-        GeIhc6QlyjvIz1WNx/IsyymH8By06Iw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-22-lEWPb9egMsaMiMSNAklbLg-1; Mon, 18 Nov 2019 10:24:39 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1643718B6409;
-        Mon, 18 Nov 2019 15:24:38 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F57350229;
-        Mon, 18 Nov 2019 15:24:36 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 87A4411E7; Mon, 18 Nov 2019 13:24:33 -0200 (BRST)
-Date:   Mon, 18 Nov 2019 13:24:33 -0200
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Hewenliang <hewenliang4@huawei.com>, tstoyanov@vmware.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        linfeilong@huawei.com
-Subject: Re: [PATCH v2] tools lib traceevent: Fix memory leakage in
- copy_filter_type
-Message-ID: <20191118152433.GA3667@redhat.com>
-References: <20191025082312.62690-1-hewenliang4@huawei.com>
- <20191118092844.7292ad26@oasis.local.home>
+        Mon, 18 Nov 2019 10:25:08 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: aratiu)
+        with ESMTPSA id 7B69B28DFE1
+From:   Adrian Ratiu <adrian.ratiu@collabora.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Cc:     kernel@collabora.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-imx@nxp.com
+Subject: [PATCH v3 0/4] Genericize DW MIPI DSI bridge and add i.MX 6 driver
+Date:   Mon, 18 Nov 2019 17:25:14 +0200
+Message-Id: <20191118152518.3374263-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191118092844.7292ad26@oasis.local.home>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: lEWPb9egMsaMiMSNAklbLg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Nov 18, 2019 at 09:28:44AM -0500, Steven Rostedt escreveu:
->=20
-> Arnaldo,
->=20
-> Can you take this patch?
+Having a generic Synopsis DesignWare MIPI-DSI host controller bridge
+driver is a very good idea, however the current implementation has
+hardcoded quite a lot of the register layouts used by the two supported
+SoC vendors, STM and Rockchip, which use IP cores v1.30 and v1.31.
 
-Sure, taking this as an Acked-by you
-=20
-> Thanks!
->=20
-> -- Steve
->=20
->=20
-> On Fri, 25 Oct 2019 04:23:12 -0400
-> Hewenliang <hewenliang4@huawei.com> wrote:
->=20
-> > It is necessary to free the memory that we have allocated
-> > when error occurs.
-> >=20
-> > Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filte=
-r_type()")
-> > Signed-off-by: Hewenliang <hewenliang4@huawei.com>
-> > ---
-> >  tools/lib/traceevent/parse-filter.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent=
-/parse-filter.c
-> > index 552592d153fb..fbaa790d10d8 100644
-> > --- a/tools/lib/traceevent/parse-filter.c
-> > +++ b/tools/lib/traceevent/parse-filter.c
-> > @@ -1473,8 +1473,10 @@ static int copy_filter_type(struct tep_event_fil=
-ter *filter,
-> >  =09if (strcmp(str, "TRUE") =3D=3D 0 || strcmp(str, "FALSE") =3D=3D 0) =
-{
-> >  =09=09/* Add trivial event */
-> >  =09=09arg =3D allocate_arg();
-> > -=09=09if (arg =3D=3D NULL)
-> > +=09=09if (arg =3D=3D NULL) {
-> > +=09=09=09free(str);
-> >  =09=09=09return -1;
-> > +=09=09}
-> > =20
-> >  =09=09arg->type =3D TEP_FILTER_ARG_BOOLEAN;
-> >  =09=09if (strcmp(str, "TRUE") =3D=3D 0)
-> > @@ -1483,8 +1485,11 @@ static int copy_filter_type(struct tep_event_fil=
-ter *filter,
-> >  =09=09=09arg->boolean.value =3D 0;
-> > =20
-> >  =09=09filter_type =3D add_filter_type(filter, event->id);
-> > -=09=09if (filter_type =3D=3D NULL)
-> > +=09=09if (filter_type =3D=3D NULL) {
-> > +=09=09=09free(str);
-> > +=09=09=09free(arg);
-> >  =09=09=09return -1;
-> > +=09=09}
-> > =20
-> >  =09=09filter_type->filter =3D arg;
-> > =20
+This makes it hard to support other SoC vendors like the FSL/NXP i.MX 6
+which use older v1.01 cores or future versions because, based on history,
+layout changes should also be expected in new DSI versions / SoCs.
+
+This patch series converts the bridge and platform drivers to access
+registers via generic regmap APIs and allows each platform driver to
+configure its register layout via struct reg_fields, then adds support
+for the host controller found on i.MX 6.
+
+I only have i.MX hardware with MIPI-DSI panel and relevant documentation
+available for testing so I'll really appreciate it if someone could test
+the series on Rockchip and STM... eyeballing register fields could only
+get me so far, so sorry in advance for any breakage!
+
+Many thanks to Boris Brezillon <boris.brezillon@collabora.com> for
+suggesting the regmap solution and to Liu Ying <Ying.Liu@freescale.com>
+for doing the initial i.MX platform driver implementation.
+
+This series applies on top of latest linux-next tree, next-20191118.
+
+v2 -> v3:
+  * Added const declarations to dw-mipi-dsi.c structs (Emil)
+  * Fixed Reviewed-by tags and cc'd some more relevant ML (Emil)
+
+v1 -> v2:
+  * Moved register definitions & regmap initialization into bridge
+  module. Platform drivers get the regmap via plat_data after calling
+  the bridge probe (Emil).
+
+Adrian Ratiu (4):
+  drm: bridge: dw_mipi_dsi: access registers via a regmap
+  drm: bridge: dw_mipi_dsi: abstract register access using reg_fields
+  drm: imx: Add i.MX 6 MIPI DSI host driver
+  dt-bindings: display: add IMX MIPI DSI host controller doc
+
+ .../bindings/display/imx/mipi-dsi.txt         |  56 ++
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 699 +++++++++++++-----
+ drivers/gpu/drm/imx/Kconfig                   |   7 +
+ drivers/gpu/drm/imx/Makefile                  |   1 +
+ drivers/gpu/drm/imx/dw_mipi_dsi-imx.c         | 378 ++++++++++
+ .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   |  17 +-
+ drivers/gpu/drm/stm/dw_mipi_dsi-stm.c         |  34 +-
+ include/drm/bridge/dw_mipi_dsi.h              |   2 +-
+ 8 files changed, 987 insertions(+), 207 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/mipi-dsi.txt
+ create mode 100644 drivers/gpu/drm/imx/dw_mipi_dsi-imx.c
+
+-- 
+2.24.0
 
