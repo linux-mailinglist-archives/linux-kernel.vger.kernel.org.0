@@ -2,88 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9715100BD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D601100BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:57:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKRSwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 13:52:14 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38997 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfKRSwM (ORCPT
+        id S1726638AbfKRS5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 13:57:43 -0500
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:59426 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfKRS5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 13:52:12 -0500
-Received: by mail-pl1-f196.google.com with SMTP id o9so10276074plk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 10:52:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uSTPqpXCkdIz0Ys9ZLE2MJ6RpXCWxgbm8ltsUhdFuaA=;
-        b=X2Qv3IxFUWevF27cjY8aXXrQI2siYVe73dYgkiMeUtD/JEU7etfRh0B7TwpGyJ4dG6
-         jy0fqJ/P9lbHqOib0wPfWSFcfjZVDpP7MWNTjayCixoBsM55AtghsA8jB2GsDcvQOZi0
-         Us6IssUiDvQAGIkruSf/mIDKvpH+JaKyL13YjPV2CI6+Sb+IFf22B9AbrdOhh+f2VfQU
-         x5Ky+GqrN4UPOKZu7xBcsGsGNtsH0j1aHNS9G6wpjVzMc9usP1PIdfmNuFn8nYUz6pDL
-         m19ojjf5y5iB2iDEXA61IiX8bUDRh0lvu1letC5Lej5L0ZaDvofGQDca93txuvzzp+1K
-         zp6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uSTPqpXCkdIz0Ys9ZLE2MJ6RpXCWxgbm8ltsUhdFuaA=;
-        b=FddRXBbYUUAMssq30+i3704H95kXKYHdVxD9HKVel/paxW6TWU5+0I7v8ejMS64FCE
-         F3QoyC4o1doZQERWZhMnUT/PVPJvWvV42GT0nP9agZBd0f76dfys1T/8GyUSeLd2kguj
-         94Og3u9nTa8/VV7y9ZDknKnFeosyKG8C36hiW2/xYtkNu28QfgNG2HvNW2VtS2ZkS/JM
-         Iumi8x6YOVIfh6jk4iO9+RBasjcQOiA3otDUNHujQg1ISN25TfwcQ7/FwwYz88/wgKZi
-         Ldr5IdcKM64S5hvpvHhjTNYA7k6LQbp6TctHH7gaFPZG2DolywdNK0k/A5Hsrs4G4XCV
-         s7FA==
-X-Gm-Message-State: APjAAAW/8y9ZuAinJ5xNerWvTbS7ycAjybnFbOXgtB2zVc/8CmwM/DyT
-        Ve6poN7OKLolsbiTdey/AQiY/G9W9oo=
-X-Google-Smtp-Source: APXvYqzzItYreBeWBbFqrWCtFJCzpea9kEtD7ao2jmO1F22pYdxUyW2dEdPzqkra62qpmsk0ZQLzEg==
-X-Received: by 2002:a17:902:9a04:: with SMTP id v4mr4924119plp.192.1574103131601;
-        Mon, 18 Nov 2019 10:52:11 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id r10sm19878910pgn.68.2019.11.18.10.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 10:52:10 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] coresight: replicator: Fix missing spin_lock_init()
-Date:   Mon, 18 Nov 2019 11:52:07 -0700
-Message-Id: <20191118185207.30441-3-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191118185207.30441-1-mathieu.poirier@linaro.org>
-References: <20191118185207.30441-1-mathieu.poirier@linaro.org>
+        Mon, 18 Nov 2019 13:57:43 -0500
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 238FA33E3A;
+        Mon, 18 Nov 2019 13:57:41 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:message-id:mime-version:content-type; s=sasl; bh=1Hj
+        fEH5GpUBsOue/0NDNyGeQocU=; b=OSuKVxiF4sDXnxUrnGnXGNzKh9EhO75otZ7
+        Ytuv4vYpZkEZCYuH8Y3MpRHex3LjTZLYuaz6TkDY+d3tEPuQG5u/TQ9oRsgVVpob
+        VPKvqotGs5YQCNUK9RZXmNGMnW+gko+K14QishYqDPsj7272mkO/LDriSygsEYcv
+        1drqMQtY=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 17D3033E38;
+        Mon, 18 Nov 2019 13:57:41 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=darkphysics.net;
+ h=date:from:to:cc:subject:message-id:mime-version:content-type;
+ s=2019-09.pbsmtp; bh=8v4o8y5JnrphhdR9ew6BuE+s/ugtRTCDOoDjyiO/G/Q=;
+ b=TUNFOyuEFEdnSDSYdfISHSDagyoPPtJ6Wu2kMohPlS+ehsRAJ0JNErT2jM+lz1wLtgCnZMZ4T6Kvwt9soLAyRODwrK2JVIsZu/kpP61wsRt/CH8LXyXvjD8SbYSHRf7IO6FauRTckG2FRNdGwA7+foDWZwo/0tDSKxnp0XqV+uA=
+Received: from Cheese (unknown [24.19.107.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 965D933E35;
+        Mon, 18 Nov 2019 13:57:39 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+Date:   Mon, 18 Nov 2019 10:57:32 -0800
+From:   Travis Davies <tdavies@darkphysics.net>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] net: Fix comment block per style guide
+Message-ID: <20191118185724.GA32637@Cheese>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Pobox-Relay-ID: 4B46DF7C-0A35-11EA-BC5B-D1361DBA3BAF-64344220!pb-smtp2.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Travis Davies <tdavies@darkphysics.net>
 
-The driver allocates the spinlock but not initialize it.
-Use spin_lock_init() on it to initialize it correctly.
-
-This is detected by Coccinelle semantic patch.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Tested-by: Yabin Cui <yabinc@google.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-replicator.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index 43304196a1a6..e7dc1c31d20d 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -248,6 +248,7 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	}
- 	dev->platform_data = pdata;
+This patch places /* and */ on separate lines for a
+multiline block comment, in order to keep code style
+consistant with majority of blocks throughout the file.
+
+This will prevent a checkpatch.pl warning:
+'Block comments use a trailing */ on a separate line'
+
+ include/linux/netdevice.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..a2605e043fa2 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define NET_XMIT_CN		0x02	/* congestion notification	*/
+ #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
  
-+	spin_lock_init(&drvdata->spinlock);
- 	desc.type = CORESIGHT_DEV_TYPE_LINK;
- 	desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_SPLIT;
- 	desc.ops = &replicator_cs_ops;
+-/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
++/*
++ * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
+  * indicates that the device will soon be dropping packets, or already drops
+- * some packets of the same priority; prompting us to send less aggressively. */
++ * some packets of the same priority; prompting us to send less aggressively.
++ */
+ #define net_xmit_eval(e)	((e) == NET_XMIT_CN ? 0 : (e))
+ #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
+ 
 -- 
-2.17.1
+2.21.0
 
