@@ -2,95 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2976D100616
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF38C100622
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:05:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbfKRNER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 08:04:17 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.216]:35031 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfKRNER (ORCPT
+        id S1726977AbfKRNFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 08:05:39 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52130 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfKRNFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:04:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574082255;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=ukcHuF3D4wPigrPHkkFZTsmWR0K50dSJVxn/jbjgb0w=;
-        b=M5xVGmXmTsZIqx14XuCzb6iREqRCgJ3NciAiuwTg8tSKgvlUg0y2H40lK5O8gh2FTj
-        jp7Ri+GsUOU1cCvyExHO1fvLYXkg9rHFTwECpRRTdOHSJM0ayXNo6Dm/5/DLb7f+J5n9
-        qOSEjueBMe3X59y35s+2RaQ9pHafFabB8sOT6ZkxBlSfajRp3yMjBL1h6RJZA7P+WLaJ
-        Ym+3DIbB2FPRL6ZPj8KVnR3uFRK03CvKbGd5tID8Bq21/m9LMoetOxR4BIwQ59ogdsAi
-        49/NNxw5fCwpQlA4cXev3A3RpAPYaBn06d9Wieaw7p/MR8Mx+biD5B+mghJc4BY4MMP6
-        tJMg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQr4OGUPX+1JjWArIj7M="
-X-RZG-CLASS-ID: mo00
-Received: from localhost.localdomain
-        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
-        with ESMTPSA id e07688vAID4Eedk
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 18 Nov 2019 14:04:14 +0100 (CET)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH] drm/mcde: dsi: Fix invalid pointer dereference if panel cannot be found
-Date:   Mon, 18 Nov 2019 14:02:52 +0100
-Message-Id: <20191118130252.170324-1-stephan@gerhold.net>
-X-Mailer: git-send-email 2.23.0
+        Mon, 18 Nov 2019 08:05:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eJ0u4T29emfj+di+mk49zhT0Lz5axTZ5bCyR1fEklx4=; b=Vka+aqpLHvXJFRIoGJm/23hWI
+        j3YYSwqcYkYNx2/mLN2RzZaoyjtQgPj5JfPXkJjEfXAsXwXtykO7slz3aQUP1bXw/J2HUfj6yzFdE
+        /qNLHoMnABRLHSx2lsksd6RuJdqzrciWhWrZvO3w18YESjg/CVP2CpDkUT+l5doqNmG/hcXpPtaaj
+        1jZEvJj2iXrpTErMGpnqXdizfRl2RrmLpe3nJwQ9mOr+OM3kO/4c+cgDuXlt3B0oIkKHOGR4yk4ZZ
+        4drMEwO9xCPlpsI26rfAo6sE0VXsmGDa5x0CC+eTDg92NH5J/hPxVnermazQMb6dHAuuMqqKxNC05
+        KG/tNXItg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iWgi7-0001k7-Ml; Mon, 18 Nov 2019 13:04:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6828E3011EC;
+        Mon, 18 Nov 2019 14:03:42 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DD7B62B128B83; Mon, 18 Nov 2019 14:04:51 +0100 (CET)
+Date:   Mon, 18 Nov 2019 14:04:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 3/9] sched/vtime: Handle nice updates under vtime
+Message-ID: <20191118130451.GB4097@hirez.programming.kicks-ass.net>
+References: <20191106030807.31091-1-frederic@kernel.org>
+ <20191106030807.31091-4-frederic@kernel.org>
+ <20191115101648.GC4131@hirez.programming.kicks-ass.net>
+ <20191115101831.GW5671@hirez.programming.kicks-ass.net>
+ <20191115152703.GA21265@lenoir>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115152703.GA21265@lenoir>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "panel" pointer is not reset to NULL if of_drm_find_panel()
-returns an error. Therefore we later assume that a panel was found,
-and try to dereference the error pointer, resulting in:
+On Fri, Nov 15, 2019 at 04:27:04PM +0100, Frederic Weisbecker wrote:
+> On Fri, Nov 15, 2019 at 11:18:31AM +0100, Peter Zijlstra wrote:
+> > On Fri, Nov 15, 2019 at 11:16:48AM +0100, Peter Zijlstra wrote:
+> > > On Wed, Nov 06, 2019 at 04:08:01AM +0100, Frederic Weisbecker wrote:
+> > > > The cputime niceness is determined while checking the target's nice value
+> > > > at cputime accounting time. Under vtime this happens on context switches,
+> > > > user exit and guest exit. But nice value updates while the target is
+> > > > running are not taken into account.
+> > > > 
+> > > > So if a task runs tickless for 10 seconds in userspace but it has been
+> > > > reniced after 5 seconds from -1 (not nice) to 1 (nice), on user exit
+> > > > vtime will account the whole 10 seconds as CPUTIME_NICE because it only
+> > > > sees the latest nice value at accounting time which is 1 here. Yet it's
+> > > > wrong, 5 seconds should be accounted as CPUTIME_USER and 5 seconds as
+> > > > CPUTIME_NICE.
+> > > > 
+> > > > In order to solve this, we now cover nice updates withing three cases:
+> > > > 
+> > > > * If the nice updater is the current task, although we are in kernel
+> > > >   mode there can be pending user or guest time in the cache to flush
+> > > >   under the prior nice state. Account these if any. Also toggle the
+> > > >   vtime nice flag for further user/guest cputime accounting.
+> > > > 
+> > > > * If the target runs on a different CPU, we interrupt it with an IPI to
+> > > >   update the vtime state in place. If the task is running in user or
+> > > >   guest, the pending cputime is accounted under the prior nice state.
+> > > >   Then the vtime nice flag is toggled for further user/guest cputime
+> > > >   accounting.
+> > > 
+> > > But but but, I thought the idea was to _never_ send interrupts to
+> > > NOHZ_FULL cpus ?!?
+> > 
+> > That is, isn't the cure worse than the problem? I mean, who bloody cares
+> > about silly accounting crud more than not getting interrupts on their
+> > NOHZ_FULL cpus.
+> 
+> Yeah indeed. I tend to sacrifice everything for correctness but perhaps we can live with
+> small issues like nice accounting not being accounted to the right place if that
+> can avoid disturbing nohz_full CPUs. Also who cares about renicing a task that is
+> supposed to run alone.
+> 
+> So here is what I can do: I'll make a simplified version of that set which accounts
+> on top of the task_nice() value found on accounting time (context switch, user exit,
+> guest exit) and if some user ever complains, I can still bring back that IPI solution.
 
-    mcde-dsi a0351000.dsi: failed to find panel try bridge (4294966779)
-    Unable to handle kernel paging request at virtual address fffffe03
-    PC is at drm_panel_bridge_add.part.0+0x10/0x5c
-    LR is at mcde_dsi_bind+0x120/0x464
-    ...
-
-Reset "panel" to NULL to avoid this problem.
-Also change the format string of the error to %ld to print
-the negative errors correctly. The crash above then becomes:
-
-    mcde-dsi a0351000.dsi: failed to find panel try bridge (-517)
-    mcde-dsi a0351000.dsi: no panel or bridge
-    ...
-
-Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
- drivers/gpu/drm/mcde/mcde_dsi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index 03896a1f339a..eb3a855aef9a 100644
---- a/drivers/gpu/drm/mcde/mcde_dsi.c
-+++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -924,11 +924,13 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		panel = of_drm_find_panel(child);
- 		if (IS_ERR(panel)) {
--			dev_err(dev, "failed to find panel try bridge (%lu)\n",
-+			dev_err(dev, "failed to find panel try bridge (%ld)\n",
- 				PTR_ERR(panel));
-+			panel = NULL;
-+
- 			bridge = of_drm_find_bridge(child);
- 			if (IS_ERR(bridge)) {
--				dev_err(dev, "failed to find bridge (%lu)\n",
-+				dev_err(dev, "failed to find bridge (%ld)\n",
- 					PTR_ERR(bridge));
- 				return PTR_ERR(bridge);
- 			}
--- 
-2.23.0
-
+Makes sense, thanks!
