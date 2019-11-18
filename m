@@ -2,114 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03EA3100E90
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 23:06:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A281100E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 23:06:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfKRWF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 17:05:58 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40649 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfKRWF5 (ORCPT
+        id S1727104AbfKRWGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 17:06:19 -0500
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:61882 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfKRWGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 17:05:57 -0500
-Received: by mail-qk1-f193.google.com with SMTP id z16so15964582qkg.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 14:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=utEgIIdXyuvjiU+wCZAIV77AFxFDu+8dYTt1kGjwZok=;
-        b=Gd08kSNGTcxarbjtgrLof1smG+W5/gVLZm33699Y1iV7U4pC1M/I8+Gnrc2ue88x16
-         xD3dM+AA5uH8bNnV3TBbn8oPA3ldzxpzKOhwNfiaKxVlBpKHBMk97ttWZCF7+p/+Y2gB
-         mFhWB29X7oXaEXXEClUllQzfzXdSZaAUNWBeiw6Wb0+6uhDzFS/N84zh3H3GgK4UQs4E
-         zEIrddIjpwZSKtAr35V4i128Sy5YfSzs5FIb92RGpNyPuVNKKrwCW2HaC9fE6q18Ezsi
-         0sjPE2b1TI+Ja4nzHtnpmfU58O9GmEQn7yOl+dXvYNh+8SstT+QQuTmeleTpCxNAWYu1
-         lk9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=utEgIIdXyuvjiU+wCZAIV77AFxFDu+8dYTt1kGjwZok=;
-        b=alkoh0AQOHCWXwVaZW7pvoGD0gmNRVBFLhA/gmUe+g+9axTOzbWMk0WcFNvbJayrdn
-         iYwHOZDjzpWnFNc4alcSZ1USWSXfwtb3LXxeHCVtnf/DJFibUndInh8apIis2XJesyyd
-         XCUdz7yPPV8Ljb3LGcM5BtWUdeUgmuO9waOFexCw8cNWHiSwUzB4KU9YhGjM1ajYyKZk
-         qmQwetgdKpMnYG+LuVB2tgogmQ0H4tnWTOnYkVWyBCJBtTKsJtzLlpY9pHKwSquIcqEA
-         8QY+f/JCihSHHQjZb7OktbF6WvlB5Fuwa3sqxu1KWGr6fI8VzF6kE6o8xOsuONfz7Jyz
-         r2PQ==
-X-Gm-Message-State: APjAAAWNUF6nMmpprFz8liyGZ1jBe412FbQ//WFRX1csBkpR5qDJnXNb
-        JbqhiJmdkcLU8vFBJMbiD0y7ZA==
-X-Google-Smtp-Source: APXvYqzM+peUo1lSKOoXz6fiecEmuZPTfjshOjkVtJi6CoTBSW5F+j67GNIWkslvpWsyjf947G+iDg==
-X-Received: by 2002:a05:620a:113a:: with SMTP id p26mr26642626qkk.479.1574114756674;
-        Mon, 18 Nov 2019 14:05:56 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id j10sm11040243qtb.34.2019.11.18.14.05.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Nov 2019 14:05:56 -0800 (PST)
-Message-ID: <1574114754.5937.154.camel@lca.pw>
-Subject: Re: PSI: use-after-free in collect_percpu_times()
-From:   Qian Cai <cai@lca.pw>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Nov 2019 17:05:54 -0500
-In-Reply-To: <20191118220036.GA382712@cmpxchg.org>
-References: <1574113159.5937.148.camel@lca.pw>
-         <20191118220036.GA382712@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 18 Nov 2019 17:06:18 -0500
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id A9F6F1CD1D;
+        Mon, 18 Nov 2019 17:06:16 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:message-id:mime-version:content-type; s=sasl; bh=LHj
+        AIQqX0SS8A9JCuySi90I1RG0=; b=sFuu8TJenzjAzvyynLKTU6/Fgy8gQuas27j
+        g/XqYH6yyajtiKofsMOHbjC/i27ZHUq9Mq0rBVT89O8Gocca4IokCXNOAHb6Ij7E
+        EH0rLhstM2z/xGjltDVQLePYJ12xqUDdvXbYJ3G7kd5El6McQ2yM8UOU5ZP/hGzS
+        St72c0z8=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id A21161CD1B;
+        Mon, 18 Nov 2019 17:06:16 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=darkphysics.net;
+ h=date:from:to:cc:subject:message-id:mime-version:content-type;
+ s=2019-09.pbsmtp; bh=KaOxpme6FNZGTPOE7sm6/XODHUtk3cS/04Nzz8GTVFM=;
+ b=qBmZrVe6/UaGKa5uvn+0IVSpKd5WbdjgLRDHNBhDdIjTkfYld8hmprlKK+Orx2hwvJ7x6u7o57DHw91GuQiIUgttgivMauWbR/0KKZGc8DSMsKGBq5zje9KXum8lsCGbd+ChpzsYnhYNt1JDhbZIMQaORZpx+YxqOS58hRSMcFw=
+Received: from Cheese (unknown [24.19.107.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 81DEA1CD1A;
+        Mon, 18 Nov 2019 17:06:15 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+Date:   Mon, 18 Nov 2019 14:06:09 -0800
+From:   Travis Davies <tdavies@darkphysics.net>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] net: Fix comment block per style guide
+Message-ID: <20191118220609.GA23999@Cheese>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Pobox-Relay-ID: A41BC134-0A4F-11EA-9080-C28CBED8090B-64344220!pb-smtp1.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-11-18 at 17:00 -0500, Johannes Weiner wrote:
-> Hi Qian,
-> 
-> On Mon, Nov 18, 2019 at 04:39:19PM -0500, Qian Cai wrote:
-> > Since a few days ago, s390 starts to crash on linux-next while reading some
-> > sysfs. It is not always reproducible but seems pretty reproducible after running
-> > the whole MM test suite here,
-> > https://github.com/cailca/linux-mm/blob/master/test.sh
-> > 
-> > the config:
-> > https://raw.githubusercontent.com/cailca/linux-mm/master/s390.config
-> > 
-> > The stack trace on s390 is not particular helpful as both gdb and faddr2line are
-> > unable to point out which line causes the issue.
-> > 
-> > # ./scripts/faddr2line vmlinux collect_percpu_times+0x2d6/0x798
-> > bad symbol size: base: 0x00000000002076f8 end: 0x00000000002076f8
-> > 
-> > (gdb) list *(collect_percpu_times+0x2d6)
-> > 0x2079ce is in collect_percpu_times (./include/linux/compiler.h:199).
-> > 194	})
-> > 195	
-> > 196	static __always_inline
-> > 197	void __read_once_size(const volatile void *p, void *res, int size)
-> > 198	{
-> > 199		__READ_ONCE_SIZE;
-> > 200	}
-> > 201	
-> > 202	#ifdef CONFIG_KASAN
-> > 203	/*
-> > 
-> > Could it be some race conditions in PSI?
-> 
-> psi doesn't do much lifetime management in itself: the psi_group is
-> embedded in the cgroup and the per-cpu data is freed right before the
-> cgroup itself is freed. An open file descriptor on the pressure files
-> will pin the cgroup and prevent it from being deleted.
-> 
-> As it's reproducible, would you be able to bisect this problem?
+This patch places /* and */ on separate lines for a
+multiline block comment, in order to keep code style
+consistant with majority of blocks throughout the file.
 
-Yes, it is going to time-consuming though as I have not found a quick reproducer
-yet.
+This will prevent a checkpatch.pl warning:
+'Block comments use a trailing */ on a separate line'
+
+Signed-off-by: Travis Davies <tdavies@darkphysics.net>
+---
+-v2: Fix commit description, and subject line as suggested by 
+     Julie Lawall
+
+ include/linux/netdevice.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..a2605e043fa2 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define NET_XMIT_CN		0x02	/* congestion notification	*/
+ #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
+ 
+-/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
++/*
++ * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
+  * indicates that the device will soon be dropping packets, or already drops
+- * some packets of the same priority; prompting us to send less aggressively. */
++ * some packets of the same priority; prompting us to send less aggressively.
++ */
+ #define net_xmit_eval(e)	((e) == NET_XMIT_CN ? 0 : (e))
+ #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
+ 
+-- 
+2.21.0
+
