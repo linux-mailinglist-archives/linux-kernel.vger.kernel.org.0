@@ -2,120 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F8E10015C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:34:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB29100162
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:37:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfKRJen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 04:34:43 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:35689 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbfKRJen (ORCPT
+        id S1726704AbfKRJhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 04:37:45 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41068 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbfKRJhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 04:34:43 -0500
-Received: by mail-il1-f195.google.com with SMTP id z12so15371747ilp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 01:34:42 -0800 (PST)
+        Mon, 18 Nov 2019 04:37:45 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b18so17114261wrj.8;
+        Mon, 18 Nov 2019 01:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lr/4E5ZW9jz9oShySXGCc5V6Txdcr0g9QJ5gIXifIGk=;
-        b=W6V9SCS3NzD7+ytXHksdvuTMYaJofAh3nWAX40damlaaJWjWjZHtQ+k6ikYy6z6QM1
-         VHwrlguvhMqY7NmZM9gTooG0Z9XHILEXYgbysYUT6DYzcl/XH1wIjioMeK/75YCyLtb/
-         aUi3Yq3X/P9iXf6Kg85iW+swL8ttWmJ0SlonE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j4Tb0ttRFw3t9sd1seO7iOyRmoHtxz8QiDipOLgYhfk=;
+        b=FmvVPxyz08Mlj9wlduT6LqMYYoow9iMU/3r91mZeSctNWMvPocJs0gi4Wbv6VQRbJq
+         0yZ8L+WlEbsQNvNDOSjl6zY8wE6yVLgpNE0wpTEDoQk3KsN6wpHjwYRyzhBmxCPQLByK
+         SYZlG9zAM1tWQ0DwN40kXtQMYfGhIa95qzNH+C5d7Y0h5KZyL3/wVb6YjkiHe4yvNz87
+         C71Lqiuwx6ho3IoMjZ0SIk97dDv1gIO3rwO80MOgp4lXyb4rhP1Q+6mzmuNGfKaSacO3
+         SnSQ5gSWP/wYu/9wFex2cY4Rstd6jtcbBsCiizOgKUvkqsJzB8RQgk1M45SgwpU2cWVD
+         a+Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lr/4E5ZW9jz9oShySXGCc5V6Txdcr0g9QJ5gIXifIGk=;
-        b=LR4PU5hQa8lXqb+xLi4SctAhfMOc5m7rGthpsASc1w5Y5F/JRRqCLanXn4NmD1ayZG
-         8UJOG9nTMr+U6TkQFfD80G+eNnTI7d2JvhaheHxeflnLape7MsVr3jNfXq1U6paYdvOJ
-         Sq3jV+2tp+u4InQShqLbCisDDOWOnJh+E6KH3YHP2+kwsBAIXz4rEnH0OH46RNgugjCI
-         IJbxpjXnlHDt2hDUG5ElXLCBot0VfI5EUlcDqB5gqw0fA4S3bNIa2qQUqCeXG9uYRkHh
-         bQf2jnwVLHEDB93kQE5Aj5OgxHEr+FJwGTDPrhANnN2HG6e2af8tSdS4Gf2ynkYQK0B8
-         dEOg==
-X-Gm-Message-State: APjAAAV+Yhrn6ldEmdo1EF3XmkpaLPXinPBrpnZ1lJsldItQ5Tow68wq
-        zSaiJDmqa8M4xbdfIwLUKcVkm6fDeWcNHrqHERHXWg==
-X-Google-Smtp-Source: APXvYqxLrh5aVv3p0xE1Cuv2M9Lu4EqPeULGldZRnOqi6Hjy+4RMLF1tR9vxtOQ6RJa0zB6OkWOb0ZxRDT43EqGIS1Q=
-X-Received: by 2002:a92:d608:: with SMTP id w8mr14471824ilm.308.1574069682145;
- Mon, 18 Nov 2019 01:34:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j4Tb0ttRFw3t9sd1seO7iOyRmoHtxz8QiDipOLgYhfk=;
+        b=DdXsprCsLW666s/Wnwe7ZCdUmNoQvYiJyuosN2pLwuscCWtGPGoLbq84iSuGLMUJYh
+         EIZJnupt2oUWMY5YEFpaIKFVdJyStreOfgQ7KszrCfvxnSE68AsOm4206EUsvVuwiS00
+         8CVo8HxI8ZhTDorwUJyn7zwsu4syZR4Q8ClkPVY7gHNnrjRb+UJ0hrri92UJZvrwAMdu
+         H6F0Ak2Nup1/+Rig5f/NQW42Ssj1ccyQopwZsXa8k2yy0CXI4EZWYROPP4LIs/t9WbFH
+         1f+Ee88Sg2mG9E3bqpxsWB1VHZIS4arKMpPtAVfvfa6Yjil8FFHb8moG5rS2g+gYPUTJ
+         bNzg==
+X-Gm-Message-State: APjAAAWO/S9ZQbNp7UQZaAAQIeUCjpxip5DGaVuE71TFIRfBmyBwzMKZ
+        OHtvUXmtQGc6P/9lo7+he20=
+X-Google-Smtp-Source: APXvYqzRNbzUzZKuGwQfxwmU1oQitUxKl4bqL0I3wGCiiaEg2GGL/i9UBvMgZ1g7TiPtHWPMnDD/+g==
+X-Received: by 2002:adf:f3c5:: with SMTP id g5mr28757517wrp.5.1574069862352;
+        Mon, 18 Nov 2019 01:37:42 -0800 (PST)
+Received: from clement-Latitude-7490.outsight.local (lputeaux-656-1-11-33.w82-127.abo.wanadoo.fr. [82.127.142.33])
+        by smtp.gmail.com with ESMTPSA id w10sm19006687wmd.26.2019.11.18.01.37.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 01:37:41 -0800 (PST)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Philipp Zabel <pza@pengutronix.de>
+Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH v5 0/8] Add support for H6 PWM
+Date:   Mon, 18 Nov 2019 10:37:19 +0100
+Message-Id: <20191118093727.21899-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190830074103.16671-1-bibby.hsieh@mediatek.com> <20190830074103.16671-3-bibby.hsieh@mediatek.com>
-In-Reply-To: <20190830074103.16671-3-bibby.hsieh@mediatek.com>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Mon, 18 Nov 2019 17:34:16 +0800
-Message-ID: <CAJMQK-ir=8ukNZw8XN=prLuh3znjbjNszVB=dcDxa_bVnFwVAQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/mediatek: Apply CMDQ control flow
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>,
-        lkml <linux-kernel@vger.kernel.org>, tfiga@chromium.org,
-        CK Hu <ck.hu@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 7:41 AM Bibby Hsieh <bibby.hsieh@mediatek.com> wrote:
+Hi,
 
-> @@ -405,26 +458,69 @@ void mtk_drm_crtc_cursor_update(struct drm_crtc *crtc, struct drm_plane *plane,
->                 return;
->
->         mutex_lock(&priv->hw_lock);
-> -       plane_helper_funcs->atomic_update(plane, plane_state);
-> -       for (i = 0; i < mtk_crtc->layer_nr; i++) {
-> -               struct drm_plane *plane = &mtk_crtc->planes[i];
-> -               struct mtk_plane_state *plane_state;
-> +       if (IS_ENABLED(CONFIG_MTK_CMDQ) && mtk_crtc->cmdq_client) {
-> +               struct mtk_crtc_state *mtk_crtc_state =
-> +                               to_mtk_crtc_state(crtc->state);
-> +               struct mtk_cmdq_cb_data *cb_data;
-> +
-> +               mtk_crtc_state->cmdq_handle =
-> +                               cmdq_pkt_create(mtk_crtc->cmdq_client,
-> +                                               PAGE_SIZE);
-> +               cmdq_pkt_clear_event(mtk_crtc_state->cmdq_handle,
-> +                                    mtk_crtc->cmdq_event);
-> +               cmdq_pkt_wfe(mtk_crtc_state->cmdq_handle, mtk_crtc->cmdq_event);
-> +               plane_helper_funcs->atomic_update(plane, plane_state);
-> +               cb_data = kmalloc(sizeof(*cb_data), GFP_KERNEL);
-Check kmalloc failure?
-> +               cb_data->cmdq_handle = mtk_crtc_state->cmdq_handle;
-> +               cmdq_pkt_flush_async(mtk_crtc_state->cmdq_handle,
-> +                                    ddp_cmdq_cursor_cb, cb_data);
+This is a rework of Jernej's previous work[1] taking account all the
+previous remarks.
 
-> @@ -494,13 +599,29 @@ static void mtk_drm_crtc_atomic_flush(struct drm_crtc *crtc,
->                                       struct drm_crtc_state *old_crtc_state)
->  {
->         struct drm_atomic_state *old_atomic_state = old_crtc_state->state;
-> +       struct drm_crtc_state *crtc_state = crtc->state;
-> +       struct mtk_crtc_state *state = to_mtk_crtc_state(crtc_state);
-> +       struct cmdq_pkt *cmdq_handle = state->cmdq_handle;
->         struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
->         struct mtk_drm_private *priv = crtc->dev->dev_private;
-> +       struct mtk_cmdq_cb_data *cb_data;
->         unsigned int pending_planes = 0;
->         int i;
->
-> -       if (mtk_crtc->event)
-> -               mtk_crtc->pending_needs_vblank = true;
-> +       DRM_DEBUG_DRIVER("[CRTC:%u] [STATE:%p(%p)->%p(%p)]\n", crtc->base.id,
-> +                        old_crtc_state, old_crtc_state->state,
-> +                        crtc_state, crtc_state->state);
-> +
-> +       if (IS_ENABLED(CONFIG_MTK_CMDQ) && mtk_crtc->cmdq_client) {
-> +               drm_atomic_state_get(old_atomic_state);
-> +               cb_data = kmalloc(sizeof(*cb_data), GFP_KERNEL);
-Check kmalloc failure?
-> +               cb_data->state = old_crtc_state;
-> +               cb_data->cmdq_handle = cmdq_handle;
+Bindings is still strict but probe in the driver are now optionnals.
+
+If someone could confirm that the PWM is not broken, as my board
+doesn't output it.
+
+I didn't add the acked-tags as there are big changes.
+
+Thanks,
+Clément
+
+Jernej's cover:
+Allwinner H6 SoC has PWM core which is basically the same as that found
+in A20, it's just depends on additional bus clock and reset line.
+
+This series adds support for it and extends PWM driver functionality in
+a way that it's now possible to bypass whole core and output PWM source
+clock directly as a PWM signal. This functionality is needed by AC200
+chip, which is bundled in same physical package as H6 SoC, to serve as a
+clock source of 24 MHz. AC200 clock input pin is bonded internally to
+the second PWM channel.
+
+I would be grateful if anyone can test this patch series for any kind of
+regression on other SoCs.
+
+[1]: https://patchwork.kernel.org/cover/11061737/
+
+Changes in v5:
+ - Move bypass calculation to pwm_calculate
+ - Split mod_clock fallback from bus_clk probe    
+ - Update comment
+ - Move my SoB after acked-by/reviewed-by
+
+Changes in v4:
+ - item description in correct order and add a blank line
+ - use %pe for printing PTR_ERR
+ - don't print error when it's an EPROBE_DEFER
+ - change output clock bypass formula to match PWM policy
+
+Changes in v3:
+ - Documentation update to allow one clock without name
+ - Change reset optional to shared
+ - If reset probe failed return an error
+ - Remove old clock probe
+ - Update bypass enabled formula
+
+Changes in v2:
+ - Remove allOf in Documentation
+ - Add H6 example in Documentation
+ - Change clock name from "pwm" to "mod"
+ - Change reset quirk to optional probe
+ - Change bus_clock quirk to optional probe
+ - Add limitation comment about mod_clk_output
+ - Add quirk for mod_clk_output
+ - Change bypass formula
+
+Clément Péron (2):
+  pwm: sun4i: Prefer "mod" clock to unamed
+  [DO NOT MERGE] arm64: allwinner: h6: enable Beelink GS1 PWM
+
+Jernej Skrabec (6):
+  dt-bindings: pwm: allwinner: Add H6 PWM description
+  pwm: sun4i: Add an optional probe for reset line
+  pwm: sun4i: Add an optional probe for bus clock
+  pwm: sun4i: Add support to output source clock directly
+  pwm: sun4i: Add support for H6 PWM
+  arm64: dts: allwinner: h6: Add PWM node
+
+ .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml |  48 +++++
+ .../dts/allwinner/sun50i-h6-beelink-gs1.dts   |   4 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
+ drivers/pwm/pwm-sun4i.c                       | 185 +++++++++++++++---
+ 4 files changed, 215 insertions(+), 32 deletions(-)
+
+-- 
+2.20.1
+
