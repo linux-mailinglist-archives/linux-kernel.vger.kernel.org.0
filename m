@@ -2,123 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE3410099F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0D81009B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfKRQrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 11:47:10 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34095 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727133AbfKRQrA (ORCPT
+        id S1726511AbfKRQuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 11:50:17 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44448 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbfKRQuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:47:00 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l28so4907136lfj.1;
-        Mon, 18 Nov 2019 08:46:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BEJ200kbZVTsss1iDk6Wt5qRmYYgbTDuf+N828TJE+4=;
-        b=IGVCd2jc4txLjHf/sfY4X+avJaXXVtxQiUXMfIumvdKaSAsNVzOtgcdtd+AHwpBqbO
-         7n/eTuOLD2NtFqmwiRinl5eTiqFcO2MsujzbRHbZG4KoBVqdb2FRgFpvtz8plrhU2rrK
-         0wItbJRA/PkavAFlXydHA8ROKZ1CfCqZVfbo5GkWzXMxYLWpvLGY2VHgwvX0ji8HKj1O
-         cVmUMkz5AwoNLLUYqlsW9fuA7r9BFxvq0dkxEVRxJcVNLQe5qRfEtHYEc9VRv8t1+GVV
-         HYT/BWiNOY5zamQOKShxM6d50RQ8FQayJ8RKvSIfoXfwRcP2qh7QNcIi5UPGgONFpW9m
-         5oNQ==
+        Mon, 18 Nov 2019 11:50:16 -0500
+Received: by mail-ot1-f68.google.com with SMTP id c19so15073396otr.11;
+        Mon, 18 Nov 2019 08:50:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BEJ200kbZVTsss1iDk6Wt5qRmYYgbTDuf+N828TJE+4=;
-        b=eb4u8p9y2boFvjHGb1+CObnkDiiw/dIDVwXpVW+CgFcxHcF5rL5YkXUbRdt1blVsXT
-         ZE8GevYqG2EEhi5TubeROpiihh3vjVpI6iZzPDbEkMPHzIOo1LX8y2mBv4W/HXtydktW
-         2KXUIHWSvQbTM2OTrFdEsgB0aveR7zkEDMeU7M04kn8CmT3pK5XN8vx6wrTM9e6Ow7Ox
-         NRtCI0jn30IWeVR3u1RAzYFbRwgwgJuo/YCTpM6xBi49hPt1gK7AyqNIloSezTItj32K
-         YWnVm3H7BuulJl7tgroNwk+EKGVy2s1kdn6W99xaK6EQJ+Zetiwo8Fi8MHAtjdFdhNrb
-         q8pg==
-X-Gm-Message-State: APjAAAWMfcKVuKx3HuOnCAwUSG35xeFC4L8jws6PzazKKAe6U2vZlgnO
-        yEiTUPhMoU+B5A5nkBxw/Wc=
-X-Google-Smtp-Source: APXvYqz478Bvh3VIehym/uGsiaTo42wDcevqvFNsiDJQj3upXVODL5mRJOxBSLNYfHEXEbPKE7y8Jg==
-X-Received: by 2002:ac2:5deb:: with SMTP id z11mr261378lfq.35.1574095617798;
-        Mon, 18 Nov 2019 08:46:57 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id d4sm8880307lfi.32.2019.11.18.08.46.56
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5NYQIVzszlovCzGCoyf9SHkjEAYAPxgYWsdxQCoKIq4=;
+        b=qetaDa4Txc0EdHqZu/KXPh05PyhaIiMT9tnrxo8A5qEzuGnIXeoRnxl4KHD7+eHUWh
+         5xcidHZPQAYvwCv6Di3ct5r0F+uYvj1PzYTtHGALgBp17UtUZfQGa+QyRc8ljMz1fQ9H
+         yPmZ1BESoE32zgkJgDzwrDXJ4b/be8eTPVoTDh8moLqQjit3BrmAhe4CJZ9LsfPRIAph
+         sSwxKqUdTpmlp0iSK42WOcyK6PWfHsDXp7vMNkSwk+ocESXChDuZqKnr+r+M/Ii9pMCV
+         NY3FZbm4lwN9EHiPeIfy4DRSDGPVPiiXsjz97E4vJQKP7WaH6ldH6prJPoBuONQM3Nvb
+         BlvA==
+X-Gm-Message-State: APjAAAUy/4YuQeyTeHLvAKjZC8zppITuXUXzWrAeHHwW2+hebCS1Z85W
+        Y74HZWknrTuBTN4zRnZLXA==
+X-Google-Smtp-Source: APXvYqy5fyTYkoXXqqwQ0H9dOLJstLheW2bjF5U1SrvtNLNVH/MBfBQlyKUyfzD0Wr2bOMi5c0zc1g==
+X-Received: by 2002:a05:6830:1e4c:: with SMTP id e12mr162673otj.358.1574095815692;
+        Mon, 18 Nov 2019 08:50:15 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s133sm6229914oia.58.2019.11.18.08.50.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 08:46:57 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 11/11] ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
-Date:   Mon, 18 Nov 2019 19:45:12 +0300
-Message-Id: <20191118164512.8676-12-digetx@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191118164512.8676-1-digetx@gmail.com>
-References: <20191118164512.8676-1-digetx@gmail.com>
+        Mon, 18 Nov 2019 08:50:15 -0800 (PST)
+Date:   Mon, 18 Nov 2019 10:50:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 01/11] dt-bindings: phy-mtk-tphy: add two optional
+ properties for u2phy
+Message-ID: <20191118165014.GA3621@bogus>
+References: <1573547796-29566-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573547796-29566-1-git-send-email-chunfeng.yun@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on beaver.
+On Tue, 12 Nov 2019 16:36:26 +0800, Chunfeng Yun wrote:
+> Add two optional properties, one for tuning J-K voltage by INTR,
+> another for disconnect threshold, both of them are related with
+> connect detection
+> 
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> ---
+> v4: no changes
+> 
+> v3: change commit log
+> 
+> v2: change description
+> ---
+>  Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30-beaver.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 6ebb3105af9e..86556622be25 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -2,6 +2,8 @@
- /dts-v1/;
- 
- #include "tegra30.dtsi"
-+#include "tegra30-cpu-opp.dtsi"
-+#include "tegra30-cpu-opp-microvolt.dtsi"
- 
- / {
- 	model = "NVIDIA Tegra30 Beaver evaluation board";
-@@ -2124,4 +2126,26 @@
- 			 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	cpus {
-+		cpu0: cpu@0 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@1 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@2 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@3 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
- };
--- 
-2.23.0
-
+Acked-by: Rob Herring <robh@kernel.org>
