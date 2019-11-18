@@ -2,76 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFEB41004D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B64410042C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:31:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfKRL6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:58:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36096 "EHLO mx1.suse.de"
+        id S1726706AbfKRLbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:31:13 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2456 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726506AbfKRL6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:58:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8773EABBD;
-        Mon, 18 Nov 2019 11:58:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1E31B1E422A; Mon, 18 Nov 2019 10:35:44 +0100 (CET)
-Date:   Mon, 18 Nov 2019 10:35:44 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Jan Kara <jack@suse.cz>, Sebastian Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: Re: [PATCH] fs/buffer: Make BH_Uptodate_Lock bit_spin_lock a regular
- spinlock_t
-Message-ID: <20191118093544.GA17319@quack2.suse.cz>
-References: <20190820170818.oldsdoumzashhcgh@linutronix.de>
- <20190820171721.GA4949@bombadil.infradead.org>
- <alpine.DEB.2.21.1908201959240.2223@nanos.tec.linutronix.de>
- <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
- <20191115145638.GA5461@quack2.suse.cz>
- <20191115173634.GC23689@mit.edu>
+        id S1726506AbfKRLbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:31:12 -0500
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 260692A3A9C03E1DC8A3;
+        Mon, 18 Nov 2019 19:31:10 +0800 (CST)
+Received: from dggeme715-chm.china.huawei.com (10.1.199.111) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 18 Nov 2019 19:31:09 +0800
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ dggeme715-chm.china.huawei.com (10.1.199.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Mon, 18 Nov 2019 19:31:09 +0800
+Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
+ dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
+ Mon, 18 Nov 2019 19:31:09 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     David Hildenbrand <david@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "steve.capper@arm.com" <steve.capper@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "walken@google.com" <walken@google.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
+        "jhubbard@nvidia.com" <jhubbard@nvidia.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] mm: get rid of odd jump labels in
+ find_mergeable_anon_vma()
+Thread-Topic: [PATCH v3] mm: get rid of odd jump labels in
+ find_mergeable_anon_vma()
+Thread-Index: AdWeAfZA6El8rFaYR4a14N6qgMMNMg==
+Date:   Mon, 18 Nov 2019 11:31:09 +0000
+Message-ID: <649a404995f34fe3ab36ae2c4d58f077@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.184.189.20]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191115173634.GC23689@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 15-11-19 12:36:34, Theodore Y. Ts'o wrote:
-> On Fri, Nov 15, 2019 at 03:56:38PM +0100, Jan Kara wrote:
-> > With some effort, we could even shrink struct buffer_head from 104 bytes
-> > (on x86_64) to 96 bytes but I don't think that effort is worth it (I'd find
-> > it better use of time to actually work on getting rid of buffer heads
-> > completely).
-> 
-> Is that really realistic?  All aside from the very large number of
-> file systems which use buffer_heads that would have to be reworked,
-> the concept of buffer heads is pretty fundamental to how jbd2 is
-> architected.
-
-I think it is reasonably possible to remove buffer_heads from data path
-(including direct IO path) of all filesystems. That way memory consumption
-of buffer_heads becomes mostly irrelevant and we can have a look how much
-from the current bh framework still makes sense...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+RGF2aWQgSGlsZGVuYnJhbmQgd3JvdGU6DQo+IE9uIDE4LjExLjE5IDA3OjM5LCBsaW5taWFvaGUg
+d3JvdGU6DQo+PiBGcm9tOiBNaWFvaGUgTGluIDxsaW5taWFvaGVAaHVhd2VpLmNvbT4NCj4+IA0K
+Pj4gVGhlIGp1bXAgbGFiZWxzIHRyeV9wcmV2IGFuZCBub25lIGFyZSBub3QgcmVhbGx5IG5lZWRl
+ZCBpbiANCj4+IGZpbmRfbWVyZ2VhYmxlX2Fub25fdm1hKCksIGVsaW1pbmF0ZSB0aGVtIHRvIGlt
+cHJvdmUgcmVhZGFiaWxpdHkuDQo+DQo+SSB0aGluayB5b3UgY2FuIGdldCByaWQgb2YgbmVhciBj
+b21wbGV0ZWx5IGFzIHdlbGwNCj4NCj4JaWYgKHZtYS0+dm1fbmV4dCkgew0KPgkJYW5vbl92bWEg
+PSByZXVzYWJsZV9hbm9uX3ZtYShuZWFyLCB2bWEsIHZtYS0+dm1fbmV4dCk7DQo+CQlpZiAoYW5v
+bl92bWEpDQo+CQkJcmV0dXJuIGFub25fdm1hOw0KPgl9DQo+DQo+Li4uDQo+DQo+QXBhcnQgZnJv
+bSAgdGhhdCBsb29rcyBnb29kIHRvIG1lLg0KPg0KPj4gICANCj4+IC0JYW5vbl92bWEgPSByZXVz
+YWJsZV9hbm9uX3ZtYShuZWFyLCB2bWEsIG5lYXIpOw0KPj4gLQlpZiAoYW5vbl92bWEpDQo+PiAt
+CQlyZXR1cm4gYW5vbl92bWE7DQo+PiAtdHJ5X3ByZXY6DQo+PiArCS8qIFRyeSBwcmV2IG5leHQu
+ICovDQo+PiAgIAluZWFyID0gdm1hLT52bV9wcmV2Ow0KPj4gLQlpZiAoIW5lYXIpDQoNClRoYW5r
+cyBmb3IgeW91ciBhZHZpY2UgYWdhaW4uIEkgd2lsbCBnZXQgcmlkIG9mIG5lYXIgY29tcGxldGVs
+eSBpbiB2NC4gVGhhbmtzIGEgbG90Lg0K
