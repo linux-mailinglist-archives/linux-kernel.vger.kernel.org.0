@@ -2,172 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E75E1004D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7181004E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 13:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfKRL5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:57:20 -0500
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:41076 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726506AbfKRL5U (ORCPT
+        id S1727056AbfKRMAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 07:00:00 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:16066 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726506AbfKRL77 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:57:20 -0500
-Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
-        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1iWfef-0005JO-HE; Mon, 18 Nov 2019 12:57:17 +0100
-X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
-        linuxbbg.five-lan.de
-Received: from [192.168.34.101] (p5098d998.dip0.t-ipconnect.de [80.152.217.152])
-        (authenticated bits=0)
-        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id xAIBvGMN025495
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 18 Nov 2019 12:57:16 +0100
-Subject: Re: [PATCH] arm64: dts: rockchip: Split rk3399-roc-pc for with and
- without mezzanine board.
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <075b3fa6-dab7-5fec-df68-b53f32bf061b@fivetechno.de>
- <2226540.xovL9aYQn6@diego>
- <CAMty3ZDwjv4ShpbAyQPWk9ewboFOK3nZO0s_QNty_m0hJKR76w@mail.gmail.com>
-From:   Markus Reichl <m.reichl@fivetechno.de>
-Autocrypt: addr=m.reichl@fivetechno.de; prefer-encrypt=mutual; keydata=
- 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
- eD/Xv4SsK2JTO4nkQYw8
-Organization: five technologies GmbH
-Message-ID: <62bfaad5-cbd6-efbd-426b-3da681fcd160@fivetechno.de>
-Date:   Mon, 18 Nov 2019 12:57:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Mon, 18 Nov 2019 06:59:59 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAIBsbju014603;
+        Mon, 18 Nov 2019 05:57:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=a90LFI+4UGRRN7SiN+NnHb60zo8aNl0u0NCeb9mxiHk=;
+ b=AME6hCYHgFoi0so5ng3/aZ9wLRPM0wv8J2BwCeJTZG1j97yGsixViaaHImVHmjKErj/V
+ /yz5WiIuZPyqTatpNGCt1ihqyAgCgWsG18tPf1vzLd98824To4FwNYBmfFWPxLPS7Msv
+ mPdXoJY4xsQKIHr+t+M4tmahSXAGZCCKs0dRGxwkwVucrG2WaKHE13Sduyo8xAy7SW8G
+ nyjRZm9Tb/64Pb6C7ptlkXJneP3mfCE7l5eFpvXUNdQPUwe5kjv4kZFHCcrOBTcNP5nF
+ 1XKpeA4XRhyb5DlCikLQJ/vreHfCNF0WgQuJywb+7bSDGr2KR6qHR4fE3yR5VDFPC6Yl XA== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2wafd6teh6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 18 Nov 2019 05:57:50 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 18 Nov
+ 2019 11:57:48 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Mon, 18 Nov 2019 11:57:48 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id F17672C6;
+        Mon, 18 Nov 2019 11:57:47 +0000 (UTC)
+Date:   Mon, 18 Nov 2019 11:57:47 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm2200: add missed operations in remove and probe
+ failure
+Message-ID: <20191118115747.GG10439@ediswmail.ad.cirrus.com>
+References: <20191118073633.28237-1-hslester96@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMty3ZDwjv4ShpbAyQPWk9ewboFOK3nZO0s_QNty_m0hJKR76w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1574078239;98fa53a2;
-X-HE-SMSGID: 1iWfef-0005JO-HE
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191118073633.28237-1-hslester96@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 suspectscore=2 bulkscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1911180108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jagan,
-
-Am 18.11.19 um 12:44 schrieb Jagan Teki:
-> On Mon, Nov 4, 2019 at 5:42 PM Heiko Stübner <heiko@sntech.de> wrote:
->>
->> Hi Markus,
->>
->> Am Freitag, 1. November 2019, 17:54:23 CET schrieb Markus Reichl:
->> > For rk3399-roc-pc is a mezzanine board available that carries M.2 and
->> > POE interfaces. Use it with a separate dts.
->> >
->> > Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
->> > ---
->> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->> >  .../boot/dts/rockchip/rk3399-roc-pc-mezz.dts  |  52 ++
->> >  .../arm64/boot/dts/rockchip/rk3399-roc-pc.dts | 757 +----------------
->> >  .../boot/dts/rockchip/rk3399-roc-pc.dtsi      | 767 ++++++++++++++++++
->> >  4 files changed, 821 insertions(+), 756 deletions(-)
->> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-roc-pc-mezz.dts
->> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
->> >
->> > diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
->> > index a959434ad46e..80ee9f1fc5f5 100644
->> > --- a/arch/arm64/boot/dts/rockchip/Makefile
->> > +++ b/arch/arm64/boot/dts/rockchip/Makefile
->> > @@ -28,6 +28,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-neo4.dtb
->> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-orangepi.dtb
->> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
->> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc.dtb
->> > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc-mezz.dtb
->> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock-pi-4.dtb
->> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock960.dtb
->> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
->> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-mezz.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-mezz.dts
->> > new file mode 100644
->> > index 000000000000..ee77677d2cf2
->> > --- /dev/null
->> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-mezz.dts
->> > @@ -0,0 +1,52 @@
->> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> > +/*
->> > + * Copyright (c) 2017 T-Chip Intelligent Technology Co., Ltd
->> > + * Copyright (c) 2019 Markus Reichl <m.reichl@fivetechno.de>
->> > + */
->> > +
->> > +/dts-v1/;
->> > +#include "rk3399-roc-pc.dtsi"
->> > +
->> > +/ {
->> > +     model = "Firefly ROC-RK3399-PC Mezzanine Board";
->> > +     compatible = "firefly,roc-rk3399-pc", "rockchip,rk3399";
->>
->> different board with same compatible isn't possible, so
->> you'll need a new compatible for it and add a new line to
->> the roc-pc entry in
->>         Documentation/devicetree/bindings/arm/rockchip.yaml
->>
->> Either you see it as
->> - a board + hat, using dt overlay and same compatible
->> - a completely separate board, which needs a separate
->>   compatible as well
->>
->> And as discussed in the previous thread
->> http://lists.infradead.org/pipermail/linux-rockchip/2019-November/027592.html
->> but also in Jagan's response that really is somehow a grey area
->> for something relatively static as the M.2 extension.
+On Mon, Nov 18, 2019 at 03:36:33PM +0800, Chuhong Yuan wrote:
+> This driver misses calls to pm_runtime_disable and regulator_bulk_disable
+> in remove and a call to free_irq in probe failure.
+> Add the calls to fix it.
 > 
-> Sorry for late response on this. I still think that the "overlay would
-> be a better suite" than having separate dts, since it is HAT which is
-> optional to insert and have possibility of having another HAT if it
-> really fit into it.
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+>  sound/soc/codecs/wm2200.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> Comments?
-Presently no other extension board does exist, I don't expect one.
+> diff --git a/sound/soc/codecs/wm2200.c b/sound/soc/codecs/wm2200.c
+> index cf64e109c658..7b087d94141b 100644
+> --- a/sound/soc/codecs/wm2200.c
+> +++ b/sound/soc/codecs/wm2200.c
+> @@ -2410,6 +2410,8 @@ static int wm2200_i2c_probe(struct i2c_client *i2c,
+>  
+>  err_pm_runtime:
+>  	pm_runtime_disable(&i2c->dev);
+> +	if (i2c->irq)
+> +		free_irq(i2c->irq, wm2200);
 
-I use it with rootfs on NVME on the mezzanine board.
-It is convenient to have the NVME up before going to user space.
+Might be worth also adding a return if the request of the IRQ
+fails. We will get a large WARN in the log if the IRQ request
+failed, then we fall down this error path.
 
-The board has SPI-NOR MTD storage to host U-Boot. 
-In future U-Boot could boot from NVME directly without needing
-an SD or MMC to host the boot kernel.
+>  err_reset:
+>  	if (wm2200->pdata.reset)
+>  		gpio_set_value_cansleep(wm2200->pdata.reset, 0);
+> @@ -2426,12 +2428,15 @@ static int wm2200_i2c_remove(struct i2c_client *i2c)
+>  {
+>  	struct wm2200_priv *wm2200 = i2c_get_clientdata(i2c);
+>  
+> +	pm_runtime_disable(&i2c->dev);
+>  	if (i2c->irq)
+>  		free_irq(i2c->irq, wm2200);
+>  	if (wm2200->pdata.reset)
+>  		gpio_set_value_cansleep(wm2200->pdata.reset, 0);
+>  	if (wm2200->pdata.ldo_ena)
+>  		gpio_set_value_cansleep(wm2200->pdata.ldo_ena, 0);
+> +	regulator_bulk_disable(ARRAY_SIZE(wm2200->core_supplies),
+> +			       wm2200->core_supplies);
 
-Gruß,
--- 
-Markus Reichl
+This one is a bit trickier since this regulator is being
+controlled by PM runtime, and I don't think it necessarily leaves
+things in an enabled state when it is disabled.
+
+Thanks,
+Charles
