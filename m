@@ -2,87 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF6B8100F6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 841AA100F74
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:36:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfKRXdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 18:33:07 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45507 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfKRXdH (ORCPT
+        id S1727014AbfKRXgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 18:36:36 -0500
+Received: from a27-187.smtp-out.us-west-2.amazonses.com ([54.240.27.187]:37160
+        "EHLO a27-187.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726795AbfKRXgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 18:33:07 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k1so9061414pgg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 15:33:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
-        b=rmglKKxUXYVNC8OU6SHrTLNOUiiTc3/oQPm2yacr2b/GaY45DTgPE6cU2nBy5xNNW0
-         pWz/JyvBSJvWahqxLDAXh8u9UDRC+8X3oAF4gIHZHw2WjFoBMMwtxINXrHGhe56pNXgr
-         /eFnn8v7XTCao+9CJbNxO+1QIC94qI+Zdom4znHdF4SV57S+D2TwxyKqt7NZMsX1e2Qe
-         5DYe6Z5QxfZLSLFtL9xJW0/Ep5nWIOiVIP55IZ4/pXr6lfnxcDI5EnWC9ynmH+YMP5cQ
-         aNiJ8ckMKtEu4tY9HKDU2c44XKH7qGmjNKGgCdZv84t+WUIWdO6fcPBPKW7bIfbJGqXz
-         Dg3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
-        b=ubWJ6WCtTVfShcLbfduRSm98PPiapx4LNDgxaitW13wMa60Y7PTTfORv7O24g4s09z
-         DgElbjdPHtc5epu17lY1JMOGF9uSDVRo9I9QE1HizblMRnSeHx0X1WGCP2deYHhJJ9FR
-         RUmL24jnYFn4P7pj3FcUw0v1hlaghUGvFflRfWTmUVYTr+UAshcxFh62U2lJeNXbJhvX
-         IlUMX92rT7GDBoiWkU9JBBc6bM5o0URUU1yYTsGWs8hvXLhlO3zs4LswS9M520IQeWbJ
-         /vctfCD6iHJRsDBAvEEUyNfRP3XS1QqB2lAYG9xqP/eYChLBN+d3s/65ivwfgeLoYN//
-         rSdQ==
-X-Gm-Message-State: APjAAAWaDmer9CIptfuRXYWTx5uni5aeInAVVj+ua/Kzrd/+oaLl7B/q
-        aU+jT76EZbjuNntU8QiS2x4FtnWYp5MfvicZzzU=
-X-Google-Smtp-Source: APXvYqypuTj7JMfMZVQ8E7HpHAM249f+tz/TtOETtaLL9bAvrH8YF0iK3lEQOZVrMrSsf08HXulbv5u9ogXdSdB1k54=
-X-Received: by 2002:a65:6145:: with SMTP id o5mr2018405pgv.38.1574119986595;
- Mon, 18 Nov 2019 15:33:06 -0800 (PST)
+        Mon, 18 Nov 2019 18:36:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574120195;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
+        bh=TvlxPY6SnVIMe+RazQy8bs89LJQ6zB0OJ9f/kliZgWg=;
+        b=ndrbU5nkSFYjmg4i95bp+bwwTJ8tSeWA8EsgX6FSVIwdxW/1n1/9GIaPx0VMqpy0
+        LKgNuA6a1qw9zXdBtdYHQc/IE5MR83P22ob1wS8kGoTeiBhgerfb+XmooQarCI37gaq
+        rIs032+6f5eguxI6qzX1qb/qptnShM2t170KDNJQ=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574120195;
+        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Feedback-ID;
+        bh=TvlxPY6SnVIMe+RazQy8bs89LJQ6zB0OJ9f/kliZgWg=;
+        b=XpDRhaWoypffs8ccilOsaPYG+jU7FMlDjvesYB4EuWJGKmphD+9RoD+/oOPqbc8C
+        ItKr4gnXAdJShCUr6HGfoA2vTQf+AiWrr6t/T3DdfNqrjV94TfpBgpwDC+W4uKTIQ6Z
+        jItnRzewOBSU0Br5xqKGz5jm5skGJxEjSdzeBQwk=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13FD5C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Mon, 18 Nov 2019 23:36:35 +0000
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     swboyd@chromium.org, linus.walleij@linaro.org,
+        bjorn.andersson@linaro.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        mkshah@codeaurora.org, linux-gpio@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org
+Subject: Re: [PATCH v2 00/12] Support wakeup capable GPIOs
+Message-ID: <0101016e80e00412-b1afa29f-17cc-4eae-90fa-7ac1c0e08e59-000000@us-west-2.amazonses.com>
+References: <1573855915-9841-1-git-send-email-ilina@codeaurora.org>
+ <86bltcxges.wl-maz@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:30ec:0:0:0:0 with HTTP; Mon, 18 Nov 2019 15:33:06
- -0800 (PST)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <missdonnahistory@gmail.com>
-Date:   Tue, 19 Nov 2019 00:33:06 +0100
-Message-ID: <CACROPfH2MKgmm09i34H3gjPLZ27+hPB8+h7-tC5o57SOU8HGHQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <86bltcxges.wl-maz@kernel.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-SES-Outgoing: 2019.11.18-54.240.27.187
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day, dear
+On Sat, Nov 16 2019 at 03:30 -0700, Marc Zyngier wrote:
+>On Fri, 15 Nov 2019 22:11:43 +0000,
+>Lina Iyer <ilina@codeaurora.org> wrote:
+>>
+>> Hi,
+>>
+>> Here is the spin of the series with the review comments addressed and
+>> Reviewed-by tags added. Thanks all for your reviews.
+>>
+>> Andy/Bjorn, would you pull patches 10-12 in your tree? Marc would be
+>> pulling the patches 1-9 into the irqchip tree.
+>
+>Applied 1-9 with some minor subject refactoring and series reordering,
+>and pushed out in irq/irqchip-next. Any late change, please provide
+>fixes on top of that branch.
+>
+Sure. Thanks Marc.
 
-My name is Mr. Joe Akaba ESQ, Working with one of the best
-chambers and I write to inform you about the death of my client who
-dead as a result of an accident with his family .On the 19th day of August
-2017, My late client died as a result of deadly accident without him be
-register any of his family member as next of kin to bank where he deposited
-a huge amount of money and He died with his family and i have searched for
-any other members of his
-nearby relative without any fruitful result and it was when the bank
-here sent me a notice of their resolution to confiscate he=E2=80=99s estate=
- in line
-with their abandoned property.
-
-This is to bring your attention by seeking your consent to present
-your name as My late client next of Kin to the bank where he
-deposited a huge amount of money before his death Eight million Five
-hundred thousand United State dollar .$8.5 million Usd
-
-I have unsuccessfully made several attempts to locate any of my
-clients extended relatives, but all to no avail. Please i need your urgent
- respond so that we can move to the bank where the fund is deposited .
-
-Thanks and regards,
-Barrister Joe Akaba (Esq)
-Principal attorney of
-dominion associates
-chambers barristers & solicitors
-Call +22890-33-26-71
+--Lina
