@@ -2,114 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B54B1100B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2625100B62
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfKRSS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 13:18:56 -0500
-Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:34220 "EHLO
-        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726541AbfKRSSz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 13:18:55 -0500
-Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
-        by mx0a-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAIIA4Pv006358;
-        Mon, 18 Nov 2019 13:18:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=fmtd2iqBbFAO+k5+TNL8jMvexpF7b7aXX6LntGCOHZs=;
- b=V2IuX7pL+Dtqg5r/Gw4TqQJm7cYi7aGb5Im1xfZKevqQ87hSr8IyXfhfuE6X0KWiskUJ
- OPACDAHlhJp1n9mSad7rsrBVlsdZrXkF8TXZZEVoU4BpOR2LrzmF+4PGxO6uj6ooG0Ej
- sqriwTwGmBBINvE5TlPvgBoHPh8VTnwNG0qwqjQEP4kVNpYRKvyAuAseNs+WTvPwF7bC
- kIk7nz8nPvNWHJEkImDoq5Oom2jNtdnba8OZKdD3IV6LCn3pJE+c2GM+8zXhsa81NENG
- DkMMUC12pFw9y0whKkElR167UGqSc5MxaJRiEIISW+Wj9ddRRNojT0X992FTxjYPQsY4 dg== 
-Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
-        by mx0a-00154904.pphosted.com with ESMTP id 2wad5f05rq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 Nov 2019 13:18:54 -0500
-Received: from pps.filterd (m0134318.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAII88Sw052981;
-        Mon, 18 Nov 2019 13:18:53 -0500
-Received: from ausc60ps301.us.dell.com (ausc60ps301.us.dell.com [143.166.148.206])
-        by mx0a-00154901.pphosted.com with ESMTP id 2wacmg0rva-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Nov 2019 13:18:53 -0500
-X-LoopCount0: from 10.166.132.132
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="1378781001"
-From:   <Mario.Limonciello@dell.com>
-To:     <gayatri.kammela@intel.com>, <andy.shevchenko@gmail.com>
-CC:     <platform-driver-x86@vger.kernel.org>,
-        <vishwanath.somayaji@intel.com>, <dvhart@infradead.org>,
-        <linux-kernel@vger.kernel.org>, <charles.d.prestopine@intel.com>,
-        <peterz@infradead.org>, <srinivas.pandruvada@intel.com>,
-        <andriy.shevchenko@linux.intel.com>, <kan.liang@intel.com>,
-        <david.e.box@intel.com>, <rajneesh.bhardwaj@intel.com>,
-        <tony.luck@intel.com>
-Subject: RE: [PATCH v3 0/7] x86/intel_pmc_core: Add Tiger Lake, Elkhart Lake
-Thread-Topic: [PATCH v3 0/7] x86/intel_pmc_core: Add Tiger Lake, Elkhart Lake
-Thread-Index: AQHVnf4HfWi4zwIc4UmHAQEsNxXTkKeRn7wA//+dHYA=
-Date:   Mon, 18 Nov 2019 18:18:51 +0000
-Message-ID: <9b880cb6585d4608814598517fe5d675@AUSX13MPC105.AMER.DELL.COM>
-References: <cover.1573750525.git.gayatri.kammela@intel.com>
- <CAHp75Vfrd-BAZ7H_LuQfz32yaap1X3gEnqZ2-9EPQ+j_b0f93g@mail.gmail.com>
- <MN2PR11MB3711EDFC967C295689E109DEF24D0@MN2PR11MB3711.namprd11.prod.outlook.com>
-In-Reply-To: <MN2PR11MB3711EDFC967C295689E109DEF24D0@MN2PR11MB3711.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726698AbfKRSV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 13:21:26 -0500
+Received: from smtp.uniroma2.it ([160.80.6.23]:41595 "EHLO smtp.uniroma2.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726216AbfKRSV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 13:21:26 -0500
+Received: from localhost.localdomain ([160.80.103.126])
+        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id xAIIKjUB028377
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 18 Nov 2019 19:20:46 +0100
+From:   Andrea Mayer <andrea.mayer@uniroma2.it>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Lebrun <dav.lebrun@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Andrea Mayer <andrea.mayer@uniroma2.it>
+Subject: [net-next] seg6: allow local packet processing for SRv6 End.DT6 behavior
+Date:   Mon, 18 Nov 2019 19:20:26 +0100
+Message-Id: <20191118182026.2634-1-andrea.mayer@uniroma2.it>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-18_05:2019-11-15,2019-11-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- malwarescore=0 priorityscore=1501 clxscore=1015 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911180155
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- mlxscore=0 impostorscore=0 phishscore=0 clxscore=1015 spamscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1911180155
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBwbGF0Zm9ybS1kcml2ZXIteDg2
-LW93bmVyQHZnZXIua2VybmVsLm9yZyA8cGxhdGZvcm0tZHJpdmVyLXg4Ni0NCj4gb3duZXJAdmdl
-ci5rZXJuZWwub3JnPiBPbiBCZWhhbGYgT2YgS2FtbWVsYSwgR2F5YXRyaQ0KPiBTZW50OiBNb25k
-YXksIE5vdmVtYmVyIDE4LCAyMDE5IDEyOjExIFBNDQo+IFRvOiBBbmR5IFNoZXZjaGVua28NCj4g
-Q2M6IFBsYXRmb3JtIERyaXZlcjsgU29tYXlhamksIFZpc2h3YW5hdGg7IERhcnJlbiBIYXJ0OyBM
-aW51eCBLZXJuZWwgTWFpbGluZw0KPiBMaXN0OyBQcmVzdG9waW5lLCBDaGFybGVzIEQ7IFBldGVy
-IFppamxzdHJhOyBQYW5kcnV2YWRhLCBTcmluaXZhczsgQW5keQ0KPiBTaGV2Y2hlbmtvOyBMaWFu
-ZywgS2FuOyBCb3gsIERhdmlkIEU7IEJoYXJkd2FqLCBSYWpuZWVzaDsgTHVjaywgVG9ueQ0KPiBT
-dWJqZWN0OiBSRTogW1BBVENIIHYzIDAvN10geDg2L2ludGVsX3BtY19jb3JlOiBBZGQgVGlnZXIg
-TGFrZSwgRWxraGFydCBMYWtlDQo+IA0KPiANCj4gW0VYVEVSTkFMIEVNQUlMXQ0KPiANCj4gPiA+
-IEFsbCB0aGUgaW5mb3JtYXRpb24gcmVnYXJkaW5nIHRoZSBQQ0ggSVBzIGFuZCBuYW1lcyBvZiBJ
-UHMgd2lsbCBiZQ0KPiA+ID4gYXZhaWxhYmxlIGluIEludGVsJ3MgUGxhdGZvcm0gQ29udHJvbGxl
-ciBIdWIgKFBDSCkgRXh0ZXJuYWwgRGVzaWduDQo+ID4gPiBTcGVjaWZpY2F0aW9uIChFRFMpIGRv
-Y3VtZW50IGV4cGVjdGVkIHRvIGJlIHJlbGVhc2VkIGluIDIwMjAgYmVmb3JlDQo+ID4gPiBwcm9k
-dWN0IGxhdW5jaC4NCj4gPg0KPiA+IFRoYW5rcywgdGhvdWdoIHlvdSBmb3Jnb3QgdG8gZml4IGFs
-bCBwcmVmaXhlcyBpbiB0aGUgbWFpbHMuIFdlIGhhdmUNCj4gPiBwbGF0Zm9ybS94ODY6ICREUklW
-RVJfTkFNRTogLi4uDQo+ID4NCj4gSGkgQW5keSEgU29ycnkgSSB0aGluayBJIG1pc3VuZGVyc3Rv
-b2QgeW91ciBjb21tZW50IGxhc3QgdGltZS4gSnVzdCB0byBtYWtlDQo+IHN1cmUsIHRoZSBwcmVm
-aXggc2hvdWxkIHRoZSBwYXR0ZXJuIGluIHRoaXMgY2FzZQ0KPiAicGxhdGZvcm0veDg2OiBpbnRl
-bF9wbWNfY29yZTogIiBhbmQgc2hvdWxkIGJlIHNhbWUgZm9yIGFsbCB0aGUgcGF0Y2hlcyBpbiB0
-aGUNCj4gc2VyaWVzIHJpZ2h0Pw0KPiANCj4gPiBBbHNvIGNvbnNpZGVyIE1hcmlvJ3MgY29tbWVu
-dCAoSSBkaWRuJ3QgaGVhciBiYWNrIGZyb20geW91IG9uIGl0KS4NCj4gU29ycnkgYWJvdXQgdGhh
-dC4gSSBhbSBwbGFubmluZyBvbiBzZW5kaW5nIGl0IGEgc2luZ2xlIHBhdGNoIGV4Y2x1ZGluZyBp
-dCBmcm9tIHRoZQ0KPiBzZXJpZXMgc2luY2Ugd2UgcmVjZWl2ZWQgYSByZXF1ZXN0IGZyb20gRGVs
-bC4gUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSB0aGluayB0aGlzDQo+IHBhdGNoIHNob3VsZCBi
-ZSBpbmNsdWRlZCBpbiB0aGUgc2VyaWVzLg0KDQpKdXN0IHRvIG1ha2UgaXQgY2xlYXIgdG8gdGhv
-c2Ugb24gdGhlIGxpc3QgLSB0aGUgcmVxdWVzdCBmcm9tIERlbGwgd2FzIG9mZiBsaXN0IGFuZCBz
-ZXBhcmF0ZWx5DQpmcm9tIG15IGNvbW1lbnQgaW4gYWRqdXN0aW5nIHRoZSBvcmRlcmluZy4gIEEg
-Y29udmVuaWVudCBzaWRlIGVmZmVjdCBpcyB0aGF0IGl0IHdpbGwNCnRha2UgaW50byBjb25zaWRl
-cmF0aW9uIG15IGNvbW1lbnQgdG9vIDopDQo=
+End.DT6 behavior makes use of seg6_lookup_nexthop() function which drops
+all packets that are destined to be locally processed. However, DT* should
+be able to delivery decapsulated packets that are destined to local
+addresses. Function seg6_lookup_nexthop() is also used by DX6, so in order
+to maintain compatibility I created another routing helper function which
+is called seg6_lookup_any_nexthop(). This function is able to take into
+account both packets that have to be processed locally and the ones that
+are destined to be forwarded directly to another machine. Hence,
+seg6_lookup_any_nexthop() is used in DT6 rather than seg6_lookup_nexthop()
+to allow local delivery.
+
+Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+---
+ net/ipv6/seg6_local.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
+index e70567446f28..43f3c9f1b4c1 100644
+--- a/net/ipv6/seg6_local.c
++++ b/net/ipv6/seg6_local.c
+@@ -149,8 +149,9 @@ static void advance_nextseg(struct ipv6_sr_hdr *srh, struct in6_addr *daddr)
+ 	*daddr = *addr;
+ }
+ 
+-int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
+-			u32 tbl_id)
++static int
++seg6_lookup_any_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
++			u32 tbl_id, int local_delivery)
+ {
+ 	struct net *net = dev_net(skb->dev);
+ 	struct ipv6hdr *hdr = ipv6_hdr(skb);
+@@ -158,6 +159,7 @@ int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
+ 	struct dst_entry *dst = NULL;
+ 	struct rt6_info *rt;
+ 	struct flowi6 fl6;
++	int dev_flags = 0;
+ 
+ 	fl6.flowi6_iif = skb->dev->ifindex;
+ 	fl6.daddr = nhaddr ? *nhaddr : hdr->daddr;
+@@ -182,7 +184,13 @@ int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
+ 		dst = &rt->dst;
+ 	}
+ 
+-	if (dst && dst->dev->flags & IFF_LOOPBACK && !dst->error) {
++	/* we want to discard traffic destined for local packet processing,
++	 * if @local_delivery is set to false.
++	 */
++	if (!local_delivery)
++		dev_flags |= IFF_LOOPBACK;
++
++	if (dst && (dst->dev->flags & dev_flags) && !dst->error) {
+ 		dst_release(dst);
+ 		dst = NULL;
+ 	}
+@@ -199,6 +207,12 @@ int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
+ 	return dst->error;
+ }
+ 
++inline int seg6_lookup_nexthop(struct sk_buff *skb,
++			       struct in6_addr *nhaddr, u32 tbl_id)
++{
++	return seg6_lookup_any_nexthop(skb, nhaddr, tbl_id, false);
++}
++
+ /* regular endpoint function */
+ static int input_action_end(struct sk_buff *skb, struct seg6_local_lwt *slwt)
+ {
+@@ -396,7 +410,7 @@ static int input_action_end_dt6(struct sk_buff *skb,
+ 
+ 	skb_set_transport_header(skb, sizeof(struct ipv6hdr));
+ 
+-	seg6_lookup_nexthop(skb, NULL, slwt->table);
++	seg6_lookup_any_nexthop(skb, NULL, slwt->table, true);
+ 
+ 	return dst_input(skb);
+ 
+-- 
+2.20.1
+
