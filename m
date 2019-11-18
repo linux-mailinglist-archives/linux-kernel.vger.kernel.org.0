@@ -2,341 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C78100863
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CED410088A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfKRPjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 10:39:21 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43303 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbfKRPjR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 10:39:17 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b1so323162pgq.10;
-        Mon, 18 Nov 2019 07:39:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nxVu6jtA8AokWDkx0sh9PMR+Vf8gqiLuOYYBOFYUbUI=;
-        b=paoK1bSyBmaR478X5wtbVD1sMaRCe3xDBzY5GaROJUIXUfcXnnQY0YlcFgPQS9v1xE
-         ypA+dKOqLMGnJD27Rw2p9dk+ZVp4sv2Cs+csBb9IL2C+S+4+5TKXhQZpxy87L5rKQ4Vs
-         snO4iqOvYPtnO/vn4ysMKI49mRyQf1ZWUsKV/9SoauEkC04Jxgxmh8iAJRlDDmOgEoj2
-         SHMxPCvMLY3DXDzMwWJCDGWVk7YSUvYT479Y0EYaQzZs5+2mJxRLZ4G0hbZ65U/ziXjN
-         6XJ/C+e7V+s6Oyhu5RDOlYlNxemb4bafA9/WZajA3ix5SOnO/04P/yOBhubz3LjX4TZn
-         zatg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nxVu6jtA8AokWDkx0sh9PMR+Vf8gqiLuOYYBOFYUbUI=;
-        b=eTLJl9IGBHqtut8CKzTXuPp+QRJ64YgGJ69m8BHCAz0XVGLfeDjzLWOgLwjTka2Ua/
-         Bj8OTyO0WUwWyeojOTQiYJOC8wl5opiIi+EVJ5XUIoLbrlscnLafARhF9OtyfcDTkS4B
-         k4s5lhx+YMIPTl/puEKsr+gVDFUepS+3A4QUTAo/iPJkcjVE/HtgdhyH34KFhYWMOLuN
-         6+onJUOH+FuLnJcvFjAeqIscKdSoAwDw/0shrwmCMvZd3swFmMLYXMOCQSJsvBtBu1gA
-         Y1bP6/U5gHbNjHrVf0g1qstHu+ucwLzrPuY5FxOCrVSUiXNcSzXBUiSmiLOVPZP0Zeuv
-         Dlng==
-X-Gm-Message-State: APjAAAUZ56zVxfZAx66lXfl8Tu8u5KA4HL89Dqtf05kDGDXUR/wnRkMd
-        K/NwTnq5XzryKenoT3E3cF4La/lI
-X-Google-Smtp-Source: APXvYqxnJe1hUOWvhUxaZOItcJOGk4eZQLs8/gUxLtC6ubS6Enqy4Q08rPmkl4jzdzDg1cnmJWsRpQ==
-X-Received: by 2002:a62:545:: with SMTP id 66mr34016944pff.1.1574091555794;
-        Mon, 18 Nov 2019 07:39:15 -0800 (PST)
-Received: from localhost.hsd1.wa.comcast.net ([2601:602:847f:811f:babe:8e8d:b27e:e6d7])
-        by smtp.gmail.com with ESMTPSA id z7sm23573732pfr.165.2019.11.18.07.39.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 07:39:14 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] crypto: caam - expose SEC4 DRNG via crypto RNG API
-Date:   Mon, 18 Nov 2019 07:38:43 -0800
-Message-Id: <20191118153843.28136-7-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191118153843.28136-1-andrew.smirnov@gmail.com>
-References: <20191118153843.28136-1-andrew.smirnov@gmail.com>
+        id S1727417AbfKRPpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 10:45:25 -0500
+Received: from mga09.intel.com ([134.134.136.24]:37583 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726216AbfKRPpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 10:45:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 07:45:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,320,1569308400"; 
+   d="scan'208";a="289292868"
+Received: from nmdeliwa-mobl1.amr.corp.intel.com (HELO [10.251.155.92]) ([10.251.155.92])
+  by orsmga001.jf.intel.com with ESMTP; 18 Nov 2019 07:45:22 -0800
+Subject: Re: [alsa-devel] [PATCH v7 1/6] ASoC: amd:Create multiple I2S
+ platform device endpoint
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Alexander.Deucher@amd.com, Dan Carpenter <dan.carpenter@oracle.com>
+References: <1574085861-22818-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574085861-22818-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <6c389fa0-a0a0-a79e-f63e-10e3616962be@linux.intel.com>
+Date:   Mon, 18 Nov 2019 09:40:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1574085861-22818-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose SEC4 DRNG IP block using crypto RNG API so it could be used
-both by kernel and userspace code.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/Kconfig  |   8 ++
- drivers/crypto/caam/Makefile |   1 +
- drivers/crypto/caam/drng.c   | 175 +++++++++++++++++++++++++++++++++++
- drivers/crypto/caam/intern.h |  13 +++
- drivers/crypto/caam/jr.c     |   1 +
- 5 files changed, 198 insertions(+)
- create mode 100644 drivers/crypto/caam/drng.c
+>   static int snd_acp3x_probe(struct pci_dev *pci,
+>   			   const struct pci_device_id *pci_id)
+>   {
+> -	int ret;
+> -	u32 addr, val;
+>   	struct acp3x_dev_data *adata;
+> -	struct platform_device_info pdevinfo;
+> +	struct platform_device_info pdevinfo[ACP3x_DEVS];
+>   	unsigned int irqflags;
+> +	int ret, val, i;
+> +	u32 addr;
+>   
+>   	if (pci_enable_device(pci)) {
 
-diff --git a/drivers/crypto/caam/Kconfig b/drivers/crypto/caam/Kconfig
-index 22116a8e2ff3..11a8f9c02448 100644
---- a/drivers/crypto/caam/Kconfig
-+++ b/drivers/crypto/caam/Kconfig
-@@ -146,6 +146,14 @@ config CRYPTO_DEV_FSL_CAAM_PKC_API
-           Supported cryptographic primitives: encryption, decryption,
-           signature and verification.
- 
-+config CRYPTO_DEV_FSL_CAAM_DRNG_API
-+	bool "Register caam device for hwrng API"
-+	default y
-+	select CRYPTO_RNG
-+	help
-+	  Selecting this will register the SEC4 DRNG to
-+	  the crypto RNG API.
-+
- endif # CRYPTO_DEV_FSL_CAAM_JR
- 
- endif # CRYPTO_DEV_FSL_CAAM
-diff --git a/drivers/crypto/caam/Makefile b/drivers/crypto/caam/Makefile
-index 04884fc087f9..02b7ed8823ce 100644
---- a/drivers/crypto/caam/Makefile
-+++ b/drivers/crypto/caam/Makefile
-@@ -20,6 +20,7 @@ caam_jr-y := jr.o key_gen.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API) += caamalg.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI) += caamalg_qi.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_AHASH_API) += caamhash.o
-+caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_DRNG_API) += drng.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_PKC_API) += caampkc.o pkc_desc.o
- 
- caam-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI) += qi.o
-diff --git a/drivers/crypto/caam/drng.c b/drivers/crypto/caam/drng.c
-new file mode 100644
-index 000000000000..75dbe4abdaa3
---- /dev/null
-+++ b/drivers/crypto/caam/drng.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver to expose SEC4 DRNG via crypto RNG API
-+ *
-+ * Copyright 2019 Zodiac Inflight Innovations
-+ *
-+ * Based on CAAM SEC4 hw_random driver
-+ *
-+ * Copyright 2011 Freescale Semiconductor, Inc.
-+ * Copyright 2018-2019 NXP
-+ *
-+ * Based on caamalg.c crypto API driver.
-+ *
-+ */
-+
-+#include <linux/completion.h>
-+#include <linux/atomic.h>
-+
-+#include <crypto/internal/rng.h>
-+
-+#include "compat.h"
-+
-+#include "regs.h"
-+#include "intern.h"
-+#include "desc_constr.h"
-+#include "jr.h"
-+#include "error.h"
-+
-+#define CAAM_DRNG_MAX_FIFO_STORE_SIZE	((unsigned int)U16_MAX)
-+
-+/* rng per-device context */
-+struct caam_drng_ctx {
-+	struct device *jrdev;
-+	struct completion done;
-+};
-+
-+static void rng_done(struct device *jrdev, u32 *desc, u32 err, void *context)
-+{
-+	struct caam_drng_ctx *ctx = context;
-+
-+	if (err)
-+		caam_jr_strstatus(jrdev, err);
-+
-+	complete(&ctx->done);
-+}
-+
-+static int caam_drng_generate(struct crypto_rng *tfm,
-+			     const u8 *src, unsigned int slen,
-+			     u8 *dst, unsigned int dlen)
-+{
-+	struct caam_drng_ctx *ctx = crypto_rng_ctx(tfm);
-+	struct device *jrdev = ctx->jrdev;
-+	unsigned int residue = dlen;
-+	dma_addr_t dst_dma, cur_dma;
-+	u32 *desc;
-+	int ret;
-+
-+	desc = kzalloc(5 * CAAM_CMD_SZ + CAAM_PTR_SZ_MAX,
-+		       GFP_KERNEL | GFP_DMA);
-+	if (!desc)
-+		return -ENOMEM;
-+
-+	cur_dma = dst_dma = dma_map_single(jrdev, dst, dlen, DMA_FROM_DEVICE);
-+	if (dma_mapping_error(jrdev, dst_dma)) {
-+		dev_err(jrdev, "unable to map destination memory\n");
-+		ret = -ENOMEM;
-+		goto free_mem;
-+	}
-+
-+	do {
-+		const unsigned int chunk = min(residue,
-+					       CAAM_DRNG_MAX_FIFO_STORE_SIZE);
-+
-+		init_job_desc(desc, 0);	/* 1 word */
-+		/* Generate random bytes */
-+		append_operation(desc, OP_ALG_ALGSEL_RNG | OP_TYPE_CLASS1_ALG |
-+				 OP_ALG_PR_ON); /* 1 word */
-+		/* Store bytes */
-+		append_seq_out_ptr_intlen(desc, cur_dma, chunk, 0);
-+		append_seq_fifo_store(desc, chunk, FIFOST_TYPE_RNGSTORE);
-+
-+		print_hex_dump_debug("rng job desc@: ", DUMP_PREFIX_ADDRESS,
-+				     16, 4, desc, desc_bytes(desc), 1);
-+
-+		init_completion(&ctx->done);
-+		ret = caam_jr_enqueue(jrdev, desc, rng_done, ctx);
-+		if (ret)
-+			break;
-+
-+		wait_for_completion(&ctx->done);
-+
-+		cur_dma += chunk;
-+		residue -= chunk;
-+	} while (residue);
-+
-+	dma_unmap_single(jrdev, dst_dma, dlen, DMA_FROM_DEVICE);
-+free_mem:
-+	kfree(desc);
-+	return ret;
-+}
-+
-+static int caam_drng_init(struct crypto_tfm *tfm)
-+{
-+	struct caam_drng_ctx *ctx = crypto_tfm_ctx(tfm);
-+	int ret;
-+
-+	ctx->jrdev = caam_jr_alloc();
-+	ret = PTR_ERR_OR_ZERO(ctx->jrdev);
-+	if (ret) {
-+		pr_err("Job Ring Device allocation for transform failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void caam_drng_exit(struct crypto_tfm *tfm)
-+{
-+	struct caam_drng_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	caam_jr_free(ctx->jrdev);
-+}
-+
-+static int caam_drng_seed(struct crypto_rng *tfm,
-+			 const u8 *seed, unsigned int slen)
-+{
-+	return 0;
-+}
-+
-+static struct rng_alg caam_drng_alg = {
-+	.generate = caam_drng_generate,
-+	.seed = caam_drng_seed,
-+	.seedsize = 0,
-+	.base = {
-+		.cra_name = "drng-caam",
-+		.cra_driver_name = "drng-caam",
-+		.cra_priority = 300,
-+		.cra_ctxsize = sizeof(struct caam_drng_ctx),
-+		.cra_module = THIS_MODULE,
-+		.cra_init = caam_drng_init,
-+		.cra_exit = caam_drng_exit,
-+	},
-+};
-+
-+static void caam_drng_unregister(void *data)
-+{
-+	crypto_unregister_rng(&caam_drng_alg);
-+}
-+
-+int caam_drng_register(struct device *ctrldev)
-+{
-+	struct caam_drv_private *priv = dev_get_drvdata(ctrldev);
-+
-+	if (caam_has_rng(priv)) {
-+		int ret;
-+
-+		ret = crypto_register_rng(&caam_drng_alg);
-+		if (ret) {
-+			dev_err(ctrldev,
-+				"couldn't register rng crypto alg: %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		ret = devm_add_action_or_reset(ctrldev, caam_drng_unregister,
-+					       NULL);
-+		if (ret)
-+			return ret;
-+
-+		dev_info(ctrldev,
-+			 "registering %s\n", caam_drng_alg.base.cra_name);
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/crypto/caam/intern.h b/drivers/crypto/caam/intern.h
-index 54bb04aa86bd..0c81eefd13a9 100644
---- a/drivers/crypto/caam/intern.h
-+++ b/drivers/crypto/caam/intern.h
-@@ -185,6 +185,19 @@ static inline int caam_trng_register(struct device *dev)
- 
- #endif /* CONFIG_CRYPTO_DEV_FSL_CAAM_RNG_API */
- 
-+#ifdef CONFIG_CRYPTO_DEV_FSL_CAAM_DRNG_API
-+
-+int caam_drng_register(struct device *dev);
-+
-+#else
-+
-+static inline int caam_drng_register(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+#endif /* CONFIG_CRYPTO_DEV_FSL_CAAM_DRNG_API */
-+
- #ifdef CONFIG_CAAM_QI
- 
- int caam_qi_algapi_init(struct device *dev);
-diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
-index c745b7044fe6..e68ba0606e3f 100644
---- a/drivers/crypto/caam/jr.c
-+++ b/drivers/crypto/caam/jr.c
-@@ -38,6 +38,7 @@ static void register_algs(struct device *dev)
- 	caam_algapi_hash_init(dev);
- 	caam_pkc_init(dev);
- 	caam_qi_algapi_init(dev);
-+	caam_drng_register(dev);
- 
- algs_unlock:
- 	mutex_unlock(&algs_lock);
--- 
-2.21.0
+if you are using devm_ across the board then you could also use 
+pcim_enable_device() here?
+
+>   		dev_err(&pci->dev, "pci_enable_device failed\n");
+> @@ -40,10 +40,10 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   	}
+>   
+>   	adata = devm_kzalloc(&pci->dev, sizeof(struct acp3x_dev_data),
+> -			     GFP_KERNEL);
+> +							     GFP_KERNEL);
+>   	if (!adata) {
+>   		ret = -ENOMEM;
+> -		goto release_regions;
+> +		goto adata_free;
+>   	}
+>   
+>   	/* check for msi interrupt support */
+> @@ -56,7 +56,8 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   		irqflags = 0;
+>   
+>   	addr = pci_resource_start(pci, 0);
+> -	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
+> +	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
+> +					pci_resource_len(pci, 0));
+>   	if (!adata->acp3x_base) {
+>   		ret = -ENOMEM;
+>   		goto release_regions;
+> @@ -68,11 +69,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   	switch (val) {
+>   	case I2S_MODE:
+>   		adata->res = devm_kzalloc(&pci->dev,
+> -					  sizeof(struct resource) * 2,
+> +					  sizeof(struct resource) * 4,
+>   					  GFP_KERNEL);
+>   		if (!adata->res) {
+>   			ret = -ENOMEM;
+> -			goto unmap_mmio;
+> +			goto release_regions;
+>   		}
+>   
+>   		adata->res[0].name = "acp3x_i2s_iomem";
+> @@ -80,28 +81,52 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   		adata->res[0].start = addr;
+>   		adata->res[0].end = addr + (ACP3x_REG_END - ACP3x_REG_START);
+>   
+> -		adata->res[1].name = "acp3x_i2s_irq";
+> -		adata->res[1].flags = IORESOURCE_IRQ;
+> -		adata->res[1].start = pci->irq;
+> -		adata->res[1].end = pci->irq;
+> +		adata->res[1].name = "acp3x_i2s_sp";
+> +		adata->res[1].flags = IORESOURCE_MEM;
+> +		adata->res[1].start = addr + ACP3x_I2STDM_REG_START;
+> +		adata->res[1].end = addr + ACP3x_I2STDM_REG_END;
+> +
+> +		adata->res[2].name = "acp3x_i2s_bt";
+> +		adata->res[2].flags = IORESOURCE_MEM;
+> +		adata->res[2].start = addr + ACP3x_BT_TDM_REG_START;
+> +		adata->res[2].end = addr + ACP3x_BT_TDM_REG_END;
+> +
+> +		adata->res[3].name = "acp3x_i2s_irq";
+> +		adata->res[3].flags = IORESOURCE_IRQ;
+> +		adata->res[3].start = pci->irq;
+> +		adata->res[3].end = adata->res[3].start;
+>   
+>   		adata->acp3x_audio_mode = ACP3x_I2S_MODE;
+>   
+>   		memset(&pdevinfo, 0, sizeof(pdevinfo));
+> -		pdevinfo.name = "acp3x_rv_i2s";
+> -		pdevinfo.id = 0;
+> -		pdevinfo.parent = &pci->dev;
+> -		pdevinfo.num_res = 2;
+> -		pdevinfo.res = adata->res;
+> -		pdevinfo.data = &irqflags;
+> -		pdevinfo.size_data = sizeof(irqflags);
+> -
+> -		adata->pdev = platform_device_register_full(&pdevinfo);
+> -		if (IS_ERR(adata->pdev)) {
+> -			dev_err(&pci->dev, "cannot register %s device\n",
+> -				pdevinfo.name);
+> -			ret = PTR_ERR(adata->pdev);
+> -			goto unmap_mmio;
+> +		pdevinfo[0].name = "acp3x_rv_i2s_dma";
+> +		pdevinfo[0].id = 0;
+> +		pdevinfo[0].parent = &pci->dev;
+> +		pdevinfo[0].num_res = 4;
+> +		pdevinfo[0].res = &adata->res[0];
+> +		pdevinfo[0].data = &irqflags;
+> +		pdevinfo[0].size_data = sizeof(irqflags);
+> +
+> +		pdevinfo[1].name = "acp3x_i2s_playcap";
+> +		pdevinfo[1].id = 0;
+> +		pdevinfo[1].parent = &pci->dev;
+> +		pdevinfo[1].num_res = 1;
+> +		pdevinfo[1].res = &adata->res[1];
+> +
+> +		pdevinfo[2].name = "acp3x_i2s_playcap";
+> +		pdevinfo[2].id = 1;
+> +		pdevinfo[2].parent = &pci->dev;
+> +		pdevinfo[2].num_res = 1;
+> +		pdevinfo[2].res = &adata->res[2];
+> +		for (i = 0; i < ACP3x_DEVS ; i++) {
+> +			adata->pdev[i] =
+> +				platform_device_register_full(&pdevinfo[i]);
+> +			if (IS_ERR(adata->pdev[i])) {
+> +				dev_err(&pci->dev, "cannot register %s device\n",
+> +					pdevinfo[i].name);
+> +				ret = PTR_ERR(adata->pdev[i]);
+> +				goto unmap_mmio;
+> +			}
+>   		}
+>   		break;
+>   	default:
+> @@ -112,10 +137,22 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   	return 0;
+>   
+>   unmap_mmio:
+> +	if (val == I2S_MODE)
+> +		for (i = 0 ; i < ACP3x_DEVS ; i++)
+> +			platform_device_unregister(adata->pdev[i]);
+> +	devm_kfree(&pci->dev, adata->res);
+> +	devm_kfree(&pci->dev, adata);
+>   	pci_disable_msi(pci);
+> -	iounmap(adata->acp3x_base);
+> +	pci_release_regions(pci);
+> +	pci_disable_device(pci);
+>   release_regions:
+> +	devm_kfree(&pci->dev, adata);
+> +	pci_disable_msi(pci);
+>   	pci_release_regions(pci);
+> +	pci_disable_device(pci);
+> +adata_free:
+> +	pci_release_regions(pci);
+> +	pci_disable_device(pci);
+>   disable_pci:
+>   	pci_disable_device(pci);
+
+this error flow is probably wrong, you should not repeat the same 
+sequences when going from one label to the other.
+
+it should be something like (not verified, example only)
+
+	devm_kfree(&pci->dev, adata->res);
+release_regions:
+	devm_kfree(&pci->dev, adata);
+    	pci_disable_msi(pci);
+adata_free:
+	pci_release_regions(pci);
+disable_pci:
+	pci_disable_device(pci);
+
+Stopping the review here.
 
