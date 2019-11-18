@@ -2,82 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 169791004A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:47:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 015081004AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:49:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKRLrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:47:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726460AbfKRLrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:47:01 -0500
-Received: from localhost (unknown [89.205.134.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FB5820730;
-        Mon, 18 Nov 2019 11:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574077621;
-        bh=kDnVWqM8rv4v0DFbARQKnL4pnCPNws5EF5tS19PJ2+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=feKrCvQ/m8Ef+oJobtODMFU/XcxXBRqauk0eAksInQzk60LFEAgNKobEQ/8djXNv5
-         SdqcRwonoa3KFQt2IANfPfJy1hUC6al1156N2ZzeXxFqzBcrATsNn3ry8d6fDDotjk
-         aJ+T9NNv1Sxv4LKP2WJOIGl1ohIEsJFHgpW31F1E=
-Date:   Mon, 18 Nov 2019 12:46:57 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] {tty: serial, nand: onenand}: samsung: rename to fix
- build warning
-Message-ID: <20191118114657.GA228826@kroah.com>
-References: <20191117202435.28127-1-sudipm.mukherjee@gmail.com>
+        id S1726990AbfKRLtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:49:20 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34040 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726646AbfKRLtU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:49:20 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAIBkk25014994;
+        Mon, 18 Nov 2019 05:47:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=OM3MQeyRTgCY7g+moHKBnLM0sRNaezpSVyrjEwAMecc=;
+ b=icrapQg74Qd4MPDUwNx097+RA3EOaBGON5SjPL0UpA+gMqF3J3FT+dZX4mSQKH7/6lVS
+ GykNgPvbzoT22HQc6nstMduxd2/V9ADldP/R8cjpMGjI/FRP+gEmour4OZ26uKm4ayv7
+ +O4p1N1ZIPT6M6QIZhgK8lJ6AA0o2o3G/slwqgDqcYnwqzeqQ9r4Z+3kEC5X68rg/bBI
+ /PjUj7K2NB4wVzdqNwksJpLF+cDTC8AkY/di+D/MrLxtkOJEChyDvcTM8zC9/4vXmdmb
+ 9fKdxDF4U1+1fWQQla7YtN5UO/+NZP8CK3JCdlHodfD3GmuBFE/g/hql8ct2EpIIspTN 9A== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2wafc82csb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 18 Nov 2019 05:47:09 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 18 Nov
+ 2019 11:47:06 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Mon, 18 Nov 2019 11:47:06 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 105292A1;
+        Mon, 18 Nov 2019 11:47:06 +0000 (UTC)
+Date:   Mon, 18 Nov 2019 11:47:06 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm5100: add missed pm_runtime_disable
+Message-ID: <20191118114706.GF10439@ediswmail.ad.cirrus.com>
+References: <20191118073707.28298-1-hslester96@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20191117202435.28127-1-sudipm.mukherjee@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191118073707.28298-1-hslester96@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 impostorscore=0
+ mlxlogscore=714 mlxscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1911180107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 17, 2019 at 08:24:35PM +0000, Sudip Mukherjee wrote:
-> Any arm config which has 'CONFIG_MTD_ONENAND_SAMSUNG=m' and
-> 'CONFIG_SERIAL_SAMSUNG=m' gives a build warning:
+On Mon, Nov 18, 2019 at 03:37:07PM +0800, Chuhong Yuan wrote:
+> The driver forgets to call pm_runtime_disable in remove and
+> probe failure.
+> Add the calls to fix it.
 > 
-> warning: same module names found:
->   drivers/tty/serial/samsung.ko
->   drivers/mtd/nand/onenand/samsung.ko
-> 
-> Rename both drivers/tty/serial/samsung.c to
-> drivers/tty/serial/samsung_tty.c and drivers/mtd/nand/onenand/samsung.c
-> drivers/mtd/nand/onenand/samsung_mtd.c to fix the warning.
-> 
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 > ---
-> 
-> v1: only renamed drivers/tty/serial/samsung.c
-> link: https://lore.kernel.org/lkml/20191018194707.27188-1-sudipm.mukherjee@gmail.com
-> 
-> v2: rename both files.
-> 
-> I was not sure if this should have been two different patch, but since
-> this will be fixing the same problem so it seems its better to have them
-> in a single patch.
-> 
->  drivers/mtd/nand/onenand/Makefile                     | 2 +-
->  drivers/mtd/nand/onenand/{samsung.c => samsung_mtd.c} | 0
->  drivers/tty/serial/Makefile                           | 2 +-
->  drivers/tty/serial/{samsung.c => samsung_tty.c}       | 0
->  4 files changed, 2 insertions(+), 2 deletions(-)
->  rename drivers/mtd/nand/onenand/{samsung.c => samsung_mtd.c} (100%)
->  rename drivers/tty/serial/{samsung.c => samsung_tty.c} (100%)
 
-I can take this in the tty tree if the mtd maintainer gives an ack for
-it...
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
+Thanks,
+Charles
