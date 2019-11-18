@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6359E100401
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01CAB1003C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:24:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfKRLZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:25:59 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42716 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbfKRLX7 (ORCPT
+        id S1727210AbfKRLYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:24:02 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42719 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727168AbfKRLYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:23:59 -0500
-Received: by mail-wr1-f67.google.com with SMTP id a15so18981099wrf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:23:57 -0800 (PST)
+        Mon, 18 Nov 2019 06:24:00 -0500
+Received: by mail-wr1-f68.google.com with SMTP id a15so18981190wrf.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:23:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vCPu9Gq+U2RPRhQiWL2MkNy7+uq9EAlYdyc3guVWBBY=;
-        b=Yk7p/G71NJ4xYDxkVfbpJ1+UrVSfYV+gyTCQfmi46U9LouNYDNp+cxJmMwhPBuXOUh
-         zx3WOhz2CX4UJ3rdW9cXaDfJ5a8dpQfRnvTiQIDU/v9xJjXIeGSa28iLidu8W1G/bdi0
-         J/Klx8ZYp7nbuJnGizHDFsLErPLTgtpoRRlfo=
+        bh=E3PC0GBgcRJcw1cBz/t/6fNHbK3513aW1cpvhBViR+w=;
+        b=NLWiHYfdgWWXoV8A9VV3UYiRSXBBAkd9NQ0Ptfjbir+1JcFK0m5QxGmHv7/bel2mH/
+         sBcth03COKtDEsFC26Dkh0oO18P0YC5xAHVVGG22Cqgn9bVD4H8oF/d2wcM+4anWubhD
+         wYGrwwrm1zz4nlIIhyBg7CsZhkcG2nKvcoLsI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vCPu9Gq+U2RPRhQiWL2MkNy7+uq9EAlYdyc3guVWBBY=;
-        b=hqpgVcIzaB/5maQdgEPqFG1OEfNhGqk8SgZ609ffT4Bby8NcAc/4u8f/Cn/iNdLxZy
-         ryGp9fd6C/9TAmZ4qyz4zpO9zGKNuTTz0CphnC61LHdCcBPZ1ScA79HuC3tblkOrz2QA
-         heKHVfbL3u0PNgujbVS8YsJjYtTMdnSqg+sY3xUcA4ubjZv71fnQkwYDlfEdmZCEML3N
-         Q5e4256jdYS74SWH3cpyZLu9eLEBLc8NilVtl0SkpWXjaWa/8EItl+lXUKudtclY50Th
-         ocV+ZISAfVVndifpNlbUCrLrUQsryvIFUck+gNlGW0upPbCaN0IXcFWtUhmRLgkOqM92
-         h6wA==
-X-Gm-Message-State: APjAAAVu6aWk3Iv1mE+SsUJDrcR9E654ZVA5q4PU2QGcEyfjXswXNQwi
-        yAdN1Fp/vKuSUWtg59svoL9rBg==
-X-Google-Smtp-Source: APXvYqyZQpRRB/MFghGLS7bJn/RObD/k7dDdrG7vxDwjNjB8Ot+1GZEzgAMa9xVYMp80+4l7TXQLQQ==
-X-Received: by 2002:adf:e5c5:: with SMTP id a5mr14806776wrn.103.1574076236602;
-        Mon, 18 Nov 2019 03:23:56 -0800 (PST)
+        bh=E3PC0GBgcRJcw1cBz/t/6fNHbK3513aW1cpvhBViR+w=;
+        b=Ps4WQzp5Nz73tIfuljyVaTq6wumlrJ2b8nVssJhApRrLki0IE1mQ8EN0DMBa80TUzR
+         sTT9MO6srv6FApNHbjumsTdflAZO8ZhSBjWwpGe7GV/lpTMsXC7gPcM6jyrk7K6cGABC
+         YDHp6WLZFRSwaOpG6+oOySnTefgYjWRFRH4WXEVPe2Fe4evY4IWXvfd0Y+jFLY47r0tv
+         aI+aTClWAFzlP6dloMWB9K1pFC86qsA1qPG3yTcwnLbmLvtJmwuVfSQTkiuhK6u7tu1y
+         2PqKsaKm2/EEbx8I0NJzgjZNpRJq4DTJCuB5NK+TFfN8kqPTiDybnM0EuwnVCyo2URZ4
+         Upfg==
+X-Gm-Message-State: APjAAAUXN3vtmR20A0ZO9YNb1XA0DOgpzNZ8qdU+z7cSiJEnvRetNnEb
+        CiFNsQkwnux6sEwAkJ+7+uvNUg==
+X-Google-Smtp-Source: APXvYqxoOW3iLoWrpFoq6/8U+4gMCkqVWlB+dTiKcZvJpqg6V9sfX1s2wWNq1gK9/hlRtkZ0PMxHzA==
+X-Received: by 2002:adf:e68d:: with SMTP id r13mr31414042wrm.199.1574076238123;
+        Mon, 18 Nov 2019 03:23:58 -0800 (PST)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.55
+        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 03:23:56 -0800 (PST)
+        Mon, 18 Nov 2019 03:23:57 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v5 20/48] soc: fsl: qe: simplify qe_ic_init()
-Date:   Mon, 18 Nov 2019 12:22:56 +0100
-Message-Id: <20191118112324.22725-21-linux@rasmusvillemoes.dk>
+Subject: [PATCH v5 21/48] soc: fsl: qe: merge qe_ic.h headers into qe_ic.c
+Date:   Mon, 18 Nov 2019 12:22:57 +0100
+Message-Id: <20191118112324.22725-22-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
 References: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
@@ -62,74 +62,257 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qe_ic_init() takes a flags parameter, but all callers (including the
-sole remaining one) have always passed 0. So remove that parameter and
-simplify the body accordingly. We still explicitly initialize the
-Interrupt Configuration Register (CICR) to its reset value of
-all-zeroes, just in case the bootloader has played funny games.
+The public qe_ic.h header is no longer included by anything but
+qe_ic.c. Merge both headers into qe_ic.c, and drop the unused
+constants.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe_ic.c | 27 ++++-----------------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
+ drivers/soc/fsl/qe/qe_ic.c | 52 +++++++++++++++++++-
+ drivers/soc/fsl/qe/qe_ic.h | 99 --------------------------------------
+ include/soc/fsl/qe/qe_ic.h | 56 ---------------------
+ 3 files changed, 50 insertions(+), 157 deletions(-)
+ delete mode 100644 drivers/soc/fsl/qe/qe_ic.h
+ delete mode 100644 include/soc/fsl/qe/qe_ic.h
 
 diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
-index 23b457e884d8..4832884da5bb 100644
+index 4832884da5bb..0dd5bdb04a14 100644
 --- a/drivers/soc/fsl/qe/qe_ic.c
 +++ b/drivers/soc/fsl/qe/qe_ic.c
-@@ -356,13 +356,13 @@ static void qe_ic_cascade_muxed_mpic(struct irq_desc *desc)
- 	chip->irq_eoi(&desc->irq_data);
- }
+@@ -15,6 +15,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/errno.h>
++#include <linux/irq.h>
+ #include <linux/reboot.h>
+ #include <linux/slab.h>
+ #include <linux/stddef.h>
+@@ -25,9 +26,56 @@
+ #include <asm/irq.h>
+ #include <asm/io.h>
+ #include <soc/fsl/qe/qe.h>
+-#include <soc/fsl/qe/qe_ic.h>
  
--static void __init qe_ic_init(struct device_node *node, unsigned int flags)
-+static void __init qe_ic_init(struct device_node *node)
- {
- 	void (*low_handler)(struct irq_desc *desc);
- 	void (*high_handler)(struct irq_desc *desc);
- 	struct qe_ic *qe_ic;
- 	struct resource res;
--	u32 temp = 0, ret;
-+	u32 ret;
+-#include "qe_ic.h"
++#define NR_QE_IC_INTS		64
++
++/* QE IC registers offset */
++#define QEIC_CICR		0x00
++#define QEIC_CIVEC		0x04
++#define QEIC_CIPXCC		0x10
++#define QEIC_CIPYCC		0x14
++#define QEIC_CIPWCC		0x18
++#define QEIC_CIPZCC		0x1c
++#define QEIC_CIMR		0x20
++#define QEIC_CRIMR		0x24
++#define QEIC_CIPRTA		0x30
++#define QEIC_CIPRTB		0x34
++#define QEIC_CHIVEC		0x60
++
++struct qe_ic {
++	/* Control registers offset */
++	u32 __iomem *regs;
++
++	/* The remapper for this QEIC */
++	struct irq_domain *irqhost;
++
++	/* The "linux" controller struct */
++	struct irq_chip hc_irq;
++
++	/* VIRQ numbers of QE high/low irqs */
++	unsigned int virq_high;
++	unsigned int virq_low;
++};
++
++/*
++ * QE interrupt controller internal structure
++ */
++struct qe_ic_info {
++	/* Location of this source at the QIMR register */
++	u32	mask;
++
++	/* Mask register offset */
++	u32	mask_reg;
++
++	/*
++	 * For grouped interrupts sources - the interrupt code as
++	 * appears at the group priority register
++	 */
++	u8	pri_code;
++
++	/* Group priority register offset */
++	u32	pri_reg;
++};
  
- 	ret = of_address_to_resource(node, 0, &res);
- 	if (ret)
-@@ -399,26 +399,7 @@ static void __init qe_ic_init(struct device_node *node, unsigned int flags)
- 		high_handler = NULL;
- 	}
+ static DEFINE_RAW_SPINLOCK(qe_ic_lock);
  
--	/* default priority scheme is grouped. If spread mode is    */
--	/* required, configure cicr accordingly.                    */
--	if (flags & QE_IC_SPREADMODE_GRP_W)
--		temp |= CICR_GWCC;
--	if (flags & QE_IC_SPREADMODE_GRP_X)
--		temp |= CICR_GXCC;
--	if (flags & QE_IC_SPREADMODE_GRP_Y)
--		temp |= CICR_GYCC;
--	if (flags & QE_IC_SPREADMODE_GRP_Z)
--		temp |= CICR_GZCC;
--	if (flags & QE_IC_SPREADMODE_GRP_RISCA)
--		temp |= CICR_GRTA;
--	if (flags & QE_IC_SPREADMODE_GRP_RISCB)
--		temp |= CICR_GRTB;
+diff --git a/drivers/soc/fsl/qe/qe_ic.h b/drivers/soc/fsl/qe/qe_ic.h
+deleted file mode 100644
+index 9420378d9b6b..000000000000
+--- a/drivers/soc/fsl/qe/qe_ic.h
++++ /dev/null
+@@ -1,99 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * drivers/soc/fsl/qe/qe_ic.h
+- *
+- * QUICC ENGINE Interrupt Controller Header
+- *
+- * Copyright (C) 2006 Freescale Semiconductor, Inc. All rights reserved.
+- *
+- * Author: Li Yang <leoli@freescale.com>
+- * Based on code from Shlomi Gridish <gridish@freescale.com>
+- */
+-#ifndef _POWERPC_SYSDEV_QE_IC_H
+-#define _POWERPC_SYSDEV_QE_IC_H
 -
--	/* choose destination signal for highest priority interrupt */
--	if (flags & QE_IC_HIGH_SIGNAL)
--		temp |= (SIGNAL_HIGH << CICR_HPIT_SHIFT);
+-#include <soc/fsl/qe/qe_ic.h>
 -
--	qe_ic_write(qe_ic->regs, QEIC_CICR, temp);
-+	qe_ic_write(qe_ic->regs, QEIC_CICR, 0);
- 
- 	irq_set_handler_data(qe_ic->virq_low, qe_ic);
- 	irq_set_chained_handler(qe_ic->virq_low, low_handler);
-@@ -439,7 +420,7 @@ static int __init qe_ic_of_init(void)
- 		if (!np)
- 			return -ENODEV;
- 	}
--	qe_ic_init(np, 0);
-+	qe_ic_init(np);
- 	of_node_put(np);
- 	return 0;
- }
+-#define NR_QE_IC_INTS		64
+-
+-/* QE IC registers offset */
+-#define QEIC_CICR		0x00
+-#define QEIC_CIVEC		0x04
+-#define QEIC_CRIPNR		0x08
+-#define QEIC_CIPNR		0x0c
+-#define QEIC_CIPXCC		0x10
+-#define QEIC_CIPYCC		0x14
+-#define QEIC_CIPWCC		0x18
+-#define QEIC_CIPZCC		0x1c
+-#define QEIC_CIMR		0x20
+-#define QEIC_CRIMR		0x24
+-#define QEIC_CICNR		0x28
+-#define QEIC_CIPRTA		0x30
+-#define QEIC_CIPRTB		0x34
+-#define QEIC_CRICR		0x3c
+-#define QEIC_CHIVEC		0x60
+-
+-/* Interrupt priority registers */
+-#define CIPCC_SHIFT_PRI0	29
+-#define CIPCC_SHIFT_PRI1	26
+-#define CIPCC_SHIFT_PRI2	23
+-#define CIPCC_SHIFT_PRI3	20
+-#define CIPCC_SHIFT_PRI4	13
+-#define CIPCC_SHIFT_PRI5	10
+-#define CIPCC_SHIFT_PRI6	7
+-#define CIPCC_SHIFT_PRI7	4
+-
+-/* CICR priority modes */
+-#define CICR_GWCC		0x00040000
+-#define CICR_GXCC		0x00020000
+-#define CICR_GYCC		0x00010000
+-#define CICR_GZCC		0x00080000
+-#define CICR_GRTA		0x00200000
+-#define CICR_GRTB		0x00400000
+-#define CICR_HPIT_SHIFT		8
+-#define CICR_HPIT_MASK		0x00000300
+-#define CICR_HP_SHIFT		24
+-#define CICR_HP_MASK		0x3f000000
+-
+-/* CICNR */
+-#define CICNR_WCC1T_SHIFT	20
+-#define CICNR_ZCC1T_SHIFT	28
+-#define CICNR_YCC1T_SHIFT	12
+-#define CICNR_XCC1T_SHIFT	4
+-
+-/* CRICR */
+-#define CRICR_RTA1T_SHIFT	20
+-#define CRICR_RTB1T_SHIFT	28
+-
+-/* Signal indicator */
+-#define SIGNAL_MASK		3
+-#define SIGNAL_HIGH		2
+-#define SIGNAL_LOW		0
+-
+-struct qe_ic {
+-	/* Control registers offset */
+-	u32 __iomem *regs;
+-
+-	/* The remapper for this QEIC */
+-	struct irq_domain *irqhost;
+-
+-	/* The "linux" controller struct */
+-	struct irq_chip hc_irq;
+-
+-	/* VIRQ numbers of QE high/low irqs */
+-	unsigned int virq_high;
+-	unsigned int virq_low;
+-};
+-
+-/*
+- * QE interrupt controller internal structure
+- */
+-struct qe_ic_info {
+-	u32	mask;	  /* location of this source at the QIMR register. */
+-	u32	mask_reg; /* Mask register offset */
+-	u8	pri_code; /* for grouped interrupts sources - the interrupt
+-			     code as appears at the group priority register */
+-	u32	pri_reg;  /* Group priority register offset */
+-};
+-
+-#endif /* _POWERPC_SYSDEV_QE_IC_H */
+diff --git a/include/soc/fsl/qe/qe_ic.h b/include/soc/fsl/qe/qe_ic.h
+deleted file mode 100644
+index 70bb5a0f6535..000000000000
+--- a/include/soc/fsl/qe/qe_ic.h
++++ /dev/null
+@@ -1,56 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * Copyright (C) 2006 Freescale Semiconductor, Inc. All rights reserved.
+- *
+- * Authors: 	Shlomi Gridish <gridish@freescale.com>
+- * 		Li Yang <leoli@freescale.com>
+- *
+- * Description:
+- * QE IC external definitions and structure.
+- */
+-#ifndef _ASM_POWERPC_QE_IC_H
+-#define _ASM_POWERPC_QE_IC_H
+-
+-#include <linux/irq.h>
+-
+-struct device_node;
+-struct qe_ic;
+-
+-#define NUM_OF_QE_IC_GROUPS	6
+-
+-/* Flags when we init the QE IC */
+-#define QE_IC_SPREADMODE_GRP_W			0x00000001
+-#define QE_IC_SPREADMODE_GRP_X			0x00000002
+-#define QE_IC_SPREADMODE_GRP_Y			0x00000004
+-#define QE_IC_SPREADMODE_GRP_Z			0x00000008
+-#define QE_IC_SPREADMODE_GRP_RISCA		0x00000010
+-#define QE_IC_SPREADMODE_GRP_RISCB		0x00000020
+-
+-#define QE_IC_LOW_SIGNAL			0x00000100
+-#define QE_IC_HIGH_SIGNAL			0x00000200
+-
+-#define QE_IC_GRP_W_PRI0_DEST_SIGNAL_HIGH	0x00001000
+-#define QE_IC_GRP_W_PRI1_DEST_SIGNAL_HIGH	0x00002000
+-#define QE_IC_GRP_X_PRI0_DEST_SIGNAL_HIGH	0x00004000
+-#define QE_IC_GRP_X_PRI1_DEST_SIGNAL_HIGH	0x00008000
+-#define QE_IC_GRP_Y_PRI0_DEST_SIGNAL_HIGH	0x00010000
+-#define QE_IC_GRP_Y_PRI1_DEST_SIGNAL_HIGH	0x00020000
+-#define QE_IC_GRP_Z_PRI0_DEST_SIGNAL_HIGH	0x00040000
+-#define QE_IC_GRP_Z_PRI1_DEST_SIGNAL_HIGH	0x00080000
+-#define QE_IC_GRP_RISCA_PRI0_DEST_SIGNAL_HIGH	0x00100000
+-#define QE_IC_GRP_RISCA_PRI1_DEST_SIGNAL_HIGH	0x00200000
+-#define QE_IC_GRP_RISCB_PRI0_DEST_SIGNAL_HIGH	0x00400000
+-#define QE_IC_GRP_RISCB_PRI1_DEST_SIGNAL_HIGH	0x00800000
+-#define QE_IC_GRP_W_DEST_SIGNAL_SHIFT		(12)
+-
+-/* QE interrupt sources groups */
+-enum qe_ic_grp_id {
+-	QE_IC_GRP_W = 0,	/* QE interrupt controller group W */
+-	QE_IC_GRP_X,		/* QE interrupt controller group X */
+-	QE_IC_GRP_Y,		/* QE interrupt controller group Y */
+-	QE_IC_GRP_Z,		/* QE interrupt controller group Z */
+-	QE_IC_GRP_RISCA,	/* QE interrupt controller RISC group A */
+-	QE_IC_GRP_RISCB		/* QE interrupt controller RISC group B */
+-};
+-
+-#endif /* _ASM_POWERPC_QE_IC_H */
 -- 
 2.23.0
 
