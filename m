@@ -2,93 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2068100651
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:19:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64860100658
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbfKRNTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 08:19:47 -0500
-Received: from mail-eopbgr80091.outbound.protection.outlook.com ([40.107.8.91]:9118
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726284AbfKRNTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:19:46 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cD8tx1PPQHPoYP/i6qMatDGSbOjXYxKoMK6v0j1ofVch0lQrRr/QN8MpU9iirrKLBHw6MjljtYU39lnLWO2NS+wXF57QQktTFdsnRz9q7zpMNJogGAqqnHi+nZ6Te/Rlslw/z1srBY8MlhXwNxEOpdhml0ocaufk2rjZuvUaavqaavkKl2aFXCXUaxBLZm8HK6FyW29x1t1suVCXSB7N8BPD+L3p/H9M4ylLixg/b79qxMKVxCWIrpXJIs4D5pbCrdjb7rZcKStXySgxGENpFIlK+iDAlxOEEycAiHnL85+Thn2w0224Rpp+J3ZcDbL2YMFIkDrAaKesXxHkClNnlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DVcdNUDdZzL9BISfjbK/iczkWbuKyLO8RhDdVXNUsQw=;
- b=NFXkotZlr+x8/gxcbCozi4gfHjh4QYBzEStXTDr55W8I1XYhNjO5lMjjR9fFzBCPpiG/DtC4tLOKqPmn+QddTME9Tipv8HQxJOAPFbWpMtb04sDHnLJ1NMxix/4N0g+OFNjr/VQFNcmBWxxMVD4tHR00U4fAdVVF4M5UrwqM0CpVFiA68GgtAkqPPO+mGFBbwwT9mdNjwjwoumFbclJN7I8g0V0BbusnejYMhpl1mZQODdIdWOAa9KWXq8rKslL1yNOXoiFNC58bt3ZLxG0UYEiQTFbGfr+0Izeh9R+gObEMPYQQtMEN+/1k11Dd/EesCie3PEAbatXOhkOZ8viLpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
+        id S1726975AbfKRNVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 08:21:09 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:35229 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfKRNVJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 08:21:09 -0500
+Received: by mail-il1-f195.google.com with SMTP id z12so15968134ilp.2;
+        Mon, 18 Nov 2019 05:21:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DVcdNUDdZzL9BISfjbK/iczkWbuKyLO8RhDdVXNUsQw=;
- b=T1vpOZKLmfDCRXgYJpohqGMwVoQZUsGiJEItBo7s5M4Y7dpDdab5vnUMJ6wl1eg7cYW7kHFzwRp6nDRzU6SewKiDnnzt2CzoDNaGXqOJDVm/tTrrLbS9Fy2YJ04VzaqZnjQttjjTXntpqV3KAw7M/y6TWqHuheghdEf4ISGTHzw=
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com (10.175.244.155) by
- VI1PR02MB3005.eurprd02.prod.outlook.com (10.170.237.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.29; Mon, 18 Nov 2019 13:19:44 +0000
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::78f1:dc96:ee1a:bccd]) by VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::78f1:dc96:ee1a:bccd%6]) with mapi id 15.20.2451.029; Mon, 18 Nov 2019
- 13:19:43 +0000
-From:   Tomer Tayar <ttayar@habana.ai>
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Omer Shpigelman <oshpigelman@habana.ai>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH] habanalabs: add more protection of device during reset
-Thread-Topic: [PATCH] habanalabs: add more protection of device during reset
-Thread-Index: AQHVnhEGcbqRgBUu/Uez1fvSqQxNzaeQ6CtQ
-Date:   Mon, 18 Nov 2019 13:19:43 +0000
-Message-ID: <VI1PR02MB3054A7F6C02671CD8B383BBFD24D0@VI1PR02MB3054.eurprd02.prod.outlook.com>
-References: <20191118130639.22354-1-oded.gabbay@gmail.com>
-In-Reply-To: <20191118130639.22354-1-oded.gabbay@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ttayar@habana.ai; 
-x-originating-ip: [31.154.181.186]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 51e3f491-6b4e-46e6-a1bf-08d76c29f9f3
-x-ms-traffictypediagnostic: VI1PR02MB3005:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR02MB30052BB3F5B7165808ABE451D24D0@VI1PR02MB3005.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3383;
-x-forefront-prvs: 0225B0D5BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39850400004)(396003)(136003)(346002)(189003)(199004)(74316002)(64756008)(305945005)(11346002)(446003)(6246003)(86362001)(186003)(7736002)(229853002)(71190400001)(71200400001)(25786009)(2906002)(478600001)(6636002)(9686003)(7696005)(486006)(55016002)(476003)(256004)(81166006)(2501003)(5660300002)(76176011)(6436002)(52536014)(81156014)(99286004)(8676002)(8936002)(316002)(558084003)(53546011)(110136005)(4326008)(76116006)(66476007)(6506007)(102836004)(66446008)(66066001)(3846002)(14454004)(26005)(66946007)(33656002)(66556008)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB3005;H:VI1PR02MB3054.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lG9XmQNZ324uK3G0i0vrGrtbSsn4oGkuB0m22Gd2HpQUSN5vH+QFLTROioMSy9vxidpHHw4oSEnaKfTEUvx2y2+2Bt5OeGKA5GdQdTOR1kUedlx2GbECam6K0aL7+XsJ2cR72MzjFOyq29YQVg5HYi0U8EGCQMQi9HVhRMkjTYJbzNF+GuslDBVEeucHjWv226RwDrXQa6ZJ1/wulIllVKWwc7O9UrzcDLOxfjkxAUPyHMEviSLMrgVHZ2ScC6QPWY7lo+jU/npCOfNPCgeBn1iy6S7mQGesu50w3Mj2aIMSHPJBr1+GodC2KXbGRmT2Pd/97KIpsJqE1IqB5ovSol8pFa7EG8XxwXY+PFl0NJNMIy7l72DlqpJtpiVu5KCarRfosY9iQNZjy4gGkyk6e7s4x96HA/KgcUiZ6Qa8qQJ9zFDTT/JJ/yUWTrvQ7Gxq
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4fLeOyF9xXkvLiSYWvPfxvPDde4oZ8BjysEdioA42Rg=;
+        b=FxYUeVkqVHinyGDq1exbxMEP43VpelHAZUhOEtZesKbp5/mf6ZtmMBQfjn/Nvujr09
+         r/itXs/UPQdX4wfROKmcByqd6eF/9687L4mAOCNoQFthUfty1O/UF96hr9u1SQHouQNr
+         /IU8mkyVLhBHQNNtBziPVzywstIyHQIxMtKvQw4q5K0mz43qOegFVufAFzXqx3rN0rri
+         MT3vuzNAm00NoF7RsWsdzSYyZYqPJFwW7DJUMRS5EeQekJXm/63CpMVrkDNlFn4XP6y2
+         12zBLhTbcX3DscpVlxzGvOb8ASPVQeEAvBgAAwddkgvqHvFr0o0Mp7hU9lFuFrunt0Qd
+         80mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4fLeOyF9xXkvLiSYWvPfxvPDde4oZ8BjysEdioA42Rg=;
+        b=FvzwcT+FSUI9GTzUKIWbJrJ5eQbCAwEa7dTWn+Rpyv3hdTp2YFx1CG/rYA+7wdgjC9
+         vdonM5RxFy8g0CD/sx0vF/PUxa3Wx8FYEgZpjaPvv2QNmsekMzRdQl4Hiac4skjjUqx7
+         SgY+0RuwN+4UBAZjzLvragmJZ1ypNKffugyjCXdTlVfchRRCeKK4wA926KGywzB47n9y
+         N3TkNEzGwdSRM1sF+cTBhMIdVsKctJgqGXhMeq2Qz++aCtvoxlyJGmLIlKSO7UmqPPTs
+         NzRltJLNIfP6eF13L3w1tEvRtSbSb/xFuI6b6xvNfH9nxBVdM81QAc5YwrJrHh43b1Wr
+         q15g==
+X-Gm-Message-State: APjAAAU5PJCSBXe02i0qIpl+kX3aBRCK+o/TNS8yevFMvYd7Wg5QmC8u
+        SoHkOYrzTVmlIq8q0SnB28vf9VA5x9EycDrOZos=
+X-Google-Smtp-Source: APXvYqyLhdW49HPyJ++cx6Lx4pbKEb+0zVpJcaaB9Fhduv35umdTPpAkuytFtW8TQK8zZA36/iv5QRWnQWCxePIxP50=
+X-Received: by 2002:a92:45ca:: with SMTP id z71mr16101637ilj.106.1574083268430;
+ Mon, 18 Nov 2019 05:21:08 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51e3f491-6b4e-46e6-a1bf-08d76c29f9f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2019 13:19:43.7667
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rLv/A6CWKMUB8c+mVUvFIXYD1MljjntM7XdzxDi420Di1kw+6usuIcJqgX3s0iZvn5auzZOISATjttjrPBPUCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB3005
+References: <1574049277-13477-1-git-send-email-cang@codeaurora.org> <0101016e7ca63d9d-c9360196-acbf-4e53-9041-ccf8935f0d2b-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016e7ca63d9d-c9360196-acbf-4e53-9041-ccf8935f0d2b-000000@us-west-2.amazonses.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Mon, 18 Nov 2019 18:50:32 +0530
+Message-ID: <CAGOxZ53JFyFVZoLY0bbc8P9YbfPo2ioMiRS4+67VniXNYRjJ6g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] scsi: ufs: Avoid messing up the compl_time_stamp
+ of lrbs
+To:     Can Guo <cang@codeaurora.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com,
+        Mark Salyzyn <salyzyn@google.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 15:07 Oded Gabbay wrote:
-> Prevent accesses to the device (register read/write) from debugfs entries
-> during reset as that can cause the device to get stuck.
->=20
-> Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+On Mon, Nov 18, 2019 at 9:27 AM Can Guo <cang@codeaurora.org> wrote:
+>
+> To be on the safe side, do not touch one lrb after clear its slot in the
+> lrb_in_use bitmap to avoid messing up the next task which would possibly
+> occupy this lrb.
+>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Reviewed-by: Tomer Tayar <ttayar@habana.ai>
+>  drivers/scsi/ufs/ufshcd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 8e7c362..5950a7c 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -4902,12 +4902,14 @@ static void __ufshcd_transfer_req_compl(struct ufs_hba *hba,
+>                         cmd->result = result;
+>                         /* Mark completed command as NULL in LRB */
+>                         lrbp->cmd = NULL;
+> +                       lrbp->compl_time_stamp = ktime_get();
+>                         clear_bit_unlock(index, &hba->lrb_in_use);
+>                         /* Do not touch lrbp after scsi done */
+>                         cmd->scsi_done(cmd);
+>                         __ufshcd_release(hba);
+>                 } else if (lrbp->command_type == UTP_CMD_TYPE_DEV_MANAGE ||
+>                         lrbp->command_type == UTP_CMD_TYPE_UFS_STORAGE) {
+> +                       lrbp->compl_time_stamp = ktime_get();
+>                         if (hba->dev_cmd.complete) {
+>                                 ufshcd_add_command_trace(hba, index,
+>                                                 "dev_complete");
+> @@ -4916,8 +4918,6 @@ static void __ufshcd_transfer_req_compl(struct ufs_hba *hba,
+>                 }
+>                 if (ufshcd_is_clkscaling_supported(hba))
+>                         hba->clk_scaling.active_reqs--;
+> -
+> -               lrbp->compl_time_stamp = ktime_get();
+>         }
+>
+>         /* clear corresponding bits of completed commands */
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
 
+
+-- 
+Regards,
+Alim
