@@ -2,124 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D76FFD11
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 03:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52676FFD16
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 03:28:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbfKRCYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 21:24:44 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33672 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfKRCYo (ORCPT
+        id S1726511AbfKRC2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 21:28:00 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:57260 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726325AbfKRC2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 21:24:44 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 71so13141347qkl.0;
-        Sun, 17 Nov 2019 18:24:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0PODx413zWYXfSobH+0+CB4Ms3JTa4kjwkVV1cKBF0I=;
-        b=rmjEArZt+40+6whHrw6ndvflf4Colo6cGXVekvJlkeRrMjkUod5apJCONqqT4UVuey
-         KJHpoxmAd2B/w6sVOUPRXpmHgQQSh2FsaQ28m6shiAZ7OKPzEhS/0Ilq3/1NEEhVC29k
-         zbTYIPnDmR4GKiYbWR/73N1wgIrjxq77uMlJ+7LNVmYLSfY3XW7CiK0ke66ner0HGenJ
-         0LuVUcu5jgnsLsEDYwCgL9Bi6qwDZZ49awAZahqJarg0niTRKSw0x0hu63HgmNeix3oZ
-         wbYcmFMFlDXC5Fu84M+oQbKneXjPl3JXfAuEVX5ktGKLobIoyZuT+X/qfByP7FMKlH3V
-         Rf6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0PODx413zWYXfSobH+0+CB4Ms3JTa4kjwkVV1cKBF0I=;
-        b=g/jv/OrVDJH5GXpcrEj5KwV3M3/autmmPPgBPYR6xmk2VubGFGpoBEqyzycGqYOl1K
-         Hw9UxENL58bPb0U4LsCGAcqChRhTBcN+h/yUWz1U3wF1Ks9BlD7xu0LKyfJFk3kttXnq
-         doJDbX82t3zpsNeldPRTWMz6y9EHFWivw4OajjAGdqjeYNONuWjPg/EJRprBYfib+wZ2
-         cDsHUeBfDn7uZdSwOhr/deiR/Q4nsoMzdbOrzUnIY79FqbD8Fbb92uZHgI/UscYGAvAD
-         WlMzmBAvx1Z/Tyd/kr8yAwLsR7PUGyXjqKk2VIklELHXoKHiUwnTG5N+mUz/ImeMmyMq
-         drNg==
-X-Gm-Message-State: APjAAAUp1t0xBXTyTdd65mUFyS93jAX1Rlq1MNnHsb1PC56zHaKpk3dA
-        y1na+9Kz1yltjNG8ZBaU6g==
-X-Google-Smtp-Source: APXvYqyck54SgVxduwvF2JuxnOVAELdcvpnIQqSktS7SoxNdd0A13dSN4e4J0HtjJBHoykci9Yv0Nw==
-X-Received: by 2002:a05:620a:159c:: with SMTP id d28mr21918417qkk.466.1574043882984;
-        Sun, 17 Nov 2019 18:24:42 -0800 (PST)
-Received: from gabell.redhat.com (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id w15sm9687938qtk.43.2019.11.17.18.24.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 18:24:42 -0800 (PST)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
-Subject: [PATCH] fuse: Fix the return code of fuse_direct_IO() to deal with the error for aio
-Date:   Sun, 17 Nov 2019 21:24:10 -0500
-Message-Id: <20191118022410.21023-1-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 17 Nov 2019 21:28:00 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TiMbjiK_1574044075;
+Received: from ali-6c96cfdd1403.local(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0TiMbjiK_1574044075)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 18 Nov 2019 10:27:55 +0800
+Subject: Re: [RFC PATCH v4 0/7] Speed booting by sorting ORC unwind tables at
+ build time
+To:     hpa@zytor.com, Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+References: <20191115164539.57930-1-shile.zhang@linux.alibaba.com>
+ <6DC4AA3A-15CA-43B5-B560-5DBB168D3899@zytor.com>
+From:   Shile Zhang <shile.zhang@linux.alibaba.com>
+Message-ID: <d0e14f75-c668-8011-bc5b-7db070bbf5bc@linux.alibaba.com>
+Date:   Mon, 18 Nov 2019 10:27:55 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <6DC4AA3A-15CA-43B5-B560-5DBB168D3899@zytor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-exit_aio() is sometimes stuck in wait_for_completion() after aio is issued
-with direct IO and the task receives a signal.
 
-That is because kioctx in mm->ioctx_table is in use by aio_kiocb.
-aio_kiocb->ki_refcnt is 1 at that time. That means iocb_put() isn't
-called correctly.
+On 2019/11/18 10:18, hpa@zytor.com wrote:
+> On November 15, 2019 8:45:32 AM PST, Shile Zhang <shile.zhang@linux.alibaba.com> wrote:
+>> Hi,
+>>
+>> I refactored the code, followed by Peter's suggestions in v3, thank
+>> you!
+>> Any suggestions and comments are welcome!
+>>
+>> Thanks!
+>>
+>> Changelog:
+>> ==========
+>> v3->v4:
+>> - Code refactored for Peter's review findings and suggestions.
+>>
+>> v2->v3:
+>> - Discard new added sortorctable tool and related Kconfig changes.
+>> - Refactored sortextable, makes it more readable and extendable.
+>> - Rename 'sortextable' to 'sorttable', for more kernel tables extend.
+>> - Add ORC unwind tables sort into sorttable.
+>> - Remove the runtime ORC tables sort.
+>> https://lore.kernel.org/lkml/20191115064750.47888-1-shile.zhang@linux.alibaba.com/
+>>
+>> v1->v2:
+>> - Removed new added Kconfig and runtime sort code, advised by Josh
+>> Poimboeuf.
+>> - Some minor refactoring.
+>> https://lore.kernel.org/lkml/20191108071108.72132-1-shile.zhang@linux.alibaba.com/
+>>
+>> v1:
+>> - Added a new sortorctable tool to sort ORC unwind tables at build
+>> time,
+>>   same as sortextable.
+>> - Add a new Kconfigure to control if ORC unwind tables sort at build
+>>   time.
+>> https://lore.kernel.org/lkml/20191107143205.206606-1-shile.zhang@linux.alibaba.com/
+>>
+>> Shile Zhang (7):
+>>   scripts/sortextable: Rewrite error/success handling
+>>   scripts/sortextable: kernel coding style formating
+>>   scripts/sortextable: Remove dead code
+>>   scripts/sortextable: refactor do_func() function
+>>   scripts/sorttable: rename sortextable to sorttable
+>>   scripts/sorttable: Add ORC unwind tables sort concurrently
+>>   x86/unwind/orc: remove run-time ORC unwind tables sort
+>>
+>> arch/arc/Kconfig                       |   2 +-
+>> arch/arm/Kconfig                       |   2 +-
+>> arch/arm64/Kconfig                     |   2 +-
+>> arch/microblaze/Kconfig                |   2 +-
+>> arch/mips/Kconfig                      |   2 +-
+>> arch/parisc/Kconfig                    |   2 +-
+>> arch/parisc/kernel/vmlinux.lds.S       |   2 +-
+>> arch/powerpc/Kconfig                   |   2 +-
+>> arch/s390/Kconfig                      |   2 +-
+>> arch/x86/Kconfig                       |   2 +-
+>> arch/x86/kernel/unwind_orc.c           |   8 +-
+>> arch/xtensa/Kconfig                    |   2 +-
+>> init/Kconfig                           |   2 +-
+>> scripts/.gitignore                     |   2 +-
+>> scripts/Makefile                       |  10 +-
+>> scripts/link-vmlinux.sh                |  10 +-
+>> scripts/sortextable.h                  | 209 -------------
+>> scripts/{sortextable.c => sorttable.c} | 299 +++++++++---------
+>> scripts/sorttable.h                    | 401 +++++++++++++++++++++++++
+>> 19 files changed, 568 insertions(+), 395 deletions(-)
+>> delete mode 100644 scripts/sortextable.h
+>> rename scripts/{sortextable.c => sorttable.c} (67%)
+>> create mode 100644 scripts/sorttable.h
+> Any actual time measurements?
 
-fuse_get_req() returns as -EINTR when it's blocked and receives a signal.
-fuse_direct_IO() deals with the -EINTER as -EIOCBQUEUED and returns as
--EIOCBQUEUED even though the aio isn't queued.
-As the result, aio_rw_done() doesn't handle the error, so iocb_put() isn't
-called via aio_complete_rw(), which is the callback.
+Sorry for missed in cover letter!
 
-The flow is something like as:
+The ORC unwind tables sorting cost about 100ms in boot time on my 
+2vcpu16GB VM (with 2.5GHz Xeon CPU).
+After sort at build time, the sorttable needs about 70ms in host.
 
-  io_submit
-    aio_get_req
-      refcount_set(&req->ki_refcnt, 2)
-    __io_submit_one
-      aio_read
-      ...
-        fuse_direct_IO # return as -EIOCBQUEUED
-          __fuse_direct_read
-          ...
-            fuse_get_req # return as -EINTR
-        aio_rw_done
-          # Nothing to do because ret is -EIOCBQUEUED...
-    iocb_put
-      refcount_dec_and_test(&iocb->ki_refcnt) # 2->1
-
-Return as the error code of fuse_direct_io() or __fuse_direct_read() in
-fuse_direct_IO() so that aio_rw_done() can handle the error and call
-iocb_put().
-
-This issue is trucked as a virtio-fs issue:
-https://gitlab.com/virtio-fs/qemu/issues/14
-
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- fs/fuse/file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index db48a5cf8620..87b151aec8f2 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3115,8 +3115,12 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 		fuse_aio_complete(io, ret < 0 ? ret : 0, -1);
- 
- 		/* we have a non-extending, async request, so return */
--		if (!blocking)
--			return -EIOCBQUEUED;
-+		if (!blocking) {
-+			if (ret >= 0)
-+				return -EIOCBQUEUED;
-+			else
-+				return ret;
-+		}
- 
- 		wait_for_completion(&wait);
- 		ret = fuse_get_res_by_io(io);
--- 
-2.18.1
+Thanks!
 
