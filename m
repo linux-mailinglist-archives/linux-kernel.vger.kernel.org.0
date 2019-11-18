@@ -2,96 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79844FFC75
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 01:21:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F57FFC80
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 01:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfKRAVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 19:21:20 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33953 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfKRAVQ (ORCPT
+        id S1726423AbfKRAke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 19:40:34 -0500
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17489 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfKRAke (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 19:21:16 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 19so3078359otz.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 16:21:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fredlawl-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1Ovt6jbDPjyCR0/arOz9a+rgIf56RvTTsMB0ccBa1ek=;
-        b=DuZR75PETpq9SHSgVGX4A7aW1VbYfbZpBNrGJMQG94ixdnUnssFw8RwbbiqCZWa/ad
-         Ib1io05cexSPa9pmwdrRDzgcgZ7FNsfNhleHAGvS7g/SNVm3GEQbn9XIt7fJ2WUDrVnJ
-         vF71JXj/NIpCafPIliMJxG0OjI3A+r//g0kJ1s4eIn0bHDy/Ci0Z4Q1M3TrxGD/1CccX
-         T1TcO83huhJL5HXu/UTUdSTCduX4v83PJKYlEktUQgpXvRMqcB+xsHT6QeIEwdHcQVrc
-         h6YVSw4gQ3rPaPuT4mzbVcReI8r5mdt90esAKNQ+uXv4Bw6Mxkb+mFPAmxGtbP57LSnB
-         wnyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1Ovt6jbDPjyCR0/arOz9a+rgIf56RvTTsMB0ccBa1ek=;
-        b=UoHSgpVHBARax058j7YffdMERbn8doQrFAq1IBnnastldiILGcoOtMOn1d4Za2gt9t
-         4KrWGobC2RizwkY9GUuUfNeV8cKMUGsZf/N1zKyV0me9/WIlVb8qdGCGd2bw7U4bDjM0
-         8Goj5K7oealFbapxs09KTEFL5/f6nd/QLsNvt6pAKBXKrI5neGY2fesLeihzsadI1HiD
-         QTb/3AsbYcTlIvYsR9UGHZtglwuqw6j7E8pTmNmVsKxzzRpLy0k2jVGOzaweOy2OijTs
-         tLbeFLBmEqa0TE8HOJbrmV3MMd3vFBI2v0Aedrs57BLit07MPyBhC37NVKHrGXxpqmtd
-         oaZQ==
-X-Gm-Message-State: APjAAAXwboOlVoUNrpBetK1dTGeB0H3TRmAZFiotKZ+ea1Z8U37mMqQX
-        hD1eSOvfw3LL6jscomn/fUIoTQ==
-X-Google-Smtp-Source: APXvYqwrOBmroGm4Xd11i377lyNFKSWESfgTnNADfHHvp4d6oK0HIA88i6ywpvr+uizhKDds258Opw==
-X-Received: by 2002:a9d:6288:: with SMTP id x8mr21052106otk.170.1574036476012;
-        Sun, 17 Nov 2019 16:21:16 -0800 (PST)
-Received: from com.attlocal.net ([2600:1700:4870:71e0::10])
-        by smtp.gmail.com with ESMTPSA id 65sm5532194oie.50.2019.11.17.16.21.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 16:21:15 -0800 (PST)
-From:   Frederick Lawler <fred@fredlawl.com>
-To:     axboe@kernel.dk
-Cc:     Frederick Lawler <fred@fredlawl.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        bvanassche@acm.org
-Subject: [PATCH v2 4/4] mtip32xx: Replace magic numbers with PCI constants
-Date:   Sun, 17 Nov 2019 18:20:57 -0600
-Message-Id: <20191118002057.9596-5-fred@fredlawl.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191118002057.9596-1-fred@fredlawl.com>
-References: <20191118002057.9596-1-fred@fredlawl.com>
+        Sun, 17 Nov 2019 19:40:34 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574037613; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=kKHJB/JBkpXuND1ewDxFWAtjDkqh7l8RaaPwENsSTY/VXPL1aWVT5A1umGdzimqVjBYGpg8DENuiwSSJFf1YzxwkBAH9KEdoqL+q7gN4C9O0c/i6y1NqvTyywQKMVLgd8TXguc00mIZrTac+2rAchj/m6cYywRBpH19hgR3HCww=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574037613; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=vVcG7rj1gM7TqVyTSElkhfI8bRKA28swvF9hvZnjE/E=; 
+        b=lUAppPjb9lSX7PXHWpmn1STXlFQHKNvr5pUhZ5HP6N1EL3DulzAFY3cH6i6sbmo7m8fdl9KwdvCp4A8G5lYDO5pvCvlvZ9i2j30q0TwxN36c44QN0Ws/zw6QJ6D95uk+dqkrCwP6+O7nYmisE/jyOHIIpjzKeCsgAPdjCQCP94U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
+        with SMTPS id 1574037611136714.0698210392902; Sun, 17 Nov 2019 16:40:11 -0800 (PST)
+Date:   Mon, 18 Nov 2019 00:25:04 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v4 2/2] iio: (bma400) add driver for the BMA400
+Message-ID: <20191118002504.GA29469@nessie>
+References: <20191018031848.18538-1-dan@dlrobertson.com>
+ <20191018031848.18538-3-dan@dlrobertson.com>
+ <CAHp75VfMW0fvmO9jGTnQumJ9Sm-SgNL0ohjSR4qRQY365aeMBw@mail.gmail.com>
+ <20191019024351.GB8593@nessie>
+ <20191021162016.531e6a2e@archlinux>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021162016.531e6a2e@archlinux>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Readability was improved by replacing pci_read_config_word() with
-pcie_capability_read_word(). Take that a step further by replacing magic
-numbers with PCI reg constants.
+Sorry for the incredibly late reply. Before I submit the next patchset version,
+I have a question from the last set of reviews.
 
-No functional change intended.
+On Mon, Oct 21, 2019 at 04:20:16PM +0100, Jonathan Cameron wrote:
+> On Sat, 19 Oct 2019 02:43:51 +0000
+> Dan Robertson <dan@dlrobertson.com> wrote:
+> > On Fri, Oct 18, 2019 at 10:23:38AM +0300, Andy Shevchenko wrote:
+> > > On Fri, Oct 18, 2019 at 6:44 AM Dan Robertson <dan@dlrobertson.com> wrote:  
+> > > > +static const int bma400_osr_table[] = { 0, 1, 3 };  
+> > >   
+> > > > +/* See the ACC_CONFIG1 section of the datasheet */
+> > > > +static const int bma400_sample_freqs[] = {
+> > > > +       12,  500000,
+> > > > +       25,  0,
+> > > > +       50,  0,
+> > > > +       100, 0,
+> > > > +       200, 0,
+> > > > +       400, 0,
+> > > > +       800, 0,
+> > > > +};  
+> > > 
+> > > This can be replaced by a formula(s).  
+> > 
+> > Yeah I think I can implement the get, set, and read functions for sample_freq
+> > with a formula, but the scale and sample frequency tables are needed by the
+> > implementation of read_avail. A implementation of read_avail with a range and
+> > a step would be ideal, but I couldn't find any documentation on implementing
+> > read_avail where the step value of the range is a multiple. Please correct
+> > me if I've missed something.
+> 
+> Indeed. We've only defined it as being fixed intervals.
+> I'm not keen to expand the options for the userspace interface any
+> further.  
+> 
+> You could compute the values at startup and store it in your state structure
+> I think (or compute them on demand, but you'd need to have the space somewhere
+> non volatile).
+> 
 
-Signed-off-by: Frederick Lawler <fred@fredlawl.com>
----
-v2:
-- Added this patch
----
- drivers/block/mtip32xx/mtip32xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I ended up writing an implementation that uses a formula for the get/set
+functions of the sample frequency and scale, but uses a table for the
+implementation of the read_avail function. While it does work, I worry
+that this makes the driver less maintainable and would make it harder to
+add support for a new hypothetical future BMA4xx device. Also, the majority
+of drivers seem to use a table for the raw value to user input conversion,
+so a move from this might make the code less "familiar".
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index 35703dc98e25..225c6ae62385 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -3942,8 +3942,8 @@ static void mtip_disable_link_opts(struct driver_data *dd, struct pci_dev *pdev)
- 		return;
- 
- 	pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &pcie_dev_ctrl);
--	if (pcie_dev_ctrl & (1 << 11) ||
--	    pcie_dev_ctrl & (1 << 4)) {
-+	if (pcie_dev_ctrl & PCI_EXP_DEVCTL_NOSNOOP_EN ||
-+	    pcie_dev_ctrl & PCI_EXP_DEVCTL_RELAX_EN) {
- 		dev_info(&dd->pdev->dev,
- 			 "Disabling ERO/No-Snoop on bridge device %04x:%04x\n",
- 			 pdev->vendor, pdev->device);
--- 
-2.20.1
+If we do stick with the translation table, would it be better to have two
+tables (a translation table and a read_avail table) so that we do not have
+a step distance of two? This would mean we would need to maintain two
+tables, but would simplify the code.
+
+Random workflow question:
+
+The sampling ratio, frequency, etc code seems to be the most complicated part
+of the driver. Is it typically recommended to upstream a more minimal driver
+that might assume the defaults?
+
+Cheers,
+
+ - Dan
 
