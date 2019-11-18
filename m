@@ -2,117 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D0A1008FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B74310090A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:19:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfKRQPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 11:15:11 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:35633 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfKRQPK (ORCPT
+        id S1726717AbfKRQTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 11:19:32 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:44385 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfKRQTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:15:10 -0500
-Received: by mail-io1-f72.google.com with SMTP id h7so13728156ioh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:15:10 -0800 (PST)
+        Mon, 18 Nov 2019 11:19:32 -0500
+Received: by mail-il1-f196.google.com with SMTP id i6so7117475ilr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:19:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E9E85CtL9td3M11CPpft7JLYpTsiRw80DDYN+NBSTjo=;
+        b=inz6BKPqZnuPFIBOaggS5p7Eq85z3j336Z6TV07+Al4rjRDU6kXtvyQ+UbLZ+grkc7
+         F9IoCrhDHv9E0jbh24OtIzDmmwE+a0DYcrXe6lMlciR7KxmFm0bRRidgAu/DP2Y6bS0M
+         eryoP6eftPzMcIOhTmUSN+/UFMaYfEBxLPQPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=lsUFo3ehvZYNop+yjFrOvo2a1EkwfkjExK3zYnbPyCU=;
-        b=JKFcE4Vh5Y75SKSkmGIrHs+JmYy5sl91IygrnT8YQIOt2Ls/hav9+uiSyMgIndaCy/
-         ra2p4GLu5ahFyvtDGtTqXZIZu7g2yAmrbP0SSmqgcHhH+1ippxQTPz7KpGDlcDCzeo/+
-         4snDfNhw7tps853nZK1y2kOzB5T2fb2HScTEN0z01J8jjjIvic2M3Wq39SNsl58PfAgl
-         sVzkIn5TYZwaxDP8Xl234xjFOSbOzPo6uymovir+hw9Gz48VNqZ3Iz0KU94NreLz0mql
-         JgQFFSA1ectKUn9w9v1ZgKhqalWA3uXUl7gXldN3jHHDbXglKSHtltGUJLPpy4RCL4K3
-         peTA==
-X-Gm-Message-State: APjAAAXDBvjQlUolrlEFpyM4SlRSZY8mK/89UwGzOioJQywFzzxiWmsX
-        cC9eNb7e3nLVahhQbXpBMiBWmdKZaQ/9ZjLPjvNWYl3J2Em/
-X-Google-Smtp-Source: APXvYqwDt/8aI9wREsziYf0WUt5rhKjTWo66At9tvjk9LwhclVgnnlFz1Peva2f1fnO38yIf730an+1+T6KwWCLiSBBiciF9WmSV
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E9E85CtL9td3M11CPpft7JLYpTsiRw80DDYN+NBSTjo=;
+        b=ge8Jt4xIfg7NCf6//UxGXHptHd3Y9Lso7+joO2/S+ZwA2RXLFklOHwS7rQ3SFhmwhp
+         wz0DR26AaQkzagGG9+d6oCgMwz3ZID241U6r0IWIEmXiTiNo2zrW/8RkWo3wIv7tP5i+
+         fuJtN0X1fhMjLKyBDt2jk5/gBMKP4iGkergwtd6lXY/9GnRTf03UIEXz0jg4sO+p6Ajg
+         iRF+qr9ELG/86bNy92ihKsSHfLwsvFdopCuu2VNRxHDv/CVHeDItyBwS1oru1jFasHnn
+         xKuYhgnSFOYI1mI7IiwrjqMorhM2I3Mu08b26JUhu5TJIs4JM1g6UGxZeFw/a85iJU9v
+         ciqw==
+X-Gm-Message-State: APjAAAV7Icby5Pv8HJeP3hxJW0T5fwFBl55jFd+iW90WNdXZ/EtM47wv
+        oAqHhxywah0Js3LY93ItP1v+XjMY8bw=
+X-Google-Smtp-Source: APXvYqzh1VKGsXvpgGv1qEG+Fa1DCpDreQ59tMk/NbRqaSSeuW7KmHAuoMM4kKHyp2UJwaLEdpFbHw==
+X-Received: by 2002:a92:8108:: with SMTP id e8mr16348963ild.209.1574093971501;
+        Mon, 18 Nov 2019 08:19:31 -0800 (PST)
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com. [209.85.166.176])
+        by smtp.gmail.com with ESMTPSA id e25sm3567879iol.36.2019.11.18.08.19.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2019 08:19:30 -0800 (PST)
+Received: by mail-il1-f176.google.com with SMTP id a7so16517256ild.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:19:30 -0800 (PST)
+X-Received: by 2002:a92:109c:: with SMTP id 28mr16767271ilq.142.1574093970462;
+ Mon, 18 Nov 2019 08:19:30 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a02:1ac5:: with SMTP id 188mr13958088jai.77.1574093710011;
- Mon, 18 Nov 2019 08:15:10 -0800 (PST)
-Date:   Mon, 18 Nov 2019 08:15:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006db5bf0597a14058@google.com>
-Subject: BUG: spinlock already unlocked in input_set_keycode
-From:   syzbot <syzbot+c769968809f9359b07aa@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, dmitry.torokhov@gmail.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, rydberg@bitmath.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190214173633.211000-1-dianders@chromium.org>
+In-Reply-To: <20190214173633.211000-1-dianders@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 18 Nov 2019 08:19:18 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WD4r-GAM6mnTg9qB04aaX7JJzHajhtb+N8Yq9UR1WZAA@mail.gmail.com>
+Message-ID: <CAD=FV=WD4r-GAM6mnTg9qB04aaX7JJzHajhtb+N8Yq9UR1WZAA@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: rpmhpd: Set 'active_only' for active only
+ power domains
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Bjorn / Andy,
 
-syzbot found the following crash on:
+On Thu, Feb 14, 2019 at 9:36 AM Douglas Anderson <dianders@chromium.org> wrote:
+>
+> The 'active_only' attribute was accidentally never set to true for any
+> power domains meaning that all the code handling this attribute was
+> dead.
+>
+> NOTE that the RPM power domain code (as opposed to the RPMh one) gets
+> this right.
+>
+> Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain driver")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+>  drivers/soc/qcom/rpmhpd.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-HEAD commit:    46178223 usb: gadget: add raw-gadget interface
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=144b2c6ae00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99c88c44660624e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c769968809f9359b07aa
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15162dc2e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11976abae00000
+Somehow this fell through the cracks and was never applied.  Can you
+pick it up?  Given that it's been a year and nobody has noticed this
+it seems like 5.5 is fine, but maybe you could add Cc: stable since it
+seems like something that stable trees would want...
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c769968809f9359b07aa@syzkaller.appspotmail.com
+Thanks!
 
-BUG: spinlock already unlocked on CPU#0, syz-executor217/1716
-  lock: 0xffff8881cfeb5210, .magic: dead4ead, .owner:  
-syz-executor217/1716, .owner_cpu: 0
-CPU: 0 PID: 1716 Comm: syz-executor217 Not tainted 5.4.0-rc6+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  spin_bug kernel/locking/spinlock_debug.c:75 [inline]
-  debug_spin_unlock kernel/locking/spinlock_debug.c:98 [inline]
-  do_raw_spin_unlock+0x163/0x220 kernel/locking/spinlock_debug.c:138
-  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:159 [inline]
-  _raw_spin_unlock_irqrestore+0x23/0x50 kernel/locking/spinlock.c:191
-  spin_unlock_irqrestore include/linux/spinlock.h:393 [inline]
-  input_set_keycode+0x125/0x320 drivers/input/input.c:958
-  evdev_handle_set_keycode_v2+0xc4/0x120 drivers/input/evdev.c:882
-  evdev_do_ioctl drivers/input/evdev.c:1150 [inline]
-  evdev_ioctl_handler+0xd49/0x19f0 drivers/input/evdev.c:1284
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
-  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444ca9
-Code: e8 bc af 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 1b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc61f97448 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000444ca9
-RDX: 0000000020000140 RSI: 0000000040284504 RDI: 0000000000000004
-RBP: 00000000006cf018 R08: 090b000000008300 R09: 00000000004002e0
-R10: 000000000000000f R11: 0000000000000246 R12: 0000000000402950
-R13: 00000000004029e0 R14: 0000000000000000 R15: 0000000000000000
-------------[ cut here ]------------
-pvqspinlock: lock 0xffff8881cfeb5210 has corrupted value 0x0!
-WARNING: CPU: 0 PID: 1716 at kernel/locking/qspinlock_paravirt.h:498  
-__pv_queued_spin_unlock_slowpath+0x1c0/0x220  
-kernel/locking/qspinlock_paravirt.h:498
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-Doug
