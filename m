@@ -2,85 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D64100473
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45769100477
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKRLlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:41:06 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45081 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbfKRLlF (ORCPT
+        id S1727016AbfKRLlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:41:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54925 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfKRLlG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:41:05 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w7so9647288plz.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:41:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uMmNWssOJlXbtofRR2kOKtfa7UxH0Ox6Pxi8KF9bxWY=;
-        b=qAbxj/zIvkWlxT5u0mKDsMBil9jocSm3LCCd8FO0IcGNqyTmQ1XWHFGVAaLkzH3/cO
-         j+FzzcK8AbDUDyIdFjZouNA8sWKs3Sy5LqPjEdWPU+UtmT/ZSztXmVbwIZiRfUYH1WU3
-         4snZJ4bTdVT4Ac/TsILCF90eQXpAqYVOFgh4nxvTTPlqRgSnPVA/0qksjrq4dgFXg3aM
-         51uGbkS4k+WiHODUJhHsN8sQYw02vqQff13CcWfadwaFpmVTEL3jhaEg9T+nRXWpfWpZ
-         NiX4bT8JOdQYb7x9w9R73Ga/QgQftA6h2/prthwToVdET5WhBBam1nbJeRpiMu6T+EAC
-         g1hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uMmNWssOJlXbtofRR2kOKtfa7UxH0Ox6Pxi8KF9bxWY=;
-        b=Dnl7oftMnIKOXtUZD0xcr+XWZmbJBsqzEHgMDNBIMHaiLR4HV7GrW7KksvRPrFDr7N
-         E9KpM6hfY7w3hHo9IPVLEdj+utt2c/YQI7dvJjZkyfftpEjLeGbhK49BAX6Lq6JNO325
-         1vtTewIo3fMLHrZKSlabBbltaFs6bkxQKTtEGKsQlSoSzUAk0WB7NQprHvzLN9W2C5wW
-         CPm/vMm/jspGLaTF60O17AkHHttulxMVj/tNRyoI7qtlhZm8lDh6FK8PfadONGbC442d
-         PfhwktCO9D7eo7m5pkoBsFgrt89zaxHSJ2Y9rI8xhH8JXwWbPbEmLUrNGBz+rftfdmg+
-         Bo/g==
-X-Gm-Message-State: APjAAAXQKHAknm0HkKsQA9xFCTL1SpCEDPjUQXZHwt+TSlYSb/HhVl+x
-        AtihCMvRxT9XVHp8+GAylcY=
-X-Google-Smtp-Source: APXvYqxLmHlJWm4W4/DvOEwpANoTCezLffx5/q4/+H0m4YNEERwIbCfFlxtui08nOnOnuXvGkolfzA==
-X-Received: by 2002:a17:90a:f013:: with SMTP id bt19mr38840524pjb.16.1574077265326;
-        Mon, 18 Nov 2019 03:41:05 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id a21sm19124492pjv.20.2019.11.18.03.41.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 03:41:04 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] mfd: tps65010: add missed gpiochip_remove
-Date:   Mon, 18 Nov 2019 19:40:56 +0800
-Message-Id: <20191118114056.25552-1-hslester96@gmail.com>
+        Mon, 18 Nov 2019 06:41:06 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iWfOt-0007Ef-P5; Mon, 18 Nov 2019 11:40:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bpf: fix memory leak on object 'data'
+Date:   Mon, 18 Nov 2019 11:40:59 +0000
+Message-Id: <20191118114059.37287-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver forgets to call gpiochip_remove to match gpiochip_add_data
-in probe.
-Add the missed call to fix it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+The error return path on when bpf_fentry_test* tests fail does not
+kfree 'data'. Fix this by adding the missing kfree.
+
+Addresses-Coverity: ("Resource leak")
+Fixes: faeb2dce084a ("bpf: Add kernel test functions for fentry testing")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mfd/tps65010.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/bpf/test_run.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/tps65010.c b/drivers/mfd/tps65010.c
-index 65fcc58c02da..f73abba7be51 100644
---- a/drivers/mfd/tps65010.c
-+++ b/drivers/mfd/tps65010.c
-@@ -513,6 +513,7 @@ static int tps65010_remove(struct i2c_client *client)
- 			dev_dbg(&client->dev, "board %s %s err %d\n",
- 				"teardown", client->name, status);
- 	}
-+	gpiochip_remove(&tps->chip);
- 	if (client->irq > 0)
- 		free_irq(client->irq, tps);
- 	cancel_delayed_work_sync(&tps->work);
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index 62933279fbba..915c2d6f7fb9 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -161,8 +161,10 @@ static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
+ 	    bpf_fentry_test3(4, 5, 6) != 15 ||
+ 	    bpf_fentry_test4((void *)7, 8, 9, 10) != 34 ||
+ 	    bpf_fentry_test5(11, (void *)12, 13, 14, 15) != 65 ||
+-	    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111)
++	    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111) {
++		kfree(data);
+ 		return ERR_PTR(-EFAULT);
++	}
+ 	return data;
+ }
+ 
 -- 
 2.24.0
 
