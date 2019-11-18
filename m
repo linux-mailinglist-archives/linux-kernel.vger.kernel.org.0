@@ -2,94 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF1E100026
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DBEFFFFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:03:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfKRIOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 03:14:02 -0500
-Received: from sender4-of-o58.zoho.com ([136.143.188.58]:21839 "EHLO
-        sender4-of-o58.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfKRIOB (ORCPT
+        id S1726460AbfKRIDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 03:03:03 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42336 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfKRIDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 03:14:01 -0500
-X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Nov 2019 03:14:01 EST
-ARC-Seal: i=1; a=rsa-sha256; t=1574063907; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=n6ZjxkhAaCYdVbmonyMT0gX8EtdaPseXqA8EVlamRr14hEIO4ZIPQuN3Th/p0tFNLHSlK0iQPaeUNip2/ohWm6MW33vHSoZ8IApAVOQIUs/MnLyAmyCGwuy+TxYLLPjaae5BLQKRdxtJDCJH2s7X/k8ykW64Ep8D6sw3BosQ7Vo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1574063907; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=QaA7BDbSdX9jfQDBkM/kSQl2g+5tNndLUXgFesI8JtU=; 
-        b=jmPe8liHwyhc+lisp/S0bh1t+B/fnJYcuQwzN8exNKgyt763W7UA2QDkcB0YIXqYdZP724iOHuTAWbTEgokonhFpAR8+R3CJ3hbz++aoUvpH+k/CEUtL90JKiK/zQeSqkPFDIR1eT0g2D+pDGxtrrOLKMVv6uafy8nWU5fnaKXM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=brennan.io;
-        spf=pass  smtp.mailfrom=stephen@brennan.io;
-        dmarc=pass header.from=<stephen@brennan.io> header.from=<stephen@brennan.io>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574063907;
-        s=selector01; d=brennan.io; i=stephen@brennan.io;
-        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        l=864; bh=QaA7BDbSdX9jfQDBkM/kSQl2g+5tNndLUXgFesI8JtU=;
-        b=gGcgYyBnfcHlRSvkWvOyaMKlDuqnVHD02oQQ6lKwfw9HdpqJzHZ64areSk9yJro2
-        nRfGp4wk4iw8ICXEKmystIxgKJ/3oXMM4LdHyCDYkiJc4VeNVGxcZTnm6KBK6RT5grj
-        kNawSeC6tTY81TexVMAwtRyTvFukohJOqFzW4xmU=
-Received: from localhost (195.173.24.136.in-addr.arpa [136.24.173.195]) by mx.zohomail.com
-        with SMTPS id 1574063905483664.0921926369589; Sun, 17 Nov 2019 23:58:25 -0800 (PST)
-From:   Stephen Brennan <stephen@brennan.io>
-To:     stephen@brennan.io
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Message-ID: <20191118075807.165126-1-stephen@brennan.io>
-Subject: [PATCH 0/3] Raspberry Pi 4 HWRNG Support
-Date:   Sun, 17 Nov 2019 23:58:04 -0800
-X-Mailer: git-send-email 2.24.0
+        Mon, 18 Nov 2019 03:03:03 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAI82uwY020694;
+        Mon, 18 Nov 2019 02:02:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574064176;
+        bh=PI8nD4jFp/0XnhGQ6/XR612OzagpQkaNZfAIXVgyfrY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Ztp0xfS1khPfQ4X+EmSwA7YGiQmNzcDlMgINCoWyMQOp6+MzX2cBLCr6w4bvxoZ+J
+         VYpIZmiIw77PzJXGH+vlMF90I5GNWYMLvtc0haB4jPEeuCQhLgAuJblVdc45OmtwOZ
+         cBEnSgR87jkq3uKkkqMy8uIm7siY6Gegg5aizopQ=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAI82uLv004259
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Nov 2019 02:02:56 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 18
+ Nov 2019 02:02:56 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 18 Nov 2019 02:02:56 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAI82reL087431;
+        Mon, 18 Nov 2019 02:02:54 -0600
+Subject: Re: [PATCH] bindings:phy Mark phy_clk binding as deprecated in
+ Cadence Sierra Phy.
+To:     Anil Joy Varughese <aniljoy@cadence.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <mparab@cadence.com>, <rafalc@cadence.com>
+References: <1574062988-4751-1-git-send-email-aniljoy@cadence.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <dce65150-cbd8-eb4d-5778-47658a719eb5@ti.com>
+Date:   Mon, 18 Nov 2019 13:32:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+In-Reply-To: <1574062988-4751-1-git-send-email-aniljoy@cadence.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series enables support for the HWRNG included on the Raspberry
-Pi 4.  It is simply a rebase of Stefan's branch [1]. I went ahead and
-tested this out on a Pi 4.  Prior to this patch series, attempting to use
-the hwrng gives:
+Anil,
 
-    $ head -c 2 /dev/hwrng
-    head: /dev/hwrng: Input/output error
+On 18/11/19 1:13 PM, Anil Joy Varughese wrote:
+> Updated the Sierra Phy binding doc to mark phy_clk as deprecated.
 
-After this patch, the same command gives two random bytes.
+This should also indicate why your are deprecating it.
 
-[1]: https://github.com/lategoodbye/rpi-zero/tree/bcm2711-hwrng
+Thanks
+Kishon
 
----
-
-Stefan Wahren (3):
-  dt-bindings: rng: add BCM2711 RNG compatible
-  hwrng: iproc-rng200: Add support for BCM2711
-  ARM: dts: bcm2711: Enable HWRNG support
-
- Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt | 1 +
- arch/arm/boot/dts/bcm2711.dtsi                              | 5 ++---
- drivers/char/hw_random/Kconfig                              | 2 +-
- drivers/char/hw_random/iproc-rng200.c                       | 1 +
- 4 files changed, 5 insertions(+), 4 deletions(-)
-
---=20
-2.24.0
-
-
-
+> 
+> Signed-off-by: Anil Joy Varughese <aniljoy@cadence.com>
+> ---
+>  .../devicetree/bindings/phy/phy-cadence-sierra.txt |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+> index 6e1b47b..9a42b46 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+> @@ -5,7 +5,7 @@ Required properties:
+>  - compatible:	cdns,sierra-phy-t0
+>  - clocks:	Must contain an entry in clock-names.
+>  		See ../clocks/clock-bindings.txt for details.
+> -- clock-names:	Must be "phy_clk"
+> +- clock-names:	Must be "phy_clk". This is deprecated and should not be used with newer bindings.
+>  - resets:	Must contain an entry for each in reset-names.
+>  		See ../reset/reset.txt for details.
+>  - reset-names:	Must include "sierra_reset" and "sierra_apb".
+> 
