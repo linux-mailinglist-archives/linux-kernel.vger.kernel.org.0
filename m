@@ -2,150 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C5A1100645
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C60B4100654
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfKRNPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 08:15:55 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50298 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfKRNPz (ORCPT
+        id S1726922AbfKRNUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 08:20:12 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40169 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfKRNUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:15:55 -0500
-Received: by mail-wm1-f68.google.com with SMTP id l17so17318175wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 05:15:52 -0800 (PST)
+        Mon, 18 Nov 2019 08:20:11 -0500
+Received: by mail-io1-f68.google.com with SMTP id p6so18680338iod.7;
+        Mon, 18 Nov 2019 05:20:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xwrm/EdqJrqRNp6lDCphJomGvC6C6nLJYt/tPtXNRTo=;
-        b=CPZtH2ZLTLwEH9TSUaYNabXvirAMqgCMYHDboEXSQKVRdXf4TcrIhYxU1tH4cNuw80
-         6SeO0ffIfO5RXwB+bfnNhLxJh0Txr04s0PXOC6Ppm/DlpSwl/VM/VaL80EU0vySF0F4n
-         qSIt5gWm9kpFeB6tu8nXpv/oNYgMI76GRWoPJ6oKyB/J2yB01hghFRorZCU2EREQATga
-         qUZOKFKOf2pBdR9uE+7Mame6+arLJhVuXGos4zGiQQt5bKvrZ8sfLwC8TIt4gAlJI3SX
-         li1ZmkMwKP2POdy6u+uOH2ReStPY4TqUehbrqYrfDyAAbEgF+8N4fAQpVud4VqNhbQay
-         hcaA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jtBslyeRe2dxLTJWRfxsV5lHghb7AWr4C0ILEly8qOo=;
+        b=IklBmRpwFCy1UUTW/WpyvUTQmcKpYwT6SZr3EYlmZEe/e2GBu7EcIde5rTKrwNWfIx
+         34uGvJ3010QsQ5SJZVNR0r847kdwMLaN1omVp+ELYmOGJ9NL8UtmD7jj2fnJtTErgDSS
+         u2O+OuRq/SgomY9Ft+7BR/TRwehd57kqizCc45VYmg8K01Pr7ANFRSi9LnIwKdeCZ1v3
+         pelR0reCfMuxini2KP//MZPpDOOAZ3tJRJa6Auilv05Z66Dt6KakcbrZmTJvSRvUUE4c
+         M5XcR7mKwH32aLQYTZBkaSTKty1utWsbwN4QehGyyl1IuVRHIy1uT7LawlVCo15k7lsl
+         kjeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xwrm/EdqJrqRNp6lDCphJomGvC6C6nLJYt/tPtXNRTo=;
-        b=ZPzpgwfwpZ+3l/zd9SE6snO69GxPV7U0sDyYLFEs+oQF8ekTL15L4zhQ+R+p0gVzZe
-         gcvb7fI/e7wFWZ+lpN+EefsKkfK6qSaRUroBxH16nEoHKzLcwzEJ62skeVvZIP9Td5y9
-         SFmyvsGlEmJcs+Zhy2r1FoTy9wp9aE2uE4bLRDfELVKMPS2cDn6/JejdNbcFvdIJnOL3
-         WkLLvVG5t0Ax1KYl1pTDofEiNC45BZUtPB3fpX0HKGGAnCpHsf5rt0pVKA8UBc6Ad4Gr
-         N5ym3JlYtHTLLS3wZFi7zkcIP1nfQrIcep67WP5EfqfYLCD1L0ByjVcFTE53ZB5CS5Wx
-         XEWA==
-X-Gm-Message-State: APjAAAXd5v6z5lWrZjWdVPUXpwx5jFeVXVUIO/9P6R+S8HUPEnn177Nx
-        P1Yc7eD6+Nw4/o0sdc7xmrk=
-X-Google-Smtp-Source: APXvYqyp+hz39/b0fxklCkUM8qTiQIMxAffYDa6DSEvI6YrVB8J9AgtZEmmPObwfkTrDBOeLgda6wA==
-X-Received: by 2002:a1c:de88:: with SMTP id v130mr30852765wmg.89.1574082949828;
-        Mon, 18 Nov 2019 05:15:49 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id 19sm26137589wrc.47.2019.11.18.05.15.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 05:15:48 -0800 (PST)
-Date:   Mon, 18 Nov 2019 14:15:46 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, pauld@redhat.com, valentin.schneider@arm.com,
-        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com
-Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
-Message-ID: <20191118131546.GA66833@gmail.com>
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <20191021075038.GA27361@gmail.com>
- <20191030162440.GO3016@techsingularity.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jtBslyeRe2dxLTJWRfxsV5lHghb7AWr4C0ILEly8qOo=;
+        b=Z5NEep7CMXzkPmijWcWOVIpkZZJWP4QMhf1BFSYTq6dI2GR5K4Pu0IQ2MZEX2DABcZ
+         pnprDflWJ7BLQxqo86ZyzPANxdtDZUcyHUal49pZVW0QAwClgDIFEUR7APF1s/41pmCQ
+         na4yNv/21glejeegPNLdVBF7ADZ/H1C1GTtkuKQRE+vviChf742fp/MKWQx7qQVpfPI0
+         eQz7QvyO//HoP4kDT7FuM7yRLM0fD5TOTtzconlhg/9Vkb44EdqLG9gnA9H2VZC4ZKMV
+         iovra1vYB3Z/HsSqZPwshgACBv3IaodtVPfCTWlPGUvmY1JhCVupoNLS4SOTAb1X7YYs
+         rigA==
+X-Gm-Message-State: APjAAAVfr0q4dRYYSguXLwJGDMLeFH8tzt7wzfNgdaXwxorVrbIkGkjR
+        9gjAm6xTz4pt7XXP21+P+Ww3ZFaO8F6By9VftZw=
+X-Google-Smtp-Source: APXvYqyfD7jj+bwf8NvPaepmFl8GYDAvT13TM0vx9+H1ZwsdMVUAQSWO3oe0cZzOsLvvUQy5YbMiAhjrN+krM3pPRnY=
+X-Received: by 2002:a02:a810:: with SMTP id f16mr13538923jaj.73.1574083210748;
+ Mon, 18 Nov 2019 05:20:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030162440.GO3016@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1574049277-13477-1-git-send-email-cang@codeaurora.org> <0101016e7ca62853-73f33b23-b1d4-4f2e-aec1-e6aa9cd34dfe-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016e7ca62853-73f33b23-b1d4-4f2e-aec1-e6aa9cd34dfe-000000@us-west-2.amazonses.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Mon, 18 Nov 2019 18:49:34 +0530
+Message-ID: <CAGOxZ50tYWgbWFsRu+80_jaAH9J-2F6PP09Mzuf77jd+WU2jLA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] scsi: ufs: Update VCCQ2 and VCCQ min/max voltage
+ hard codes
+To:     Can Guo <cang@codeaurora.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com,
+        Mark Salyzyn <salyzyn@google.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I agree with Avri, you can just drop this patch, unless you see
+anything affected because of not setting VDDQ/VDDQ2 as per spec.
+or alternatively you can have  different marco of each spec and handle
+the same in the code as per ufs specification version.
 
-* Mel Gorman <mgorman@techsingularity.net> wrote:
+On Mon, Nov 18, 2019 at 9:25 AM Can Guo <cang@codeaurora.org> wrote:
+>
+> Per UFS 3.0 JEDEC standard, the VCCQ2 min voltage is 1.7v and the VCCQ
+> voltage range is 1.14v ~ 1.26v. Update their hard codes accordingly to
+> make sure they work in a safe range compliant for ver 1.0/2.0/2.1/3.0
+> UFS devices.
+>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index 385bac8..9df4f4d 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -500,9 +500,9 @@ struct ufs_query_res {
+>  #define UFS_VREG_VCC_MAX_UV       3600000 /* uV */
+>  #define UFS_VREG_VCC_1P8_MIN_UV    1700000 /* uV */
+>  #define UFS_VREG_VCC_1P8_MAX_UV    1950000 /* uV */
+> -#define UFS_VREG_VCCQ_MIN_UV      1100000 /* uV */
+> +#define UFS_VREG_VCCQ_MIN_UV      1140000 /* uV */
+>  #define UFS_VREG_VCCQ_MAX_UV      1300000 /* uV */
+> -#define UFS_VREG_VCCQ2_MIN_UV     1650000 /* uV */
+> +#define UFS_VREG_VCCQ2_MIN_UV     1700000 /* uV */
+>  #define UFS_VREG_VCCQ2_MAX_UV     1950000 /* uV */
+>
+>  /*
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
 
-> On Mon, Oct 21, 2019 at 09:50:38AM +0200, Ingo Molnar wrote:
-> > > <SNIP>
-> > 
-> > Thanks, that's an excellent series!
-> > 
-> 
-> Agreed despite the level of whining and complaining I made during the
-> review.
 
-I saw no whining and complaining whatsoever, and thanks for the feedback!
-:-)
-
-> 
-> > I've queued it up in sched/core with a handful of readability edits to 
-> > comments and changelogs.
-> > 
-> > There are some upstreaming caveats though, I expect this series to be a 
-> > performance regression magnet:
-> > 
-> >  - load_balance() and wake-up changes invariably are such: some workloads 
-> >    only work/scale well by accident, and if we touch the logic it might 
-> >    flip over into a less advantageous scheduling pattern.
-> > 
-> >  - In particular the changes from balancing and waking on runnable load 
-> >    to full load that includes blocking *will* shift IO-intensive 
-> >    workloads that you tests don't fully capture I believe. You also made 
-> >    idle balancing more aggressive in essence - which might reduce cache 
-> >    locality for some workloads.
-> > 
-> > A full run on Mel Gorman's magic scalability test-suite would be super 
-> > useful ...
-> > 
-> 
-> I queued this back on the 21st and it took this long for me to get back
-> to it.
-> 
-> What I tested did not include the fix for the last patch so I cannot say
-> the data is that useful. I also failed to include something that exercised
-> the IO paths in a way that idles rapidly as that can catch interesting
-> details (usually cpufreq related but sometimes load-balancing related).
-> There was no real thinking behind this decision, I just used an old
-> collection of tests to get a general feel for the series.
-
-I have just applied Vincent's fix to find_idlest_group(), so that will 
-probably modify some of the results. (Hopefully for the better.)
-
-Will push it out later today-ish.
-
-> Most of the results were performance-neutral and some notable gains 
-> (kernel compiles were 1-6% faster depending on the -j count). Hackbench 
-> saw a disproportionate gain in terms of performance but I tend to be 
-> wary of hackbench as improving it is rarely a universal win. There 
-> tends to be some jitter around the point where a NUMA nodes worth of 
-> CPUs gets overloaded. tbench (mmtests configuation network-tbench) on a 
-> NUMA machine showed gains for low thread counts and high thread counts 
-> but a loss near the boundary where a single node would get overloaded.
-> 
-> Some NAS-related workloads saw a drop in performance on NUMA machines 
-> but the size class might be too small to be certain, I'd have to rerun 
-> with the D class to be sure.  The biggest strange drop in performance 
-> was the elapsed time to run the git test suite (mmtests configuration 
-> workload-shellscripts modified to use a fresh XFS partition) took 
-> 17.61% longer to execute on a UMA Skylake machine. This *might* be due 
-> to the missing fix because it is mostly a single-task workload.
-
-Thanks a lot for your testing!
-
-> I'm not going to go through the results in detail because I think 
-> another full round of testing would be required to take the fix into 
-> account. I'd also prefer to wait to see if the review results in any 
-> material change to the series.
-
-I'll try to make sure it all gets addressed.
-
-Thanks,
-
-	Ingo
+-- 
+Regards,
+Alim
