@@ -2,90 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6755F100873
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 490F0100898
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:45:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfKRPlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 10:41:19 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33050 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbfKRPlS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 10:41:18 -0500
-Received: by mail-io1-f68.google.com with SMTP id j13so19292520ioe.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 07:41:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LDK9yK9BoIJXiRshGH8S+ARb//vvA/0NHK9tQB/EqPk=;
-        b=JaQ3lkdxJbg8bC1c3jS+KwvIPC4OYHwwfxOOr83yS4U4QDzFNnWNlZ/p8PuJ96np2E
-         fSAKxEDc8Nlw46j0x8sDTkmy8rEIthr/WFem2d8bAl0iNj18msLAPp9+Qqw8SvjrYFOj
-         3EJP2rizmnWjpUQ81QDQLHav2Tp5HVA4u81MwCU4l9mmA08xnqINakg2qQ0Qqif/jPDU
-         cj76eJwfOZnRj3nWeBGiV/PEuiL0fSFQfPs36u/4sn+YKAJg5MIM0MMYKTeugndAPPka
-         ajIMC8PlwEyo22uO2Ji9NNlBpygJnk5UjX4ca26Yx50OfsMWk84dbtjiEcKRS6BQEBNE
-         yt5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LDK9yK9BoIJXiRshGH8S+ARb//vvA/0NHK9tQB/EqPk=;
-        b=EsyfjqMZzo7xwFr9D1Rh41V2j4LaxZI8R+GHVIBQhHh0acupuRHNsQDrY2w7SJaXC2
-         nqhLnen3xMpPBLslQbKQnLk71ZCTK/LeXmFecEL7mU5i+HEY7XYWgS7CCnHxLs9kcA+T
-         JMY0JMkg+MX96VXWUbMdFRuf9b6iEcLm2dRhWgqJja+0G52j2+dkqqI2Dzsf5OiploAo
-         w9FAeWH+n9fNQMrsEKGUy4ktozZ/pBhws/B8nt3N/nEKYHh0H5A28TLsVcLdQUjrVb3l
-         4LvlqjCUL7vNVp71j3IqyEu2gvjqWwmAIt71EzLplJXhKWcTTQ2bElP8JAG17XN9p9dp
-         FkYg==
-X-Gm-Message-State: APjAAAX2rixbRRQr9nRF5Jc83uzlptWufbm45noijukViIhBRNfpLqvP
-        rHBpsf47lCmP5z8iYRqlmSR/ZQ==
-X-Google-Smtp-Source: APXvYqwof3l/MsVfP7ktJ3h+n1HCG5pvVXBQdOFvhVIS26ekBuLo1YKhPDa/JlQ2jH5waDFiOTh3+Q==
-X-Received: by 2002:a6b:c0c7:: with SMTP id q190mr9712406iof.256.1574091676102;
-        Mon, 18 Nov 2019 07:41:16 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u6sm4612045ilm.22.2019.11.18.07.41.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Nov 2019 07:41:15 -0800 (PST)
-Subject: Re: [PATCH block/for-next] blk-cgroup: cgroup_rstat_updated()
- shouldn't be called on cgroup1
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Faiz Abbas <faiz_abbas@ti.com>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lizefan@huawei.com, hannes@cmpxchg.org, kernel-team@fb.com,
-        Dan Schatzberg <dschatzberg@fb.com>, Daniel Xu <dlxu@fb.com>
-References: <20191107191804.3735303-1-tj@kernel.org>
- <20191107191804.3735303-6-tj@kernel.org>
- <cd3ebcee-6819-a09b-aeba-de6817f32cde@ti.com>
- <20191113163501.GI4163745@devbig004.ftw2.facebook.com>
- <20191114223128.GM4163745@devbig004.ftw2.facebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <091022e8-e6a1-178d-80cd-b2a070d3519f@kernel.dk>
-Date:   Mon, 18 Nov 2019 08:41:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727498AbfKRPpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 10:45:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53646 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727336AbfKRPpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 10:45:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9C99DAD33;
+        Mon, 18 Nov 2019 15:45:49 +0000 (UTC)
+Date:   Mon, 18 Nov 2019 07:41:31 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     mingo@kernel.org
+Cc:     tglx@linutronix.de, peterz@infradead.org, bp@alien8.de,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -tip v2 0/4] x86,mm/pat: Move towards using generic
+ interval tree
+Message-ID: <20191118154131.4vvqa3azfneakxrm@linux-p48b>
+References: <20191021231924.25373-1-dave@stgolabs.net>
 MIME-Version: 1.0
-In-Reply-To: <20191114223128.GM4163745@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191021231924.25373-1-dave@stgolabs.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/19 3:31 PM, Tejun Heo wrote:
-> Currently, cgroup rstat is supported only on cgroup2 hierarchy and
-> rstat functions shouldn't be called on cgroup1 cgroups.  While
-> converting blk-cgroup core statistics to rstat, f73316482977
-> ("blk-cgroup: reimplement basic IO stats using cgroup rstat")
-> accidentally ended up calling cgroup_rstat_updated() on cgroup1
-> cgroups causing crashes.
-> 
-> Longer term, we probably should add cgroup1 support to rstat but for
-> now let's mask the call directly.
+ping?
 
-Applied, thanks.
+With another week of rc, can this still make it for v5.5?
 
--- 
-Jens Axboe
+Thanks,
+Davidlohr
 
+On Mon, 21 Oct 2019, Davidlohr Bueso wrote:
+
+>Changes from v1[0]:
+> - Got rid of more code in patch 1 by using the end - 1 for closed
+>   intervals, instead of keeping the overlap-check.
+>
+> - added an additional cleanup patch.
+>
+>Hi,
+>
+>I'm sending this series again in this format as the interval tree
+>node conversion will, at a minimum, take longer than hoped for
+>(ie: Jason still removing interval tree users for the mmu_notifier
+>rework[1]). There is also a chance this will never see be done.
+>
+>As such, I'm resending this series (where patch 1 is the only
+>interesting one and which Ingo acked previously, with the exception
+>that the nodes remain fully closed). In the future, it would be
+>trivial to port pat tree to semi open nodes, but for now think that
+>it makes sense to just get the pat changes in.
+>
+>Please consider for v5.5. Thanks!
+>
+>[0] https://lore.kernel.org/lkml/20190813224620.31005-1-dave@stgolabs.net/
+>[1] https://marc.info/?l=linux-mm&m=157116340411211
+>
+>Davidlohr Bueso (4):
+>  x86/mm, pat: Convert pat tree to generic interval tree
+>  x86,mm/pat: Cleanup some of the local memtype_rb_* calls
+>  x86,mm/pat: Drop rbt suffix from external memtype calls
+>  x86/mm, pat:  Rename pat_rbtree.c to pat_interval.c
+>
+> arch/x86/mm/pat.c          |   8 +-
+> arch/x86/mm/pat_internal.h |  20 ++--
+> arch/x86/mm/pat_interval.c | 186 +++++++++++++++++++++++++++++++
+> arch/x86/mm/pat_rbtree.c   | 268 ---------------------------------------------
+> 4 files changed, 200 insertions(+), 282 deletions(-)
+> create mode 100644 arch/x86/mm/pat_interval.c
+> delete mode 100644 arch/x86/mm/pat_rbtree.c
+>
+>--
+>2.16.4
+>
