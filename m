@@ -2,117 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8D1810005C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C15F410006D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:36:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfKRIcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 03:32:53 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38619 "EHLO
+        id S1726786AbfKRIgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 03:36:17 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46655 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfKRIcx (ORCPT
+        with ESMTP id S1726721AbfKRIgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 03:32:53 -0500
-Received: by mail-qt1-f193.google.com with SMTP id p20so19321927qtq.5;
-        Mon, 18 Nov 2019 00:32:52 -0800 (PST)
+        Mon, 18 Nov 2019 03:36:16 -0500
+Received: by mail-qt1-f193.google.com with SMTP id r20so19259463qtp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 00:36:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=G197wSf8TaiI9/lGYE0rDPhziYwFTRIxBhPoTUbgeBA=;
-        b=RPLX7TeW/GbXiMC3Vh2XCtKZQyv5itThHJSwjyZdRW0TQZ35tz7SDfT53bl+VlpgXb
-         8FYLFF9p1Yl+aDRafxc+GYOOEoq3/Y+aq+39yIVgo5SopNKmVgMhNkOjz+fV1970xUgU
-         uKWvuBZbbWo5q9t+2UL7a5AEMBvZ60bpK7RU0=
+        bh=JqpfOa+eDbyWdbseRYm3zOhbqqwwfORj1AqplMRUi+w=;
+        b=YgFrNR38/JA2gm9khV7YWCGxCQuzkhNGurY4QDn9gGbAXhb0Uujj9Y3wxTaLqW6YMr
+         8Bn5fhHu88WgRgUm49BT/QYdUZY4zn6Vrd91n5HBKsgh+TuxP38gVozFfdrNTwTCc51y
+         gSxPQWLd8uq69IdPSgckc+p0IM/sJ2WMCEfSgVDJZ/2deoSXcuq3STZLDGUN1tQRXvoV
+         xVNnTUR9wc0zP1GS+ecMj1P0XNuZo8PtQYxTstrVoadx7y0wRc9QQr7eKk+98VZBmSmg
+         3n4pZdCPIF+KRw/GnFEU93vG6vQ2Wus0u0/P2OcShX7l1sKLbnkch83BSwedEoP1UYVC
+         I/4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=G197wSf8TaiI9/lGYE0rDPhziYwFTRIxBhPoTUbgeBA=;
-        b=Q/u4v3P4Ba/xmvZ9arhi51Zsx09rPDMsDBfVbwFfX51OAUSt6cUoPB5U0whF2FPmVm
-         /djPURk/8sJxxQIr5qh6TKVLn/Tz0fRt4MwvdeGMTZ5OH3/Kgz+q9RrsDHhV84Mx0gFt
-         BQSJ1nWW45VCpHMK1wape7g2kQuCuTI+IQsI5Zh5VZXdv4qHjfMHzRnDGKEX1y3l/iaa
-         bTY8jKTe3rn4vxkMRbHzGnwaJ/xy0WlIdipdY+YwOfvj31VTxiElin8//ygdSad1KtGF
-         0EE1hym7qLU8lN/ljoSVRfcFGC0A2c7OwTXuVeIh7oanRlSKIHu6FGM0RHP22SoOpeaQ
-         ClBw==
-X-Gm-Message-State: APjAAAWteounm+6yTaMvLKzks/YVyi393L6StF7K/AaJlIaQmj+3P9ZP
-        3U7l7OR8tSTUkKkcGKcTMqRmyaF61xZYWEX84VQ=
-X-Google-Smtp-Source: APXvYqytLEVzZAuHtu5CpbX/qKPC3Y0ucWn6Og0BcdDsGA1J4wtPHXG9cobEVbysXJFiSglvMc/tM3gWN1oOZIZ7E2Y=
-X-Received: by 2002:aed:3baf:: with SMTP id r44mr25945827qte.255.1574065971965;
- Mon, 18 Nov 2019 00:32:51 -0800 (PST)
+        bh=JqpfOa+eDbyWdbseRYm3zOhbqqwwfORj1AqplMRUi+w=;
+        b=lEyFursB3KGe48smo6oSrx2bBbxsNGRRWTxUpGboMNYJIWW7r6sfsIKlwG1vxxQBiy
+         pQuSwKx3/LDH3enOysBENFPyHwqBS2CMHFDa+V33lklWjss7x+h0dlJETT7+jKJ/EhBV
+         VzF+bkEJgS+ZShxxR9rx0AFjMUBbCoAw227V3lE511/DZ9RZxZkhkU69BvosszQ1qGJY
+         accRsXiZjebsK2dDOBQaW05VuNR4ch4xtgSsbn+YT5+EVWoBDjbKUqdMbedPXdiaokBw
+         8LBjUAEZcj6mRGh2rHYW7y9RdjpsaXimh4VHZ6dFi9+lGdaGM/njJGB+Cne1ftc9JL+P
+         k9hg==
+X-Gm-Message-State: APjAAAUaej7sye//dKEYDzIE6jDx2pRr853LKwI80tsrpr8oJ+QURl2d
+        0xq1Jtg+mIumfqcRrV1ngtfOmSmmPMaQOWqrhSAMsw==
+X-Google-Smtp-Source: APXvYqyeBbiZSQxUZ3SyZ5Crt8n3zxsQIu7J7Po+5Ek5F2Qv731hQvcE4cq/ITz1DTKw7PRSc+e859EYLiU9jWaKTB0=
+X-Received: by 2002:aed:24af:: with SMTP id t44mr25440361qtc.57.1574066174427;
+ Mon, 18 Nov 2019 00:36:14 -0800 (PST)
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.1911171212140.2641@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1911171212140.2641@hadrien>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Mon, 18 Nov 2019 08:32:40 +0000
-Message-ID: <CACPK8XdB7vFThUUCv-eAZM=Qxka_GR2OfcdZza5+9Xs80TCf5A@mail.gmail.com>
-Subject: Re: [PATCH] drivers/soc: fix semicolon.cocci warnings
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Eddie James <eajames@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Andrew Jeffery <andrew@aj.id.au>, maz@kernel.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>, kbuild-all@lists.01.org
+References: <20191115191728.87338-1-jannh@google.com> <20191115191728.87338-3-jannh@google.com>
+In-Reply-To: <20191115191728.87338-3-jannh@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 18 Nov 2019 09:36:03 +0100
+Message-ID: <CACT4Y+ZmAupVG204VuL_73a8FdbM1NHwgV9oC4mK09ELnYujbA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] x86/kasan: Print original address on #GP
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Sun, 17 Nov 2019 at 11:13, Julia Lawall <julia.lawall@lip6.fr> wrote:
+On Fri, Nov 15, 2019 at 8:17 PM Jann Horn <jannh@google.com> wrote:
 >
-> From: kbuild test robot <lkp@intel.com>
+> Make #GP exceptions caused by out-of-bounds KASAN shadow accesses easier
+> to understand by computing the address of the original access and
+> printing that. More details are in the comments in the patch.
 >
->  Remove unneeded semicolons.
+> This turns an error like this:
 >
-> Generated by: scripts/coccinelle/misc/semicolon.cocci
+>     kasan: CONFIG_KASAN_INLINE enabled
+>     kasan: GPF could be caused by NULL-ptr deref or user memory access
+>     traps: probably dereferencing non-canonical address 0xe017577ddf75b7dd
+>     general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
 >
-> Fixes: eeb5d52f36e5 ("drivers/soc: Add Aspeed XDMA Engine Driver")
-> CC: Eddie James <eajames@linux.ibm.com>
-> Signed-off-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+> into this:
 >
+>     traps: dereferencing non-canonical address 0xe017577ddf75b7dd
+>     traps: probably dereferencing non-canonical address 0xe017577ddf75b7dd
+>     KASAN: maybe wild-memory-access in range
+>             [0x00badbeefbadbee8-0x00badbeefbadbeef]
+>     general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
+>
+> The hook is placed in architecture-independent code, but is currently
+> only wired up to the X86 exception handler because I'm not sufficiently
+> familiar with the address space layout and exception handling mechanisms
+> on other architectures.
+>
+> Signed-off-by: Jann Horn <jannh@google.com>
 > ---
 >
-> url:    https://github.com/0day-ci/linux/commits/Eddie-James/Aspeed-Add-SCU-interrupt-controller-and-XDMA-engine-drivers/20191110-064846
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git for-next
-
-I found this confusing, as the branch doesn't contain the patch you're
-referring to.
-
-Cheers,
-
-Joel
-
-
-
-> :::::: branch date: 7 days ago
-> :::::: commit date: 7 days ago
+> Notes:
+>     v2:
+>      - move to mm/kasan/report.c (Dmitry)
+>      - change hook name to be more generic
+>      - use TASK_SIZE instead of TASK_SIZE_MAX for compiling on non-x86
+>      - don't open-code KASAN_SHADOW_MASK (Dmitry)
+>      - add "KASAN: " prefix, but not "BUG: " (Andrey, Dmitry)
+>      - use same naming scheme as get_wild_bug_type (Andrey)
 >
->  aspeed-xdma.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/x86/kernel/traps.c     |  2 ++
+>  arch/x86/mm/kasan_init_64.c | 21 -------------------
+>  include/linux/kasan.h       |  6 ++++++
+>  mm/kasan/report.c           | 40 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 48 insertions(+), 21 deletions(-)
 >
-> --- a/drivers/soc/aspeed/aspeed-xdma.c
-> +++ b/drivers/soc/aspeed/aspeed-xdma.c
-> @@ -607,7 +607,7 @@ static int aspeed_xdma_init(struct aspee
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index 12d42697a18e..87b52682a37a 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -37,6 +37,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/smp.h>
+>  #include <linux/io.h>
+> +#include <linux/kasan.h>
+>  #include <asm/stacktrace.h>
+>  #include <asm/processor.h>
+>  #include <asm/debugreg.h>
+> @@ -540,6 +541,7 @@ static void print_kernel_gp_address(struct pt_regs *regs)
 >
->                 scu = syscon_regmap_lookup_by_compatible("aspeed,ast2600-scu");
->                 break;
-> -       };
-> +       }
+>         pr_alert("probably dereferencing non-canonical address 0x%016lx\n",
+>                  addr_ref);
+> +       kasan_non_canonical_hook(addr_ref);
+>  #endif
+>  }
 >
->         if (!scu) {
->                 dev_err(ctx->dev, "Failed to grab SCU regs.\n");
-> @@ -735,7 +735,7 @@ static int aspeed_xdma_probe(struct plat
->                 ctx->status_bits.ds_comp = XDMA_AST2600_STATUS_DS_COMP;
->                 ctx->status_bits.ds_dirty = XDMA_AST2600_STATUS_DS_DIRTY;
->                 break;
-> -       };
-> +       }
+> diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+> index 296da58f3013..69c437fb21cc 100644
+> --- a/arch/x86/mm/kasan_init_64.c
+> +++ b/arch/x86/mm/kasan_init_64.c
+> @@ -245,23 +245,6 @@ static void __init kasan_map_early_shadow(pgd_t *pgd)
+>         } while (pgd++, addr = next, addr != end);
+>  }
 >
->         ctx->dev = dev;
->         platform_set_drvdata(pdev, ctx);
+> -#ifdef CONFIG_KASAN_INLINE
+> -static int kasan_die_handler(struct notifier_block *self,
+> -                            unsigned long val,
+> -                            void *data)
+> -{
+> -       if (val == DIE_GPF) {
+> -               pr_emerg("CONFIG_KASAN_INLINE enabled\n");
+> -               pr_emerg("GPF could be caused by NULL-ptr deref or user memory access\n");
+> -       }
+> -       return NOTIFY_OK;
+> -}
+> -
+> -static struct notifier_block kasan_die_notifier = {
+> -       .notifier_call = kasan_die_handler,
+> -};
+> -#endif
+> -
+>  void __init kasan_early_init(void)
+>  {
+>         int i;
+> @@ -298,10 +281,6 @@ void __init kasan_init(void)
+>         int i;
+>         void *shadow_cpu_entry_begin, *shadow_cpu_entry_end;
+>
+> -#ifdef CONFIG_KASAN_INLINE
+> -       register_die_notifier(&kasan_die_notifier);
+> -#endif
+> -
+>         memcpy(early_top_pgt, init_top_pgt, sizeof(early_top_pgt));
+>
+>         /*
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index cc8a03cc9674..7305024b44e3 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -194,4 +194,10 @@ static inline void *kasan_reset_tag(const void *addr)
+>
+>  #endif /* CONFIG_KASAN_SW_TAGS */
+>
+> +#ifdef CONFIG_KASAN_INLINE
+> +void kasan_non_canonical_hook(unsigned long addr);
+> +#else /* CONFIG_KASAN_INLINE */
+> +static inline void kasan_non_canonical_hook(unsigned long addr) { }
+> +#endif /* CONFIG_KASAN_INLINE */
+> +
+>  #endif /* LINUX_KASAN_H */
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index 621782100eaa..5ef9f24f566b 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -512,3 +512,43 @@ void __kasan_report(unsigned long addr, size_t size, bool is_write, unsigned lon
+>
+>         end_report(&flags);
+>  }
+> +
+> +#ifdef CONFIG_KASAN_INLINE
+> +/*
+> + * With CONFIG_KASAN_INLINE, accesses to bogus pointers (outside the high
+> + * canonical half of the address space) cause out-of-bounds shadow memory reads
+> + * before the actual access. For addresses in the low canonical half of the
+> + * address space, as well as most non-canonical addresses, that out-of-bounds
+> + * shadow memory access lands in the non-canonical part of the address space.
+> + * Help the user figure out what the original bogus pointer was.
+> + */
+> +void kasan_non_canonical_hook(unsigned long addr)
+> +{
+> +       unsigned long orig_addr;
+> +       const char *bug_type;
+> +
+> +       if (addr < KASAN_SHADOW_OFFSET)
+> +               return;
+> +
+> +       orig_addr = (addr - KASAN_SHADOW_OFFSET) << KASAN_SHADOW_SCALE_SHIFT;
+> +       /*
+> +        * For faults near the shadow address for NULL, we can be fairly certain
+> +        * that this is a KASAN shadow memory access.
+> +        * For faults that correspond to shadow for low canonical addresses, we
+> +        * can still be pretty sure - that shadow region is a fairly narrow
+> +        * chunk of the non-canonical address space.
+> +        * But faults that look like shadow for non-canonical addresses are a
+> +        * really large chunk of the address space. In that case, we still
+> +        * print the decoded address, but make it clear that this is not
+> +        * necessarily what's actually going on.
+> +        */
+> +       if (orig_addr < PAGE_SIZE)
+> +               bug_type = "null-ptr-deref";
+> +       else if (orig_addr < TASK_SIZE)
+> +               bug_type = "probably user-memory-access";
+> +       else
+> +               bug_type = "maybe wild-memory-access";
+> +       pr_alert("KASAN: %s in range [0x%016lx-0x%016lx]\n", bug_type,
+> +                orig_addr, orig_addr + KASAN_SHADOW_MASK);
+> +}
+> +#endif
+> --
+> 2.24.0.432.g9d3f5f5b63-goog
+
+
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+
+Thanks!
