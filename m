@@ -2,160 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08939100F39
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:04:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3AA100F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfKRXEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 18:04:21 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:39664 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbfKRXEV (ORCPT
+        id S1727137AbfKRXKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 18:10:10 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:47618 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbfKRXKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 18:04:21 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 331C5283B8;
-        Mon, 18 Nov 2019 18:04:17 -0500 (EST)
-Date:   Tue, 19 Nov 2019 10:04:17 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Kars de Jong <jongk@linux-m68k.org>
-cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] esp_scsi: Clear Transfer Count registers before PIO
- transfers
-In-Reply-To: <CACz-3rhr_R+_mJpg+Rvgoj=1GC5AO3YKxYxS_0ShAfQ-NiFDtg@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1.1911190923120.8@nippy.intranet>
-References: <2bbb6359d542f5882be67c415ecc25ad2d9eeb5e.1573875417.git.fthain@telegraphics.com.au> <CACz-3rjHAyi6kMQ6j9YALLm1ApYrsqKiTnGNPUhxqqEuRJ9TjQ@mail.gmail.com> <alpine.LNX.2.21.1.1911180947020.8@nippy.intranet>
- <CACz-3rhr_R+_mJpg+Rvgoj=1GC5AO3YKxYxS_0ShAfQ-NiFDtg@mail.gmail.com>
+        Mon, 18 Nov 2019 18:10:05 -0500
+Received: from 79.184.253.244.ipv4.supernova.orange.pl (79.184.253.244) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id bde311d14881fd19; Tue, 19 Nov 2019 00:10:02 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Len Brown <lenb@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Doug Smythies <dsmythies@telus.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFC][PATCH 0/2] cpuidle: Allow states to be disabled by default (was: Re: [PATCH] cpuidle: Consolidate disabled state checks)
+Date:   Tue, 19 Nov 2019 00:04:59 +0100
+Message-ID: <1688511.GgkECGP1XA@kreacher>
+In-Reply-To: <CAJZ5v0jsQG37VF3-tiSndE0pXX9jEfgucm0UyvpM0bsyoOcpuA@mail.gmail.com>
+References: <2717750.dCEzHT3DVQ@kreacher> <CAJZ5v0ifOQaOm-8n5gUgud0sCn-Y1KQWWhzhtzdm+exvMLgL7Q@mail.gmail.com> <CAJZ5v0jsQG37VF3-tiSndE0pXX9jEfgucm0UyvpM0bsyoOcpuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Nov 2019, Kars de Jong wrote:
-
-> Op ma 18 nov. 2019 om 00:13 schreef Finn Thain <fthain@telegraphics.com.au>:
+On Monday, November 18, 2019 12:26:57 PM CET Rafael J. Wysocki wrote:
+> On Mon, Nov 18, 2019 at 10:22 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
 > >
-> > On Sun, 17 Nov 2019, Kars de Jong wrote:
-> > > Are you sure this is really needed?
+> > On Mon, Nov 18, 2019 at 5:46 AM Len Brown <lenb@kernel.org> wrote:
 > > >
-> >
-> > No. I think it improves robustness and correctness.
-> >
-> > I would be interested to know whether there is any measurable performance
-> > impact on zorro_esp.
-> >
-> > > The only [time when] the driver reads these registers is after a data
-> > > transfer. These are done using DMA on all Zorro boards, so I don't think
-> > > there's a risk of stale values from a PIO transfer there.
+> > > On Mon, Nov 4, 2019 at 6:16 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > >
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > There are two reasons why CPU idle states may be disabled: either
+> > > > because the driver has disabled them or because they have been
+> > > > disabled by user space via sysfs.
+> > > >
+> > > > In the former case, the state's "disabled" flag is set once during
+> > > > the initialization of the driver and it is never cleared later (it
+> > > > is read-only effectively).
 > > >
+> > > for x86 (intel_idle and acpi_idle), no states with disabled=1 are  registered
+> > > with cpuidle.  Instead, intel_idle (currently) skips them in the loop
+> > > that registers states.
+> > > (and acpi_idle never touches the disabled field)
+> > >
+> > > And so for x86, governors checking for drv->states[i].disabled is a NOP,
+> > > and the condition described by CPUIDLE_STATE_DISABLED_BY_DRIVER
+> > > does not (yet) exist.
 > >
-> > I'm not entirely sure that the chip is unaffected by stale counter values.
+> > OK
 > >
-> > (Stale transfer counter values are distinct from stale transfer count
-> > register values. Both are addressed by the patch.)
-> 
-> I still don't see the need to address that in the PIO transfer code.
-
-Well, send_dma_cmd() always initializes those registers. That's fine in 
-the DMA case and seems to be the least surprising and cleanest thing to do 
-for the PIO case, I think.
-
-> The ESP (when in initiator mode) doesn't use the transfer counter 
-> (registers) in PIO mode.
-> 
-> > If there are DMA controllers out there that can't do very short 
-> > transfers then this objection would seem to be invalid, because the 
-> > "DMA length is zero!" issue could be tackled using PIO.
-> 
-> That's the issue you fixed by limiting the transfer size to 65535 bytes, 
-> correct?
-
-I was alluding to an unpatched theoretical failure.
-
-The issue would arise when a board driver indicated to the core driver 
-that the requested transfer was too small. I'm assuming that it would do 
-this by returning zero from esp->ops->dma_length_limit(), which puts us in 
-the "DMA length is zero" code path.
-
-The actual failure (that you patched) shows that your board isn't able to 
-do short DMA transfers and would require PIO for that.
-
-But this is a theoretical problem so far. You may need to use sg_utils to 
-generate a SCSI command like that.
-
-(For a DMA controller subject to, say, 24-bit boundaries, there are 
-additional ways to end up with short transfers.)
-
-> The SYM53CF92-X in my Blizzard didn't show this error for the 1 byte
-> transfers.
-> It just hung up:
-> 
->  sdb: RDSK (512) sdb1 (DOS^C)(res 2 spb 1) sdb2 (SWP^@)(res 0 spb 8)
-> sdb3 (LNX^@)(res 2 spb 1) sdb4 (LNX^@)(res 2 spb 1)
-> sd 1:0:0:0: [sdb] Attached SCSI disk
-> EXT4-fs (sdb3): mounting ext3 file system using the ext4 subsystem
-> scsi host1: Aborting command [(ptrval):28]
-> scsi host1: Current command [(ptrval):28]
-> scsi host1:  Active command [(ptrval):28]
-> scsi host1: Dumping command log
-> scsi host1: ent[6] CMD val[12] sreg[97] seqreg[9c] sreg2[00] ireg[08] ss[00] event[0c]
-> scsi host1: ent[7] EVENT val[0d] sreg[91] seqreg[9c] sreg2[00] ireg[08] ss[00] event[0c]
-> scsi host1: ent[8] EVENT val[03] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[0d]
-> scsi host1: ent[9] CMD val[80] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[03]
-> scsi host1: ent[10] CMD val[90] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[03]
-> scsi host1: ent[11] EVENT val[05] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[03]
-> scsi host1: ent[12] EVENT val[0d] sreg[93] seqreg[cc] sreg2[00] ireg[10] ss[00] event[05]
-> scsi host1: ent[13] CMD val[01] sreg[93] seqreg[cc] sreg2[00] ireg[10] ss[00] event[0d]
-> scsi host1: ent[14] CMD val[11] sreg[93] seqreg[cc] sreg2[00] ireg[10] ss[00] event[0d]
-> scsi host1: ent[15] EVENT val[0b] sreg[93] seqreg[cc] sreg2[00] ireg[10] ss[00] event[0d]
-> scsi host1: ent[16] CMD val[12] sreg[97] seqreg[cc] sreg2[00] ireg[08] ss[00] event[0b]
-> scsi host1: ent[17] EVENT val[0c] sreg[97] seqreg[cc] sreg2[00] ireg[08] ss[00] event[0b]
-> scsi host1: ent[18] CMD val[44] sreg[90] seqreg[cc] sreg2[00] ireg[20] ss[00] event[0c]
-> scsi host1: ent[19] CMD val[01] sreg[90] seqreg[cc] sreg2[00] ireg[20] ss[01] event[0c]
-> scsi host1: ent[20] CMD val[46] sreg[90] seqreg[cc] sreg2[00] ireg[20] ss[01] event[0c]
-> scsi host1: ent[21] EVENT val[0d] sreg[97] seqreg[04] sreg2[00] ireg[18] ss[00] event[0c]
-> scsi host1: ent[22] EVENT val[06] sreg[97] seqreg[04] sreg2[00] ireg[18] ss[00] event[0d]
-> scsi host1: ent[23] CMD val[01] sreg[97] seqreg[04] sreg2[00] ireg[18] ss[00] event[06]
-> scsi host1: ent[24] CMD val[10] sreg[97] seqreg[04] sreg2[00] ireg[18] ss[00] event[06]
-> scsi host1: ent[25] EVENT val[0c] sreg[97] seqreg[8c] sreg2[00] ireg[08] ss[00] event[06]
-> scsi host1: ent[26] CMD val[12] sreg[97] seqreg[8c] sreg2[00] ireg[08] ss[00] event[0c]
-> scsi host1: ent[27] CMD val[44] sreg[90] seqreg[cc] sreg2[00] ireg[20] ss[00] event[0c]
-> scsi host1: ent[28] CMD val[01] sreg[97] seqreg[9c] sreg2[00] ireg[0c] ss[00] event[0c]
-> scsi host1: ent[29] CMD val[00] sreg[97] seqreg[9c] sreg2[00] ireg[0c] ss[00] event[0c]
-> scsi host1: ent[30] CMD val[12] sreg[97] seqreg[9c] sreg2[00] ireg[0c] ss[00] event[0c]
-> scsi host1: ent[31] CMD val[10] sreg[97] seqreg[9c] sreg2[00] ireg[10] ss[00] event[0c]
-> scsi host1: ent[0] CMD val[12] sreg[97] seqreg[9c] sreg2[00] ireg[08] ss[00] event[0c]
-> scsi host1: ent[1] EVENT val[0d] sreg[91] seqreg[9c] sreg2[00] ireg[08] ss[00] event[0c]
-> scsi host1: ent[2] EVENT val[03] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[0d]
-> scsi host1: ent[3] CMD val[80] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[03]
-> scsi host1: ent[4] CMD val[90] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[03]
-> scsi host1: ent[5] EVENT val[05] sreg[91] seqreg[c4] sreg2[00] ireg[10] ss[00] event[03]
-> 
-> > > The only place the controller reads these registers is when a DMA
-> > > command is issued. The only place where that is done is in the zorro_esp
-> > > send_dma_command() functions.
+> > > Looking at the ARM code, it seems that cpuidle-imx6q.c and cpuidle-tegra20.c
+> > > reach into the cpuidle states at run time and toggle the
+> > > drv->states[i].disabled.
 > >
-> > Aren't you overlooking all of the ESP_CMD_DMA flags in the core driver?
+> > I might have overlooked that, let me check.
+> >
+> > > It seems that this patch takes the initial value of
+> > > drv->states->disabled, and sets the (per cpu)
+> > > usage.disable=..BY_DRIVER,
+> > > but that subsequent run-time toggles in drv->states[i]disabled by
+> > > these drivers would be missed,
+> > > because you're removed the run-time checking of drv->states->disabled?
+> >
+> > If it is updated at run time, then yes, the updates will be missed, so
+> > thanks for pointing that out.
+> >
+> > > Finally, I'd like to change intel_idle so that it *can* register a
+> > > state that is disabled, by default.
+> > > If I change the driver to NOT skip registering disabled states, and
+> > > the cpuidle copy has cpuidle_state.disabled=1,
+> > > then the state is indeed, unused at run-time.  But as you said,
+> > > it is effectively read-only, and is not indicated in sysfs, and can
+> > > not be changed via sysfs.
+> > >
+> > > One way to do this is to do what you do here and initialize
+> > > usage.disabled to drv->state.disabled. (not distinguishing between
+> > > DRIVER and USER)
+> > > That way the user could later over-ride what a driver set, by clearing
+> > > the disabled attribute.
 > 
-> No, all those occurences are only used when calling
-> send_dma_command(), except the NULL/NOP DMA commands
-> directly after a chip reset.
+> I'd rather get rid of the "disabled" field from struct cpuidle_state
+> entirely and introduce a new state flag to indicate the "disabled by
+> default" status.
 > 
-
-Fair enough. That means a stale count could be used after a PIO transfer 
-in DATA IN and DATA OUT phase that happened to follow a DMA transfer (in 
-any phase).
-
-I still think there is a opportunity to improve robustness and correctness 
-(presuming that performance isn't impacted).
-
--- 
-
-> Kind regards,
+> I also would expose that new flag in a new sysfs attribute of idle
+> states, say "disable_default".
 > 
-> Kars.
-> 
+> Then, the DISABLED_BY_DRIVER bit would be reserved for driver quirks
+> (as per https://patchwork.kernel.org/patch/11249519/) and the
+> DISABLED_BY_USER one could be used for all of the other purposes.
+
+To that end, I have the following two experimental patches (on top of
+https://patchwork.kernel.org/patch/11249519/) that IMO are simple
+enough.
+
+Please let me know what you think.
+
+
+
