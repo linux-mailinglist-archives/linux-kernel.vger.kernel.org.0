@@ -2,147 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7590D10048A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC40C100498
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfKRLnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:43:24 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:47833 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726460AbfKRLnY (ORCPT
+        id S1726953AbfKRLor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:44:47 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:63202 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726881AbfKRLop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:43:24 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TiTc2xD_1574077394;
-Received: from ali-6c96cfdd1403.local(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0TiTc2xD_1574077394)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 18 Nov 2019 19:43:14 +0800
-Subject: Re: [RFC PATCH v3 6/7] scripts/sorttable: Add ORC unwind tables sort
- concurrently
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-References: <9594afbc-52bc-5ae7-4a19-8fc4b36a1abd@linux.alibaba.com>
- <A4F85A0C-C8A8-4226-A334-276F9D0C2679@amacapital.net>
-From:   Shile Zhang <shile.zhang@linux.alibaba.com>
-Message-ID: <4a3f2717-9e1c-a378-2cf6-84e90c18fddb@linux.alibaba.com>
-Date:   Mon, 18 Nov 2019 19:43:13 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <A4F85A0C-C8A8-4226-A334-276F9D0C2679@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Mon, 18 Nov 2019 06:44:45 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 18 Nov 2019 17:14:38 +0530
+IronPort-SDR: /W+N4905p9RK0bzC8y4pDHSxWzvdq35sFqc8fNnmGpEeyx23W0RIi20MpIt+GMOI1VPVpwU0xm
+ Y4Ljit1xnXOmWuaiBFB8uNGIv4L6TzLJMCfEIa195KrgNKFa1tprP5F8SiaHnEJECo+aHP4lMm
+ +FzjlHBsv/W/aYd4D3hYIxJWto3mWi/yah44ObFeh+kyRswsWY/CHaHbS+Jy736snlWow5TYWl
+ RLuO3LTFJ+wL/rEFvp6W7E/mqeG+hBUHk73WRts05semvYkg/J0Xf9SptMaQNKjYvsEgV3tb5d
+ VK7Oumec49RRXdGvnlKG5gwT
+Received: from kalyant-linux.qualcomm.com ([10.204.66.210])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 18 Nov 2019 17:14:09 +0530
+Received: by kalyant-linux.qualcomm.com (Postfix, from userid 94428)
+        id 521E1431A; Mon, 18 Nov 2019 17:14:08 +0530 (IST)
+From:   Kalyan Thota <kalyan_t@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Kalyan Thota <kalyan_t@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org, dhar@codeaurora.org,
+        jsanka@codeaurora.org, chandanu@codeaurora.org,
+        travitej@codeaurora.org, nganji@codeaurora.org
+Subject: [PATCH v1] msm:disp:dpu1: setup display datapath for SC7180 target
+Date:   Mon, 18 Nov 2019 17:14:03 +0530
+Message-Id: <1574077444-24554-1-git-send-email-kalyan_t@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+SC7180 follows a newer architecture where in some flush controls have been re-organized to simplify programming and provide for future expandability. 
+Specifically:
+1) The TIMING_<j> bits that control flush of INTF_<j> have been replaced with a common INTF flush bit which flushes the programming in the MDP_CTL_<id>_INTF_ACTIVE register
+2) Individual flush bits for MERGE_3D, DSC and CDWN have been added which flush the programming in the MDP_CTL_<id>_MERGE_3D_ACTIVE, ... etc respectively
+3) PERIPH flush bit has been added to flush DSP packets for DisplayPort
 
-On 2019/11/16 01:24, Andy Lutomirski wrote:
->> On Nov 15, 2019, at 1:43 AM, Shile Zhang <shile.zhang@linux.alibaba.com> wrote:
->>
->> ﻿
->>
->>> On 2019/11/15 17:07, Peter Zijlstra wrote:
->>>> On Fri, Nov 15, 2019 at 02:47:49PM +0800, Shile Zhang wrote:
->>>>
->>>> +#if defined(SORTTABLE_64) && defined(UNWINDER_ORC_ENABLED)
->>>> +/* ORC unwinder only support X86_64 */
->>>> +#include <errno.h>
->>>> +#include <pthread.h>
->>>> +#include <linux/types.h>
->>>> +
->>>> +#define ORC_REG_UNDEFINED    0
->>>> +#define ERRSTRING_MAXSZ        256
->>>> +
->>>> +struct orc_entry {
->>>> +    s16        sp_offset;
->>>> +    s16        bp_offset;
->>>> +    unsigned    sp_reg:4;
->>>> +    unsigned    bp_reg:4;
->>>> +    unsigned    type:2;
->>>> +    unsigned    end:1;
->>>> +} __attribute__((packed));
->>>> +
->>>> +struct orctable_info {
->>>> +    size_t    orc_size;
->>>> +    size_t    orc_ip_size;
->>>> +} orctable;
->>> There's ./arch/x86/include/asm/orc_types.h for this. Please don't
->>> duplicate. objtool uses that same header.
->> Good catch! Thanks for your kindly reminder! I'll remove it.
->>>> +/**
->>>> + * sort - sort an array of elements
->>>> + * @base: pointer to data to sort
->>>> + * @num: number of elements
->>>> + * @size: size of each element
->>>> + * @cmp_func: pointer to comparison function
->>>> + * @swap_func: pointer to swap function
->>>> + *
->>>> + * This function does a heapsort on the given array. You may provide a
->>>> + * swap_func function optimized to your element type.
->>>> + *
->>>> + * Sorting time is O(n log n) both on average and worst-case. While
->>>> + * qsort is about 20% faster on average, it suffers from exploitable
->>>> + * O(n*n) worst-case behavior and extra memory requirements that make
->>>> + * it less suitable for kernel use.
->>>> + *
->>>> + * This code token out of /lib/sort.c.
->>>> + */
->>>> +static void sort(void *base, size_t num, size_t size,
->>>> +      int (*cmp_func)(const void *, const void *),
->>>> +      void (*swap_func)(void *, void *, int size))
->>>> +{
->>>> +    /* pre-scale counters for performance */
->>>> +    int i = (num/2 - 1) * size, n = num * size, c, r;
->>>> +
->>>> +    /* heapify */
->>>> +    for ( ; i >= 0; i -= size) {
->>>> +        for (r = i; r * 2 + size < n; r  = c) {
->>>> +            c = r * 2 + size;
->>>> +            if (c < n - size &&
->>>> +                    cmp_func(base + c, base + c + size) < 0)
->>>> +                c += size;
->>>> +            if (cmp_func(base + r, base + c) >= 0)
->>>> +                break;
->>>> +            swap_func(base + r, base + c, size);
->>>> +        }
->>>> +    }
->>>> +
->>>> +    /* sort */
->>>> +    for (i = n - size; i > 0; i -= size) {
->>>> +        swap_func(base, base + i, size);
->>>> +        for (r = 0; r * 2 + size < i; r = c) {
->>>> +            c = r * 2 + size;
->>>> +            if (c < i - size &&
->>>> +                    cmp_func(base + c, base + c + size) < 0)
->>>> +                c += size;
->>>> +            if (cmp_func(base + r, base + c) >= 0)
->>>> +                break;
->>>> +            swap_func(base + r, base + c, size);
->>>> +        }
->>>> +    }
->>>> +}
->>> Do we really need to copy the heapsort implementation? That is, why not
->>> use libc's qsort() ? This is userspace after all.
->> Yes, I think qsort is better choice than copy-paste here. But qsort does not support customized swap func, which is needed for ORC unwind swap two tables together.
->> I think it's hard to do with qsort, so I used sort same with original orc unwind table sort.
-> One solution is to make an array of indices 0, 1, 2, etc, and sort that using a comparison function that compares i,j by actually comparing source[i], source[j]. (Or use pointers, but indices are probably faster on a 64-bit machine if you can use 32-bit indices.) Then, after sorting, permute the original array using the now-sorted indices. In the case where swapping is expensive, this is actually faster, since it does exactly n moves instead of O(n log n).
+The complete datapath is described using the MDP_CTL_<id>_TOP and newly added ACTIVE registers to handle other sub blocks
+such as interface (INTF) resources, PingPong buffer / Layer Mixer, Display Stream Compression (DSC) resources, writeback (WB) and 3D Merge 
+selections that are part of the datapath.
 
-Hi, Andy,
 
-Thanks for your suggestion!
-It's works, qsort is faster than heap sort, sort time down from 70ms to 
-20ms.
 
-I'll update in next version.
-Thanks again!
+Kalyan Thota (1):
+  msm:disp:dpu1: setup display datapath for SC7180 target
+
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  4 +-
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   | 21 +++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         | 84 +++++++++++++++++++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         | 24 +++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c        | 28 ++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h        |  6 ++
+ 7 files changed, 161 insertions(+), 7 deletions(-)
+
+-- 
+1.9.1
 
