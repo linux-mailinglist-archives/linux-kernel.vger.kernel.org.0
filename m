@@ -2,89 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21709FFCEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 02:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38CBBFFCF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 02:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfKRBr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 20:47:59 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40067 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfKRBr6 (ORCPT
+        id S1726464AbfKRByf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 20:54:35 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:45294 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726168AbfKRBye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 20:47:58 -0500
-Received: by mail-qk1-f195.google.com with SMTP id z16so13075179qkg.7
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 17:47:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Kk427tpjt2oz13JMneQ7KWi2G03iAnJtXBlLQOK6MjA=;
-        b=a0/268UKKtqtcue0dzcssBouAoa5dbDxxSaHUQFpToyc98FZiVdID4AH+kt7KFQvL6
-         2yUJgCEGCtlWNOBzIRN5Mb+5TOfEoIadaa0JabeWAKiFLiW5us9AJArbxCY8/M64fqiv
-         MfpNJmsJ0jkAOOjjSnzGK4azPcMGs0oC7fUD5emMX5KlFQ/lriEylw+QSBxMcsLNmIiv
-         lvByGvpCGW+xyq6CDnteNWnNseteE7LRjZco0g9P7w7G77C0S7vVD5l2qkbJgoIk5xHQ
-         xvToUfE9cVBP3t5tQXZMou1YERfUsiNPwJJy15gPruUuwBglke8vmXL4tC+pmKTpkmmT
-         ukgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Kk427tpjt2oz13JMneQ7KWi2G03iAnJtXBlLQOK6MjA=;
-        b=mpSjELJPdYjm547SaVx5264BLa+u+/N09kLmT0rVnIGbeDAMgjh6IaL/RHH0XVfBvG
-         nu0Pfiyi8q86tJFMBugkmF0kjBEy9jyzJ8xAbnFfS1lgCh4F7EaCRW78H9Z4FBlJI4g7
-         TJiOiCcXeKvQJTPgOHxoofnEhAFb2NpFPe77V5kwVnlvW/+hMi8sODe7sIsvqDsv2ZnI
-         j8sWG2jpCeOKITTduZ2Q5YHeFGyO6cCdmSzdLx4ArCUEHbnTn8ZhdZTivzUF6cdm5M17
-         6sHje3Lnqi23KJs+1zidL83e+itQLtQLwyAjBwuWIvJd5qDdCgWPCsXq9SLTar/8IVlV
-         K04g==
-X-Gm-Message-State: APjAAAUviEKn9TIMX0l7fR7ed/Fy/rR9yaShHQHZtli/WAdswIEpgJ46
-        hWIxuLShzyOCPxx4XRjY9Lb/iOyHwzIfY85ysXQ=
-X-Google-Smtp-Source: APXvYqxW0SgymZ//ML7n2DAoI6m5GqMLsOo4KUC7wqdFEd8asuUxJA7TnfC7LKSC4SCMOrLs2SdCW6RLbE0tVyeTwHI=
-X-Received: by 2002:a37:4dd2:: with SMTP id a201mr10478115qkb.5.1574041677571;
- Sun, 17 Nov 2019 17:47:57 -0800 (PST)
+        Sun, 17 Nov 2019 20:54:34 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TiLvO-m_1574042069;
+Received: from C02XQCBJJG5H.local(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0TiLvO-m_1574042069)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 18 Nov 2019 09:54:30 +0800
+Subject: Re: [PATCH 08/11] rcu: don't use negative ->rcu_read_lock_nesting
+To:     paulmck@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
+ <20191031100806.1326-9-laijs@linux.alibaba.com>
+ <20191101123323.GC17910@paulmck-ThinkPad-P72>
+ <3437ee3f-2807-16eb-5e9b-77189fa31cdf@linux.alibaba.com>
+ <20191117215339.GD2889@paulmck-ThinkPad-P72>
+From:   Lai Jiangshan <laijs@linux.alibaba.com>
+Message-ID: <77222fe8-db55-d09f-e8fd-e6f1a10f9dc3@linux.alibaba.com>
+Date:   Mon, 18 Nov 2019 09:54:29 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:ac8:2cf4:0:0:0:0:0 with HTTP; Sun, 17 Nov 2019 17:47:57
- -0800 (PST)
-Reply-To: JOHNPERDOC.F.D@accountant.com
-From:   John Perdoc Finance Director <richywealth3123@gmail.com>
-Date:   Mon, 18 Nov 2019 01:47:57 +0000
-Message-ID: <CAHj8=Y2zh4mbxerriRANjPzzHAbAJ=oOfTMAh6FEpO3KM77DgQ@mail.gmail.com>
-Subject: Dearest Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191117215339.GD2889@paulmck-ThinkPad-P72>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day friend,my name is John Perdoc I work in the bank as a Finance
-Director I found your information from a business contact when i was
-searching for a honest partner, I hope that you will not expose or
-betray this trust. I am in need of your help as a foreigner to claim
-an abandon fund sum of $15 million U.S dollars. This money belonged to
-one of our customers from the Indonesia who died in a Tsunami while on
-vacation with his family. Unfortunately his beneficiaries also passed
-in this tragic disaster. We currently do not have anyone to claim
-these funds. Please I would like you to keep this proposal between us.
-My proposal is that, you will have 40% of the above mentioned fund,
-while will have 60%. If you are interested kindly fill out below
-information and send it back to me in my personal email below for mor
-details. email: JOHNPERDOC.F.D@accountant.com
-Your full name
 
-.Your country.
 
-Your age.
+On 2019/11/18 5:53 上午, Paul E. McKenney wrote:
+> On Sat, Nov 16, 2019 at 09:04:56PM +0800, Lai Jiangshan wrote:
+>> On 2019/11/1 8:33 下午, Paul E. McKenney wrote:
+>>> On Thu, Oct 31, 2019 at 10:08:03AM +0000, Lai Jiangshan wrote:
+>>>> Negative ->rcu_read_lock_nesting was introduced to prevent
+>>>> scheduler deadlock which was just prevented by deferred qs.
+>>>> So negative ->rcu_read_lock_nesting is useless now and
+>>>> rcu_read_unlock() can be simplified.
+>>>>
+>>>> And negative ->rcu_read_lock_nesting is bug-prone,
+>>>> it is good to kill it.
+>>>>
+>>>> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+>>>> ---
+>>>>    kernel/rcu/tree_exp.h    | 30 ++----------------------------
+>>>>    kernel/rcu/tree_plugin.h | 21 +++++----------------
+>>>>    2 files changed, 7 insertions(+), 44 deletions(-)
+>>>>
+>>>> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+>>>> index c0d06bce35ea..9dcbd2734620 100644
+>>>> --- a/kernel/rcu/tree_exp.h
+>>>> +++ b/kernel/rcu/tree_exp.h
+>>>> @@ -621,11 +621,11 @@ static void rcu_exp_handler(void *unused)
+>>>>    	 * report the quiescent state, otherwise defer.
+>>>>    	 */
+>>>>    	if (!t->rcu_read_lock_nesting) {
+>>>> +		rdp->exp_deferred_qs = true;
+>>>>    		if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
+>>>>    		    rcu_dynticks_curr_cpu_in_eqs()) {
+>>>> -			rcu_report_exp_rdp(rdp);
+>>>> +			rcu_preempt_deferred_qs(t);
+>>>>    		} else {
+>>>> -			rdp->exp_deferred_qs = true;
+>>>>    			set_tsk_need_resched(t);
+>>>>    			set_preempt_need_resched();
+>>>>    		}
+>>>> @@ -646,32 +646,6 @@ static void rcu_exp_handler(void *unused)
+>>>>    		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+>>>>    		return;
+>>>>    	}
+>>>> -
+>>>> -	/*
+>>>> -	 * The final and least likely case is where the interrupted
+>>>> -	 * code was just about to or just finished exiting the RCU-preempt
+>>>> -	 * read-side critical section, and no, we can't tell which.
+>>>> -	 * So either way, set ->deferred_qs to flag later code that
+>>>> -	 * a quiescent state is required.
+>>>> -	 *
+>>>> -	 * If the CPU is fully enabled (or if some buggy RCU-preempt
+>>>> -	 * read-side critical section is being used from idle), just
+>>>> -	 * invoke rcu_preempt_deferred_qs() to immediately report the
+>>>> -	 * quiescent state.  We cannot use rcu_read_unlock_special()
+>>>> -	 * because we are in an interrupt handler, which will cause that
+>>>> -	 * function to take an early exit without doing anything.
+>>>> -	 *
+>>>> -	 * Otherwise, force a context switch after the CPU enables everything.
+>>>> -	 */
+>>>> -	rdp->exp_deferred_qs = true;
+>>>> -	if (rcu_preempt_need_deferred_qs(t) &&
+>>>> -	    (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
+>>>> -	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))) {
+>>>> -		rcu_preempt_deferred_qs(t);
+>>>> -	} else {
+>>>> -		set_tsk_need_resched(t);
+>>>> -		set_preempt_need_resched();
+>>>> -	}
+>>>>    }
+>>>>    /* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
+>>>> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+>>>> index dbded2b8c792..c62631c79463 100644
+>>>> --- a/kernel/rcu/tree_plugin.h
+>>>> +++ b/kernel/rcu/tree_plugin.h
+>>>> @@ -344,8 +344,6 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
+>>>>    }
+>>>>    /* Bias and limit values for ->rcu_read_lock_nesting. */
+>>>> -#define RCU_NEST_BIAS INT_MAX
+>>>> -#define RCU_NEST_NMAX (-INT_MAX / 2)
+>>>>    #define RCU_NEST_PMAX (INT_MAX / 2)
+>>>>    /*
+>>>> @@ -373,21 +371,15 @@ void __rcu_read_unlock(void)
+>>>>    {
+>>>>    	struct task_struct *t = current;
+>>>> -	if (t->rcu_read_lock_nesting != 1) {
+>>>> -		--t->rcu_read_lock_nesting;
+>>>> -	} else {
+>>>> +	if (--t->rcu_read_lock_nesting == 0) {
+>>>>    		barrier();  /* critical section before exit code. */
+>>>> -		t->rcu_read_lock_nesting = -RCU_NEST_BIAS;
+>>>> -		barrier();  /* assign before ->rcu_read_unlock_special load */
+>>>
+>>> But if we take an interrupt here, and the interrupt handler contains
+>>> an RCU read-side critical section, don't we end up in the same hole
+>>> that resulted in this article when the corresponding rcu_read_unlock()
+>>> executes?  https://lwn.net/Articles/453002/
+>>
+>> Hello, Paul
+>>
+>> I'm replying the email of V1, which is relying on deferred_qs changes
+>> in [PATCH 07/11] (V1).
+>> ([PATCH 04/11](V1) relies on it too as you pointed out)
+>>
+>> I hope I can answer the question wrt https://lwn.net/Articles/453002/
+>> maybe partially.
+>>
+>> With the help of deferred_qs mechanism and the special.b.deferred_qs
+>> bit, I HOPED rcu_read_unlock_special() can find if itself is
+>> risking in scheduler locks via special.b.deferred_qs bit.
+>>
+>> --t->rcu_read_lock_nesting;
+>> //outmost rcu c.s, rcu_read_lock_nesting is 0. but special is not zero
+>> INTERRUPT
+>>   // the fallowing code will normally be in_interrupt()
+>>   // or NOT in_interrupt() when wakeup_softirqd() in invoke_softirq()
+>>   // or NOT in_interrupt() when preempt_shedule_irq()
+>>   // or other cases I missed.
+>>   scheduler_lock()
+>>   rcu_read_lock()
+>>   rcu_read_unlock()
+>>    // special has been set but with no special.b.deferred_qs
+>>    rcu_read_unlock_special()
+>>     raise_softirq_irqoff()
+>>      wake_up() when !in_interrupt() // dead lock
+>>
+>> preempt_shedule_irq() is guaranteed to clear rcu_read_unlock_special
+>> when rcu_read_lock_nesting = 0 before calling into scheduler locks.
+>>
+>> But, at least, what caused my hope to be failed was the case
+>> wakeup_softirqd() in invoke_softirq() (which was once protected by
+>> softirq in about 2 years between ec433f0c5152 and facd8b80c67a).
+>> I don't think it is hard to fix it if we keep using
+>> special.b.deferred_qs as this V1 series.
+> 
+> It is quite possible that special.b.deferred_qs might be useful
+> for debugging.  But it should now be possible to take care of the
+> nohz_full issue for expedited grace periods, which might in turn allow
+> rcu_read_unlock_special() to avoid acquiring scheduler locks.
+> 
+> This could avoid the need for negative ->rcu_read_lock_nesting,
+> in turn allowing your simplified _rcu_read_unlock().
+> 
+> Would you like to do the expedited grace-period modifications, or
+> would you rather that I do so?
+> 
 
-Your occupation.
+Hello, Paul
 
-Phone number.
+To be honest, I didn't known there was special issue about
+nohz_full with expedited grace periods until several days before
+you told me. I just thought that it is requested to be expedited
+so that we need to wake up something to handle it ASAP.
 
-Your address.
+IOW, I'm not in a position to do the expedited grace-period
+modifications before I learnt enough about it. I would be very
+obliged that you do so. I believe it will be a better solution
+than this one or the one in V2 relying on preempt_count.
 
-A copy of your passport or ID card.
-
- Best Regards
- Mr John Perdoc
-Finance Director
-
-Sorry if You Received This Letter In YourJunk mail or Spam, Due To
-Recent Connection Error Here
+Thanks
+Lai
