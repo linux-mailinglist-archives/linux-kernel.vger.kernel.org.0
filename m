@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E85641003C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:24:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 749BF1003ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbfKRLYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:24:11 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41415 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfKRLYD (ORCPT
+        id S1727294AbfKRLYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:24:09 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45391 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbfKRLYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:24:03 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b18so17545817wrj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:24:01 -0800 (PST)
+        Mon, 18 Nov 2019 06:24:05 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z10so18958883wrs.12
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:24:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1C8bi+Glp22eU2mPHcIIhRfHNSQMvhbk1zxbdzRB++Q=;
-        b=TWX9iBpwdpSNUgpJ/cUdC3Epzue8lAUKQth8hP+iX2zCk3JnB67JdPmo2cnMyzbduE
-         aMo8BAZYKyCe25eCCHhnVtjFsg6NdBfAYdBSLpK6akVSb6dEwTAoUQ0168Nhq2K9wUQW
-         zPnEeNERzqbndvpDwZzJpYA4bOmnl+GKVAuj8=
+        bh=/C1Eg1dR+pzbI0uF0+AzerXAuAR/n78tvkDzoMBSgLI=;
+        b=CRf+gbRezpDATz6c9R0mDvANO/QSuegvfk8Tajpqx2H0xRJkQoudvG/k8cPenj1OfF
+         YhcVEbS+mvttjyvlLQ4/bmQnkwvSFsB1/Z2vKohH9lSn3GzuXb6KD2DTi0j+cj+cZ8IE
+         xXF9M2X0cOPy12JeOjAezgGD65VW8DU2AZoKc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1C8bi+Glp22eU2mPHcIIhRfHNSQMvhbk1zxbdzRB++Q=;
-        b=BfbGYep0AKzbRhbzEFbPft/4QZvqRxErBz4g5n54EvXj+oszfQFGK+tsliSyEn/jf1
-         WIqryLGiB3Kl/XOuiO1j/VaCeehEWdrYBQkNOmUETjj30b3yJfr0rHBTMr17DE5Buo9+
-         /A+Asyra9deKyaqHbhOtoROmZmiL992wMu5aJ8YsJS7D9le6HXw7VjRJ5GrUkEu1tsED
-         8NWp3W9WV41WVybeD59HBpFekhJQ6VzUnjXdnSS81Sje3z8/ZLGBv5PEiFZBro16y6CB
-         tjhomuRSRHFk+5D/TJt6ypzpA1yK3qLtbMzPhQ8yOpgovd8Bv1cBujBiEhHKU4saNPg5
-         xITA==
-X-Gm-Message-State: APjAAAV4/3U7Sew2tYu99q+oCXXiBTY2cKm5jACTVli66bF6r7j32MqK
-        uaaaNaSwZynrNlKWZTB333qFqu9iKxSwdg==
-X-Google-Smtp-Source: APXvYqyU40TIEBeeNT1xotdOz5OkMurLXXVSorlX6DaEtGjrmXTvcB0yK0PqCzhmSIW/U7/u5ZYHhA==
-X-Received: by 2002:adf:d091:: with SMTP id y17mr30844295wrh.182.1574076240560;
-        Mon, 18 Nov 2019 03:24:00 -0800 (PST)
+        bh=/C1Eg1dR+pzbI0uF0+AzerXAuAR/n78tvkDzoMBSgLI=;
+        b=rm03wuHDwG7g3hxN9/8jRmR24CXqzK3f/h3NJ6/NRtF+kI5hg2cgeciNkOMSrpe4I2
+         BLo8FoacKEOgsPLPgxKJoCQ0cg0H82xocdcY4w+OAu0InpU9m/7LQOslwwA1LroD17mH
+         XPRa4ACL4ql7mt/a8PtWfGm+ITV8WixfFgSZQXd+tkQgLZU0A4JjoCC6PHz/RTvbGBCt
+         TPxRiK1QUzbst8OB/zjHMquI+ewrzqkrEqXWJM3AGI0BbgV7uGFN8xQH+6bNFDeNrbKt
+         RP8ZSK2lbMiSCV3FVSAna9i6sow0Oq1TCZYlG/OVsVmuUdx/iILsFcdIutrAzDhQs8dl
+         E/hQ==
+X-Gm-Message-State: APjAAAW4cY1/eIdzMCNHfs9AP4i0ukElWguFwcQjCMJZ0ViuDp0qfq6y
+        AZS7LB/YHRf8mIcmDHGGNCosNw==
+X-Google-Smtp-Source: APXvYqzXsZpamBeEGMUxEhf7zjXrdrLG8X9SsNbwa395AChzzSBkUYi7pScN/Cb75JOsNmN8os6gHg==
+X-Received: by 2002:a5d:55c7:: with SMTP id i7mr30699762wrw.64.1574076242263;
+        Mon, 18 Nov 2019 03:24:02 -0800 (PST)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.59
+        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.24.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 03:24:00 -0800 (PST)
+        Mon, 18 Nov 2019 03:24:01 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v5 23/48] soc: fsl: qe: qe_io.c: don't open-code of_parse_phandle()
-Date:   Mon, 18 Nov 2019 12:22:59 +0100
-Message-Id: <20191118112324.22725-24-linux@rasmusvillemoes.dk>
+Subject: [PATCH v5 24/48] soc: fsl: qe: qe_io.c: access device tree property using be32_to_cpu
+Date:   Mon, 18 Nov 2019 12:23:00 +0100
+Message-Id: <20191118112324.22725-25-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
 References: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
@@ -62,40 +62,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We need to apply be32_to_cpu to make this work correctly on
+little-endian hosts.
+
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe_io.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/soc/fsl/qe/qe_io.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qe_io.c b/drivers/soc/fsl/qe/qe_io.c
-index f6b10f38b2f4..99aeb01586bd 100644
+index 99aeb01586bd..61dd8eb8c0fe 100644
 --- a/drivers/soc/fsl/qe/qe_io.c
 +++ b/drivers/soc/fsl/qe/qe_io.c
-@@ -141,7 +141,6 @@ EXPORT_SYMBOL(par_io_data_set);
- int par_io_of_config(struct device_node *np)
+@@ -142,7 +142,7 @@ int par_io_of_config(struct device_node *np)
  {
  	struct device_node *pio;
--	const phandle *ph;
  	int pio_map_len;
- 	const unsigned int *pio_map;
+-	const unsigned int *pio_map;
++	const __be32 *pio_map;
  
-@@ -150,14 +149,12 @@ int par_io_of_config(struct device_node *np)
- 		return -1;
+ 	if (par_io == NULL) {
+ 		printk(KERN_ERR "par_io not initialized\n");
+@@ -167,9 +167,15 @@ int par_io_of_config(struct device_node *np)
  	}
  
--	ph = of_get_property(np, "pio-handle", NULL);
--	if (ph == NULL) {
-+	pio = of_parse_phandle(np, "pio-handle", 0);
-+	if (pio == NULL) {
- 		printk(KERN_ERR "pio-handle not available\n");
- 		return -1;
+ 	while (pio_map_len > 0) {
+-		par_io_config_pin((u8) pio_map[0], (u8) pio_map[1],
+-				(int) pio_map[2], (int) pio_map[3],
+-				(int) pio_map[4], (int) pio_map[5]);
++		u8 port        = be32_to_cpu(pio_map[0]);
++		u8 pin         = be32_to_cpu(pio_map[1]);
++		int dir        = be32_to_cpu(pio_map[2]);
++		int open_drain = be32_to_cpu(pio_map[3]);
++		int assignment = be32_to_cpu(pio_map[4]);
++		int has_irq    = be32_to_cpu(pio_map[5]);
++
++		par_io_config_pin(port, pin, dir, open_drain,
++				  assignment, has_irq);
+ 		pio_map += 6;
+ 		pio_map_len -= 6;
  	}
- 
--	pio = of_find_node_by_phandle(*ph);
--
- 	pio_map = of_get_property(pio, "pio-map", &pio_map_len);
- 	if (pio_map == NULL) {
- 		printk(KERN_ERR "pio-map is not set!\n");
 -- 
 2.23.0
 
