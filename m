@@ -2,141 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E570100B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:18:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B54B1100B5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfKRSSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 13:18:02 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33552 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfKRSR7 (ORCPT
+        id S1727016AbfKRSS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 13:18:56 -0500
+Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:34220 "EHLO
+        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726541AbfKRSSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 13:17:59 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w9so20714454wrr.0;
-        Mon, 18 Nov 2019 10:17:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jpG2kEyEJHc8/CbQPiWfOD/+xRzsS5WNXU8AFKfy8Cg=;
-        b=EMsOtal5IxuXRR6Ovh9l1jsckcRu6ANKKAO4xosjmjDrrOT5p1sN4prnJYcTztqv20
-         6jdjXPjqdT1deIscnpJeu5rIgUQ7ARgpvbI0jUwKDRw0xFaQoGA52n6lHGu0wN4DHJqS
-         uCQFu/du47+++EaynzJ/qMUpl0+kK0FSW1PqwTDu9MgtU/54v8HyCp94AHUqSaNcYz8T
-         z4d4vaascf+LHRW2vVrQR6cGRDCeI7dIomeSDy1B5x1dkstq1Qq6J2PTQSMEm1J+Hp7A
-         ZhB/UgBM2/VqrB2ygn7T8qWnZmpFweWAmy6bVkmWq4vqO8ByG/f/vbgdii3tHTVgrwao
-         JyWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=jpG2kEyEJHc8/CbQPiWfOD/+xRzsS5WNXU8AFKfy8Cg=;
-        b=QwKOGHYbETGJCXRmXKLEHWr/mx/gHh7s6Sy05cSwkRNu4IpxoTXaG+5umcVYTevgsF
-         h6awhhvklewSoiNtojo0I5UnEsYjzcVrvM6aYSVlS4vSuFqwX6RNQh3U1J/saMePZ9Wh
-         yb1gxapFkJlpdWGKlUOW0rqgTRCC/vUjpN68ZDllPFv3/maauWjfpiwsn6vVKPF1GPyk
-         7iEvs4JxWql7UeQLt0dj0ISuR19TdTjBsuRJVNkuGuTBy1hCqVMVrmis1WqrijjmVXid
-         r9sT5hgpznBNT8xWGRC94MYXn2Kd1ScyLN0m1po4t0kGcI1uEa8gsMamh5pKscfyYiRN
-         Ayfg==
-X-Gm-Message-State: APjAAAXnBXE0hNaAxDsglQzFvBPXTEtwKEr7e7GiS+Tu+X2N/bBcmjp4
-        BbhNsA6mteiRREQK1CPg0wWtAmrc
-X-Google-Smtp-Source: APXvYqxRMPUdmTzKr9fbr/6UsyRvQMFo7cWSZV09SuiPptY2AUJ+tlECky1XRY2ahQqroDirkyHvQA==
-X-Received: by 2002:a5d:5686:: with SMTP id f6mr32984073wrv.231.1574101076166;
-        Mon, 18 Nov 2019 10:17:56 -0800 (PST)
-Received: from 640k.localdomain.com ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id v81sm233794wmg.4.2019.11.18.10.17.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Nov 2019 10:17:55 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     jmattson@google.com,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH 5/5] KVM: vmx: use MSR_IA32_TSX_CTRL to hard-disable TSX on guest that lack it
-Date:   Mon, 18 Nov 2019 19:17:47 +0100
-Message-Id: <1574101067-5638-6-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1574101067-5638-1-git-send-email-pbonzini@redhat.com>
-References: <1574101067-5638-1-git-send-email-pbonzini@redhat.com>
+        Mon, 18 Nov 2019 13:18:55 -0500
+Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
+        by mx0a-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAIIA4Pv006358;
+        Mon, 18 Nov 2019 13:18:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=fmtd2iqBbFAO+k5+TNL8jMvexpF7b7aXX6LntGCOHZs=;
+ b=V2IuX7pL+Dtqg5r/Gw4TqQJm7cYi7aGb5Im1xfZKevqQ87hSr8IyXfhfuE6X0KWiskUJ
+ OPACDAHlhJp1n9mSad7rsrBVlsdZrXkF8TXZZEVoU4BpOR2LrzmF+4PGxO6uj6ooG0Ej
+ sqriwTwGmBBINvE5TlPvgBoHPh8VTnwNG0qwqjQEP4kVNpYRKvyAuAseNs+WTvPwF7bC
+ kIk7nz8nPvNWHJEkImDoq5Oom2jNtdnba8OZKdD3IV6LCn3pJE+c2GM+8zXhsa81NENG
+ DkMMUC12pFw9y0whKkElR167UGqSc5MxaJRiEIISW+Wj9ddRRNojT0X992FTxjYPQsY4 dg== 
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0a-00154904.pphosted.com with ESMTP id 2wad5f05rq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 18 Nov 2019 13:18:54 -0500
+Received: from pps.filterd (m0134318.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAII88Sw052981;
+        Mon, 18 Nov 2019 13:18:53 -0500
+Received: from ausc60ps301.us.dell.com (ausc60ps301.us.dell.com [143.166.148.206])
+        by mx0a-00154901.pphosted.com with ESMTP id 2wacmg0rva-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Nov 2019 13:18:53 -0500
+X-LoopCount0: from 10.166.132.132
+X-PREM-Routing: D-Outbound
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="1378781001"
+From:   <Mario.Limonciello@dell.com>
+To:     <gayatri.kammela@intel.com>, <andy.shevchenko@gmail.com>
+CC:     <platform-driver-x86@vger.kernel.org>,
+        <vishwanath.somayaji@intel.com>, <dvhart@infradead.org>,
+        <linux-kernel@vger.kernel.org>, <charles.d.prestopine@intel.com>,
+        <peterz@infradead.org>, <srinivas.pandruvada@intel.com>,
+        <andriy.shevchenko@linux.intel.com>, <kan.liang@intel.com>,
+        <david.e.box@intel.com>, <rajneesh.bhardwaj@intel.com>,
+        <tony.luck@intel.com>
+Subject: RE: [PATCH v3 0/7] x86/intel_pmc_core: Add Tiger Lake, Elkhart Lake
+Thread-Topic: [PATCH v3 0/7] x86/intel_pmc_core: Add Tiger Lake, Elkhart Lake
+Thread-Index: AQHVnf4HfWi4zwIc4UmHAQEsNxXTkKeRn7wA//+dHYA=
+Date:   Mon, 18 Nov 2019 18:18:51 +0000
+Message-ID: <9b880cb6585d4608814598517fe5d675@AUSX13MPC105.AMER.DELL.COM>
+References: <cover.1573750525.git.gayatri.kammela@intel.com>
+ <CAHp75Vfrd-BAZ7H_LuQfz32yaap1X3gEnqZ2-9EPQ+j_b0f93g@mail.gmail.com>
+ <MN2PR11MB3711EDFC967C295689E109DEF24D0@MN2PR11MB3711.namprd11.prod.outlook.com>
+In-Reply-To: <MN2PR11MB3711EDFC967C295689E109DEF24D0@MN2PR11MB3711.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-18_05:2019-11-15,2019-11-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ malwarescore=0 priorityscore=1501 clxscore=1015 mlxlogscore=999
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911180155
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ mlxscore=0 impostorscore=0 phishscore=0 clxscore=1015 spamscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1911180155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If X86_FEATURE_RTM is disabled, the guest should not be able to access
-MSR_IA32_TSX_CTRL.  We can therefore use it in KVM to force all
-transactions from the guest to abort.
-
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/vmx.c | 44 ++++++++++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index ed25fe7d5234..8cba65eec0d3 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -639,6 +639,23 @@ struct shared_msr_entry *find_msr_entry(struct vcpu_vmx *vmx, u32 msr)
- 	return NULL;
- }
- 
-+static int vmx_set_guest_msr(struct vcpu_vmx *vmx, struct shared_msr_entry *msr, u64 data)
-+{
-+	int ret = 0;
-+
-+	u64 old_msr_data = msr->data;
-+	msr->data = data;
-+	if (msr - vmx->guest_msrs < vmx->save_nmsrs) {
-+		preempt_disable();
-+		ret = kvm_set_shared_msr(msr->index, msr->data,
-+					 msr->mask);
-+		preempt_enable();
-+		if (ret)
-+			msr->data = old_msr_data;
-+	}
-+	return ret;
-+}
-+
- void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs)
- {
- 	vmcs_clear(loaded_vmcs->vmcs);
-@@ -2174,20 +2191,10 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	default:
- 	find_shared_msr:
- 		msr = find_msr_entry(vmx, msr_index);
--		if (msr) {
--			u64 old_msr_data = msr->data;
--			msr->data = data;
--			if (msr - vmx->guest_msrs < vmx->save_nmsrs) {
--				preempt_disable();
--				ret = kvm_set_shared_msr(msr->index, msr->data,
--							 msr->mask);
--				preempt_enable();
--				if (ret)
--					msr->data = old_msr_data;
--			}
--			break;
--		}
--		ret = kvm_set_msr_common(vcpu, msr_info);
-+		if (msr)
-+			ret = vmx_set_guest_msr(vmx, msr, data);
-+		else
-+			ret = kvm_set_msr_common(vcpu, msr_info);
- 	}
- 
- 	return ret;
-@@ -7138,6 +7145,15 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
- 	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
- 			guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
- 		update_intel_pt_cfg(vcpu);
-+
-+	if (boot_cpu_has(X86_FEATURE_RTM)) {
-+		struct shared_msr_entry *msr;
-+		msr = find_msr_entry(vmx, MSR_IA32_TSX_CTRL);
-+		if (msr) {
-+			bool enabled = guest_cpuid_has(vcpu, X86_FEATURE_RTM);
-+			vmx_set_guest_msr(vmx, msr, enabled ? 0 : TSX_CTRL_RTM_DISABLE);
-+		}
-+	}
- }
- 
- static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
--- 
-1.8.3.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBwbGF0Zm9ybS1kcml2ZXIteDg2
+LW93bmVyQHZnZXIua2VybmVsLm9yZyA8cGxhdGZvcm0tZHJpdmVyLXg4Ni0NCj4gb3duZXJAdmdl
+ci5rZXJuZWwub3JnPiBPbiBCZWhhbGYgT2YgS2FtbWVsYSwgR2F5YXRyaQ0KPiBTZW50OiBNb25k
+YXksIE5vdmVtYmVyIDE4LCAyMDE5IDEyOjExIFBNDQo+IFRvOiBBbmR5IFNoZXZjaGVua28NCj4g
+Q2M6IFBsYXRmb3JtIERyaXZlcjsgU29tYXlhamksIFZpc2h3YW5hdGg7IERhcnJlbiBIYXJ0OyBM
+aW51eCBLZXJuZWwgTWFpbGluZw0KPiBMaXN0OyBQcmVzdG9waW5lLCBDaGFybGVzIEQ7IFBldGVy
+IFppamxzdHJhOyBQYW5kcnV2YWRhLCBTcmluaXZhczsgQW5keQ0KPiBTaGV2Y2hlbmtvOyBMaWFu
+ZywgS2FuOyBCb3gsIERhdmlkIEU7IEJoYXJkd2FqLCBSYWpuZWVzaDsgTHVjaywgVG9ueQ0KPiBT
+dWJqZWN0OiBSRTogW1BBVENIIHYzIDAvN10geDg2L2ludGVsX3BtY19jb3JlOiBBZGQgVGlnZXIg
+TGFrZSwgRWxraGFydCBMYWtlDQo+IA0KPiANCj4gW0VYVEVSTkFMIEVNQUlMXQ0KPiANCj4gPiA+
+IEFsbCB0aGUgaW5mb3JtYXRpb24gcmVnYXJkaW5nIHRoZSBQQ0ggSVBzIGFuZCBuYW1lcyBvZiBJ
+UHMgd2lsbCBiZQ0KPiA+ID4gYXZhaWxhYmxlIGluIEludGVsJ3MgUGxhdGZvcm0gQ29udHJvbGxl
+ciBIdWIgKFBDSCkgRXh0ZXJuYWwgRGVzaWduDQo+ID4gPiBTcGVjaWZpY2F0aW9uIChFRFMpIGRv
+Y3VtZW50IGV4cGVjdGVkIHRvIGJlIHJlbGVhc2VkIGluIDIwMjAgYmVmb3JlDQo+ID4gPiBwcm9k
+dWN0IGxhdW5jaC4NCj4gPg0KPiA+IFRoYW5rcywgdGhvdWdoIHlvdSBmb3Jnb3QgdG8gZml4IGFs
+bCBwcmVmaXhlcyBpbiB0aGUgbWFpbHMuIFdlIGhhdmUNCj4gPiBwbGF0Zm9ybS94ODY6ICREUklW
+RVJfTkFNRTogLi4uDQo+ID4NCj4gSGkgQW5keSEgU29ycnkgSSB0aGluayBJIG1pc3VuZGVyc3Rv
+b2QgeW91ciBjb21tZW50IGxhc3QgdGltZS4gSnVzdCB0byBtYWtlDQo+IHN1cmUsIHRoZSBwcmVm
+aXggc2hvdWxkIHRoZSBwYXR0ZXJuIGluIHRoaXMgY2FzZQ0KPiAicGxhdGZvcm0veDg2OiBpbnRl
+bF9wbWNfY29yZTogIiBhbmQgc2hvdWxkIGJlIHNhbWUgZm9yIGFsbCB0aGUgcGF0Y2hlcyBpbiB0
+aGUNCj4gc2VyaWVzIHJpZ2h0Pw0KPiANCj4gPiBBbHNvIGNvbnNpZGVyIE1hcmlvJ3MgY29tbWVu
+dCAoSSBkaWRuJ3QgaGVhciBiYWNrIGZyb20geW91IG9uIGl0KS4NCj4gU29ycnkgYWJvdXQgdGhh
+dC4gSSBhbSBwbGFubmluZyBvbiBzZW5kaW5nIGl0IGEgc2luZ2xlIHBhdGNoIGV4Y2x1ZGluZyBp
+dCBmcm9tIHRoZQ0KPiBzZXJpZXMgc2luY2Ugd2UgcmVjZWl2ZWQgYSByZXF1ZXN0IGZyb20gRGVs
+bC4gUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSB0aGluayB0aGlzDQo+IHBhdGNoIHNob3VsZCBi
+ZSBpbmNsdWRlZCBpbiB0aGUgc2VyaWVzLg0KDQpKdXN0IHRvIG1ha2UgaXQgY2xlYXIgdG8gdGhv
+c2Ugb24gdGhlIGxpc3QgLSB0aGUgcmVxdWVzdCBmcm9tIERlbGwgd2FzIG9mZiBsaXN0IGFuZCBz
+ZXBhcmF0ZWx5DQpmcm9tIG15IGNvbW1lbnQgaW4gYWRqdXN0aW5nIHRoZSBvcmRlcmluZy4gIEEg
+Y29udmVuaWVudCBzaWRlIGVmZmVjdCBpcyB0aGF0IGl0IHdpbGwNCnRha2UgaW50byBjb25zaWRl
+cmF0aW9uIG15IGNvbW1lbnQgdG9vIDopDQo=
