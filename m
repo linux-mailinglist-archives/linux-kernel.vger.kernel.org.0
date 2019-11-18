@@ -2,130 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA85310008F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:39:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47D4810008B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:39:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfKRIj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 03:39:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44978 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfKRIj2 (ORCPT
+        id S1726739AbfKRIjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 03:39:06 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47080 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfKRIjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 03:39:28 -0500
-Received: by mail-wr1-f66.google.com with SMTP id f2so18327424wrs.11
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 00:39:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=l/4KEkLITq2bAD2Q4JLMyFpEUnZBBMmBfjgRPECjVtM=;
-        b=BazAFLyy02yC+PNnAgDSZQFqJT1Orv2PdA02ZSK6GElQM4LdfBdBS6cbJzJ7vFtIOi
-         MpaS3JUEbn4dXGOZffT/Q7WMKvsKtkjlF5gyTeRqih4u/I+WqrJEaB3+4GNLJr4KzHvF
-         nM/KLDfoZPrjjTBuX7TvQ7/fhUZUrpQClQPstArW+3K0BX0AjWzUjhC8o67RyCJ90cYq
-         /gxjz5ylu7K1IyOZDMEIdrun47ZjIn9YHzqWs1xY/fWT9vskRxUk5X4O+WiUORBy2Ho7
-         nftOUpUEt9ji6UgAr1EkwHMnHqRR3Y9EVF54v2GmCeC8aCQF+1l15jnZ0L1G4UIcjlGN
-         7djw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=l/4KEkLITq2bAD2Q4JLMyFpEUnZBBMmBfjgRPECjVtM=;
-        b=rAhsXfeEZzZ28c4tp7E2ukBgMFAa7sprRaE631dcqW32pxTooyTRiUAEVy6XQpSt2U
-         kS6ph/p21Qtne4pBw1u1SEA9dkSEXY0kRO3KUrFQFRYF2nsyXJsw7kh77B6XywCrmCjI
-         pUDBLz1lFuUxi0+RcciFkHJd9CXgxkcLk56pYx7YwJq7KWbxiVWOWEhurpBwyL5JI8/S
-         mlsrs0fGWcijs2Q1LZgI3nBdINr3qT4GXSIjje3CJQioPhVrsdtfg9Tfxrv+0vx6UoLY
-         +cBg8ArpTsIFh5sB7M8HW+fDz9AdeEk1mspaFiItUMUanHS/BZmLA1bePQlbb5jOZujV
-         0h5w==
-X-Gm-Message-State: APjAAAXCCn5vpQlc8rKhukFntT6HOkFNJjyLeNFkS0vhis4xu8bQ2BnX
-        NWesO07trcJoBbMu1AvLmRoab3V3g65PxW/x
-X-Google-Smtp-Source: APXvYqy1m69WCYdOYXWEnMpikQ9jG7ZoLkJpwh41mDFaVYDbbtOju/Wg+LXKZdFH9OxwdWvNjba1Kw==
-X-Received: by 2002:adf:f18e:: with SMTP id h14mr10606428wro.348.1574066364683;
-        Mon, 18 Nov 2019 00:39:24 -0800 (PST)
-Received: from rudolphp.9e.network (b2b-78-94-0-50.unitymedia.biz. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id z14sm21700530wrl.60.2019.11.18.00.39.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 00:39:24 -0800 (PST)
-From:   patrick.rudolph@9elements.com
-To:     linux-kernel@vger.kernel.org
-Cc:     coreboot@coreboot.org, Arthur Heymans <arthur@aheymans.xyz>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [Patch v2 3/3] firmware: google: Probe for a GSMI handler in firmware
-Date:   Mon, 18 Nov 2019 09:39:00 +0100
-Message-Id: <20191118083903.19311-3-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191118083903.19311-1-patrick.rudolph@9elements.com>
-References: <20191118083903.19311-1-patrick.rudolph@9elements.com>
+        Mon, 18 Nov 2019 03:39:05 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAI8cmmB033613;
+        Mon, 18 Nov 2019 02:38:48 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574066328;
+        bh=2FmC6WnguELH0WljaqAvUXHz4oovTIg5XA3M9m7laOM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=JQk58HK+KG2z9Y7+qVN3JLPmEHQ+wsw40VdDVyonlPjWTyUovUDwXsKg1NKgobvMG
+         bMeoY97hekPv8YSMIffnOMGmbk6NqrB+OONU9gvN1GMg5ZC4CsTUDHdz3DUrVk3pZ7
+         D8vjzUdjnTP5OwUMqW61010vvke/PcVkUYYejwB8=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAI8cmZ5055342
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Nov 2019 02:38:48 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 18
+ Nov 2019 02:38:47 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 18 Nov 2019 02:38:47 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAI8ciXl127055;
+        Mon, 18 Nov 2019 02:38:45 -0600
+Subject: Re: [PATCH block/for-next] blk-cgroup: cgroup_rstat_updated()
+ shouldn't be called on cgroup1
+To:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
+CC:     <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizefan@huawei.com>,
+        <hannes@cmpxchg.org>, <kernel-team@fb.com>,
+        Dan Schatzberg <dschatzberg@fb.com>, Daniel Xu <dlxu@fb.com>
+References: <20191107191804.3735303-1-tj@kernel.org>
+ <20191107191804.3735303-6-tj@kernel.org>
+ <cd3ebcee-6819-a09b-aeba-de6817f32cde@ti.com>
+ <20191113163501.GI4163745@devbig004.ftw2.facebook.com>
+ <20191114223128.GM4163745@devbig004.ftw2.facebook.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <6f791736-2728-be53-9544-e0a0f0d09dd0@ti.com>
+Date:   Mon, 18 Nov 2019 14:09:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191114223128.GM4163745@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Heymans <arthur@aheymans.xyz>
+Hi,
 
-Currently this driver is loaded if the DMI string matches coreboot
-and has a proper smi_command in the ACPI FADT table, but a GSMI handler in
-SMM is an optional feature in coreboot.
+On 15/11/19 4:01 AM, Tejun Heo wrote:
+> Currently, cgroup rstat is supported only on cgroup2 hierarchy and
+> rstat functions shouldn't be called on cgroup1 cgroups.  While
+> converting blk-cgroup core statistics to rstat, f73316482977
+> ("blk-cgroup: reimplement basic IO stats using cgroup rstat")
+> accidentally ended up calling cgroup_rstat_updated() on cgroup1
+> cgroups causing crashes.
+> 
+> Longer term, we probably should add cgroup1 support to rstat but for
+> now let's mask the call directly.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Fixes: f73316482977 ("blk-cgroup: reimplement basic IO stats using cgroup rstat")
+Tested-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  include/linux/blk-cgroup.h |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+> index 48a66738143d..19394c77ed99 100644
+> --- a/include/linux/blk-cgroup.h
+> +++ b/include/linux/blk-cgroup.h
+> @@ -626,7 +626,8 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+>  		bis->cur.ios[rwd]++;
+>  
+>  		u64_stats_update_end(&bis->sync);
+> -		cgroup_rstat_updated(blkg->blkcg->css.cgroup, cpu);
+> +		if (cgroup_subsys_on_dfl(io_cgrp_subsys))
+> +			cgroup_rstat_updated(blkg->blkcg->css.cgroup, cpu);
+>  		put_cpu();
+>  	}
+>  
+> 
 
-So probe for a SMM GSMI handler before initializing the driver.
-If the smihandler leaves the calling argument in %eax in the SMM save state
-untouched that generally means the is no handler for GSMI.
-
-Signed-off-by: Arthur Heymans <arthur@aheymans.xyz>
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
----
- drivers/firmware/google/gsmi.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index 974c769b75cf..5b2011ebbe26 100644
---- a/drivers/firmware/google/gsmi.c
-+++ b/drivers/firmware/google/gsmi.c
-@@ -76,6 +76,7 @@
- #define GSMI_CMD_LOG_S0IX_RESUME	0x0b
- #define GSMI_CMD_CLEAR_CONFIG		0x20
- #define GSMI_CMD_HANDSHAKE_TYPE		0xC1
-+#define GSMI_CMD_RESERVED		0xff
- 
- /* Magic entry type for kernel events */
- #define GSMI_LOG_ENTRY_TYPE_KERNEL     0xDEAD
-@@ -746,6 +747,7 @@ MODULE_DEVICE_TABLE(dmi, gsmi_dmi_table);
- static __init int gsmi_system_valid(void)
- {
- 	u32 hash;
-+	u16 cmd, result;
- 
- 	if (!dmi_check_system(gsmi_dmi_table))
- 		return -ENODEV;
-@@ -780,6 +782,23 @@ static __init int gsmi_system_valid(void)
- 		return -ENODEV;
- 	}
- 
-+	/* Test the smihandler with a bogus command. If it leaves the
-+	 * calling argument in %ax untouched, there is no handler for
-+	 * GSMI commands.
-+	 */
-+	cmd = GSMI_CALLBACK | GSMI_CMD_RESERVED << 8;
-+	asm volatile (
-+		"outb %%al, %%dx\n\t"
-+		: "=a" (result)
-+		: "0" (cmd),
-+		  "d" (acpi_gbl_FADT.smi_command)
-+		: "memory", "cc"
-+		);
-+	if (cmd == result) {
-+		pr_info("gsmi: no gsmi handler in firmware\n");
-+		return -ENODEV;
-+	}
-+
- 	/* Found */
- 	return 0;
- }
--- 
-2.21.0
-
+Thanks,
+Faiz
