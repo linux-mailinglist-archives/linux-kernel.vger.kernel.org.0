@@ -2,69 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE315100AF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA294100AF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:59:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfKRR6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 12:58:33 -0500
-Received: from ms.lwn.net ([45.79.88.28]:60182 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbfKRR6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 12:58:32 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 2D6149A7;
-        Mon, 18 Nov 2019 17:58:32 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 10:58:31 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        prarit@redhat.com, rafael.j.wysocki@intel.co,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH] admin guide/pm: Admin guide for intel-speed-select
-Message-ID: <20191118105831.5fd78335@lwn.net>
-In-Reply-To: <20191118174828.GY32742@smile.fi.intel.com>
-References: <20191115204925.55181-1-srinivas.pandruvada@linux.intel.com>
-        <20191118104105.11776f58@lwn.net>
-        <20191118174828.GY32742@smile.fi.intel.com>
-Organization: LWN.net
+        id S1726961AbfKRR7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 12:59:16 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44228 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfKRR7Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 12:59:16 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q26so10722422pfn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 09:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7EYmZ7NRTxHkOWSbSxQ0gywzZ0Cdf+FfUYZH7rtEdQE=;
+        b=dLIQEzcwJz03sHkX/zkGpM9f5gUe4Ym6v3uAIwg37cDxKuvpfBDkJEaQpxzKHzK5fv
+         PwiH8ZdFLgm9mi7G+FxOTJvbzKFvKbp0ZgvV/+/9eTdRu09rUCCIgt5Tijrm0oYfy6vY
+         ae1TO3fwnzHwp3RD6ch5hUmBkvcD+bd+BIxgPXQNrpmYl0ys7jhvyb4EoYa0Z8UumCPo
+         gh6FWfkUDYgGqYD38BJRkMEycx7slcYj7Jq8bjTk9qSQY/FFFun9JXxsrlxiyZ1WepyL
+         7KFFRRVvozD2Fp1TqFeOS5wq0MPMFwO17JNiyIJpw+vvX/Dh4GK7wqmIU4GXaHYcgUuq
+         WMJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7EYmZ7NRTxHkOWSbSxQ0gywzZ0Cdf+FfUYZH7rtEdQE=;
+        b=UJYKkqJB98bCr/5+BN21V4zEeMMZWw1Ub65FewTABwMZvm61zTAIlDn9YPs9N+iloD
+         YTcwqO7/+1rDnl0fF7Za2wRWzaC1+pVXhvMrPmCvRsKSp4jIx71mOgyHboYL8PTrOBq+
+         WnyO4Q92ZvkhuqCmlqnkP5wBlP2p8hwKwXNfDNoXGgRWlOFasZc5htnoQuX6DxLUR8pI
+         ImDSnNhtsLXRoOaH1WsoZBG5T2JrKY3ZQTusPv8x9Xg6lrJfMTOYQmjPvMpmoo4fkVDA
+         XP4eK4N0Wuomp4pkfkJ5Gr+XkDOmnX8bHOhiAyyu8nE9Vs3qpvE4SeeHzb93RNXX+8uh
+         A8MQ==
+X-Gm-Message-State: APjAAAV3lf/Q1/wKgt0u2Vl3TBx93E/TpAagpgPjADIjPbYNYG7KC7oP
+        vmsrL4bptL+0YahahDSM53+6P2usJBvKEQ==
+X-Google-Smtp-Source: APXvYqwe244ck0Ha1OOKUd5dlfDyynPE9re1cJMR8bAB5hw9pzDlUwsH4z+WwCavWNf8pM4H24Z4bg==
+X-Received: by 2002:a63:f40e:: with SMTP id g14mr623031pgi.132.1574099953908;
+        Mon, 18 Nov 2019 09:59:13 -0800 (PST)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id r16sm18525557pgl.77.2019.11.18.09.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 09:59:13 -0800 (PST)
+Date:   Mon, 18 Nov 2019 09:59:10 -0800
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "olaf\@aepfle.de" <olaf@aepfle.de>,
+        "davem\@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sashal\@kernel.org" <sashal@kernel.org>,
+        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net, 1/2] hv_netvsc: Fix offset usage in
+ netvsc_send_table()
+Message-ID: <20191118095910.3566c5dd@hermes.lan>
+In-Reply-To: <87wobxgkkv.fsf@vitty.brq.redhat.com>
+References: <1574094751-98966-1-git-send-email-haiyangz@microsoft.com>
+        <1574094751-98966-2-git-send-email-haiyangz@microsoft.com>
+        <87wobxgkkv.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Nov 2019 19:48:28 +0200
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+On Mon, 18 Nov 2019 18:28:48 +0100
+Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
 
-> On Mon, Nov 18, 2019 at 10:41:05AM -0700, Jonathan Corbet wrote:
-> > On Fri, 15 Nov 2019 12:49:25 -0800
-> > Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> wrote:  
+> > +		netdev_err(ndev, "Received send-table offset too big:%u\n",
+> > +			   offset);
+> > +		return;
+> > +	}
+> > +
+> > +	tab = (void *)nvmsg + offset;  
 > 
-> > > Added documentation to configure servers to use Intel(R) Speed
-> > > Select Technology using intel-speed-select tool.  
-> 
-> > > +=========================================================
-> > > +Intel® Speed Select Technology (Intel® SST) : User Guide
-> > > +=========================================================  
-> > 
-> > People give me grief when I take docs patches adding non-ascii characters.
-> > Adding nearly 100 useless ® symbols seems likely to trigger that sort of
-> > unicode aversion.  Can I ask you, please, to take those out?  There are
-> > many occurrences of unadorned "Intel" in the kernel, and the world hasn't
-> > ended yet.  
-> 
-> Side comment. It's really strange to hear above in 21st centure. We are living
-> in Unicode times. How harm unicode characters nowadays?
+> But tab is 'u32 *', doesn't compiler complain?
 
-In general I agree, and I have little patience for complaints about
-non-ascii characters in places where they actually have value. This,
-however, is not one of those places.
-
-Thanks,
-
-jon
+nvmsg + offset is still of type void *.
+assigning void * to another pointer type is allowed with C.
