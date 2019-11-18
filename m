@@ -2,112 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9179100400
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B990710040F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfKRLZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:25:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:36073 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727173AbfKRLYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:24:01 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Gmmt4X8kz9sPW;
-        Mon, 18 Nov 2019 22:23:58 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1574076238;
-        bh=+m0WYc56ma1T5C9ucaT2dZi4UQCzolMchE10o+XuaYk=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=Hs2bBVyJgfMxyMAV2SGToHqrhgDVtlT7I4RfuZjOnYe9uUiPK/mLztGRh9ou2tej+
-         dtfbsXfdcq7bLlalr27d8RprN2aMfVMZ4mLGzOSCOQDN2iGSKIVOsHWge/g69SbWK5
-         b3/Zmlyn7FujzA4PETqB84UxRAjOAM2Q6lDkFynQmhNcI0cz0fSTGfdWVrGaJBEm/o
-         IL2YulcasqRQ9FpURjV0wwbbIhIJv+jIhWBbe7V3kFepAbUFdAU9NOXpN4hSuaFAVU
-         fqV8HeJcFr2q9rcyWMUUEfds5pDrWEKthzy5yVH/xu6XUKOs5rEtgzdjDFiAOGLXFK
-         V36mhOe18CK6A==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 2/2] powerpc/kexec: move kexec files into a dedicated subdir.
-In-Reply-To: <afbef97ec6a978574a5cf91a4441000e0a9da42a.1572351221.git.christophe.leroy@c-s.fr>
-References: <e235973a1198195763afd3b6baffa548a83f4611.1572351221.git.christophe.leroy@c-s.fr> <afbef97ec6a978574a5cf91a4441000e0a9da42a.1572351221.git.christophe.leroy@c-s.fr>
-Date:   Mon, 18 Nov 2019 22:23:56 +1100
-Message-ID: <87pnhpctrn.fsf@mpe.ellerman.id.au>
+        id S1726765AbfKRL1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:27:10 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40500 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfKRL1K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:27:10 -0500
+Received: by mail-ot1-f68.google.com with SMTP id m15so14170314otq.7;
+        Mon, 18 Nov 2019 03:27:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0VGp3OpF5GA2F7BU2LE4TwYF6X0125T01Rr+E1EqppI=;
+        b=jCMLZMfmYQkoKN3iFC/0AuUf28FH7MDLubE6jSmZTvABJSU6ZYjmQ32KzTMLwEL/BE
+         v0pJd7qp2EpS84gG91LfN2xUw7n83VVDK8v8gKacvB4uCupsDGv3xLa0iXh2atKSCn2D
+         ynj/bzN3qT3Y/+1cvsNSvogzpIowAY/Bmqv5PCNk1ZfHYs1h6KyL8eKM8lDsl7SAAAR9
+         S98uJrIdufRAh8CxeBEAlPkavt8T8v9nMghFZBCTRQ+RkQsbANyP8bo0C3keGkVv0agB
+         C2e5g8OXIuVFCk6wfa9rAGNBcGvUk0UUuLf5id0AVE/0OfMenq6WE1UhSSiir9MWfK7e
+         H4ng==
+X-Gm-Message-State: APjAAAXTEGxk0JBBEnl/mVbB/Kdu4nLAvMZCpjnSpaFkO7Td4ulNnpww
+        UbVtUHtSZ0Jf9RefQ6idRM450nBISiIbtgD/t/A=
+X-Google-Smtp-Source: APXvYqxy13t3uLGFNSvy3wvHL6OJCqB1p2rtgvpSnNHM+tvUbQdNmTfWxjSP1ZfXrk3AUSM30/lBEFwcSxpYvZPNb+4=
+X-Received: by 2002:a05:6830:232a:: with SMTP id q10mr22460237otg.262.1574076428641;
+ Mon, 18 Nov 2019 03:27:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <2717750.dCEzHT3DVQ@kreacher> <CAJvTdKn9wuoXkKecZxCJHPZAG7XK_BqAZT5=7k9Mi4zo4SBL0g@mail.gmail.com>
+ <CAJZ5v0ifOQaOm-8n5gUgud0sCn-Y1KQWWhzhtzdm+exvMLgL7Q@mail.gmail.com>
+In-Reply-To: <CAJZ5v0ifOQaOm-8n5gUgud0sCn-Y1KQWWhzhtzdm+exvMLgL7Q@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 18 Nov 2019 12:26:57 +0100
+Message-ID: <CAJZ5v0jsQG37VF3-tiSndE0pXX9jEfgucm0UyvpM0bsyoOcpuA@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: Consolidate disabled state checks
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Doug Smythies <dsmythies@telus.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> arch/powerpc/kernel/ contains 8 files dedicated to kexec.
+On Mon, Nov 18, 2019 at 10:22 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> Move them into a dedicated subdirectory.
+> On Mon, Nov 18, 2019 at 5:46 AM Len Brown <lenb@kernel.org> wrote:
+> >
+> > On Mon, Nov 4, 2019 at 6:16 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > There are two reasons why CPU idle states may be disabled: either
+> > > because the driver has disabled them or because they have been
+> > > disabled by user space via sysfs.
+> > >
+> > > In the former case, the state's "disabled" flag is set once during
+> > > the initialization of the driver and it is never cleared later (it
+> > > is read-only effectively).
+> >
+> > for x86 (intel_idle and acpi_idle), no states with disabled=1 are  registered
+> > with cpuidle.  Instead, intel_idle (currently) skips them in the loop
+> > that registers states.
+> > (and acpi_idle never touches the disabled field)
+> >
+> > And so for x86, governors checking for drv->states[i].disabled is a NOP,
+> > and the condition described by CPUIDLE_STATE_DISABLED_BY_DRIVER
+> > does not (yet) exist.
 >
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> OK
 >
-> ---
-> v2: moved crash.c as well as it's part of kexec suite.
-> v3: renamed files to remove 'kexec' keyword from names.
-> v4: removed a ifdef in kexec/Makefile
-> ---
->  arch/powerpc/kernel/Makefile                       | 19 +---------------
->  arch/powerpc/kernel/kexec/Makefile                 | 25 ++++++++++++++++++++++
->  arch/powerpc/kernel/{ => kexec}/crash.c            |  0
->  .../kernel/{kexec_elf_64.c => kexec/elf_64.c}      |  0
->  arch/powerpc/kernel/{ima_kexec.c => kexec/ima.c}   |  0
->  .../kernel/{machine_kexec.c => kexec/machine.c}    |  0
->  .../{machine_kexec_32.c => kexec/machine_32.c}     |  0
->  .../{machine_kexec_64.c => kexec/machine_64.c}     |  0
->  .../machine_file_64.c}                             |  0
->  .../{kexec_relocate_32.S => kexec/relocate_32.S}   |  2 +-
->  10 files changed, 27 insertions(+), 19 deletions(-)
->  create mode 100644 arch/powerpc/kernel/kexec/Makefile
->  rename arch/powerpc/kernel/{ => kexec}/crash.c (100%)
->  rename arch/powerpc/kernel/{kexec_elf_64.c => kexec/elf_64.c} (100%)
->  rename arch/powerpc/kernel/{ima_kexec.c => kexec/ima.c} (100%)
->  rename arch/powerpc/kernel/{machine_kexec.c => kexec/machine.c} (100%)
->  rename arch/powerpc/kernel/{machine_kexec_32.c => kexec/machine_32.c} (100%)
->  rename arch/powerpc/kernel/{machine_kexec_64.c => kexec/machine_64.c} (100%)
->  rename arch/powerpc/kernel/{machine_kexec_file_64.c => kexec/machine_file_64.c} (100%)
->  rename arch/powerpc/kernel/{kexec_relocate_32.S => kexec/relocate_32.S} (99%)
+> > Looking at the ARM code, it seems that cpuidle-imx6q.c and cpuidle-tegra20.c
+> > reach into the cpuidle states at run time and toggle the
+> > drv->states[i].disabled.
+>
+> I might have overlooked that, let me check.
+>
+> > It seems that this patch takes the initial value of
+> > drv->states->disabled, and sets the (per cpu)
+> > usage.disable=..BY_DRIVER,
+> > but that subsequent run-time toggles in drv->states[i]disabled by
+> > these drivers would be missed,
+> > because you're removed the run-time checking of drv->states->disabled?
+>
+> If it is updated at run time, then yes, the updates will be missed, so
+> thanks for pointing that out.
+>
+> > Finally, I'd like to change intel_idle so that it *can* register a
+> > state that is disabled, by default.
+> > If I change the driver to NOT skip registering disabled states, and
+> > the cpuidle copy has cpuidle_state.disabled=1,
+> > then the state is indeed, unused at run-time.  But as you said,
+> > it is effectively read-only, and is not indicated in sysfs, and can
+> > not be changed via sysfs.
+> >
+> > One way to do this is to do what you do here and initialize
+> > usage.disabled to drv->state.disabled. (not distinguishing between
+> > DRIVER and USER)
+> > That way the user could later over-ride what a driver set, by clearing
+> > the disabled attribute.
 
-I'm inclined to move the directory out of kernel, ie. up a level with mm
-and so on.
+I'd rather get rid of the "disabled" field from struct cpuidle_state
+entirely and introduce a new state flag to indicate the "disabled by
+default" status.
 
-And I also don't think the "machine" naming is useful anymore. It comes
-from the naming of the arch functions, eg. machine_kexec(), which was
-named to be analogous to machine_restart().
+I also would expose that new flag in a new sysfs attribute of idle
+states, say "disable_default".
 
-So how about:
+Then, the DISABLED_BY_DRIVER bit would be reserved for driver quirks
+(as per https://patchwork.kernel.org/patch/11249519/) and the
+DISABLED_BY_USER one could be used for all of the other purposes.
 
-  arch/powerpc/{kernel/machine_kexec.c => kexec/core.c}
-  arch/powerpc/{kernel/machine_kexec_32.c => kexec/core_32.c}
-  arch/powerpc/{kernel/machine_kexec_64.c => kexec/core_64.c}
-  arch/powerpc/{kernel => kexec}/crash.c
-  arch/powerpc/{kernel/kexec_elf_64.c => kexec/elf_64.c}
-  arch/powerpc/{kernel/machine_kexec_file_64.c => kexec/file_load.c}
-  arch/powerpc/{kernel/ima_kexec.c => kexec/ima.c}
-  arch/powerpc/{kernel/kexec_relocate_32.S => kexec/relocate_32.S}
-
-And we end up with:
-
-  $ find arch/powerpc/kexec
-  arch/powerpc/kexec/
-  arch/powerpc/kexec/file_load.c
-  arch/powerpc/kexec/relocate_32.S
-  arch/powerpc/kexec/core_64.c
-  arch/powerpc/kexec/ima.c
-  arch/powerpc/kexec/core.c
-  arch/powerpc/kexec/core_32.c
-  arch/powerpc/kexec/Makefile
-  arch/powerpc/kexec/crash.c
-  arch/powerpc/kexec/elf_64.c
-
-
-cheers
+Cheers,
+Rafael
