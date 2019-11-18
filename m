@@ -2,101 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69C2100779
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 15:36:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF5410077C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 15:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfKROgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 09:36:01 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34288 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbfKROgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 09:36:01 -0500
-Received: from zn.tnic (p200300EC2F27B50084A11D83797EBEC7.dip0.t-ipconnect.de [IPv6:2003:ec:2f27:b500:84a1:1d83:797e:bec7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 16D581EC05DE;
-        Mon, 18 Nov 2019 15:36:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1574087760;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=HIiagHNihEtq/23FNusQiNOrZ2Lv80N9XpOGmMlnIl0=;
-        b=daNUb7ullbGMCWEXX6RLx4v+dpu7G4yTHbPJSUREkpYiXbffE2QidsmrcpVRNUo0PVyqT1
-        1xJGGmawPcNnQEvBD+Vam0RBTCnq/EF6GpdfgDRamb7c7s6e3IORqooOnK3yXuiLIOh9WY
-        JcR8xQsovJLCTJOlPvRUNaCvQJfmZks=
-Date:   Mon, 18 Nov 2019 15:35:53 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ilie Halip <ilie.halip@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH V2] x86/boot: explicitly place .eh_frame after .rodata
-Message-ID: <20191118143553.GD6363@zn.tnic>
-References: <CAKwvOdmSo=BWGnaVeejez6K0Tukny2niWXrr52YvOPDYnXbOsg@mail.gmail.com>
- <20191106120629.28423-1-ilie.halip@gmail.com>
+        id S1727217AbfKROgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 09:36:39 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:58190 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfKROgj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 09:36:39 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 5FDC71C17F8; Mon, 18 Nov 2019 15:36:37 +0100 (CET)
+Date:   Mon, 18 Nov 2019 15:36:36 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     kan.liang@linux.intel.com
+Cc:     peterz@infradead.org, mingo@kernel.org, sashal@kernel.org,
+        gregkh@linuxfoundation.org, pavel@denx.de,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH] perf/x86/uncore: Remove unnecessary check for uncore_pmu
+Message-ID: <20191118143636.GD22736@duo.ucw.cz>
+References: <1573652102-131731-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="C+ts3FVlLX8+P6JN"
 Content-Disposition: inline
-In-Reply-To: <20191106120629.28423-1-ilie.halip@gmail.com>
+In-Reply-To: <1573652102-131731-1-git-send-email-kan.liang@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 02:06:28PM +0200, Ilie Halip wrote:
-> When using GCC as compiler and LLVM's lld as linker, linking
-> setup.elf fails:
->       LD      arch/x86/boot/setup.elf
->     ld.lld: error: init sections too big!
-> 
-> This happens because ld.lld has different rules for placing
-> orphan sections (i.e. sections not mentioned in a linker script)
-> compared to ld.bfd.
-> 
-> Particularly, in this case, the merged .eh_frame section is
-> placed before __end_init, which triggers an assert in the script.
-> 
-> Explicitly place this section after .rodata, in accordance with
-> ld.bfd's behavior.
-> 
-> Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/760
-> ---
-> 
-> Changes in V2:
->  * removed wildcard for input sections (.eh_frame* -> .eh_frame)
-> 
->  arch/x86/boot/setup.ld | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
-> index 0149e41d42c2..30ce52635cd0 100644
-> --- a/arch/x86/boot/setup.ld
-> +++ b/arch/x86/boot/setup.ld
-> @@ -25,6 +25,7 @@ SECTIONS
->  
->  	. = ALIGN(16);
->  	.rodata		: { *(.rodata*) }
-> +	.eh_frame	: { *(.eh_frame) }
 
-The kernel proper linker script does
+--C+ts3FVlLX8+P6JN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-        /DISCARD/ : {
-                *(.eh_frame)
-        }
+On Wed 2019-11-13 05:35:02, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+>=20
+> The uncore_pmu pointer in uncore_pmu_enable/disable() is from
+> container_of, which never be NULL.
+>=20
+> Remove the unnecessary check for uncore_pmu.
+>=20
+> Fixes: 75be6f703a14 ("perf/x86/uncore: Fix event group support")
+> Reported-by: Pavel Machek <pavel@denx.de>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Cc: stable@vger.kernel.org
 
-with the .eh_frame section.
+Sorry, sent email too fast.
 
-Wouldn't that solve your issue too, if you add it to the /DISCARD/
-section in that linker script too?
+I agree this is good fix for mainline, but as the code is a tiny bit
+ineffective but correct, I don't think we neccessarily need it in
+stable.
 
--- 
-Regards/Gruss,
-    Boris.
+Best regards,
+							Pavel
+						=09
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--C+ts3FVlLX8+P6JN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXdKsdAAKCRAw5/Bqldv6
+8mU3AJ9+JUK3UhvtIbQf/OVMZgQQFuaLqACeMvHDB/bq1neMOohhJzKkkzdH1gU=
+=T8Gj
+-----END PGP SIGNATURE-----
+
+--C+ts3FVlLX8+P6JN--
