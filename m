@@ -2,59 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C262FFF9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:37:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 591ABFFFA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfKRHhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 02:37:20 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:46810 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbfKRHhU (ORCPT
+        id S1727111AbfKRHhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 02:37:41 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37480 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfKRHhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 02:37:20 -0500
-Received: by mail-pj1-f67.google.com with SMTP id a16so1233995pjs.13
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 23:37:19 -0800 (PST)
+        Mon, 18 Nov 2019 02:37:41 -0500
+Received: by mail-pl1-f193.google.com with SMTP id bb5so9292093plb.4;
+        Sun, 17 Nov 2019 23:37:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xe+Hh36CXezhILfUXHbWAftsPx9okk6we2CTbfEFf9s=;
-        b=uEywBp9R7GGZbAzKwdAp8tFWJqgwu/JH5HVj9tW+e7xMxu2mtryi1sS83Qn0KWgBC+
-         lQDxYX+Cnfc+47KD5MeyLaWjQgPPcxnck+6F46FzQ66bkSe5D5F0x/ho0I8lGxhGPKHP
-         pyr9nhutvn48T1wCAqqwcGzEfpfaS+AF30BYjLvzn3CVSOfYk4UKpBRtA668JhpHltoM
-         F7vIpSDC/GN6dWG/X3pLxhZ5HjV9hxCHb7xyssC8cGsKmApjJrtLs4eFWbQlGnc1GtTb
-         NTq1LuL7BUNhRrsGbnja7MPBHr9MDRp8WzrX/eLwT1p/3sh1IFSMEK2rMUE2MkoY+csp
-         kN9w==
+        bh=ky5bDnxx6AUjjKxYULMJAA7cOyrMt7zuSBXFyQDWhek=;
+        b=OBJ+QV/ft4Ji3XO8qf+lJk1uMFtal6W/+gGtRe9y5aHNrpkEG0PefkFamWnCj0uiaP
+         +f8+qkEupzSRNO2by6UKCN7+YE4GkiheK4lbmGsxvI+Q4g1Sx3jr2cfzwW5hd57s8wvp
+         bEt9AHBrULurCYCr5hY3h/Z1RR87aFnwiP+dmqZhv2Wh+MbKrChBxccge/NwuerAw2Jp
+         NtQPBbTuLuwNWHco31ij6Qn48/nbgdn0rkzrxZZbXvjGXJDf2Yh/gyYAFlxxux/169yl
+         /l8wpE4Dgf7+l8so8Fbvhnb/DPIYTL7nJ8Jgx+matKq061NCoX4cai0mEZbsMv8qwNd9
+         fXUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xe+Hh36CXezhILfUXHbWAftsPx9okk6we2CTbfEFf9s=;
-        b=s9lxdGo5GOl00+OOpr61RMUjlaAm4ub4ABbZcImKAkldL475B3WaOFt517Yveoqtor
-         siXrEBtJGht4uXuftGIkWikco3KQknJJvdmhfJTWMqPTI9OSYK5hhQJOML0tXjsfy8Qq
-         j5OKq8CYEX5jsTtH4jlOQeyg3nwF+5AxJFstBkEJvg4euqde7C5uo+TN6PgSnBmjzZHc
-         DlVE3RwcQOnLQM3UDTyP/E28RZ6nycKmFHgimV/i+geQfm6KMZp+BkskSeq12Lz4s9pG
-         h42/HRyORdm7aN6sBnaO2q8WIP6moec2KH9UaoLxfClKYvM1a1slQr0rurpPusPgPmTr
-         CCAA==
-X-Gm-Message-State: APjAAAVEo1xZdogDtZBIODVqKv8YV6TKFCMXgKbBXSas+vA4JhSkslxy
-        1Un6d+glzS4HMePjfdVzcHI=
-X-Google-Smtp-Source: APXvYqxThCkDRP6EGlQmF9R4DC4kVnMAodv4rvCLvKrIbCeIrNU4+BLtKDrzVZu6CedepBM3wRJUKA==
-X-Received: by 2002:a17:90a:ca04:: with SMTP id x4mr38341944pjt.103.1574062639600;
-        Sun, 17 Nov 2019 23:37:19 -0800 (PST)
+        bh=ky5bDnxx6AUjjKxYULMJAA7cOyrMt7zuSBXFyQDWhek=;
+        b=Ty3zjZymLn2gkp5IREYveSiIPIa1KU+M6E1jP4jcmwaTecNYe41wwjqdbji07Kcaee
+         f24G/at5uuR0FncxmnzypO2tLIWfbi8cd3DD9l4rX52VjhUo/VSTjU7URygCZuvM6I8b
+         ST45on5K9GJy7oechWO/0gL4K6ciWhmUXAGc7xbbtooVMUmaqpHrqHyxZEV56QUKqVx8
+         e2VUp8jwy58G1TW+fZDvrNdmDjiD92pvWX1RCnZUo6N9te9KUpQaj614y6ZGGNnkNsxU
+         HsQ/VJAVpyWJNjNF7KSceYRxPmNBszrnIY8hZG2zeBDFAAMLU846jnlonVfUYW8BSgKo
+         7BzA==
+X-Gm-Message-State: APjAAAWd2cGCRU3rCwgaxLWtBSGEl2mvqdVrjQQlR+9R65gYc4ZusxUU
+        mE4KQ6oWlPBNO/Qoc2VFH7o=
+X-Google-Smtp-Source: APXvYqxDuyMB0QPSuhD3+vOpCXqc+kMBLHlUh5x28nOiEhBw21YBgd88SFXmmScokH02rF0vER36WQ==
+X-Received: by 2002:a17:902:ba97:: with SMTP id k23mr27372249pls.137.1574062660255;
+        Sun, 17 Nov 2019 23:37:40 -0800 (PST)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id ay16sm23001911pjb.2.2019.11.17.23.37.14
+        by smtp.gmail.com with ESMTPSA id y4sm18657504pgy.27.2019.11.17.23.37.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 23:37:18 -0800 (PST)
+        Sun, 17 Nov 2019 23:37:39 -0800 (PST)
 From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] ASoC: wm5100: add missed pm_runtime_disable
-Date:   Mon, 18 Nov 2019 15:37:07 +0800
-Message-Id: <20191118073707.28298-1-hslester96@gmail.com>
+Subject: [PATCH 1/2] dmaengine: ti: edma: add missed pm_runtime_disable
+Date:   Mon, 18 Nov 2019 15:37:28 +0800
+Message-Id: <20191118073728.28366-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,35 +62,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver forgets to call pm_runtime_disable in remove and
-probe failure.
-Add the calls to fix it.
+The driver forgets to call pm_runtime_disable in probe failure and
+remove.
+Add the calls and modify probe failure handling to fix it.
 
+Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- sound/soc/codecs/wm5100.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma/ti/edma.c | 43 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 15 deletions(-)
 
-diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
-index 4af0e519e623..91cc63c5a51f 100644
---- a/sound/soc/codecs/wm5100.c
-+++ b/sound/soc/codecs/wm5100.c
-@@ -2617,6 +2617,7 @@ static int wm5100_i2c_probe(struct i2c_client *i2c,
+diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+index ba7c4f07fcd6..8be32fd9f762 100644
+--- a/drivers/dma/ti/edma.c
++++ b/drivers/dma/ti/edma.c
+@@ -2282,16 +2282,18 @@ static int edma_probe(struct platform_device *pdev)
+ 	ret = pm_runtime_get_sync(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "pm_runtime_get_sync() failed\n");
+-		return ret;
++		goto err_disable_pm;
+ 	}
+ 
+ 	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+ 	if (ret)
+-		return ret;
++		goto err_disable_pm;
+ 
+ 	ecc = devm_kzalloc(dev, sizeof(*ecc), GFP_KERNEL);
+-	if (!ecc)
+-		return -ENOMEM;
++	if (!ecc) {
++		ret = -ENOMEM;
++		goto err_disable_pm;
++	}
+ 
+ 	ecc->dev = dev;
+ 	ecc->id = pdev->id;
+@@ -2306,30 +2308,37 @@ static int edma_probe(struct platform_device *pdev)
+ 		mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 		if (!mem) {
+ 			dev_err(dev, "no mem resource?\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto err_disable_pm;
+ 		}
+ 	}
+ 	ecc->base = devm_ioremap_resource(dev, mem);
+-	if (IS_ERR(ecc->base))
+-		return PTR_ERR(ecc->base);
++	if (IS_ERR(ecc->base)) {
++		ret = PTR_ERR(ecc->base);
++		goto err_disable_pm;
++	}
+ 
+ 	platform_set_drvdata(pdev, ecc);
+ 
+ 	/* Get eDMA3 configuration from IP */
+ 	ret = edma_setup_from_hw(dev, info, ecc);
+ 	if (ret)
+-		return ret;
++		goto err_disable_pm;
+ 
+ 	/* Allocate memory based on the information we got from the IP */
+ 	ecc->slave_chans = devm_kcalloc(dev, ecc->num_channels,
+ 					sizeof(*ecc->slave_chans), GFP_KERNEL);
+-	if (!ecc->slave_chans)
+-		return -ENOMEM;
++	if (!ecc->slave_chans) {
++		ret = -ENOMEM;
++		goto err_disable_pm;
++	}
+ 
+ 	ecc->slot_inuse = devm_kcalloc(dev, BITS_TO_LONGS(ecc->num_slots),
+ 				       sizeof(unsigned long), GFP_KERNEL);
+-	if (!ecc->slot_inuse)
+-		return -ENOMEM;
++	if (!ecc->slot_inuse) {
++		ret = -ENOMEM;
++		goto err_disable_pm;
++	}
+ 
+ 	ecc->default_queue = info->default_queue;
+ 
+@@ -2368,7 +2377,7 @@ static int edma_probe(struct platform_device *pdev)
+ 				       ecc);
+ 		if (ret) {
+ 			dev_err(dev, "CCINT (%d) failed --> %d\n", irq, ret);
+-			return ret;
++			goto err_disable_pm;
+ 		}
+ 		ecc->ccint = irq;
+ 	}
+@@ -2384,7 +2393,7 @@ static int edma_probe(struct platform_device *pdev)
+ 				       ecc);
+ 		if (ret) {
+ 			dev_err(dev, "CCERRINT (%d) failed --> %d\n", irq, ret);
+-			return ret;
++			goto err_disable_pm;
+ 		}
+ 		ecc->ccerrint = irq;
+ 	}
+@@ -2392,7 +2401,8 @@ static int edma_probe(struct platform_device *pdev)
+ 	ecc->dummy_slot = edma_alloc_slot(ecc, EDMA_SLOT_ANY);
+ 	if (ecc->dummy_slot < 0) {
+ 		dev_err(dev, "Can't allocate PaRAM dummy slot\n");
+-		return ecc->dummy_slot;
++		ret = ecc->dummy_slot;
++		goto err_disable_pm;
+ 	}
+ 
+ 	queue_priority_mapping = info->queue_priority_mapping;
+@@ -2473,6 +2483,8 @@ static int edma_probe(struct platform_device *pdev)
+ 
+ err_reg1:
+ 	edma_free_slot(ecc, ecc->dummy_slot);
++err_disable_pm:
++	pm_runtime_disable(dev);
  	return ret;
+ }
  
- err_reset:
-+	pm_runtime_disable(&i2c->dev);
- 	if (i2c->irq)
- 		free_irq(i2c->irq, wm5100);
- 	wm5100_free_gpio(i2c);
-@@ -2640,6 +2641,7 @@ static int wm5100_i2c_remove(struct i2c_client *i2c)
- {
- 	struct wm5100_priv *wm5100 = i2c_get_clientdata(i2c);
+@@ -2503,6 +2515,7 @@ static int edma_remove(struct platform_device *pdev)
+ 	if (ecc->dma_memcpy)
+ 		dma_async_device_unregister(ecc->dma_memcpy);
+ 	edma_free_slot(ecc, ecc->dummy_slot);
++	pm_runtime_disable(dev);
  
-+	pm_runtime_disable(&i2c->dev);
- 	if (i2c->irq)
- 		free_irq(i2c->irq, wm5100);
- 	wm5100_free_gpio(i2c);
+ 	return 0;
+ }
 -- 
 2.24.0
 
