@@ -2,98 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADA7100F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A97100F65
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:24:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfKRXOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 18:14:09 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41784 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726787AbfKRXOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 18:14:09 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 207so2993592pge.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 15:14:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5T5w0+YP6bAfrz0Su1CbB2mvqzr4wyLw5/A7zapB5W8=;
-        b=J/6m8q7Qfyge9NFke5to2CyxpgVaOnDFdp25MTCSGcBtZ9/8SRgj+zo+4++EH4rzhs
-         rR40I4A9SACNeE91nyIGu5NCUD60z+irLsiO+2DKJ+UjmXv1VxRYEAKWO31g/LrI1dXC
-         SD9l9tFurz/eH1ON1CbVO5iiPUToZztWGUvo0NSI22EpVzbexbid0gpnn3BFgDubECJe
-         mYr5pcSJRYXjwocQ/TTV7HOYOQ+u4MHH5w7FKMe3OiV5h52XU3hVOQlMLMmQsgftxjCg
-         F/vF5G3Hzfhg8JIm7+u9LBoGYpsj6Bd5Gqnr+MbZ2ZYoijsNLjbNatxu0RxeEfWr2uyu
-         2QSg==
-X-Gm-Message-State: APjAAAVnR3SCzZEuby6n8jNpXnEOhn1+sAw8rIfbyXed2JM6ri3SEoqq
-        T9TBJBHkz7gKBoOmMQeCUhg=
-X-Google-Smtp-Source: APXvYqyoTPvE2tSZgpER1q28KWhDz1UjiZi15VB9YtdSTtVmlj9+3Fn1ZJ99JdkY1xYXpQF0ijh5xg==
-X-Received: by 2002:a63:4104:: with SMTP id o4mr1919442pga.169.1574118848642;
-        Mon, 18 Nov 2019 15:14:08 -0800 (PST)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id 39sm562453pjo.7.2019.11.18.15.14.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2019 15:14:07 -0800 (PST)
-Subject: Re: Compilation error for target liblockdep
-To:     Zhengyuan Liu <liuzhengyuan@kylinos.cn>, mingo <mingo@kernel.org>,
-        "alexander.levin" <alexander.levin@microsoft.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <tencent_221B7250536E082573770ABA@qq.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <e3ae190e-0888-3d4a-e969-9604d4ab8695@acm.org>
-Date:   Mon, 18 Nov 2019 15:14:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726909AbfKRXX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 18:23:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53590 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726787AbfKRXX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 18:23:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E38B4AC81;
+        Mon, 18 Nov 2019 23:23:54 +0000 (UTC)
+Date:   Mon, 18 Nov 2019 15:19:35 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, will@kernel.org, oleg@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
+        bristot@redhat.com, longman@redhat.com, jack@suse.com
+Subject: Re: [PATCH 5/5] locking/percpu-rwsem: Remove the embedded rwsem
+Message-ID: <20191118231935.7wvkozof3ocubxej@linux-p48b>
+References: <20191113102115.116470462@infradead.org>
+ <20191113102855.925208237@infradead.org>
+ <20191118195304.b3d6fg4jmmj7kmfh@linux-p48b>
 MIME-Version: 1.0
-In-Reply-To: <tencent_221B7250536E082573770ABA@qq.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191118195304.b3d6fg4jmmj7kmfh@linux-p48b>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/18/19 1:20 AM, Zhengyuan Liu wrote:
-> I got a compilation error while building target liblockdep and I think I'd
-> better report it to you. The error info showed as bellow:
-> 
->          # cd SRC/tools
->          # make liblockdep
->            DESCEND  lib/lockdep
->            CC       lockdep.o
->          In file included from lockdep.c:33:0:
->          ../../../kernel/locking/lockdep.c:53:28: fatal error: linux/rcupdate.h: No such file or directory
->          compilation terminated.
->          mv: cannot stat './.lockdep.o.tmp': No such file or directory
->          /home/lzy/kernel-upstream/linux-linus-ubuntu/tools/build/Makefile.build:96: recipe for target 'lockdep.o' failed
->          make[2]: *** [lockdep.o] Error 1
->          Makefile:121: recipe for target 'liblockdep-in.o' failed
->          make[1]: *** [liblockdep-in.o] Error 2
->          Makefile:68: recipe for target 'liblockdep' failed
->          make: *** [liblockdep] Error 2
-> 
-> BTW, It was introduced by commit a0b0fd53e1e ("locking/lockdep: Free lock classes that are no longer in use").
+On Mon, 18 Nov 2019, Davidlohr Bueso wrote:
 
-(+Peter)
+>On Wed, 13 Nov 2019, Peter Zijlstra wrote:
+3>>bool __percpu_down_read(struct percpu_rw_semaphore *sem, bool try)
+>>{
+>>	if (__percpu_down_read_trylock(sem))
+>>@@ -89,20 +156,10 @@ bool __percpu_down_read(struct percpu_rw
+>>	if (try)
+>>		return false;
+>>
+>>-	/*
+>>-	 * We either call schedule() in the wait, or we'll fall through
+>>-	 * and reschedule on the preempt_enable() in percpu_down_read().
+>>-	 */
+>>-	preempt_enable_no_resched();
+>>-
+>>-	/*
+>>-	 * Avoid lockdep for the down/up_read() we already have them.
+>>-	 */
+>>-	__down_read(&sem->rw_sem);
+>>-	this_cpu_inc(*sem->read_count);
+>>-	__up_read(&sem->rw_sem);
+>>-
+>>+	preempt_enable();
+>>+	percpu_rwsem_wait(sem, /* .reader = */ true );
+>>	preempt_disable();
+>>+
+>>	return true;
+>>}
+>>EXPORT_SYMBOL_GPL(__percpu_down_read);
+>
+>Do we really need to export symbol here? This function is only called
+>from percpu-rwsem.h.
 
-Hi Zhengyuan Liu,
+Similarly, afaict we can get rid of __percpu_up_read() and put the
+slowpath all into percpu_up_read(). Also explicitly mention the
+single task nature of the writer (which is a better comment for
+the rcuwait_wake_up()).
 
-The approach of liblockdep is fragile. Every time an additional kernel 
-header is included from the lockdep code or a change is made in one of 
-the kernel headers used by lockdep, that change has to be ported to the 
-include files in the tools/lib/lockdep/include/liblockdep/ directory. I 
-think there are two possible solutions:
-- Making the changes necessary to make liblockdep build again.
-- Removing the code under tools/lib/lockdep and porting this code to the
-   new KUnit framework. If I understood the KUnit framework correctly it
-   is based on UML and hence does not require kernel headers to be
-   duplicated.
-
-I'm not sure what the best approach is.
-
-Thanks,
-
-Bart.
+diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+index f5ecf6a8a1dd..eda545f42fb8 100644
+--- a/include/linux/percpu-rwsem.h
++++ b/include/linux/percpu-rwsem.h
+@@ -43,7 +43,6 @@ is_static struct percpu_rw_semaphore name = {				\
+ 	__DEFINE_PERCPU_RWSEM(name, static)
+ 
+ extern bool __percpu_down_read(struct percpu_rw_semaphore *, bool);
+-extern void __percpu_up_read(struct percpu_rw_semaphore *);
+ 
+ static inline void percpu_down_read(struct percpu_rw_semaphore *sem)
+ {
+@@ -103,10 +102,23 @@ static inline void percpu_up_read(struct percpu_rw_semaphore *sem)
+ 	/*
+ 	 * Same as in percpu_down_read().
+ 	 */
+-	if (likely(rcu_sync_is_idle(&sem->rss)))
++	if (likely(rcu_sync_is_idle(&sem->rss))) {
+ 		__this_cpu_dec(*sem->read_count);
+-	else
+-		__percpu_up_read(sem); /* Unconditional memory barrier */
++		goto done;
++	}
++
++	/*
++	 * slowpath; reader will only ever wake a single blocked writer.
++	 */
++	smp_mb(); /* B matches C */
++	/*
++	 * In other words, if they see our decrement (presumably to
++	 * aggregate zero, as that is the only time it matters) they
++	 * will also see our critical section.
++	 */
++	__this_cpu_dec(*sem->read_count);
++	rcuwait_wake_up(&sem->writer);
++done:
+ 	preempt_enable();
+ }
+ 
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index 851038468efb..a5150a876626 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -164,21 +164,6 @@ bool __percpu_down_read(struct percpu_rw_semaphore *sem, bool try)
+ }
+ EXPORT_SYMBOL_GPL(__percpu_down_read);
+ 
+-void __percpu_up_read(struct percpu_rw_semaphore *sem)
+-{
+-	smp_mb(); /* B matches C */
+-	/*
+-	 * In other words, if they see our decrement (presumably to aggregate
+-	 * zero, as that is the only time it matters) they will also see our
+-	 * critical section.
+-	 */
+-	__this_cpu_dec(*sem->read_count);
+-
+-	/* Prod writer to re-evaluate readers_active_check() */
+-	rcuwait_wake_up(&sem->writer);
+-}
+-EXPORT_SYMBOL_GPL(__percpu_up_read);
+-
+ #define per_cpu_sum(var)						\
+ ({									\
+ 	typeof(var) __sum = 0;						\
