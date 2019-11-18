@@ -2,154 +2,659 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46DDFFCE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 02:45:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38882FFCE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 02:47:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfKRBpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 20:45:55 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:16076 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfKRBpy (ORCPT
+        id S1726822AbfKRBqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 20:46:48 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33208 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfKRBqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 20:45:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1574041555; x=1605577555;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=WNZTx9GyoL4Vd7lTFi/mb0kb7oCUmiWhKqr5z6bCBeY=;
-  b=XZW3XRAOXL61ioi4qhOg4TIp4WItnCwbHXKmkFpsBL5z6JL2W4aff38R
-   JVDF89t5fhHeSaNPD4bv2P9zuxXa3ayxXs3QDrXwIiZKeGZWjxKIeIYAp
-   V1kxH5mYuec1kxIHv/dK3I7v4cFHAvIWiztoAQpcdij8080I7VXxFODy0
-   NnUlzKPTodZ+NsM9H/l5+ky6ZfmYIEhE5mSoDLj8BP4mocH61UDhiNgVa
-   KY3q6lFvVP9xNe0SynfvhTaoMdO6gYALOa5YBgn13YfmdutzSiw9+IcUa
-   sRZegwaIdEWb1f3LOjZEERXdeYl5KUPw/T7HHUT3vG8l6RtPdLwbwh2h+
-   w==;
-IronPort-SDR: QVAehKPDbbPrMVSnHqbo7FAF31zVOt8tU74SrcByLWob+oWYilZ7hq32DDiY+jOvHV+o3hBSDR
- iD8lgcx8tcyx00U5Eb4MSfWt4Xl63D0v22yA8R2rsFys3TXHRMOgYBFFjGREMo1wBR5B+D5nEg
- bcfDBtQXeEbcZV78oWGQTpo5C+3a9VwqPfv3S2iafBgeXbovO0ryqWztge7MfSo7sy0HjlSbLK
- JA2UwzvANMGji/XKj9iYmHd+ZPTC6igCOc/NshluayFytgh8W6kQ3X3BigR96C9unIAdZHryyu
- F6I=
-X-IronPort-AV: E=Sophos;i="5.68,318,1569254400"; 
-   d="scan'208";a="124028463"
-Received: from mail-sn1nam01lp2056.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.56])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Nov 2019 09:45:53 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Gbbn+wknnClHXwU8wRrXEdC3+dIfwmlcsUeRA5f2cAf5302vd27YQyoDnfyT5Hh+m1zeXHuo4VGGKbrOWezk1jEj1kq33KP11AQlUDuQ8AYVkDFfPl7/yheOIUPwe/LNsa6LHLNYa+DmiVIQIBg/1RP87TsQ4zTcmpqui5LJRcHHZ6GqrCQQIsQBJWwsojmcfj9dkQz+gremPnINRBiJevA/h/jz7vbtcbed1eVoc80aMKkT9G42n5fYwB7bnlhiM+omQRwslQDT20tBiqPzRzNe6kZndcLIYMKa9Nmi+/+6lYbMVRwXwB0Uz99ThokANnk9/8wRycOiAUYpyFOruA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JvX1t/gr23CyA5gA/ly4kF2WbeaeJFifNwNj94j15Vg=;
- b=O1f1z8HYO6pDBjVf/JcmZAuJKCj2+6oktcJgB/Zupgj72fck4GjlXMtsTE+EE992xwFRoNNoPmp9vr3TRquIP9Kg/7GjpnCdQl4+7Ya+AWgopD3qaygcwoCa1oyDiqTQ/BbDtkSlPADx/iYk6a1I1sZdGBblGOkJpoVxaFszmUhUe7A3O7TtnVaKQTrIG7HTVV6AoNKu4c+adNQuhLGXzd8oIQALvF475oz5wc+/k7evhxVCRns5cotEeFUe8ZG79wmZJrpErUxNrfofaGEg4nbcwzSmYDO/bEJ7v/OkIX6fa51t4TvY38j3UfwglbcHbI0+HAsnDQub6cigpgxlTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Sun, 17 Nov 2019 20:46:47 -0500
+Received: by mail-pg1-f195.google.com with SMTP id h27so8826277pgn.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 17:46:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JvX1t/gr23CyA5gA/ly4kF2WbeaeJFifNwNj94j15Vg=;
- b=j1EOXyNuQc/SCGmhjrwnGmf8zYvst5ZJQ8rxpO/kifUHl7bI6cOOOsMBxAxshomzcPgnzcNtaOX7MJTnGCQcXuid6E6GSTDb75HJCOyQh+6whK19OLWh5S7T0TSJHPRCfWgIwJNCyNwG0lNpQ2cmnbWpSUVvcm0hfogpEcI8dLw=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.59.16) by
- BYAPR04MB5864.namprd04.prod.outlook.com (20.179.58.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.28; Mon, 18 Nov 2019 01:45:51 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::4176:5eda:76a2:3c40]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::4176:5eda:76a2:3c40%7]) with mapi id 15.20.2451.029; Mon, 18 Nov 2019
- 01:45:51 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Frederick Lawler <fred@fredlawl.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>
-Subject: Re: [PATCH v2 2/4] skd: Replace magic numbers with PCI constants
-Thread-Topic: [PATCH v2 2/4] skd: Replace magic numbers with PCI constants
-Thread-Index: AQHVnaYi33hLetsYh0O/iIIdyDhL/Q==
-Date:   Mon, 18 Nov 2019 01:45:51 +0000
-Message-ID: <BYAPR04MB58162980CA2A2244626C999DE74D0@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20191118002057.9596-1-fred@fredlawl.com>
- <20191118002057.9596-3-fred@fredlawl.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [199.255.47.8]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b5231936-d835-4b5a-336c-08d76bc90b02
-x-ms-traffictypediagnostic: BYAPR04MB5864:
-x-microsoft-antispam-prvs: <BYAPR04MB5864815FA95060EFDB516DC8E74D0@BYAPR04MB5864.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1148;
-x-forefront-prvs: 0225B0D5BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(136003)(346002)(366004)(39860400002)(376002)(199004)(189003)(186003)(3846002)(71190400001)(6436002)(2501003)(26005)(7696005)(8936002)(52536014)(99286004)(8676002)(76116006)(102836004)(66946007)(66066001)(91956017)(86362001)(66446008)(66556008)(66476007)(64756008)(53546011)(478600001)(6506007)(33656002)(446003)(256004)(6246003)(14454004)(316002)(71200400001)(76176011)(81156014)(81166006)(5660300002)(2906002)(55016002)(476003)(4326008)(9686003)(486006)(74316002)(54906003)(7736002)(110136005)(305945005)(25786009)(229853002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5864;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZNuLWPWJfbTju6b9J7yPiCMA0CO7HacfRqI+4a7FbZ5uGJIaz7z86esfm5tNbpztKxLJD3M0XpA1Os8hw1tz+5wsXpbZI97W1orK0JgBR2v1PXKTY95Y5QME8NbeShS4EMi6KaJB3U8RCywlGu7YhNM05f8YY0mh+0wZNCzOcBgFq2NkrfMLQhwKUyVcXcqGy7mna8Q78uLZ3KvuThwvjul2pb6pUzYYvlRBvAtJA41pD8INvgztTLyyL2ULDTAn0bHPEXRZtFTV39cOK0Tax3Zs00RCpXRIOi/yEvdTmHUX7D+6S2iTIvjTP3BDFykul44epxEAOsK9RTZBHR09yKpdn06sbdeBgluf7rBdW9mPdM8RD4DC52Jmo1kf7JvFx1XSxPNXZ5yzIUJh2lzB45zcA79fR47rvt3BswRuKe8QvBNagGu+NSqDgtPi5pkM
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jP3ad7NYj5eP5DNOPOUCVEwxQvU1ZecJiisLTW8VvgM=;
+        b=IAWda5OBIKUw7uZWNxS5A6e2XCalbHu7OfnVK4V4FKp0LWsGP/rDxLdCqL/OkWHGlo
+         TA3QKiob4dwzwEMAEQEWKiFrOrpJ9lEA8OfvwpfZisAf2osb8S5QteA4uqYsAWkAfXxB
+         sbulqez973+spklowG/HuYlztvup23vrE8S4rkBu7QRYuhycNgIRKNCvfssjTsD56/oe
+         /R/riHUIIndM46uCY4KVQmYqi1kVPvc1aFSTJuF3mf7VOh0JipZVAe9A44Smy2/z2GvI
+         MtiC8GKe+aWPtkGen/X1llXp3jioIlJTUMUpCqymPvc2dWcCysBg+27DysFVeIVOFyLd
+         ZGwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jP3ad7NYj5eP5DNOPOUCVEwxQvU1ZecJiisLTW8VvgM=;
+        b=ItaHPFOgp67DQUYPUpTuLbVNEHPEQgnZ3ko/GgsTTrnZBWvPDK1mWAaW4hd8f6VSQs
+         /0RLT4QvxAFLV0P/4XE4ib+0hs1RArZPPbs7jKCAQIloVyxnglhEdgz0ufVK26lU3nbY
+         iihphFXYSHhKtFF7kuYs0PcUn6qljJFYBlK6kKuXhIJ4kjQneMt7ODO/qVO7Nl5QUTaP
+         MCHkk3yzwRiU7I6aezaLpKAOpwe/yK1u7hdmRkinb9xanIGtvwqCgnVvm1U4vC53j1S4
+         VQiEBOCSDtsWM4SMnpOBWF7EMiKF3gNzHAheDye27qcQNz5Iyb2saoxKPNeKOBaRmmfg
+         /guw==
+X-Gm-Message-State: APjAAAVB3hPrZGIBkyv6fHx9SUIroiJUxAcS+GWrC0wVg62+dN7WdvPp
+        djrY+3xXPXYaMAhJQgbPvGw=
+X-Google-Smtp-Source: APXvYqy4CWvtrVEKsHK5KbLsXkpXxKFX3zJY3COmMxj32w6c2+CRDwC0sy+e4wwNds1+oAKzLewgmQ==
+X-Received: by 2002:a65:6081:: with SMTP id t1mr956871pgu.391.1574041606392;
+        Sun, 17 Nov 2019 17:46:46 -0800 (PST)
+Received: from gmail.com ([2601:600:817f:a132:df3e:521d:99d5:710d])
+        by smtp.gmail.com with ESMTPSA id y1sm20047052pfq.138.2019.11.17.17.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2019 17:46:45 -0800 (PST)
+Date:   Sun, 17 Nov 2019 17:46:42 -0800
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>
+Subject: Re: [PATCH v11 2/2] selftests: add tests for clone3() with *set_tid
+Message-ID: <20191118014642.GC391304@gmail.com>
+References: <20191115123621.142252-1-areber@redhat.com>
+ <20191115123621.142252-2-areber@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5231936-d835-4b5a-336c-08d76bc90b02
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2019 01:45:51.1677
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QN6X5PKPFCC+FxOJ1Vg05kVwzZjEaF5RDAQLYGuDkZoCkZmUMBNGQgMZzn/HeJ4fLTb+CQfJFhCsZ4nwcXtH2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5864
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20191115123621.142252-2-areber@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/11/18 9:21, Frederick Lawler wrote:=0A=
-> Readability was improved by replacing pci_read_config_word() with=0A=
-> pcie_capability_read_word(). Take that a step further by replacing magic=
-=0A=
-> numbers with PCI reg constants.=0A=
-> =0A=
-> No functional change intended.=0A=
-> =0A=
-> Signed-off-by: Frederick Lawler <fred@fredlawl.com>=0A=
-> ---=0A=
-> v2=0A=
-> - Added this patch=0A=
-> ---=0A=
->  drivers/block/skd_main.c | 8 +++++---=0A=
->  1 file changed, 5 insertions(+), 3 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c=0A=
-> index f25f6ef6b4c7..7f8243573ad9 100644=0A=
-> --- a/drivers/block/skd_main.c=0A=
-> +++ b/drivers/block/skd_main.c=0A=
-> @@ -3141,9 +3141,11 @@ static char *skd_pci_info(struct skd_device *skdev=
-, char *str)=0A=
->  		char lwstr[6];=0A=
->  		uint16_t pcie_lstat, lspeed, lwidth;=0A=
->  =0A=
-> -		pcie_capability_read_word(skdev->pdev, 0x12, &pcie_lstat);=0A=
-> -		lspeed =3D pcie_lstat & (0xF);=0A=
-> -		lwidth =3D (pcie_lstat & 0x3F0) >> 4;=0A=
-> +		pcie_capability_read_word(skdev->pdev, PCI_EXP_LNKSTA,=0A=
-> +					  &pcie_lstat);=0A=
-> +		lspeed =3D pcie_lstat & PCI_EXP_LNKSTA_CLS;=0A=
-> +		lwidth =3D (pcie_lstat & PCI_EXP_LNKSTA_NLW) >>=0A=
-> +			 PCI_EXP_LNKSTA_NLW_SHIFT;=0A=
->  =0A=
->  		if (lspeed =3D=3D 1)=0A=
->  			strcat(str, "2.5GT/s ");=0A=
-> =0A=
-=0A=
-Looks OK to me. But since this is changing again one line that is added=0A=
-by patch 1/4, why not make patch 1 and this patch changes a single patch ?=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Fri, Nov 15, 2019 at 01:36:21PM +0100, Adrian Reber wrote:
+> This tests clone3() with *set_tid to see if all desired PIDs are working
+> as expected. The tests are trying multiple invalid input parameters as
+> well as creating processes while specifying a certain PID in multiple
+> PID namespaces at the same time.
+> 
+> Additionally this moves common clone3() test code into clone3_selftests.h.
+> 
+> Signed-off-by: Adrian Reber <areber@redhat.com>
+> ---
+> v9:
+>  - applied all changes from Christian's review (except using the
+>    NSpid: parsing code from selftests/pidfd/pidfd_fdinfo_test.c)
+> 
+> v10:
+>  - added even more '\n' and include file fixes (Christian)
+> 
+> v11:
+>  - added more return code checking at multiple places (Andrei)
+>  - also add set_tid/set_tid_size to internal struct (Andrei)
+> ---
+>  tools/testing/selftests/clone3/.gitignore     |   1 +
+>  tools/testing/selftests/clone3/Makefile       |   2 +-
+>  tools/testing/selftests/clone3/clone3.c       |   8 +-
+>  .../selftests/clone3/clone3_clear_sighand.c   |  20 +-
+>  .../selftests/clone3/clone3_selftests.h       |  35 ++
+>  .../testing/selftests/clone3/clone3_set_tid.c | 381 ++++++++++++++++++
+>  6 files changed, 421 insertions(+), 26 deletions(-)
+>  create mode 100644 tools/testing/selftests/clone3/clone3_selftests.h
+>  create mode 100644 tools/testing/selftests/clone3/clone3_set_tid.c
+> 
+> diff --git a/tools/testing/selftests/clone3/.gitignore b/tools/testing/selftests/clone3/.gitignore
+> index 2a30ae18b06e..0dc4f32c6cb8 100644
+> --- a/tools/testing/selftests/clone3/.gitignore
+> +++ b/tools/testing/selftests/clone3/.gitignore
+> @@ -1,2 +1,3 @@
+>  clone3
+>  clone3_clear_sighand
+> +clone3_set_tid
+> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+> index eb26eb793c80..cf976c732906 100644
+> --- a/tools/testing/selftests/clone3/Makefile
+> +++ b/tools/testing/selftests/clone3/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  CFLAGS += -g -I../../../../usr/include/
+>  
+> -TEST_GEN_PROGS := clone3 clone3_clear_sighand
+> +TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
+>  
+>  include ../lib.mk
+> diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
+> index 0f8a9ef40117..4669b3d418e7 100644
+> --- a/tools/testing/selftests/clone3/clone3.c
+> +++ b/tools/testing/selftests/clone3/clone3.c
+> @@ -18,6 +18,7 @@
+>  #include <sched.h>
+>  
+>  #include "../kselftest.h"
+> +#include "clone3_selftests.h"
+>  
+>  /*
+>   * Different sizes of struct clone_args
+> @@ -35,11 +36,6 @@ enum test_mode {
+>  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
+>  };
+>  
+> -static pid_t raw_clone(struct clone_args *args, size_t size)
+> -{
+> -	return syscall(__NR_clone3, args, size);
+> -}
+> -
+>  static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+>  {
+>  	struct clone_args args = {
+> @@ -83,7 +79,7 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+>  
+>  	memcpy(&args_ext.args, &args, sizeof(struct clone_args));
+>  
+> -	pid = raw_clone((struct clone_args *)&args_ext, size);
+> +	pid = sys_clone3((struct clone_args *)&args_ext, size);
+>  	if (pid < 0) {
+>  		ksft_print_msg("%s - Failed to create new process\n",
+>  				strerror(errno));
+> diff --git a/tools/testing/selftests/clone3/clone3_clear_sighand.c b/tools/testing/selftests/clone3/clone3_clear_sighand.c
+> index 0d957be1bdc5..456783ad19d6 100644
+> --- a/tools/testing/selftests/clone3/clone3_clear_sighand.c
+> +++ b/tools/testing/selftests/clone3/clone3_clear_sighand.c
+> @@ -14,30 +14,12 @@
+>  #include <sys/wait.h>
+>  
+>  #include "../kselftest.h"
+> +#include "clone3_selftests.h"
+>  
+>  #ifndef CLONE_CLEAR_SIGHAND
+>  #define CLONE_CLEAR_SIGHAND 0x100000000ULL
+>  #endif
+>  
+> -#ifndef __NR_clone3
+> -#define __NR_clone3 -1
+> -struct clone_args {
+> -	__aligned_u64 flags;
+> -	__aligned_u64 pidfd;
+> -	__aligned_u64 child_tid;
+> -	__aligned_u64 parent_tid;
+> -	__aligned_u64 exit_signal;
+> -	__aligned_u64 stack;
+> -	__aligned_u64 stack_size;
+> -	__aligned_u64 tls;
+> -};
+> -#endif
+> -
+> -static pid_t sys_clone3(struct clone_args *args, size_t size)
+> -{
+> -	return syscall(__NR_clone3, args, size);
+> -}
+> -
+>  static void test_clone3_supported(void)
+>  {
+>  	pid_t pid;
+> diff --git a/tools/testing/selftests/clone3/clone3_selftests.h b/tools/testing/selftests/clone3/clone3_selftests.h
+> new file mode 100644
+> index 000000000000..1a270390766a
+> --- /dev/null
+> +++ b/tools/testing/selftests/clone3/clone3_selftests.h
+> @@ -0,0 +1,35 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef _CLONE3_SELFTESTS_H
+> +#define _CLONE3_SELFTESTS_H
+> +
+> +#define _GNU_SOURCE
+> +#include <sched.h>
+> +#include <stdint.h>
+> +#include <syscall.h>
+> +#include <linux/types.h>
+> +
+> +#define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
+> +
+> +#ifndef __NR_clone3
+> +#define __NR_clone3 -1
+> +struct clone_args {
+> +	__aligned_u64 flags;
+> +	__aligned_u64 pidfd;
+> +	__aligned_u64 child_tid;
+> +	__aligned_u64 parent_tid;
+> +	__aligned_u64 exit_signal;
+> +	__aligned_u64 stack;
+> +	__aligned_u64 stack_size;
+> +	__aligned_u64 tls;
+> +	__aligned_u64 set_tid;
+> +	__aligned_u64 set_tid_size;
+> +};
+> +#endif
+> +
+> +static pid_t sys_clone3(struct clone_args *args, size_t size)
+> +{
+> +	return syscall(__NR_clone3, args, size);
+> +}
+> +
+> +#endif /* _CLONE3_SELFTESTS_H */
+> diff --git a/tools/testing/selftests/clone3/clone3_set_tid.c b/tools/testing/selftests/clone3/clone3_set_tid.c
+> new file mode 100644
+> index 000000000000..3480e1c46983
+> --- /dev/null
+> +++ b/tools/testing/selftests/clone3/clone3_set_tid.c
+> @@ -0,0 +1,381 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Based on Christian Brauner's clone3() example.
+> + * These tests are assuming to be running in the host's
+> + * PID namespace.
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <linux/types.h>
+> +#include <linux/sched.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <stdbool.h>
+> +#include <sys/syscall.h>
+> +#include <sys/types.h>
+> +#include <sys/un.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <sched.h>
+> +
+> +#include "../kselftest.h"
+> +#include "clone3_selftests.h"
+> +
+> +#ifndef MAX_PID_NS_LEVEL
+> +#define MAX_PID_NS_LEVEL 32
+> +#endif
+> +
+> +static int pipe_1[2];
+> +static int pipe_2[2];
+> +
+> +static int call_clone3_set_tid(pid_t *set_tid,
+> +			       size_t set_tid_size,
+> +			       int flags,
+> +			       int expected_pid,
+> +			       bool wait_for_it)
+> +{
+> +	int status;
+> +	pid_t pid = -1;
+> +
+> +	struct clone_args args = {
+> +		.flags = flags,
+> +		.exit_signal = SIGCHLD,
+> +		.set_tid = ptr_to_u64(set_tid),
+> +		.set_tid_size = set_tid_size,
+> +	};
+> +
+> +	pid = sys_clone3(&args, sizeof(struct clone_args));
+> +	if (pid < 0) {
+> +		ksft_print_msg("%s - Failed to create new process\n",
+> +			       strerror(errno));
+> +		return -errno;
+> +	}
+> +
+> +	if (pid == 0) {
+> +		int ret;
+> +		char tmp = 0;
+> +		int exit_code = EXIT_SUCCESS;
+> +
+> +		ksft_print_msg("I am the child, my PID is %d (expected %d)\n",
+> +			       getpid(), set_tid[0]);
+> +		if (wait_for_it) {
+> +			ksft_print_msg("[%d] Child is ready and waiting\n",
+> +				       getpid());
+> +
+> +			/* Signal the parent that the child is ready */
+> +			close(pipe_1[0]);
+> +			ret = write(pipe_1[1], &tmp, 1);
+> +			if (ret != 1) {
+> +				ksft_print_msg(
+> +					"Writing to pipe returned %d", ret);
+> +				exit_code = EXIT_FAILURE;
+> +			}
+> +			close(pipe_1[1]);
+> +			close(pipe_2[1]);
+> +			ret = read(pipe_2[0], &tmp, 1);
+> +			if (ret != 1) {
+> +				ksft_print_msg(
+> +					"Reading from pipe returned %d", ret);
+> +				exit_code = EXIT_FAILURE;
+> +			}
+> +			close(pipe_2[0]);
+> +		}
+> +
+> +		if (set_tid[0] != getpid())
+> +			_exit(EXIT_FAILURE);
+> +		_exit(exit_code);
+> +	}
+> +
+> +	if (expected_pid == 0 || expected_pid == pid) {
+> +		ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
+> +			       getpid(), pid);
+> +	} else {
+> +		ksft_print_msg(
+> +			"Expected child pid %d does not match actual pid %d\n",
+> +			expected_pid, pid);
+> +		return -1;
+> +	}
+> +
+> +	if (waitpid(pid, &status, 0) < 0) {
+> +		ksft_print_msg("Child returned %s\n", strerror(errno));
+> +		return -errno;
+> +	}
+> +
+> +	if (!WIFEXITED(status))
+> +		return -1;
+> +
+> +	return WEXITSTATUS(status);
+> +}
+> +
+> +static void test_clone3_set_tid(pid_t *set_tid,
+> +				size_t set_tid_size,
+> +				int flags,
+> +				int expected,
+> +				int expected_pid,
+> +				bool wait_for_it)
+> +{
+> +	int ret;
+> +
+> +	ksft_print_msg(
+> +		"[%d] Trying clone3() with CLONE_SET_TID to %d and 0x%x\n",
+> +		getpid(), set_tid[0], flags);
+> +	ret = call_clone3_set_tid(set_tid, set_tid_size, flags, expected_pid,
+> +				  wait_for_it);
+> +	ksft_print_msg(
+> +		"[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
+> +		getpid(), set_tid[0], ret, expected);
+> +	if (ret != expected)
+> +		ksft_test_result_fail(
+> +			"[%d] Result (%d) is different than expected (%d)\n",
+> +			getpid(), ret, expected);
+> +	else
+> +		ksft_test_result_pass(
+> +			"[%d] Result (%d) matches expectation (%d)\n",
+> +			getpid(), ret, expected);
+> +}
+> +int main(int argc, char *argv[])
+> +{
+> +	FILE *f;
+> +	char buf;
+> +	char *line;
+> +	int status;
+> +	int ret = -1;
+> +	size_t len = 0;
+> +	int pid_max = 0;
+> +	uid_t uid = getuid();
+> +	char proc_path[100] = {0};
+> +	pid_t pid, ns1, ns2, ns3, ns_pid;
+> +	pid_t set_tid[MAX_PID_NS_LEVEL * 2];
+> +
+> +	if (pipe(pipe_1) < 0 || pipe(pipe_2) < 0)
+> +		ksft_exit_fail_msg("pipe() failed\n");
+> +
+> +	ksft_print_header();
+> +	ksft_set_plan(27);
+> +
+> +	f = fopen("/proc/sys/kernel/pid_max", "r");
+> +	if (f == NULL)
+> +		ksft_exit_fail_msg(
+> +			"%s - Could not open /proc/sys/kernel/pid_max\n",
+> +			strerror(errno));
+> +	fscanf(f, "%d", &pid_max);
+> +	fclose(f);
+> +	ksft_print_msg("/proc/sys/kernel/pid_max %d\n", pid_max);
+> +
+> +	/* Try invalid settings */
+> +	memset(&set_tid, 0, sizeof(set_tid));
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL + 1, 0, -EINVAL, 0, 0);
+> +
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2, 0, -EINVAL, 0, 0);
+> +
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2 + 1, 0,
+> +			-EINVAL, 0, 0);
+> +
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 42, 0, -EINVAL, 0, 0);
+> +
+> +	/*
+> +	 * This can actually work if this test running in a MAX_PID_NS_LEVEL - 1
+> +	 * nested PID namespace.
+> +	 */
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL - 1, 0, -EINVAL, 0, 0);
+> +
+> +	memset(&set_tid, 0xff, sizeof(set_tid));
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL + 1, 0, -EINVAL, 0, 0);
+> +
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2, 0, -EINVAL, 0, 0);
+> +
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 2 + 1, 0,
+> +			-EINVAL, 0, 0);
+> +
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL * 42, 0, -EINVAL, 0, 0);
+> +
+> +	/*
+> +	 * This can actually work if this test running in a MAX_PID_NS_LEVEL - 1
+> +	 * nested PID namespace.
+> +	 */
+> +	test_clone3_set_tid(set_tid, MAX_PID_NS_LEVEL - 1, 0, -EINVAL, 0, 0);
+> +
+> +	memset(&set_tid, 0, sizeof(set_tid));
+> +	/* Try with an invalid PID */
+> +	set_tid[0] = 0;
+> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
+> +
+> +	set_tid[0] = -1;
+> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
+> +
+> +	/* Claim that the set_tid array actually contains 2 elements. */
+> +	test_clone3_set_tid(set_tid, 2, 0, -EINVAL, 0, 0);
+> +
+> +	/* Try it in a new PID namespace */
+> +	if (uid == 0)
+> +		test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, -EINVAL, 0, 0);
+> +	else
+> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
+> +
+> +	/* Try with a valid PID (1) this should return -EEXIST. */
+> +	set_tid[0] = 1;
+> +	if (uid == 0)
+> +		test_clone3_set_tid(set_tid, 1, 0, -EEXIST, 0, 0);
+> +	else
+> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
+> +
+> +	/* Try it in a new PID namespace */
+> +	if (uid == 0)
+> +		test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, 0, 0, 0);
+> +	else
+> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
+> +
+> +	/* pid_max should fail everywhere */
+> +	set_tid[0] = pid_max;
+> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
+> +
+> +	if (uid == 0)
+> +		test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, -EINVAL, 0, 0);
+> +	else
+> +		ksft_test_result_skip("Clone3() with set_tid requires root\n");
+> +
+> +	if (uid != 0) {
+> +		/*
+> +		 * All remaining tests require root. Tell the framework
+> +		 * that all those tests are skipped as non-root.
+> +		 */
+> +		ksft_cnt.ksft_xskip += ksft_plan - ksft_test_num();
+> +		goto out;
+> +	}
+> +
+> +	/* Find the current active PID */
+> +	pid = fork();
+> +	if (pid == 0) {
+> +		ksft_print_msg("Child has PID %d\n", getpid());
+> +		_exit(EXIT_SUCCESS);
+> +	}
+> +	if (waitpid(pid, &status, 0) < 0)
+> +		ksft_exit_fail_msg("Waiting for child %d failed", pid);
+> +
+> +	/* After the child has finished, its PID should be free. */
+> +	set_tid[0] = pid;
+> +	test_clone3_set_tid(set_tid, 1, 0, 0, 0, 0);
+> +
+> +	/* This should fail as there is no PID 1 in that namespace */
+> +	test_clone3_set_tid(set_tid, 1, CLONE_NEWPID, -EINVAL, 0, 0);
+> +
+> +	/*
+> +	 * Creating a process with PID 1 in the newly created most nested
+> +	 * PID namespace and PID 'pid' in the parent PID namespace. This
+> +	 * needs to work.
+> +	 */
+> +	set_tid[0] = 1;
+> +	set_tid[1] = pid;
+> +	test_clone3_set_tid(set_tid, 2, CLONE_NEWPID, 0, pid, 0);
+> +
+> +	ksft_print_msg("unshare PID namespace\n");
+> +	if (unshare(CLONE_NEWPID) == -1)
+> +		ksft_exit_fail_msg("unshare(CLONE_NEWPID) failed: %s\n",
+> +				strerror(errno));
+> +
+> +	set_tid[0] = pid;
+> +
+> +	/* This should fail as there is no PID 1 in that namespace */
+> +	test_clone3_set_tid(set_tid, 1, 0, -EINVAL, 0, 0);
+> +
+> +	/* Let's create a PID 1 */
+> +	ns_pid = fork();
+> +	if (ns_pid == 0) {
+> +		ksft_print_msg("Child in PID namespace has PID %d\n", getpid());
+> +		set_tid[0] = 2;
+> +		test_clone3_set_tid(set_tid, 1, 0, 0, 2, 0);
+> +
+> +		set_tid[0] = 1;
+> +		set_tid[1] = -1;
+> +		set_tid[2] = pid;
+> +		/* This should fail as there is invalid PID at level '1'. */
+> +		test_clone3_set_tid(set_tid, 3, CLONE_NEWPID, -EINVAL, 0, 0);
+> +
+> +		set_tid[0] = 1;
+> +		set_tid[1] = 42;
+> +		set_tid[2] = pid;
+> +		/*
+> +		 * This should fail as there are not enough active PID
+> +		 * namespaces. Again assuming this is running in the host's
+> +		 * PID namespace. Not yet nested.
+> +		 */
+> +		test_clone3_set_tid(set_tid, 4, CLONE_NEWPID, -EINVAL, 0, 0);
+> +
+> +		/*
+> +		 * This should work and from the parent we should see
+> +		 * something like 'NSpid:	pid	42	1'.
+> +		 */
+> +		test_clone3_set_tid(set_tid, 3, CLONE_NEWPID, 0, 42, true);
+> +
+> +		_exit(ksft_cnt.ksft_pass);
+> +	}
+> +
+> +	close(pipe_1[1]);
+> +	close(pipe_2[0]);
+> +	while (read(pipe_1[0], &buf, 1) > 0) {
+> +		ksft_print_msg("[%d] Child is ready and waiting\n", getpid());
+> +		break;
+> +	}
+> +
+> +	snprintf(proc_path, sizeof(proc_path), "/proc/%d/status", pid);
+> +	f = fopen(proc_path, "r");
+> +	if (f == NULL)
+> +		ksft_exit_fail_msg(
+> +			"%s - Could not open %s\n",
+> +			strerror(errno), proc_path);
+> +
+> +	while (getline(&line, &len, f) != -1) {
+> +		if (strstr(line, "NSpid")) {
+> +			int i;
+> +
+> +			/* Verify that all generated PIDs are as expected. */
+> +			i = sscanf(line, "NSpid:\t%d\t%d\t%d",
+> +				   &ns3, &ns2, &ns1);
+> +			if (i != 3) {
+> +				ksft_print_msg(
+> +					"Unexpected 'NSPid:' entry: %s",
+> +					line);
+> +				ns1 = ns2 = ns3 = 0;
+> +			}
+> +			break;
+> +		}
+> +	}
+> +	fclose(f);
+> +	free(line);
+> +	close(pipe_2[0]);
+> +
+> +	/* Tell the clone3()'d child to finish. */
+> +	write(pipe_2[1], &buf, 1);
+> +	close(pipe_2[1]);
+> +
+> +	if (waitpid(ns_pid, &status, 0) < 0) {
+> +		ksft_print_msg("Child returned %s\n", strerror(errno));
+> +		ret = -errno;
+> +		goto out;
+> +	}
+> +
+> +	if (!WIFEXITED(status))
+> +		ksft_test_result_fail("Child error\n");
+> +
+> +	if (WEXITSTATUS(status))
+> +		/*
+> +		 * Update the number of total tests with the tests from the
+> +		 * child processes.
+> +		 */
+> +		ksft_cnt.ksft_pass = WEXITSTATUS(status);
+
+I just found that accounting of failed test cases in this test doesn't
+work properly. And if one of the test cases fails in a child process,
+the whole test will have the pass status.
+
+
+For example, if we add a fake fail:
+
+diff --git a/tools/testing/selftests/clone3/clone3_set_tid.c b/tools/testing/selftests/clone3/clone3_set_tid.c
+index 3480e1c46..82c99c42f 100644
+--- a/tools/testing/selftests/clone3/clone3_set_tid.c
++++ b/tools/testing/selftests/clone3/clone3_set_tid.c
+@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
+                 * namespaces. Again assuming this is running in the host's
+                 * PID namespace. Not yet nested.
+                 */
+-               test_clone3_set_tid(set_tid, 4, CLONE_NEWPID, -EINVAL, 0, 0);
++               test_clone3_set_tid(set_tid, 4, CLONE_NEWPID, -EPERM, 0, 0);
+ 
+                /*
+                 * This should work and from the parent we should see
+
+$ make run_tests 
+....
+# ok 21 [21104] Result (0) matches expectation (0)
+# # unshare PID namespace
+# # [21104] Trying clone3() with CLONE_SET_TID to 21106 and 0x0
+# # Invalid argument - Failed to create new process
+# # [21104] clone3() with CLONE_SET_TID 21106 says :-22 - expected -22
+# ok 22 [21104] Result (-22) matches expectation (-22)
+# # [21104] Child is ready and waiting
+# ok 26 PIDs in all namespaces as expected (21106,42,1)
+# # Planned tests != run tests (27 != 26)
+# # Pass 26 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+ok 3 selftests: clone3: clone3_set_tid
+
+
+> +
+> +	if (ns3 == pid && ns2 == 42 && ns1 == 1)
+> +		ksft_test_result_pass(
+> +			"PIDs in all namespaces as expected (%d,%d,%d)\n",
+> +			ns3, ns2, ns1);
+> +	else
+> +		ksft_test_result_fail(
+> +			"PIDs in all namespaces not as expected (%d,%d,%d)\n",
+> +			ns3, ns2, ns1);
+> +out:
+> +	ret = 0;
+> +
+> +	return !ret ? ksft_exit_pass() : ksft_exit_fail();
+> +}
+> -- 
+> 2.23.0
+> 
