@@ -2,106 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92559100631
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:10:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78E67100641
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:12:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfKRNKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 08:10:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:34538 "EHLO foss.arm.com"
+        id S1726761AbfKRNMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 08:12:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbfKRNJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:09:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D3681FB;
-        Mon, 18 Nov 2019 05:09:58 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E5563F6C4;
-        Mon, 18 Nov 2019 05:09:57 -0800 (PST)
-Date:   Mon, 18 Nov 2019 13:09:56 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-        lgirdwood@gmail.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        robh+dt@kernel.org
-Subject: Applied "ASoC: pcm3168a: Document optional RST gpio" to the asoc tree
-In-Reply-To: <20191113124734.27984-2-peter.ujfalusi@ti.com>
-Message-Id: <applied-20191113124734.27984-2-peter.ujfalusi@ti.com>
-X-Patchwork-Hint: ignore
+        id S1726178AbfKRNMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 08:12:42 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F9C52071C;
+        Mon, 18 Nov 2019 13:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574082761;
+        bh=WMe0I3EG4ps7xAe3DkVvXD3fbqLLGFm0wowZjHciiQY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=z/L6foljQByrauIjOI06JjV8sgoV4yE3qF1V9DNieqEgkqN2ps64CE18YqzmwQv4i
+         z2mVqVGNQpcTGHmH5ckJdaAtPTEQeIuWWKWG31lyolu1lbZ5YeSb180Ee89ofrta0r
+         xBOPuP6/qICXsw0aMUdRPj+r3qCI7L7Hq2m9bZ4w=
+Message-ID: <3dc2df0ba5776fb0f7aaac3a099a938823ed0ebf.camel@kernel.org>
+Subject: Re: [RFC PATCH v3] ceph: add new obj copy OSD Op
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Gregory Farnum <gfarnum@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 18 Nov 2019 08:12:39 -0500
+In-Reply-To: <20191118120935.7013-1-lhenriques@suse.com>
+References: <20191118120935.7013-1-lhenriques@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, 2019-11-18 at 12:09 +0000, Luis Henriques wrote:
+> Hi,
+> 
+> Before going ahead with a pull-request for ceph I would like to make sure
+> we're all on the same page regarding the final fix for this problem.
+> Thus, following this email, I'm sending 2 patches: one for ceph OSDs and
+> the another for the kernel client.
+> 
+> * osd: add new 'copy-from-notrunc' operation
+>   This patch shall be applied to ceph master after reverting commit
+>   ba152435fd85 ("osd: add flag to prevent truncate_seq copy in copy-from
+>   operation").  It adds a new operation that will be exactly the same as
+>   the original 'copy-from' operation, but with the extra 2 parameters
+>   (truncate_{seq,size})
+> 
+> * ceph: switch copy_file_range to 'copy-from-notrunc' operation
+>   This will make the kernel client use the new OSD op in
+>   copy_file_range.  One extra thing that could probably be added is
+>   changing the mount options to NOCOPYFROM if the first call to
+>   ceph_osdc_copy_from() fails.
+> 
 
-   ASoC: pcm3168a: Document optional RST gpio
+I probably wouldn't change the mount options to be different from what
+was initially specified. How about just disable copy_file_range
+internally for that superblock, and then pr_notice a message that says
+that copy_file_range is being autodisabled. If they mount with '-o
+nocopyfrom' that will make the warning go away.
 
-has been applied to the asoc tree at
+> Does this look good, or did I missed something from the previous
+> discussion?
+> 
+> (One advantage of this approach: the OSD patch can be easily backported!)
+> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From cdacc761dae1cbd6475ac79f0e732f2b1ca021e0 Mon Sep 17 00:00:00 2001
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Wed, 13 Nov 2019 14:47:33 +0200
-Subject: [PATCH] ASoC: pcm3168a: Document optional RST gpio
-
-On boards where the RST line is not pulled up, but it is connected to a
-GPIO line this property must present in order to be able to enable the
-codec.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20191113124734.27984-2-peter.ujfalusi@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/ti,pcm3168a.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt b/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt
-index 5d9cb84c661d..f30aebc7603a 100644
---- a/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt
-+++ b/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt
-@@ -25,6 +25,12 @@ Required properties:
- 
- For required properties on SPI/I2C, consult SPI/I2C device tree documentation
- 
-+Optional properties:
-+
-+  - rst-gpios : Optional RST gpio line for the codec
-+		RST = low: device power-down
-+		RST = high: device is enabled
-+
- Examples:
- 
- i2c0: i2c0@0 {
-@@ -34,6 +40,7 @@ i2c0: i2c0@0 {
- 	pcm3168a: audio-codec@44 {
- 		compatible = "ti,pcm3168a";
- 		reg = <0x44>;
-+		rst-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
- 		clocks = <&clk_core CLK_AUDIO>;
- 		clock-names = "scki";
- 		VDD1-supply = <&supply3v3>;
+Yep, I think this looks like a _much_ simpler approach to the problem.
 -- 
-2.20.1
+Jeff Layton <jlayton@kernel.org>
 
