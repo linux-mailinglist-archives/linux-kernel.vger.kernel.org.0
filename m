@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 600E51003BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E83A310040B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfKRLXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:23:50 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39900 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbfKRLXn (ORCPT
+        id S1727752AbfKRL0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:26:42 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43181 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfKRLXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Nov 2019 06:23:43 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l7so18972420wrp.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:23:41 -0800 (PST)
+Received: by mail-wr1-f65.google.com with SMTP id n1so18953775wra.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:23:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kyeKnOkwmKeZFZzRl62UDL9FeDrPQAcAwjRLFXYmB4s=;
-        b=Kp/2Qrl0WogI3QIBxtJTW5MJVHIbq/2uw1JW8ScQJeaJ4OyPwesWLCJi7WSHLKMmD0
-         ZXE7qjL8rxpVre74lQfEWFzbu1zCpKehD8HpFh675ZEG0kVNRIqqLtrZM8vEXIU8L5go
-         kKVx8nM77mj5guxSm2VdPkZruIH3Hcra9EFNc=
+        bh=td9IeMtAnKP3TNZfmfJvazvskLsY9wm2/Illqt7TzBU=;
+        b=G64zeN1sRuWJalczBb4PcQsQpdk8AHwaM9zcHSLXuqOvP5z4JH7E9AP76uvffGy3zY
+         yjRjr2asra7B1qPqQ/fI0qbAgipxM8OEVMFbLZ0C/GpWiqxCk1f8PPb1AHMEFvY4WNYP
+         gENB4iPaF1vsQQWQhDFs6zCOfSvffYUQVX+vQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kyeKnOkwmKeZFZzRl62UDL9FeDrPQAcAwjRLFXYmB4s=;
-        b=YuZDaNa4QtIKUc+9fQAtCJQ5swtq8y1BEzWBAB0y76ATuyfffUyhLW6fFASSFhQ1IY
-         fx/7VP1FqLO8dhFTZOOkEvPygTH/Oy/7bvL/BaVyqBncPZt734IVOQJYzEciA8PzxK7O
-         1ynSSFRarMOniEd0muD65L2Pg6xyc0yGSXs3+GnF+t2lX5e8H/J2mZnr5NmfJ3DaXzAk
-         fyW3Te8S2lsKf48JwSmO8NaGTIQKZ9fQPp3QXymTsL5uPcT8JVvCzKtfRkzvFQ/YIMSt
-         w0a0JAxR64Y3UL/M5SgOoPHFFZjpbBY08h1EfW2j5mRx2BLVmNkvi58zInCr/8mtKNvE
-         b5Dw==
-X-Gm-Message-State: APjAAAWkHAHo5cKqbsq6+eIVMm3FaI22poWic8qvz9NP45SidNDgq4DP
-        eckmC0NsLrxTb/+I107nxcXwRw==
-X-Google-Smtp-Source: APXvYqzaBJa2z4p/MIy/XkJ1yYVw9Z/Old2wqWcOIlNDO2iI1uAYS9WoVgZQiK8eXdVFkYWSnSXLBQ==
-X-Received: by 2002:adf:d091:: with SMTP id y17mr30842193wrh.182.1574076220773;
-        Mon, 18 Nov 2019 03:23:40 -0800 (PST)
+        bh=td9IeMtAnKP3TNZfmfJvazvskLsY9wm2/Illqt7TzBU=;
+        b=TSmh9vloaHkRKRVVq8TFvo/vPLqUbdk02lEuOd9UDAhLg3UcvADLeWaHPfoLFUgbQ6
+         M6vpbyuHb83ejobwV1uOATvGFo2DXuQIO0C4dcOzwvzCn3dADbvRx3BuxB4jXLDeIaC2
+         9LIHmKmtH7lpD18wF44/OGsZU0PVjw0vu0IBTUqx3oJqdtE2YDxP57Mqax3vU+k2ChD8
+         V1476i2stz005Njj0WswZVwki23ZzFo8MgQ+CaCn7xogbI5DGrQO86voruq13+sJjRJ4
+         VMuGfrRqVZuUfpX1j8tZxtRoa0uq9fJDlcjmgXTvSnbqZxY5fA+lDU9zxycmEdpHk1tv
+         Kwqg==
+X-Gm-Message-State: APjAAAUQdBotqOE2nCs8FO2xE+H2sGZ00PPH5y2HeVpHsTWpVdh5gweD
+        IgToprYouP3uT0RZOp+XRrKu4Q==
+X-Google-Smtp-Source: APXvYqzirelmZJRfngi/39rVlWqXESUNTo+aHeVFXR3g/cUeCUfTGitgRt+Ga84uxToqgzwRUh8Unw==
+X-Received: by 2002:adf:db4b:: with SMTP id f11mr2022844wrj.239.1574076221874;
+        Mon, 18 Nov 2019 03:23:41 -0800 (PST)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.39
+        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 03:23:40 -0800 (PST)
+        Mon, 18 Nov 2019 03:23:41 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v5 08/48] soc: fsl: qe: drop unneeded #includes
-Date:   Mon, 18 Nov 2019 12:22:44 +0100
-Message-Id: <20191118112324.22725-9-linux@rasmusvillemoes.dk>
+Subject: [PATCH v5 09/48] soc: fsl: qe: drop assign-only high_active in qe_ic_init
+Date:   Mon, 18 Nov 2019 12:22:45 +0100
+Message-Id: <20191118112324.22725-10-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
 References: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
@@ -62,46 +62,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These includes are not actually needed, and asm/rheap.h and
-sysdev/fsl_soc.h are PPC-specific, hence prevent compiling QE for
-other architectures.
+high_active is only assigned to but never used. Remove it.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe.c    | 5 -----
- drivers/soc/fsl/qe/qe_io.c | 2 --
- 2 files changed, 7 deletions(-)
+ drivers/soc/fsl/qe/qe_ic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-index 1d8aa62c7ddf..a4763282ea68 100644
---- a/drivers/soc/fsl/qe/qe.c
-+++ b/drivers/soc/fsl/qe/qe.c
-@@ -26,13 +26,8 @@
- #include <linux/crc32.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of_platform.h>
--#include <asm/irq.h>
--#include <asm/page.h>
--#include <asm/pgtable.h>
- #include <soc/fsl/qe/immap_qe.h>
- #include <soc/fsl/qe/qe.h>
--#include <asm/prom.h>
--#include <asm/rheap.h>
+diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+index 8c874372416b..4b03060d8079 100644
+--- a/drivers/soc/fsl/qe/qe_ic.c
++++ b/drivers/soc/fsl/qe/qe_ic.c
+@@ -320,7 +320,7 @@ void __init qe_ic_init(struct device_node *node, unsigned int flags,
+ {
+ 	struct qe_ic *qe_ic;
+ 	struct resource res;
+-	u32 temp = 0, ret, high_active = 0;
++	u32 temp = 0, ret;
  
- static void qe_snums_init(void);
- static int qe_sdma_init(void);
-diff --git a/drivers/soc/fsl/qe/qe_io.c b/drivers/soc/fsl/qe/qe_io.c
-index 5e3471ac09dd..f6b10f38b2f4 100644
---- a/drivers/soc/fsl/qe/qe_io.c
-+++ b/drivers/soc/fsl/qe/qe_io.c
-@@ -18,8 +18,6 @@
+ 	ret = of_address_to_resource(node, 0, &res);
+ 	if (ret)
+@@ -366,10 +366,8 @@ void __init qe_ic_init(struct device_node *node, unsigned int flags,
+ 		temp |= CICR_GRTB;
  
- #include <asm/io.h>
- #include <soc/fsl/qe/qe.h>
--#include <asm/prom.h>
--#include <sysdev/fsl_soc.h>
+ 	/* choose destination signal for highest priority interrupt */
+-	if (flags & QE_IC_HIGH_SIGNAL) {
++	if (flags & QE_IC_HIGH_SIGNAL)
+ 		temp |= (SIGNAL_HIGH << CICR_HPIT_SHIFT);
+-		high_active = 1;
+-	}
  
- #undef DEBUG
+ 	qe_ic_write(qe_ic->regs, QEIC_CICR, temp);
  
 -- 
 2.23.0
