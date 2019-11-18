@@ -2,45 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CED410088A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6755F100873
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 16:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfKRPpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 10:45:25 -0500
-Received: from mga09.intel.com ([134.134.136.24]:37583 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfKRPpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 10:45:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 07:45:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,320,1569308400"; 
-   d="scan'208";a="289292868"
-Received: from nmdeliwa-mobl1.amr.corp.intel.com (HELO [10.251.155.92]) ([10.251.155.92])
-  by orsmga001.jf.intel.com with ESMTP; 18 Nov 2019 07:45:22 -0800
-Subject: Re: [alsa-devel] [PATCH v7 1/6] ASoC: amd:Create multiple I2S
- platform device endpoint
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
-        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
-        Alexander.Deucher@amd.com, Dan Carpenter <dan.carpenter@oracle.com>
-References: <1574085861-22818-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1574085861-22818-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <6c389fa0-a0a0-a79e-f63e-10e3616962be@linux.intel.com>
-Date:   Mon, 18 Nov 2019 09:40:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727338AbfKRPlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 10:41:19 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33050 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfKRPlS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 10:41:18 -0500
+Received: by mail-io1-f68.google.com with SMTP id j13so19292520ioe.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 07:41:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LDK9yK9BoIJXiRshGH8S+ARb//vvA/0NHK9tQB/EqPk=;
+        b=JaQ3lkdxJbg8bC1c3jS+KwvIPC4OYHwwfxOOr83yS4U4QDzFNnWNlZ/p8PuJ96np2E
+         fSAKxEDc8Nlw46j0x8sDTkmy8rEIthr/WFem2d8bAl0iNj18msLAPp9+Qqw8SvjrYFOj
+         3EJP2rizmnWjpUQ81QDQLHav2Tp5HVA4u81MwCU4l9mmA08xnqINakg2qQ0Qqif/jPDU
+         cj76eJwfOZnRj3nWeBGiV/PEuiL0fSFQfPs36u/4sn+YKAJg5MIM0MMYKTeugndAPPka
+         ajIMC8PlwEyo22uO2Ji9NNlBpygJnk5UjX4ca26Yx50OfsMWk84dbtjiEcKRS6BQEBNE
+         yt5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LDK9yK9BoIJXiRshGH8S+ARb//vvA/0NHK9tQB/EqPk=;
+        b=EsyfjqMZzo7xwFr9D1Rh41V2j4LaxZI8R+GHVIBQhHh0acupuRHNsQDrY2w7SJaXC2
+         nqhLnen3xMpPBLslQbKQnLk71ZCTK/LeXmFecEL7mU5i+HEY7XYWgS7CCnHxLs9kcA+T
+         JMY0JMkg+MX96VXWUbMdFRuf9b6iEcLm2dRhWgqJja+0G52j2+dkqqI2Dzsf5OiploAo
+         w9FAeWH+n9fNQMrsEKGUy4ktozZ/pBhws/B8nt3N/nEKYHh0H5A28TLsVcLdQUjrVb3l
+         4LvlqjCUL7vNVp71j3IqyEu2gvjqWwmAIt71EzLplJXhKWcTTQ2bElP8JAG17XN9p9dp
+         FkYg==
+X-Gm-Message-State: APjAAAX2rixbRRQr9nRF5Jc83uzlptWufbm45noijukViIhBRNfpLqvP
+        rHBpsf47lCmP5z8iYRqlmSR/ZQ==
+X-Google-Smtp-Source: APXvYqwof3l/MsVfP7ktJ3h+n1HCG5pvVXBQdOFvhVIS26ekBuLo1YKhPDa/JlQ2jH5waDFiOTh3+Q==
+X-Received: by 2002:a6b:c0c7:: with SMTP id q190mr9712406iof.256.1574091676102;
+        Mon, 18 Nov 2019 07:41:16 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id u6sm4612045ilm.22.2019.11.18.07.41.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Nov 2019 07:41:15 -0800 (PST)
+Subject: Re: [PATCH block/for-next] blk-cgroup: cgroup_rstat_updated()
+ shouldn't be called on cgroup1
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Faiz Abbas <faiz_abbas@ti.com>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lizefan@huawei.com, hannes@cmpxchg.org, kernel-team@fb.com,
+        Dan Schatzberg <dschatzberg@fb.com>, Daniel Xu <dlxu@fb.com>
+References: <20191107191804.3735303-1-tj@kernel.org>
+ <20191107191804.3735303-6-tj@kernel.org>
+ <cd3ebcee-6819-a09b-aeba-de6817f32cde@ti.com>
+ <20191113163501.GI4163745@devbig004.ftw2.facebook.com>
+ <20191114223128.GM4163745@devbig004.ftw2.facebook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <091022e8-e6a1-178d-80cd-b2a070d3519f@kernel.dk>
+Date:   Mon, 18 Nov 2019 08:41:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <1574085861-22818-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191114223128.GM4163745@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,170 +73,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/14/19 3:31 PM, Tejun Heo wrote:
+> Currently, cgroup rstat is supported only on cgroup2 hierarchy and
+> rstat functions shouldn't be called on cgroup1 cgroups.  While
+> converting blk-cgroup core statistics to rstat, f73316482977
+> ("blk-cgroup: reimplement basic IO stats using cgroup rstat")
+> accidentally ended up calling cgroup_rstat_updated() on cgroup1
+> cgroups causing crashes.
+> 
+> Longer term, we probably should add cgroup1 support to rstat but for
+> now let's mask the call directly.
 
->   static int snd_acp3x_probe(struct pci_dev *pci,
->   			   const struct pci_device_id *pci_id)
->   {
-> -	int ret;
-> -	u32 addr, val;
->   	struct acp3x_dev_data *adata;
-> -	struct platform_device_info pdevinfo;
-> +	struct platform_device_info pdevinfo[ACP3x_DEVS];
->   	unsigned int irqflags;
-> +	int ret, val, i;
-> +	u32 addr;
->   
->   	if (pci_enable_device(pci)) {
+Applied, thanks.
 
-if you are using devm_ across the board then you could also use 
-pcim_enable_device() here?
-
->   		dev_err(&pci->dev, "pci_enable_device failed\n");
-> @@ -40,10 +40,10 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   	}
->   
->   	adata = devm_kzalloc(&pci->dev, sizeof(struct acp3x_dev_data),
-> -			     GFP_KERNEL);
-> +							     GFP_KERNEL);
->   	if (!adata) {
->   		ret = -ENOMEM;
-> -		goto release_regions;
-> +		goto adata_free;
->   	}
->   
->   	/* check for msi interrupt support */
-> @@ -56,7 +56,8 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   		irqflags = 0;
->   
->   	addr = pci_resource_start(pci, 0);
-> -	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
-> +	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
-> +					pci_resource_len(pci, 0));
->   	if (!adata->acp3x_base) {
->   		ret = -ENOMEM;
->   		goto release_regions;
-> @@ -68,11 +69,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   	switch (val) {
->   	case I2S_MODE:
->   		adata->res = devm_kzalloc(&pci->dev,
-> -					  sizeof(struct resource) * 2,
-> +					  sizeof(struct resource) * 4,
->   					  GFP_KERNEL);
->   		if (!adata->res) {
->   			ret = -ENOMEM;
-> -			goto unmap_mmio;
-> +			goto release_regions;
->   		}
->   
->   		adata->res[0].name = "acp3x_i2s_iomem";
-> @@ -80,28 +81,52 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   		adata->res[0].start = addr;
->   		adata->res[0].end = addr + (ACP3x_REG_END - ACP3x_REG_START);
->   
-> -		adata->res[1].name = "acp3x_i2s_irq";
-> -		adata->res[1].flags = IORESOURCE_IRQ;
-> -		adata->res[1].start = pci->irq;
-> -		adata->res[1].end = pci->irq;
-> +		adata->res[1].name = "acp3x_i2s_sp";
-> +		adata->res[1].flags = IORESOURCE_MEM;
-> +		adata->res[1].start = addr + ACP3x_I2STDM_REG_START;
-> +		adata->res[1].end = addr + ACP3x_I2STDM_REG_END;
-> +
-> +		adata->res[2].name = "acp3x_i2s_bt";
-> +		adata->res[2].flags = IORESOURCE_MEM;
-> +		adata->res[2].start = addr + ACP3x_BT_TDM_REG_START;
-> +		adata->res[2].end = addr + ACP3x_BT_TDM_REG_END;
-> +
-> +		adata->res[3].name = "acp3x_i2s_irq";
-> +		adata->res[3].flags = IORESOURCE_IRQ;
-> +		adata->res[3].start = pci->irq;
-> +		adata->res[3].end = adata->res[3].start;
->   
->   		adata->acp3x_audio_mode = ACP3x_I2S_MODE;
->   
->   		memset(&pdevinfo, 0, sizeof(pdevinfo));
-> -		pdevinfo.name = "acp3x_rv_i2s";
-> -		pdevinfo.id = 0;
-> -		pdevinfo.parent = &pci->dev;
-> -		pdevinfo.num_res = 2;
-> -		pdevinfo.res = adata->res;
-> -		pdevinfo.data = &irqflags;
-> -		pdevinfo.size_data = sizeof(irqflags);
-> -
-> -		adata->pdev = platform_device_register_full(&pdevinfo);
-> -		if (IS_ERR(adata->pdev)) {
-> -			dev_err(&pci->dev, "cannot register %s device\n",
-> -				pdevinfo.name);
-> -			ret = PTR_ERR(adata->pdev);
-> -			goto unmap_mmio;
-> +		pdevinfo[0].name = "acp3x_rv_i2s_dma";
-> +		pdevinfo[0].id = 0;
-> +		pdevinfo[0].parent = &pci->dev;
-> +		pdevinfo[0].num_res = 4;
-> +		pdevinfo[0].res = &adata->res[0];
-> +		pdevinfo[0].data = &irqflags;
-> +		pdevinfo[0].size_data = sizeof(irqflags);
-> +
-> +		pdevinfo[1].name = "acp3x_i2s_playcap";
-> +		pdevinfo[1].id = 0;
-> +		pdevinfo[1].parent = &pci->dev;
-> +		pdevinfo[1].num_res = 1;
-> +		pdevinfo[1].res = &adata->res[1];
-> +
-> +		pdevinfo[2].name = "acp3x_i2s_playcap";
-> +		pdevinfo[2].id = 1;
-> +		pdevinfo[2].parent = &pci->dev;
-> +		pdevinfo[2].num_res = 1;
-> +		pdevinfo[2].res = &adata->res[2];
-> +		for (i = 0; i < ACP3x_DEVS ; i++) {
-> +			adata->pdev[i] =
-> +				platform_device_register_full(&pdevinfo[i]);
-> +			if (IS_ERR(adata->pdev[i])) {
-> +				dev_err(&pci->dev, "cannot register %s device\n",
-> +					pdevinfo[i].name);
-> +				ret = PTR_ERR(adata->pdev[i]);
-> +				goto unmap_mmio;
-> +			}
->   		}
->   		break;
->   	default:
-> @@ -112,10 +137,22 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   	return 0;
->   
->   unmap_mmio:
-> +	if (val == I2S_MODE)
-> +		for (i = 0 ; i < ACP3x_DEVS ; i++)
-> +			platform_device_unregister(adata->pdev[i]);
-> +	devm_kfree(&pci->dev, adata->res);
-> +	devm_kfree(&pci->dev, adata);
->   	pci_disable_msi(pci);
-> -	iounmap(adata->acp3x_base);
-> +	pci_release_regions(pci);
-> +	pci_disable_device(pci);
->   release_regions:
-> +	devm_kfree(&pci->dev, adata);
-> +	pci_disable_msi(pci);
->   	pci_release_regions(pci);
-> +	pci_disable_device(pci);
-> +adata_free:
-> +	pci_release_regions(pci);
-> +	pci_disable_device(pci);
->   disable_pci:
->   	pci_disable_device(pci);
-
-this error flow is probably wrong, you should not repeat the same 
-sequences when going from one label to the other.
-
-it should be something like (not verified, example only)
-
-	devm_kfree(&pci->dev, adata->res);
-release_regions:
-	devm_kfree(&pci->dev, adata);
-    	pci_disable_msi(pci);
-adata_free:
-	pci_release_regions(pci);
-disable_pci:
-	pci_disable_device(pci);
-
-Stopping the review here.
+-- 
+Jens Axboe
 
