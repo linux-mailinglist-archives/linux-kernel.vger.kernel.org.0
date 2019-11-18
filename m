@@ -2,118 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE96A100138
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A1710013C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:26:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfKRJZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 04:25:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56354 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726460AbfKRJZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 04:25:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8A9D1AD55;
-        Mon, 18 Nov 2019 09:25:43 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 10:25:42 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Linux I2C <linux-i2c@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 1/4] firmware: dmi: Remember the memory type
-Message-ID: <20191118102542.0dc43cd2@endymion>
-In-Reply-To: <20191118102410.78cd8e6e@endymion>
-References: <20191118102410.78cd8e6e@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1726855AbfKRJ0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 04:26:17 -0500
+Received: from smtp2.axis.com ([195.60.68.18]:33902 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726460AbfKRJ0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 04:26:17 -0500
+IronPort-SDR: /ZR5xX+73d/C8ro/l/i8tfrG/O4pT9ZCbVHflRFTpnylxq8+Qpgra+nV9eGfx1ngB/G5XziGfW
+ +HcDcr3mGC5AwP3aDQLe3IE6pC+5SPJIqljZAymuL5qPdRWDxsJYfK2iuza5RBkvUwQM0jog6Q
+ oj0/Bk42qrkA63XsowN8VcCTyFatGZhwP3Ro6O6+RvOcw99SEec6Vi9eRmVRRwUPTfYwkTSGdC
+ Aqtwk9d7ETdnLJOaXRMasCWFNUeLgn058RHzk2qwwl2dtKQzxjOqkUN4S417VKPaVuLdtHg+F3
+ ccU=
+X-IronPort-AV: E=Sophos;i="5.68,319,1569276000"; 
+   d="scan'208";a="2531062"
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bes.se.axis.com
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     linux@armlinux.org.uk, gregkh@linuxfoundation.org
+Cc:     jslaby@suse.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH] serial: pl011: Fix DMA ->flush_buffer()
+Date:   Mon, 18 Nov 2019 10:25:47 +0100
+Message-Id: <20191118092547.32135-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Store the memory type while walking the memory slots, and provide a
-way to retrieve it later.
+PL011's ->flush_buffer() implementation releases and reacquires the port
+lock.  Due to a race condition here, data can end up being added to the
+circular buffer but neither being discarded nor being sent out.  This
+leads to, for example, tcdrain(2) waiting indefinitely.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Process A                       Process B
+
+uart_flush_buffer()
+ - acquire lock
+ - circ_clear
+ - pl011_flush_buffer()
+ -- release lock
+ -- dmaengine_terminate_all()
+
+                                uart_write()
+                                - acquire lock
+                                - add chars to circ buffer
+                                - start_tx()
+                                -- start DMA
+                                - release lock
+
+ -- acquire lock
+ -- turn off DMA
+ -- release lock
+
+                                // Data in circ buffer but DMA is off
+
+According to the comment in the code, the releasing of the lock around
+dmaengine_terminate_all() is to avoid a deadlock with the DMA engine
+callback.  However, since the time this code was written, the DMA engine
+API documentation seems to have been clarified to say that
+dmaengine_terminate_all() (in the identically implemented but
+differently named dmaengine_terminate_async() variant) does not wait for
+any running complete callback to be completed and can even be called
+from a complete callback.  So there is no possibility of deadlock if the
+DMA engine driver implements this API correctly.
+
+So we should be able to just remove this release and reacquire of the
+lock to prevent the aforementioned race condition.
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
- drivers/firmware/dmi_scan.c |   25 ++++++++++++++++++++++++-
- include/linux/dmi.h         |    2 ++
- 2 files changed, 26 insertions(+), 1 deletion(-)
+ drivers/tty/serial/amba-pl011.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- linux-5.3.orig/drivers/firmware/dmi_scan.c	2019-10-08 14:27:23.783640227 +0200
-+++ linux-5.3/drivers/firmware/dmi_scan.c	2019-10-08 16:35:35.442803880 +0200
-@@ -35,6 +35,7 @@ static struct dmi_memdev_info {
- 	const char *bank;
- 	u64 size;		/* bytes */
- 	u16 handle;
-+	u8 type;		/* DDR2, DDR3, DDR4 etc */
- } *dmi_memdev;
- static int dmi_memdev_nr;
- 
-@@ -391,7 +392,7 @@ static void __init save_mem_devices(cons
- 	u64 bytes;
- 	u16 size;
- 
--	if (dm->type != DMI_ENTRY_MEM_DEVICE || dm->length < 0x12)
-+	if (dm->type != DMI_ENTRY_MEM_DEVICE || dm->length < 0x13)
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 3a7d1a66f79c..b0b689546395 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -813,10 +813,8 @@ __acquires(&uap->port.lock)
+ 	if (!uap->using_tx_dma)
  		return;
- 	if (nr >= dmi_memdev_nr) {
- 		pr_warn(FW_BUG "Too many DIMM entries in SMBIOS table\n");
-@@ -400,6 +401,7 @@ static void __init save_mem_devices(cons
- 	dmi_memdev[nr].handle = get_unaligned(&dm->handle);
- 	dmi_memdev[nr].device = dmi_string(dm, d[0x10]);
- 	dmi_memdev[nr].bank = dmi_string(dm, d[0x11]);
-+	dmi_memdev[nr].type = d[0x12];
  
- 	size = get_unaligned((u16 *)&d[0xC]);
- 	if (size == 0)
-@@ -1128,3 +1130,24 @@ u64 dmi_memdev_size(u16 handle)
- 	return ~0ull;
- }
- EXPORT_SYMBOL_GPL(dmi_memdev_size);
+-	/* Avoid deadlock with the DMA engine callback */
+-	spin_unlock(&uap->port.lock);
+-	dmaengine_terminate_all(uap->dmatx.chan);
+-	spin_lock(&uap->port.lock);
++	dmaengine_terminate_async(uap->dmatx.chan);
 +
-+/**
-+ * dmi_memdev_type - get the memory type
-+ * @handle: DMI structure handle
-+ *
-+ * Return the DMI memory type of the module in the slot associated with the
-+ * given DMI handle, or 0x0 if no such DMI handle exists.
-+ */
-+u8 dmi_memdev_type(u16 handle)
-+{
-+	int n;
-+
-+	if (dmi_memdev) {
-+		for (n = 0; n < dmi_memdev_nr; n++) {
-+			if (handle == dmi_memdev[n].handle)
-+				return dmi_memdev[n].type;
-+		}
-+	}
-+	return 0x0;	/* Not a valid value */
-+}
-+EXPORT_SYMBOL_GPL(dmi_memdev_type);
---- linux-5.3.orig/include/linux/dmi.h	2019-10-04 16:14:24.575714482 +0200
-+++ linux-5.3/include/linux/dmi.h	2019-10-08 17:42:19.726907967 +0200
-@@ -113,6 +113,7 @@ extern int dmi_walk(void (*decode)(const
- extern bool dmi_match(enum dmi_field f, const char *str);
- extern void dmi_memdev_name(u16 handle, const char **bank, const char **device);
- extern u64 dmi_memdev_size(u16 handle);
-+extern u8 dmi_memdev_type(u16 handle);
- 
- #else
- 
-@@ -142,6 +143,7 @@ static inline bool dmi_match(enum dmi_fi
- static inline void dmi_memdev_name(u16 handle, const char **bank,
- 		const char **device) { }
- static inline u64 dmi_memdev_size(u16 handle) { return ~0ul; }
-+static inline u8 dmi_memdev_type(u16 handle) { return 0x0; }
- static inline const struct dmi_system_id *
- 	dmi_first_match(const struct dmi_system_id *list) { return NULL; }
- 
-
+ 	if (uap->dmatx.queued) {
+ 		dma_unmap_sg(uap->dmatx.chan->device->dev, &uap->dmatx.sg, 1,
+ 			     DMA_TO_DEVICE);
 -- 
-Jean Delvare
-SUSE L3 Support
+2.20.0
+
