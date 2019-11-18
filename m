@@ -2,209 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 418C2FFF8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C6CFFF93
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfKRHfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 02:35:24 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39550 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbfKRHfY (ORCPT
+        id S1726920AbfKRHgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 02:36:50 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:55427 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfKRHgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 02:35:24 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAI7ZG6r099577;
-        Mon, 18 Nov 2019 01:35:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574062516;
-        bh=jAuRpekXF3jtoawWT7hGxk6T2pAz5AKTl9w23pKdMXY=;
-        h=From:To:CC:Subject:Date;
-        b=MweProfqMkKsL3KxQc0UkuH2LV3TiUL1OOFsctkFlJ8Yt2I2MYiFnj4UvNDQZv7b6
-         C/cUsvcAXOGnf1xYtncRgO6Vf56jA3QOsui/74mKGujG25wVXQ4hTtMUTCJ8LweIdj
-         7DPAeznZ2X//7+9c2yaJsJis4wbf5d66ECkxo9zA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAI7ZFhH124319
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 18 Nov 2019 01:35:16 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 18
- Nov 2019 01:35:15 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 18 Nov 2019 01:35:15 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAI7ZDYI011349;
-        Mon, 18 Nov 2019 01:35:14 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH v2] mmc: sdhci_am654: Add Support for Command Queuing Engine to J721E
-Date:   Mon, 18 Nov 2019 13:06:09 +0530
-Message-ID: <20191118073609.22921-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Mon, 18 Nov 2019 02:36:49 -0500
+Received: from localhost ([185.35.208.129]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MnpP8-1i3dg71iXK-00pOvd; Mon, 18 Nov 2019 08:36:13 +0100
+Date:   Mon, 18 Nov 2019 08:36:12 +0100
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     robh+dt@kernel.org, jic23@kernel.org, mark.rutland@arm.com
+Cc:     mripard@kernel.org, shawnguo@kernel.org, heiko@sntech.de,
+        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        gregkh@linuxfoundation.org, christophe.jaillet@wanadoo.fr,
+        tglx@linutronix.de, mchehab+samsung@kernel.org,
+        davem@davemloft.net, paulmck@linux.ibm.com,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/4] dt-bindings: add parallax ping sensors
+Message-ID: <20191118073611.pvge47kgupu6omrf@arbad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:yVseu36YheWCygoGq+ft3p0e0iu8fgGoKVfl3cImcfWXq7IcQ9v
+ 64IAheX8Irfb2fO312Ve/wzH2zy/MAH7M+GlZpMlrXI3zSCniIfWpiaD6/Skwy6o/TifgE9
+ NzCq2LrIS+SsWfF+DB98Du8F691gjwNijTTZtEKyRkDS968omddwyzSGzj/oA2FMtBacECv
+ bgNshXrgyCIa5aLeWs3+g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DYhdsw6dcKk=:NqfLp2QdMcVk0WkrnIOvz5
+ b6dteCGGPpVjdM/dysyfVLmCY+HICoFmMOMYrZoXxDGp/J/4yb0IPJL0ZEaw3y3pwk5ISwM7Y
+ TmkMMQzkkrCGeMlbVxfozmx3eWunPL+FrQD8DzXIagziVyl8hNOHngXhXZ7rbHKOK8JE6Sucy
+ 6OcoHhP5AGR+VNi7081U3VFobDQ2/i8LKUjQ6dGtafMpkxG3KooDzfPk/h0/UJLEJIHylfy3h
+ Lw3PYEpXOW67n71SdjaCAIQsvDvEO35x1CFdUbTb/+m++iLeM+jm1CMPYFq9Xr1PzXrYqubcT
+ AwDF+H7rliM68BRXPl9fA3fi87mXaO3kLI6t2Fpj55UgFV7pHl+yUpU9VjsDfmbW/AYT0F8B/
+ 5M+Txa4cNfii5/0mWgeIGWg9EHLS8KhAhCj0XxzxJRGiHDu13z//D7iWD2CvOmEauHS6ds4Q2
+ MO6yXeYkNCJVhgXEdK3iDK69tkJj4KrhmkZijmf6rajFkBld4oo9l93TeeutCW0ymArIeHIhX
+ ELQ2BJM9y/guuhu0tEUzIbRz3hQzyaGluX0eazs+eU1VRq+Fjhh96Jhfaq9E0TV7vksI0mCzl
+ A6a7CF7v3n4EI+JYIRMT+ReHZT8SaH4xMnbUM3tPbLkEosIwQsYqeoMSE5Hh/yVvsJOXWOuhV
+ Sz6/9BAJDH7PTeC5AifoYx8a/V+U7cdMlFcgcIhrYdF4FtJbh7J6BPfyxr5kuFK0InzLs61oU
+ AnGGuwmgmfvpia25DjhMhQyrUlCF9i7CkMXd95gvL6cxP7UD5J4X+g5OF4Se+JfZK5poopbZW
+ UATJ90b8bz+1fBx0tEDkjAvsWfuLupffDHKJfVILz3NjC+7QhmwbDzKWdymUHAK4pSLdCfgAu
+ HkjnhzY2BC22vtP699P7YSg4hrPHPxYgHy9Lu5wE4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Support for CQHCI (Command Queuing Host Controller Interface)
-for each of the host controllers present in TI's J721E devices.
-Add cqhci_ops and a .irq() callback to handle cqhci specific interrupts.
+Add dt-bindings for parallax PING))) and LaserPING iio sensors, which
+are used for measuring distances.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+ .../bindings/iio/proximity/parallax-ping.yaml      | 51 ++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
 
-v2: Dropped CONFIG_ prefix from select MMC_CQHCI which led to build
-failures. Successfully built with the .config provided by the kbuild test robot.
-
- drivers/mmc/host/Kconfig       |  1 +
- drivers/mmc/host/sdhci_am654.c | 71 +++++++++++++++++++++++++++++++++-
- 2 files changed, 71 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 49ea02c467bf..7c1310ed26c6 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -1011,6 +1011,7 @@ config MMC_SDHCI_AM654
- 	tristate "Support for the SDHCI Controller in TI's AM654 SOCs"
- 	depends on MMC_SDHCI_PLTFM && OF && REGMAP_MMIO
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_CQHCI
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in TI's AM654 SOCs. The controller supports
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index bb90757ecace..b8e897e31e2e 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -12,6 +12,7 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- 
-+#include "cqhci.h"
- #include "sdhci-pltfm.h"
- 
- /* CTL_CFG Registers */
-@@ -68,6 +69,9 @@
- 
- #define CLOCK_TOO_SLOW_HZ	400000
- 
-+/* Command Queue Host Controller Interface Base address */
-+#define SDHCI_AM654_CQE_BASE_ADDR 0x200
+diff --git a/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml b/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
+new file mode 100644
+index 000000000000..a079c9921af6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/proximity/parallax-ping.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- static struct regmap_config sdhci_am654_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
-@@ -259,6 +263,19 @@ static const struct sdhci_am654_driver_data sdhci_am654_drvdata = {
- 	.flags = IOMUX_PRESENT | FREQSEL_2_BIT | STRBSEL_4_BIT | DLL_PRESENT,
- };
- 
-+static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
++title: Parallax PING))) and LaserPING range finder
 +
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
++maintainers:
++  - Andreas Klinger <ak@it-klinger.de>
 +
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
++description: |
++  Bit-banging driver using one GPIO:
++  - ping-gpios is raised by the driver to start measurement
++  - direction of ping-gpio is then switched into input with an interrupt
++    for receiving distance value as PWM signal
 +
-+	return 0;
-+}
++  Specifications about the devices can be found at:
++  http://parallax.com/sites/default/files/downloads/28041-LaserPING-2m-Rangefinder-Guide.pdf
++  http://parallax.com/sites/default/files/downloads/28015-PING-Documentation-v1.6.pdf
 +
- static struct sdhci_ops sdhci_j721e_8bit_ops = {
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
-@@ -267,6 +284,7 @@ static struct sdhci_ops sdhci_j721e_8bit_ops = {
- 	.set_power = sdhci_am654_set_power,
- 	.set_clock = sdhci_am654_set_clock,
- 	.write_b = sdhci_am654_write_b,
-+	.irq = sdhci_am654_cqhci_irq,
- 	.reset = sdhci_reset,
- };
- 
-@@ -290,6 +308,7 @@ static struct sdhci_ops sdhci_j721e_4bit_ops = {
- 	.set_power = sdhci_am654_set_power,
- 	.set_clock = sdhci_j721e_4bit_set_clock,
- 	.write_b = sdhci_am654_write_b,
-+	.irq = sdhci_am654_cqhci_irq,
- 	.reset = sdhci_reset,
- };
- 
-@@ -304,6 +323,40 @@ static const struct sdhci_am654_driver_data sdhci_j721e_4bit_drvdata = {
- 	.pdata = &sdhci_j721e_4bit_pdata,
- 	.flags = IOMUX_PRESENT,
- };
++properties:
++  compatible:
++    enum:
++      - parallax,ping
++      - parallax,laserping
 +
-+static void sdhci_am654_dumpregs(struct mmc_host *mmc)
-+{
-+	sdhci_dumpregs(mmc_priv(mmc));
-+}
++  ping-gpios:
++    description:
++      Definition of the GPIO for the triggering and echo (output and input)
++      This GPIO is set for about 5 us by the driver to tell the device it
++      should initiate the measurement cycle. Afterwards the GPIO is switched
++      to input direction with an interrupt. The device sets it and the
++      length of the input signal corresponds to the measured distance.
++      It needs to be an GPIO which is able to deliver an interrupt because
++      the time between two interrupts is measured in the driver.
++      See Documentation/devicetree/bindings/gpio/gpio.txt for information
++      on how to specify a consumer gpio.
++    maxItems: 1
 +
-+static const struct cqhci_host_ops sdhci_am654_cqhci_ops = {
-+	.enable		= sdhci_cqe_enable,
-+	.disable	= sdhci_cqe_disable,
-+	.dumpregs	= sdhci_am654_dumpregs,
-+};
++required:
++  - compatible
++  - ping-gpios
 +
-+static int sdhci_am654_cqe_add_host(struct sdhci_host *host)
-+{
-+	struct cqhci_host *cq_host;
-+	int ret;
-+
-+	cq_host = devm_kzalloc(host->mmc->parent, sizeof(struct cqhci_host),
-+			       GFP_KERNEL);
-+	if (!cq_host)
-+		return -ENOMEM;
-+
-+	cq_host->mmio = host->ioaddr + SDHCI_AM654_CQE_BASE_ADDR;
-+	cq_host->quirks |= CQHCI_QUIRK_SHORT_TXFR_DESC_SZ;
-+	cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-+	cq_host->ops = &sdhci_am654_cqhci_ops;
-+
-+	host->mmc->caps2 |= MMC_CAP2_CQE;
-+
-+	ret = cqhci_init(cq_host, host->mmc, 1);
-+
-+	return ret;
-+}
-+
- static int sdhci_am654_init(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -344,7 +397,23 @@ static int sdhci_am654_init(struct sdhci_host *host)
- 	regmap_update_bits(sdhci_am654->base, CTL_CFG_2, SLOTTYPE_MASK,
- 			   ctl_cfg_2);
- 
--	return sdhci_add_host(host);
-+	ret = sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	ret = sdhci_am654_cqe_add_host(host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	return 0;
-+
-+err_cleanup_host:
-+	sdhci_cleanup_host(host);
-+	return ret;
- }
- 
- static int sdhci_am654_get_of_property(struct platform_device *pdev,
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    proximity {
++        compatible = "parallax,laserping";
++        ping-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
++    };
 -- 
-2.19.2
-
+2.11.0
