@@ -2,153 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 919A4100408
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9179100400
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfKRL01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:26:27 -0500
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:45570 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726967AbfKRLXw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:23:52 -0500
-Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
-        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1iWf8G-0008Oa-8i; Mon, 18 Nov 2019 12:23:48 +0100
-X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
-        linuxbbg.five-lan.de
-Received: from [192.168.34.101] (p5098d998.dip0.t-ipconnect.de [80.152.217.152])
-        (authenticated bits=0)
-        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id xAIBNleY023886
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 18 Nov 2019 12:23:47 +0100
-Subject: [PATCH v3 2/2] arm64: dts: rockchip: Add SDR104 mode to SD-card I/F
- on rk3399-roc-pc
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-References: <25466090-3b24-2695-10fb-88c59be3f149@fivetechno.de>
- <1918981.kTmXGv9Lqf@phil>
-From:   Markus Reichl <m.reichl@fivetechno.de>
-Autocrypt: addr=m.reichl@fivetechno.de; prefer-encrypt=mutual; keydata=
- xsDNBFs02GcBDADRBOYE75/gs54okjHfQ1LK8FfNH5yMq1/3MxhqP7gsCol5ZGbdNhJ7lnxX
- jIEIlYfd6EgJMJV6E69uHe4JF9RO0BDdIy79ruoxnYaurxB40qPtb+YyTy3YjeNF3NBRE+4E
- ffvY5AQvt3aIUP83u7xbNzMfV4JuxaopB+yiQkGo0eIAYqdy+L+5sHkxj/MptMAfDKvM8rvT
- 4LaeqiGG4b8xsQRQNqbfIq1VbNEx/sPXFv6XDYMehYcbppMW6Zpowd46aZ5/CqP6neQYiCu2
- rT1pf/s3hIJ6hdauk3V5U8GH/vupCNKA2M2inrnsRDVsYfrGHC59JAB545/Vt8VNJT5BAPKP
- ka4lgIofVmErILAhLtxu3iSH6gnHWTroccM/j0kHOmrMrAmCcLrenLMmB6a/m7Xve5J7F96z
- LAWW6niQyN757MpgVQWsDkY2c5tQeTIHRlsZ5AXxOFzA44IuDNIS7pa603AJWC+ZVqujr80o
- rChE99LDPe1zZUd2Une43jEAEQEAAc0iTWFya3VzIFJlaWNobCA8cmVpY2hsQHQtb25saW5l
- LmRlPsLA8AQTAQoAGgQLCQgHAhUKAhYBAhkBBYJbNNhnAp4BApsDAAoJEDol3g5rGv2ygaMM
- AMuGjrnzf6BOeXQvadxcZTVas9HJv7Y0TRgShl4ItT6u63+mvOSrns/w6iNpwZxzhlP9OIrb
- v2gorWDvW8VUXaCpA81EEz7LTrq+PYFEfIdtGgKXCOqn0Om8AHx5EmEuPF+dvUjESVoG85hL
- Q6r6PJUh8xhYGMUYMer/ka2jAu2hT1sLpmPijXnw9TvC2K9W3paouf4u5ZtG32fegvUeoQ1R
- t30k0bYRNqX8xboD1mMKgc4IWLsH6I0MROwTF7JvarkC9rU/M6OL6dwnNuauLvGVs/aXLrn2
- UYxas9erPOwr+M45f8OR7O8xxvKoP5WSU6qWB/EExfm/ZBUkDKq8nDgItEpm+UUxpS9EpyvC
- TIQ3qkqHGn1cf2+XRUjaCGsRG6fyY7XM4v5ariuMrg8RV7ec2jxIs3546pXx4GFP6rBcZZoW
- f6y2A6h47rWGHAhbZ6cnJp/PMDIQrnVkzQHYBkTuhTp1bzUGhCfKLhz2M/UAIo+4VNUicJ56
- PgDT5NYvvc7AzQRbNNhnAQwAmbmYfkV7PA3zrsveqraUIrz5TeNdI3GPO/kBWPFXe/ECaCoX
- IVfacTV8miHvxqU92Vr/7Zw7lland+UgHa7MGlJfNHoqXIVL8ZWAj+mGf4jMo02S+XtUvdL7
- LtALQwXlT7GD0e9Efyk/AV9vL8aiseT/SmW6+sAhs9Q7XPvZWE/ME1M/WRlDsi32g04mkvOz
- G/bGN9De+LoSgn/220udTgLpq2aJEYGgvgZRVDKeOGSeP9cAKYQPjsW0okFfVyezZubNHLwd
- yjVFxGB2XIH/XIVo13E2SFvWHrdjmCcZek37k4uftdYG90iBXS3Dtp0u87yiOIoL2PXM8qLU
- 2+FhXphjce6Ef33nKQpelWLXxlrXUr1lOmNTAHfVIsKmGsRBqRBmphLMJOfyD6enYR0B/f+s
- LVDtKFrMzhkjqvanwlcQkbpN6DvD409QRaUwxQiUaCcplUqHnJvKdjO7zCI4u6T6hjvciBrg
- EBB+uN15uGg+LODRZ4Ue0KaWoiH6n1IxABEBAAHCwN8EGAEKAAkFgls02GcCmwwACgkQOiXe
- Dmsa/bKWFgwAw3hc1BGC65BhhcYyikqRNI6jnHQVC29ax1RTijC2PJZ5At+uASYAy97A2WjC
- L3UdLU/B6yhcEt3U6gwQgQbfrbPObjeZi8XSQzP2qZI8urjnIPUG7WYDK8grFqpjvAWPBhpS
- B5CeMaICi9ppZnqkE3/d/NMXHCU/qbARpATJGODk64GnJEnlSWDbWfTgEUd+lnUQVKAZfy5Z
- 5oYabpGpG5tDM49LxuC4ZpTkKiX+eT1YxsKH9fCSFnETR54ZVCS7NQDOTtpHDA2Qz2ie3sNC
- H7YyH580i9znwePyhCFQQeX+jo2r2GQ0v+kOQrL9wwluW6xNWBakhLanQFrHypn7azpOCaIr
- pWfxOm9CPEk4zGjQmE7sW1HfIdYC39OeEEnoPdnNGxn7sf6Fuv+fahAs8ls33JBdtEAPLiR8
- Dm43HZwTBXPwasFHnGkF10N7aXf3r8WYpctbZYlcT5EV9m9i4jfWoGzHS5V4DXmv6OBmdLYk
- eD/Xv4SsK2JTO4nkQYw8
-Organization: five technologies GmbH
-Message-ID: <1b9b8314-8778-2d48-6f7a-3502c2146c42@fivetechno.de>
-Date:   Mon, 18 Nov 2019 12:23:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727699AbfKRLZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:25:53 -0500
+Received: from ozlabs.org ([203.11.71.1]:36073 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727173AbfKRLYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:24:01 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Gmmt4X8kz9sPW;
+        Mon, 18 Nov 2019 22:23:58 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1574076238;
+        bh=+m0WYc56ma1T5C9ucaT2dZi4UQCzolMchE10o+XuaYk=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Hs2bBVyJgfMxyMAV2SGToHqrhgDVtlT7I4RfuZjOnYe9uUiPK/mLztGRh9ou2tej+
+         dtfbsXfdcq7bLlalr27d8RprN2aMfVMZ4mLGzOSCOQDN2iGSKIVOsHWge/g69SbWK5
+         b3/Zmlyn7FujzA4PETqB84UxRAjOAM2Q6lDkFynQmhNcI0cz0fSTGfdWVrGaJBEm/o
+         IL2YulcasqRQ9FpURjV0wwbbIhIJv+jIhWBbe7V3kFepAbUFdAU9NOXpN4hSuaFAVU
+         fqV8HeJcFr2q9rcyWMUUEfds5pDrWEKthzy5yVH/xu6XUKOs5rEtgzdjDFiAOGLXFK
+         V36mhOe18CK6A==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 2/2] powerpc/kexec: move kexec files into a dedicated subdir.
+In-Reply-To: <afbef97ec6a978574a5cf91a4441000e0a9da42a.1572351221.git.christophe.leroy@c-s.fr>
+References: <e235973a1198195763afd3b6baffa548a83f4611.1572351221.git.christophe.leroy@c-s.fr> <afbef97ec6a978574a5cf91a4441000e0a9da42a.1572351221.git.christophe.leroy@c-s.fr>
+Date:   Mon, 18 Nov 2019 22:23:56 +1100
+Message-ID: <87pnhpctrn.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <1918981.kTmXGv9Lqf@phil>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1574076232;55ebdb4b;
-X-HE-SMSGID: 1iWf8G-0008Oa-8i
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SDR104 capability and regulators to SD card node.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> arch/powerpc/kernel/ contains 8 files dedicated to kexec.
+>
+> Move them into a dedicated subdirectory.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>
+> ---
+> v2: moved crash.c as well as it's part of kexec suite.
+> v3: renamed files to remove 'kexec' keyword from names.
+> v4: removed a ifdef in kexec/Makefile
+> ---
+>  arch/powerpc/kernel/Makefile                       | 19 +---------------
+>  arch/powerpc/kernel/kexec/Makefile                 | 25 ++++++++++++++++++++++
+>  arch/powerpc/kernel/{ => kexec}/crash.c            |  0
+>  .../kernel/{kexec_elf_64.c => kexec/elf_64.c}      |  0
+>  arch/powerpc/kernel/{ima_kexec.c => kexec/ima.c}   |  0
+>  .../kernel/{machine_kexec.c => kexec/machine.c}    |  0
+>  .../{machine_kexec_32.c => kexec/machine_32.c}     |  0
+>  .../{machine_kexec_64.c => kexec/machine_64.c}     |  0
+>  .../machine_file_64.c}                             |  0
+>  .../{kexec_relocate_32.S => kexec/relocate_32.S}   |  2 +-
+>  10 files changed, 27 insertions(+), 19 deletions(-)
+>  create mode 100644 arch/powerpc/kernel/kexec/Makefile
+>  rename arch/powerpc/kernel/{ => kexec}/crash.c (100%)
+>  rename arch/powerpc/kernel/{kexec_elf_64.c => kexec/elf_64.c} (100%)
+>  rename arch/powerpc/kernel/{ima_kexec.c => kexec/ima.c} (100%)
+>  rename arch/powerpc/kernel/{machine_kexec.c => kexec/machine.c} (100%)
+>  rename arch/powerpc/kernel/{machine_kexec_32.c => kexec/machine_32.c} (100%)
+>  rename arch/powerpc/kernel/{machine_kexec_64.c => kexec/machine_64.c} (100%)
+>  rename arch/powerpc/kernel/{machine_kexec_file_64.c => kexec/machine_file_64.c} (100%)
+>  rename arch/powerpc/kernel/{kexec_relocate_32.S => kexec/relocate_32.S} (99%)
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
----
-v3: Split patch in two, remove non related changes
-v2: Remove always-on from vcc3v0_sd
----
- .../boot/dts/rockchip/rk3399-roc-pc.dtsi      | 23 ++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+I'm inclined to move the directory out of kernel, ie. up a level with mm
+and so on.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
-index 6d485712f47c..014a9869d61a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
-@@ -135,6 +135,19 @@
- 		vin-supply = <&vcc_1v8>;
- 	};
- 
-+	vcc3v0_sd: vcc3v0-sd {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio4 RK_PD6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vcc3v0_sd_en>;
-+		regulator-name = "vcc3v0_sd";
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		vin-supply = <&vcc3v3_sys>;
-+	};
-+
- 	vcc3v3_sys: vcc3v3-sys {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc3v3_sys";
-@@ -610,6 +623,12 @@
- 		};
- 	};
- 
-+	sdmmc {
-+		vcc3v0_sd_en: vcc3v0-sd-en {
-+			rockchip,pins = <4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
- 	pmic {
- 		pmic_int_l: pmic-int-l {
- 			rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
-@@ -662,13 +681,15 @@
- 
- &sdmmc {
- 	bus-width = <4>;
--	cap-mmc-highspeed;
- 	cap-sd-highspeed;
- 	cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
- 	disable-wp;
- 	max-frequency = <150000000>;
-+	sd-uhs-sdr104;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
-+	vmmc-supply = <&vcc3v0_sd>;
-+	vqmmc-supply = <&vcc_sdio>;
- 	status = "okay";
- };
- 
--- 
-2.20.1
+And I also don't think the "machine" naming is useful anymore. It comes
+from the naming of the arch functions, eg. machine_kexec(), which was
+named to be analogous to machine_restart().
 
+So how about:
+
+  arch/powerpc/{kernel/machine_kexec.c => kexec/core.c}
+  arch/powerpc/{kernel/machine_kexec_32.c => kexec/core_32.c}
+  arch/powerpc/{kernel/machine_kexec_64.c => kexec/core_64.c}
+  arch/powerpc/{kernel => kexec}/crash.c
+  arch/powerpc/{kernel/kexec_elf_64.c => kexec/elf_64.c}
+  arch/powerpc/{kernel/machine_kexec_file_64.c => kexec/file_load.c}
+  arch/powerpc/{kernel/ima_kexec.c => kexec/ima.c}
+  arch/powerpc/{kernel/kexec_relocate_32.S => kexec/relocate_32.S}
+
+And we end up with:
+
+  $ find arch/powerpc/kexec
+  arch/powerpc/kexec/
+  arch/powerpc/kexec/file_load.c
+  arch/powerpc/kexec/relocate_32.S
+  arch/powerpc/kexec/core_64.c
+  arch/powerpc/kexec/ima.c
+  arch/powerpc/kexec/core.c
+  arch/powerpc/kexec/core_32.c
+  arch/powerpc/kexec/Makefile
+  arch/powerpc/kexec/crash.c
+  arch/powerpc/kexec/elf_64.c
+
+
+cheers
