@@ -2,83 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9242F1006FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 15:05:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF58100703
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 15:06:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfKROFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 09:05:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51548 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726654AbfKROFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 09:05:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C2174ADDD;
-        Mon, 18 Nov 2019 14:05:52 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 14:05:51 +0000
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v3] ceph: add new obj copy OSD Op
-Message-ID: <20191118140551.GA8951@hermes.olymp>
-References: <20191118120935.7013-1-lhenriques@suse.com>
- <3dc2df0ba5776fb0f7aaac3a099a938823ed0ebf.camel@kernel.org>
+        id S1727233AbfKROG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 09:06:29 -0500
+Received: from foss.arm.com ([217.140.110.172]:35186 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726627AbfKROG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 09:06:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A5EC328;
+        Mon, 18 Nov 2019 06:06:27 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFD223F6C4;
+        Mon, 18 Nov 2019 06:06:25 -0800 (PST)
+Subject: Re: [PATCH v2] sched/fair: add comments for group_type and balancing
+ at SD_NUMA level
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, dietmar.eggemann@arm.com,
+        juri.lelli@redhat.com, rostedt@goodmis.org, mgorman@suse.de,
+        bsegall@google.com
+References: <1573570243-1903-1-git-send-email-vincent.guittot@linaro.org>
+ <7325dac4-bb26-9fcb-75bc-15b68d35b62d@arm.com>
+ <20191118133457.GB66833@gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <3cdf1c60-edf1-a46f-d312-411fa3301c95@arm.com>
+Date:   Mon, 18 Nov 2019 14:06:24 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3dc2df0ba5776fb0f7aaac3a099a938823ed0ebf.camel@kernel.org>
+In-Reply-To: <20191118133457.GB66833@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 08:12:39AM -0500, Jeff Layton wrote:
-> On Mon, 2019-11-18 at 12:09 +0000, Luis Henriques wrote:
-> > Hi,
-> > 
-> > Before going ahead with a pull-request for ceph I would like to make sure
-> > we're all on the same page regarding the final fix for this problem.
-> > Thus, following this email, I'm sending 2 patches: one for ceph OSDs and
-> > the another for the kernel client.
-> > 
-> > * osd: add new 'copy-from-notrunc' operation
-> >   This patch shall be applied to ceph master after reverting commit
-> >   ba152435fd85 ("osd: add flag to prevent truncate_seq copy in copy-from
-> >   operation").  It adds a new operation that will be exactly the same as
-> >   the original 'copy-from' operation, but with the extra 2 parameters
-> >   (truncate_{seq,size})
-> > 
-> > * ceph: switch copy_file_range to 'copy-from-notrunc' operation
-> >   This will make the kernel client use the new OSD op in
-> >   copy_file_range.  One extra thing that could probably be added is
-> >   changing the mount options to NOCOPYFROM if the first call to
-> >   ceph_osdc_copy_from() fails.
-> > 
+On 18/11/2019 13:34, Ingo Molnar wrote:
+> Thanks - I did a few more fixes and updates to the comments, this is how 
+> it ended up looking like (full patch below):
 > 
-> I probably wouldn't change the mount options to be different from what
-> was initially specified. How about just disable copy_file_range
-> internally for that superblock, and then pr_notice a message that says
-> that copy_file_range is being autodisabled. If they mount with '-o
-> nocopyfrom' that will make the warning go away.
+[...]
 
-Ok, that makes sense.  I'll include this in the next rev, which will
-probably be sent only after the pull-request for ceph goes in (assuming
-the OSD patch won't need any major rework).
+LGTM, thanks!
 
-> > Does this look good, or did I missed something from the previous
-> > discussion?
-> > 
-> > (One advantage of this approach: the OSD patch can be easily backported!)
-> > 
+> I also added your Acked-by, which I think was implicit? :)
 > 
-> Yep, I think this looks like a _much_ simpler approach to the problem.
 
-Agreed!
-
-Cheers,
---
-Luís
+Hah, I'm not used to handing those out, but sure!
