@@ -2,70 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 089BB100260
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 11:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2DD100251
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 11:24:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbfKRK3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 05:29:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38984 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726518AbfKRK3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 05:29:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 56444AE89;
-        Mon, 18 Nov 2019 10:29:51 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 11:29:50 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     linux-mm <linux-mm@kvack.org>, Rong Chen <rong.a.chen@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v3] memcg: add memcg lru
-Message-ID: <20191118102950.GB14255@dhcp22.suse.cz>
-References: <20191117113526.5640-1-hdanton@sina.com>
+        id S1726774AbfKRKYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 05:24:34 -0500
+Received: from mga17.intel.com ([192.55.52.151]:18925 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726460AbfKRKYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 05:24:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 02:24:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,319,1569308400"; 
+   d="scan'208";a="208807990"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2019 02:24:31 -0800
+Message-ID: <5DD272F7.4070008@intel.com>
+Date:   Mon, 18 Nov 2019 18:31:19 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191117113526.5640-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     Khazhismel Kumykov <khazhy@google.com>, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtio_balloon: fix shrinker pages_to_free calculation
+References: <20191115225557.61847-1-khazhy@google.com> <5DD21784.8020506@intel.com> <20191118002652-mutt-send-email-mst@kernel.org> <5DD24B52.4090603@intel.com> <20191118032416-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20191118032416-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 17-11-19 19:35:26, Hillf Danton wrote:
-> 
-> Currently soft limit reclaim (slr) is frozen, see
-> Documentation/admin-guide/cgroup-v2.rst for reasons.
-> 
-> This work adds memcg hook into kswapd's logic to bypass slr, paving
-> a brick for its cleanup later.
-> 
-> After b23afb93d317 ("memcg: punt high overage reclaim to
-> return-to-userland path"), high limit breachers (hlb) are reclaimed
-> one after another spiraling up through the memcg hierarchy before
-> returning to userspace.
-> 
-> The current memcg high work helps to add the lru because we get to
-> collect hlb at zero price and in particular without adding changes
-> to the high work's behavior.
-> 
-> Then a fifo list, which is essencially a simple copy of the page lru,
-> is needed to facilitate queuing up hlb and ripping pages off them in
-> round robin once kswapd starts doing its job.
-> 
-> Finally new hook is added with slr's two problems addressed i.e.
-> hierarchy-unaware reclaim and overreclaim.
-> 
-> Thanks to Rong Chen for testing.
+On 11/18/2019 04:26 PM, Michael S. Tsirkin wrote:
+>
+> The order is called VIRTIO_BALLOON_FREE_PAGE_ORDER
+> making it sounds like there's a free page
+> and that's it order.
+>
+> Let's rename that hont block?
+> So VIRTIO_BALLOON_HINT_BLOCK_ORDER ?
+>
+> VIRTIO_BALLOON_PAGES_PER_HINT_BLOCK ?
 
-You have ignored the previous review feedback again [1]. I have nacked
-the patch on grounds that it is completely missing any real use case
-scenario or any numbers suggesting there is an actual improvement.
+Sounds good.
 
-Please do not post new versions until you make those things clear.
-
-[1] http://lkml.kernel.org/r/20191029083730.GC31513@dhcp22.suse.cz
--- 
-Michal Hocko
-SUSE Labs
+Best,
+Wei
