@@ -2,124 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD884FFF8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8646EFFFB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfKRHfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 02:35:25 -0500
-Received: from mga17.intel.com ([192.55.52.151]:8493 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbfKRHfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 02:35:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2019 23:35:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,319,1569308400"; 
-   d="scan'208";a="258334186"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Nov 2019 23:35:23 -0800
-Message-ID: <5DD24B52.4090603@intel.com>
-Date:   Mon, 18 Nov 2019 15:42:10 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1726646AbfKRHmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 02:42:43 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48317 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfKRHmm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 02:42:42 -0500
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iWbg8-0004wZ-Kx; Mon, 18 Nov 2019 07:42:32 +0000
+Date:   Mon, 18 Nov 2019 08:42:31 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>
+Subject: Re: [PATCH v11 2/2] selftests: add tests for clone3() with *set_tid
+Message-ID: <20191118074231.fvczfgrbinzgajqg@wittgenstein>
+References: <20191115123621.142252-1-areber@redhat.com>
+ <20191115123621.142252-2-areber@redhat.com>
+ <20191118014642.GC391304@gmail.com>
 MIME-Version: 1.0
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     Khazhismel Kumykov <khazhy@google.com>, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio_balloon: fix shrinker pages_to_free calculation
-References: <20191115225557.61847-1-khazhy@google.com> <5DD21784.8020506@intel.com> <20191118002652-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20191118002652-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191118014642.GC391304@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/18/2019 01:30 PM, Michael S. Tsirkin wrote:
-> On Mon, Nov 18, 2019 at 12:01:08PM +0800, Wei Wang wrote:
->> On 11/16/2019 06:55 AM, Khazhismel Kumykov wrote:
->>> To my reading, we're accumulating total freed pages in pages_freed, but
->>> subtracting it every iteration from pages_to_free, meaning we'll count
->>> earlier iterations multiple times, freeing fewer pages than expected.
->>> Just accumulate in pages_freed, and compare to pages_to_free.
->> Not sure about the above. But the following unit mismatch is a good capture,
->> thanks!
->>
->>> There's also a unit mismatch, where pages_to_free seems to be virtio
->>> balloon pages, and pages_freed is system pages (We divide by
->>> VIRTIO_BALLOON_PAGES_PER_PAGE), so sutracting pages_freed from
->>> pages_to_free may result in freeing too much.
->>>
->>> There also seems to be a mismatch between shrink_free_pages() and
->>> shrink_balloon_pages(), where in both pages_to_free is given as # of
->>> virtio pages to free, but free_pages() returns virtio pages, and
->>> balloon_pages returns system pages.
->>>
->>> (For 4K PAGE_SIZE, this mismatch wouldn't be noticed since
->>> VIRTIO_BALLOON_PAGES_PER_PAGE would be 1)
->>>
->>> Have both return virtio pages, and divide into system pages when
->>> returning from shrinker_scan()
->> Sounds good.
->>
->>> Fixes: 71994620bb25 ("virtio_balloon: replace oom notifier with shrinker")
->>> Cc: Wei Wang <wei.w.wang@intel.com>
->>> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
->>> ---
->>>
->>> Tested this under memory pressure conditions and the shrinker seemed to
->>> shrink.
->>>
->>>    drivers/virtio/virtio_balloon.c | 11 ++++-------
->>>    1 file changed, 4 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
->>> index 226fbb995fb0..7951ece3fe24 100644
->>> --- a/drivers/virtio/virtio_balloon.c
->>> +++ b/drivers/virtio/virtio_balloon.c
->>> @@ -782,11 +782,8 @@ static unsigned long shrink_balloon_pages(struct virtio_balloon *vb,
->>>    	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
->>>    	 * multiple times to deflate pages till reaching pages_to_free.
->>>    	 */
->>> -	while (vb->num_pages && pages_to_free) {
->>> -		pages_freed += leak_balloon(vb, pages_to_free) /
->>> -					VIRTIO_BALLOON_PAGES_PER_PAGE;
->>> -		pages_to_free -= pages_freed;
->>> -	}
->>> +	while (vb->num_pages && pages_to_free > pages_freed)
->>> +		pages_freed += leak_balloon(vb, pages_to_free - pages_freed);
->>>    	update_balloon_size(vb);
->>>    	return pages_freed;
->>> @@ -805,11 +802,11 @@ static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
->>>    		pages_freed = shrink_free_pages(vb, pages_to_free);
->> We also need a fix here then:
->>
->> pages_freed = shrink_free_pages(vb, sc->nr_to_scan) *
->> VIRTIO_BALLOON_PAGES_PER_PAGE;
-> No let's do accounting in pages please. virtio page is a legacy
-> thing we just did not fix it in time to get rid of it by now.
->
->> Btw, there is another mistake, in virtio_balloon_shrinker_count:
->>
->> -       count += vb->num_free_page_blocks >> VIRTIO_BALLOON_FREE_PAGE_ORDER;
->> +      count += vb->num_free_page_blocks << VIRTIO_BALLOON_FREE_PAGE_ORDER;
->>
->> You may want to include it in this fix patch as well.
-> OMG. should be a separate patch.
-> But really this just shows why shifts are such a bad idea.
->
-> Let's define
-> VIRTIO_BALLOON_PAGES_PER_FREE_PAGE
->
-> and use it with * and / consistently instead of shifts.
->
+On Sun, Nov 17, 2019 at 05:46:42PM -0800, Andrei Vagin wrote:
+> On Fri, Nov 15, 2019 at 01:36:21PM +0100, Adrian Reber wrote:
+> > +	if (!WIFEXITED(status))
+> > +		ksft_test_result_fail("Child error\n");
+> > +
+> > +	if (WEXITSTATUS(status))
+> > +		/*
+> > +		 * Update the number of total tests with the tests from the
+> > +		 * child processes.
+> > +		 */
+> > +		ksft_cnt.ksft_pass = WEXITSTATUS(status);
+> 
+> I just found that accounting of failed test cases in this test doesn't
+> work properly. And if one of the test cases fails in a child process,
+> the whole test will have the pass status.
+> 
+> 
+> For example, if we add a fake fail:
+> 
+> diff --git a/tools/testing/selftests/clone3/clone3_set_tid.c b/tools/testing/selftests/clone3/clone3_set_tid.c
+> index 3480e1c46..82c99c42f 100644
+> --- a/tools/testing/selftests/clone3/clone3_set_tid.c
+> +++ b/tools/testing/selftests/clone3/clone3_set_tid.c
+> @@ -301,7 +301,7 @@ int main(int argc, char *argv[])
+>                  * namespaces. Again assuming this is running in the host's
+>                  * PID namespace. Not yet nested.
+>                  */
+> -               test_clone3_set_tid(set_tid, 4, CLONE_NEWPID, -EINVAL, 0, 0);
+> +               test_clone3_set_tid(set_tid, 4, CLONE_NEWPID, -EPERM, 0, 0);
+>  
+>                 /*
+>                  * This should work and from the parent we should see
+> 
+> $ make run_tests 
+> ....
+> # ok 21 [21104] Result (0) matches expectation (0)
+> # # unshare PID namespace
+> # # [21104] Trying clone3() with CLONE_SET_TID to 21106 and 0x0
+> # # Invalid argument - Failed to create new process
+> # # [21104] clone3() with CLONE_SET_TID 21106 says :-22 - expected -22
+> # ok 22 [21104] Result (-22) matches expectation (-22)
+> # # [21104] Child is ready and waiting
+> # ok 26 PIDs in all namespaces as expected (21106,42,1)
+> # # Planned tests != run tests (27 != 26)
+> # # Pass 26 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+> ok 3 selftests: clone3: clone3_set_tid
 
-OK, will do (maybe call it VIRTIO_BALLOON_FREE_PAGES_PER_BLOCK).
+Thanks for reporting this.
+With your patch series you just sent this problem should be addressed.
 
-Best,
-Wei
-
+Thanks!
+Christian
