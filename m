@@ -2,70 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F18C1100AF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1105100B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfKRR72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 12:59:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:53198 "EHLO mga02.intel.com"
+        id S1727053AbfKRSTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 13:19:19 -0500
+Received: from mga02.intel.com ([134.134.136.20]:54651 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbfKRR72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 12:59:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726317AbfKRSTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 13:19:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 09:59:27 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 10:19:18 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,321,1569308400"; 
-   d="scan'208";a="208926876"
-Received: from cooperwu-mobl.gar.corp.intel.com (HELO localhost) ([10.252.3.195])
-  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2019 09:59:25 -0800
-Date:   Mon, 18 Nov 2019 19:59:24 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, jsnitsel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
- tpm_tis_probe_irq_single
-Message-ID: <20191118175924.GA5984@linux.intel.com>
-References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
- <20191114164151.GB9528@linux.intel.com>
- <20191114164426.GC9528@linux.intel.com>
- <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+   d="scan'208";a="407480031"
+Received: from asimomai-mobl1.amr.corp.intel.com (HELO [10.251.156.191]) ([10.251.156.191])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Nov 2019 10:19:17 -0800
+Subject: Re: linux-next: build failure after merge of the sound-asoc-fixes
+ tree
+To:     Mark Brown <broonie@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191113081035.7e7f9bc2@canb.auug.org.au>
+ <20191115093410.4a7938f5@canb.auug.org.au>
+ <20191118155852.GG9761@sirena.org.uk>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a0e6089b-b5a3-f9e3-fc2c-5b433553e154@linux.intel.com>
+Date:   Mon, 18 Nov 2019 10:47:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191118155852.GG9761@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 16, 2019 at 09:32:06AM -0500, Stefan Berger wrote:
-> On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
-> > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
-> > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
-> > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > 
-> > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
-> > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
-> > > > This move handles error conditions better that may arise if anything
-> > > > before fails in tpm_tis_probe_irq_single.
-> > > > 
-> > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > What about just changing the condition?
-> > Also cannot take this since it is not a bug (no fixes tag).
+
+
+On 11/18/19 9:58 AM, Mark Brown wrote:
+> On Fri, Nov 15, 2019 at 09:34:10AM +1100, Stephen Rothwell wrote:
+>> On Wed, 13 Nov 2019 08:10:35 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> I'll repost but will wait until Jerry has tested it on that machine.
+>>> Caused by commit
+> 
+>>>    1d3e9077307f ("ASoC: SOF: Intel: Fix CFL and CML FW nocodec binary names.")
+> 
+>>> I have reverted that commit for today.
+> 
+>> I am still reverting that commit.
+> 
+> I've reverted the commit, I was a bit disappointed that none of the
+> Intel people responded but I see you didn't CC Pierre who sent the
+> commit so he won't have seen your report - I missed that due to the CC
+> to Liam who was also in the chain.
 
-OK, great, thank you.
-
-This is really needs some reasoning on why this was the right way to
-fix the issue. In addition, a source code comment might make sense.
-
-/Jarkko
+Sorry about that, the use of 'Fix' in the commit message might have 
+misled Mark.
+If you CC: me and also CC: alsa-devel you should get an answer without 
+delay. I only noticed the issue this morning with kbuild reports.
