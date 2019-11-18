@@ -2,99 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83003FFFF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12959FFFE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfKRIAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 03:00:07 -0500
-Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21416 "EHLO
-        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbfKRIAG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 03:00:06 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1574063917; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=YE3ZdikWrz4vU1wnKMshg3aH2E9+RlQgSCVV+br1F91F1PuwLieEtIvZvoKrgjOwY04gbq6CseB7hmzWfRWHRw7w+XXHWD74F4gYyBf1qGBToBah6MhfA9nYZ7uZBml+5d6589ujXt5UPlJWxuIBND3tX5RAkSLVkeuoI6mevfM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1574063917; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=SqUaBIpR2mccPD6jr20GE5M0X9vjxDDNdgLp2NxZva8=; 
-        b=VbjBKVhlbPDXrHTk9ZxSJ/Mbtm6iuhEV80+RtOhFRgX6rOH8Uh3qhgcWlh9Nvob6E/XVwozQHv0aXQPaL8pZqYz+3Xm0ccbemPFpvRrtMLEx13KyloMw5Kt8NI3NvfjgV2MANyy1Gc/+u0c4BM75lrwXbNcSFRndAnQR6Pt+Rzw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=brennan.io;
-        spf=pass  smtp.mailfrom=stephen@brennan.io;
-        dmarc=pass header.from=<stephen@brennan.io> header.from=<stephen@brennan.io>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574063917;
-        s=selector01; d=brennan.io; i=stephen@brennan.io;
-        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        l=928; bh=SqUaBIpR2mccPD6jr20GE5M0X9vjxDDNdgLp2NxZva8=;
-        b=anV7HRl7bKqk4mHo2jeLLWqW3ZBdNO6/iS8FDjt7rIsjIXtvSDQHIA07RUh0kNm/
-        ynOfFc0UVtWYGRrWy6/YaGFfPU5v/P2jpMLVN5DYd5zYfV+Gmbbqos0UQrF4uQfHbM+
-        YoXP6BNOK8ivrGQ3+nUcWLaQOmJ98s3VCV5PZkqg=
-Received: from localhost (195.173.24.136.in-addr.arpa [136.24.173.195]) by mx.zohomail.com
-        with SMTPS id 1574063915435914.3658986565996; Sun, 17 Nov 2019 23:58:35 -0800 (PST)
-From:   Stephen Brennan <stephen@brennan.io>
-To:     stephen@brennan.io
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Message-ID: <20191118075807.165126-4-stephen@brennan.io>
-Subject: [PATCH 3/3] ARM: dts: bcm2711: Enable HWRNG support
-Date:   Sun, 17 Nov 2019 23:58:07 -0800
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191118075807.165126-1-stephen@brennan.io>
-References: <20191118075807.165126-1-stephen@brennan.io>
+        id S1726488AbfKRH6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 02:58:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbfKRH63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 02:58:29 -0500
+Received: from localhost (unknown [122.167.117.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 614B820692;
+        Mon, 18 Nov 2019 07:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574063909;
+        bh=2inFxxvwRMGZpWan2xQ1yUu6g4OjzeAlqm+cS029Jkk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GIUOEw9VUPEfCmkeckbz0iSW3JnqhEPwU61x17w/0G6rFiTZPx2+fC8ouwz+klFaS
+         KJEjiSCXf2K+K93SijTnH4ocZ5Lk7Qurup7ZYlavjL8jQJILJ2yahZw4vEp6YVDx3C
+         aA5dJzjJ3CvUtlySWB8/ozLBoAHyHK87Fnzco4nk=
+Date:   Mon, 18 Nov 2019 13:28:21 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Green Wan <green.wan@sifive.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: sf-pdma: fix kernel-doc W=1 warning
+Message-ID: <20191118075821.GA82508@vkoul-mobl>
+References: <20191115031013.30448-1-green.wan@sifive.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115031013.30448-1-green.wan@sifive.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
+On 15-11-19, 11:10, Green Wan wrote:
+> Fix kernel-doc W=1 warning. There are several comments starting from "/**"
+> but not for function comment purpose. Remove them to fix the warning.
+> Another definition in front of function causes warning. Move definition
+> to header file.
 
-This enables hardware random number generator support for the BCM2711
-on the Raspberry Pi 4 board.
+We do not do these kind of titles for a patch, a patch should have
+subject which describes the changes and we do not mix multiple changes
+into a patch , so..
+> 
+> kernel-doc warning:
+> 
+> drivers/dma/sf-pdma/sf-pdma.c:28: warning: Function parameter or member
+> 	'addr' not described in 'readq'
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Signed-off-by: Stephen Brennan <stephen@brennan.io>
----
- arch/arm/boot/dts/bcm2711.dtsi | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+'describe redq parameter' can be good subject and a patch
 
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dts=
-i
-index ac83dac2e6ba..2c19e5de284a 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
-@@ -92,10 +92,9 @@ pm: watchdog@7e100000 {
- =09=09};
-=20
- =09=09rng@7e104000 {
-+=09=09=09compatible =3D "brcm,bcm2711-rng200";
- =09=09=09interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
--
--=09=09=09/* RNG is incompatible with brcm,bcm2835-rng */
--=09=09=09status =3D "disabled";
-+=09=09=09status =3D "okay";
- =09=09};
-=20
- =09=09uart2: serial@7e201400 {
---=20
-2.24.0
+> drivers/dma/sf-pdma/sf-pdma.c:438: warning: Function parameter or member
+> 	'ch' not described in 'SF_PDMA_REG_BASE'
+> drivers/dma/sf-pdma/sf-pdma.c:438: warning: Excess function parameter
+> 	'pdma' description in 'SF_PDMA_REG_BASE'
 
+'remove pdma description' can be second patch and subject
 
+> 
+> Changes:
+>  - Replace string '/**' with '/*' not for comment purpose
+>  - Move definition, "SF_PDMA_REG_BASE", fomr sf-pdma.c to sf-pdma.h
+> 
+> Signed-off-by: Green Wan <green.wan@sifive.com>
+> ---
+>  drivers/dma/sf-pdma/sf-pdma.c | 3 +--
+>  drivers/dma/sf-pdma/sf-pdma.h | 4 +++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/dma/sf-pdma/sf-pdma.c b/drivers/dma/sf-pdma/sf-pdma.c
+> index 16fe00553496..465256fe8b1f 100644
+> --- a/drivers/dma/sf-pdma/sf-pdma.c
+> +++ b/drivers/dma/sf-pdma/sf-pdma.c
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-or-later
+> -/**
+> +/*
+>   * SiFive FU540 Platform DMA driver
+>   * Copyright (C) 2019 SiFive
+>   *
+> @@ -435,7 +435,6 @@ static int sf_pdma_irq_init(struct platform_device *pdev, struct sf_pdma *pdma)
+>   *
+>   * Return: none
+>   */
+> -#define SF_PDMA_REG_BASE(ch)	(pdma->membase + (PDMA_CHAN_OFFSET * (ch)))
+>  static void sf_pdma_setup_chans(struct sf_pdma *pdma)
+>  {
+>  	int i;
+> diff --git a/drivers/dma/sf-pdma/sf-pdma.h b/drivers/dma/sf-pdma/sf-pdma.h
+> index 55816c9e0249..0c20167b097d 100644
+> --- a/drivers/dma/sf-pdma/sf-pdma.h
+> +++ b/drivers/dma/sf-pdma/sf-pdma.h
+> @@ -1,5 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0-or-later */
+> -/**
+> +/*
+>   * SiFive FU540 Platform DMA driver
+>   * Copyright (C) 2019 SiFive
+>   *
+> @@ -57,6 +57,8 @@
+>  /* Error Recovery */
+>  #define MAX_RETRY					1
+>  
+> +#define SF_PDMA_REG_BASE(ch)	(pdma->membase + (PDMA_CHAN_OFFSET * (ch)))
+> +
+>  struct pdma_regs {
+>  	/* read-write regs */
+>  	void __iomem *ctrl;		/* 4 bytes */
+> 
+> base-commit: a7e335deed174a37fc6f84f69caaeff8a08f8ff8
+> -- 
+> 2.17.1
 
+-- 
+~Vinod
