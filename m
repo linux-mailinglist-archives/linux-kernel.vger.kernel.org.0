@@ -2,157 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78647100902
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0EC1008EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:11:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbfKRQQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 11:16:51 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:41199 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbfKRQQv (ORCPT
+        id S1727339AbfKRQL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 11:11:29 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:46270 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfKRQL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:16:51 -0500
-Received: by mail-il1-f193.google.com with SMTP id q15so16522463ils.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:16:50 -0800 (PST)
+        Mon, 18 Nov 2019 11:11:29 -0500
+Received: by mail-qv1-f65.google.com with SMTP id w11so6746101qvu.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:11:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vGDUmknBAHHgnUGD6G/YP0BMVQ+t0TVHx52Qz9PZmwY=;
-        b=LcnAEJQfcR+16B5xAU1duNVJ5mC51SCgsYmRJoEQik6hAY9yeHjfDpdnU6mZX/7YZS
-         5b7TwjIsbX/45vF5T4i3YutHXRm2eLAe3l1Zd/IRiYEOPrNzYd5CdZdYEiPHgb8YpspE
-         uMlrBkxoaQht9bPslaYl+l5boo7gzXta3VnnY=
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j0SqAQT8llYIw4e/49l3a9ohNbFeVl5zPNeEm/Wp4s0=;
+        b=D4nk0Siou5s/cqdoqRqvYGa8zjueKxO+SjyVZm6/zT83sFfDUd2SnGh1k9QnwDRDrx
+         CH6WGIyRKE0rF+mnWZMd8pHyYqF+YLfdNHGtqMo/fOoR4AXXtBL0Cj7J0CMVPjVHqH1A
+         5p89M+K8M+qZDQsxCDXAtPbwLRRrKzSr3XyWyZ95bNw/QI/aHZbmCL8249BGxWEd1uNi
+         NmxnkCqIoZnTJ4pMiiNzMsyDF7nPDvcgoyhCtivfuijsRgBIc92NpnNww90o0JoHuJom
+         W1UH6Cibz2Uc69M0LwpMJivjKj1PUsQuKOhtJZg9yyVl2bQ6Et0jog0H3A2vuFx+O7mN
+         fvRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vGDUmknBAHHgnUGD6G/YP0BMVQ+t0TVHx52Qz9PZmwY=;
-        b=TqTiMu3qIzpOjjCzN5AJGT3HgWhkGajGZWL4JwIguZK1bWAFQVviG7cbP7X74FQPk1
-         hUKYIWlwwvU92IdJ/IO66frchkqhLVMkfV9qmhy2VrxooqedVVTazvnYOrpU7mLDhYou
-         Nbg9V0MFFs0z26jzqRHRDBqeedU9UBbumnKG2A8CgTKda3j/Ern0o7LvAD90++rz0oju
-         0+C4MhWZdPUkiZt9CwwjYuupgopi+r/F1X/wR75BzV+GtVjfQriuC7kmeaAns1FgNm66
-         waBVM759Xy7IJp9R1t7xRPTOjyFkDxwPxFH/jxkRCB41DVh0oRqZ7LNTxr+XbpZB4q8t
-         Jaiw==
-X-Gm-Message-State: APjAAAXS7tpeJD+ky99v41TWHz8zrqmJyosvUvlsPUMLAZHUGrBw7k02
-        cYPGI0zdjHTi6Ap15WMZG/g1D9m/bko=
-X-Google-Smtp-Source: APXvYqwoaO+oWnxiLS4QmLvqId9v0r+cHot9LjDn1jUMEr6abjEyNywiyDRcEAojxoQmqWLp2Z9Rog==
-X-Received: by 2002:a92:c8c9:: with SMTP id c9mr17686336ilq.197.1574093809321;
-        Mon, 18 Nov 2019 08:16:49 -0800 (PST)
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
-        by smtp.gmail.com with ESMTPSA id j5sm4679071ilc.10.2019.11.18.08.16.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2019 08:16:49 -0800 (PST)
-Received: by mail-io1-f50.google.com with SMTP id 1so19412496iou.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:16:49 -0800 (PST)
-X-Received: by 2002:a6b:a0c:: with SMTP id z12mr5762767ioi.142.1574093329092;
- Mon, 18 Nov 2019 08:08:49 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j0SqAQT8llYIw4e/49l3a9ohNbFeVl5zPNeEm/Wp4s0=;
+        b=ht/Ap/WIIRDsWcm6JWRjuV3YaA5AcEKdlqNwWVrPRXHe2FEIl7SLXcSmyjk7/LLhnV
+         fmInNzmFNVOOes3SGYU1SVT4Q+fXdpuxhdNfezoK8u2FFmhQ2g+NFVUigXjgfxo1Y3zk
+         PG6+DKQuEPTKore5JAv/rSR+PltirwY809y5U7kF0Vq6NY+Lw59ftGXK50Qw872wHgcD
+         K3BgS843tGEMsUA6TaYiaiMbfJzvGl30D2LZApXSJ8yeH5w0MClkTQO0D2eQfmVQlIky
+         HwGVmeTDKK0u1AH0Zdl/2hJZ00BqSlbAtz8ufdPk9tZgKL3tr5EyWiFN+aRUVBFspK2F
+         zo9w==
+X-Gm-Message-State: APjAAAVfp6hkpLxJOw5kE+UJ64zB8MfHXb6yHQyllW5c/sceBa92p1IP
+        qGeTJ6QipgcUW1Wy08YKusqDHg==
+X-Google-Smtp-Source: APXvYqyvK7ktIXppKh1dR704A5mqOwl/diTd0Fr4GO7WaTkdgkBup/M3IW20e4uuZ1GlgXiw9mZ32w==
+X-Received: by 2002:a0c:fa50:: with SMTP id k16mr10774204qvo.172.1574093487963;
+        Mon, 18 Nov 2019 08:11:27 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:1113])
+        by smtp.gmail.com with ESMTPSA id i4sm10125597qtp.57.2019.11.18.08.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 08:11:26 -0800 (PST)
+Date:   Mon, 18 Nov 2019 11:11:26 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH v3 3/7] mm/lru: replace pgdat lru_lock with lruvec lock
+Message-ID: <20191118161126.GB365174@cmpxchg.org>
+References: <1573874106-23802-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1573874106-23802-4-git-send-email-alex.shi@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20190301153348.29870-1-christoph.muellner@theobroma-systems.com>
- <2766673.iMURPl8gB5@phil> <69472c06-8b21-c3d8-acad-1a0a292c0fa2@fivetechno.de>
- <3460135.SDF8zhHPq4@diego>
-In-Reply-To: <3460135.SDF8zhHPq4@diego>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 18 Nov 2019 08:08:37 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VnjyQJpRcW6P1f4+ZrSOzAe2Cnoej=it4aCz+F_ozukw@mail.gmail.com>
-Message-ID: <CAD=FV=VnjyQJpRcW6P1f4+ZrSOzAe2Cnoej=it4aCz+F_ozukw@mail.gmail.com>
-Subject: Re: arm64: dts: rockchip: Disable HS400 for mmc on rk3399-roc-pc
-To:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc:     Markus Reichl <m.reichl@fivetechno.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Tony Xie <tony.xie@rock-chips.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vicente Bergas <vicencb@gmail.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Randy Li <ayaka@soulik.info>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Christoph Muellner <christoph.muellner@theobroma-systems.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573874106-23802-4-git-send-email-alex.shi@linux.alibaba.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, Nov 16, 2019 at 11:15:02AM +0800, Alex Shi wrote:
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 62470325f9bc..cf274739e619 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1246,6 +1246,42 @@ struct lruvec *mem_cgroup_page_lruvec(struct page *page, struct pglist_data *pgd
+>  	return lruvec;
+>  }
+>  
+> +struct lruvec *lock_page_lruvec_irq(struct page *page,
+> +					struct pglist_data *pgdat)
+> +{
+> +	struct lruvec *lruvec;
+> +
+> +again:
+> +	lruvec = mem_cgroup_page_lruvec(page, pgdat);
+> +	spin_lock_irq(&lruvec->lru_lock);
 
+This isn't safe. Nothing prevents the page from being moved to a
+different memcg in between these two operations, and the lruvec having
+been freed by the time you try to acquire the spinlock.
 
-On Fri, Nov 15, 2019 at 3:19 AM Heiko St=C3=BCbner <heiko@sntech.de> wrote:
->
-> Hi Markus,
->
-> Am Freitag, 15. November 2019, 11:37:58 CET schrieb Markus Reichl:
-> > Am 14.11.19 um 14:10 schrieb Heiko Stuebner:
-> > > $subject is missing the [PATCH] prefix
-> > will fix.
->
-> no need to resend just for this ... just to keep in mind for future patch=
-es ;-)
->
->
-> > > Am Montag, 11. November 2019, 10:51:04 CET schrieb Markus Reichl:
-> > >> Working with rootfs on two 128GB mmcs on rk3399-roc-pc.
-> > >>
-> > >> One (mmc name 128G72, one screw hole) works fine in HS400 mode.
-> > >> Other (mmc name DJNB4R, firefly on pcb, two screw holes) gets lots o=
-f
-> > >> mmc1: "running CQE recovery", even hangs with damaged fs,
-> > >> when running under heavy load, e.g. compiling kernel.
-> > >> Both run fine with HS200.
-> > >>
-> > >> Disabling CQ with patch mmc: core: Add MMC Command Queue Support ker=
-nel parameter [0] did not help.
-> > >> [0] https://gitlab.com/ayufan-repos/rock64/linux-mainline-kernel/com=
-mit/54e264154b87dfe32a8359b2726e2d5611adbaf3
-> > >
-> > > I'm hoping for some input from other people in Cc but your mail heade=
-rs
-> > > also referenced the drive-impendance series from Christoph [0], which
-> > > it seems we need to poke the phy maintainer again.
-> > >
-> > > Did you check if changing the impedance helped (like the signal dampe=
-ning
-> > > Philipp described in one of the replies there).
-> >
-> > checked with
-> >
-> > &emmc_phy {
-> > +       drive-impedance-ohm =3D <33>;
-> >
-> > gives no improvement:
->
-> That is sad ... I guess we really should disable hs400 then ...
-> that may give others more incentive to dive deeper ;-)
+You need to use the rcu lock to dereference page->mem_cgroup and its
+lruvec when coming from the page like this.
 
-Just out of curiosity, is the problem with the strobe line, or with
-hs400?  Have you tried using the solution from "rk3399-gru.dtsi"?
-Namely:
-
-        /*
-         * Signal integrity isn't great at 200 MHz and 150 MHz (DDR) gives =
-the
-         * same (or nearly the same) performance for all eMMC that are inte=
-nded
-         * to be used.
-         */
-        assigned-clock-rates =3D <150000000>;
-
-IIRC hs400 on rk3399 was a bit iffy but running at 150 MHz made it
-much more reliable and still gave you 300 MB/s transfer rate (so much
-better than hs200).  In reality many eMMC chips can't do > 300 MB/s
-anyway.
-
--Doug
+You also need to use page_memcg_rcu() to insert the appropriate
+lockless access barriers, which mem_cgroup_page_lruvec() does not do
+since it's designed for use with pgdat->lru_lock.
