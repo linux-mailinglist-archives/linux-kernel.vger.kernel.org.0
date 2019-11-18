@@ -2,67 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63354100A7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9BB100A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:40:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfKRRkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 12:40:04 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:39400 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfKRRkD (ORCPT
+        id S1727431AbfKRRkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 12:40:20 -0500
+Received: from a27-55.smtp-out.us-west-2.amazonses.com ([54.240.27.55]:45946
+        "EHLO a27-55.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726461AbfKRRkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 12:40:03 -0500
-Received: by mail-oi1-f195.google.com with SMTP id v138so16095250oif.6;
-        Mon, 18 Nov 2019 09:40:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HR5G7YllB3yBoP1VaKbqalm04pOE91aZ4flxfcWit7o=;
-        b=LILAQxoWslf1mIkeLomeuOclHD4ATtNjY1Dbg58bzXaRyGy34l57P8clyVwnKjPm7a
-         3crnZoiCL+dutQKz7nWmGUw2EjQDIhPfnlbmk/vY4R9xpdnBNaE+XdaXH5LB0pzkIS3h
-         5ExZLYp/mQvPYkks0Az2h/hlYvZe1FJo6QmXfZAODxBGtLJMxlTncaadsSkV4DPij/Jg
-         C0nAcfyVR1Vmdx7dABoK9euwNPD9g2F//238rALS72M5bXzj2Av8vFqwwJY+EbmiFnJs
-         jcDjBbegA0Ew53ySGGt1KyqrCw5DfqKZQ+NpCoTQ0RdTzbihUNllK47WvVAW4QXhHoej
-         Fq+Q==
-X-Gm-Message-State: APjAAAXnF1ixKd8oz3/sr6e6yEL5S1fkl1qY7VIlFk2FINASX01xGrv1
-        3nGm96RrTC5WdN6/QeuZUZTJJBw=
-X-Google-Smtp-Source: APXvYqyNEcbuRyYTbqpR2eYVi1OEjRcS06GdZdvr3yrHT2MH88vBkjpS3CCYVVthd5u6EBAx8RzOCw==
-X-Received: by 2002:aca:cdc2:: with SMTP id d185mr96054oig.35.1574098802794;
-        Mon, 18 Nov 2019 09:40:02 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i11sm6444275otj.17.2019.11.18.09.40.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 09:40:02 -0800 (PST)
-Date:   Mon, 18 Nov 2019 11:40:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benoit Parrot <bparrot@ti.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
-Subject: Re: [RESEND Patch v3 02/20] dt-bindings: media: cal: update binding
- example
-Message-ID: <20191118174001.GA7672@bogus>
-References: <20191112145347.23519-1-bparrot@ti.com>
- <20191112145347.23519-3-bparrot@ti.com>
+        Mon, 18 Nov 2019 12:40:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574098803;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+        bh=D+qzsjQFvwEHeF6Jdqmzkusi1quRYgFgN764fiHoWOM=;
+        b=h35xw2itNPH+FrbO5+8Fp2h6bgHrJGrwot9CJ0OMqRVAXQp+EDuNCFewIrqS534a
+        mWo13w1cNVIVGQ6xP/8nnbK11Gm25CRyfHhp6Mb979kubXUzZraMHEakKgb+GuPTuYd
+        OcWpj5oI0Ji4YkCrq1vyW4PpaSmA6+0kCnHB154E=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574098803;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+        bh=D+qzsjQFvwEHeF6Jdqmzkusi1quRYgFgN764fiHoWOM=;
+        b=P8LnezQZ6BzOTEO33ejxNTqnPK3UXTpKDvLJkIvd8tJsnDRntucDmk/20FCWWiQ6
+        h56w4Hkk4oSS7SyPGDUd/4U70/s1qTwSGmGzyor9G+dcAbf5bfU1IuPJtuyfhRmUDKW
+        vYTVMlv815ovjUp2GdBY2AVrJwFx5XTsNKDQ5bpI=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3662C447A4
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, rnayak@codeaurora.org
+Cc:     agross@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        mark.rutland@arm.com, swboyd@chromium.org, dianders@chromium.org
+Subject: [PATCH 1/6] soc: qcom: rpmhpd: Set 'active_only' for active only power domains
+Date:   Mon, 18 Nov 2019 17:40:02 +0000
+Message-ID: <0101016e7f9998d8-877e9166-8b6a-4530-ab66-3c88002e1db4-000000@us-west-2.amazonses.com>
+X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20191118173944.27043-1-sibis@codeaurora.org>
+References: <20191118173944.27043-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112145347.23519-3-bparrot@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SES-Outgoing: 2019.11.18-54.240.27.55
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Nov 2019 08:53:29 -0600, Benoit Parrot wrote:
-> Update binding example to show proper endpoint properties and linkage.
-> 
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> ---
->  .../devicetree/bindings/media/ti-cal.txt      | 31 ++++++++++---------
->  1 file changed, 16 insertions(+), 15 deletions(-)
-> 
+From: Douglas Anderson <dianders@chromium.org>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The 'active_only' attribute was accidentally never set to true for any
+power domains meaning that all the code handling this attribute was
+dead.
+
+NOTE that the RPM power domain code (as opposed to the RPMh one) gets
+this right.
+
+Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/soc/qcom/rpmhpd.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+index 5741ec3fa814c..51850cc68b701 100644
+--- a/drivers/soc/qcom/rpmhpd.c
++++ b/drivers/soc/qcom/rpmhpd.c
+@@ -93,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
+ 
+ static struct rpmhpd sdm845_mx_ao = {
+ 	.pd = { .name = "mx_ao", },
++	.active_only = true,
+ 	.peer = &sdm845_mx,
+ 	.res_name = "mx.lvl",
+ };
+@@ -107,6 +108,7 @@ static struct rpmhpd sdm845_cx = {
+ 
+ static struct rpmhpd sdm845_cx_ao = {
+ 	.pd = { .name = "cx_ao", },
++	.active_only = true,
+ 	.peer = &sdm845_cx,
+ 	.parent = &sdm845_mx_ao.pd,
+ 	.res_name = "cx.lvl",
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
