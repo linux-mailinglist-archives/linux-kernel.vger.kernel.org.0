@@ -2,114 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3AA100F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F474100F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 00:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKRXKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 18:10:10 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47618 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbfKRXKF (ORCPT
+        id S1726952AbfKRXHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 18:07:21 -0500
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:53156 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbfKRXHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 18:10:05 -0500
-Received: from 79.184.253.244.ipv4.supernova.orange.pl (79.184.253.244) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id bde311d14881fd19; Tue, 19 Nov 2019 00:10:02 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Len Brown <lenb@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Doug Smythies <dsmythies@telus.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC][PATCH 0/2] cpuidle: Allow states to be disabled by default (was: Re: [PATCH] cpuidle: Consolidate disabled state checks)
-Date:   Tue, 19 Nov 2019 00:04:59 +0100
-Message-ID: <1688511.GgkECGP1XA@kreacher>
-In-Reply-To: <CAJZ5v0jsQG37VF3-tiSndE0pXX9jEfgucm0UyvpM0bsyoOcpuA@mail.gmail.com>
-References: <2717750.dCEzHT3DVQ@kreacher> <CAJZ5v0ifOQaOm-8n5gUgud0sCn-Y1KQWWhzhtzdm+exvMLgL7Q@mail.gmail.com> <CAJZ5v0jsQG37VF3-tiSndE0pXX9jEfgucm0UyvpM0bsyoOcpuA@mail.gmail.com>
+        Mon, 18 Nov 2019 18:07:21 -0500
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id F161A35F41;
+        Mon, 18 Nov 2019 18:07:18 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:message-id:mime-version:content-type; s=sasl; bh=MDm
+        cpYj5GppYnk3UEbf62ejYYXY=; b=aatd/yAr2sv8eHA5BT4r9+aN2HoFoimASTW
+        yQvrXMzYWwdN2Bh+8EaJnLQFcAcGiIw99qvMZmcgQ2HJsmOz6CripSETHcJOjBPs
+        aOwPswo3YRG9XT/VgZqtQ2Gw0iTkcR6xdRw9KU5Q95mNkR6v3AnQDxtKwvoZn71z
+        f9fIzzR0=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id E92A535F40;
+        Mon, 18 Nov 2019 18:07:18 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=darkphysics.net;
+ h=date:from:to:cc:subject:message-id:mime-version:content-type;
+ s=2019-09.pbsmtp; bh=xp3dJWmhhz8NtHy5owQ0Ttu27bNB/gejh64OWp+S7xA=;
+ b=wC1vpr9TC1vY2qS8oegY8ProRFLJJ3pDAoqVKt2+yBealPj+C3KAjI5c9VJNhC+OcUuHlZ32VXDPKFJ50moTS2/SYBhv73i/uRWFEWsXgEIBlXSif4m9cKL2QlS6Ct9ZNzh136LxwM0+F3rbqOkffU1CNZfxLWzDKXyLxrkeR+Y=
+Received: from Cheese (unknown [24.19.107.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id F22A135F3F;
+        Mon, 18 Nov 2019 18:07:17 -0500 (EST)
+        (envelope-from tdavies@darkphysics.net)
+Date:   Mon, 18 Nov 2019 15:07:11 -0800
+From:   Travis Davies <tdavies@darkphysics.net>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/1] net: Fix comment block per style guide
+Message-ID: <20191118230711.GA5493@Cheese>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Pobox-Relay-ID: 2B085C0E-0A58-11EA-BF0C-D1361DBA3BAF-64344220!pb-smtp2.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, November 18, 2019 12:26:57 PM CET Rafael J. Wysocki wrote:
-> On Mon, Nov 18, 2019 at 10:22 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Mon, Nov 18, 2019 at 5:46 AM Len Brown <lenb@kernel.org> wrote:
-> > >
-> > > On Mon, Nov 4, 2019 at 6:16 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > > >
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >
-> > > > There are two reasons why CPU idle states may be disabled: either
-> > > > because the driver has disabled them or because they have been
-> > > > disabled by user space via sysfs.
-> > > >
-> > > > In the former case, the state's "disabled" flag is set once during
-> > > > the initialization of the driver and it is never cleared later (it
-> > > > is read-only effectively).
-> > >
-> > > for x86 (intel_idle and acpi_idle), no states with disabled=1 are  registered
-> > > with cpuidle.  Instead, intel_idle (currently) skips them in the loop
-> > > that registers states.
-> > > (and acpi_idle never touches the disabled field)
-> > >
-> > > And so for x86, governors checking for drv->states[i].disabled is a NOP,
-> > > and the condition described by CPUIDLE_STATE_DISABLED_BY_DRIVER
-> > > does not (yet) exist.
-> >
-> > OK
-> >
-> > > Looking at the ARM code, it seems that cpuidle-imx6q.c and cpuidle-tegra20.c
-> > > reach into the cpuidle states at run time and toggle the
-> > > drv->states[i].disabled.
-> >
-> > I might have overlooked that, let me check.
-> >
-> > > It seems that this patch takes the initial value of
-> > > drv->states->disabled, and sets the (per cpu)
-> > > usage.disable=..BY_DRIVER,
-> > > but that subsequent run-time toggles in drv->states[i]disabled by
-> > > these drivers would be missed,
-> > > because you're removed the run-time checking of drv->states->disabled?
-> >
-> > If it is updated at run time, then yes, the updates will be missed, so
-> > thanks for pointing that out.
-> >
-> > > Finally, I'd like to change intel_idle so that it *can* register a
-> > > state that is disabled, by default.
-> > > If I change the driver to NOT skip registering disabled states, and
-> > > the cpuidle copy has cpuidle_state.disabled=1,
-> > > then the state is indeed, unused at run-time.  But as you said,
-> > > it is effectively read-only, and is not indicated in sysfs, and can
-> > > not be changed via sysfs.
-> > >
-> > > One way to do this is to do what you do here and initialize
-> > > usage.disabled to drv->state.disabled. (not distinguishing between
-> > > DRIVER and USER)
-> > > That way the user could later over-ride what a driver set, by clearing
-> > > the disabled attribute.
-> 
-> I'd rather get rid of the "disabled" field from struct cpuidle_state
-> entirely and introduce a new state flag to indicate the "disabled by
-> default" status.
-> 
-> I also would expose that new flag in a new sysfs attribute of idle
-> states, say "disable_default".
-> 
-> Then, the DISABLED_BY_DRIVER bit would be reserved for driver quirks
-> (as per https://patchwork.kernel.org/patch/11249519/) and the
-> DISABLED_BY_USER one could be used for all of the other purposes.
+This patch places /* and */ on separate lines for a
+multiline block comment, in order to keep code style
+consistant with majority of blocks throughout the file.
 
-To that end, I have the following two experimental patches (on top of
-https://patchwork.kernel.org/patch/11249519/) that IMO are simple
-enough.
+This will prevent a checkpatch.pl warning:
+'Block comments use a trailing */ on a separate line'
 
-Please let me know what you think.
+Signed-off-by: Travis Davies <tdavies@darkphysics.net>
+---
+-v2: Fix commit description, and subject line as suggested by
+     Julia Lawall.
+-v3: Include my Sign-off.
 
+ include/linux/netdevice.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..a2605e043fa2 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define NET_XMIT_CN		0x02	/* congestion notification	*/
+ #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
+ 
+-/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
++/*
++ * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
+  * indicates that the device will soon be dropping packets, or already drops
+- * some packets of the same priority; prompting us to send less aggressively. */
++ * some packets of the same priority; prompting us to send less aggressively.
++ */
+ #define net_xmit_eval(e)	((e) == NET_XMIT_CN ? 0 : (e))
+ #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
+ 
+-- 
+2.21.0
 
