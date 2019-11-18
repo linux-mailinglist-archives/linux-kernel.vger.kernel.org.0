@@ -2,153 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BACB10038E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A647100397
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfKRLL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:11:28 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48118 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbfKRLL2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:11:28 -0500
-Received: from 79.184.253.244.ipv4.supernova.orange.pl (79.184.253.244) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id b3af18d642a7f005; Mon, 18 Nov 2019 12:11:24 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Len Brown <lenb@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] cpuidle: Introduce cpuidle_driver_state_disabled() for driver quirks
-Date:   Mon, 18 Nov 2019 12:11:24 +0100
-Message-ID: <5502311.VOJAVHccSv@kreacher>
+        id S1726788AbfKRLLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:11:52 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37703 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726460AbfKRLLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:11:48 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47GmVm1C3vz9sPW;
+        Mon, 18 Nov 2019 22:11:44 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1574075505;
+        bh=QByUf344DbijnEcOKjXE4bov4EScyA8n8e5maydZozo=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=hpoz6mdZbL3VKo2Lz73Gfs7my5GTa4IlFeffXEBJLPoLFaqeRT4/mNgJfEfZ6PPnF
+         nrtW48n7UNoMazweZHcXu+Hz5/6qsmDT7VXwoRTblB/vNHXuoCqq2cBzolunk4gyvH
+         S8xeV3xe/3p02onu0nUjRz1B/rhuyqOnFuONi7Q2yIzFAyuMlLeS9fMi0CLzZYjsuU
+         +jE8ZkIqe3ITpz8ELVMjdH+YLwjY5elttiCPWITPTFDeIf//ymDk5bakwsq/3Bu4wC
+         0IBdwBeu1oAbW095JNG5+UKtDpPP0Yj4MsBv/JWD6CNjj9fZtmqf0mJ34ACz743r/d
+         Ew/T7s/F/ZfqA==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, npiggin@gmail.com,
+        dja@axtens.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 15/15] powerpc/32s: Activate CONFIG_VMAP_STACK
+In-Reply-To: <a99bdfb64e287b16b8cd3f7ec1abfdfb50c7cc64.1568106758.git.christophe.leroy@c-s.fr>
+References: <cover.1568106758.git.christophe.leroy@c-s.fr> <a99bdfb64e287b16b8cd3f7ec1abfdfb50c7cc64.1568106758.git.christophe.leroy@c-s.fr>
+Date:   Mon, 18 Nov 2019 22:11:38 +1100
+Message-ID: <87v9rhcuc5.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> A few changes to retrieve DAR and DSISR from struct regs
+> instead of retrieving them directly, as they may have
+> changed due to a TLB miss.
+>
+> Also modifies hash_page() and friends to work with virtual
+> data addresses instead of physical ones.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/kernel/entry_32.S         |  4 +++
+>  arch/powerpc/kernel/head_32.S          | 19 +++++++++++---
+>  arch/powerpc/kernel/head_32.h          |  4 ++-
+>  arch/powerpc/mm/book3s32/hash_low.S    | 46 +++++++++++++++++++++-------------
+>  arch/powerpc/mm/book3s32/mmu.c         |  9 +++++--
+>  arch/powerpc/platforms/Kconfig.cputype |  2 ++
+>  6 files changed, 61 insertions(+), 23 deletions(-)
 
-Commit 99e98d3fb100 ("cpuidle: Consolidate disabled state checks")
-overlooked the fact that the imx6q and tegra20 cpuidle drivers use
-the "disabled" field in struct cpuidle_state for quirks which trigger
-after the initialization of cpuidle, so reading the initial value of
-that field is not sufficient for those drivers.
+If I build pmac32_defconfig with KVM enabled this causes a build break:
 
-In order to allow them to implement the quirks without using the
-"disabled" field in struct cpuidle_state, introduce a new helper
-function and modify them to use it.
+  arch/powerpc/kernel/head_32.S: Assembler messages:
+  arch/powerpc/kernel/head_32.S:324: Error: attempt to move .org backwards
+  scripts/Makefile.build:357: recipe for target 'arch/powerpc/kernel/head_32.o' failed
+  make[2]: *** [arch/powerpc/kernel/head_32.o] Error 1
 
-Fixes: 99e98d3fb100 ("cpuidle: Consolidate disabled state checks")
-Reported-by: Len Brown <lenb@kernel.org> 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- arch/arm/mach-imx/cpuidle-imx6q.c     |    4 ++--
- arch/arm/mach-tegra/cpuidle-tegra20.c |    2 +-
- drivers/cpuidle/driver.c              |   28 ++++++++++++++++++++++++++++
- include/linux/cpuidle.h               |    4 ++++
- 4 files changed, 35 insertions(+), 3 deletions(-)
+In the interests of getting the series merged I'm inclined to just make
+VMAP_STACK and KVM incompatible for now with:
 
-Index: linux-pm/drivers/cpuidle/driver.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/driver.c
-+++ linux-pm/drivers/cpuidle/driver.c
-@@ -389,3 +389,31 @@ void cpuidle_driver_unref(void)
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index 15c9097dc4f7..5074fe77af40 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -31,7 +31,7 @@ config PPC_BOOK3S_6xx
+        select PPC_HAVE_PMU_SUPPORT
+        select PPC_HAVE_KUEP
+        select PPC_HAVE_KUAP
+-       select HAVE_ARCH_VMAP_STACK
++       select HAVE_ARCH_VMAP_STACK if !KVM_BOOK3S_32
  
- 	spin_unlock(&cpuidle_driver_lock);
- }
-+
-+/**
-+ * cpuidle_driver_state_disabled - Disable or enable an idle state
-+ * @drv: cpuidle driver owning the state
-+ * @idx: State index
-+ * @disable: Whether or not to disable the state
-+ */
-+void cpuidle_driver_state_disabled(struct cpuidle_driver *drv, int idx,
-+				 bool disable)
-+{
-+	unsigned int cpu;
-+
-+	mutex_lock(&cpuidle_lock);
-+
-+	for_each_cpu(cpu, drv->cpumask) {
-+		struct cpuidle_device *dev = per_cpu(cpuidle_devices, cpu);
-+
-+		if (!dev)
-+			continue;
-+
-+		if (disable)
-+			dev->states_usage[idx].disable |= CPUIDLE_STATE_DISABLED_BY_DRIVER;
-+		else
-+			dev->states_usage[idx].disable &= ~CPUIDLE_STATE_DISABLED_BY_DRIVER;
-+	}
-+
-+	mutex_unlock(&cpuidle_lock);
-+}
-Index: linux-pm/include/linux/cpuidle.h
-===================================================================
---- linux-pm.orig/include/linux/cpuidle.h
-+++ linux-pm/include/linux/cpuidle.h
-@@ -149,6 +149,8 @@ extern int cpuidle_register_driver(struc
- extern struct cpuidle_driver *cpuidle_get_driver(void);
- extern struct cpuidle_driver *cpuidle_driver_ref(void);
- extern void cpuidle_driver_unref(void);
-+extern void cpuidle_driver_state_disabled(struct cpuidle_driver *drv, int idx,
-+					bool disable);
- extern void cpuidle_unregister_driver(struct cpuidle_driver *drv);
- extern int cpuidle_register_device(struct cpuidle_device *dev);
- extern void cpuidle_unregister_device(struct cpuidle_device *dev);
-@@ -186,6 +188,8 @@ static inline int cpuidle_register_drive
- static inline struct cpuidle_driver *cpuidle_get_driver(void) {return NULL; }
- static inline struct cpuidle_driver *cpuidle_driver_ref(void) {return NULL; }
- static inline void cpuidle_driver_unref(void) {}
-+static inline void cpuidle_driver_state_disabled(struct cpuidle_driver *drv,
-+					       int idx, bool disable) { }
- static inline void cpuidle_unregister_driver(struct cpuidle_driver *drv) { }
- static inline int cpuidle_register_device(struct cpuidle_device *dev)
- {return -ENODEV; }
-Index: linux-pm/arch/arm/mach-imx/cpuidle-imx6q.c
-===================================================================
---- linux-pm.orig/arch/arm/mach-imx/cpuidle-imx6q.c
-+++ linux-pm/arch/arm/mach-imx/cpuidle-imx6q.c
-@@ -62,13 +62,13 @@ static struct cpuidle_driver imx6q_cpuid
-  */
- void imx6q_cpuidle_fec_irqs_used(void)
- {
--	imx6q_cpuidle_driver.states[1].disabled = true;
-+	cpuidle_driver_state_disabled(&imx6q_cpuidle_driver, 1, true);
- }
- EXPORT_SYMBOL_GPL(imx6q_cpuidle_fec_irqs_used);
- 
- void imx6q_cpuidle_fec_irqs_unused(void)
- {
--	imx6q_cpuidle_driver.states[1].disabled = false;
-+	cpuidle_driver_state_disabled(&imx6q_cpuidle_driver, 1, false);
- }
- EXPORT_SYMBOL_GPL(imx6q_cpuidle_fec_irqs_unused);
- 
-Index: linux-pm/arch/arm/mach-tegra/cpuidle-tegra20.c
-===================================================================
---- linux-pm.orig/arch/arm/mach-tegra/cpuidle-tegra20.c
-+++ linux-pm/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -203,7 +203,7 @@ void tegra20_cpuidle_pcie_irqs_in_use(vo
- {
- 	pr_info_once(
- 		"Disabling cpuidle LP2 state, since PCIe IRQs are in use\n");
--	tegra_idle_driver.states[1].disabled = true;
-+	cpuidle_driver_state_disabled(&tegra_idle_driver, 1, true);
- }
- 
- int __init tegra20_cpuidle_init(void)
+ config PPC_BOOK3S_601
+        bool "PowerPC 601"
 
 
+Thoughts?
 
+cheers
