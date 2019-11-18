@@ -2,96 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B74310090A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC501100910
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKRQTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 11:19:32 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:44385 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfKRQTc (ORCPT
+        id S1726833AbfKRQUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 11:20:12 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38296 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbfKRQUM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:19:32 -0500
-Received: by mail-il1-f196.google.com with SMTP id i6so7117475ilr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:19:32 -0800 (PST)
+        Mon, 18 Nov 2019 11:20:12 -0500
+Received: by mail-oi1-f193.google.com with SMTP id a14so15837703oid.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:20:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=E9E85CtL9td3M11CPpft7JLYpTsiRw80DDYN+NBSTjo=;
-        b=inz6BKPqZnuPFIBOaggS5p7Eq85z3j336Z6TV07+Al4rjRDU6kXtvyQ+UbLZ+grkc7
-         F9IoCrhDHv9E0jbh24OtIzDmmwE+a0DYcrXe6lMlciR7KxmFm0bRRidgAu/DP2Y6bS0M
-         eryoP6eftPzMcIOhTmUSN+/UFMaYfEBxLPQPA=
+        bh=vFDYWWex6iRLOgdk1JIotXQ89HmdObyXOaIPkDF429E=;
+        b=PO0SsL/cZc1EnX8IsvAlOlmSWDfgsXgUcbkWDJSbXhYQ/O16mAxzNXj7/s9qnhwllx
+         cB8Ewh+z5jAOc5AzFHvCa+ijHyMj7OczSAP/+FrRirW9+7CL/AvkyrYDQMMxuOxMko5Q
+         RCQhuC8/UpsuQOSPE76iq1xfbYUi646/9oWV6C9rB4eBNl+IxsldE7WFWM4ME32s/bgC
+         3IJlETatFKFEYl/D9o/UtRXZUQb+hZBE7rruBnb+GoQLjqce6pt1GNSg5fyq3kcmdDVT
+         x5e7jbPBVJthBahav/hfIvVeYdFq2Ez/ECRux1+0tA0uyNMbGKdnoW5JwjmuZ8NZjHX3
+         iMXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=E9E85CtL9td3M11CPpft7JLYpTsiRw80DDYN+NBSTjo=;
-        b=ge8Jt4xIfg7NCf6//UxGXHptHd3Y9Lso7+joO2/S+ZwA2RXLFklOHwS7rQ3SFhmwhp
-         wz0DR26AaQkzagGG9+d6oCgMwz3ZID241U6r0IWIEmXiTiNo2zrW/8RkWo3wIv7tP5i+
-         fuJtN0X1fhMjLKyBDt2jk5/gBMKP4iGkergwtd6lXY/9GnRTf03UIEXz0jg4sO+p6Ajg
-         iRF+qr9ELG/86bNy92ihKsSHfLwsvFdopCuu2VNRxHDv/CVHeDItyBwS1oru1jFasHnn
-         xKuYhgnSFOYI1mI7IiwrjqMorhM2I3Mu08b26JUhu5TJIs4JM1g6UGxZeFw/a85iJU9v
-         ciqw==
-X-Gm-Message-State: APjAAAV7Icby5Pv8HJeP3hxJW0T5fwFBl55jFd+iW90WNdXZ/EtM47wv
-        oAqHhxywah0Js3LY93ItP1v+XjMY8bw=
-X-Google-Smtp-Source: APXvYqzh1VKGsXvpgGv1qEG+Fa1DCpDreQ59tMk/NbRqaSSeuW7KmHAuoMM4kKHyp2UJwaLEdpFbHw==
-X-Received: by 2002:a92:8108:: with SMTP id e8mr16348963ild.209.1574093971501;
-        Mon, 18 Nov 2019 08:19:31 -0800 (PST)
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com. [209.85.166.176])
-        by smtp.gmail.com with ESMTPSA id e25sm3567879iol.36.2019.11.18.08.19.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2019 08:19:30 -0800 (PST)
-Received: by mail-il1-f176.google.com with SMTP id a7so16517256ild.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 08:19:30 -0800 (PST)
-X-Received: by 2002:a92:109c:: with SMTP id 28mr16767271ilq.142.1574093970462;
- Mon, 18 Nov 2019 08:19:30 -0800 (PST)
+        bh=vFDYWWex6iRLOgdk1JIotXQ89HmdObyXOaIPkDF429E=;
+        b=YFszVrSl23WYbNbVNSKpxUR/D3AZUk7IEj8JlQbyIto8NPEviTHVp+KpFOEDOr5Gw8
+         +pNIsjDlIjqTikZmt3n+oYwDKaP7QPo22Uw/4DVrKIXQQzO+E07KG2nkThw1jAu+rNHv
+         WB4/851TLVX9kE2UcEnWWKq6iCACSjsT4bVn8D8nk95dWcbmy4BZ+DM+3YVk5Dpf/XIu
+         XngAVotQCQSFgWdRPKbL+ixMUHWFz5rJ6P2K3hMvr1NRwsBZqX9/euMwf/hzivl1pfRU
+         k2sJyMaDtfWd5Gw3VCtG8ttZZByx7s3yux9trb+0k0K/C3vJEakH/X5iOPeU69SEGA/k
+         6z1Q==
+X-Gm-Message-State: APjAAAUxppl50+k7Peqo4Vl+KcRdp9UJjmvPmo9brR+l7+Avyaa3J72l
+        H3M5wO/T3tixZlKZMj73TvjiI0XsZe4gRg6ONlyYMw==
+X-Google-Smtp-Source: APXvYqw+KKzzd/AE/OnyrneLv5VHUUg/59mvCFzaf/yHa5uT6qanRxc07y7qoK/vdP4xLBMcOay5oq9TfQigZrTlbB4=
+X-Received: by 2002:aca:ccd1:: with SMTP id c200mr21380309oig.157.1574094010691;
+ Mon, 18 Nov 2019 08:20:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20190214173633.211000-1-dianders@chromium.org>
-In-Reply-To: <20190214173633.211000-1-dianders@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 18 Nov 2019 08:19:18 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WD4r-GAM6mnTg9qB04aaX7JJzHajhtb+N8Yq9UR1WZAA@mail.gmail.com>
-Message-ID: <CAD=FV=WD4r-GAM6mnTg9qB04aaX7JJzHajhtb+N8Yq9UR1WZAA@mail.gmail.com>
-Subject: Re: [PATCH] soc: qcom: rpmhpd: Set 'active_only' for active only
- power domains
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20191115191728.87338-1-jannh@google.com> <20191115191728.87338-2-jannh@google.com>
+ <20191118142144.GC6363@zn.tnic> <CACT4Y+bCOr=du1QEg8TtiZ-X6U+8ZPR4N07rJOeSCsd5h+zO3w@mail.gmail.com>
+In-Reply-To: <CACT4Y+bCOr=du1QEg8TtiZ-X6U+8ZPR4N07rJOeSCsd5h+zO3w@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 18 Nov 2019 17:19:44 +0100
+Message-ID: <CAG48ez1AWW7FkvU31ahy=0ZiaAreSMz=FFA0u8-XkXT9hNdWKA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] x86/traps: Print non-canonical address on #GP
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn / Andy,
-
-On Thu, Feb 14, 2019 at 9:36 AM Douglas Anderson <dianders@chromium.org> wrote:
+On Mon, Nov 18, 2019 at 5:03 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Mon, Nov 18, 2019 at 3:21 PM Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Fri, Nov 15, 2019 at 08:17:27PM +0100, Jann Horn wrote:
+> > >  dotraplinkage void
+> > >  do_general_protection(struct pt_regs *regs, long error_code)
+> > >  {
+> > > @@ -547,8 +581,15 @@ do_general_protection(struct pt_regs *regs, long error_code)
+> > >                       return;
+> > >
+> > >               if (notify_die(DIE_GPF, desc, regs, error_code,
+> > > -                            X86_TRAP_GP, SIGSEGV) != NOTIFY_STOP)
+> > > -                     die(desc, regs, error_code);
+> > > +                            X86_TRAP_GP, SIGSEGV) == NOTIFY_STOP)
+> > > +                     return;
+> > > +
+> > > +             if (error_code)
+> > > +                     pr_alert("GPF is segment-related (see error code)\n");
+> > > +             else
+> > > +                     print_kernel_gp_address(regs);
+> > > +
+> > > +             die(desc, regs, error_code);
+> >
+> > Right, this way, those messages appear before the main "general
+> > protection ..." message:
+> >
+> > [    2.434372] traps: probably dereferencing non-canonical address 0xdfff000000000001
+> > [    2.442492] general protection fault: 0000 [#1] PREEMPT SMP
+> >
+> > Can we glue/merge them together? Or is this going to confuse tools too much:
+> >
+> > [    2.542218] general protection fault while derefing a non-canonical address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
+> >
+> > (and that sentence could be shorter too:
+> >
+> >         "general protection fault for non-canonical address 0xdfff000000000001"
+> >
+> > looks ok to me too.)
 >
-> The 'active_only' attribute was accidentally never set to true for any
-> power domains meaning that all the code handling this attribute was
-> dead.
+> This exact form will confuse syzkaller crash parsing for Linux kernel:
+> https://github.com/google/syzkaller/blob/1daed50ac33511e1a107228a9c3b80e5c4aebb5c/pkg/report/linux.go#L1347
+> It expects a "general protection fault:" line for these crashes.
 >
-> NOTE that the RPM power domain code (as opposed to the RPMh one) gets
-> this right.
->
-> Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain driver")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
->  drivers/soc/qcom/rpmhpd.c | 2 ++
->  1 file changed, 2 insertions(+)
+> A graceful way to update kernel crash messages would be to add more
+> tests with the new format here:
+> https://github.com/google/syzkaller/tree/1daed50ac33511e1a107228a9c3b80e5c4aebb5c/pkg/report/testdata/linux/report
+> Update parsing code. Roll out new version. Update all other testing
+> systems that detect and parse kernel crashes. Then commit kernel
+> changes.
 
-Somehow this fell through the cracks and was never applied.  Can you
-pick it up?  Given that it's been a year and nobody has noticed this
-it seems like 5.5 is fine, but maybe you could add Cc: stable since it
-seems like something that stable trees would want...
+So for syzkaller, it'd be fine as long as we keep the colon there?
+Something like:
 
-Thanks!
+general protection fault: derefing non-canonical address
+0xdfff000000000001: 0000 [#1] PREEMPT SMP
 
--Doug
+And it looks like the 0day test bot doesn't have any specific pattern
+for #GP, it seems to just look for the panic triggered by
+panic-on-oops as far as I can tell (oops=panic in lkp-exec/qemu, no
+"general protection fault" in etc/dmesg-kill-pattern).
+
+> An unfortunate consequence of offloading testing to third-party systems...
+
+And of not having a standard way to signal "this line starts something
+that should be reported as a bug"? Maybe as a longer-term idea, it'd
+help to have some sort of extra prefix byte that the kernel can print
+to say "here comes a bug report, first line should be the subject", or
+something like that, similar to how we have loglevels...
