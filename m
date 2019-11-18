@@ -2,139 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2588B100C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 20:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D07100C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 20:57:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfKRTsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 14:48:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726435AbfKRTsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 14:48:09 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 181E72230F;
-        Mon, 18 Nov 2019 19:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574106487;
-        bh=CRT5AsiklE8UBnzI46KWJI+GgkLzqT65uKMX5KjaECk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GrNALO9sGiaUWgW5vaoFLgIbs+uGKTeIfDd0Wty3VJdsLU6RxuuZCcP/Hh8GYeCw3
-         0AcN1doOb017ByxLm4uoIygOCO9Cq8oKLyPjFv/a5SI/CiCV2pkv7N7tm/P3TO2ynZ
-         bQAUDx58pybgho4y+h4NxkT7Gqt899V3G/jjWX4I=
-Date:   Mon, 18 Nov 2019 20:48:04 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     git@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: Signal conflict on merging metadata-differing patches
-Message-ID: <20191118194804.GA662468@kroah.com>
-References: <20191118172917.GA6063@vmlxhi-102.adit-jv.com>
- <20191118173517.GA599094@kroah.com>
- <20191118184523.GA6894@vmlxhi-102.adit-jv.com>
+        id S1726704AbfKRT5Z convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 18 Nov 2019 14:57:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34022 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726250AbfKRT5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 14:57:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 06B3AB0AE;
+        Mon, 18 Nov 2019 19:57:22 +0000 (UTC)
+Date:   Mon, 18 Nov 2019 11:53:04 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, will@kernel.org, oleg@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
+        bristot@redhat.com, longman@redhat.com, jack@suse.com
+Subject: Re: [PATCH 5/5] locking/percpu-rwsem: Remove the embedded rwsem
+Message-ID: <20191118195304.b3d6fg4jmmj7kmfh@linux-p48b>
+References: <20191113102115.116470462@infradead.org>
+ <20191113102855.925208237@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20191118184523.GA6894@vmlxhi-102.adit-jv.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20191113102855.925208237@infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 07:45:23PM +0100, Eugeniu Rosca wrote:
-> On Mon, Nov 18, 2019 at 06:35:17PM +0100, Greg KH wrote:
-> > On Mon, Nov 18, 2019 at 06:29:17PM +0100, Eugeniu Rosca wrote:
-> > > Dear Git community,
-> > > 
-> > > Due to high inflow of patches which Linux maintainers carry on their
-> > > shoulders and due to occasionally intricate relationships between
-> > > consecutive revisions of the same series, it may [1] happen that two
-> > > distinct revisions of the same patch (differing only/mostly in
-> > > metadata, e.g. Author's time-stamp and commit description) may end up
-> > > being merged on the same branch, without git to complain about that.
-> > 
-> > Why would git complain about that?
-> 
-> This would help those performing the merge identify and (if needed)
-> avoid having several slightly different patches on the same branch.
+On Wed, 13 Nov 2019, Peter Zijlstra wrote:
+>@@ -54,23 +52,23 @@ static bool __percpu_down_read_trylock(s
+> 	 * the same CPU as the increment, avoiding the
+> 	 * increment-on-one-CPU-and-decrement-on-another problem.
 
-The patches were not on the same branch to start with, they ended up on
-two different branches that got merged together at some point in time
-later on.
+Nit: Now that you've made read_count more symmetric, maybe this first
+paragraph can be moved down to __percpu_rwsem_trylock() reader side,
+as such:
 
-This happens all the time in kernel development :)
+	/*
+	 * Due to having preemption disabled the decrement happens on
+	 * the same CPU as the increment, avoiding the
+	 * increment-on-one-CPU-and-decrement-on-another problem.
+	 */
+	preempt_disable();
+	ret = __percpu_down_read_trylock(sem);
+	preempt_enable();
 
-> > > Is there any "git merge" flag available off-the-shelf which (if used)
-> > > would signal such situations?
-> > 
-> > I don't understand what you are looking for here.  Two different
-> > versions of the patch were merged to different branches and then merged
-> > together, and git did the right thing with the resolution of the code.
-> 
-> I personally care about commit metadata (i.e. Author's/Committer's names
-> and timestamps, as well as commit description) as much as (and sometimes
-> more than) the code contents of the patch.
-> 
-> If I am given multiple patches which perform the same code changes, but
-> provide different descriptions, this _already_ generates potential work
-> on my plate, since I have to make sense of those differences when I
-> stumble upon them. Which patch do I recommend to the customer (who,
-> let's say, still lives on the older v4.14 LTS), if I am asked to?
+> 	 *
+>-	 * If the reader misses the writer's assignment of readers_block, then
+>-	 * the writer is guaranteed to see the reader's increment.
+>+	 * If the reader misses the writer's assignment of sem->block, then the
+>+	 * writer is guaranteed to see the reader's increment.
 
-Welcome to my life :)
+...
 
-As I said above, this happens quite frequently, and honestly, I just
-live with it.  Look at the kernel's DRM branch for the main abusers of
-this, they cherry-pick patches from their local tree to a tree to send
-to Linus today, with the sha1 in the commit message.  That means that
-Linus ends up with a commit referencing a sha1 that will not show up in
-his tree until sometime in the _future_.
+> bool __percpu_down_read(struct percpu_rw_semaphore *sem, bool try)
+> {
+> 	if (__percpu_down_read_trylock(sem))
+>@@ -89,20 +156,10 @@ bool __percpu_down_read(struct percpu_rw
+> 	if (try)
+> 		return false;
+>
+>-	/*
+>-	 * We either call schedule() in the wait, or we'll fall through
+>-	 * and reschedule on the preempt_enable() in percpu_down_read().
+>-	 */
+>-	preempt_enable_no_resched();
+>-
+>-	/*
+>-	 * Avoid lockdep for the down/up_read() we already have them.
+>-	 */
+>-	__down_read(&sem->rw_sem);
+>-	this_cpu_inc(*sem->read_count);
+>-	__up_read(&sem->rw_sem);
+>-
+>+	preempt_enable();
+>+	percpu_rwsem_wait(sem, /* .reader = */ true );
+> 	preempt_disable();
+>+
+> 	return true;
+> }
+> EXPORT_SYMBOL_GPL(__percpu_down_read);
 
-It causes havoc with my scripts and I hate it.
+Do we really need to export symbol here? This function is only called
+from percpu-rwsem.h.
 
-But, it makes things easier for the developers and maintainers of that
-subsystem and in the end, that's what really matters.  Stable and
-backports should almost never cause developers any problems or extra
-work as that is not their responsibility.
+>@@ -117,7 +174,7 @@ void __percpu_up_read(struct percpu_rw_s
+> 	 */
+> 	__this_cpu_dec(*sem->read_count);
+>
+>-	/* Prod writer to recheck readers_active */
+>+	/* Prod writer to re-evaluate readers_active_check() */
+> 	rcuwait_wake_up(&sem->writer);
+> }
+> EXPORT_SYMBOL_GPL(__percpu_up_read);
+>@@ -137,6 +194,8 @@ EXPORT_SYMBOL_GPL(__percpu_up_read);
+>  * zero.  If this sum is zero, then it is stable due to the fact that if any
+>  * newly arriving readers increment a given counter, they will immediately
+>  * decrement that same counter.
+>+ *
+>+ * Assumes sem->block is set.
+>  */
+> static bool readers_active_check(struct percpu_rw_semaphore *sem)
+> {
+>@@ -160,23 +219,22 @@ void percpu_down_write(struct percpu_rw_
+> 	/* Notify readers to take the slow path. */
+> 	rcu_sync_enter(&sem->rss);
+>
+>-	__down_write(&sem->rw_sem);
+>-
+> 	/*
+>-	 * Notify new readers to block; up until now, and thus throughout the
+>-	 * longish rcu_sync_enter() above, new readers could still come in.
+>+	 * Try set sem->block; this provides writer-writer exclusion.
+>+	 * Having sem->block set makes new readers block.
+> 	 */
+>-	WRITE_ONCE(sem->readers_block, 1);
+>+	if (!__percpu_down_write_trylock(sem))
+>+		percpu_rwsem_wait(sem, /* .reader = */ false);
+>
+>-	smp_mb(); /* D matches A */
+>+	/* smp_mb() implied by __percpu_down_writer_trylock() on success -- D matches A */
+                                               ^^^
+					       write
+...
 
-> Why should I (or anybody else) spend time doing research at all, if this
-> can be avoided by just passing an additional option to "git merge"?
-> 
-> It is the most basic requirement I can think of that the maintainers
-> select the _latest_ version of a patch series, without intertwining it
-> with a superseded version.
+>--- a/kernel/locking/rwsem.h
+>+++ b/kernel/locking/rwsem.h
+>@@ -1,12 +0,0 @@
+>-/* SPDX-License-Identifier: GPL-2.0 */
+>-
+>-#ifndef __INTERNAL_RWSEM_H
+>-#define __INTERNAL_RWSEM_H
+>-#include <linux/rwsem.h>
+>-
+>-extern void __down_read(struct rw_semaphore *sem);
+>-extern void __up_read(struct rw_semaphore *sem);
+>-extern void __down_write(struct rw_semaphore *sem);
+>-extern void __up_write(struct rw_semaphore *sem);
 
-I really don't understand what you expect to have happen here.
+This is a nice side effect.
 
-Look at the drm tree again, what should git do sometime in the future
-when the same "logical change" gets merged into Linus's tree.  I think
-it should do what it does today, handle the merge of the code changes
-just fine and allow for perfect representation at any point in time what
-the tree looked like if you check it out then.
-
-What should git do instead?
-
-> > What more can it do here?
-> 
-> Currently Git says nothing in below merge scenarios (all of them are
-> conflict-less successful merges):
->  - Merge two commits which perform identical code changes but have
->    different metadata
->  - Merge commit "A" and commits ("B", "C", "D"), the latter being
->    subsets of "A"
-> 
-> I don't advocate for "git merge" to fail in the above scenarios. No.
-> I just say that Git could likely detect such scenarios and help people
-> like you not pushing v2 and v5 of the same patch into the main tree.
-
-But what should it do in either of those above situations?  Fail the
-merge?  No, that's not ok as those different branches were just fine on
-their own and I will never expect them to be rebased/rewritten just for
-something like this.  That's crazy.
-
-thanks,
-
-greg k-h
+Thanks,
+Davidlohr
