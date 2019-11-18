@@ -2,82 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 015081004AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:49:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E661004AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfKRLtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:49:20 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34040 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726646AbfKRLtU (ORCPT
+        id S1726895AbfKRLsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:48:40 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55102 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfKRLsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:49:20 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAIBkk25014994;
-        Mon, 18 Nov 2019 05:47:09 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=OM3MQeyRTgCY7g+moHKBnLM0sRNaezpSVyrjEwAMecc=;
- b=icrapQg74Qd4MPDUwNx097+RA3EOaBGON5SjPL0UpA+gMqF3J3FT+dZX4mSQKH7/6lVS
- GykNgPvbzoT22HQc6nstMduxd2/V9ADldP/R8cjpMGjI/FRP+gEmour4OZ26uKm4ayv7
- +O4p1N1ZIPT6M6QIZhgK8lJ6AA0o2o3G/slwqgDqcYnwqzeqQ9r4Z+3kEC5X68rg/bBI
- /PjUj7K2NB4wVzdqNwksJpLF+cDTC8AkY/di+D/MrLxtkOJEChyDvcTM8zC9/4vXmdmb
- 9fKdxDF4U1+1fWQQla7YtN5UO/+NZP8CK3JCdlHodfD3GmuBFE/g/hql8ct2EpIIspTN 9A== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2wafc82csb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 18 Nov 2019 05:47:09 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 18 Nov
- 2019 11:47:06 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Mon, 18 Nov 2019 11:47:06 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 105292A1;
-        Mon, 18 Nov 2019 11:47:06 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 11:47:06 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: wm5100: add missed pm_runtime_disable
-Message-ID: <20191118114706.GF10439@ediswmail.ad.cirrus.com>
-References: <20191118073707.28298-1-hslester96@gmail.com>
+        Mon, 18 Nov 2019 06:48:40 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iWfWF-0007lC-T9; Mon, 18 Nov 2019 11:48:35 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dan Murphy <dmurphy@ti.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: phy: dp83869: fix return of uninitialized variable ret
+Date:   Mon, 18 Nov 2019 11:48:35 +0000
+Message-Id: <20191118114835.39494-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191118073707.28298-1-hslester96@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 impostorscore=0
- mlxlogscore=714 mlxscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 spamscore=0 adultscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1911180107
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 03:37:07PM +0800, Chuhong Yuan wrote:
-> The driver forgets to call pm_runtime_disable in remove and
-> probe failure.
-> Add the calls to fix it.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+In the case where the call to phy_interface_is_rgmii returns zero
+the variable ret is left uninitialized and this is returned at
+the end of the function dp83869_configure_rgmii.  Fix this by
+returning 0 instead of the uninitialized value in ret.
 
-Thanks,
-Charles
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 01db923e8377 ("net: phy: dp83869: Add TI dp83869 phy")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/phy/dp83869.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+index fcd418716c10..1c7a7c57dec3 100644
+--- a/drivers/net/phy/dp83869.c
++++ b/drivers/net/phy/dp83869.c
+@@ -239,7 +239,7 @@ static int dp83869_configure_rgmii(struct phy_device *phydev,
+ 			       dp83869->io_impedance &
+ 			       DP83869_IO_MUX_CFG_IO_IMPEDANCE_CTRL);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int dp83869_configure_mode(struct phy_device *phydev,
+-- 
+2.24.0
+
