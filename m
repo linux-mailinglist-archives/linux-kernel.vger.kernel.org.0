@@ -2,118 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F30FFD75
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 04:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA255FFD86
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 05:09:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfKRDyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 22:54:25 -0500
-Received: from mga09.intel.com ([134.134.136.24]:27563 "EHLO mga09.intel.com"
+        id S1726568AbfKREJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 23:09:06 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37183 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbfKRDyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 22:54:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2019 19:54:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,318,1569308400"; 
-   d="scan'208";a="258292816"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Nov 2019 19:54:21 -0800
-Message-ID: <5DD21784.8020506@intel.com>
-Date:   Mon, 18 Nov 2019 12:01:08 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1726314AbfKREJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 23:09:06 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Gb734K3kz9sPT;
+        Mon, 18 Nov 2019 15:09:03 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574050144;
+        bh=mkXvmpEAu9p9EiOd11+f+65UBhxqEdWIRPREiV7EO28=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SJGuIPL4oZV3MFLI1aq8mKI0be/8/op1Wd6jDp6krsWs/riGZlujuur5unWi/RsWN
+         VlMKnTpCuFt7Em3mRsnP0LYtdHwKh5h+GufletqAR0AjNsDb4zv1P060HB6Z+Yq0pb
+         BYaZ9rMqLkK7ky1E19dSEZXkcU1LHbNJsdLSDeUj5oS61xwHOW53kxc7v8tj/Dol5l
+         Fh+i/LcCDp66+GLwS/hzFffVJ1iLj1RVbGFjC3v5wEpCLn+Oee7mqJ+PQPBCu2jBIF
+         Ouz5if8OHZ88P7amY8+pMHvR1rE7UBq8eEW7AKeJn8CksuJS7N+GWqaWQPbR/FGa4F
+         DStxbT8fNlGrA==
+Date:   Mon, 18 Nov 2019 15:08:58 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: linux-next: manual merge of the workqueues tree with the tip tree
+Message-ID: <20191118150858.1a436a12@canb.auug.org.au>
 MIME-Version: 1.0
-To:     Khazhismel Kumykov <khazhy@google.com>, mst@redhat.com,
-        jasowang@redhat.com
-CC:     virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio_balloon: fix shrinker pages_to_free calculation
-References: <20191115225557.61847-1-khazhy@google.com>
-In-Reply-To: <20191115225557.61847-1-khazhy@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/l.=wrc79NzWG0japl4GYqQz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/2019 06:55 AM, Khazhismel Kumykov wrote:
-> To my reading, we're accumulating total freed pages in pages_freed, but
-> subtracting it every iteration from pages_to_free, meaning we'll count
-> earlier iterations multiple times, freeing fewer pages than expected.
-> Just accumulate in pages_freed, and compare to pages_to_free.
+--Sig_/l.=wrc79NzWG0japl4GYqQz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Not sure about the above. But the following unit mismatch is a good 
-capture, thanks!
+Hi all,
 
->
-> There's also a unit mismatch, where pages_to_free seems to be virtio
-> balloon pages, and pages_freed is system pages (We divide by
-> VIRTIO_BALLOON_PAGES_PER_PAGE), so sutracting pages_freed from
-> pages_to_free may result in freeing too much.
->
-> There also seems to be a mismatch between shrink_free_pages() and
-> shrink_balloon_pages(), where in both pages_to_free is given as # of
-> virtio pages to free, but free_pages() returns virtio pages, and
-> balloon_pages returns system pages.
->
-> (For 4K PAGE_SIZE, this mismatch wouldn't be noticed since
-> VIRTIO_BALLOON_PAGES_PER_PAGE would be 1)
->
-> Have both return virtio pages, and divide into system pages when
-> returning from shrinker_scan()
+Today's linux-next merge of the workqueues tree got a conflict in:
 
-Sounds good.
+  kernel/workqueue.c
 
->
-> Fixes: 71994620bb25 ("virtio_balloon: replace oom notifier with shrinker")
-> Cc: Wei Wang <wei.w.wang@intel.com>
-> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-> ---
->
-> Tested this under memory pressure conditions and the shrinker seemed to
-> shrink.
->
->   drivers/virtio/virtio_balloon.c | 11 ++++-------
->   1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index 226fbb995fb0..7951ece3fe24 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -782,11 +782,8 @@ static unsigned long shrink_balloon_pages(struct virtio_balloon *vb,
->   	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
->   	 * multiple times to deflate pages till reaching pages_to_free.
->   	 */
-> -	while (vb->num_pages && pages_to_free) {
-> -		pages_freed += leak_balloon(vb, pages_to_free) /
-> -					VIRTIO_BALLOON_PAGES_PER_PAGE;
-> -		pages_to_free -= pages_freed;
-> -	}
-> +	while (vb->num_pages && pages_to_free > pages_freed)
-> +		pages_freed += leak_balloon(vb, pages_to_free - pages_freed);
->   	update_balloon_size(vb);
->   
->   	return pages_freed;
-> @@ -805,11 +802,11 @@ static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
->   		pages_freed = shrink_free_pages(vb, pages_to_free);
+between commit:
 
-We also need a fix here then:
+  5a6446626d7e ("workqueue: Convert for_each_wq to use built-in list check")
 
-pages_freed = shrink_free_pages(vb, sc->nr_to_scan) * 
-VIRTIO_BALLOON_PAGES_PER_PAGE;
+from the tip tree and commit:
 
+  49e9d1a9faf2 ("workqueue: Add RCU annotation for pwq list walk")
 
-Btw, there is another mistake, in virtio_balloon_shrinker_count:
+from the workqueues tree.
 
--       count += vb->num_free_page_blocks >> VIRTIO_BALLOON_FREE_PAGE_ORDER;
-+      count += vb->num_free_page_blocks << VIRTIO_BALLOON_FREE_PAGE_ORDER;
+I fixed it up (I just used the former as it is a superset of the latter)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
-You may want to include it in this fix patch as well.
+--=20
+Cheers,
+Stephen Rothwell
 
-Best,
-Wei
+--Sig_/l.=wrc79NzWG0japl4GYqQz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3SGVoACgkQAVBC80lX
+0Gxn3Af8DBCO64ZGZ40FpA/jOgAWhkdQpraxigpjHr/b2fBzYI/GHLtRabwykNTD
+eRQDBnYRE0BQW8rEhuDz2Xy8B1XOWuOOnawwrHlvgT6RPMLHC+u0NjuYiqefWmpT
+rI0+4R38xqZ9nDszzX1KT1chYkJoKgxsNXB0Zc/nr3P6tCejHV2Xz/gdA70cCi+4
+Wmwrf8/9RD3L28px3jqa6miFktuI2wpO953TSpBOe3qiLbme9JMYXI4k4ThnKNMC
+hkf5jZMyc0AtTOcY8pAzZtu6ePc70mHk7jPL7HIy8phjae8g0v7hOgYv9HC32tvO
+AyeXaavHfy7qjY2i0URpJTRzuPfLJA==
+=YYlg
+-----END PGP SIGNATURE-----
+
+--Sig_/l.=wrc79NzWG0japl4GYqQz--
