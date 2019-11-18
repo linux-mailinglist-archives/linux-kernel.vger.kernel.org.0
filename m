@@ -2,122 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784B8100B7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32185100B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfKRSb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 13:31:56 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35437 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfKRSb4 (ORCPT
+        id S1726744AbfKRScW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 13:32:22 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10542 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfKRScV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 13:31:56 -0500
-Received: by mail-pj1-f66.google.com with SMTP id s8so1732594pji.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 10:31:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A4WMyPwwd33AeWG8Iqc5mgyWoDalMpSQTRsm3rGqwlk=;
-        b=ZEu6MqIWF1RGB6jwTdYhgHtxhAATdk1ygV/D13/7aMyuBRUAxpL9gDOKnW1YPM/nX7
-         23u6A7lrO4lGUJ27TFnoXF0lqTyFkMa05WMr53EPub91ytz47wsBRy2Cg8xJlmXJ8izw
-         BFPtLFmh8TGgmhhfVC4M62Z9fJihEG6wvlR3doCWpGCqfc4YFyMjeQW0+WI0OQOGVJFH
-         yol3VAr89WnKHDukq6EJzwO2GWv34IvLeTpiMiwew+8CRmTopaeVu8/tozDTVeiudldZ
-         gLk/LVTPoDXoQpARKeLAB7WZme2//ckYXuDhm6shpmQ+YoksNdJYGpL9y7ZAReWpLH9n
-         /m4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A4WMyPwwd33AeWG8Iqc5mgyWoDalMpSQTRsm3rGqwlk=;
-        b=pGcYb8rrpwNQWpibnkXD3eyZSPaEpmabSHpoiaT2ZMjWyNehNvecYhswW3bidNo0Rd
-         ZUoRSXbOWnEU4Fg09nl8SS/4sc74YSPi239Wb0VGhuRdPk7zwrGHUb21/UUQDMt3h2A5
-         SbsQdtgTQlmvgazpAox6lvDeL1ovgNm7Qhcx2wVBQjlbWx512bV9PQfGylN5AIXOiHTS
-         2AIP4+dUi7bdKdJo9fOgGP8D3bywgE50jxtLM0G88Am5dmsB61LaR1PjIyhmeWHjiyhk
-         zFDZS9h4awQLlQM14KIM1nrjBEkyHlsfuImvlcLK/B9UIgx4bCRITYO9fdLa4qrkL9d6
-         rkJg==
-X-Gm-Message-State: APjAAAWNfCfHrLpbGvtlE3TcuGI3MEm4ye/QhN5QFRVTgOO89mn5uaDw
-        rYaokt9pxTuI1RgHuczGPdkSV2JKhui+n9lNgqXMcg==
-X-Google-Smtp-Source: APXvYqx8XiO2tBbSITPF018kWtOJPDBA1kHDVcmrihBshjIKcmexjBxYou1Oyuo1WIXr2rOeMVvKtkImAr+5wZvRChk=
-X-Received: by 2002:a17:90a:1f4b:: with SMTP id y11mr418957pjy.123.1574101915060;
- Mon, 18 Nov 2019 10:31:55 -0800 (PST)
+        Mon, 18 Nov 2019 13:32:21 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd2e3b50002>; Mon, 18 Nov 2019 10:32:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 18 Nov 2019 10:32:21 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 10:32:21 -0800
+Received: from rcampbell-dev.nvidia.com (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 18 Nov
+ 2019 18:32:18 +0000
+Subject: Re: [PATCH v4 2/2] mm/hmm/test: add self tests for HMM
+To:     Jason Gunthorpe <jgg@mellanox.com>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Shuah Khan <shuah@kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+References: <20191104222141.5173-1-rcampbell@nvidia.com>
+ <20191104222141.5173-3-rcampbell@nvidia.com> <20191112152521.GC12550@lst.de>
+ <07589a71-3984-b2a6-b24b-6b9a23e1b60d@nvidia.com>
+ <20191112234549.GX21728@mellanox.com> <20191113135115.GA10688@lst.de>
+ <21d6b69c-3167-e60d-eed2-65bb1f8515ae@nvidia.com>
+ <20191115140619.GC3873@mellanox.com>
+From:   Ralph Campbell <rcampbell@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <912f9f23-fa2a-1dd7-3f91-f7175094c2e2@nvidia.com>
+Date:   Mon, 18 Nov 2019 10:32:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-References: <20191031194652.118427-1-samitolvanen@google.com> <20191114165544.GB5158@willie-the-truck>
-In-Reply-To: <20191114165544.GB5158@willie-the-truck>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 18 Nov 2019 10:31:44 -0800
-Message-ID: <CAKwvOdnwL8cXGDykq4YAQi4bXYc7Fccqm-ki61-nySP0h+8ZxQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH] arm64: fix alternatives with LLVM's integrated assembler
-To:     Will Deacon <will@kernel.org>
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Jian Cai <jiancai@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191115140619.GC3873@mellanox.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574101941; bh=39u0XUhcHMVb+ZMv/dn3CtMgXSJFUOYDTSmuZ9uY/T0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=o965utNs7sb47SjzfNx79P1NDcBYHTTGYjQg5eKJdAz3jTgIhAnFr7N7geNbmi9ao
+         0aR+c+4bAWxpWTsY8M7EzLb02XVMovvgMAPCe6jdZBm6jwo5VnQrt9+rCKJqo5Mkon
+         LrArGzwWtC3qJKyXDLyDSzFu3Qfb38n35KX+O1XdeUetSQm5A71fFIm2qI6frO6BLZ
+         YWQKfutfxInIgfUt8Gqfws0OZXSfTM0mz83p6l/T1h40NtNdZnySgsZATpTc2AtoSH
+         N0DZphSt/6agDSMc8H6BBxkfDZwbXAJPZmi2srMIK0eBBEXuDroYwod1i4932/8BLH
+         QNbuhWw7JCpYg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 8:55 AM Will Deacon <will@kernel.org> wrote:
->
-> Hi Sami,
->
-> Sorry -- I thought I'd already replied to this, but it had actually
-> slipped through the cracks.
->
-> On Thu, Oct 31, 2019 at 12:46:52PM -0700, Sami Tolvanen wrote:
-> > LLVM's integrated assembler fails with the following error when
-> > building KVM:
-> >
-> >   <inline asm>:12:6: error: expected absolute expression
-> >    .if kvm_update_va_mask == 0
-> >        ^
-> >   <inline asm>:21:6: error: expected absolute expression
-> >    .if kvm_update_va_mask == 0
-> >        ^
-> >   <inline asm>:24:2: error: unrecognized instruction mnemonic
-> >           NOT_AN_INSTRUCTION
-> >           ^
-> >   LLVM ERROR: Error parsing inline asm
-> >
-> > These errors come from ALTERNATIVE_CB and __ALTERNATIVE_CFG,
-> > which test for the existence of the callback parameter in inline
-> > assembly using the following expression:
-> >
-> >   " .if " __stringify(cb) " == 0\n"
-> >
-> > This works with GNU as, but isn't supported by LLVM. This change
-> > splits __ALTERNATIVE_CFG and ALTINSTR_ENTRY into separate macros
-> > to fix the LLVM build.
->
-> Please could you explain a bit more about the failure and why LLVM's
-> integrated assembler rejects this?
 
-There are currently more than one issue with `.if` assembler
-directives we're tracking against Clang's integrated assembler
-currently, particularly around the handling of special cases related
-to "fragments."
-Recommended reading:
-https://eli.thegreenplace.net/2013/01/03/assembler-relaxation
-This particular case looks like the error is related to referring to
-section before it has been seen.  My current understanding is that
-Clang's integrated assembler is one pass, unlike GAS, so it chokes on
-references to symbols it has not yet seen.
+On 11/15/19 6:06 AM, Jason Gunthorpe wrote:
+> On Thu, Nov 14, 2019 at 03:06:05PM -0800, Ralph Campbell wrote:
+>>
+>> On 11/13/19 5:51 AM, Christoph Hellwig wrote:
+>>> On Tue, Nov 12, 2019 at 11:45:52PM +0000, Jason Gunthorpe wrote:
+>>>>> Well, it would mean registering for the whole process address space.
+>>>>> I'll give it a try.
+>>>>
+>>>> I'm not sure it makes much sense that this testing is essentially
+>>>> modeled after nouveau's usage which is very strange compared to the
+>>>> other drivers.
+>>>
+>>> Which means we really should make the test cases fit the proper usage.
+>>> Maybe defer the tests for 5.5 and just merge the first patch for now?
+>>>
+>>
+>> I think this a good point to discuss.
+>> Some devices will want to register for all changes to the process address
+>> space because there is no requirement to preregister regions that the
+>> device can access verses devices like InfiniBand where a range of addresses
+>> have to be registered before the device can access those addresses.
+> 
+> But this is a very bad idea to register and do HW actions for ranges
+> that can't possibly have any pages registered. It slows down the
+> entire application
+> 
+> I think the ODP approach might be saner, when it mirrors the entire
+> address space it chops it up into VA chunks, and once a page is
+> registered on the HW the VA chunk goes into the interval tree.
+> 
+> Presumably the GPU also has some kind of page table tree and you could
+> set one of the levels as the VA interval when there are populated children
+> 
+> Jason
 
-> Could we use something like .ifb or
-> .ifeqs instead?
->
-> Thanks,
->
-> Will
+I wasn't suggesting that HW invalidates happen in two places.
+I'm suggesting the two styles of invalidates can work together.
+For example, what if a driver calls mmu_notifier_register(mn, mm)
+to register for address space wide invalidations, then some time
+later there is a device page table fault and the driver calls
+mmu_range_notifier_insert() but with a NULL ops.invalidate.
+The fault handler follows the nouveau/test_hmm pattern to call
+     mmu_range_read_begin()
+     hmm_range_fault()
+     device lock
+     mmu_range_read_retry()
+     update device page tables
+     device unlock
+     mmu_range_notifier_remove()
 
+The global invalidate() callback would get the device lock and
+call into mm to update the sequence number of any affected ranges
+instead of having a range invalidate callback, and then do the HW
+invalidations.
 
-
--- 
-Thanks,
-~Nick Desaulniers
