@@ -2,92 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219C3100396
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB717100399
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfKRLLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:11:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbfKRLLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:11:47 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C790E2075E;
-        Mon, 18 Nov 2019 11:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574075506;
-        bh=8iL77Cbod2Ldiv/Kdt/qOxk6iOq/uRTCIjFxHr20nBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qq3QIkHDLBpbwRJOsBbMchPRtT1Ua8NRpKp1o1BQyYFmK0/Wxh9Vq0GZUOG6H8xxs
-         r44ljL0TDHb4sJ1TjYcMvn3e3Gv13Vwx4bZo2OwJwjwDS0jOFxpyOb/fhIvk/H+c0p
-         wurFPXM4pgNllY2K6gNcSo1iaEZpBsXU3edAjdTk=
-Date:   Mon, 18 Nov 2019 12:11:43 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 2/3] ARM: dts: sun8i: a33: add the new SecuritySystem
- compatible
-Message-ID: <20191118111143.GF4345@gilmour.lan>
-References: <20191114144812.22747-1-clabbe.montjoie@gmail.com>
- <20191114144812.22747-3-clabbe.montjoie@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p76r+0aZ/vhNbw2t"
-Content-Disposition: inline
-In-Reply-To: <20191114144812.22747-3-clabbe.montjoie@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726814AbfKRLMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:12:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35954 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726460AbfKRLMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 06:12:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 52F8CB42B;
+        Mon, 18 Nov 2019 11:12:43 +0000 (UTC)
+From:   Hannes Reinecke <hare@suse.de>
+To:     Jan Hoeppner <hoeppner@linux.ibm.com>
+Cc:     Stefan Haberland <sth@linux.ibm.com>, linux-s390@vger.kernel.org,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Sebastian Parschauer <sparschauer@suse.de>
+Subject: [PATCH] dasd_fba: Display '00000000' for zero page when dumping sense
+Date:   Mon, 18 Nov 2019 12:12:26 +0100
+Message-Id: <20191118111226.56666-1-hare@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When a discard I/O fails, dasd_fba_dump_sense() will crash as it
+tries to print out the CCW, and failing to take into account that
+for discard I/O we have only one data pointer, not one per sg.
+As the data pointer will always point to the zero page this patch
+replaces the data pointer output with '00000000' to avoid the crash.
 
---p76r+0aZ/vhNbw2t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+[sparschauer: replaced "ccw" with "act", "snprintf" with "sprintf"]
+[sparschauer v2: added missing curly braces to for loops]
+Signed-off-by: Sebastian Parschauer <sparschauer@suse.de>
+---
+ drivers/s390/block/dasd_fba.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-Hi,
+diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
+index cbb770824226..4b867bd6b164 100644
+--- a/drivers/s390/block/dasd_fba.c
++++ b/drivers/s390/block/dasd_fba.c
+@@ -717,10 +717,15 @@ dasd_fba_dump_sense(struct dasd_device *device, struct dasd_ccw_req * req,
+ 			       " CCW %p: %08X %08X DAT:",
+ 			       act, ((int *) act)[0], ((int *) act)[1]);
+ 		for (count = 0; count < 32 && count < act->count;
+-		     count += sizeof(int))
++		     count += sizeof(int)) {
++			if (act->flags & CCW_FLAG_SLI) {
++				len += sprintf(page + len, " 00000000");
++				break;
++			}
+ 			len += sprintf(page + len, " %08X",
+ 				       ((int *) (addr_t) act->cda)
+ 				       [(count>>2)]);
++		}
+ 		len += sprintf(page + len, "\n");
+ 		act++;
+ 	}
+@@ -739,10 +744,15 @@ dasd_fba_dump_sense(struct dasd_device *device, struct dasd_ccw_req * req,
+ 			       " CCW %p: %08X %08X DAT:",
+ 			       act, ((int *) act)[0], ((int *) act)[1]);
+ 		for (count = 0; count < 32 && count < act->count;
+-		     count += sizeof(int))
++		     count += sizeof(int)) {
++			if (act->flags & CCW_FLAG_SLI) {
++				len += sprintf(page + len, " 00000000");
++				break;
++			}
+ 			len += sprintf(page + len, " %08X",
+ 				       ((int *) (addr_t) act->cda)
+ 				       [(count>>2)]);
++		}
+ 		len += sprintf(page + len, "\n");
+ 		act++;
+ 	}
+@@ -757,10 +767,15 @@ dasd_fba_dump_sense(struct dasd_device *device, struct dasd_ccw_req * req,
+ 			       " CCW %p: %08X %08X DAT:",
+ 			       act, ((int *) act)[0], ((int *) act)[1]);
+ 		for (count = 0; count < 32 && count < act->count;
+-		     count += sizeof(int))
++		     count += sizeof(int)) {
++			if (act->flags & CCW_FLAG_SLI) {
++				len += sprintf(page + len, " 00000000");
++				break;
++			}
+ 			len += sprintf(page + len, " %08X",
+ 				       ((int *) (addr_t) act->cda)
+ 				       [(count>>2)]);
++		}
+ 		len += sprintf(page + len, "\n");
+ 		act++;
+ 	}
+-- 
+2.16.4
 
-On Thu, Nov 14, 2019 at 03:48:11PM +0100, Corentin Labbe wrote:
-> Add the new A33 SecuritySystem compatible to the crypto node.
->
-> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> ---
->  arch/arm/boot/dts/sun8i-a33.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-> index 1532a0e59af4..5680fa1de102 100644
-> --- a/arch/arm/boot/dts/sun8i-a33.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-> @@ -215,7 +215,8 @@
->  		};
->
->  		crypto: crypto-engine@1c15000 {
-> -			compatible = "allwinner,sun4i-a10-crypto";
-> +			compatible = "allwinner,sun8i-a33-crypto",
-> +				     "allwinner,sun4i-a10-crypto";
-
-If some algorithms aren't working properly, we can't really fall back
-to it, we should just use the a33 compatible.
-
-Maxime
-
---p76r+0aZ/vhNbw2t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXdJ8bwAKCRDj7w1vZxhR
-xWSsAQDfuOb7pAGVgHQzg3LHHlN6b2U6D/Lbo36ifRgHXwR4yQEA0GMSVqz5xwZy
-x+K+EU4sfN71BXTin4nzbE/XEZXdQgc=
-=hnch
------END PGP SIGNATURE-----
-
---p76r+0aZ/vhNbw2t--
