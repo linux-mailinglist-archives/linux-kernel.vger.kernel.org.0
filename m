@@ -2,319 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44EA9100A4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE10100A52
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfKRRcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 12:32:36 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55651 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfKRRcg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 12:32:36 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b11so126543wmb.5;
-        Mon, 18 Nov 2019 09:32:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9cUOn4dXQObR7q+VBOZahx/ugZjKHh2rWdB8yZdQGkI=;
-        b=nWX+jjiizY/XT+BAk1ctVJ1fdnxY5KQ50xN1jo+PQ4iae9XeYK6gM/spIaPzc8Nb07
-         bFNlxbj9VyzaEzfZDXWrzQ5D1a7BGV7PpqQFB73jOORcMYP0fCJL15e+iglW39/+nzcL
-         /5bjXHEzM85mreMl5DUfCf1Y23HhN9SSyWz+GC42DDKvERWzjSMk3q3P89ggVsVv4edx
-         eKYGwWmeno1SWhK5ZXdmoA9EiI3foSzDdy0Vp+sBW0yYOFNqcVtMc6WFWTxbocF6HY4l
-         qY5Yo4HuGPOdnwmCeuTYq16iYHk58zz6G+QY7pcDjtj32fotR8vMo1jgy026iNNOwVAF
-         cEIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9cUOn4dXQObR7q+VBOZahx/ugZjKHh2rWdB8yZdQGkI=;
-        b=umyAdOB/uWtoNn/voqCCz3SMlxVNRKpW0KQFzqr2C8kx7Sxw+TNcb5v8J74EZS28JN
-         8mrUWiXcxDEz8b5U7p9Wmm45VIpSIPdc05WqHNJTkOyvgmiqfXcE6abA9aYBwUxo651g
-         64cC96srTRsPPV4dYY9dW9IlDyXKIhpBQZLfLRQfGfgvGcJyYvewngpd/PT+DTv8P8JA
-         qciQkGtuzU1IZaDzizaJp6PGDpt+KwYF6CwVPsDkgaruRoUueGHEVDrsq6Bdm+9ZCFVr
-         6ZwfyVa3t58SkQqy1gLNF5KwsLHmmZh34KZKtFeRSFG97TPAhUetFRq2zX5sxuDyjK9N
-         l2kQ==
-X-Gm-Message-State: APjAAAWP9is6dYNlwhzoqb+bdpA38T38cqaTDnY5yFzpWkhBnkZWGqkz
-        ioy8SUCtr5ncerplUzxiIoA=
-X-Google-Smtp-Source: APXvYqxBASmSBziAl7PKRwEoLyPls2LH9/l314Fd8pkEnVKPTAzBofCwPdmeJNVo3SBbmPo3YIht9A==
-X-Received: by 2002:a1c:5fc4:: with SMTP id t187mr201252wmb.142.1574098351306;
-        Mon, 18 Nov 2019 09:32:31 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id n1sm24456636wrr.24.2019.11.18.09.32.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Nov 2019 09:32:29 -0800 (PST)
-Date:   Mon, 18 Nov 2019 18:32:28 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Giovanni Mascellani <gio@debian.org>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dell-smm-hwmon: Add support for disabling
- automatic BIOS fan control
-Message-ID: <20191118173228.gn2y5ssp7v3fcctn@pali>
-References: <20191118171148.76373-1-gio@debian.org>
+        id S1726698AbfKRRfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 12:35:17 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:59194 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726322AbfKRRfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 12:35:16 -0500
+Received: from zn.tnic (p200300EC2F27B5003D22FC05E431AFF8.dip0.t-ipconnect.de [IPv6:2003:ec:2f27:b500:3d22:fc05:e431:aff8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 46CAF1EC072D;
+        Mon, 18 Nov 2019 18:35:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1574098511;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ndkDKtfR+XvFiIIHQaaiR63mI1Ov3k+RZNEVbDcRAoA=;
+        b=kfwiml/3cso9RddEMd/IeRS8ROF89RgW4TqWMEUjdx6ulAZVkpQGmrFl4pw23Bwr1TaCmb
+        RUuzX5HAo8sm+UKhmzA/gA1/ta9v+vSqCTbo/Ikdtk2fGtEbUQJeI9phyPcjeevQ1seI0K
+        OjWE1CDmhGwJDT8dPM1KHuFd0utIQ5Y=
+Date:   Mon, 18 Nov 2019 18:35:10 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-tip-commits@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/ftrace: Mark ftrace_modify_code_direct() __ref
+Message-ID: <20191118173510.GK6363@zn.tnic>
+References: <20191111132457.761255803@infradead.org>
+ <157381099055.29467.10982011694493970062.tip-bot2@tip-bot2>
+ <20191116204607.GC23231@zn.tnic>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="dntxtsgj3xed2gg4"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191118171148.76373-1-gio@debian.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191116204607.GC23231@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 16, 2019 at 09:46:07PM +0100, Borislav Petkov wrote:
+> WARNING: vmlinux.o(.text+0x8c0b1): Section mismatch in reference from the function ftrace_modify_code_direct() to the function .init.text:text_poke_early()
+> The function ftrace_modify_code_direct() references
+> the function __init text_poke_early().
+> This is often because ftrace_modify_code_direct lacks a __init 
+> annotation or the annotation of text_poke_early is wrong.
+> 
+> FATAL: modpost: Section mismatches detected.
+> Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
+> make[1]: *** [scripts/Makefile.modpost:66: __modpost] Error 1
+> make: *** [Makefile:1077: vmlinux] Error 2
 
---dntxtsgj3xed2gg4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here's a fix suggested by Peter:
 
-On Monday 18 November 2019 18:11:47 Giovanni Mascellani wrote:
-> This patch exports standard hwmon pwmX_enable sysfs attribute for
-> enabling or disabling automatic fan control by BIOS. Standard value
-> "1" is for disabling automatic BIOS fan control and value "2" for
-> enabling.
->=20
-> By default BIOS auto mode is enabled by laptop firmware.
->=20
-> When BIOS auto mode is enabled, custom fan speed value (set via hwmon
-> pwmX sysfs attribute) is overwritten by SMM in few seconds and
-> therefore any custom settings are without effect. So this is reason
-> why implementing option for disabling BIOS auto mode is needed.
->=20
-> So finally this patch allows kernel to set and control fan speed on
-> laptops, but it can be dangerous (like setting speed of other fans).
->=20
-> The SMM commands to enable or disable automatic fan control are not
-> documented and are not the same on all Dell laptops. Therefore a
-> whitelist is used to send the correct codes only on laptopts for which
-> they are known.
->=20
-> This patch was originally developed by Pali Roh=C3=A1r; later Giovanni
-> Mascellani implemented the whitelist.
->=20
-> Signed-off-by: Giovanni Mascellani <gio@debian.org>
-> Co-Developer-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+---
+From: Borislav Petkov <bp@suse.de>
+Subject: [PATCH] x86/ftrace: Mark ftrace_modify_code_direct() __ref
 
-This patch is fine for me now. I'm not sure if Co-Developer-by: tag is
-supported, but you can add:
+... because it calls the .init.text function text_poke_early(). That is
+ok because it does call that function early, during boot.
 
-Signed-off-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+Fixes: 9706f7c3531f ("x86/ftrace: Use text_poke()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20191116204607.GC23231@zn.tnic
+---
+ arch/x86/kernel/ftrace.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/hwmon/dell-smm-hwmon.c | 114 ++++++++++++++++++++++++++++++---
->  1 file changed, 104 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmo=
-n.c
-> index 4212d022d253..25d160b36a57 100644
-> --- a/drivers/hwmon/dell-smm-hwmon.c
-> +++ b/drivers/hwmon/dell-smm-hwmon.c
-> @@ -68,6 +68,8 @@ static uint i8k_pwm_mult;
->  static uint i8k_fan_max =3D I8K_FAN_HIGH;
->  static bool disallow_fan_type_call;
->  static bool disallow_fan_support;
-> +static unsigned int manual_fan;
-> +static unsigned int auto_fan;
-> =20
->  #define I8K_HWMON_HAVE_TEMP1	(1 << 0)
->  #define I8K_HWMON_HAVE_TEMP2	(1 << 1)
-> @@ -300,6 +302,20 @@ static int i8k_get_fan_nominal_speed(int fan, int sp=
-eed)
->  	return i8k_smm(&regs) ? : (regs.eax & 0xffff) * i8k_fan_mult;
->  }
-> =20
-> +/*
-> + * Enable or disable automatic BIOS fan control support
-> + */
-> +static int i8k_enable_fan_auto_mode(bool enable)
-> +{
-> +	struct smm_regs regs =3D { };
-> +
-> +	if (disallow_fan_support)
-> +		return -EINVAL;
-> +
-> +	regs.eax =3D enable ? auto_fan : manual_fan;
-> +	return i8k_smm(&regs);
-> +}
-> +
->  /*
->   * Set the fan speed (off, low, high). Returns the new fan status.
->   */
-> @@ -726,6 +742,35 @@ static ssize_t i8k_hwmon_pwm_store(struct device *de=
-v,
->  	return err < 0 ? -EIO : count;
->  }
-> =20
-> +static ssize_t i8k_hwmon_pwm_enable_store(struct device *dev,
-> +					  struct device_attribute *attr,
-> +					  const char *buf, size_t count)
-> +{
-> +	int err;
-> +	bool enable;
-> +	unsigned long val;
-> +
-> +	if (!auto_fan)
-> +		return -ENODEV;
-> +
-> +	err =3D kstrtoul(buf, 10, &val);
-> +	if (err)
-> +		return err;
-> +
-> +	if (val =3D=3D 1)
-> +		enable =3D false;
-> +	else if (val =3D=3D 2)
-> +		enable =3D true;
-> +	else
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&i8k_mutex);
-> +	err =3D i8k_enable_fan_auto_mode(enable);
-> +	mutex_unlock(&i8k_mutex);
-> +
-> +	return err ? err : count;
-> +}
-> +
->  static SENSOR_DEVICE_ATTR_RO(temp1_input, i8k_hwmon_temp, 0);
->  static SENSOR_DEVICE_ATTR_RO(temp1_label, i8k_hwmon_temp_label, 0);
->  static SENSOR_DEVICE_ATTR_RO(temp2_input, i8k_hwmon_temp, 1);
-> @@ -749,6 +794,7 @@ static SENSOR_DEVICE_ATTR_RO(temp10_label, i8k_hwmon_=
-temp_label, 9);
->  static SENSOR_DEVICE_ATTR_RO(fan1_input, i8k_hwmon_fan, 0);
->  static SENSOR_DEVICE_ATTR_RO(fan1_label, i8k_hwmon_fan_label, 0);
->  static SENSOR_DEVICE_ATTR_RW(pwm1, i8k_hwmon_pwm, 0);
-> +static SENSOR_DEVICE_ATTR_WO(pwm1_enable, i8k_hwmon_pwm_enable, 0);
->  static SENSOR_DEVICE_ATTR_RO(fan2_input, i8k_hwmon_fan, 1);
->  static SENSOR_DEVICE_ATTR_RO(fan2_label, i8k_hwmon_fan_label, 1);
->  static SENSOR_DEVICE_ATTR_RW(pwm2, i8k_hwmon_pwm, 1);
-> @@ -780,12 +826,13 @@ static struct attribute *i8k_attrs[] =3D {
->  	&sensor_dev_attr_fan1_input.dev_attr.attr,	/* 20 */
->  	&sensor_dev_attr_fan1_label.dev_attr.attr,	/* 21 */
->  	&sensor_dev_attr_pwm1.dev_attr.attr,		/* 22 */
-> -	&sensor_dev_attr_fan2_input.dev_attr.attr,	/* 23 */
-> -	&sensor_dev_attr_fan2_label.dev_attr.attr,	/* 24 */
-> -	&sensor_dev_attr_pwm2.dev_attr.attr,		/* 25 */
-> -	&sensor_dev_attr_fan3_input.dev_attr.attr,	/* 26 */
-> -	&sensor_dev_attr_fan3_label.dev_attr.attr,	/* 27 */
-> -	&sensor_dev_attr_pwm3.dev_attr.attr,		/* 28 */
-> +	&sensor_dev_attr_pwm1_enable.dev_attr.attr,	/* 23 */
-> +	&sensor_dev_attr_fan2_input.dev_attr.attr,	/* 24 */
-> +	&sensor_dev_attr_fan2_label.dev_attr.attr,	/* 25 */
-> +	&sensor_dev_attr_pwm2.dev_attr.attr,		/* 26 */
-> +	&sensor_dev_attr_fan3_input.dev_attr.attr,	/* 27 */
-> +	&sensor_dev_attr_fan3_label.dev_attr.attr,	/* 28 */
-> +	&sensor_dev_attr_pwm3.dev_attr.attr,		/* 29 */
->  	NULL
->  };
-> =20
-> @@ -828,16 +875,19 @@ static umode_t i8k_is_visible(struct kobject *kobj,=
- struct attribute *attr,
->  	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_TEMP10))
->  		return 0;
-> =20
-> -	if (index >=3D 20 && index <=3D 22 &&
-> +	if (index >=3D 20 && index <=3D 23 &&
->  	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN1))
->  		return 0;
-> -	if (index >=3D 23 && index <=3D 25 &&
-> +	if (index >=3D 24 && index <=3D 26 &&
->  	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN2))
->  		return 0;
-> -	if (index >=3D 26 && index <=3D 28 &&
-> +	if (index >=3D 27 && index <=3D 29 &&
->  	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN3))
->  		return 0;
-> =20
-> +	if (index =3D=3D 23 && !auto_fan)
-> +		return 0;
-> +
->  	return attr->mode;
->  }
-> =20
-> @@ -1135,12 +1185,48 @@ static struct dmi_system_id i8k_blacklist_fan_sup=
-port_dmi_table[] __initdata =3D {
->  	{ }
->  };
-> =20
-> +struct i8k_fan_control_data {
-> +	unsigned int manual_fan;
-> +	unsigned int auto_fan;
-> +};
-> +
-> +enum i8k_fan_controls {
-> +	I8K_FAN_34A3_35A3,
-> +};
-> +
-> +static const struct i8k_fan_control_data i8k_fan_control_data[] =3D {
-> +	[I8K_FAN_34A3_35A3] =3D {
-> +		.manual_fan =3D 0x34a3,
-> +		.auto_fan =3D 0x35a3,
-> +	},
-> +};
-> +
-> +static struct dmi_system_id i8k_whitelist_fan_control[] __initdata =3D {
-> +	{
-> +		.ident =3D "Dell Precision 5530",
-> +		.matches =3D {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Precision 5530"),
-> +		},
-> +		.driver_data =3D (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
-> +	},
-> +	{
-> +		.ident =3D "Dell Latitude E6440",
-> +		.matches =3D {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Latitude E6440"),
-> +		},
-> +		.driver_data =3D (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
-> +	},
-> +	{ }
-> +};
-> +
->  /*
->   * Probe for the presence of a supported laptop.
->   */
->  static int __init i8k_probe(void)
->  {
-> -	const struct dmi_system_id *id;
-> +	const struct dmi_system_id *id, *fan_control;
->  	int fan, ret;
-> =20
->  	/*
-> @@ -1200,6 +1286,14 @@ static int __init i8k_probe(void)
->  	i8k_fan_max =3D fan_max ? : I8K_FAN_HIGH;	/* Must not be 0 */
->  	i8k_pwm_mult =3D DIV_ROUND_UP(255, i8k_fan_max);
-> =20
-> +	fan_control =3D dmi_first_match(i8k_whitelist_fan_control);
-> +	if (fan_control && fan_control->driver_data) {
-> +		const struct i8k_fan_control_data *fan_control_data =3D fan_control->d=
-river_data;
-> +		manual_fan =3D fan_control_data->manual_fan;
-> +		auto_fan =3D fan_control_data->auto_fan;
-> +		pr_info("enabling support for setting automatic/manual fan control\n");
-> +	}
-> +
->  	if (!fan_mult) {
->  		/*
->  		 * Autodetect fan multiplier based on nominal rpm
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 2a179fb35cd1..108ee96f8b66 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -99,7 +99,12 @@ static int ftrace_verify_code(unsigned long ip, const char *old_code)
+ 	return 0;
+ }
+ 
+-static int
++/*
++ * Marked __ref because it calls text_poke_early() which is .init.text. That is
++ * ok because that call will happen early, during boot, when .init sections are
++ * still present.
++ */
++static int __ref
+ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+ 			  const char *new_code)
+ {
+-- 
+2.21.0
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+-- 
+Regards/Gruss,
+    Boris.
 
---dntxtsgj3xed2gg4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXdLVkwAKCRCL8Mk9A+RD
-UptqAKCDV9GLxi+nzSzmFuka+tuytD4U1gCcDHwaFLNCmeHqC17JGAhujp0PRBE=
-=B9yk
------END PGP SIGNATURE-----
-
---dntxtsgj3xed2gg4--
+https://people.kernel.org/tglx/notes-about-netiquette
