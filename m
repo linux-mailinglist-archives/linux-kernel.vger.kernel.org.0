@@ -2,199 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0568E100665
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CDB5100673
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfKRNXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 08:23:52 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46828 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfKRNXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:23:51 -0500
-Received: by mail-io1-f68.google.com with SMTP id i11so7728587iol.13;
-        Mon, 18 Nov 2019 05:23:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=op5rd6aO2/xdLRaY54P25hFvtDdUpULFrgXMiQFvOAg=;
-        b=lyB2ZoaEUVNsw5pIhq8A/M3Qf4XTcofq7KgDzHdZpm/rMYlbxqTqa1SW9AfwLBjDV0
-         +NAp7cdLLr4J/MzbeRmqpxV1kjHgDUI0GU7FrEQZj3aDsokRzU8saxKwK9gwzAhxqWWA
-         wTe8neVFFRviLugbthQcRmWZP+hgGJ/2qkBs8ANJGrQ5Q8R3XDCqu4evi/en8C1+wiMT
-         6BRtC5QqqHgdxWfT0ox00G4YpsuOXdqpkhnEyYDvEn7rZ0gNeic3M8UZvFXVN72sR87q
-         3hCO6xitjYcRNYdgBnT1M6eoEY/Ik98caOUXBYvOvXOYkZLNqxp2HI1etP97fdCGdtDQ
-         rmdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=op5rd6aO2/xdLRaY54P25hFvtDdUpULFrgXMiQFvOAg=;
-        b=GRXF9rKNgcozHdSSNujPdbb1CuJijQ4Zz7RivIReg8fDIuoMj/ao3mHwiacjxadqUR
-         LSeH3DVKDP47aDB6c8GcbDBUfk9EZeV7PDQQzvUNLdYWVW/cJIH/kBJJH3La4bA+qCuw
-         lV/2GofAgKJGTU95kkvNBM3wvj7wqs1XS7g9Bi5l9VYFW5bKzEhDKDGTxuNMryZjRajh
-         7RyCDvjxOguoPEuEjpAD0nqXMpKNxa53rMNvSg7jlMWfIpwpMt318JcRUzcM6Sp7IDsK
-         bV5U+zhXXjN2njx94fVVQk+NtFp4x19OBNSLXRdLEj2k5TjLUvRcvSpeQOG7xFTjCWtr
-         vJYw==
-X-Gm-Message-State: APjAAAUXLFKcoWg8cMbZrBNnZ6T6wHw6u5x7ttlsTnXOtLQUCNGrgqd2
-        7yBw4Q/5M/OGmnOTDr4zs89dxNgf2Hep3oRwgBeFE+6JoUY=
-X-Google-Smtp-Source: APXvYqwwesXFTHMX8XUyxZkWh41hLitS8hyv0l7BRBm77qtkF2Vxd9k8PkikJb7y37ESM/fNSi6wklRzseDLD42tLo4=
-X-Received: by 2002:a5d:9547:: with SMTP id a7mr13366391ios.198.1574083430516;
- Mon, 18 Nov 2019 05:23:50 -0800 (PST)
+        id S1727010AbfKRN2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 08:28:20 -0500
+Received: from smtp2.axis.com ([195.60.68.18]:53795 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726284AbfKRN2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 08:28:19 -0500
+IronPort-SDR: bs9+P0Lias7qQgUZjcfe6XsQmJVbm3KCbjy1lVFY1UmOks7hXisFSoWmeXtHRep6TdDl3MQvmP
+ uFZ+N+rPQrGnFfVzu/Xe7X1kQjvOpMUeiyy/TmSF7tLZSBByavFQKlZzDC1bzypvAraIj5SIWn
+ Adj94MkmoFBeuIZUgq9HYzi15LrtckTobI6LD+xip87mvZSxn5UXeywbBBt02Ad8ANXSioOkdo
+ LQ9sVcoie3ylGdyshqgc46bOujZ+s2Q3QPI3XPsD7XqwqY1LqZtPGAnYigG6HQxXSm0hmaMFuu
+ bqQ=
+X-IronPort-AV: E=Sophos;i="5.68,320,1569276000"; 
+   d="scan'208";a="2543781"
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     pantelis.antoniou@konsulko.com, frowand.list@gmail.com,
+        robh+dt@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH 1/2] of: overlay: fix properties memory leak
+Date:   Mon, 18 Nov 2019 14:28:08 +0100
+Message-Id: <20191118132809.30127-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <1574049061-11417-1-git-send-email-cang@qti.qualcomm.com> <1574049061-11417-5-git-send-email-cang@qti.qualcomm.com>
-In-Reply-To: <1574049061-11417-5-git-send-email-cang@qti.qualcomm.com>
-From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Mon, 18 Nov 2019 18:53:13 +0530
-Message-ID: <CAGOxZ53Z6je9Omuh2k=wVJrGVKZDfsfx6=mUJ-8QiRk-2q3u0g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] scsi: ufs: Complete pending requests in host reset
- and restore path
-To:     Can Guo <cang@qti.qualcomm.com>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com,
-        Mark Salyzyn <salyzyn@google.com>,
-        Can Guo <cang@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 9:22 AM Can Guo <cang@qti.qualcomm.com> wrote:
->
-> From: Can Guo <cang@codeaurora.org>
->
-> In UFS host reset and restore path, before probe, we stop and start the
-> host controller once. After host controller is stopped, the pending
-> requests, if any, are cleared from the doorbell, but no completion IRQ
-> would be raised due to the hba is stopped.
-> These pending requests shall be completed along with the first NOP_OUT
-> command(as it is the first command which can raise a transfer completion
-> IRQ) sent during probe.
-> Since the OCSs of these pending requests are not SUCCESS(because they are
-> not yet literally finished), their UPIUs shall be dumped. When there are
-> multiple pending requests, the UPIU dump can be overwhelming and may lead
-> to stability issues because it is in atomic context.
-> Therefore, before probe, complete these pending requests right after host
-> controller is stopped and silence the UPIU dump from them.
->
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> ---
+No changeset entries are created for #address-cells and #size-cells
+properties, but the duplicated properies are never freed.  This results
+in a memory leak which is detected by kmemleak:
 
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+ unreferenced object 0x85887180 (size 64):
+   backtrace:
+     kmem_cache_alloc_trace+0x1fb/0x1fc
+     __of_prop_dup+0x25/0x7c
+     add_changeset_property+0x17f/0x370
+     build_changeset_next_level+0x29/0x20c
+     of_overlay_fdt_apply+0x32b/0x6b4
+     ...
 
-Please add all previous Ack/reviewed and tested-by tags so that we are
-aware what need to be done for this patch.
-Thanks
+Fixes: 6f75118800acf77f8 ("of: overlay: validate overlay properties #address-cells and #size-cells")
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+ drivers/of/overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/scsi/ufs/ufshcd.c | 24 ++++++++++--------------
->  drivers/scsi/ufs/ufshcd.h |  2 ++
->  2 files changed, 12 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 5950a7c..b92a3f4 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -4845,7 +4845,7 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
->                 break;
->         } /* end of switch */
->
-> -       if (host_byte(result) != DID_OK)
-> +       if ((host_byte(result) != DID_OK) && !hba->silence_err_logs)
->                 ufshcd_print_trs(hba, 1 << lrbp->task_tag, true);
->         return result;
->  }
-> @@ -5404,8 +5404,8 @@ static void ufshcd_err_handler(struct work_struct *work)
->
->         /*
->          * if host reset is required then skip clearing the pending
-> -        * transfers forcefully because they will automatically get
-> -        * cleared after link startup.
-> +        * transfers forcefully because they will get cleared during
-> +        * host reset and restore
->          */
->         if (needs_reset)
->                 goto skip_pending_xfer_clear;
-> @@ -6333,9 +6333,15 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
->         int err;
->         unsigned long flags;
->
-> -       /* Reset the host controller */
-> +       /*
-> +        * Stop the host controller and complete the requests
-> +        * cleared by h/w
-> +        */
->         spin_lock_irqsave(hba->host->host_lock, flags);
->         ufshcd_hba_stop(hba, false);
-> +       hba->silence_err_logs = true;
-> +       ufshcd_complete_requests(hba);
-> +       hba->silence_err_logs = false;
->         spin_unlock_irqrestore(hba->host->host_lock, flags);
->
->         /* scale up clocks to max frequency before full reinitialization */
-> @@ -6369,7 +6375,6 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
->  static int ufshcd_reset_and_restore(struct ufs_hba *hba)
->  {
->         int err = 0;
-> -       unsigned long flags;
->         int retries = MAX_HOST_RESET_RETRIES;
->
->         do {
-> @@ -6379,15 +6384,6 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
->                 err = ufshcd_host_reset_and_restore(hba);
->         } while (err && --retries);
->
-> -       /*
-> -        * After reset the door-bell might be cleared, complete
-> -        * outstanding requests in s/w here.
-> -        */
-> -       spin_lock_irqsave(hba->host->host_lock, flags);
-> -       ufshcd_transfer_req_compl(hba);
-> -       ufshcd_tmc_handler(hba);
-> -       spin_unlock_irqrestore(hba->host->host_lock, flags);
-> -
->         return err;
->  }
->
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index e0fe247..1e51034 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -513,6 +513,7 @@ struct ufs_stats {
->   * @uic_error: UFS interconnect layer error status
->   * @saved_err: sticky error mask
->   * @saved_uic_err: sticky UIC error mask
-> + * @silence_err_logs: flag to silence error logs
->   * @dev_cmd: ufs device management command information
->   * @last_dme_cmd_tstamp: time stamp of the last completed DME command
->   * @auto_bkops_enabled: to track whether bkops is enabled in device
-> @@ -670,6 +671,7 @@ struct ufs_hba {
->         u32 saved_err;
->         u32 saved_uic_err;
->         struct ufs_stats ufs_stats;
-> +       bool silence_err_logs;
->
->         /* Device management request data */
->         struct ufs_dev_cmd dev_cmd;
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
-
-
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index c423e94baf0f..5f8869e2a8b3 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -360,7 +360,7 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+ 		pr_err("WARNING: memory leak will occur if overlay removed, property: %pOF/%s\n",
+ 		       target->np, new_prop->name);
+ 
+-	if (ret) {
++	if (ret || !check_for_non_overlay_node) {
+ 		kfree(new_prop->name);
+ 		kfree(new_prop->value);
+ 		kfree(new_prop);
 -- 
-Regards,
-Alim
+2.20.0
+
