@@ -2,112 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7120C100019
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BBEB10001E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:13:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfKRIMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 03:12:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
+        id S1726933AbfKRIMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 03:12:34 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:52035 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfKRIMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 03:12:25 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726875AbfKRIMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 03:12:30 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B242A20748;
-        Mon, 18 Nov 2019 08:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574064744;
-        bh=Rw4DbqPrbG0yXaPzv4cd2fGUfjZk2CcZa6W0iBrXzcE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZrvXgTbx9kQUHaQ+hl3xamijPj8z5aL+KsWtq3ZAcgAfiORAPcJIeyXmpbP7mvDyu
-         +fr4NuUMJEQRgSzGNZpOEDoK5SzGrPvrXvOGxHsr96NaJ9bd2DShW2osOK0xdRtvXc
-         c5Bsgy576px6emINb7ajn3WEENeLLNcMUgiL7CtY=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH v3 4/7] perf probe: Generate event name with line number
-Date:   Mon, 18 Nov 2019 17:12:20 +0900
-Message-Id: <157406474026.24476.2828897745502059569.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <157406469983.24476.13195800716161845227.stgit@devnote2>
-References: <157406469983.24476.13195800716161845227.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47GhWt6MCHz9sR8;
+        Mon, 18 Nov 2019 19:12:26 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574064747;
+        bh=Ylcv/kAcskiEgYIYi4TminUt71+ufYVaNqcwaor7E8c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DHIf2G7ZB+cL+eBkxIPvCu1EjLMZWxzzns94iTyTeLzbfBPA61/Tqsnu+09y7azC0
+         T1XAp2boKqnROXrHLsvArwOxw9RH3/DCdHXd+MpENTLVppLBb+bqHZEeYjowBiCHz6
+         5dWvkduh+e1HkqImBBas7dBU5lpnjxEafRvswr7BY4FIjNmRBF0RwLvCVpz/Xi9SOL
+         RhIuKlWpXGYF601KiV3jhvogxKQei9mq2GVcYr/cin3ujGqoNbBLOBTzsDtoVLhpJ2
+         AtafywVaatEd8+uhHZwOqgtozNlOfRFaLCtDRg4DKKazzUZ9wV7E9PZ3IQD9zkboQR
+         Qlg67yn9dUqpg==
+Date:   Mon, 18 Nov 2019 19:12:23 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux Crypto List <linux-crypto@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the crypto tree
+Message-ID: <20191118191223.1b7c11a9@canb.auug.org.au>
+In-Reply-To: <MN2PR20MB2973E1EAD50B58826FCEC763CA4D0@MN2PR20MB2973.namprd20.prod.outlook.com>
+References: <20191116101954.33672f2d@canb.auug.org.au>
+        <MN2PR20MB2973E1EAD50B58826FCEC763CA4D0@MN2PR20MB2973.namprd20.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/t+UzsCG2yRIu++9O0gVcY2h";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Generate event name from function name with line number
-as <function>_L<line_number>. Note that this is only for
-the new event which is defined by the line number of
-function (except for line 0).
+--Sig_/t+UzsCG2yRIu++9O0gVcY2h
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If there is another event on same line, you have to use
-"-f" option. In that case, the new event has "_1" suffix.
+Hi Pascal,
 
- e.g.
-  # perf probe -a kernel_read:2
-  Added new event:
-    probe:kernel_read_L2 (on kernel_read:2)
+On Mon, 18 Nov 2019 07:58:42 +0000 Pascal Van Leeuwen <pvanleeuwen@verimatr=
+ix.com> wrote:
+>
+> My bad, I didn't know the Fixes tag should not be broken over
+> lines (and that rather conflicted with the 75 characters per
+> line rule here, which is why I did break it up).
+>=20
+> I'm willing to fix that - except that I don't know how to create
+> a patch that _only_ fixes the commit description of something=20
+> already pulled into the cryptodev tree?
 
-  You can now use it in all perf tools, such as:
+Unless Herbert wants to rebase the crypto tree (and I think this is not
+a good reason to do that), you should just consider this a learning
+experience. :-)
 
-  	perf record -e probe:kernel_read_L2 -aR sleep 1
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/t+UzsCG2yRIu++9O0gVcY2h
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-But if we omit the line number or 0th line, it will
-have no suffix.
+-----BEGIN PGP SIGNATURE-----
 
-  # perf probe -a kernel_read:0
-  Added new event:
-    probe:kernel_read (on kernel_read)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3SUmcACgkQAVBC80lX
+0GwDlAf8ClZ7n/HmuTyieT433MqwtF26pB9zw9iswQ709v1gNpWzMT5xdfba2JKr
+Vnvci9i0a02Op4c5gX0rQiB3a2k0FFb+jNA+Y68qk5iRvGE1EjD9u4V38xsErH9s
+v0penDIX9T8t83KRpdSNQHWbL2ZU0VOoKz5kRYBWe/XU2aW0DdMk74XrBeVIVhLD
+BwAK8LHOTdgQwlZoRIfGAjMeTJuagvUUC5RGPX72WXxn3WzUcJIH3IK0Y5/IaHqH
+pbAdAEYyEk1RYr4FveBhnDT0CcFkXTMlbU0LsXAD9dY1eaZ3efK7o2ZSPxpWKo8e
+iIRE73ISn4nGzBdtnlyQBttgX6Fxrg==
+=gpYR
+-----END PGP SIGNATURE-----
 
-  You can now use it in all perf tools, such as:
-
-  	perf record -e probe:kernel_read -aR sleep 1
-
-# perf probe -l
-  probe:kernel_read    (on kernel_read@linux-5.0.0/fs/read_write.c)
-  probe:kernel_read_L2 (on kernel_read:2@linux-5.0.0/fs/read_write.c)
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- Changes in v3:
-  - Update samples according to previous fixes.
- Changes in v2:
-  - Do not add _L* suffix for the event which has no line
-    number or line #0.
----
- tools/perf/util/probe-event.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index e29948b8fcab..5c86d2cf6338 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -1679,6 +1679,14 @@ int parse_perf_probe_command(const char *cmd, struct perf_probe_event *pev)
- 	if (ret < 0)
- 		goto out;
- 
-+	/* Generate event name if needed */
-+	if (!pev->event && pev->point.function && pev->point.line
-+			&& !pev->point.lazy_line && !pev->point.offset) {
-+		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
-+			pev->point.line) < 0)
-+			return -ENOMEM;
-+	}
-+
- 	/* Copy arguments and ensure return probe has no C argument */
- 	pev->nargs = argc - 1;
- 	pev->args = zalloc(sizeof(struct perf_probe_arg) * pev->nargs);
-
+--Sig_/t+UzsCG2yRIu++9O0gVcY2h--
