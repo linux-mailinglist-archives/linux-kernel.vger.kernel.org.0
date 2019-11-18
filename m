@@ -2,103 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA12100C59
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 20:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9772100C41
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 20:38:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfKRTlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 14:41:32 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37983 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfKRTlb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 14:41:31 -0500
-Received: by mail-ot1-f67.google.com with SMTP id z25so15624630oti.5
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 11:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X3o0IsIZAZ7wZG7kNKtDTIC/+CrHgjEOKYqn/GJZgow=;
-        b=IP57T3BawVyl+urI2HsWXb3a52KJBX1CVpOTmaws+YDj5nD8X94w/onrfLkCgdDNod
-         wN66e0baMmlaayqO4Q3w/oj9JHMWfC3vyWSS1dnr+ktELyPIKg2CPpNZiEgrMSyTARJu
-         MfEDJNd3GECOcxNV2Pt9Tm1NrDZr2sdTONBOAecH5v7zpR37Y5ZQyPSy9rL9hesTYa8F
-         VW9wgwHLCxTr2sng/rdtXaBI/SkDjMD/wHYF3gAaCdx5bPmqjM/knxvxIJbignzjLPiF
-         vrWTBmmunBhanAtLrzaAHfQoJFRV4XID3x2sLXwQ9ZkWVk8rMiynFeppf12qstMIXUF1
-         0AxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X3o0IsIZAZ7wZG7kNKtDTIC/+CrHgjEOKYqn/GJZgow=;
-        b=ez3ff33yiuea2KNnnLvWSsQN5G6ZShDOy6IsLCCf/6BQprH5AiTJUv5gFo/TTBupFn
-         IVRayil1MODvjvEnaobGaklXfdbEf5cWZlMXG9q+7fWrxF1yis5j8Pk6D2VOakf4lhO2
-         JvzR23N6IztFHGdtZhB1QOMP7QNnaQxVCT5gU8AssIb7mPibtsyjLepO7zvwo5tXh1Gy
-         FeQcA62JGDefT9wmqXpsnDd2UYYXKoGzMbL5LsDd5dNwugL5kBXG0hMhgS8rPAFmoYr7
-         3IbA9fLv5sQesk9Lh5UkPDi2FlWr0UpysN8hwVyISlqIg+rI7uf8+/Wi8h2Gw1X8jMGb
-         hdTw==
-X-Gm-Message-State: APjAAAXC9/B5BUZT4lTAyi6RepvtDFncfec2GxGLc1H8RQ8w2ooPH+Ug
-        0H91ibNYcDfLCUhXn8A17KPSWwHzOussPyyjJlhrsA==
-X-Google-Smtp-Source: APXvYqzUsgAQBjPOYLPLOEbi+X4F4sQfjR2aYPz7uHf2rwXILQINWQCn1hgtNd0dkCm49mZdpcu3Q2oMsIQ6w0Mchn4=
-X-Received: by 2002:a9d:5543:: with SMTP id h3mr715368oti.33.1574106090265;
- Mon, 18 Nov 2019 11:41:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20191030013701.39647-1-almasrymina@google.com>
- <20191030013701.39647-5-almasrymina@google.com> <010d5a90-3ebf-30e5-8829-a61f01b6f620@gmail.com>
-In-Reply-To: <010d5a90-3ebf-30e5-8829-a61f01b6f620@gmail.com>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Mon, 18 Nov 2019 11:41:19 -0800
-Message-ID: <CAHS8izMWi0BXyiv+Nx4PSV+QkN8beHn0WH9HwwjsMJacwRntvw@mail.gmail.com>
-Subject: Re: [PATCH v8 5/9] hugetlb: disable region_add file_region coalescing
-To:     Wenkuan Wang <wwk0817@gmail.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, shuah <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726759AbfKRTiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 14:38:00 -0500
+Received: from mga02.intel.com ([134.134.136.20]:60271 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726435AbfKRTh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 14:37:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 11:37:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,321,1569308400"; 
+   d="scan'208";a="380760842"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga005.jf.intel.com with ESMTP; 18 Nov 2019 11:37:58 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v2 00/10] VT-d Native Shared virtual memory cleanup and fixes
+Date:   Mon, 18 Nov 2019 11:42:23 -0800
+Message-Id: <1574106153-45867-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On 10/30/19 9:36 AM, Mina Almasry wrote:
-> > /* Must be called with resv->lock held. Calling this with count_only == true
-> > * will count the number of pages to be added but will not modify the linked
-> > - * list.
-> > + * list. If regions_needed != NULL and count_only == true, then regions_needed
-> > + * will indicate the number of file_regions needed in the cache to carry out to
-> > + * add the regions for this range.
-> > */
-> > static long add_reservation_in_range(struct resv_map *resv, long f, long t,
->
-> Hi Mina,
->
-> Would you please share which tree this patch set used? this patch 5/9 can't be
-> applied with Linus's tree and add_reservation_in_range can't be found.
->
-> Thanks
-> Wenkuan
+Mostly extracted from nested SVA/SVM series based on review comments of v7.
+https://lkml.org/lkml/2019/10/24/852
 
-Sorry for the late reply. Locally I have this patchset on top of
-linus/master and a patchset that added add_reservation_in_range.
+This series also adds a few important fixes for native use of SVA. Nested
+SVA new code will be submitted separately as a smaller set. Based on the
+core branch of IOMMU tree staged for v5.5, where common APIs for vSVA were
+applied.
+git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git core
 
-But, this patchset can be rebased on top of this commit with 'minimal'
-merge conflicts:
+Changelog:
+V2
+	- Coding style fixes based on Baolu's input, no functional change
+	- Added Acked-by tags.
 
-commit c1ca56bab12f3 (tag: v5.4-rc7-mmots-2019-11-15-18-40, github-akpm/master)
-Author: Linus Torvalds <torvalds@linux-foundation.org>
+Thanks,
 
-    pci: test for unexpectedly disabled bridges
+Jacob
 
-It's the latest mmotm I find on https://github.com/hnaz/linux-mm.git.
-My next patchset will be rebased on top mmotm.
 
->
-> > - bool count_only)
-> > + long *regions_needed, bool count_only)
-> > {
-> > - long chg = 0;
-> > + long add = 0;
-> > struct list_head *head = &resv->regions;
-> > + long last_accounted_offset = f;
-> > struct file_region *rg = NULL, *trg = NULL, *nrg = NULL;
-> > - /* Locate the region we are before or
+Jacob Pan (10):
+  iommu/vt-d: Introduce native SVM capable flag
+  iommu/vt-d: Fix CPU and IOMMU SVM feature matching checks
+  iommu/vt-d: Reject SVM bind for failed capability check
+  iommu/vt-d: Match CPU and IOMMU paging mode
+  iommu/vt-d: Avoid duplicated code for PASID setup
+  iommu/vt-d: Fix off-by-one in PASID allocation
+  iommu/vt-d: Replace Intel specific PASID allocator with IOASID
+  iommu/vt-d: Fix PASID cache flush
+  iommu/vt-d: Avoid sending invalid page response
+  iommu/vt-d: Misc macro clean up for SVM
+
+ drivers/iommu/Kconfig       |   1 +
+ drivers/iommu/intel-iommu.c |  23 +++----
+ drivers/iommu/intel-pasid.c |  99 ++++++++------------------
+ drivers/iommu/intel-svm.c   | 164 +++++++++++++++++++++++++-------------------
+ include/linux/intel-iommu.h |   5 +-
+ 5 files changed, 138 insertions(+), 154 deletions(-)
+
+-- 
+2.7.4
+
