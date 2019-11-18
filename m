@@ -2,123 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF0A31002CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 11:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FE41002DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 11:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKRKrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 05:47:00 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47753 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726460AbfKRKq7 (ORCPT
+        id S1727040AbfKRKrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 05:47:24 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34674 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbfKRKrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 05:46:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574074018;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MEYcx5JOdSU5kuiBB8VLRdEb9UL42F7wAgggAIuvnKc=;
-        b=ENmpaSVgiTCHdzm8/MqXyNKvJlTebXGsICnjAuf9KM4QSEptz4upG+KAiNDIHI4FhHQABT
-        gfT/wLe5atgGSz5SUwU0KWAQfkjeLpru34AnIIgz6Scx4d8MjKZs25y0GhwkZQ4aYmQV2g
-        ghULDGviuGgYr9botKWs25JM0zg3l98=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-95-y9bPbW_NPyO0YGR5ftI4Eg-1; Mon, 18 Nov 2019 05:46:55 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB9CA801FCB;
-        Mon, 18 Nov 2019 10:46:53 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4A5F61009976;
-        Mon, 18 Nov 2019 10:46:52 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 11:46:51 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf session: fix decompression of
- PERF_RECORD_COMPRESSED records
-Message-ID: <20191118104651.GE28372@krava>
-References: <237222f1-9765-dce1-601c-60530a7fc844@linux.intel.com>
- <20191115151124.GA25246@krava>
- <2f2b2421-6865-4669-7e30-918d12ae5e01@linux.intel.com>
+        Mon, 18 Nov 2019 05:47:24 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z188so9474454pgb.1;
+        Mon, 18 Nov 2019 02:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dge8oGHILOMVpeHYXPYEEqzdaTbTgZkgcFraEKUk5Iw=;
+        b=HtoXSgQeDMMxc5Almr2lsw2p6Uk0TomEHQWZp/YE3klijiuXaP/HtEkaD07T387JVp
+         SJfq2dljQY2IWXxTqWA9EOwisHAhCFM/G4lCLqy2DUIrCH7Ha/KDcoO1jiL2kMvuQ5N5
+         a2lUYxRmI+sxqTkWBQN496KiQ8S804wP0NX9LdAvFnR1Ksuo4exwAm0oKUmlBIXzWR4c
+         0zNzE5AtxrQt71Huc8eHjyfKBw1f25nl2Owqaa2EIlS/JKr/CIb1I0+nUK8BcCav1/HC
+         EA2EIsy5zMpkh1WzDW4wHlMIeBm5WZufOmgGvzpdTMlPSLe7qG3xFWx7jwAHUbhlWzys
+         i4Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dge8oGHILOMVpeHYXPYEEqzdaTbTgZkgcFraEKUk5Iw=;
+        b=a4/lXH1U1cFGM7rtjAFAtjcfg6Lb9Vq19ecCe1EOlgOvgy+dn4T3Bc/lQjMjt4EGjv
+         eu4Y7y3GcA9J7IShwvOGBjMu3DqWubTZr8tZwIbo+41apGtM5I+nty1CCzdDbQSIdbBw
+         vJN+eijoXrdUUzAi5SDvwQfG75MQw0No4KaTLONmMysrwqAmpH5aHuIGrN9aVPdyiNvQ
+         li6GFF3RWzOPJPPS0wCWky8s5koSI45klM2UE3ucnoJZD+qicA06QRX7lC34J9/DKrSe
+         vgDxB27LvTDXQpQaN2LLFObPjIv7u82aV8uAMbi0cGPi9EMv9hRRDoyyOdS8GZ4Ut4pw
+         0Rjg==
+X-Gm-Message-State: APjAAAXV8+JDDXXiuvt2W/RBkbhX99T5hP7bZqGjtY/SkJRTWn6dIojF
+        ZfuhyRkq5edtUYXpiubHfPVCe0ioFZOZsdNmf6g=
+X-Google-Smtp-Source: APXvYqx6vi0UhJpubvhU/knhFdFxdxzoVMkqr6flgKEmwAWcrWS+2xYp0m7NdJDseyWgwuuzE1KAyGSaRhcMMxfdj5Q=
+X-Received: by 2002:a65:5542:: with SMTP id t2mr14392758pgr.74.1574074042336;
+ Mon, 18 Nov 2019 02:47:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2f2b2421-6865-4669-7e30-918d12ae5e01@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: y9bPbW_NPyO0YGR5ftI4Eg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <cover.1573460910.git.sramani@mellanox.com>
+In-Reply-To: <cover.1573460910.git.sramani@mellanox.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 18 Nov 2019 12:47:11 +0200
+Message-ID: <CAHp75VdWM8Y7TAbVYNoo9vV2N+ZYDZWWGHtgvt8WjD5KiFfZRA@mail.gmail.com>
+Subject: Re: [PATCH v1] platform/mellanox: Add Mellanox TRIO driver
+To:     Shravan Kumar Ramani <sramani@mellanox.com>
+Cc:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        Liming Sun <lsun@mellanox.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 08:09:19PM +0300, Alexey Budankov wrote:
->=20
-> On 15.11.2019 18:11, Jiri Olsa wrote:
-> > On Fri, Nov 15, 2019 at 12:05:14PM +0300, Alexey Budankov wrote:
-> <SNIP>
-> >> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> >> index f07b8ecb91bc..3f6f812ec4ed 100644
-> >> --- a/tools/perf/util/session.c
-> >> +++ b/tools/perf/util/session.c
-> >> @@ -1957,9 +1957,31 @@ static int __perf_session__process_pipe_events(=
-struct perf_session *session)
-> >>  =09return err;
-> >>  }
-> >> =20
-> >> +static union perf_event *
-> >> +prefetch_event(char *buf, u64 head, size_t mmap_size,
-> >> +=09       bool needs_swap, union perf_event *ret);
-> >=20
-> > why not move prefetch_event definition in here?
-> > I don't see any need for the static declaration..
->=20
-> It is just for the sake of more readable patch formatting=20
-> and, yes, could be avoided and replaced by the definition.
+On Mon, Nov 11, 2019 at 4:35 PM Shravan Kumar Ramani
+<sramani@mellanox.com> wrote:
+>
+> This patch adds support for Mellanox BlueField TRIO PCIe host controller.
+> The driver supports multiple TRIO instances and provides a sysfs interface
+> to allow the user to read/set the L3 cache profile for transactions going
+> through the TRIO. It also provides an interrupt handler for the TRIO blocks.
 
-I think we're trying to avoid static declarations
+Besides on-going review, this doesn't apply. So, please check that you
+rebase it on top of our for-next branch, thanks!
 
->=20
-> >=20
-> >> +
-> >>  static union perf_event *
-> >>  fetch_mmaped_event(struct perf_session *session,
-> >>  =09=09   u64 head, size_t mmap_size, char *buf)
-> >> +{
-> >> +=09return prefetch_event(buf, head, mmap_size,
-> >> +=09=09=09      session->header.needs_swap,
-> >> +=09=09=09      ERR_PTR(-EINVAL));
-> >> +}
-> >> +
-> >> +static union perf_event *
-> >> +fetch_decomp_event(struct perf_session *session,
-> >> +=09=09   u64 head, size_t mmap_size, char *buf)
-> >> +{
-> >=20
-> > if this is decomp specific, it could take 'struct decomp*' as argument
->=20
-> Well, it makes sense. whole session object is not required here.
-> Just session->header.needs_swap could be passed as a param.
-> Shall we make it like this?
->=20
-> static union perf_event *=20
-> fetch_decomp_event(u64 head, size_t mmap_size, char *buf, bool needs_swap=
-)
+P.S. I'll wait for v2 with Vadim's comments being addressed.
 
-ok, I just saw the call passing all the stuff from 'struct decomp'
-so I thought it'd save some arguments if we pass the  struct itself
-instead
+>
+> Shravan Kumar Ramani (1):
+>   platform/mellanox: Add Mellanox TRIO driver
+>
+>  MAINTAINERS                            |   5 +
+>  drivers/platform/mellanox/Kconfig      |   8 +
+>  drivers/platform/mellanox/Makefile     |   1 +
+>  drivers/platform/mellanox/mlxbf-trio.c | 624 +++++++++++++++++++++++++++++++++
+>  4 files changed, 638 insertions(+)
+>  create mode 100644 drivers/platform/mellanox/mlxbf-trio.c
+>
+> --
+> 2.1.2
+>
 
-jirka
 
+-- 
+With Best Regards,
+Andy Shevchenko
