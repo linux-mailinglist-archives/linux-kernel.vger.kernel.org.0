@@ -2,179 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3581001A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 005EE1001A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:48:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfKRJqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 04:46:49 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13044 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726464AbfKRJqt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 04:46:49 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAI9gM0s017313;
-        Mon, 18 Nov 2019 04:46:36 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2waeh8534u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 Nov 2019 04:46:36 -0500
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xAI9gUgx018488;
-        Mon, 18 Nov 2019 04:46:36 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2waeh85342-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 Nov 2019 04:46:36 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xAI9jARS026504;
-        Mon, 18 Nov 2019 09:46:35 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04wdc.us.ibm.com with ESMTP id 2wa8r6h6xu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 Nov 2019 09:46:34 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAI9kY4l46727560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Nov 2019 09:46:34 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 014D8136053;
-        Mon, 18 Nov 2019 09:46:34 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88E5A13604F;
-        Mon, 18 Nov 2019 09:46:29 +0000 (GMT)
-Received: from skywalker.linux.ibm.com (unknown [9.199.34.246])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 18 Nov 2019 09:46:28 +0000 (GMT)
-X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Vishal Verma <vishal.l.verma@intel.com>, peterz@infradead.org,
-        dave.hansen@linux.intel.com, hch@lst.de,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 04/18] libnvdimm: Move nd_numa_attribute_group to device_type
-In-Reply-To: <157401269537.43284.14411189404186877352.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157401267421.43284.2135775608523385279.stgit@dwillia2-desk3.amr.corp.intel.com> <157401269537.43284.14411189404186877352.stgit@dwillia2-desk3.amr.corp.intel.com>
-Date:   Mon, 18 Nov 2019 15:16:27 +0530
-Message-ID: <87r225h5zg.fsf@linux.ibm.com>
+        id S1726647AbfKRJs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 04:48:28 -0500
+Received: from mx2.cyber.ee ([193.40.6.72]:33679 "EHLO mx2.cyber.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726464AbfKRJs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 04:48:28 -0500
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+From:   Meelis Roos <mroos@linux.ee>
+Subject: 5.4-rc8 OOPS from path_openat->link_path_walk->inode_permission, on
+ sparc64
+Message-ID: <cf84521e-7b7e-570e-9850-1a5573e62786@linux.ee>
+Date:   Mon, 18 Nov 2019 11:48:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-18_01:2019-11-15,2019-11-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- phishscore=0 impostorscore=0 bulkscore=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911180087
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+Just tried 5.3 and 5.4-rc8 on my revived Sun Netra 240 (Ultrasparc III).
+gcc-8 was used to compile 5.3, then as a test, packages were upgraded so
+gcc-9 was used to compile the 5.4-rc8 kernel in question. Did not see any problems with 5.3.
 
-> A 'struct device_type' instance can carry default attributes for the
-> device. Use this facility to remove the export of
-> nd_numa_attribute_group and put the responsibility on the core rather
-> than leaf implementations to define this attribute.
->
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Started some more package upgrades with 5.4-rc8 with apt and got a crash:
 
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: "Oliver O'Halloran" <oohall@gmail.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> Link: https://lore.kernel.org/r/157309901655.1582359.18126990555058555754.stgit@dwillia2-desk3.amr.corp.intel.com
-> ---
->  arch/powerpc/platforms/pseries/papr_scm.c |    1 -
->  drivers/acpi/nfit/core.c                  |    1 -
->  drivers/nvdimm/bus.c                      |    3 +--
->  drivers/nvdimm/nd.h                       |    1 +
->  drivers/nvdimm/region_devs.c              |    1 +
->  include/linux/libnvdimm.h                 |    1 -
->  6 files changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
-> index 04726f8fd189..6ffda03a6349 100644
-> --- a/arch/powerpc/platforms/pseries/papr_scm.c
-> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
-> @@ -287,7 +287,6 @@ int papr_scm_ndctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
->  static const struct attribute_group *region_attr_groups[] = {
->  	&nd_region_attribute_group,
->  	&nd_mapping_attribute_group,
-> -	&nd_numa_attribute_group,
->  	NULL,
->  };
->  
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index dec7c2b08672..b3213faf37b5 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -2198,7 +2198,6 @@ static const struct attribute_group acpi_nfit_region_attribute_group = {
->  static const struct attribute_group *acpi_nfit_region_attribute_groups[] = {
->  	&nd_region_attribute_group,
->  	&nd_mapping_attribute_group,
-> -	&nd_numa_attribute_group,
->  	&acpi_nfit_region_attribute_group,
->  	NULL,
->  };
-> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-> index eb422527dd57..28e1b265aa63 100644
-> --- a/drivers/nvdimm/bus.c
-> +++ b/drivers/nvdimm/bus.c
-> @@ -697,11 +697,10 @@ static umode_t nd_numa_attr_visible(struct kobject *kobj, struct attribute *a,
->  /*
->   * nd_numa_attribute_group - NUMA attributes for all devices on an nd bus
->   */
-> -struct attribute_group nd_numa_attribute_group = {
-> +const struct attribute_group nd_numa_attribute_group = {
->  	.attrs = nd_numa_attributes,
->  	.is_visible = nd_numa_attr_visible,
->  };
-> -EXPORT_SYMBOL_GPL(nd_numa_attribute_group);
->  
->  int nvdimm_bus_create_ndctl(struct nvdimm_bus *nvdimm_bus)
->  {
-> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-> index 21e018bfa188..ec3d5f619957 100644
-> --- a/drivers/nvdimm/nd.h
-> +++ b/drivers/nvdimm/nd.h
-> @@ -240,6 +240,7 @@ void nvdimm_exit(void);
->  void nd_region_exit(void);
->  struct nvdimm;
->  extern const struct attribute_group nd_device_attribute_group;
-> +extern const struct attribute_group nd_numa_attribute_group;
->  struct nvdimm_drvdata *to_ndd(struct nd_mapping *nd_mapping);
->  int nvdimm_check_config_data(struct device *dev);
->  int nvdimm_init_nsarea(struct nvdimm_drvdata *ndd);
-> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-> index 710b5111eaa8..e4281f806adc 100644
-> --- a/drivers/nvdimm/region_devs.c
-> +++ b/drivers/nvdimm/region_devs.c
-> @@ -765,6 +765,7 @@ EXPORT_SYMBOL_GPL(nd_region_attribute_group);
->  
->  static const struct attribute_group *nd_region_attribute_groups[] = {
->  	&nd_device_attribute_group,
-> +	&nd_numa_attribute_group,
->  	NULL,
->  };
->  
-> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> index d7dbf42498af..e9a4e25fc708 100644
-> --- a/include/linux/libnvdimm.h
-> +++ b/include/linux/libnvdimm.h
-> @@ -67,7 +67,6 @@ enum {
->  
->  extern struct attribute_group nvdimm_bus_attribute_group;
->  extern struct attribute_group nvdimm_attribute_group;
-> -extern struct attribute_group nd_numa_attribute_group;
->  extern struct attribute_group nd_region_attribute_group;
->  extern struct attribute_group nd_mapping_attribute_group;
->  
+[  294.269620] Kernel unaligned access at TPC[5a9e84] generic_permission+0x164/0x200
+[  294.368107] Unable to handle kernel paging request in mna handler
+[  294.368110]  at virtual address 91d0200591d02055
+[  294.508933] current->{active_,}mm->context = 0000000000000001
+[  294.584438] current->{active_,}mm->pgd = fff000133c930000
+[  294.655439]               \|/ ____ \|/
+[  294.655439]               "@'/ .. \`@"
+[  294.655439]               /_| \__/ |_\
+[  294.655439]                  \__U_/
+[  294.848739] systemd(1): Oops [#1]
+[  294.892191] CPU: 0 PID: 1 Comm: systemd Not tainted 5.4.0-rc8 #12
+[  294.972257] TSTATE: 0000009111001600 TPC: 00000000005a9e84 TNPC: 00000000005a9e88 Y: 00000000    Not tainted
+[  295.101497] TPC: <generic_permission+0x164/0x200>
+[  295.163253] g0: 0000000000000000 g1: 91d0200591d02005 g2: 00000000000091d0 g3: 0000000000010000
+[  295.277641] g4: fff000133c0ab760 g5: fff000133ec8a000 g6: fff000133c100000 g7: 0000000000000000
+[  295.392015] o0: 0000000000000001 o1: fff000133c103d38 o2: fff000133c103a40 o3: fff000133c103a38
+[  295.506381] o4: fff000133c103a34 o5: 0000000000040000 sp: fff000133c1030f1 ret_pc: 00000000005abc3c
+[  295.625335] RPC: <lookup_fast+0x9c/0x2c0>
+[  295.677938] l0: fff000133c9bde60 l1: 0000000000200008 l2: 0000010000284df0 l3: 000007feffd41088
+[  295.792320] l4: 00000100000fb0a0 l5: 000001000026ac10 l6: 0000000000000000 l7: fff0000100a65d20
+[  295.906690] i0: fff000132e001d08 i1: 0000000000000081 i2: fff000133c103a38 i3: fff000133c103a34
+[  296.021068] i4: 0000000000000001 i5: 00000000000091d0 i6: fff000133c1031a1 i7: 00000000005a9f40
+[  296.135438] I7: <inode_permission+0x20/0x1e0>
+[  296.192623] Call Trace:
+[  296.224647]  [00000000005a9f40] inode_permission+0x20/0x1e0
+[  296.297851]  [00000000005ad8f4] link_path_walk.part.0+0x74/0x540
+[  296.376770]  [00000000005ae498] path_openat+0x78/0x12e0
+[  296.445420]  [00000000005b0608] do_filp_open+0x48/0xc0
+[  296.512994]  [000000000059c168] do_sys_open+0x168/0x240
+[  296.581716]  [0000000000406254] linux_sparc_syscall+0x34/0x44
+[  296.657291] Disabling lock debugging due to kernel taint
+[  296.727063] Caller[00000000005a9f40]: inode_permission+0x20/0x1e0
+[  296.807121] Caller[00000000005ad8f4]: link_path_walk.part.0+0x74/0x540
+[  296.892905] Caller[00000000005ae498]: path_openat+0x78/0x12e0
+[  296.968388] Caller[00000000005b0608]: do_filp_open+0x48/0xc0
+[  297.042734] Caller[000000000059c168]: do_sys_open+0x168/0x240
+[  297.118218] Caller[0000000000406254]: linux_sparc_syscall+0x34/0x44
+[  297.200570] Caller[fff0000100207200]: 0xfff0000100207200
+[  297.270332] Instruction DUMP:
+[  297.270334]  b8102000
+[  297.309217]  c25e2028
+[  297.340098]  07000040
+[  297.370982] <c2586050>
+[  297.401860]  82084003
+[  297.432743]  22c04007
+[  297.463623]  d0062008
+[  297.494506]  8408a038
+[  297.525384]  80a0a000
+[  297.556264]
+[  297.643992] printk: systemd: 15 output lines suppressed due to ratelimiting
+[  297.735610] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+[  297.836282] Press Stop-A (L1-A) from sun keyboard or send break
+[  297.836282] twice on console to return to the boot prom
+[  297.982667] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009 ]---
+
+-- 
+Meelis Roos <mroos@linux.ee>
+
