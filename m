@@ -2,114 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E7110015F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BE9B10018F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 10:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfKRJhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 04:37:31 -0500
-Received: from mail-eopbgr740072.outbound.protection.outlook.com ([40.107.74.72]:53664
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726461AbfKRJha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 04:37:30 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PnOdRyOhtvxS/d6dyGp6YHmccTUxE+Pk1Dmy1c3lokq/Jyq+hYBKrgwm2PoUaJm8YM6PCIWSI4/dzq5Z8W+icVxVrjEyydca7bjzEC5LFjWYtnYEiwlRlwRSw7teEjv0IiADty5Y/FTzyByDHnmD3Mw4SWXWNVQBUy3B5gieIHfCE2IvLMd7FhBcrOeQgpvYssFcObf4xHbfa3YDy2OQ87Vy5pcxx7BqlF2QrjHfiWUIkYCDjBLECsY66zpi0yyuNFFbjtjkGGdNGJyAKtaaKN+Oqoukl1oI8MM+A1KJ13JnmlEHICEL2kXutUV18H8nHkYHXGqAwkycw6vXGopDOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ULOSXUSi+/EsERkJiV9n05O+86O8Cl5+5spjLv17qis=;
- b=A++Es6+9zEOeScDAvF2Am/mBgAGn6yYBfo9NJzeQX7ZMU9OIwoKBmZfn/egQHeweRxevTOww4eC6bzUh6OxKL0v4VVjTSHBU1flzKJKB2g7b+PW8/XiE0xMpz82q3aKSUQRaZeaBuACpmjL69LTfF/+KFgfxn6iMekxz1N3ywUCPeG+e92HMPmaQLzD6V2Y13XobvI/5PTrIvVfEDGvrQmhBLYH/5Oh6KLuYFzWAzWNzq+zXTwRdLpsElQkQNfqBJR3qbQ6GFsA5NzWtZ/Smus2pDZat7L+AM+0elg48tWr6hM1CQxCB/CIFHImfWFzaG0cOCKW78QKLbPXFwmBG6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ULOSXUSi+/EsERkJiV9n05O+86O8Cl5+5spjLv17qis=;
- b=S4zJ//FJUli+odNj88jSPBf9gCm4ugiEtlNybx6meg2HjYNmWcEONfULrkJOVATIhH/4F2zJQ+TCBPsJOVwwi8YV5tBudGHUqXmyZDjOiuxs/o0tOWSRu7Z/gGwfei7z6j+0Pm6BAxvSeJvz5aFICzauaopnsBjKk/VoiYh2UXg=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
- BN7PR08MB4228.namprd08.prod.outlook.com (52.133.222.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.27; Mon, 18 Nov 2019 09:37:27 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::a91a:c2f5:c557:4285]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::a91a:c2f5:c557:4285%6]) with mapi id 15.20.2451.029; Mon, 18 Nov 2019
- 09:37:27 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Can Guo <cang@qti.qualcomm.com>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        "saravanak@google.com" <saravanak@google.com>,
-        "salyzyn@google.com" <salyzyn@google.com>,
-        "cang@codeaurora.org" <cang@codeaurora.org>
-CC:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] [PATCH v2 3/4] scsi: ufs: Avoid messing up the
- compl_time_stamp of lrbs
-Thread-Topic: [EXT] [PATCH v2 3/4] scsi: ufs: Avoid messing up the
- compl_time_stamp of lrbs
-Thread-Index: AQHVncN0qi6outuzf0O6t+NF9bzRkKeQq7+Q
-Date:   Mon, 18 Nov 2019 09:37:27 +0000
-Message-ID: <BN7PR08MB5684C8920F081E3463B8BE90DB4D0@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <1574049061-11417-1-git-send-email-cang@qti.qualcomm.com>
- <1574049061-11417-4-git-send-email-cang@qti.qualcomm.com>
-In-Reply-To: <1574049061-11417-4-git-send-email-cang@qti.qualcomm.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTA2MzA0MmJiLTA5ZTctMTFlYS04Yjg1LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFwwNjMwNDJiZC0wOWU3LTExZWEtOGI4NS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjQyMyIgdD0iMTMyMTg1NDM0NDQ0NDUyOTkzIiBoPSJQeXU5YU5iV0k2Q2krdmo5VFphQk1nWW9LWm89IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: true
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.81.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e2525a6c-806a-4fb4-bd61-08d76c0aecc4
-x-ms-traffictypediagnostic: BN7PR08MB4228:|BN7PR08MB4228:|BN7PR08MB4228:
-x-microsoft-antispam-prvs: <BN7PR08MB4228BC8A1A3FF0E6A0BAFA3EDB4D0@BN7PR08MB4228.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0225B0D5BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(346002)(396003)(39860400002)(189003)(199004)(74316002)(558084003)(55016002)(4326008)(256004)(99286004)(76116006)(9686003)(229853002)(6436002)(8936002)(25786009)(81156014)(7696005)(76176011)(6246003)(81166006)(8676002)(86362001)(5660300002)(6116002)(3846002)(476003)(186003)(55236004)(66066001)(2201001)(71190400001)(71200400001)(7416002)(102836004)(6506007)(316002)(14454004)(110136005)(446003)(11346002)(54906003)(66946007)(66446008)(64756008)(66556008)(66476007)(478600001)(52536014)(33656002)(7736002)(486006)(305945005)(2906002)(26005)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB4228;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: sHV1mF+QPxkYaglTnhRSw3JFZ2ypUPwcaBviHFYOnTO6G/WYzqF57ovTiLFDTVsd7yZBiyoFI24a1joDiI/blp00skxxOhxUBO8tMnyoplWkj6l/cJFEVwdaA7DjXJQU/09G6/11ldBxcAE2r8HWNMiuca0Pz6ElA8WKEfCbN3Z2b/SJtyogRWAq06Q+7Uf79PdKKJuZqTXQSQo+qWFtuxZPvWq1XsHTyy/qn37qJFbrotrCBHu+yYptQwyDh8fZyiRIeG27IUURn0WkuYaHyW+9tBWmnED9Ozg5/TBs0j6AHm7fM8LavoDjVla2Hx4/Co7Ka+Zc8Pup2LuXAAjdDE10mlQI/+PLWA1DLMVIiv/udwDHaCLji4HZ/PfV0mIei0f4xSp98m8xzceUAZ+FRJasGur8yTqBfHq89l2bDqWSd9fmOGtzzbObRAXIzEJu
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726626AbfKRJnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 04:43:37 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40060 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726490AbfKRJnh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 04:43:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574070215;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2K0wvDeLJaW8sYE1jy+QQGz6cSrIUDN55exId+Sge8Y=;
+        b=D7j6LC5htBBByzR4SJIWinAiI4mIkL7/q8XHLdaW4xHTWoKdMqrWR0p2mL7HwfC7CFwejF
+        MrCtEHeS9s+wtRtbKq9X0syx/Hck+HWj5HfRRp9eYRdzjeI8vgKnetE9g4ZISr1e7vs+qH
+        /Gq9wDMQCf4bR/3A2pxwa32LSdh1cnY=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-232-IJRyYxmFMJm8ziglMNy3bA-1; Mon, 18 Nov 2019 04:43:34 -0500
+Received: by mail-qv1-f70.google.com with SMTP id g33so12112881qvd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 01:43:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v6BPHFPKvorTEt7xRKiDYcS9E+a1exQkd1rgkDj9f8k=;
+        b=Ps6aB6gwKJvz13ZRzj4275PCtWop0Twa29btcTpfla0ZHbI3Csdpnq2et6Qcl7/Kcj
+         H1C3hH7PqrfAS8CJVh/fpyPv0cb5I8mSwrQqTGuZ/uyB5Vi4EeE4nAEpc7gVYJvqu5jn
+         emhhbAru7iaQmdnBK2wXG2drbDGknZvP7hy98hlkfrOIGFshuubzdpZuyWznC2bm9mWK
+         e/cGtgnfYN6X1ribPhkBVNAcL3QybmFPlajeQYuE88U0IrCKYXJq9M2pg3KYQBPr9Tb7
+         kb1hm9JCPuQ+zJ95YAwbNjA1dIUq7vy/fUlUVWmnUpdslFYqwwD2Sr3io46jA2EPkhgS
+         PChw==
+X-Gm-Message-State: APjAAAWM0jjuFsDh5QE0sFrnzLnr3RfwzZ50rY2xvk+jDonmpktcjrLn
+        2iys7JbJtHyewMz+BB8FUJzJhPsU0RGQvmVhBnmgVxWEAlL/r4t19+Z2irdd4hpb05W5Fx7O3m0
+        2KXDNOn1j8HUe4DOC4lwgDCvklwqmC9ktp8ac4inp
+X-Received: by 2002:ad4:4042:: with SMTP id r2mr14849480qvp.196.1574070214015;
+        Mon, 18 Nov 2019 01:43:34 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx71kYpokpYolgnoIGCviUOb0R7a7qr8hq+AWngDyS809ErQ8pbjgNF0TGZ3+0bjitznHrrNaWkVj/d0HliWew=
+X-Received: by 2002:ad4:4042:: with SMTP id r2mr14849462qvp.196.1574070213673;
+ Mon, 18 Nov 2019 01:43:33 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2525a6c-806a-4fb4-bd61-08d76c0aecc4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2019 09:37:27.2144
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: f8Eo6UAedSQqyO0ax38LY66eOYXNjCDQuViPLtAes8fbT56eCxSlqDQgSBudu9G6QpOSdahenBB1mt0vCjGdCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4228
+References: <20191105141807.27054-1-tranmanphong@gmail.com>
+In-Reply-To: <20191105141807.27054-1-tranmanphong@gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 18 Nov 2019 10:43:21 +0100
+Message-ID: <CAO-hwJ+cydMPQE_otc8-67=SDKmjac5RXsLs-9x6dH4YqA+DVQ@mail.gmail.com>
+Subject: Re: [PATCH] HID: hid-lg4ff: Fix uninit-value set_autocenter_default
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+1234691fec1b8ceba8b1@syzkaller.appspotmail.com
+X-MC-Unique: IJRyYxmFMJm8ziglMNy3bA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->=20
-> From: Can Guo <cang@codeaurora.org>
->=20
-> To be on the safe side, do not touch one lrb after clear its slot in the =
-lrb_in_use
-> bitmap to avoid messing up the next task which would possibly occupy this=
- lrb.
->=20
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+On Tue, Nov 5, 2019 at 3:18 PM Phong Tran <tranmanphong@gmail.com> wrote:
+>
+> syzbot found a problem using of uinit pointer in
+> lg4ff_set_autocenter_default().
+>
+> Reported-by: syzbot+1234691fec1b8ceba8b1@syzkaller.appspotmail.com
+>
+> Tested by syzbot:
+>
+> https://groups.google.com/d/msg/syzkaller-bugs/ApnMLW6sfKE/Qq0bIHGEAQAJ
+
+This seems weird to me:
+
+the syzbot link above is about `hid_get_drvdata(hid)`, and, as I read
+it, the possibility that hid might not have an initialized value.
+
+Here you are changing the initialized values of value, entry and
+drv_data, all 3 are never used before their first assignment.
+
+I have a feeling this particular syzbot check has already been fixed
+upstream by d9d4b1e46d95 "HID: Fix assumption that devices have
+inputs".
+
+Cheers,
+Benjamin
+
+>
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+> ---
+>  drivers/hid/hid-lg4ff.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
+> index 5e6a0cef2a06..44dfd08b0c32 100644
+> --- a/drivers/hid/hid-lg4ff.c
+> +++ b/drivers/hid/hid-lg4ff.c
+> @@ -468,10 +468,10 @@ static int lg4ff_play(struct input_dev *dev, void *=
+data, struct ff_effect *effec
+>  static void lg4ff_set_autocenter_default(struct input_dev *dev, u16 magn=
+itude)
+>  {
+>         struct hid_device *hid =3D input_get_drvdata(dev);
+> -       s32 *value;
+> +       s32 *value =3D NULL;
+>         u32 expand_a, expand_b;
+> -       struct lg4ff_device_entry *entry;
+> -       struct lg_drv_data *drv_data;
+> +       struct lg4ff_device_entry *entry =3D NULL;
+> +       struct lg_drv_data *drv_data =3D NULL;
+>         unsigned long flags;
+>
+>         drv_data =3D hid_get_drvdata(hid);
+> --
+> 2.20.1
+>
+
