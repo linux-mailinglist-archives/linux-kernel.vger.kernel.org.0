@@ -2,73 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D4D10062C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A105F100636
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 14:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfKRNI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 08:08:58 -0500
-Received: from foss.arm.com ([217.140.110.172]:34484 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbfKRNI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:08:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D7DA1FB;
-        Mon, 18 Nov 2019 05:08:57 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0A143F6C4;
-        Mon, 18 Nov 2019 05:08:56 -0800 (PST)
-Date:   Mon, 18 Nov 2019 13:08:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        kuninori.morimoto.gx@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bindings: sound: pcm3168a: Document optional RST gpio
-Message-ID: <20191118130855.GE9761@sirena.org.uk>
-References: <20191113124734.27984-1-peter.ujfalusi@ti.com>
- <20191113124734.27984-2-peter.ujfalusi@ti.com>
+        id S1727039AbfKRNKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 08:10:20 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40758 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfKRNKU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 08:10:20 -0500
+Received: by mail-io1-f68.google.com with SMTP id p6so18645718iod.7;
+        Mon, 18 Nov 2019 05:10:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mr9WfdYenNY5j6q7FL+eHIEixX6YeeRurCUnT8vUnEs=;
+        b=fqB5MnuDAxJO3/DiqejJmL5scs9pBMIq5XTY1NeMgvv58+6kp89L0dKnOjrWNtfTJg
+         p70M1sYCh3VS4qTCizRbeoIS/4jvVPWvELlHstpA0nw9GEVek6BlAP5v1uvnHDK/ojbK
+         cevJLmUyCIQ5qg+J8NqpwEJ+dULhmAckc+7xBvVV/JFpUDaE7iBBKuiScgD3yD3jveTt
+         rjPvXohLFrIr0t1SnljYMG0wTN82t1yE46Ng9rqGEgz7jgyOoUMXls+ddmuQKb5pVTkX
+         iGRU6HQ5lz/4oH5eoKImGXsyPGr0M2qd8Ya4MwAvpQThhKZV3KSKgNLEck7KD9tMu+Q7
+         dAxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mr9WfdYenNY5j6q7FL+eHIEixX6YeeRurCUnT8vUnEs=;
+        b=jL2/m1tokODl8qXThbdH3Um/CDXaS58mC6IJd/qQCcobgbsHeR4ILxZ56AEqWhMfEZ
+         rQYpjsmxfdR/cJ8cghWFgC7Ee3+CUXEnzQaxl3Gj2mdyEGv3QT7XM1NmD7jof5LDMTh4
+         iDJcAyWIO19lLXZkkfmqH6yNO6TCe4NMfxxVngSFSRIpfl66O3UPryKLa/J8ovDUzz/2
+         lWJv4vtUBTjb9YhWNDAdFhJOT7jMNjN2E1NHAicHvusRd8uIkhzQD5No6p3yahIO3TRX
+         eolB7HJJEn8nVatTOoorrMW/M/jVJTcoMvlnnb1YZxyi7hm9UwbAg4786DiIMHuIZ0pI
+         hdKQ==
+X-Gm-Message-State: APjAAAWeJWFIvIWzuPUWSCe6yDdV491XZnlFkxSLwKDVB595MXxlI5JI
+        u7o8T8lJLlZ/t2P1BeqTpJ86AnvVJvJuoQ2NiJ8=
+X-Google-Smtp-Source: APXvYqzMWwRt3LsZ3Wc4TX0zDV2JaPQ1dgITFcbslb0uvtzmnIqb6OrDdYxptOIB1WM3szTirFd5cdKiPG7vFgQHLeE=
+X-Received: by 2002:a5d:9547:: with SMTP id a7mr13306711ios.198.1574082619341;
+ Mon, 18 Nov 2019 05:10:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Rgf3q3z9SdmXC6oT"
-Content-Disposition: inline
-In-Reply-To: <20191113124734.27984-2-peter.ujfalusi@ti.com>
-X-Cookie: no maintenance:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1574049061-11417-1-git-send-email-cang@qti.qualcomm.com> <1574049061-11417-2-git-send-email-cang@qti.qualcomm.com>
+In-Reply-To: <1574049061-11417-2-git-send-email-cang@qti.qualcomm.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Mon, 18 Nov 2019 18:39:43 +0530
+Message-ID: <CAGOxZ51ddstawjBryo92+6Qhgy8g+ZU2PorUNguwv_d8n5Yj6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] scsi: ufs: Recheck bkops level if bkops is disabled
+To:     Can Guo <cang@qti.qualcomm.com>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com,
+        Mark Salyzyn <salyzyn@google.com>,
+        Can Guo <cang@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Can
 
---Rgf3q3z9SdmXC6oT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Nov 18, 2019 at 9:21 AM Can Guo <cang@qti.qualcomm.com> wrote:
+>
+> From: Asutosh Das <asutoshd@codeaurora.org>
+>
+> Bkops level should be rechecked upon receiving an exception.
+> Currently the bkops level is being cached and never updated.
+>
+> Update the same each time the level is checked.
+> Also do not use the cached bkops level value if it is disabled
+> and then enabled.
+>
+> Fixes: afdfff59a0e0 (scsi: ufs: handle non spec compliant bkops behaviour by device)
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Reviewed-by: Bean Huo <beanhuo@micron.com>
+> ---
+Feel free to add
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Ran these patches on exynos7 platfrom, and no regression observed,
+basic read/write works, so
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com
+>
+>  drivers/scsi/ufs/ufshcd.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 3910c58..8e7c362 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -5099,6 +5099,7 @@ static int ufshcd_disable_auto_bkops(struct ufs_hba *hba)
+>
+>         hba->auto_bkops_enabled = false;
+>         trace_ufshcd_auto_bkops_state(dev_name(hba->dev), "Disabled");
+> +       hba->is_urgent_bkops_lvl_checked = false;
+>  out:
+>         return err;
+>  }
+> @@ -5123,6 +5124,7 @@ static void ufshcd_force_reset_auto_bkops(struct ufs_hba *hba)
+>                 hba->ee_ctrl_mask &= ~MASK_EE_URGENT_BKOPS;
+>                 ufshcd_disable_auto_bkops(hba);
+>         }
+> +       hba->is_urgent_bkops_lvl_checked = false;
+>  }
+>
+>  static inline int ufshcd_get_bkops_status(struct ufs_hba *hba, u32 *status)
+> @@ -5169,6 +5171,7 @@ static int ufshcd_bkops_ctrl(struct ufs_hba *hba,
+>                 err = ufshcd_enable_auto_bkops(hba);
+>         else
+>                 err = ufshcd_disable_auto_bkops(hba);
+> +       hba->urgent_bkops_lvl = curr_status;
+>  out:
+>         return err;
+>  }
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
 
-On Wed, Nov 13, 2019 at 02:47:33PM +0200, Peter Ujfalusi wrote:
-> On boards where the RST line is not pulled up, but it is connected to a
-> GPIO line this property must present in order to be able to enable the
-> codec.
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---Rgf3q3z9SdmXC6oT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3Sl+YACgkQJNaLcl1U
-h9CQRAf+IOHuqykiR2XV9orGZa0JGfA9jN/HKH9JdghHPcxQ0jzR/dfC3kNnBy/l
-QAeSXU6vF5LuJx75MIHsf6Dx15bZ0kZ0WKpJnI9Fqn+k/PKeXWPhBB+6sPet4msQ
-A5opWLa03tkaXlmNZd14uQrEV6Zbir9q9WT5UqAvM7Ceb3k1jDKRBb7tWvPUggTi
-Rk2DeiXEHNOWWa0eekadtR453n2MTfUtmEncqiKzZu2+PGOI5sz+banoXhgaXlim
-Jwbk83xfZ/HrgB6Wqvw2pneJ+1fEsu8aix6z8ty3UWhPwcIuNqNZGyOlVPjGYUTm
-5g86BZwQ18875HSZ3tAi1meDwJt1cA==
-=7OaS
------END PGP SIGNATURE-----
-
---Rgf3q3z9SdmXC6oT--
+-- 
+Regards,
+Alim
