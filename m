@@ -2,32 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF00FFD74
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 04:51:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09708FFD77
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 04:54:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfKRDvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 17 Nov 2019 22:51:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbfKRDvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Nov 2019 22:51:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A4E78C00A26; Mon, 18 Nov 2019 03:51:30 +0000 (UTC)
+        id S1726705AbfKRDyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 17 Nov 2019 22:54:51 -0500
+Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:35346
+        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726266AbfKRDyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Nov 2019 22:54:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574049289;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
+        bh=LZu8RInnO3guFGROW0ewhSbCJOgJfmUIOWNgeOU48Mk=;
+        b=E46OXh4FEwfhj5xRDN7dkjVZmNKL54s+t6Z3aLd9mijX2Xl1CbzPYzXjWzBdtX+R
+        yJ0HSHlIy7P/v3PVELCrYamhorZtZC5PnvPbFQc/b0IQnPAGwX+vVQQC6EJ2ivvt71Q
+        hVQK5ZpO1+4On/j0xfd/c5qUSGQIgfARU4szzqqQ=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574049289;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:Feedback-ID;
+        bh=LZu8RInnO3guFGROW0ewhSbCJOgJfmUIOWNgeOU48Mk=;
+        b=XjT7KIE4rS3N8tBg+ZAps4kicTgMtEyGQ1V34wxN2ikWlD507PIP+XnDIz/ph53w
+        ks8xUxfINGJsvuHzMFhTRSbz/GZ7GzohEGwocdUk0Q3X5UL2jyS05HGmrSEZdo3XsZc
+        hrdRpwJd1NVe+0NwwCshzYS8ylxADfZL7tmYvCME=
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
         URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 362B2C48B02;
-        Mon, 18 Nov 2019 03:51:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 362B2C48B02
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=pass (p=none dis=none) header.from=qti.qualcomm.com
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=pass smtp.mailfrom=cang@qti.qualcomm.com
-From:   Can Guo <cang@qti.qualcomm.com>
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06F5DC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
 To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
         rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
         kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
@@ -41,127 +48,65 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Bean Huo <beanhuo@micron.com>,
         Tomas Winkler <tomas.winkler@intel.com>,
         Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 4/4] scsi: ufs: Complete pending requests in host reset and restore path
-Date:   Sun, 17 Nov 2019 19:51:00 -0800
-Message-Id: <1574049061-11417-5-git-send-email-cang@qti.qualcomm.com>
+Subject: [PATCH v2 1/4] scsi: ufs: Recheck bkops level if bkops is disabled
+Date:   Mon, 18 Nov 2019 03:54:49 +0000
+Message-ID: <0101016e7ca61572-bf100c84-1209-46ae-a209-e30e68109a95-000000@us-west-2.amazonses.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1574049061-11417-1-git-send-email-cang@qti.qualcomm.com>
-References: <1574049061-11417-1-git-send-email-cang@qti.qualcomm.com>
+In-Reply-To: <1574049277-13477-1-git-send-email-cang@codeaurora.org>
+References: <1574049277-13477-1-git-send-email-cang@codeaurora.org>
+X-SES-Outgoing: 2019.11.18-54.240.27.18
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Can Guo <cang@codeaurora.org>
+From: Asutosh Das <asutoshd@codeaurora.org>
 
-In UFS host reset and restore path, before probe, we stop and start the
-host controller once. After host controller is stopped, the pending
-requests, if any, are cleared from the doorbell, but no completion IRQ
-would be raised due to the hba is stopped.
-These pending requests shall be completed along with the first NOP_OUT
-command(as it is the first command which can raise a transfer completion
-IRQ) sent during probe.
-Since the OCSs of these pending requests are not SUCCESS(because they are
-not yet literally finished), their UPIUs shall be dumped. When there are
-multiple pending requests, the UPIU dump can be overwhelming and may lead
-to stability issues because it is in atomic context.
-Therefore, before probe, complete these pending requests right after host
-controller is stopped and silence the UPIU dump from them.
+Bkops level should be rechecked upon receiving an exception.
+Currently the bkops level is being cached and never updated.
 
+Update the same each time the level is checked.
+Also do not use the cached bkops level value if it is disabled
+and then enabled.
+
+Fixes: afdfff59a0e0 (scsi: ufs: handle non spec compliant bkops behaviour by device)
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 Signed-off-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
 ---
- drivers/scsi/ufs/ufshcd.c | 24 ++++++++++--------------
- drivers/scsi/ufs/ufshcd.h |  2 ++
- 2 files changed, 12 insertions(+), 14 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 5950a7c..b92a3f4 100644
+index 3910c58..8e7c362 100644
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4845,7 +4845,7 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
- 		break;
- 	} /* end of switch */
+@@ -5099,6 +5099,7 @@ static int ufshcd_disable_auto_bkops(struct ufs_hba *hba)
  
--	if (host_byte(result) != DID_OK)
-+	if ((host_byte(result) != DID_OK) && !hba->silence_err_logs)
- 		ufshcd_print_trs(hba, 1 << lrbp->task_tag, true);
- 	return result;
- }
-@@ -5404,8 +5404,8 @@ static void ufshcd_err_handler(struct work_struct *work)
- 
- 	/*
- 	 * if host reset is required then skip clearing the pending
--	 * transfers forcefully because they will automatically get
--	 * cleared after link startup.
-+	 * transfers forcefully because they will get cleared during
-+	 * host reset and restore
- 	 */
- 	if (needs_reset)
- 		goto skip_pending_xfer_clear;
-@@ -6333,9 +6333,15 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
- 	int err;
- 	unsigned long flags;
- 
--	/* Reset the host controller */
-+	/*
-+	 * Stop the host controller and complete the requests
-+	 * cleared by h/w
-+	 */
- 	spin_lock_irqsave(hba->host->host_lock, flags);
- 	ufshcd_hba_stop(hba, false);
-+	hba->silence_err_logs = true;
-+	ufshcd_complete_requests(hba);
-+	hba->silence_err_logs = false;
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	/* scale up clocks to max frequency before full reinitialization */
-@@ -6369,7 +6375,6 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
- static int ufshcd_reset_and_restore(struct ufs_hba *hba)
- {
- 	int err = 0;
--	unsigned long flags;
- 	int retries = MAX_HOST_RESET_RETRIES;
- 
- 	do {
-@@ -6379,15 +6384,6 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
- 		err = ufshcd_host_reset_and_restore(hba);
- 	} while (err && --retries);
- 
--	/*
--	 * After reset the door-bell might be cleared, complete
--	 * outstanding requests in s/w here.
--	 */
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	ufshcd_transfer_req_compl(hba);
--	ufshcd_tmc_handler(hba);
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
--
+ 	hba->auto_bkops_enabled = false;
+ 	trace_ufshcd_auto_bkops_state(dev_name(hba->dev), "Disabled");
++	hba->is_urgent_bkops_lvl_checked = false;
+ out:
  	return err;
  }
+@@ -5123,6 +5124,7 @@ static void ufshcd_force_reset_auto_bkops(struct ufs_hba *hba)
+ 		hba->ee_ctrl_mask &= ~MASK_EE_URGENT_BKOPS;
+ 		ufshcd_disable_auto_bkops(hba);
+ 	}
++	hba->is_urgent_bkops_lvl_checked = false;
+ }
  
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index e0fe247..1e51034 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -513,6 +513,7 @@ struct ufs_stats {
-  * @uic_error: UFS interconnect layer error status
-  * @saved_err: sticky error mask
-  * @saved_uic_err: sticky UIC error mask
-+ * @silence_err_logs: flag to silence error logs
-  * @dev_cmd: ufs device management command information
-  * @last_dme_cmd_tstamp: time stamp of the last completed DME command
-  * @auto_bkops_enabled: to track whether bkops is enabled in device
-@@ -670,6 +671,7 @@ struct ufs_hba {
- 	u32 saved_err;
- 	u32 saved_uic_err;
- 	struct ufs_stats ufs_stats;
-+	bool silence_err_logs;
- 
- 	/* Device management request data */
- 	struct ufs_dev_cmd dev_cmd;
+ static inline int ufshcd_get_bkops_status(struct ufs_hba *hba, u32 *status)
+@@ -5169,6 +5171,7 @@ static int ufshcd_bkops_ctrl(struct ufs_hba *hba,
+ 		err = ufshcd_enable_auto_bkops(hba);
+ 	else
+ 		err = ufshcd_disable_auto_bkops(hba);
++	hba->urgent_bkops_lvl = curr_status;
+ out:
+ 	return err;
+ }
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
