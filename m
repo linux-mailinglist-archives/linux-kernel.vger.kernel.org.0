@@ -2,128 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3078100D7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 22:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDFC0100D84
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 22:18:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfKRVQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 16:16:00 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42231 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfKRVQA (ORCPT
+        id S1726961AbfKRVSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 16:18:03 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33228 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbfKRVSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:16:00 -0500
-Received: by mail-oi1-f196.google.com with SMTP id o12so6612294oic.9;
-        Mon, 18 Nov 2019 13:15:59 -0800 (PST)
+        Mon, 18 Nov 2019 16:18:02 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u13so15871329ote.0;
+        Mon, 18 Nov 2019 13:18:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IabCX6kBV/Mgb1XtRiYbU3GVuFyLKj7vP/odV1Askuo=;
+        b=LUkhNmtywxzw73lNFZSUTSLJvpU4SrC3SSG94jfyYW8wc2YYQFHP2xK3r0UEFQBAO/
+         fJg1OejWr58ym84pgfJn4DzUy67tOxF2Msz93xQlzBmFvYCsRuenp/H3jmOpnfl5cm53
+         aOEUSSOj1qpW+tmdxq5ZKeZ2dqgltOLm/t829Y2NfhpFka3GgqtSzCB32ha3GBtRJJUI
+         moHZr8odRU76Uu3xX1vdLiXuLFzGRNZ33jTCu8QmUbvdz8DEe0f/DrPabGpoRm2JhI7w
+         sVEdEL5zNbrveUEU3aPVcTHJiKuca6os1r/uH++1FiiG3fLl+UDBdsQ60FflhJnwRYUo
+         +DbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EGmcPUR8/fSmoKZT8wNG542Hx4EddFL0Aj04F8QGfeY=;
-        b=ThXvTYCc91LVt5IxL/YqWcKw7vlFNAQzx/sSiAgA0RyYzwDMU0Vs1X2c5KhzkJoWOf
-         CxN6Ys5n9WaFf7SbhUYCupaiIyPQSZl5LXmyUz3Gua6NSOx+XsRrcvEbunGr6P56Xub5
-         WXQSvcc1koJoDCPlPUmrBEvtQghvPwACN+XUZK4ByzTPGZcMc2JH46gV97sh/qa4RhLh
-         8/V2aX2jQbeEl2VW36B9XbSGIqaDrjceEi6FsnucAaPCWXgaK14vU3FEUQnfFfH3dvYv
-         9XnYJZ2Mt0wy0L2hc1wbvbE21PGdwCUh4mM8tm5lp+8cKGiwo7Tjf6u7QxlfSHuvoMwr
-         9Vvw==
-X-Gm-Message-State: APjAAAVDNCtNQdk6qLsmGPcNWRljODVJw4VmPjkhlCn5LG3MLi8FDtKx
-        OBQLqyK/xz/57kY3KbmPkBcZ25WdkDfSbfTeW2c=
-X-Google-Smtp-Source: APXvYqxKvx5v2bCoNyNp2j7oV6Nv/3O62/Y0L4stjW1SPiCGZ4joqQakDM+BdHFoJFd/VP2iZTuRGld/2iYKJrPlnDw=
-X-Received: by 2002:aca:d4c6:: with SMTP id l189mr903647oig.68.1574111759293;
- Mon, 18 Nov 2019 13:15:59 -0800 (PST)
+        bh=IabCX6kBV/Mgb1XtRiYbU3GVuFyLKj7vP/odV1Askuo=;
+        b=rdnpdYFdj1QSmzWVCTDBeMdu2Y0JfxezK+i+3Pg+aK3vyceQn0TLQdrboSp1nWGX0f
+         3dcYs4BK+jmxnn0Svat4iY9jx7AKBvLnBmjKcIQvP1Q+TFPk4R+hlbCOMCZlGAQpfAkb
+         cusELaZ40UPt48qy3ussgDsXT2TKtkgBah4RSY06pCva1Z0kpiEQQjmUwH/5p+q3V/5y
+         Bz07sk1b88r2dORlm4E3Ep1FN/oDmbyeCFKHOPz4ofuD/1fKcVzNObxAUBEXK0ZM2+jg
+         YRqhkODyNa7ARkVZHBd/i2tsm2m6vI1b8QKpR5RL9TPKc0XDM2aLB6sl6PojvOhOXKP4
+         gL4A==
+X-Gm-Message-State: APjAAAXTnNgHFPkH0SQAM06TLQ/ytYdiyppZ0SG4aUdqHsECON5BuV+i
+        Ful0mCGtLw+ePSpTUmenLLY9HdF30mAgXIKM0/Q=
+X-Google-Smtp-Source: APXvYqy5Csuu3CZ8WGvTufcihjOMe/h9Fe7votgoCqnJbEHErkBVC+bnIWRoLhCs0yChwEz+AMTol5kYrSIIX0OSmYo=
+X-Received: by 2002:a9d:6841:: with SMTP id c1mr1053825oto.224.1574111881395;
+ Mon, 18 Nov 2019 13:18:01 -0800 (PST)
 MIME-Version: 1.0
-References: <cc03ba18-4949-9244-639c-94f461f03361@huawei.com>
- <CAA9_cmc7BuWkBHadHRAxfch43KWovb6rSr2AR9y3bVue0M9EhQ@mail.gmail.com>
- <CAJZ5v0g35zvSB88d7qK8n1uRGCuO5VNK11jHVQRNKwyQW4vZSQ@mail.gmail.com> <CAA42JLYCod=mymBiDDXxQ1sts7e-Ot_q9SKdJxjSkcsZRVGDTQ@mail.gmail.com>
-In-Reply-To: <CAA42JLYCod=mymBiDDXxQ1sts7e-Ot_q9SKdJxjSkcsZRVGDTQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 18 Nov 2019 22:15:48 +0100
-Message-ID: <CAJZ5v0iAbf7qQeyeR6CVYTX8v=OpEcbFksTHgQ0LAZk-QKqHpQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: sysfs: Change ACPI_MASKABLE_GPE_MAX to 0x100
-To:     Dexuan-Linux Cui <dexuan.linux@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Yunfeng Ye <yeyunfeng@huawei.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
+References: <20191118165400.21985-1-TheSven73@gmail.com> <20191118165400.21985-2-TheSven73@gmail.com>
+ <20191118170111.GL9761@sirena.org.uk> <CAGngYiW+8m4fBAY5Ya_4YmEmCTQeiiNP6=aH2mUX6d2wY1442w@mail.gmail.com>
+ <20191118174550.GA43585@sirena.org.uk> <CAGngYiXLx8rkkKPyALYyCHFyst2Ft8bCkP4uqmzXAHHqXhUvkQ@mail.gmail.com>
+ <20191118203406.GE43585@sirena.org.uk>
+In-Reply-To: <20191118203406.GE43585@sirena.org.uk>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 18 Nov 2019 16:17:49 -0500
+Message-ID: <CAGngYiWQixey6t_4evqPdS9Rw+VNf0M1nax8bEqaUt=nLDjEfw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] tps6105x: add optional devicetree support
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grigoryev Denis <grigoryev@fastwel.ru>,
+        Axel Lin <axel.lin@ingics.com>, Dan Murphy <dmurphy@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
-        "linfeilong@huawei.com" <linfeilong@huawei.com>,
-        Dexuan Cui <decui@microsoft.com>
+        linux-leds@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 8:44 PM Dexuan-Linux Cui <dexuan.linux@gmail.com> wrote:
+On Mon, Nov 18, 2019 at 3:34 PM Mark Brown <broonie@kernel.org> wrote:
 >
-> On Mon, Nov 18, 2019 at 1:04 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Sat, Nov 16, 2019 at 9:06 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > On Wed, Nov 13, 2019 at 11:17 PM Yunfeng Ye <yeyunfeng@huawei.com> wrote:
-> > > >
-> > > > The commit 0f27cff8597d ("ACPI: sysfs: Make ACPI GPE mask kernel
-> > > > parameter cover all GPEs") says:
-> > > >   "Use a bitmap of size 0xFF instead of a u64 for the GPE mask so 256
-> > > >    GPEs can be masked"
-> > > >
-> > > > But the masking of GPE 0xFF it not supported and the check condition
-> > > > "gpe > ACPI_MASKABLE_GPE_MAX" is not valid because the type of gpe is
-> > > > u8.
-> > > >
-> > > > So modify the macro ACPI_MASKABLE_GPE_MAX to 0x100, and drop the "gpe >
-> > > > ACPI_MASKABLE_GPE_MAX" check. In addition, update the docs "Format" for
-> > > > acpi_mask_gpe parameter.
-> > > >
-> > > > Fixes: 0f27cff8597d ("ACPI: sysfs: Make ACPI GPE mask kernel parameter cover all GPEs")
-> > > > Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-> > > > ---
-> > > > v1 -> v2:
-> > > >  - drop the "gpe > ACPI_MASKABLE_GPE_MAX" check
-> > > >  - update the docs "Format" from <int> to <byte> for acpi_mask_gpe parameter
-> > > >  - update the commit comment
-> > > >
-> > > >  Documentation/admin-guide/kernel-parameters.txt | 2 +-
-> > > >  drivers/acpi/sysfs.c                            | 4 ++--
-> > > >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > Bisect flags commit eb09878e1301 "ACPI: sysfs: Change
-> > > ACPI_MASKABLE_GPE_MAX to 0x100" in -next as the reason for a boot
-> > > regression in my qemu-kvm test environment. It spews:
-> > >
-> > > [    1.456728] ACPI: Masking GPE 0x0.
-> > > ...
-> > > [  161.721420] ACPI: Masking GPE 0x0.
-> > >
-> > > ...and then hangs.
-> > >
-> > > A straight revert gets the configuration back on its feet.
-> > >
-> > > qemu-system-x86_64 --version
-> > > QEMU emulator version 4.0.50 (v4.0.0-928-g49c6c6ac0cd8)
-> >
-> > OK, I'll drop it then, thanks!
+> On Mon, Nov 18, 2019 at 01:13:24PM -0500, Sven Van Asbroeck wrote:
 >
-> We're seeing the same issue wtih 5.4.0-rc7-next-20191118 on a Linux VM
-> running on Hyper-V :
->
-> [    0.133029] ACPI: 1 ACPI AML tables successfully acquired and loaded
-> [    0.144023] ACPI: Interpreter enabled
-> [    0.145023] ACPI: (supports S0 S5)
-> [    0.146023] ACPI: Using IOAPIC for interrupt routing
-> [    0.147024] PCI: Using host bridge windows from ACPI; if necessary,
-> use "pci=nocrs" and report a bug
-> [    0.148031] ACPI: Masking GPE 0x0.
-> ...
-> [  774.839023] ACPI: Masking GPE 0x0.
-> [  774.840023] ACPI: Masking GPE 0x0.
->
-> I guess the patch is only tested on a physical machine and not on a VM...
+> Is the regulator bit of this perhaps a voltage regulator and a current
+> regulator packaged together mainly for use powering LEDs?  That's a
+> hardware design I've seen before...
 
-It looks like the patch hasn't been tested at all.
+Yes, you nailed it :)
 
-Please try to change the data type of gpe in
-acpi_gpe_apply_masked_gpes() to u16 and see if that helps.
+>
+> Just point the regulator framework at the MFD's DT node - the children
+> of the MFD can look at the parent device happily, there's several
+> existing MFDs do this.
+
+Ok, I think I get it now. Will prepare v2.
