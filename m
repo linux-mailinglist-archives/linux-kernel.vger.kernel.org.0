@@ -2,112 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2EFB10001B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F8F910001F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 09:13:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbfKRIMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 03:12:30 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45241 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfKRIM3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 03:12:29 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z10so18212812wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 00:12:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=Gerxo1HXE3qxO7EIBzXua6pkCgqBbbDV3nyA1Pb0wBo=;
-        b=ZgKAz+5OdQjkRD+eyq8cPlQgn3FarU/V2Ax05GPw/Xhr4/YKs0r98GJT9zQoHPdvmK
-         k9wKXS9W0JFqKCUvnOTa05TUC5zUQO3PjBr1ed3uYib5o77jSlWnrXRaxIxRp4sGh22t
-         bVZyQGTQL0Vz4hsVhtD8I9plJaDNLTo4u+y8F3v0W3ddt05KvDoZaaetgTgHfwe20+mR
-         LD82XBI9aw+ur946qs9SMMEkfVqO7EhT8RZPrPKSVhDRq57Sj3VvYK7B1+oi1q/2XVDv
-         frbfH3Si2SnlmgCKlH+s2lX/Z+xaEKEUM7fdYyKVIFnkhJfEOMspgTPx2mkZ6QBquYrp
-         ewRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=Gerxo1HXE3qxO7EIBzXua6pkCgqBbbDV3nyA1Pb0wBo=;
-        b=txx5X0L0DmhBYgyDoVfsBRhu+uVtvHUyRp5SgtKLV5QkZUJDGAwcBcZMlJX5dxKRYJ
-         MzQ4JF7dx+QGBn7ERyBPWxM7MhZEtFRPJ6s1RwbsGQ0X8pEmVoD9SesT98NwXysIZ+E8
-         pft/2amHqMkEsfg1zr+gg0VekwkZzD1CsmaW8sRhZz8AGjPhd89xRKBsKuCyuPGkoVK4
-         WZTw5FLGiW5QqmO/EHDr7wkFhFHJs8imt5mytOi7uy3r5OqM7x8UO4knLuDbt8gB0xh8
-         3XZgLj9D7Cz0zCKvnXYaJFIt8VLyZVcO79b4kTqsUor+QGIp58oqN5nuZB4v4oE11W1k
-         UGrg==
-X-Gm-Message-State: APjAAAUhuyZuN/D0XN0SlhaC/PGNKdOHhHwW5q8INV8Au0UZeIes9ep0
-        FFyN4tG5tm1Ihz1RHcrvFcDUdg==
-X-Google-Smtp-Source: APXvYqznaq8NPgx9ib3bRkuzm2nqHxQVhkVx5C8CJtce7uveJTuh5OCW7AKxImyR9UQ1PUdBZyrECg==
-X-Received: by 2002:adf:d842:: with SMTP id k2mr28129290wrl.163.1574064746694;
-        Mon, 18 Nov 2019 00:12:26 -0800 (PST)
-Received: from rudolphp (b2b-78-94-0-50.unitymedia.biz. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id y78sm19882825wmd.32.2019.11.18.00.12.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 00:12:26 -0800 (PST)
-Message-ID: <fd1a028bf2a5f9141b3a25459fa21b4083c58705.camel@9elements.com>
-Subject: Re: [PATCH 1/3] firmware: google: Release devices before
- unregistering the bus
-From:   patrick.rudolph@9elements.com
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Arthur Heymans <arthur@aheymans.xyz>
-Date:   Mon, 18 Nov 2019 09:12:24 +0100
-In-Reply-To: <20191116133849.GC454551@kroah.com>
-References: <20191115134842.17013-1-patrick.rudolph@9elements.com>
-         <20191115134842.17013-2-patrick.rudolph@9elements.com>
-         <20191116133849.GC454551@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726967AbfKRIMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 03:12:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726695AbfKRIMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 03:12:35 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D464920740;
+        Mon, 18 Nov 2019 08:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574064754;
+        bh=FqcDv1sjY05veUgpDJnfxuCQBeNLAI8X0PRJC2Y59xc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qFovBanfu4CUeJMdb3jmO3DRCwJ7P4pT/yHJc0sQ0B14p3Nlxy5fevJMMRXd0PrTl
+         amkBr6J1Q4Rf/ckYsKWFFnsZOAgOFsMpCDJxOJh0XI3JIrZKVlJfY1hiZyhya+CZGe
+         Be2wnq5yalgGwUUiTa5BOwWDjtK+vlaeWVy9cq9M=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH v3 5/7] perf probe: Support multiprobe event
+Date:   Mon, 18 Nov 2019 17:12:30 +0900
+Message-Id: <157406475010.24476.586290752591512351.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <157406469983.24476.13195800716161845227.stgit@devnote2>
+References: <157406469983.24476.13195800716161845227.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-11-16 at 14:38 +0100, Greg Kroah-Hartman wrote:
-> On Fri, Nov 15, 2019 at 02:48:37PM +0100, 
-> patrick.rudolph@9elements.com wrote:
-> > From: Patrick Rudolph <patrick.rudolph@9elements.com>
-> > 
-> > Fix a bug where the kernel module can't be loaded after it has been
-> > unloaded as the devices are still present and conflicting with the
-> > to be created coreboot devices.
-> > 
-> > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-> > ---
-> >  drivers/firmware/google/coreboot_table.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/firmware/google/coreboot_table.c
-> > b/drivers/firmware/google/coreboot_table.c
-> > index 8d132e4f008a..88c6545bebf4 100644
-> > --- a/drivers/firmware/google/coreboot_table.c
-> > +++ b/drivers/firmware/google/coreboot_table.c
-> > @@ -163,8 +163,14 @@ static int coreboot_table_probe(struct
-> > platform_device *pdev)
-> >  	return ret;
-> >  }
-> >  
-> > +static int __cb_dev_unregister(struct device *dev, void *dummy)
-> > +{
-> > +	device_unregister(dev);
-> 
-> Did you build this patch???
-> 
-> Did it work when you tested it?  How?
-> 
-It builds without a warning and is working.
+Support multiprobe event if the event is based on function
+and lines and kernel supports it. In this case, perf probe
+creates the first probe with an event, and tries to append
+following probes on that event, since those probes must be
+on the same source code line.
 
-It looks like there's no -Werror=return-type in the kernel's Makefile,
-which is kind of odd as this is kind of undefined behaviour in C...
+Before this patch;
+  # perf probe -a vfs_read:18
+  Added new events:
+    probe:vfs_read_L18   (on vfs_read:18)
+    probe:vfs_read_L18_1 (on vfs_read:18)
 
-Will fix.
+  You can now use it in all perf tools, such as:
 
-> Please fix up,
-> 
-> greg k-h
+  	perf record -e probe:vfs_read_L18_1 -aR sleep 1
+
+  #
+
+After this patch (on multiprobe supported kernel)
+  # perf probe -a vfs_read:18
+  Added new events:
+    probe:vfs_read_L18   (on vfs_read:18)
+    probe:vfs_read_L18   (on vfs_read:18)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:vfs_read_L18 -aR sleep 1
+
+  #
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ tools/perf/util/probe-event.c |    9 +++++++--
+ tools/perf/util/probe-file.c  |    7 +++++++
+ tools/perf/util/probe-file.h  |    1 +
+ 3 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 5c86d2cf6338..8f963a193a5d 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -2738,8 +2738,13 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
+ 	if (tev->event == NULL || tev->group == NULL)
+ 		return -ENOMEM;
+ 
+-	/* Add added event name to namelist */
+-	strlist__add(namelist, event);
++	/*
++	 * Add new event name to namelist if multiprobe event is NOT
++	 * supported, since we have to use new event name for following
++	 * probes in that case.
++	 */
++	if (!multiprobe_event_is_supported())
++		strlist__add(namelist, event);
+ 	return 0;
+ }
+ 
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index b659466ea498..a63f1a19b0e8 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -1007,6 +1007,7 @@ enum ftrace_readme {
+ 	FTRACE_README_KRETPROBE_OFFSET,
+ 	FTRACE_README_UPROBE_REF_CTR,
+ 	FTRACE_README_USER_ACCESS,
++	FTRACE_README_MULTIPROBE_EVENT,
+ 	FTRACE_README_END,
+ };
+ 
+@@ -1020,6 +1021,7 @@ static struct {
+ 	DEFINE_TYPE(FTRACE_README_KRETPROBE_OFFSET, "*place (kretprobe): *"),
+ 	DEFINE_TYPE(FTRACE_README_UPROBE_REF_CTR, "*ref_ctr_offset*"),
+ 	DEFINE_TYPE(FTRACE_README_USER_ACCESS, "*[u]<offset>*"),
++	DEFINE_TYPE(FTRACE_README_MULTIPROBE_EVENT, "*Create/append/*"),
+ };
+ 
+ static bool scan_ftrace_readme(enum ftrace_readme type)
+@@ -1085,3 +1087,8 @@ bool user_access_is_supported(void)
+ {
+ 	return scan_ftrace_readme(FTRACE_README_USER_ACCESS);
+ }
++
++bool multiprobe_event_is_supported(void)
++{
++	return scan_ftrace_readme(FTRACE_README_MULTIPROBE_EVENT);
++}
+diff --git a/tools/perf/util/probe-file.h b/tools/perf/util/probe-file.h
+index 986c1c94f64f..850d1b52d60a 100644
+--- a/tools/perf/util/probe-file.h
++++ b/tools/perf/util/probe-file.h
+@@ -71,6 +71,7 @@ bool probe_type_is_available(enum probe_type type);
+ bool kretprobe_offset_is_supported(void);
+ bool uprobe_ref_ctr_is_supported(void);
+ bool user_access_is_supported(void);
++bool multiprobe_event_is_supported(void);
+ #else	/* ! HAVE_LIBELF_SUPPORT */
+ static inline struct probe_cache *probe_cache__new(const char *tgt __maybe_unused, struct nsinfo *nsi __maybe_unused)
+ {
 
