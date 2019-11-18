@@ -2,138 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D851100A94
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:41:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2C3100A95
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 18:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKRRlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 12:41:08 -0500
-Received: from ms.lwn.net ([45.79.88.28]:60096 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbfKRRlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 12:41:07 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 42294378;
-        Mon, 18 Nov 2019 17:41:06 +0000 (UTC)
-Date:   Mon, 18 Nov 2019 10:41:05 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     andriy.shevchenko@intel.com, prarit@redhat.com,
-        rafael.j.wysocki@intel.co, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH] admin guide/pm: Admin guide for intel-speed-select
-Message-ID: <20191118104105.11776f58@lwn.net>
-In-Reply-To: <20191115204925.55181-1-srinivas.pandruvada@linux.intel.com>
-References: <20191115204925.55181-1-srinivas.pandruvada@linux.intel.com>
-Organization: LWN.net
+        id S1726830AbfKRRmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 12:42:04 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:43585 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfKRRmD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 12:42:03 -0500
+Received: by mail-vk1-f196.google.com with SMTP id k19so4309599vke.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 09:42:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=CxIIGyyy2F97GWw9aqAAKUmtDbspIwQixOAhBYT+G3g=;
+        b=MkWAaIMZXa3s/v/TT+feWQqPcFkGd6VxRFEcdU8VVY0VLbqnA2iHbsjprpbuCtBxmN
+         H5y/BqrOigwTEroGA3bnm57rl/PTFzUqaIda1zHEzaNin3KOiRNf7BjGsjxWdk8A5fHC
+         DsEcMWIPflEVk5erLuDGQqkMdBoCyK4UKJalPhbnrnt9xQZSsW+1D4hGhxPgEFM2iMev
+         xSW/0CCwPg1AvAut1jkZ3LLOWGj0QUM07eD1679FX4LWb3ST7PUIAa/4uWf+cq+iQPe9
+         QCIiK7nbiTBp6/Wxce2SEfoVtQux0rNI2IJW03KOBB+d8j44VfA7iucq+figvyFdCzHz
+         uNCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=CxIIGyyy2F97GWw9aqAAKUmtDbspIwQixOAhBYT+G3g=;
+        b=DeXAs8o+qJX9huR3pQS2hNYGPTeWeJ+PD/fjJPeLlfCl7LoXvo76kfmrIZcxbXapxh
+         801wF7xo2wG06gpTfuMtEtc7CRQInJg6WcBHqCOXUate/2wLnau/h7O6o6g6Q673+uAi
+         YJS8sM4gp1SlbaIpz1nB5c7WhnGD+lMtGSoMcHnn8cFA0aUFyLXtFpAawqB8phqpv+j8
+         G1S2IbpZbiv2BMmsJTwqsZbQgCQZX80Ram2tZ8e6SilJUsg6KouNQnLyjXUwbgRuA+to
+         y3HlelaMku1t32Rd71/pufk9H8TyZXgo9uNxz7jBxA42BAm8RT3wwD5DvLrNPRS7Rmb0
+         zqxA==
+X-Gm-Message-State: APjAAAXizXtbeYhlv3KSCtImWn0mFd8eJInKDXfxIh8QLl9h4gsfXmab
+        QL6qRJEAWL9/bcu0TBeGfEVtlrY9hhZKxJu6ZbA=
+X-Google-Smtp-Source: APXvYqwFggxAjqOQUPDrdv7CWzinFzhRXw3yFXU4gMdyjPXIazMCGBRsREIobn6iH5p6c/ZqyJkMgbtlOESoZ3eWBnI=
+X-Received: by 2002:a1f:41c4:: with SMTP id o187mr17341870vka.102.1574098922618;
+ Mon, 18 Nov 2019 09:42:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:6102:2129:0:0:0:0 with HTTP; Mon, 18 Nov 2019 09:42:02
+ -0800 (PST)
+Reply-To: mr.milchoilinka@aol.com
+From:   "Mr.Milcho Ilinka" <beaut.maxwell@gmail.com>
+Date:   Mon, 18 Nov 2019 18:42:02 +0100
+Message-ID: <CALEbF=M66prA2Y0au3kPzZ28GKei0d+NxuJab0nn8pQcMPtskQ@mail.gmail.com>
+Subject: VERY VERY URGENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 12:49:25 -0800
-Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
+Dear Friend,
 
-> Added documentation to configure servers to use Intel(R) Speed
-> Select Technology using intel-speed-select tool.
-> 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+I Am Mr.Milcho Ilinka, chairman and chief operating officer with the
+Bank of Africa, and I want you to know that the amount of $ 18.6
+million will be transferred to your name as a foreign partner of our
+deceased client.
 
-Thanks for improving the docs!  I do have a few overall comments,
-though...  
+I need your help to get this fund to be transfer out from here to your
+account, and we share at a ratio of 50% for me, while 50% is for you
+in any assistance that you may require to give during the transferring
+process of this fund into your account. You will receive this amount
+by bank transfer.
 
->  .../admin-guide/pm/intel-speed-select.rst     | 934 ++++++++++++++++++
->  .../admin-guide/pm/working-state.rst          |   1 +
->  2 files changed, 935 insertions(+)
->  create mode 100644 Documentation/admin-guide/pm/intel-speed-select.rst
-> 
-> diff --git a/Documentation/admin-guide/pm/intel-speed-select.rst b/Documentation/admin-guide/pm/intel-speed-select.rst
-> new file mode 100644
-> index 000000000000..c2ce57ebc268
-> --- /dev/null
-> +++ b/Documentation/admin-guide/pm/intel-speed-select.rst
-> @@ -0,0 +1,934 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=========================================================
-> +Intel® Speed Select Technology (Intel® SST) : User Guide
-> +=========================================================
+Please send your full name and your directly phone numbers, and
+address, and I will details you about this transaction. You have to
+contact me through my private e-mail at {milchoilinka@outlook.com}
 
-People give me grief when I take docs patches adding non-ascii characters.
-Adding nearly 100 useless ® symbols seems likely to trigger that sort of
-unicode aversion.  Can I ask you, please, to take those out?  There are
-many occurrences of unadorned "Intel" in the kernel, and the world hasn't
-ended yet.
+Your prompt reply will be highly appreciated.
 
-> +The Intel® Speed Select Technology (Intel® SST) provides a powerful new
-> +collection of features that give more granular control over CPU performance.
-> +With Intel® SST, one server can be configured for power and performance for a
-> +variety of diverse workload requirements.
-> +
-> +Refer to the links below for an overview of the technology:
-> +
-> +- https://www.intel.com/content/www/us/en/architecture-and-technology/speed-select-technology-article.html
-> +- https://builders.intel.com/docs/networkbuilders/intel-speed-select-technology-base-frequency-enhancing-performance.pdf
-> +
-> +These capabilities are further enhanced in some of the newer generations of
-> +server platforms where these features can be enumerated and controlled
-> +dynamically without pre-configuring via BIOS setup options. This dynamic
-> +configuration is done via mailbox commands to the hardware. One way to enumerate
-> +and configure these features is by using the Intel® Speed Select utility.
-> +
-> +This document explains how to use the Intel® Speed Select tool to enumerate and
-> +control Intel® SST features. This document gives example commands and explains
-> +how these commands change the power and performance profile of the system under
-> +test. Using this tool as an example, customers can replicate the messaging
-> +implemented in the tool in their production software.
-> +
-> +
-> +intel-speed-select configuration tool
-> +-------------------------------------
+Sincerely,
+CONTACTS ME THROUGH MY INFORMATION
+Bank Of Africa (B.O.A)
+Ouagadougou Burkina Faso,
+West Africa
+Contact: E-Mail :{milchoilinka@outlook.com}
+Contact: E-Mail :{mr.milchoilinka@aol.com}
+Mr.Milcho Ilinka
 
-The conventions for subsection markers are documented in
-Documentation/doc-guide/sphinx.rst; this should be "========" rather than
-hyphens. 
-
-> +Most Linux distribution packages include the "intel-speed-select" tool. If not,
-> +it can be built by downloading the Linux kernel tree from kernel.org. Once
-> +downloaded, the tool can be built without building the full kernel.
-> +
-> +From the kernel tree, run the following commands:
-> +
-> +# cd tools/power/x86/intel-speed-select/
-> +
-> +# make
-> +
-> +# make install
-
-This kind of stuff isn't going to render well in the built docs.  Can you
-please change the literal text to literal blocks?  Something like:
-
-	From the kernel tree, run the following commands::
-
-		# cd tools/power/x86/intel-speed-select/
-		# make
-		# make install
-
-Note the "::" on the first line; that introduces a literal block.  It would
-be good to build the docs once you're done and be sure that you're happy
-with the results.
-
-There's a lot of these in this document.
-
-> +
-> +**Getting Help**
-
-Since this is meant to be a section header, please mark it as such;
-"------" would be the appropriate marker for a header at this level.
-
-That's enough for a first pass.
-
-Thanks,
-
-jon
+Sorry if you received this letter in your spam, is due to recent
+connection error here in the country.
