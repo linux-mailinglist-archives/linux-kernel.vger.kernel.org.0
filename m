@@ -2,211 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3258100E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 22:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3CAA100E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 22:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfKRVs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 16:48:56 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44510 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfKRVs4 (ORCPT
+        id S1727001AbfKRVwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 16:52:38 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28590 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726647AbfKRVwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:48:56 -0500
-Received: by mail-qk1-f195.google.com with SMTP id m16so15897311qki.11
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 13:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q4B0Yr9MAH2OOg9e+2b4uJAfwJytTTL68mfbk8OBhyw=;
-        b=Vvfbp0OrCgdTvICqPVO8WcPkW9ijaNwWbxmlSk+D0EB0YpBzPn4ZZb+f5PIT7mxvsx
-         x9NNZkBMQtjQXI6jy+fWLutZ/8OjtFanDkSZZgvM5DZNk004u3iHO92IMg8qJy5EJhdu
-         97ZCm6xODzY87FDX4AI/jgMj5Ta8+IdwEZgN8AaaaobIylkwXDmMtlnJsEYRJpAOWThT
-         1deIAVVSuFAtkzY8uiwN4p2VwJ6I+CiO9Y0iDPpSj/uf+T6D2wZrTB2arJ/IK7pWWS/r
-         xqtMPydC8hkGr+noMhvdheSIzaeUM/7OarjFia7hj/SEwi4gw+OzTjhk2uFQn86vO9nt
-         yePw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q4B0Yr9MAH2OOg9e+2b4uJAfwJytTTL68mfbk8OBhyw=;
-        b=SREifwLMghKV5lzrTxOr3K4qEka4+HDDvNzTFgW3EER7pGrrfNyguv39qNdz+7/XmN
-         YlOb9tNYmReQIl6Oo4ZQhkvGaN44iUp1m7orkjb5TIzjs4dOEI+tMlO+Sv+9bf5bDm8p
-         vvzK9Gz3dyo9yEaR7KCWzizLyNGdUwxM41QkaLQw1rkk+uWbeseQoW7Xvs1p9paBQ+0b
-         6s0MOhp8WyyjbkjccRotOb0a9pdBONtLdw8kFOVydNYmnUkiUh8Z3ojTAm84UkgoQSjk
-         xK7cG22ARitKuYDreAJpirZRwD2fzJmkXeWeokYUmVcVv3HLmBsemym6CXVLNeTUrT5b
-         iqPQ==
-X-Gm-Message-State: APjAAAXOYlux643daxwBZBi5aBNrzClTmGsuvjswo+JHKW/JZdoOSi7g
-        7PO0Mdc2va+HMChoBZIMB9k=
-X-Google-Smtp-Source: APXvYqy0Vd5NbsNbEaE0q9ix5UTYeXFagdw7Wa2Z6XCsVWsE/zbr7nwWUytVsLAuKyoqgfQpCQF/HQ==
-X-Received: by 2002:a37:9d12:: with SMTP id g18mr24162968qke.157.1574113734704;
-        Mon, 18 Nov 2019 13:48:54 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id i41sm11427666qti.42.2019.11.18.13.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 13:48:53 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 71C4840D3E; Mon, 18 Nov 2019 18:48:51 -0300 (-03)
-Date:   Mon, 18 Nov 2019 18:48:51 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCHv2 0/2] perf tools: Share struct map after clone
-Message-ID: <20191118214851.GA17315@kernel.org>
-References: <20191016082226.10325-1-jolsa@kernel.org>
- <20191023075517.GA22919@krava>
- <20191029205855.GA20826@krava>
- <20191118121400.GA14046@krava>
+        Mon, 18 Nov 2019 16:52:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574113956;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=37fM1KMKYNrGbiZSg07VSdDytySB2r4xXsbLO3HzSdo=;
+        b=J0lCJRdgC8PhMrgAyDwWRmhXrFgWVpNYHxg2Q4g+XiFyf9bWBGg18b4Ofx3In0uCLckhoR
+        DWuCUZj9Tobh0q3rgGVqQauk+qgQcVgmza7nvHnnF2i4PaZ3SUloFhCDdOk8LtfzsWSyDR
+        h/7uY5Yjdu0vFBsVbi2GWKyYnIJ9y0M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-286-fJFIxhqENmWVImvxdMKnew-1; Mon, 18 Nov 2019 16:52:35 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 02C4C477;
+        Mon, 18 Nov 2019 21:52:34 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 669B25DD98;
+        Mon, 18 Nov 2019 21:52:24 +0000 (UTC)
+Subject: Re: [PATCH 5/5] locking/percpu-rwsem: Remove the embedded rwsem
+To:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
+        will@kernel.org
+Cc:     oleg@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
+        bristot@redhat.com, dave@stgolabs.net, jack@suse.com
+References: <20191113102115.116470462@infradead.org>
+ <20191113102855.925208237@infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <7b412d15-b796-3b8d-0e98-22362377093f@redhat.com>
+Date:   Mon, 18 Nov 2019 16:52:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191118121400.GA14046@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191113102855.925208237@infradead.org>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: fJFIxhqENmWVImvxdMKnew-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Nov 18, 2019 at 01:14:00PM +0100, Jiri Olsa escreveu:
-> On Tue, Oct 29, 2019 at 09:58:55PM +0100, Jiri Olsa wrote:
-> > > > 
-> > > > Also available in here:
-> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-> > > >   perf/map_shared
+On 11/13/19 5:21 AM, Peter Zijlstra wrote:
+> @@ -130,20 +131,12 @@ static inline void percpu_rwsem_release(
+>  =09=09=09=09=09bool read, unsigned long ip)
+>  {
+>  =09lock_release(&sem->dep_map, ip);
+> -#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+> -=09if (!read)
+> -=09=09atomic_long_set(&sem->rw_sem.owner, RWSEM_OWNER_UNKNOWN);
+> -#endif
+>  }
+> =20
 
-> > > I rebased to latest perf/core and pushed the branch out
+This is the only place that set RWSEM_OWNER_UNKNOWN. So you may as well
+remove all references to it:
 
-> > rebased and pushed out
- 
-> heya,
-> I lost track of this.. what's the status, are you going with your
-> version, or is this one still in? I don't see any of them in latest
-> code..
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 00d6054687dd..8a418d9eeb7a 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -53,12 +53,6 @@ struct rw_semaphore {
+=C2=A0#endif
+=C2=A0};
+=C2=A0
+-/*
+- * Setting all bits of the owner field except bit 0 will indicate
+- * that the rwsem is writer-owned with an unknown owner.
+- */
+-#define RWSEM_OWNER_UNKNOWN=C2=A0=C2=A0=C2=A0 (-2L)
+-
+=C2=A0/* In all implementations count !=3D 0 means locked */
+=C2=A0static inline int rwsem_is_locked(struct rw_semaphore *sem)
+=C2=A0{
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index eef04551eae7..622842754c73 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -660,8 +660,6 @@ static inline bool rwsem_can_spin_on_owner(struct
+rw_semapho
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long flags;
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool ret =3D true;
+=C2=A0
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUILD_BUG_ON(!(RWSEM_OWNER_UNKNOWN & =
+RWSEM_NONSPINNABLE));
+-
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (need_resched()) {
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 lockevent_inc(rwsem_opt_fail);
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 return false;
 
-So, I'm still working on and off on this, current status is at:
+Cheers,
+Longman
 
-https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=perf/map_share
-
-Its just one patch more than perf/core, the one that does the sharing.
-
-The thing is, as I'm going over all the fields in 'struct map', it seems
-that we'll end up with just one cacheline per instance, as there are
-things there that are not strictly related to a map, but to a map_group
-(unmap_ip/map_ip), or to a dso (maj, min, ino, ino_generation), and some
-need less than what is allocated to them.
-
-Current status is:
-
-[root@quaco ~]# pahole -C map ~acme/bin/perf
-struct map {
-	union {
-		struct rb_node rb_node __attribute__((__aligned__(8))); /*     0    24 */
-		struct list_head node;                   /*     0    16 */
-	} __attribute__((__aligned__(8)));                                               /*     0    24 */
-	u64                        start;                /*    24     8 */
-	u64                        end;                  /*    32     8 */
-	_Bool                      erange_warned:1;      /*    40: 0  1 */
-	_Bool                      priv:1;               /*    40: 1  1 */
-
-	/* XXX 6 bits hole, try to pack */
-	/* XXX 3 bytes hole, try to pack */
-
-	u32                        prot;                 /*    44     4 */
-	u64                        pgoff;                /*    48     8 */
-	u64                        reloc;                /*    56     8 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	u64                        (*map_ip)(struct map *, u64); /*    64     8 */
-	u64                        (*unmap_ip)(struct map *, u64); /*    72     8 */
-	struct dso *               dso;                  /*    80     8 */
-	refcount_t                 refcnt;               /*    88     4 */
-	u32                        flags;                /*    92     4 */
-
-	/* size: 96, cachelines: 2, members: 13 */
-	/* sum members: 92, holes: 1, sum holes: 3 */
-	/* sum bitfield members: 2 bits, bit holes: 1, sum bit holes: 6 bits */
-	/* forced alignments: 1 */
-	/* last cacheline: 32 bytes */
-} __attribute__((__aligned__(8)));
-[root@quaco ~]#
-
-This is with the tentative move of maj/min/ino/ino_generation to 'struct
-dso', but that needs more work to match the sort order that touches it
-"dcacheline", i.e. a map that comes with the same backing DSO but
-different values for those fields is not the same DSO, right?
-
-Right now with moving the maj/min/etc to dso, in the map_share patch we
-get the structure used to keep shared entries in the rb_tree at 40
-bytes, under one cacheline, while the full 'struct map' is 32 bytes more
-than one cacheline, so still good for sharing:
-
-[acme@quaco perf]$ pahole -C map_node ~/bin/perf
-struct map_node {
-	union {
-		struct rb_node rb_node __attribute__((__aligned__(8))); /*     0    24 */
-		struct list_head node;                   /*     0    16 */
-	} __attribute__((__aligned__(8)));               /*     0    24 */
-	refcount_t                 refcnt;               /*    24     4 */
-	_Bool                      is_node:1;            /*    28: 0  1 */
-
-	/* XXX 7 bits hole, try to pack */
-	/* XXX 3 bytes hole, try to pack */
-
-	struct map *               map;                  /*    32     8 */
-
-	/* size: 40, cachelines: 1, members: 4 */
-	/* sum members: 36, holes: 1, sum holes: 3 */
-	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 7 bits */
-	/* forced alignments: 1 */
-	/* last cacheline: 40 bytes */
-} __attribute__((__aligned__(8)));
-[acme@quaco perf]$ pahole -C map ~/bin/perf
-struct map {
-	union {
-		struct rb_node rb_node __attribute__((__aligned__(8))); /*     0    24 */
-		struct list_head node;                   /*     0    16 */
-	} __attribute__((__aligned__(8)));               /*     0    24 */
-	refcount_t                 refcnt;               /*    24     4 */
-	_Bool                      is_node:1;            /*    28: 0  1 */
-	_Bool                      erange_warned:1;      /*    28: 1  1 */
-	_Bool                      priv:1;               /*    28: 2  1 */
-
-	/* XXX 5 bits hole, try to pack */
-	/* XXX 3 bytes hole, try to pack */
-
-	u64                        start;                /*    32     8 */
-	u64                        end;                  /*    40     8 */
-	u64                        pgoff;                /*    48     8 */
-	u64                        reloc;                /*    56     8 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	u64                        (*map_ip)(struct map *, u64); /*    64     8 */
-	u64                        (*unmap_ip)(struct map *, u64); /*    72     8 */
-	struct dso *               dso;                  /*    80     8 */
-	u32                        flags;                /*    88     4 */
-	u32                        prot;                 /*    92     4 */
-
-	/* size: 96, cachelines: 2, members: 14 */
-	/* sum members: 92, holes: 1, sum holes: 3 */
-	/* sum bitfield members: 3 bits, bit holes: 1, sum bit holes: 5 bits */
-	/* forced alignments: 1 */
-	/* last cacheline: 32 bytes */
-} __attribute__((__aligned__(8)));
-[acme@quaco perf]$
-
-So give me some more time, please :-)
-
-The sharing map is this one, without the maj/map/ move to 'struct dso':
-
-https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=perf/map_share&id=451df1d4ad3c636f6be57b8e69b4f94c1bbf4a65
-
-- Arnaldo
