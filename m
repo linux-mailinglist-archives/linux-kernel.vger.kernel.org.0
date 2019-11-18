@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C97D61003BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C047E100404
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 12:27:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfKRLXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 06:23:55 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:32990 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbfKRLXx (ORCPT
+        id S1727731AbfKRL0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 06:26:13 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51813 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727102AbfKRLXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 06:23:53 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a17so15755875wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:23:50 -0800 (PST)
+        Mon, 18 Nov 2019 06:23:54 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q70so16934156wme.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 03:23:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=I90vJMFtkMg4SHfbJTMtwkyg7nT+nson2WyIsvh49PY=;
-        b=CJmsOYwoG/0ZYgdz/b61MluQi1orb/lKCRRZkRKCNpJ20wjddgb44XEghmwtT2GfX8
-         XN/V6nG/cPsibOHagnO33gg9Gy8k4jbMf+vL7hsq0V1LlD37DuzJLptLrdJAUf3NsOMX
-         xoU2ediZyzFONFe1sgwcpn6730+uW747gk2IQ=
+        bh=gmfKhQtUBCxwlUAlf/yXjWEx2pu0ns3cTlzrvt6tvNM=;
+        b=AJVpaEvl9G5F0oAahsi+0ZgpySklOjd4xtw7qttK1bHx/u99ZtsTLGjT/UMHORUZzT
+         05NzypYyRQHOCOpk/wF0sZVVV6V9bYlOZaesudcySkPGn68XaPoLhMsGTjUWeoYprHHj
+         Lf1gBda5IudhPUPsShp5s4rzFiUS4goWpviR8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I90vJMFtkMg4SHfbJTMtwkyg7nT+nson2WyIsvh49PY=;
-        b=M8rpFvyRyjt8CYHK90Ap0KIwcrn1OnxJj6Bmrc2idUn3KbqLyrcT4ts5Xj8S+EO2PN
-         T8R0WXRuPVw2FFSJUL5Q5ejiv+XkPy/K7edjKfr/0r18ZD+7XvqFxqXkrpjdZgJSE8og
-         9fhL1UhoFiZPI5PedS9jV2axqM/lSyCRUQPxZD7IeSGAb5o9mikJ0zGrQlwR1NBFogoD
-         jg97n7dN1cFNtZgbHpERDD3CEInAA1EnRXRK3oitIZfb6nDRWCGKffzBjVLnlAZpFrfp
-         +EQ03aiohmE6PXSqtp4t0uxlFxlIhwBDn/SUt41kCMONugRgY/Vc5xf6Eo7DTf4oSuzJ
-         vjjg==
-X-Gm-Message-State: APjAAAUSAYVBQCMb/v+Rr2I7TL7u+nMsSXykz4OZAPL41tOYkkF9Ny2Z
-        sReysxO2dECM+uH5OrzoeDIQ/J8C2rfgQQ==
-X-Google-Smtp-Source: APXvYqz7K8GDMVABuKFmW8dcBuTDe9zePQwO4LgAafm9yVCNA5pY+4RwcC61CufkkUx8utquzc99zQ==
-X-Received: by 2002:a1c:9d89:: with SMTP id g131mr26551723wme.81.1574076230091;
-        Mon, 18 Nov 2019 03:23:50 -0800 (PST)
+        bh=gmfKhQtUBCxwlUAlf/yXjWEx2pu0ns3cTlzrvt6tvNM=;
+        b=KtHOF3ylVza2QcVRICorDQOmnDKY898EhGkkNmfEOY/fL8HnxYQc3ok4Qb5a2dJFvS
+         E0MpxGJZmhpMs9u4MYrTbfPFsrwj1r2w33IWDcI9QqP4NHN1wzYqiLZK0YWUFt3MqND4
+         V6Jeb348dYzxBwd8nvMRkK+xqSsmT91D0GAnktTTWxXiDgo0J9wRuANNN6i7UOUzg0+M
+         pm0lAJGdOjBv4nrQdupm7/n34L4jY2dDwGqY7H8Po2JG1ZCMLkDwS1iRunEP49Uxv7fo
+         csT7KTkkFUpfIa6pBGJdar3aBMoU5I96f9c8dRqg6qQiGXjoZj/SIAhiDXyhTa2vAfNC
+         uqCA==
+X-Gm-Message-State: APjAAAXF9YpfRkY9P67Sd5Jck2oYMu3t/fliH4yUnvcC2vJMB7MFio3f
+        iOSkwnY+Cr1WIMOZEtHgHZP38w==
+X-Google-Smtp-Source: APXvYqz0blv7TtLD2zri7O/qOuTx9rfA3NWuzorwvuyMu4SHgET5SAZO88THQGXJ6kr7wgrqP6gmmw==
+X-Received: by 2002:a1c:2745:: with SMTP id n66mr28610056wmn.171.1574076231514;
+        Mon, 18 Nov 2019 03:23:51 -0800 (PST)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.49
+        by smtp.gmail.com with ESMTPSA id y2sm21140815wmy.2.2019.11.18.03.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 03:23:49 -0800 (PST)
+        Mon, 18 Nov 2019 03:23:51 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v5 15/48] soc: fsl: qe: move qe_ic_cascade_* functions to qe_ic.c
-Date:   Mon, 18 Nov 2019 12:22:51 +0100
-Message-Id: <20191118112324.22725-16-linux@rasmusvillemoes.dk>
+Subject: [PATCH v5 16/48] soc: fsl: qe: rename qe_ic_cascade_low_mpic -> qe_ic_cascade_low
+Date:   Mon, 18 Nov 2019 12:22:52 +0100
+Message-Id: <20191118112324.22725-17-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
 References: <20191118112324.22725-1-linux@rasmusvillemoes.dk>
@@ -62,122 +62,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These functions are only ever called through a function pointer, and
-therefore it makes no sense for them to be "static inline" - gcc has
-no choice but to emit a copy in each translation unit that takes the
-address of one of these. Since they are now only referenced from
-qe_ic.c, just make them local to that file.
+The qe_ic_cascade_{low,high}_mpic functions are now used as handlers
+both when the interrupt parent is mpic as well as ipic, so remove the
+_mpic suffix.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe_ic.c | 42 ++++++++++++++++++++++++++++++++++++++
- include/soc/fsl/qe/qe_ic.h | 42 --------------------------------------
- 2 files changed, 42 insertions(+), 42 deletions(-)
+ drivers/soc/fsl/qe/qe_ic.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
-index a062efac398b..94ccbeeb1ad1 100644
+index 94ccbeeb1ad1..de2ca2e3a648 100644
 --- a/drivers/soc/fsl/qe/qe_ic.c
 +++ b/drivers/soc/fsl/qe/qe_ic.c
-@@ -314,6 +314,48 @@ unsigned int qe_ic_get_high_irq(struct qe_ic *qe_ic)
+@@ -314,7 +314,7 @@ unsigned int qe_ic_get_high_irq(struct qe_ic *qe_ic)
  	return irq_linear_revmap(qe_ic->irqhost, irq);
  }
  
-+static void qe_ic_cascade_low_mpic(struct irq_desc *desc)
-+{
-+	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
-+	unsigned int cascade_irq = qe_ic_get_low_irq(qe_ic);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+
-+	if (cascade_irq != NO_IRQ)
-+		generic_handle_irq(cascade_irq);
-+
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(&desc->irq_data);
-+}
-+
-+static void qe_ic_cascade_high_mpic(struct irq_desc *desc)
-+{
-+	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
-+	unsigned int cascade_irq = qe_ic_get_high_irq(qe_ic);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+
-+	if (cascade_irq != NO_IRQ)
-+		generic_handle_irq(cascade_irq);
-+
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(&desc->irq_data);
-+}
-+
-+static void qe_ic_cascade_muxed_mpic(struct irq_desc *desc)
-+{
-+	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
-+	unsigned int cascade_irq;
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+
-+	cascade_irq = qe_ic_get_high_irq(qe_ic);
-+	if (cascade_irq == NO_IRQ)
-+		cascade_irq = qe_ic_get_low_irq(qe_ic);
-+
-+	if (cascade_irq != NO_IRQ)
-+		generic_handle_irq(cascade_irq);
-+
-+	chip->irq_eoi(&desc->irq_data);
-+}
-+
- static void __init qe_ic_init(struct device_node *node, unsigned int flags)
+-static void qe_ic_cascade_low_mpic(struct irq_desc *desc)
++static void qe_ic_cascade_low(struct irq_desc *desc)
  {
- 	void (*low_handler)(struct irq_desc *desc);
-diff --git a/include/soc/fsl/qe/qe_ic.h b/include/soc/fsl/qe/qe_ic.h
-index a47a0d26acbd..43e4ce95c6a0 100644
---- a/include/soc/fsl/qe/qe_ic.h
-+++ b/include/soc/fsl/qe/qe_ic.h
-@@ -67,46 +67,4 @@ void qe_ic_set_highest_priority(unsigned int virq, int high);
- int qe_ic_set_priority(unsigned int virq, unsigned int priority);
- int qe_ic_set_high_priority(unsigned int virq, unsigned int priority, int high);
+ 	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
+ 	unsigned int cascade_irq = qe_ic_get_low_irq(qe_ic);
+@@ -327,7 +327,7 @@ static void qe_ic_cascade_low_mpic(struct irq_desc *desc)
+ 		chip->irq_eoi(&desc->irq_data);
+ }
  
--static inline void qe_ic_cascade_low_mpic(struct irq_desc *desc)
--{
--	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
--	unsigned int cascade_irq = qe_ic_get_low_irq(qe_ic);
--	struct irq_chip *chip = irq_desc_get_chip(desc);
--
--	if (cascade_irq != NO_IRQ)
--		generic_handle_irq(cascade_irq);
--
--	if (chip->irq_eoi)
--		chip->irq_eoi(&desc->irq_data);
--}
--
--static inline void qe_ic_cascade_high_mpic(struct irq_desc *desc)
--{
--	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
--	unsigned int cascade_irq = qe_ic_get_high_irq(qe_ic);
--	struct irq_chip *chip = irq_desc_get_chip(desc);
--
--	if (cascade_irq != NO_IRQ)
--		generic_handle_irq(cascade_irq);
--
--	if (chip->irq_eoi)
--		chip->irq_eoi(&desc->irq_data);
--}
--
--static inline void qe_ic_cascade_muxed_mpic(struct irq_desc *desc)
--{
--	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
--	unsigned int cascade_irq;
--	struct irq_chip *chip = irq_desc_get_chip(desc);
--
--	cascade_irq = qe_ic_get_high_irq(qe_ic);
--	if (cascade_irq == NO_IRQ)
--		cascade_irq = qe_ic_get_low_irq(qe_ic);
--
--	if (cascade_irq != NO_IRQ)
--		generic_handle_irq(cascade_irq);
--
--	chip->irq_eoi(&desc->irq_data);
--}
--
- #endif /* _ASM_POWERPC_QE_IC_H */
+-static void qe_ic_cascade_high_mpic(struct irq_desc *desc)
++static void qe_ic_cascade_high(struct irq_desc *desc)
+ {
+ 	struct qe_ic *qe_ic = irq_desc_get_handler_data(desc);
+ 	unsigned int cascade_irq = qe_ic_get_high_irq(qe_ic);
+@@ -392,8 +392,8 @@ static void __init qe_ic_init(struct device_node *node, unsigned int flags)
+ 		return;
+ 	}
+ 	if (qe_ic->virq_high != qe_ic->virq_low) {
+-		low_handler = qe_ic_cascade_low_mpic;
+-		high_handler = qe_ic_cascade_high_mpic;
++		low_handler = qe_ic_cascade_low;
++		high_handler = qe_ic_cascade_high;
+ 	} else {
+ 		low_handler = qe_ic_cascade_muxed_mpic;
+ 		high_handler = NULL;
 -- 
 2.23.0
 
