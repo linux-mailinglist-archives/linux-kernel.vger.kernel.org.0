@@ -2,106 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD95FFF96
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B274FFFA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 08:37:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfKRHgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 02:36:52 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:43838 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbfKRHgu (ORCPT
+        id S1727104AbfKRHh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 02:37:26 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:38567 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfKRHhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 02:36:50 -0500
-Received: by mail-pj1-f67.google.com with SMTP id a10so1234322pju.10
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2019 23:36:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O2pEQ/gFrO9sbquSpD0RUFiXEZPVde4Gd/3NvXvj/F8=;
-        b=lasfj/iUysHaMF/qDePjau4redMEkpAtBhX7DCWwsRWWjoMjocxy53+NEzYlRx6r+F
-         eqQDOy6M4w/kJNlBDir5GV7B2JaigQk7H0QKVPSK7M2gIomrHOwulfnCqztEEL6G/k+F
-         T7zpBu/Uw/7zNWTTExlJ4dC0NjILJUqniavbTldNu4ppTZ3oaPyO3RS7l5Y89icjrMnZ
-         /4WyzvHplHa/ygdLd2SvixPvFo1NgnVt+pk/A2J6R40uU80Zbbce2AecXSatp6LWc5c9
-         IGSnhiCXSLSiMCZlQN4f6XKPDoRRUE6jCcsxilTW/Fdw8qB5t66bpprKEK5tvlf3mB+U
-         L/MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O2pEQ/gFrO9sbquSpD0RUFiXEZPVde4Gd/3NvXvj/F8=;
-        b=CJwMgsseIXSukl/tgFWbyE6I10/IsE3ow1eWeejYDWFHTO/yWEdxGsimShprb/TKwH
-         hwCREus7dJUWLmokp0kAmZrr5P7aHyR+1wdsfc99EI9p6n4/Lnvy3EpobZZM8hC0RB8z
-         LTZ888BVBIZ1OxXtk1In2JKcPJyjKlhugV4q6K3eMEYR1Z8KQ3/Hld9J8ujcxO9Qu7hp
-         bwh5lzaOFhX9+XIRX0k2AaWh0sbzsMNjbOtMgpImFZApZxtc5JyoKTFr0luJ7klbe27E
-         nQgk3ajzpCjelbUZhtjlgb5FrCPxB3ASXglKQXnAq3rN2sFzT/drje1paMmq6hs9BCy6
-         GOvA==
-X-Gm-Message-State: APjAAAUNGBVvRwdbQTY/ghTm9RGphEqWcPBNYTgyld2ScyB3Pn7Z1Xes
-        Tz0IV6aOX/Sy+bkLwOl/WZUx3LK6hDQ=
-X-Google-Smtp-Source: APXvYqzTxqKx8I3LrGzO+aP1mTgFtsOpNih9t3u1AhFiqfSjAM2j1hpXKU8cxdopEtymDDo+1JkzHA==
-X-Received: by 2002:a17:90a:2470:: with SMTP id h103mr39127468pje.12.1574062609419;
-        Sun, 17 Nov 2019 23:36:49 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id k13sm18597563pgl.69.2019.11.17.23.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 23:36:48 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] ASoC: wm2200: add missed operations in remove and probe failure
-Date:   Mon, 18 Nov 2019 15:36:33 +0800
-Message-Id: <20191118073633.28237-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        Mon, 18 Nov 2019 02:37:25 -0500
+Received: from localhost ([185.35.208.129]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N9dg5-1hli4Z3cEH-015WVh; Mon, 18 Nov 2019 08:36:54 +0100
+Date:   Mon, 18 Nov 2019 08:36:50 +0100
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     robh+dt@kernel.org, jic23@kernel.org, mark.rutland@arm.com
+Cc:     mripard@kernel.org, shawnguo@kernel.org, heiko@sntech.de,
+        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        gregkh@linuxfoundation.org, christophe.jaillet@wanadoo.fr,
+        tglx@linutronix.de, mchehab+samsung@kernel.org,
+        davem@davemloft.net, paulmck@linux.ibm.com,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/4] MAINTAINERS: add maintainer for ping iio sensors
+Message-ID: <20191118073648.tk4otab6alsiuzt7@arbad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:ZISP8DP7LxxcjVaKcb0HRurcDIs/0YQTEspXlzOeNUD09UpU21I
+ A8MfWMOlgmmvZwYxEVYwbPSQsxW7yxgfzqZdQCxtLfO/MgWG2IqPZMRQR+ZzfvL9TV8tknA
+ gJpZuVuMirJ5Dk2t49/AmA/SKYp5VCeCRO1xCWcWn+i79CdlQOeLjKt/bQLFSW8nwsS4xKP
+ EHfM7FqfJrwlgsCGPfjzQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pzWtpX5zhZA=:uAPKewFawR4cgNWUdCnfrh
+ TKb2ODE7kL5lG4bjmgtm/SMhHhx/6z7AWNU0kO0TTrbrtWe/mGBhHzw6v4VeztTj1wdC7+IJd
+ zPXNvZ4S/5LK+u4dAflENtx6btQ41SHOEGxfOZKdkhbCtpOh5Pk4pwiYmuW/IuHHMK7MRynEB
+ mCbyrd1q1B1pLmlTkhO0jMvFoWvjBCSJDejDP9B/rRGO9d4/UxOWDhyJAXzUQ1zKdeAoFmTUd
+ 6oQMPQXVMR/YG9ed9q9gGHN4uuYvCK5hRULjaSlMF6p0nSTUYXMOeFb3mc11wC54M84KSLJ7N
+ 03OVQygOfpdHXEwYLJmcPdjteyFBIvFbwGqyn7U3o3sEMCBeeQoXTaNWXK+Yzkx55P0hX7eMF
+ pl/g+auPT/EPhh6WAbyl3CGPlkJ8UOhm8csfemYYdcKGQWci7KzvtIhMhS81f5adabVCIVrNQ
+ yQGI9HvlQ0xlagOiRgCJwJoOlZJJiQV6kxDRbXccBFdf5eXG85Up9GAdabbjhCrCEe8mRUKdG
+ iINAa9dIkQS36Ugm4xXsQFH0riCfkvLQhjMTms1HW3+0w+N9zZXqT2hWZJw3McmJr+g4PFGm3
+ CrPB2jE4wd1kbIfyI1y3FiL1gp1a7qBtYNMHwhFwu9w+ocos8pn254b9Vr5Vg0aaGnbEgJFz5
+ e7T1xwEAYbGk0albCkSO/QWAIMNX/8YUqka0KfylCv//nf5+DY7mlWgiPzA2ZbP3kAPXpE4ry
+ MHbYBLBWCCJvBdIvdpxvOwDCta/quArlCp9CtIrivJXfZiWVKRtn6SHAm1/OR6S2/DRYU9gDM
+ nmP4gUGy0BSXxWSHClGa+VJ5WfsFBdGiYizWTk5YBvT/cr+KtSXKuT/6qvdBkZNk+0QLJOmbE
+ 0N0MLkHejM1mychbQr5z9VBDKKf/oY5Ld4CKzAJ1Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver misses calls to pm_runtime_disable and regulator_bulk_disable
-in remove and a call to free_irq in probe failure.
-Add the calls to fix it.
+Add a maintainer for the new parallax PING))) and LaserPING IIO sensors
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 ---
- sound/soc/codecs/wm2200.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/codecs/wm2200.c b/sound/soc/codecs/wm2200.c
-index cf64e109c658..7b087d94141b 100644
---- a/sound/soc/codecs/wm2200.c
-+++ b/sound/soc/codecs/wm2200.c
-@@ -2410,6 +2410,8 @@ static int wm2200_i2c_probe(struct i2c_client *i2c,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c6c34d04ce95..ad469adffb99 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12264,6 +12264,13 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/platform/x86/panasonic-laptop.c
  
- err_pm_runtime:
- 	pm_runtime_disable(&i2c->dev);
-+	if (i2c->irq)
-+		free_irq(i2c->irq, wm2200);
- err_reset:
- 	if (wm2200->pdata.reset)
- 		gpio_set_value_cansleep(wm2200->pdata.reset, 0);
-@@ -2426,12 +2428,15 @@ static int wm2200_i2c_remove(struct i2c_client *i2c)
- {
- 	struct wm2200_priv *wm2200 = i2c_get_clientdata(i2c);
- 
-+	pm_runtime_disable(&i2c->dev);
- 	if (i2c->irq)
- 		free_irq(i2c->irq, wm2200);
- 	if (wm2200->pdata.reset)
- 		gpio_set_value_cansleep(wm2200->pdata.reset, 0);
- 	if (wm2200->pdata.ldo_ena)
- 		gpio_set_value_cansleep(wm2200->pdata.ldo_ena, 0);
-+	regulator_bulk_disable(ARRAY_SIZE(wm2200->core_supplies),
-+			       wm2200->core_supplies);
- 
- 	return 0;
- }
++PARALLAX PING IIO SENSOR DRIVER
++M:	Andreas Klinger <ak@it-klinger.de>
++L:	linux-iio@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
++F:	drivers/iio/proximity/ping.c
++
+ PARALLEL LCD/KEYPAD PANEL DRIVER
+ M:	Willy Tarreau <willy@haproxy.com>
+ M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
 -- 
-2.24.0
-
+2.11.0
