@@ -2,157 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2D810024E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 11:24:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 771E5100237
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 11:18:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKRKYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 05:24:04 -0500
-Received: from spam01.hygon.cn ([110.188.70.11]:50976 "EHLO spam1.hygon.cn"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726461AbfKRKYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 05:24:04 -0500
-Received: from MK-FE.hygon.cn ([172.23.18.61])
-        by spam1.hygon.cn with ESMTP id xAIAKXCl085098;
-        Mon, 18 Nov 2019 18:20:33 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from cncheex01.Hygon.cn ([172.23.18.10])
-        by MK-FE.hygon.cn with ESMTP id xAIAKNwP014116;
-        Mon, 18 Nov 2019 18:20:23 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from [172.20.21.12] (172.23.18.44) by cncheex01.Hygon.cn
- (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 18 Nov
- 2019 18:20:28 +0800
-Subject: Re: [PATCH] NTB: Fix an error in get link status
-To:     Jon Mason <jdmason@kudzu.us>
-CC:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-ntb <linux-ntb@googlegroups.com>, <linjiasen007@gmail.com>
-References: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
- <CAPoiz9wAJz=Hqb6Os=9AHHv_NGpZ8uCaAuOC=aUTkASKdfs9WQ@mail.gmail.com>
-From:   Jiasen Lin <linjiasen@hygon.cn>
-Message-ID: <933f74c7-7249-618c-13dc-9e4e47ad75d7@hygon.cn>
-Date:   Mon, 18 Nov 2019 18:17:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726600AbfKRKSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 05:18:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726460AbfKRKSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 05:18:24 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 598B220727;
+        Mon, 18 Nov 2019 10:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574072303;
+        bh=kKOMigJg/s6w5TnRT2XmC14ecX+48iqWRHWFRAU2aSg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sIDKgm9hhuZtzd+Vv1GQpYXd/CMqag0FgT1WIybFKRnx3I7X+vqNp6JyIzXESvYbW
+         aeJWsH/clVRt9o1kQtDsq5rDzjnCAenvqkmTB7+n+sS7i4m0vA/aRsw/S66u5782Da
+         s1hSjyIHpn0Zlwomi4OzVdM61tQLDngwxcm6UMHA=
+Date:   Mon, 18 Nov 2019 11:18:21 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Tian Yunhao <t123yh@outlook.com>
+Cc:     Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH, v2] clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
+Message-ID: <20191118101821.GD4345@gilmour.lan>
+References: <MN2PR08MB579006CB67AC63A93C8B0D5E89760@MN2PR08MB5790.namprd08.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPoiz9wAJz=Hqb6Os=9AHHv_NGpZ8uCaAuOC=aUTkASKdfs9WQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.23.18.44]
-X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
- (172.23.18.10)
-X-MAIL: spam1.hygon.cn xAIAKXCl085098
-X-DNSRBL: 
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OsjXUGRLsfCucSoX"
+Content-Disposition: inline
+In-Reply-To: <MN2PR08MB579006CB67AC63A93C8B0D5E89760@MN2PR08MB5790.namprd08.prod.outlook.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--OsjXUGRLsfCucSoX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2019/11/18 7:00, Jon Mason wrote:
-> On Thu, Nov 7, 2019 at 4:37 AM Jiasen Lin <linjiasen@hygon.cn> wrote:
->>
->> The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
->> but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
->> It is offset of Device Capabilities Reg rather than Link Control Reg.
->>
->> This code trigger an error in get link statsus:
->>
->>          cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
->>                  LNK STA -               0x8fa1
->>                  Link Status -           Up
->>                  Link Speed -            PCI-E Gen 0
->>                  Link Width -            x0
->>
->> This patch use pcie_capability_read_dword to get link status.
->> After fix this issue, we can get link status accurately:
->>
->>          cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
->>                  LNK STA -               0x11030042
->>                  Link Status -           Up
->>                  Link Speed -            PCI-E Gen 3
->>                  Link Width -            x16
-> 
-> No response from AMD maintainers, but it looks like you are correct.
-> 
-> This needs a "Fixes:" line here.  I took the liberty of adding one to
-> this patch.
-> 
+Hi,
 
-Thank you for your suggestions. Yes, this patch fix the commit id: 
-a1b3695 ("NTB: Add support for AMD PCI-Express Non-Transparent Bridge").
-
->> Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
->> ---
->>   drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
->>   drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
->>   2 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
->> index 156c2a1..ae91105 100644
->> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
->> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
->> @@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
->>
->>          ndev->cntl_sta = reg;
->>
->> -       rc = pci_read_config_dword(ndev->ntb.pdev,
->> -                                  AMD_LINK_STATUS_OFFSET, &stat);
->> +       rc = pcie_capability_read_dword(ndev->ntb.pdev,
->> +                                  PCI_EXP_LNKCTL, &stat);
->>          if (rc)
->>                  return 0;
->>          ndev->lnk_sta = stat;
->> @@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
->>   static const struct pci_device_id amd_ntb_pci_tbl[] = {
->>          { PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
->>          { PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
->> +       { PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
-> 
-> This should be a separate patch.  I took the liberty of splitting it
-> off into a unique patch and attributing it to you.  I've pushed them
-> to the ntb-next branch on
-> https://github.com/jonmason/ntb
+On Wed, Nov 13, 2019 at 09:23:59AM +0000, Tian Yunhao wrote:
+> The hws field of sun8i_v3s_hw_clks has only 74
+> members. However, the number specified by CLK_NUMBER
+> is 77 (= CLK_I2S0 + 1). This leads to runtime segmentation
+> fault that is not always reproducible.
 >
-Thank you for your comment. We appreciate the time and effort you have 
-spent to split it off, I will test it ASAP.
+> This patch corrects this behavior by separating clock
+> numbers for V3 and V3S.
+>
+> Signed-off-by: Yunhao Tian <t123yh@outlook.com>
 
-> Please verify everything looks acceptable to you (given the changes I
-> did above that are attributed to you).  Also, testing of the latest
-> code is always appreciated.
-> 
-> Thanks,
-> Jon
-> 
-> 
->>          { 0, }
->>   };
->>   MODULE_DEVICE_TABLE(pci, amd_ntb_pci_tbl);
->> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_amd.h
->> index 139a307..39e5d18 100644
->> --- a/drivers/ntb/hw/amd/ntb_hw_amd.h
->> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
->> @@ -53,7 +53,6 @@
->>   #include <linux/pci.h>
->>
->>   #define AMD_LINK_HB_TIMEOUT    msecs_to_jiffies(1000)
->> -#define AMD_LINK_STATUS_OFFSET 0x68
->>   #define NTB_LIN_STA_ACTIVE_BIT 0x00000002
->>   #define NTB_LNK_STA_SPEED_MASK 0x000F0000
->>   #define NTB_LNK_STA_WIDTH_MASK 0x03F00000
->> --
->> 2.7.4
->>
->> --
->> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
->> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
->> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/1573119336-107732-1-git-send-email-linjiasen%40hygon.cn.
+Even though they are similar, the Signed-off-by doesn't match the
+authorship.
 
-Thanks,
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 4 ++--
+>  drivers/clk/sunxi-ng/ccu-sun8i-v3s.h | 3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> index 5c779eec454b..72a87dd0c0d8 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> @@ -618,7 +618,7 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+>  		[CLK_MBUS]		= &mbus_clk.common.hw,
+>  		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+>  	},
+> -	.num	= CLK_NUMBER,
+> +	.num	= CLK_NUMBER_V3S,
+>  };
+>
+>  static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+> @@ -700,7 +700,7 @@ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+>  		[CLK_MBUS]		= &mbus_clk.common.hw,
+>  		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+>  	},
+> -	.num	= CLK_NUMBER,
+> +	.num	= CLK_NUMBER_V3,
 
-Jiasen Lin
+There's not much point in having a defined CLK_NUMBER here, just use
+the value you've defined it to (so CLK_I2S0 + 1  and CLK_PLL_DDR1 + 1)
+
+Maxime
+
+--OsjXUGRLsfCucSoX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXdJv7QAKCRDj7w1vZxhR
+xVauAP0a9Re23tvnPYMA7Ub1qIg6UIRCLhMLGd36GhgtgPhUiwEAiFCX1AxrLVL2
+8JoMUkjm4pyZkQ/hVE+edtx46zPZ/Ag=
+=A6na
+-----END PGP SIGNATURE-----
+
+--OsjXUGRLsfCucSoX--
