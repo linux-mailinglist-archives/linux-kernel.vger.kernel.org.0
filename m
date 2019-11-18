@@ -2,92 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59098100B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45909100BB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 19:45:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfKRScH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 13:32:07 -0500
-Received: from mga05.intel.com ([192.55.52.43]:13370 "EHLO mga05.intel.com"
+        id S1726881AbfKRSpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 13:45:46 -0500
+Received: from mxa1.seznam.cz ([77.75.78.90]:63694 "EHLO mxa1.seznam.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfKRScH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 13:32:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 10:32:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,321,1569308400"; 
-   d="scan'208";a="217973838"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 18 Nov 2019 10:32:06 -0800
-Date:   Mon, 18 Nov 2019 10:36:41 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 10/10] iommu/vt-d: Misc macro clean up for SVM
-Message-ID: <20191118103641.24e73c7d@jacob-builder>
-In-Reply-To: <ac725526-0396-e9c6-196e-b0d1cf5431fe@linux.intel.com>
-References: <1573859377-75924-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1573859377-75924-11-git-send-email-jacob.jun.pan@linux.intel.com>
-        <ac725526-0396-e9c6-196e-b0d1cf5431fe@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726423AbfKRSpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 13:45:46 -0500
+X-Greylist: delayed 706 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Nov 2019 13:45:45 EST
+Received: from email.seznam.cz
+        by email-smtpc10b.ko.seznam.cz (email-smtpc10b.ko.seznam.cz [10.53.14.45])
+        id 7e43507a554ae8787a1a4ccd;
+        Mon, 18 Nov 2019 19:45:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1574102740; bh=TzTZvRPTC8arfHf9xInFoxSaBfyeJQCa4kNpPyUwaUc=;
+        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer;
+        b=IzopMcl2Cy2LzattbBHt/V7GuqMoJpI5uOeXr88rM4jgpF4wzIjxZ/8TWcjKAhtkO
+         m6dgTATKxwUMkd3zNeNn+UIBp7Num4LuvyveUol4J8SbgJbdaaa2FznXSvKlKNw4Qs
+         ridKx+q/x4liWqOYQsgaOpblAz6GNzPZKdhZNIAI=
+Received: from linux-h043.suse.cz (cst-prg-22-65.cust.vodafone.cz [46.135.22.65])
+        by email-relay13.ko.seznam.cz (Seznam SMTPD 1.3.108) with ESMTP;
+        Mon, 18 Nov 2019 19:33:35 +0100 (CET)  
+From:   Giovanni Gherdovich <bobdc9664@seznam.cz>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Giovanni Gherdovich <bobdc9664@seznam.cz>
+Subject: [PATCH] staging: octeon: indent with tabs instead of spaces
+Date:   Mon, 18 Nov 2019 19:38:52 +0100
+Message-Id: <20191118183852.3699-1-bobdc9664@seznam.cz>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Nov 2019 10:23:34 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+Remove a coding style error from the Octeon driver's tree and keep
+checkpatch.pl a little quieter.
 
-> Hi,
-> 
-> On 11/16/19 7:09 AM, Jacob Pan wrote:
-> > Use combined macros for_each_svm_dev() to simplify SVM device
-> > iteration and error checking.
-> > 
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> > ---
-> >   drivers/iommu/intel-svm.c | 85
-> > ++++++++++++++++++++++------------------------- 1 file changed, 40
-> > insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> > index 189865501411..a7f67a9da3fc 100644
-> > --- a/drivers/iommu/intel-svm.c
-> > +++ b/drivers/iommu/intel-svm.c
-> > @@ -226,6 +226,10 @@ static const struct mmu_notifier_ops
-> > intel_mmuops = { static DEFINE_MUTEX(pasid_mutex);
-> >   static LIST_HEAD(global_svm_list);
-> >   
-> > +#define for_each_svm_dev(sdev, svm, dev)		\
-> > +	list_for_each_entry(sdev, &svm->devs, list)	\
-> > +		if (dev != sdev->dev) {} else  
-> 
-> "dev" has been reused in "sdev->dev", how about below?
-> 
-> #define for_each_svm_dev(sdev, svm, d)                  \
->          list_for_each_entry((sdev), &(svm)->devs, list) \
->                  if ((d) != (sdev)->dev) {} else
-> 
-sounds good. will do.
+Being a white-spaces patch the chances of breakage are minimal; we don't
+have the hardware to run this driver so we built it with COMPILE_TEST
+enabled on an x86 machine.
 
-> Best regards,
-> baolu
-> 
-> 
->  [...]  
+Signed-off-by: Giovanni Gherdovich <bobdc9664@seznam.cz>
+---
+ drivers/staging/octeon/octeon-stubs.h | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-[Jacob Pan]
+diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+index ed9d44ff148b..79213c045504 100644
+--- a/drivers/staging/octeon/octeon-stubs.h
++++ b/drivers/staging/octeon/octeon-stubs.h
+@@ -1140,22 +1140,22 @@ union cvmx_npi_rsl_int_blocks {
+ union cvmx_pko_command_word0 {
+ 	uint64_t u64;
+ 	struct {
+-	        uint64_t total_bytes:16;
+-	        uint64_t segs:6;
+-	        uint64_t dontfree:1;
+-	        uint64_t ignore_i:1;
+-	        uint64_t ipoffp1:7;
+-	        uint64_t gather:1;
+-	        uint64_t rsp:1;
+-	        uint64_t wqp:1;
+-	        uint64_t n2:1;
+-	        uint64_t le:1;
+-	        uint64_t reg0:11;
+-	        uint64_t subone0:1;
+-	        uint64_t reg1:11;
+-	        uint64_t subone1:1;
+-	        uint64_t size0:2;
+-	        uint64_t size1:2;
++		uint64_t total_bytes:16;
++		uint64_t segs:6;
++		uint64_t dontfree:1;
++		uint64_t ignore_i:1;
++		uint64_t ipoffp1:7;
++		uint64_t gather:1;
++		uint64_t rsp:1;
++		uint64_t wqp:1;
++		uint64_t n2:1;
++		uint64_t le:1;
++		uint64_t reg0:11;
++		uint64_t subone0:1;
++		uint64_t reg1:11;
++		uint64_t subone1:1;
++		uint64_t size0:2;
++		uint64_t size1:2;
+ 	} s;
+ };
+ 
+-- 
+2.16.4
+
