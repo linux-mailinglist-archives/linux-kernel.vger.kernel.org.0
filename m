@@ -2,133 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C7A1009BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:53:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5392A1009C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2019 17:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbfKRQxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 11:53:48 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42683 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfKRQxr (ORCPT
+        id S1726975AbfKRQyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 11:54:14 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:34129 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbfKRQyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:53:47 -0500
-Received: by mail-oi1-f196.google.com with SMTP id o12so5815511oic.9;
-        Mon, 18 Nov 2019 08:53:47 -0800 (PST)
+        Mon, 18 Nov 2019 11:54:12 -0500
+Received: by mail-qv1-f67.google.com with SMTP id n12so6831880qvt.1;
+        Mon, 18 Nov 2019 08:54:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0RY29p8OCAPItaI1ueD3TYbt/flhsMbwSYmc7O8tl/M=;
+        b=kAppjLoEn+T0AThKTVo5v1wHMbf7qr3o/J14MxqqWA20r4g/DotXfAo9q0l4jUBGKP
+         R8eJGyrTIxtezn4RcTdv/uHIh79UfoLj8s3TnNeV2EfMhjNzUhSiQref9WNF5t5RKzak
+         KX5juWQeOBJcAvFaGNKvrjHwsfuvqYt3Am5QgGv7oRMjuEiMDZl9rmaNoP7vuDJn0ke7
+         Ko90C+vNlRJZlHL+o9n4pFWn/CrKnp4MY5YSzmnx+0m3A9cC49DDdvobcayKLNYRwAbP
+         kO5QFvfXO24Z/mncToWpa1revFsB25CK8necDKMXizJxX9ZOHv0mB5l173sWAwzIg7/r
+         s2eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hqTOasQxtcpYkZR/qyY0Ns887QHHgqrNr6obLQsmNsI=;
-        b=OWcHeOLBFcvsJGM4bLKrsbHY1ywlzAMVlzijeOfEGBK/N0Jh1Sol1ekSSLR02gfBIY
-         FlkgaQ8h39q6D0Fgso6CK23rttxDepbChSmpC+P34nzqkblv0ZgZLLiG1kiLocci25Wu
-         gKiqoU4s9ynUYwdAc9vaBYnCYoAjdAokWu9Fwgr+QW9Hg+Vd89X4ad3PDOhlvm504Ip8
-         iSpdo6mGx6NBP4SobWaSYYnP8ketB8xNkBfvDWUR7nDcuX4d4a2BeKooQ9JmEYGgt4L1
-         Wxkksa8GDAYnPLUhl2UKzOWYYyBARx10vypQ8WkUsonuXflGMrKKAArVOjxC+Hr56jjI
-         VY1Q==
-X-Gm-Message-State: APjAAAVrB1r4NDT2YvrDZc8Z7mfjGQpqMFH1q/Smw4TWoB+dgnrI1ouk
-        PGmlIjgFobWY77uGmg4oRA==
-X-Google-Smtp-Source: APXvYqxhK6+LinJAXcIhwyYoIbpoJYerjNgZrjGX55HdjJe+rrjIeNxntyurC83Ly9lLYUCNhH+m7w==
-X-Received: by 2002:aca:451:: with SMTP id 78mr21727660oie.170.1574096026456;
-        Mon, 18 Nov 2019 08:53:46 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o18sm6447650otj.38.2019.11.18.08.53.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0RY29p8OCAPItaI1ueD3TYbt/flhsMbwSYmc7O8tl/M=;
+        b=mXjcJqYfj5MhRk0oruIKb54MqPwxvXlfUC9/zo0Ik6Rj4zNYg7O0DUU43BcMnjrLlh
+         isH2DfIjDs/7LvH4HGC10XEcPJSFmjSpll8INfSTzsvmPlrdm6diaya+6Yalkjz7p8gQ
+         CgGVR0NWaHm/7VyfJIkYE0TM0WPHnHP31c7olSl3fK/ewxGhLgxaTqScB9dSj1BZOR78
+         jI24LUYy+Z2X9U0T4nR6Gxgibcj9D+GK5xCBFNGxEJrkZeAU8RD4X58esvovM/Qy7ymn
+         lj9XD9nyOnctoiHXbY9Qm7wmgDSl2mPcdPk/X2UBd2aG2qJvgjQzM8RPql2aAwhXQmPq
+         yidg==
+X-Gm-Message-State: APjAAAVuQKE3jjLES8l3VkXTzJLpBQmNfPhrq2gHkbSOr+NMbjuoh2P0
+        UJ5TgwlfSH2o9pWxKU340PM=
+X-Google-Smtp-Source: APXvYqy8eHYH29PFX5EW/5Rxpb8JjCASf9s8UFZjOHCHXroi+2D/CMOBzaAuwaxfXcjsrGkSMjPT+A==
+X-Received: by 2002:a05:6214:22a:: with SMTP id j10mr25800324qvt.154.1574096049203;
+        Mon, 18 Nov 2019 08:54:09 -0800 (PST)
+Received: from localhost.localdomain ([72.53.229.209])
+        by smtp.gmail.com with ESMTPSA id a3sm8634648qkf.76.2019.11.18.08.54.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 08:53:45 -0800 (PST)
-Date:   Mon, 18 Nov 2019 10:53:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "bmeng.cn@gmail.com" <bmeng.cn@gmail.com>,
-        "atish.patra@wdc.com" <atish.patra@wdc.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
-Subject: Re: [PATCH 2/4] gpio: sifive: Add DT documentation for SiFive GPIO
-Message-ID: <20191118165345.GA3935@bogus>
-References: <1573560684-48104-1-git-send-email-yash.shah@sifive.com>
- <1573560684-48104-3-git-send-email-yash.shah@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573560684-48104-3-git-send-email-yash.shah@sifive.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 18 Nov 2019 08:54:08 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Grigoryev Denis <grigoryev@fastwel.ru>,
+        Axel Lin <axel.lin@ingics.com>, Dan Murphy <dmurphy@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: [PATCH v1 0/4] tps6105x add devicetree and leds support
+Date:   Mon, 18 Nov 2019 11:53:56 -0500
+Message-Id: <20191118165400.21985-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 12:12:06PM +0000, Yash Shah wrote:
-> DT documentation for GPIO controller added.
-> 
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [Atish: Compatible string update]
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-sifive.txt       | 33 ++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sifive.txt
+I needed led operation for this mfd chip, so I added a very simple
+driver for this.
 
-Please make this a schema. See 
-Documentation/devicetree/writing-schema.rst.
+My platform (arm imx6q) is devicetree-based, so I added optional
+devicetree support for this chip and its sub-drivers.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sifive.txt b/Documentation/devicetree/bindings/gpio/gpio-sifive.txt
-> new file mode 100644
-> index 0000000..d3416d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-sifive.txt
-> @@ -0,0 +1,33 @@
-> +SiFive GPIO controller bindings
-> +
-> +Required properties:
-> +- compatible: Should be "sifive,<chip>-gpio" and "sifive,gpio<version>".
-> +  Supported compatible strings are: "sifive,fu540-c000-gpio" for the SiFive
-> +  GPIO v0 as integrated onto the SiFive FU540 chip, and "sifive,gpio0" for the
-> +  SiFive GPIO v0 IP block with no chip integration tweaks.
-> +  Please refer to sifive-blocks-ip-versioning.txt for details.
-> +- reg: Physical base address and length of the controller's registers.
-> +- clocks: Should contain a clock identifier for the GPIO's parent clock.
-> +- #gpio-cells : Should be 2
-> +  - The first cell is the GPIO offset number.
-> +  - The second cell indicates the polarity of the GPIO
-> +- gpio-controller : Marks the device node as a GPIO controller.
-> +- interrupt-controller: Marks the device node as an interrupt controller.
-> +- #interrupt-cells : Should be 2.
-> +  - The first cell is the GPIO offset number within the GPIO controller.
-> +  - The second cell is the edge/level to use for interrupt generation.
-> +- interrupts: Specify the interrupts, one per GPIO
+Interestingly, the main mfd driver had a dt 'compatible' binding, but
+could not operate without platform data?
 
-How many GPIOs?
+Sven Van Asbroeck (4):
+  tps6105x: add optional devicetree support
+  regulator: tps6105x: add optional devicetree support
+  leds: tps6105x: add driver for mfd chip led mode
+  dt-bindings: mfd: update TI tps6105x chip bindings
 
-> +
-> +Example:
-> +
-> +gpio: gpio@10060000 {
-> +	compatible = "sifive,fu540-c000-gpio","sifive,gpio0";
+ .../devicetree/bindings/mfd/tps6105x.txt      | 32 ++++++++-
+ drivers/leds/Kconfig                          | 10 +++
+ drivers/leds/Makefile                         |  1 +
+ drivers/leds/leds-tps6105x.c                  | 68 +++++++++++++++++++
+ drivers/mfd/tps6105x.c                        | 36 +++++++++-
+ drivers/regulator/tps6105x-regulator.c        | 10 ++-
+ 6 files changed, 152 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/leds/leds-tps6105x.c
 
-space                                         ^
+-- 
+2.17.1
 
-> +	interrupt-parent = <&plic>;
-> +	interrupts = <7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22>;
-> +	reg = <0x0 0x10060000 0x0 0x1000>;
-> +	clocks = <&tlclk>;
-> +	gpio-controller;
-> +	#gpio-cells = <2>;
-> +	interrupt-controller;
-> +	#interrupt-cells = <2>;
-> +};
-> -- 
-> 2.7.4
-> 
