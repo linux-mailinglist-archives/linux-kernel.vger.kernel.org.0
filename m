@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A819A1017A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE7E10191B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfKSGCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:02:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36280 "EHLO mail.kernel.org"
+        id S1727516AbfKSFVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:21:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbfKSFlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:45 -0500
+        id S1727453AbfKSFVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:21:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2D63222DC;
-        Tue, 19 Nov 2019 05:41:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEC722231E;
+        Tue, 19 Nov 2019 05:21:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142103;
-        bh=7o3t0HLIp/Gxq4Put8H/ayN9hsib+w2vXFjw9yIg2lk=;
+        s=default; t=1574140905;
+        bh=SmWTtC00I/W3MBF24Muk28GmlRgpglXRziTfV6MQVLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nch+jO/Y1gZGswuDo7cVn/F/B3H0+QeHpHJHsF3ib5+mSduZBH1dZrsIHP8Os9upd
-         dgxcoyrEO4jZbb7JzVMShBeOokg2rd8mQb/FjZmQLQwRuzqpQ3IprWhT/aVAd0oJ6H
-         lnl0Al8ZnbKNQyGkhSR1MUFAXoZ+HgDpB/EvgMS4=
+        b=dM7B0qggBh++rcDiolTIzW8ChjrfHcCsMC0pMmEqyOeMFkOTckYcpoovtJ5HzSBZF
+         5mWgzxAuWIBcxI7uRct3mjci09cZmLvJ6tUNu9oHhq6ee4ffUg4cl5NlAYliQofC/6
+         SUhqkFF6PwEGbdngljIW2ZFH16sJzGnZqawvX9oo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoph Manszewski <c.manszewski@samsung.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 388/422] crypto: s5p-sss: Fix race in error handling
-Date:   Tue, 19 Nov 2019 06:19:45 +0100
-Message-Id: <20191119051424.238691009@linuxfoundation.org>
+        stable@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: [PATCH 5.3 26/48] KVM: MMU: Do not treat ZONE_DEVICE pages as being reserved
+Date:   Tue, 19 Nov 2019 06:19:46 +0100
+Message-Id: <20191119051008.145283241@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
+References: <20191119050946.745015350@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,87 +46,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Manszewski <c.manszewski@samsung.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-[ Upstream commit 5842cd44786055231b233ed5ed98cdb63ffb7db3 ]
+commit a78986aae9b2988f8493f9f65a587ee433e83bc3 upstream.
 
-Remove a race condition introduced by error path in functions:
-s5p_aes_interrupt and s5p_aes_crypt_start. Setting the busy field of
-struct s5p_aes_dev to false made it possible for s5p_tasklet_cb to
-change the req field, before s5p_aes_complete was called.
+Explicitly exempt ZONE_DEVICE pages from kvm_is_reserved_pfn() and
+instead manually handle ZONE_DEVICE on a case-by-case basis.  For things
+like page refcounts, KVM needs to treat ZONE_DEVICE pages like normal
+pages, e.g. put pages grabbed via gup().  But for flows such as setting
+A/D bits or shifting refcounts for transparent huge pages, KVM needs to
+to avoid processing ZONE_DEVICE pages as the flows in question lack the
+underlying machinery for proper handling of ZONE_DEVICE pages.
 
-Change the first parameter of s5p_aes_complete to struct
-ablkcipher_request. Before spin_unlock, make a copy of the currently
-handled request, to ensure s5p_aes_complete function call with the
-correct request.
+This fixes a hang reported by Adam Borowski[*] in dev_pagemap_cleanup()
+when running a KVM guest backed with /dev/dax memory, as KVM straight up
+doesn't put any references to ZONE_DEVICE pages acquired by gup().
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
-Acked-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Note, Dan Williams proposed an alternative solution of doing put_page()
+on ZONE_DEVICE pages immediately after gup() in order to simplify the
+auditing needed to ensure is_zone_device_page() is called if and only if
+the backing device is pinned (via gup()).  But that approach would break
+kvm_vcpu_{un}map() as KVM requires the page to be pinned from map() 'til
+unmap() when accessing guest memory, unlike KVM's secondary MMU, which
+coordinates with mmu_notifier invalidations to avoid creating stale
+page references, i.e. doesn't rely on pages being pinned.
+
+[*] http://lkml.kernel.org/r/20190919115547.GA17963@angband.pl
+
+Reported-by: Adam Borowski <kilobyte@angband.pl>
+Analyzed-by: David Hildenbrand <david@redhat.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/crypto/s5p-sss.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/x86/kvm/mmu.c       |    8 ++++----
+ include/linux/kvm_host.h |    1 +
+ virt/kvm/kvm_main.c      |   26 +++++++++++++++++++++++---
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index faa282074e5aa..9021ad9df0c45 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -475,9 +475,9 @@ static void s5p_sg_done(struct s5p_aes_dev *dev)
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3352,7 +3352,7 @@ static void transparent_hugepage_adjust(
+ 	 * here.
+ 	 */
+ 	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+-	    level == PT_PAGE_TABLE_LEVEL &&
++	    !kvm_is_zone_device_pfn(pfn) && level == PT_PAGE_TABLE_LEVEL &&
+ 	    PageTransCompoundMap(pfn_to_page(pfn)) &&
+ 	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+ 		unsigned long mask;
+@@ -5961,9 +5961,9 @@ restart:
+ 		 * the guest, and the guest page table is using 4K page size
+ 		 * mapping if the indirect sp has level = 1.
+ 		 */
+-		if (sp->role.direct &&
+-			!kvm_is_reserved_pfn(pfn) &&
+-			PageTransCompoundMap(pfn_to_page(pfn))) {
++		if (sp->role.direct && !kvm_is_reserved_pfn(pfn) &&
++		    !kvm_is_zone_device_pfn(pfn) &&
++		    PageTransCompoundMap(pfn_to_page(pfn))) {
+ 			pte_list_remove(rmap_head, sptep);
+ 
+ 			if (kvm_available_flush_tlb_with_range())
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -966,6 +966,7 @@ int kvm_cpu_has_pending_timer(struct kvm
+ void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
+ 
+ bool kvm_is_reserved_pfn(kvm_pfn_t pfn);
++bool kvm_is_zone_device_pfn(kvm_pfn_t pfn);
+ 
+ struct kvm_irq_ack_notifier {
+ 	struct hlist_node link;
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -150,10 +150,30 @@ __weak int kvm_arch_mmu_notifier_invalid
+ 	return 0;
  }
  
- /* Calls the completion. Cannot be called with dev->lock hold. */
--static void s5p_aes_complete(struct s5p_aes_dev *dev, int err)
-+static void s5p_aes_complete(struct ablkcipher_request *req, int err)
++bool kvm_is_zone_device_pfn(kvm_pfn_t pfn)
++{
++	/*
++	 * The metadata used by is_zone_device_page() to determine whether or
++	 * not a page is ZONE_DEVICE is guaranteed to be valid if and only if
++	 * the device has been pinned, e.g. by get_user_pages().  WARN if the
++	 * page_count() is zero to help detect bad usage of this helper.
++	 */
++	if (!pfn_valid(pfn) || WARN_ON_ONCE(!page_count(pfn_to_page(pfn))))
++		return false;
++
++	return is_zone_device_page(pfn_to_page(pfn));
++}
++
+ bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
  {
--	dev->req->base.complete(&dev->req->base, err);
-+	req->base.complete(&req->base, err);
- }
++	/*
++	 * ZONE_DEVICE pages currently set PG_reserved, but from a refcounting
++	 * perspective they are "normal" pages, albeit with slightly different
++	 * usage rules.
++	 */
+ 	if (pfn_valid(pfn))
+-		return PageReserved(pfn_to_page(pfn));
++		return PageReserved(pfn_to_page(pfn)) &&
++		       !kvm_is_zone_device_pfn(pfn);
  
- static void s5p_unset_outdata(struct s5p_aes_dev *dev)
-@@ -655,6 +655,7 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+ 	return true;
+ }
+@@ -1882,7 +1902,7 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty)
+ 
+ void kvm_set_pfn_dirty(kvm_pfn_t pfn)
  {
- 	struct platform_device *pdev = dev_id;
- 	struct s5p_aes_dev *dev = platform_get_drvdata(pdev);
-+	struct ablkcipher_request *req;
- 	int err_dma_tx = 0;
- 	int err_dma_rx = 0;
- 	int err_dma_hx = 0;
-@@ -727,7 +728,7 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
+-	if (!kvm_is_reserved_pfn(pfn)) {
++	if (!kvm_is_reserved_pfn(pfn) && !kvm_is_zone_device_pfn(pfn)) {
+ 		struct page *page = pfn_to_page(pfn);
  
- 		spin_unlock_irqrestore(&dev->lock, flags);
+ 		SetPageDirty(page);
+@@ -1892,7 +1912,7 @@ EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
  
--		s5p_aes_complete(dev, 0);
-+		s5p_aes_complete(dev->req, 0);
- 		/* Device is still busy */
- 		tasklet_schedule(&dev->tasklet);
- 	} else {
-@@ -752,11 +753,12 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
- error:
- 	s5p_sg_done(dev);
- 	dev->busy = false;
-+	req = dev->req;
- 	if (err_dma_hx == 1)
- 		s5p_set_dma_hashdata(dev, dev->hash_sg_iter);
- 
- 	spin_unlock_irqrestore(&dev->lock, flags);
--	s5p_aes_complete(dev, err);
-+	s5p_aes_complete(req, err);
- 
- hash_irq_end:
- 	/*
-@@ -1983,7 +1985,7 @@ indata_error:
- 	s5p_sg_done(dev);
- 	dev->busy = false;
- 	spin_unlock_irqrestore(&dev->lock, flags);
--	s5p_aes_complete(dev, err);
-+	s5p_aes_complete(req, err);
+ void kvm_set_pfn_accessed(kvm_pfn_t pfn)
+ {
+-	if (!kvm_is_reserved_pfn(pfn))
++	if (!kvm_is_reserved_pfn(pfn) && !kvm_is_zone_device_pfn(pfn))
+ 		mark_page_accessed(pfn_to_page(pfn));
  }
- 
- static void s5p_tasklet_cb(unsigned long data)
--- 
-2.20.1
-
+ EXPORT_SYMBOL_GPL(kvm_set_pfn_accessed);
 
 
