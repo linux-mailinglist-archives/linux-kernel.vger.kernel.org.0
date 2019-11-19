@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3535D101660
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F98010166C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731489AbfKSFwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:52:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
+        id S1731972AbfKSFxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:53:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731596AbfKSFwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:52:30 -0500
+        id S1731036AbfKSFxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:53:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8235621783;
-        Tue, 19 Nov 2019 05:52:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E31B921823;
+        Tue, 19 Nov 2019 05:53:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142750;
-        bh=olP18mzLHEq5aeklcBEE1+hOx3ydda638HvyajAvQIc=;
+        s=default; t=1574142782;
+        bh=46aynxYa1blruQAizaAJje0TP9KsL3W8yOgn6Hl7da0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJ9y+yEw8B0iQVJ+abhUwU9kuTytHprlXgRj2Ga+KK9T24UjbOUXCETs/7EF4eJOT
-         hEODsEP44n5M2NWhZW1wAiIOcMHb70aLtPbgn01tI3o14K0G7U8f99B+pgdwmLd1WB
-         ZjXLYblG1cMz45vHTzw6CrryTb9Qa7xLmMVK5wLU=
+        b=Cz52qiPOPC1pdgtLuhJrUscOot2CW9PZu/qZ8ThGCjO0Vnt7pxIBnHvZTyHdjLzKs
+         UQBZQIYt+mEjgJc47l1OsGjjxS/8nJs4NLccdgMy9ZGiay4FLIYjCKcd1EUO3YJpBi
+         MvTH6/PEwITC22uYE4czGVBwsjpt/whNf9J22CfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shahed Shaikh <Shahed.Shaikh@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 170/239] bnx2x: Ignore bandwidth attention in single function mode
-Date:   Tue, 19 Nov 2019 06:19:30 +0100
-Message-Id: <20191119051333.925320107@linuxfoundation.org>
+Subject: [PATCH 4.14 171/239] samples/bpf: fix compilation failure
+Date:   Tue, 19 Nov 2019 06:19:31 +0100
+Message-Id: <20191119051333.987386908@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -45,45 +46,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shahed Shaikh <Shahed.Shaikh@cavium.com>
+From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
 
-[ Upstream commit 75a110a1783ef8324ffd763b24f4ac268253cbca ]
+[ Upstream commit 32c009798385ce21080beaa87a9b95faad3acd1e ]
 
-This is a workaround for FW bug -
-MFW generates bandwidth attention in single function mode, which
-is only expected to be generated in multi function mode.
-This undesired attention in SF mode results in incorrect HW
-configuration and resulting into Tx timeout.
+following commit:
+commit d58e468b1112 ("flow_dissector: implements flow dissector BPF hook")
+added struct bpf_flow_keys which conflicts with the struct with
+same name in sockex2_kern.c and sockex3_kern.c
 
-Signed-off-by: Shahed Shaikh <Shahed.Shaikh@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+similar to commit:
+commit 534e0e52bc23 ("samples/bpf: fix a compilation failure")
+we tried the rename it "flow_keys" but it also conflicted with struct
+having same name in include/net/flow_dissector.h. Hence renaming the
+struct to "flow_key_record". Also, this commit doesn't fix the
+compilation error completely because the similar struct is present in
+sockex3_kern.c. Hence renaming it in both files sockex3_user.c and
+sockex3_kern.c
+
+Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ samples/bpf/sockex2_kern.c | 11 ++++++-----
+ samples/bpf/sockex3_kern.c |  8 ++++----
+ samples/bpf/sockex3_user.c |  4 ++--
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 8f0c9f6de893d..dbe8feec456c2 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -3540,6 +3540,16 @@ static void bnx2x_drv_info_iscsi_stat(struct bnx2x *bp)
-  */
- static void bnx2x_config_mf_bw(struct bnx2x *bp)
+diff --git a/samples/bpf/sockex2_kern.c b/samples/bpf/sockex2_kern.c
+index f58acfc925561..f2f9dbc021b0d 100644
+--- a/samples/bpf/sockex2_kern.c
++++ b/samples/bpf/sockex2_kern.c
+@@ -14,7 +14,7 @@ struct vlan_hdr {
+ 	__be16 h_vlan_encapsulated_proto;
+ };
+ 
+-struct bpf_flow_keys {
++struct flow_key_record {
+ 	__be32 src;
+ 	__be32 dst;
+ 	union {
+@@ -59,7 +59,7 @@ static inline __u32 ipv6_addr_hash(struct __sk_buff *ctx, __u64 off)
+ }
+ 
+ static inline __u64 parse_ip(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_proto,
+-			     struct bpf_flow_keys *flow)
++			     struct flow_key_record *flow)
  {
-+	/* Workaround for MFW bug.
-+	 * MFW is not supposed to generate BW attention in
-+	 * single function mode.
-+	 */
-+	if (!IS_MF(bp)) {
-+		DP(BNX2X_MSG_MCP,
-+		   "Ignoring MF BW config in single function mode\n");
-+		return;
-+	}
-+
- 	if (bp->link_vars.link_up) {
- 		bnx2x_cmng_fns_init(bp, true, CMNG_FNS_MINMAX);
- 		bnx2x_link_sync_notify(bp);
+ 	__u64 verlen;
+ 
+@@ -83,7 +83,7 @@ static inline __u64 parse_ip(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_proto
+ }
+ 
+ static inline __u64 parse_ipv6(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_proto,
+-			       struct bpf_flow_keys *flow)
++			       struct flow_key_record *flow)
+ {
+ 	*ip_proto = load_byte(skb,
+ 			      nhoff + offsetof(struct ipv6hdr, nexthdr));
+@@ -96,7 +96,8 @@ static inline __u64 parse_ipv6(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_pro
+ 	return nhoff;
+ }
+ 
+-static inline bool flow_dissector(struct __sk_buff *skb, struct bpf_flow_keys *flow)
++static inline bool flow_dissector(struct __sk_buff *skb,
++				  struct flow_key_record *flow)
+ {
+ 	__u64 nhoff = ETH_HLEN;
+ 	__u64 ip_proto;
+@@ -198,7 +199,7 @@ struct bpf_map_def SEC("maps") hash_map = {
+ SEC("socket2")
+ int bpf_prog2(struct __sk_buff *skb)
+ {
+-	struct bpf_flow_keys flow = {};
++	struct flow_key_record flow = {};
+ 	struct pair *value;
+ 	u32 key;
+ 
+diff --git a/samples/bpf/sockex3_kern.c b/samples/bpf/sockex3_kern.c
+index 95907f8d2b17d..c527b57d3ec8a 100644
+--- a/samples/bpf/sockex3_kern.c
++++ b/samples/bpf/sockex3_kern.c
+@@ -61,7 +61,7 @@ struct vlan_hdr {
+ 	__be16 h_vlan_encapsulated_proto;
+ };
+ 
+-struct bpf_flow_keys {
++struct flow_key_record {
+ 	__be32 src;
+ 	__be32 dst;
+ 	union {
+@@ -88,7 +88,7 @@ static inline __u32 ipv6_addr_hash(struct __sk_buff *ctx, __u64 off)
+ }
+ 
+ struct globals {
+-	struct bpf_flow_keys flow;
++	struct flow_key_record flow;
+ };
+ 
+ struct bpf_map_def SEC("maps") percpu_map = {
+@@ -114,14 +114,14 @@ struct pair {
+ 
+ struct bpf_map_def SEC("maps") hash_map = {
+ 	.type = BPF_MAP_TYPE_HASH,
+-	.key_size = sizeof(struct bpf_flow_keys),
++	.key_size = sizeof(struct flow_key_record),
+ 	.value_size = sizeof(struct pair),
+ 	.max_entries = 1024,
+ };
+ 
+ static void update_stats(struct __sk_buff *skb, struct globals *g)
+ {
+-	struct bpf_flow_keys key = g->flow;
++	struct flow_key_record key = g->flow;
+ 	struct pair *value;
+ 
+ 	value = bpf_map_lookup_elem(&hash_map, &key);
+diff --git a/samples/bpf/sockex3_user.c b/samples/bpf/sockex3_user.c
+index 4d75674bee35e..741b899b693f3 100644
+--- a/samples/bpf/sockex3_user.c
++++ b/samples/bpf/sockex3_user.c
+@@ -13,7 +13,7 @@
+ #define PARSE_IP_PROG_FD (prog_fd[0])
+ #define PROG_ARRAY_FD (map_fd[0])
+ 
+-struct flow_keys {
++struct flow_key_record {
+ 	__be32 src;
+ 	__be32 dst;
+ 	union {
+@@ -64,7 +64,7 @@ int main(int argc, char **argv)
+ 	(void) f;
+ 
+ 	for (i = 0; i < 5; i++) {
+-		struct flow_keys key = {}, next_key;
++		struct flow_key_record key = {}, next_key;
+ 		struct pair value;
+ 
+ 		sleep(1);
 -- 
 2.20.1
 
