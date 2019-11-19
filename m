@@ -2,89 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD98E102876
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50077102890
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:47:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbfKSPqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 10:46:51 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38343 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728516AbfKSPqt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:46:49 -0500
-Received: by mail-lf1-f67.google.com with SMTP id q28so17464675lfa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 07:46:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mduOSCKauFb3j3r6hILUAiEYXazQDNKgF2SjQXFQbkI=;
-        b=oScf9xUteMXLAaLWoQ9x7ikhUGemCzDuLtClzRtrvXBEdZGSuhXeNXEEdc7fM0cPZZ
-         4EDzkAg1qWI22+1VoUASkJ+ROGdGPVCpN4BoYYRsCqJsN1Y9bXI2+dKM1O20J3P8j1Bq
-         30GIhWMcWSrZST5tojyirpAFUaSdQuCX1JLuODW2s6UFkzU3yYaclLSC13nSNFVzOwLD
-         DASJvz9uCmPLIbatmly0lQPMHleMB/YeB3OLoobHf5Frz4nc/w+vvmiydL6sp8bizT9U
-         0YPAno8EssdUUfIu9+W0qmu4dwc73hHvxx5YX5H0SUH6Fj1ixhctz/jZeuDo3znjjnIl
-         EG1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mduOSCKauFb3j3r6hILUAiEYXazQDNKgF2SjQXFQbkI=;
-        b=hq74I7MH8GEMvF5kaf14DuUpkdM6PN9uPprzg9V/D7ClAau5jgKPB7ovxK0dOKsM4s
-         eiEIxRxrKZKwDvbaZXUlqoN+yeP6nJ49cOZFzzlt01UaGWtgZUzMYMaiV7H0wARQck/6
-         m6iYJ7hhRTE4MShUcOOS4RTyh7rGlWcA2N4sXB9ab8QXSNh8cliRg5dW20BfzBZV85rM
-         8EoeGtvpRKZCHCehsTNIZWf7dTk+O6P9AL4oRpbRbCw8ZXgMtPgKncwdYaD1ipaXC9Gu
-         BrIswgwNWhHQEE+/whEzHk5YJfDOqzkj2h2mmfC5540Gj2yuapd+fObww3TdLSxL6HIA
-         XCVQ==
-X-Gm-Message-State: APjAAAV3oMvM2sfd8v5vnT1aJA3I92IQWSpTR75xK999Ji0vxJ5jcyi6
-        kN02YIqOVbd4HyuARfixdVygRt+VgdqK6g==
-X-Google-Smtp-Source: APXvYqzaxxG5ZqNc8iYg/clzpbHW2UpP3WOKI6lRquEhvqf/7jQ8UnBV+TmnjBteY/kPGirgoc7JKg==
-X-Received: by 2002:ac2:434f:: with SMTP id o15mr4442152lfl.190.1574178406942;
-        Tue, 19 Nov 2019 07:46:46 -0800 (PST)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id e14sm10128803ljb.75.2019.11.19.07.46.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 07:46:46 -0800 (PST)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 5/5] arm64: defconfig: enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM
-Date:   Tue, 19 Nov 2019 16:46:20 +0100
-Message-Id: <20191119154621.55341-6-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191119154621.55341-1-niklas.cassel@linaro.org>
-References: <20191119154621.55341-1-niklas.cassel@linaro.org>
+        id S1728553AbfKSPrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 10:47:25 -0500
+Received: from mga12.intel.com ([192.55.52.136]:27077 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727910AbfKSPrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 10:47:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 07:47:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,324,1569308400"; 
+   d="scan'208";a="209453942"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 19 Nov 2019 07:47:18 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 19 Nov 2019 17:47:17 +0200
+Date:   Tue, 19 Nov 2019 17:47:17 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-acpi@vger.kernel.org,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/i915: DSI: select correct PWM controller to use
+ based on the VBT
+Message-ID: <20191119154717.GA1208@intel.com>
+References: <20191119151818.67531-1-hdegoede@redhat.com>
+ <20191119151818.67531-4-hdegoede@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191119151818.67531-4-hdegoede@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM.
+On Tue, Nov 19, 2019 at 04:18:18PM +0100, Hans de Goede wrote:
+> At least Bay Trail (BYT) and Cherry Trail (CHT) devices can use 1 of 2
+> different PWM controllers for controlling the LCD's backlight brightness.
+> Either the one integrated into the PMIC or the one integrated into the
+> SoC (the 1st LPSS PWM controller).
+> 
+> So far in the LPSS code on BYT we have skipped registering the LPSS PWM
+> controller "pwm_backlight" lookup entry when a Crystal Cove PMIC is
+> present, assuming that in this case the PMIC PWM controller will be used.
+> 
+> On CHT we have been relying on only 1 of the 2 PWM controllers being
+> enabled in the DSDT at the same time; and always registered the lookup.
+> 
+> So far this has been working, but the correct way to determine which PWM
+> controller needs to be used is by checking a bit in the VBT table and
+> recently I've learned about 2 different BYT devices:
+> Point of View MOBII TAB-P800W
+> Acer Switch 10 SW5-012
+> 
+> Which use a Crystal Cove PMIC, yet the LCD is connected to the SoC/LPSS
+> PWM controller (and the VBT correctly indicates this), so here our old
+> heuristics fail.
+> 
+> This commit fixes using the wrong PWM controller on these devices by
+> calling pwm_get() for the right PWM controller based on the
+> VBT dsi.config.pwm_blc bit.
+> 
+> Note this is part of a series which contains 2 other patches which renames
+> the PWM lookup for the 1st SoC/LPSS PWM from "pwm_backlight" to
+> "pwm_pmic_backlight" and the PWM lookup for the Crystal Cove PMIC PWM
+> from "pwm_backlight" to "pwm_pmic_backlight".
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/gpu/drm/i915/display/intel_panel.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/display/intel_panel.c b/drivers/gpu/drm/i915/display/intel_panel.c
+> index bc14e9c0285a..ddcf311d1114 100644
+> --- a/drivers/gpu/drm/i915/display/intel_panel.c
+> +++ b/drivers/gpu/drm/i915/display/intel_panel.c
+> @@ -1840,13 +1840,22 @@ static int pwm_setup_backlight(struct intel_connector *connector,
+>  			       enum pipe pipe)
+>  {
+>  	struct drm_device *dev = connector->base.dev;
+> +	struct drm_i915_private *dev_priv = to_i915(dev);
+>  	struct intel_panel *panel = &connector->panel;
+> +	const char *desc;
+>  	int retval;
+>  
+> -	/* Get the PWM chip for backlight control */
+> -	panel->backlight.pwm = pwm_get(dev->dev, "pwm_backlight");
+> +	/* Get the right PWM chip for DSI backlight according to VBT */
+> +	if (dev_priv->vbt.dsi.config->pwm_blc == PPS_BLC_PMIC) {
+> +		panel->backlight.pwm = pwm_get(dev->dev, "pwm_pmic_backlight");
+> +		desc = "PMIC";
+> +	} else {
+> +		panel->backlight.pwm = pwm_get(dev->dev, "pwm_soc_backlight");
+> +		desc = "SoC";
+> +	}
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Might we want the same thing for the panel enable gpio?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4385033c0a34..09aaffd473a0 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -88,6 +88,7 @@ CONFIG_ACPI_CPPC_CPUFREQ=m
- CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
- CONFIG_ARM_IMX_CPUFREQ_DT=m
-+CONFIG_ARM_QCOM_CPUFREQ_NVMEM=y
- CONFIG_ARM_QCOM_CPUFREQ_HW=y
- CONFIG_ARM_RASPBERRYPI_CPUFREQ=m
- CONFIG_ARM_TEGRA186_CPUFREQ=y
+> +
+>  	if (IS_ERR(panel->backlight.pwm)) {
+> -		DRM_ERROR("Failed to own the pwm chip\n");
+> +		DRM_ERROR("Failed to get the %s PWM chip\n", desc);
+>  		panel->backlight.pwm = NULL;
+>  		return -ENODEV;
+>  	}
+> @@ -1873,6 +1882,7 @@ static int pwm_setup_backlight(struct intel_connector *connector,
+>  				 CRC_PMIC_PWM_PERIOD_NS);
+>  	panel->backlight.enabled = panel->backlight.level != 0;
+>  
+> +	DRM_INFO("Using %s PWM for LCD backlight control\n", desc);
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.23.0
+
 -- 
-2.23.0
-
+Ville Syrjälä
+Intel
