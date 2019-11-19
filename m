@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09543101486
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 254381015CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbfKSFet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:34:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55586 "EHLO mail.kernel.org"
+        id S1730960AbfKSFr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:47:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729732AbfKSFer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:34:47 -0500
+        id S1730714AbfKSFrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:47:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05766208C3;
-        Tue, 19 Nov 2019 05:34:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BE292071B;
+        Tue, 19 Nov 2019 05:47:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141686;
-        bh=LOoFyHqdtFlQI7thHL/oKGR6t8lo4GqLDvCdzHE5FfU=;
+        s=default; t=1574142443;
+        bh=RKRTRBPAlk+f+aw3C7A6A3UDnlrwH0Cc8yXEXBYKvkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O2xqc24z79ttsmXR9IGcRTnqUVw14s3bBBFk5xSXrIYPFCTYu6it4z65qXBWwOjjt
-         FmRMXRMSjHpJZ1WvHhx35uLMUoKAFN/7Xmof9QVuFo4HWOWA9NU8Zg5UvENzAeiZy3
-         cYkxNhR1pPNisL8ZPIeexVzn770Q7a2QnXp22tho=
+        b=hAyURS4nP0LAubSYxncjvCGQCmaWa1j7bb1A+mLeqpND+cYt9wGzUPCXuCBeQ4ZU2
+         /lbI56blQtu3CwWyLVxp8Rq+sCxytdeSwETI5TLUzBYSvJPulCfvSKvcezTJbPBHjU
+         7mCfesy/L5IHtrGdaE6iLdd9c93uqZWboC8X10gU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 246/422] serial: mxs-auart: Fix potential infinite loop
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 043/239] ath10k: limit available channels via DT ieee80211-freq-limit
 Date:   Tue, 19 Nov 2019 06:17:23 +0100
-Message-Id: <20191119051414.938365200@linuxfoundation.org>
+Message-Id: <20191119051306.116827965@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 5963e8a3122471cadfe0eba41c4ceaeaa5c8bb4d ]
+[ Upstream commit 34d5629d2ca89d847b7040762b87964c696c14da ]
 
-On the error path of mxs_auart_request_gpio_irq() is performed
-backward iterating with index i of enum type. Underline enum type
-may be unsigned char. In this case check (--i >= 0) will be always
-true and error handling goes into infinite loop.
+Tri-band devices (1x 2.4GHz + 2x 5GHz) often incorporate special filters in
+the RX and TX path. These filtered channel can in theory still be used by
+the hardware but the signal strength is reduced so much that it makes no
+sense.
 
-The patch changes the check so that it is valid for signed and unsigned
-types.
+There is already a DT property to limit the available channels but ath10k
+has to manually call this functionality to limit the currrently set wiphy
+channels further.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/mxs-auart.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/mac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
-index 34acdf29713d7..4c188f4079b3e 100644
---- a/drivers/tty/serial/mxs-auart.c
-+++ b/drivers/tty/serial/mxs-auart.c
-@@ -1634,8 +1634,9 @@ static int mxs_auart_request_gpio_irq(struct mxs_auart_port *s)
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 58a3c42c4aedb..8c4bb56c262f6 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -17,6 +17,7 @@
  
- 	/*
- 	 * If something went wrong, rollback.
-+	 * Be careful: i may be unsigned.
- 	 */
--	while (err && (--i >= 0))
-+	while (err && (i-- > 0))
- 		if (irq[i] >= 0)
- 			free_irq(irq[i], s);
+ #include "mac.h"
  
++#include <net/cfg80211.h>
+ #include <net/mac80211.h>
+ #include <linux/etherdevice.h>
+ #include <linux/acpi.h>
+@@ -8174,6 +8175,7 @@ int ath10k_mac_register(struct ath10k *ar)
+ 		ar->hw->wiphy->bands[NL80211_BAND_5GHZ] = band;
+ 	}
+ 
++	wiphy_read_of_freq_limits(ar->hw->wiphy);
+ 	ath10k_mac_setup_ht_vht_cap(ar);
+ 
+ 	ar->hw->wiphy->interface_modes =
 -- 
 2.20.1
 
