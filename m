@@ -2,53 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FED1026FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:41:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DACC7102704
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbfKSOld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:41:33 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:45263 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfKSOlc (ORCPT
+        id S1728147AbfKSOlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:41:50 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39880 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbfKSOls (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:41:32 -0500
-Received: by mail-pj1-f65.google.com with SMTP id m71so2728287pjb.12
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 06:41:32 -0800 (PST)
+        Tue, 19 Nov 2019 09:41:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id x28so12284423pfo.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 06:41:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=OSYfTpCeLoiCz6ar4Y5YCkx3V+95c+mgOu5iGHlEmLs=;
-        b=mIh147tKxoB5iHq6Sr1ixvt392/H81YC4txurdUXGO4fdsuRJsZfRNmzjoYizdd6rX
-         nGc7h+zlPVktQFpLiQCQMN3PAFS85Dc7P9Kxb0HSfmfILyTZUvPAs1NQw4Y8IvKGbRvP
-         u8vGOxhGMWYqNB7ep+7hpo7JbeAgD6vTzGFYgpT+zXXPXmS2m7UdGtylxU5Gl12pacO/
-         vdh65ZlWJk3w/TT+waRzqqrvSRtVQ7nq+jLQa2pND8LEO5bvL03GQhgZuqOoxWWukfrS
-         5ZYiJKH1QsdRlqIi3oHjLKCdCUPhkRQKuvHk0iQbmgwAHmdIzHXBYH1YE9Ne1xMF16gz
-         oXCg==
+        bh=dF+ivxgCTPanWWoF5C1qzzPBT3PQ81LJ6vYrJ5PQ2+o=;
+        b=d9MCjAtf3HcUeUDZxHNFN1stQiS49wMgNo3h4H0vX/o9JdElwWX1ywNG2EXThYd0RH
+         +8cKRcvYNxir2JGucTC9qDkvAnfhhCW1oUlJ/O7O54NeuGPVjedoqsnoeCxrcFpVizvA
+         e+w7+mW0+AabolNy6JD4ke6zN9p31LbQggY5kQ8JJH5DiO/PhH9Ocvt4U7gzuV5NbTqB
+         2Tl+GDpnXxH/MIGmfHmZEXkLtrYgADsbvIrmOKswXFE1Jy20uZXQw4639Fr/gpyYG0Br
+         Bol0KDBPWw2Wu1jear/lICrDt6UWwzZtAO9ynuu+YUmZA/SrV7YQpcqFK/Ww2iWV50dX
+         PElQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OSYfTpCeLoiCz6ar4Y5YCkx3V+95c+mgOu5iGHlEmLs=;
-        b=kRO+iMic4TU4w/nGbEAWG1ZejZ22nvukCcRJDtbHiolyV6B/Cq4Ukm72FAFmIqVcBy
-         Spt/dnk9cDnEyychlL9as+CtEjMTshWO1yigo6xfvyjJAklhgKYwjDyNDX2avWt5Hn8w
-         IfO3Rlcnvt/7RZgH3tYI1jRSIJUcbDl0abehb1N77PRTYQOADnl3oXbMnaM1z1cFIxHm
-         NgmgDvMpkHc03pD2ypHdTckUOerHc7dTCh+8/HYQYEk4vLkIlqIubC6Rlv5pG3u58b9d
-         2Wt1XQxk1XZp089d7JQUdYkM8wxXHQ9q+shRvvWPDR1Z1QqP5lz8f4zPmJyJrFRBR2EH
-         gS0w==
-X-Gm-Message-State: APjAAAWxIz96Uab83YeLrSkbHxgV1cvEXgvpJbNb+y19sncrIy630h+2
-        uGi8ZbAfOW35oEFaoI3WcVsa/2nLAaVd9jA3cyOToA==
-X-Google-Smtp-Source: APXvYqwNT/0sPHSivxokIq2Ao+cp8Lh+ljvm77BDSPn8sYnI3sbqDNPMhQ1jWCaHD21W7sfzidfYsTd4IcmvXsUCiK0=
-X-Received: by 2002:a17:902:9682:: with SMTP id n2mr31713409plp.336.1574174491437;
- Tue, 19 Nov 2019 06:41:31 -0800 (PST)
+        bh=dF+ivxgCTPanWWoF5C1qzzPBT3PQ81LJ6vYrJ5PQ2+o=;
+        b=dItn9I60DXvnS/ovWTQWQbQYy2ULJjxIOil/7S4itIN6Nr7Ee7t7xkXGDAne1x1BBk
+         Lh72ew2tX8BCOWZSZfoV/pG3LNTjaX3J/MPFLoDxCJrhOwpmix8c2V1OcBZMbVGpDEaz
+         PJRtCEfJy70T9nZqbgMt01TRCVscCTswPSr5qCiv79oOgtuXFKWHKb9/kH0UmRxwag3s
+         ZMXVRuK62qPvMWWREZhdN1FCdbqRvRJxzzOn2J/g0KZAbrF6Z9UC+t1YBNVfaAkPMUkV
+         vLlmU2kfhWGHwo2QVenr7d/Bs4OjCF7zQYXjmqfJJtvFf9ux0+g2wJN3YJpnSoEHMCjv
+         v5zQ==
+X-Gm-Message-State: APjAAAUzGixDiqHwFKcY+0w3YTZ4qeoQv94cEa8KA2NfKRL2p8fJRcDL
+        GCW1xRCZHhmm6hfDCEDwADRreF5pXFzvXyr+IwM1yw==
+X-Google-Smtp-Source: APXvYqxdXyNFFcj5EZ5h5U7TXLjwCISllyxI/ZtTITEcJUZ+tLMedG7CTEI9fOQY3zr2M8tyq0eamnkb8U+8yPul9Fk=
+X-Received: by 2002:a63:c804:: with SMTP id z4mr6093685pgg.440.1574174507326;
+ Tue, 19 Nov 2019 06:41:47 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000d5795d0596acbc93@google.com>
-In-Reply-To: <000000000000d5795d0596acbc93@google.com>
+References: <000000000000835f920595f81bfa@google.com>
+In-Reply-To: <000000000000835f920595f81bfa@google.com>
 From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 19 Nov 2019 15:41:19 +0100
-Message-ID: <CAAeHK+w599vgUcfDMtK+HDfQRw6Xnt-RzaVzeqGKJuoLf81_EA@mail.gmail.com>
-Subject: Re: BUG: bad host security descriptor; not enough data (2 vs 5 left)
-To:     syzbot <syzbot+8a8429a8b80280ff1c80@syzkaller.appspotmail.com>
+Date:   Tue, 19 Nov 2019 15:41:34 +0100
+Message-ID: <CAAeHK+w6QNoy22Mo1juA-EWUe=zXjOtqmVNC0dWe_3ObUoWUvQ@mail.gmail.com>
+Subject: Re: BUG: bad host encryption descriptor; descriptor is too short (0
+ vs 5 needed)
+To:     syzbot <syzbot+48fbe2f8fdcd2fbc1242@syzkaller.appspotmail.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         USB list <linux-usb@vger.kernel.org>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>
@@ -59,46 +60,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 1:32 PM syzbot
-<syzbot+8a8429a8b80280ff1c80@syzkaller.appspotmail.com> wrote:
+On Mon, Oct 28, 2019 at 2:02 PM syzbot
+<syzbot+48fbe2f8fdcd2fbc1242@syzkaller.appspotmail.com> wrote:
 >
 > Hello,
 >
 > syzbot found the following crash on:
 >
-> HEAD commit:    b1aa9d83 usb: raw: add raw-gadget interface
+> HEAD commit:    22be26f7 usb-fuzzer: main usb gadget fuzzer driver
 > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D153a1f8ae0000=
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16eccc0f60000=
 0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D79de80330003b=
-5f7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D8a8429a8b80280f=
-f1c80
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D5fe29bc39eff9=
+627
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D48fbe2f8fdcd2fb=
+c1242
 > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10893fcce00=
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10d08e4ce00=
 000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15bbaa62e0000=
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11fb07ff60000=
 0
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit=
 :
-> Reported-by: syzbot+8a8429a8b80280ff1c80@syzkaller.appspotmail.com
+> Reported-by: syzbot+48fbe2f8fdcd2fbc1242@syzkaller.appspotmail.com
 >
-> usb 1-1: config 0 interface 0 altsetting 0 has 3 endpoint descriptors,
+> usb 1-1: config 0 interface 66 altsetting 0 has 3 endpoint descriptors,
 > different from the interface descriptor's value: 4
 > usb 1-1: New USB device found, idVendor=3D13dc, idProduct=3D5611,
 > bcdDevice=3D40.15
 > usb 1-1: New USB device strings: Mfr=3D0, Product=3D0, SerialNumber=3D0
 > usb 1-1: config 0 descriptor??
-> hwa-hc 1-1:0.0: Wire Adapter v106.52 newer than groked v1.0
-> hwa-hc 1-1:0.0: FIXME: USB_MAXCHILDREN too low for WUSB adapter (194 port=
+> hwa-hc 1-1:0.66: Wire Adapter v125.52 newer than groked v1.0
+> hwa-hc 1-1:0.66: FIXME: USB_MAXCHILDREN too low for WUSB adapter (53 port=
 s)
-> usb 1-1: BUG: bad host security descriptor; not enough data (2 vs 5 left)
-> usb 1-1: supported encryption types: =EF=BF=BD=EF=BF=BD=CF=81=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD|=EF=BF=BD=EF=BF=BD=CF=81=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD=EF=BF=BD=CF=81=EF=BF=BD=EF=BF=BD=EF=BF=BD
+> usb 1-1: BUG: bad host encryption descriptor; descriptor is too short (0 =
+vs
+> 5 needed)
+> usb 1-1: supported encryption types: =EF=BF=BD=EF=BF=BD=EF=BF=BD=CF=81=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD|=EF=BF=BD=EF=BF=BD=CF=81=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=CF=81=EF=BF=BD=EF=BF=BD=EF=BF=BD
 > usb 1-1: E: host doesn't support CCM-1 crypto
-> hwa-hc 1-1:0.0: Cannot initialize internals: -19
+> hwa-hc 1-1:0.66: Cannot initialize internals: -19
 >
 >
 > ---
