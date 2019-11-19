@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA6911017F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3606510171D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730040AbfKSFhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:37:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58666 "EHLO mail.kernel.org"
+        id S1731295AbfKSFrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:47:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730032AbfKSFhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:37:02 -0500
+        id S1731276AbfKSFrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:47:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EC93214DE;
-        Tue, 19 Nov 2019 05:37:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1135521783;
+        Tue, 19 Nov 2019 05:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141821;
-        bh=JimTXPtAbX8YoTT19Gr8WHDW98DSZBe8ND3dur/LtAQ=;
+        s=default; t=1574142467;
+        bh=6MASBMvSjedbUBKnlD71QlaSd44QwcHpO8AQ3LfEVJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lpcIpKXhTiQOoT+DOFIrYUUggtdcYwUMzQorWT4gCj0zYLfWjCqz0wVUcvkeuauLX
-         X2sS0ej+Vp4vUwzUgBKv2NwSFC4mUUwzBdyGYycR0afAekQa+J2jMuZM0el84pzmlm
-         HBvthojrCckgngzk5wgf7cjJ9Kyfvb3SWXHVrDtQ=
+        b=af5zeFcAfQjDT4rmEV80mCpsX9pPLwo/KN+JFbi90YWmQgdk5988NAsxBJP48qQ/F
+         kWjTBCsUbaHFmtnZi6sNMyDyCexF5sYl8hELFiuPrVEaKbWnSVAGeMn+4iEIGIPcmV
+         gQWrmekzcmSKKpuVfcFj6JVoDVCSVcwet51suR2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 292/422] brcmfmac: increase buffer for obtaining firmware capabilities
-Date:   Tue, 19 Nov 2019 06:18:09 +0100
-Message-Id: <20191119051417.914114118@linuxfoundation.org>
+Subject: [PATCH 4.14 092/239] signal: Properly deliver SIGILL from uprobes
+Date:   Tue, 19 Nov 2019 06:18:12 +0100
+Message-Id: <20191119051320.368558389@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,38 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-[ Upstream commit 59c2a30d36c8ae430d26a902c4c9665ea33ccee5 ]
+[ Upstream commit 55a3235fc71bf34303e34a95eeee235b2d2a35dd ]
 
-When obtaining the firmware capability a buffer is provided of 512
-bytes. However, if all features in firmware are supported the buffer
-needs to be 565 bytes as otherwise truncated information is retrieved
-from firmware. Increasing the buffer to 768 bytes on stack.
+For userspace to tell the difference between a random signal and an
+exception, the exception must include siginfo information.
 
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Using SEND_SIG_FORCED for SIGILL is thus wrong, and it will result
+in userspace seeing si_code == SI_USER (like a random signal) instead
+of si_code == SI_KERNEL or a more specific si_code as all exceptions
+deliver.
+
+Therefore replace force_sig_info(SIGILL, SEND_SIG_FORCE, current)
+with force_sig(SIG_ILL, current) which gets this right and is
+shorter and easier to type.
+
+Fixes: 014940bad8e4 ("uprobes/x86: Send SIGILL if arch_uprobe_post_xol() fails")
+Fixes: 0b5256c7f173 ("uprobes: Send SIGILL if handle_trampoline() fails")
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/uprobes.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
-index 8347da632a5b0..4c5a3995dc352 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
-@@ -178,7 +178,7 @@ static void brcmf_feat_iovar_data_set(struct brcmf_if *ifp,
- 	ifp->fwil_fwerr = false;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 01941cffa9c2f..c74fc98262508 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1854,7 +1854,7 @@ static void handle_trampoline(struct pt_regs *regs)
+ 
+  sigill:
+ 	uprobe_warn(current, "handle uretprobe, sending SIGILL.");
+-	force_sig_info(SIGILL, SEND_SIG_FORCED, current);
++	force_sig(SIGILL, current);
+ 
  }
  
--#define MAX_CAPS_BUFFER_SIZE	512
-+#define MAX_CAPS_BUFFER_SIZE	768
- static void brcmf_feat_firmware_capabilities(struct brcmf_if *ifp)
- {
- 	char caps[MAX_CAPS_BUFFER_SIZE];
+@@ -1970,7 +1970,7 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+ 
+ 	if (unlikely(err)) {
+ 		uprobe_warn(current, "execute the probed insn, sending SIGILL.");
+-		force_sig_info(SIGILL, SEND_SIG_FORCED, current);
++		force_sig(SIGILL, current);
+ 	}
+ }
+ 
 -- 
 2.20.1
 
