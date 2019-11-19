@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A68101616
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0771014FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731585AbfKSFuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:50:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46920 "EHLO mail.kernel.org"
+        id S1730296AbfKSFjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729360AbfKSFuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:50:00 -0500
+        id S1730285AbfKSFj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4220420721;
-        Tue, 19 Nov 2019 05:49:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D01A4208C3;
+        Tue, 19 Nov 2019 05:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142599;
-        bh=5x+LmrqeEnbeK59deb9In/L3b8XEmOiclhXJ0kY79ls=;
+        s=default; t=1574141968;
+        bh=VnAEBOD27XWMulR9/EeVPCt6n+USTqJyjGRRcoqKhTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HixryGg8TxajsG49XKkL9Wft2bdVBCLKY8A1Pwulw4fx3htUm5gylmj6tQGJ1+Fov
-         wRO+jNJYrZ84BUHxlCbOIriDAZY0E9fRM1u1OLlgN3Y6AmTsNO4ZFI/plllyl5twAP
-         HJ5EajW5pxEBimVg84M7Cx4nRf0cLnmiXgsoc++E=
+        b=uD/ry+kBVYsieQoF4rn+pjwiPmpcumYj/tvyd/DdJNGlq0joSa+n8yRrDn4+YERP7
+         wzCspRkpJg0MlEmeIJyhT19LJ4CQ0avx1GKzFdqLMd/k7w1L2A4V2yoRxpHp+2vZKJ
+         g2vJQQTvtXSQNmWHMpHn+clwKqmJrgGM7Bq3ExLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
+        <sebastien.szymanski@armadeus.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 137/239] ipmi:dmi: Ignore IPMI SMBIOS entries with a zero base address
-Date:   Tue, 19 Nov 2019 06:18:57 +0100
-Message-Id: <20191119051331.291215311@linuxfoundation.org>
+Subject: [PATCH 4.19 341/422] ARM: dts: imx6ull: update vdd_soc voltage for 900MHz operating point
+Date:   Tue, 19 Nov 2019 06:18:58 +0100
+Message-Id: <20191119051421.112711980@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 1574608f5f4204440d6d9f52b971aba967664764 ]
+[ Upstream commit 245f880c25dbd8927af0f33aa5d1404370013957 ]
 
-Looking at logs from systems all over the place, it looks like tons
-of broken systems exist that set the base address to zero.  I can
-only guess that is some sort of non-standard idea to mark the
-interface as not being present.  It can't be zero, anyway, so just
-complain and ignore it.
+Update VDD_SOC voltage to 1.25V for 900MHz operating point
+according to datasheet Rev. 1.3, 08/2018, 25mV is added to
+the minimum allowed values to cover power supply ripple.
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_dmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/imx6ull.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/ipmi/ipmi_dmi.c b/drivers/char/ipmi/ipmi_dmi.c
-index c3a23ec3e76f7..a37d9794170cc 100644
---- a/drivers/char/ipmi/ipmi_dmi.c
-+++ b/drivers/char/ipmi/ipmi_dmi.c
-@@ -197,6 +197,10 @@ static void __init dmi_decode_ipmi(const struct dmi_header *dm)
- 	slave_addr = data[DMI_IPMI_SLAVEADDR];
- 
- 	memcpy(&base_addr, data + DMI_IPMI_ADDR, sizeof(unsigned long));
-+	if (!base_addr) {
-+		pr_err("Base address is zero, assuming no IPMI interface\n");
-+		return;
-+	}
- 	if (len >= DMI_IPMI_VER2_LENGTH) {
- 		if (type == IPMI_DMI_TYPE_SSIF) {
- 			offset = 0;
+diff --git a/arch/arm/boot/dts/imx6ull.dtsi b/arch/arm/boot/dts/imx6ull.dtsi
+index cd1776a7015ac..796ed35d4ac9a 100644
+--- a/arch/arm/boot/dts/imx6ull.dtsi
++++ b/arch/arm/boot/dts/imx6ull.dtsi
+@@ -22,7 +22,7 @@
+ 	>;
+ 	fsl,soc-operating-points = <
+ 		/* KHz	uV */
+-		900000	1175000
++		900000	1250000
+ 		792000	1175000
+ 		528000	1175000
+ 		396000	1175000
 -- 
 2.20.1
 
