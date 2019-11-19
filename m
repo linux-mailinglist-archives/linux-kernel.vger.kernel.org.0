@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9B910145C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:33:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA2C101592
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfKSFdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:33:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53442 "EHLO mail.kernel.org"
+        id S1730194AbfKSFpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729471AbfKSFdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:02 -0500
+        id S1730947AbfKSFpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:45:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5546421783;
-        Tue, 19 Nov 2019 05:33:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AE822084D;
+        Tue, 19 Nov 2019 05:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141580;
-        bh=NflRRV0uqucVxYoCTUuHIRCHF+FW37oV9OaJflefziU=;
+        s=default; t=1574142320;
+        bh=uDCGXaCPSzUDmEXiC4cE9ce1ty5IHGYHkXnabqtaQDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OjFnvUr/WtrQ99NmsfsmPwbth+Stp83stQ8xVGe8qAc/aJCwHrzdSfzr47Lcvd80C
-         gisOUkCBrJVP5gqLObQwaO7YgrZPeKxO+UULmt2u+BcOhr+FkhN7OccA1NWBRxYZAD
-         HZg79rSlXPPX0E61+Wd6zo0GZgeuxdsbtWQl0UxY=
+        b=Y+TAi5LCo7kEXR5x+bw9p12dxFNZTntl/l1ZbP/0a2+MfPmW4ZzfmdOpGKt0px4b2
+         pOYlAwywdDTcQtip7+j30Olc9J7tALdoB8ktD7Z2V7hyrhQWL1Uq8eWWegqnw4ZEO+
+         IdAELMeM9SRxFmoRCyv3vaQ4uDQQjPlStNa5Y3Ec=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 209/422] arm64: dts: broadcom: Fix I2C and SPI bus warnings
+        stable@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>
+Subject: [PATCH 4.14 006/239] powerpc/perf: Fix IMC_MAX_PMU macro
 Date:   Tue, 19 Nov 2019 06:16:46 +0100
-Message-Id: <20191119051412.136267401@linuxfoundation.org>
+Message-Id: <20191119051258.425251463@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,91 +45,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
 
-[ Upstream commit 7cdbe45da1a189e744e6801aebb462ee47235580 ]
+commit 73ce9aec65b17433e18163d07eb5cb6bf114bd6c upstream.
 
-dtc has new checks for I2C and SPI buses. Fix the warnings in node names
-and unit-addresses.
+IMC_MAX_PMU is used for static storage (per_nest_pmu_arr) which holds
+nest pmu information. Current value for the macro is 32 based on
+the initial number of nest pmu units supported by the nest microcode.
+But going forward, microcode could support more nest units. Instead
+of static storage, patch to fix the code to dynamically allocate an
+array based on the number of nest imc units found in the device tree.
 
-arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dtb: Warning (i2c_bus_reg): /hsls/i2c@e0000/pcf8574@20: I2C bus unit address format error, expected "27"
-arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dtb: Warning (i2c_bus_reg): /hsls/i2c@e0000/pcf8574@20: I2C bus unit address format error, expected "27"
-arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dtb: Warning (spi_bus_bridge): /hsls/ssp@180000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dtb: Warning (spi_bus_bridge): /hsls/ssp@190000: node name for SPI buses should be 'spi'
+Fixes:8f95faaac56c1 ('powerpc/powernv: Detect and create IMC device')
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Scott Branden <sbranden@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi          | 4 ++--
- arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 2 +-
- arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/powerpc/include/asm/imc-pmu.h        |    6 +-----
+ arch/powerpc/perf/imc-pmu.c               |   15 ++++++++++++---
+ arch/powerpc/platforms/powernv/opal-imc.c |   16 ++++++++++++++++
+ 3 files changed, 29 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-index 1a406a76c86a2..ea854f689fda8 100644
---- a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-@@ -639,7 +639,7 @@
- 			status = "disabled";
- 		};
+--- a/arch/powerpc/include/asm/imc-pmu.h
++++ b/arch/powerpc/include/asm/imc-pmu.h
+@@ -21,11 +21,6 @@
+ #include <asm/opal.h>
  
--		ssp0: ssp@66180000 {
-+		ssp0: spi@66180000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x66180000 0x1000>;
- 			interrupts = <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>;
-@@ -650,7 +650,7 @@
- 			status = "disabled";
- 		};
+ /*
+- * For static allocation of some of the structures.
+- */
+-#define IMC_MAX_PMUS			32
+-
+-/*
+  * Compatibility macros for IMC devices
+  */
+ #define IMC_DTB_COMPAT			"ibm,opal-in-memory-counters"
+@@ -125,4 +120,5 @@ enum {
+ extern int init_imc_pmu(struct device_node *parent,
+ 				struct imc_pmu *pmu_ptr, int pmu_id);
+ extern void thread_imc_disable(void);
++extern int get_max_nest_dev(void);
+ #endif /* __ASM_POWERPC_IMC_PMU_H */
+--- a/arch/powerpc/perf/imc-pmu.c
++++ b/arch/powerpc/perf/imc-pmu.c
+@@ -26,7 +26,7 @@
+  */
+ static DEFINE_MUTEX(nest_init_lock);
+ static DEFINE_PER_CPU(struct imc_pmu_ref *, local_nest_imc_refc);
+-static struct imc_pmu *per_nest_pmu_arr[IMC_MAX_PMUS];
++static struct imc_pmu **per_nest_pmu_arr;
+ static cpumask_t nest_imc_cpumask;
+ struct imc_pmu_ref *nest_imc_refc;
+ static int nest_pmus;
+@@ -286,13 +286,14 @@ static struct imc_pmu_ref *get_nest_pmu_
+ static void nest_change_cpu_context(int old_cpu, int new_cpu)
+ {
+ 	struct imc_pmu **pn = per_nest_pmu_arr;
+-	int i;
  
--		ssp1: ssp@66190000 {
-+		ssp1: spi@66190000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x66190000 0x1000>;
- 			interrupts = <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index bc299c3d90683..a9b92e52d50e8 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -138,7 +138,7 @@
- &i2c1 {
- 	status = "okay";
+ 	if (old_cpu < 0 || new_cpu < 0)
+ 		return;
  
--	pcf8574: pcf8574@20 {
-+	pcf8574: pcf8574@27 {
- 		compatible = "nxp,pcf8574a";
- 		gpio-controller;
- 		#gpio-cells = <2>;
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 84101ea1fd2cb..ff714fcbac68d 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -520,7 +520,7 @@
- 			status = "disabled";
- 		};
+-	for (i = 0; *pn && i < IMC_MAX_PMUS; i++, pn++)
++	while (*pn) {
+ 		perf_pmu_migrate_context(&(*pn)->pmu, old_cpu, new_cpu);
++		pn++;
++	}
+ }
  
--		ssp0: ssp@180000 {
-+		ssp0: spi@180000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x00180000 0x1000>;
- 			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-@@ -532,7 +532,7 @@
- 			status = "disabled";
- 		};
+ static int ppc_nest_imc_cpu_offline(unsigned int cpu)
+@@ -1212,6 +1213,7 @@ static void imc_common_cpuhp_mem_free(st
+ 		kfree(pmu_ptr->attr_groups[IMC_EVENT_ATTR]->attrs);
+ 	kfree(pmu_ptr->attr_groups[IMC_EVENT_ATTR]);
+ 	kfree(pmu_ptr);
++	kfree(per_nest_pmu_arr);
+ 	return;
+ }
  
--		ssp1: ssp@190000 {
-+		ssp1: spi@190000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x00190000 0x1000>;
- 			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.20.1
-
+@@ -1236,6 +1238,13 @@ static int imc_mem_init(struct imc_pmu *
+ 			return -ENOMEM;
+ 
+ 		/* Needed for hotplug/migration */
++		if (!per_nest_pmu_arr) {
++			per_nest_pmu_arr = kcalloc(get_max_nest_dev() + 1,
++						sizeof(struct imc_pmu *),
++						GFP_KERNEL);
++			if (!per_nest_pmu_arr)
++				return -ENOMEM;
++		}
+ 		per_nest_pmu_arr[pmu_index] = pmu_ptr;
+ 		break;
+ 	case IMC_DOMAIN_CORE:
+--- a/arch/powerpc/platforms/powernv/opal-imc.c
++++ b/arch/powerpc/platforms/powernv/opal-imc.c
+@@ -159,6 +159,22 @@ static void disable_core_pmu_counters(vo
+ 	put_online_cpus();
+ }
+ 
++int get_max_nest_dev(void)
++{
++	struct device_node *node;
++	u32 pmu_units = 0, type;
++
++	for_each_compatible_node(node, NULL, IMC_DTB_UNIT_COMPAT) {
++		if (of_property_read_u32(node, "type", &type))
++			continue;
++
++		if (type == IMC_TYPE_CHIP)
++			pmu_units++;
++	}
++
++	return pmu_units;
++}
++
+ static int opal_imc_counters_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *imc_dev = pdev->dev.of_node;
 
 
