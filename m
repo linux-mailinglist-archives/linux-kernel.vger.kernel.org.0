@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B465D101419
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A649D10141B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfKSFaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:30:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48940 "EHLO mail.kernel.org"
+        id S1729123AbfKSFaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:30:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728011AbfKSFaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:30:14 -0500
+        id S1729109AbfKSFaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:30:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 692FC21939;
-        Tue, 19 Nov 2019 05:30:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A276B222A2;
+        Tue, 19 Nov 2019 05:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141412;
-        bh=Ze+zPj9F92/cxye0P++w2Oo8cvHRn+ZLD1meN+16LYM=;
+        s=default; t=1574141416;
+        bh=jVMivIphEJg/VS15640mhwO4FSp2BARzrIpoBp8ADYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CAUiBhfxehrX3EHHzBOmWMPYQ9DEx5P30JY5yP/1pk4biIwCeqVdi9nfcLuVRU9nA
-         4YIYyEOEAIKqvFygkP7fN4mMkOofMjPlVmmqcGEk1eTPBeF2xhUVsMp0BGDGxu81yY
-         MO5uoLLnmdlTKNucf85hqb1HvbvPY+B5IfBk0WuM=
+        b=nVTP2Tk2qjkMhuvXE/uOglPZGapFMSs83MJ8lhq//IM9Bq6rXQ/b0MgH9zFnloa+h
+         miXWq/z6lsvIG/3nerXmj2+pmwzzFl1hvAR4vPZBu/Ubx1/oQdjEGkJd58yumrureS
+         6Wxep0yq/WTI9Krg3ixYGQ65V5W0E4OJ2/Vk000c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        stable@vger.kernel.org, Daniel Silsby <dansilsby@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
         Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 153/422] dmaengine: dma-jz4780: Dont depend on MACH_JZ4780
-Date:   Tue, 19 Nov 2019 06:15:50 +0100
-Message-Id: <20191119051408.513339279@linuxfoundation.org>
+Subject: [PATCH 4.19 154/422] dmaengine: dma-jz4780: Further residue status fix
+Date:   Tue, 19 Nov 2019 06:15:51 +0100
+Message-Id: <20191119051408.565147387@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -43,35 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Daniel Silsby <dansilsby@gmail.com>
 
-[ Upstream commit c558ecd21c852c97ff98dc6c61f715ba420ec251 ]
+[ Upstream commit 83ef4fb7556b6a673f755da670cbacab7e2c7f1b ]
 
-If we make this driver depend on MACH_JZ4780, that means it can be
-enabled only if we're building a kernel specially crafted for a
-JZ4780-based board, while most GNU/Linux distributions will want one
-generic MIPS kernel that works on multiple boards.
+Func jz4780_dma_desc_residue() expects the index to the next hw
+descriptor as its last parameter. Caller func jz4780_dma_tx_status(),
+however, applied modulus before passing it. When the current hw
+descriptor was last in the list, the index passed became zero.
 
+The resulting excess of reported residue especially caused problems
+with cyclic DMA transfer clients, i.e. ALSA AIC audio output, which
+rely on this for determining current DMA location within buffer.
+
+Combined with the recent and related residue-reporting fixes, spurious
+ALSA audio underruns on jz4770 hardware are now fixed.
+
+Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/Kconfig | 2 +-
+ drivers/dma/dma-jz4780.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index dacf3f42426de..a4f95574eb9ad 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -143,7 +143,7 @@ config DMA_JZ4740
+diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+index 987899610b461..edff93aacad36 100644
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -587,7 +587,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
+ 					to_jz4780_dma_desc(vdesc), 0);
+ 	} else if (cookie == jzchan->desc->vdesc.tx.cookie) {
+ 		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
+-			  (jzchan->curr_hwdesc + 1) % jzchan->desc->count);
++					jzchan->curr_hwdesc + 1);
+ 	} else
+ 		txstate->residue = 0;
  
- config DMA_JZ4780
- 	tristate "JZ4780 DMA support"
--	depends on MACH_JZ4780 || COMPILE_TEST
-+	depends on MIPS || COMPILE_TEST
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
- 	help
 -- 
 2.20.1
 
