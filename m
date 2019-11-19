@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D1A010131E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19582101320
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbfKSFWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:22:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37758 "EHLO mail.kernel.org"
+        id S1727780AbfKSFWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:22:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727736AbfKSFW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:22:26 -0500
+        id S1727744AbfKSFWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:22:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C444121939;
-        Tue, 19 Nov 2019 05:22:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A22832231A;
+        Tue, 19 Nov 2019 05:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574140946;
-        bh=qhjc3em040Ekybk+oPPE0CRElY/YwmptLb2RMbz5b94=;
+        s=default; t=1574140952;
+        bh=e6CICMOupY8NFEmXVT/oiRzp/oDxkEoLf0qYaYMSIQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vos8Duf10v0ZOXfPiVPqT1uRGRPyyuk1H7S+SrRGTffQ0e7pFJp22M8jHKjOXiC1w
-         nW01Ep+mxA2Kzx0DNfTotBnclHqyNNcM3wPu0EeBUIHK6IAQfU2v0xz3iGIJkyrIeH
-         D9RYE/4AcHqAhiEScz7iJ0zvtdo1YiP9vMecjYIs=
+        b=NYVCs9G9GVDzlQXAwAS6LlMbavY7+L8AHiFW6Dw2XVk8AvKCDWCP6QYAz5IQBUlIe
+         HCM+Irx796xre6eNpCc+mYimOvvUOGZQGWkN9Jj+NLg/s/I/4AxVfqYuehxvMbhyoE
+         L4Qv46hD6/DpNdOUNKajC/MBhDUcfDaAz9N5FNA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 5.3 39/48] ntp/y2038: Remove incorrect time_t truncation
-Date:   Tue, 19 Nov 2019 06:19:59 +0100
-Message-Id: <20191119051022.161704534@linuxfoundation.org>
+        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 40/48] net: ethernet: dwmac-sun8i: Use the correct function in exit path
+Date:   Tue, 19 Nov 2019 06:20:00 +0100
+Message-Id: <20191119051022.818468781@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
 References: <20191119050946.745015350@linuxfoundation.org>
@@ -43,37 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-commit 2f5841349df281ecf8f81cc82d869b8476f0db0b upstream.
+commit 40a1dcee2d1846a24619fe9ca45c661ca0db7dda upstream.
 
-A cast to 'time_t' was accidentally left in place during the
-conversion of __do_adjtimex() to 64-bit timestamps, so the
-resulting value is incorrectly truncated.
+When PHY is not powered, the probe function fail and some resource are
+still unallocated.
+Furthermore some BUG happens:
+dwmac-sun8i 5020000.ethernet: EMAC reset timeout
+------------[ cut here ]------------
+kernel BUG at /linux-next/net/core/dev.c:9844!
 
-Remove the cast so the 64-bit time gets propagated correctly.
+So let's use the right function (stmmac_pltfr_remove) in the error path.
 
-Fixes: ead25417f82e ("timex: use __kernel_timex internally")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191108203435.112759-2-arnd@arndb.de
+Fixes: 9f93ac8d4085 ("net-next: stmmac: Add dwmac-sun8i")
+Cc: <stable@vger.kernel.org> # v4.15+
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/ntp.c |    2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -771,7 +771,7 @@ int __do_adjtimex(struct __kernel_timex
- 	/* fill PPS status fields */
- 	pps_fill_timex(txc);
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -1225,7 +1225,7 @@ static int sun8i_dwmac_probe(struct plat
+ dwmac_mux:
+ 	sun8i_dwmac_unset_syscon(gmac);
+ dwmac_exit:
+-	sun8i_dwmac_exit(pdev, plat_dat->bsp_priv);
++	stmmac_pltfr_remove(pdev);
+ return ret;
+ }
  
--	txc->time.tv_sec = (time_t)ts->tv_sec;
-+	txc->time.tv_sec = ts->tv_sec;
- 	txc->time.tv_usec = ts->tv_nsec;
- 	if (!(time_status & STA_NANO))
- 		txc->time.tv_usec = ts->tv_nsec / NSEC_PER_USEC;
 
 
