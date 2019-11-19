@@ -2,77 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A71410169E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B333101461
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:33:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732228AbfKSFzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:55:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731647AbfKSFzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:55:00 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A97C21850;
-        Tue, 19 Nov 2019 05:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142900;
-        bh=WbJxy/8DRGlu9013th9fto4GeRgocDeBURwckfTCLQI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=17Ntbhv+onuu/DCv8REc/SGGNpMpZKgZbEcLDcYaFziatZyoU852eyjCgSXmsKu1N
-         8vVd4lePxJNrHEBnfBaGE00PcYzjoDgDKi3sTwd3VBw0KDXkpKf07l1M/G8aUNYRKw
-         I7OODnZBklNtAqrJlRXn7PpTWkWCC9C9DCuAHyqQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 4.14 239/239] memfd: Use radix_tree_deref_slot_protected to avoid the warning.
-Date:   Tue, 19 Nov 2019 06:20:39 +0100
-Message-Id: <20191119051342.809188054@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729515AbfKSFdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:33:15 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:43106 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729504AbfKSFdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:33:12 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ5TF0E134981;
+        Tue, 19 Nov 2019 05:32:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=X+d/DvKGRe+3ht5uGLcFVUVOi2MtdYAju2LrusN0PB8=;
+ b=Eg57Xk7Dlr+oDb9WxKzCghU3rGfM/tKiWrrIlOnoMFTkUEIMtm2GGkDhwqr7QmVhvDmn
+ I7xE5Ge7ycQseksjeyn1gKpChkowEZK6oI+Gx9G0L7SmSNoNWsTeAYg7EBwH/pTOtPpu
+ lFmk56hCZGESru2ZgZWw05LkwxyF/dEiyQ1y9CJepKXRJycnt2iYW76Eqzj5C5J9b3gF
+ DxSWY0Ui5q694tSUhsZwX0Sr7NOuWM0h5bRgAMPnp2ZlaP+RyW0FucXNGedoojmzEcAx
+ nBVnBv7Is9MTP68ucX8p5W75u2uJ49PLjVXt7qjuNl4KaJHn95UB4/Wra2iYi4H+RvXU EA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2wa8htmkds-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 05:32:52 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ5SNWL016943;
+        Tue, 19 Nov 2019 05:32:51 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2wbxm3nx20-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 05:32:51 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJ5Wo7G012724;
+        Tue, 19 Nov 2019 05:32:50 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Nov 2019 21:32:47 -0800
+Date:   Tue, 19 Nov 2019 08:32:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        security@kernel.org, ben.dooks@codethink.co.uk
+Subject: Re: [PATCH] exec: warn if process starts with executable stack
+Message-ID: <20191119053230.GC5626@kadam>
+References: <20191118145114.GA9228@avx2>
+ <20191118125457.778e44dfd4740d24795484c7@linux-foundation.org>
+ <20191118215227.GA24536@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191118215227.GA24536@avx2>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=587
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190050
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=714 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190050
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+On Tue, Nov 19, 2019 at 12:52:27AM +0300, Alexey Dobriyan wrote:
+> There were few episodes of silent downgrade to an executable stack:
+> 
+> 1) linking innocent looking assembly file
+> 
+> 	$ cat f.S
+> 	.intel_syntax noprefix
+> 	.text
+> 	.globl f
+> 	f:
+> 	        ret
+> 
+> 	$ cat main.c
+> 	void f(void);
+> 	int main(void)
+> 	{
+> 	        f();
+> 	        return 0;
+> 	}
+> 
+> 	$ gcc main.c f.S
+> 	$ readelf -l ./a.out
+> 	  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+>                          0x0000000000000000 0x0000000000000000  RWE    0x10
+> 
+> 2) converting C99 nested function into a closure
+> https://nullprogram.com/blog/2019/11/15/
+> 
+> 	void intsort2(int *base, size_t nmemb, _Bool invert)
+> 	{
+> 	    int cmp(const void *a, const void *b)
+> 	    {
+> 	        int r = *(int *)a - *(int *)b;
+> 	        return invert ? -r : r;
+> 	    }
+> 	    qsort(base, nmemb, sizeof(*base), cmp);
+> 	}
+> 
+> will silently require stack trampolines while non-closure version will not.
+> 
+> While without a double this behaviour is documented somewhere, add a warning
+                  ^^^^^^
+doubt
 
-The commit 391d4ee568b5 ("memfd: Fix locking when tagging pins")
-introduces the following warning messages.
+> so that developers and users can at least notice. After so many years of x86_64
+> having proper executable stack support it should not cause too much problems.
+> 
+> If the system is old or CPU is old, then there will be an early warning
+> against init and/or support personnel will write that "uh-oh, our Enterprise
+> Software absolutely requires executable stack" and close tickets and customers
+> will nod heads and life moves on.
+> 
 
-*WARNING: suspicious RCU usage in memfd_wait_for_pins*
-
-It is because we still use radix_tree_deref_slot without read_rcu_lock.
-We should use radix_tree_deref_slot_protected instead in the case.
-
-Cc: stable@vger.kernel.org
-Fixes: 391d4ee568b5 ("memfd: Fix locking when tagging pins")
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/shmem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2664,7 +2664,7 @@ static void shmem_tag_pins(struct addres
- 
- 	spin_lock_irq(&mapping->tree_lock);
- 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
--		page = radix_tree_deref_slot(slot);
-+		page = radix_tree_deref_slot_protected(slot, &mapping->tree_lock);
- 		if (!page || radix_tree_exception(page)) {
- 			if (radix_tree_deref_retry(page)) {
- 				slot = radix_tree_iter_retry(&iter);
-
-
+regards,
+dan carpenter
