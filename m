@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A046101701
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9108C10181D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfKSFqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:46:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41888 "EHLO mail.kernel.org"
+        id S1728183AbfKSFfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:35:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731031AbfKSFp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:45:58 -0500
+        id S1729817AbfKSFfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:35:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D016C2075E;
-        Tue, 19 Nov 2019 05:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D095B20862;
+        Tue, 19 Nov 2019 05:35:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142358;
-        bh=kbSPGq080Nn0FUfGmRqHlogt7rWfHK73COfGgh2PqDU=;
+        s=default; t=1574141730;
+        bh=jXkiVzZYSLUq0yhlysGpFlmVqSm2aSwxQEawDZL8+xY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dCoewIKDaBWxfDeQJ3T2wtzf27ZKd2Ww4Dy24ECxMkB42UqhJCtuyRq197Lf4JosB
-         ULTgHH29WTXH0JV6dzsX0TGsHUC3jephSCrP1W+HGKzBfPhGwQQtqcWnxWOJW6O6WL
-         gRnHCa4gzBeA2zuHtgP5toDo0mOmAmj0pwEFX/5E=
+        b=g8oWlJfevFGkyuuQOvCt3m2ptRut+0ojU3TgsjnFt8IVMcsUMHL6yIB3eImi190Uk
+         bpSlZMOn71yyEYAIovCVy+SQ5tsx3C7aB+++/aRkewe8gba8vDcfVZ3vrekvhl/UaM
+         L6MjJO6DE8f5SyJvEa/7h853drMLV8O9o9W550m4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 055/239] iwlwifi: dont WARN on trying to dump dead firmware
-Date:   Tue, 19 Nov 2019 06:17:35 +0100
-Message-Id: <20191119051308.365808462@linuxfoundation.org>
+Subject: [PATCH 4.19 260/422] powerpc/iommu: Avoid derefence before pointer check
+Date:   Tue, 19 Nov 2019 06:17:37 +0100
+Message-Id: <20191119051415.839491019@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit 84f260251ed8153e84c64eb2c5278ab18d3ddef6 ]
+[ Upstream commit 984ecdd68de0fa1f63ce205d6c19ef5a7bc67b40 ]
 
-There's no point in warning here, the user will just get an
-error back to the debugfs file write, and warning just makes
-it seem like there's an internal consistency problem when in
-reality the user just happened to hit this at a bad time.
-Remove the warning.
+The tbl pointer is being derefenced by IOMMU_PAGE_SIZE prior the check
+if it is not NULL.
 
-Fixes: f45f979dc208 ("iwlwifi: mvm: disable dbg data collect when fw isn't alive")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Just moving the dereference code to after the check, where there will
+be guarantee that 'tbl' will not be NULL.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index 8390104172410..e72c0b825420c 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -954,7 +954,7 @@ int iwl_fw_dbg_collect_desc(struct iwl_fw_runtime *fwrt,
- 	 * If the loading of the FW completed successfully, the next step is to
- 	 * get the SMEM config data. Thus, if fwrt->smem_cfg.num_lmacs is non
- 	 * zero, the FW was already loaded successully. If the state is "NO_FW"
--	 * in such a case - WARN and exit, since FW may be dead. Otherwise, we
-+	 * in such a case - exit, since FW may be dead. Otherwise, we
- 	 * can try to collect the data, since FW might just not be fully
- 	 * loaded (no "ALIVE" yet), and the debug data is accessible.
- 	 *
-@@ -962,9 +962,8 @@ int iwl_fw_dbg_collect_desc(struct iwl_fw_runtime *fwrt,
- 	 *	config. In such a case, due to HW access problems, we might
- 	 *	collect garbage.
- 	 */
--	if (WARN((fwrt->trans->state == IWL_TRANS_NO_FW) &&
--		 fwrt->smem_cfg.num_lmacs,
--		 "Can't collect dbg data when FW isn't alive\n"))
-+	if (fwrt->trans->state == IWL_TRANS_NO_FW &&
-+	    fwrt->smem_cfg.num_lmacs)
- 		return -EIO;
+diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
+index 19b4c628f3bec..f0dc680e659af 100644
+--- a/arch/powerpc/kernel/iommu.c
++++ b/arch/powerpc/kernel/iommu.c
+@@ -785,9 +785,9 @@ dma_addr_t iommu_map_page(struct device *dev, struct iommu_table *tbl,
  
- 	if (test_and_set_bit(IWL_FWRT_STATUS_DUMPING, &fwrt->status))
+ 	vaddr = page_address(page) + offset;
+ 	uaddr = (unsigned long)vaddr;
+-	npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
+ 
+ 	if (tbl) {
++		npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
+ 		align = 0;
+ 		if (tbl->it_page_shift < PAGE_SHIFT && size >= PAGE_SIZE &&
+ 		    ((unsigned long)vaddr & ~PAGE_MASK) == 0)
 -- 
 2.20.1
 
