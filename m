@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9E73101554
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 453E0101669
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbfKSFnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37768 "EHLO mail.kernel.org"
+        id S1729506AbfKSFw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:52:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730684AbfKSFm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:42:56 -0500
+        id S1731961AbfKSFwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:52:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 072DC21783;
-        Tue, 19 Nov 2019 05:42:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CE5221939;
+        Tue, 19 Nov 2019 05:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142176;
-        bh=Nie++jwXeETwcFQqwwHJgPZbDbLErfmYmKOCTZHw8QM=;
+        s=default; t=1574142773;
+        bh=oHMUJSdY6GTcK8AEGZQrARA28E+MfxcypOGkikh7IlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eK+NUhx0JeBjhMAa7PRxcBCcj7/FvTzy8wBP1HtdXOZpWJfD/Cy+JT7OcnlxeRStB
-         i35ovO/v3qvbBdG91USHiRiA46QCRMq+ylOhpcLk7gILcAl7YBvOHRM5fqIbJdkRP+
-         p03eG2otv3cSK2i4bHN+tEvbAi0Lhh8pYRXtWSa8=
+        b=aniEgnHukkFHqBb+ibfpEDoZKRrDoARwNv54Pae69dDQVpTp01+v2JxGRKMnuV930
+         lnxBeslCkow1u5hzgLX6WeisUbddg60bt2Paau/QFQ600fL+aHFlYbc5cwQ/v1OEI5
+         H6/86w0vGDHQLcTe9AC0ryNe5++xjYih+W4wv8Qo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 398/422] iwlwifi: mvm: Allow TKIP for AP mode
+        stable@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 195/239] coresight: tmc: Fix byte-address alignment for RRP
 Date:   Tue, 19 Nov 2019 06:19:55 +0100
-Message-Id: <20191119051424.925088372@linuxfoundation.org>
+Message-Id: <20191119051335.964672784@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Leo Yan <leo.yan@linaro.org>
 
-[ Upstream commit 6f3df8c1192c873a6ad9a76328920f6f85af90a8 ]
+[ Upstream commit e7753f3937610633a540f2be81be87531f96ff04 ]
 
-Support for setting keys for TKIP cipher suite was mistakenly removed
-for AP mode. Fix this.
+>From the comment in the code, it claims the requirement for byte-address
+alignment for RRP register: 'for 32-bit, 64-bit and 128-bit wide trace
+memory, the four LSBs must be 0s. For 256-bit wide trace memory, the
+five LSBs must be 0s'.  This isn't consistent with the program, the
+program sets five LSBs as zeros for 32/64/128-bit wide trace memory and
+set six LSBs zeros for 256-bit wide trace memory.
 
-Fixes: 85aeb58cec1a ("iwlwifi: mvm: Enable security on new TX API")
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+After checking with the CoreSight Trace Memory Controller technical
+reference manual (ARM DDI 0461B, section 3.3.4 RAM Read Pointer
+Register), it proves the comment is right and the program does wrong
+setting.
+
+This patch fixes byte-address alignment for RRP by following correct
+definition in the technical reference manual.
+
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-index 18db1ed92d9b0..04ea516bddcc0 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -3133,10 +3133,6 @@ static int __iwl_mvm_set_sta_key(struct iwl_mvm *mvm,
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index e2513b7862427..336194d059fed 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -442,10 +442,10 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
+ 		case TMC_MEM_INTF_WIDTH_32BITS:
+ 		case TMC_MEM_INTF_WIDTH_64BITS:
+ 		case TMC_MEM_INTF_WIDTH_128BITS:
+-			mask = GENMASK(31, 5);
++			mask = GENMASK(31, 4);
+ 			break;
+ 		case TMC_MEM_INTF_WIDTH_256BITS:
+-			mask = GENMASK(31, 6);
++			mask = GENMASK(31, 5);
+ 			break;
+ 		}
  
- 	switch (keyconf->cipher) {
- 	case WLAN_CIPHER_SUITE_TKIP:
--		if (vif->type == NL80211_IFTYPE_AP) {
--			ret = -EINVAL;
--			break;
--		}
- 		addr = iwl_mvm_get_mac_addr(mvm, vif, sta);
- 		/* get phase 1 key from mac80211 */
- 		ieee80211_get_key_rx_seq(keyconf, 0, &seq);
 -- 
 2.20.1
 
