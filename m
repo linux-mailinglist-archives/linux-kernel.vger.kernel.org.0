@@ -2,217 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516EA1026E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 005B51026F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:40:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbfKSOfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:35:33 -0500
-Received: from cmta16.telus.net ([209.171.16.89]:51805 "EHLO cmta16.telus.net"
+        id S1728022AbfKSOkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:40:35 -0500
+Received: from mout.web.de ([212.227.17.11]:33701 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbfKSOfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:35:32 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id X4bGiIrObFXoiX4bHild2S; Tue, 19 Nov 2019 07:35:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1574174129; bh=63LOnJc30pBSREJO4wJYShoRYdLEO0kEt45oadjC+os=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=T4Ten+hDuivTIJWRrZY7rqjP2VeElc6BzCjlCqBXu2EyHRlZjJ1C1yX8+28Tyjnxw
-         CnaaSdbbn3MpSkswl8qcWvlfX5axjhzlf9f9Qb21eLlHndiYTtdoUFjEiO2Ez8sTDd
-         P2p3vHBN5KP65OSlAVlTcUUVegve2Aw8KkNHbezVLnHMG64rP4gY+zJZbzxIyPV4+h
-         pEqaYmUe8bx0KsyjzRiJ9JbnR/xRdTqHO+WOpnlS8JMHHRqbcZgwamwZFIP8qnTlR+
-         fsmthn7rdRji8aua5AZHzOg97ZEDOZWQT0Qz2os5KQy6bkfxjJKsJ+K3AP+Q1B2iBP
-         pqbpCmXfPaUrA==
-X-Telus-Authed: none
-X-Authority-Analysis: v=2.3 cv=HoEI5HbS c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
- a=kj9zAlcOel0A:10 a=eoc6EyjFvRJxczR-1ZoA:9 a=CjuIK1q_8ugA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>
-Cc:     "'Linux ACPI'" <linux-acpi@vger.kernel.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Viresh Kumar'" <viresh.kumar@linaro.org>,
-        "'Sudeep Holla'" <sudeep.holla@arm.com>,
-        "'Dmitry Osipenko'" <digetx@gmail.com>
-References: <2811202.iOFZ6YHztY@kreacher> <4551555.oysnf1Sd0E@kreacher>  <000001d59d61$eb4e6670$c1eb3350$@net>
-In-Reply-To: <000001d59d61$eb4e6670$c1eb3350$@net>
-Subject: RE: [RFT][PATCH 1/3] PM: QoS: Introduce frequency QoS
-Date:   Tue, 19 Nov 2019 06:35:23 -0800
-Message-ID: <000401d59ee6$959e3da0$c0dab8e0$@net>
+        id S1727351AbfKSOkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:40:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574174419;
+        bh=JxsUoMHheXU/KdGBNnEpaHryq9RrGzadPVe4yz26uNM=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=VsYVAiTx2UVbJEFVx04DUML3XkXoAfWhKOIyLw/7tgJoKOImy91w07thHIEFBdZTw
+         ryfTcb6JhJKyDuRdOMFBdy20OImaO0wM6PfRu0IgUpf8WRDfb0857zNhCVWkOZj3L8
+         uCNKxtYTg3FLbj5ReRRvnuhga33c+jguvGpDUIqw=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([2.243.93.164]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LoHcD-1hvEss1DIH-00gIgs; Tue, 19
+ Nov 2019 15:40:19 +0100
+Subject: Re: [PATCH v3 08/13] exfat: add exfat cache
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191119093718.3501-1-namjae.jeon@samsung.com>
+ <CGME20191119094024epcas1p1be385d521ef64ae0e62da3f6f9bf3401@epcas1p1.samsung.com>
+ <20191119093718.3501-9-namjae.jeon@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <c1db28a9-7905-be5e-68fa-21e23400b4a5@web.de>
+Date:   Tue, 19 Nov 2019 15:40:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdWED0vlByLFQ8J4Rz2jUgcX377w8gZBYsHgABMAilAARNHnkA==
-Content-Language: en-ca
-X-CMAE-Envelope: MS4wfGlZrt8fA0JDBbp+rsXg0s950oIfnn+/5U3Qm7Roij26fEaS19MOqBw4jeWFATeCWVBexqn8CudFMysYBwgIZfgQQY3dT+dVkuEK0GK9dAXNyVvOG1AJ
- nly4uNkrMp0yuqm0IJMHZhBcRPmkNwi19v/U7bA4KlKXTCKN4RvIfW/H9HUnMJD6wVvhh/E0wfN00I4E88G2GnqKQvUC0d1582yNNJY323aPxQqPnuQzZ5A2
- lzU0491n5rWctVVvQN6vo2RbwVHE6oQjzIbwr9LYUntar2wuYniBshX88VGQibAb3QnH6AA1Q/jGu0FPp1BI4b++SSB8bMb3XjayolNKfiBJ9ChsiFWIMpom
- xIJ2RboYQFNYuOq98YrWSnBjRiWgdA==
+In-Reply-To: <20191119093718.3501-9-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JEkbcMI3twANPqjwWQAeufGCc0HTvD4tuO7TVhn8Oa374e1bn63
+ zsbJbNjxvrIu3mNyyvRUiwI7FFU4EIs1w7MJ42Y79BepxSQ11gka78Lvya9HJLHW2pREuuQ
+ nHBqMJ8jd3qyc9LVHeVl4hY+1cYPgAvqpfGJmjCjrKv3de/+zLXkD4UywSDYVEsq3hRZaFS
+ iUGCWvfwPll2RpgpbMfaA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hr07JeH+9i0=:jrHSJRRtxMIwEoCTW5S3++
+ rvUFmYULeDdbKli3zRS+PZfLVV36xCo1wgT6CvBdTaduV13bq9Msh57ZTRfOqstHgmozkDqp0
+ L+Mdvl/HSnBMz0MmeQGFpbVtseBr2R4mh1aAkU2bvCy/gz/waDzHjwAtezMk8I7q4z8q14KmT
+ tCxNeQCy57HVB7u/zaCX6feCumG80zJ8hjYn4UJGhAVVfM0qORSkvcNu4Ipzv3ffhETuxaQEX
+ D6d19YZXFnIcApGMuwIDPBxZw+UEhuOle4ej7tCessBHVMBRISL3s4bGWYEU2tyujdnbb8zGa
+ uIAYaJsKpMkDOmE3XGMeH2sdFz+9gqnXzQQkLO9tNo0PmJo/lWbPlVqFkzol6sehE2zoqnUQu
+ ZkJb4R6XWN/eRQ85bVhvwfpfQlMPVrP5QLFLfvXNFAyvH7K/legySCcWvW/Yz3xVD8PqhGMek
+ o0WGsYOMmGnsR/Pbsqw2c21lYqmWgfgEoGtt595W48JSbhTdi8NMcVVKiwi7kyJl0od4IQrSq
+ P/w8TqfTtOiFgYuyqNC+uOD8uNtOi/tY2R+fHbwJ1flHbmpTFEOjXZz8lzO3Via6iSionLqSE
+ kyErlrqG3sDUb+SBIHBorcotpoqdkpvIEKUPSb3ioinp6EHHpeLSbb9vjLdybKJ3n9Phyn0WM
+ 09alF6Mr+qbPJxqLVOuA80Zw3/cJ5guYacPIouGIxjBrA5DiN2i47mq3aiRCACNNd8/QXDo0R
+ UO3CyTRWmXZDPIksZW11+hVVA/t21K9zaxh7gxEqy00eQlznmWhEzD7Uprh629oHHtZDV51U0
+ vcLR/AbKBR/HXGrxoDdSZKIKiaeIUFXOqxQdXISpS6SmUFIyIfqZIfN7ElvmYR11EcmQDh2tX
+ MsjIP9k6Hsm/42caRY/+HLL/N9RthmtGTTRBip/lXdn6c2ShDMw6n3k2WXOXjgYAchX8e2Ih4
+ vRL7h4iKSkmbo+x+CV/KiNtFul+86NRWqxpusizmvRHc52uOXLIP/uT1JAGoImT7vpeCYvOoQ
+ kqOm8fNQSVxAnh0LA8iFt0TEh9dhrAOKlLRHQiqSy6HDm9oUgrlsg3wAAwgy3511VH7CBTfCa
+ nsxdiYzYVVyO2HVfNOxqrg63eGULLJ8IhaQX87jVvk3QDJ8fO11yU7/oM0aGCUDmeRpEAgOiM
+ LWGm+OCEtgcWkufKRn8QL+4fPbQ5MP0Yp/DR/OZGscqveErUe++sxiso7iHiV3PeX4/q/Mi0I
+ eadh0oLMiTy68UVuv7BG4e1WZEDJcmhAIe28JQzN6OJ4T81Sy8KDHtvQ8IJ0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019.11.17 08:13 Doug Smythies wrote:
-> On 2019.11.16 23:35 Doug Smythies wrote:
+=E2=80=A6
+> +++ b/fs/exfat/cache.c
+=E2=80=A6
+> +static void exfat_cache_add(struct inode *inode,
+> +		struct exfat_cache_id *new)
+> +{
+=E2=80=A6
+> +out:
+> +	spin_unlock(&ei->cache_lru_lock);
+=E2=80=A6
 
->> Hi Rafael,
->>
->> Not sure, but I think it is this one that
->> causes complaining when I try to set the
->> intel_pstate driver to passive mode.
->> I started from active mode, powersave governor,
->> no HWP.
->>
->> Kernel: 5.4-rc7
->>
->> I did not go back and try previous 5.4 RCs.
+Can the label =E2=80=9Cunlock=E2=80=9D be more helpful?
 
-After looking at the git tags for this patch,
-I tried kernel 5.4-rc2, which was the closest
-Kernel I had to before the patch set was added.
-It worked fine, as expected.
-
->> I did try kernel 5.3-rc8, because I already had
->> it installed, and it worked fine.
->>
->> I use a script (for years), run as sudo:
->>
->> doug@s15:~/temp$ cat set_cpu_passive
->> #! /bin/bash
->> cat /sys/devices/system/cpu/intel_pstate/status
->> echo passive > /sys/devices/system/cpu/intel_pstate/status
->> cat /sys/devices/system/cpu/intel_pstate/status
->>
->> And I get this (very small excerpt):
->>
->> freq_qos_add_request() called for active request
->> WARNING: CPU: 1 PID: 2758 at kernel/power/qos.c:763 freq_qos_add_request+0x4c/0xa0
->> CPU: 1 PID: 2758 Comm: set_cpu_passive Not tainted 5.4.0-rc7-stock #727
->> Failed to add freq constraint for CPU0 (-22)
->>
->> freq_qos_add_request() called for active request
->> WARNING: CPU: 1 PID: 2758 at kernel/power/qos.c:763 freq_qos_add_request+0x4c/0xa0
->> CPU: 1 PID: 2758 Comm: set_cpu_passive Tainted: G        W         5.4.0-rc7-stock #727
->> Failed to add freq constraint for CPU1 (-22)
-
-Updated summary of previous emails:
-This patch or patch set breaks the after boot
-ability to change CPU frequency scaling drivers.
-
-Using a workaround of booting with
-"intel_pstate=passive" seems to prevent the errors.
-
-Changing between the intel_pstate and intel_cpufreq drivers
-(i.e. between active and passive modes)
-after boot, either way, causes the errors. i.e.
-
-Failed to add freq constraint for CPU7 (-22)
-(2 per CPU per attempt)
-
-This is 100% repeatable.
-
-> I forgot to mention, other than the error messages,
-> things seems to work fine.
-
-Correction: It is actually quite bad. Eventually,
-there will be a "Segmentation fault (core dumped)",
-and then even re-boot gets stuck and the only
-recourse seems to be the reset button.
-
-This is not 100% repeatable.
-
-I did this (kernel 5.4-rc8):
-
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 8ab3170..24c7a6b 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2491,6 +2491,8 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
- {
-        int ret;
-
-+       pr_info("Intel P-state register driver .... \n");
-+
-        memset(&global, 0, sizeof(global));
-        global.max_perf_pct = 100;
-
-@@ -2508,6 +2510,8 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
-
- static int intel_pstate_unregister_driver(void)
- {
-+       pr_info("Intel P-state unregister driver .... \n");
-+
-        if (hwp_active)
-                return -EBUSY;
-
-And got this (dmesg | grep -i pstate):
-
-[    2.024876] intel_pstate: Intel P-state driver initializing
-[    2.024883] intel_pstate: Intel P-state register driver ....
-
-Attempt to change from the booted passive mode to active mode:
-
-[  175.903031] intel_pstate: Intel P-state unregister driver ....
-[  175.975543] intel_pstate: Intel P-state register driver ....
-[  175.975754]  intel_pstate_register_driver+0x4b/0x90
-[  175.975756]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.977728]  intel_pstate_register_driver+0x4b/0x90
-[  175.977730]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.979644]  intel_pstate_register_driver+0x4b/0x90
-[  175.979647]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.981424]  intel_pstate_register_driver+0x4b/0x90
-[  175.981427]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.982428]  intel_pstate_register_driver+0x4b/0x90
-[  175.982430]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.983127]  intel_pstate_register_driver+0x4b/0x90
-[  175.983128]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.983829]  intel_pstate_register_driver+0x4b/0x90
-[  175.983832]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.984434]  intel_pstate_register_driver+0x4b/0x90
-[  175.984435]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.985040]  intel_pstate_register_driver+0x4b/0x90
-[  175.985041]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.985598]  intel_pstate_register_driver+0x4b/0x90
-[  175.985600]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.986178]  intel_pstate_register_driver+0x4b/0x90
-[  175.986179]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.986721]  intel_pstate_register_driver+0x4b/0x90
-[  175.986723]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.987301]  intel_pstate_register_driver+0x4b/0x90
-[  175.987302]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.987828]  intel_pstate_register_driver+0x4b/0x90
-[  175.987830]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.988420]  intel_pstate_register_driver+0x4b/0x90
-[  175.988421]  ? intel_pstate_unregister_driver+0x31/0x40
-[  175.988920]  intel_pstate_register_driver+0x4b/0x90
-[  175.988921]  ? intel_pstate_unregister_driver+0x31/0x40
-
-Sometimes I get this:
-
-grep . /sys/devices/system/cpu/intel_pstate/*
-/sys/devices/system/cpu/intel_pstate/max_perf_pct:100
-/sys/devices/system/cpu/intel_pstate/min_perf_pct:42
-
-Instead of this:
-
-grep . /sys/devices/system/cpu/intel_pstate/*
-/sys/devices/system/cpu/intel_pstate/max_perf_pct:100
-/sys/devices/system/cpu/intel_pstate/min_perf_pct:42
-/sys/devices/system/cpu/intel_pstate/no_turbo:0
-/sys/devices/system/cpu/intel_pstate/num_pstates:23
-/sys/devices/system/cpu/intel_pstate/status:active
-/sys/devices/system/cpu/intel_pstate/turbo_pct:18
-
-But do not yet know the exact way to reliably
-create it.
-
-This is as far as I got so far.
-
-... Doug
-
-
+Regards,
+Markus
