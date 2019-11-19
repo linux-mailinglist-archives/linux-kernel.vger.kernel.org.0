@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC13101633
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CDA5101545
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731163AbfKSFvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48428 "EHLO mail.kernel.org"
+        id S1730618AbfKSFmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:42:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731725AbfKSFvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:05 -0500
+        id S1729536AbfKSFmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:42:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 147D521939;
-        Tue, 19 Nov 2019 05:51:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CEDE21783;
+        Tue, 19 Nov 2019 05:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142664;
-        bh=HhY6aRuiU+JFIVbArd6TnC9cOXQnnSAEu6elwhYbO2M=;
+        s=default; t=1574142135;
+        bh=DirF3562ki04v3whOy7FclNbip8VciH5wUPKy5FLgs4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DmS7kFm1SKzwcCBlO4HklHSGFhPZWYS9snLX4gTzsq++eeIQ/X4Kc8w5cWXI8UOsq
-         ligElru7JYGNSHXquLgukgXocCtr8bnQC5pJJPUz6+xTWg2uJ9VukbKq0nX7cGnFp5
-         nbzp73py2jMJiAR4mQc98MstAzn9SIlEd78WarNg=
+        b=DmEmPdaeSKL/bWhf0yhAVc7+G22eHo5fsB0Crp3ZxF47OtsHSBURskiUomutapqTP
+         1yY5/7gsgdU5lYXMVT86R0rKoQ5opNy6N+p4sWpZV9+ToAD+KkcpNuT4BoD/I/8Vug
+         FjumKXzb3CA7X0u+m6kx0ZIuEMa9KS7i9ZmGkuPI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Peter Chen <peter.chen@nxp.com>,
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Steve Wise <swise@opengridcomputing.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 157/239] usb: chipidea: Fix otg event handler
+Subject: [PATCH 4.19 360/422] iw_cxgb4: Use proper enumerated type in c4iw_bar2_addrs
 Date:   Tue, 19 Nov 2019 06:19:17 +0100
-Message-Id: <20191119051333.133155502@linuxfoundation.org>
+Message-Id: <20191119051422.343630177@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +46,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Loic Poulain <loic.poulain@linaro.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 59739131e0ca06db7560f9073fff2fb83f6bc2a5 ]
+[ Upstream commit 1b571086e869395b6a11ab24186b0104fe05c057 ]
 
-At OTG work running time, it's possible that several events need to be
-addressed (e.g. ID and VBUS events). The current implementation handles
-only one event at a time which leads to ignoring the other one. Fix it.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
+drivers/infiniband/hw/cxgb4/qp.c:287:8: warning: implicit conversion
+from enumeration type 'enum t4_bar2_qtype' to different enumeration type
+'enum cxgb4_bar2_qtype' [-Wenum-conversion]
+                                                 T4_BAR2_QTYPE_EGRESS,
+                                                 ^~~~~~~~~~~~~~~~~~~~
+
+c4iw_bar2_addrs expects a value from enum cxgb4_bar2_qtype so use the
+corresponding values from that type so Clang is satisfied without changing
+the meaning of the code.
+
+T4_BAR2_QTYPE_EGRESS = CXGB4_BAR2_QTYPE_EGRESS = 0
+T4_BAR2_QTYPE_INGRESS = CXGB4_BAR2_QTYPE_INGRESS = 1
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/chipidea/otg.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/cxgb4/cq.c | 2 +-
+ drivers/infiniband/hw/cxgb4/qp.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/chipidea/otg.c b/drivers/usb/chipidea/otg.c
-index 10236fe715228..8bf4032226ed5 100644
---- a/drivers/usb/chipidea/otg.c
-+++ b/drivers/usb/chipidea/otg.c
-@@ -206,14 +206,17 @@ static void ci_otg_work(struct work_struct *work)
- 	}
+diff --git a/drivers/infiniband/hw/cxgb4/cq.c b/drivers/infiniband/hw/cxgb4/cq.c
+index 6d30427940942..1fd8798d91a73 100644
+--- a/drivers/infiniband/hw/cxgb4/cq.c
++++ b/drivers/infiniband/hw/cxgb4/cq.c
+@@ -161,7 +161,7 @@ static int create_cq(struct c4iw_rdev *rdev, struct t4_cq *cq,
+ 	cq->gts = rdev->lldi.gts_reg;
+ 	cq->rdev = rdev;
  
- 	pm_runtime_get_sync(ci->dev);
-+
- 	if (ci->id_event) {
- 		ci->id_event = false;
- 		ci_handle_id_switch(ci);
--	} else if (ci->b_sess_valid_event) {
-+	}
-+
-+	if (ci->b_sess_valid_event) {
- 		ci->b_sess_valid_event = false;
- 		ci_handle_vbus_change(ci);
--	} else
--		dev_err(ci->dev, "unexpected event occurs at %s\n", __func__);
-+	}
-+
- 	pm_runtime_put_sync(ci->dev);
+-	cq->bar2_va = c4iw_bar2_addrs(rdev, cq->cqid, T4_BAR2_QTYPE_INGRESS,
++	cq->bar2_va = c4iw_bar2_addrs(rdev, cq->cqid, CXGB4_BAR2_QTYPE_INGRESS,
+ 				      &cq->bar2_qid,
+ 				      user ? &cq->bar2_pa : NULL);
+ 	if (user && !cq->bar2_pa) {
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index 347fe18b1a41c..a9e3a11bea54a 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -279,12 +279,13 @@ static int create_qp(struct c4iw_rdev *rdev, struct t4_wq *wq,
  
- 	enable_irq(ci->irq);
+ 	wq->db = rdev->lldi.db_reg;
+ 
+-	wq->sq.bar2_va = c4iw_bar2_addrs(rdev, wq->sq.qid, T4_BAR2_QTYPE_EGRESS,
++	wq->sq.bar2_va = c4iw_bar2_addrs(rdev, wq->sq.qid,
++					 CXGB4_BAR2_QTYPE_EGRESS,
+ 					 &wq->sq.bar2_qid,
+ 					 user ? &wq->sq.bar2_pa : NULL);
+ 	if (need_rq)
+ 		wq->rq.bar2_va = c4iw_bar2_addrs(rdev, wq->rq.qid,
+-						 T4_BAR2_QTYPE_EGRESS,
++						 CXGB4_BAR2_QTYPE_EGRESS,
+ 						 &wq->rq.bar2_qid,
+ 						 user ? &wq->rq.bar2_pa : NULL);
+ 
+@@ -2572,7 +2573,7 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
+ 	memset(wq->queue, 0, wq->memsize);
+ 	pci_unmap_addr_set(wq, mapping, wq->dma_addr);
+ 
+-	wq->bar2_va = c4iw_bar2_addrs(rdev, wq->qid, T4_BAR2_QTYPE_EGRESS,
++	wq->bar2_va = c4iw_bar2_addrs(rdev, wq->qid, CXGB4_BAR2_QTYPE_EGRESS,
+ 				      &wq->bar2_qid,
+ 			user ? &wq->bar2_pa : NULL);
+ 
 -- 
 2.20.1
 
