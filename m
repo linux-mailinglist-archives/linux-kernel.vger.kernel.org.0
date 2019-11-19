@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F349C101455
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D84C101574
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbfKSFcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:32:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53130 "EHLO mail.kernel.org"
+        id S1730586AbfKSFoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729445AbfKSFcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:32:46 -0500
+        id S1728629AbfKSFoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51B36222A2;
-        Tue, 19 Nov 2019 05:32:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D0E52075E;
+        Tue, 19 Nov 2019 05:44:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141565;
-        bh=ZBUarJcRbt5B3LCR0U1Unw1x/sHcp5/3339eiUcDDvQ=;
+        s=default; t=1574142255;
+        bh=yx7LKwTUSFp/Jv9bAC2z1ZvGkfcLgLukF/deIfRG3uU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zwhbDPgeo6T2hLMdPhnjkQCgKG78Lx+/BUqcI7tMpaycTs9gVOrCESNze8AVUUYjg
-         3NcqK6tRXYsLY8TeVeB7Hb9kr53qgEei03ggKDov3L47UusCt8L37nvG3DQk7L0Q5a
-         vI6XWs4n54m4a5rAVj90OBivoieh6i/ZV0uzvFHM=
+        b=ph9b+x6jXAmlNztWNmftKKVdBZxTxGNLjO1/xsUKwlUiYrzALwIKkUAPiGqmP2El3
+         IlNuQahoOBeLyWY9d6msf3xAwEP3gnmIIssF6PerzrhngOH2r/CBiRMeWSTF1Vtr6X
+         0noA+kh5xr+ZyLqTOtVjhUW2qKoCKE5E6rDmL3AU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 204/422] soc: qcom: geni: Dont ignore clk_round_rate() errors in geni_se_clk_tbl_get()
-Date:   Tue, 19 Nov 2019 06:16:41 +0100
-Message-Id: <20191119051411.801774598@linuxfoundation.org>
+Subject: [PATCH 4.14 002/239] KVM: x86: introduce is_pae_paging
+Date:   Tue, 19 Nov 2019 06:16:42 +0100
+Message-Id: <20191119051256.559776124@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +45,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit e11bbcedecae85ce60a5d99ea03528c2d6f867e0 ]
+[ Upstream commit bf03d4f9334728bf7c8ffc7de787df48abd6340e ]
 
-The function clk_round_rate() is defined to return a "long", not an
-"unsigned long".  That's because it might return a negative error
-code.  Change the call in geni_se_clk_tbl_get() to check for errors.
+Checking for 32-bit PAE is quite common around code that fiddles with
+the PDPTRs.  Add a function to compress all checks into a single
+invocation.
 
-While we're at it, get rid of a useless init of "freq".
+Moving to the common helper also fixes a subtle bug in kvm_set_cr3()
+where it fails to check is_long_mode() and results in KVM incorrectly
+attempting to load PDPTRs for a 64-bit guest.
 
-NOTE: overall the idea that we should iterate over clk_round_rate() to
-try to reconstruct a table already present in the clock driver is
-questionable.  Specifically:
-- This method relies on "clk_round_rate()" rounding up.
-- This method only works if the table is sorted and has no duplicates.
-...this patch doesn't try to fix those problems, it just makes the
-error handling more correct.
-
-Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[sean: backport to 4.x; handle vmx.c split in 5.x, call out the bugfix]
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/qcom/qcom-geni-se.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c | 7 +++----
+ arch/x86/kvm/x86.c | 8 ++++----
+ arch/x86/kvm/x86.h | 5 +++++
+ 3 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-index feed3db21c108..1b19b8428c4ac 100644
---- a/drivers/soc/qcom/qcom-geni-se.c
-+++ b/drivers/soc/qcom/qcom-geni-se.c
-@@ -513,7 +513,7 @@ EXPORT_SYMBOL(geni_se_resources_on);
-  */
- int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index cd5a8e888eb6b..ab6384efc7916 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4468,7 +4468,7 @@ static void ept_load_pdptrs(struct kvm_vcpu *vcpu)
+ 		      (unsigned long *)&vcpu->arch.regs_dirty))
+ 		return;
+ 
+-	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		vmcs_write64(GUEST_PDPTR0, mmu->pdptrs[0]);
+ 		vmcs_write64(GUEST_PDPTR1, mmu->pdptrs[1]);
+ 		vmcs_write64(GUEST_PDPTR2, mmu->pdptrs[2]);
+@@ -4480,7 +4480,7 @@ static void ept_save_pdptrs(struct kvm_vcpu *vcpu)
  {
--	unsigned long freq = 0;
-+	long freq = 0;
- 	int i;
+ 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
  
- 	if (se->clk_perf_tbl) {
-@@ -529,7 +529,7 @@ int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
+-	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		mmu->pdptrs[0] = vmcs_read64(GUEST_PDPTR0);
+ 		mmu->pdptrs[1] = vmcs_read64(GUEST_PDPTR1);
+ 		mmu->pdptrs[2] = vmcs_read64(GUEST_PDPTR2);
+@@ -10906,8 +10906,7 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
+ 		 * If PAE paging and EPT are both on, CR3 is not used by the CPU and
+ 		 * must not be dereferenced.
+ 		 */
+-		if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu) &&
+-		    !nested_ept) {
++		if (is_pae_paging(vcpu) && !nested_ept) {
+ 			if (!load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3)) {
+ 				*entry_failure_code = ENTRY_FAIL_PDPTE;
+ 				return 1;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index dc1b6d5bb16d6..1f9360320a82c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -620,7 +620,7 @@ bool pdptrs_changed(struct kvm_vcpu *vcpu)
+ 	gfn_t gfn;
+ 	int r;
  
- 	for (i = 0; i < MAX_CLK_PERF_LEVEL; i++) {
- 		freq = clk_round_rate(se->clk, freq + 1);
--		if (!freq || freq == se->clk_perf_tbl[i - 1])
-+		if (freq <= 0 || freq == se->clk_perf_tbl[i - 1])
- 			break;
- 		se->clk_perf_tbl[i] = freq;
+-	if (is_long_mode(vcpu) || !is_pae(vcpu) || !is_paging(vcpu))
++	if (!is_pae_paging(vcpu))
+ 		return false;
+ 
+ 	if (!test_bit(VCPU_EXREG_PDPTR,
+@@ -849,8 +849,8 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+ 	if (is_long_mode(vcpu) &&
+ 	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
+ 		return 1;
+-	else if (is_pae(vcpu) && is_paging(vcpu) &&
+-		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
++	else if (is_pae_paging(vcpu) &&
++		 !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
+ 		return 1;
+ 
+ 	vcpu->arch.cr3 = cr3;
+@@ -7787,7 +7787,7 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+ 		kvm_update_cpuid(vcpu);
+ 
+ 	idx = srcu_read_lock(&vcpu->kvm->srcu);
+-	if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		load_pdptrs(vcpu, vcpu->arch.walk_mmu, kvm_read_cr3(vcpu));
+ 		mmu_reset_needed = 1;
  	}
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index c88305d997b0f..68eb0d03e5fc3 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -94,6 +94,11 @@ static inline int is_paging(struct kvm_vcpu *vcpu)
+ 	return likely(kvm_read_cr0_bits(vcpu, X86_CR0_PG));
+ }
+ 
++static inline bool is_pae_paging(struct kvm_vcpu *vcpu)
++{
++	return !is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu);
++}
++
+ static inline u32 bit(int bitno)
+ {
+ 	return 1 << (bitno & 31);
 -- 
 2.20.1
 
