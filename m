@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6194101790
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D71101785
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfKSGCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:02:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37356 "EHLO mail.kernel.org"
+        id S1728235AbfKSGCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:02:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730647AbfKSFmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:42:35 -0500
+        id S1730672AbfKSFmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:42:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BA9021783;
-        Tue, 19 Nov 2019 05:42:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A407421783;
+        Tue, 19 Nov 2019 05:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142154;
-        bh=kiO9wqUjASzmMINbaT3sESNlTQfAAWLNzXtu9pP1MHU=;
+        s=default; t=1574142168;
+        bh=6zIYvAQLeAqmRqLZCnOGn1hGP8lmOux0Wh75nSABTTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iqBQTLo46YZdLd2+a1oeU5S/BnHkNJ/fDiVgcHkWwzlP54lyg4kIQ1sGkBfGGLKjo
-         fNKuGIN6esr+b0r9v0nYeVzPXEI7voWv9a1+1FZKTDG9yyiE7ldYqStUrwROkjpl39
-         1LBC2QljR5KG+aH5iDysovAFtW2pjDGVycTWTftI=
+        b=OEM/Xisf9L7sdhTOIYYlXNLt+jenKWanvmkRzT3XhBbTCqvxa0e494qZVFo7WUGfS
+         GwiCG3hmOPjhBSS7usP8ERcChfCLknqp+c8sDtXM4eOdGQ/zHVY9iXgaRO5Tk1Ltx1
+         //ruXGNyIBfdgvy18ALkoQu4vwAyK/cWvAKxrFqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 408/422] arm64: dts: amd: Fix SPI bus warnings
-Date:   Tue, 19 Nov 2019 06:20:05 +0100
-Message-Id: <20191119051425.623376535@linuxfoundation.org>
+Subject: [PATCH 4.19 413/422] rtc: armada38x: fix possible race condition
+Date:   Tue, 19 Nov 2019 06:20:10 +0100
+Message-Id: <20191119051425.956631885@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -46,48 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit e9f0878c4b2004ac19581274c1ae4c61ae3ca70e ]
+[ Upstream commit 7d61cbb945a753af08e247b5f10bdd5dbb8d6c80 ]
 
-dtc has new checks for SPI buses. Fix the warnings in node names.
+The IRQ is requested before the struct rtc is allocated and registered, but
+this struct is used in the IRQ handler. This may lead to a NULL pointer
+dereference.
 
-arch/arm64/boot/dts/amd/amd-overdrive.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/amd/amd-overdrive-rev-b0.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
+Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+before requesting the IRQ.
 
-Cc: Brijesh Singh <brijeshkumar.singh@amd.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-armada38x.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-index 125f4deb52fe9..b664e7af74eb3 100644
---- a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-+++ b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-@@ -107,7 +107,7 @@
- 			clock-names = "uartclk", "apb_pclk";
- 		};
+diff --git a/drivers/rtc/rtc-armada38x.c b/drivers/rtc/rtc-armada38x.c
+index bde53c8ccee2c..b74338d6dde60 100644
+--- a/drivers/rtc/rtc-armada38x.c
++++ b/drivers/rtc/rtc-armada38x.c
+@@ -514,7 +514,6 @@ MODULE_DEVICE_TABLE(of, armada38x_rtc_of_match_table);
  
--		spi0: ssp@e1020000 {
-+		spi0: spi@e1020000 {
- 			status = "disabled";
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0 0xe1020000 0 0x1000>;
-@@ -117,7 +117,7 @@
- 			clock-names = "apb_pclk";
- 		};
+ static __init int armada38x_rtc_probe(struct platform_device *pdev)
+ {
+-	const struct rtc_class_ops *ops;
+ 	struct resource *res;
+ 	struct armada38x_rtc *rtc;
+ 	const struct of_device_id *match;
+@@ -551,6 +550,11 @@ static __init int armada38x_rtc_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "no irq\n");
+ 		return rtc->irq;
+ 	}
++
++	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(rtc->rtc_dev))
++		return PTR_ERR(rtc->rtc_dev);
++
+ 	if (devm_request_irq(&pdev->dev, rtc->irq, armada38x_rtc_alarm_irq,
+ 				0, pdev->name, rtc) < 0) {
+ 		dev_warn(&pdev->dev, "Interrupt not available.\n");
+@@ -560,28 +564,24 @@ static __init int armada38x_rtc_probe(struct platform_device *pdev)
  
--		spi1: ssp@e1030000 {
-+		spi1: spi@e1030000 {
- 			status = "disabled";
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0 0xe1030000 0 0x1000>;
+ 	if (rtc->irq != -1) {
+ 		device_init_wakeup(&pdev->dev, 1);
+-		ops = &armada38x_rtc_ops;
++		rtc->rtc_dev->ops = &armada38x_rtc_ops;
+ 	} else {
+ 		/*
+ 		 * If there is no interrupt available then we can't
+ 		 * use the alarm
+ 		 */
+-		ops = &armada38x_rtc_ops_noirq;
++		rtc->rtc_dev->ops = &armada38x_rtc_ops_noirq;
+ 	}
+ 	rtc->data = (struct armada38x_rtc_data *)match->data;
+ 
+-
+ 	/* Update RTC-MBUS bridge timing parameters */
+ 	rtc->data->update_mbus_timing(rtc);
+ 
+-	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+-						ops, THIS_MODULE);
+-	if (IS_ERR(rtc->rtc_dev)) {
+-		ret = PTR_ERR(rtc->rtc_dev);
++	ret = rtc_register_device(rtc->rtc_dev);
++	if (ret)
+ 		dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
+-		return ret;
+-	}
+-	return 0;
++
++	return ret;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.20.1
 
