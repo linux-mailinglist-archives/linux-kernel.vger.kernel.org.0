@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBC31017BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:03:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F4B91017B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfKSFj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:39:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33948 "EHLO mail.kernel.org"
+        id S1729355AbfKSFk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:40:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbfKSFjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:53 -0500
+        id S1730393AbfKSFkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:40:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F9272071A;
-        Tue, 19 Nov 2019 05:39:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 815ED21783;
+        Tue, 19 Nov 2019 05:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141991;
-        bh=Qza8YEvSzdPKwKEaI7fqjuv7psHzH3lMC18tMA5SjGY=;
+        s=default; t=1574142022;
+        bh=oNMpK4uCT6FqDAbQaOrbyYV5qSgpW9C8QAqC4iyX9LQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f9hKIEw3lS2cooC2Ow9++jBU510bWJkFZQkl/WQUSvasw44uvxmUbC+309aCdj2DZ
-         P77P+3XCnh9LGCc2bmJme/QuJ48K+gmpa6wwmClVuidFnJjuD26hLuQRGCnvS3+7i2
-         Lv7zu+/xUy18M3rcqCwKrvVrUcNz6xKCc3pRJcMA=
+        b=bGjgvlP0caNDgRTbOwhp6a6Ejz0BDtwAslkdAAzFd7AR3Kq2czry2CVk8EiNkUSB9
+         /9M/f5FbvXv57jsMzNy6t3cO++BjB9hPhWFsECXPWssU/xDiKJo3nYCPbXDux2k4ZO
+         IJ+Tk9ttcc4A6ebVznivXhepU6tri2snFh+SyfVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tomasz Nowicki <tnowicki@caviumnetworks.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 349/422] coresight: etm4x: Configure EL2 exception level when kernel is running in HYP
-Date:   Tue, 19 Nov 2019 06:19:06 +0100
-Message-Id: <20191119051421.627452325@linuxfoundation.org>
+Subject: [PATCH 4.19 354/422] silmbus: ngd: register controller after power up.
+Date:   Tue, 19 Nov 2019 06:19:11 +0100
+Message-Id: <20191119051421.958702318@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -45,107 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomasz Nowicki <tnowicki@caviumnetworks.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit b860801e3237ec4c74cf8de0be4816996757ae5c ]
+[ Upstream commit 94fe5f2b45c4108885e4b71f6b181068632ec904 ]
 
-For non-VHE systems host kernel runs at EL1 and jumps to EL2 whenever
-hypervisor code should be executed. In this case ETM4x driver must
-restrict configuration to EL1 when it setups kernel tracing.
-However, there is no separate hypervisor privilege level when VHE
-is enabled, the host kernel runs at EL2.
+Register slimbus controller only after finishing powerup sequnce so that we
+do not endup in situation where core starts sending transactions before
+the controller is ready.
 
-This patch fixes configuration of TRCACATRn register for VHE systems
-so that ETM_EXLEVEL_NS_HYP bit is used instead of ETM_EXLEVEL_NS_OS
-to on/off kernel tracing. At the same time, it moves common code
-to new helper.
-
-Signed-off-by: Tomasz Nowicki <tnowicki@caviumnetworks.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-etm4x.c | 40 +++++++++----------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ drivers/slimbus/qcom-ngd-ctrl.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index e45b5ec2f4512..b7bc08cf90c69 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -28,6 +28,7 @@
- #include <linux/pm_runtime.h>
- #include <asm/sections.h>
- #include <asm/local.h>
-+#include <asm/virt.h>
- 
- #include "coresight-etm4x.h"
- #include "coresight-etm-perf.h"
-@@ -616,7 +617,7 @@ static void etm4_set_default_config(struct etmv4_config *config)
- 	config->vinst_ctrl |= BIT(0);
- }
- 
--static u64 etm4_get_access_type(struct etmv4_config *config)
-+static u64 etm4_get_ns_access_type(struct etmv4_config *config)
- {
- 	u64 access_type = 0;
- 
-@@ -627,17 +628,26 @@ static u64 etm4_get_access_type(struct etmv4_config *config)
- 	 *   Bit[13] Exception level 1 - OS
- 	 *   Bit[14] Exception level 2 - Hypervisor
- 	 *   Bit[15] Never implemented
--	 *
--	 * Always stay away from hypervisor mode.
- 	 */
--	access_type = ETM_EXLEVEL_NS_HYP;
--
--	if (config->mode & ETM_MODE_EXCL_KERN)
--		access_type |= ETM_EXLEVEL_NS_OS;
-+	if (!is_kernel_in_hyp_mode()) {
-+		/* Stay away from hypervisor mode for non-VHE */
-+		access_type =  ETM_EXLEVEL_NS_HYP;
-+		if (config->mode & ETM_MODE_EXCL_KERN)
-+			access_type |= ETM_EXLEVEL_NS_OS;
-+	} else if (config->mode & ETM_MODE_EXCL_KERN) {
-+		access_type = ETM_EXLEVEL_NS_HYP;
-+	}
- 
- 	if (config->mode & ETM_MODE_EXCL_USER)
- 		access_type |= ETM_EXLEVEL_NS_APP;
- 
-+	return access_type;
-+}
+diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+index e587be9064e74..d72f8eed2e8b7 100644
+--- a/drivers/slimbus/qcom-ngd-ctrl.c
++++ b/drivers/slimbus/qcom-ngd-ctrl.c
+@@ -1234,8 +1234,17 @@ static int qcom_slim_ngd_enable(struct qcom_slim_ngd_ctrl *ctrl, bool enable)
+ 			pm_runtime_resume(ctrl->dev);
+ 		pm_runtime_mark_last_busy(ctrl->dev);
+ 		pm_runtime_put(ctrl->dev);
 +
-+static u64 etm4_get_access_type(struct etmv4_config *config)
-+{
-+	u64 access_type = etm4_get_ns_access_type(config);
++		ret = slim_register_controller(&ctrl->ctrl);
++		if (ret) {
++			dev_err(ctrl->dev, "error adding slim controller\n");
++			return ret;
++		}
 +
- 	/*
- 	 * EXLEVEL_S, bits[11:8], don't trace anything happening
- 	 * in secure state.
-@@ -891,20 +901,10 @@ void etm4_config_trace_mode(struct etmv4_config *config)
++		dev_info(ctrl->dev, "SLIM controller Registered\n");
+ 	} else {
+ 		qcom_slim_qmi_exit(ctrl);
++		slim_unregister_controller(&ctrl->ctrl);
+ 	}
  
- 	addr_acc = config->addr_acc[ETM_DEFAULT_ADDR_COMP];
- 	/* clear default config */
--	addr_acc &= ~(ETM_EXLEVEL_NS_APP | ETM_EXLEVEL_NS_OS);
-+	addr_acc &= ~(ETM_EXLEVEL_NS_APP | ETM_EXLEVEL_NS_OS |
-+		      ETM_EXLEVEL_NS_HYP);
+ 	return 0;
+@@ -1360,11 +1369,6 @@ static int qcom_slim_ngd_probe(struct platform_device *pdev)
+ 	int ret;
  
--	/*
--	 * EXLEVEL_NS, bits[15:12]
--	 * The Exception levels are:
--	 *   Bit[12] Exception level 0 - Application
--	 *   Bit[13] Exception level 1 - OS
--	 *   Bit[14] Exception level 2 - Hypervisor
--	 *   Bit[15] Never implemented
--	 */
--	if (mode & ETM_MODE_EXCL_KERN)
--		addr_acc |= ETM_EXLEVEL_NS_OS;
--	else
--		addr_acc |= ETM_EXLEVEL_NS_APP;
-+	addr_acc |= etm4_get_ns_access_type(config);
+ 	ctrl->ctrl.dev = dev;
+-	ret = slim_register_controller(&ctrl->ctrl);
+-	if (ret) {
+-		dev_err(dev, "error adding slim controller\n");
+-		return ret;
+-	}
  
- 	config->addr_acc[ETM_DEFAULT_ADDR_COMP] = addr_acc;
- 	config->addr_acc[ETM_DEFAULT_ADDR_COMP + 1] = addr_acc;
+ 	pm_runtime_use_autosuspend(dev);
+ 	pm_runtime_set_autosuspend_delay(dev, QCOM_SLIM_NGD_AUTOSUSPEND);
+@@ -1374,7 +1378,7 @@ static int qcom_slim_ngd_probe(struct platform_device *pdev)
+ 	ret = qcom_slim_ngd_qmi_svc_event_init(ctrl);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "QMI service registration failed:%d", ret);
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	INIT_WORK(&ctrl->m_work, qcom_slim_ngd_master_worker);
+@@ -1386,8 +1390,6 @@ static int qcom_slim_ngd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	return 0;
+-err:
+-	slim_unregister_controller(&ctrl->ctrl);
+ wq_err:
+ 	qcom_slim_ngd_qmi_svc_event_deinit(&ctrl->qmi);
+ 	if (ctrl->mwq)
+@@ -1460,7 +1462,7 @@ static int qcom_slim_ngd_remove(struct platform_device *pdev)
+ 	struct qcom_slim_ngd_ctrl *ctrl = platform_get_drvdata(pdev);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-	slim_unregister_controller(&ctrl->ctrl);
++	qcom_slim_ngd_enable(ctrl, false);
+ 	qcom_slim_ngd_exit_dma(ctrl);
+ 	qcom_slim_ngd_qmi_svc_event_deinit(&ctrl->qmi);
+ 	if (ctrl->mwq)
 -- 
 2.20.1
 
