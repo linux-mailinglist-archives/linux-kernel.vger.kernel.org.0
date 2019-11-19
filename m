@@ -2,121 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC97102BC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:36:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06EF6102BC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:38:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfKSSg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 13:36:29 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:44160 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfKSSg2 (ORCPT
+        id S1727405AbfKSSiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 13:38:02 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:44006 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbfKSSiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 13:36:28 -0500
-Received: by mail-pj1-f65.google.com with SMTP id w8so2957000pjh.11
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 10:36:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cqd1PZl4Bd7PEGTyuVkaWzR8dbBXh+gC15PgfLfD0Zw=;
-        b=vVGW3EfTq7IwmL6p+BTaKa+qb54m/uF752AGPg8O3AB19vr2fJ/XiITO6xRm37/htM
-         wgspP/qnrZ1knIUwpY9LkcSAxvEW7iwhMFr5lE+KUXiSfqUzYWgLg9s2yaZu0etKbwbl
-         4vPlCLufd/3gzStPsWsGMNY7I1o6en96LUpHN/Y0QlKwMSABDJk/uQmFIVMjQ0F1eiNk
-         1DXuJ4+1FQK3UILFjofyOz+sf4XqFrOkSyZVopEKE/90f1tx+zZBAwopmSMT6fJUCUmt
-         iuodJG/jzNR98u9s3lij09Ql46xDCZn8QZ5zpDUnSXzbMtU9uA7PJrsByrH5UVZbeSrQ
-         FI0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cqd1PZl4Bd7PEGTyuVkaWzR8dbBXh+gC15PgfLfD0Zw=;
-        b=m9cp4NLdydUEIQsuSmH6E+k9mOQC/a29hd8JBcEhIPGeH7UxQ9WpDESoolHiNHEmv1
-         o6CLgvL97FQi25LPxzdj1CfSfUB0dp3pYMN/b4HkMlV6Uim9WY3lClRonserVGmlOtbc
-         BqWzAqYLqlOnpaay2Qb/otZfGnAaqAyf9YUmlMTeuev7x++bJyzpNsmvpvIH5/nDmnv5
-         iNFAeqHOO6Ibvf7kGB5hh14zfMXzTKU1g7LB/BYOjJwI1j7Prwot9921HgCee+LvGSrU
-         g4xWwEJKGyPOtJn+lW/7pqZuwyW8b/zzCiGduNUagos7k1hneRdcj8+ywt+wrp7F/Wiq
-         RoxQ==
-X-Gm-Message-State: APjAAAWoOzcH3utDgkm1y4ipAx1d495Xc9Bod1jmHBVMISlnCPYznXEy
-        4lZKenClsVbEWFDyul4XEMdZ4mRySrThCxel7ZAphQ==
-X-Google-Smtp-Source: APXvYqwntEoFXFSkd8roeQK4Vfw0pBJCXkLH0R0JAgVf2MFOls4Cp8WPWrVjsoHG2ZZbgV3p9gNovSTX97zEa+suatw=
-X-Received: by 2002:a17:90a:d155:: with SMTP id t21mr8032255pjw.84.1574188587517;
- Tue, 19 Nov 2019 10:36:27 -0800 (PST)
+        Tue, 19 Nov 2019 13:38:01 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAJIbr6Z039222;
+        Tue, 19 Nov 2019 12:37:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574188673;
+        bh=200y+IYezlbg1I7CHIbsZoBP5uAkW4mrYcSZBakSEkA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=xUaj7hMnZ4gydoPBzKyzJX1x7VBnBrpEwwFvuYeXRF1HpccFXeJEEpvlbW3AuWBoQ
+         7ruduYMQfXtKq7jYsxvHSdU2wlGXe1n0FBnOIoner3JZxpHEx80H8kGQ3UVJBqNXeM
+         QCjfZyu2GY3zoMIjhubrfN+6oSavdipD25/p96QI=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAJIbqOZ061176
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Nov 2019 12:37:52 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 19
+ Nov 2019 12:37:52 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 19 Nov 2019 12:37:52 -0600
+Received: from [10.250.33.226] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAJIbqTW082910;
+        Tue, 19 Nov 2019 12:37:52 -0600
+Subject: Re: [PATCH v2 4/4] dt-bindings: mfd: update TI tps6105x chip bindings
+To:     Sven Van Asbroeck <thesven73@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Grigoryev Denis <grigoryev@fastwel.ru>,
+        Axel Lin <axel.lin@ingics.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20191119154611.29625-1-TheSven73@gmail.com>
+ <20191119154611.29625-5-TheSven73@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <a37d098e-12ea-af2e-22cd-cb5ec2856b6d@ti.com>
+Date:   Tue, 19 Nov 2019 12:36:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <1573812972-10529-1-git-send-email-alan.maguire@oracle.com>
- <1573812972-10529-2-git-send-email-alan.maguire@oracle.com> <20191117013336.F23F820730@mail.kernel.org>
-In-Reply-To: <20191117013336.F23F820730@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 19 Nov 2019 10:36:15 -0800
-Message-ID: <CAFd5g44115hPDMJNWPnyLZ_3zJMBzA+6MHxCLCA1ddkYipDtkA@mail.gmail.com>
-Subject: Re: [PATCH v4 linux-kselftest-test 1/6] kunit: move string-stream.h
- to lib/kunit
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Alan Maguire <alan.maguire@oracle.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
-        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        Luis Chamberlain <mcgrof@kernel.org>, changbin.du@intel.com,
-        linux-ext4@vger.kernel.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Knut Omang <knut.omang@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191119154611.29625-5-TheSven73@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 16, 2019 at 5:33 PM Stephen Boyd <sboyd@kernel.org> wrote:
+Sven
+
+On 11/19/19 9:46 AM, Sven Van Asbroeck wrote:
+> The driver has been extended to optionally get its operational
+> mode, regulator init data and led label from the devicetree.
 >
-> Quoting Alan Maguire (2019-11-15 02:16:07)
-> > string-stream interfaces are not intended for external use;
-> > move them from include/kunit to lib/kunit accordingly.
-> >
-> > Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> > Signed-off-by: Knut Omang <knut.omang@oracle.com>
+> Tree: next-20191118
+> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+> ---
+>   .../devicetree/bindings/mfd/tps6105x.txt      | 42 ++++++++++++++++++-
+>   1 file changed, 41 insertions(+), 1 deletion(-)
 >
-> The sign off chain is incorrect here. Is Knut tag supposed to be
-> Co-developed-by?
+> diff --git a/Documentation/devicetree/bindings/mfd/tps6105x.txt b/Documentation/devicetree/bindings/mfd/tps6105x.txt
+> index 93602c7a19c8..ab5d4c52074f 100644
+> --- a/Documentation/devicetree/bindings/mfd/tps6105x.txt
+> +++ b/Documentation/devicetree/bindings/mfd/tps6105x.txt
+> @@ -7,11 +7,51 @@ Required properties:
+>   - compatible:		"ti,tps61050" or "ti,tps61052"
+>   - reg:			Specifies the I2C slave address
+>   
+> -Example:
+> +Optional sub-node:
+> +
+> +This subnode selects the chip's operational mode.
+> +There can be at most one single available subnode.
+> +
+> +- regulator: presence of this sub-node puts the chip in regulator mode.
+> +	see Documentation/devicetree/bindings/regulator/regulator.txt
+> +
+> +- led: presence of this sub-node puts the chip in led mode.
+> +	Optional properties:
+> +		- label: see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example (GPIO operation only):
+> +
+> +i2c0 {
+> +	tps61052@33 {
+> +		compatible = "ti,tps61052";
+> +		reg = <0x33>;
+> +	};
+> +};
+> +
+> +Example (GPIO + regulator operation):
+>   
+>   i2c0 {
+>   	tps61052@33 {
+>   		compatible = "ti,tps61052";
+>   		reg = <0x33>;
+> +
+> +		regulator {
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			regulator-always-on;
+> +		};
+> +	};
+> +};
+> +
+> +Example (GPIO + led operation):
+What part of the example is GPIO? Is that the default function?
+> +
+> +i2c0 {
+> +	tps61052@33 {
+> +		compatible = "ti,tps61052";
+> +		reg = <0x33>;
+> +
+> +		led {
+> +			label = "tps-torch";
 
-I am not sure what the relationship between Alan and Knut on this
-patch. Nevertheless, Signed-off-by is required either way, but it
-seems that Co-developed-by is optional depending on how Alan and Knut
-would like to share credit for this patch, at least that is based on
-my reading of the submitting patches guide:
+function and color examples?
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
 
-> > diff --git a/include/kunit/assert.h b/include/kunit/assert.h
-> > index db6a0fc..ad889b5 100644
-> > --- a/include/kunit/assert.h
-> > +++ b/include/kunit/assert.h
-> > @@ -9,10 +9,11 @@
-> >  #ifndef _KUNIT_ASSERT_H
-> >  #define _KUNIT_ASSERT_H
-> >
-> > -#include <kunit/string-stream.h>
-> >  #include <linux/err.h>
-> > +#include <linux/kernel.h>
->
-> Why is this included now?
-
-Nice catch! I think I would have missed that.
-
-> >
-> >  struct kunit;
-> > +struct string_stream;
-> >
-> >  /**
-> >   * enum kunit_assert_type - Type of expectation/assertion.
-
-Cheers!
+> +		};
+>   	};
+>   };
