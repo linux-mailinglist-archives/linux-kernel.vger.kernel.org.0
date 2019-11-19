@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E284C101746
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E102D1017E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbfKSF7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:59:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44422 "EHLO mail.kernel.org"
+        id S1730095AbfKSFhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:37:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbfKSFr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:47:59 -0500
+        id S1729163AbfKSFhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:37:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94F46218BA;
-        Tue, 19 Nov 2019 05:47:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8302821783;
+        Tue, 19 Nov 2019 05:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142479;
-        bh=TpkzKMyFzG2aSK2ygTyId2XlAG8Nb4XPxuop5Fac2x8=;
+        s=default; t=1574141851;
+        bh=5UlIQR2DCq+pOvDPurmJbhIK5FNedXV0/VZEjZx8hAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vOg5sNC8qvFHJZY/3RebfCaCVpqvndz5wylxQCYQzNEKSi0H/qRxEdE/iNxCbAaN0
-         9BEGO6whB+5npCkpAjBDDns/b49ueEsOQ720/Ol5PnuKbEJxEXeshHjPPjR4sBQy0k
-         mdSFsUI3+ZJmxIRT5sTR/NE5zUypaW/gb7J3NSGc=
+        b=rhzauzkDPLi8fSoKziZfusqjjZBX1+Xq0tgdqf1zJC8vkZ3l9oXTY2wqZXNcyZYTJ
+         ZgS5IFI1nyyrmppjwIoFdjUs4bSnIWMSY9EH+sPTygBcMPgM+aAGdpVf2ddrTiOYT0
+         1bXsZy4i2NsmeCj5wOkQj26Ql8dNaMHVU7TCpXho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 096/239] scsi: qla2xxx: Defer chip reset until target mode is enabled
-Date:   Tue, 19 Nov 2019 06:18:16 +0100
-Message-Id: <20191119051322.867369592@linuxfoundation.org>
+Subject: [PATCH 4.19 301/422] ARM: dts: ux500: Fix LCDA clock line muxing
+Date:   Tue, 19 Nov 2019 06:18:18 +0100
+Message-Id: <20191119051418.506508118@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 93eca6135183f7a71e36acd47655a085ed11bcdc ]
+[ Upstream commit ecde29569e3484e1d0a032bf4074449bce4d4a03 ]
 
-For target mode, any chip reset triggered before target mode is enabled will
-be held off until user is ready to enable.  This prevents the chip from
-starting or running before it is intended.
+The "lcdaclk_b_1" group is muxed with the function "lcd"
+but needs a separate entry to be muxed in with "lcda"
+rather than "lcd".
 
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_os.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/ste-href-family-pinctrl.dtsi | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 343fbaa6d2a2d..5617bb18c2335 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -5801,12 +5801,27 @@ qla2x00_do_dpc(void *data)
- 		if (test_and_clear_bit
- 		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
- 		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
-+			bool do_reset = true;
-+
-+			switch (ql2x_ini_mode) {
-+			case QLA2XXX_INI_MODE_ENABLED:
-+				break;
-+			case QLA2XXX_INI_MODE_DISABLED:
-+				if (!qla_tgt_mode_enabled(base_vha))
-+					do_reset = false;
-+				break;
-+			case QLA2XXX_INI_MODE_DUAL:
-+				if (!qla_dual_mode_enabled(base_vha))
-+					do_reset = false;
-+				break;
-+			default:
-+				break;
-+			}
+diff --git a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
+index 5c5cea232743d..1ec193b0c5065 100644
+--- a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
++++ b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
+@@ -607,16 +607,20 @@
  
--			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
--			    "ISP abort scheduled.\n");
--			if (!(test_and_set_bit(ABORT_ISP_ACTIVE,
-+			if (do_reset && !(test_and_set_bit(ABORT_ISP_ACTIVE,
- 			    &base_vha->dpc_flags))) {
--
-+				ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
-+				    "ISP abort scheduled.\n");
- 				if (ha->isp_ops->abort_isp(base_vha)) {
- 					/* failed. retry later */
- 					set_bit(ISP_ABORT_NEEDED,
-@@ -5814,10 +5829,9 @@ qla2x00_do_dpc(void *data)
- 				}
- 				clear_bit(ABORT_ISP_ACTIVE,
- 						&base_vha->dpc_flags);
-+				ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
-+				    "ISP abort end.\n");
- 			}
--
--			ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
--			    "ISP abort end.\n");
- 		}
- 
- 		if (test_and_clear_bit(FCPORT_UPDATE_NEEDED,
+ 			mcde {
+ 				lcd_default_mode: lcd_default {
+-					default_mux {
++					default_mux1 {
+ 						/* Mux in VSI0 and all the data lines */
+ 						function = "lcd";
+ 						groups =
+ 						"lcdvsi0_a_1", /* VSI0 for LCD */
+ 						"lcd_d0_d7_a_1", /* Data lines */
+ 						"lcd_d8_d11_a_1", /* TV-out */
+-						"lcdaclk_b_1", /* Clock line for TV-out */
+ 						"lcdvsi1_a_1"; /* VSI1 for HDMI */
+ 					};
++					default_mux2 {
++						function = "lcda";
++						groups =
++						"lcdaclk_b_1"; /* Clock line for TV-out */
++					};
+ 					default_cfg1 {
+ 						pins =
+ 						"GPIO68_E1", /* VSI0 */
 -- 
 2.20.1
 
