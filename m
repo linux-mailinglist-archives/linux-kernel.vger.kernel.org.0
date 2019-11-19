@@ -2,148 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D7FB10257D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16816102584
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:36:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbfKSNf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:35:28 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36721 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfKSNf1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:35:27 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k13so11387921pgh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:35:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mlL4JdbEktI9zkObkASn7TbhSwKiSPzPVUMi6U8vf2E=;
-        b=H5OEA6kMS0jCMTcFH3iKYxZa78SKxenglMSWLMOp6yInuynmqeA2hc7M9GioyuCiWx
-         3NbEHnsdTOrOqYDZd5GV3C3fkYTCVU+WsH5e57HL0mpAF/obR+xG1pE4SVLJZlPSPRIm
-         mEPN+3ecGnBf6mpvjHUSaJ6Z/EWzfLoFXyyAarIbORfxAX8KFCpuOO8+nnZgH6X0+nOK
-         u8uOow8qTm644lreNoTQMltmz+k9NFc3/GDhP3y7njQutN3kbJ7A9ThzBxWswOruBlur
-         B6byDGSmsHhIZZgxeJo4DQQWewV0DJMjz9avWU+cmLSEiQ/nj9gWCb4/Qn4T9jQAdO3J
-         CLVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mlL4JdbEktI9zkObkASn7TbhSwKiSPzPVUMi6U8vf2E=;
-        b=sjxupfp+IM+e+edJCMl9gnJ13D6VOQhnmt4uga1qIOUpZUM3HtB3CUQBBbPeQbyOxk
-         mNigyose62Ik8lP0OZgoLQCX5UkuThiqC8ZXPlW1fNrEnx2MPu96OlJ3S9qQaWUKWEUi
-         dYJxzHMT8b7ECsrnDzBA624+xvC9zO4zOLcQ5TYazk4u7f6u7iTfjNH1C1aXMO19yGgJ
-         98hO0nvab8Loh2oVV37rgEpa119QIISW3iuuSbwoGXUL8z4GybMSK/mpGNNN4fYG9JDN
-         RoDhEImDA8ygrpJE7nMNWfep409P+Rb89yJuYvxYC1Ce1npNep5wyk3Z67b17WyctqV/
-         ovOQ==
-X-Gm-Message-State: APjAAAVj1U5dz5w9cygAOcI0GOfp1JP8OGSUEiox2Z6PKcY1iqaW28iT
-        E2MAxvvu5juSmaecOXOX6GVPSFptv0hOFdIW0NyJjGn89SU=
-X-Google-Smtp-Source: APXvYqwJPep0pkr6Pm8D9lD8AXtrHo+fVEFaCUUTFGdphUt+aPWWPkqpij8kFvDzlmTBMo17l+ODwzZ4xneNzmK3iA4=
-X-Received: by 2002:a62:53c6:: with SMTP id h189mr5775991pfb.93.1574170525792;
- Tue, 19 Nov 2019 05:35:25 -0800 (PST)
-MIME-Version: 1.0
-References: <000000000000c4157e0590123002@google.com>
-In-Reply-To: <000000000000c4157e0590123002@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 19 Nov 2019 14:35:13 +0100
-Message-ID: <CAAeHK+x1gdMaVf8uXKATnsj1+qZ40AJVE7-ZXxFv0NVNi0OuTw@mail.gmail.com>
-Subject: Re: divide error in usbtmc_generic_read
-To:     syzbot <syzbot+55b0304b360654a7537b@syzkaller.appspotmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        guido.kiener@rohde-schwarz.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        steve_bayless@keysight.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+        id S1728022AbfKSNf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:35:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47754 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725798AbfKSNf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 08:35:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 35F11B1D3;
+        Tue, 19 Nov 2019 13:35:57 +0000 (UTC)
+Message-ID: <1574170553.28617.10.camel@suse.com>
+Subject: Re: WARNING in ath6kl_htc_pipe_rx_complete
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+555908813b2ea35dae9a@syzkaller.appspotmail.com>,
+        andreyknvl@google.com, davem@davemloft.net, kvalo@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Date:   Tue, 19 Nov 2019 14:35:53 +0100
+In-Reply-To: <0000000000008123610596c36579@google.com>
+References: <0000000000008123610596c36579@google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 1:38 PM syzbot
-<syzbot+55b0304b360654a7537b@syzkaller.appspotmail.com> wrote:
->
+Am Donnerstag, den 07.11.2019, 07:34 -0800 schrieb syzbot:
 > Hello,
->
+> 
 > syzbot found the following crash on:
->
-> HEAD commit:    d0847550 usb-fuzzer: main usb gadget fuzzer driver
+> 
+> HEAD commit:    d60bbfea usb: raw: add raw-gadget interface
 > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16295d4a600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dbc9c80cc095da19
-> dashboard link: https://syzkaller.appspot.com/bug?extid=55b0304b360654a7537b
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1029829ae00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=79de80330003b5f7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=555908813b2ea35dae9a
 > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1288a31c600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15282e86600000
->
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1388a2aae00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13aa35dce00000
+> 
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+55b0304b360654a7537b@syzkaller.appspotmail.com
->
-> divide error: 0000 [#1] SMP KASAN
-> CPU: 1 PID: 1761 Comm: syz-executor063 Not tainted 5.3.0-rc4+ #26
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:usbtmc_generic_read+0x135/0x1190 drivers/usb/class/usbtmc.c:816
-> Code: 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2
-> 0f 85 50 08 00 00 41 0f b7 6e 34 31 d2 31 ff 8b 44 24 28 <f7> f5 89 d6 41
-> 89 d4 e8 2f 54 c9 fd 44 8b 6c 24 28 45 85 e4 44 89
-> RSP: 0018:ffff8881d2b77a58 EFLAGS: 00010246
-> RAX: 0000000000000002 RBX: 000000004f894bad RCX: ffffffff837487cd
-> RDX: 0000000000000000 RSI: ffffffff837487da RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffff8881d20a0000 R09: ffffed103a56ef90
-> R10: ffffed103a56ef8f R11: 0000000000000003 R12: ffff8881d08e7180
-> R13: 0000000020000000 R14: ffff8881d0404c80 R15: ffff8881d08e7180
-> FS:  0000555555b74880(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000006cc090 CR3: 00000001d615e000 CR4: 00000000001406e0
-> Call Trace:
->   usbtmc_ioctl_generic_read drivers/usb/class/usbtmc.c:1029 [inline]
->   usbtmc_ioctl+0x27d/0x2ab0 drivers/usb/class/usbtmc.c:2089
->   vfs_ioctl fs/ioctl.c:46 [inline]
->   file_ioctl fs/ioctl.c:509 [inline]
->   do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
->   ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
->   __do_sys_ioctl fs/ioctl.c:720 [inline]
->   __se_sys_ioctl fs/ioctl.c:718 [inline]
->   __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
->   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4419a9
-> Code: e8 8c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 cb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffd0abd6738 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004419a9
-> RDX: 0000000020000000 RSI: 00000000c0145b0e RDI: 0000000000000004
-> RBP: 000000000000a984 R08: 000000000000000f R09: 00000000004002c8
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402700
-> R13: 0000000000402790 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> ---[ end trace a91d281a4d83213c ]---
-> RIP: 0010:usbtmc_generic_read+0x135/0x1190 drivers/usb/class/usbtmc.c:816
-> Code: 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2
-> 0f 85 50 08 00 00 41 0f b7 6e 34 31 d2 31 ff 8b 44 24 28 <f7> f5 89 d6 41
-> 89 d4 e8 2f 54 c9 fd 44 8b 6c 24 28 45 85 e4 44 89
-> RSP: 0018:ffff8881d2b77a58 EFLAGS: 00010246
-> RAX: 0000000000000002 RBX: 000000004f894bad RCX: ffffffff837487cd
-> RDX: 0000000000000000 RSI: ffffffff837487da RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffff8881d20a0000 R09: ffffed103a56ef90
-> R10: ffffed103a56ef8f R11: 0000000000000003 R12: ffff8881d08e7180
-> R13: 0000000020000000 R14: ffff8881d0404c80 R15: ffff8881d08e7180
-> FS:  0000555555b74880(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000006cc090 CR3: 00000001d615e000 CR4: 00000000001406e0
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> Reported-by: syzbot+555908813b2ea35dae9a@syzkaller.appspotmail.com
 
-#syz fix: usbtmc: more sanity checking for packet size
+#syz test: https://github.com/google/kasan.git d60bbfea
+
+From d289a4973b869117a5a7f70297b0cecffceb8289 Mon Sep 17 00:00:00 2001
+From: Oliver Neukum <oneukum@suse.com>
+Date: Mon, 18 Nov 2019 19:23:25 +0100
+Subject: [PATCH] ath6kl: reduce WARN to dev_dbg() in callback
+
+The warn is triggered on a known race condition
+that is correctly handled. Using WARN() hinders automated
+testing. Reducing severity.
+
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+---
+ drivers/net/wireless/ath/ath6kl/htc_pipe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/htc_pipe.c b/drivers/net/wireless/ath/ath6kl/htc_pipe.c
+index c68848819a52..9b88d96bfe96 100644
+--- a/drivers/net/wireless/ath/ath6kl/htc_pipe.c
++++ b/drivers/net/wireless/ath/ath6kl/htc_pipe.c
+@@ -960,8 +960,8 @@ static int ath6kl_htc_pipe_rx_complete(struct ath6kl *ar, struct sk_buff *skb,
+ 	 * Thus the possibility of ar->htc_target being NULL
+ 	 * via ath6kl_recv_complete -> ath6kl_usb_io_comp_work.
+ 	 */
+-	if (WARN_ON_ONCE(!target)) {
+-		ath6kl_err("Target not yet initialized\n");
++	if (!target) {
++		ath6kl_dbg(ATH6KL_DBG_HTC, "Target not yet initialized\n");
+ 		status = -EINVAL;
+ 		goto free_skb;
+ 	}
+-- 
+2.16.4
+
