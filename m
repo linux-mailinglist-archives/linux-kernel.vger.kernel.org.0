@@ -2,162 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AC810139E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1168C1013B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728470AbfKSFZz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 19 Nov 2019 00:25:55 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:58369 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728444AbfKSFZw (ORCPT
+        id S1728581AbfKSF0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:26:32 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40649 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728572AbfKSF0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:25:52 -0500
-Received: from marcel-macbook.holtmann.net (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
-        by mail.holtmann.org (Postfix) with ESMTPSA id A7DE8CECED;
-        Tue, 19 Nov 2019 06:34:57 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH v6 1/4] Bluetooth: hci_bcm: Disallow set_baudrate for
- BCM4354
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20191118110335.v6.1.I8ed714e23fdf42fa35588cfee2877b53d781df12@changeid>
-Date:   Tue, 19 Nov 2019 06:25:50 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-bluetooth@vger.kernel.org, dianders@chromium.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <5C8B480B-E8DE-4A90-B33C-0A8AF8BD4FF8@holtmann.org>
-References: <20191118192123.82430-1-abhishekpandit@chromium.org>
- <20191118110335.v6.1.I8ed714e23fdf42fa35588cfee2877b53d781df12@changeid>
-To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-X-Mailer: Apple Mail (2.3601.0.10)
+        Tue, 19 Nov 2019 00:26:30 -0500
+Received: by mail-qk1-f193.google.com with SMTP id z16so16749005qkg.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 21:26:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=podFF2nwPATgk6Vyaa+JKA//o6jLZZVDQvx/NXLG1qw=;
+        b=KyWCOhP8jnpTna7LokuJ3F0YPjpGUTp7v8hiLdPCgezIrdQViDb5ELCsIgqA+PbW7V
+         3hfj6V5icMIBejEYWnkhZfwtBaL9nKmrwhkhajivZ5Yy8fDRwTR7nNSViN48nzdzR4RL
+         z0UjUmwB1jqafeMb0lIDHDKFQAyNgYrmApymj8vZ2y5GfYY8Ag7Fqahe3sB9XLqxmTcA
+         bdjaL5FGV9B20YEyeHawFdceEettYdOYR8a1LJDxavzTYLJV+3OPThmSgCSxaKp45FfS
+         oWtmlStL+Ct/bbTpMr6kEjr71Nse3C8LetBocRbMpqYjHPgmtAFxSdcNI8k8ju5qZUa2
+         m35Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=podFF2nwPATgk6Vyaa+JKA//o6jLZZVDQvx/NXLG1qw=;
+        b=MsGFRFaeS48uxztxHdIJN6RNzOXi6qmXqCD0xbvLVIqxx49Wn/ZoO/w69yDA6AoKJs
+         wDwP4tXH4dlNl8LcLrfL4E0GM7WvUYr7y3W2ZfQCj8rCz2NdRx12ejE/KK0ExwkqF2ev
+         2pe2e6ZW5CH8Y2iTmBrLfT8ld/9J5vv35CvpEbLlcez4k+ebfMvyEbmdYarJm8OxmywZ
+         fh0VxzS4oAx1d2xgWgPyejddQ893d4XQJvAH8X9hUHabtdSw+XHjlAWCAjFLdL3+AdnP
+         8dAbPoZWCX4LaZZNw9FHPLaCsGUooKFgRj1q/ijmDaostdLS7AnVKK1WSFzCXbx3K6q5
+         92rA==
+X-Gm-Message-State: APjAAAUwH+/05Cm5BpY94VkfOKKTTIr5VlgNyUEOcU+ZSpsYWfEuNun6
+        AhTr79tuAk2TQOx4orJgW5gANyD2Ra9DaTakzScHxg==
+X-Google-Smtp-Source: APXvYqwflmyefFY6nZjcYclr6qXpeKQ0p3jimSeMmqtsPPXbdgiEFdjyKSl93F3ZmOOWiM3pqjYuyMaUYB8dyh2z1vs=
+X-Received: by 2002:a37:94e:: with SMTP id 75mr27389233qkj.49.1574141188100;
+ Mon, 18 Nov 2019 21:26:28 -0800 (PST)
+MIME-Version: 1.0
+References: <20191119014357.98465-1-brianvv@google.com> <20191119014357.98465-6-brianvv@google.com>
+ <20191119042012.3wpj5porwkntpfm4@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20191119042012.3wpj5porwkntpfm4@ast-mbp.dhcp.thefacebook.com>
+From:   Brian Vazquez <brianvv@google.com>
+Date:   Mon, 18 Nov 2019 21:26:17 -0800
+Message-ID: <CAMzD94Rv2ysZuMOwMFtZqPVjnhYdx-t2N=ekZzgVNeRapd86Ow@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 5/9] bpf: add batch ops to all htab bpf map
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Yonghong Song <yhs@fb.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On Mon, Nov 18, 2019 at 8:35 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Nov 18, 2019 at 05:43:53PM -0800, Brian Vazquez wrote:
+> > From: Yonghong Song <yhs@fb.com>
+> >
+> > htab can't use generic batch support due some problematic behaviours
+> > inherent to the datastructre, i.e. while iterating the bpf map  a
+> > concurrent program might delete the next entry that batch was about to
+> > use, in this case there's no easy solution to retrieve the next entry
+> > and the issua has been discussed multiple times (see [1] and [2]).
+> > The only way hmap can be traversed without the problem previously
+> > exposed is by making sure that the map is traversing entire buckets.
+> > This commit implements those strict requirements for hmap, the
+> > implementation follows the same interaction that generic support with
+> > some exceptions:
+> >
+> >  - If keys/values buffer are not big enough to traverse a bucket,
+> >    ENOSPC will be returned.
+> >  - out_batch contains the value of the next bucket in the iteration, not
+> >  the next key, but this is transparent for the user since the user
+> >  should never use out_batch for other than bpf batch syscalls.
+> >
+> > Note that only lookup and lookup_and_delete batch ops require the hmap
+> > specific implementation and update/delete batch ops can be the generic
+> > ones.
+> >
+> > [1] https://lore.kernel.org/bpf/20190724165803.87470-1-brianvv@google.com/
+> > [2] https://lore.kernel.org/bpf/20190906225434.3635421-1-yhs@fb.com/
+> >
+> > Co-authored-by: Brian Vazquez <brianvv@google.com>
+> > Signed-off-by: Brian Vazquez <brianvv@google.com>
+> > Signed-off-by: Yonghong Song <yhs@fb.com>
+>
+> SOB order is not quite correct.
+> If the patch was mainly developed by Yonghong it should have his 'From:'
+> then his SOB and then your SOB.
+> You can drop Co-authored-by field.
+>
+Thanks for clarifying, will fix in v2.
 
-> Without updating the patchram, the BCM4354 does not support a higher
-> operating speed. The normal bcm_setup follows the correct order
-> (init_speed, patchram and then oper_speed) but the serdev driver will
-> set the operating speed before calling the hu->setup function. Thus,
-> for the BCM4354, don't set the operating speed before patchram.
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> ---
-> 
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
-> 
-> drivers/bluetooth/hci_bcm.c | 31 +++++++++++++++++++++++++++++--
-> 1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-> index 0f851c0dde7f..ee40003008d8 100644
-> --- a/drivers/bluetooth/hci_bcm.c
-> +++ b/drivers/bluetooth/hci_bcm.c
-> @@ -47,6 +47,14 @@
-> 
-> #define BCM_NUM_SUPPLIES 2
-> 
-> +/**
-> + * struct bcm_device_data - device specific data
-> + * @no_early_set_baudrate: Disallow set baudrate before driver setup()
-> + */
-> +struct bcm_device_data {
-> +	bool	no_early_set_baudrate;
-> +};
-> +
-> /**
->  * struct bcm_device - device driver resources
->  * @serdev_hu: HCI UART controller struct
-> @@ -79,6 +87,7 @@
->  * @hu: pointer to HCI UART controller struct,
->  *	used to disable flow control during runtime suspend and system sleep
->  * @is_suspended: whether flow control is currently disabled
-> + * @no_early_set_baudrate: don't set_baudrate before setup()
->  */
-> struct bcm_device {
-> 	/* Must be the first member, hci_serdev.c expects this. */
-> @@ -112,6 +121,7 @@ struct bcm_device {
-> 	struct hci_uart		*hu;
-> 	bool			is_suspended;
-> #endif
-> +	bool			no_early_set_baudrate;
-> };
-> 
-> /* generic bcm uart resources */
-> @@ -447,7 +457,13 @@ static int bcm_open(struct hci_uart *hu)
-> 	if (bcm->dev) {
-> 		hci_uart_set_flow_control(hu, true);
-> 		hu->init_speed = bcm->dev->init_speed;
-> -		hu->oper_speed = bcm->dev->oper_speed;
-> +
-> +		/* If oper_speed is set, ldisc/serdev will set the baudrate
-> +		 * before calling setup()
-> +		 */
-> +		if (!bcm->dev->no_early_set_baudrate)
-> +			hu->oper_speed = bcm->dev->oper_speed;
-> +
-> 		err = bcm_gpio_set_power(bcm->dev, true);
-> 		hci_uart_set_flow_control(hu, false);
-> 		if (err)
-> @@ -565,6 +581,8 @@ static int bcm_setup(struct hci_uart *hu)
-> 	/* Operational speed if any */
-> 	if (hu->oper_speed)
-> 		speed = hu->oper_speed;
-> +	else if (bcm->dev && bcm->dev->oper_speed)
-> +		speed = bcm->dev->oper_speed;
-> 	else if (hu->proto->oper_speed)
-> 		speed = hu->proto->oper_speed;
-> 	else
-> @@ -1374,6 +1392,7 @@ static struct platform_driver bcm_driver = {
-> static int bcm_serdev_probe(struct serdev_device *serdev)
-> {
-> 	struct bcm_device *bcmdev;
-> +	const struct bcm_device_data *data;
-> 	int err;
-> 
-> 	bcmdev = devm_kzalloc(&serdev->dev, sizeof(*bcmdev), GFP_KERNEL);
-> @@ -1408,6 +1427,10 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
-> 	if (err)
-> 		dev_err(&serdev->dev, "Failed to power down\n");
-> 
-> +	data = device_get_match_data(bcmdev->dev);
-> +	if (data)
-> +		bcmdev->no_early_set_baudrate = data->no_early_set_baudrate;
-> +
-> 	return hci_uart_register_device(&bcmdev->serdev_hu, &bcm_proto);
-> }
-> 
-> @@ -1419,12 +1442,16 @@ static void bcm_serdev_remove(struct serdev_device *serdev)
-> }
-> 
-> #ifdef CONFIG_OF
-> +struct bcm_device_data bcm4354_device_data = {
-> +	.no_early_set_baudrate = true,
-> +};
-> +
-> static const struct of_device_id bcm_bluetooth_of_match[] = {
-> 	{ .compatible = "brcm,bcm20702a1" },
-> 	{ .compatible = "brcm,bcm4345c5" },
-> 	{ .compatible = "brcm,bcm4330-bt" },
-> 	{ .compatible = "brcm,bcm43438-bt" },
-> -	{ .compatible = "brcm,bcm43540-bt" },
-> +	{ .compatible = "brcm,bcm43540-bt", .data = &bcm4354_device_data },
-> 	{ },
-> };
-> MODULE_DEVICE_TABLE(of, bcm_bluetooth_of_match);
+> Patch 2 was also mainly done by Yonghong or not ?
+> If so it should have his 'From:' field.6504484251
 
-this patch looks good to me. I just like to get a few Tested-By lines from people using the other devices where we can change the baud rate early on.
-
-Regards
-
-Marcel
-
+Generic support was done by me, but will double check the rest of the
+patches and fix them if needed.
