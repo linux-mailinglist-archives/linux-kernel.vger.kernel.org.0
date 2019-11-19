@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 073A91016A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 210DC10155A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfKSFzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:55:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53486 "EHLO mail.kernel.org"
+        id S1729789AbfKSFnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:43:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731923AbfKSFzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:55:09 -0500
+        id S1730477AbfKSFnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:43:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56081218BA;
-        Tue, 19 Nov 2019 05:55:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3F6021783;
+        Tue, 19 Nov 2019 05:43:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142908;
-        bh=yNy5f3Bw3KkD7wJrL+SQzTMJT5C/90GVEYL0GQQQ3zg=;
+        s=default; t=1574142188;
+        bh=H7Djb+n3qjxbE2dVJgW6kUOuIo0sOoojYsnEGEwGFNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LfTy4Nym9DwORzED7uuOIHREOeQMUSDuY1lU7sFC0PDeSUXybmiL8EHbYZeGndnEr
-         05WswyEckWBdzjfmcVODurGxqN6yJ1NRrsLEDQNAjWDH5RgDyNfFFCFoWq19tSz5/G
-         KL6Wpx7sMKsY2S6w8XNO2iZ0yvrG5jkDE5QH5h9w=
+        b=hrt6b5X5bLf8QEOHXkhqIgWg3gkYInukgtxbShITANVUjqkS6+K1rADunt62MErpB
+         AsPxeXS99ThsXO6McXUEz5nv2DkBJ0FlsGny2FctMditcy/6wfOd3oCCBTsqH0UIL/
+         Qf8T6zM4KT9bZ/vjTnGtItZSnxrRm04z++N6JciY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Dan Aloni <dan@kernelim.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 216/239] crypto: fix a memory leak in rsa-kcs1pads encryption mode
+        stable@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 419/422] media: ov2680: fix null dereference at power on
 Date:   Tue, 19 Nov 2019 06:20:16 +0100
-Message-Id: <20191119051339.185883486@linuxfoundation.org>
+Message-Id: <20191119051426.345896171@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Aloni <dan@kernelim.com>
+From: Rui Miguel Silva <rui.silva@linaro.org>
 
-[ Upstream commit 3944f139d5592790b70bc64f197162e643a8512b ]
+[ Upstream commit c45fbdf24c61a7b7a37f1b3bbd46f054637a3627 ]
 
-The encryption mode of pkcs1pad never uses out_sg and out_buf, so
-there's no need to allocate the buffer, which presently is not even
-being freed.
+Swapping the order between v4l2 subdevice registration and checking chip
+id in b7a417628abf ("media: ov2680: don't register the v4l2 subdevice
+before checking chip ID") makes the mode restore to use the sensor
+controls before they are set, so move the mode restore call to s_power
+after the handler setup for controls is done.
 
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: linux-crypto@vger.kernel.org
-CC: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: Dan Aloni <dan@kernelim.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This remove also the need for the error code path in power on function.
+
+Fixes: b7a417628abf ("media: ov2680: don't register the v4l2 subdevice before checking chip ID")
+
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/rsa-pkcs1pad.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/media/i2c/ov2680.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
-index 407c64bdcdd9a..3279b457c4ede 100644
---- a/crypto/rsa-pkcs1pad.c
-+++ b/crypto/rsa-pkcs1pad.c
-@@ -261,15 +261,6 @@ static int pkcs1pad_encrypt(struct akcipher_request *req)
- 	pkcs1pad_sg_set_buf(req_ctx->in_sg, req_ctx->in_buf,
- 			ctx->key_size - 1 - req->src_len, req->src);
+diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
+index 3ccd584568fb5..d8798fb714ba8 100644
+--- a/drivers/media/i2c/ov2680.c
++++ b/drivers/media/i2c/ov2680.c
+@@ -568,10 +568,6 @@ static int ov2680_power_on(struct ov2680_dev *sensor)
+ 	if (ret < 0)
+ 		return ret;
  
--	req_ctx->out_buf = kmalloc(ctx->key_size, GFP_KERNEL);
--	if (!req_ctx->out_buf) {
--		kfree(req_ctx->in_buf);
--		return -ENOMEM;
--	}
+-	ret = ov2680_mode_restore(sensor);
+-	if (ret < 0)
+-		goto disable;
 -
--	pkcs1pad_sg_set_buf(req_ctx->out_sg, req_ctx->out_buf,
--			ctx->key_size, NULL);
+ 	sensor->is_enabled = true;
+ 
+ 	/* Set clock lane into LP-11 state */
+@@ -580,12 +576,6 @@ static int ov2680_power_on(struct ov2680_dev *sensor)
+ 	ov2680_stream_disable(sensor);
+ 
+ 	return 0;
 -
- 	akcipher_request_set_tfm(&req_ctx->child_req, ctx->child);
- 	akcipher_request_set_callback(&req_ctx->child_req, req->base.flags,
- 			pkcs1pad_encrypt_sign_complete_cb, req);
+-disable:
+-	dev_err(dev, "failed to enable sensor: %d\n", ret);
+-	ov2680_power_off(sensor);
+-
+-	return ret;
+ }
+ 
+ static int ov2680_s_power(struct v4l2_subdev *sd, int on)
+@@ -606,6 +596,8 @@ static int ov2680_s_power(struct v4l2_subdev *sd, int on)
+ 		ret = v4l2_ctrl_handler_setup(&sensor->ctrls.handler);
+ 		if (ret < 0)
+ 			return ret;
++
++		ret = ov2680_mode_restore(sensor);
+ 	}
+ 
+ 	return ret;
 -- 
 2.20.1
 
