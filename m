@@ -2,89 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 353361012CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC785101333
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfKSFHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:07:55 -0500
-Received: from mail-pl1-f173.google.com ([209.85.214.173]:46697 "EHLO
-        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfKSFHz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:07:55 -0500
-Received: by mail-pl1-f173.google.com with SMTP id l4so11074055plt.13;
-        Mon, 18 Nov 2019 21:07:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=feilDUjQ5x/59LFnxlxvW8WwQKzwk+wbXzAfXtSise0=;
-        b=VYJbCCRXBL9vm9AuHqkXrEa9kVoSz+5rrJpTVyktE6DIHKNZNFmUF2RuEvqsoK1K+O
-         X/0BlBUAgkg8j8qVtACyb176L/4yDY0JPoafHJWo3i1wNkHuTiZnRVJzl17SumxyXm7Y
-         nRArW3adCtHAiN7bgsL8EBsEp4MV2VpvLLBrd8BL3GsIo7JwhpIvNKKRAvutZaFxCJnB
-         P52VZy7Uy3c3hIs+mUN20tTlTau3zH8MnOu0SJp2WOUP9/J0y+Z5gj+YDQuS4c58Owy5
-         FmxilFWia0Y+F6/0xJ5RiLRZp48O6UqeIH/veMn71cxq1UYoLQqBoExqBaGubAv8STyt
-         t1JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=feilDUjQ5x/59LFnxlxvW8WwQKzwk+wbXzAfXtSise0=;
-        b=Cb9F/m0r9i+HbaKMLvX4k+HlmPOr91+Nv1X3zrHKI56EifwHIBBS6dJgJ4/C4/UGXf
-         8iY6JMzV2rZ0pAy8sETnlSIBNii8WS7GAIyQpTLnBvGcFai8pVPNIO/WU7RkOcwOEJpn
-         7MiHerFpl6FEBeKuoXr2AilZhNwEQrxe4cBPwcQtxaixVEM4qPEKxKkr6ahRscW7rCxG
-         zIgyZJNUtY6r2OzOV0JrrDxzTe3omfVufUnfnTa2pCvCV77N4aZ1MAEYW0QrBS6ArIeL
-         DfvVJGHRBZnCof05dE80G9fAoXhowV7rhaD1fv4SQKj+v/BswSOU6yHqlRmsHwY0yRao
-         E1qg==
-X-Gm-Message-State: APjAAAU2G6CK6B7WonWXIJneVwgaavlBtlfI2n4NaPjeXQ2Rvy4A3wtz
-        KaAeozgTzxkrNkmOgTv9LRW9CxB921wCAqJR9UkvntXT
-X-Google-Smtp-Source: APXvYqyZGR0NZQ8bv6c3yoRKpCaYYkLhmwJdhA1EWsd+QoiFfP0AuklbkWnmoMCBC/UXHcJJwGfVwZdRYzrqUElTLIU=
-X-Received: by 2002:a17:90a:2551:: with SMTP id j75mr3705887pje.122.1574140074250;
- Mon, 18 Nov 2019 21:07:54 -0800 (PST)
+        id S1727109AbfKSFXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:23:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727944AbfKSFXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:23:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0AE32235D;
+        Tue, 19 Nov 2019 05:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574140995;
+        bh=YDjnTWL4YHnkqEVPpcQ8dBSBHnXGv0uzgLUzmhhK8/8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rNI1u1H+IcrYEa6lTLx/TGOgCfEZE0d4sYIcYmg6L7rCj6t9lIZpy3raiCrK/A9oh
+         Nh26++lMhmeOMkgfSaefxYKf7z++vW5kSeXACERatAtBK9VLZk6ZzpqJpaC2KBtGwM
+         UysH2B+y7d1K+bC2A2Ubvhnt+am0LXL0O5ZKlSiM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Lamprecht <t.lamprecht@proxmox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 001/422] KVM: x86: introduce is_pae_paging
+Date:   Tue, 19 Nov 2019 06:13:18 +0100
+Message-Id: <20191119051400.346801427@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-From:   Bala S <balas2380@gmail.com>
-Date:   Tue, 19 Nov 2019 10:37:44 +0530
-Message-ID: <CAJKzgVtzD7ULwCDVRSLMCmGJNaMqvx+jVO619t3xuv2oiEsPMQ@mail.gmail.com>
-Subject: Suggested Patch is not working for 22851 Bugzilla issue
-To:     mhocko@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mhocko,
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-https://sourceware.org/bugzilla/show_bug.cgi?id=3D22851
-For the above issue, I have found the patch.
+[ Upstream commit bf03d4f9334728bf7c8ffc7de787df48abd6340e ]
 
-Patch link:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1561935.html
+Checking for 32-bit PAE is quite common around code that fiddles with
+the PDPTRs.  Add a function to compress all checks into a single
+invocation.
 
-Only change i noticed is 'MAP_FIXED_NOREPLACE' is used instead of
-'MAP_FIXED_SAFE'.
+Moving to the common helper also fixes a subtle bug in kvm_set_cr3()
+where it fails to check is_long_mode() and results in KVM incorrectly
+attempting to load PDPTRs for a 64-bit guest.
 
-I ran test case on the following targets with this patch:
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[sean: backport to 4.x; handle vmx.c split in 5.x, call out the bugfix]
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Tested-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kvm/vmx.c | 7 +++----
+ arch/x86/kvm/x86.c | 8 ++++----
+ arch/x86/kvm/x86.h | 5 +++++
+ 3 files changed, 12 insertions(+), 8 deletions(-)
 
-1. For X86-64, Still i could see the reported issue( 'libevil.so' just
-runs =E2=80=98cat /etc/passwd')
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 4eda2a9c234a6..1ab4bb3d6a040 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -5173,7 +5173,7 @@ static void ept_load_pdptrs(struct kvm_vcpu *vcpu)
+ 		      (unsigned long *)&vcpu->arch.regs_dirty))
+ 		return;
+ 
+-	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		vmcs_write64(GUEST_PDPTR0, mmu->pdptrs[0]);
+ 		vmcs_write64(GUEST_PDPTR1, mmu->pdptrs[1]);
+ 		vmcs_write64(GUEST_PDPTR2, mmu->pdptrs[2]);
+@@ -5185,7 +5185,7 @@ static void ept_save_pdptrs(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
+ 
+-	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		mmu->pdptrs[0] = vmcs_read64(GUEST_PDPTR0);
+ 		mmu->pdptrs[1] = vmcs_read64(GUEST_PDPTR1);
+ 		mmu->pdptrs[2] = vmcs_read64(GUEST_PDPTR2);
+@@ -12013,8 +12013,7 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
+ 		 * If PAE paging and EPT are both on, CR3 is not used by the CPU and
+ 		 * must not be dereferenced.
+ 		 */
+-		if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu) &&
+-		    !nested_ept) {
++		if (is_pae_paging(vcpu) && !nested_ept) {
+ 			if (!load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3)) {
+ 				*entry_failure_code = ENTRY_FAIL_PDPTE;
+ 				return 1;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e536503ac7881..6cf8af022b21d 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -634,7 +634,7 @@ bool pdptrs_changed(struct kvm_vcpu *vcpu)
+ 	gfn_t gfn;
+ 	int r;
+ 
+-	if (is_long_mode(vcpu) || !is_pae(vcpu) || !is_paging(vcpu))
++	if (!is_pae_paging(vcpu))
+ 		return false;
+ 
+ 	if (!test_bit(VCPU_EXREG_PDPTR,
+@@ -885,8 +885,8 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+ 	if (is_long_mode(vcpu) &&
+ 	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
+ 		return 1;
+-	else if (is_pae(vcpu) && is_paging(vcpu) &&
+-		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
++	else if (is_pae_paging(vcpu) &&
++		 !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
+ 		return 1;
+ 
+ 	kvm_mmu_new_cr3(vcpu, cr3, skip_tlb_flush);
+@@ -8348,7 +8348,7 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+ 		kvm_update_cpuid(vcpu);
+ 
+ 	idx = srcu_read_lock(&vcpu->kvm->srcu);
+-	if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		load_pdptrs(vcpu, vcpu->arch.walk_mmu, kvm_read_cr3(vcpu));
+ 		mmu_reset_needed = 1;
+ 	}
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 3a91ea760f073..608e5f8c5d0a5 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -139,6 +139,11 @@ static inline int is_paging(struct kvm_vcpu *vcpu)
+ 	return likely(kvm_read_cr0_bits(vcpu, X86_CR0_PG));
+ }
+ 
++static inline bool is_pae_paging(struct kvm_vcpu *vcpu)
++{
++	return !is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu);
++}
++
+ static inline u32 bit(int bitno)
+ {
+ 	return 1 << (bitno & 31);
+-- 
+2.20.1
 
-2. For MIPS-64, i am not seeing the malicious file content as
-reported. But =E2=80=98ldd=E2=80=99 could not found =E2=80=98libevil.so=E2=
-=80=99.
 
-root@qemumips64:~/LIN1019-1806# ldd ./main
-        linux-vdso.so.1 (0x000000fff1f20000)
-        libevil.so =3D> not found
-        libc.so.6 =3D> /lib/libc.so.6 (0x0000005e46f70000)
-        /lib/ld.so.1 (0x000000fff7888000)
 
-I am not clear why this patch is not working for X86-64? But it is
-working for MIPS-64 with some issue.
-Please let me know, if anything is pending on this patch for the reported i=
-ssue.
-
-Thanks,
-Bala
