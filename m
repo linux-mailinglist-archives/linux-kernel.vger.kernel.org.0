@@ -2,195 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBF08103062
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E137810306A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:45:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfKSXm6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 19 Nov 2019 18:42:58 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:59321 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfKSXm5 (ORCPT
+        id S1727399AbfKSXpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 18:45:54 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:57012 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbfKSXpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 18:42:57 -0500
-Received: from marcel-macbook.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
-        by mail.holtmann.org (Postfix) with ESMTPSA id BD161CECFA;
-        Wed, 20 Nov 2019 00:52:02 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH v6 4/4] Bluetooth: hci_bcm: Support pcm params in dts
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CANFp7mX8zsFBjQ4pYyBnG4KbTv-0m004LPmYAtLmGRm3rkfoRA@mail.gmail.com>
-Date:   Wed, 20 Nov 2019 00:42:55 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-bluetooth@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <A98BB7FA-064A-4824-81F1-E5C8F204BBD0@holtmann.org>
-References: <20191118192123.82430-1-abhishekpandit@chromium.org>
- <20191118110335.v6.4.I3e900de9478b68e5e4475e747d1c46fdd28313fa@changeid>
- <963EC7CC-B81D-4667-A681-2CE49D17CB1E@holtmann.org>
- <CANFp7mX8zsFBjQ4pYyBnG4KbTv-0m004LPmYAtLmGRm3rkfoRA@mail.gmail.com>
-To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-X-Mailer: Apple Mail (2.3601.0.10)
+        Tue, 19 Nov 2019 18:45:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574207152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=3bFj7LSbHt/7ruFNmSC+gYmj5OfI/vxqc7ZinRrkQ1A=;
+        b=TzbuEuvIg9aI5VJuEbmsOy42VGUjp++eWjzYc8bwRP7qHDF2J4ovuUaiwumMimucAE6xH6
+        0wHdRq6oFQCirg5Oqrwh09RcBYYC9b0YyLyx2LsBpvQYQ4NbO5Bg1mN4C0Qbvn+6i6kciw
+        6azNt5Hx3//vlgGLC/t/bi7Vim41wWM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-7-OLmRwB14PtS3nQai2skpxQ-1; Tue, 19 Nov 2019 18:45:50 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 735D0100551A;
+        Tue, 19 Nov 2019 23:45:48 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-46.bss.redhat.com [10.20.1.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8415810375FC;
+        Tue, 19 Nov 2019 23:45:41 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     linux-input@vger.kernel.org
+Cc:     stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        Nick Black <dankamongmen@gmail.com>,
+        Yussuf Khalil <dev@pp3345.net>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Alexander Mikhaylenko <exalm7659@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "Input: synaptics - enable RMI mode for X1 Extreme 2nd Generation"
+Date:   Tue, 19 Nov 2019 18:45:33 -0500
+Message-Id: <20191119234534.10725-1-lyude@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: OLmRwB14PtS3nQai2skpxQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+This reverts commit 68b9c5066e39af41d3448abfc887c77ce22dd64d.
 
->>> BCM chips may require configuration of PCM to operate correctly and
->>> there is a vendor specific HCI command to do this. Add support in the
->>> hci_bcm driver to parse this from devicetree and configure the chip.
->>> 
->>> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
->>> ---
->>> 
->>> Changes in v6:
->>> - Added btbcm_read_pcm_int_params and change pcm params to first read
->>> the pcm params before setting it
->>> 
->>> Changes in v5:
->>> - Rename parameters to bt-* and read as integer instead of bytestring
->>> - Update documentation with defaults and put values in header
->>> - Changed patch order
->>> 
->>> Changes in v4:
->>> - Fix incorrect function name in hci_bcm
->>> 
->>> Changes in v3:
->>> - Change disallow baudrate setting to return -EBUSY if called before
->>> ready. bcm_proto is no longer modified and is back to being const.
->>> - Changed btbcm_set_pcm_params to btbcm_set_pcm_int_params
->>> - Changed brcm,sco-routing to brcm,bt-sco-routing
->>> 
->>> Changes in v2:
->>> - Use match data to disallow baudrate setting
->>> - Parse pcm parameters by name instead of as a byte string
->>> - Fix prefix for dt-bindings commit
->>> 
->>> drivers/bluetooth/hci_bcm.c | 57 +++++++++++++++++++++++++++++++++++++
->>> 1 file changed, 57 insertions(+)
->>> 
->>> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
->>> index ee40003008d8..2ce3fac2c5dd 100644
->>> --- a/drivers/bluetooth/hci_bcm.c
->>> +++ b/drivers/bluetooth/hci_bcm.c
->>> @@ -25,6 +25,7 @@
->>> #include <linux/pm_runtime.h>
->>> #include <linux/serdev.h>
->>> 
->>> +#include <dt-bindings/bluetooth/brcm.h>
->>> #include <net/bluetooth/bluetooth.h>
->>> #include <net/bluetooth/hci_core.h>
->>> 
->>> @@ -88,6 +89,7 @@ struct bcm_device_data {
->>> *    used to disable flow control during runtime suspend and system sleep
->>> * @is_suspended: whether flow control is currently disabled
->>> * @no_early_set_baudrate: don't set_baudrate before setup()
->>> + * @pcm_params: PCM and routing parameters
->>> */
->>> struct bcm_device {
->>>      /* Must be the first member, hci_serdev.c expects this. */
->>> @@ -122,6 +124,8 @@ struct bcm_device {
->>>      bool                    is_suspended;
->>> #endif
->>>      bool                    no_early_set_baudrate;
->>> +
->>> +     struct bcm_set_pcm_int_params   pcm_params;
->>> };
->>> 
->>> /* generic bcm uart resources */
->>> @@ -541,6 +545,7 @@ static int bcm_flush(struct hci_uart *hu)
->>> static int bcm_setup(struct hci_uart *hu)
->>> {
->>>      struct bcm_data *bcm = hu->priv;
->>> +     struct bcm_set_pcm_int_params p;
->>>      char fw_name[64];
->>>      const struct firmware *fw;
->>>      unsigned int speed;
->>> @@ -594,6 +599,31 @@ static int bcm_setup(struct hci_uart *hu)
->>>                      host_set_baudrate(hu, speed);
->>>      }
->>> 
->>> +     /* PCM parameters if any*/
->>> +     err = btbcm_read_pcm_int_params(hu->hdev, &p);
->>> +     if (!err) {
->>> +             if (bcm->dev->pcm_params.routing == 0xff)
->>> +                     bcm->dev->pcm_params.routing = p.routing;
->>> +             if (bcm->dev->pcm_params.rate == 0xff)
->>> +                     bcm->dev->pcm_params.rate = p.rate;
->>> +             if (bcm->dev->pcm_params.frame_sync == 0xff)
->>> +                     bcm->dev->pcm_params.frame_sync = p.frame_sync;
->>> +             if (bcm->dev->pcm_params.sync_mode == 0xff)
->>> +                     bcm->dev->pcm_params.sync_mode = p.sync_mode;
->>> +             if (bcm->dev->pcm_params.clock_mode == 0xff)
->>> +                     bcm->dev->pcm_params.clock_mode = p.clock_mode;
->> 
->> Frankly, I wouldn’t bother here. If the read HCI command failed, then we abort bcm_setup and fail the whole procedure. These commands have been around the first Broadcom chips and you can assume they are present. And if at some point they do fail, I want to know about it.
-> Ok -- will change to return error if it fails.
-> 
->> 
->>> +
->>> +             /* Write only when there are changes */
->>> +             if (memcmp(&p, &bcm->dev->pcm_params, sizeof(p)))
->>> +                     err = btbcm_write_pcm_int_params(hu->hdev,
->>> +                                                      &bcm->dev->pcm_params);
->>> +
->>> +             if (err)
->>> +                     bt_dev_warn(hu->hdev, "BCM: Write pcm params failed (%d)",
->>> +                                 err);
->>> +     } else
->>> +             bt_dev_warn(hu->hdev, "BCM: Read pcm params failed (%d)", err);
->>> +
->>> finalize:
->>>      release_firmware(fw);
->>> 
->>> @@ -1128,9 +1158,36 @@ static int bcm_acpi_probe(struct bcm_device *dev)
->>> }
->>> #endif /* CONFIG_ACPI */
->>> 
->>> +static int property_read_u8(struct device *dev, const char *prop, u8 *value)
->>> +{
->>> +     int err;
->>> +     u32 tmp;
->>> +
->>> +     err = device_property_read_u32(dev, prop, &tmp);
->>> +
->>> +     if (!err)
->>> +             *value = (u8)tmp;
->>> +
->>> +     return err;
->>> +}
->> 
->> I think this really needs to be done in the generic property code if this is wanted.
-> Yes, this should be device_property_read_u8. For some reason, I
-> thought that wasn't working before (I'll have to retest it with
-> straight integer values).
-> 
->> 
->>> +
->>> static int bcm_of_probe(struct bcm_device *bdev)
->>> {
->>>      device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_speed);
->>> +
->>> +     memset(&bdev->pcm_params, 0xff, sizeof(bdev->pcm_params));
->> 
->> Scrap this memset. We will read the values first.
-> 
-> I added this memset is bcm_of_probe occurs before patchram and without
-> setting some magic value in the pcm_params, we don't know which values
-> are valid (since 0 has some meaning in the params).
-> It doesn't make sense to me to read pcm params outside setup (I want
-> patchram to complete first) and it doesn't make sense to do property
-> reads inside setup.
+Ugh, I really dropped the ball on this one :\. So as it turns out RMI4
+works perfectly fine on the X1 Extreme Gen 2 except for one thing I
+didn't notice because I usually use the trackpoint: clicking with the
+touchpad. Somehow this is broken, in fact we don't even seem to indicate
+BTN_LEFT as a valid event type for the RMI4 touchpad. And, I don't even
+see any RMI4 events coming from the touchpad when I press down on it.
+This only seems to work for PS/2 mode.
 
-I wonder if we should just fail if bt-sco-routing is PCM and not all values are provided in the DT. Looks like there is no clean way of doing this gracefully otherwise.
+Since that means we have a regression, and PS/2 mode seems to work fine
+for the time being - revert this for now. We'll have to do a more
+thorough investigation on this.
 
-Regards
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/input/mouse/synaptics.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Marcel
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptic=
+s.c
+index 704558d449a2..56fae3472114 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -177,7 +177,6 @@ static const char * const smbus_pnp_ids[] =3D {
+ =09"LEN0096", /* X280 */
+ =09"LEN0097", /* X280 -> ALPS trackpoint */
+ =09"LEN009b", /* T580 */
+-=09"LEN0402", /* X1 Extreme 2nd Generation */
+ =09"LEN200f", /* T450s */
+ =09"LEN2054", /* E480 */
+ =09"LEN2055", /* E580 */
+--=20
+2.21.0
 
