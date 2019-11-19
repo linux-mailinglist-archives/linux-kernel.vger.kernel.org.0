@@ -2,167 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3748101768
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE42C1018D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfKSGBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:01:18 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:28635 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730456AbfKSFoM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:12 -0500
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191119054410epoutp04146a56064f0c8854343ecc77131f7457~YegljOgNk0693506935epoutp04M
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:44:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191119054410epoutp04146a56064f0c8854343ecc77131f7457~YegljOgNk0693506935epoutp04M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574142250;
-        bh=QyPkrsaltRC54WIiNJdMbWI+p4JqBzFBPnyCo+00/Xw=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=I4Jre43Qn0YJjcVV8TFHUEGtnLOjTGlKfmJS9csknGT2/9rYYxpcmQbZguq3uFO6J
-         Lu7d72nz2YZ9Q0B+WXnT/tb1tWXxTKlj7WV6mAlJrMCuvtsO/7D5Lq0w7lhiKpGPOo
-         nA0Me28ueO0jHtNz06vk9PDavLx1NhBp1vQAIblw=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20191119054410epcas5p24daff299eed9533e04a92c8e0d27ab35~YeglKyGrI1350413504epcas5p2s;
-        Tue, 19 Nov 2019 05:44:10 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DB.70.04403.A2183DD5; Tue, 19 Nov 2019 14:44:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191119051537epcas5p2da5439a60d1167b8cc7e2179487996aa~YeHqZArTQ2360123601epcas5p2D;
-        Tue, 19 Nov 2019 05:15:37 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191119051537epsmtrp1977f5c869323dce3196676af087987d5~YeHqYLMda1009210092epsmtrp11;
-        Tue, 19 Nov 2019 05:15:37 +0000 (GMT)
-X-AuditID: b6c32a4a-3cbff70000001133-e9-5dd3812ae0e3
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8F.57.03654.97A73DD5; Tue, 19 Nov 2019 14:15:37 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.135]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191119051535epsmtip12326a990fb36f739e94802d8fe63aaf7~YeHn9OTdQ2224622246epsmtip1m;
-        Tue, 19 Nov 2019 05:15:34 +0000 (GMT)
-From:   Maninder Singh <maninder1.s@samsung.com>
-To:     dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, v.narang@samsung.com,
-        a.sahrawat@samsung.com, avnish.jain@samsung.com,
-        Maninder Singh <maninder1.s@samsung.com>
-Subject: [PATCH 1/1] mm: Map next task stack in previous mm.
-Date:   Tue, 19 Nov 2019 10:45:20 +0530
-Message-Id: <1574140520-9738-1-git-send-email-maninder1.s@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRmVeSWpSXmKPExsWy7bCmhq5W4+VYg9aZLBYXd6dazPjzk8ni
-        84Z/bBYvNrQzWkzbKG5xedccNovzu9ayWhye38ZicenAAiaL470HmCw2b5rKbHHo5FxGix8b
-        HrM68Hp8b+1j8di8Qstj06pONo93586xe8w7Gejxft9VNo++LasYPT5vkvM40fKFNYAzissm
-        JTUnsyy1SN8ugSujbeoztoJdghU7OjewNDD+5u1i5OSQEDCReL70IGsXIxeHkMBuRonFk24x
-        giSEBD4xSvS8sYJIfGOUWHdnMxNMx6+3F5ggivYySnzZEANR9JVR4vPeH2DdbAJ6Eqt27WEB
-        SYgIdDNKTHzcAeYwCyxllPj6dj0zSJWwgI3Eq0cLwDpYBFQlvs+eywJi8wq4Sfz8sglqnZzE
-        zXOdzBD2CTaJTXvEIWwXiaUPb0PFhSVeHd/CDmFLSbzsb2MHWSYh0Mwo8WnfWkYIZwqjxNKL
-        H1khquwlXjc3AG3gADpJU2L9Ln2IsKzE1FPrwBYzC/BJ9P5+AnUEr8SOeTC2qkTLzQ1QY6Ql
-        Pn/8yAJhe0icXvKKDWSkkECsxLGbURMYZWchLFjAyLiKUTK1oDg3PbXYtMAoL7Vcrzgxt7g0
-        L10vOT93EyM4rWh57WBcds7nEKMAB6MSD+8JlcuxQqyJZcWVuYcYJTiYlUR4/R5diBXiTUms
-        rEotyo8vKs1JLT7EKM3BoiTOO4n1aoyQQHpiSWp2ampBahFMlomDU6qBcd/mbeo+pxYnTtuz
-        ztVzqfDVQsXAPa5ZscW236f+Xf3uUeTh/4as1xYsWLqjQedJnHBHeb2lz7K2s8d+/wh5fOhn
-        vJmv8yLlZaeExIp6J/UfmczUN1H63qJzwc8YthyxX6b4fI7goxtNgp86159fm1zkMyl1sdvk
-        wq0BiiLvBKUq5slviTxypkCJpTgj0VCLuag4EQACze3XJwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSnG5l1eVYgzv9KhYXd6dazPjzk8ni
-        84Z/bBYvNrQzWkzbKG5xedccNovzu9ayWhye38ZicenAAiaL470HmCw2b5rKbHHo5FxGix8b
-        HrM68Hp8b+1j8di8Qstj06pONo93586xe8w7Gejxft9VNo++LasYPT5vkvM40fKFNYAzissm
-        JTUnsyy1SN8ugSujbeoztoJdghU7OjewNDD+5u1i5OSQEDCR+PX2AlMXIxeHkMBuRom7d/+y
-        QiSkJX7+e88CYQtLrPz3nB2i6DOjxIb+f2BFbAJ6Eqt27WEBSYgITGWUOPKthRkkwSywmlFi
-        ziZBEFtYwEbi1aMFjCA2i4CqxPfZc8Gm8gq4Sfz8sokJYoOcxM1zncwTGHkWMDKsYpRMLSjO
-        Tc8tNiwwzEst1ytOzC0uzUvXS87P3cQIDlItzR2Ml5fEH2IU4GBU4uE9oXI5Vog1say4MvcQ
-        owQHs5IIr9+jC7FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZ/mHYsUEkhPLEnNTk0tSC2CyTJx
-        cEo1MFbPUH05KWPB5PLEd90ZYXdn82+xr1dQYD+SeSop882rR8URm15+0uDLjnz3PH9pSPVE
-        g5gfdnvW3ctdvoRJ+uL/KpOJqVktnRnq2hHBui6F987sE9pz1FJTTO387LyJs0RZvzTUeTSv
-        cn7om+9k+rxid0DYp9DkLW9YH9eIK8z9f/psczubihJLcUaioRZzUXEiAE9HthJOAgAA
-X-CMS-MailID: 20191119051537epcas5p2da5439a60d1167b8cc7e2179487996aa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20191119051537epcas5p2da5439a60d1167b8cc7e2179487996aa
-References: <CGME20191119051537epcas5p2da5439a60d1167b8cc7e2179487996aa@epcas5p2.samsung.com>
+        id S1729463AbfKSGJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:09:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727908AbfKSF3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:29:00 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BABB208C3;
+        Tue, 19 Nov 2019 05:28:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574141339;
+        bh=NgTsZq5LbL3QYqBe2oz5+VeHyhCREUqx2iZfVrpgkDA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hAiFeNHvMR07ri0yW3dEH8Tt346gdCoy2bm73BLj/amr/EpmidoOsux22M8EFcAbu
+         aHa02IJpQND5bi6Xi52C2zamzSrCoRdLLysSWwozFUH6i9DQjktwOUHUAOceHVeuKa
+         zWGeh7ad1snGggfj2nQWpOtOz+61rbmCiD6Z+YrQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Erik Stromdahl <erik.stromdahl@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 126/422] ath10k: wmi: disable softirqs while calling ieee80211_rx
+Date:   Tue, 19 Nov 2019 06:15:23 +0100
+Message-Id: <20191119051407.125019358@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Issue: In context switch, stack of next task (kernel thread)
-is not mapped in previous task PGD.
+From: Erik Stromdahl <erik.stromdahl@gmail.com>
 
-Issue faced while porting VMAP stack on ARM.
-currently forcible mapping is done in case of switching mm, but if
-next task is kernel thread then it can cause issue.
+[ Upstream commit 37f62c0d5822f631b786b29a1b1069ab714d1a28 ]
 
-Thus Map stack of next task in prev if next task is kernel thread,
-as kernel thread will use mm of prev task.
+This is done in order not to trig the below warning in
+ieee80211_rx_napi:
 
-"Since we don't have reproducible setup for x86, 
-changes verified on ARM. So not sure about arch specific handling
-for X86"
+WARN_ON_ONCE(softirq_count() == 0);
 
-Signed-off-by: Vaneet Narang <v.narang@samsung.com>
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+ieee80211_rx_napi requires that softirq's are disabled during
+execution.
+
+The High latency bus drivers (SDIO and USB) sometimes call the wmi
+ep_rx_complete callback from non softirq context, resulting in a trigger
+of the above warning.
+
+Calling ieee80211_rx_ni with softirq's already disabled (e.g., from
+softirq context) should be safe as the local_bh_disable and
+local_bh_enable functions (called from ieee80211_rx_ni) are fully
+reentrant.
+
+Signed-off-by: Erik Stromdahl <erik.stromdahl@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/tlb.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index e6a9edc5baaf..28328cf8e79c 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -161,11 +161,17 @@ void switch_mm(struct mm_struct *prev, struct mm_struct *next,
- 	local_irq_restore(flags);
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index 583147f00fa4e..40b36e73bb48c 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -2487,7 +2487,8 @@ int ath10k_wmi_event_mgmt_rx(struct ath10k *ar, struct sk_buff *skb)
+ 		   status->freq, status->band, status->signal,
+ 		   status->rate_idx);
+ 
+-	ieee80211_rx(ar->hw, skb);
++	ieee80211_rx_ni(ar->hw, skb);
++
+ 	return 0;
  }
  
--static void sync_current_stack_to_mm(struct mm_struct *mm)
-+static void sync_stack_to_mm(struct mm_struct *mm, struct task_struct *tsk)
- {
--	unsigned long sp = current_stack_pointer;
--	pgd_t *pgd = pgd_offset(mm, sp);
-+	unsigned long sp;
-+	pgd_t *pgd;
- 
-+	if (!tsk)
-+		sp = current_stack_pointer;
-+	else
-+		sp = (unsigned long)tsk->stack;
-+
-+	pgd = pgd_offset(mm, sp);
- 	if (pgtable_l5_enabled()) {
- 		if (unlikely(pgd_none(*pgd))) {
- 			pgd_t *pgd_ref = pgd_offset_k(sp);
-@@ -383,7 +389,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			 * mapped in the new pgd, we'll double-fault.  Forcibly
- 			 * map it.
- 			 */
--			sync_current_stack_to_mm(next);
-+			sync_stack_to_mm(next, NULL);
- 		}
- 
- 		/*
-@@ -460,6 +466,15 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
-  */
- void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
- {
-+	if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-+		/*
-+		 * If tsk stack is in vmalloc space and isn't
-+		 * mapped in the new pgd, we'll double-fault.  Forcibly
-+		 * map it.
-+		 */
-+		sync_stack_to_mm(mm, tsk);
-+	}
-+
- 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
- 		return;
- 
 -- 
-2.17.1
+2.20.1
+
+
 
