@@ -2,57 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E27301028C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06AFB1028D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbfKSQA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 11:00:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727937AbfKSQAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:00:25 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDF6A20730;
-        Tue, 19 Nov 2019 16:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574179225;
-        bh=mpZ1eVPdbpU3gDuboJ/Rps+9NEdYFQDjt91KhM3YLMw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R+fE/W1SQpo+mwDqOW/H8bwW+X+cSq4/01msXLWjznjEa/3WCmQzh92Af5AUW51Xd
-         Pd9EyvEIJ3MdnzcHULlKxEnOPits80xBzv2DupQsqdaYMurA7pZAeq10rwAG0uUA4b
-         G/VTLUKHadNlAAyb8FmxFe2DjxUMEd1ZP7pkz8fA=
-Date:   Tue, 19 Nov 2019 17:00:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Thunderbolt change for v5.5 part 2
-Message-ID: <20191119160022.GA2027670@kroah.com>
-References: <20191119130751.GK11621@lahna.fi.intel.com>
+        id S1728259AbfKSQDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 11:03:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46268 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727728AbfKSQDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 11:03:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D9A1BB30B;
+        Tue, 19 Nov 2019 16:03:43 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 187A01E47E5; Tue, 19 Nov 2019 17:03:43 +0100 (CET)
+Date:   Tue, 19 Nov 2019 17:03:43 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     jack@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] quota: remove unnecessary check in dquot_add_inodes()
+ and dquot_add_space()
+Message-ID: <20191119160343.GA2440@quack2.suse.cz>
+References: <20191117132028.19564-1-cgxu519@mykernel.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191119130751.GK11621@lahna.fi.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191117132028.19564-1-cgxu519@mykernel.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 03:07:51PM +0200, Mika Westerberg wrote:
-> Hi Greg,
+On Sun 17-11-19 21:20:28, Chengguang Xu wrote:
+> After passed grace time we treat softlimit as hardlimit,
+> so we don't have to compare desire usage with softlimit
+> in this place.
 > 
-> There is one more Thunderbolt driver improvement that I would like to
-> get into v5.5 merge window. Please consider pulling.
+> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
 
-Hey, that sounds like the problem my laptop was having!  :)
+Thanks for the patch! I guess you mean that when dqb_itime is set, we are
+sure that softlimit is exceeded. You are right but the benefit of your
+change is not big and I prefer to keep the current "defensive" condition.
 
-Should this also go to stable for 5.4.y?
+								Honza
 
-thanks,
-
-greg k-h
+> ---
+>  fs/quota/dquot.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 6e826b454082..97740077afac 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -1283,7 +1283,6 @@ static int dquot_add_inodes(struct dquot *dquot, qsize_t inodes,
+>  	}
+>  
+>  	if (dquot->dq_dqb.dqb_isoftlimit &&
+> -	    newinodes > dquot->dq_dqb.dqb_isoftlimit &&
+>  	    dquot->dq_dqb.dqb_itime &&
+>  	    ktime_get_real_seconds() >= dquot->dq_dqb.dqb_itime &&
+>              !ignore_hardlimit(dquot)) {
+> @@ -1333,7 +1332,6 @@ static int dquot_add_space(struct dquot *dquot, qsize_t space,
+>  	}
+>  
+>  	if (dquot->dq_dqb.dqb_bsoftlimit &&
+> -	    tspace > dquot->dq_dqb.dqb_bsoftlimit &&
+>  	    dquot->dq_dqb.dqb_btime &&
+>  	    ktime_get_real_seconds() >= dquot->dq_dqb.dqb_btime &&
+>              !ignore_hardlimit(dquot)) {
+> -- 
+> 2.21.0
+> 
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
