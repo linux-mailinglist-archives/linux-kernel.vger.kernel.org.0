@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EECCE10158E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED37101458
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbfKSFpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:45:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
+        id S1729470AbfKSFc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:32:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730935AbfKSFpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:45:15 -0500
+        id S1727717AbfKSFcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:32:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A4452071B;
-        Tue, 19 Nov 2019 05:45:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42A9F21783;
+        Tue, 19 Nov 2019 05:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142314;
-        bh=aIW5SCsQ78E/60clbtfozDFpW3dYpOdNi2zy8NoYgFY=;
+        s=default; t=1574141574;
+        bh=UVs0BQCbS7l7vr5KRG0CBnk8B8+YWO9XidSyUtzdbGQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VQA8ab4tzAAIIx37Hb/D0nqXpb7fOrBWO8uymMdydxDCg+4pbn/0QO0LwB7JMNHmJ
-         RPXrDHUhFxxEMEcizLsuS0JpGTSUQ8Wqsuanl1A2dYPPmwso7osWxft4NJFBCnnX3z
-         1h6E0AtadLdDJHP5kTMXBrZFogVSLF9HgmCY+shY=
+        b=hEiXGqY3qOQA0wrGiRflfQbjYLtWEM6inFY5WCDinad8bNvH6RklwZCAEMpmbD8xs
+         HOUbUn3iDGOrbqiCt/mwMskc0WqDcE2EmF4Ku22KaM2v+OF7fOhsDIRbNoefZmYeFZ
+         YgkRy+x3LPFF0qRhcZ3WNv9BNzA1GBmWvDFBuuBI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 004/239] scsi: core: Handle drivers which set sg_tablesize to zero
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 207/422] soc: qcom: apr: Avoid string overflow
 Date:   Tue, 19 Nov 2019 06:16:44 +0100
-Message-Id: <20191119051257.618992876@linuxfoundation.org>
+Message-Id: <20191119051412.003391715@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-commit 9393c8de628cf0968d81a17cc11841e42191e041 upstream.
+[ Upstream commit 4fadb26574cb74e5de079dd384f25f44f4fb3ec3 ]
 
-In scsi_mq_setup_tags(), cmd_size is calculated based on zero size for the
-scatter-gather list in case the low level driver uses SG_NONE in its host
-template.
+'adev->name' is used as a NUL-terminated string, but using strncpy() with the
+length equal to the buffer size may result in lack of the termination:
 
-cmd_size is passed on to the block layer for calculation of the request
-size, and we've seen NULL pointer dereference errors from the block layer
-in drivers where SG_NONE is used and a mq IO scheduler is active,
-apparently as a consequence of this (see commit 68ab2d76e4be ("scsi:
-cxlflash: Set sg_tablesize to 1 instead of SG_NONE"), and a recent patch by
-Finn Thain converting the three m68k NFR5380 drivers to avoid setting
-SG_NONE).
+In function 'apr_add_device',
+    inlined from 'of_register_apr_devices' at drivers//soc/qcom/apr.c:264:7,
+    inlined from 'apr_probe' at drivers//soc/qcom/apr.c:290:2:
+drivers//soc/qcom/apr.c:222:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(adev->name, np->name, APR_NAME_SIZE);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Try to avoid these errors by accounting for at least one sg list entry when
-calculating cmd_size, regardless of whether the low level driver set a zero
-sg_tablesize.
+This changes it to use the safer strscpy() instead.
 
-Tested on 030 m68k with the atari_scsi driver - setting sg_tablesize to
-SG_NONE no longer results in a crash when loading this driver.
-
-CC: Finn Thain <fthain@telegraphics.com.au>
-Link: https://lore.kernel.org/r/1572922150-4358-1-git-send-email-schmitzmic@gmail.com
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_lib.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/soc/qcom/apr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -2277,7 +2277,8 @@ int scsi_mq_setup_tags(struct Scsi_Host
- {
- 	unsigned int cmd_size, sgl_size;
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 57af8a5373325..ee9197f5aae96 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -219,9 +219,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 	adev->domain_id = id->domain_id;
+ 	adev->version = id->svc_version;
+ 	if (np)
+-		strncpy(adev->name, np->name, APR_NAME_SIZE);
++		strscpy(adev->name, np->name, APR_NAME_SIZE);
+ 	else
+-		strncpy(adev->name, id->name, APR_NAME_SIZE);
++		strscpy(adev->name, id->name, APR_NAME_SIZE);
  
--	sgl_size = scsi_mq_sgl_size(shost);
-+	sgl_size = max_t(unsigned int, sizeof(struct scatterlist),
-+			scsi_mq_sgl_size(shost));
- 	cmd_size = sizeof(struct scsi_cmnd) + shost->hostt->cmd_size + sgl_size;
- 	if (scsi_host_get_prot(shost))
- 		cmd_size += sizeof(struct scsi_data_buffer) + sgl_size;
+ 	dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", adev->name,
+ 		     id->domain_id, id->svc_id);
+-- 
+2.20.1
+
 
 
