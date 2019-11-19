@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93EAA10191E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9BF910179F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfKSGMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:12:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35942 "EHLO mail.kernel.org"
+        id S1730530AbfKSFl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727239AbfKSFVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:21:13 -0500
+        id S1730504AbfKSFlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:41:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AB3B22317;
-        Tue, 19 Nov 2019 05:21:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A185208C3;
+        Tue, 19 Nov 2019 05:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574140873;
-        bh=JmLPL/HEQWkgPTJclvHxmxL5U3PoN0BCo8F9NLWo16o=;
+        s=default; t=1574142082;
+        bh=LC0TPsH+HUPj01rsBWyN/9j4+EIjXpxXbLbHZ65ebpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IUUyangO5VXU958PcmL/V/s0MdOge+KBSS+8FKSQxUSQUNOYHQkvgPoiyKJe0x5j7
-         0k55T3G+agQClFca9kdc0MKVjq3OoR+sEWY0j6nn4bNXsaOvwPc0XQQBTMsw3uxF8C
-         yDFhnNayuGbkezgvsmY8xT0YDkKjwQsmpPMIxfvM=
+        b=n2f3A6cwGfsve74b0gvZdhFdPjru8hCYMSqhWqeBD0YWm22Gc2WtiQg0IuaC5xAcT
+         e1m4CNMoZYAxkoXAuwn9KrqcignzLErv2iNb+4ag1lR3rxP0yvM71tEIJx27roiODF
+         Pu+L15fFkrKhFYAO4rYjsKS6LRnjK9VRtzdcIWrw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.3 16/48] ALSA: usb-audio: Fix incorrect NULL check in create_yamaha_midi_quirk()
-Date:   Tue, 19 Nov 2019 06:19:36 +0100
-Message-Id: <20191119051001.053603583@linuxfoundation.org>
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 382/422] ARM: dts: realview: Fix SPI controller node names
+Date:   Tue, 19 Nov 2019 06:19:39 +0100
+Message-Id: <20191119051423.821026860@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
-References: <20191119050946.745015350@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +43,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Rob Herring <robh@kernel.org>
 
-commit cc9dbfa9707868fb0ca864c05e0c42d3f4d15cf2 upstream.
+[ Upstream commit 016add12977bcc30f77d7e48fc9a3a024cb46645 ]
 
-The commit 60849562a5db ("ALSA: usb-audio: Fix possible NULL
-dereference at create_yamaha_midi_quirk()") added NULL checks in
-create_yamaha_midi_quirk(), but there was an overlook.  The code
-allows one of either injd or outjd is NULL, but the second if check
-made returning -ENODEV if any of them is NULL.  Fix it in a proper
-form.
+SPI controller nodes should be named 'spi' rather than 'ssp'. Fixing the
+name enables dtc SPI bus checks.
 
-Fixes: 60849562a5db ("ALSA: usb-audio: Fix possible NULL dereference at create_yamaha_midi_quirk()")
-Reported-by: Pavel Machek <pavel@denx.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191113111259.24123-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/quirks.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/arm-realview-eb.dtsi    | 2 +-
+ arch/arm/boot/dts/arm-realview-pb1176.dts | 2 +-
+ arch/arm/boot/dts/arm-realview-pb11mp.dts | 2 +-
+ arch/arm/boot/dts/arm-realview-pbx.dtsi   | 2 +-
+ arch/arm/boot/dts/versatile-ab.dts        | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -248,8 +248,8 @@ static int create_yamaha_midi_quirk(stru
- 					NULL, USB_MS_MIDI_OUT_JACK);
- 	if (!injd && !outjd)
- 		return -ENODEV;
--	if (!(injd && snd_usb_validate_midi_desc(injd)) ||
--	    !(outjd && snd_usb_validate_midi_desc(outjd)))
-+	if ((injd && !snd_usb_validate_midi_desc(injd)) ||
-+	    (outjd && !snd_usb_validate_midi_desc(outjd)))
- 		return -ENODEV;
- 	if (injd && (injd->bLength < 5 ||
- 		     (injd->bJackType != USB_MS_EMBEDDED &&
+diff --git a/arch/arm/boot/dts/arm-realview-eb.dtsi b/arch/arm/boot/dts/arm-realview-eb.dtsi
+index a917cf8825ca8..0e4c7c4c8c093 100644
+--- a/arch/arm/boot/dts/arm-realview-eb.dtsi
++++ b/arch/arm/boot/dts/arm-realview-eb.dtsi
+@@ -371,7 +371,7 @@
+ 			clock-names = "uartclk", "apb_pclk";
+ 		};
+ 
+-		ssp: ssp@1000d000 {
++		ssp: spi@1000d000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x1000d000 0x1000>;
+ 			clocks = <&sspclk>, <&pclk>;
+diff --git a/arch/arm/boot/dts/arm-realview-pb1176.dts b/arch/arm/boot/dts/arm-realview-pb1176.dts
+index f935b72d3d964..f2a1d25eb6cf3 100644
+--- a/arch/arm/boot/dts/arm-realview-pb1176.dts
++++ b/arch/arm/boot/dts/arm-realview-pb1176.dts
+@@ -380,7 +380,7 @@
+ 			clock-names = "apb_pclk";
+ 		};
+ 
+-		pb1176_ssp: ssp@1010b000 {
++		pb1176_ssp: spi@1010b000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x1010b000 0x1000>;
+ 			interrupt-parent = <&intc_dc1176>;
+diff --git a/arch/arm/boot/dts/arm-realview-pb11mp.dts b/arch/arm/boot/dts/arm-realview-pb11mp.dts
+index 36203288de426..7f9cbdf33a510 100644
+--- a/arch/arm/boot/dts/arm-realview-pb11mp.dts
++++ b/arch/arm/boot/dts/arm-realview-pb11mp.dts
+@@ -523,7 +523,7 @@
+ 			clock-names = "uartclk", "apb_pclk";
+ 		};
+ 
+-		ssp@1000d000 {
++		spi@1000d000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x1000d000 0x1000>;
+ 			interrupt-parent = <&intc_pb11mp>;
+diff --git a/arch/arm/boot/dts/arm-realview-pbx.dtsi b/arch/arm/boot/dts/arm-realview-pbx.dtsi
+index 10868ba3277f5..a5676697ff3b7 100644
+--- a/arch/arm/boot/dts/arm-realview-pbx.dtsi
++++ b/arch/arm/boot/dts/arm-realview-pbx.dtsi
+@@ -362,7 +362,7 @@
+ 			clock-names = "uartclk", "apb_pclk";
+ 		};
+ 
+-		ssp: ssp@1000d000 {
++		ssp: spi@1000d000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x1000d000 0x1000>;
+ 			clocks = <&sspclk>, <&pclk>;
+diff --git a/arch/arm/boot/dts/versatile-ab.dts b/arch/arm/boot/dts/versatile-ab.dts
+index 5f61d36090270..6f4f60ba5429c 100644
+--- a/arch/arm/boot/dts/versatile-ab.dts
++++ b/arch/arm/boot/dts/versatile-ab.dts
+@@ -373,7 +373,7 @@
+ 			clock-names = "apb_pclk";
+ 		};
+ 
+-		ssp@101f4000 {
++		spi@101f4000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x101f4000 0x1000>;
+ 			interrupts = <11>;
+-- 
+2.20.1
+
 
 
