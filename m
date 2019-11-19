@@ -2,128 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C24581028BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF1B41028C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:59:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbfKSP6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 10:58:32 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:37733 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbfKSP6b (ORCPT
+        id S1728387AbfKSP7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 10:59:43 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42393 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbfKSP7m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:58:31 -0500
-Received: by mail-qv1-f66.google.com with SMTP id s18so8332781qvr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 07:58:31 -0800 (PST)
+        Tue, 19 Nov 2019 10:59:42 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t20so25132591qtn.9;
+        Tue, 19 Nov 2019 07:59:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1z5z/i+3LcTUqYQxh88HeAp06C7NWtljha+VhmnIoik=;
-        b=q0/4rbRZzWyL2IQLLIRg9XxI7yVsxFhM0SqLGtUDlDWUnV4Cx9fQki4nQnyOu4FNdz
-         MgQNxzZhvmeNQ4vxKWKJtCQDbUTdNBQ/xV4ZzzAuYYpG7kI4kzg88KFEjKB1OOop5/MM
-         dmXWHVVk0f4IFEfTzJxC6wcIumqRKUt94xq2t5M1QrFtdREOzai+F5k09z+z/k7Jqu2c
-         BbEiwmnIPaHiEI7Zt/2/+6F59OuFSlOgnOLvgDI/i2RqODvIB0JSGBdy0iHPtmZxlA3s
-         3kg9/g+NZCqZF2g4heUVMqHBqHVmvfVaEeVCQXYnhyuzSasBKFdARpAUYdnI1+guGW/u
-         oDwQ==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m9owisihVoUKEdIZBWaiOa7IHVOtGuTKDH0fF9E2sX4=;
+        b=Al9cWTCEmFGh3dhfC5/fKcqfTRLGohNSOfErqJi+7K5fc2lSuvvijW3iX/vmJK0cWt
+         a7OLToGABHj2RVK4WJXwnBBbElEEJlGKwYwVUlJ52L8p78++2L4n6HtoV8AtcOKD+2C/
+         7vFPhoVONDnEZqcEmMGL5evbFvsW30sXKhrn+TTIFoy7RfZatqKB7gvS/2FwGdnxoHvP
+         6cSgUAhZwQGSbzWeOQtHk55l1Ot1TlKDR7qiEur+j4UukR0Wt0j8STLHQmNwUzVWz+Pp
+         +f69kGr++ExDEWmSOKPLovTztggqQWUOfD7XZKBLZMhXEfWYMXaLHfWF96fxB5xNeMmj
+         Umkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1z5z/i+3LcTUqYQxh88HeAp06C7NWtljha+VhmnIoik=;
-        b=tdKUSODQcGqhNqUvt1Tp6cz18uxQVoBXsA54hCB1oO3a0gqXU+l8V18cZQVlnlgSEU
-         hQ4ASaUNyEcMxkcc46tn+APrLMJSCoXPK3YAOe7A0FFt1sFmSbDpXIVBRpfyL8h1kAsO
-         1handpEjmCePdrxc0cxe7oR85HECupqK/z2dZQcpzjDFLInlxjsgjRW2mdqCDlvas588
-         GrAPpNseQHbr+CvXvenpHwr5ywg7viWrHCVq2YElW7EXXu36QsZKNWpfcefCbpdDzbyE
-         dbtheReNOittmBMIkxdXYtPTmK9Fam2XkTFe/JBMHn40UQzoK36Y3wPTUXjlG0Jkk99W
-         sdKg==
-X-Gm-Message-State: APjAAAVtxm37I6w3sKNaopRmkIgBBaVQyJ69qu6rDpCTGdc5EPUNe1ep
-        tNsnpyr/lFHYjT0gxViUwg77CA9qQPw=
-X-Google-Smtp-Source: APXvYqzQs4PHJxtGOjF5LF5GaxORkXbZEPYtAW8Ec/ZJQGupHFmldpVxF1PjfxTctBnYnLVlTTelSQ==
-X-Received: by 2002:ad4:4dce:: with SMTP id cw14mr20727040qvb.185.1574179109802;
-        Tue, 19 Nov 2019 07:58:29 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id i10sm11536583qtj.19.2019.11.19.07.58.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Nov 2019 07:58:29 -0800 (PST)
-Message-ID: <1574179107.9585.1.camel@lca.pw>
-Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
-From:   Qian Cai <cai@lca.pw>
-To:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 19 Nov 2019 10:58:27 -0500
-In-Reply-To: <20191119094134.6hzbjc7l5ite6bpg@pathway.suse.cz>
-References: <20190904065455.GE3838@dhcp22.suse.cz>
-         <20190904071911.GB11968@jagdpanzerIV> <20190904074312.GA25744@jagdpanzerIV>
-         <1567599263.5576.72.camel@lca.pw>
-         <20190904144850.GA8296@tigerII.localdomain>
-         <1567629737.5576.87.camel@lca.pw> <20190905113208.GA521@jagdpanzerIV>
-         <1573751570.5937.122.camel@lca.pw>
-         <20191118152738.az364dczadskgimc@pathway.suse.cz>
-         <20191119004119.GC208047@google.com>
-         <20191119094134.6hzbjc7l5ite6bpg@pathway.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m9owisihVoUKEdIZBWaiOa7IHVOtGuTKDH0fF9E2sX4=;
+        b=IHfFVgAXWQ/42yz6XIiq5XpI6WbMhfaLu5G74jgtYYUf7lKDsDz8ig/x/V5xiBbjpJ
+         2tDD48Vyah1V79/3GZ6ArpMNCAtXsFDcZkYs9+2LEKbkfu0nBrsoXrH9ad+OhFTWI/EH
+         nsHFYsqR5Fdn0ZnXyxxJa8ZVArlAJl/aKnz3h8oB0LH0k021LnEkkbNQrfQMawrvOw3d
+         LF79nufp7mwE6pGUa0rXC4hhz0/ddze59cgGbGe7p5HHRRhRtGP+U6p++jk65sk64z3r
+         rJk/Nn4nEcOZO+B9dRXwg9i5aMWa9dcPW//SGfY5gB4HnR+Bl8V0fck+MZilfnx+5xQz
+         hFSQ==
+X-Gm-Message-State: APjAAAWwWacJRuV4KQA1XYe5RKoNp57FMqCCr0w1YzpI2FnrEWy4k2wz
+        2qPji2rCcwzDilDHdt5xea0=
+X-Google-Smtp-Source: APXvYqxw/mipy1xv+BDJlBvv52s6KA03uNVaG1x2rooAK6M1x9d1rm+UBPPUswr6Wmfn2RDN9gzhiw==
+X-Received: by 2002:ac8:342b:: with SMTP id u40mr32830412qtb.87.1574179179727;
+        Tue, 19 Nov 2019 07:59:39 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id w5sm10141364qkf.43.2019.11.19.07.59.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 07:59:39 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id E981D40D3E; Tue, 19 Nov 2019 12:59:36 -0300 (-03)
+Date:   Tue, 19 Nov 2019 12:59:36 -0300
+To:     lqqq341 <liuqi115@hisilicon.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, ak@linux.intel.com,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxarm@huawei.com, john.garry@huawei.com,
+        zhangshaokun@hisilicon.com, huangdaode@hisilicon.com,
+        linyunsheng@huawei.com
+Subject: Re: [PATCH] Perf stat: Fix the ratio comments of miss-events
+Message-ID: <20191119155936.GC24290@kernel.org>
+References: <1573890521-56450-1-git-send-email-liuqi115@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573890521-56450-1-git-send-email-liuqi115@hisilicon.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-11-19 at 10:41 +0100, Petr Mladek wrote:
-> On Tue 2019-11-19 09:41:19, Sergey Senozhatsky wrote:
-> > On (19/11/18 16:27), Petr Mladek wrote:
-> > > > > @@ -2027,8 +2027,11 @@ asmlinkage int vprintk_emit(int facility, int level,
-> > > > >  	pending_output = (curr_log_seq != log_next_seq);
-> > > > >  	logbuf_unlock_irqrestore(flags);
-> > > > >  
-> > > > > +	if (!pending_output)
-> > > > > +		return printed_len;
-> > > > > +
-> > > > >  	/* If called from the scheduler, we can not call up(). */
-> > > > > -	if (!in_sched && pending_output) {
-> > > > > +	if (!in_sched) {
-> > > > >  		/*
-> > > > >  		 * Disable preemption to avoid being preempted while holding
-> > > > >  		 * console_sem which would prevent anyone from printing to
-> > > > > @@ -2043,10 +2046,11 @@ asmlinkage int vprintk_emit(int facility, int level,
-> > > > >  		if (console_trylock_spinning())
-> > > > >  			console_unlock();
-> > > > >  		preempt_enable();
-> > > > > -	}
-> > > > >  
-> > > > > -	if (pending_output)
-> > > > > +		wake_up_interruptible(&log_wait);
-> > > 
-> > > I do not like this. As a result, normal printk() will always deadlock
-> > > in the scheduler code, including WARN() calls. The chance of the
-> > > deadlock is small now. It happens only when there is another
-> > > process waiting for console_sem.
-> > 
-> > Why would it *always* deadlock? If this is the case, why we don't *always*
-> > deadlock doing the very same wake_up_process() from console_unlock()?
+Em Sat, Nov 16, 2019 at 03:48:41PM +0800, lqqq341 escreveu:
+> From: Qi Liu <liuqi115@hisilicon.com>
 > 
-> I speak about _normal_ printk() and not about printk_deferred().
+> Perf stat displays miss ratio of L1-dcache, L1-icache, dTLB cache,
+> iTLB cache and LL-cache. Take L1-dcache for example, its miss ratio
+> is caculated as "L1-dcache-load-misses/L1-dcache-loads". So "of all
+> L1-dcache hits" is unsuitable to describe it, and "of all L1-dcache
+> accesses" seems better. The comments of L1-icache, dTLB cache, iTLB
+> cache and LL-cache are fixed in the same way.
 > 
-> wake_up_process() is called in console_unlock() only when
-> sem->wait_list is not empty, see up() in kernel/locking/semaphore.c.
-> printk() itself uses console_trylock() and does not wait.
+> Signed-off-by: Qi Liu <liuqi115@hisilicon.com>
+> ---
+>  tools/perf/util/stat-shadow.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
 > 
-> I believe that this is the rason why printk_sched() was added
-> so late in 2012. It was more than 10 years after adding
-> the semaphore into console_unlock(). IMHO, the deadlock
-> was rare. Of course, it was also hard to debug but it
-> would not take 10 years.
+> diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+> index 2c41d47..a3bdf2b 100644
+> --- a/tools/perf/util/stat-shadow.c
+> +++ b/tools/perf/util/stat-shadow.c
+> @@ -506,7 +506,8 @@ static void print_l1_dcache_misses(struct perf_stat_config *config,
+>  
+>  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
+>  
+> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
+> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
+> +			  "of all L1-dcache accesses", ratio);
 
-I would not be surprise that those potential deadlocks have been existed even
-for 10 years. Not only that it is difficult to debug, but also when eventually
-someone had reported them, subsystem developers could still "kick balls" like
-where it had been observed for the last a few months, and no progress could be
-done for those as eventually life is too short and the reporters have to give
-up.
+
+Why have you reflowed all those lines? This patch should have been like:
+
+-	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
++	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache accesses", ratio);
+
+Notice how it is easier to compare the changes, and also to keep the
+flowing like it was before your change,
+
+Thanks,
+
+- Arnaldo
+
+>  }
+>  
+>  static void print_l1_icache_misses(struct perf_stat_config *config,
+> @@ -527,7 +528,8 @@ static void print_l1_icache_misses(struct perf_stat_config *config,
+>  		ratio = avg / total * 100.0;
+>  
+>  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
+> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-icache hits", ratio);
+> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
+> +			  "of all L1-icache accesses", ratio);
+>  }
+>  
+>  static void print_dtlb_cache_misses(struct perf_stat_config *config,
+> @@ -547,7 +549,8 @@ static void print_dtlb_cache_misses(struct perf_stat_config *config,
+>  		ratio = avg / total * 100.0;
+>  
+>  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
+> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all dTLB cache hits", ratio);
+> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
+> +			  "of all dTLB cache accesses", ratio);
+>  }
+>  
+>  static void print_itlb_cache_misses(struct perf_stat_config *config,
+> @@ -567,7 +570,8 @@ static void print_itlb_cache_misses(struct perf_stat_config *config,
+>  		ratio = avg / total * 100.0;
+>  
+>  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
+> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all iTLB cache hits", ratio);
+> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
+> +			  "of all iTLB cache accesses", ratio);
+>  }
+>  
+>  static void print_ll_cache_misses(struct perf_stat_config *config,
+> @@ -587,7 +591,8 @@ static void print_ll_cache_misses(struct perf_stat_config *config,
+>  		ratio = avg / total * 100.0;
+>  
+>  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
+> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all LL-cache hits", ratio);
+> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
+> +			  "of all LL-cache accesses", ratio);
+>  }
+>  
+>  /*
+> @@ -872,7 +877,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+>  		if (runtime_stat_n(st, STAT_L1_DCACHE, ctx, cpu) != 0)
+>  			print_l1_dcache_misses(config, cpu, evsel, avg, out, st);
+>  		else
+> -			print_metric(config, ctxp, NULL, NULL, "of all L1-dcache hits", 0);
+> +			print_metric(config, ctxp, NULL, NULL,
+> +				     "of all L1-dcache accesses", 0);
+>  	} else if (
+>  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
+>  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_L1I |
+> @@ -882,7 +888,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+>  		if (runtime_stat_n(st, STAT_L1_ICACHE, ctx, cpu) != 0)
+>  			print_l1_icache_misses(config, cpu, evsel, avg, out, st);
+>  		else
+> -			print_metric(config, ctxp, NULL, NULL, "of all L1-icache hits", 0);
+> +			print_metric(config, ctxp, NULL, NULL,
+> +				     "of all L1-icache accesses", 0);
+>  	} else if (
+>  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
+>  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_DTLB |
+> @@ -892,7 +899,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+>  		if (runtime_stat_n(st, STAT_DTLB_CACHE, ctx, cpu) != 0)
+>  			print_dtlb_cache_misses(config, cpu, evsel, avg, out, st);
+>  		else
+> -			print_metric(config, ctxp, NULL, NULL, "of all dTLB cache hits", 0);
+> +			print_metric(config, ctxp, NULL, NULL,
+> +				     "of all dTLB cache accesses", 0);
+>  	} else if (
+>  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
+>  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_ITLB |
+> @@ -902,7 +910,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+>  		if (runtime_stat_n(st, STAT_ITLB_CACHE, ctx, cpu) != 0)
+>  			print_itlb_cache_misses(config, cpu, evsel, avg, out, st);
+>  		else
+> -			print_metric(config, ctxp, NULL, NULL, "of all iTLB cache hits", 0);
+> +			print_metric(config, ctxp, NULL, NULL,
+> +				     "of all iTLB cache accesses", 0);
+>  	} else if (
+>  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
+>  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_LL |
+> @@ -912,7 +921,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+>  		if (runtime_stat_n(st, STAT_LL_CACHE, ctx, cpu) != 0)
+>  			print_ll_cache_misses(config, cpu, evsel, avg, out, st);
+>  		else
+> -			print_metric(config, ctxp, NULL, NULL, "of all LL-cache hits", 0);
+> +			print_metric(config, ctxp, NULL, NULL,
+> +				     "of all LL-cache accesses", 0);
+>  	} else if (perf_evsel__match(evsel, HARDWARE, HW_CACHE_MISSES)) {
+>  		total = runtime_stat_avg(st, STAT_CACHEREFS, ctx, cpu);
+>  
+> -- 
+> 2.8.1
+
+-- 
+
+- Arnaldo
