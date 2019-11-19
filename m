@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 385511014F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 014F010163E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbfKSFjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:39:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32924 "EHLO mail.kernel.org"
+        id S1731792AbfKSFv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbfKSFi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:38:56 -0500
+        id S1731777AbfKSFv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 710532071A;
-        Tue, 19 Nov 2019 05:38:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9B25208C3;
+        Tue, 19 Nov 2019 05:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141935;
-        bh=hwEnfSrRKF/vEjZnGBCUmDoqUXJUVgPMbVJ6QRvL9Iw=;
+        s=default; t=1574142685;
+        bh=d999pwMigJEppsr13vUh55zksJ5+AulgB9PyRUebJXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bIGbZ7ZVxieszOyjzqa7sqq/Lu0LEWT7dQuFozXC8mev/r4F5jsutlclrNu076rwo
-         6EdE6mpKNi9nyybTziiFFLYgyCaobWyrau9Cftj9oYGzk7fe24rDik5q6KQiwwl0vJ
-         3kkziijUoU84oJTv//BqnKdiSzsJhpjale+O+BHM=
+        b=kcojmWkrYDGNWeZ4yHwm7pro/JmAUlc8gXLfkFgX+u5sw9tbdC5LlGkxM8AHQQAA6
+         nX65YLJB8YOi0CGlcL9if7wAJqrfeyFbCm1t/xjy72owb3XgK9S1ENIjn+K8DihMst
+         ZqxWLwzh7+r0vMyxs87Q6JFKkSrX1av2xYkVbNww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 331/422] usb: gadget: uvc: configfs: Drop leaked references to config items
+Subject: [PATCH 4.14 128/239] ACPI / LPSS: Exclude I2C busses shared with PUNIT from pmc_atom_d3_mask
 Date:   Tue, 19 Nov 2019 06:18:48 +0100
-Message-Id: <20191119051420.465895368@linuxfoundation.org>
+Message-Id: <20191119051330.514529055@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +45,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 86f3daed59bceb4fa7981d85e89f63ebbae1d561 ]
+[ Upstream commit 86b62e5cd8965d3056f9e9ccdec51631c37add81 ]
 
-Some of the .allow_link() and .drop_link() operations implementations
-call config_group_find_item() and then leak the reference to the
-returned item. Fix this by dropping those references where needed.
+lpss_iosf_enter_d3_state() checks if all hw-blocks using the DMA
+controllers are in d3 before powering down the DMA controllers.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+But on devices, where the I2C bus connected to the PMIC is shared by
+the PUNIT, the controller for that bus will never reach d3 since it has
+an effectively empty _PS3 method. Instead it appears to automatically
+power-down during S0i3 and we never see it as being in d3.
+
+This causes the DMA controllers to never be powered-down on these devices,
+causing them to never reach S0i3. This commit uses the ACPI _SEM method
+to detect if an I2C bus is shared with the PUNIT and if it is, it removes
+it from the mask of devices which lpss_iosf_enter_d3_state() checks for.
+
+This fixes these devices never reaching any S0ix states.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/uvc_configfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/acpi/acpi_lpss.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index b51f0d2788269..dc4edba95a478 100644
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -544,6 +544,7 @@ static int uvcg_control_class_allow_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -579,6 +580,7 @@ static void uvcg_control_class_drop_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- }
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index 51592dd45b066..1ab8d7223b252 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -98,6 +98,9 @@ struct lpss_private_data {
+ 	u32 prv_reg_ctx[LPSS_PRV_REG_COUNT];
+ };
  
-@@ -2038,6 +2040,7 @@ static int uvcg_streaming_class_allow_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -2078,6 +2081,7 @@ static void uvcg_streaming_class_drop_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- }
++/* Devices which need to be in D3 before lpss_iosf_enter_d3_state() proceeds */
++static u32 pmc_atom_d3_mask = 0xfe000ffe;
++
+ /* LPSS run time quirks */
+ static unsigned int lpss_quirks;
+ 
+@@ -174,6 +177,21 @@ static void byt_pwm_setup(struct lpss_private_data *pdata)
+ 
+ static void byt_i2c_setup(struct lpss_private_data *pdata)
+ {
++	const char *uid_str = acpi_device_uid(pdata->adev);
++	acpi_handle handle = pdata->adev->handle;
++	unsigned long long shared_host = 0;
++	acpi_status status;
++	long uid = 0;
++
++	/* Expected to always be true, but better safe then sorry */
++	if (uid_str)
++		uid = simple_strtol(uid_str, NULL, 10);
++
++	/* Detect I2C bus shared with PUNIT and ignore its d3 status */
++	status = acpi_evaluate_integer(handle, "_SEM", NULL, &shared_host);
++	if (ACPI_SUCCESS(status) && shared_host && uid)
++		pmc_atom_d3_mask &= ~(BIT_LPSS2_F1_I2C1 << (uid - 1));
++
+ 	lpss_deassert_reset(pdata);
+ 
+ 	if (readl(pdata->mmio_base + pdata->dev_desc->prv_offset))
+@@ -789,7 +807,7 @@ static void lpss_iosf_enter_d3_state(void)
+ 	 * Here we read the values related to LPSS power island, i.e. LPSS
+ 	 * devices, excluding both LPSS DMA controllers, along with SCC domain.
+ 	 */
+-	u32 func_dis, d3_sts_0, pmc_status, pmc_mask = 0xfe000ffe;
++	u32 func_dis, d3_sts_0, pmc_status;
+ 	int ret;
+ 
+ 	ret = pmc_atom_read(PMC_FUNC_DIS, &func_dis);
+@@ -807,7 +825,7 @@ static void lpss_iosf_enter_d3_state(void)
+ 	 * Shutdown both LPSS DMA controllers if and only if all other devices
+ 	 * are already in D3hot.
+ 	 */
+-	pmc_status = (~(d3_sts_0 | func_dis)) & pmc_mask;
++	pmc_status = (~(d3_sts_0 | func_dis)) & pmc_atom_d3_mask;
+ 	if (pmc_status)
+ 		goto exit;
  
 -- 
 2.20.1
