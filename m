@@ -2,87 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA33C101044
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 01:32:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24F00101049
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 01:35:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfKSAck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 19:32:40 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39989 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfKSAcj (ORCPT
+        id S1727170AbfKSAfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 19:35:07 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32977 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfKSAfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 19:32:39 -0500
-Received: by mail-pg1-f196.google.com with SMTP id e17so3075954pgd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 16:32:37 -0800 (PST)
+        Mon, 18 Nov 2019 19:35:07 -0500
+Received: by mail-pl1-f193.google.com with SMTP id ay6so10738742plb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 16:35:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:to:subject:from:user-agent:date;
-        bh=o0OXgLmHTG6WHUoLd4+XFd/oiOrWoJBJ98oXwGWf49U=;
-        b=M5FXXW0mR0xn+5fsbeH0ePNNujEUWE4+jL4vomKqcmMB5GfonCjRlaIdutis/H5QB3
-         zAuMK1WjG32gGhpBOHHnDhMAREoTUU7xKb+mmBwWqIxeQbdzL4MQc+HxYvdIqqZ9dKnQ
-         opTS860TAZBLz8BVfzAH++6rhEyMViLuHo5rU=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KDjD6wRu08/3eOf5MmI1OKuUS2ePOxx6myNS0OClZW8=;
+        b=cpQP7haZ+qnxm49l1kiO3rneGBNvdafMNXYylZOqZtyhHZ0UQBk1UvGioO2Tm4UKfU
+         bVxFYceBpiVXNyY+0FP9js/obi0/U1euVPU2zBXCqdIkU2CwzXvjScc7mS06age6cBeu
+         RZDjkIOxguq7TDOaRrrHOb0T4eVi0Q/lq7ssL6GCHIHr0kJ23QzzeKVaeyue3EQU33ix
+         LZO1ilWg0c1pw46cl07rclj1NJyng7cjT7w7rVpQXLJIvs9UgabUGWKCiiYEdAUPIax1
+         8HWULHCUaEw29Ry6bYakMq5jC2UvpyvmjTLa/PtHrRJVVPgtIaTC98wJGbS8TjyKLLlj
+         3WHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:to:subject:from
-         :user-agent:date;
-        bh=o0OXgLmHTG6WHUoLd4+XFd/oiOrWoJBJ98oXwGWf49U=;
-        b=gq6HM9Ysuu1a7/jLEe8pBT5l6NnNVLE4Efk9dAZm06PM5QMp4pZ44jJcnXI99KCTN9
-         6RBpmGTBK/eLkwReZHvl0KNGlkbrVIcqB2LI4KK58ABA5QdHAso7DyrNf8pnNBkrs2c0
-         FEgwnZVEGk7gHEGVQ19Z8iU7kXURJYsCt+SOEvfC9zWbMs2etvm9G1D+fbcLgwB3l8vW
-         6Aj/Gqf1SF2RjpeFMyB51GhagPNDY7gBqNwFrVfJ5lAD6xFDOTroblx9z0GCfSRpqoRm
-         MkbiKsQm6mvEQsa2Tzt/M8bqurObxVv2bBzJdF3qSjcTr5G9sbSJkIrssHveD/m5st7A
-         WAKw==
-X-Gm-Message-State: APjAAAWgnaBPW05x3ancUd8GP7ZeqKPr4TGmkRkBNt/OkCtd5dlbwALt
-        XInR2J0zvT1lTHOt8HZZMbTHwA==
-X-Google-Smtp-Source: APXvYqyAKyUgyhNNCirKuH+kZ1grecYk6P0rtU1NXPsuBpylGactVDgBMuarRDsz9xu7bEt2bBE6ww==
-X-Received: by 2002:a65:47c1:: with SMTP id f1mr2187675pgs.393.1574123557349;
-        Mon, 18 Nov 2019 16:32:37 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id d23sm23136047pfo.140.2019.11.18.16.32.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 16:32:36 -0800 (PST)
-Message-ID: <5dd33824.1c69fb81.2d94a.4f12@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KDjD6wRu08/3eOf5MmI1OKuUS2ePOxx6myNS0OClZW8=;
+        b=J82AFrclG3cJgpZGHrLNHAYAckFGTMTlHKfbAgI6Zwqb3YaiiA7Lr8B4ntBTol3Sf7
+         R666VPIG6XgtA2gj5pJd1g9Jm3MUF6n6md8r+vgTgapxcOTIaq/EZpEbfkExzI7nNix4
+         glZCM8wOP4E9cwIzDu4LPeEzNIfVabY4/NGx6L9hJuAHjHsA0NvLwTFLVACntKVAwLeE
+         Y67Jjll1CTabsqnY+UYoDf/klgqv1IjjSWny86BpRLYb05/KwD/IbGN+h7E5IVz3Hyfp
+         GMbZicuQd2Zd1/W7x1fWoRU0uWeaF6HspQMdTGKwL+aWD1pQMTHQ8HZkG0o6HfuajlxV
+         NnHQ==
+X-Gm-Message-State: APjAAAW4Zrva7JQkIOXoO7OgZAdMseQNcuE80jfWagAFFlbP6cYknvsK
+        AawyN6WIf7RUmJYIyMvzuSnU3MqMZutKg+c/20GAYg==
+X-Google-Smtp-Source: APXvYqzisxXdX2gUjgmZ6VXkODOtflaLP8heK8Rw+lwEa0j3nLTrZNJKQNDvqDFnnE1Owdv6Fid84PeLGqzly0vXJ2A=
+X-Received: by 2002:a17:90a:d155:: with SMTP id t21mr2326831pjw.84.1574123705397;
+ Mon, 18 Nov 2019 16:35:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191118234043.331542-1-robdclark@gmail.com>
-References: <20191118234043.331542-1-robdclark@gmail.com>
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-To:     Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/msm/a6xx: restore previous freq on resume
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 18 Nov 2019 16:32:35 -0800
+References: <20191106004329.16991-1-brendanhiggins@google.com>
+ <201911060916.AC9E14B@keescook> <20191107233337.GA191231@google.com>
+In-Reply-To: <20191107233337.GA191231@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 18 Nov 2019 16:34:53 -0800
+Message-ID: <CAFd5g462jFnbPxA2Nvc_3W064kZ8t5oHNE4M_3yt84+NuoiHGQ@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v2] apparmor: add AppArmor KUnit
+ tests for policy unpack
+To:     Kees Cook <keescook@chromium.org>
+Cc:     shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, Alan Maguire <alan.maguire@oracle.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Clark (2019-11-18 15:40:38)
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/=
-adreno/a6xx_gmu.h
-> index 39a26dd63674..2af91ed7ed0c 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> @@ -63,6 +63,9 @@ struct a6xx_gmu {
->         struct clk_bulk_data *clocks;
->         struct clk *core_clk;
-> =20
-> +       /* current performance index set externally */
-> +       int current_perf_index;
-> +
+On Thu, Nov 7, 2019 at 3:33 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Wed, Nov 06, 2019 at 09:18:27AM -0800, Kees Cook wrote:
+> > On Tue, Nov 05, 2019 at 04:43:29PM -0800, Brendan Higgins wrote:
+> > > From: Mike Salvatore <mike.salvatore@canonical.com>
+> > >
+> > > Add KUnit tests to test AppArmor unpacking of userspace policies.
+> > > AppArmor uses a serialized binary format for loading policies. To find
+> > > policy format documentation see
+> > > Documentation/admin-guide/LSM/apparmor.rst.
+> > >
+> > > In order to write the tests against the policy unpacking code, some
+> > > static functions needed to be exposed for testing purposes. One of the
+> > > goals of this patch is to establish a pattern for which testing these
+> > > kinds of functions should be done in the future.
+> > >
+> > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > > Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
+> > > ---
+> > >  security/apparmor/Kconfig              |  16 +
+> > >  security/apparmor/policy_unpack.c      |   4 +
+> > >  security/apparmor/policy_unpack_test.c | 607 +++++++++++++++++++++++++
+> > >  3 files changed, 627 insertions(+)
+> > >  create mode 100644 security/apparmor/policy_unpack_test.c
+> > >
+> > > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+> > > index d8b1a360a6368..78a33ccac2574 100644
+> > > --- a/security/apparmor/Kconfig
+> > > +++ b/security/apparmor/Kconfig
+> > > @@ -66,3 +66,19 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
+> > >       Set the default value of the apparmor.debug kernel parameter.
+> > >       When enabled, various debug messages will be logged to
+> > >       the kernel message buffer.
+> > > +
+> > > +config SECURITY_APPARMOR_KUNIT_TEST
+> > > +   bool "Build KUnit tests for policy_unpack.c"
+> > > +   depends on KUNIT && SECURITY_APPARMOR
+> > > +   help
+> > > +     This builds the AppArmor KUnit tests.
+> > > +
+> > > +     KUnit tests run during boot and output the results to the debug log
+> > > +     in TAP format (http://testanything.org/). Only useful for kernel devs
+> > > +     running KUnit test harness and are not for inclusion into a
+> > > +     production build.
+> > > +
+> > > +     For more information on KUnit and unit tests in general please refer
+> > > +     to the KUnit documentation in Documentation/dev-tools/kunit/.
+> > > +
+> > > +     If unsure, say N.
+> > > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> > > index 8cfc9493eefc7..37c1dd3178fc0 100644
+> > > --- a/security/apparmor/policy_unpack.c
+> > > +++ b/security/apparmor/policy_unpack.c
+> > > @@ -1120,3 +1120,7 @@ int aa_unpack(struct aa_loaddata *udata, struct list_head *lh,
+> > >
+> > >     return error;
+> > >  }
+> > > +
+> > > +#ifdef CONFIG_SECURITY_APPARMOR_KUNIT_TEST
+> > > +#include "policy_unpack_test.c"
+> > > +#endif /* CONFIG_SECURITY_APPARMOR_KUNIT_TEST */
+> >
+> > To make this even LESS intrusive, the ifdefs could live in ..._test.c.
+>
+> Less intrusive, yes, but I think I actually like the ifdef here; it
+> makes it clear from the source that the test is only a part of the build
+> when configured to do so. Nevertheless, I will change it if anyone feels
+> strongly about it.
+>
+> > Also, while I *think* the kernel build system will correctly track this
+> > dependency, can you double-check that changes to ..._test.c correctly
+> > trigger a recompile of policy_unpack.c?
+>
+> Yep, just verified, first I ran the tests and everything passed. Then I
+> applied the following diff:
+>
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index 533137f45361c..e1b0670dbdc27 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -161,7 +161,7 @@ static void policy_unpack_test_unpack_array_with_name(struct kunit *test)
+>
+>         array_size = unpack_array(puf->e, name);
+>
+> -       KUNIT_EXPECT_EQ(test, array_size, (u16)TEST_ARRAY_SIZE);
+> +       KUNIT_EXPECT_EQ(test, array_size + 1, (u16)TEST_ARRAY_SIZE);
+>         KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+>                 puf->e->start + TEST_ARRAY_BUF_OFFSET + sizeof(u16) + 1);
+>  }
+>
+> and reran the tests (to trigger an incremental build) and the test
+> failed as expected indicating that the dependency is properly tracked.
 
-Is there a reason this isn't unsigned? It looks like
-__a6xx_gmu_set_freq() takes an int, but maybe it should take a u16 or
-something?
+Hey Kees,
 
+Since it looks like you already took a pretty close look at this,
+would you mind giving me a review?
+
+Thanks!
