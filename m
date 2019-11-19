@@ -2,154 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C02102EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 23:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DDD1102EF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 23:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfKSWN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 17:13:59 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60596 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbfKSWN5 (ORCPT
+        id S1727428AbfKSWPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 17:15:24 -0500
+Received: from mail-io1-f41.google.com ([209.85.166.41]:44754 "EHLO
+        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfKSWPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 17:13:57 -0500
-Received: from 79.184.253.244.ipv4.supernova.orange.pl (79.184.253.244) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 1bb4ebfdd68c6764; Tue, 19 Nov 2019 23:13:54 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Doug Smythies <dsmythies@telus.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFT][PATCH 1/3] PM: QoS: Introduce frequency QoS
-Date:   Tue, 19 Nov 2019 23:13:53 +0100
-Message-ID: <6710300.onecg0m5mP@kreacher>
-In-Reply-To: <CAJZ5v0i1iAjpWju6FiCjP3RvspKDRfSwz4=b_3qgGhhfz8sSrw@mail.gmail.com>
-References: <2811202.iOFZ6YHztY@kreacher> <000401d59ee6$959e3da0$c0dab8e0$@net> <CAJZ5v0i1iAjpWju6FiCjP3RvspKDRfSwz4=b_3qgGhhfz8sSrw@mail.gmail.com>
+        Tue, 19 Nov 2019 17:15:23 -0500
+Received: by mail-io1-f41.google.com with SMTP id j20so14140624ioo.11
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 14:15:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oNq+FxS/ZZbLEoaixalkYRZne7eBiDi2jHdHzkSxO20=;
+        b=AHsE3pNL0Gg1DEkNsj/sSPrv6vwIDKdmIINkIPasmG2gnXG74efq4ptiV1lfwK2XsK
+         ngKeKQuIaU+WyJqsvBX+RNYlq7LrjfGwWd1jxPeRvK+FcN8D44zBa0PYsYcSVlsdX6kH
+         Y9lKeF4fYK5tOXwEtwlcviv0GxRpkTr/fQcDbWOzfM61EJrN3GdJdHKtxlr3E0gPnsGX
+         rHLDTJG1diqoy0tIhLhGt3BtYB5zkXtAwLiEQos1N2YB/Pq9/gnXO0SHkAwpttGdjWgy
+         22tq8UeL3ksvkO+tXso0lnnjAqS4i3BAhHGArRu4N58Gd04c2JaaZSriXMYxcRX4zDb+
+         wn1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oNq+FxS/ZZbLEoaixalkYRZne7eBiDi2jHdHzkSxO20=;
+        b=MZoPRcLqD6M55puxg2nQFsRt2xH+6LZ7j1eZQpiEZ6yqmMH5jrEXQy/m+79hNvVJ5v
+         JXFUxmc3ImYY8w/A+8uUe9gv6Al1GDrhexIqqXK7+feUJYBQ0BcxxJxaR31KSG9J2xC0
+         RXSB247emS9K3Kckr2UHUWO43bR+n2sj19ulEno+2sLl9egP920qtJ5Dv0F7rEsmMwNC
+         VS1jh+0JUuKRzHSrpQt/77u4xJs8NLLEkN3jicqXt6H+VZ2BPcbajCcbv68yh3fgt5YG
+         atC9oq/RvHcJYVhyIjPS4nHGE6D5l1EuGSwidLAE49Yc2rUqsA2/XfE1VTytiOtDgeR3
+         KnBA==
+X-Gm-Message-State: APjAAAXhlLis2Evp6/E7jhIixXVPzDCbJwO+8kohNONK5ReExJNhimS6
+        PTTBZTZ15vZqCxFBvus+Aj3nsD7OuzBoB7aTL6w=
+X-Google-Smtp-Source: APXvYqzv4cLzlJJjN4hEzAeqVcVtd2JF9QPu/O6QyjpHThyz322rRg+35LYWy7/cHgGu9kGClsS0Zr6ojtPHYRl6Ga8=
+X-Received: by 2002:a02:65c7:: with SMTP id u190mr213999jab.142.1574201723096;
+ Tue, 19 Nov 2019 14:15:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <5c4f8af1-723b-1b10-5163-f8f8b14b38ca@gmail.com>
+In-Reply-To: <5c4f8af1-723b-1b10-5163-f8f8b14b38ca@gmail.com>
+From:   Jim Davis <jim.epost@gmail.com>
+Date:   Tue, 19 Nov 2019 15:15:11 -0700
+Message-ID: <CA+r1ZhjZRED8OCyxMK=71H2obYhccB8q1+nCZ6bnMNQ7SmFkdA@mail.gmail.com>
+Subject: Re: man-pages-5.04 is released
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, November 19, 2019 8:17:05 PM CET Rafael J. Wysocki wrote:
-> On Tue, Nov 19, 2019 at 3:35 PM Doug Smythies <dsmythies@telus.net> wrote:
-> >
-> > On 2019.11.17 08:13 Doug Smythies wrote:
-> > > On 2019.11.16 23:35 Doug Smythies wrote:
-> >
-> > >> Hi Rafael,
-> > >>
-> > >> Not sure, but I think it is this one that
-> > >> causes complaining when I try to set the
-> > >> intel_pstate driver to passive mode.
-> > >> I started from active mode, powersave governor,
-> > >> no HWP.
-> > >>
-> > >> Kernel: 5.4-rc7
-> > >>
-> > >> I did not go back and try previous 5.4 RCs.
-> >
-> > After looking at the git tags for this patch,
-> > I tried kernel 5.4-rc2, which was the closest
-> > Kernel I had to before the patch set was added.
-> > It worked fine, as expected.
-> >
-> > >> I did try kernel 5.3-rc8, because I already had
-> > >> it installed, and it worked fine.
-> > >>
-> > >> I use a script (for years), run as sudo:
-> > >>
-> > >> doug@s15:~/temp$ cat set_cpu_passive
-> > >> #! /bin/bash
-> > >> cat /sys/devices/system/cpu/intel_pstate/status
-> > >> echo passive > /sys/devices/system/cpu/intel_pstate/status
-> > >> cat /sys/devices/system/cpu/intel_pstate/status
-> > >>
-> > >> And I get this (very small excerpt):
-> > >>
-> > >> freq_qos_add_request() called for active request
-> > >> WARNING: CPU: 1 PID: 2758 at kernel/power/qos.c:763 freq_qos_add_request+0x4c/0xa0
-> > >> CPU: 1 PID: 2758 Comm: set_cpu_passive Not tainted 5.4.0-rc7-stock #727
-> > >> Failed to add freq constraint for CPU0 (-22)
-> > >>
-> > >> freq_qos_add_request() called for active request
-> > >> WARNING: CPU: 1 PID: 2758 at kernel/power/qos.c:763 freq_qos_add_request+0x4c/0xa0
-> > >> CPU: 1 PID: 2758 Comm: set_cpu_passive Tainted: G        W         5.4.0-rc7-stock #727
-> > >> Failed to add freq constraint for CPU1 (-22)
-> >
-> > Updated summary of previous emails:
-> > This patch or patch set breaks the after boot
-> > ability to change CPU frequency scaling drivers.
-> >
-> > Using a workaround of booting with
-> > "intel_pstate=passive" seems to prevent the errors.
-> >
-> > Changing between the intel_pstate and intel_cpufreq drivers
-> > (i.e. between active and passive modes)
-> > after boot, either way, causes the errors. i.e.
-> >
-> > Failed to add freq constraint for CPU7 (-22)
-> > (2 per CPU per attempt)
-> 
-> These messages come from acpi_processor_ppc_init() and
-> acpi_thermal_cpufreq_init(), AFAICS, which are invoked by
-> acpi_processor_notifier() and that is invoked by the
-> blocking_notifier_call_chain() in cpufreq_online() which tirggers for
-> new policies after adding the max freq QoS request to
-> policy->constraints.
-> 
-> The requests added by them should be removed by
-> acpi_processor_ppc_exit() and acpi_thermal_cpufreq_exit(),
-> respectively, invoked by the blocking_notifier_call_chain() in
-> cpufreq_policy_free(), but it looks like that doesn't happen.
-> 
-> However, I now also see that freq_qos_remove_request() doesn't clear
-> the qos field in req which is should do, so freq_qos_add_request()
-> will complain and fail if the object pointed to by req is passed to it
-> again.
-> 
-> I'll send a patch to test for this later today.
-> 
+On Tue, Nov 19, 2019 at 2:48 PM Michael Kerrisk (man-pages)
+<mtk.manpages@gmail.com> wrote:
 
-The patch is appended.  Please test it (on top of 5.4-rc8) and report back.
+> Git repository:
+>     https://git.kernel.org/cgit/docs/man-pages/man-pages.git/
 
+https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git ?
 
----
- kernel/power/qos.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-Index: linux-pm/kernel/power/qos.c
-===================================================================
---- linux-pm.orig/kernel/power/qos.c
-+++ linux-pm/kernel/power/qos.c
-@@ -814,6 +814,8 @@ EXPORT_SYMBOL_GPL(freq_qos_update_reques
-  */
- int freq_qos_remove_request(struct freq_qos_request *req)
- {
-+	int ret;
-+
- 	if (!req)
- 		return -EINVAL;
- 
-@@ -821,7 +823,11 @@ int freq_qos_remove_request(struct freq_
- 		 "%s() called for unknown object\n", __func__))
- 		return -EINVAL;
- 
--	return freq_qos_apply(req, PM_QOS_REMOVE_REQ, PM_QOS_DEFAULT_VALUE);
-+	ret = freq_qos_apply(req, PM_QOS_REMOVE_REQ, PM_QOS_DEFAULT_VALUE);
-+	req->qos = NULL;
-+	req->type = 0;
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(freq_qos_remove_request);
- 
-
-
-
+-- 
+Jim
