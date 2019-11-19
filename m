@@ -2,57 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3DC3102EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:53:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B8A6102EAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:54:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfKSVxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 16:53:52 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:47936 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbfKSVxw (ORCPT <rfc822;linux-kernel@vger.kernel.orG>);
-        Tue, 19 Nov 2019 16:53:52 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1iXBRT-0008JI-AN; Wed, 20 Nov 2019 05:53:47 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1iXBRR-0007Yb-Vw; Wed, 20 Nov 2019 05:53:46 +0800
-Date:   Wed, 20 Nov 2019 05:53:45 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] padata: Remove broken queue flushing
-Message-ID: <20191119215345.jr7y47b37ivshwcm@gondor.apana.org.au>
-References: <20191119051731.yev6dcsp2znjaagz@gondor.apana.org.au>
- <20191119192405.imfi6q4u3g2zgstc@ca-dmjordan1.us.oracle.com>
+        id S1727450AbfKSVyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 16:54:01 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33005 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfKSVyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 16:54:01 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u13so19366384ote.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 13:54:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xwQvEr0/UaVV1k90qxcSpFl3vFq94C3DTr9L5ipVOwI=;
+        b=os/9/wpFP/DXclPEjwrDUzXZ9xZyYOLNYumwPQAx6DyFBIR7SoxEqKwNn+/IZhR//X
+         OQOeRncPuE1vhO2moGvPoo7z6/z3zTRs91p3NkWjOK3lktd5iMvMjjFDe19mGrjssLPS
+         zmmzHsKAaRO/a/uzddjHH/kpp2a3Rz2HX47MN7hGP8BL5NJEV0SKqDceVCAlwP4KAUz3
+         brpZdGqYvdc1o2yKVBKQgsX5jRGCrki9za3mxu8k5xR82ifHBeu43F7TGh7R70va38Ns
+         vrNtgb7acdZidnXSx39yPOh3nrgilOQsv6q8diSKlHIdchPOifk+39wxRB9wr4KJgIql
+         CzFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xwQvEr0/UaVV1k90qxcSpFl3vFq94C3DTr9L5ipVOwI=;
+        b=BpWTBY+jKOCZhB7Jqu+njjSwWiiRbxbOq9JNmq2lEDtIgD0r8bGoJG4/+LaaDJ+r4j
+         HOzOha+PlqkLjMa/nuTtjCWD4iN0P9QWdCx123OKqgZ1QXfCVW9pRacELOswye7oGKz0
+         jJ+NHimw4VNULRitkSV3ujKI2aCFn2AMyStE7G31l43xYFflaoXJbSeqUMpnE0fChpPg
+         J5qCo0+nH/1N7dyanPDFafbQ3QQQVPHJv7yQLlVklF9oYEzc0Fd4QkLcYJM97+1dLlwB
+         yhovnwUkfvLhs2jRNNNs2bXujJ/f+9c5d/EBYOCSmjYTsoKtnyT7vs7BWiDYxKduHfjd
+         VXpw==
+X-Gm-Message-State: APjAAAVIk5nU2+SiKb+SmNfAwfm0grFWqxPdRz9v33pf8JDod/I4wvSQ
+        eGTASW84CokdZAq5mhlDyJgR38+h7T1SlIyK+OAj7g==
+X-Google-Smtp-Source: APXvYqz2fsoAggh7I5N4oqb965IJ4kPem0JLzhQ1wxS9dVs2sFp6YDXQH7OhcFkNUVDUWie4TDvvMj1XJov8Z8A+PIE=
+X-Received: by 2002:a9d:82e:: with SMTP id 43mr5680239oty.23.1574200440363;
+ Tue, 19 Nov 2019 13:54:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119192405.imfi6q4u3g2zgstc@ca-dmjordan1.us.oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <CANpmjNPiKg++=QHUjD87dqiBU1pHHfZmGLAh1gOZ+4JKAQ4SAQ@mail.gmail.com>
+ <A74F8151-F5E8-4532-BB67-6CFA32487D26@lca.pw>
+In-Reply-To: <A74F8151-F5E8-4532-BB67-6CFA32487D26@lca.pw>
+From:   Marco Elver <elver@google.com>
+Date:   Tue, 19 Nov 2019 22:53:48 +0100
+Message-ID: <CANpmjNOJdWi6i+2Nn70UQDvF0a0pQTVVye7CTTJgqOHa3UmHMQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] kcsan: Add Kernel Concurrency Sanitizer infrastructure
+To:     Qian Cai <cai@lca.pw>
+Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alexander Potapenko <glider@google.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-efi@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 02:24:05PM -0500, Daniel Jordan wrote:
+On Tue, 19 Nov 2019 at 22:42, Qian Cai <cai@lca.pw> wrote:
 >
-> __padata_free unconditionally frees pd, so a padata job might choke on it
-> later.  padata_do_parallel calls seem safe because they use RCU, but it seems
-> possible that a job could call padata_do_serial after the instance is gone.
+>
+>
+> > On Nov 19, 2019, at 2:54 PM, Marco Elver <elver@google.com> wrote:
+> >
+> > Regardless of approach, my guess is that the complexity outweighs any
+> > benefits this may provide in the end. Not only would a hypothetical
+> > kernel that combines these be extremely slow, it'd also diminish the
+> > practical value because testing and finding bugs would also be
+> > impaired due to performance.
+>
+> On the other hand, it is valuable for distros to be able to select both for the debug kernel variant. Performance is usually not a major concern over there and could be migrated by other means like selecting powerful systems etc.
 
-Actually __padata_free no longer frees the pd after my patch.
+Fair enough. However, right now none of gcc nor clang would support
+this. It is something to revisit in future, but is certainly not
+something that can trivially be resolved.
 
-We should also mandate that __padata_free can only be called after
-all jobs have completed.  This is already the case with pcrypt.
-
-In fact we should discuss merging padata into pcrypt.  It's been
-10 years and not a single user of padata has emerged in the kernel.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+-- Marco
