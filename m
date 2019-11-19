@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8657F101613
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 950DE1014FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbfKSFuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:50:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46892 "EHLO mail.kernel.org"
+        id S1729425AbfKSFj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbfKSFt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:49:58 -0500
+        id S1730285AbfKSFjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B170208C3;
-        Tue, 19 Nov 2019 05:49:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 990D4222A4;
+        Tue, 19 Nov 2019 05:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142597;
-        bh=2/j4KmKRBuQKRP03CURvKCeNJQx6DOj4oH59pezYbNs=;
+        s=default; t=1574141965;
+        bh=XSc49gLZDnT5iD6+dqt3KN9TjzN4HO4lpDf5yK9KBYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SVhC5Q4l8f7bXNgIwpmAy+uJvjCcUtFJxo2erbE4CmtaBWpBbFRLqjOs6+edF299d
-         Uf4hMcbG7bs31qw1TF9oT77ipnE0vBgCfm2/B18d3GkqscRF+6HnlRti5mGaJK+hj+
-         MvcuwCUxTVyx7Ac4uUsB+h7zv9a7hz3l94tUbt88=
+        b=JafbXqatE0id5CSEfexJwY3UVkQvSVhHA5c7BnDLY7Ke/VZUlcPwhgaC+HOWp1xca
+         9h7uGv+ZL2M10m9D0n2pniuRZTstUKjEQSDIXTEPBINCwjIpjtcN6Isc6tvNTBHsW3
+         91hroJqv2GQVMIpE0czBZIPT6BIkO55/owhAX8B8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 136/239] spi: mediatek: Dont modify spi_transfer when transfer.
-Date:   Tue, 19 Nov 2019 06:18:56 +0100
-Message-Id: <20191119051331.103464841@linuxfoundation.org>
+Subject: [PATCH 4.19 340/422] phy: phy-twl4030-usb: fix denied runtime access
+Date:   Tue, 19 Nov 2019 06:18:57 +0100
+Message-Id: <20191119051421.048533050@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,117 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Shih <pihsun@chromium.org>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 00bca73bfca4fb0ab089b94cad0fc83d8b49c25f ]
+[ Upstream commit 6c7103aa026094a4ee2c2708ec6977a6dfc5331d ]
 
-Mediatek SPI driver modifies some fields (tx_buf, rx_buf, len, tx_dma,
-rx_dma) of the spi_transfer* passed in when doing transfer_one and in
-interrupt handler. This is somewhat unexpected, and there are some
-caller (e.g. Cr50 spi driver) that reuse the spi_transfer for multiple
-messages. Add a field to record how many bytes have been transferred,
-and calculate the right len / buffer based on it instead.
+When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
+the counter will be incremented but the resume callback not called,
+so enumeration and charging will not start properly.
+To avoid that happen, disable irq on suspend and recheck on resume.
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Practically this happens when the device is woken up from suspend by
+plugging in usb.
 
-Change-Id: I23e218cd964f16c0b2b26127d4a5ca6529867673
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-mt65xx.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ drivers/phy/ti/phy-twl4030-usb.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 86bf45667a040..3dc31627c6558 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -98,6 +98,7 @@ struct mtk_spi {
- 	struct clk *parent_clk, *sel_clk, *spi_clk;
- 	struct spi_transfer *cur_transfer;
- 	u32 xfer_len;
-+	u32 num_xfered;
- 	struct scatterlist *tx_sgl, *rx_sgl;
- 	u32 tx_sgl_len, rx_sgl_len;
- 	const struct mtk_spi_compatible *dev_comp;
-@@ -385,6 +386,7 @@ static int mtk_spi_fifo_transfer(struct spi_master *master,
+diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
+index a44680d64f9b4..c267afb68f077 100644
+--- a/drivers/phy/ti/phy-twl4030-usb.c
++++ b/drivers/phy/ti/phy-twl4030-usb.c
+@@ -144,6 +144,7 @@
+ #define PMBR1				0x0D
+ #define GPIO_USB_4PIN_ULPI_2430C	(3 << 0)
  
- 	mdata->cur_transfer = xfer;
- 	mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, xfer->len);
-+	mdata->num_xfered = 0;
- 	mtk_spi_prepare_transfer(master, xfer);
- 	mtk_spi_setup_packet(master);
++static irqreturn_t twl4030_usb_irq(int irq, void *_twl);
+ /*
+  * If VBUS is valid or ID is ground, then we know a
+  * cable is present and we need to be runtime-enabled
+@@ -395,6 +396,33 @@ static void __twl4030_phy_power(struct twl4030_usb *twl, int on)
+ 	WARN_ON(twl4030_usb_write_verify(twl, PHY_PWR_CTRL, pwr) < 0);
+ }
  
-@@ -415,6 +417,7 @@ static int mtk_spi_dma_transfer(struct spi_master *master,
- 	mdata->tx_sgl_len = 0;
- 	mdata->rx_sgl_len = 0;
- 	mdata->cur_transfer = xfer;
-+	mdata->num_xfered = 0;
- 
- 	mtk_spi_prepare_transfer(master, xfer);
- 
-@@ -482,7 +485,7 @@ static int mtk_spi_setup(struct spi_device *spi)
- 
- static irqreturn_t mtk_spi_interrupt(int irq, void *dev_id)
++static int __maybe_unused twl4030_usb_suspend(struct device *dev)
++{
++	struct twl4030_usb *twl = dev_get_drvdata(dev);
++
++	/*
++	 * we need enabled runtime on resume,
++	 * so turn irq off here, so we do not get it early
++	 * note: wakeup on usb plug works independently of this
++	 */
++	dev_dbg(twl->dev, "%s\n", __func__);
++	disable_irq(twl->irq);
++
++	return 0;
++}
++
++static int __maybe_unused twl4030_usb_resume(struct device *dev)
++{
++	struct twl4030_usb *twl = dev_get_drvdata(dev);
++
++	dev_dbg(twl->dev, "%s\n", __func__);
++	enable_irq(twl->irq);
++	/* check whether cable status changed */
++	twl4030_usb_irq(0, twl);
++
++	return 0;
++}
++
+ static int __maybe_unused twl4030_usb_runtime_suspend(struct device *dev)
  {
--	u32 cmd, reg_val, cnt, remainder;
-+	u32 cmd, reg_val, cnt, remainder, len;
- 	struct spi_master *master = dev_id;
- 	struct mtk_spi *mdata = spi_master_get_devdata(master);
- 	struct spi_transfer *trans = mdata->cur_transfer;
-@@ -497,36 +500,38 @@ static irqreturn_t mtk_spi_interrupt(int irq, void *dev_id)
- 		if (trans->rx_buf) {
- 			cnt = mdata->xfer_len / 4;
- 			ioread32_rep(mdata->base + SPI_RX_DATA_REG,
--				     trans->rx_buf, cnt);
-+				     trans->rx_buf + mdata->num_xfered, cnt);
- 			remainder = mdata->xfer_len % 4;
- 			if (remainder > 0) {
- 				reg_val = readl(mdata->base + SPI_RX_DATA_REG);
--				memcpy(trans->rx_buf + (cnt * 4),
--					&reg_val, remainder);
-+				memcpy(trans->rx_buf +
-+					mdata->num_xfered +
-+					(cnt * 4),
-+					&reg_val,
-+					remainder);
- 			}
- 		}
+ 	struct twl4030_usb *twl = dev_get_drvdata(dev);
+@@ -655,6 +683,7 @@ static const struct phy_ops ops = {
+ static const struct dev_pm_ops twl4030_usb_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(twl4030_usb_runtime_suspend,
+ 			   twl4030_usb_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(twl4030_usb_suspend, twl4030_usb_resume)
+ };
  
--		trans->len -= mdata->xfer_len;
--		if (!trans->len) {
-+		mdata->num_xfered += mdata->xfer_len;
-+		if (mdata->num_xfered == trans->len) {
- 			spi_finalize_current_transfer(master);
- 			return IRQ_HANDLED;
- 		}
- 
--		if (trans->tx_buf)
--			trans->tx_buf += mdata->xfer_len;
--		if (trans->rx_buf)
--			trans->rx_buf += mdata->xfer_len;
--
--		mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, trans->len);
-+		len = trans->len - mdata->num_xfered;
-+		mdata->xfer_len = min(MTK_SPI_MAX_FIFO_SIZE, len);
- 		mtk_spi_setup_packet(master);
- 
--		cnt = trans->len / 4;
--		iowrite32_rep(mdata->base + SPI_TX_DATA_REG, trans->tx_buf, cnt);
-+		cnt = len / 4;
-+		iowrite32_rep(mdata->base + SPI_TX_DATA_REG,
-+				trans->tx_buf + mdata->num_xfered, cnt);
- 
--		remainder = trans->len % 4;
-+		remainder = len % 4;
- 		if (remainder > 0) {
- 			reg_val = 0;
--			memcpy(&reg_val, trans->tx_buf + (cnt * 4), remainder);
-+			memcpy(&reg_val,
-+				trans->tx_buf + (cnt * 4) + mdata->num_xfered,
-+				remainder);
- 			writel(reg_val, mdata->base + SPI_TX_DATA_REG);
- 		}
- 
+ static int twl4030_usb_probe(struct platform_device *pdev)
 -- 
 2.20.1
 
