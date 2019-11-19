@@ -2,95 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DEB4101985
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A1AA1019D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:53:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfKSGuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:50:50 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:46584 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725784AbfKSGuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 01:50:50 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F75720002C;
-        Tue, 19 Nov 2019 07:50:48 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7020020000F;
-        Tue, 19 Nov 2019 07:50:46 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BC27140286;
-        Tue, 19 Nov 2019 14:50:43 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     Sandor Yu <Sandor.yu@nxp.com>, linux-kernel@vger.kernel.org
-Cc:     Wen He <wen.he_1@nxp.com>
-Subject: [linux-nxp/display/hdp] drm: imx: mhdp: Adjustment core rate of DP TX CTRL for LS1028A
-Date:   Tue, 19 Nov 2019 14:50:49 +0800
-Message-Id: <20191119065049.27594-1-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727678AbfKSGxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:53:30 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34121 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfKSGxa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 01:53:30 -0500
+Received: by mail-pl1-f195.google.com with SMTP id h13so11252161plr.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 22:53:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NVHXbZOZBXxiZKX3GBeHJYFk4c/WxyAtG65m0ugrmM0=;
+        b=GdJtIXil0bjIVxjoqklp3hhWfkZgjD1rVeNy17TQZy5SkISD/Z1g+IsPLZGLFGGzT0
+         j784s0fi0Chiw/MHPjGB6hFvcyu5/iOMEiLyHu5OcBeI4D6fIFnxbYV9lhiTZJpEfFRV
+         goLDEN+cRhbdRvivs649Cd05kT9pBhkr9ChwtMf1OAD0cV0ccrvJhhDAoZ3WFohLMtpu
+         VABFXugT0yLKPFPN7LLVKQp3lCNux8ddhKpcHjPBjNbPSgMZoLzNsHmozlqGJOu/sbKy
+         avMvkr99s46Obi68WjllyjZiXZBbDTiEvxrDbyeIne6MaizCHeIDpKaDcHIviEIgrd8Q
+         30dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NVHXbZOZBXxiZKX3GBeHJYFk4c/WxyAtG65m0ugrmM0=;
+        b=SGzuTKA8cKXUdMDw87RAgtMOWQbrAMRzTbj9TpxWTWnIFtqQwKQhjwnGoRlbekRt3z
+         BYWqF0TgdAfFN4ro/oLus/Hiud4f8zYNd2VUjEchNUy31OivaI3LuiAdR5he247Hg0yp
+         ZGpNGpJAvMLl2cWToQKfXp65DqZjznUOP38HRExuaHRSLDajloWTfONtuTo9OPxQkPgw
+         yplpg1/1GD0qaFUGUpZpoiH1coa62ywRfTAyhuNjsKleRK0ulWm+axhrBJf2Y4oxWsVX
+         CgXb/ijwN7SW8SN3ESsW0nBSCc+sl/FU6O5akc0RuEp1ZIEPoqQmZkG9Cy+fn+x5u4BY
+         IZAg==
+X-Gm-Message-State: APjAAAVIo+GrOsfh6IXQ06z/O/gdCHa9GgOhOHziK9eB9u8+PQeryxI9
+        xKM6IhPezaq4JhJ0jwiEeZZnMU6kkeg=
+X-Google-Smtp-Source: APXvYqyo2oK2hAMFq1/V2OO+nv/wG1IJdRPM9KNkUwYbcn2xpLbU4OZVqkHErgLpjOcExdimgLJR2g==
+X-Received: by 2002:a17:90a:b385:: with SMTP id e5mr4285353pjr.115.1574146408233;
+        Mon, 18 Nov 2019 22:53:28 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y1sm25484599pfq.138.2019.11.18.22.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 22:53:27 -0800 (PST)
+Date:   Mon, 18 Nov 2019 22:53:25 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
+        tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org
+Subject: Re: [PATCH 3/3] soc: qcom: apr: Add avs/audio tracking functionality
+Message-ID: <20191119065325.GF18024@yoga>
+References: <20191118142728.30187-1-sibis@codeaurora.org>
+ <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This Display TX CTRL clock should be ACLK/4, update it to align with
-the specification.
+On Mon 18 Nov 06:28 PST 2019, Sibi Sankar wrote:
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+[..]
+> +static void of_register_apr_devices(struct device *dev, const char *svc_path)
+>  {
+>  	struct apr *apr = dev_get_drvdata(dev);
+>  	struct device_node *node;
+> +	const char *service_path;
+> +	int ret;
+>  
+>  	for_each_child_of_node(dev->of_node, node) {
+>  		struct apr_device_id id = { {0} };
+>  
+> +		ret = of_property_read_string_index(node, "qcom,protection-domain",
+> +						    1, &service_path);
+> +		if (svc_path) {
+> +			/* skip APR services that are PD independent */
+> +			if (ret)
+> +				continue;
+> +
+> +			/* skip APR services whose PD paths don't match */
+> +			if (strcmp(service_path, svc_path))
+> +				continue;
+> +		} else {
+> +			/* skip APR services whose PD lookups are registered*/
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
- drivers/gpu/drm/bridge/cadence/cdns-dp-core.c | 4 ++++
- drivers/gpu/drm/imx/cdn-mhdp-imx8qm.c         | 3 +++
- include/drm/bridge/cdns-mhdp-common.h         | 1 +
- 3 files changed, 8 insertions(+)
+Missing space before */
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dp-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dp-core.c
-index 54396f9042ed..0a7550785953 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dp-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dp-core.c
-@@ -435,6 +435,7 @@ static int __cdns_dp_probe(struct platform_device *pdev,
- 	}
- 
- 	mhdp->is_hpd = true;
-+	mhdp->is_ls1028a = false;
- 
- 	mhdp->irq[IRQ_IN] = platform_get_irq_byname(pdev, "plug_in");
- 	if (mhdp->irq[IRQ_IN] < 0) {
-@@ -450,6 +451,9 @@ static int __cdns_dp_probe(struct platform_device *pdev,
- 
- 	cdns_dp_parse_dt(mhdp);
- 
-+	if (of_device_is_compatible(dev->of_node, "cdn,ls1028a-dp"))
-+		mhdp->is_ls1028a = true;
-+
- 	cdns_mhdp_plat_call(mhdp, power_on);
- 
- 	cdns_mhdp_plat_call(mhdp, firmware_init);
-diff --git a/drivers/gpu/drm/imx/cdn-mhdp-imx8qm.c b/drivers/gpu/drm/imx/cdn-mhdp-imx8qm.c
-index b8a762ed2d90..76ecfefe3153 100644
---- a/drivers/gpu/drm/imx/cdn-mhdp-imx8qm.c
-+++ b/drivers/gpu/drm/imx/cdn-mhdp-imx8qm.c
-@@ -526,6 +526,9 @@ int cdns_mhdp_firmware_init_imx8qm(struct cdns_mhdp_device *mhdp)
- 
- 	/* configure HDMI/DP core clock */
- 	rate = clk_get_rate(imx_mhdp->clks.clk_core);
-+	if (mhdp->is_ls1028a)
-+		rate = rate / 4;
-+
- 	cdns_mhdp_set_fw_clk(&imx_mhdp->mhdp, rate);
- 
- 	/* un-reset ucpu */
-diff --git a/include/drm/bridge/cdns-mhdp-common.h b/include/drm/bridge/cdns-mhdp-common.h
-index d11d048352ef..f416b57d29db 100755
---- a/include/drm/bridge/cdns-mhdp-common.h
-+++ b/include/drm/bridge/cdns-mhdp-common.h
-@@ -684,6 +684,7 @@ struct cdns_mhdp_device {
- 	bool power_up;
- 	bool plugged;
- 	bool is_hpd;
-+	bool is_ls1028a;
- 	struct mutex lock;
- 	struct mutex iolock;
- 
--- 
-2.17.1
+> +			if (ret == 0)
+> +				continue;
+> +		}
+> +
+>  		if (of_property_read_u32(node, "reg", &id.svc_id))
+>  			continue;
+>  
+> @@ -318,6 +365,37 @@ static void of_register_apr_devices(struct device *dev)
+>  	}
+>  }
+>  
+> +static int apr_remove_device(struct device *dev, void *svc_path)
+> +{
+> +	struct apr_device *adev = to_apr_device(dev);
+> +
+> +	if (svc_path) {
+> +		if (!strcmp(adev->service_path, (char *)svc_path))
+> +			device_unregister(&adev->dev);
+> +	} else {
+> +		device_unregister(&adev->dev);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
 
+Why is the pdr status function returning an int?
+
+> +{
+> +	struct apr *apr = container_of(pdr, struct apr, pdr);
+> +
+> +	switch (pds->state) {
+> +	case SERVREG_SERVICE_STATE_UP:
+> +		of_register_apr_devices(apr->dev, pds->service_path);
+> +		break;
+> +	case SERVREG_SERVICE_STATE_DOWN:
+> +		device_for_each_child(apr->dev, pds->service_path,
+> +				      apr_remove_device);
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+[..]
+> @@ -343,20 +421,19 @@ static int apr_probe(struct rpmsg_device *rpdev)
+>  		return -ENOMEM;
+>  	}
+>  	INIT_WORK(&apr->rx_work, apr_rxwq);
+> +
+> +	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to init PDR handle\n");
+
+You need to destroy apr->rxwq here as well.
+
+> +		return ret;
+> +	}
+> +
+>  	INIT_LIST_HEAD(&apr->rx_list);
+>  	spin_lock_init(&apr->rx_lock);
+>  	spin_lock_init(&apr->svcs_lock);
+>  	idr_init(&apr->svcs_idr);
+> -	of_register_apr_devices(dev);
+> -
+> -	return 0;
+> -}
+
+Regards,
+Bjorn
