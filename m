@@ -2,113 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1168C1013B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:27:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A40101442
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:32:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfKSF0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:26:32 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40649 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728572AbfKSF0a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:26:30 -0500
-Received: by mail-qk1-f193.google.com with SMTP id z16so16749005qkg.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 21:26:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=podFF2nwPATgk6Vyaa+JKA//o6jLZZVDQvx/NXLG1qw=;
-        b=KyWCOhP8jnpTna7LokuJ3F0YPjpGUTp7v8hiLdPCgezIrdQViDb5ELCsIgqA+PbW7V
-         3hfj6V5icMIBejEYWnkhZfwtBaL9nKmrwhkhajivZ5Yy8fDRwTR7nNSViN48nzdzR4RL
-         z0UjUmwB1jqafeMb0lIDHDKFQAyNgYrmApymj8vZ2y5GfYY8Ag7Fqahe3sB9XLqxmTcA
-         bdjaL5FGV9B20YEyeHawFdceEettYdOYR8a1LJDxavzTYLJV+3OPThmSgCSxaKp45FfS
-         oWtmlStL+Ct/bbTpMr6kEjr71Nse3C8LetBocRbMpqYjHPgmtAFxSdcNI8k8ju5qZUa2
-         m35Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=podFF2nwPATgk6Vyaa+JKA//o6jLZZVDQvx/NXLG1qw=;
-        b=MsGFRFaeS48uxztxHdIJN6RNzOXi6qmXqCD0xbvLVIqxx49Wn/ZoO/w69yDA6AoKJs
-         wDwP4tXH4dlNl8LcLrfL4E0GM7WvUYr7y3W2ZfQCj8rCz2NdRx12ejE/KK0ExwkqF2ev
-         2pe2e6ZW5CH8Y2iTmBrLfT8ld/9J5vv35CvpEbLlcez4k+ebfMvyEbmdYarJm8OxmywZ
-         fh0VxzS4oAx1d2xgWgPyejddQ893d4XQJvAH8X9hUHabtdSw+XHjlAWCAjFLdL3+AdnP
-         8dAbPoZWCX4LaZZNw9FHPLaCsGUooKFgRj1q/ijmDaostdLS7AnVKK1WSFzCXbx3K6q5
-         92rA==
-X-Gm-Message-State: APjAAAUwH+/05Cm5BpY94VkfOKKTTIr5VlgNyUEOcU+ZSpsYWfEuNun6
-        AhTr79tuAk2TQOx4orJgW5gANyD2Ra9DaTakzScHxg==
-X-Google-Smtp-Source: APXvYqwflmyefFY6nZjcYclr6qXpeKQ0p3jimSeMmqtsPPXbdgiEFdjyKSl93F3ZmOOWiM3pqjYuyMaUYB8dyh2z1vs=
-X-Received: by 2002:a37:94e:: with SMTP id 75mr27389233qkj.49.1574141188100;
- Mon, 18 Nov 2019 21:26:28 -0800 (PST)
+        id S1729347AbfKSFcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:32:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728546AbfKSFb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:31:59 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36AA9208C3;
+        Tue, 19 Nov 2019 05:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574141518;
+        bh=shC5VOSxOD1ERsqfvjB2XFUiJo6ylE13+c1kqvHzgxc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=khW1p6hLajrOBDYJd3VdZnkbkvc8ybYKq7eW09Hsfmj0IEIfZYxWPnmO2tTucx6oh
+         GoHPbKI00CthWaGqbPUWnG8gaRA3J3cp9oDry7QNvFcDSqLzvx4OBOzvUQDNd+7Znn
+         TzE/+HTcG2nACHmmyMt8ggfiTzEUZsG2ij+ErFZw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 138/422] ARM: dts: omap3-gta04: give spi_lcd node a label so that we can overwrite in other DTS files
+Date:   Tue, 19 Nov 2019 06:15:35 +0100
+Message-Id: <20191119051407.744243402@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-References: <20191119014357.98465-1-brianvv@google.com> <20191119014357.98465-6-brianvv@google.com>
- <20191119042012.3wpj5porwkntpfm4@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20191119042012.3wpj5porwkntpfm4@ast-mbp.dhcp.thefacebook.com>
-From:   Brian Vazquez <brianvv@google.com>
-Date:   Mon, 18 Nov 2019 21:26:17 -0800
-Message-ID: <CAMzD94Rv2ysZuMOwMFtZqPVjnhYdx-t2N=ekZzgVNeRapd86Ow@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 5/9] bpf: add batch ops to all htab bpf map
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Yonghong Song <yhs@fb.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 8:35 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Nov 18, 2019 at 05:43:53PM -0800, Brian Vazquez wrote:
-> > From: Yonghong Song <yhs@fb.com>
-> >
-> > htab can't use generic batch support due some problematic behaviours
-> > inherent to the datastructre, i.e. while iterating the bpf map  a
-> > concurrent program might delete the next entry that batch was about to
-> > use, in this case there's no easy solution to retrieve the next entry
-> > and the issua has been discussed multiple times (see [1] and [2]).
-> > The only way hmap can be traversed without the problem previously
-> > exposed is by making sure that the map is traversing entire buckets.
-> > This commit implements those strict requirements for hmap, the
-> > implementation follows the same interaction that generic support with
-> > some exceptions:
-> >
-> >  - If keys/values buffer are not big enough to traverse a bucket,
-> >    ENOSPC will be returned.
-> >  - out_batch contains the value of the next bucket in the iteration, not
-> >  the next key, but this is transparent for the user since the user
-> >  should never use out_batch for other than bpf batch syscalls.
-> >
-> > Note that only lookup and lookup_and_delete batch ops require the hmap
-> > specific implementation and update/delete batch ops can be the generic
-> > ones.
-> >
-> > [1] https://lore.kernel.org/bpf/20190724165803.87470-1-brianvv@google.com/
-> > [2] https://lore.kernel.org/bpf/20190906225434.3635421-1-yhs@fb.com/
-> >
-> > Co-authored-by: Brian Vazquez <brianvv@google.com>
-> > Signed-off-by: Brian Vazquez <brianvv@google.com>
-> > Signed-off-by: Yonghong Song <yhs@fb.com>
->
-> SOB order is not quite correct.
-> If the patch was mainly developed by Yonghong it should have his 'From:'
-> then his SOB and then your SOB.
-> You can drop Co-authored-by field.
->
-Thanks for clarifying, will fix in v2.
+From: H. Nikolaus Schaller <hns@goldelico.com>
 
-> Patch 2 was also mainly done by Yonghong or not ?
-> If so it should have his 'From:' field.6504484251
+[ Upstream commit fa0d7dc355c890725b6178dab0cc11b194203afa ]
 
-Generic support was done by me, but will double check the rest of the
-patches and fix them if needed.
+needed for device variants based on GTA04 board but with
+different display panel (driver).
+
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/omap3-gta04.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+index ac830b9177763..ae33e0e0f1d2c 100644
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -78,7 +78,7 @@
+ 		#sound-dai-cells = <0>;
+ 	};
+ 
+-	spi_lcd {
++	spi_lcd: spi_lcd {
+ 		compatible = "spi-gpio";
+ 		#address-cells = <0x1>;
+ 		#size-cells = <0x0>;
+-- 
+2.20.1
+
+
+
