@@ -2,151 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72AA8102E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45EF9102E0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfKSVJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 16:09:19 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44868 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfKSVJT (ORCPT
+        id S1727389AbfKSVM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 16:12:26 -0500
+Received: from smtprelay0069.hostedemail.com ([216.40.44.69]:48622 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726892AbfKSVM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 16:09:19 -0500
-Received: by mail-pl1-f195.google.com with SMTP id az9so12524190plb.11;
-        Tue, 19 Nov 2019 13:09:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=540qf/bm5KNNA99hBGUVZOgA79LIDKy75tuXaffYbt4=;
-        b=oKGpGWgynQH9ILYGsyHsX31+GjtrcYbP9aVt91ZRjLLzZhK/UGcnwlnPPwjaTFpY5v
-         DqGFcB8M3yVBV3u19g31aeIoAKp0SiOeibtGsMi7uFN20gMBrrFH32nHDFegSsqPmpHP
-         cnydPu1sG+uq3t7cOUcDFNOC7sr65zdgkGYswFOGN61LUCZOhGUdR/feNrGEWsZGk7qh
-         ZleCpfaEl6dxmb7gwoF/Xgv9aTBg1d5ln/zjA4xLazUGVukTDJjbkokVOMixQMpKi7EO
-         qmLWrxzi0AVT8iUTDeIMaEWR9r5gVU21r2KYcNHHARCAHqHNLQz25bPA2gHu9aSRYpV3
-         dU2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=540qf/bm5KNNA99hBGUVZOgA79LIDKy75tuXaffYbt4=;
-        b=MPvKIBdi1QKCTgSRZOChgghkhECmEFam8rO8mdDjFRAf1Hqz+kCQZcyRHlWaBD4IXD
-         DqY4JnnjY+fwUwW8/Z42Ib74hYr2JaF90B5AJ7lI2QwKMTz+JEhqKYzVYmKkuFk5Fj1E
-         cC2rtnKKECh26WRefdUKawZUE4raUunN4rjMB7uLe6DU9IRdPMITF02vXqax4DyKoHDa
-         EU79GRbMaVNq97msKYzT8hEBWHblUkYLgYo5IAaodOGV/S7V89Fq+cVPgPufOoJfkItZ
-         tov1u/rM5mCB1loqdfCeV9Q8BQ/4GNbOGJ6S0uvFze0Ua5WOc6ApyHtKzzCsuZxmyJUs
-         WUrw==
-X-Gm-Message-State: APjAAAWFfM6kBRQ30Q5sjMGQkiixYsSmcTWsVmLWKX1pfey5Q2jDWQ7x
-        QBYPQNsr/dgMY4ISj/w4YSY=
-X-Google-Smtp-Source: APXvYqzKTah3FltRWuH5uhmLTEFkDzCBgApiVxtKBu7r5/lKFfyo2Piv4hieGubZghGC8/y9Q2LAeQ==
-X-Received: by 2002:a17:90a:3522:: with SMTP id q31mr9154747pjb.18.1574197758251;
-        Tue, 19 Nov 2019 13:09:18 -0800 (PST)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id y24sm28215358pfr.116.2019.11.19.13.09.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2019 13:09:17 -0800 (PST)
-Subject: Re: KMSAN: uninit-value in can_receive
-To:     Oliver Hartkopp <socketcan@hartkopp.net>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        syzbot <syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com>,
-        davem@davemloft.net, glider@google.com, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000005c08d10597a3a05d@google.com>
- <a5f73d92-fdf2-2590-c863-39a181dca8e1@hartkopp.net>
- <deedd609-6f3b-8035-47e1-252ab221faa1@pengutronix.de>
- <7934bc2b-597f-0bb3-be2d-32f3b07b4de9@hartkopp.net>
- <7f5c4546-0c1a-86ae-581e-0203b5fca446@pengutronix.de>
- <1f7d6ea7-152e-ff18-549c-b196d8b5e3a7@hartkopp.net>
- <9e06266a-67f3-7352-7b87-2b9144c7c9a9@gmail.com>
- <3142c032-e46a-531c-d1b8-d532e5b403a6@hartkopp.net>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <92c04159-b83a-3e33-91da-25a727a692d0@gmail.com>
-Date:   Tue, 19 Nov 2019 13:09:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 19 Nov 2019 16:12:26 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id D30B3180A5AED;
+        Tue, 19 Nov 2019 21:12:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2538:2553:2559:2562:2693:2828:2911:3138:3139:3140:3141:3142:3165:3353:3622:3865:3866:3867:3870:3871:3872:3874:4321:4425:5007:6742:7903:10004:10400:10848:11232:11473:11658:11914:12043:12050:12297:12740:12760:12895:13069:13072:13311:13357:13439:13846:14096:14097:14181:14659:14721:14777:14819:21080:21433:21450:21451:21627:21740:21819:30003:30022:30054:30067:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: scene39_893a14c56c12e
+X-Filterd-Recvd-Size: 2870
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 19 Nov 2019 21:12:22 +0000 (UTC)
+Message-ID: <1e9719feb8c650ea90dec41850fe9058eef59862.camel@perches.com>
+Subject: Re: [PATCH 2/2] MAINTAINERS: Switch to Marvell addresses
+From:   Joe Perches <joe@perches.com>
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm soc <arm@kernel.org>,
+        Jan Glauber <jglauber@marvell.com>,
+        Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+        George Cherian <gcherian@marvell.com>,
+        Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "soc@kernel.org" <soc@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 19 Nov 2019 13:12:00 -0800
+In-Reply-To: <20191119202328.cqfzf5a4svn23h5a@rric.localdomain>
+References: <20191119165549.14570-1-rrichter@marvell.com>
+         <20191119165549.14570-4-rrichter@marvell.com>
+         <64ace55545c028bc39b08370074aafd32e8fc5f5.camel@perches.com>
+         <20191119185012.2fekd6f5gbpflpqe@rric.localdomain>
+         <cb41a8956be6cf11e9d25c1790eeb8c935b9ab29.camel@perches.com>
+         <20191119202328.cqfzf5a4svn23h5a@rric.localdomain>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <3142c032-e46a-531c-d1b8-d532e5b403a6@hartkopp.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/19/19 12:24 PM, Oliver Hartkopp wrote:
-> Hi Eric,
+On Tue, 2019-11-19 at 20:23 +0000, Robert Richter wrote:
+> Joe,
 > 
-> On 19/11/2019 17.53, Eric Dumazet wrote:
->>
->>
->> On 11/18/19 11:35 PM, Oliver Hartkopp wrote:
->>>
->>
->>>
->>> See ioctl$ifreq https://syzkaller.appspot.com/x/log.txt?x=14563416e00000
->>>
->>> 23:11:34 executing program 2:
->>> r0 = socket(0x200000000000011, 0x3, 0x0)
->>> ioctl$ifreq_SIOCGIFINDEX_vcan(r0, 0x8933, &(0x7f0000000040)={'vxcan1\x00', <r1=>0x0})
->>> bind$packet(r0, &(0x7f0000000300)={0x11, 0xc, r1}, 0x14)
->>> sendmmsg(r0, &(0x7f0000000d00), 0x400004e, 0x0)
->>>
->>> We only can receive skbs from (v(x))can devices.
->>> No matter if someone wrote to them via PF_CAN or PF_PACKET.
->>> We check for ETH_P_CAN(FD) type and ARPHRD_CAN dev type at rx time.
->>
->> And what entity sets the can_skb_prv(skb)->skbcnt to zero exactly ?
->>
->>>
->>>>> We additionally might think about introducing a check whether we have a
->>>>> can_skb_reserve() created skbuff.
->>>>>
->>>>> But even if someone forged a skbuff without this reserved space the
->>>>> access to can_skb_prv(skb)->skbcnt would point into some CAN frame
->>>>> content - which is still no access to uninitialized content, right?
->>>
->>> So this question remains still valid whether we have a false positive from KMSAN here.
->>
->> I do not believe it is a false positive.
->>
->> It seems CAN relies on some properties of low level drivers using alloc_can_skb() or similar function.
->>
->> Why not simply fix this like that ?
->>
->> diff --git a/net/can/af_can.c b/net/can/af_can.c
->> index 128d37a4c2e0ba5d8db69fcceec8cbd6a79380df..3e71a78d82af84caaacd0ef512b5e894efbf4852 100644
->> --- a/net/can/af_can.c
->> +++ b/net/can/af_can.c
->> @@ -647,8 +647,9 @@ static void can_receive(struct sk_buff *skb, struct net_device *dev)
->>          pkg_stats->rx_frames_delta++;
->>            /* create non-zero unique skb identifier together with *skb */
->> -       while (!(can_skb_prv(skb)->skbcnt))
->> +       do {
->>                  can_skb_prv(skb)->skbcnt = atomic_inc_return(&skbcounter);
->> +       } while (!(can_skb_prv(skb)->skbcnt));
->>            rcu_read_lock();
->>   
+> thanks for your review.
 > 
-> Please check commit d3b58c47d330d ("can: replace timestamp as unique skb attribute").
-
-Oh well... This notion of 'unique skb attribute' is interesting...
-
+> On 19.11.19 11:56:53, Joe Perches wrote:
+> > Maybe make that change globally in all the files other
+> > than MAINTAINERS as well eventually.
+> > 
+> > arch/arm64/mm/numa.c:6: * Author: Ganapatrao Kulkarni <gkulkarni@cavium.com>
+> > arch/mips/cavium-octeon/octeon-usb.c:551:MODULE_AUTHOR("David Daney <david.daney@cavium.com>");
+> > arch/mips/include/asm/octeon/cvmx-coremask.h:6: * Copyright (c) 2016  Cavium Inc. (support@cavium.com).
 > 
-> can_skb_prv(skb)->skbcnt is set to 0 at skb creation time when sending CAN frames from local host or receiving CAN frames from a real CAN interface.
-
-We can not enforce this to happen with a virtual interface.
-
+> [...]
 > 
-> When a CAN skb is received by the net layer the *first* time it gets a unique value which we need for a per-cpu filter mechanism in raw_rcv().
-> 
-> So where's the problem to check for (!(can_skb_prv(skb)->skbcnt)) in a while statement? I can't see a chance for an uninitialized value there.
+> This is a bit past the scope of this patch.
 
-You have to make sure the packet has been properly cooked by a 'real CAN interface' then, and reject them if not.
+Yup, completely agree, as it seems I understated with "eventually".
+
+>  I will leave that change to the driver's maintainers.
+
+Fine by me.  btw:  There's also entries for @caviumnetworks.com
+so those might change one day too.
+
+> I also think that authorship does not
+> change even if the author's email address changed or vanished later. I
+> am not sure on the general handling of MODULE_AUTHOR(), should that
+> always contain a valid email address? Seems not the case. I don't
+> think somebody actually sends an email to the author, it is more to
+> better identify the author.
+
+Changelog identifies the author, MODULE_AUTHOR is actually
+available via modinfo -a, which shows email if entered,
+but that may also be rarely used in practice.
 
 
