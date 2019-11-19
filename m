@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1839E101469
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A43101570
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbfKSFdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:33:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54186 "EHLO mail.kernel.org"
+        id S1730830AbfKSFoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728839AbfKSFdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:37 -0500
+        id S1730291AbfKSFoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82CD921783;
-        Tue, 19 Nov 2019 05:33:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B50D3222A4;
+        Tue, 19 Nov 2019 05:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141616;
-        bh=lPL/Fqkv/wk/e+ywuFI15F63eJE2Xvzj5FPReiZlEhc=;
+        s=default; t=1574142250;
+        bh=TSFsAvaGBmZ6vHG8Bcr9uENl0LS1+W5Kq8pB0n3HhdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4bwVFasmPOjxACBKlGWN9dSNsNQuDJB4m2qggYr8rUlkyLU9GIOqjC4XUn7mctTr
-         lh4/PmeQghdg5CP9qnlNtftA7nQ8uhDGwjO5MFspdSLCyHkBZ37au4ARJ7bLnXznpQ
-         JlFQXCVRdLRCVpxtgzgMlSE8xPQzbs3oT5DXSl4c=
+        b=MNcAUoCbh+ld3+4KRU2Tbced4ht7ps8wpoN+9oB7VZWvLzupGOC5YWO+n3Hq5P52g
+         B04n6/UTrJis69DSx9eXGEW3IQJJm3EcZocpB+13MIa+ytIt3609U7OsYHOd1EB/YI
+         oj6xqaoxFvmNCLMmC2keZ5TO9hulbXRh10UVt9Ek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 220/422] block, bfq: inject other-queue I/O into seeky idle queues on NCQ flash
-Date:   Tue, 19 Nov 2019 06:16:57 +0100
-Message-Id: <20191119051412.882089519@linuxfoundation.org>
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 018/239] Input: synaptics-rmi4 - destroy F54 poller workqueue when removing
+Date:   Tue, 19 Nov 2019 06:16:58 +0100
+Message-Id: <20191119051301.143335244@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,220 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit d0edc2473be9d70f999282e1ca7863ad6ae704dc ]
+commit ba60cf9f78f0d7c8e73c7390608f7f818ee68aa0 upstream.
 
-The Achilles' heel of BFQ is its failing to reach a high throughput
-with sync random I/O on flash storage with internal queueing, in case
-the processes doing I/O have differentiated weights.
+The driver forgets to destroy workqueue in remove() similarly to what is
+done when probe() fails. Add a call to destroy_workqueue() to fix it.
 
-The cause of this failure is as follows. If at least two processes do
-sync I/O, and have a different weight from each other, then BFQ plugs
-I/O dispatching every time one of these processes, while it is being
-served, remains temporarily without pending I/O requests. This
-plugging is necessary to guarantee that every process enjoys a
-bandwidth proportional to its weight; but it empties the internal
-queue(s) of the drive. And this kills throughput with random I/O. So,
-if some processes have differentiated weights and do both sync and
-random I/O, the end result is a throughput collapse.
+Since unregistration will wait for the work to finish, we do not need to
+cancel/flush the work instance in remove().
 
-This commit tries to counter this problem by injecting the service of
-other processes, in a controlled way, while the process in service
-happens to have no I/O. This injection is performed only if the medium
-is non rotational and performs internal queueing, and the process in
-service does random I/O (service injection might be beneficial for
-sequential I/O too, we'll work on that).
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191114023405.31477-1-hslester96@gmail.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-As an example of the benefits of this commit, on a PLEXTOR PX-256M5S
-SSD, and with five processes having differentiated weights and doing
-sync random 4KB I/O, this commit makes the throughput with bfq grow by
-400%, from 25 to 100MB/s. This higher throughput is 10MB/s lower than
-that reached with none. As some less random I/O is added to the mix,
-the throughput becomes equal to or higher than that with none.
-
-This commit is a very first attempt to recover throughput without
-losing control, and certainly has many limitations. One is, e.g., that
-the processes whose service is injected are not chosen so as to
-distribute the extra bandwidth they receive in accordance to their
-weights. Thus there might be loss of weighted fairness in some
-cases. Anyway, this loss concerns extra service, which would not have
-been received at all without this commit. Other limitations and issues
-will probably show up with usage.
-
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-iosched.c | 68 +++++++++++++++++++++++++++++++++++++++++----
- block/bfq-iosched.h | 26 +++++++++++++++++
- 2 files changed, 88 insertions(+), 6 deletions(-)
+ drivers/input/rmi4/rmi_f54.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index d8d2ac294b0c0..35ddaa820737c 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -3195,6 +3195,13 @@ static unsigned long bfq_bfqq_softrt_next_start(struct bfq_data *bfqd,
- 		    jiffies + nsecs_to_jiffies(bfqq->bfqd->bfq_slice_idle) + 4);
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -747,6 +747,7 @@ static void rmi_f54_remove(struct rmi_fu
+ 
+ 	video_unregister_device(&f54->vdev);
+ 	v4l2_device_unregister(&f54->v4l2);
++	destroy_workqueue(f54->workqueue);
  }
  
-+static bool bfq_bfqq_injectable(struct bfq_queue *bfqq)
-+{
-+	return BFQQ_SEEKY(bfqq) && bfqq->wr_coeff == 1 &&
-+		blk_queue_nonrot(bfqq->bfqd->queue) &&
-+		bfqq->bfqd->hw_tag;
-+}
-+
- /**
-  * bfq_bfqq_expire - expire a queue.
-  * @bfqd: device owning the queue.
-@@ -3304,6 +3311,8 @@ void bfq_bfqq_expire(struct bfq_data *bfqd,
- 	if (ref == 1) /* bfqq is gone, no more actions on it */
- 		return;
- 
-+	bfqq->injected_service = 0;
-+
- 	/* mark bfqq as waiting a request only if a bic still points to it */
- 	if (!bfq_bfqq_busy(bfqq) &&
- 	    reason != BFQQE_BUDGET_TIMEOUT &&
-@@ -3642,6 +3651,30 @@ static bool bfq_bfqq_must_idle(struct bfq_queue *bfqq)
- 	return RB_EMPTY_ROOT(&bfqq->sort_list) && bfq_better_to_idle(bfqq);
- }
- 
-+static struct bfq_queue *bfq_choose_bfqq_for_injection(struct bfq_data *bfqd)
-+{
-+	struct bfq_queue *bfqq;
-+
-+	/*
-+	 * A linear search; but, with a high probability, very few
-+	 * steps are needed to find a candidate queue, i.e., a queue
-+	 * with enough budget left for its next request. In fact:
-+	 * - BFQ dynamically updates the budget of every queue so as
-+	 *   to accommodate the expected backlog of the queue;
-+	 * - if a queue gets all its requests dispatched as injected
-+	 *   service, then the queue is removed from the active list
-+	 *   (and re-added only if it gets new requests, but with
-+	 *   enough budget for its new backlog).
-+	 */
-+	list_for_each_entry(bfqq, &bfqd->active_list, bfqq_list)
-+		if (!RB_EMPTY_ROOT(&bfqq->sort_list) &&
-+		    bfq_serv_to_charge(bfqq->next_rq, bfqq) <=
-+		    bfq_bfqq_budget_left(bfqq))
-+			return bfqq;
-+
-+	return NULL;
-+}
-+
- /*
-  * Select a queue for service.  If we have a current queue in service,
-  * check whether to continue servicing it, or retrieve and set a new one.
-@@ -3723,10 +3756,19 @@ check_queue:
- 	 * No requests pending. However, if the in-service queue is idling
- 	 * for a new request, or has requests waiting for a completion and
- 	 * may idle after their completion, then keep it anyway.
-+	 *
-+	 * Yet, to boost throughput, inject service from other queues if
-+	 * possible.
- 	 */
- 	if (bfq_bfqq_wait_request(bfqq) ||
- 	    (bfqq->dispatched != 0 && bfq_better_to_idle(bfqq))) {
--		bfqq = NULL;
-+		if (bfq_bfqq_injectable(bfqq) &&
-+		    bfqq->injected_service * bfqq->inject_coeff <
-+		    bfqq->entity.service * 10)
-+			bfqq = bfq_choose_bfqq_for_injection(bfqd);
-+		else
-+			bfqq = NULL;
-+
- 		goto keep_queue;
- 	}
- 
-@@ -3816,6 +3858,14 @@ static struct request *bfq_dispatch_rq_from_bfqq(struct bfq_data *bfqd,
- 
- 	bfq_dispatch_remove(bfqd->queue, rq);
- 
-+	if (bfqq != bfqd->in_service_queue) {
-+		if (likely(bfqd->in_service_queue))
-+			bfqd->in_service_queue->injected_service +=
-+				bfq_serv_to_charge(rq, bfqq);
-+
-+		goto return_rq;
-+	}
-+
- 	/*
- 	 * If weight raising has to terminate for bfqq, then next
- 	 * function causes an immediate update of bfqq's weight,
-@@ -3834,13 +3884,12 @@ static struct request *bfq_dispatch_rq_from_bfqq(struct bfq_data *bfqd,
- 	 * belongs to CLASS_IDLE and other queues are waiting for
- 	 * service.
- 	 */
--	if (bfqd->busy_queues > 1 && bfq_class_idle(bfqq))
--		goto expire;
--
--	return rq;
-+	if (!(bfqd->busy_queues > 1 && bfq_class_idle(bfqq)))
-+		goto return_rq;
- 
--expire:
- 	bfq_bfqq_expire(bfqd, bfqq, false, BFQQE_BUDGET_EXHAUSTED);
-+
-+return_rq:
- 	return rq;
- }
- 
-@@ -4246,6 +4295,13 @@ static void bfq_init_bfqq(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 			bfq_mark_bfqq_has_short_ttime(bfqq);
- 		bfq_mark_bfqq_sync(bfqq);
- 		bfq_mark_bfqq_just_created(bfqq);
-+		/*
-+		 * Aggressively inject a lot of service: up to 90%.
-+		 * This coefficient remains constant during bfqq life,
-+		 * but this behavior might be changed, after enough
-+		 * testing and tuning.
-+		 */
-+		bfqq->inject_coeff = 1;
- 	} else
- 		bfq_clear_bfqq_sync(bfqq);
- 
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index d5e9e60cb1a5f..a41e9884f2dd2 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -351,6 +351,32 @@ struct bfq_queue {
- 	unsigned long split_time; /* time of last split */
- 
- 	unsigned long first_IO_time; /* time of first I/O for this queue */
-+
-+	/* max service rate measured so far */
-+	u32 max_service_rate;
-+	/*
-+	 * Ratio between the service received by bfqq while it is in
-+	 * service, and the cumulative service (of requests of other
-+	 * queues) that may be injected while bfqq is empty but still
-+	 * in service. To increase precision, the coefficient is
-+	 * measured in tenths of unit. Here are some example of (1)
-+	 * ratios, (2) resulting percentages of service injected
-+	 * w.r.t. to the total service dispatched while bfqq is in
-+	 * service, and (3) corresponding values of the coefficient:
-+	 * 1 (50%) -> 10
-+	 * 2 (33%) -> 20
-+	 * 10 (9%) -> 100
-+	 * 9.9 (9%) -> 99
-+	 * 1.5 (40%) -> 15
-+	 * 0.5 (66%) -> 5
-+	 * 0.1 (90%) -> 1
-+	 *
-+	 * So, if the coefficient is lower than 10, then
-+	 * injected service is more than bfqq service.
-+	 */
-+	unsigned int inject_coeff;
-+	/* amount of service injected in current service slot */
-+	unsigned int injected_service;
- };
- 
- /**
--- 
-2.20.1
-
+ struct rmi_function_handler rmi_f54_handler = {
 
 
