@@ -2,69 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FDD2102F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 23:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC09102F8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 23:50:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbfKSWuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 17:50:24 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:50178 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726290AbfKSWuX (ORCPT <rfc822;linux-kernel@vger.kernel.orG>);
-        Tue, 19 Nov 2019 17:50:23 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1iXCKB-00018Q-9n; Wed, 20 Nov 2019 06:50:19 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1iXCKA-0000FY-0I; Wed, 20 Nov 2019 06:50:18 +0800
-Date:   Wed, 20 Nov 2019 06:50:17 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] padata: Remove broken queue flushing
-Message-ID: <20191119225017.mjrak2fwa5vccazl@gondor.apana.org.au>
-References: <20191119051731.yev6dcsp2znjaagz@gondor.apana.org.au>
- <20191119192405.imfi6q4u3g2zgstc@ca-dmjordan1.us.oracle.com>
- <20191119215345.jr7y47b37ivshwcm@gondor.apana.org.au>
- <20191119224432.vr7lyoaqdzpelszo@ca-dmjordan1.us.oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119224432.vr7lyoaqdzpelszo@ca-dmjordan1.us.oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1727423AbfKSWux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 17:50:53 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:46166 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfKSWuw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 17:50:52 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id EC2671423DA68;
+        Tue, 19 Nov 2019 14:50:51 -0800 (PST)
+Date:   Tue, 19 Nov 2019 14:50:48 -0800 (PST)
+Message-Id: <20191119.145048.487849503145486152.davem@davemloft.net>
+To:     anders.roxell@linaro.org
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, paulmck@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ipmr: fix suspicious RCU warning
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191118090925.2474-1-anders.roxell@linaro.org>
+References: <20191118090925.2474-1-anders.roxell@linaro.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 19 Nov 2019 14:50:52 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 05:44:32PM -0500, Daniel Jordan wrote:
-> 
-> I assume you mean the third patch you recently posted, "crypto: pcrypt - Avoid
-> deadlock by using per-instance padata queues".  That's true, the problem is
-> fixed there, and the bug being present in bisection doesn't seem like enough
-> justification to implement something short-lived just to prevent it.
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Mon, 18 Nov 2019 10:09:25 +0100
 
-Right.  But as pcrypt is the only user this should still work.
- 
-> Makes sense to me, though I don't see how it's enforced now in pcrypt.  I'm not
-> an async crypto person, but wouldn't unloading the pcrypt module when there are
-> still outstanding async jobs break this rule?
+> @@ -108,9 +108,18 @@ static void igmpmsg_netlink_event(struct mr_table *mrt, struct sk_buff *pkt);
+>  static void mroute_clean_tables(struct mr_table *mrt, int flags);
+>  static void ipmr_expire_process(struct timer_list *t);
+>  
+> +#ifdef CONFIG_PROVE_LOCKING
+> +int ip_mr_initialized;
+> +void ip_mr_now_initialized(void) { ip_mr_initialized = 1; }
+> +#else
+> +const int ip_mr_initialized = 1;
+> +void ip_mr_now_initialized(void) { }
+> +#endif
 
-It's enforced through module reference counting.  While there are
-any outstanding requests, there must be allocated crypto tfms.  Each
-crypto tfm maintains a module reference count on pcrypt which
-prevents it from being unloaded.
+This seems excessive and a bit not so pretty.
 
-> Actually, I'm working on an RFC right now to add more users for padata.  It
-> should be posted in the coming week or two, and I hope it can be part of that
-> discussion.
+> +
+>  #ifdef CONFIG_IP_MROUTE_MULTIPLE_TABLES
+>  #define ipmr_for_each_table(mrt, net) \
+> -	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list)
+> +	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list, \
+> +			(lockdep_rtnl_is_held() || !ip_mr_initialized))
+>  
+>  static struct mr_table *ipmr_mr_table_iter(struct net *net,
+>  					   struct mr_table *mrt)
 
-OK.
+The problematic code path is ipmr_rules_init() done during ipmr_net_init().
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+You can just wrap this call around RCU locking or take the RTNL mutex.
+
+That way you don't need to rediculous ip_mr_initialized knob which frankly
+doesn't even seem accurate to me.  It's a centralized global variable
+which is holding state about multiple network namespace objects which makes
+absolutely no sense at all, it's wrong.
