@@ -2,152 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE53102770
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:56:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7459102776
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:56:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfKSO4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:56:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbfKSO4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:56:20 -0500
-Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99FE4222A0;
-        Tue, 19 Nov 2019 14:56:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574175378;
-        bh=0Ljh4HfAXA7BAQs+eBmjHbb2K6a07lLbR0S63uNYi50=;
-        h=Date:From:To:Cc:Subject:Reply-To:From;
-        b=nNqxkTunp73XruGKE4BEcS7t7f6t+aACKFK0b4f/xmPtLAjAOm9A32awUXo+QJQSC
-         HTjtS3b0F3pJ+zSH2TzJ0IlwHh0xJlWlsjYYTwnYdL2lLPCJ7Ls2rLaPXWvunrA0Ss
-         Ff7RPCVIGvgLDHLxtIwAMfnXiaIEj+Z8s7/79d4M=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 4267D3520F2F; Tue, 19 Nov 2019 06:56:18 -0800 (PST)
-Date:   Tue, 19 Nov 2019 06:56:18 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     mingo@kernel.org
-Cc:     elver@google.com, linux-kernel@vger.kernel.org,
-        sfr@canb.auug.org.au
-Subject: [GIT RFC PULL kcsan] KCSAN commits for 5.5
-Message-ID: <20191119145618.GA19028@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
+        id S1728187AbfKSO4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:56:39 -0500
+Received: from mail-eopbgr150050.outbound.protection.outlook.com ([40.107.15.50]:21479
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728071AbfKSO4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:56:38 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nUUVmIT0y1/EjFRSsaJOqxLFrkQN5lnEZXwmi+O/bZg0YBFfg/v76gS2VJgACcjJeCrv+b6lbxs9HKswBrNBHJyJq6U5C/y71m34y3M/ESqW8fOVXh0ZT745VQytzFxyNPP0Z7X/2na100MAiYNSkeXOfVvJwE1ZwDhGcJk57duAnv6ocldmKmZq3Ma+EkDlZmY+Wup6vaFtAnDj8BmAL15AP7mEFK+fLgRKRq+RIOF8MUgtVM+r2nSpd1/jO3KJAzyN9Ac68gw2VA9SfOHzp35rE7yDgoYtuYlrq1EKTLSfDr1rU4DhyIk4F9Ox1iN2t7L/2e1CD93in0WQZTe+Bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NKbjRLRfqWT6CnXo3MhHeHtqb1u69HA/nddLCOhk2K0=;
+ b=Eyzw79qm248LH5myne2Aa/JJ4p6isoQ0cM3SpnNM4Wg4RFYXw0VWCt9ib+rL55eDHrikufOlQQYFWEsvXEnQFUlkYUu7/m27tn7XwNnhDjmtPI8qFMlc6EeHyjYFhqKJJa4bPiyDf6DTL7LnfH0ZorTgcduoGPQAXo2izLWQeVBQoAtzb6YJ5ytNu+7CMqCQ8Z6upKhEqbe501FnH+Sy17SRVDLWDnxjuhLS/H25R9KCN0mQA540iqnC+EFDsXkeq97sibGlCv020VAMWJ3YcosQHgKFVQ6FChhxfSSBscPT89qEfccwKS0QB4P5G5OWism+kBHZ6qxsHOZp3ejABQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NKbjRLRfqWT6CnXo3MhHeHtqb1u69HA/nddLCOhk2K0=;
+ b=Zw7y4m7Gtb5bSH0tKAkylDhvpUucFfxFbpRHfu05wfa4iF+2ritUSX0ut+lylIkWs31lGSPKE3NHCs2MKP8SLR6P6b0wHEk/Cf8QojFcDXCPwlDDP6U+9dYA82OW53o357Bxf0ePGUy4OyxT2KVQryQW1cUb6D6G68ET41rZUac=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3536.eurprd04.prod.outlook.com (52.134.1.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.23; Tue, 19 Nov 2019 14:56:30 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::89e1:552e:a24d:e72]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::89e1:552e:a24d:e72%3]) with mapi id 15.20.2474.015; Tue, 19 Nov 2019
+ 14:56:30 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 03/12] crypto: caam - refactor ahash_done callbacks
+Thread-Topic: [PATCH 03/12] crypto: caam - refactor ahash_done callbacks
+Thread-Index: AQHVnZayXIBTED7Av0G5EEEbA3XwdA==
+Date:   Tue, 19 Nov 2019 14:56:30 +0000
+Message-ID: <VI1PR0402MB3485B14652A134EC5317B828984C0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1574029845-22796-1-git-send-email-iuliana.prodan@nxp.com>
+ <1574029845-22796-4-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: be2aa05e-28ee-431c-4cdf-08d76d00a99c
+x-ms-traffictypediagnostic: VI1PR0402MB3536:|VI1PR0402MB3536:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB353677F6176400072C37C05A984C0@VI1PR0402MB3536.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2512;
+x-forefront-prvs: 022649CC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(366004)(396003)(136003)(189003)(199004)(71190400001)(3846002)(52536014)(6636002)(66476007)(66446008)(9686003)(81166006)(81156014)(64756008)(66556008)(7696005)(186003)(86362001)(5660300002)(26005)(229853002)(7736002)(6246003)(14454004)(305945005)(6506007)(102836004)(76116006)(53546011)(25786009)(8936002)(91956017)(71200400001)(8676002)(446003)(66946007)(6116002)(4326008)(558084003)(478600001)(256004)(99286004)(66066001)(2906002)(54906003)(44832011)(74316002)(6436002)(316002)(76176011)(110136005)(486006)(33656002)(55016002)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3536;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: DEbq5pV6bV3dEXIKV07VSioDU0GDb0kVY5kyQ/xsREoUVQKpkI9NMUveelrw1ta0jm5nCl6+t3Y9M9zmdeAAqoo7CrGLjzvEYQCYxO7sxHnIBSfTmb5dzqNHaSbLBxtN9F2nF4SInQjnC52rltFBSOjaif0eUI6O4Sn+Q11pK88DPhqVvdnUzdDoLhGBQEaCVM/FB17+vnWMrDAfx+qnr3ockQBelmHtP+HiUn2HZZxFi057GumUZYBGbamnymGVE9OySC26pK9O68sBjKp43mZsrQuclZ879xqZJmzFCdCqh31c/gp52UlisyFGPkIxcD3QAll7PAHwZy9xuKe55BCQuKYPcfmPtDwtkaXRY31A2kcTtj4pbafa/m9SR8K+GjIzQA3DMH4AkNjjloc8R/cJ3aSGAAKhxZqgSVyuBmLRalWuprhqDaToR5RlPu0q
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be2aa05e-28ee-431c-4cdf-08d76d00a99c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 14:56:30.7395
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OM5PWasHNwicf2lLlD+sJWneueIst8z00pxpDnSrdqYLR2m0yNlu9EHro7mu1VhwAcdWsRC5iFyaZCTILT/kdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3536
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ingo,
-
-This pull request contains base kernel concurrency sanitizer
-(KCSAN) enablement for x86, courtesy of Marco Elver.  KCSAN is a
-sampling watchpoint-based data-race detector, and is documented in
-Documentation/dev-tools/kcsan.rst.  KCSAN was announced in September,
-and much feedback has since been incorporated:
-
-http://lkml.kernel.org/r/CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com
-
-The data races located thus far have resulted in a number of fixes:
-
-https://github.com/google/ktsan/wiki/KCSAN#upstream-fixes-of-data-races-found-by-kcsan
-
-Additional information may be found here:
-
-https://lore.kernel.org/lkml/20191114180303.66955-1-elver@google.com/
-
-This has been subject to kbuild test robot and -next testing.  The
--next testing located a Kconfig conflict called out here:
-
-https://lore.kernel.org/lkml/20191119183042.5839ef00@canb.auug.org.au/
-
-Marco is satisfied with Stephen's resolution, and it looks good to me
-as well.
-
-The following changes since commit 31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c:
-
-  Linux 5.4-rc7 (2019-11-10 16:17:15 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-
-for you to fetch changes up to 40d04110f87940b6a03bf0aa19cd29e84f465f20:
-
-  x86, kcsan: Enable KCSAN for x86 (2019-11-16 07:23:16 -0800)
-
-----------------------------------------------------------------
-Marco Elver (9):
-      kcsan: Add Kernel Concurrency Sanitizer infrastructure
-      include/linux/compiler.h: Introduce data_race(expr) macro
-      kcsan: Add Documentation entry in dev-tools
-      objtool, kcsan: Add KCSAN runtime functions to whitelist
-      build, kcsan: Add KCSAN build exceptions
-      seqlock, kcsan: Add annotations for KCSAN
-      seqlock: Require WRITE_ONCE surrounding raw_seqcount_barrier
-      locking/atomics, kcsan: Add KCSAN instrumentation
-      x86, kcsan: Enable KCSAN for x86
-
- Documentation/dev-tools/index.rst         |   1 +
- Documentation/dev-tools/kcsan.rst         | 256 ++++++++++++
- MAINTAINERS                               |  11 +
- Makefile                                  |   3 +-
- arch/x86/Kconfig                          |   1 +
- arch/x86/boot/Makefile                    |   2 +
- arch/x86/boot/compressed/Makefile         |   2 +
- arch/x86/entry/vdso/Makefile              |   3 +
- arch/x86/include/asm/bitops.h             |   6 +-
- arch/x86/kernel/Makefile                  |   4 +
- arch/x86/kernel/cpu/Makefile              |   3 +
- arch/x86/lib/Makefile                     |   4 +
- arch/x86/mm/Makefile                      |   4 +
- arch/x86/purgatory/Makefile               |   2 +
- arch/x86/realmode/Makefile                |   3 +
- arch/x86/realmode/rm/Makefile             |   3 +
- drivers/firmware/efi/libstub/Makefile     |   2 +
- include/asm-generic/atomic-instrumented.h | 393 ++++++++++---------
- include/linux/compiler-clang.h            |   9 +
- include/linux/compiler-gcc.h              |   7 +
- include/linux/compiler.h                  |  57 ++-
- include/linux/kcsan-checks.h              |  97 +++++
- include/linux/kcsan.h                     | 115 ++++++
- include/linux/sched.h                     |   4 +
- include/linux/seqlock.h                   |  51 ++-
- init/init_task.c                          |   8 +
- init/main.c                               |   2 +
- kernel/Makefile                           |   6 +
- kernel/kcsan/Makefile                     |  11 +
- kernel/kcsan/atomic.h                     |  27 ++
- kernel/kcsan/core.c                       | 626 ++++++++++++++++++++++++++++++
- kernel/kcsan/debugfs.c                    | 275 +++++++++++++
- kernel/kcsan/encoding.h                   |  94 +++++
- kernel/kcsan/kcsan.h                      | 108 ++++++
- kernel/kcsan/report.c                     | 320 +++++++++++++++
- kernel/kcsan/test.c                       | 121 ++++++
- kernel/sched/Makefile                     |   6 +
- lib/Kconfig.debug                         |   2 +
- lib/Kconfig.kcsan                         | 118 ++++++
- lib/Makefile                              |   3 +
- mm/Makefile                               |   8 +
- scripts/Makefile.kcsan                    |   6 +
- scripts/Makefile.lib                      |  10 +
- scripts/atomic/gen-atomic-instrumented.sh |  17 +-
- tools/objtool/check.c                     |  18 +
- 45 files changed, 2623 insertions(+), 206 deletions(-)
- create mode 100644 Documentation/dev-tools/kcsan.rst
- create mode 100644 include/linux/kcsan-checks.h
- create mode 100644 include/linux/kcsan.h
- create mode 100644 kernel/kcsan/Makefile
- create mode 100644 kernel/kcsan/atomic.h
- create mode 100644 kernel/kcsan/core.c
- create mode 100644 kernel/kcsan/debugfs.c
- create mode 100644 kernel/kcsan/encoding.h
- create mode 100644 kernel/kcsan/kcsan.h
- create mode 100644 kernel/kcsan/report.c
- create mode 100644 kernel/kcsan/test.c
- create mode 100644 lib/Kconfig.kcsan
- create mode 100644 scripts/Makefile.kcsan
+On 11/18/2019 12:31 AM, Iuliana Prodan wrote:=0A=
+> Create two common ahash_done_* functions with the dma=0A=
+> direction as parameter. Then, these 2 are called with=0A=
+> the proper direction for unmap.=0A=
+> =0A=
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
