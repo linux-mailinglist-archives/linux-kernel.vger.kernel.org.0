@@ -2,94 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C77101225
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:23:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9712101228
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbfKSDXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 22:23:21 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:12814 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727018AbfKSDXU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 22:23:20 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAJ3CVeP175202
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 22:23:20 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wadmwcmk9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 22:23:19 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 19 Nov 2019 03:23:17 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Nov 2019 03:23:14 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAJ3NDC346596318
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 03:23:13 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D168AE056;
-        Tue, 19 Nov 2019 03:23:13 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 40979AE045;
-        Tue, 19 Nov 2019 03:23:11 +0000 (GMT)
-Received: from [9.124.31.106] (unknown [9.124.31.106])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Nov 2019 03:23:11 +0000 (GMT)
-Subject: Re: [PATCH] perf vendor events: Make the power8/power9 event files
- valid JSON
-To:     Subho Banerjee <ssbanerje@gmail.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20191117231600.27632-1-ssbanerje@gmail.com>
- <20191118221316.GG20465@kernel.org>
- <E980D3B0-4519-451C-A0D7-7A8CE1A5AB2C@gmail.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Tue, 19 Nov 2019 08:53:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727409AbfKSD1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 22:27:19 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6250 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727018AbfKSD1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 22:27:18 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 713B0C8CB653863E022A;
+        Tue, 19 Nov 2019 11:27:16 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 19 Nov 2019 11:27:05 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <davem@davemloft.net>, <sgarzare@redhat.com>,
+        <kstewart@linuxfoundation.org>, <alexios.zavras@intel.com>,
+        <tglx@linutronix.de>, <maowenan@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] vsock/vmci: make vmci_vsock_cb_host_called static
+Date:   Tue, 19 Nov 2019 11:25:34 +0800
+Message-ID: <20191119032534.52090-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <E980D3B0-4519-451C-A0D7-7A8CE1A5AB2C@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19111903-0028-0000-0000-000003BAC14B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111903-0029-0000-0000-0000247DDCC8
-Message-Id: <5b051139-039c-4e16-76b8-05af17eb9113@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-18_08:2019-11-15,2019-11-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxlogscore=608 impostorscore=0 mlxscore=0 clxscore=1015
- priorityscore=1501 spamscore=0 suspectscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1910280000 definitions=main-1911190028
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When using make C=2 drivers/misc/vmw_vmci/vmci_driver.o
+to compile, below warning can be seen:
+drivers/misc/vmw_vmci/vmci_driver.c:33:6: warning:
+symbol 'vmci_vsock_cb_host_called' was not declared. Should it be static?
 
+This patch make symbol vmci_vsock_cb_host_called static.
 
-On 11/19/19 8:48 AM, Subho Banerjee wrote:
-> Hi Arnaldo,
-> I am uncertain which commit you are working on.
+Fixes: b1bba80a4376 ("vsock/vmci: register vmci_transport only when VMCI guest/host are active")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/misc/vmw_vmci/vmci_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://git.kernel.org/acme/c/835e5bd90926f8
-https://git.kernel.org/acme/c/da3ef7f6cd5222
+diff --git a/drivers/misc/vmw_vmci/vmci_driver.c b/drivers/misc/vmw_vmci/vmci_driver.c
+index 95fed46..cbb706d 100644
+--- a/drivers/misc/vmw_vmci/vmci_driver.c
++++ b/drivers/misc/vmw_vmci/vmci_driver.c
+@@ -30,7 +30,7 @@ static bool vmci_host_personality_initialized;
+ 
+ static DEFINE_MUTEX(vmci_vsock_mutex); /* protects vmci_vsock_transport_cb */
+ static vmci_vsock_cb vmci_vsock_transport_cb;
+-bool vmci_vsock_cb_host_called;
++static bool vmci_vsock_cb_host_called;
+ 
+ /*
+  * vmci_get_context_id() - Gets the current context ID.
+-- 
+2.7.4
 
