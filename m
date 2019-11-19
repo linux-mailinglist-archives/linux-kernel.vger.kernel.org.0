@@ -2,114 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F93F10223A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 11:47:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD53102249
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 11:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfKSKrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 05:47:42 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38663 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfKSKrl (ORCPT
+        id S1727631AbfKSKvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 05:51:12 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:44865 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfKSKvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:47:41 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v8so22773905ljh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 02:47:40 -0800 (PST)
+        Tue, 19 Nov 2019 05:51:12 -0500
+Received: by mail-vs1-f66.google.com with SMTP id j85so13859613vsd.11
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 02:51:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZeUoRBlonDBywzKfeqqP13/zDfclITwdseqORXN8Cf8=;
-        b=pMNRPe/vbBEEGmwaWUdl00xTZ6wQoousS+UdFgtJC/pWhowy4zMVZjnDPZzrqVJYEt
-         2r7GEZ5b7/mdzlTO/V40zTu6h8qStWZhGLBixdIGD6kwhWmF9jDvcZLLYDp8MqlAUHdT
-         SjoXj+PFJjsZ78X9Q0cgmJnvpJ5hozipVsRpquAxLPa4riHqYPI/CMOpe69EKjcnvRwH
-         52O/pK47K2Soaj9dAvkuJUQvDPJvczfcEHjQQFqyMoZ7b2ZFRHWU5/tmmapT3h+HOsrk
-         g/F+vEIOLx3FuFst6FtA/lsnuYlfuj8if3dqxvP19cFFSrcWXtgYHR+GEOsQCvXau6QR
-         S5Ug==
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5xtsF1Sv+l+9zrpE4z0KioV1mHpXZsbvecSOZbkb/Q8=;
+        b=hq9IXkC5JKzFG1aE2B51COqqquq5bFvThTVH4Gj/fldrzI5Ih6wXfn8pRZtOIvDcHK
+         TRmglLfHOF89Yqcd16P05oO2z3Mdqk5uq7Qg11ljMwZjl2b/RmJjIfD2jaeAl1sooMRx
+         lbHE39wwvW4fQxrzcA5mvM2tv3VmDvWqxYWp45B+g0+B5lfPIau2Mo5JUKISVZ2RLRpH
+         VPMcP9Y19RjKPtx8vC2M2dxJQsNerXAKWZPfhnekCyVD3gS+RXpmqV07yAKmRnyjOqio
+         w71saYZE26s3KxvG8TI3xUBpK4mVz11A2rzF2ADEr8SOYxKEpurX27BOx+LXK3yWHKqb
+         CwCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZeUoRBlonDBywzKfeqqP13/zDfclITwdseqORXN8Cf8=;
-        b=B2JnC+bkKj91w928o3tkwTzmOODtVi7dcna5NHbTqwBEPGsH3o18sbW+Co4SHiIOrw
-         8BFAPuE7Og99czmdX8S8T/vDSJKutMHOtKN3WSPTDmqZK+OxEG+3L6W4XgK60hOlMnwe
-         rK9R3xxz9vDW8VmW3X055ICUe29c3JOxpYPcELMeMKjvc6rS9n30/bJaltmvpoea2Gqy
-         IkPNznfxwa2LvN13mc4D6PWKFcjJU9xbwIIlyra4EPORIO2G0DbiGw4HsxjTajwWsgqY
-         AtTmBkuTaVuMQg0K4U0L6+/71c7sx7AzW6ho0BQoMdmNYoERGdcHBh1qfVIyUaj1DldS
-         M9Kw==
-X-Gm-Message-State: APjAAAVFH6ptHewx8uSWz49FvoZsTn/L0YpdnGUOIr5SmSQfah6yWzp0
-        GMz6j39k1B9UIkkPOAdKlFXfWN9pGBM=
-X-Google-Smtp-Source: APXvYqwjTgl8vU2jVXehL8zImk0x1eHm3t2yMg3AUBp9OVxqwasqP3PbsJyzfhvWoMG3Zt2ugIMwpw==
-X-Received: by 2002:a2e:970a:: with SMTP id r10mr3366384lji.142.1574160459559;
-        Tue, 19 Nov 2019 02:47:39 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c80sm786601lfg.81.2019.11.19.02.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 02:47:38 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id F354C100F52; Tue, 19 Nov 2019 13:47:41 +0300 (+03)
-Date:   Tue, 19 Nov 2019 13:47:41 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Rafael Aquini <aquini@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: kconfig: make Transparent Hugepage Support sysfs
- defaults to match the documentation
-Message-ID: <20191119104741.rtjc7awl4k57boyu@box>
-References: <20191119030102.27559-1-aquini@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5xtsF1Sv+l+9zrpE4z0KioV1mHpXZsbvecSOZbkb/Q8=;
+        b=YjNRoHVN7uLlEDU+cU7CCMm/8Aq21xQJqbnakaEht4vl4EI2hE2DNJxkbYTB+J+GR3
+         eY9XOmhaD0YNDPvtqmRxrlwrzDiHU9ft/w7biG87uihIEH0XoDNb6c3u0vgRoMthRdcM
+         XtLtmMl4YvE3syesTRZg2aXZlTvQTA2Yi8YNmE7iUZOqcmweREwpKEaVUPdPNT25Xtd4
+         KWtujx+V784SFMMXP1Rj9OsPoW+oioi9rwX08KSQKy31TqsIAfYPyfqL4PYA/Db97EJw
+         NqUqHW56VlrFJDmYhatLp3sdZM3rrcJiM4A/LREw+b+ayFhhyrtxU8VtBFOaCOPs4cBH
+         CX8A==
+X-Gm-Message-State: APjAAAXuWusJWTjsYAdqF+E2JxCLZ86sN0g5utKrky9c6/4PZ1WhRyCV
+        uhk0zN0nl7IJw3k6XRDWn87svAfUEAZrrlxdF3WbsHYs
+X-Google-Smtp-Source: APXvYqwPaPOP/tvcGP9mQYoUq0M6Kxu+nl2EbUWFxWA6q3Mapgn1ahClizb5eOnSjYBRzGlia1hHLCKzm9KhCHqtPYA=
+X-Received: by 2002:a67:da85:: with SMTP id w5mr22162061vsj.159.1574160669891;
+ Tue, 19 Nov 2019 02:51:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119030102.27559-1-aquini@redhat.com>
-User-Agent: NeoMutt/20180716
+References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org> <1572979786-20361-2-git-send-email-thara.gopinath@linaro.org>
+In-Reply-To: <1572979786-20361-2-git-send-email-thara.gopinath@linaro.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Tue, 19 Nov 2019 16:20:58 +0530
+Message-ID: <CAHLCerP6AyB1QZrUdL9XU6PcTjQWgRuQdRvPamtWjBNJNhL=HA@mail.gmail.com>
+Subject: Re: [Patch v5 1/6] sched/pelt.c: Add support to track thermal pressure
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, ionela.voinescu@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, qperret@google.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 10:01:02PM -0500, Rafael Aquini wrote:
-> Documentation/admin-guide/mm/transhuge.rst (originally in Documentation/vm/transhuge.txt)
-> states that TRANSPARENT_HUGEPAGE_MADVISE is the default option for THP config:
-> 
-> "
-> madvise
->         will enter direct reclaim like ``always`` but only for regions
->         that are have used madvise(MADV_HUGEPAGE). This is the default
->         behaviour.
-> "
-> 
-> This patch changes mm/Kconfig to reflect that fact, accordingly.
+On Wed, Nov 6, 2019 at 12:20 AM Thara Gopinath
+<thara.gopinath@linaro.org> wrote:
+>
+> Extrapolating on the exisiting framework to track rt/dl utilization using
+> pelt signals, add a similar mechanism to track thermal pressure. The
+> difference here from rt/dl utilization tracking is that, instead of
+> tracking time spent by a cpu running a rt/dl task through util_avg,
+> the average thermal pressure is tracked through load_avg. This is
+> because thermal pressure signal is weighted "delta" capacity
+> and is not binary(util_avg is binary). "delta capacity" here
+> means delta between the actual capacity of a cpu and the decreased
+> capacity a cpu due to a thermal event.
 
-No. You've read it incorrectly.
+Use a blank line here. And reflow the paragraph text.
 
-The documentation describes default behaviour wrt defragmentaton ("defrag"
-file), not page fault ("enabled" file). We don't have any Kconfig option
-to set default behaviour for "defrag".
-
-> Besides keeping consistency between documentation and the code behavior,
-> other reasons to perform this minor adjustment are noted at:
-> https://bugzilla.redhat.com/show_bug.cgi?id=1772133
-> 
-> Signed-off-by: Rafael Aquini <aquini@redhat.com>
+> In order to track average thermal pressure, a new sched_avg variable
+> avg_thermal is introduced. Function update_thermal_load_avg can be called
+> to do the periodic bookeeping (accumulate, decay and average)
+> of the thermal pressure.
+>
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 > ---
->  mm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index a5dae9a7eb51..c12a559aa1e5 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -385,7 +385,7 @@ config TRANSPARENT_HUGEPAGE
->  choice
->  	prompt "Transparent Hugepage Support sysfs defaults"
->  	depends on TRANSPARENT_HUGEPAGE
-> -	default TRANSPARENT_HUGEPAGE_ALWAYS
-> +	default TRANSPARENT_HUGEPAGE_MADVISE
->  	help
->  	  Selects the sysfs defaults for Transparent Hugepage Support.
->  
-> -- 
-> 2.17.2
-> 
-> 
+>  kernel/sched/pelt.c  | 13 +++++++++++++
+>  kernel/sched/pelt.h  |  7 +++++++
+>  kernel/sched/sched.h |  1 +
+>  3 files changed, 21 insertions(+)
+>
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> index a96db50..3821069 100644
+> --- a/kernel/sched/pelt.c
+> +++ b/kernel/sched/pelt.c
+> @@ -353,6 +353,19 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+>         return 0;
+>  }
+>
+> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
+> +{
+> +       if (___update_load_sum(now, &rq->avg_thermal,
+> +                              capacity,
+> +                              capacity,
+> +                              capacity)) {
+> +               ___update_load_avg(&rq->avg_thermal, 1, 1);
+> +               return 1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+>  /*
+>   * irq:
+> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+> index afff644..c74226d 100644
+> --- a/kernel/sched/pelt.h
+> +++ b/kernel/sched/pelt.h
+> @@ -6,6 +6,7 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
+>  int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
+>  int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+>  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
+> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity);
+>
+>  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+>  int update_irq_load_avg(struct rq *rq, u64 running);
+> @@ -159,6 +160,12 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+>  }
+>
+>  static inline int
+> +update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
+> +{
+> +       return 0;
+> +}
+> +
+> +static inline int
+>  update_irq_load_avg(struct rq *rq, u64 running)
+>  {
+>         return 0;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 0db2c1b..d5d82c8 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -944,6 +944,7 @@ struct rq {
+>  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+>         struct sched_avg        avg_irq;
+>  #endif
+> +       struct sched_avg        avg_thermal;
 
--- 
- Kirill A. Shutemov
+Have your considered putting this inside a #ifdef
+CONFIG_HAVE_SCHED_THERMAL_PRESSURE?
+
+
+>         u64                     idle_stamp;
+>         u64                     avg_idle;
+>
+> --
+> 2.1.4
+>
