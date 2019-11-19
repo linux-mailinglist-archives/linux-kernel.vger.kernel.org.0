@@ -2,92 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5B310125A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 05:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0763F101263
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 05:15:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfKSEGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 23:06:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34030 "EHLO mail.kernel.org"
+        id S1727506AbfKSEP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 23:15:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfKSEGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 23:06:32 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        id S1727018AbfKSEP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 23:15:26 -0500
+Received: from localhost (unknown [106.200.237.83])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26BC522316;
-        Tue, 19 Nov 2019 04:06:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 214C82231A;
+        Tue, 19 Nov 2019 04:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574136391;
-        bh=h3O05lBsTS2ujFG2b7XJbkSMdiqsVY8miz0OJT9ljAY=;
+        s=default; t=1574136925;
+        bh=bDUyDx/f/KUw+cY6r3VOmVRVO8EkUIrxtun7yYSHFR4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b+wRyXD2zkHzq/hfU2wpIHEKPrRjEnfGHdPYpW6XIAGvEiJnMIO1aOU38pEBXDBJf
-         3dZtX+Fxj4RlMNrhWsb05DRyCbiqi9cngiD2oWhJz18y/EVOPgYUjdzC5iFJaYuj3/
-         VnSB9m7TpKXSzZSzP1klBNd6sjyAafs5+BJnsBKw=
-Date:   Mon, 18 Nov 2019 20:06:29 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+a0fc447639c6ffa66b59@syzkaller.appspotmail.com>
-Cc:     Steven Price <steven.price@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in pagemap_pmd_range
-Message-ID: <20191119040629.GA163020@sol.localdomain>
-References: <000000000000ca5b3f0596a21e0c@google.com>
+        b=R69eQpWWPuzeknOX41NxKcmnDBr9VqW6W3yXZd5PDbDKn/5FHE0JoKW9DwW9GjXUu
+         GQJCYl5P2IUSWBL8Xd7axFNwbdJy6VgPL5/t5zwYLgdkbdPMko4BhrSnxKl2taQRCP
+         IT7fDfoy1charOQ29skTcD/dialfY7BvCZW113Qk=
+Date:   Tue, 19 Nov 2019 09:45:21 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, Patrick Lai <plai@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [RFC PATCH 0/3] ALSA: compress: Add support for FLAC
+Message-ID: <20191119041521.GB82508@vkoul-mobl>
+References: <20191115102705.649976-1-vkoul@kernel.org>
+ <19c70dac-aa3e-f0ea-d729-26df4f193eb0@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000ca5b3f0596a21e0c@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <19c70dac-aa3e-f0ea-d729-26df4f193eb0@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[trimmed down ridiculous Cc list]
+On 15-11-19, 08:55, Pierre-Louis Bossart wrote:
+> 
+> 
+> On 11/15/19 4:27 AM, Vinod Koul wrote:
+> > The current design of sending codec parameters assumes that decoders
+> > will have parsers so they can parse the encoded stream for parameters
+> > and configure the decoder.
+> 
+> that's not quite correct. It's rather than there was no need so far for
+> existing implementations to have parameters on decode, this was never a
+> limitation of the design, see e.g. the comments below:
 
-On Tue, Nov 05, 2019 at 03:52:08PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    51309b9d Add linux-next specific files for 20191105
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11ad1658e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a9b1a641c1f1fc52
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a0fc447639c6ffa66b59
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164e5f92e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c65bcce00000
-> 
-> The bug was bisected to:
-> 
-> commit 181be542ef3c9ca495500143d4c23f4d58beb5ab
-> Author: Steven Price <steven.price@arm.com>
-> Date:   Mon Nov 4 22:57:54 2019 +0000
-> 
->     mm: pagewalk: allow walking without vma
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11341968e00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=13341968e00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15341968e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a0fc447639c6ffa66b59@syzkaller.appspotmail.com
-> Fixes: 181be542ef3c ("mm: pagewalk: allow walking without vma")
-> 
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 8839 Comm: syz-executor009 Not tainted 5.4.0-rc6-next-20191105
-> #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:pmd_trans_huge_lock include/linux/huge_mm.h:219 [inline]
-> RIP: 0010:pagemap_pmd_range+0x83/0x1e40 fs/proc/task_mmu.c:1373
+You might be correct here as this is implementation based and in this
+case looks like decoders also need the additional params
 
-From some quick tests, this seems to have been fixed by
-mm-pagewalk-allow-walking-without-vma-v15
-(http://lkml.kernel.org/r/20191101140942.51554-13-steven.price@arm.com).
-And it's consistent with syzbot last seeing this crash on next-20191105.
-
-As this fix will be folded in, let's invalidate this syzbot bug report:
-
-#syz invalid
+-- 
+~Vinod
