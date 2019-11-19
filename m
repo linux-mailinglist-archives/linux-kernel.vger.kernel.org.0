@@ -2,105 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D686C1028B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9F21028BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:58:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbfKSP5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 10:57:10 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46068 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfKSP5J (ORCPT
+        id S1728365AbfKSP6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 10:58:46 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:31551 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727591AbfKSP6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:57:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W1uhPT3svlAF0ny/aKL/GHGJkaklH1eD5N8ZBRDMDjQ=; b=Xfdf/vrhOYcquHoQNoWpTcYtN
-        kuKDO7Bj0HAO9PGeYCNBHKD8xBrQdnj0NBMreHHZsj6FewQ1lt2CJRl5hZh7TsQLGgENhL3m9Y2vg
-        hgFjZX+aDnEaE4AoEMRRRAl7sFpRoDW7RF27nGb6Djf9AI9Tj5n16mNuwfZMKDqQd48sFww3pKSoO
-        A3tzKcDLGANz00inclHZMDPUpgPNRT5lBfyG4pYvTruFLURextxyUhR1r2/NAqX65anAsLCtSBbTG
-        fcpQx31yG7SOO80NCnOArA/EM6w9iLaF4Y5dqIt2zQua0YL/9XPDRqNicbv1QzgepjAfcZST2eANh
-        LdHbfPRqw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iX5sG-0003B8-Ga; Tue, 19 Nov 2019 15:57:05 +0000
-Date:   Tue, 19 Nov 2019 07:57:04 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
-        yang.shi@linux.alibaba.com, shakeelb@google.com,
-        hannes@cmpxchg.org, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Colin Ian King <colin.king@canonical.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH v4 3/9] mm/lru: replace pgdat lru_lock with lruvec lock
-Message-ID: <20191119155704.GP20752@bombadil.infradead.org>
-References: <1574166203-151975-1-git-send-email-alex.shi@linux.alibaba.com>
- <1574166203-151975-4-git-send-email-alex.shi@linux.alibaba.com>
+        Tue, 19 Nov 2019 10:58:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574179124;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QYuT05bQRH1TDY+TH4L5voF9XhTBnlMPUL3L+VxlLhk=;
+        b=NIrx3VSpR+2z71347mpCIptJwpfl3U7EgteqeE6rwtodnMuxDivjxxg6d9rO9BysQQtFSw
+        TRW7yX0N1+iZEs2wNaCNm7RJmWUCVncVMeJ22TS5veqlaN+VVgJylGf5fADjCiv9XsVQOt
+        hihd8LWBcPgIrz8h4JsQpqHQYhZUkW4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-298-FPZIHhWjMtCcDYIFUQk-0g-1; Tue, 19 Nov 2019 10:58:40 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7C9C8DDCD6;
+        Tue, 19 Nov 2019 15:58:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D528360255;
+        Tue, 19 Nov 2019 15:58:28 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 19 Nov 2019 16:58:37 +0100 (CET)
+Date:   Tue, 19 Nov 2019 16:58:26 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
+        will@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
+        bristot@redhat.com, dave@stgolabs.net, jack@suse.com
+Subject: Re: [PATCH 5/5] locking/percpu-rwsem: Remove the embedded rwsem
+Message-ID: <20191119155826.GA4739@redhat.com>
+References: <20191113102115.116470462@infradead.org>
+ <20191113102855.925208237@infradead.org>
+ <ee75fc38-c3c8-3f9e-13ba-5c8312d61325@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <ee75fc38-c3c8-3f9e-13ba-5c8312d61325@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: FPZIHhWjMtCcDYIFUQk-0g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <1574166203-151975-4-git-send-email-alex.shi@linux.alibaba.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 08:23:17PM +0800, Alex Shi wrote:
-> +static inline struct lruvec *lock_page_lruvec_irqsave(struct page *page,
-> +				struct pglist_data *pgdat, unsigned long *flags)
-> +{
-> +	struct lruvec *lruvec = mem_cgroup_page_lruvec(page, pgdat);
-> +
-> +	spin_lock_irqsave(&lruvec->lru_lock, *flags);
-> +
-> +	return lruvec;
-> +}
+On 11/19, Waiman Long wrote:
+>
+> On 11/13/19 5:21 AM, Peter Zijlstra wrote:
+> > +static int percpu_rwsem_wake_function(struct wait_queue_entry *wq_entr=
+y,
+> > +=09=09=09=09      unsigned int mode, int wake_flags,
+> > +=09=09=09=09      void *key)
+> > +{
+> > +=09struct task_struct *p =3D get_task_struct(wq_entry->private);
+> > +=09bool reader =3D wq_entry->flags & WQ_FLAG_CUSTOM;
+> > +=09struct percpu_rw_semaphore *sem =3D key;
+> > +
+> > +=09/* concurrent against percpu_down_write(), can get stolen */
+> > +=09if (!__percpu_rwsem_trylock(sem, reader))
+> > +=09=09return 1;
+> > +
+> > +=09list_del_init(&wq_entry->entry);
+> > +=09smp_store_release(&wq_entry->private, NULL);
+> > +
+> > +=09wake_up_process(p);
+> > +=09put_task_struct(p);
+> > +
+> > +=09return !reader; /* wake 'all' readers and 1 writer */
+> > +}
+> > +
+>
+> If I read the function correctly, you are setting the WQ_FLAG_EXCLUSIVE
+> for both readers and writers and __wake_up() is called with an exclusive
+> count of one. So only one reader or writer is woken up each time.
 
-This should be a macro, not a function.  You basically can't do this;
-spin_lock_irqsave needs to write to a variable which can then be passed
-to spin_unlock_irqrestore().  What you're doing here will dereference the
-pointer in _this_ function, but won't propagate the modified value back to
-the caller.  I suppose you could do something like this ...
+This depends on what percpu_rwsem_wake_function() returns. If it returns 1,
+__wake_up_common() stops, exactly because all waiters have WQ_FLAG_EXCLUSIV=
+E.
 
-static inline struct lruvec *lock_page_lruvec_irqsave(struct page *page,
-			struct pglist_data *pgdat, unsigned long *flagsp)
-{
-	unsigned long flags;
-	struct lruvec *lruvec = mem_cgroup_page_lruvec(page, pgdat);
+> However, the comment above said we wake 'all' readers and 1 writer. That
+> doesn't match the actual code, IMO.
 
-	spin_lock_irqsave(&lruvec->lru_lock, flags);
-	*flagsp = flags;
+Well, "'all' readers" probably means "all readers before writer",
 
-	return lruvec;
-}
+> To match the comments, you should
+> have set WQ_FLAG_EXCLUSIVE flag only on writer. In this case, you
+> probably don't need WQ_FLAG_CUSTOM to differentiate between readers and
+> writers.
 
-Almost certainly easier to write a macro though.
+See above...
 
-You shouldn't need the two prior patches with this kind of change.
+note also the
+
+=09if (!__percpu_rwsem_trylock(sem, reader))
+=09=09return 1;
+
+at the start of percpu_rwsem_wake_function(). We want to stop wake_up_commo=
+n()
+as soon as percpu_rwsem_trylock() fails. Because we know that if it fails o=
+nce
+it can't succeed later. Although iiuc this can only happen if another (new)
+writer races with __wake_up(&sem->waiters).
+
+
+I guess WQ_FLAG_CUSTOM can be avoided, percpu_rwsem_wait() could do
+
+=09if (read)
+=09=09__add_wait_queue_entry_tail(...);
+=09else {
+=09=09wq_entry.flags |=3D WQ_FLAG_EXCLUSIVE;
+=09=09__add_wait_queue(...);
+=09}
+
+but this is "unfair".
+
+Oleg.
+
