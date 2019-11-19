@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 242EC101514
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:40:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BBE910163B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730414AbfKSFka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:40:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
+        id S1731780AbfKSFvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730410AbfKSFk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:40:28 -0500
+        id S1731758AbfKSFvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 019FE218BA;
-        Tue, 19 Nov 2019 05:40:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2487208C3;
+        Tue, 19 Nov 2019 05:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142027;
-        bh=CGJbKln3Rkg2sxB7qY0MAuLx3+hEzsvt48vMiraYkKs=;
+        s=default; t=1574142679;
+        bh=5UlIQR2DCq+pOvDPurmJbhIK5FNedXV0/VZEjZx8hAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dDblZ0k0d5vUffNms0f+q/KX42sxbG/b4XbZAX6R9pUA0ehUFMlYCkJsbymM5HTEn
-         ApHi7dOWNvqKIeXoF2LICGX7VJ6IcDlHAH5LMbwHuw9zirhYcbdj09y4xF9sPU/bmy
-         Sggi6FF8Q7RlWXwGveUxDTVKJoBPRewOHBYR+AGM=
+        b=EVt3mhv689n+7tQmB5qZpxCPLL903GoFggVl35nfd3DqhSfbRyLoBn0M6Mfmj/fA3
+         etNsGpaKSTDIrAgtn1+uF9gUW8PSP2T6+kvP2+IzZv9fiRefjQm56X1qQLp3dhIspC
+         VyC1oIq4UpTWCEBwaDmg4tzgvtdLt9AA7wjz0KcM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 364/422] ARM: dts: meson8b: odroidc1: enable the SAR ADC
-Date:   Tue, 19 Nov 2019 06:19:21 +0100
-Message-Id: <20191119051422.602010042@linuxfoundation.org>
+Subject: [PATCH 4.14 162/239] ARM: dts: ux500: Fix LCDA clock line muxing
+Date:   Tue, 19 Nov 2019 06:19:22 +0100
+Message-Id: <20191119051333.435722076@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit fd6643142a0c5ab4d423ed7173a0be414d509214 ]
+[ Upstream commit ecde29569e3484e1d0a032bf4074449bce4d4a03 ]
 
-Odroid-C1 exposes ADC channels 0 and 1 on the GPIO headers. NOTE: Due
-to the SoC design these are limited to 1.8V (instead of 3.3V like all
-other pins).
-Enable the SAR ADC to enable voltage measurements on these pins.
+The "lcdaclk_b_1" group is muxed with the function "lcd"
+but needs a separate entry to be muxed in with "lcda"
+rather than "lcd".
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/meson8b-odroidc1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/ste-href-family-pinctrl.dtsi | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-index 8fdeeffecbdbc..8a09071d712a5 100644
---- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-+++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-@@ -153,6 +153,11 @@
- 	pinctrl-names = "default";
- };
+diff --git a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
+index 5c5cea232743d..1ec193b0c5065 100644
+--- a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
++++ b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
+@@ -607,16 +607,20 @@
  
-+&saradc {
-+	status = "okay";
-+	vref-supply = <&vcc_1v8>;
-+};
-+
- &sdio {
- 	status = "okay";
- 
+ 			mcde {
+ 				lcd_default_mode: lcd_default {
+-					default_mux {
++					default_mux1 {
+ 						/* Mux in VSI0 and all the data lines */
+ 						function = "lcd";
+ 						groups =
+ 						"lcdvsi0_a_1", /* VSI0 for LCD */
+ 						"lcd_d0_d7_a_1", /* Data lines */
+ 						"lcd_d8_d11_a_1", /* TV-out */
+-						"lcdaclk_b_1", /* Clock line for TV-out */
+ 						"lcdvsi1_a_1"; /* VSI1 for HDMI */
+ 					};
++					default_mux2 {
++						function = "lcda";
++						groups =
++						"lcdaclk_b_1"; /* Clock line for TV-out */
++					};
+ 					default_cfg1 {
+ 						pins =
+ 						"GPIO68_E1", /* VSI0 */
 -- 
 2.20.1
 
