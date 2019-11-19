@@ -2,103 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C8A102AC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 702F3102AD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:31:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfKSR14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:27:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:15490 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728060AbfKSR14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:27:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:27:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,218,1571727600"; 
-   d="scan'208";a="289673313"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2019 09:27:55 -0800
-Date:   Tue, 19 Nov 2019 09:32:31 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 02/10] iommu/vt-d: Fix CPU and IOMMU SVM feature
- matching checks
-Message-ID: <20191119093231.65fb3b3f@jacob-builder>
-In-Reply-To: <3634dee5-3f9f-4618-951e-8bb5e4988223@redhat.com>
-References: <1574106153-45867-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1574106153-45867-3-git-send-email-jacob.jun.pan@linux.intel.com>
-        <26d1e79b-3a16-0a8f-895e-e2c41c8d3b28@redhat.com>
-        <20191118134719.6835981b@jacob-builder>
-        <3634dee5-3f9f-4618-951e-8bb5e4988223@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728467AbfKSRbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:31:20 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44750 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728128AbfKSRbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 12:31:20 -0500
+Received: by mail-io1-f66.google.com with SMTP id j20so13093001ioo.11
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 09:31:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZKXb08mLw7/gYPbvXLPbBkWtw4UGYUMyffgZIZI+HT0=;
+        b=ArmFHtCFR79K59IBtCbRQ9YtpK4dcS1SQ2DILybT8VpuW5oSI+0/OjIkU1lxFXj90/
+         g67wwarVmSXF/YEiLI36TyOFoIjfqE27lCCfVjunx2J7PwQuhJWt3gDvFtjUCpYKxgh9
+         oVBJkz7zllCUtHe+zYEkA35bMlpX/+bt76IY68FDbH/jA6+he9MBGIXzPgjDy2onhxbt
+         MmWvCZG+IUqmlnJ/v5MdvtENnsgyvXm6+Q+U4kXbHucQ25VneEvlZXYpMb/i6Pwua1OF
+         iBgGyPJ+pmIvLIBTRt8nvMFDyfyP6H8g7fFrfjUeeOMyL36jz0L55jJ7g10/Y6oDX1NK
+         nTKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZKXb08mLw7/gYPbvXLPbBkWtw4UGYUMyffgZIZI+HT0=;
+        b=e/xRls++CWG83MJDMU/A04NY2Zo0VqT1WxM4GdZ7XsOxwS6rJ9kpg9zZeW2A09NTv0
+         YYvK552vKJu/nbNC7oRgHmmwWPOvnDHGFvgrJ3zbB3cIYhevPZdf0Fs1e0xlgoaNw6lu
+         IXPmVPLmFshzJ6sJ7aaYwW0Fhr3VIe3WUq420jsYoq307Ho23vQuE3fzLOs1MbqVNoq7
+         lvxL+c3T3z6CA43o8LPHIRtJd2V45HqL7BkiMYz1XYEr68ZIXPGad1KC/l15jMIfVDUB
+         n6b7967Z10TAUVIeIN068Nn93iG5avHlT6NOIOOvZalh6qwA39QhUqulZ7rfR6YmbZSB
+         vwMw==
+X-Gm-Message-State: APjAAAUX5T8hJz1bd0JjJ+HlBO+ZLmr7VKGZ1khn0jOBdRKIBNIrdHG4
+        hmRCiDU0/afscqvwP0l7i5wRvdcma1p+PxjGyJ1vlw==
+X-Google-Smtp-Source: APXvYqxuSx88S96OihGrrKgtsaBcR+slNCHyQEu+C35JJbv7CvdH9n0vVrz2XW8a5TUK1UWZLn2OBnY3pHUXCiSjiq8=
+X-Received: by 2002:a6b:14ca:: with SMTP id 193mr19398156iou.140.1574184677951;
+ Tue, 19 Nov 2019 09:31:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191119141645.19777-1-t-kristo@ti.com>
+In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 19 Nov 2019 10:31:06 -0700
+Message-ID: <CANLsYkwyLMHzKkm-6X+OgQ+khRYJshMJsxdst7+c7n+hX4nLpQ@mail.gmail.com>
+Subject: Re: [PATCHv2 00/15] Remoteproc: updates for OMAP remoteproc support
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 09:02:26 +0100
-Auger Eric <eric.auger@redhat.com> wrote:
+On Tue, 19 Nov 2019 at 07:17, Tero Kristo <t-kristo@ti.com> wrote:
+>
+> Hi,
+>
+> This is v2 of the series [1], addressing comments from Bjorn and Rob.
+> Bindings patch is funnily v2.5, as I posted v2 already and wanted to
+> keep this somehow in sync. Individual patches contain comments about the
+> changes, or Reviewed-by tags provided if there are no changes.
+>
+> I also dropped the conversion patch to SPDX licensing until I can
+> confirm the license we want to use. Lets just keep the existing in place
+> until that.
+>
+> This series still depends on the reset + clock patches posted earlier,
+> but both of those dependencies are in linux-next now.
 
-> Hi Jacob,
-> 
-> On 11/18/19 10:47 PM, Jacob Pan wrote:
-> > On Mon, 18 Nov 2019 21:33:34 +0100
-> > Auger Eric <eric.auger@redhat.com> wrote:
-> >   
-> >> Hi Jacob,
-> >>
-> >> On 11/18/19 8:42 PM, Jacob Pan wrote:  
-> >>> The current code checks CPU and IOMMU feature set for SVM support
-> >>> but the result is never stored nor used. Therefore, SVM can still
-> >>> be used even when these checks failed.    
-> >> "SVM can still be used even when these checks failed". What were
-> >> the consequences if it happened? Does it fix this cleanly now.  
-> >>>  
-> > The consequence is DMA cannot reach above 48-bit virtual address
-> > range when CPU does 5-level and IOMMU can only do 4-level. With is
-> > fix, svm_bind_mm will fail in the first place to prevent SVM use by
-> > DMA.  
-> OK thank you for the clarification. Maybe this latter can be added in
-> the commit message
-> >
-Yes, will do.   
->  [...]  
-> >> nit: is it really an error or just a warning?  
-> > I think it is an error in that there is an illegal configuration.
-> > It is mostly for vIOMMU, we expect native HW should have these
-> > features matched.  
-> 
-> OK
-> 
-> Thanks
-> 
-> Eric
-> >   
->  [...]  
-> >> Besides,
-> >> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> >>
-> >> Thanks
-> >>
-> >> Eric
-> >>  
-> > 
-> > [Jacob Pan]
-> >   
-> 
+I tried to apply your set to today's linux-next (next-20191119) but it
+fails at patch 13.
 
-[Jacob Pan]
+Mathieu
+
+>
+> -Tero
+>
+> [1] https://patchwork.kernel.org/cover/11215421/
+>
+>
+>
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
