@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8FD31016A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D3CD10155D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732253AbfKSFzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53552 "EHLO mail.kernel.org"
+        id S1730733AbfKSFnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731923AbfKSFzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:55:11 -0500
+        id S1730707AbfKSFnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:43:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7B9C218BA;
-        Tue, 19 Nov 2019 05:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B759B21783;
+        Tue, 19 Nov 2019 05:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142911;
-        bh=M7N5LztpDw2kyJ5yB4iPmtwbve+0kgH1XBI6bCkxHh8=;
+        s=default; t=1574142194;
+        bh=YoOdhLDsccXJu821EOv0qP752hFVRTq/feQk1vt7ELE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vv9j9oP9xLlsK5HijNx/XN2BZ9fEb9mNQsLykvsHRF+4thJbVzWk4b5zZv6Lfl4ii
-         qyoRUxDU0k62OZpXC05f9twhg8rWJwSha5cl/W7UnplyhgN1ZasTJF6GL07IiNMRkv
-         nVO/Ej1UlfR1AUGHMBkbhaJuvC9FKYtBtGQkXB8k=
+        b=JLyXBPpp0QSE4BAJQY+Ya+frIKK+qy4JRgaUj4kblayiX1ycykXSLIAy0MiYIukEV
+         uQDucJ7wjHSL4pdjlNrQVNG+FdKqbQ/plEJGtWrN8CkRAGbGxgayaCwT57e2vkjY+D
+         X5fv2OWVrlQlko10baWZw9s2sLol4lo/Otl73L4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 217/239] iwlwifi: dbg: dont crash if the firmware crashes in the middle of a debug dump
-Date:   Tue, 19 Nov 2019 06:20:17 +0100
-Message-Id: <20191119051339.238673966@linuxfoundation.org>
+Subject: [PATCH 4.19 421/422] net: phy: mdio-bcm-unimac: mark PM functions as __maybe_unused
+Date:   Tue, 19 Nov 2019 06:20:18 +0100
+Message-Id: <20191119051426.475173994@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 79f25b10c9da3dbc953e47033d0494e51580ac3b ]
+[ Upstream commit 9b97123a584f60a5bca5a2663485768a1f6cd0a4 ]
 
-We can dump data from the firmware either when it crashes,
-or when the firmware is alive.
-Not all the data is available if the firmware is running
-(like the Tx / Rx FIFOs which are available only when the
-firmware is halted), so we first check that the firmware
-is alive to compute the required size for the dump and then
-fill the buffer with the data.
+The newly added runtime-pm support causes a harmless warning
+when CONFIG_PM is disabled:
 
-When we allocate the buffer, we test the STATUS_FW_ERROR
-bit to check if the firmware is alive or not. This bit
-can be changed during the course of the dump since it is
-modified in the interrupt handler.
+drivers/net/phy/mdio-bcm-unimac.c:330:12: error: 'unimac_mdio_resume' defined but not used [-Werror=unused-function]
+ static int unimac_mdio_resume(struct device *d)
+drivers/net/phy/mdio-bcm-unimac.c:321:12: error: 'unimac_mdio_suspend' defined but not used [-Werror=unused-function]
+ static int unimac_mdio_suspend(struct device *d)
 
-We hit a case where we allocate the buffer while the
-firmware is sill working, and while we start to fill the
-buffer, the firmware crashes. Then we test STATUS_FW_ERROR
-again and decide to fill the buffer with data like the
-FIFOs even if no room was allocated for this data in the
-buffer. This means that we overflow the buffer that was
-allocated leading to memory corruption.
+Marking the functions as __maybe_unused is the easiest workaround
+and avoids adding #ifdef checks.
 
-To fix this, test the STATUS_FW_ERROR bit only once and
-rely on local variables to check if we should dump fifos
-or other firmware components.
-
-Fixes: 04fd2c28226f ("iwlwifi: mvm: add rxf and txf to dump data")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: b78ac6ecd1b6 ("net: phy: mdio-bcm-unimac: Allow configuring MDIO clock divider")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/mdio-bcm-unimac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index e72c0b825420c..4650b9e5da2bc 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -775,7 +775,7 @@ void iwl_fw_error_dump(struct iwl_fw_runtime *fwrt)
- 	dump_data = iwl_fw_error_next_data(dump_data);
+diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
+index 80b9583eaa952..df75efa96a7d9 100644
+--- a/drivers/net/phy/mdio-bcm-unimac.c
++++ b/drivers/net/phy/mdio-bcm-unimac.c
+@@ -318,7 +318,7 @@ static int unimac_mdio_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 	/* We only dump the FIFOs if the FW is in error state */
--	if (test_bit(STATUS_FW_ERROR, &fwrt->trans->status)) {
-+	if (fifo_data_len) {
- 		iwl_fw_dump_fifos(fwrt, &dump_data);
- 		if (radio_len)
- 			iwl_read_radio_regs(fwrt, &dump_data);
+-static int unimac_mdio_suspend(struct device *d)
++static int __maybe_unused unimac_mdio_suspend(struct device *d)
+ {
+ 	struct unimac_mdio_priv *priv = dev_get_drvdata(d);
+ 
+@@ -327,7 +327,7 @@ static int unimac_mdio_suspend(struct device *d)
+ 	return 0;
+ }
+ 
+-static int unimac_mdio_resume(struct device *d)
++static int __maybe_unused unimac_mdio_resume(struct device *d)
+ {
+ 	struct unimac_mdio_priv *priv = dev_get_drvdata(d);
+ 	int ret;
 -- 
 2.20.1
 
