@@ -2,128 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12DE2102B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B775102B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfKSSHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 13:07:41 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35991 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbfKSSHk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 13:07:40 -0500
-Received: by mail-il1-f196.google.com with SMTP id s75so20547175ilc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 10:07:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XSGUSmt8DWCWlW8msIL5ALGPJmoB1fkd0qNlWqLeu8k=;
-        b=Sk+Vv51z9OEF2Nd65IvmzhNBU4TlFhmlNcI/Os6xZbjg4GHq0BoYEEN6u171Z5Agzq
-         3q8XQIlLJ3ZYDM90jSKcuddVt/HMRsClMFg6hrhDNT9TU/AspHhRDQqocDepD5bjwhCq
-         Bx97mOKPEPrq1HElEmHHSSxPcVu2lvpWl4QtTGYqTQ8VMAvMg9oCTLA+Rdqyzd5n92xZ
-         chjeIYoKPFTRugu92/WZNnD554cNHgihEhQTWbtsUEErp9OX7Ijiw/UgGaodEWuAL5tf
-         WAlASgI9/UfmIooC9Ftl54a5FOW+5QdJQeXo1hJAX00BhXZRnO7auMi8xdk8G2638juP
-         PbPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XSGUSmt8DWCWlW8msIL5ALGPJmoB1fkd0qNlWqLeu8k=;
-        b=lDdJR8ZqJkBgLeWpgn8BgoEH6XEhgHBmQv1KO240bOVNlF+UESR+tk2vy40VopLFsA
-         +2WfvNCHQX9q9ckS5AB0G/WttLa4lKmzUP5i4UbJAHTriKkJvU7dfY8unKebaKQK8ka3
-         Qg1j/3BCyaib6GZQVdbzlgEEj/wG9W8Ft/KJER2tPh/GFUpaR1FADpRx8V1hla2mI94s
-         S9aoof5otC4psS8MaZlH0XdTipbADlfR0kv0bI5sCwbnXtFpXiQE995C7SHXfBVHlW1l
-         Nc+JswTa1qhVaBfTLi/7RHlyG3xW4QGAxyVgYrJNW5Zql5e8rPIn+hZzJH0ntNmCm9CW
-         FiNA==
-X-Gm-Message-State: APjAAAXs0fnZ3Fw/aW/QKepLD3xVIgK6A6VZBNckcmqLaUnZUkZ468ON
-        5ZoY4cyIKfuD9V0baEF+ZjByvuiuwS3oP57snVmLRA==
-X-Google-Smtp-Source: APXvYqx9gw2Pd6WfePrc4Gj3pViSbuDuvBNqS6ajS2Oy5htzLNbc/ORkSvCY/OjBI2MG3V2dSxKXistO0VXRWSlyD0A=
-X-Received: by 2002:a92:8c49:: with SMTP id o70mr24067717ild.72.1574186859319;
- Tue, 19 Nov 2019 10:07:39 -0800 (PST)
+        id S1727031AbfKSSNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 13:13:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:56452 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726510AbfKSSN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 13:13:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42F481FB;
+        Tue, 19 Nov 2019 10:13:28 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B16B3F703;
+        Tue, 19 Nov 2019 10:13:27 -0800 (PST)
+Date:   Tue, 19 Nov 2019 18:13:25 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Message-ID: <20191119181325.GD3634@sirena.org.uk>
+References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+ <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191118162502.GJ9761@sirena.org.uk>
+ <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20191119141645.19777-1-t-kristo@ti.com> <CANLsYkwyLMHzKkm-6X+OgQ+khRYJshMJsxdst7+c7n+hX4nLpQ@mail.gmail.com>
-In-Reply-To: <CANLsYkwyLMHzKkm-6X+OgQ+khRYJshMJsxdst7+c7n+hX4nLpQ@mail.gmail.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 19 Nov 2019 11:07:28 -0700
-Message-ID: <CANLsYkwcWDOPx_rpL5RkzsNLyw+ccPE0bNhar6xv1SZ1=R5xmA@mail.gmail.com>
-Subject: Re: [PATCHv2 00/15] Remoteproc: updates for OMAP remoteproc support
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
+Content-Disposition: inline
+In-Reply-To: <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
+X-Cookie: Beam me up, Scotty!  It ate my phaser!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 at 10:31, Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Tue, 19 Nov 2019 at 07:17, Tero Kristo <t-kristo@ti.com> wrote:
-> >
-> > Hi,
-> >
-> > This is v2 of the series [1], addressing comments from Bjorn and Rob.
-> > Bindings patch is funnily v2.5, as I posted v2 already and wanted to
-> > keep this somehow in sync. Individual patches contain comments about the
-> > changes, or Reviewed-by tags provided if there are no changes.
-> >
-> > I also dropped the conversion patch to SPDX licensing until I can
-> > confirm the license we want to use. Lets just keep the existing in place
-> > until that.
-> >
-> > This series still depends on the reset + clock patches posted earlier,
-> > but both of those dependencies are in linux-next now.
->
-> I tried to apply your set to today's linux-next (next-20191119) but it
-> fails at patch 13.
 
-Digging further into this patch 12 is causing problem on next-20191119 (not 13):
+--llIrKcgUOe3dCx0c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-mpoirier@xps15:~/work/remoteproc/kernel-review$ git apply --reject
-0012-remoteproc-omap-add-support-for-system-suspend-resum.patch
-Checking patch drivers/remoteproc/omap_remoteproc.c...
-Hunk #3 succeeded at 85 (offset -1 lines).
-Hunk #4 succeeded at 99 (offset -1 lines).
-Hunk #5 succeeded at 359 (offset -1 lines).
-Hunk #6 succeeded at 544 (offset -1 lines).
-Hunk #7 succeeded at 952 (offset -1 lines).
-Hunk #8 succeeded at 992 (offset -2 lines).
-Checking patch drivers/remoteproc/omap_remoteproc.h...
-error: while searching for:
-/*
- * Remote processor messaging
- *
- * Copyright (C) 2011 Texas Instruments, Inc.
- * Copyright (C) 2011 Google, Inc.
- * All rights reserved.
- */
+On Mon, Nov 18, 2019 at 06:03:42PM +0000, Vaittinen, Matti wrote:
 
-error: patch failed: drivers/remoteproc/omap_remoteproc.h:2
-Hunk #2 succeeded at 57 (offset 25 lines).
-Hunk #3 succeeded at 80 (offset 25 lines).
-Applied patch drivers/remoteproc/omap_remoteproc.c cleanly.
-Applying patch drivers/remoteproc/omap_remoteproc.h with 1 reject...
-Rejected hunk #1.
-Hunk #2 applied cleanly.
-Hunk #3 applied cleanly.
+> It's nice to hear from you again :) I hope you're enjoying all the new
+> things :)
 
-Your patch expects the last line of the first hunk to be '*/' but it
-is '*' in linux-next.
+:)
 
->
-> Mathieu
->
-> >
-> > -Tero
-> >
-> > [1] https://patchwork.kernel.org/cover/11215421/
-> >
-> >
-> >
-> > --
-> > Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> On Mon, 2019-11-18 at 16:25 +0000, Mark Brown wrote:
+> > On Mon, Nov 18, 2019 at 08:53:57AM +0200, Matti Vaittinen wrote:
+
+> > I don't think I saw this having the effect on set_voltage() that I'd
+> > have expected in the driver? =20
+
+> The support for this is added in patch 12. I should've ordered the
+> patch series so that all regulator patches were one after another.
+> Sorry for that.
+> The patch 12 adds the run-level support. Please see the functions
+> get_runcontrolled_bucks_dt(),
+> mark_regulator_runlvl_controlled() (sets the g->runlvl)
+> and set_buck_runlvl_controlled() (called based on g->runlvl)
+> which changes the ops to disallow setters and to get voltage based on
+> current runlevel - and different ops depending on if runlevels are
+> controlled by GPIO or I2C. Additionally set_buck_runlvl_controlled()
+> adds DT parsing call-back for setting the initial voltages.
+
+Ah, OK.  I didn't even notice that patch when I scanned the series.
+I'll look out for this next time around but that sounds like it's
+generally going in the right direction, especially if it's integrated
+with the suspend mode regulator bindings that Chunyan did.
+
+> > > +        minimum: 0
+> > > +        maximum: 2000000
+> > > +        maxItems: 4
+> > > +        description:
+> > > +          Array of voltages for run-levels. First value is for
+> > > run-level 0,
+> > > +          second for run-level 1 etc. Microvolts.
+
+> > What's the mapping from array indexes to the names used elsewhere to
+> > support runlevels?
+
+> Hmm. Sorry Mark, I don't think I follow your question. Do you mean
+> names like LPSR, SUSPEND, IDLE, RUN? If so, then I might need to
+> rephrase this. The runlevels referred here are different from LPSR,
+> SUSPEND, IDLE etc. They are actually 'sub-levels' for PMIC's RUN state.
+> Eg, kind of a 'fast way' to change voltages for multiple power rails
+> when SoC is at RUN state. The names I have seen are RUN0, RUN1, RUN2
+> and RUN3. That mapping is described in description above.
+
+Yes, I think this needs clarification as I completely failed to pick up
+on this and did indeed read this as referring to the modes.  "Voltages
+that can be set in RUN mode" or something?  I take it these voltages are
+fixed and the OS can't change them?
+
+--llIrKcgUOe3dCx0c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3UMMUACgkQJNaLcl1U
+h9DsnQf9H7LkN3pf6vXdSLnZFaW2fiJIGf+Sk/WnqSyYD4zxVm0xlQ1OPVmWaRv+
+KQ4LEN9/ZqHA3KmCWJrtPLm9R5lXwu2VefYDJVkwb+Rlczpg7nusSr8qSFqi3C48
+UhWSGJy/myipQixFnlucne58SDANqnA/R+WxvPW8Q+PLsFgWmm/MjBF2YCVmrFv+
+R3K8G+POKe4GWkC6E8ISlWHG1YAcFYljMwXCwhex20OxEyuQhzWQ4HFfvbd9OVhe
+lxawOmHk0Oh/pNkB9LX42CnI3oBv6hRc2O0No9kOWWxfTOJuJyRz3N/YlI5EVDzS
+oJ8uCa7FF9f8mnmVxN27sGy7pKAFZQ==
+=lX/d
+-----END PGP SIGNATURE-----
+
+--llIrKcgUOe3dCx0c--
