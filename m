@@ -2,166 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7EE102516
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:03:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF3610252F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfKSNDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:03:30 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51375 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725798AbfKSND3 (ORCPT
+        id S1727738AbfKSNJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:09:47 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39027 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfKSNJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:03:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574168607;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VVKdPHyNInKr1jXwID8mLSj5pIoLgSLr+NLS/+lX59s=;
-        b=gyMooxpPqqtE0lwRVVcMo99wrL0CrX79iAZ8Y4vD4dV123sBG7m1c+CLizf/WE2sj5o2m/
-        KCr9+bQyr2+ENG+uBPpwbOlGbnD02JTmyl4v0TRoJN++szUzB734PMDS/GahpNj6eOvWVU
-        +RPBUbq4ujsvE6v6LqarTRglOPCw7Sw=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-Vy0N39GpOD-O8Hfpc0gfmA-1; Tue, 19 Nov 2019 08:03:26 -0500
-Received: by mail-qt1-f198.google.com with SMTP id f14so9397573qto.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:03:26 -0800 (PST)
+        Tue, 19 Nov 2019 08:09:47 -0500
+Received: by mail-ed1-f68.google.com with SMTP id l25so17004836edt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=VEavlwL1+rDzs+L+hM6nx0dnrMPSn2yWoKd3exKBnKI=;
+        b=b6eiXfq4vDKE47zZ4PvxoN61Q1BY37X7wcxDr/SiVmRRP0VtNsmCMMkrX3qi2LrRtu
+         P92lSpOaIxSROrtWuDJJ0XrRgaTiZBAJJ6z6l46VSE06O0MjhbBzsnYdD72zjhau3pF3
+         WCNJR5qHibROyv1OB4bctwVa86YYWorAOoycA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=U7VXEEogLZ2y/UYgVzgWhynH6YujLFzwyuHzw1/YNWU=;
-        b=eCV3sAQDofYH2Amj39qGlXKj/dAanEbNvth/XriLGisecLkBwAlVLy/4mmpLQj0Avs
-         SbRHbgZQ4TXwZOBzONVyu85bop9cN+S/qybVVbwhZYT4ZP+qOUe4CWV6Y5WZQjp10GyY
-         yGCnoBoBo5UxGDW8bUgmjNc70DOzbNz9wTuhJ3degAdp+abBTKi97UsUDeuDgpVi8weF
-         SNy7cMDByroUy7DxT0yRDbdkVgb4+Se0xPY/ZeV5iF880QmAvmfuqspSLV4pKrJOV9MS
-         xYiJ/2IzzaI0lu3RhHNqEdMBtZ3v1RD7LnBXj4BsE+GMP5GRa3sEuy8UcThvqmfjE590
-         gwSQ==
-X-Gm-Message-State: APjAAAVv7Ly7VwFgAF7Py09iQ9zACkuqq9Ukqmo/1TTptTi4YbYX2v/n
-        JobtnaVLuzyUwCZTlf0Gfh6n32+KD5M9p6G7OJOQHl/1umByzbkHp2ND/AdojL2fmOfngYKgfXG
-        RjFu1mUsQphBxq3BvrCpukUhR
-X-Received: by 2002:ae9:edc6:: with SMTP id c189mr29290246qkg.351.1574168606026;
-        Tue, 19 Nov 2019 05:03:26 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyiIfkMbDD3N5CTsf6CCSVQpQTOzwgDzZyzojxHwiP+jBWlIneB91vqUjmHw3eYsoLuHqhzZw==
-X-Received: by 2002:ae9:edc6:: with SMTP id c189mr29290210qkg.351.1574168605618;
-        Tue, 19 Nov 2019 05:03:25 -0800 (PST)
-Received: from redhat.com (bzq-79-176-6-42.red.bezeqint.net. [79.176.6.42])
-        by smtp.gmail.com with ESMTPSA id 187sm10260541qkk.103.2019.11.19.05.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 05:03:24 -0800 (PST)
-Date:   Tue, 19 Nov 2019 08:03:19 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Khazhismel Kumykov <khazhy@google.com>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH] virtio_balloon: fix shrinker scan number of pages
-Message-ID: <20191119080254-mutt-send-email-mst@kernel.org>
-References: <20191119101718.38976-1-mst@redhat.com>
- <34c84d6a-d200-c296-39bb-4770bf4517e9@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=VEavlwL1+rDzs+L+hM6nx0dnrMPSn2yWoKd3exKBnKI=;
+        b=bSaTH8JezjGVGGbTfzDrveN/YK/3aGFfgj9CdC5u5q3PqjGgrW/ESOW6IsvHUiFvkz
+         VxZ8Oyb8dwhXihccr01im0xbWn+MsT8Xfd0KsdEqTjHMqC3Hyy8a4cGECg4BqP+MUa0U
+         4KlCz2CgOJKuMy2IGPOfyrYPSWPiavLu2PVEAx6rsmUuA6yJWdLUw9mbUU9km90aCvF7
+         P8/spX/4AspnfAm6iwMl4f85XD5ABIMc5yITJ7OP6VLeu2jKH6BmTq9OJ4UOHDgWaFMq
+         gfwdRtSQXNC6lL7rXDpr2BT0yFYH3NBLZ84n9BKx4HRyBUkvI5ZRDJfo3bv2oVu6pRhe
+         9Mtw==
+X-Gm-Message-State: APjAAAWFt1zhxTy5gxogdD7jME3o29pbo5lDe0+4POp9Bbkw85OV2Qv/
+        Ax1fBujkXaXKE8xkcC+UNu1HvNH9qdcLdA==
+X-Google-Smtp-Source: APXvYqyi7VyGF04nrp0FD7XxKIMU7peUyxddHM2uVH/F4ypmOHUZQ3/qB/XqrN3ZnYv9ZSibZci55w==
+X-Received: by 2002:a17:906:b80f:: with SMTP id dv15mr35974432ejb.188.1574168983486;
+        Tue, 19 Nov 2019 05:09:43 -0800 (PST)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id e19sm557254eds.71.2019.11.19.05.09.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2019 05:09:43 -0800 (PST)
+Received: by mail-wr1-f51.google.com with SMTP id e6so23805464wrw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:09:43 -0800 (PST)
+X-Received: by 2002:adf:e505:: with SMTP id j5mr33584239wrm.46.1574168650324;
+ Tue, 19 Nov 2019 05:04:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <34c84d6a-d200-c296-39bb-4770bf4517e9@redhat.com>
-X-MC-Unique: Vy0N39GpOD-O8Hfpc0gfmA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+References: <20191114051242.14651-1-helen.koike@collabora.com>
+ <20191114051242.14651-3-helen.koike@collabora.com> <09d4f683-d03d-46c9-e9d2-b8cceb72446e@xs4all.nl>
+ <9cb116f6-64f4-1510-b128-8657d6d4889b@collabora.com> <CAFLEztRQfYE_Mssiq4KxK-QyJEe+KT4eTsvnLZQK5T=uVADUqA@mail.gmail.com>
+ <4135d35cd581b31d08b547852ac43e959957abf5.camel@collabora.com>
+In-Reply-To: <4135d35cd581b31d08b547852ac43e959957abf5.camel@collabora.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 19 Nov 2019 22:03:59 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BPwSnY51vJboCB6Hr2Yz4jMqt4VWLNNLTpiwenGo_Wew@mail.gmail.com>
+Message-ID: <CAAFQd5BPwSnY51vJboCB6Hr2Yz4jMqt4VWLNNLTpiwenGo_Wew@mail.gmail.com>
+Subject: Re: [PATCH v11 02/11] media: staging: rkisp1: add document for rkisp1
+ meta buffer format
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Jacob Chen <jacobchen110@gmail.com>,
+        Helen Koike <helen.koike@collabora.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        Eddie Cai <eddie.cai.linux@gmail.com>, kernel@collabora.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jacob Chen <jacob-chen@rock-chips.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 12:39:51PM +0100, David Hildenbrand wrote:
-> On 19.11.19 11:17, Michael S. Tsirkin wrote:
-> > virtio_balloon_shrinker_scan should return number of system pages freed=
+On Tue, Nov 19, 2019 at 9:56 PM Ezequiel Garcia <ezequiel@collabora.com> wr=
+ote:
+>
+> Hello Jacob,
+>
+> Thanks for the insight.
+>
+> On Tue, 2019-11-19 at 18:16 +0800, Jacob Chen wrote:
+> > Hi Helen ,
+> >
+> > Helen Koike <helen.koike@collabora.com> =E4=BA=8E2019=E5=B9=B411=E6=9C=
+=8814=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=886:59=E5=86=99=E9=81=93=
+=EF=BC=9A
+> > >
+> > >
+> > > On 11/14/19 6:21 AM, Hans Verkuil wrote:
+> > > > On 11/14/19 6:12 AM, Helen Koike wrote:
+> > > > > From: Jacob Chen <jacob2.chen@rock-chips.com>
+> > > > >
+> > > > > This commit add document for rkisp1 meta buffer format
+> > > > >
+> > > > > Signed-off-by: Jacob Chen <jacob-chen@rock-chips.com>
+> > > > > [refactored for upstream]
+> > > > > Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> > > >
+> > > > checkpatch gives me:
+> > > >
+> > > > WARNING: Missing Signed-off-by: line by nominal patch author 'Jacob=
+ Chen <jacob2.chen@rock-chips.com>'
+> > > >
+> > > > Looking at this series I see duplicate Signed-off-by entries for Ja=
+cob Chen and a total
+> > > > of three different email addresses:
+> > > >
+> > > > jacob2.chen@rock-chips.com
+> > > > jacob-chen@rock-chips.com
+> > > > cc@rock-chips.com
+> > >
+> > > And I see a name in the Maintainers file as Jacob Chen <jacob-chen@io=
+twrt.com>.
+> > > I was wondering if I could replace the email by jacob-chen@iotwrt.com=
+, or if I should
+> > > keep the original ones.
+> > >
+> > > Helen
+> > >
+> >
+> > "jacob2.chen@rock-chips.com"/"jacob-chen@rock-chips.com" is me and
+> > "cc@rock-chips.com" is another one.
+> > ' jacob-chen@rock-chips.com' is invalid now,  so you could replace the
+> > email by 'jacob-chen@iotwrt.com'.
+> >
+>
+> Authorship and SOB can't be changed freely, the original must be retained=
 ,
-> > but because it's calling functions that deal with balloon pages, it get=
-s
-> > confused and sometimes returns the number of balloon pages.
-> >=20
-> > It does not matter practically as the exact number isn't
-> > used, but it seems better to be consistent in case someone
-> > starts using this API.
->=20
-> If it doesn't matter, why cc: stable?
+> because this gives proper credit to the company that sponsored the work.
+>
+> I.e. if your mail used to be jacob2.chen at rock-chips.com, then I think
+> we can use that. And if cc at rock-chips.com is a different engineer,
+> also named Jacob Chen, perhaps we can mention that somewhere to reduce th=
+e
+> confusion.
 
-Oh right. Sorry.
+Some patches have been developed by Jacob <jacob2.chen at
+rock-chips.com>, some by Jacob <cc at rock-chips.com> and some by
+both.
 
-> >=20
-> > Further, if we ever tried to iteratively leak pages as
-> > virtio_balloon_shrinker_scan tries to do, we'd run into issues - this i=
-s
-> > because freed_pages was accumulating total freed pages, but was also
-> > subtracted on each iteration from pages_to_free, which can result in
-> > either leaking less memory than we were supposed to free, or or more if
-> > pages_to_free underruns.
-> >=20
-> > On a system with 4K pages we are lucky that we are never asked to leak
-> > more than 128 pages while we can leak up to 256 at a time,
-> > but it looks like a real issue for systems with page size !=3D 4K.
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Fixes: 71994620bb25 ("virtio_balloon: replace oom notifier with shrinke=
-r")
-> > Reported-by: Khazhismel Kumykov <khazhy@google.com>
-> > Reviewed-by: Wei Wang <wei.w.wang@intel.com>
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> >   drivers/virtio/virtio_balloon.c | 17 +++++++++++------
-> >   1 file changed, 11 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_ba=
-lloon.c
-> > index 226fbb995fb0..7cee05cdf3fb 100644
-> > --- a/drivers/virtio/virtio_balloon.c
-> > +++ b/drivers/virtio/virtio_balloon.c
-> > @@ -772,6 +772,13 @@ static unsigned long shrink_free_pages(struct virt=
-io_balloon *vb,
-> >   =09return blocks_freed << VIRTIO_BALLOON_FREE_PAGE_ORDER;
-> >   }
-> > +static unsigned long leak_balloon_pages(struct virtio_balloon *vb,
-> > +                                          unsigned long pages_to_free)
-> > +{
-> > +=09return leak_balloon(vb, pages_to_free * VIRTIO_BALLOON_PAGES_PER_PA=
-GE) /
-> > +=09=09VIRTIO_BALLOON_PAGES_PER_PAGE;
-> > +}
-> > +
-> >   static unsigned long shrink_balloon_pages(struct virtio_balloon *vb,
-> >   =09=09=09=09=09  unsigned long pages_to_free)
-> >   {
-> > @@ -782,11 +789,9 @@ static unsigned long shrink_balloon_pages(struct v=
-irtio_balloon *vb,
-> >   =09 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
-> >   =09 * multiple times to deflate pages till reaching pages_to_free.
-> >   =09 */
-> > -=09while (vb->num_pages && pages_to_free) {
-> > -=09=09pages_freed +=3D leak_balloon(vb, pages_to_free) /
-> > -=09=09=09=09=09VIRTIO_BALLOON_PAGES_PER_PAGE;
-> > -=09=09pages_to_free -=3D pages_freed;
-> > -=09}
-> > +=09while (vb->num_pages && pages_freed < pages_to_free)
-> > +=09=09pages_freed +=3D leak_balloon_pages(vb, pages_to_free);
-> > +
-> >   =09update_balloon_size(vb);
-> >   =09return pages_freed;
-> > @@ -799,7 +804,7 @@ static unsigned long virtio_balloon_shrinker_scan(s=
-truct shrinker *shrinker,
-> >   =09struct virtio_balloon *vb =3D container_of(shrinker,
-> >   =09=09=09=09=09struct virtio_balloon, shrinker);
-> > -=09pages_to_free =3D sc->nr_to_scan * VIRTIO_BALLOON_PAGES_PER_PAGE;
-> > +=09pages_to_free =3D sc->nr_to_scan;
-> >   =09if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
-> >   =09=09pages_freed =3D shrink_free_pages(vb, pages_to_free);
-> >=20
->=20
->=20
-> --=20
->=20
-> Thanks,
->=20
-> David / dhildenb
+Some patches have been also re-posted by Jacob after leaving Rockchip
+AFAIR, from the <jacob-chen at iotwrt.com> address. Those should have
+<jacob2.chen at rock-chips.com> as From: and include sign-offs from
+both <jacob2.chen at rock-chips.com> and <jacob-chen at iotwrt.com>.
 
+So the conclusion is that the original sign-offs should be retained
++/- typos fixed.
+
+For typos, was <jacob-chen at rock-chips.com> a typo of <jacob2.chen
+at rock-chips.com> or a typo of <jacob-chen at iotwrt.com>?
+
+Best regards,
+Tomasz
