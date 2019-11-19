@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA490101140
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 03:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED371101136
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 03:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfKSCTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 21:19:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58010 "EHLO mx1.suse.de"
+        id S1727368AbfKSCT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 21:19:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58028 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727059AbfKSCTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727099AbfKSCTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Nov 2019 21:19:25 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C6F1B328;
+        by mx1.suse.de (Postfix) with ESMTP id C52C2B32F;
         Tue, 19 Nov 2019 02:19:23 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v4 3/8] arm64: dts: realtek: rtd129x: Add irq muxes and UART interrupts
-Date:   Tue, 19 Nov 2019 03:19:12 +0100
-Message-Id: <20191119021917.15917-4-afaerber@suse.de>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH v4 4/8] irqchip: rtd1195-mux: Add RTD1195 definitions
+Date:   Tue, 19 Nov 2019 03:19:13 +0100
+Message-Id: <20191119021917.15917-5-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191119021917.15917-1-afaerber@suse.de>
 References: <20191119021917.15917-1-afaerber@suse.de>
@@ -35,89 +36,171 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add iso and misc IRQ mux DT nodes to RTD129x SoC family.
-
-Update the UART DT nodes with interrupts from these muxes,
-so that UART0 can be used without earlycon.
+Add compatible strings and bit mappings for Realtek RTD1195 SoC.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
  v3 -> v4:
- * Rebased onto chip-info and r-bus
- * Dropped schema-violating second interrupts for UART1 and UART2
+ * Use tabular formatting (Thomas)
+ * Adopt different braces style (Thomas)
+ * Updated with shortened isr_to_int_en_mask callback name (Thomas)
+ * Renamed functions and variables from rtd119x_ to rtd1195_
+ * Renamed enum values from RTD119X_ to RTD1195_
  
- v2 -> v3:
- * Added nodes to rtd129x.dtsi instead of rtd1295.dtsi
- * Adopted misc compatible string
- * Renamed node label from irq_mux to misc_irq_mux for clarity
+ v3: New
  
- v1 -> v2:
- * Rebased
- 
- arch/arm64/boot/dts/realtek/rtd129x.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/irqchip/irq-rtd1195-mux.c | 101 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 100 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-index 7d56c9f5d48a..188b4f256917 100644
---- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-@@ -86,6 +86,14 @@
- 				#reset-cells = <1>;
- 			};
+diff --git a/drivers/irqchip/irq-rtd1195-mux.c b/drivers/irqchip/irq-rtd1195-mux.c
+index e6b08438b23c..765d72653383 100644
+--- a/drivers/irqchip/irq-rtd1195-mux.c
++++ b/drivers/irqchip/irq-rtd1195-mux.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * Realtek RTD1295 IRQ mux
++ * Realtek RTD1195/RTD1295 IRQ mux
+  *
+  * Copyright (c) 2017-2019 Andreas Färber
+  */
+@@ -132,6 +132,81 @@ static const struct irq_domain_ops rtd1195_mux_irq_domain_ops = {
+ 	.map	= rtd1195_mux_irq_domain_map,
+ };
  
-+			iso_irq_mux: interrupt-controller@7000 {
-+				compatible = "realtek,rtd1295-iso-irq-mux";
-+				reg = <0x7000 0x100>;
-+				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
++enum rtd1195_iso_isr_bits {
++	RTD1195_ISO_ISR_TC3_SHIFT		= 1,
++	RTD1195_ISO_ISR_UR0_SHIFT		= 2,
++	RTD1195_ISO_ISR_IRDA_SHIFT		= 5,
++	RTD1195_ISO_ISR_WDOG_NMI_SHIFT		= 7,
++	RTD1195_ISO_ISR_I2C0_SHIFT		= 8,
++	RTD1195_ISO_ISR_TC4_SHIFT		= 9,
++	RTD1195_ISO_ISR_I2C6_SHIFT		= 10,
++	RTD1195_ISO_ISR_RTC_HSEC_SHIFT		= 12,
++	RTD1195_ISO_ISR_RTC_ALARM_SHIFT		= 13,
++	RTD1195_ISO_ISR_VFD_WDONE_SHIFT		= 14,
++	RTD1195_ISO_ISR_VFD_ARDKPADA_SHIFT	= 15,
++	RTD1195_ISO_ISR_VFD_ARDKPADDA_SHIFT	= 16,
++	RTD1195_ISO_ISR_VFD_ARDSWA_SHIFT	= 17,
++	RTD1195_ISO_ISR_VFD_ARDSWDA_SHIFT	= 18,
++	RTD1195_ISO_ISR_GPIOA_SHIFT		= 19,
++	RTD1195_ISO_ISR_GPIODA_SHIFT		= 20,
++	RTD1195_ISO_ISR_CEC_SHIFT		= 22,
++};
 +
- 			iso_reset: reset-controller@7088 {
- 				compatible = "snps,dw-low-reset";
- 				reg = <0x7088 0x4>;
-@@ -105,6 +113,8 @@
- 				reg-io-width = <4>;
- 				clock-frequency = <27000000>;
- 				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
-+				interrupt-parent = <&iso_irq_mux>;
-+				interrupts = <2>;
- 				status = "disabled";
- 			};
- 
-@@ -115,6 +125,14 @@
- 				      <0x171d8 0x4>;
- 			};
- 
-+			misc_irq_mux: interrupt-controller@1b000 {
-+				compatible = "realtek,rtd1295-misc-irq-mux";
-+				reg = <0x1b000 0x100>;
-+				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
++static const u32 rtd1195_iso_isr_to_scpu_int_en_mask[32] = {
++	[RTD1195_ISO_ISR_UR0_SHIFT]		= BIT(2),
++	[RTD1195_ISO_ISR_IRDA_SHIFT]		= BIT(5),
++	[RTD1195_ISO_ISR_I2C0_SHIFT]		= BIT(8),
++	[RTD1195_ISO_ISR_I2C6_SHIFT]		= BIT(10),
++	[RTD1195_ISO_ISR_RTC_HSEC_SHIFT]	= BIT(12),
++	[RTD1195_ISO_ISR_RTC_ALARM_SHIFT]	= BIT(13),
++	[RTD1195_ISO_ISR_VFD_WDONE_SHIFT]	= BIT(14),
++	[RTD1195_ISO_ISR_VFD_ARDKPADA_SHIFT]	= BIT(15),
++	[RTD1195_ISO_ISR_VFD_ARDKPADDA_SHIFT]	= BIT(16),
++	[RTD1195_ISO_ISR_VFD_ARDSWA_SHIFT]	= BIT(17),
++	[RTD1195_ISO_ISR_VFD_ARDSWDA_SHIFT]	= BIT(18),
++	[RTD1195_ISO_ISR_GPIOA_SHIFT]		= BIT(19),
++	[RTD1195_ISO_ISR_GPIODA_SHIFT]		= BIT(20),
++	[RTD1195_ISO_ISR_CEC_SHIFT]		= BIT(22),
++};
 +
- 			uart1: serial@1b200 {
- 				compatible = "snps,dw-apb-uart";
- 				reg = <0x1b200 0x100>;
-@@ -122,6 +140,8 @@
- 				reg-io-width = <4>;
- 				clock-frequency = <432000000>;
- 				resets = <&reset2 RTD1295_RSTN_UR1>;
-+				interrupt-parent = <&misc_irq_mux>;
-+				interrupts = <3>;
- 				status = "disabled";
- 			};
++enum rtd1195_misc_isr_bits {
++	RTD1195_MIS_ISR_WDOG_NMI_SHIFT		= 2,
++	RTD1195_MIS_ISR_UR1_SHIFT		= 3,
++	RTD1195_MIS_ISR_I2C1_SHIFT		= 4,
++	RTD1195_MIS_ISR_UR1_TO_SHIFT		= 5,
++	RTD1195_MIS_ISR_TC0_SHIFT		= 6,
++	RTD1195_MIS_ISR_TC1_SHIFT		= 7,
++	RTD1195_MIS_ISR_RTC_HSEC_SHIFT		= 9,
++	RTD1195_MIS_ISR_RTC_MIN_SHIFT		= 10,
++	RTD1195_MIS_ISR_RTC_HOUR_SHIFT		= 11,
++	RTD1195_MIS_ISR_RTC_DATE_SHIFT		= 12,
++	RTD1195_MIS_ISR_I2C5_SHIFT		= 14,
++	RTD1195_MIS_ISR_I2C4_SHIFT		= 15,
++	RTD1195_MIS_ISR_GPIOA_SHIFT		= 19,
++	RTD1195_MIS_ISR_GPIODA_SHIFT		= 20,
++	RTD1195_MIS_ISR_LSADC_SHIFT		= 21,
++	RTD1195_MIS_ISR_I2C3_SHIFT		= 23,
++	RTD1195_MIS_ISR_I2C2_SHIFT		= 26,
++	RTD1195_MIS_ISR_GSPI_SHIFT		= 27,
++};
++
++static const u32 rtd1195_misc_isr_to_scpu_int_en_mask[32] = {
++	[RTD1195_MIS_ISR_UR1_SHIFT]		= BIT(3),
++	[RTD1195_MIS_ISR_I2C1_SHIFT]		= BIT(4),
++	[RTD1195_MIS_ISR_UR1_TO_SHIFT]		= BIT(5),
++	[RTD1195_MIS_ISR_RTC_MIN_SHIFT]		= BIT(10),
++	[RTD1195_MIS_ISR_RTC_HOUR_SHIFT]	= BIT(11),
++	[RTD1195_MIS_ISR_RTC_DATE_SHIFT]	= BIT(12),
++	[RTD1195_MIS_ISR_I2C5_SHIFT]		= BIT(14),
++	[RTD1195_MIS_ISR_I2C4_SHIFT]		= BIT(15),
++	[RTD1195_MIS_ISR_GPIOA_SHIFT]		= BIT(19),
++	[RTD1195_MIS_ISR_GPIODA_SHIFT]		= BIT(20),
++	[RTD1195_MIS_ISR_LSADC_SHIFT]		= BIT(21),
++	[RTD1195_MIS_ISR_I2C2_SHIFT]		= BIT(26),
++	[RTD1195_MIS_ISR_GSPI_SHIFT]		= BIT(27),
++	[RTD1195_MIS_ISR_I2C3_SHIFT]		= BIT(28),
++};
++
+ enum rtd1295_iso_isr_bits {
+ 	RTD1295_ISO_ISR_UR0_SHIFT		= 2,
+ 	RTD1295_ISO_ISR_IRDA_SHIFT		= 5,
+@@ -202,6 +277,13 @@ static const u32 rtd1295_misc_isr_to_scpu_int_en_mask[32] = {
+ 	[RTD1295_ISR_FAN_SHIFT]			= BIT(29),
+ };
  
-@@ -132,6 +152,8 @@
- 				reg-io-width = <4>;
- 				clock-frequency = <432000000>;
- 				resets = <&reset2 RTD1295_RSTN_UR2>;
-+				interrupt-parent = <&misc_irq_mux>;
-+				interrupts = <8>;
- 				status = "disabled";
- 			};
- 		};
++static const struct rtd1195_irq_mux_info rtd1195_iso_irq_mux_info = {
++	.isr_offset		= 0x0,
++	.umsk_isr_offset	= 0x4,
++	.scpu_int_en_offset	= 0x40,
++	.isr_to_int_en_mask	= rtd1195_iso_isr_to_scpu_int_en_mask,
++};
++
+ static const struct rtd1195_irq_mux_info rtd1295_iso_irq_mux_info = {
+ 	.isr_offset		= 0x0,
+ 	.umsk_isr_offset	= 0x4,
+@@ -209,6 +291,13 @@ static const struct rtd1195_irq_mux_info rtd1295_iso_irq_mux_info = {
+ 	.isr_to_int_en_mask	= rtd1295_iso_isr_to_scpu_int_en_mask,
+ };
+ 
++static const struct rtd1195_irq_mux_info rtd1195_misc_irq_mux_info = {
++	.umsk_isr_offset	= 0x8,
++	.isr_offset		= 0xc,
++	.scpu_int_en_offset	= 0x80,
++	.isr_to_int_en_mask	= rtd1195_misc_isr_to_scpu_int_en_mask,
++};
++
+ static const struct rtd1195_irq_mux_info rtd1295_misc_irq_mux_info = {
+ 	.umsk_isr_offset	= 0x8,
+ 	.isr_offset		= 0xc,
+@@ -217,10 +306,18 @@ static const struct rtd1195_irq_mux_info rtd1295_misc_irq_mux_info = {
+ };
+ 
+ static const struct of_device_id rtd1295_irq_mux_dt_matches[] = {
++	{
++		.compatible = "realtek,rtd1195-iso-irq-mux",
++		.data = &rtd1195_iso_irq_mux_info,
++	},
+ 	{
+ 		.compatible = "realtek,rtd1295-iso-irq-mux",
+ 		.data = &rtd1295_iso_irq_mux_info,
+ 	},
++	{
++		.compatible = "realtek,rtd1195-misc-irq-mux",
++		.data = &rtd1195_misc_irq_mux_info,
++	},
+ 	{
+ 		.compatible = "realtek,rtd1295-misc-irq-mux",
+ 		.data = &rtd1295_misc_irq_mux_info,
+@@ -279,5 +376,7 @@ static int __init rtd1195_irq_mux_init(struct device_node *node,
+ 
+ 	return 0;
+ }
++IRQCHIP_DECLARE(rtd1195_iso_mux, "realtek,rtd1195-iso-irq-mux", rtd1195_irq_mux_init);
+ IRQCHIP_DECLARE(rtd1295_iso_mux, "realtek,rtd1295-iso-irq-mux", rtd1195_irq_mux_init);
++IRQCHIP_DECLARE(rtd1195_misc_mux, "realtek,rtd1195-misc-irq-mux", rtd1195_irq_mux_init);
+ IRQCHIP_DECLARE(rtd1295_misc_mux, "realtek,rtd1295-misc-irq-mux", rtd1195_irq_mux_init);
 -- 
 2.16.4
 
