@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0580B101411
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 084E21013D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729057AbfKSF34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:29:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48534 "EHLO mail.kernel.org"
+        id S1728808AbfKSF1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:27:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728543AbfKSF3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:29:52 -0500
+        id S1727826AbfKSF1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:27:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7F2B208C3;
-        Tue, 19 Nov 2019 05:29:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FF8521939;
+        Tue, 19 Nov 2019 05:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141392;
-        bh=wV0PEgMTP2ewp/zK9SfyPeKGCygghrXr9NicZlG2qNU=;
+        s=default; t=1574141266;
+        bh=pJS58U8mwZIYJHL/49hU2S6Sd3AeaEcSOOkKJJyeS8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d15IJHamlZujr0akS8RdAYNNUljM1Qnlwi7G2YxXkpgbcuN8UqshNF0iz+fVr5Zd8
-         286jfHgVrUDpClz39YZSipD5CHDLE75doo9VDrG+3lyJB2Dha0DBBdL3MJrUBk11al
-         AFNwMICS3zHZktxAk37qrM0NpSvp5hbtazVy9GJs=
+        b=vbMTz8SXi+uUWIT4g/6DHIHcZDS3EuCytoncJEInNmVMTTusVUA5og0dbz/pZMeDk
+         PRegqrG/la1HvBEtwc5h6YBZbRlwx+Xq7lWdAvduYBQlP/dvj9YBzgpoQZvqUWGvRQ
+         2sw5Bj3YDq6mmLXZL4Cdx/g+rzsciF+L8sU0fbiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
+        stable@vger.kernel.org, Marcel Ziswiler <marcel@ziswiler.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 094/422] ARM: dts: pxa: fix the rtc controller
-Date:   Tue, 19 Nov 2019 06:14:51 +0100
-Message-Id: <20191119051405.420868711@linuxfoundation.org>
+Subject: [PATCH 4.19 095/422] ARM: dts: pxa: fix power i2c base address
+Date:   Tue, 19 Nov 2019 06:14:52 +0100
+Message-Id: <20191119051405.472141339@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -43,54 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+From: Marcel Ziswiler <marcel@ziswiler.com>
 
-[ Upstream commit 24a610eba32a80ed778ea79680b600c3fe73d7de ]
+[ Upstream commit 8a1ecc01a473b75ab97be9b36f623e4551a6e9ae ]
 
-The RTC controller is fed by an external fixed 32kHz clock. Yet the
-driver wants to acquire this clock, even though it doesn't make any use
-of it, ie. doesn't get the rate to make calculation.
+There is one too many zeroes in the Power I2C base address. Fix this.
 
-Therefore, use the exported 32.768kHz clock in the PXA clock tree to
-make the driver happy and working.
-
+Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
- arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
- 2 files changed, 8 insertions(+)
+ arch/arm/boot/dts/pxa27x.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
-index 95d59be97213e..8494b57871709 100644
---- a/arch/arm/boot/dts/pxa25x.dtsi
-+++ b/arch/arm/boot/dts/pxa25x.dtsi
-@@ -80,6 +80,10 @@
- 			#pwm-cells = <1>;
- 			clocks = <&clks CLK_PWM1>;
- 		};
-+
-+		rtc@40900000 {
-+			clocks = <&clks CLK_OSC32k768>;
-+		};
- 	};
- 
- 	timer@40a00000 {
 diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
-index 747f750f675d9..2ab6986433c82 100644
+index 2ab6986433c82..3228ad5fb725f 100644
 --- a/arch/arm/boot/dts/pxa27x.dtsi
 +++ b/arch/arm/boot/dts/pxa27x.dtsi
-@@ -113,6 +113,10 @@
- 
- 			status = "disabled";
+@@ -71,7 +71,7 @@
+ 			clocks = <&clks CLK_PWM1>;
  		};
-+
-+		rtc@40900000 {
-+			clocks = <&clks CLK_OSC32k768>;
-+		};
- 	};
  
- 	clocks {
+-		pwri2c: i2c@40f000180 {
++		pwri2c: i2c@40f00180 {
+ 			compatible = "mrvl,pxa-i2c";
+ 			reg = <0x40f00180 0x24>;
+ 			interrupts = <6>;
 -- 
 2.20.1
 
