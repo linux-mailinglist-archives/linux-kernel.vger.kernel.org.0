@@ -2,181 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1823102B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C8B102B7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfKSSHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 13:07:50 -0500
-Received: from mail.z3ntu.xyz ([128.199.32.197]:41242 "EHLO mail.z3ntu.xyz"
+        id S1727532AbfKSSFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 13:05:49 -0500
+Received: from muru.com ([72.249.23.125]:42934 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbfKSSHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 13:07:50 -0500
-Received: from localhost.localdomain (80-110-127-196.cgn.dynamic.surfer.at [80.110.127.196])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 066B3DE610;
-        Tue, 19 Nov 2019 18:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1574186867; bh=vX9Z3hazzpYKkIuT58NuZuER7WoMridQbUFkjy2mD+k=;
-        h=From:To:Cc:Subject:Date;
-        b=H/5HfE1BUYslvjr+YCbopGdzzuCGq15m6w4gQFwXAUv5Yw/dz58BUaGAyTFVfPTzJ
-         7lb2lOogpGGeFjM4TJ8N0BOeeoM7ZT/yTzOJWNXEeuf95K596rR1gqGNEn8vaaGBrR
-         yKMnNw2DxxqGiNBuk2wQhg4Uzo9FpJ0zpvJ9VcSA=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-input@vger.kernel.org
-Cc:     Luca Weiss <luca@z3ntu.xyz>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marex@denx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: ili210x - add ili2120 support
-Date:   Tue, 19 Nov 2019 19:05:43 +0100
-Message-Id: <20191119180543.120362-1-luca@z3ntu.xyz>
-X-Mailer: git-send-email 2.24.0
+        id S1726836AbfKSSFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 13:05:49 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3DA6F809B;
+        Tue, 19 Nov 2019 18:06:26 +0000 (UTC)
+Date:   Tue, 19 Nov 2019 10:05:46 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: OMAP: Use ARM SMC Calling Convention when OP-TEE is
+ available
+Message-ID: <20191119180546.GM35479@atomide.com>
+References: <20191118165236.22136-1-afd@ti.com>
+ <20191118215759.GD35479@atomide.com>
+ <b86e1d66-1566-521c-a445-4f0ae2fd95d6@ti.com>
+ <20191118223128.GE35479@atomide.com>
+ <29db708e-119e-8a89-7d43-e38e2a10dc07@ti.com>
+ <20191119162157.GJ35479@atomide.com>
+ <6e009ae3-6aa2-409b-749f-4947303940d8@ti.com>
+ <20191119164227.GL35479@atomide.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191119164227.GL35479@atomide.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the Ilitek ili2120 touchscreen found in the
-Fairphone 2 smartphone.
+* Tony Lindgren <tony@atomide.com> [191119 16:43]:
+> What I'd like to have though is to make arm_smccc_smc()
+> work for optee and non-optee case for mach-omap2 as it
+> already has the features necessary to do the runtime
+> patching of the code for the quirks.
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
-From some testing, the touchscreen works fine with this patch but I'm
-not sure it's 100% correct.
-I've uploaded the data the panel produces onto pastebin [1], maybe
-someone who knows more can take a look at the packets.
+In any case sounds like we only need the r12 quirk when
+optee is _not_ enabled.
 
-Additionally, I know that the code in the driver for querying the
-firmware version doesn't work on this panel. The downstream driver
-uses some code which I don't really understand, see [2] ; but as the
-version string is only used for a dev_dbg statement, I didn't spend
-more time with that.
+So a modified version of your earlier smccc-call.S patch
+modified to only enable the r12 quirk when no optee is
+loaded just might be all we need :)
 
-If wanted, I can split out the dt-binding changes to a separate
-commit but looking at the git log, many patches are touching both
-dt-bindings and driver.
+Regards,
 
-[1] https://pastebin.com/raw/LPeAske5
-[2] https://github.com/FairphoneMirrors/android_kernel_fairphone_msm8974/blob/fp2-m-sibon/drivers/input/touchscreen/ilitek/ilitek_aim.c#L850-L861
-
- .../bindings/input/ilitek,ili2xxx.txt         |  3 +-
- drivers/input/touchscreen/ili210x.c           | 34 +++++++++++++++++--
- 2 files changed, 34 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt b/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt
-index b2a76301e632..045d1587d17a 100644
---- a/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt
-+++ b/Documentation/devicetree/bindings/input/ilitek,ili2xxx.txt
-@@ -1,8 +1,9 @@
--Ilitek ILI210x/ILI251x touchscreen controller
-+Ilitek ILI210x/ILI212x/ILI251x touchscreen controller
- 
- Required properties:
- - compatible:
-     ilitek,ili210x for ILI210x
-+    ilitek,ili212x for ILI212x
-     ilitek,ili251x for ILI251x
- 
- - reg: The I2C address of the device
-diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
-index e9006407c9bc..8331286ac950 100644
---- a/drivers/input/touchscreen/ili210x.c
-+++ b/drivers/input/touchscreen/ili210x.c
-@@ -13,6 +13,7 @@
- #include <asm/unaligned.h>
- 
- #define ILI210X_TOUCHES		2
-+#define ILI212X_TOUCHES		10
- #define ILI251X_TOUCHES		10
- #define DEFAULT_POLL_PERIOD	20
- 
-@@ -30,6 +31,7 @@ struct firmware_version {
- 
- enum ili2xxx_model {
- 	MODEL_ILI210X,
-+	MODEL_ILI212X,
- 	MODEL_ILI251X,
- };
- 
-@@ -118,6 +120,23 @@ static bool ili210x_touchdata_to_coords(struct ili210x *priv, u8 *touchdata,
- 	return true;
- }
- 
-+static bool ili212x_touchdata_to_coords(struct ili210x *priv, u8 *touchdata,
-+					unsigned int finger,
-+					unsigned int *x, unsigned int *y)
-+{
-+	if (finger >= ILI212X_TOUCHES)
-+		return false;
-+
-+	*x = get_unaligned_be16(touchdata + 3 + (finger * 5) + 0);
-+	if (!(*x & BIT(15)))	/* Touch indication */
-+		return false;
-+
-+	*x &= 0x3fff;
-+	*y = get_unaligned_be16(touchdata + 3 + (finger * 5) + 2);
-+
-+	return true;
-+}
-+
- static bool ili251x_touchdata_to_coords(struct ili210x *priv, u8 *touchdata,
- 					unsigned int finger,
- 					unsigned int *x, unsigned int *y)
-@@ -146,6 +165,12 @@ static bool ili210x_report_events(struct ili210x *priv, u8 *touchdata)
- 		if (priv->model == MODEL_ILI210X) {
- 			touch = ili210x_touchdata_to_coords(priv, touchdata,
- 							    i, &x, &y);
-+		} else if (priv->model == MODEL_ILI212X) {
-+			touch = ili212x_touchdata_to_coords(priv, touchdata,
-+							    i, &x, &y);
-+
-+			if (touch)
-+				contact = true;
- 		} else if (priv->model == MODEL_ILI251X) {
- 			touch = ili251x_touchdata_to_coords(priv, touchdata,
- 							    i, &x, &y);
-@@ -179,7 +204,8 @@ static void ili210x_work(struct work_struct *work)
- 	bool touch;
- 	int error = -EINVAL;
- 
--	if (priv->model == MODEL_ILI210X) {
-+	if (priv->model == MODEL_ILI210X ||
-+	    priv->model == MODEL_ILI212X) {
- 		error = ili210x_read_reg(client, REG_TOUCHDATA,
- 					 touchdata, sizeof(touchdata));
- 	} else if (priv->model == MODEL_ILI251X) {
-@@ -311,7 +337,9 @@ static int ili210x_i2c_probe(struct i2c_client *client,
- 	priv->model = model;
- 	if (model == MODEL_ILI210X)
- 		priv->max_touches = ILI210X_TOUCHES;
--	if (model == MODEL_ILI251X)
-+	else if (model == MODEL_ILI212X)
-+		priv->max_touches = ILI212X_TOUCHES;
-+	else if (model == MODEL_ILI251X)
- 		priv->max_touches = ILI251X_TOUCHES;
- 
- 	i2c_set_clientdata(client, priv);
-@@ -395,6 +423,7 @@ static SIMPLE_DEV_PM_OPS(ili210x_i2c_pm,
- 
- static const struct i2c_device_id ili210x_i2c_id[] = {
- 	{ "ili210x", MODEL_ILI210X },
-+	{ "ili212x", MODEL_ILI212X },
- 	{ "ili251x", MODEL_ILI251X },
- 	{ }
- };
-@@ -402,6 +431,7 @@ MODULE_DEVICE_TABLE(i2c, ili210x_i2c_id);
- 
- static const struct of_device_id ili210x_dt_ids[] = {
- 	{ .compatible = "ilitek,ili210x", .data = (void *)MODEL_ILI210X },
-+	{ .compatible = "ilitek,ili212x", .data = (void *)MODEL_ILI212X },
- 	{ .compatible = "ilitek,ili251x", .data = (void *)MODEL_ILI251X },
- 	{ },
- };
--- 
-2.24.0
-
+Tony
