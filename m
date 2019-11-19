@@ -2,85 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9492C10127B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 05:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD19101273
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 05:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfKSEcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 23:32:51 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:49530 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfKSEcu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 23:32:50 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ4ODF7090371;
-        Tue, 19 Nov 2019 04:32:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=mI7i+8fMH9XzWsU8aUL2eoc7knC5XOFnHhg7fkCXrOg=;
- b=ck/uq3no02yLim/AgdHB8tMmHHTRae+M4hPhzD/3BBaKo9fGqsM+33oKvrr8xKUefn1h
- ZDwx3BYn5J0DuoSi3DUYmD8/+7WQQRz2OuofoygLID5HkHMTOdu0mnIUhBoAqWCvZSWa
- fD3w6QI0VL0ySwU8oUOqfswdwZrDj0Xzs3/lrcxw8sbsRgsOt8mzM8TlbGzCn9CxUkbA
- dz4QT45y0zJeHfHgrqro2K00q0rcwzLQZ8xBbNRWDZ9WXU1GOibnoSmf4BwJMN9SXKXr
- 3LwXElyMWQdfQ9xv0EX9uaeE/POS0GnPVxxwMOElxj1nV69DVusJtpB6uXS+OXExuWqH hg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2wa8htmdnt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 04:32:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ4SuHJ190376;
-        Tue, 19 Nov 2019 04:30:43 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2wc09wq26r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 04:30:43 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJ4UdKC022160;
-        Tue, 19 Nov 2019 04:30:42 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Nov 2019 20:30:39 -0800
-To:     Pan Bian <bianpan2016@163.com>
-Cc:     QLogic-Storage-Upstream@qlogic.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] SCSI: qla4xxx: fix double free bug
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1572945927-27796-1-git-send-email-bianpan2016@163.com>
-Date:   Mon, 18 Nov 2019 23:30:37 -0500
-In-Reply-To: <1572945927-27796-1-git-send-email-bianpan2016@163.com> (Pan
-        Bian's message of "Tue, 5 Nov 2019 17:25:27 +0800")
-Message-ID: <yq1mucsjxn6.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1727491AbfKSEat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 23:30:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727217AbfKSEas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 23:30:48 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CB6922316;
+        Tue, 19 Nov 2019 04:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574137846;
+        bh=T37bxWVhJKKhbkDEGYOqyIok1+0lbyLc5krYCRyZ/rQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lWq0fdyNOB73+P+FwU+ZXEW0zXXHJHTf+oJe0KRum+B/NFZ+zcVHeXDFUEXoOQ6mN
+         AJpegyTyXrHPmLxUV2c7NgN3Dp195roY3XdCr4d6d4kKJimLcMw09RlgfmFdDyRImC
+         T5w1vNN0wPXniGL0ttZZqRoUpbWuuNl1eO8fCvyQ=
+Date:   Tue, 19 Nov 2019 05:30:44 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] coresight: funnel: Fix missing spin_lock_init()
+Message-ID: <20191119043044.GB1446085@kroah.com>
+References: <20191118185207.30441-1-mathieu.poirier@linaro.org>
+ <20191118185207.30441-2-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=823
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190039
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=908 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191118185207.30441-2-mathieu.poirier@linaro.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 18, 2019 at 11:52:06AM -0700, Mathieu Poirier wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> The driver allocates the spinlock but not initialize it.
+> Use spin_lock_init() on it to initialize it correctly.
+> 
+> This is detected by Coccinelle semantic patch.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Tested-by: Yabin Cui <yabinc@google.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  drivers/hwtracing/coresight/coresight-funnel.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Pan,
+Is this, and the 2/2 patch here, needed for stable releases?
 
-> The variable init_fw_cb is released twice, resulting in a double free
-> bug. The call to the function dma_free_coherent() before goto is
-> removed to get rid of potential double free.
+thanks,
 
-Applied to 5.5/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+greg k-h
