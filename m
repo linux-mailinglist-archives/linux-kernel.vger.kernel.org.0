@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A92D10147A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8097D101587
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbfKSFeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:34:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54888 "EHLO mail.kernel.org"
+        id S1730566AbfKSFpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:45:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728873AbfKSFeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:34:11 -0500
+        id S1730439AbfKSFo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8804D20672;
-        Tue, 19 Nov 2019 05:34:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A73A82071B;
+        Tue, 19 Nov 2019 05:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141651;
-        bh=mreQAMbZ+CpRVpcttSNGFJi8T0eMst7r9ESpUc40GFM=;
+        s=default; t=1574142297;
+        bh=LSJuR6xuJV+Zd/1X8vuZZ7n0Yx4USt8B+Uah0jtEuXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KnTO0GpLOQHj5DIGGGeXKrLUdiyETcJLn8YFzjdd23DZpoE3jlCL9v20x/cbH4Hob
-         PqKjrzEHDAFg7N/UeIY4zhqtiuSM0Wug5zS350SkuM3k17HokNeojRroglinIVltk6
-         NOJHOSCjZn0rtLfEAHB/aCkGrfDYCKUcGXpd7FEM=
+        b=LOgDJfMrz9LtQ0pW9dZFGSKlzqj4ijaDIou1iO9UUs9rvEFX3ZzOxZs5OjZZb1yCt
+         jkRry9FH5vocZ1rAgjTgNVxoeu+fujp7ek7sWPV+KYyBL8+ykWd3015xOdTcHRbKkZ
+         5YUA9l6lwLQS+cBYKymPvxRY8gG7YmuYiW4doljA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 234/422] ath9k: Fix a locking bug in ath9k_add_interface()
-Date:   Tue, 19 Nov 2019 06:17:11 +0100
-Message-Id: <20191119051414.258032392@linuxfoundation.org>
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Martin Lucina <martin@lucina.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 032/239] arm64: dts: allwinner: a64: Olinuxino: fix DRAM voltage
+Date:   Tue, 19 Nov 2019 06:17:12 +0100
+Message-Id: <20191119051303.669678206@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit 461cf036057477805a8a391e5fd0f5264a5e56a8 ]
+[ Upstream commit 93366b49a35f3a190052734b3f32c8fe2535b53f ]
 
-We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
-mode interface") but accidentally missed part of the locking change.
+The Olinuxino board uses DDR3L chips which are supposed to be driven
+with 1.35V. The reset default of the AXP is properly set to 1.36V.
 
-The lock has to be held earlier so that we're holding it when we do
-"sc->tx99_vif = vif;" and also there in the current code there is a
-stray unlock before we have taken the lock.
+While technically the chips can also run at 1.5 volts, changing the
+voltage on the fly while booting Linux is asking for trouble. Also
+running at a lower voltage saves power.
 
-Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+So fix the DCDC5 value to match the actual board design.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Tested-by: Martin Lucina <martin@lucina.net>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index c85f613e8ceb5..74f98bbaea889 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -1251,6 +1251,7 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 	struct ath_vif *avp = (void *)vif->drv_priv;
- 	struct ath_node *an = &avp->mcast_node;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 338e786155b1f..2ef779b027572 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -120,10 +120,14 @@
  
-+	mutex_lock(&sc->mutex);
- 	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
- 		if (sc->cur_chan->nvifs >= 1) {
- 			mutex_unlock(&sc->mutex);
-@@ -1259,8 +1260,6 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 		sc->tx99_vif = vif;
- 	}
+ /* DCDC3 is polyphased with DCDC2 */
  
--	mutex_lock(&sc->mutex);
--
- 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
- 	sc->cur_chan->nvifs++;
++/*
++ * The board uses DDR3L DRAM chips. 1.36V is the closest to the nominal
++ * 1.35V that the PMIC can drive.
++ */
+ &reg_dcdc5 {
+ 	regulator-always-on;
+-	regulator-min-microvolt = <1500000>;
+-	regulator-max-microvolt = <1500000>;
++	regulator-min-microvolt = <1360000>;
++	regulator-max-microvolt = <1360000>;
+ 	regulator-name = "vcc-ddr3";
+ };
  
 -- 
 2.20.1
