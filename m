@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D38F01017BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93EAA10191E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbfKSGDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:03:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35038 "EHLO mail.kernel.org"
+        id S1727881AbfKSGMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:12:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729217AbfKSFks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:40:48 -0500
+        id S1727239AbfKSFVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:21:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F7821823;
-        Tue, 19 Nov 2019 05:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AB3B22317;
+        Tue, 19 Nov 2019 05:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142047;
-        bh=UjqVqgdhztbhUdrL+ufrQI7PcTgq8W31OFAvib2seIo=;
+        s=default; t=1574140873;
+        bh=JmLPL/HEQWkgPTJclvHxmxL5U3PoN0BCo8F9NLWo16o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=johXGKMIVsEE84b+pivyZ6NQxdGT22Znsy1TagDzYXM8csHJTbmM+WuS2Cx4ra05I
-         kX94MQ5pHu5ykhVS/CxyM9uSrEmQ6A9PQDMAsrQe/eSfbDnWybT546CpMtydCkJvbs
-         LRgVdA2teMNKaNCzRWPROrBM286/f5BdGH/+5V3k=
+        b=IUUyangO5VXU958PcmL/V/s0MdOge+KBSS+8FKSQxUSQUNOYHQkvgPoiyKJe0x5j7
+         0k55T3G+agQClFca9kdc0MKVjq3OoR+sEWY0j6nn4bNXsaOvwPc0XQQBTMsw3uxF8C
+         yDFhnNayuGbkezgvsmY8xT0YDkKjwQsmpPMIxfvM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 371/422] ARM: tegra: apalis_t30: fix mcp2515 can controller interrupt polarity
-Date:   Tue, 19 Nov 2019 06:19:28 +0100
-Message-Id: <20191119051423.052842944@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 16/48] ALSA: usb-audio: Fix incorrect NULL check in create_yamaha_midi_quirk()
+Date:   Tue, 19 Nov 2019 06:19:36 +0100
+Message-Id: <20191119051001.053603583@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
+References: <20191119050946.745015350@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit b38f6aa4b60a1fcc41f5c469981f8f62d6070ee3 ]
+commit cc9dbfa9707868fb0ca864c05e0c42d3f4d15cf2 upstream.
 
-Fix the MCP2515 SPI CAN controller interrupt polarity which according
-to its datasheet defaults to low-active aka falling edge.
+The commit 60849562a5db ("ALSA: usb-audio: Fix possible NULL
+dereference at create_yamaha_midi_quirk()") added NULL checks in
+create_yamaha_midi_quirk(), but there was an overlook.  The code
+allows one of either injd or outjd is NULL, but the second if check
+made returning -ENODEV if any of them is NULL.  Fix it in a proper
+form.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 60849562a5db ("ALSA: usb-audio: Fix possible NULL dereference at create_yamaha_midi_quirk()")
+Reported-by: Pavel Machek <pavel@denx.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191113111259.24123-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++--
+ sound/usb/quirks.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index e749e047db7ab..f810bbf8212bd 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -659,7 +659,7 @@
- 			reg = <1>;
- 			clocks = <&clk16m>;
- 			interrupt-parent = <&gpio>;
--			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_RISING>;
-+			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_FALLING>;
- 			spi-max-frequency = <10000000>;
- 		};
- 	};
-@@ -674,7 +674,7 @@
- 			reg = <0>;
- 			clocks = <&clk16m>;
- 			interrupt-parent = <&gpio>;
--			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_RISING>;
-+			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_FALLING>;
- 			spi-max-frequency = <10000000>;
- 		};
- 	};
--- 
-2.20.1
-
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -248,8 +248,8 @@ static int create_yamaha_midi_quirk(stru
+ 					NULL, USB_MS_MIDI_OUT_JACK);
+ 	if (!injd && !outjd)
+ 		return -ENODEV;
+-	if (!(injd && snd_usb_validate_midi_desc(injd)) ||
+-	    !(outjd && snd_usb_validate_midi_desc(outjd)))
++	if ((injd && !snd_usb_validate_midi_desc(injd)) ||
++	    (outjd && !snd_usb_validate_midi_desc(outjd)))
+ 		return -ENODEV;
+ 	if (injd && (injd->bLength < 5 ||
+ 		     (injd->bJackType != USB_MS_EMBEDDED &&
 
 
