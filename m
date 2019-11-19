@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D1A101780
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8204B10176B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbfKSFm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:42:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37712 "EHLO mail.kernel.org"
+        id S1730724AbfKSFnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:43:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbfKSFmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:42:54 -0500
+        id S1730186AbfKSFnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:43:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 573D121783;
-        Tue, 19 Nov 2019 05:42:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 178FE218BA;
+        Tue, 19 Nov 2019 05:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142173;
-        bh=O3mFNZoIUng350Ipl4qr82fCz1yUrnK9uVXdJCEkPLw=;
+        s=default; t=1574142191;
+        bh=8cx90xcuJ2/7+XJQJkGSC6D0S1sN5k36Nt1id3Is/8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cUlHYLcdZjkpyH7Cv4O1iW60KZ/4x5fatrxRWUZ47MhG4vttiWyf4hEKW2xW2uxjG
-         Rbr47NdufG6DVW0MII/pZcekJa++P/teTAwcv9oWH/+zCGvZzwwftUjH+oSlcVJboN
-         WLxGGaMsXvo2wkp8UPRLJiZTPwiGt7jMZgKJTVv4=
+        b=e5QTPll3NbfGjbghRJRB8gz4uy+zG+gzPU0HY7xlAqxP1h4+J8aQzFsFu+xez0YCO
+         Y9Tts9P51J3O2YgLGaJHGN33K7Oko0hldrD+utK1ILbPLKxys6IDtv4F9xrA9pEaMd
+         y+FiYf9H9l0TNm6W2eMRpplxjb2Zj6QC/PcmNasc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 415/422] usb: xhci-mtk: fix ISOC error when interval is zero
-Date:   Tue, 19 Nov 2019 06:20:12 +0100
-Message-Id: <20191119051426.088297138@linuxfoundation.org>
+Subject: [PATCH 4.19 420/422] s390/vdso: correct vdso mapping for compat tasks
+Date:   Tue, 19 Nov 2019 06:20:17 +0100
+Message-Id: <20191119051426.410191997@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,36 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 87173acc0d8f0987bda8827da35fff67f52ad15d ]
+[ Upstream commit 190f056fba230abee80712eb810939ef9a8c462f ]
 
-If the interval equal zero, needn't round up to power of two
-for the number of packets in each ESIT, so fix it.
+While "s390/vdso: avoid 64-bit vdso mapping for compat tasks" fixed
+64-bit vdso mapping for compat tasks under gdb it introduced another
+problem. "compat_mm" flag is not inherited during fork and when
+31-bit process forks a child (but does not perform exec) it ends up
+with 64-bit vdso. To address that, init_new_context (which is called
+during fork and exec) now initialize compat_mm based on thread TIF_31BIT
+flag. Later compat_mm is adjusted in arch_setup_additional_pages, which
+is called during exec.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: d1befa65823e ("s390/vdso: avoid 64-bit vdso mapping for compat tasks")
+Reported-by: Stefan Liebler <stli@linux.ibm.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: <stable@vger.kernel.org> # v4.20+
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-mtk-sch.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/s390/include/asm/mmu_context.h | 2 +-
+ arch/s390/kernel/vdso.c             | 5 ++---
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-mtk-sch.c b/drivers/usb/host/xhci-mtk-sch.c
-index fa33d6e5b1cbd..d04fdd173ed2e 100644
---- a/drivers/usb/host/xhci-mtk-sch.c
-+++ b/drivers/usb/host/xhci-mtk-sch.c
-@@ -113,7 +113,9 @@ static void setup_sch_info(struct usb_device *udev,
- 		}
+diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
+index e4462202200d7..8d04e6f3f7964 100644
+--- a/arch/s390/include/asm/mmu_context.h
++++ b/arch/s390/include/asm/mmu_context.h
+@@ -25,7 +25,7 @@ static inline int init_new_context(struct task_struct *tsk,
+ 	atomic_set(&mm->context.flush_count, 0);
+ 	mm->context.gmap_asce = 0;
+ 	mm->context.flush_mm = 0;
+-	mm->context.compat_mm = 0;
++	mm->context.compat_mm = test_thread_flag(TIF_31BIT);
+ #ifdef CONFIG_PGSTE
+ 	mm->context.alloc_pgste = page_table_allocate_pgste ||
+ 		test_thread_flag(TIF_PGSTE) ||
+diff --git a/arch/s390/kernel/vdso.c b/arch/s390/kernel/vdso.c
+index ec31b48a42a52..7ab7d256d1eb7 100644
+--- a/arch/s390/kernel/vdso.c
++++ b/arch/s390/kernel/vdso.c
+@@ -224,10 +224,9 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
  
- 		if (ep_type == ISOC_IN_EP || ep_type == ISOC_OUT_EP) {
--			if (esit_pkts <= sch_ep->esit)
-+			if (sch_ep->esit == 1)
-+				sch_ep->pkts = esit_pkts;
-+			else if (esit_pkts <= sch_ep->esit)
- 				sch_ep->pkts = 1;
- 			else
- 				sch_ep->pkts = roundup_pow_of_two(esit_pkts)
+ 	vdso_pages = vdso64_pages;
+ #ifdef CONFIG_COMPAT
+-	if (is_compat_task()) {
++	mm->context.compat_mm = is_compat_task();
++	if (mm->context.compat_mm)
+ 		vdso_pages = vdso32_pages;
+-		mm->context.compat_mm = 1;
+-	}
+ #endif
+ 	/*
+ 	 * vDSO has a problem and was disabled, just don't "enable" it for
 -- 
 2.20.1
 
