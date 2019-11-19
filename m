@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6621910146F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C82C91014A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbfKSFdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:33:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54438 "EHLO mail.kernel.org"
+        id S1729459AbfKSFgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:36:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729575AbfKSFds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:48 -0500
+        id S1728141AbfKSFgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:36:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C64520672;
-        Tue, 19 Nov 2019 05:33:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5015D20862;
+        Tue, 19 Nov 2019 05:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141627;
-        bh=rCJCWlVVGLmwt2uICL+fQP9cUjdE8EIa3YhyInu72zs=;
+        s=default; t=1574141768;
+        bh=8C77Ah9eGNmpKFrXn+KY6E4yKZ1R8Yn9FxFLckt44Sg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pYyIpso3vm4JoBLBlabzeyzOpz7AFYM5XWqYp0qg8sGiEmeH7qtlpJuOWU8wtN81T
-         G9wPgsG6jQx6XIUUzttQ8XsWPMx8Wi8OFhL8IkKHUkZwMhcB708mEag75hRDy7D/T/
-         Jj8lecrTs6wWIKShoj1PicY+CgL6zwtZakbEbVaU=
+        b=LLgMpwsd/Ot3mF914VUUu/s9mYeapZ3C9Svd5lRKKnF1CGC4sdK6YvKVn/KI6+0UT
+         oImx3eNtxaOE1OhpFneg8tjrHfpkjPnjFl8M9Ox7qSa09P0OHparrcuViLT5wIV71+
+         1CMikSIx4DwcrHmX/mkED7O1/98oiamEkstXoDsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 223/422] power: supply: ab8500_fg: silence uninitialized variable warnings
-Date:   Tue, 19 Nov 2019 06:17:00 +0100
-Message-Id: <20191119051413.083539646@linuxfoundation.org>
+Subject: [PATCH 4.19 224/422] power: reset: at91-poweroff: do not procede if at91_shdwc is allocated
+Date:   Tue, 19 Nov 2019 06:17:01 +0100
+Message-Id: <20191119051413.150080240@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,76 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-[ Upstream commit 54baff8d4e5dce2cef61953b1dc22079cda1ddb1 ]
+[ Upstream commit 9f1e44774be578fb92776add95f1fcaf8284d692 ]
 
-If kstrtoul() fails then we print "charge_full" when it's uninitialized.
-The debug printk doesn't add anything so I deleted it and cleaned these
-two functions up a bit.
+There should be only one instance of struct shdwc in the system. This is
+referenced through at91_shdwc. Return in probe if at91_shdwc is already
+allocated.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/ab8500_fg.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ drivers/power/reset/at91-sama5d2_shdwc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
-index 02356f9b5f22a..8bb89c697c1eb 100644
---- a/drivers/power/supply/ab8500_fg.c
-+++ b/drivers/power/supply/ab8500_fg.c
-@@ -2433,17 +2433,14 @@ static ssize_t charge_full_store(struct ab8500_fg *di, const char *buf,
- 				 size_t count)
- {
- 	unsigned long charge_full;
--	ssize_t ret;
-+	int ret;
+diff --git a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/reset/at91-sama5d2_shdwc.c
+index 0206cce328b3d..d9493e893d64e 100644
+--- a/drivers/power/reset/at91-sama5d2_shdwc.c
++++ b/drivers/power/reset/at91-sama5d2_shdwc.c
+@@ -246,6 +246,9 @@ static int __init at91_shdwc_probe(struct platform_device *pdev)
+ 	if (!pdev->dev.of_node)
+ 		return -ENODEV;
  
- 	ret = kstrtoul(buf, 10, &charge_full);
-+	if (ret)
-+		return ret;
- 
--	dev_dbg(di->dev, "Ret %zd charge_full %lu", ret, charge_full);
--
--	if (!ret) {
--		di->bat_cap.max_mah = (int) charge_full;
--		ret = count;
--	}
--	return ret;
-+	di->bat_cap.max_mah = (int) charge_full;
-+	return count;
- }
- 
- static ssize_t charge_now_show(struct ab8500_fg *di, char *buf)
-@@ -2455,20 +2452,16 @@ static ssize_t charge_now_store(struct ab8500_fg *di, const char *buf,
- 				 size_t count)
- {
- 	unsigned long charge_now;
--	ssize_t ret;
-+	int ret;
- 
- 	ret = kstrtoul(buf, 10, &charge_now);
-+	if (ret)
-+		return ret;
- 
--	dev_dbg(di->dev, "Ret %zd charge_now %lu was %d",
--		ret, charge_now, di->bat_cap.prev_mah);
--
--	if (!ret) {
--		di->bat_cap.user_mah = (int) charge_now;
--		di->flags.user_cap = true;
--		ret = count;
--		queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
--	}
--	return ret;
-+	di->bat_cap.user_mah = (int) charge_now;
-+	di->flags.user_cap = true;
-+	queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
-+	return count;
- }
- 
- static struct ab8500_fg_sysfs_entry charge_full_attr =
++	if (at91_shdwc)
++		return -EBUSY;
++
+ 	at91_shdwc = devm_kzalloc(&pdev->dev, sizeof(*at91_shdwc), GFP_KERNEL);
+ 	if (!at91_shdwc)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
