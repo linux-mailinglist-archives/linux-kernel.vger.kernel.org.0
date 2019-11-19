@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4223610161E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD42C101506
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:40:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731628AbfKSFu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:50:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47450 "EHLO mail.kernel.org"
+        id S1730330AbfKSFjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731611AbfKSFuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:50:24 -0500
+        id S1730005AbfKSFjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4782B21783;
-        Tue, 19 Nov 2019 05:50:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C8722071A;
+        Tue, 19 Nov 2019 05:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142624;
-        bh=eCG85q6t7YJoJKlRi9ND0119j3qWg7j8OP8APe9k2Zg=;
+        s=default; t=1574141986;
+        bh=QJxa5nK1H1nKWLhJmsQHhMbrd/v7Of9YYRk/3G1Mo8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vLCMPMXskpmsffM4DNq/HbWmvPZLoOv8AMtu3EzHTjBvG4ZIIOHciL6e53nqdC9xd
-         EqDarZEiPZc7/geayIrjJbPrcILj2MpjL6Z/cEqDHCMVFurmSWdEcrJkhX9bIC1rzX
-         so7S3NAmVwEaz2p8sOjvvPMQ/M7T63weHwWrW+fs=
+        b=f2AqO7p8tIEMhSZdy+wsFXEHzJwO+ILZ1XppSHOPaT/+RQcE/iyDGQ9LILz1zSCg7
+         okiBXbUg01ME/t8od1vjvQueDEhu3CkBrElUq0weZWFF9FboTR2GJOxDBApSosAPSv
+         8YXd9S6BjcQZ4ZQlHfV4iiNmuk63jIs6/u/feLNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        stable@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 144/239] OPP: Protect dev_list with opp_table lock
+Subject: [PATCH 4.19 347/422] coresight: perf: Disable trace path upon source error
 Date:   Tue, 19 Nov 2019 06:19:04 +0100
-Message-Id: <20191119051332.034700923@linuxfoundation.org>
+Message-Id: <20191119051421.497738470@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,134 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 3d2556992a878a2210d3be498416aee39e0c32aa ]
+[ Upstream commit 4f8ef21007531c3d7cb5b826e7b2c8999b65ecae ]
 
-The dev_list needs to be protected with a lock, else we may have
-simultaneous access (addition/removal) to it and that would be racy.
-Extend scope of the opp_table lock to protect dev_list as well.
+We enable the trace path, before activating the source.
+If we fail to enable the source, we must disable the path
+to make sure it is available for another session.
 
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/power/opp/core.c | 21 +++++++++++++++++++--
- drivers/base/power/opp/cpu.c  |  2 ++
- drivers/base/power/opp/opp.h  |  2 +-
- 3 files changed, 22 insertions(+), 3 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
-index d5e7e8cc4f221..8100c87691497 100644
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -49,9 +49,14 @@ static struct opp_device *_find_opp_dev(const struct device *dev,
- static struct opp_table *_find_opp_table_unlocked(struct device *dev)
- {
- 	struct opp_table *opp_table;
-+	bool found;
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 4b53d55788a07..c3c6452015142 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -306,11 +306,13 @@ static void etm_event_start(struct perf_event *event, int flags)
  
- 	list_for_each_entry(opp_table, &opp_tables, node) {
--		if (_find_opp_dev(dev, opp_table)) {
-+		mutex_lock(&opp_table->lock);
-+		found = !!_find_opp_dev(dev, opp_table);
-+		mutex_unlock(&opp_table->lock);
-+
-+		if (found) {
- 			_get_opp_table_kref(opp_table);
+ 	/* Finally enable the tracer */
+ 	if (source_ops(csdev)->enable(csdev, event, CS_MODE_PERF))
+-		goto fail_end_stop;
++		goto fail_disable_path;
  
- 			return opp_table;
-@@ -711,6 +716,8 @@ struct opp_device *_add_opp_dev(const struct device *dev,
+ out:
+ 	return;
  
- 	/* Initialize opp-dev */
- 	opp_dev->dev = dev;
-+
-+	mutex_lock(&opp_table->lock);
- 	list_add(&opp_dev->node, &opp_table->dev_list);
- 
- 	/* Create debugfs entries for the opp_table */
-@@ -718,6 +725,7 @@ struct opp_device *_add_opp_dev(const struct device *dev,
- 	if (ret)
- 		dev_err(dev, "%s: Failed to register opp debugfs (%d)\n",
- 			__func__, ret);
-+	mutex_unlock(&opp_table->lock);
- 
- 	return opp_dev;
- }
-@@ -736,6 +744,7 @@ static struct opp_table *_allocate_opp_table(struct device *dev)
- 	if (!opp_table)
- 		return NULL;
- 
-+	mutex_init(&opp_table->lock);
- 	INIT_LIST_HEAD(&opp_table->dev_list);
- 
- 	opp_dev = _add_opp_dev(dev, opp_table);
-@@ -757,7 +766,6 @@ static struct opp_table *_allocate_opp_table(struct device *dev)
- 
- 	BLOCKING_INIT_NOTIFIER_HEAD(&opp_table->head);
- 	INIT_LIST_HEAD(&opp_table->opp_list);
--	mutex_init(&opp_table->lock);
- 	kref_init(&opp_table->kref);
- 
- 	/* Secure the device table modification */
-@@ -799,6 +807,10 @@ static void _opp_table_kref_release(struct kref *kref)
- 	if (!IS_ERR(opp_table->clk))
- 		clk_put(opp_table->clk);
- 
-+	/*
-+	 * No need to take opp_table->lock here as we are guaranteed that no
-+	 * references to the OPP table are taken at this point.
-+	 */
- 	opp_dev = list_first_entry(&opp_table->dev_list, struct opp_device,
- 				   node);
- 
-@@ -1702,6 +1714,9 @@ void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev,
- {
- 	struct dev_pm_opp *opp, *tmp;
- 
-+	/* Protect dev_list */
-+	mutex_lock(&opp_table->lock);
-+
- 	/* Find if opp_table manages a single device */
- 	if (list_is_singular(&opp_table->dev_list)) {
- 		/* Free static OPPs */
-@@ -1712,6 +1727,8 @@ void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev,
- 	} else {
- 		_remove_opp_dev(_find_opp_dev(dev, opp_table), opp_table);
- 	}
-+
-+	mutex_unlock(&opp_table->lock);
- }
- 
- void _dev_pm_opp_find_and_remove_table(struct device *dev, bool remove_all)
-diff --git a/drivers/base/power/opp/cpu.c b/drivers/base/power/opp/cpu.c
-index 2d87bc1adf38b..66e406bd4d628 100644
---- a/drivers/base/power/opp/cpu.c
-+++ b/drivers/base/power/opp/cpu.c
-@@ -222,8 +222,10 @@ int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask)
- 	cpumask_clear(cpumask);
- 
- 	if (opp_table->shared_opp == OPP_TABLE_ACCESS_SHARED) {
-+		mutex_lock(&opp_table->lock);
- 		list_for_each_entry(opp_dev, &opp_table->dev_list, node)
- 			cpumask_set_cpu(opp_dev->dev->id, cpumask);
-+		mutex_unlock(&opp_table->lock);
- 	} else {
- 		cpumask_set_cpu(cpu_dev->id, cpumask);
- 	}
-diff --git a/drivers/base/power/opp/opp.h b/drivers/base/power/opp/opp.h
-index 166eef9905995..0a206c6b90868 100644
---- a/drivers/base/power/opp/opp.h
-+++ b/drivers/base/power/opp/opp.h
-@@ -124,7 +124,7 @@ enum opp_table_access {
-  * @dev_list:	list of devices that share these OPPs
-  * @opp_list:	table of opps
-  * @kref:	for reference count of the table.
-- * @lock:	mutex protecting the opp_list.
-+ * @lock:	mutex protecting the opp_list and dev_list.
-  * @np:		struct device_node pointer for opp's DT node.
-  * @clock_latency_ns_max: Max clock latency in nanoseconds.
-  * @shared_opp: OPP is shared between multiple devices.
++fail_disable_path:
++	coresight_disable_path(path);
+ fail_end_stop:
+ 	perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
+ 	perf_aux_output_end(handle, 0);
 -- 
 2.20.1
 
