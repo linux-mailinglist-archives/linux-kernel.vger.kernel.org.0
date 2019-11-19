@@ -2,134 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 397DC1021AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 11:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C421021C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 11:10:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfKSKJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 05:09:05 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:32855 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbfKSKJF (ORCPT
+        id S1727584AbfKSKKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 05:10:25 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:40894 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725280AbfKSKKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:09:05 -0500
-Received: by mail-qk1-f195.google.com with SMTP id 71so17266936qkl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 02:09:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kthzsFDv3BtXMmmJRQd1qCPqKASHhxamk1aLgY0fuLQ=;
-        b=kPWwFSfnlnu9XmSpJkG19s/iNALUrvrShZ1C2Czk8j+q0g1ifRmXzjO7YHXd0Q1dOX
-         Ken9OddoZlUkmrM9m+umBzKw13kRR7mNzFg1wI+oC8dS+YLk616rxc5Sg81P5atJpGYd
-         qSO9RCZZX9iN4OJKVboKydfL/0ODVcP/UVn+Ts03/6e7WHZEzvm/d7lj5rlvE/wBFAAM
-         VyYt0jJPsXOrT4UMMEdVd5dQ6guTn7n0ZMGStIqBOF5PwnXSg/TNiFkg31py0Zypjp5j
-         vrSh7+Qq3R1ZqjtFGdovVZ0OaPYXl/RW7Jox8/Ua90XBVBAgc/coO/Zw1cCQa2J3oKOU
-         Ydhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kthzsFDv3BtXMmmJRQd1qCPqKASHhxamk1aLgY0fuLQ=;
-        b=rBssdqwarEdujCU6mj/B1h8u7wRvxdtYSgdnTCf/jK3+TVz8yeXQoKDfCFvV9/0BNW
-         XjJRundFvd5GzlT7gdMgEjZR9rgvNArRQ4IR+ufIaW4QYWxRnrVC9ytiSdDXlSzKiDxB
-         WrtuhD2G9TA04Z9fNaIEwbM5qIOAJPyQlvZeoeKvDGh73afuLLn7FJkbg9/Mz4ybP5ak
-         Swg8svo0CIzopNRRLQlPHB0ZWKFYR1SDvLQX6MZNseBlnrt9uB6UibPvSbqejta7iafN
-         8ZaoTm3HV2ywjRMO1KYX+F+33AH1yNvNYFqfiysJA3rFNBsce0vj1mhK7lJM0lTIfLbl
-         tBig==
-X-Gm-Message-State: APjAAAXlZV1o3nV1C5WV8z5mbSiXlh2Bmu/sjsVhSln7W27Q1D+30zP/
-        45+g9mVewfvtk0LrfMkiRF+rzhYR7HPTbfmYTmaEOA==
-X-Google-Smtp-Source: APXvYqz3sW+a1UoaZIdKYgIlbIKJ5VYWfPjuUI7mT8jMQMykt/NPr28fXvPHFDM4PpsUCVdsAZOz5StnaJQW1bzfBxo=
-X-Received: by 2002:a37:6156:: with SMTP id v83mr27936505qkb.43.1574158143641;
- Tue, 19 Nov 2019 02:09:03 -0800 (PST)
+        Tue, 19 Nov 2019 05:10:25 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=38;SR=0;TI=SMTPD_---0TiYLMZT_1574158209;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TiYLMZT_1574158209)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 19 Nov 2019 18:10:10 +0800
+Subject: Re: [PATCH v3 3/7] mm/lru: replace pgdat lru_lock with lruvec lock
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, yang.shi@linux.alibaba.com,
+        willy@infradead.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+References: <1573874106-23802-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1573874106-23802-4-git-send-email-alex.shi@linux.alibaba.com>
+ <20191119021058.auxc6g7vmgf7d5gg@ca-dmjordan1.us.oracle.com>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <1199177d-6f34-3aae-3eb6-8fac42f070a1@linux.alibaba.com>
+Date:   Tue, 19 Nov 2019 18:10:09 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <0000000000005c08d10597a3a05d@google.com> <a5f73d92-fdf2-2590-c863-39a181dca8e1@hartkopp.net>
- <deedd609-6f3b-8035-47e1-252ab221faa1@pengutronix.de> <7934bc2b-597f-0bb3-be2d-32f3b07b4de9@hartkopp.net>
- <7f5c4546-0c1a-86ae-581e-0203b5fca446@pengutronix.de> <1f7d6ea7-152e-ff18-549c-b196d8b5e3a7@hartkopp.net>
-In-Reply-To: <1f7d6ea7-152e-ff18-549c-b196d8b5e3a7@hartkopp.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 19 Nov 2019 11:08:52 +0100
-Message-ID: <CACT4Y+acOwzqwrJ1OSStRkvdxsmM4RY6mz4qDEFAUpMM2P-FiQ@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in can_receive
-To:     Oliver Hartkopp <socketcan@hartkopp.net>,
-        Alexander Potapenko <glider@google.com>
-Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        syzbot <syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>, linux-can@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191119021058.auxc6g7vmgf7d5gg@ca-dmjordan1.us.oracle.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 8:36 AM Oliver Hartkopp <socketcan@hartkopp.net> wrote:
-> On 18/11/2019 22.15, Marc Kleine-Budde wrote:
-> > On 11/18/19 9:49 PM, Oliver Hartkopp wrote:
-> >>
-> >>
-> >> On 18/11/2019 21.29, Marc Kleine-Budde wrote:
-> >>> On 11/18/19 9:25 PM, Oliver Hartkopp wrote:
-> >>
-> >>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >>>>> Reported-by: syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com
-> >>>>>
-> >>>>> =====================================================
-> >>>>> BUG: KMSAN: uninit-value in can_receive+0x23c/0x5e0 net/can/af_can.c:649
-> >>>>> CPU: 1 PID: 3490 Comm: syz-executor.2 Not tainted 5.4.0-rc5+ #0
-> >>
-> >>>>
-> >>>> In line 649 of 5.4.0-rc5+ we can find a while() statement:
-> >>>>
-> >>>> while (!(can_skb_prv(skb)->skbcnt))
-> >>>>    can_skb_prv(skb)->skbcnt = atomic_inc_return(&skbcounter);
-> >>>>
-> >>>> In linux/include/linux/can/skb.h we see:
-> >>>>
-> >>>> static inline struct can_skb_priv *can_skb_prv(struct sk_buff *skb)
-> >>>> {
-> >>>>    return (struct can_skb_priv *)(skb->head);
-> >>>> }
-> >>>>
-> >>>> IMO accessing can_skb_prv(skb)->skbcnt at this point is a valid
-> >>>> operation which has no uninitialized value.
-> >>>>
-> >>>> Can this probably be a false positive of KMSAN?
-> >>>
-> >>> The packet is injected via the packet socket into the kernel. Where does
-> >>> skb->head point to in this case? When the skb is a proper
-> >>> kernel-generated skb containing a CAN-2.0 or CAN-FD frame skb->head is
-> >>> maybe properly initialized?
-> >>
-> >> The packet is either received via vcan or vxcan which checks via
-> >> can_dropped_invalid_skb() if we have a valid ETH_P_CAN type skb.
-> >
-> > According to the call stack it's injected into the kernel via a packet
-> > socket and not via v(x)can.
->
-> See ioctl$ifreq https://syzkaller.appspot.com/x/log.txt?x=14563416e00000
->
-> 23:11:34 executing program 2:
-> r0 = socket(0x200000000000011, 0x3, 0x0)
-> ioctl$ifreq_SIOCGIFINDEX_vcan(r0, 0x8933,
-> &(0x7f0000000040)={'vxcan1\x00', <r1=>0x0})
-> bind$packet(r0, &(0x7f0000000300)={0x11, 0xc, r1}, 0x14)
-> sendmmsg(r0, &(0x7f0000000d00), 0x400004e, 0x0)
->
-> We only can receive skbs from (v(x))can devices.
-> No matter if someone wrote to them via PF_CAN or PF_PACKET.
-> We check for ETH_P_CAN(FD) type and ARPHRD_CAN dev type at rx time.
->
-> >> We additionally might think about introducing a check whether we have a
-> >> can_skb_reserve() created skbuff.
-> >>
-> >> But even if someone forged a skbuff without this reserved space the
-> >> access to can_skb_prv(skb)->skbcnt would point into some CAN frame
-> >> content - which is still no access to uninitialized content, right?
->
-> So this question remains still valid whether we have a false positive
-> from KMSAN here.
 
-+Alex, please check re KMSAN false positive.
-Oliver, Marc, where this skbcnt should have been initialized in this case?
+
+ÔÚ 2019/11/19 ÉÏÎç10:10, Daniel Jordan Ð´µÀ:
+>> -	if (pgdat)
+>> -		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
+>> +
+>>  	release_pages(pvec->pages, pvec->nr);
+>>  	pagevec_reinit(pvec);
+>>  }
+> Why can't you keep the locking pattern where we only drop and reacquire if the
+> lruvec changes?  It'd save a lot of locks and unlocks if most pages were from
+> the same memcg and node, or the memory controller were unused.
+> 
+
+Good catching! This issue will be fixed in the next patch which introduce relock_ function.
+
+Thanks!
