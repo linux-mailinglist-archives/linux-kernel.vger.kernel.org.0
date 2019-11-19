@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C8A10164F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9319B101521
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730727AbfKSFwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:52:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49558 "EHLO mail.kernel.org"
+        id S1730466AbfKSFlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728603AbfKSFv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:57 -0500
+        id S1729371AbfKSFk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:40:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E48AC208C3;
-        Tue, 19 Nov 2019 05:51:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F02121823;
+        Tue, 19 Nov 2019 05:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142717;
-        bh=J5MJjxD5jAeVkjz/fx+zVxhI7b1OTA8vjQiUHrSwREs=;
+        s=default; t=1574142056;
+        bh=7O0a6f7OAljtZm3g5vT7cbtIr3K62GbeufgrYTkBfgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mGXCwo0C3NnUtqRyv3+DyySsmnrUF4uQkHIYTULMydMRci8whi34iODYJaIhmp5Wg
-         FiIiC3tf7X1KBCoWRmBCHUAHjWA2uCuULZt+RoQzYd9e7D+poD7mYegyuJRS8xGWJj
-         vD6cHLWx1VTI9KCkc+8FmleFEpmegpeDkm+n41lI=
+        b=aonxyrq4JOUPK8KzqNzGIx5GmDeg2td4tFmSRb7eS8oh1C6B7V16NOJ9LKCR0IYDo
+         xjVh+x/68DNKc2NPp4CjxbETbuiRk9h79c+R2Hwaz991/i9Yk7eZlJ0X7Bl0AH+p5a
+         1Mwd13YSqYFzij30qHhji7KrVtZy2AcYBuRhsAB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        stable@vger.kernel.org, Marc Dietrich <marvin24@gmx.de>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 169/239] ARM: dts: clearfog: fix sdhci supply property name
-Date:   Tue, 19 Nov 2019 06:19:29 +0100
-Message-Id: <20191119051333.872849565@linuxfoundation.org>
+Subject: [PATCH 4.19 373/422] ARM: dts: paz00: fix wakeup gpio keycode
+Date:   Tue, 19 Nov 2019 06:19:30 +0100
+Message-Id: <20191119051423.187108953@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Marc Dietrich <marvin24@gmx.de>
 
-[ Upstream commit e807f0298144c06740022a2f900d86b7f115595e ]
+[ Upstream commit ebea2a43fdafdbce918bd7e200b709d6c33b9f3b ]
 
-The vmmc phandle, like all power supply property names, must have the
-'-supply' suffix.
+The power key is controlled solely by the EC, which only tiggeres this
+gpio after wakeup.
+Fixes immediately return to suspend after wake from LP1.
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/armada-388-clearfog.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-paz00.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/armada-388-clearfog.dtsi b/arch/arm/boot/dts/armada-388-clearfog.dtsi
-index 68acfc9687069..8a3bbb7d6cc10 100644
---- a/arch/arm/boot/dts/armada-388-clearfog.dtsi
-+++ b/arch/arm/boot/dts/armada-388-clearfog.dtsi
-@@ -89,7 +89,7 @@
- 					     &clearfog_sdhci_cd_pins>;
- 				pinctrl-names = "default";
- 				status = "okay";
--				vmmc = <&reg_3p3v>;
-+				vmmc-supply = <&reg_3p3v>;
- 				wp-inverted;
- 			};
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index ef245291924f0..4f9b4a889febe 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -524,10 +524,10 @@
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
  
+-		power {
+-			label = "Power";
++		wakeup {
++			label = "Wakeup";
+ 			gpios = <&gpio TEGRA_GPIO(J, 7) GPIO_ACTIVE_LOW>;
+-			linux,code = <KEY_POWER>;
++			linux,code = <KEY_WAKEUP>;
+ 			wakeup-source;
+ 		};
+ 	};
 -- 
 2.20.1
 
