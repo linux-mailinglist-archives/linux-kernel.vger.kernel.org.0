@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE52C10163A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 242EC101514
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:40:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730563AbfKSFvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48658 "EHLO mail.kernel.org"
+        id S1730414AbfKSFka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:40:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731758AbfKSFvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:16 -0500
+        id S1730410AbfKSFk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:40:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9E25208C3;
-        Tue, 19 Nov 2019 05:51:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 019FE218BA;
+        Tue, 19 Nov 2019 05:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142676;
-        bh=SYK3cbFOH5p92qBycnjfraI6rejI7ktNpDJLkusLl1w=;
+        s=default; t=1574142027;
+        bh=CGJbKln3Rkg2sxB7qY0MAuLx3+hEzsvt48vMiraYkKs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OJ/LUZU39u/PLeK3TRiEXg0804v90RZucnogERtDK0cNojaa17iJBw2dXkMHid03S
-         yPzPvzpFlK/bz+1INEqaNbcVgC98nFGSwFMXEKFyt8mIjGYo9oKGD/pxjH+IyDsKVU
-         Uc0SvfXf3Yac1rnKyG25HhI/EwN4Gm8sqNM+gz88=
+        b=dDblZ0k0d5vUffNms0f+q/KX42sxbG/b4XbZAX6R9pUA0ehUFMlYCkJsbymM5HTEn
+         ApHi7dOWNvqKIeXoF2LICGX7VJ6IcDlHAH5LMbwHuw9zirhYcbdj09y4xF9sPU/bmy
+         Sggi6FF8Q7RlWXwGveUxDTVKJoBPRewOHBYR+AGM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 161/239] ARM: dts: ux500: Correct SCU unit address
+Subject: [PATCH 4.19 364/422] ARM: dts: meson8b: odroidc1: enable the SAR ADC
 Date:   Tue, 19 Nov 2019 06:19:21 +0100
-Message-Id: <20191119051333.379209838@linuxfoundation.org>
+Message-Id: <20191119051422.602010042@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 2f217d24ecaec2012e628d21e244eef0608656a4 ]
+[ Upstream commit fd6643142a0c5ab4d423ed7173a0be414d509214 ]
 
-The unit address of the Cortex-A9 SCU device node contains one zero too
-many.  Remove it.
+Odroid-C1 exposes ADC channels 0 and 1 on the GPIO headers. NOTE: Due
+to the SoC design these are limited to 1.8V (instead of 3.3V like all
+other pins).
+Enable the SAR ADC to enable voltage measurements on these pins.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/ste-dbx5x0.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/meson8b-odroidc1.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/ste-dbx5x0.dtsi b/arch/arm/boot/dts/ste-dbx5x0.dtsi
-index 2310a4e97768c..3dc0028e108b3 100644
---- a/arch/arm/boot/dts/ste-dbx5x0.dtsi
-+++ b/arch/arm/boot/dts/ste-dbx5x0.dtsi
-@@ -197,7 +197,7 @@
- 			      <0xa0410100 0x100>;
- 		};
+diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
+index 8fdeeffecbdbc..8a09071d712a5 100644
+--- a/arch/arm/boot/dts/meson8b-odroidc1.dts
++++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
+@@ -153,6 +153,11 @@
+ 	pinctrl-names = "default";
+ };
  
--		scu@a04100000 {
-+		scu@a0410000 {
- 			compatible = "arm,cortex-a9-scu";
- 			reg = <0xa0410000 0x100>;
- 		};
++&saradc {
++	status = "okay";
++	vref-supply = <&vcc_1v8>;
++};
++
+ &sdio {
+ 	status = "okay";
+ 
 -- 
 2.20.1
 
