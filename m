@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB1B101539
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9743F1016DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbfKSFlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36452 "EHLO mail.kernel.org"
+        id S1731312AbfKSF5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:57:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728636AbfKSFlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:52 -0500
+        id S1731919AbfKSFwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:52:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B80A121783;
-        Tue, 19 Nov 2019 05:41:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3916420721;
+        Tue, 19 Nov 2019 05:52:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142112;
-        bh=ENwu7Bk/AGxxd6bkRW4LmZu93geDO4izsdATKSHOnRw=;
+        s=default; t=1574142752;
+        bh=XSc49gLZDnT5iD6+dqt3KN9TjzN4HO4lpDf5yK9KBYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XYPszns+ZJOPxF3Thj18+mS6WAFVw2+W8hPmWz9FtYRBCN0X5lVG3T+a8Bk9w3TsC
-         vJZo6MT8Bwn+/gxXMz2di/GF9cOJZbIG8SmnJiLYW/MP5kHZZDaQrqPy1JEXP9VWnn
-         JZJYcD5egIuN00Ejrh9n15r11vn3iTOIfcs8fV/4=
+        b=KVeZ9wBpApyddv9d5GIwpQYVSdEkAvp2MIZJE24Kd5+3aNz4AJgjnK0NjwXMzrciF
+         EDYKGAQqxbCC4R8Xzxitk03nfzYkm9M+XxpQgmNqDM7GEf+hvQT93bwzEtIE3lYQok
+         HUS/u6q3vG6W8be7BhdOLcUmsuQxH1IZhzxPC0O4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 391/422] iwlwifi: dbg: dont crash if the firmware crashes in the middle of a debug dump
+Subject: [PATCH 4.14 188/239] phy: phy-twl4030-usb: fix denied runtime access
 Date:   Tue, 19 Nov 2019 06:19:48 +0100
-Message-Id: <20191119051424.455274854@linuxfoundation.org>
+Message-Id: <20191119051335.323621818@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 79f25b10c9da3dbc953e47033d0494e51580ac3b ]
+[ Upstream commit 6c7103aa026094a4ee2c2708ec6977a6dfc5331d ]
 
-We can dump data from the firmware either when it crashes,
-or when the firmware is alive.
-Not all the data is available if the firmware is running
-(like the Tx / Rx FIFOs which are available only when the
-firmware is halted), so we first check that the firmware
-is alive to compute the required size for the dump and then
-fill the buffer with the data.
+When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
+the counter will be incremented but the resume callback not called,
+so enumeration and charging will not start properly.
+To avoid that happen, disable irq on suspend and recheck on resume.
 
-When we allocate the buffer, we test the STATUS_FW_ERROR
-bit to check if the firmware is alive or not. This bit
-can be changed during the course of the dump since it is
-modified in the interrupt handler.
+Practically this happens when the device is woken up from suspend by
+plugging in usb.
 
-We hit a case where we allocate the buffer while the
-firmware is sill working, and while we start to fill the
-buffer, the firmware crashes. Then we test STATUS_FW_ERROR
-again and decide to fill the buffer with data like the
-FIFOs even if no room was allocated for this data in the
-buffer. This means that we overflow the buffer that was
-allocated leading to memory corruption.
-
-To fix this, test the STATUS_FW_ERROR bit only once and
-rely on local variables to check if we should dump fifos
-or other firmware components.
-
-Fixes: 04fd2c28226f ("iwlwifi: mvm: add rxf and txf to dump data")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/ti/phy-twl4030-usb.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index 8070b2d4c46fe..3443cbdbab4ae 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -824,7 +824,7 @@ void iwl_fw_error_dump(struct iwl_fw_runtime *fwrt)
- 	}
+diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
+index a44680d64f9b4..c267afb68f077 100644
+--- a/drivers/phy/ti/phy-twl4030-usb.c
++++ b/drivers/phy/ti/phy-twl4030-usb.c
+@@ -144,6 +144,7 @@
+ #define PMBR1				0x0D
+ #define GPIO_USB_4PIN_ULPI_2430C	(3 << 0)
  
- 	/* We only dump the FIFOs if the FW is in error state */
--	if (test_bit(STATUS_FW_ERROR, &fwrt->trans->status)) {
-+	if (fifo_data_len) {
- 		iwl_fw_dump_fifos(fwrt, &dump_data);
- 		if (radio_len)
- 			iwl_read_radio_regs(fwrt, &dump_data);
++static irqreturn_t twl4030_usb_irq(int irq, void *_twl);
+ /*
+  * If VBUS is valid or ID is ground, then we know a
+  * cable is present and we need to be runtime-enabled
+@@ -395,6 +396,33 @@ static void __twl4030_phy_power(struct twl4030_usb *twl, int on)
+ 	WARN_ON(twl4030_usb_write_verify(twl, PHY_PWR_CTRL, pwr) < 0);
+ }
+ 
++static int __maybe_unused twl4030_usb_suspend(struct device *dev)
++{
++	struct twl4030_usb *twl = dev_get_drvdata(dev);
++
++	/*
++	 * we need enabled runtime on resume,
++	 * so turn irq off here, so we do not get it early
++	 * note: wakeup on usb plug works independently of this
++	 */
++	dev_dbg(twl->dev, "%s\n", __func__);
++	disable_irq(twl->irq);
++
++	return 0;
++}
++
++static int __maybe_unused twl4030_usb_resume(struct device *dev)
++{
++	struct twl4030_usb *twl = dev_get_drvdata(dev);
++
++	dev_dbg(twl->dev, "%s\n", __func__);
++	enable_irq(twl->irq);
++	/* check whether cable status changed */
++	twl4030_usb_irq(0, twl);
++
++	return 0;
++}
++
+ static int __maybe_unused twl4030_usb_runtime_suspend(struct device *dev)
+ {
+ 	struct twl4030_usb *twl = dev_get_drvdata(dev);
+@@ -655,6 +683,7 @@ static const struct phy_ops ops = {
+ static const struct dev_pm_ops twl4030_usb_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(twl4030_usb_runtime_suspend,
+ 			   twl4030_usb_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(twl4030_usb_suspend, twl4030_usb_resume)
+ };
+ 
+ static int twl4030_usb_probe(struct platform_device *pdev)
 -- 
 2.20.1
 
