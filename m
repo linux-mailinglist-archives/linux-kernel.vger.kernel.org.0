@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9722101748
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E284C101746
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731904AbfKSF7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:59:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44248 "EHLO mail.kernel.org"
+        id S1731884AbfKSF7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:59:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731278AbfKSFru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:47:50 -0500
+        id S1727481AbfKSFr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:47:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEB232071B;
-        Tue, 19 Nov 2019 05:47:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94F46218BA;
+        Tue, 19 Nov 2019 05:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142470;
-        bh=ZoolEWxOabJwcBM2BzPFOQu5UR4QVvivvteOKpm4ogs=;
+        s=default; t=1574142479;
+        bh=TpkzKMyFzG2aSK2ygTyId2XlAG8Nb4XPxuop5Fac2x8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=whIEUmAJSPP+2MW9dKy/GT1pKdnqsTLNBvIQ2tAws8uH9wqTr0zF4aHY1psDgoIFT
-         ko6unE6SVTha7SnkqZqudr0JdOF7Am5m5jyyZ5Gq58MinmKPZGL96s/NWXUnvZ+XTj
-         t9Xw1X+4d+98SWIWUWFbGzVLNGNJoclJ+kO8foS0=
+        b=vOg5sNC8qvFHJZY/3RebfCaCVpqvndz5wylxQCYQzNEKSi0H/qRxEdE/iNxCbAaN0
+         9BEGO6whB+5npCkpAjBDDns/b49ueEsOQ720/Ol5PnuKbEJxEXeshHjPPjR4sBQy0k
+         mdSFsUI3+ZJmxIRT5sTR/NE5zUypaW/gb7J3NSGc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 093/239] signal: Properly deliver SIGSEGV from x86 uprobes
-Date:   Tue, 19 Nov 2019 06:18:13 +0100
-Message-Id: <20191119051321.234871754@linuxfoundation.org>
+Subject: [PATCH 4.14 096/239] scsi: qla2xxx: Defer chip reset until target mode is enabled
+Date:   Tue, 19 Nov 2019 06:18:16 +0100
+Message-Id: <20191119051322.867369592@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -44,43 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-[ Upstream commit 4a63c1ffd384ebdce40aac9c997dab68379137be ]
+[ Upstream commit 93eca6135183f7a71e36acd47655a085ed11bcdc ]
 
-For userspace to tell the difference between an random signal
-and an exception, the exception must include siginfo information.
+For target mode, any chip reset triggered before target mode is enabled will
+be held off until user is ready to enable.  This prevents the chip from
+starting or running before it is intended.
 
-Using SEND_SIG_FORCED for SIGSEGV is thus wrong, and it will result in
-userspace seeing si_code == SI_USER (like a random signal) instead of
-si_code == SI_KERNEL or a more specific si_code as all exceptions
-deliver.
-
-Therefore replace force_sig_info(SIGSEGV, SEND_SIG_FORCE, current)
-with force_sig(SIG_SEGV, current) which gets this right and is shorter
-and easier to type.
-
-Fixes: 791eca10107f ("uretprobes/x86: Hijack return address")
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/uprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_os.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index 7a87ef1f5b5e6..73391c1bd2a9a 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -987,7 +987,7 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs
- 		pr_err("uprobe: return address clobbered: pid=%d, %%sp=%#lx, "
- 			"%%ip=%#lx\n", current->pid, regs->sp, regs->ip);
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 343fbaa6d2a2d..5617bb18c2335 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -5801,12 +5801,27 @@ qla2x00_do_dpc(void *data)
+ 		if (test_and_clear_bit
+ 		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
+ 		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
++			bool do_reset = true;
++
++			switch (ql2x_ini_mode) {
++			case QLA2XXX_INI_MODE_ENABLED:
++				break;
++			case QLA2XXX_INI_MODE_DISABLED:
++				if (!qla_tgt_mode_enabled(base_vha))
++					do_reset = false;
++				break;
++			case QLA2XXX_INI_MODE_DUAL:
++				if (!qla_dual_mode_enabled(base_vha))
++					do_reset = false;
++				break;
++			default:
++				break;
++			}
  
--		force_sig_info(SIGSEGV, SEND_SIG_FORCED, current);
-+		force_sig(SIGSEGV, current);
- 	}
+-			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
+-			    "ISP abort scheduled.\n");
+-			if (!(test_and_set_bit(ABORT_ISP_ACTIVE,
++			if (do_reset && !(test_and_set_bit(ABORT_ISP_ACTIVE,
+ 			    &base_vha->dpc_flags))) {
+-
++				ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
++				    "ISP abort scheduled.\n");
+ 				if (ha->isp_ops->abort_isp(base_vha)) {
+ 					/* failed. retry later */
+ 					set_bit(ISP_ABORT_NEEDED,
+@@ -5814,10 +5829,9 @@ qla2x00_do_dpc(void *data)
+ 				}
+ 				clear_bit(ABORT_ISP_ACTIVE,
+ 						&base_vha->dpc_flags);
++				ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
++				    "ISP abort end.\n");
+ 			}
+-
+-			ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
+-			    "ISP abort end.\n");
+ 		}
  
- 	return -1;
+ 		if (test_and_clear_bit(FCPORT_UPDATE_NEEDED,
 -- 
 2.20.1
 
