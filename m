@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022D510157C
+	by mail.lfdr.de (Postfix) with ESMTP id 75AF110157D
 	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730864AbfKSFoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:44:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40022 "EHLO mail.kernel.org"
+        id S1729068AbfKSFom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729066AbfKSFog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:36 -0500
+        id S1729374AbfKSFok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFF3C208C3;
-        Tue, 19 Nov 2019 05:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18E10208C3;
+        Tue, 19 Nov 2019 05:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142276;
-        bh=ynaErUTl8+VKC74rImywBO6Po3jc/xm37V2gxxiQ00c=;
+        s=default; t=1574142279;
+        bh=36z5BUggWpUohDKvMWsMdKHgnLJ/TsBubSnnojh1NdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UHVFxN6sw94ARQAvSo4KkZM7bRl4kLsD0ulAQi5onzphVULY5qc/jdZ7+JBuvGKtt
-         NKPK0XlGvz648y+mFV85je/PpjRfw3y1AyQO5ea1HowyF8RIoeLmdKZ37O+RC/cMHT
-         iJJCQsn8o/WON0n8LPjV30XUUuxOAQ8M9qg74Kng=
+        b=ZZ0pEnbA6sOiGvmT9BM7ttzQJJ/E5F/Nh06sz6AngDfTYd81/m4J+tMV41E2dXwCH
+         0GWvWRtVzTvwSOOIiGzAQKdCxodBrkdGj5ASRJRXySe0JsHMso6oU2UDyPmHFqngpT
+         eKzgVTujZS21AnE3hao8wGtROADWdG+rDUJVc/gQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 026/239] mm: hugetlb: switch to css_tryget() in hugetlb_cgroup_charge_cgroup()
-Date:   Tue, 19 Nov 2019 06:17:06 +0100
-Message-Id: <20191119051302.851557319@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 027/239] mmc: sdhci-of-at91: fix quirk2 overwrite
+Date:   Tue, 19 Nov 2019 06:17:07 +0100
+Message-Id: <20191119051303.020618457@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -47,49 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-commit 0362f326d86c645b5e96b7dbc3ee515986ed019d upstream.
+commit fed23c5829ecab4ddc712d7b0046e59610ca3ba4 upstream.
 
-An exiting task might belong to an offline cgroup.  In this case an
-attempt to grab a cgroup reference from the task can end up with an
-infinite loop in hugetlb_cgroup_charge_cgroup(), because neither the
-cgroup will become online, neither the task will be migrated to a live
-cgroup.
+The quirks2 are parsed and set (e.g. from DT) before the quirk for broken
+HS200 is set in the driver.
+The driver needs to enable just this flag, not rewrite the whole quirk set.
 
-Fix this by switching over to css_tryget().  As css_tryget_online()
-can't guarantee that the cgroup won't go offline, in most cases the
-check doesn't make sense.  In this particular case users of
-hugetlb_cgroup_charge_cgroup() are not affected by this change.
-
-A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
-css_tryget() instead of css_tryget_online() in task_get_css()").
-
-Link: http://lkml.kernel.org/r/20191106225131.3543616-2-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 7871aa60ae00 ("mmc: sdhci-of-at91: add quirk for broken HS200")
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb_cgroup.c |    2 +-
+ drivers/mmc/host/sdhci-of-at91.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -196,7 +196,7 @@ int hugetlb_cgroup_charge_cgroup(int idx
- again:
- 	rcu_read_lock();
- 	h_cg = hugetlb_cgroup_from_task(current);
--	if (!css_tryget_online(&h_cg->css)) {
-+	if (!css_tryget(&h_cg->css)) {
- 		rcu_read_unlock();
- 		goto again;
- 	}
+--- a/drivers/mmc/host/sdhci-of-at91.c
++++ b/drivers/mmc/host/sdhci-of-at91.c
+@@ -365,7 +365,7 @@ static int sdhci_at91_probe(struct platf
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 
+ 	/* HS200 is broken at this moment */
+-	host->quirks2 = SDHCI_QUIRK2_BROKEN_HS200;
++	host->quirks2 |= SDHCI_QUIRK2_BROKEN_HS200;
+ 
+ 	ret = sdhci_add_host(host);
+ 	if (ret)
 
 
