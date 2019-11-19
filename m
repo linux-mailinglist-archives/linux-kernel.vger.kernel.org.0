@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EDD0102A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:59:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 674BB102A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbfKSQ5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 11:57:08 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52839 "EHLO
+        id S1728922AbfKSQ6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 11:58:24 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:52923 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728637AbfKSQ5G (ORCPT
+        with ESMTP id S1728718AbfKSQ5P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:57:06 -0500
+        Tue, 19 Nov 2019 11:57:15 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iX6oF-0007QG-A8; Tue, 19 Nov 2019 17:56:59 +0100
+        id 1iX6oL-0007WI-EU; Tue, 19 Nov 2019 17:57:05 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4E18E1C19CC;
-        Tue, 19 Nov 2019 17:56:49 +0100 (CET)
-Date:   Tue, 19 Nov 2019 16:56:49 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D07F01C19DC;
+        Tue, 19 Nov 2019 17:56:50 +0100 (CET)
+Date:   Tue, 19 Nov 2019 16:56:50 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf map: Use bitmap for booleans
+Subject: [tip: perf/core] perf maps: Purge the entries from maps->names in
+ __maps__purge()
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-g5545pcq4ff0wr17tfb1piqt@git.kernel.org>
-References: <tip-g5545pcq4ff0wr17tfb1piqt@git.kernel.org>
+In-Reply-To: <tip-ps0nrio8pydyo23rr2s696ue@git.kernel.org>
+References: <tip-ps0nrio8pydyo23rr2s696ue@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157418260927.12247.7477192419256385944.tip-bot2@tip-bot2>
+Message-ID: <157418261074.12247.14398818002410876760.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,83 +51,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     dbc984c961667b1ce48a0337b5bcd3b8c9cb2098
-Gitweb:        https://git.kernel.org/tip/dbc984c961667b1ce48a0337b5bcd3b8c9cb2098
+Commit-ID:     bcb8af5c46e452018de9b58db1fd0ffd94b5d96c
+Gitweb:        https://git.kernel.org/tip/bcb8af5c46e452018de9b58db1fd0ffd94b5d96c
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 18 Nov 2019 16:26:29 -03:00
+AuthorDate:    Wed, 13 Nov 2019 16:06:28 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 18 Nov 2019 16:29:01 -03:00
+CommitterDate: Wed, 13 Nov 2019 16:06:28 -03:00
 
-perf map: Use bitmap for booleans
+perf maps: Purge the entries from maps->names in __maps__purge()
 
-The map->priv and map->erange_warned are seldom used, the first only in
-tests/vmlinux-kallsyms.c, the later only when hist_entry__inc_addr_samples()
-returns -ERANGE in 'perf top', which are really rare occasions, so make
-them a bool bitfield.
+No need to iterate via the ->names rbtree, as all the entries there
+as in maps->entries as well, reuse __maps__purge() for that.
 
-This will open up space for other members on the first cacheline.
-
-  $ pahole -C map ~/bin/perf
-  struct map {
-  	union {
-  		struct rb_node rb_node __attribute__((__aligned__(8))); /*     0    24 */
-  		struct list_head node;                   /*     0    16 */
-  	} __attribute__((__aligned__(8)));                                               /*     0    24 */
-  	u64                        start;                /*    24     8 */
-  	u64                        end;                  /*    32     8 */
-  	_Bool                      erange_warned:1;      /*    40: 0  1 */
-  	_Bool                      priv:1;               /*    40: 1  1 */
-
-  	/* XXX 6 bits hole, try to pack */
-  	/* XXX 3 bytes hole, try to pack */
-
-  	u32                        prot;                 /*    44     4 */
-  	u32                        flags;                /*    48     4 */
-
-  	/* XXX 4 bytes hole, try to pack */
-
-  	u64                        pgoff;                /*    56     8 */
-  	/* --- cacheline 1 boundary (64 bytes) --- */
-  	u64                        reloc;                /*    64     8 */
-  	u32                        maj;                  /*    72     4 */
-  	u32                        min;                  /*    76     4 */
-  	u64                        ino;                  /*    80     8 */
-  	u64                        ino_generation;       /*    88     8 */
-  	u64                        (*map_ip)(struct map *, u64); /*    96     8 */
-  	u64                        (*unmap_ip)(struct map *, u64); /*   104     8 */
-  	struct dso *               dso;                  /*   112     8 */
-  	refcount_t                 refcnt;               /*   120     4 */
-
-  	/* size: 128, cachelines: 2, members: 17 */
-  	/* sum members: 116, holes: 2, sum holes: 7 */
-  	/* sum bitfield members: 2 bits, bit holes: 1, sum bit holes: 6 bits */
-  	/* padding: 4 */
-  	/* forced alignments: 1 */
-  } __attribute__((__aligned__(8)));
-  $
+Doing it this way we can kill maps__for_each_entry_by_name(),
+maps__for_each_entry_by_name_safe(), maps__{first,next}_by_name().
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-g5545pcq4ff0wr17tfb1piqt@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-ps0nrio8pydyo23rr2s696ue@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/map.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/map.c        | 34 +---------------------------------
+ tools/perf/util/map_groups.h |  8 --------
+ 2 files changed, 1 insertion(+), 41 deletions(-)
 
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index a31e809..e2466aa 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -25,8 +25,8 @@ struct map {
- 	};
- 	u64			start;
- 	u64			end;
--	bool			erange_warned;
--	u32			priv;
-+	bool			erange_warned:1;
-+	bool			priv:1;
- 	u32			prot;
- 	u32			flags;
- 	u64			pgoff;
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 3598468..69b9e9b 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -589,15 +589,7 @@ static void __maps__purge(struct maps *maps)
+ 	maps__for_each_entry_safe(maps, pos, next) {
+ 		rb_erase_init(&pos->rb_node,  &maps->entries);
+ 		map__put(pos);
+-	}
+-}
+-
+-static void __maps__purge_names(struct maps *maps)
+-{
+-	struct map *pos, *next;
+-
+-	maps__for_each_entry_by_name_safe(maps, pos, next) {
+-		rb_erase_init(&pos->rb_node_name,  &maps->names);
++		rb_erase_init(&pos->rb_node_name, &maps->names);
+ 		map__put(pos);
+ 	}
+ }
+@@ -606,7 +598,6 @@ static void maps__exit(struct maps *maps)
+ {
+ 	down_write(&maps->lock);
+ 	__maps__purge(maps);
+-	__maps__purge_names(maps);
+ 	up_write(&maps->lock);
+ }
+ 
+@@ -994,29 +985,6 @@ struct map *map__next(struct map *map)
+ 	return map ? __map__next(map) : NULL;
+ }
+ 
+-struct map *maps__first_by_name(struct maps *maps)
+-{
+-	struct rb_node *first = rb_first(&maps->names);
+-
+-	if (first)
+-		return rb_entry(first, struct map, rb_node_name);
+-	return NULL;
+-}
+-
+-static struct map *__map__next_by_name(struct map *map)
+-{
+-	struct rb_node *next = rb_next(&map->rb_node_name);
+-
+-	if (next)
+-		return rb_entry(next, struct map, rb_node_name);
+-	return NULL;
+-}
+-
+-struct map *map__next_by_name(struct map *map)
+-{
+-	return map ? __map__next_by_name(map) : NULL;
+-}
+-
+ struct kmap *__map__kmap(struct map *map)
+ {
+ 	if (!map->dso || !map->dso->kernel)
+diff --git a/tools/perf/util/map_groups.h b/tools/perf/util/map_groups.h
+index 99cb810..3f36140 100644
+--- a/tools/perf/util/map_groups.h
++++ b/tools/perf/util/map_groups.h
+@@ -33,14 +33,6 @@ struct map *map__next(struct map *map);
+ 	for (map = maps__first(maps), next = map__next(map); map; map = next, next = map__next(map))
+ 
+ struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name, struct map **mapp);
+-struct map *maps__first_by_name(struct maps *maps);
+-struct map *map__next_by_name(struct map *map);
+-
+-#define maps__for_each_entry_by_name(maps, map) \
+-	for (map = maps__first_by_name(maps); map; map = map__next_by_name(map))
+-
+-#define maps__for_each_entry_by_name_safe(maps, map, next) \
+-	for (map = maps__first_by_name(maps), next = map__next_by_name(map); map; map = next, next = map__next_by_name(map))
+ 
+ struct map_groups {
+ 	struct maps	 maps;
