@@ -2,205 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC47A10301E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7848710304F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:36:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfKSXZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 18:25:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33424 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726911AbfKSXZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 18:25:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9B13ACC0;
-        Tue, 19 Nov 2019 23:25:26 +0000 (UTC)
-Subject: Re: [PATCH v4 2/8] irqchip: Add Realtek RTD1295 mux driver
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Aleix Roca Nonell <kernelrocks@gmail.com>,
-        James Tai <james.tai@realtek.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20191119021917.15917-1-afaerber@suse.de>
- <20191119021917.15917-3-afaerber@suse.de>
- <a34e00cac16899b53d0b6445f0e81f4c@www.loen.fr>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <0bff78c1-a1d0-9631-fbf4-e0d1ef1264ea@suse.de>
-Date:   Wed, 20 Nov 2019 00:25:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <a34e00cac16899b53d0b6445f0e81f4c@www.loen.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727450AbfKSXg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 18:36:29 -0500
+Received: from mx.aristanetworks.com ([162.210.129.12]:49027 "EHLO
+        smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfKSXg3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 18:36:29 -0500
+X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Nov 2019 18:36:29 EST
+Received: from us180.sjc.aristanetworks.com (us180.sjc.aristanetworks.com [172.25.230.4])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 7335B40186F;
+        Tue, 19 Nov 2019 15:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1574206247;
+        bh=7hTxUZAHCeTYICBD3dCxn3lCMI94VzJ7Cmd8ewom4xE=;
+        h=Date:To:Subject:From:From;
+        b=hmWMzUemrhYukBBsgZFXHLBVrJYPeOxvVL2Ex0qXLeeta1eAXdC4RzwOPWwYvbDrG
+         BlXjVBYRdDH6G5wgeLEPqSF3E0wUI7f31vF1Ihd/swPzseEBvkXeznpvjbRYS57mfs
+         sC+U/L6i1RKb/asEykxkxg5jm5lGzQCzXEjsjYxkOwaJzHsTKADuSoMSO8ieX/iWVV
+         T8xU1ti8spnpVT3xbgPvwh2N7BWUD3Jqo8m0+vSzbAGDgMAWcY4Rtl64Qe7FFRHlj4
+         EgSvl3MZacfi3e3nPFycsSnMf3LOr6WRQlq3Gmy06BHxvE2RLh9V3PRNDa9kM/rlNC
+         SlZWeD3b/mbtw==
+Received: by us180.sjc.aristanetworks.com (Postfix, from userid 10189)
+        id 5447495C0DE7; Tue, 19 Nov 2019 15:30:47 -0800 (PST)
+Date:   Tue, 19 Nov 2019 15:30:47 -0800
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        fruggeri@arista.com
+Subject: Kernel panic when reading /sys/firmware/acpi/tables/data/BERT
+User-Agent: Heirloom mailx 12.5 7/5/10
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-Id: <20191119233047.5447495C0DE7@us180.sjc.aristanetworks.com>
+From:   fruggeri@arista.com (Francesco Ruggeri)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 19.11.19 um 13:01 schrieb Marc Zyngier:
-> On 2019-11-19 02:19, Andreas Färber wrote:
->> diff --git a/drivers/irqchip/irq-rtd1195-mux.c
->> b/drivers/irqchip/irq-rtd1195-mux.c
->> new file mode 100644
->> index 000000000000..e6b08438b23c
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-rtd1195-mux.c
-[...]
->> +static void rtd1195_mux_irq_handle(struct irq_desc *desc)
->> +{
->> +    struct rtd1195_irq_mux_data *data = irq_desc_get_handler_data(desc);
->> +    struct irq_chip *chip = irq_desc_get_chip(desc);
->> +    u32 isr, mask;
->> +    int i;
->> +
->> +    chained_irq_enter(chip, desc);
->> +
->> +    isr = readl_relaxed(data->reg_isr);
->> +
->> +    while (isr) {
->> +        i = __ffs(isr);
->> +        isr &= ~BIT(i);
->> +
->> +        mask = data->info->isr_to_int_en_mask[i];
->> +        if (mask && !(data->scpu_int_en & mask))
->> +            continue;
->> +
->> +        if (!generic_handle_irq(irq_find_mapping(data->domain, i)))
->> +            writel_relaxed(BIT(i), data->reg_isr);
-> 
-> What does this write do exactly? It is the same thing as a 'mask',
-> which is pretty odd. So either:
-> 
-> - this is not doing anything and your 'mask' callback is bogus
->   (otherwise you'd never have more than a single interrupt)
-> 
-> - or this is an ACK operation, and this should be described as
->   such (and then fix the mask/unmask/enable/disable mess that
->   results from it).
+If I run
 
-This is supposed to be an ACK, i.e. clear-1-bits operation.
+for ((i=0; i<10; i++))
+	do for ((j=0; j<1000000; j++))
+		do cat /sys/firmware/acpi/tables/data/BERT >/dev/null
+	done &
+done
 
-The BSP had extended various drivers, such as 8250 UART, to do this ack
-in their interrupt handler through an additional DT reg region. I tried
-to clean that up by handling it centrally here in the irqchip driver.
+I see this panic in 5.3.11. I see a similar panic in 4.19.84.
 
-> 
-> as I can't see how the same register can be used for both purposes.
-> You should be able to verify this experimentally, even without
-> documentation.
+Is this a know issue?
 
-There are three registers here:
+Thanks,
 
-MIS_UMSK_ISR    - MISC unmasked interrupt status register
-MIS_ISR         - MISC   masked interrupt status register
-MIS_SCPU_INT_EN - MISC SCPU interrupt enable register
+Francesco Ruggeri
 
-The latter is a regular R/W register; the former two have a write_data
-field as BIT(0), with 1 indicating a write vs. 0 indicating clear, RAZ.
-
-By enabling/disabling in _SCPU_INT_EN we mask/unmask them in _ISR but
-not in _UMSK_ISR.
-
-Does that shed any more light?
-
-So given that we're iterating over reg_isr above, we could probably drop
-the mask check here...
-
-In addition there are MIS_[UMSK_]ISR_SWC and MIS_SETTING_SWC registers
-for Secure World, and MIS_FAST_INT_EN_* and MIS_FAST_ISR as well as
-various GPIO interrupt registers.
-
-Regards,
-Andreas
-
->> +    }
->> +
->> +    chained_irq_exit(chip, desc);
->> +}
->> +
->> +static void rtd1195_mux_mask_irq(struct irq_data *data)
->> +{
->> +    struct rtd1195_irq_mux_data *mux_data =
->> irq_data_get_irq_chip_data(data);
->> +
->> +    writel_relaxed(BIT(data->hwirq), mux_data->reg_isr);
->> +}
->> +
->> +static void rtd1195_mux_unmask_irq(struct irq_data *data)
->> +{
->> +    struct rtd1195_irq_mux_data *mux_data =
->> irq_data_get_irq_chip_data(data);
->> +
->> +    writel_relaxed(BIT(data->hwirq), mux_data->reg_umsk_isr);
->> +}
->> +
->> +static void rtd1195_mux_enable_irq(struct irq_data *data)
->> +{
->> +    struct rtd1195_irq_mux_data *mux_data =
->> irq_data_get_irq_chip_data(data);
->> +    unsigned long flags;
->> +    u32 mask;
->> +
->> +    mask = mux_data->info->isr_to_int_en_mask[data->hwirq];
->> +    if (!mask)
->> +        return;
-> 
-> How can this happen? You've mapped the interrupt, so it exists.
-> I can't see how you can decide to fail such enable.
-> 
->> +
->> +    raw_spin_lock_irqsave(&mux_data->lock, flags);
->> +
->> +    mux_data->scpu_int_en |= mask;
->> +    writel_relaxed(mux_data->scpu_int_en, mux_data->reg_scpu_int_en);
->> +
->> +    raw_spin_unlock_irqrestore(&mux_data->lock, flags);
->> +}
->> +
->> +static void rtd1195_mux_disable_irq(struct irq_data *data)
->> +{
->> +    struct rtd1195_irq_mux_data *mux_data =
->> irq_data_get_irq_chip_data(data);
->> +    unsigned long flags;
->> +    u32 mask;
->> +
->> +    mask = mux_data->info->isr_to_int_en_mask[data->hwirq];
->> +    if (!mask)
->> +        return;
->> +
->> +    raw_spin_lock_irqsave(&mux_data->lock, flags);
->> +
->> +    mux_data->scpu_int_en &= ~mask;
->> +    writel_relaxed(mux_data->scpu_int_en, mux_data->reg_scpu_int_en);
->> +
->> +    raw_spin_unlock_irqrestore(&mux_data->lock, flags);
->> +}
->> +
->> +static struct irq_chip rtd1195_mux_irq_chip = {
->> +    .name        = "rtd1195-mux",
->> +    .irq_mask    = rtd1195_mux_mask_irq,
->> +    .irq_unmask    = rtd1195_mux_unmask_irq,
->> +    .irq_enable    = rtd1195_mux_enable_irq,
->> +    .irq_disable    = rtd1195_mux_disable_irq,
->> +};
-> 
-> [...]
-> 
-> Although the code is pretty clean, the way you drive the HW looks
-> suspicious, and requires clarification.
-> 
-> Thanks,
-> 
->         M.
+[   96.496605] x86/PAT: cat:14315 freeing invalid memtype [mem 0x7e212000-0x7e212fff]
+[   96.496606] ------------[ cut here ]------------
+[   96.496609] kernel BUG at arch/x86/mm/ioremap.c:457!
+[   96.513923] invalid opcode: 0000 [#1] SMP
+[   96.517978] CPU: 21 PID: 14316 Comm: cat Kdump: loaded Not tainted 5.3.11-14308225.AroraKernelnext.fc18.x86_64 #1
+[   96.528284] Hardware name: Supermicro X9DRT/X9DRT, BIOS 3.0 06/28/2013
+[   96.534872] RIP: 0010:iounmap+0xa1/0xb0
+[   96.538766] Code: f6 44 24 18 40 48 8d b0 00 f0 ff ff 48 0f 45 f0 48 01 fe e8 78 3b 00 00 48 89 df e8 cd 34 14 00 49 39 c4 75 05 48 85 c0 75 02 <0f> 0b 4c 89 e7 e8 ac 3d 16 00 5b 41 5c 5d c3 66 66 66 66 90 55 48
+[   96.557594] RSP: 0018:ffffc9000cd87d80 EFLAGS: 00010286
+[   96.562867] RAX: 0000000000000000 RBX: ffffc9000cd91000 RCX: 0000000000000001
+[   96.570053] RDX: ba7841fee6198e00 RSI: 0000000000000001 RDI: ffffc9000cd91000
+[   96.577251] RBP: ffffc9000cd87d90 R08: 0000000000000001 R09: ffffffff81052572
+[   96.584433] R10: ffffc9000cd87d28 R11: 0000000000000000 R12: ffff88a038a034c0
+[   96.591627] R13: ffff88903b902000 R14: ffffc9000cd87ee8 R15: ffff88903b8eeda0
+[   96.598812] FS:  00007f7cb3d01700(0000) GS:ffff88903fb40000(0000) knlGS:0000000000000000
+[   96.606951] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   96.612969] CR2: 00007f5df9b4f030 CR3: 0000001033f50004 CR4: 00000000000606e0
+[   96.620375] Call Trace:
+[   96.623095]  acpi_os_map_cleanup.part.14+0x31/0x3e
+[   96.628158]  acpi_os_unmap_iomem+0xc9/0xcf
+[   96.632509]  acpi_os_unmap_memory+0xe/0x10
+[   96.636886]  acpi_data_show+0x66/0x73
+[   96.640814]  sysfs_kf_bin_read+0x69/0x6c
+[   96.645000]  kernfs_fop_read+0xe1/0x152
+[   96.649094]  __vfs_read+0x18/0x2f
+[   96.652665]  vfs_read+0xa4/0xdc
+[   96.656064]  ksys_read+0x6a/0xb6
+[   96.659553]  __x64_sys_read+0x1a/0x1c
+[   96.663483]  do_syscall_64+0x4c/0x5b
+[   96.667330]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   96.672637] RIP: 0033:0x7f7cb3812020
+[   96.676482] Code: b6 fe ff ff 48 8d 3d 1f e6 09 00 48 83 ec 08 e8 f6 97 02 00 66 0f 1f 44 00 00 83 3d 7d f7 2d 00 00 75 10 b8 00 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e d2 01 00 48 89 04 24
+[   96.695955] RSP: 002b:00007ffcdd7852c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   96.703985] RAX: ffffffffffffffda RBX: 0000000000010000 RCX: 00007f7cb3812020
+[   96.711372] RDX: 0000000000010000 RSI: 000000000246c000 RDI: 0000000000000003
+[   96.718766] RBP: 0000000000010000 R08: 0000000000000000 R09: 000000000246b030
+[   96.726176] R10: 00007ffcdd784d28 R11: 0000000000000246 R12: 000000000246c000
+[   96.733565] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000010000
+[   96.740958] Modules linked in: xt_MASQUERADE nf_conntrack_netlink iptable_filter xt_addrtype xt_conntrack br_netfilter bridge stp llc macvlan sg coretemp iTCO_wdt iTCO_vendor_support ip6table_filter ip6_tables x86_pkg_temp_thermal bonding ghash_clmulni_intel kvm_intel aesni_intel kvm igb irqbypass aes_x86_64 fuse hwmon glue_helper crypto_simd i2c_i801 i2c_algo_bit xt_multiport ioatdma cryptd lpc_ich joydev mfd_core i2c_core pcspkr dca iptable_nat ipmi_si ip_tables ipmi_msghandler nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 x_tables loop tun 8021q raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 isci ehci_pci libsas crc32c_intel ehci_hcd scsi_transport_sas wmi autofs4
 
 
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
