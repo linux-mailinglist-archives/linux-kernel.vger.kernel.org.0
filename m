@@ -2,89 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F88102AC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB707102ACA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbfKSR0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:26:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36750 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728443AbfKSRZ7 (ORCPT
+        id S1728610AbfKSR3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:29:25 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:44686 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728141AbfKSR3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:25:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so24842093wrx.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 09:25:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=OMBD2QQQoCU7yP4WQk94AyQxF7iHg8KGVWW/zSQqulg=;
-        b=T/uoVxbxYaOGX9wqZEjZPIu86xOQXEOo+zSrnymeJE1BmxQ/5isXpNgw9KaEwUfy4f
-         aqGEmmCCeQ4tk7QUk0CmJwerFOFZ7PCOlzDjm5WHRqZ9EPuQCNrXQcd7/Zim1qZpRPQ6
-         U2CLL7GQMMk57BFK/eDnq8Wy2pXqSLH+Dv8eg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=OMBD2QQQoCU7yP4WQk94AyQxF7iHg8KGVWW/zSQqulg=;
-        b=JagAbeitFKerGRXu3k0T7fAakRDdxvYt75mH5JBb/qQg9o8coGnNcBClXerUBRe37L
-         xjPAW0+LOmdpGbb6HgL+cP9jn256LwmfftkPVLv3sC6Bqvo0Q0MeixHeEDHCQ2LAuUeF
-         X8ETuxLb6buMMjy5DHc8zRryoV0umIju0X2dpVbfnPMZoLafv3PkfoO8i9waXuxcqEAN
-         R6Qdv1yJEYHoCaJEFobGhK4R5TbGliIiM0Lz4MMNfyWAOp8mpZFo84mOtXcX+1Qknr0v
-         H/zgleW8sNMlyMjYMkgngLgtEOArHklqA5nvonXOJf2ssgtMJgHXQXvpdq/wO7QBiOKu
-         7qmg==
-X-Gm-Message-State: APjAAAUr31QqNHLWO/H+GVJ87Dhs0roKXFYvZfTsoXkAGvSZQXmPpNQ0
-        g44vv9/pO+I/r+vVpmki+OcmNg==
-X-Google-Smtp-Source: APXvYqwRxcjVLzTu9mvOATHREjWzHA6YUWlAbUmR0OMRD1Z4pbe9YbkHAsoujaznD5BMXjTcATrEJg==
-X-Received: by 2002:adf:c786:: with SMTP id l6mr36689212wrg.45.1574184357732;
-        Tue, 19 Nov 2019 09:25:57 -0800 (PST)
-Received: from [10.69.45.46] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id y16sm27846357wro.25.2019.11.19.09.25.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Nov 2019 09:25:57 -0800 (PST)
-Subject: Re: [PATCH] scsi: lpfc: Move work items to a stack list
-To:     Daniel Wagner <dwagner@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Dick Kennedy <dick.kennedy@broadcom.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Smart <james.smart@broadcom.com>
-References: <20191105080855.16881-1-dwagner@suse.de>
- <yq1h838pivf.fsf@oracle.com> <20191119132854.mwkxx4fixjaoxv4w@beryllium.lan>
-From:   James Smart <james.smart@broadcom.com>
-Message-ID: <4a1fedc9-03f1-7312-fd50-a041a78c0294@broadcom.com>
-Date:   Tue, 19 Nov 2019 09:25:54 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Tue, 19 Nov 2019 12:29:24 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAJHTG3L069131;
+        Tue, 19 Nov 2019 11:29:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574184556;
+        bh=r/cBAHM8oY922P/6C8P9pt6goo9s2PX5XRBXQYR1CPs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=FHa8q0AkaQO/TTYzSCJp+gu59qGkDHoWhpifhhJKOVXbe/7yw1YNPIQ+Zmioo5Fb7
+         b2ZSb14bLzq+rRZx3GI8MukkkMcDhVLWLnTt2daCpnOBJhLMQlctIbLuySr/DNx+FL
+         UjWrquOZJbvuC5FhShxZEwsyCQytFg7kpXUUXSv0=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAJHTGsr005655
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Nov 2019 11:29:16 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 19
+ Nov 2019 11:29:16 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 19 Nov 2019 11:29:16 -0600
+Received: from [10.250.33.226] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAJHTGpj083047;
+        Tue, 19 Nov 2019 11:29:16 -0600
+Subject: Re: [PATCH][next] net: phy: dp83869: fix return of uninitialized
+ variable ret
+To:     Andrew Lunn <andrew@lunn.ch>, Colin King <colin.king@canonical.com>
+CC:     Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191118114835.39494-1-colin.king@canonical.com>
+ <20191118232912.GC15395@lunn.ch>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <1346c899-2114-875a-68a7-4ce0c08307dc@ti.com>
+Date:   Tue, 19 Nov 2019 11:27:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191119132854.mwkxx4fixjaoxv4w@beryllium.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191118232912.GC15395@lunn.ch>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Andrew
+
+On 11/18/19 5:29 PM, Andrew Lunn wrote:
+> On Mon, Nov 18, 2019 at 11:48:35AM +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> In the case where the call to phy_interface_is_rgmii returns zero
+>> the variable ret is left uninitialized and this is returned at
+>> the end of the function dp83869_configure_rgmii.  Fix this by
+>> returning 0 instead of the uninitialized value in ret.
+>>
+>> Addresses-Coverity: ("Uninitialized scalar variable")
+>> Fixes: 01db923e8377 ("net: phy: dp83869: Add TI dp83869 phy")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>
+> Dan: phy_modify_mmd() could fail. You check the return value for
+> phy_read and phy_write, so it would be consistent to also check
+
+Thanks for the heads up on this.
+
+I need to check the set/clear_mmd bits too.
+
+Dan
 
 
-On 11/19/2019 5:28 AM, Daniel Wagner wrote:
-> On Tue, Nov 12, 2019 at 10:15:00PM -0500, Martin K. Petersen wrote:
->>> While trying to understand what's going on in the Oops below I figured
->>> that it could be the result of the invalid pointer access. The patch
->>> still needs testing by our customer but indepent of this I think the
->>> patch fixes a real bug.
-> I was able to reproduce the same stack trace with this patch
-> applied... That is obviously bad. The good news, I have access to this
-> machine, so maybe I able to figure out what's the root cause of this
-> crash.
-
-fyi - Dick and I were taking our time reviewing your patch as the major 
-concern we had with it was that the splice and then the re-add of the 
-work-list could have an abort complete before the IO, which could lead 
-to DC.
-
-We'll look anew at your repro.
-
--- james
-
+> 	 Andrew
