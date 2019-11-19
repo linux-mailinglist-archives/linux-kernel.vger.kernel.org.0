@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B122010174A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59DE9101710
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfKSF7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:59:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42898 "EHLO mail.kernel.org"
+        id S1730388AbfKSFqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:46:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729040AbfKSFqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:46:43 -0500
+        id S1730650AbfKSFqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:46:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AC192071B;
-        Tue, 19 Nov 2019 05:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6628F2071B;
+        Tue, 19 Nov 2019 05:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142403;
-        bh=HTtoqZyvVxPeVVf9GFCb236etSkJ8xztU8o8/+LFI4M=;
+        s=default; t=1574142408;
+        bh=5y7jySM1EY7FEWm+rSzD2iseCEIB0/ban7fS0k4+TEA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjLYWwyknv/MIho5PcScBtv/tyPbEG6W7A4+P4Kz7OZ1kDvePhRzPgSoCCSC+eiZE
-         ch1dekdZ7D2o5DUA0eHw01woFJHr3Py5fKK0cJnr77HoKC3rmKLLhju6FOA+yPO3N8
-         wE/fTqadpghIOIc66d2E9TzAHifSoa5OErZ0AGLc=
+        b=ZJm42z5BUicUjoUcBzGGuolHUVp8mX9OJLQT27wT+1bHtZVLVVvm8lVnxl912QjvH
+         sV+AkslNTWWk0tDz6SlC+7TrABnKD70hHxM0dnVWYWmtu9KGxs0vMOHu4dhjUGXUo5
+         NfzGOEjglPgjgZHJ2sIfj5GwGf2r7/6LmOewOQ7w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Muhammad Sammar <muhammads@mellanox.com>,
+        Feras Daoud <ferasda@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 068/239] ARM: dts: exynos: Disable pull control for S5M8767 PMIC
-Date:   Tue, 19 Nov 2019 06:17:48 +0100
-Message-Id: <20191119051312.605119413@linuxfoundation.org>
+Subject: [PATCH 4.14 070/239] IB/ipoib: Ensure that MTU isnt less than minimum permitted
+Date:   Tue, 19 Nov 2019 06:17:50 +0100
+Message-Id: <20191119051313.031606081@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -45,49 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Muhammad Sammar <muhammads@mellanox.com>
 
-[ Upstream commit ef2ecab9af5feae97c47b7f61cdd96f7f49b2c23 ]
+[ Upstream commit 142a9c287613560edf5a03c8d142c8b6ebc1995b ]
 
-S5M8767 PMIC interrupt line on Exynos5250-based Arndale board has
-external pull-up resistors, so disable any pull control for it in
-in controller node. This fixes support for S5M8767 interrupts and
-enables operation of wakeup from S5M8767 RTC alarm.
+It is illegal to change MTU to a value lower than the minimum MTU
+stated in ethernet spec. In addition to that we need to add 4 bytes
+for encapsulation header (IPOIB_ENCAP_LEN).
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Before "ifconfig ib0 mtu 0" command, succeeds while it obviously shouldn't.
+
+Signed-off-by: Muhammad Sammar <muhammads@mellanox.com>
+Reviewed-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 18a7f396ac5f7..abd1705635f9b 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -169,6 +169,8 @@
- 		reg = <0x66>;
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&s5m8767_irq>;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 1a93d3d58c8a4..caae4bfab950d 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -249,7 +249,8 @@ static int ipoib_change_mtu(struct net_device *dev, int new_mtu)
+ 		return 0;
+ 	}
  
- 		vinb1-supply = <&main_dc_reg>;
- 		vinb2-supply = <&main_dc_reg>;
-@@ -544,6 +546,13 @@
- 	cap-sd-highspeed;
- };
+-	if (new_mtu > IPOIB_UD_MTU(priv->max_ib_mtu))
++	if (new_mtu < (ETH_MIN_MTU + IPOIB_ENCAP_LEN) ||
++	    new_mtu > IPOIB_UD_MTU(priv->max_ib_mtu))
+ 		return -EINVAL;
  
-+&pinctrl_0 {
-+	s5m8767_irq: s5m8767-irq {
-+		samsung,pins = "gpx3-2";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
+ 	priv->admin_mtu = new_mtu;
 -- 
 2.20.1
 
