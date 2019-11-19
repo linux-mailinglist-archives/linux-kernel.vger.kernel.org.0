@@ -2,136 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0329B1026B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F461026D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbfKSOan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:30:43 -0500
-Received: from sender4-pp-o98.zoho.com ([136.143.188.98]:25845 "EHLO
-        sender4-pp-o98.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbfKSOam (ORCPT
+        id S1728146AbfKSOcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:32:53 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:48450 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbfKSOcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:30:42 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1574173772; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=haNrHXmZ8f5gKg7Aqd56b9lZvE3/LWraVNamsBfZoS8jPJpkFaOs0er1j2Mu4/PoqEJ/sYA6Kl9/7GGNxs1E7s19QErXrQsgA+Je4xf92OE0/VQf12p1wYWpzOCS9QFqNu/xEcWhk/itJMQn6XeJJMxh3Ofgq1jcpVfdZULEVP8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1574173772; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To; 
-        bh=K3eeJlCStJlagedwM9bTo7SweAVG0wRCc805HZD/FBs=; 
-        b=MbNEHtCntZuO+9TwjZwLtaFw7zaAeOCVmsMwG+Vvb2N+O1oD/JZVqEDsdMCdQm3OebGeBzLL1njTsuHpUUyr9d+OLxmGwmLU/+iYzzubHiJR/9FQP+BVO10sfvoMT5db5wRbGRrDcxlinr7bdyMljpFfMdPpG51ewU9TK92b2LE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=T8f/CLB8BgSro3xqmKC80DFGsPE/+fTpkUE/V24jOrguijNYAB8KiQmA5WWm/SSdbaZC61BBsfzV
-    aXzzVeLfcjlqD4l1d8Yeid/W77hhTugcBE7PGKZE8ekvhlQbOEO+  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574173772;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=2889; bh=K3eeJlCStJlagedwM9bTo7SweAVG0wRCc805HZD/FBs=;
-        b=BeQiadmuk4U9Fs7d1JA24clkREYJ5QChKsuds4mHdVkjFIIbneUI3YCvpdijTejS
-        HwxzOJ7/MM6vofFbDtgE2n9o+EN1dVGkYl2WUk/JQXmDV5SveskYOUxKlXv6btEVi2t
-        PsVMrxxgjr+XDyAa07BeMCOycCPY8F12D0750I/I=
-Received: from zhouyanjie-virtual-machine.localdomain (171.221.113.24 [171.221.113.24]) by mx.zohomail.com
-        with SMTPS id 1574173771482827.3018728700847; Tue, 19 Nov 2019 06:29:31 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ralf@linux-mips.org,
-        paulburton@kernel.org, jhogan@kernel.org, paul@crapouillou.net,
-        jiaxun.yang@flygoat.com, gregkh@linuxfoundation.org,
-        malat@debian.org, tglx@linutronix.de, chenhc@lemote.com
-Subject: [PATCH 2/2 v3] MIPS: Ingenic: Disable abandoned HPTLB function.
-Date:   Tue, 19 Nov 2019 22:28:47 +0800
-Message-Id: <1574173727-123321-3-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574173727-123321-1-git-send-email-zhouyanjie@zoho.com>
-References: <1571909341-10108-1-git-send-email-zhouyanjie@zoho.com>
- <1574173727-123321-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Tue, 19 Nov 2019 09:32:52 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJEJFrj171891;
+        Tue, 19 Nov 2019 14:29:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=YGqCGMrjp855JQhfRhha1mrka4pAadiq0XrsZH5hYAw=;
+ b=jGtW79A1pr9OPnc5oA91hidud7AxlatNcxYphekZmeVmfzy+ypV4kHy6qK9RNCH4eBMD
+ D2Jlgwa/4Y7oldYkflEq16oQsCJSErifIWvenZQNNFvEEsiV5lgUKVqTKUFm8EjbmYGb
+ 8Y3S8Kn2gZ5BqyfRJIZyH/AYo0IuWZNS0fvdkbOPuV2Y/Odxy/ISzkEcwSPAp/yeDBNh
+ /u15xaW8YEh++soJ/JxI8H9YGhCNOkFvHgjTbeNrv6bIjmUFkmPp52PrLN+Efp7ATdGJ
+ j/2dXvCZarL8bAUNh65YpFt+vF5ZussuG3jENLqp8zfTl5p6bIv4qlxU+LX7Usupj/Kz 1A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2wa92pq6kh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 14:29:20 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJES0U2101336;
+        Tue, 19 Nov 2019 14:29:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2wbxm4bu1f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 14:29:20 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJETDHY032503;
+        Tue, 19 Nov 2019 14:29:14 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 06:29:12 -0800
+Date:   Tue, 19 Nov 2019 17:28:57 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, djkurtz@google.com,
+        Akshu.Agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 6/6] ASoC: amd: Added ACP3x system resume and runtime
+ pm
+Message-ID: <20191119142856.GE30789@kadam>
+References: <1574172508-26546-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574172508-26546-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574172508-26546-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-JZ4760/JZ4770/JZ4775/X1000/X1500 has an abandoned huge page tlb,
-this mode is not compatible with the MIPS standard, it will cause
-tlbmiss and into an infinite loop (line 21 in the tlb-funcs.S)
-when starting the init process. write 0xa9000000 to cp0 register 5
-sel 4 to disable this function to prevent getting stuck. Confirmed
-by Ingenic, this operation will not adversely affect processors
-without HPTLB function.
+This is improved.  Thanks!
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
----
- arch/mips/include/asm/mipsregs.h |  6 ++++++
- arch/mips/kernel/cpu-probe.c     | 21 +++++++++++++++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
-index bdbdc19..0d5a309 100644
---- a/arch/mips/include/asm/mipsregs.h
-+++ b/arch/mips/include/asm/mipsregs.h
-@@ -689,6 +689,9 @@
- #define MIPS_CONF7_IAR		(_ULCAST_(1) << 10)
- #define MIPS_CONF7_AR		(_ULCAST_(1) << 16)
- 
-+/* Ingenic HPTLB off bits */
-+#define XBURST_PAGECTRL_HPTLB_DIS 0xa9000000
-+
- /* Ingenic Config7 bits */
- #define MIPS_CONF7_BTB_LOOP_EN	(_ULCAST_(1) << 4)
- 
-@@ -1971,6 +1974,9 @@ do {									\
- #define read_c0_brcm_sleepcount()	__read_32bit_c0_register($22, 7)
- #define write_c0_brcm_sleepcount(val)	__write_32bit_c0_register($22, 7, val)
- 
-+/* Ingenic page ctrl register */
-+#define write_c0_page_ctrl(val)	__write_32bit_c0_register($5, 4, val)
-+
- /*
-  * Macros to access the guest system control coprocessor
-  */
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index 7a0e33c..3b5f4fb 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1965,13 +1965,30 @@ static inline void cpu_probe_ingenic(struct cpuinfo_mips *c, unsigned int cpu)
- 		break;
- 	}
- 
-+	switch (c->processor_id & PRID_COMP_MASK) {
-+	/*
-+	 * The config0 register in the XBurst CPUs with a processor ID of
-+	 * PRID_COMP_INGENIC_D1 has an abandoned huge page tlb mode, this
-+	 * mode is not compatible with the MIPS standard, it will cause
-+	 * tlbmiss and into an infinite loop (line 21 in the tlb-funcs.S)
-+	 * when starting the init process. After chip reset, the default
-+	 * is HPTLB mode, Write 0xa9000000 to cp0 register 5 sel 4 to
-+	 * switch back to VTLB mode to prevent getting stuck.
-+	 */
-+	case PRID_COMP_INGENIC_D1:
-+		write_c0_page_ctrl(XBURST_PAGECTRL_HPTLB_DIS);
-+		break;
- 	/*
--	 * The config0 register in the Xburst CPUs with a processor ID of
-+	 * The config0 register in the XBurst CPUs with a processor ID of
- 	 * PRID_COMP_INGENIC_D0 report themselves as MIPS32r2 compatible,
- 	 * but they don't actually support this ISA.
- 	 */
--	if ((c->processor_id & PRID_COMP_MASK) == PRID_COMP_INGENIC_D0)
-+	case PRID_COMP_INGENIC_D0:
- 		c->isa_level &= ~MIPS_CPU_ISA_M32R2;
-+		break;
-+	default:
-+		break;
-+	}
- }
- 
- static inline void cpu_probe_netlogic(struct cpuinfo_mips *c, int cpu)
--- 
-2.7.4
-
-
+regards,
+dan carpenter
