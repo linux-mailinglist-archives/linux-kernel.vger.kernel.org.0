@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5829010167E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D452101527
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732081AbfKSFxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:53:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51804 "EHLO mail.kernel.org"
+        id S1730503AbfKSFlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732073AbfKSFxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:53:50 -0500
+        id S1729126AbfKSFlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:41:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4C272084D;
-        Tue, 19 Nov 2019 05:53:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90395208C3;
+        Tue, 19 Nov 2019 05:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142829;
-        bh=yf2g5LS7CSR6EimOmXLQw28lqB88ShIVUmK5hDk1gAE=;
+        s=default; t=1574142071;
+        bh=YnD9x+eja6JGX98NJrMj97iJQaEMDMj5uSFc7nwljo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrUp/1R3y0RziyKwb96gV3dftUe/qnOXpBoDm+7lQdXDGgIbcwEP4kmtBzKzs0C2a
-         H2PE8K096ZNaGKs8Q18ihi3A1ggnUljuAVW0ndhXB6Ttw82hmzq2PgJhObuqnqrcEq
-         mN3naxgLItvRdk5UoBZbitzwL9tPzO58kgsXVC9w=
+        b=sXf+E5rPGIMnus1xJv/CJH03h4BV9V6vsHDL0cXOq7yyiDWETkMkJF2tXlLQQM7TN
+         oOXzzobZVwCZsBqecsPq374p3LjQeKYoh9TltTbJ/uPxVIDR/puHVBLhCkuiI2ANO7
+         eGfUPP9B4wPQnUSmKbnUQPv/VoVq2jIGvx4EURh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 174/239] net: freescale: fix return type of ndo_start_xmit function
-Date:   Tue, 19 Nov 2019 06:19:34 +0100
-Message-Id: <20191119051334.175237707@linuxfoundation.org>
+Subject: [PATCH 4.19 378/422] f2fs: fix to recover inodes project id during POR
+Date:   Tue, 19 Nov 2019 06:19:35 +0100
+Message-Id: <20191119051423.537799061@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,106 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 06983aa526c759ebdf43f202d8d0491d9494e2f4 ]
+[ Upstream commit f4474aa6e5e901ee4af21f39f1b9115aaaaec503 ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+Testcase to reproduce this bug:
+1. mkfs.f2fs -O extra_attr -O project_quota /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. sync
+5. chattr -p 1 /mnt/f2fs/file
+6. xfs_io -f /mnt/f2fs/file -c "fsync"
+7. godown /mnt/f2fs
+8. umount /mnt/f2fs
+9. mount -t f2fs /dev/sdd /mnt/f2fs
+10. lsattr -p /mnt/f2fs/file
 
-Found by coccinelle.
+    0 -----------------N- /mnt/f2fs/file
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But actually, we expect the correct result is:
+
+    1 -----------------N- /mnt/f2fs/file
+
+The reason is we didn't recover inode.i_projid field during mount,
+fix it.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c        | 3 ++-
- drivers/net/ethernet/freescale/fec_mpc52xx.c          | 3 ++-
- drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 3 ++-
- drivers/net/ethernet/freescale/gianfar.c              | 4 ++--
- drivers/net/ethernet/freescale/ucc_geth.c             | 3 ++-
- 5 files changed, 10 insertions(+), 6 deletions(-)
+ fs/f2fs/recovery.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index d5f8bf87519ac..39b8b6730e77c 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2036,7 +2036,8 @@ static inline int dpaa_xmit(struct dpaa_priv *priv,
- 	return 0;
- }
- 
--static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
-+static netdev_tx_t
-+dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- {
- 	const int queue_mapping = skb_get_queue_mapping(skb);
- 	bool nonlinear = skb_is_nonlinear(skb);
-diff --git a/drivers/net/ethernet/freescale/fec_mpc52xx.c b/drivers/net/ethernet/freescale/fec_mpc52xx.c
-index 6d7269d87a850..b90bab72efdb3 100644
---- a/drivers/net/ethernet/freescale/fec_mpc52xx.c
-+++ b/drivers/net/ethernet/freescale/fec_mpc52xx.c
-@@ -305,7 +305,8 @@ static int mpc52xx_fec_close(struct net_device *dev)
-  * invariant will hold if you make sure that the netif_*_queue()
-  * calls are done at the proper times.
-  */
--static int mpc52xx_fec_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+mpc52xx_fec_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct mpc52xx_fec_priv *priv = netdev_priv(dev);
- 	struct bcom_fec_bd *bd;
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-index 28bd4cf61741b..708082c255d09 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-@@ -481,7 +481,8 @@ static struct sk_buff *tx_skb_align_workaround(struct net_device *dev,
- }
- #endif
- 
--static int fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct fs_enet_private *fep = netdev_priv(dev);
- 	cbd_t __iomem *bdp;
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index 63daae120b2d4..27d0e3b9833cd 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -112,7 +112,7 @@
- const char gfar_driver_version[] = "2.0";
- 
- static int gfar_enet_open(struct net_device *dev);
--static int gfar_start_xmit(struct sk_buff *skb, struct net_device *dev);
-+static netdev_tx_t gfar_start_xmit(struct sk_buff *skb, struct net_device *dev);
- static void gfar_reset_task(struct work_struct *work);
- static void gfar_timeout(struct net_device *dev);
- static int gfar_close(struct net_device *dev);
-@@ -2334,7 +2334,7 @@ static inline bool gfar_csum_errata_76(struct gfar_private *priv,
- /* This is called by the kernel when a frame is ready for transmission.
-  * It is pointed to by the dev->hard_start_xmit function pointer
-  */
--static int gfar_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t gfar_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct gfar_private *priv = netdev_priv(dev);
- 	struct gfar_priv_tx_q *tx_queue = NULL;
-diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
-index 94df1ddc5dcba..bddf4c25ee6ea 100644
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -3085,7 +3085,8 @@ static int ucc_geth_startup(struct ucc_geth_private *ugeth)
- 
- /* This is called by the kernel when a frame is ready for transmission. */
- /* It is pointed to by the dev->hard_start_xmit function pointer */
--static int ucc_geth_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+ucc_geth_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(dev);
- #ifdef CONFIG_UGETH_TX_ON_DEMAND
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 2c5d2c25d37e3..01636d996ba41 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -218,6 +218,19 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 	inode->i_mode = le16_to_cpu(raw->i_mode);
+ 	i_uid_write(inode, le32_to_cpu(raw->i_uid));
+ 	i_gid_write(inode, le32_to_cpu(raw->i_gid));
++
++	if (raw->i_inline & F2FS_EXTRA_ATTR) {
++		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)->sb) &&
++			F2FS_FITS_IN_INODE(raw, le16_to_cpu(raw->i_extra_isize),
++								i_projid)) {
++			projid_t i_projid;
++
++			i_projid = (projid_t)le32_to_cpu(raw->i_projid);
++			F2FS_I(inode)->i_projid =
++				make_kprojid(&init_user_ns, i_projid);
++		}
++	}
++
+ 	f2fs_i_size_write(inode, le64_to_cpu(raw->i_size));
+ 	inode->i_atime.tv_sec = le64_to_cpu(raw->i_atime);
+ 	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
 -- 
 2.20.1
 
