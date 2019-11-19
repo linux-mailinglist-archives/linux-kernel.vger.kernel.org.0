@@ -2,89 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 822E4102DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 21:41:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F710102DA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 21:40:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfKSUk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 15:40:57 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38346 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfKSUk4 (ORCPT
+        id S1727233AbfKSUkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 15:40:53 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46468 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726711AbfKSUkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 15:40:56 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAJKemnp003319;
-        Tue, 19 Nov 2019 14:40:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574196048;
-        bh=BZMZhIOhih6YWB34NAzn3mDl5RjnHoAwoyYhzzDXlMM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pojpkqbdgJivQrnErcOzv/20vn8gRtjnv0zV6pa0n10JWMQsJn6uUYJXgErIv0nFC
-         59xX2J5VFE/RZ//QXSjV0E/V6aRid6Td62yLdIN3rKm1MP+XeHLpPlHivX6r/NCiP+
-         37UngNfXN8XM4xOTdXQpK5jQD0z4wL3i53FvyLJo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAJKemcF077835
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Nov 2019 14:40:48 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 19
- Nov 2019 14:40:47 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 19 Nov 2019 14:40:47 -0600
-Received: from [10.250.45.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAJKekhh012907;
-        Tue, 19 Nov 2019 14:40:46 -0600
-Subject: Re: [PATCH 0/1] ARM: dts: am5729: beaglebone-ai: enable board
-To:     Caleb Robey <c-robey@ti.com>, <linux-omap@vger.kernel.org>
-CC:     Jason Kridner <jkridner@gmail.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>, Jason Kridner <jdk@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tom Rini <trini@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191119202850.18149-1-c-robey@ti.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <a117b152-8fcb-01a8-5a53-2cb615e87111@ti.com>
-Date:   Tue, 19 Nov 2019 15:40:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 19 Nov 2019 15:40:53 -0500
+Received: by mail-pl1-f193.google.com with SMTP id l4so12456912plt.13;
+        Tue, 19 Nov 2019 12:40:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CSaSjdFx+v8TgqrKNkfnWp7nAv6SAOOTZ17l4vlUo0A=;
+        b=aJYoIoZo4QrycytU5Yl3xmbMDv1vOxs2Mh3otchnoI4oDPu8VAJgOdYhgnq2GH0N2o
+         uALAu4Z1r142+V8LFJ2vOm0bxbtBbpR3BNFH8BdExAK1d/736Cm7OIBw8dBwLzb2eQCp
+         nrnnaEpSJD3lq0FWy+1Li3bq6wStpqGL9xbQG1so/goyttNLtjo5wO02/XhueNG9H7bY
+         jfIpVYgHKcKNnOe0KSCBN+wWOyFlWoL08SkUPvAv7R16DY7RKc0sqAB7+r0BBEW22uR0
+         YGJPINP3M1FEkycEwKf4hYizyRn418KRHU6LyPFdBSGkS97gKXxZLuWwj6Ts5uIlsCN+
+         l83A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CSaSjdFx+v8TgqrKNkfnWp7nAv6SAOOTZ17l4vlUo0A=;
+        b=DmJcX6btwKKEDmwVSsdLAhtmnH71mF+I0MczOOxmPe2KfUqaKMGDTWsZaR5hxvM2Ci
+         NXZIP+xGvi2h9ryftksszEkZB7kmaDxiseGHm8EQYwFEb8Ul6m690il9huP1+aSQ3oGm
+         P0DHkHxici1cAXssYgzGhHUm1IBwyihQMiwTbKdgPgNFowBSzSg3lQhskNcVPJFNO53h
+         3BTVvVNn1PR08wqYXvVe7K0hBoAdk2RWYz1itPX/fXmDV2dbzSLZ8mkghkjT/C2ZoQXS
+         J7u81UZUqKFn8vrgRir6yyKmHDbCm7Wq8itgfsshsi/DO2gBqnV4nSwLAXixIsmFVViN
+         msxQ==
+X-Gm-Message-State: APjAAAUE7SuwWZpQ74X5pXumxZFUl7747Hy6+hFntAXEbpXpn64Up5R0
+        Id39rC4OLZqCcw+WxAmLP18aSEyX
+X-Google-Smtp-Source: APXvYqz5aaftKLhMq3XwHsDL6DPu4M/T0DcRhsAeCdvGD/dzTZxwJuRAZb2EaSKvm4fsVHhq6RqKpA==
+X-Received: by 2002:a17:90a:326b:: with SMTP id k98mr8957149pjb.50.1574196051134;
+        Tue, 19 Nov 2019 12:40:51 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a6sm24793197pgc.4.2019.11.19.12.40.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Nov 2019 12:40:50 -0800 (PST)
+Date:   Tue, 19 Nov 2019 12:40:49 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Denis Kirjanov <kda@linux-powerpc.org>
+Subject: Re: [PATCH 3.16 000/132] 3.16.74-rc1 review
+Message-ID: <20191119204049.GD14938@roeck-us.net>
+References: <lsq.1568989414.954567518@decadent.org.uk>
+ <20190920200423.GA26056@roeck-us.net>
+ <8dbced01558cd8d4a1d4f058010e7d63e5f6810e.camel@decadent.org.uk>
+ <CANiq72mYYzH1oS4h9GTODMP1ckZn2GnGTGirue1VLU1aw+Qo2A@mail.gmail.com>
+ <13b0e0ced6e9420dc91242dbe85cdf96c06fb645.camel@decadent.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20191119202850.18149-1-c-robey@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13b0e0ced6e9420dc91242dbe85cdf96c06fb645.camel@decadent.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/19 3:28 PM, Caleb Robey wrote:
-> The following patch adds the device tree file for BeagleBone AI
->  
-
-
-Cover-letter for a single patch is probably not needed, especially when
-you don't add anything useful in the cover letter.
-
-Andrew
-
-
-> Caleb Robey (1):
->   ARM: dts: am5729: beaglebone-ai: adding device tree
+On Tue, Nov 19, 2019 at 02:58:58PM +0000, Ben Hutchings wrote:
+> On Sun, 2019-09-22 at 21:26 +0200, Miguel Ojeda wrote:
+> > On Sun, Sep 22, 2019 at 9:04 PM Ben Hutchings <ben@decadent.org.uk> wrote:
+> > > It looks like this is triggered by you switching arm builds from gcc 8
+> > > to 9, rather than by any code change.
+> > > 
+> > > Does it actually make sense to try to support building Linux 3.16 with
+> > > gcc 9?  If so, I suppose I'll need to add:
+> > > 
+> > > commit edc966de8725f9186cc9358214da89d335f0e0bd
+> > > Author: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> > > Date:   Fri Aug 2 12:37:56 2019 +0200
+> > > 
+> > >     Backport minimal compiler_attributes.h to support GCC 9
+> > > 
+> > > commit a6e60d84989fa0e91db7f236eda40453b0e44afa
+> > > Author: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> > > Date:   Sat Jan 19 20:59:34 2019 +0100
+> > > 
+> > >     include/linux/module.h: copy __init/__exit attrs to init/cleanup_module
+> > 
+> > Yeah, those should fix it.
 > 
->  arch/arm/boot/dts/Makefile                |   1 +
->  arch/arm/boot/dts/am5729-beagleboneai.dts | 782 ++++++++++++++++++++++
->  2 files changed, 783 insertions(+)
->  create mode 100644 arch/arm/boot/dts/am5729-beagleboneai.dts
+> A week or two back I tried building 3.16 for x86_64 with gcc 8, which
+> produced some warnings but did succeed (and I know Guenter successfully
+> build-tests 3.16 with gcc 8 for many architectures).  However, the
+> kernel didn't boot on a test system, while the same code built with gcc
+> 4.9 (if I remember correctly) did boot.
 > 
+> While I'm not about to remove support for gcc 8, this makes me think
+> that there are some not-so-obvious fixes required to make 3.16 properly
+> compatible with recent gcc versions.  So I would rather not continue
+> adding superficial support for them, that may lead to people wasting
+> time building broken kernels.
+> 
+
+I kind of agree. It would make my life easier since I'd be able to drop
+older compilers, but on the other side anyone actually using 3.16 kernels
+will very likely not update their compilers for the same reason they don't
+update the kernel.
+
+Guenter
