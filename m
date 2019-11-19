@@ -2,184 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCA7103066
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB0B103076
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:57:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfKSXpq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 19 Nov 2019 18:45:46 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:59915 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfKSXpp (ORCPT
+        id S1727512AbfKSX5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 18:57:48 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54878 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbfKSX5r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 18:45:45 -0500
-Received: from marcel-macbook.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 06560CECFA;
-        Wed, 20 Nov 2019 00:54:51 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH v6 2/4] Bluetooth: btbcm: Support pcm configuration
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CANFp7mWUQFvk=gL5D9N6Fzd8wmfub5O8RF9CcWqwGr03oLJKkw@mail.gmail.com>
-Date:   Wed, 20 Nov 2019 00:45:44 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-bluetooth@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <2EB9A44E-AF4C-49C9-A98F-35F2BC52B17B@holtmann.org>
-References: <20191118192123.82430-1-abhishekpandit@chromium.org>
- <20191118110335.v6.2.I2a9640407d375f20c7c8f4afd1607db143ff0246@changeid>
- <989EE002-F3F4-441B-BD9B-B460D8B09708@holtmann.org>
- <CANFp7mWUQFvk=gL5D9N6Fzd8wmfub5O8RF9CcWqwGr03oLJKkw@mail.gmail.com>
-To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-X-Mailer: Apple Mail (2.3601.0.10)
+        Tue, 19 Nov 2019 18:57:47 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJNnfIb066835;
+        Tue, 19 Nov 2019 23:57:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=tfuEuFk0YvAERfq+sH36ftSgtj/+gMSIC9nQN57hpgw=;
+ b=MfMZQu0C+huaUzWzUspz03OIco+elBoNw1syMizQ9zgArUITChgtfCnMlzBVO8puxQxZ
+ 7MahJQNU3SUPR8uCEkTvZLq5e/z+1fSlr7+XaaJEIYl3tKPto4wap1BBV+vdo6FP1y/t
+ ZsMhSKS89NOAUvOuEyWWORV2Wthy1C3yx+bUgRbn+4TES+N2VoKWhBh49E4OZs/n848y
+ lZ2rk/HEtEOPP7sEPR5CE20o8SqE1RMNTNvPpjCM0PTnCapeKw0M4KwNsGehYbEu31af
+ Hv8gtV1T90ejxleBxfLdDyFCRdZnKTLf/Msf6APl5F7j0VMwvz9k0L+0zxt9tp0wobIM aA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2wa9rqj8ct-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 23:57:38 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJNmjF5119257;
+        Tue, 19 Nov 2019 23:55:38 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wc09y8518-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 23:55:38 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJNtad2008965;
+        Tue, 19 Nov 2019 23:55:37 GMT
+Received: from [10.159.234.241] (/10.159.234.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 15:55:36 -0800
+Subject: Re: [PATCH v2 1/2] Introduce maximum WQE size to check limits
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     monis@mellanox.com, dledford@redhat.com, sean.hefty@intel.com,
+        hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1574106879-19211-1-git-send-email-rao.shoaib@oracle.com>
+ <1574106879-19211-2-git-send-email-rao.shoaib@oracle.com>
+ <20191119203138.GA13145@ziepe.ca>
+ <44d1242a-fc32-9918-dd53-cd27ebf61811@oracle.com>
+ <20191119231334.GO4991@ziepe.ca>
+From:   Rao Shoaib <rao.shoaib@oracle.com>
+Message-ID: <dff3da9b-06a3-3904-e9eb-7feaa1ae9e01@oracle.com>
+Date:   Tue, 19 Nov 2019 15:55:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <20191119231334.GO4991@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9446 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190188
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9446 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
 
->>> Add BCM vendor specific command to configure PCM parameters. The new
->>> vendor opcode allows us to set the sco routing, the pcm interface rate,
->>> and a few other pcm specific options (frame sync, sync mode, and clock
->>> mode). See broadcom-bluetooth.txt in Documentation for more information
->>> about valid values for those settings.
->>> 
->>> Here is an example trace where this opcode was used to configure
->>> a BCM4354:
->>> 
->>>       < HCI Command: Vendor (0x3f|0x001c) plen 5
->>>               01 02 00 01 01
->>>> HCI Event: Command Complete (0x0e) plen 4
->>>       Vendor (0x3f|0x001c) ncmd 1
->>>               Status: Success (0x00)
->>> 
->>> We can read back the values as well with ocf 0x001d to confirm the
->>> values that were set:
->>>       $ hcitool cmd 0x3f 0x001d
->>>       < HCI Command: ogf 0x3f, ocf 0x001d, plen 0
->>>> HCI Event: 0x0e plen 9
->>>       01 1D FC 00 01 02 00 01 01
->>> 
->>> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
->>> ---
->>> 
->>> Changes in v6: None
->>> Changes in v5: None
->>> Changes in v4: None
->>> Changes in v3: None
->>> Changes in v2: None
->>> 
->>> drivers/bluetooth/btbcm.c | 47 +++++++++++++++++++++++++++++++++++++++
->>> drivers/bluetooth/btbcm.h | 16 +++++++++++++
->>> 2 files changed, 63 insertions(+)
->>> 
->>> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
->>> index 2d2e6d862068..df90841d29c5 100644
->>> --- a/drivers/bluetooth/btbcm.c
->>> +++ b/drivers/bluetooth/btbcm.c
->>> @@ -105,6 +105,53 @@ int btbcm_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
->>> }
->>> EXPORT_SYMBOL_GPL(btbcm_set_bdaddr);
->>> 
->>> +int btbcm_read_pcm_int_params(struct hci_dev *hdev,
->>> +                           struct bcm_set_pcm_int_params *int_params)
->>> +{
->> 
->> the name should be _param and not _params since if I remember correctly that is how Broadcom specified it. Also just use param as variable name.
-> 
-> Technically, you are configuring multiple PCM params :)
+On 11/19/19 3:13 PM, Jason Gunthorpe wrote:
+> On Tue, Nov 19, 2019 at 02:38:23PM -0800, Rao Shoaib wrote:
+>> On 11/19/19 12:31 PM, Jason Gunthorpe wrote:
+>>> On Mon, Nov 18, 2019 at 11:54:38AM -0800, rao Shoaib wrote:
+>>>> From: Rao Shoaib <rao.shoaib@oracle.com>
+>>>>
+>>>> Introduce maximum WQE size to impose limits on max SGE's and inline data
+>>>>
+>>>> Signed-off-by: Rao Shoaib <rao.shoaib@oracle.com>
+>>>>    drivers/infiniband/sw/rxe/rxe_param.h | 3 ++-
+>>>>    drivers/infiniband/sw/rxe/rxe_qp.c    | 7 +++++--
+>>>>    2 files changed, 7 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/sw/rxe/rxe_param.h b/drivers/infiniband/sw/rxe/rxe_param.h
+>>>> index 1b596fb..31fb5c7 100644
+>>>> +++ b/drivers/infiniband/sw/rxe/rxe_param.h
+>>>> @@ -68,7 +68,6 @@ enum rxe_device_param {
+>>>>    	RXE_HW_VER			= 0,
+>>>>    	RXE_MAX_QP			= 0x10000,
+>>>>    	RXE_MAX_QP_WR			= 0x4000,
+>>>> -	RXE_MAX_INLINE_DATA		= 400,
+>>>>    	RXE_DEVICE_CAP_FLAGS		= IB_DEVICE_BAD_PKEY_CNTR
+>>>>    					| IB_DEVICE_BAD_QKEY_CNTR
+>>>>    					| IB_DEVICE_AUTO_PATH_MIG
+>>>> @@ -79,7 +78,9 @@ enum rxe_device_param {
+>>>>    					| IB_DEVICE_RC_RNR_NAK_GEN
+>>>>    					| IB_DEVICE_SRQ_RESIZE
+>>>>    					| IB_DEVICE_MEM_MGT_EXTENSIONS,
+>>>> +	RXE_MAX_WQE_SIZE		= 0x2d0, /* For RXE_MAX_SGE */
+>>> This shouldn't just be a random constant, I think you are trying to
+>>> say:
+>>>
+>>>     RXE_MAX_WQE_SIZE = sizeof(struct rxe_send_wqe) + sizeof(struct ib_sge)*RXE_MAX_SGE
+>> I thought you wanted this value to be independent of RXE_MAX_SGE, else why
+>> are defining it.
+> Then define
+>
+>     RXE_MAX_SGE = (RXE_MAX_WQE_SIZE - sizeof(rxe_send_wqe))/sizeof(rxe_sge)
+>
+> And drive everything off RXE_MAX_WQE_SIZE, which sounds good
+>
+>>> Just say that
+>>>
+>>>>    	RXE_MAX_SGE			= 32,
+>>>> +	RXE_MAX_INLINE_DATA		= RXE_MAX_WQE_SIZE,
+>>> This is mixed up now, it should be
+>>>
+>>>     RXE_MAX_INLINE_DATA = RXE_MAX_WQE_SIZE - sizeof(rxe_send_wqe)
+>> I agree to what you are suggesting, it will make the current patch better.
+>> However, In my previous patch I had
+>>
+>> RXE_MAX_INLINE_DATA		= RXE_MAX_SGE * sizeof(struct ib_sge)
+>>
+>> IMHO that conveys the intent much better. I do not see the reason for
+>> defining RXE_MAX_WQE_SIZE, ib_device_attr does not even have an entry for it
+>> and hence the value is not used anywhere by rxe or by any other relevant
+>> driver.
+> Because WQE_SIZE is what you are actually concerned with here, using
+> MAX_SGE as a proxy for the max WQE is confusing
+>
+> Jason
 
-I know and maybe they renamed the command internally by now. It is just when I read the Broadcom HCI vendor commands, it was named that way. Anyway, I am fine if you want to use _params and params argument variable name. Might make sense since we somehow named the struct that way as well and it is pre-existing.
+My intent is that we calculate and use the maximum buffer size using the 
+maximum of, number of SGE's and inline data requested, not controlling 
+the size of WQE buffer. If I was trying to limit WQE size I would agree 
+with you. Defining MAX_WQE_SIZE based on MAX_SGE and recalculating 
+MAX_SGE does not make sense to me. MAX_SGE and inline_data are 
+independent variables and define the size of wqe size not the other wise 
+around. I did make inline_dependent on MAX_SGE.
 
->>> +     struct sk_buff *skb;
->>> +     int err = 0;
->>> +
->>> +     skb = __hci_cmd_sync(hdev, 0xfc1d, 5, int_params, HCI_INIT_TIMEOUT);
->>> +     if (IS_ERR(skb)) {
->>> +             err = PTR_ERR(skb);
->>> +             bt_dev_err(hdev, "BCM: Read PCM int params failed (%d)", err);
->>> +             return err;
->>> +     }
->>> +
->>> +     if (!skb->data[0] && skb->len == sizeof(*int_params) + 1) {
->>> +             memcpy(int_params, &skb->data[1], sizeof(*int_params));
->>> +     } else {
->>> +             bt_dev_err(hdev,
->>> +                        "BCM: Read PCM int params failed (%d), Length (%d)",
->>> +                        skb->data[0], skb->len);
->>> +             err = -EINVAL;
->>> +     }
->>> +
->>> +     kfree_skb(skb);
->> 
->> I find these harder to read actually and it can be still fault at data[0] access.
->> 
->>        if (skb->len != sizeof(*param) || skb->data[0]) {
->>                bt_dev_err(hdev, "BCM: Read SCO PCM int parameter failure");
->>                kfree_skb(skb);
->>                return -EIO;
->>        }
->> 
->>        memcpy(param, skb->data + 1, sizeof(*param));
->>        kfree_skb(skb);
->>        return 0;
->> }
->> 
-> 
-> Sure. skb->len should be sizeof(*param) + 1 because there's an extra
-> byte for the status as well.
+Your and my preferences can be different but you are the maintainer and 
+what you say goes. We have had a good discussion and I am going with 
+your previous suggestion.
 
-Good point. I forgot about the status octet.
+Kind Regards,
 
-> 
->>> +
->>> +     return err;
->>> +}
->>> +EXPORT_SYMBOL_GPL(btbcm_read_pcm_int_params);
->>> +
->>> +int btbcm_write_pcm_int_params(struct hci_dev *hdev,
->>> +                            const struct bcm_set_pcm_int_params *int_params)
->>> +{
->>> +     struct sk_buff *skb;
->>> +     int err;
->>> +
->>> +     /* Vendor ocf 0x001c sets the pcm parameters and 0x001d reads it */
->> 
->> Scrap this comment.
->> 
->>> +     skb = __hci_cmd_sync(hdev, 0xfc1c, 5, int_params, HCI_INIT_TIMEOUT);
->>> +     if (IS_ERR(skb)) {
->>> +             err = PTR_ERR(skb);
->>> +             bt_dev_err(hdev, "BCM: Write PCM int params failed (%d)", err);
->>> +             return err;
->>> +     }
->>> +     kfree_skb(skb);
->>> +
->>> +     return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(btbcm_write_pcm_int_params);
->>> +
->>> int btbcm_patchram(struct hci_dev *hdev, const struct firmware *fw)
->>> {
->> 
->> Otherwise this looks good.
->> 
->> Regards
->> 
->> Marcel
->> 
-> 
-> So generally, I've done a whole new patch series with every change.
-> Would you prefer to see singular updates on the same email thread or
-> should I keep doing new patch series?
-
-That is fine by me. I will start applying individual patches if possible and we get the tested-by or ACKs for it where I need them.
-
-Regards
-
-Marcel
+Shoaib
 
