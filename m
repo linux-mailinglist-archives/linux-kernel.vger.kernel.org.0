@@ -2,580 +2,392 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C7121025F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:09:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1D71025FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:09:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbfKSOJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:09:02 -0500
-Received: from mail-eopbgr10041.outbound.protection.outlook.com ([40.107.1.41]:59905
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728068AbfKSOI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:08:56 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dyruR8Mh+A20YkDAiynqppbtxqzCKJlBto7xGi6NmidRZ24RXOm0zkZ975nBlmGYZakfweZHBgTRuhaSPRjx6ty6/OnUfzgDseK4ckN+9tHt4s6hfgraw5lj61Qgh9hxkoDaJ8sh0/fhxexjMnZqCV4hd+fesOA83AJ4WB0xI9x6RVdspnLPWqWVRmDQR6vuCwTynwwFiMKPgUR/vFUpdyaJtdxvCKtv4UH0StjiA6jj1dkI/Zw9vBk58hWr5XYAwGFCktHOiGYTemhC15NyKy2YNZOasdIUtVKhXghrHSB5qALBI/4r13gq+Zt4OJtWlOrOOW1XFE+2O96VQA1CrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ph+7aNUUANu/qf690DDFhOXtHVpLqvR9BM0o+4PP05o=;
- b=PCdji0U4hp858RGFsAifrq+h1MeFv1k0vIapdGPOmic3ra2uGI0uq0OjZccp/AWAGMvUHqDXvvWpOLiICCVL4e6BLSmYO6HSuBSrjQHkQULEnRuhObTR0veisJdbomGhRyJEtvuAjEKlIbHYTB0SrzT/BCq1N3m/yNouKtNaclOxt+rC5mmJqXCh/yZklb1t/A0UT2Ecmhu9B2NZvTTBTUGdrGvsDhy5V/BNStO8laEhj8+hJ2Qs/3teGUnEGQPlk8Zo9yTlDKCTvmLNOY4JBgEiaAnRep+UDci+Ya13MeNQXKSfM6pzkafygVhHXLa0w22nrFRVSeKULYnC0WTFxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ph+7aNUUANu/qf690DDFhOXtHVpLqvR9BM0o+4PP05o=;
- b=EVI5x0tK4jR8QwgS59Xi3L0JAmNGmCq6SjcJsMWhuih34/2118IFLBGdX1dmpuVqBaqY3cvnP+7H+G2l5ARw1uVdoCIS0vrZf9ZSCLj9Ex1+7cLJzL0bEXJ+ZitT1Z7G+Aawg6Ok/HeHm9c8GqCk4H8qvo+JB46oYBurZ31WRPc=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB7044.eurprd04.prod.outlook.com (10.186.128.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.23; Tue, 19 Nov 2019 14:08:49 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2451.029; Tue, 19 Nov 2019
- 14:08:48 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Jacky Bai <ping.bai@nxp.com>
-CC:     Peng Fan <peng.fan@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH 9/9] clk: imx7up: Rename the clks to hws
-Thread-Topic: [PATCH 9/9] clk: imx7up: Rename the clks to hws
-Thread-Index: AQHVnuLczdbn6NCbZUCohcuOl28r4w==
-Date:   Tue, 19 Nov 2019 14:08:47 +0000
-Message-ID: <1574172496-12987-10-git-send-email-abel.vesa@nxp.com>
-References: <1574172496-12987-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1574172496-12987-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM0PR04CA0026.eurprd04.prod.outlook.com
- (2603:10a6:208:122::39) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-x-mailer: git-send-email 2.7.4
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 54ca7fd8-05e5-4c91-7ba7-08d76cf9feb7
-x-ms-traffictypediagnostic: AM0PR04MB7044:|AM0PR04MB7044:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB7044CE17B1CE75B9D931C97EF64C0@AM0PR04MB7044.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2043;
-x-forefront-prvs: 022649CC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(396003)(346002)(39860400002)(199004)(189003)(86362001)(66066001)(50226002)(386003)(486006)(102836004)(6506007)(26005)(66946007)(2906002)(6116002)(3846002)(6512007)(6486002)(30864003)(4326008)(5660300002)(6436002)(7736002)(25786009)(14454004)(76176011)(71200400001)(305945005)(8936002)(6636002)(478600001)(44832011)(476003)(71190400001)(2616005)(446003)(11346002)(36756003)(256004)(14444005)(316002)(66476007)(81156014)(81166006)(186003)(54906003)(110136005)(99286004)(8676002)(66446008)(52116002)(64756008)(66556008)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7044;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: wvfc/g06RFoZA7QrZnjhVLk2YcyJCFwJBCWaCUFyxBnHzCccgnaXfkuOPe9+JStaXYL46o/7iEiAlisR9gKoZUIK380gPyOYIisckvCQqSRzcI/A8NyXpAKdRWQGCTNWAJt4rSK0goVQnLU1NVh1qxKXi27GQMRXB0ww+2WfQlJGmb2vxGD6IeTpLyTh/2a/XhTI9V0Idlsnlrs0661FfDcsG+MmM7RYIMppY/MTU8XFij9ADeqqijQywZDPvWJWUXb2Lsr2oWQ+j/LrKnKLrujj6dNDp48tGleSCNL4tsRbTqGNENunujWYKcLb866OM4Wk2YHeyAEaXl29rck37HSXZnTckq5+McM0rDOxValIpMXOYcXK2JI0lQRSLVbL3jSZDJkNhUCju5eD27QtvFs+sxzAknrfVbRKPLrvaA6lpyrD6XlINxE9Mct+2pkk
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1728162AbfKSOJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:09:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727763AbfKSOJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:09:28 -0500
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 270002084D;
+        Tue, 19 Nov 2019 14:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574172566;
+        bh=FM/bjst/yFekG0yKfuQFRL1ctO1Q0YUL6KdL5pMpTpI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QsH29e/KeSXLDnVP8R5/iy0uhn4gbbcZC7WJaJ1mZrV1HTYkJJY4NWDGAIqT3zqBn
+         mHGjDsVXldWNtaEg0hWJiqw9ri/VrO/W0ejbzi+vPOTI7r9hn09PHghBjldivyPEn1
+         yYEH7kKeRXw4OodgEqzBW/UQTsoqj+WAe+PCWSro=
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PM / QoS: Wrap documentation to fit in 80 columns
+Date:   Tue, 19 Nov 2019 08:09:23 -0600
+Message-Id: <20191119140923.175286-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54ca7fd8-05e5-4c91-7ba7-08d76cf9feb7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 14:08:47.4697
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /nFnMDBuY2H9E23WezJg/2F9VTIj6Rg77FtqfBcf41C1Y1PH1CnvNba6SRV1MCfdBU2qU8WuG7a/Nx7rtIIODA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7044
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is just to keep in line with the other i.MX clock drivers that are
-clk_hw based. Plus, it makes more sense to be called hws since its type is
-clk_hw not clk.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Wrap to 80 columns.  No textual change except to correct some "it's" that
+should be "its".
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/clk/imx/clk-imx7ulp.c | 182 +++++++++++++++++++++-----------------=
-----
- 1 file changed, 91 insertions(+), 91 deletions(-)
+ Documentation/power/drivers-testing.rst       |  7 ++--
+ Documentation/power/freezing-of-tasks.rst     | 37 ++++++++++---------
+ Documentation/power/opp.rst                   | 32 ++++++++--------
+ Documentation/power/pci.rst                   | 28 +++++++-------
+ Documentation/power/pm_qos_interface.rst      | 26 ++++++-------
+ Documentation/power/runtime_pm.rst            |  4 +-
+ .../power/suspend-and-cpuhotplug.rst          |  7 ++--
+ Documentation/power/swsusp.rst                | 14 ++++---
+ 8 files changed, 81 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 8657e5f..8f67e49 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -58,7 +58,7 @@ static struct clk **pcc3_uart_clks[ARRAY_SIZE(pcc3_uart_c=
-lk_ids) + 1] __initdata
- static void __init imx7ulp_clk_scg1_init(struct device_node *np)
- {
- 	struct clk_hw_onecell_data *clk_data;
--	struct clk_hw **clks;
-+	struct clk_hw **hws;
- 	void __iomem *base;
-=20
- 	clk_data =3D kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_SCG1_END),
-@@ -67,76 +67,76 @@ static void __init imx7ulp_clk_scg1_init(struct device_=
-node *np)
- 		return;
-=20
- 	clk_data->num =3D IMX7ULP_CLK_SCG1_END;
--	clks =3D clk_data->hws;
-+	hws =3D clk_data->hws;
-=20
--	clks[IMX7ULP_CLK_DUMMY]		=3D imx_clk_hw_fixed("dummy", 0);
-+	hws[IMX7ULP_CLK_DUMMY]		=3D imx_clk_hw_fixed("dummy", 0);
-=20
--	clks[IMX7ULP_CLK_ROSC]		=3D imx_obtain_fixed_clk_hw(np, "rosc");
--	clks[IMX7ULP_CLK_SOSC]		=3D imx_obtain_fixed_clk_hw(np, "sosc");
--	clks[IMX7ULP_CLK_SIRC]		=3D imx_obtain_fixed_clk_hw(np, "sirc");
--	clks[IMX7ULP_CLK_FIRC]		=3D imx_obtain_fixed_clk_hw(np, "firc");
--	clks[IMX7ULP_CLK_UPLL]		=3D imx_obtain_fixed_clk_hw(np, "upll");
-+	hws[IMX7ULP_CLK_ROSC]		=3D imx_obtain_fixed_clk_hw(np, "rosc");
-+	hws[IMX7ULP_CLK_SOSC]		=3D imx_obtain_fixed_clk_hw(np, "sosc");
-+	hws[IMX7ULP_CLK_SIRC]		=3D imx_obtain_fixed_clk_hw(np, "sirc");
-+	hws[IMX7ULP_CLK_FIRC]		=3D imx_obtain_fixed_clk_hw(np, "firc");
-+	hws[IMX7ULP_CLK_UPLL]		=3D imx_obtain_fixed_clk_hw(np, "upll");
-=20
- 	/* SCG1 */
- 	base =3D of_iomap(np, 0);
- 	WARN_ON(!base);
-=20
- 	/* NOTE: xPLL config can't be changed when xPLL is enabled */
--	clks[IMX7ULP_CLK_APLL_PRE_SEL]	=3D imx_clk_hw_mux_flags("apll_pre_sel", b=
-ase + 0x508, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_G=
-ATE);
--	clks[IMX7ULP_CLK_SPLL_PRE_SEL]	=3D imx_clk_hw_mux_flags("spll_pre_sel", b=
-ase + 0x608, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_G=
-ATE);
-+	hws[IMX7ULP_CLK_APLL_PRE_SEL]	=3D imx_clk_hw_mux_flags("apll_pre_sel", ba=
-se + 0x508, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GA=
-TE);
-+	hws[IMX7ULP_CLK_SPLL_PRE_SEL]	=3D imx_clk_hw_mux_flags("spll_pre_sel", ba=
-se + 0x608, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GA=
-TE);
-=20
- 	/*							   name		    parent_name	   reg			shift	width	flags */
--	clks[IMX7ULP_CLK_APLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("apll_pre_div=
-", "apll_pre_sel", base + 0x508,	8,	3,	CLK_SET_RATE_GATE);
--	clks[IMX7ULP_CLK_SPLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("spll_pre_div=
-", "spll_pre_sel", base + 0x608,	8,	3,	CLK_SET_RATE_GATE);
-+	hws[IMX7ULP_CLK_APLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("apll_pre_div"=
-, "apll_pre_sel", base + 0x508,	8,	3,	CLK_SET_RATE_GATE);
-+	hws[IMX7ULP_CLK_SPLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("spll_pre_div"=
-, "spll_pre_sel", base + 0x608,	8,	3,	CLK_SET_RATE_GATE);
-=20
- 	/*						name	 parent_name	 base */
--	clks[IMX7ULP_CLK_APLL]		=3D imx_clk_hw_pllv4("apll",  "apll_pre_div", bas=
-e + 0x500);
--	clks[IMX7ULP_CLK_SPLL]		=3D imx_clk_hw_pllv4("spll",  "spll_pre_div", bas=
-e + 0x600);
-+	hws[IMX7ULP_CLK_APLL]		=3D imx_clk_hw_pllv4("apll",  "apll_pre_div", base=
- + 0x500);
-+	hws[IMX7ULP_CLK_SPLL]		=3D imx_clk_hw_pllv4("spll",  "spll_pre_div", base=
- + 0x600);
-=20
- 	/* APLL PFDs */
--	clks[IMX7ULP_CLK_APLL_PFD0]	=3D imx_clk_hw_pfdv2("apll_pfd0", "apll", bas=
-e + 0x50c, 0);
--	clks[IMX7ULP_CLK_APLL_PFD1]	=3D imx_clk_hw_pfdv2("apll_pfd1", "apll", bas=
-e + 0x50c, 1);
--	clks[IMX7ULP_CLK_APLL_PFD2]	=3D imx_clk_hw_pfdv2("apll_pfd2", "apll", bas=
-e + 0x50c, 2);
--	clks[IMX7ULP_CLK_APLL_PFD3]	=3D imx_clk_hw_pfdv2("apll_pfd3", "apll", bas=
-e + 0x50c, 3);
-+	hws[IMX7ULP_CLK_APLL_PFD0]	=3D imx_clk_hw_pfdv2("apll_pfd0", "apll", base=
- + 0x50c, 0);
-+	hws[IMX7ULP_CLK_APLL_PFD1]	=3D imx_clk_hw_pfdv2("apll_pfd1", "apll", base=
- + 0x50c, 1);
-+	hws[IMX7ULP_CLK_APLL_PFD2]	=3D imx_clk_hw_pfdv2("apll_pfd2", "apll", base=
- + 0x50c, 2);
-+	hws[IMX7ULP_CLK_APLL_PFD3]	=3D imx_clk_hw_pfdv2("apll_pfd3", "apll", base=
- + 0x50c, 3);
-=20
- 	/* SPLL PFDs */
--	clks[IMX7ULP_CLK_SPLL_PFD0]	=3D imx_clk_hw_pfdv2("spll_pfd0", "spll", bas=
-e + 0x60C, 0);
--	clks[IMX7ULP_CLK_SPLL_PFD1]	=3D imx_clk_hw_pfdv2("spll_pfd1", "spll", bas=
-e + 0x60C, 1);
--	clks[IMX7ULP_CLK_SPLL_PFD2]	=3D imx_clk_hw_pfdv2("spll_pfd2", "spll", bas=
-e + 0x60C, 2);
--	clks[IMX7ULP_CLK_SPLL_PFD3]	=3D imx_clk_hw_pfdv2("spll_pfd3", "spll", bas=
-e + 0x60C, 3);
-+	hws[IMX7ULP_CLK_SPLL_PFD0]	=3D imx_clk_hw_pfdv2("spll_pfd0", "spll", base=
- + 0x60C, 0);
-+	hws[IMX7ULP_CLK_SPLL_PFD1]	=3D imx_clk_hw_pfdv2("spll_pfd1", "spll", base=
- + 0x60C, 1);
-+	hws[IMX7ULP_CLK_SPLL_PFD2]	=3D imx_clk_hw_pfdv2("spll_pfd2", "spll", base=
- + 0x60C, 2);
-+	hws[IMX7ULP_CLK_SPLL_PFD3]	=3D imx_clk_hw_pfdv2("spll_pfd3", "spll", base=
- + 0x60C, 3);
-=20
- 	/* PLL Mux */
--	clks[IMX7ULP_CLK_APLL_PFD_SEL]	=3D imx_clk_hw_mux_flags("apll_pfd_sel", b=
-ase + 0x508, 14, 2, apll_pfd_sels, ARRAY_SIZE(apll_pfd_sels), CLK_SET_RATE_=
-PARENT | CLK_SET_PARENT_GATE);
--	clks[IMX7ULP_CLK_SPLL_PFD_SEL]	=3D imx_clk_hw_mux_flags("spll_pfd_sel", b=
-ase + 0x608, 14, 2, spll_pfd_sels, ARRAY_SIZE(spll_pfd_sels), CLK_SET_RATE_=
-PARENT | CLK_SET_PARENT_GATE);
--	clks[IMX7ULP_CLK_APLL_SEL]	=3D imx_clk_hw_mux_flags("apll_sel", base + 0x=
-508, 1, 1, apll_sels, ARRAY_SIZE(apll_sels), CLK_SET_RATE_PARENT | CLK_SET_=
-PARENT_GATE);
--	clks[IMX7ULP_CLK_SPLL_SEL]	=3D imx_clk_hw_mux_flags("spll_sel", base + 0x=
-608, 1, 1, spll_sels, ARRAY_SIZE(spll_sels), CLK_SET_RATE_PARENT | CLK_SET_=
-PARENT_GATE);
-+	hws[IMX7ULP_CLK_APLL_PFD_SEL]	=3D imx_clk_hw_mux_flags("apll_pfd_sel", ba=
-se + 0x508, 14, 2, apll_pfd_sels, ARRAY_SIZE(apll_pfd_sels), CLK_SET_RATE_P=
-ARENT | CLK_SET_PARENT_GATE);
-+	hws[IMX7ULP_CLK_SPLL_PFD_SEL]	=3D imx_clk_hw_mux_flags("spll_pfd_sel", ba=
-se + 0x608, 14, 2, spll_pfd_sels, ARRAY_SIZE(spll_pfd_sels), CLK_SET_RATE_P=
-ARENT | CLK_SET_PARENT_GATE);
-+	hws[IMX7ULP_CLK_APLL_SEL]	=3D imx_clk_hw_mux_flags("apll_sel", base + 0x5=
-08, 1, 1, apll_sels, ARRAY_SIZE(apll_sels), CLK_SET_RATE_PARENT | CLK_SET_P=
-ARENT_GATE);
-+	hws[IMX7ULP_CLK_SPLL_SEL]	=3D imx_clk_hw_mux_flags("spll_sel", base + 0x6=
-08, 1, 1, spll_sels, ARRAY_SIZE(spll_sels), CLK_SET_RATE_PARENT | CLK_SET_P=
-ARENT_GATE);
-=20
--	clks[IMX7ULP_CLK_SPLL_BUS_CLK]	=3D imx_clk_hw_divider_gate("spll_bus_clk"=
-, "spll_sel", CLK_SET_RATE_GATE, base + 0x604, 8, 3, 0, ulp_div_table, &imx=
-_ccm_lock);
-+	hws[IMX7ULP_CLK_SPLL_BUS_CLK]	=3D imx_clk_hw_divider_gate("spll_bus_clk",=
- "spll_sel", CLK_SET_RATE_GATE, base + 0x604, 8, 3, 0, ulp_div_table, &imx_=
-ccm_lock);
-=20
- 	/* scs/ddr/nic select different clock source requires that clock to be en=
-abled first */
--	clks[IMX7ULP_CLK_SYS_SEL]	=3D imx_clk_hw_mux2("scs_sel", base + 0x14, 24,=
- 4, scs_sels, ARRAY_SIZE(scs_sels));
--	clks[IMX7ULP_CLK_HSRUN_SYS_SEL] =3D imx_clk_hw_mux2("hsrun_scs_sel", base=
- + 0x1c, 24, 4, scs_sels, ARRAY_SIZE(scs_sels));
--	clks[IMX7ULP_CLK_NIC_SEL]	=3D imx_clk_hw_mux2("nic_sel", base + 0x40, 28,=
- 1, nic_sels, ARRAY_SIZE(nic_sels));
--	clks[IMX7ULP_CLK_DDR_SEL]	=3D imx_clk_hw_mux_flags("ddr_sel", base + 0x30=
-, 24, 2, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PARE=
-NT_ENABLE);
-+	hws[IMX7ULP_CLK_SYS_SEL]	=3D imx_clk_hw_mux2("scs_sel", base + 0x14, 24, =
-4, scs_sels, ARRAY_SIZE(scs_sels));
-+	hws[IMX7ULP_CLK_HSRUN_SYS_SEL] =3D imx_clk_hw_mux2("hsrun_scs_sel", base =
-+ 0x1c, 24, 4, scs_sels, ARRAY_SIZE(scs_sels));
-+	hws[IMX7ULP_CLK_NIC_SEL]	=3D imx_clk_hw_mux2("nic_sel", base + 0x40, 28, =
-1, nic_sels, ARRAY_SIZE(nic_sels));
-+	hws[IMX7ULP_CLK_DDR_SEL]	=3D imx_clk_hw_mux_flags("ddr_sel", base + 0x30,=
- 24, 2, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PAREN=
-T_ENABLE);
-=20
--	clks[IMX7ULP_CLK_CORE_DIV]	=3D imx_clk_hw_divider_flags("divcore",	"scs_s=
-el",  base + 0x14, 16, 4, CLK_SET_RATE_PARENT);
--	clks[IMX7ULP_CLK_HSRUN_CORE_DIV] =3D imx_clk_hw_divider_flags("hsrun_divc=
-ore", "hsrun_scs_sel", base + 0x1c, 16, 4, CLK_SET_RATE_PARENT);
-+	hws[IMX7ULP_CLK_CORE_DIV]	=3D imx_clk_hw_divider_flags("divcore",	"scs_se=
-l",  base + 0x14, 16, 4, CLK_SET_RATE_PARENT);
-+	hws[IMX7ULP_CLK_HSRUN_CORE_DIV] =3D imx_clk_hw_divider_flags("hsrun_divco=
-re", "hsrun_scs_sel", base + 0x1c, 16, 4, CLK_SET_RATE_PARENT);
-=20
--	clks[IMX7ULP_CLK_DDR_DIV]	=3D imx_clk_hw_divider_gate("ddr_clk", "ddr_sel=
-", CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, base + 0x30, 0, 3,
-+	hws[IMX7ULP_CLK_DDR_DIV]	=3D imx_clk_hw_divider_gate("ddr_clk", "ddr_sel"=
-, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, base + 0x30, 0, 3,
- 							       0, ulp_div_table, &imx_ccm_lock);
-=20
--	clks[IMX7ULP_CLK_NIC0_DIV]	=3D imx_clk_hw_divider_flags("nic0_clk",		"nic=
-_sel",  base + 0x40, 24, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
--	clks[IMX7ULP_CLK_NIC1_DIV]	=3D imx_clk_hw_divider_flags("nic1_clk",		"nic=
-0_clk", base + 0x40, 16, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
--	clks[IMX7ULP_CLK_NIC1_BUS_DIV]	=3D imx_clk_hw_divider_flags("nic1_bus_clk=
-",	"nic0_clk", base + 0x40, 4,  4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
-+	hws[IMX7ULP_CLK_NIC0_DIV]	=3D imx_clk_hw_divider_flags("nic0_clk",		"nic_=
-sel",  base + 0x40, 24, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
-+	hws[IMX7ULP_CLK_NIC1_DIV]	=3D imx_clk_hw_divider_flags("nic1_clk",		"nic0=
-_clk", base + 0x40, 16, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
-+	hws[IMX7ULP_CLK_NIC1_BUS_DIV]	=3D imx_clk_hw_divider_flags("nic1_bus_clk"=
-,	"nic0_clk", base + 0x40, 4,  4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
-=20
--	clks[IMX7ULP_CLK_GPU_DIV]	=3D imx_clk_hw_divider("gpu_clk", "nic0_clk", b=
-ase + 0x40, 20, 4);
-+	hws[IMX7ULP_CLK_GPU_DIV]	=3D imx_clk_hw_divider("gpu_clk", "nic0_clk", ba=
-se + 0x40, 20, 4);
-=20
--	clks[IMX7ULP_CLK_SOSC_BUS_CLK]	=3D imx_clk_hw_divider_gate("sosc_bus_clk"=
-, "sosc", 0, base + 0x104, 8, 3,
-+	hws[IMX7ULP_CLK_SOSC_BUS_CLK]	=3D imx_clk_hw_divider_gate("sosc_bus_clk",=
- "sosc", 0, base + 0x104, 8, 3,
- 							       CLK_DIVIDER_READ_ONLY, ulp_div_table, &imx_ccm_lock);
--	clks[IMX7ULP_CLK_FIRC_BUS_CLK]	=3D imx_clk_hw_divider_gate("firc_bus_clk"=
-, "firc", 0, base + 0x304, 8, 3,
-+	hws[IMX7ULP_CLK_FIRC_BUS_CLK]	=3D imx_clk_hw_divider_gate("firc_bus_clk",=
- "firc", 0, base + 0x304, 8, 3,
- 							       CLK_DIVIDER_READ_ONLY, ulp_div_table, &imx_ccm_lock);
-=20
--	imx_check_clk_hws(clks, clk_data->num);
-+	imx_check_clk_hws(hws, clk_data->num);
-=20
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
- }
-@@ -145,7 +145,7 @@ CLK_OF_DECLARE(imx7ulp_clk_scg1, "fsl,imx7ulp-scg1", im=
-x7ulp_clk_scg1_init);
- static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
- {
- 	struct clk_hw_onecell_data *clk_data;
--	struct clk_hw **clks;
-+	struct clk_hw **hws;
- 	void __iomem *base;
- 	int i;
-=20
-@@ -155,42 +155,42 @@ static void __init imx7ulp_clk_pcc2_init(struct devic=
-e_node *np)
- 		return;
-=20
- 	clk_data->num =3D IMX7ULP_CLK_PCC2_END;
--	clks =3D clk_data->hws;
-+	hws =3D clk_data->hws;
-=20
- 	/* PCC2 */
- 	base =3D of_iomap(np, 0);
- 	WARN_ON(!base);
-=20
--	clks[IMX7ULP_CLK_DMA1]		=3D imx_clk_hw_gate("dma1", "nic1_clk", base + 0x=
-20, 30);
--	clks[IMX7ULP_CLK_RGPIO2P1]	=3D imx_clk_hw_gate("rgpio2p1", "nic1_bus_clk"=
-, base + 0x3c, 30);
--	clks[IMX7ULP_CLK_DMA_MUX1]	=3D imx_clk_hw_gate("dma_mux1", "nic1_bus_clk"=
-, base + 0x84, 30);
--	clks[IMX7ULP_CLK_CAAM]		=3D imx_clk_hw_gate("caam", "nic1_clk", base + 0x=
-90, 30);
--	clks[IMX7ULP_CLK_LPTPM4]	=3D imx7ulp_clk_hw_composite("lptpm4",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
--	clks[IMX7ULP_CLK_LPTPM5]	=3D imx7ulp_clk_hw_composite("lptpm5",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
--	clks[IMX7ULP_CLK_LPIT1]		=3D imx7ulp_clk_hw_composite("lpit1",   periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
--	clks[IMX7ULP_CLK_LPSPI2]	=3D imx7ulp_clk_hw_composite("lpspi2",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa4);
--	clks[IMX7ULP_CLK_LPSPI3]	=3D imx7ulp_clk_hw_composite("lpspi3",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa8);
--	clks[IMX7ULP_CLK_LPI2C4]	=3D imx7ulp_clk_hw_composite("lpi2c4",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xac);
--	clks[IMX7ULP_CLK_LPI2C5]	=3D imx7ulp_clk_hw_composite("lpi2c5",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb0);
--	clks[IMX7ULP_CLK_LPUART4]	=3D imx7ulp_clk_hw_composite("lpuart4", periph_=
-bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb4);
--	clks[IMX7ULP_CLK_LPUART5]	=3D imx7ulp_clk_hw_composite("lpuart5", periph_=
-bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb8);
--	clks[IMX7ULP_CLK_FLEXIO1]	=3D imx7ulp_clk_hw_composite("flexio1", periph_=
-bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xc4);
--	clks[IMX7ULP_CLK_USB0]		=3D imx7ulp_clk_hw_composite("usb0",    periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xcc);
--	clks[IMX7ULP_CLK_USB1]		=3D imx7ulp_clk_hw_composite("usb1",    periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xd0);
--	clks[IMX7ULP_CLK_USB_PHY]	=3D imx_clk_hw_gate("usb_phy", "nic1_bus_clk", =
-base + 0xd4, 30);
--	clks[IMX7ULP_CLK_USDHC0]	=3D imx7ulp_clk_hw_composite("usdhc0",  periph_p=
-lat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xdc);
--	clks[IMX7ULP_CLK_USDHC1]	=3D imx7ulp_clk_hw_composite("usdhc1",  periph_p=
-lat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xe0);
--	clks[IMX7ULP_CLK_WDG1]		=3D imx7ulp_clk_hw_composite("wdg1",    periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xf4);
--	clks[IMX7ULP_CLK_WDG2]		=3D imx7ulp_clk_hw_composite("sdg2",    periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0x10c);
+diff --git a/Documentation/power/drivers-testing.rst b/Documentation/power/drivers-testing.rst
+index e53f1999fc39..d77d2894f9fe 100644
+--- a/Documentation/power/drivers-testing.rst
++++ b/Documentation/power/drivers-testing.rst
+@@ -39,9 +39,10 @@ c) Compile the driver directly into the kernel and try the test modes of
+ d) Attempt to hibernate with the driver compiled directly into the kernel
+    in the "reboot", "shutdown" and "platform" modes.
+ 
+-e) Try the test modes of suspend (see: Documentation/power/basic-pm-debugging.rst,
+-   2).  [As far as the STR tests are concerned, it should not matter whether or
+-   not the driver is built as a module.]
++e) Try the test modes of suspend (see:
++   Documentation/power/basic-pm-debugging.rst, 2).  [As far as the STR tests are
++   concerned, it should not matter whether or not the driver is built as a
++   module.]
+ 
+ f) Attempt to suspend to RAM using the s2ram tool with the driver loaded
+    (see: Documentation/power/basic-pm-debugging.rst, 2).
+diff --git a/Documentation/power/freezing-of-tasks.rst b/Documentation/power/freezing-of-tasks.rst
+index ef110fe55e82..8bd693399834 100644
+--- a/Documentation/power/freezing-of-tasks.rst
++++ b/Documentation/power/freezing-of-tasks.rst
+@@ -215,30 +215,31 @@ VI. Are there any precautions to be taken to prevent freezing failures?
+ 
+ Yes, there are.
+ 
+-First of all, grabbing the 'system_transition_mutex' lock to mutually exclude a piece of code
+-from system-wide sleep such as suspend/hibernation is not encouraged.
+-If possible, that piece of code must instead hook onto the suspend/hibernation
+-notifiers to achieve mutual exclusion. Look at the CPU-Hotplug code
+-(kernel/cpu.c) for an example.
 -
--	imx_check_clk_hws(clks, clk_data->num);
-+	hws[IMX7ULP_CLK_DMA1]		=3D imx_clk_hw_gate("dma1", "nic1_clk", base + 0x2=
-0, 30);
-+	hws[IMX7ULP_CLK_RGPIO2P1]	=3D imx_clk_hw_gate("rgpio2p1", "nic1_bus_clk",=
- base + 0x3c, 30);
-+	hws[IMX7ULP_CLK_DMA_MUX1]	=3D imx_clk_hw_gate("dma_mux1", "nic1_bus_clk",=
- base + 0x84, 30);
-+	hws[IMX7ULP_CLK_CAAM]		=3D imx_clk_hw_gate("caam", "nic1_clk", base + 0x9=
-0, 30);
-+	hws[IMX7ULP_CLK_LPTPM4]	=3D imx7ulp_clk_hw_composite("lptpm4",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
-+	hws[IMX7ULP_CLK_LPTPM5]	=3D imx7ulp_clk_hw_composite("lptpm5",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
-+	hws[IMX7ULP_CLK_LPIT1]		=3D imx7ulp_clk_hw_composite("lpit1",   periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
-+	hws[IMX7ULP_CLK_LPSPI2]	=3D imx7ulp_clk_hw_composite("lpspi2",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa4);
-+	hws[IMX7ULP_CLK_LPSPI3]	=3D imx7ulp_clk_hw_composite("lpspi3",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa8);
-+	hws[IMX7ULP_CLK_LPI2C4]	=3D imx7ulp_clk_hw_composite("lpi2c4",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xac);
-+	hws[IMX7ULP_CLK_LPI2C5]	=3D imx7ulp_clk_hw_composite("lpi2c5",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb0);
-+	hws[IMX7ULP_CLK_LPUART4]	=3D imx7ulp_clk_hw_composite("lpuart4", periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb4);
-+	hws[IMX7ULP_CLK_LPUART5]	=3D imx7ulp_clk_hw_composite("lpuart5", periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb8);
-+	hws[IMX7ULP_CLK_FLEXIO1]	=3D imx7ulp_clk_hw_composite("flexio1", periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xc4);
-+	hws[IMX7ULP_CLK_USB0]		=3D imx7ulp_clk_hw_composite("usb0",    periph_pla=
-t_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xcc);
-+	hws[IMX7ULP_CLK_USB1]		=3D imx7ulp_clk_hw_composite("usb1",    periph_pla=
-t_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xd0);
-+	hws[IMX7ULP_CLK_USB_PHY]	=3D imx_clk_hw_gate("usb_phy", "nic1_bus_clk", b=
-ase + 0xd4, 30);
-+	hws[IMX7ULP_CLK_USDHC0]	=3D imx7ulp_clk_hw_composite("usdhc0",  periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xdc);
-+	hws[IMX7ULP_CLK_USDHC1]	=3D imx7ulp_clk_hw_composite("usdhc1",  periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xe0);
-+	hws[IMX7ULP_CLK_WDG1]		=3D imx7ulp_clk_hw_composite("wdg1",    periph_bus=
-_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xf4);
-+	hws[IMX7ULP_CLK_WDG2]		=3D imx7ulp_clk_hw_composite("sdg2",    periph_bus=
-_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0x10c);
+-However, if that is not feasible, and grabbing 'system_transition_mutex' is deemed necessary,
+-it is strongly discouraged to directly call mutex_[un]lock(&system_transition_mutex) since
+-that could lead to freezing failures, because if the suspend/hibernate code
+-successfully acquired the 'system_transition_mutex' lock, and hence that other entity failed
+-to acquire the lock, then that task would get blocked in TASK_UNINTERRUPTIBLE
+-state. As a consequence, the freezer would not be able to freeze that task,
+-leading to freezing failure.
++First of all, grabbing the 'system_transition_mutex' lock to mutually exclude a
++piece of code from system-wide sleep such as suspend/hibernation is not
++encouraged.  If possible, that piece of code must instead hook onto the
++suspend/hibernation notifiers to achieve mutual exclusion. Look at the
++CPU-Hotplug code (kernel/cpu.c) for an example.
 +
-+	imx_check_clk_hws(hws, clk_data->num);
-=20
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-=20
- 	for (i =3D 0; i < ARRAY_SIZE(pcc2_uart_clk_ids); i++) {
- 		int index =3D pcc2_uart_clk_ids[i];
-=20
--		pcc2_uart_clks[i] =3D &clks[index]->clk;
-+		pcc2_uart_clks[i] =3D &hws[index]->clk;
- 	}
-=20
- 	imx_register_uart_clocks(pcc2_uart_clks);
-@@ -200,7 +200,7 @@ CLK_OF_DECLARE(imx7ulp_clk_pcc2, "fsl,imx7ulp-pcc2", im=
-x7ulp_clk_pcc2_init);
- static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
- {
- 	struct clk_hw_onecell_data *clk_data;
--	struct clk_hw **clks;
-+	struct clk_hw **hws;
- 	void __iomem *base;
- 	int i;
-=20
-@@ -210,41 +210,41 @@ static void __init imx7ulp_clk_pcc3_init(struct devic=
-e_node *np)
- 		return;
-=20
- 	clk_data->num =3D IMX7ULP_CLK_PCC3_END;
--	clks =3D clk_data->hws;
-+	hws =3D clk_data->hws;
-=20
- 	/* PCC3 */
- 	base =3D of_iomap(np, 0);
- 	WARN_ON(!base);
-=20
--	clks[IMX7ULP_CLK_LPTPM6]	=3D imx7ulp_clk_hw_composite("lptpm6",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x84);
--	clks[IMX7ULP_CLK_LPTPM7]	=3D imx7ulp_clk_hw_composite("lptpm7",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x88);
-+	hws[IMX7ULP_CLK_LPTPM6]	=3D imx7ulp_clk_hw_composite("lptpm6",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x84);
-+	hws[IMX7ULP_CLK_LPTPM7]	=3D imx7ulp_clk_hw_composite("lptpm7",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x88);
-=20
--	clks[IMX7ULP_CLK_MMDC]		=3D clk_hw_register_gate(NULL, "mmdc", "nic1_clk"=
-, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+	hws[IMX7ULP_CLK_MMDC]		=3D clk_hw_register_gate(NULL, "mmdc", "nic1_clk",=
- CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 							       base + 0xac, 30, 0, &imx_ccm_lock);
--	clks[IMX7ULP_CLK_LPI2C6]	=3D imx7ulp_clk_hw_composite("lpi2c6",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x90);
--	clks[IMX7ULP_CLK_LPI2C7]	=3D imx7ulp_clk_hw_composite("lpi2c7",  periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
--	clks[IMX7ULP_CLK_LPUART6]	=3D imx7ulp_clk_hw_composite("lpuart6", periph_=
-bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
--	clks[IMX7ULP_CLK_LPUART7]	=3D imx7ulp_clk_hw_composite("lpuart7", periph_=
-bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
--	clks[IMX7ULP_CLK_DSI]		=3D imx7ulp_clk_hw_composite("dsi",     periph_bus=
-_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xa4);
--	clks[IMX7ULP_CLK_LCDIF]		=3D imx7ulp_clk_hw_composite("lcdif",   periph_p=
-lat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xa8);
-+	hws[IMX7ULP_CLK_LPI2C6]	=3D imx7ulp_clk_hw_composite("lpi2c6",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x90);
-+	hws[IMX7ULP_CLK_LPI2C7]	=3D imx7ulp_clk_hw_composite("lpi2c7",  periph_bu=
-s_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
-+	hws[IMX7ULP_CLK_LPUART6]	=3D imx7ulp_clk_hw_composite("lpuart6", periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
-+	hws[IMX7ULP_CLK_LPUART7]	=3D imx7ulp_clk_hw_composite("lpuart7", periph_b=
-us_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
-+	hws[IMX7ULP_CLK_DSI]		=3D imx7ulp_clk_hw_composite("dsi",     periph_bus_=
-sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xa4);
-+	hws[IMX7ULP_CLK_LCDIF]		=3D imx7ulp_clk_hw_composite("lcdif",   periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xa8);
-=20
--	clks[IMX7ULP_CLK_VIU]		=3D imx_clk_hw_gate("viu",   "nic1_clk",	   base +=
- 0xa0, 30);
--	clks[IMX7ULP_CLK_PCTLC]		=3D imx_clk_hw_gate("pctlc", "nic1_bus_clk", bas=
-e + 0xb8, 30);
--	clks[IMX7ULP_CLK_PCTLD]		=3D imx_clk_hw_gate("pctld", "nic1_bus_clk", bas=
-e + 0xbc, 30);
--	clks[IMX7ULP_CLK_PCTLE]		=3D imx_clk_hw_gate("pctle", "nic1_bus_clk", bas=
-e + 0xc0, 30);
--	clks[IMX7ULP_CLK_PCTLF]		=3D imx_clk_hw_gate("pctlf", "nic1_bus_clk", bas=
-e + 0xc4, 30);
-+	hws[IMX7ULP_CLK_VIU]		=3D imx_clk_hw_gate("viu",   "nic1_clk",	   base + =
-0xa0, 30);
-+	hws[IMX7ULP_CLK_PCTLC]		=3D imx_clk_hw_gate("pctlc", "nic1_bus_clk", base=
- + 0xb8, 30);
-+	hws[IMX7ULP_CLK_PCTLD]		=3D imx_clk_hw_gate("pctld", "nic1_bus_clk", base=
- + 0xbc, 30);
-+	hws[IMX7ULP_CLK_PCTLE]		=3D imx_clk_hw_gate("pctle", "nic1_bus_clk", base=
- + 0xc0, 30);
-+	hws[IMX7ULP_CLK_PCTLF]		=3D imx_clk_hw_gate("pctlf", "nic1_bus_clk", base=
- + 0xc4, 30);
-=20
--	clks[IMX7ULP_CLK_GPU3D]		=3D imx7ulp_clk_hw_composite("gpu3d",   periph_p=
-lat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x140);
--	clks[IMX7ULP_CLK_GPU2D]		=3D imx7ulp_clk_hw_composite("gpu2d",   periph_p=
-lat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x144);
-+	hws[IMX7ULP_CLK_GPU3D]		=3D imx7ulp_clk_hw_composite("gpu3d",   periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x140);
-+	hws[IMX7ULP_CLK_GPU2D]		=3D imx7ulp_clk_hw_composite("gpu2d",   periph_pl=
-at_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x144);
-=20
--	imx_check_clk_hws(clks, clk_data->num);
-+	imx_check_clk_hws(hws, clk_data->num);
-=20
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-=20
- 	for (i =3D 0; i < ARRAY_SIZE(pcc3_uart_clk_ids); i++) {
- 		int index =3D pcc3_uart_clk_ids[i];
-=20
--		pcc3_uart_clks[i] =3D &clks[index]->clk;
-+		pcc3_uart_clks[i] =3D &hws[index]->clk;
- 	}
-=20
- 	imx_register_uart_clocks(pcc3_uart_clks);
-@@ -254,7 +254,7 @@ CLK_OF_DECLARE(imx7ulp_clk_pcc3, "fsl,imx7ulp-pcc3", im=
-x7ulp_clk_pcc3_init);
- static void __init imx7ulp_clk_smc1_init(struct device_node *np)
- {
- 	struct clk_hw_onecell_data *clk_data;
--	struct clk_hw **clks;
-+	struct clk_hw **hws;
- 	void __iomem *base;
-=20
- 	clk_data =3D kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_SMC1_END),
-@@ -263,15 +263,15 @@ static void __init imx7ulp_clk_smc1_init(struct devic=
-e_node *np)
- 		return;
-=20
- 	clk_data->num =3D IMX7ULP_CLK_SMC1_END;
--	clks =3D clk_data->hws;
-+	hws =3D clk_data->hws;
-=20
- 	/* SMC1 */
- 	base =3D of_iomap(np, 0);
- 	WARN_ON(!base);
-=20
--	clks[IMX7ULP_CLK_ARM] =3D imx_clk_hw_mux_flags("arm", base + 0x10, 8, 2, =
-arm_sels, ARRAY_SIZE(arm_sels), CLK_IS_CRITICAL);
-+	hws[IMX7ULP_CLK_ARM] =3D imx_clk_hw_mux_flags("arm", base + 0x10, 8, 2, a=
-rm_sels, ARRAY_SIZE(arm_sels), CLK_IS_CRITICAL);
-=20
--	imx_check_clk_hws(clks, clk_data->num);
-+	imx_check_clk_hws(hws, clk_data->num);
-=20
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
- }
---=20
-2.7.4
++However, if that is not feasible, and grabbing 'system_transition_mutex' is
++deemed necessary, it is strongly discouraged to directly call
++mutex_[un]lock(&system_transition_mutex) since that could lead to freezing
++failures, because if the suspend/hibernate code successfully acquired the
++'system_transition_mutex' lock, and hence that other entity failed to acquire
++the lock, then that task would get blocked in TASK_UNINTERRUPTIBLE state. As a
++consequence, the freezer would not be able to freeze that task, leading to
++freezing failure.
+ 
+ However, the [un]lock_system_sleep() APIs are safe to use in this scenario,
+ since they ask the freezer to skip freezing this task, since it is anyway
+-"frozen enough" as it is blocked on 'system_transition_mutex', which will be released
+-only after the entire suspend/hibernation sequence is complete.
+-So, to summarize, use [un]lock_system_sleep() instead of directly using
++"frozen enough" as it is blocked on 'system_transition_mutex', which will be
++released only after the entire suspend/hibernation sequence is complete.  So, to
++summarize, use [un]lock_system_sleep() instead of directly using
+ mutex_[un]lock(&system_transition_mutex). That would prevent freezing failures.
+ 
+ V. Miscellaneous
+ ================
+ 
+ /sys/power/pm_freeze_timeout controls how long it will cost at most to freeze
+-all user space processes or all freezable kernel threads, in unit of millisecond.
+-The default value is 20000, with range of unsigned integer.
++all user space processes or all freezable kernel threads, in unit of
++millisecond.  The default value is 20000, with range of unsigned integer.
+diff --git a/Documentation/power/opp.rst b/Documentation/power/opp.rst
+index 209c7613f5a4..e3cc4f349ea8 100644
+--- a/Documentation/power/opp.rst
++++ b/Documentation/power/opp.rst
+@@ -73,19 +73,21 @@ factors. Example usage: Thermal management or other exceptional situations where
+ SoC framework might choose to disable a higher frequency OPP to safely continue
+ operations until that OPP could be re-enabled if possible.
+ 
+-OPP library facilitates this concept in it's implementation. The following
++OPP library facilitates this concept in its implementation. The following
+ operational functions operate only on available opps:
+-opp_find_freq_{ceil, floor}, dev_pm_opp_get_voltage, dev_pm_opp_get_freq, dev_pm_opp_get_opp_count
++opp_find_freq_{ceil, floor}, dev_pm_opp_get_voltage, dev_pm_opp_get_freq,
++dev_pm_opp_get_opp_count
+ 
+-dev_pm_opp_find_freq_exact is meant to be used to find the opp pointer which can then
+-be used for dev_pm_opp_enable/disable functions to make an opp available as required.
++dev_pm_opp_find_freq_exact is meant to be used to find the opp pointer
++which can then be used for dev_pm_opp_enable/disable functions to make an
++opp available as required.
+ 
+ WARNING: Users of OPP library should refresh their availability count using
+-get_opp_count if dev_pm_opp_enable/disable functions are invoked for a device, the
+-exact mechanism to trigger these or the notification mechanism to other
+-dependent subsystems such as cpufreq are left to the discretion of the SoC
+-specific framework which uses the OPP library. Similar care needs to be taken
+-care to refresh the cpufreq table in cases of these operations.
++get_opp_count if dev_pm_opp_enable/disable functions are invoked for a
++device, the exact mechanism to trigger these or the notification mechanism
++to other dependent subsystems such as cpufreq are left to the discretion of
++the SoC specific framework which uses the OPP library. Similar care needs
++to be taken care to refresh the cpufreq table in cases of these operations.
+ 
+ 2. Initial OPP List Registration
+ ================================
+@@ -99,11 +101,11 @@ OPPs dynamically using the dev_pm_opp_enable / disable functions.
+ dev_pm_opp_add
+ 	Add a new OPP for a specific domain represented by the device pointer.
+ 	The OPP is defined using the frequency and voltage. Once added, the OPP
+-	is assumed to be available and control of it's availability can be done
+-	with the dev_pm_opp_enable/disable functions. OPP library internally stores
+-	and manages this information in the opp struct. This function may be
+-	used by SoC framework to define a optimal list as per the demands of
+-	SoC usage environment.
++	is assumed to be available and control of its availability can be done
++	with the dev_pm_opp_enable/disable functions. OPP library
++	internally stores and manages this information in the opp struct.
++	This function may be used by SoC framework to define a optimal list
++	as per the demands of SoC usage environment.
+ 
+ 	WARNING:
+ 		Do not use this function in interrupt context.
+@@ -354,7 +356,7 @@ struct dev_pm_opp
+ 
+ struct device
+ 	This is used to identify a domain to the OPP layer. The
+-	nature of the device and it's implementation is left to the user of
++	nature of the device and its implementation is left to the user of
+ 	OPP library such as the SoC framework.
+ 
+ Overall, in a simplistic view, the data structure operations is represented as
+diff --git a/Documentation/power/pci.rst b/Documentation/power/pci.rst
+index 0e2ef7429304..51e0a493d284 100644
+--- a/Documentation/power/pci.rst
++++ b/Documentation/power/pci.rst
+@@ -426,12 +426,12 @@ pm->runtime_idle() callback.
+ 2.4. System-Wide Power Transitions
+ ----------------------------------
+ There are a few different types of system-wide power transitions, described in
+-Documentation/driver-api/pm/devices.rst.  Each of them requires devices to be handled
+-in a specific way and the PM core executes subsystem-level power management
+-callbacks for this purpose.  They are executed in phases such that each phase
+-involves executing the same subsystem-level callback for every device belonging
+-to the given subsystem before the next phase begins.  These phases always run
+-after tasks have been frozen.
++Documentation/driver-api/pm/devices.rst.  Each of them requires devices to be
++handled in a specific way and the PM core executes subsystem-level power
++management callbacks for this purpose.  They are executed in phases such that
++each phase involves executing the same subsystem-level callback for every device
++belonging to the given subsystem before the next phase begins.  These phases
++always run after tasks have been frozen.
+ 
+ 2.4.1. System Suspend
+ ^^^^^^^^^^^^^^^^^^^^^
+@@ -636,12 +636,12 @@ System restore requires a hibernation image to be loaded into memory and the
+ pre-hibernation memory contents to be restored before the pre-hibernation system
+ activity can be resumed.
+ 
+-As described in Documentation/driver-api/pm/devices.rst, the hibernation image is loaded
+-into memory by a fresh instance of the kernel, called the boot kernel, which in
+-turn is loaded and run by a boot loader in the usual way.  After the boot kernel
+-has loaded the image, it needs to replace its own code and data with the code
+-and data of the "hibernated" kernel stored within the image, called the image
+-kernel.  For this purpose all devices are frozen just like before creating
++As described in Documentation/driver-api/pm/devices.rst, the hibernation image
++is loaded into memory by a fresh instance of the kernel, called the boot kernel,
++which in turn is loaded and run by a boot loader in the usual way.  After the
++boot kernel has loaded the image, it needs to replace its own code and data with
++the code and data of the "hibernated" kernel stored within the image, called the
++image kernel.  For this purpose all devices are frozen just like before creating
+ the image during hibernation, in the
+ 
+ 	prepare, freeze, freeze_noirq
+@@ -691,8 +691,8 @@ controlling the runtime power management of their devices.
+ 
+ At the time of this writing there are two ways to define power management
+ callbacks for a PCI device driver, the recommended one, based on using a
+-dev_pm_ops structure described in Documentation/driver-api/pm/devices.rst, and the
+-"legacy" one, in which the .suspend(), .suspend_late(), .resume_early(), and
++dev_pm_ops structure described in Documentation/driver-api/pm/devices.rst, and
++the "legacy" one, in which the .suspend(), .suspend_late(), .resume_early(), and
+ .resume() callbacks from struct pci_driver are used.  The legacy approach,
+ however, doesn't allow one to define runtime power management callbacks and is
+ not really suitable for any new drivers.  Therefore it is not covered by this
+diff --git a/Documentation/power/pm_qos_interface.rst b/Documentation/power/pm_qos_interface.rst
+index 3097694fba69..0d62d506caf0 100644
+--- a/Documentation/power/pm_qos_interface.rst
++++ b/Documentation/power/pm_qos_interface.rst
+@@ -8,8 +8,8 @@ one of the parameters.
+ 
+ Two different PM QoS frameworks are available:
+ 1. PM QoS classes for cpu_dma_latency
+-2. the per-device PM QoS framework provides the API to manage the per-device latency
+-constraints and PM QoS flags.
++2. The per-device PM QoS framework provides the API to manage the
++   per-device latency constraints and PM QoS flags.
+ 
+ Each parameters have defined units:
+ 
+@@ -47,14 +47,14 @@ void pm_qos_add_request(handle, param_class, target_value):
+   pm_qos API functions.
+ 
+ void pm_qos_update_request(handle, new_target_value):
+-  Will update the list element pointed to by the handle with the new target value
+-  and recompute the new aggregated target, calling the notification tree if the
+-  target is changed.
++  Will update the list element pointed to by the handle with the new target
++  value and recompute the new aggregated target, calling the notification tree
++  if the target is changed.
+ 
+ void pm_qos_remove_request(handle):
+-  Will remove the element.  After removal it will update the aggregate target and
+-  call the notification tree if the target was changed as a result of removing
+-  the request.
++  Will remove the element.  After removal it will update the aggregate target
++  and call the notification tree if the target was changed as a result of
++  removing the request.
+ 
+ int pm_qos_request(param_class):
+   Returns the aggregated value for a given PM QoS class.
+@@ -167,9 +167,9 @@ int dev_pm_qos_expose_flags(device, value)
+   change the value of the PM_QOS_FLAG_NO_POWER_OFF flag.
+ 
+ void dev_pm_qos_hide_flags(device)
+-  Drop the request added by dev_pm_qos_expose_flags() from the device's PM QoS list
+-  of flags and remove sysfs attribute pm_qos_no_power_off from the device's power
+-  directory.
++  Drop the request added by dev_pm_qos_expose_flags() from the device's PM QoS
++  list of flags and remove sysfs attribute pm_qos_no_power_off from the device's
++  power directory.
+ 
+ Notification mechanisms:
+ 
+@@ -179,8 +179,8 @@ int dev_pm_qos_add_notifier(device, notifier, type):
+   Adds a notification callback function for the device for a particular request
+   type.
+ 
+-  The callback is called when the aggregated value of the device constraints list
+-  is changed.
++  The callback is called when the aggregated value of the device constraints
++  list is changed.
+ 
+ int dev_pm_qos_remove_notifier(device, notifier, type):
+   Removes the notification callback function for the device.
+diff --git a/Documentation/power/runtime_pm.rst b/Documentation/power/runtime_pm.rst
+index 2c2ec99b5088..ab8406c84254 100644
+--- a/Documentation/power/runtime_pm.rst
++++ b/Documentation/power/runtime_pm.rst
+@@ -268,8 +268,8 @@ defined in include/linux/pm.h:
+   `unsigned int runtime_auto;`
+     - if set, indicates that the user space has allowed the device driver to
+       power manage the device at run time via the /sys/devices/.../power/control
+-      `interface;` it may only be modified with the help of the pm_runtime_allow()
+-      and pm_runtime_forbid() helper functions
++      `interface;` it may only be modified with the help of the
++      pm_runtime_allow() and pm_runtime_forbid() helper functions
+ 
+   `unsigned int no_callbacks;`
+     - indicates that the device does not use the runtime PM callbacks (see
+diff --git a/Documentation/power/suspend-and-cpuhotplug.rst b/Documentation/power/suspend-and-cpuhotplug.rst
+index 7ac8e1f549f4..572d968c5375 100644
+--- a/Documentation/power/suspend-and-cpuhotplug.rst
++++ b/Documentation/power/suspend-and-cpuhotplug.rst
+@@ -106,8 +106,8 @@ execution during resume):
+ * Release system_transition_mutex lock.
+ 
+ 
+-It is to be noted here that the system_transition_mutex lock is acquired at the very
+-beginning, when we are just starting out to suspend, and then released only
++It is to be noted here that the system_transition_mutex lock is acquired at the
++very beginning, when we are just starting out to suspend, and then released only
+ after the entire cycle is complete (i.e., suspend + resume).
+ 
+ ::
+@@ -165,7 +165,8 @@ Important files and functions/entry points:
+ 
+ - kernel/power/process.c : freeze_processes(), thaw_processes()
+ - kernel/power/suspend.c : suspend_prepare(), suspend_enter(), suspend_finish()
+-- kernel/cpu.c: cpu_[up|down](), _cpu_[up|down](), [disable|enable]_nonboot_cpus()
++- kernel/cpu.c: cpu_[up|down](), _cpu_[up|down](),
++  [disable|enable]_nonboot_cpus()
+ 
+ 
+ 
+diff --git a/Documentation/power/swsusp.rst b/Documentation/power/swsusp.rst
+index d000312f6965..8524f079e05c 100644
+--- a/Documentation/power/swsusp.rst
++++ b/Documentation/power/swsusp.rst
+@@ -118,7 +118,8 @@ In a really perfect world::
+ 
+   echo 1 > /proc/acpi/sleep       # for standby
+   echo 2 > /proc/acpi/sleep       # for suspend to ram
+-  echo 3 > /proc/acpi/sleep       # for suspend to ram, but with more power conservative
++  echo 3 > /proc/acpi/sleep       # for suspend to ram, but with more power
++                                  # conservative
+   echo 4 > /proc/acpi/sleep       # for suspend to disk
+   echo 5 > /proc/acpi/sleep       # for shutdown unfriendly the system
+ 
+@@ -192,8 +193,8 @@ Q:
+ 
+ A:
+   The freezing of tasks is a mechanism by which user space processes and some
+-  kernel threads are controlled during hibernation or system-wide suspend (on some
+-  architectures).  See freezing-of-tasks.txt for details.
++  kernel threads are controlled during hibernation or system-wide suspend (on
++  some architectures).  See freezing-of-tasks.txt for details.
+ 
+ Q:
+   What is the difference between "platform" and "shutdown"?
+@@ -282,7 +283,8 @@ A:
+       suspend(PMSG_FREEZE): devices are frozen so that they don't interfere
+       with state snapshot
+ 
+-      state snapshot: copy of whole used memory is taken with interrupts disabled
++      state snapshot: copy of whole used memory is taken with interrupts
++      disabled
+ 
+       resume(): devices are woken up so that we can write image to swap
+ 
+@@ -353,8 +355,8 @@ Q:
+ 
+ A:
+   Generally, yes, you can.  However, it requires you to use the "resume=" and
+-  "resume_offset=" kernel command line parameters, so the resume from a swap file
+-  cannot be initiated from an initrd or initramfs image.  See
++  "resume_offset=" kernel command line parameters, so the resume from a swap
++  file cannot be initiated from an initrd or initramfs image.  See
+   swsusp-and-swap-files.txt for details.
+ 
+ Q:
+-- 
+2.24.0.432.g9d3f5f5b63-goog
 
