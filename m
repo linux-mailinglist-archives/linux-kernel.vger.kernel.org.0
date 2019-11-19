@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD0C1014FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3819E101507
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730286AbfKSFjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:39:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33464 "EHLO mail.kernel.org"
+        id S1730339AbfKSFj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730261AbfKSFjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:23 -0500
+        id S1729029AbfKSFjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F31A0208C3;
-        Tue, 19 Nov 2019 05:39:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15284208C3;
+        Tue, 19 Nov 2019 05:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141962;
-        bh=8GO4XkRygHmVTWKvH9SbwPX3T6ChRn2RDaOvhj0FWc0=;
+        s=default; t=1574141994;
+        bh=AaJ/mLERXI2BGShxQaRJWcyC7zaq2lLv8vFC69G+pfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOG8xJVyYoAq25TWT9qpI5xTIvXIH+JdQRgIrjOpZ0Sm7PK+zZV6EdGIa8PHj1Cjw
-         rY36gSWuKZ6q7pxCIsNRmmMXG84QxSUkYKhfKxsnuxNT7Zu8Oa8cX8m8GcgaKhdUBV
-         0TUUQvVrw0hlZcY7/mp9FdmM0rZ+Jb5nJPmwAvo4=
+        b=AKzYOh//kxh9GSnW1xCYcpIeUsu2EzSyVNttwyK2G1R3XoPOTx+tF1qtE6JntH2xq
+         ylvygpXODpkqNa/S+yJhn4M5ONx37Lt6SSRYHvb1hMqa0jo4cU0cEK0TF4BdieqlIE
+         9gKUdXpSLSv4M3/GZ3/qObS2+uAx48nTVefp4wMM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Sinan Kaya <okaya@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 313/422] PCI/AER: Take reference on error devices
-Date:   Tue, 19 Nov 2019 06:18:30 +0100
-Message-Id: <20191119051419.277615903@linuxfoundation.org>
+Subject: [PATCH 4.19 314/422] PCI/AER: Dont read upstream ports below fatal errors
+Date:   Tue, 19 Nov 2019 06:18:31 +0100
+Message-Id: <20191119051419.342944237@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -46,41 +46,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Keith Busch <keith.busch@intel.com>
 
-[ Upstream commit 60271ab044a53edb9dcbe76bebea2221c4ff04d9 ]
+[ Upstream commit 9d938ea53b265ed6df6cdd1715d971f0235fdbfc ]
 
-Error handling may be running in parallel with a hot removal.  Reference
-count the device during AER handling so the device can not be freed while
-AER wants to reference it.
+The AER driver has never read the config space of an endpoint that reported
+a fatal error because the link to that device is considered unreliable.
+
+An ERR_FATAL from an upstream port almost certainly indicates an error on
+its upstream link, so we can't expect to reliably read its config space for
+the same reason.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Sinan Kaya <okaya@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pcie/aer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/pcie/aer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 637d638f73da5..ffbbd759683c5 100644
+index ffbbd759683c5..5c3ea7254c6ae 100644
 --- a/drivers/pci/pcie/aer.c
 +++ b/drivers/pci/pcie/aer.c
-@@ -866,7 +866,7 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
- static int add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
- {
- 	if (e_info->error_dev_num < AER_MAX_MULTI_ERR_DEVICES) {
--		e_info->dev[e_info->error_dev_num] = dev;
-+		e_info->dev[e_info->error_dev_num] = pci_dev_get(dev);
- 		e_info->error_dev_num++;
- 		return 0;
- 	}
-@@ -1013,6 +1013,7 @@ static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
- 		pcie_do_nonfatal_recovery(dev);
- 	else if (info->severity == AER_FATAL)
- 		pcie_do_fatal_recovery(dev, PCIE_PORT_SERVICE_AER);
-+	pci_dev_put(dev);
- }
+@@ -1116,8 +1116,9 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
+ 			&info->mask);
+ 		if (!(info->status & ~info->mask))
+ 			return 0;
+-	} else if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE ||
+-		info->severity == AER_NONFATAL) {
++	} else if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT ||
++	           pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
++		   info->severity == AER_NONFATAL) {
  
- #ifdef CONFIG_ACPI_APEI_PCIEAER
+ 		/* Link is still healthy for IO reads */
+ 		pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS,
 -- 
 2.20.1
 
