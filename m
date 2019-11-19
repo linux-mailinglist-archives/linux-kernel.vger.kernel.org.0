@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D74C5101590
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17730101480
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730936AbfKSFpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:45:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40842 "EHLO mail.kernel.org"
+        id S1729689AbfKSFed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:34:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730446AbfKSFpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:45:12 -0500
+        id S1729675AbfKSFea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:34:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1746C21D7B;
-        Tue, 19 Nov 2019 05:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E352214DE;
+        Tue, 19 Nov 2019 05:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142311;
-        bh=bQI38G0uBLoRUHG1bRD67xPvAwdXeHP+L7g8f44DKqI=;
+        s=default; t=1574141670;
+        bh=5jKDS4f6adCK47ipLVZiaAL1ffsI2Sc6gz7VkiAQEZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ry2B5XL3a7DjoZjp7lqGZzkjBWSJA/R7NWXWjOrh5ZNSBNpDQ7NVGMM1B4ME6BAGa
-         7BCWAsEyFMtQTvD2idQxo2VTun+BAu+FH8YPijsoOWikmgNjbz2Px3NI+ssAsB85SF
-         OWlB6kXfFJGpEDwGM9wluaN9pG2WLF1DMicVZevM=
+        b=bhvp9gNbWapS4gvlcuyh6tWQL0hhuXh1F/Jp391yuQgzGxu6aFDF6vMoAbGML8+Gp
+         /U7bWAWkzYGHvqWUGLcYxx0mWMWJliTsig+qQAOVNuLQJpvilYNhBrN3LhSmFPXNsr
+         jJVUWq2gaJ7qXLpZm6mluDHb44LNh+QgY1v0wHQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 037/239] rtc: rv8803: fix the rv8803 id in the OF table
-Date:   Tue, 19 Nov 2019 06:17:17 +0100
-Message-Id: <20191119051304.620424607@linuxfoundation.org>
+Subject: [PATCH 4.19 241/422] net: socionext: Fix two sleep-in-atomic-context bugs in ave_rxfifo_reset()
+Date:   Tue, 19 Nov 2019 06:17:18 +0100
+Message-Id: <20191119051414.641566074@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit c856618d20662695fcdb47bf4d560dc457662aec ]
+[ Upstream commit 0020f5c807ef67954d9210eea0ba17a6134cdf7d ]
 
-The ID for RV8803 must be rv_8803
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.17 are:
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[FUNC] usleep_range
+drivers/net/ethernet/socionext/sni_ave.c, 892:
+	usleep_range in ave_rxfifo_reset
+drivers/net/ethernet/socionext/sni_ave.c, 932:
+	ave_rxfifo_reset in ave_irq_handler
+
+[FUNC] usleep_range
+drivers/net/ethernet/socionext/sni_ave.c, 888:
+	usleep_range in ave_rxfifo_reset
+drivers/net/ethernet/socionext/sni_ave.c, 932:
+	ave_rxfifo_reset in ave_irq_handler
+
+To fix these bugs, usleep_range() is replaced with udelay().
+
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-rv8803.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/socionext/sni_ave.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-rv8803.c b/drivers/rtc/rtc-rv8803.c
-index aae2576741a61..6e06fb3b0b928 100644
---- a/drivers/rtc/rtc-rv8803.c
-+++ b/drivers/rtc/rtc-rv8803.c
-@@ -622,7 +622,7 @@ MODULE_DEVICE_TABLE(i2c, rv8803_id);
- static const struct of_device_id rv8803_of_match[] = {
- 	{
- 		.compatible = "microcrystal,rv8803",
--		.data = (void *)rx_8900
-+		.data = (void *)rv_8803
- 	},
- 	{
- 		.compatible = "epson,rx8900",
+diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
+index f27d67a4d3045..09d25b87cf7c0 100644
+--- a/drivers/net/ethernet/socionext/sni_ave.c
++++ b/drivers/net/ethernet/socionext/sni_ave.c
+@@ -906,11 +906,11 @@ static void ave_rxfifo_reset(struct net_device *ndev)
+ 
+ 	/* assert reset */
+ 	writel(AVE_GRR_RXFFR, priv->base + AVE_GRR);
+-	usleep_range(40, 50);
++	udelay(50);
+ 
+ 	/* negate reset */
+ 	writel(0, priv->base + AVE_GRR);
+-	usleep_range(10, 20);
++	udelay(20);
+ 
+ 	/* negate interrupt status */
+ 	writel(AVE_GI_RXOVF, priv->base + AVE_GISR);
 -- 
 2.20.1
 
