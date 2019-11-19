@@ -2,133 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE7B102C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 20:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 012E5102C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 20:07:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfKSTF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 14:05:59 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41489 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfKSTF6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 14:05:58 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 94so18875437oty.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 11:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0NatauBtPtJXOsbjFvuk9RBByg3dOvLiEzcuEjEIyik=;
-        b=Z5T8NRw+0YDFCLzG1USKVrnQoi6akbzWg0AEZin9GQL7FupBZLWGa2T73NmchR7aSA
-         pPfLQeAunLtuqxrSAXlTBx+JySV2avVYIQCmFaA05Dey3NogSQBBI4yygA7BCbP5/bpL
-         Yz4o8QOp7wohXXlR2Faby+FBLa53lWNSYyaS7OaOdRc+bogOVA/MpJLVJaQtjBISre/G
-         VJzG2KEDfV/FObm/rejuXbOc09Rlb98N5iCCm8csk+Bdw3QjvHpR0amM+IzfupcCN6LJ
-         eRQqBM94k3KBJvq0hvkBY9LUx/UhTHhZXWIj+4eY3J7AO4aeEvK7IloE+ok2+yYUST7C
-         /CuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0NatauBtPtJXOsbjFvuk9RBByg3dOvLiEzcuEjEIyik=;
-        b=mSrv48S++S6jd6Sw7E9tTbj8uHfu7GLcUhEnejKHB4A2KpZ/lnRSCSEj43Wu5TXOry
-         +SOasxcok7e6d+2T1KaV1rR2cDE3iUefPAMOItDEg0kmSCsjSrQNrgG7PdZdneycYRQ4
-         TFk0qxRfMC2nM5mGoyb1h5c032rDSRGtLwGlG7L8ZPPVijjbOsDAvcLLAgbCeufe43Nr
-         9tOAS8DhaB6SKxWCSTCjwUIJtA3eIjwZzrlv8QY5oeZkH4pkVIw2Abxh8Q/EuDa/WiLt
-         yIKwvs2D6JuPe0r/PAawg7yhe5fcjS4cOUjX7see8rBVUtP6b96dsVQYOhSBq3PtpbMb
-         NUfg==
-X-Gm-Message-State: APjAAAWDb58xvGzmL7VH4j0DIQiJfgQvyp59ruWCtUvXPr9LtbVbW7mj
-        U/EQu3r4BjXDtvhYSAVe9oru1v0Zjev2P3fviA1GWQ==
-X-Google-Smtp-Source: APXvYqyUZtQAxkb9wAVmkm9Ylw96P/rfxBE9DAOE0RfSEB3iGv1yRwmd6+Rz7VODo0gvsGqNKgLx2YPETkbUgURxTzg=
-X-Received: by 2002:a9d:69cf:: with SMTP id v15mr4680730oto.251.1574190357041;
- Tue, 19 Nov 2019 11:05:57 -0800 (PST)
+        id S1727359AbfKSTHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 14:07:25 -0500
+Received: from muru.com ([72.249.23.125]:42954 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbfKSTHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 14:07:25 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id CDE20809B;
+        Tue, 19 Nov 2019 19:08:01 +0000 (UTC)
+Date:   Tue, 19 Nov 2019 11:07:21 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: OMAP: Use ARM SMC Calling Convention when OP-TEE is
+ available
+Message-ID: <20191119190721.GO35479@atomide.com>
+References: <b86e1d66-1566-521c-a445-4f0ae2fd95d6@ti.com>
+ <20191118223128.GE35479@atomide.com>
+ <29db708e-119e-8a89-7d43-e38e2a10dc07@ti.com>
+ <20191119162157.GJ35479@atomide.com>
+ <6e009ae3-6aa2-409b-749f-4947303940d8@ti.com>
+ <20191119164227.GL35479@atomide.com>
+ <20191119180546.GM35479@atomide.com>
+ <9e15c170-c9fa-778c-d998-bd1111a6390d@ti.com>
+ <20191119183247.GN35479@atomide.com>
+ <a351461a-f6a1-334b-6bdd-a56626914fb3@ti.com>
 MIME-Version: 1.0
-References: <20191119194658.39af50d0@canb.auug.org.au> <e75be639-110a-c615-3ec7-a107318b7746@infradead.org>
- <CANpmjNMpnY54kDdGwOPOD84UDf=Fzqtu62ifTds2vZn4t4YigQ@mail.gmail.com>
- <fb7e25d8-aba4-3dcf-7761-cb7ecb3ebb71@infradead.org> <20191119183407.GA68739@google.com>
- <1574190168.9585.4.camel@lca.pw>
-In-Reply-To: <1574190168.9585.4.camel@lca.pw>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 19 Nov 2019 20:05:45 +0100
-Message-ID: <CANpmjNMfCNqgsXQdDckOg0kuMgvnD8_jka8N0AT2K3hC=CUe0w@mail.gmail.com>
-Subject: Re: linux-next: Tree for Nov 19 (kcsan)
-To:     Qian Cai <cai@lca.pw>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a351461a-f6a1-334b-6bdd-a56626914fb3@ti.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 at 20:02, Qian Cai <cai@lca.pw> wrote:
->
-> On Tue, 2019-11-19 at 19:34 +0100, 'Marco Elver' via kasan-dev wrote:
-> > On Tue, 19 Nov 2019, Randy Dunlap wrote:
-> >
-> > > On 11/19/19 8:12 AM, Marco Elver wrote:
-> > > > On Tue, 19 Nov 2019 at 16:11, Randy Dunlap <rdunlap@infradead.org> =
-wrote:
-> > > > >
-> > > > > On 11/19/19 12:46 AM, Stephen Rothwell wrote:
-> > > > > > Hi all,
-> > > > > >
-> > > > > > Changes since 20191118:
-> > > > > >
-> > > > >
-> > > > > on x86_64:
-> > > > >
-> > > > > It seems that this function can already be known by the compiler =
-as a
-> > > > > builtin:
-> > > > >
-> > > > > ../kernel/kcsan/core.c:619:6: warning: conflicting types for buil=
-t-in function =E2=80=98__tsan_func_exit=E2=80=99 [-Wbuiltin-declaration-mis=
-match]
-> > > > >  void __tsan_func_exit(void)
-> > > > >       ^~~~~~~~~~~~~~~~
-> > > > >
-> > > > >
-> > > > > $ gcc --version
-> > > > > gcc (SUSE Linux) 7.4.1 20190905 [gcc-7-branch revision 275407]
-> > > >
-> > > > Interesting. Could you share the .config? So far I haven't been abl=
-e
-> > > > to reproduce.
-> > >
-> > > Sure, it's attached.
-> >
-> > Thanks, the config did the trick, even for gcc 9.0.0.
-> >
-> > The problem is CONFIG_UBSAN=3Dy. We haven't explicitly disallowed it li=
-ke
-> > with KASAN. In principle there should be nothing wrong with KCSAN+UBSAN=
-.
-> >
-> > There are 3 options:
-> > 1. Just disable UBSAN for KCSAN, and also disable KCSAN for UBSAN.
-> > 2. Restrict the config to not allow combining KCSAN and UBSAN.
-> > 3. Leave things as-is.
-> >
-> > Option 1 probably makes most sense, and I'll send a patch for that
-> > unless there are major objections.
->
-> Both option #1 and #2 sounds quite unfortunate, as UBSAN is quite valuabl=
-e for
-> debugging. Hence, it is desire to make both work at the same time.
+* Andrew F. Davis <afd@ti.com> [191119 18:51]:
+> On 11/19/19 1:32 PM, Tony Lindgren wrote:
+> > It would allow us to completely change over to using
+> > arm_smccc_smc() and forget the custom calls.
+> 
+> We would need more than just the r12 quirk to replace all our custom SMC
+> handlers, we would need quirks for omap_smc2 which puts process ID in r1
+> and puts #0xff in r6, and omap_smc3 that uses smc #1. All of our legacy
+> SMC calls also trash r4-r11, that is very non SMCCC complaint as only
+> r4-r7 need be caller saved. I don't see arm_smccc_smc() working with
+> legacy ROM no matter how much we hack at it :(
 
-Apologies, I think I was a bit unclear with #1. For #1, this just
-means that UBSAN is being disabled for the KCSAN runtime and
-vice-versa. All other parts of the kernel are still instrumented with
-both.
+We would just have omap_smc2() call arm_smccc_smc() and in that
+case. And omap_smc2() would still deal with saving and restoring
+the registers.
 
-See here: https://lore.kernel.org/linux-next/20191119185742.GB68739@google.=
-com/
+Certainly the wrapper functions calling arm_smccc_smc() can deal
+with r12 too if the r12-quirk version and the plain version are
+never needed the same time on a booted SoC.
 
-Thanks,
--- Marco
+Are they ever needed the same time on a booted SoC or not?
+
+> I can make OP-TEE also compatible with the r12 quirk, which is what I
+> used to do. That way we didn't need to do any detection. The issue was
+> that non-standard SMC calls should not go through the common SMCCC
+> handler (unless you are QCOM for some reason..).
+
+Sounds like for optee nothing must be done for r12 :)
+
+Regards,
+
+Tony
