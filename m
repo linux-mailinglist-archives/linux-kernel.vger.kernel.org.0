@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD23101513
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE52C10163A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbfKSFk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:40:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34596 "EHLO mail.kernel.org"
+        id S1730563AbfKSFvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbfKSFkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:40:25 -0500
+        id S1731758AbfKSFvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27C6921783;
-        Tue, 19 Nov 2019 05:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9E25208C3;
+        Tue, 19 Nov 2019 05:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142024;
-        bh=xOH+ix3LhRxkW9EZ3qVwZJdXRhikzraxle2sk20ZrZA=;
+        s=default; t=1574142676;
+        bh=SYK3cbFOH5p92qBycnjfraI6rejI7ktNpDJLkusLl1w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4/sahUQh1cYIIy5Gyd5rl/KnzqLLTOME9723y83ScRNSrkEI1H06JtnCLVwzFXg5
-         UejOvl62ArptLlJbTpgIIxBa6fHLefP7bwKfqKLETfqGmbjJv7Q/YDdohI1fUbzGAc
-         WU60vqIFzjBzMVvSNQPEEwf8FCs6A45NGOlAjEeA=
+        b=OJ/LUZU39u/PLeK3TRiEXg0804v90RZucnogERtDK0cNojaa17iJBw2dXkMHid03S
+         yPzPvzpFlK/bz+1INEqaNbcVgC98nFGSwFMXEKFyt8mIjGYo9oKGD/pxjH+IyDsKVU
+         Uc0SvfXf3Yac1rnKyG25HhI/EwN4Gm8sqNM+gz88=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 363/422] phy: lantiq: Fix compile warning
-Date:   Tue, 19 Nov 2019 06:19:20 +0100
-Message-Id: <20191119051422.538015251@linuxfoundation.org>
+Subject: [PATCH 4.14 161/239] ARM: dts: ux500: Correct SCU unit address
+Date:   Tue, 19 Nov 2019 06:19:21 +0100
+Message-Id: <20191119051333.379209838@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hauke Mehrtens <hauke@hauke-m.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 3a00dae006623d799266d85f28b5f76ef07d6b6c ]
+[ Upstream commit 2f217d24ecaec2012e628d21e244eef0608656a4 ]
 
-This local variable is unused, remove it.
+The unit address of the Cortex-A9 SCU device node contains one zero too
+many.  Remove it.
 
-Fixes: dea54fbad332 ("phy: Add an USB PHY driver for the Lantiq SoCs using the RCU module")
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/lantiq/phy-lantiq-rcu-usb2.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/ste-dbx5x0.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-index 986224fca9e91..5a180f71d8d4d 100644
---- a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-+++ b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-@@ -156,7 +156,6 @@ static int ltq_rcu_usb2_of_parse(struct ltq_rcu_usb2_priv *priv,
- {
- 	struct device *dev = priv->dev;
- 	const __be32 *offset;
--	int ret;
+diff --git a/arch/arm/boot/dts/ste-dbx5x0.dtsi b/arch/arm/boot/dts/ste-dbx5x0.dtsi
+index 2310a4e97768c..3dc0028e108b3 100644
+--- a/arch/arm/boot/dts/ste-dbx5x0.dtsi
++++ b/arch/arm/boot/dts/ste-dbx5x0.dtsi
+@@ -197,7 +197,7 @@
+ 			      <0xa0410100 0x100>;
+ 		};
  
- 	priv->reg_bits = of_device_get_match_data(dev);
- 
+-		scu@a04100000 {
++		scu@a0410000 {
+ 			compatible = "arm,cortex-a9-scu";
+ 			reg = <0xa0410000 0x100>;
+ 		};
 -- 
 2.20.1
 
