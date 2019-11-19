@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4468C101572
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F047910146E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfKSFoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:44:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39526 "EHLO mail.kernel.org"
+        id S1729580AbfKSFdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:33:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729643AbfKSFoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:13 -0500
+        id S1729564AbfKSFdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:33:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 660A32075E;
-        Tue, 19 Nov 2019 05:44:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEC8D21823;
+        Tue, 19 Nov 2019 05:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142252;
-        bh=Ac5B6XUO63g1mIXDroLKb2RIGZiAiNvL0SvzwLi+qa4=;
+        s=default; t=1574141624;
+        bh=J8Af5rd+geu2PFA2CWpOAT2ClSBICxyzyklJSlfvkZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xzgrS8D9e0SLcXVDLJVPn695Pcow4DDoitYuKpUaFKzoGy7lqv+y9VY88Sh2kXzZU
-         +7swJeA7+ABgl9kMwqPwp8iMBeTgaDART9vbjt1NKphzpP4de/402gBjwoYecvZTHs
-         TGGLKFmeUomxPQ5m87bNWgZ9BymcaI3dm4TwSugk=
+        b=Oa3DaiGdPjvnZWS+9PPfG7MHIyn0gNtvmeZcZ/ted+FJt+ce1fQULiNf0/1wrvXDh
+         D6o7HBvIrYeMbnA8jTkPjw4d2F0OOD/Fx43UyzWZ7OP4Gz9kiOGRLzAjAAmYVfgstF
+         UhD1QrQb5C1kH8SY2Pzu6TYLuzp3P4+zpUGfxy+w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        James Erwin <james.erwin@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 019/239] IB/hfi1: Ensure full Gen3 speed in a Gen4 system
+        stable@vger.kernel.org, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, Rob Herring <robh@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 222/422] arm64: dts: meson: Fix erroneous SPI bus warnings
 Date:   Tue, 19 Nov 2019 06:16:59 +0100
-Message-Id: <20191119051301.427742030@linuxfoundation.org>
+Message-Id: <20191119051413.017143708@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,47 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Erwin <james.erwin@intel.com>
+From: Rob Herring <robh@kernel.org>
 
-commit a9c3c4c597704b3a1a2b9bef990e7d8a881f6533 upstream.
+[ Upstream commit 68ecb5c1920c5b98b1e717fd2349fba2ee5d4031 ]
 
-If an hfi1 card is inserted in a Gen4 systems, the driver will avoid the
-gen3 speed bump and the card will operate at half speed.
+dtc has new checks for SPI buses. The meson dts files have a node named
+spi' which causes false positive warnings. As the node is a pinctrl child
+node, change the node name to be 'spi-pins' to fix the warnings.
 
-This is because the driver avoids the gen3 speed bump when the parent bus
-speed isn't identical to gen3, 8.0GT/s.  This is not compatible with gen4
-and newer speeds.
+arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dtb: Warning (spi_bus_bridge): /soc/periphs@c8834000/pinctrl@4b0/spi: incorrect #address-cells for SPI bus
 
-Fix by relaxing the test to explicitly look for the lower capability
-speeds which inherently allows for gen4 and all future speeds.
-
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Link: https://lore.kernel.org/r/20191101192059.106248.1699.stgit@awfm-01.aw.intel.com
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Reviewed-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: James Erwin <james.erwin@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/pcie.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/pcie.c
-+++ b/drivers/infiniband/hw/hfi1/pcie.c
-@@ -327,7 +327,9 @@ int pcie_speeds(struct hfi1_devdata *dd)
- 	/*
- 	 * bus->max_bus_speed is set from the bridge's linkcap Max Link Speed
- 	 */
--	if (parent && dd->pcidev->bus->max_bus_speed != PCIE_SPEED_8_0GT) {
-+	if (parent &&
-+	    (dd->pcidev->bus->max_bus_speed == PCIE_SPEED_2_5GT ||
-+	     dd->pcidev->bus->max_bus_speed == PCIE_SPEED_5_0GT)) {
- 		dd_dev_info(dd, "Parent PCIe bridge does not support Gen3\n");
- 		dd->link_gen3_capable = 0;
- 	}
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 98cbba6809caa..1ade7e486828c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -390,7 +390,7 @@
+ 			};
+ 		};
+ 
+-		spi_pins: spi {
++		spi_pins: spi-pins {
+ 			mux {
+ 				groups = "spi_miso",
+ 					"spi_mosi",
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index c87a80e9bcc6a..8f0bb3c44bd6d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -337,7 +337,7 @@
+ 			};
+ 		};
+ 
+-		spi_pins: spi {
++		spi_pins: spi-pins {
+ 			mux {
+ 				groups = "spi_miso",
+ 					"spi_mosi",
+-- 
+2.20.1
+
 
 
