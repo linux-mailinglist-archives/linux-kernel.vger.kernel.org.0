@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 247E1101407
+	by mail.lfdr.de (Postfix) with ESMTP id 8DFD9101408
 	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbfKSF3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:29:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48076 "EHLO mail.kernel.org"
+        id S1729013AbfKSF3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:29:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728997AbfKSF33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:29:29 -0500
+        id S1729001AbfKSF3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:29:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7738B21823;
-        Tue, 19 Nov 2019 05:29:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2902121939;
+        Tue, 19 Nov 2019 05:29:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141369;
-        bh=ZQk8HUJVVWdkb6PKw7UQGNwXF9TB19ZXHOw1EDZu7as=;
+        s=default; t=1574141371;
+        bh=gCbS15XtXj4oIuSuRwt5i3q+8lCfPki4Urq31VaAOrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9fcDv7MPJeQoxbuB5qzQM/HhZUOEmmc9sDPcnXD6NDGtw1gWcY94s/x+z3ghnxPr
-         Z5qgByK5Eq/6aaVgeYCPJYHz+izNZdh9biUjBHK+Ttx4GDlS1Q3Dr17kcflPpEU2e4
-         44XFgTNufUbVp6XEWdLy3o7gI4Gao7SAvqkbXV44=
+        b=VsLMGc9QxTXcIabn5cUFXAucA/JieAw5lG0cDI81/jfdnktGu4xP5w5+lyVp1nSWi
+         W53fUpp5MAiGuIkeyIH2LvbDu+7x65dJl2ZWpSyYG5BjMaJx+2Phy4t7AB7ZEWFr9M
+         7vuN0yxfNKOARWpvKB2dnyYJHJqsJzJgYSJFdUuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yong Zhi <yong.zhi@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 135/422] ASoC: Intel: hdac_hdmi: Limit sampling rates at dai creation
-Date:   Tue, 19 Nov 2019 06:15:32 +0100
-Message-Id: <20191119051407.588210779@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Suman Trpathi <stripathi@amperecomputing.com>,
+        Rameshwar Prasad Sahu <rameshwar.sahu@amperecomputing.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 136/422] ata: Disable AHCI ALPM feature for Ampere Computing eMAG SATA
+Date:   Tue, 19 Nov 2019 06:15:33 +0100
+Message-Id: <20191119051407.639411260@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -45,44 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yong Zhi <yong.zhi@intel.com>
+From: Suman Tripathi <stripathi@amperecomputing.com>
 
-[ Upstream commit 3b857472f34faa7d11001afa5e158833812c98d7 ]
+[ Upstream commit 20bdc376b427cb420836f39ee8f281ea85dbaeef ]
 
-Playback of 44.1Khz contents with HDMI plugged returns
-"Invalid pipe config" because HDMI paths in the FW
-topology are configured to operate at 48Khz.
+Due to hardware errata, Ampere Computing eMAG SATA can't support
+AHCI ALPM feature. This patch disables the AHCI ALPM feature for
+eMAG SATA.
 
-This patch filters out sampling rates not supported
-at hdac_hdmi_create_dais() to let user space SRC
-to do the converting.
-
-Signed-off-by: Yong Zhi <yong.zhi@intel.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Suman Trpathi <stripathi@amperecomputing.com>
+Signed-off-by: Rameshwar Prasad Sahu <rameshwar.sahu@amperecomputing.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/hdac_hdmi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/ata/ahci_platform.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-index 098196610542a..be2473166bfaf 100644
---- a/sound/soc/codecs/hdac_hdmi.c
-+++ b/sound/soc/codecs/hdac_hdmi.c
-@@ -1410,6 +1410,12 @@ static int hdac_hdmi_create_dais(struct hdac_device *hdev,
- 		if (ret)
- 			return ret;
+diff --git a/drivers/ata/ahci_platform.c b/drivers/ata/ahci_platform.c
+index 46f0bd75eff79..cf1e0e18a7a98 100644
+--- a/drivers/ata/ahci_platform.c
++++ b/drivers/ata/ahci_platform.c
+@@ -33,6 +33,13 @@ static const struct ata_port_info ahci_port_info = {
+ 	.port_ops	= &ahci_platform_ops,
+ };
  
-+		/* Filter out 44.1, 88.2 and 176.4Khz */
-+		rates &= ~(SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_88200 |
-+			   SNDRV_PCM_RATE_176400);
-+		if (!rates)
-+			return -EINVAL;
++static const struct ata_port_info ahci_port_info_nolpm = {
++	.flags		= AHCI_FLAG_COMMON | ATA_FLAG_NO_LPM,
++	.pio_mask	= ATA_PIO4,
++	.udma_mask	= ATA_UDMA6,
++	.port_ops	= &ahci_platform_ops,
++};
 +
- 		sprintf(dai_name, "intel-hdmi-hifi%d", i+1);
- 		hdmi_dais[i].name = devm_kstrdup(&hdev->dev,
- 					dai_name, GFP_KERNEL);
+ static struct scsi_host_template ahci_platform_sht = {
+ 	AHCI_SHT(DRV_NAME),
+ };
+@@ -41,6 +48,7 @@ static int ahci_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ahci_host_priv *hpriv;
++	const struct ata_port_info *port;
+ 	int rc;
+ 
+ 	hpriv = ahci_platform_get_resources(pdev,
+@@ -58,7 +66,11 @@ static int ahci_probe(struct platform_device *pdev)
+ 	if (of_device_is_compatible(dev->of_node, "hisilicon,hisi-ahci"))
+ 		hpriv->flags |= AHCI_HFLAG_NO_FBS | AHCI_HFLAG_NO_NCQ;
+ 
+-	rc = ahci_platform_init_host(pdev, hpriv, &ahci_port_info,
++	port = acpi_device_get_match_data(dev);
++	if (!port)
++		port = &ahci_port_info;
++
++	rc = ahci_platform_init_host(pdev, hpriv, port,
+ 				     &ahci_platform_sht);
+ 	if (rc)
+ 		goto disable_resources;
+@@ -85,6 +97,7 @@ static const struct of_device_id ahci_of_match[] = {
+ MODULE_DEVICE_TABLE(of, ahci_of_match);
+ 
+ static const struct acpi_device_id ahci_acpi_match[] = {
++	{ "APMC0D33", (unsigned long)&ahci_port_info_nolpm },
+ 	{ ACPI_DEVICE_CLASS(PCI_CLASS_STORAGE_SATA_AHCI, 0xffffff) },
+ 	{},
+ };
 -- 
 2.20.1
 
