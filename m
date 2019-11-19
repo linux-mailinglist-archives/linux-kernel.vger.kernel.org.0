@@ -2,195 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D8BB102EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 23:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A038102EE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 23:13:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbfKSWOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 17:14:32 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6791 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbfKSWOc (ORCPT
+        id S1727333AbfKSWNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 17:13:55 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46462 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbfKSWNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 17:14:32 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd469430000>; Tue, 19 Nov 2019 14:14:27 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 19 Nov 2019 14:14:30 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 19 Nov 2019 14:14:30 -0800
-Received: from [10.2.175.254] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
- 2019 22:14:28 +0000
-Subject: Re: [PATCH v1 06/17] soc: pmc: Add blink output clock registration to
- Tegra PMC
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <tglx@linutronix.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
- <1574146234-3871-7-git-send-email-skomatineni@nvidia.com>
- <95f3e928-3e08-abbd-5617-d3570a592c06@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <87dca259-1f3f-6e74-db45-411ed84afba7@nvidia.com>
-Date:   Tue, 19 Nov 2019 14:13:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 19 Nov 2019 17:13:54 -0500
+Received: by mail-pl1-f196.google.com with SMTP id l4so12682698plt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 14:13:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:from:cc:to:user-agent:date;
+        bh=ASznCwZJ9ByLV4yzgLO4lJUGY/U/ukbE4wowdWRBq4E=;
+        b=Tm/ClsWEZ+XTrHRg12YXmBZbEQduJlGoiWcusKF0D+L31Pf83YcmXs1HDdXuH9vJGq
+         YFm24DEbLSuGeqs2xiFuIKVD0V+q64JkWodIP6IN8yricnaEdi5aBgJzRuxmbcyaUQFo
+         Xm95Y3iBb1vovUjRjxwLRGWhFsCdg2VCN1vyI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
+         :user-agent:date;
+        bh=ASznCwZJ9ByLV4yzgLO4lJUGY/U/ukbE4wowdWRBq4E=;
+        b=r0tA/UdoJp/1hGDqTHcHY5omXIjkvmNPGRAH/jLQ2WUka1eX5VFPpEVr8t5FaQBbSO
+         IZZhvo2nvwuO9/8tL3dmV3KGijyICfOHdqIUBzLQSfmk3PDPhV3vRURQeJNWEU7rKOko
+         3eoRKaNpoTEih0t7vHOIjt+G9Hiv1KiMotQuQKfpIwxQMyvhu6Ba6/SOb6CHBJNg2PNu
+         vuYsaa+9Lods4wuHy8qVkz8FL6EXYj/3r8N8sOUtRqUaGi5mDzs187xUA97kYWqcj8jg
+         XQeQjOd8s5yvXgb3XPeNwz/U/zkLZvXat80FQolASSRwVHUNSgjLTTo0AHW4sjioxwtB
+         wPYQ==
+X-Gm-Message-State: APjAAAVlZRM0h+6RuGPyvr/TgD2x2WlQszWb5Fjhz/1VgD6px27aVtWA
+        BqsYwLzGwWQ3jGKFKVRl1FPprg==
+X-Google-Smtp-Source: APXvYqzjtiAMF6Bis8voqOYzvqiuCuY9dRznuUPn80UHLIO0EIWVeK/Q9L79gsJSx7d4c8hbrNX+Fg==
+X-Received: by 2002:a17:902:8497:: with SMTP id c23mr34136707plo.209.1574201633891;
+        Tue, 19 Nov 2019 14:13:53 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id b24sm24260272pgk.93.2019.11.19.14.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 14:13:53 -0800 (PST)
+Message-ID: <5dd46921.1c69fb81.aef4b.686e@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <95f3e928-3e08-abbd-5617-d3570a592c06@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574201667; bh=zfnrwuF7fwDfmzMCOkWaY3fHjm2PBHMW5dwbrnuC3m4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=WvTUAjIZl7UIF6EoPZroqn8VeKqtzlqK80UriHzo6JoKow1rqIx4y6SBOxx6tkoA/
-         urtL5ZcxvztrQ799D+xyIwLflxL9TrWEYtIeFmf/k+AqQvRIxw0QiQEix5iHm0OKL2
-         Ydu1RIZFuP1IM5VRP/gmGtqD8j/uYodaT3A7dWLUV1bXce5LfWrYStd8QRUAaS2Cuk
-         lft8HBO86sFJqjrvltFcya+0DHFqeGdSbRR4a9vos8Ak5Vw6sWng16Eh17SG88WOwD
-         BF7GGrGYW4okdCfz5+UjkrjsoBbBwh7tSuIgmkJPpXjpxC9/iOkkLhE1IoZCs8NaL9
-         8ay23xXwM9rwA==
+In-Reply-To: <1573593774-12539-16-git-send-email-eberman@codeaurora.org>
+References: <1573593774-12539-1-git-send-email-eberman@codeaurora.org> <1573593774-12539-16-git-send-email-eberman@codeaurora.org>
+Subject: Re: [PATCH v2 15/18] firmware: qcom_scm-32: Add device argument to atomic calls
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     Elliot Berman <eberman@codeaurora.org>, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, psodagud@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Elliot Berman <eberman@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, saiprakash.ranjan@codeaurora.org
+User-Agent: alot/0.8.1
+Date:   Tue, 19 Nov 2019 14:13:52 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Elliot Berman (2019-11-12 13:22:51)
+> Add this unused parameter to reduce merge friction between SMCCC and
+> legacy based conventions.
 
-On 11/19/19 11:34 AM, Dmitry Osipenko wrote:
-> 19.11.2019 09:50, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra PMC has blink control to output 32 Khz clock out to Tegra
->> blink pin. Blink pad DPD state and enable controls are part of
->> Tegra PMC register space.
->>
->> Currently Tegra clock driver registers blink control by passing
->> PMC address and register offset to clk_register_gate which performs
->> direct PMC access during clk_ops and with this when PMC is in secure
->> mode, any access from non-secure world does not go through.
->>
->> This patch adds blink control registration to the Tegra PMC driver
->> using PMC specific clock gate operations that use tegra_pmc_readl
->> and tegra_pmc_writel to support both secure mode and non-secure
->> mode PMC register access.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/soc/tegra/pmc.c | 42 +++++++++++++++++++++++++++++++++++++++++=
-+
->>   1 file changed, 42 insertions(+)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index 790a6619ba32..095e89c7fa3f 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -61,12 +61,15 @@
->>   #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
->>   #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
->>   #define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
->> +#define  PMC_CNTRL_BLINK_EN		BIT(7)
->>   #define  PMC_CNTRL_MAIN_RST		BIT(4)
->>  =20
->>   #define PMC_WAKE_MASK			0x0c
->>   #define PMC_WAKE_LEVEL			0x10
->>   #define PMC_WAKE_STATUS			0x14
->>   #define PMC_SW_WAKE_STATUS		0x18
->> +#define PMC_DPD_PADS_ORIDE		0x1c
->> +#define  PMC_DPD_PADS_ORIDE_BLINK	BIT(20)
->>  =20
->>   #define DPD_SAMPLE			0x020
->>   #define  DPD_SAMPLE_ENABLE		BIT(0)
->> @@ -79,6 +82,7 @@
->>  =20
->>   #define PWRGATE_STATUS			0x38
->>  =20
->> +#define TEGRA210_PMC_BLINK_TIMER	0x40
->>   #define PMC_IMPL_E_33V_PWR		0x40
->>  =20
->>   #define PMC_PWR_DET			0x48
->> @@ -247,6 +251,9 @@ static struct pmc_clk_init_data tegra_pmc_clks_data[=
-] =3D {
->>   	PMC_CLK(3, 22, 18, 0, 0),
->>   };
->>  =20
->> +static struct pmc_clk_gate blink_override;
->> +static struct pmc_clk_gate blink;
->> +
->>   struct tegra_powergate {
->>   	struct generic_pm_domain genpd;
->>   	struct tegra_pmc *pmc;
->> @@ -359,6 +366,7 @@ struct tegra_pmc_soc {
->>  =20
->>   	struct pmc_clk_init_data *pmc_clks_data;
->>   	unsigned int num_pmc_clks;
->> +	bool has_blink_output;
->>   };
->>  =20
->>   static const char * const tegra186_reset_sources[] =3D {
->> @@ -2530,6 +2538,9 @@ static void tegra_pmc_clock_register(struct tegra_=
-pmc *pmc,
->>   	/* each pmc clock output has a mux and a gate */
->>   	num_clks =3D pmc->soc->num_pmc_clks * 2;
->>  =20
->> +	if (pmc->soc->has_blink_output)
->> +		num_clks +=3D 1;
->> +
->>   	if (!num_clks)
->>   		return;
->>  =20
->> @@ -2604,6 +2615,30 @@ static void tegra_pmc_clock_register(struct tegra=
-_pmc *pmc,
->>   		}
->>   	}
->>  =20
->> +	if (pmc->soc->has_blink_output) {
->> +		tegra_pmc_writel(pmc, 0x0, TEGRA210_PMC_BLINK_TIMER);
->> +		clkgate =3D tegra_pmc_clk_gate_register("blink_override",
->> +						      "clk_32k",
->> +						      0, &blink_override,
->> +					      PMC_DPD_PADS_ORIDE,
->> +						      PMC_DPD_PADS_ORIDE_BLINK,
->> +						      NULL);
->> +		if (IS_ERR(clkgate))
->> +			goto free_clks;
->> +
->> +		clkgate =3D tegra_pmc_clk_gate_register("blink",
->> +						      "blink_override",
->> +						      0, &blink,
->> +						      PMC_CNTRL,
->> +						      PMC_CNTRL_BLINK_EN,
->> +						      NULL);
->> +		if (IS_ERR(clkgate))
->> +			goto free_clks;
->> +
->> +		clk_data->clks[TEGRA_PMC_CLK_BLINK] =3D clkgate;
->> +		clk_register_clkdev(clkgate, "blink", NULL);
-> Tegra20 has pmc->soc->num_pmc_clks =3D 0 and thus num_clks =3D 1, while
-> TEGRA_PMC_CLK_BLINK =3D 6.
->
-> BTW, Tegra30 doesn't boot. I'll try again v2.
->
-> Please fix it all in v2. Compile-test all patches and make at least a
-> boot-test where possible.
->
-> [snip]
+in an upcoming patch.
 
-looks like blink output should be enabled during boot for Tegra20 and=20
-Tegra30 platforms.
+>=20
+> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
+> ---
+>  drivers/firmware/qcom_scm-32.c | 17 +++++++++--------
+>  drivers/firmware/qcom_scm-64.c |  5 +++--
+>  drivers/firmware/qcom_scm.c    |  5 +++--
+>  drivers/firmware/qcom_scm.h    |  5 +++--
+>  4 files changed, 18 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-3=
+2.c
+> index eca18e1..c1c0831 100644
+> --- a/drivers/firmware/qcom_scm-32.c
+> +++ b/drivers/firmware/qcom_scm-32.c
+> @@ -269,7 +269,7 @@ static int qcom_scm_call(struct device *dev, struct q=
+com_scm_desc *desc)
+>   * This shall only be used with commands that are guaranteed to be
+>   * uninterruptable, atomic and SMP safe.
+>   */
+> -static int qcom_scm_call_atomic(struct qcom_scm_desc *desc)
+> +static int qcom_scm_call_atomic(struct device *dev, struct qcom_scm_desc=
+ *desc)
 
-Will add init state for blink output in V2. Will compile for old Tegra's=20
-as well and will try boot-test.
+If the argument is unused, how about call it 'struct device *unused' so
+we can ignore it?
 
+>  {
+>         int context_id;
+>         struct arm_smccc_args smc =3D {0};
