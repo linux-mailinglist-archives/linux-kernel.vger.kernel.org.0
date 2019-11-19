@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98500101496
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:35:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C54C1015A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbfKSFfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:35:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56222 "EHLO mail.kernel.org"
+        id S1730781AbfKSFp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:45:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728804AbfKSFfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:35:19 -0500
+        id S1731026AbfKSFp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:45:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07488206EC;
-        Tue, 19 Nov 2019 05:35:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35F932075E;
+        Tue, 19 Nov 2019 05:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141718;
-        bh=t3smQKcjjFBjbreDgVg9JggXSHRt1WbmMzRz6EoMzU0=;
+        s=default; t=1574142355;
+        bh=82XU3aU5ABFzGlRmWBE0XT+9t7AA0CAjUdCcZDInlf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Od9lUSxn5mGOAJyeYDj3HQnEYHk0IRmolf99ko5HhV94BXg+I+l2IPno8lLymmRJ8
-         glYCRjutcCy8ixZOmeF+V9UE3E3BFCOb1BzSvbT3OILsaHEf0s8kyF4WSJ1hz6y79B
-         DRCKrfpw96ZkXeC7QCQYNiSRlv1EXJ/B8DUOdbsE=
+        b=piXoLK6WL/Dd7d2edNnIgOoVA+ShTzaC/EwozeRS0R4bNOYHrIxIi6gxsvGnQZXzZ
+         UgWj2Zp5ykil885niXpgLQPR8+E3VPh6rdKIj4N4ZNSJjAQ1xjBUvR8tbV4N2cZER5
+         TJPIFdvRnWq+sie42Cy0ilr2PHsrbPsjWYi674nk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org, Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 256/422] ipmi: fix return value of ipmi_set_my_LUN
-Date:   Tue, 19 Nov 2019 06:17:33 +0100
-Message-Id: <20191119051415.576556883@linuxfoundation.org>
+Subject: [PATCH 4.14 054/239] IB/rxe: fixes for rdma read retry
+Date:   Tue, 19 Nov 2019 06:17:34 +0100
+Message-Id: <20191119051308.130440267@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-[ Upstream commit 060e8fb53fe3455568982d10ab8c3dd605565049 ]
+[ Upstream commit 030e46e495af855a13964a0aab9753ea82a96edc ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+When a read request is retried for the remaining partial
+data, the response may restart from read response first
+or read response only. So support those cases.
 
-drivers/char/ipmi/ipmi_msghandler.c: In function 'ipmi_set_my_LUN':
-drivers/char/ipmi/ipmi_msghandler.c:1335:13: warning:
- variable 'rv' set but not used [-Wunused-but-set-variable]
-  int index, rv = 0;
+Do not advance the comp psn beyond the current wqe's last_psn
+as that could skip over an entire read wqe and will cause the
+req_retry() logic to set an incorrect req psn.
+An example sequence is as follows:
+Write        PSN 40 -- this is the current WQE.
+Read request PSN 41
+Write        PSN 42
+Receive ACK  PSN 42 -- this will complete the current WQE
+for PSN 40, and set the comp psn to 42 which is a problem
+because the read request at PSN 41 has been skipped over.
+So when req_retry() tries to retransmit the read request,
+it sets the req psn to 42 which is incorrect.
 
-'rv' should be the correct return value.
+When retrying a read request, calculate the number of psns
+completed based on the dma resid instead of the wqe first_psn.
+The wqe first_psn could have moved if the read request was
+retried multiple times.
 
-Fixes: 048f7c3e352e ("ipmi: Properly release srcu locks on error conditions")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Set the reth length to the dma resid to handle read retries for
+the remaining partial data.
+
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_msghandler.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/sw/rxe/rxe_comp.c | 21 ++++++++++++++++-----
+ drivers/infiniband/sw/rxe/rxe_req.c  | 15 +++++++++------
+ 2 files changed, 25 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 3fb297b5fb176..84c17f936c09c 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -1365,7 +1365,7 @@ int ipmi_set_my_LUN(struct ipmi_user *user,
+diff --git a/drivers/infiniband/sw/rxe/rxe_comp.c b/drivers/infiniband/sw/rxe/rxe_comp.c
+index 83cfe44f070ec..fd9ce03dbd292 100644
+--- a/drivers/infiniband/sw/rxe/rxe_comp.c
++++ b/drivers/infiniband/sw/rxe/rxe_comp.c
+@@ -253,6 +253,17 @@ static inline enum comp_state check_ack(struct rxe_qp *qp,
+ 	case IB_OPCODE_RC_RDMA_READ_RESPONSE_MIDDLE:
+ 		if (pkt->opcode != IB_OPCODE_RC_RDMA_READ_RESPONSE_MIDDLE &&
+ 		    pkt->opcode != IB_OPCODE_RC_RDMA_READ_RESPONSE_LAST) {
++			/* read retries of partial data may restart from
++			 * read response first or response only.
++			 */
++			if ((pkt->psn == wqe->first_psn &&
++			     pkt->opcode ==
++			     IB_OPCODE_RC_RDMA_READ_RESPONSE_FIRST) ||
++			    (wqe->first_psn == wqe->last_psn &&
++			     pkt->opcode ==
++			     IB_OPCODE_RC_RDMA_READ_RESPONSE_ONLY))
++				break;
++
+ 			return COMPST_ERROR;
+ 		}
+ 		break;
+@@ -501,11 +512,11 @@ static inline enum comp_state complete_wqe(struct rxe_qp *qp,
+ 					   struct rxe_pkt_info *pkt,
+ 					   struct rxe_send_wqe *wqe)
+ {
+-	qp->comp.opcode = -1;
+-
+-	if (pkt) {
+-		if (psn_compare(pkt->psn, qp->comp.psn) >= 0)
+-			qp->comp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
++	if (pkt && wqe->state == wqe_state_pending) {
++		if (psn_compare(wqe->last_psn, qp->comp.psn) >= 0) {
++			qp->comp.psn = (wqe->last_psn + 1) & BTH_PSN_MASK;
++			qp->comp.opcode = -1;
++		}
+ 
+ 		if (qp->req.wait_psn) {
+ 			qp->req.wait_psn = 0;
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index 08ae4f3a6a379..9fd4f04df3b33 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -73,9 +73,6 @@ static void req_retry(struct rxe_qp *qp)
+ 	int npsn;
+ 	int first = 1;
+ 
+-	wqe = queue_head(qp->sq.queue);
+-	npsn = (qp->comp.psn - wqe->first_psn) & BTH_PSN_MASK;
+-
+ 	qp->req.wqe_index	= consumer_index(qp->sq.queue);
+ 	qp->req.psn		= qp->comp.psn;
+ 	qp->req.opcode		= -1;
+@@ -107,11 +104,17 @@ static void req_retry(struct rxe_qp *qp)
+ 		if (first) {
+ 			first = 0;
+ 
+-			if (mask & WR_WRITE_OR_SEND_MASK)
++			if (mask & WR_WRITE_OR_SEND_MASK) {
++				npsn = (qp->comp.psn - wqe->first_psn) &
++					BTH_PSN_MASK;
+ 				retry_first_write_send(qp, wqe, mask, npsn);
++			}
+ 
+-			if (mask & WR_READ_MASK)
++			if (mask & WR_READ_MASK) {
++				npsn = (wqe->dma.length - wqe->dma.resid) /
++					qp->mtu;
+ 				wqe->iova += npsn * qp->mtu;
++			}
+ 		}
+ 
+ 		wqe->state = wqe_state_posted;
+@@ -435,7 +438,7 @@ static struct sk_buff *init_req_packet(struct rxe_qp *qp,
+ 	if (pkt->mask & RXE_RETH_MASK) {
+ 		reth_set_rkey(pkt, ibwr->wr.rdma.rkey);
+ 		reth_set_va(pkt, wqe->iova);
+-		reth_set_len(pkt, wqe->dma.length);
++		reth_set_len(pkt, wqe->dma.resid);
  	}
- 	release_ipmi_user(user, index);
  
--	return 0;
-+	return rv;
- }
- EXPORT_SYMBOL(ipmi_set_my_LUN);
- 
+ 	if (pkt->mask & RXE_IMMDT_MASK)
 -- 
 2.20.1
 
