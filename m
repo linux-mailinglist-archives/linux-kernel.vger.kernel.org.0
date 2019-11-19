@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F5A1101692
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A69C10155B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731345AbfKSFyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:54:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52736 "EHLO mail.kernel.org"
+        id S1730711AbfKSFnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:43:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729381AbfKSFyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:54:35 -0500
+        id S1730364AbfKSFnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:43:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACCD82084D;
-        Tue, 19 Nov 2019 05:54:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C94A21783;
+        Tue, 19 Nov 2019 05:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142875;
-        bh=sL0SKLEML4Y9k9kz/zU2jbjo+8R+OhLdgvLoi8HegYo=;
+        s=default; t=1574142182;
+        bh=blpqi0RXovzkfLlmQ9MMcwXtTOCskwWkjcijEU41dFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HgRbpEY1Pu9tOweH+gbjlnXiExau02KrY7hx4MnHQuQECldxxNehGJiN/4ioYDIro
-         /fHgxj2pLOHZ8Slx7g4+lxmHju/pdWAE1f3UeWOd45IlvyJ5IccN9pGinWq/1FetkW
-         eGirafSmKm2ijnhxcrFH97uy1k/pBtBeqtx8ISC8=
+        b=NUQZGFBR36lTQSzyqLBYUk7UhRsUV/PYTPeTL5OdBz1aTkWOOBUtGgZuX5hDti8Pb
+         ipOIXXhJtaz9iOT/AHsbw4z95tLBqAr3xNkSETrdOEyFh9q4c0l0SJJbByAQ2+QGe/
+         BRRalr7iFuVF/5GCPTOXHPZnPCKiaSuNr+UMB/yo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 213/239] Bluetooth: L2CAP: Detect if remote is not able to use the whole MPS
-Date:   Tue, 19 Nov 2019 06:20:13 +0100
-Message-Id: <20191119051338.663707707@linuxfoundation.org>
+Subject: [PATCH 4.19 417/422] fuse: use READ_ONCE on congestion_threshold and max_background
+Date:   Tue, 19 Nov 2019 06:20:14 +0100
+Message-Id: <20191119051426.217491591@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-[ Upstream commit a5c3021bb62b970713550db3f7fd08aa70665d7e ]
+[ Upstream commit 2a23f2b8adbe4bd584f936f7ac17a99750eed9d7 ]
 
-If the remote is not able to fully utilize the MPS choosen recalculate
-the credits based on the actual amount it is sending that way it can
-still send packets of MTU size without credits dropping to 0.
+Since they are of unsigned int type, it's allowed to read them
+unlocked during reporting to userspace. Let's underline this fact
+with READ_ONCE() macroses.
 
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/l2cap_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/fuse/control.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index 0c2219f483d70..f63d9918b15ad 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -6819,6 +6819,16 @@ static int l2cap_le_data_rcv(struct l2cap_chan *chan, struct sk_buff *skb)
- 		chan->sdu_len = sdu_len;
- 		chan->sdu_last_frag = skb;
- 
-+		/* Detect if remote is not able to use the selected MPS */
-+		if (skb->len + L2CAP_SDULEN_SIZE < chan->mps) {
-+			u16 mps_len = skb->len + L2CAP_SDULEN_SIZE;
-+
-+			/* Adjust the number of credits */
-+			BT_DBG("chan->mps %u -> %u", chan->mps, mps_len);
-+			chan->mps = mps_len;
-+			l2cap_chan_le_send_credits(chan);
-+		}
-+
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 0b694655d9880..acc35819aae64 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -107,7 +107,7 @@ static ssize_t fuse_conn_max_background_read(struct file *file,
+ 	if (!fc)
  		return 0;
- 	}
  
+-	val = fc->max_background;
++	val = READ_ONCE(fc->max_background);
+ 	fuse_conn_put(fc);
+ 
+ 	return fuse_conn_limit_read(file, buf, len, ppos, val);
+@@ -144,7 +144,7 @@ static ssize_t fuse_conn_congestion_threshold_read(struct file *file,
+ 	if (!fc)
+ 		return 0;
+ 
+-	val = fc->congestion_threshold;
++	val = READ_ONCE(fc->congestion_threshold);
+ 	fuse_conn_put(fc);
+ 
+ 	return fuse_conn_limit_read(file, buf, len, ppos, val);
 -- 
 2.20.1
 
