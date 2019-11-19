@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B692E101604
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA967101606
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbfKSFt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:49:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46136 "EHLO mail.kernel.org"
+        id S1731499AbfKSFtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:49:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730917AbfKSFtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:49:25 -0500
+        id S1731486AbfKSFt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:49:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B639420721;
-        Tue, 19 Nov 2019 05:49:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB0CF20721;
+        Tue, 19 Nov 2019 05:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142564;
-        bh=RBRTeBaME1S9QHwrLDbdRZCqvLjaiRbJ04TB6H3lm/o=;
+        s=default; t=1574142567;
+        bh=W1/lV2XXwhI/fw03aQUefAxM/mttitnn52A6z2VdHYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FvNMRmaxZTvYi4pMix0ilajm59aDgFto/wxciDvGUKe/VJYeKbWssr0VRU6AjCs55
-         5nHQQd0b18J3nsBf+ABWMmCdkKtMKgEzdMpB3+YI6W+Xg2afERtjgiJTRnife4IJ8u
-         dOsEIcoLU9ZNTY7VghR0EwPPMEs85/VjqjVTY1bE=
+        b=Fp7woUxtYZTbc8EPw53G3qohOMwL6/6dgAPXY9V1qFnhLeiipn99Z5R/eesBPFX6C
+         DhV0gt7C5POZ5a2PvihStDMQ058WPKWIA5jSKu+bHbecXBJpLVmm2MqOSC4+09lyGd
+         7p8RUkUm3jo97VhE6xfvUrOb40BZQ5B66g4dgziA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        stable@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 122/239] power: reset: at91-poweroff: do not procede if at91_shdwc is allocated
-Date:   Tue, 19 Nov 2019 06:18:42 +0100
-Message-Id: <20191119051329.966707883@linuxfoundation.org>
+Subject: [PATCH 4.14 123/239] power: supply: max8998-charger: Fix platform data retrieval
+Date:   Tue, 19 Nov 2019 06:18:43 +0100
+Message-Id: <20191119051330.126745410@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -46,36 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-[ Upstream commit 9f1e44774be578fb92776add95f1fcaf8284d692 ]
+[ Upstream commit cb90a2c6f77fe9b43d1e3f759bb2f13fe7fa1811 ]
 
-There should be only one instance of struct shdwc in the system. This is
-referenced through at91_shdwc. Return in probe if at91_shdwc is already
-allocated.
+Since the max8998 MFD driver supports instantiation by DT, platform data
+retrieval is handled in MFD probe and cell drivers should get use
+the pdata field of max8998_dev struct to obtain them.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/reset/at91-sama5d2_shdwc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/power/supply/max8998_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/reset/at91-sama5d2_shdwc.c
-index 31080c2541249..037976a1fe40b 100644
---- a/drivers/power/reset/at91-sama5d2_shdwc.c
-+++ b/drivers/power/reset/at91-sama5d2_shdwc.c
-@@ -246,6 +246,9 @@ static int __init at91_shdwc_probe(struct platform_device *pdev)
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
- 
-+	if (at91_shdwc)
-+		return -EBUSY;
-+
- 	at91_shdwc = devm_kzalloc(&pdev->dev, sizeof(*at91_shdwc), GFP_KERNEL);
- 	if (!at91_shdwc)
- 		return -ENOMEM;
+diff --git a/drivers/power/supply/max8998_charger.c b/drivers/power/supply/max8998_charger.c
+index b64cf0f141425..66438029bdd0c 100644
+--- a/drivers/power/supply/max8998_charger.c
++++ b/drivers/power/supply/max8998_charger.c
+@@ -85,7 +85,7 @@ static const struct power_supply_desc max8998_battery_desc = {
+ static int max8998_battery_probe(struct platform_device *pdev)
+ {
+ 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max8998_platform_data *pdata = dev_get_platdata(iodev->dev);
++	struct max8998_platform_data *pdata = iodev->pdata;
+ 	struct power_supply_config psy_cfg = {};
+ 	struct max8998_battery_data *max8998;
+ 	struct i2c_client *i2c;
 -- 
 2.20.1
 
