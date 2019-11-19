@@ -2,76 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF81B102ADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6712102AF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:50:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfKSRfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:35:01 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:37670 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728060AbfKSRfB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:35:01 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Tia1I97_1574184888;
-Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0Tia1I97_1574184888)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Nov 2019 01:34:58 +0800
-From:   Wen Yang <wenyang@linux.alibaba.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     zhiche.yy@alibaba-inc.com, xlpang@linux.alibaba.com,
-        Wen Yang <wenyang@linux.alibaba.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] intel_th: avoid double free in error flow
-Date:   Wed, 20 Nov 2019 01:34:47 +0800
-Message-Id: <20191119173447.2454-1-wenyang@linux.alibaba.com>
-X-Mailer: git-send-email 2.23.0
+        id S1727072AbfKSRt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:49:56 -0500
+Received: from mga02.intel.com ([134.134.136.20]:13584 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbfKSRtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 12:49:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:49:54 -0800
+X-IronPort-AV: E=Sophos;i="5.69,218,1571727600"; 
+   d="scan'208";a="200430864"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:49:54 -0800
+Subject: [PATCH] dma/debug: Fix dma vs cow-page collision detection
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     hch@lst.de
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Don Dutile <ddutile@redhat.com>, stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date:   Tue, 19 Nov 2019 09:35:38 -0800
+Message-ID: <157418493888.1639105.6922809760655305210.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a possible double free issue in intel_th_subdevice_alloc:
+The debug_dma_assert_idle() infrastructure was put in place to catch a
+data corruption scenario first identified by the now defunct NET_DMA
+receive offload feature. It caught cases where dma was in flight to a
+stale page because the dma raced the cpu writing the page, and the cpu
+write triggered cow_user_page().
 
-651         err = intel_th_device_add_resources(thdev, res, subdev->nres);
-652         if (err) {
-653                 put_device(&thdev->dev);
-654                 goto fail_put_device;     ---> freed
-655         }
-...
-687 fail_put_device:
-688         put_device(&thdev->dev);          ---> double freed
-689
+However, the dma-debug tracking is overeager and also triggers in cases
+where the dma device is reading from a page that is also undergoing
+cow_user_page().
 
-This patch fix it by removing the unnecessary put_device().
+The fix proposed was originally posted in 2016, and Russell reported
+"Yes, that seems to avoid the warning for me from an initial test", and
+now Don is also reporting that this fix is addressing a similar false
+positive report that he is seeing.
 
-Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
+Link: https://lore.kernel.org/r/CAPcyv4j8fWqwAaX5oCdg5atc+vmp57HoAGT6AfBFwaCiv0RbAQ@mail.gmail.com
+Reported-by: Russell King <linux@armlinux.org.uk>
+Reported-by: Don Dutile <ddutile@redhat.com>
+Fixes: 0abdd7a81b7e ("dma-debug: introduce debug_dma_assert_idle()")
+Cc: <stable@vger.kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/hwtracing/intel_th/core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ kernel/dma/debug.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
-index d5c1821..98d195c 100644
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -649,10 +649,8 @@ static inline void intel_th_request_hub_module_flush(struct intel_th *th)
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index 099002d84f46..11a6db53d193 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -587,7 +587,7 @@ void debug_dma_assert_idle(struct page *page)
  	}
+ 	spin_unlock_irqrestore(&radix_lock, flags);
  
- 	err = intel_th_device_add_resources(thdev, res, subdev->nres);
--	if (err) {
--		put_device(&thdev->dev);
-+	if (err)
- 		goto fail_put_device;
--	}
+-	if (!entry)
++	if (!entry || entry->direction != DMA_FROM_DEVICE)
+ 		return;
  
- 	if (subdev->type == INTEL_TH_OUTPUT) {
- 		if (subdev->mknode)
--- 
-1.8.3.1
+ 	cln = to_cacheline_number(entry);
 
