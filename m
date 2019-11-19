@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD2D01014ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF5910160F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbfKSFiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:38:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60840 "EHLO mail.kernel.org"
+        id S1731270AbfKSFtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:49:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729672AbfKSFip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:38:45 -0500
+        id S1731526AbfKSFtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:49:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7F0D222DC;
-        Tue, 19 Nov 2019 05:38:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FD54208C3;
+        Tue, 19 Nov 2019 05:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141924;
-        bh=gzEchfM7M9ylyt97dkh+RkFlfZBYYPbqX4JcKuUKC2g=;
+        s=default; t=1574142588;
+        bh=V2MXQNvdw4Ron/Ca+2ik6qa8Dz9RDGfx4vCYSh7+Ib0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RNRjgWaO50JMvnM3qUAATWZ3GIgSv2kiRlic1lV2eOLdftkXjvOa6kG8lQfQOEwZQ
-         7uiB3Dx8p5HmPsfPN5iNvp7i5OSKxD87HPg+V/+W3NVQU/uIhXnzcXHrllX+dGx8tt
-         EAzVT3OdzbpkNkZZ1O9dYx5YCD14zJkb4w/Sobp4=
+        b=C3hUZ7E6FwpCLpG6LOQu2j6FJqI38jMjqIg2tBoa7VCVEe7W0E0d0nICa8iFiVROb
+         11maD8+k+914YUu8mNp/vUx/dahqaoiyT065TLRz5icnP+9E0XXtJyKhX7v/7OJL9v
+         Rscrn4gHP9llMuADWgCis1ffQS/mT9qj97V+dZ7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 328/422] media: au0828: Fix incorrect error messages
+        stable@vger.kernel.org, Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 125/239] kernfs: Fix range checks in kernfs_get_target_path
 Date:   Tue, 19 Nov 2019 06:18:45 +0100
-Message-Id: <20191119051420.271739603@linuxfoundation.org>
+Message-Id: <20191119051330.330237056@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brad Love <brad@nextdimension.cc>
+From: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-[ Upstream commit f347596f2bf114a3af3d80201c6e6bef538d884f ]
+[ Upstream commit a75e78f21f9ad4b810868c89dbbabcc3931591ca ]
 
-Correcting red herring error messages.
+The terminating NUL byte is only there because the buffer is
+allocated with kzalloc(PAGE_SIZE, GFP_KERNEL), but since the
+range-check is off-by-one, and PAGE_SIZE==PATH_MAX, the
+returned string may not be zero-terminated if it is exactly
+PATH_MAX characters long.  Furthermore also the initial loop
+may theoretically exceed PATH_MAX and cause a fault.
 
-Where appropriate, replaces au0282_dev_register with:
-- au0828_analog_register
-- au0828_dvb_register
-
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/au0828/au0828-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/kernfs/symlink.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/au0828/au0828-core.c b/drivers/media/usb/au0828/au0828-core.c
-index e3f63299f85c0..07e3322bb1827 100644
---- a/drivers/media/usb/au0828/au0828-core.c
-+++ b/drivers/media/usb/au0828/au0828-core.c
-@@ -632,7 +632,7 @@ static int au0828_usb_probe(struct usb_interface *interface,
- 	/* Analog TV */
- 	retval = au0828_analog_register(dev, interface);
- 	if (retval) {
--		pr_err("%s() au0282_dev_register failed to register on V4L2\n",
-+		pr_err("%s() au0828_analog_register failed to register on V4L2\n",
- 			__func__);
- 		mutex_unlock(&dev->lock);
- 		goto done;
-@@ -641,7 +641,7 @@ static int au0828_usb_probe(struct usb_interface *interface,
- 	/* Digital TV */
- 	retval = au0828_dvb_register(dev);
- 	if (retval)
--		pr_err("%s() au0282_dev_register failed\n",
-+		pr_err("%s() au0828_dvb_register failed\n",
- 		       __func__);
+diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
+index 5145ae2f0572e..d273e3accade6 100644
+--- a/fs/kernfs/symlink.c
++++ b/fs/kernfs/symlink.c
+@@ -63,6 +63,9 @@ static int kernfs_get_target_path(struct kernfs_node *parent,
+ 		if (base == kn)
+ 			break;
  
- 	/* Remote controller */
++		if ((s - path) + 3 >= PATH_MAX)
++			return -ENAMETOOLONG;
++
+ 		strcpy(s, "../");
+ 		s += 3;
+ 		base = base->parent;
+@@ -79,7 +82,7 @@ static int kernfs_get_target_path(struct kernfs_node *parent,
+ 	if (len < 2)
+ 		return -EINVAL;
+ 	len--;
+-	if ((s - path) + len > PATH_MAX)
++	if ((s - path) + len >= PATH_MAX)
+ 		return -ENAMETOOLONG;
+ 
+ 	/* reverse fillup of target string from target to base */
 -- 
 2.20.1
 
