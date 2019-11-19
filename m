@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E6610133E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9E4101340
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbfKSFXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:23:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39420 "EHLO mail.kernel.org"
+        id S1727250AbfKSFXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:23:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728028AbfKSFXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:23:41 -0500
+        id S1728055AbfKSFXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:23:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEC822231D;
-        Tue, 19 Nov 2019 05:23:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02383208C3;
+        Tue, 19 Nov 2019 05:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141020;
-        bh=sm1EhOKQK1y+CCqUuavqqCwAKgiFTi6pmR57AvcYe98=;
+        s=default; t=1574141025;
+        bh=HMJKuEBSSrGyP06AAdXX08X+kMCPToYcKTmElvu7oZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wpBjIXQ4Cs5+7mAW6odIIEcIGNbxURHHBMqKbMrYc71maZQb0gr11akmD/R1dARvg
-         Y/adMphrF7eOFg4wI6gO+qMpgNjnRwO/bVvO/b1I2jAIG6+Zz//o9NUrXqsusfeBQZ
-         mD447KO4IWReAB6bYEv2AJZNzvsgkbRkYGmU3Y6I=
+        b=rvrXA925v0s8l6vsnmRiHW7V9Lue6mf9d7O5E7ioAxAD9lDc6jlDiUrkYiREanr6k
+         zMN2QBIovZtHkpO1MoYOzHNn9vwZ/2J6krLCMEb92oo2H9maH9VC9/KRg7ZY288ocN
+         DSZXVEGASyPZxu7RlWkTYGTOuW4NKQnPvkQlxHs0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Duggan <aduggan@synaptics.com>,
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 018/422] Input: synaptics-rmi4 - do not consume more data than we have (F11, F12)
-Date:   Tue, 19 Nov 2019 06:13:35 +0100
-Message-Id: <20191119051401.297643776@linuxfoundation.org>
+Subject: [PATCH 4.19 020/422] Input: synaptics-rmi4 - destroy F54 poller workqueue when removing
+Date:   Tue, 19 Nov 2019 06:13:37 +0100
+Message-Id: <20191119051401.407394866@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -43,53 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Duggan <aduggan@synaptics.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-commit 5d40d95e7e64756cc30606c2ba169271704d47cb upstream.
+commit ba60cf9f78f0d7c8e73c7390608f7f818ee68aa0 upstream.
 
-Currently, rmi_f11_attention() and rmi_f12_attention() functions update
-the attn_data data pointer and size based on the size of the expected
-size of the attention data. However, if the actual valid data in the
-attn buffer is less then the expected value then the updated data
-pointer will point to memory beyond the end of the attn buffer. Using
-the calculated valid_bytes instead will prevent this from happening.
+The driver forgets to destroy workqueue in remove() similarly to what is
+done when probe() fails. Add a call to destroy_workqueue() to fix it.
 
-Signed-off-by: Andrew Duggan <aduggan@synaptics.com>
+Since unregistration will wait for the work to finish, we do not need to
+cancel/flush the work instance in remove().
+
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191025002527.3189-3-aduggan@synaptics.com
+Link: https://lore.kernel.org/r/20191114023405.31477-1-hslester96@gmail.com
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/rmi4/rmi_f11.c |    4 ++--
- drivers/input/rmi4/rmi_f12.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/input/rmi4/rmi_f54.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/input/rmi4/rmi_f11.c
-+++ b/drivers/input/rmi4/rmi_f11.c
-@@ -1287,8 +1287,8 @@ static irqreturn_t rmi_f11_attention(int
- 			valid_bytes = f11->sensor.attn_size;
- 		memcpy(f11->sensor.data_pkt, drvdata->attn_data.data,
- 			valid_bytes);
--		drvdata->attn_data.data += f11->sensor.attn_size;
--		drvdata->attn_data.size -= f11->sensor.attn_size;
-+		drvdata->attn_data.data += valid_bytes;
-+		drvdata->attn_data.size -= valid_bytes;
- 	} else {
- 		error = rmi_read_block(rmi_dev,
- 				data_base_addr, f11->sensor.data_pkt,
---- a/drivers/input/rmi4/rmi_f12.c
-+++ b/drivers/input/rmi4/rmi_f12.c
-@@ -217,8 +217,8 @@ static irqreturn_t rmi_f12_attention(int
- 			valid_bytes = sensor->attn_size;
- 		memcpy(sensor->data_pkt, drvdata->attn_data.data,
- 			valid_bytes);
--		drvdata->attn_data.data += sensor->attn_size;
--		drvdata->attn_data.size -= sensor->attn_size;
-+		drvdata->attn_data.data += valid_bytes;
-+		drvdata->attn_data.size -= valid_bytes;
- 	} else {
- 		retval = rmi_read_block(rmi_dev, f12->data_addr,
- 					sensor->data_pkt, sensor->pkt_size);
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -742,6 +742,7 @@ static void rmi_f54_remove(struct rmi_fu
+ 
+ 	video_unregister_device(&f54->vdev);
+ 	v4l2_device_unregister(&f54->v4l2);
++	destroy_workqueue(f54->workqueue);
+ }
+ 
+ struct rmi_function_handler rmi_f54_handler = {
 
 
