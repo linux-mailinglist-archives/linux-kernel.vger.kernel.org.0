@@ -2,81 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6712102AF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E98102AE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfKSRt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:49:56 -0500
-Received: from mga02.intel.com ([134.134.136.20]:13584 "EHLO mga02.intel.com"
+        id S1728544AbfKSRlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:41:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbfKSRtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:49:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:49:54 -0800
-X-IronPort-AV: E=Sophos;i="5.69,218,1571727600"; 
-   d="scan'208";a="200430864"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:49:54 -0800
-Subject: [PATCH] dma/debug: Fix dma vs cow-page collision detection
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     hch@lst.de
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Don Dutile <ddutile@redhat.com>, stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Tue, 19 Nov 2019 09:35:38 -0800
-Message-ID: <157418493888.1639105.6922809760655305210.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1728433AbfKSRk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 12:40:58 -0500
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACEFC22384
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 17:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574185256;
+        bh=CluRblEFMUETyKbYj2Mbw+FlclYGBj6WdguG//F2G7Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QNdH6mi5PiBtuEUA+43zu2S/TU+LbiB0e005F3zS94ECiaj4JE+mdeafj73BfHmPV
+         EdXo8E+E08nSEn2/f6U2g/kBww828l/aRDCGIhlCgTGANqLIlsgR91hNi5+zRNetYB
+         qZqmwLE61dEejb4RB62BEBD6Va8/0rIAsEmn4vb4=
+Received: by mail-wm1-f41.google.com with SMTP id u18so4153165wmc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 09:40:56 -0800 (PST)
+X-Gm-Message-State: APjAAAVh6QaWPvnLAF7fUHKlJzWbKPXPT+wVT9M3/5KIYrRahLjeYeAP
+        Vo/FvQc9vtF65wQ3IyywabWl08wtVvmBsVMr2Qu+tg==
+X-Google-Smtp-Source: APXvYqw6UtwVIGhkNwkVtKkd6cSjWvijD04+2DtfuhQRcsA5MlCEw0Y6e7FEa0raVjE8DvKEE5qxMkQ82hVrcQ4PLB0=
+X-Received: by 2002:a1c:f210:: with SMTP id s16mr5247240wmc.76.1574185255074;
+ Tue, 19 Nov 2019 09:40:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <2476454.l8LQlgn7Hv@positron.chronox.de> <3043322.Kq9igzfA0K@positron.chronox.de>
+ <CALCETrVXGuShozaf5RpgmQnwtTpAbmaTVny+E0q8OE4OLuWwAQ@mail.gmail.com> <5323691.yyFvDVlHDV@tauon.chronox.de>
+In-Reply-To: <5323691.yyFvDVlHDV@tauon.chronox.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 19 Nov 2019 09:40:43 -0800
+X-Gmail-Original-Message-ID: <CALCETrV9W9_rkdCZ4ZvV0bQWiE0ms8cvAyZqeNy4=kHnFj9BRA@mail.gmail.com>
+Message-ID: <CALCETrV9W9_rkdCZ4ZvV0bQWiE0ms8cvAyZqeNy4=kHnFj9BRA@mail.gmail.com>
+Subject: Re: [PATCH v25 03/12] LRNG - /proc interface
+To:     Stephan Mueller <smueller@chronox.de>
+Cc:     Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The debug_dma_assert_idle() infrastructure was put in place to catch a
-data corruption scenario first identified by the now defunct NET_DMA
-receive offload feature. It caught cases where dma was in flight to a
-stale page because the dma raced the cpu writing the page, and the cpu
-write triggered cow_user_page().
+On Tue, Nov 19, 2019 at 2:57 AM Stephan Mueller <smueller@chronox.de> wrote=
+:
+>
+> Am Dienstag, 19. November 2019, 11:06:02 CET schrieb Andy Lutomirski:
+>
+> Hi Andy,
+>
+> > On Sun, Nov 17, 2019 at 4:16 AM Stephan M=C3=BCller <smueller@chronox.d=
+e> wrote:
+> > > Am Samstag, 16. November 2019, 17:39:40 CET schrieb Andy Lutomirski:
+> > >
+> > > Hi Andy,
+> > >
+> > > > > On Nov 16, 2019, at 1:40 AM, Stephan M=C3=BCller <smueller@chrono=
+x.de>
+> > > > > wrote:
+> > > > >
+> > > > > =EF=BB=BFThe LRNG /proc interface provides the same files as the =
+legacy
+> > > > > /dev/random. These files behave identically. Yet, all files are
+> > > > > documented at [1].
+> > > >
+> > > > Why?
+> > >
+> > > I am not sure here: are you referring to the documentation? Or the on=
+e
+> > > additional file?
+> > >
+> > > If it is the documentation, do you want me to add it to the patch
+> > > description? I initially did not add it as these files were present a=
+nd
+> > > seemingly known what they provide. But I would add that documentation=
+ to
+> > > the patch description if this is desired.
+> >
+> > Sorry, I should have been a lot more explicit.  Why do you want to add
+> > a new interface to read the RNG?  What's wrong with the old one?
+>
+> There is nothing wrong at all. I actually want to be 100% API and ABI
+> compliant with the existing random.c. Thus, the list of the sysctls are
+> identical to the existing random.c with the same behavior (hence I skippe=
+d the
+> documentation of these files).
 
-However, the dma-debug tracking is overeager and also triggers in cases
-where the dma device is reading from a page that is also undergoing
-cow_user_page().
+Whoops, I misunderstood your commit message.  You said "The LRNG /proc
+interface provides the same files as the legacy
+/dev/random.".  I assumed that meant that you had a file in /proc that
+worked like /dev/random.
 
-The fix proposed was originally posted in 2016, and Russell reported
-"Yes, that seems to avoid the warning for me from an initial test", and
-now Don is also reporting that this fix is addressing a similar false
-positive report that he is seeing.
-
-Link: https://lore.kernel.org/r/CAPcyv4j8fWqwAaX5oCdg5atc+vmp57HoAGT6AfBFwaCiv0RbAQ@mail.gmail.com
-Reported-by: Russell King <linux@armlinux.org.uk>
-Reported-by: Don Dutile <ddutile@redhat.com>
-Fixes: 0abdd7a81b7e ("dma-debug: introduce debug_dma_assert_idle()")
-Cc: <stable@vger.kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- kernel/dma/debug.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index 099002d84f46..11a6db53d193 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -587,7 +587,7 @@ void debug_dma_assert_idle(struct page *page)
- 	}
- 	spin_unlock_irqrestore(&radix_lock, flags);
- 
--	if (!entry)
-+	if (!entry || entry->direction != DMA_FROM_DEVICE)
- 		return;
- 
- 	cln = to_cacheline_number(entry);
-
+So never mind.
