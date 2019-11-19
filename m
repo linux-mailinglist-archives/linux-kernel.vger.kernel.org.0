@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048801015E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58C01101601
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbfKSFsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:48:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44730 "EHLO mail.kernel.org"
+        id S1730292AbfKSFtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:49:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731321AbfKSFsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:48:14 -0500
+        id S1731470AbfKSFtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:49:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B2762071B;
-        Tue, 19 Nov 2019 05:48:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06CD621783;
+        Tue, 19 Nov 2019 05:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142493;
-        bh=HdPHDp3BlBc7LAHKrrfU2bGbLW19OD8QFTgc6uk6uuQ=;
+        s=default; t=1574142558;
+        bh=lgzmDY7hvgwZlBz91lc4Dp9NshUnGaue5baV8VcMsmk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=riFTTKZ6IO+EVfwa6h5lSAClLtek8a5VgbZ+0QIC3kEE13LZtY5BCYC0SfeXlvfsq
-         8TWPZgHanvdOLalSA1HBrlUeoKg2uW3gcZU+ybADzXwqp+KAZA5iWWPr6BRHhwy8iZ
-         tFcUetGmYr74manTJuDWGUTR7+wGGtZKcbXqhT2M=
+        b=GJa0n4CqYQ1gXRx6MyRVsAFw6/WDMCtH1IUOOyJb12qdw5KrdRLI+xasrbDOCSI6w
+         YWLzOh6uyBijmSng+5K/Rs96UpUCkMWD/xG4WfYB0ipkeF32cisSNc/7qhwEY39veJ
+         u3156/4CZ9TYG/EJpyfq92apcmZvciBRfOJkeMZs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vicente Bergas <vicencb@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 083/239] arm64: dts: rockchip: Fix VCC5V0_HOST_EN on rk3399-sapphire
-Date:   Tue, 19 Nov 2019 06:18:03 +0100
-Message-Id: <20191119051316.339430105@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Silsby <dansilsby@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 085/239] dmaengine: dma-jz4780: Further residue status fix
+Date:   Tue, 19 Nov 2019 06:18:05 +0100
+Message-Id: <20191119051317.783541817@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -44,32 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vicente Bergas <vicencb@gmail.com>
+From: Daniel Silsby <dansilsby@gmail.com>
 
-[ Upstream commit bcdb578a5f5b4aea79441606ab7f0a2e076b4474 ]
+[ Upstream commit 83ef4fb7556b6a673f755da670cbacab7e2c7f1b ]
 
-The pin is GPIO4-D1 not GPIO1-D1, see schematic, page 15 for reference.
+Func jz4780_dma_desc_residue() expects the index to the next hw
+descriptor as its last parameter. Caller func jz4780_dma_tx_status(),
+however, applied modulus before passing it. When the current hw
+descriptor was last in the list, the index passed became zero.
 
-Signed-off-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+The resulting excess of reported residue especially caused problems
+with cyclic DMA transfer clients, i.e. ALSA AIC audio output, which
+rely on this for determining current DMA location within buffer.
+
+Combined with the recent and related residue-reporting fixes, spurious
+ALSA audio underruns on jz4770 hardware are now fixed.
+
+Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi | 2 +-
+ drivers/dma/dma-jz4780.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
-index ce592a4c0c4cd..82576011b959b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
-@@ -136,7 +136,7 @@
- 	vcc5v0_host: vcc5v0-host-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
--		gpio = <&gpio1 RK_PD1 GPIO_ACTIVE_HIGH>;
-+		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&vcc5v0_host_en>;
- 		regulator-name = "vcc5v0_host";
+diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+index 803cfb4523b08..aca2d6fd92d56 100644
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -580,7 +580,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
+ 					to_jz4780_dma_desc(vdesc), 0);
+ 	} else if (cookie == jzchan->desc->vdesc.tx.cookie) {
+ 		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
+-			  (jzchan->curr_hwdesc + 1) % jzchan->desc->count);
++					jzchan->curr_hwdesc + 1);
+ 	} else
+ 		txstate->residue = 0;
+ 
 -- 
 2.20.1
 
