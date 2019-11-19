@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 575961017AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E62101740
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbfKSFkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:40:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34288 "EHLO mail.kernel.org"
+        id S1731745AbfKSF6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:58:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729283AbfKSFkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:40:10 -0500
+        id S1731414AbfKSFtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:49:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3728D218BA;
-        Tue, 19 Nov 2019 05:40:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 216AA20862;
+        Tue, 19 Nov 2019 05:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142008;
-        bh=5ZDLL2jzO0bYUJZZV6wHwNTMpEYiGBSQOV5StXzn/1U=;
+        s=default; t=1574142540;
+        bh=fyEovHonIi28L8n/cm3MK/odCyRSRZIyQ7OjuLbLtdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PYc3dQOhRqRT+X42sRY+YQRxg4GeC3lrg3lPPT9HhnZ7Ja5WxGyVl4JVtWZtZ7q9X
-         zfvsCowdOb3KKf+W5Pq6sBFgl1HEU+86XwTvpd/xfu6JBhTFa7ClMnN3YpAno5kKAu
-         K0fFzrNMPi8a6niDnjDgOkJGpob3ws+FFo96FE/k=
+        b=in8DGZx7cCrl1yDixAK9lWA9kAe95AUIKFbRDvQLMcUXAUMvuJareo94QR9kht/HL
+         ZGegzzea5jdrNzttVU/bBuUZEyJjZeiGrbI3oiJqvjkvwP6pCq20A+QNdkYfv5f0/o
+         DlusjFy7qfF0YC/5N/UlAYEEKs9BKFTmJ3a7aMeA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Alan Modra <amodra@gmail.com>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 316/422] samples/bpf: fix compilation failure
-Date:   Tue, 19 Nov 2019 06:18:33 +0100
-Message-Id: <20191119051419.471438761@linuxfoundation.org>
+Subject: [PATCH 4.14 115/239] powerpc/vdso: Correct call frame information
+Date:   Tue, 19 Nov 2019 06:18:35 +0100
+Message-Id: <20191119051328.957111578@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,145 +45,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+From: Alan Modra <amodra@gmail.com>
 
-[ Upstream commit 32c009798385ce21080beaa87a9b95faad3acd1e ]
+[ Upstream commit 56d20861c027498b5a1112b4f9f05b56d906fdda ]
 
-following commit:
-commit d58e468b1112 ("flow_dissector: implements flow dissector BPF hook")
-added struct bpf_flow_keys which conflicts with the struct with
-same name in sockex2_kern.c and sockex3_kern.c
+Call Frame Information is used by gdb for back-traces and inserting
+breakpoints on function return for the "finish" command.  This failed
+when inside __kernel_clock_gettime.  More concerning than difficulty
+debugging is that CFI is also used by stack frame unwinding code to
+implement exceptions.  If you have an app that needs to handle
+asynchronous exceptions for some reason, and you are unlucky enough to
+get one inside the VDSO time functions, your app will crash.
 
-similar to commit:
-commit 534e0e52bc23 ("samples/bpf: fix a compilation failure")
-we tried the rename it "flow_keys" but it also conflicted with struct
-having same name in include/net/flow_dissector.h. Hence renaming the
-struct to "flow_key_record". Also, this commit doesn't fix the
-compilation error completely because the similar struct is present in
-sockex3_kern.c. Hence renaming it in both files sockex3_user.c and
-sockex3_kern.c
+What's wrong:  There is control flow in __kernel_clock_gettime that
+reaches label 99 without saving lr in r12.  CFI info however is
+interpreted by the unwinder without reference to control flow: It's a
+simple matter of "Execute all the CFI opcodes up to the current
+address".  That means the unwinder thinks r12 contains the return
+address at label 99.  Disabuse it of that notion by resetting CFI for
+the return address at label 99.
 
-Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Note that the ".cfi_restore lr" could have gone anywhere from the
+"mtlr r12" a few instructions earlier to the instruction at label 99.
+I put the CFI as late as possible, because in general that's best
+practice (and if possible grouped with other CFI in order to reduce
+the number of CFI opcodes executed when unwinding).  Using r12 as the
+return address is perfectly fine after the "mtlr r12" since r12 on
+that code path still contains the return address.
+
+__get_datapage also has a CFI error.  That function temporarily saves
+lr in r0, and reflects that fact with ".cfi_register lr,r0".  A later
+use of r0 means the CFI at that point isn't correct, as r0 no longer
+contains the return address.  Fix that too.
+
+Signed-off-by: Alan Modra <amodra@gmail.com>
+Tested-by: Reza Arbab <arbab@linux.ibm.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/bpf/sockex2_kern.c | 11 ++++++-----
- samples/bpf/sockex3_kern.c |  8 ++++----
- samples/bpf/sockex3_user.c |  4 ++--
- 3 files changed, 12 insertions(+), 11 deletions(-)
+ arch/powerpc/kernel/vdso32/datapage.S     | 1 +
+ arch/powerpc/kernel/vdso32/gettimeofday.S | 1 +
+ arch/powerpc/kernel/vdso64/datapage.S     | 1 +
+ arch/powerpc/kernel/vdso64/gettimeofday.S | 1 +
+ 4 files changed, 4 insertions(+)
 
-diff --git a/samples/bpf/sockex2_kern.c b/samples/bpf/sockex2_kern.c
-index f58acfc925561..f2f9dbc021b0d 100644
---- a/samples/bpf/sockex2_kern.c
-+++ b/samples/bpf/sockex2_kern.c
-@@ -14,7 +14,7 @@ struct vlan_hdr {
- 	__be16 h_vlan_encapsulated_proto;
- };
- 
--struct bpf_flow_keys {
-+struct flow_key_record {
- 	__be32 src;
- 	__be32 dst;
- 	union {
-@@ -59,7 +59,7 @@ static inline __u32 ipv6_addr_hash(struct __sk_buff *ctx, __u64 off)
- }
- 
- static inline __u64 parse_ip(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_proto,
--			     struct bpf_flow_keys *flow)
-+			     struct flow_key_record *flow)
- {
- 	__u64 verlen;
- 
-@@ -83,7 +83,7 @@ static inline __u64 parse_ip(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_proto
- }
- 
- static inline __u64 parse_ipv6(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_proto,
--			       struct bpf_flow_keys *flow)
-+			       struct flow_key_record *flow)
- {
- 	*ip_proto = load_byte(skb,
- 			      nhoff + offsetof(struct ipv6hdr, nexthdr));
-@@ -96,7 +96,8 @@ static inline __u64 parse_ipv6(struct __sk_buff *skb, __u64 nhoff, __u64 *ip_pro
- 	return nhoff;
- }
- 
--static inline bool flow_dissector(struct __sk_buff *skb, struct bpf_flow_keys *flow)
-+static inline bool flow_dissector(struct __sk_buff *skb,
-+				  struct flow_key_record *flow)
- {
- 	__u64 nhoff = ETH_HLEN;
- 	__u64 ip_proto;
-@@ -198,7 +199,7 @@ struct bpf_map_def SEC("maps") hash_map = {
- SEC("socket2")
- int bpf_prog2(struct __sk_buff *skb)
- {
--	struct bpf_flow_keys flow = {};
-+	struct flow_key_record flow = {};
- 	struct pair *value;
- 	u32 key;
- 
-diff --git a/samples/bpf/sockex3_kern.c b/samples/bpf/sockex3_kern.c
-index 95907f8d2b17d..c527b57d3ec8a 100644
---- a/samples/bpf/sockex3_kern.c
-+++ b/samples/bpf/sockex3_kern.c
-@@ -61,7 +61,7 @@ struct vlan_hdr {
- 	__be16 h_vlan_encapsulated_proto;
- };
- 
--struct bpf_flow_keys {
-+struct flow_key_record {
- 	__be32 src;
- 	__be32 dst;
- 	union {
-@@ -88,7 +88,7 @@ static inline __u32 ipv6_addr_hash(struct __sk_buff *ctx, __u64 off)
- }
- 
- struct globals {
--	struct bpf_flow_keys flow;
-+	struct flow_key_record flow;
- };
- 
- struct bpf_map_def SEC("maps") percpu_map = {
-@@ -114,14 +114,14 @@ struct pair {
- 
- struct bpf_map_def SEC("maps") hash_map = {
- 	.type = BPF_MAP_TYPE_HASH,
--	.key_size = sizeof(struct bpf_flow_keys),
-+	.key_size = sizeof(struct flow_key_record),
- 	.value_size = sizeof(struct pair),
- 	.max_entries = 1024,
- };
- 
- static void update_stats(struct __sk_buff *skb, struct globals *g)
- {
--	struct bpf_flow_keys key = g->flow;
-+	struct flow_key_record key = g->flow;
- 	struct pair *value;
- 
- 	value = bpf_map_lookup_elem(&hash_map, &key);
-diff --git a/samples/bpf/sockex3_user.c b/samples/bpf/sockex3_user.c
-index 22f74d0e14934..9d02e0404719a 100644
---- a/samples/bpf/sockex3_user.c
-+++ b/samples/bpf/sockex3_user.c
-@@ -13,7 +13,7 @@
- #define PARSE_IP_PROG_FD (prog_fd[0])
- #define PROG_ARRAY_FD (map_fd[0])
- 
--struct flow_keys {
-+struct flow_key_record {
- 	__be32 src;
- 	__be32 dst;
- 	union {
-@@ -64,7 +64,7 @@ int main(int argc, char **argv)
- 	(void) f;
- 
- 	for (i = 0; i < 5; i++) {
--		struct flow_keys key = {}, next_key;
-+		struct flow_key_record key = {}, next_key;
- 		struct pair value;
- 
- 		sleep(1);
+diff --git a/arch/powerpc/kernel/vdso32/datapage.S b/arch/powerpc/kernel/vdso32/datapage.S
+index 3745113fcc652..2a7eb5452aba7 100644
+--- a/arch/powerpc/kernel/vdso32/datapage.S
++++ b/arch/powerpc/kernel/vdso32/datapage.S
+@@ -37,6 +37,7 @@ data_page_branch:
+ 	mtlr	r0
+ 	addi	r3, r3, __kernel_datapage_offset-data_page_branch
+ 	lwz	r0,0(r3)
++  .cfi_restore lr
+ 	add	r3,r0,r3
+ 	blr
+   .cfi_endproc
+diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
+index 769c2624e0a6b..1e0bc5955a400 100644
+--- a/arch/powerpc/kernel/vdso32/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
+@@ -139,6 +139,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
+ 	 */
+ 99:
+ 	li	r0,__NR_clock_gettime
++  .cfi_restore lr
+ 	sc
+ 	blr
+   .cfi_endproc
+diff --git a/arch/powerpc/kernel/vdso64/datapage.S b/arch/powerpc/kernel/vdso64/datapage.S
+index abf17feffe404..bf96686915116 100644
+--- a/arch/powerpc/kernel/vdso64/datapage.S
++++ b/arch/powerpc/kernel/vdso64/datapage.S
+@@ -37,6 +37,7 @@ data_page_branch:
+ 	mtlr	r0
+ 	addi	r3, r3, __kernel_datapage_offset-data_page_branch
+ 	lwz	r0,0(r3)
++  .cfi_restore lr
+ 	add	r3,r0,r3
+ 	blr
+   .cfi_endproc
+diff --git a/arch/powerpc/kernel/vdso64/gettimeofday.S b/arch/powerpc/kernel/vdso64/gettimeofday.S
+index 3820213248836..09b2a49f6dd53 100644
+--- a/arch/powerpc/kernel/vdso64/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso64/gettimeofday.S
+@@ -124,6 +124,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
+ 	 */
+ 99:
+ 	li	r0,__NR_clock_gettime
++  .cfi_restore lr
+ 	sc
+ 	blr
+   .cfi_endproc
 -- 
 2.20.1
 
