@@ -2,92 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3D4103014
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89754103010
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfKSXWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 18:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727471AbfKSXWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 18:22:45 -0500
-Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B674C2245C;
-        Tue, 19 Nov 2019 23:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574205764;
-        bh=OPg+OWIL7YrZ7aK6JFMMVO6jtqfg0GHKfu/eH8lWhWk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RULm7mPRUw6UKwZP9N4dbrI92xv0MUP5+jsqBp/10vjnuZnPHQ5YIA0NKAtFJnnsX
-         lskhAuic4YymfRtXTlX1Emz7CVSD7FhUi8/rfQWXXh7Va7codaKT2sgsDb5QHBZ2or
-         de7SQa+EHjkN2inJf3ixc35lnz9agCLv56yendRU=
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH 6/6] rackmeter: Use vtime aware kcpustat accessor
-Date:   Wed, 20 Nov 2019 00:22:18 +0100
-Message-Id: <20191119232218.4206-7-frederic@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191119232218.4206-1-frederic@kernel.org>
-References: <20191119232218.4206-1-frederic@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727578AbfKSXWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 18:22:41 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:46472 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbfKSXWi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 18:22:38 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6E74B1428DA53;
+        Tue, 19 Nov 2019 15:22:38 -0800 (PST)
+Date:   Tue, 19 Nov 2019 15:22:38 -0800 (PST)
+Message-Id: <20191119.152238.234909279065487800.davem@davemloft.net>
+To:     andrea.mayer@uniroma2.it
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        dav.lebrun@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [net-next] seg6: allow local packet processing for SRv6
+ End.DT6 behavior
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191118182026.2634-1-andrea.mayer@uniroma2.it>
+References: <20191118182026.2634-1-andrea.mayer@uniroma2.it>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 19 Nov 2019 15:22:38 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have a vtime safe kcpustat accessor, use it to fetch
-CPUTIME_NICE and fix frozen kcpustat values on nohz_full CPUs.
+From: Andrea Mayer <andrea.mayer@uniroma2.it>
+Date: Mon, 18 Nov 2019 19:20:26 +0100
 
-Reported-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- drivers/macintosh/rack-meter.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> End.DT6 behavior makes use of seg6_lookup_nexthop() function which drops
+> all packets that are destined to be locally processed. However, DT* should
+> be able to delivery decapsulated packets that are destined to local
+> addresses. Function seg6_lookup_nexthop() is also used by DX6, so in order
+> to maintain compatibility I created another routing helper function which
+> is called seg6_lookup_any_nexthop(). This function is able to take into
+> account both packets that have to be processed locally and the ones that
+> are destined to be forwarded directly to another machine. Hence,
+> seg6_lookup_any_nexthop() is used in DT6 rather than seg6_lookup_nexthop()
+> to allow local delivery.
+> 
+> Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
 
-diff --git a/drivers/macintosh/rack-meter.c b/drivers/macintosh/rack-meter.c
-index 4134e580f786..60311e8d6240 100644
---- a/drivers/macintosh/rack-meter.c
-+++ b/drivers/macintosh/rack-meter.c
-@@ -81,13 +81,14 @@ static int rackmeter_ignore_nice;
-  */
- static inline u64 get_cpu_idle_time(unsigned int cpu)
- {
-+	struct kernel_cpustat *kcpustat = &kcpustat_cpu(cpu);
- 	u64 retval;
- 
--	retval = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE] +
--		 kcpustat_cpu(cpu).cpustat[CPUTIME_IOWAIT];
-+	retval = kcpustat->cpustat[CPUTIME_IDLE] +
-+		 kcpustat->cpustat[CPUTIME_IOWAIT];
- 
- 	if (rackmeter_ignore_nice)
--		retval += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
-+		retval += kcpustat_field(kcpustat, CPUTIME_NICE, cpu);
- 
- 	return retval;
- }
--- 
-2.23.0
-
+Please address Sergei's feedback and resubmit, thank you.
