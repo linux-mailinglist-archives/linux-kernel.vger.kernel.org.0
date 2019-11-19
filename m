@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32E210164B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10FAC101610
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731855AbfKSFvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49434 "EHLO mail.kernel.org"
+        id S1731552AbfKSFtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:49:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731438AbfKSFvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:52 -0500
+        id S1730977AbfKSFtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:49:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E9C214D9;
-        Tue, 19 Nov 2019 05:51:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC5420721;
+        Tue, 19 Nov 2019 05:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142711;
-        bh=srycieWXSGszwVJ8ASQMK8t1Lxk8Er2ie0ADMyYiDBU=;
+        s=default; t=1574142591;
+        bh=oDKOZKsGlOSOwbHZ/0xDL00iTc9xm4wYxZZxvU1I6Pc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zAfVgNF8HM2Wp0mPxugTYcJwrxLw6NR4whZ2q09z4BiOw4oaz3LyvJy0WeRTj996N
-         IEQSL5K28PYu3moN8jot+yuMni1AgNLAvYmE9MmYqDpvWoFU15AzMlxyRY/ifAeMhC
-         zoDDZ8rhPHweKTcMK0Ye/rwgl4EmtvcWk7iFc3hI=
+        b=MSi9icl6diIxTztkx04q+QfB0mjB9fj5jhjcajI9GeNr/VIBw8WhScBJwuknapO/R
+         YsEqQmnxjDK57blqSfH559mfpnAIPkW0nQC0L33lPJqT1//ENL22b4MqTjrna+/ZTi
+         HxrBCAFkc+7ZiIALaoAycgkCJ8sSpOWVt8KFOoa0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 133/239] serial: samsung: Enable baud clock for UART reset procedure in resume
-Date:   Tue, 19 Nov 2019 06:18:53 +0100
-Message-Id: <20191119051330.835278270@linuxfoundation.org>
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 134/239] serial: mxs-auart: Fix potential infinite loop
+Date:   Tue, 19 Nov 2019 06:18:54 +0100
+Message-Id: <20191119051330.894516003@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -45,50 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 1ff3652bc7111df26b5807037f624be294cf69d5 ]
+[ Upstream commit 5963e8a3122471cadfe0eba41c4ceaeaa5c8bb4d ]
 
-Ensure that the baud clock is also enabled for UART register writes in
-driver resume. On Exynos5433 SoC this is needed to avoid external abort
-issue.
+On the error path of mxs_auart_request_gpio_irq() is performed
+backward iterating with index i of enum type. Underline enum type
+may be unsigned char. In this case check (--i >= 0) will be always
+true and error handling goes into infinite loop.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+The patch changes the check so that it is valid for signed and unsigned
+types.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/samsung.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/tty/serial/mxs-auart.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index f4b8e4e17a868..808373d4e37a6 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1922,7 +1922,11 @@ static int s3c24xx_serial_resume(struct device *dev)
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index 673c8fd7e34f6..e83750831f15e 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1638,8 +1638,9 @@ static int mxs_auart_request_gpio_irq(struct mxs_auart_port *s)
  
- 	if (port) {
- 		clk_prepare_enable(ourport->clk);
-+		if (!IS_ERR(ourport->baudclk))
-+			clk_prepare_enable(ourport->baudclk);
- 		s3c24xx_serial_resetport(port, s3c24xx_port_to_cfg(port));
-+		if (!IS_ERR(ourport->baudclk))
-+			clk_disable_unprepare(ourport->baudclk);
- 		clk_disable_unprepare(ourport->clk);
+ 	/*
+ 	 * If something went wrong, rollback.
++	 * Be careful: i may be unsigned.
+ 	 */
+-	while (err && (--i >= 0))
++	while (err && (i-- > 0))
+ 		if (irq[i] >= 0)
+ 			free_irq(irq[i], s);
  
- 		uart_resume_port(&s3c24xx_uart_drv, port);
-@@ -1945,7 +1949,11 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 			if (rx_enabled(port))
- 				uintm &= ~S3C64XX_UINTM_RXD_MSK;
- 			clk_prepare_enable(ourport->clk);
-+			if (!IS_ERR(ourport->baudclk))
-+				clk_prepare_enable(ourport->baudclk);
- 			wr_regl(port, S3C64XX_UINTM, uintm);
-+			if (!IS_ERR(ourport->baudclk))
-+				clk_disable_unprepare(ourport->baudclk);
- 			clk_disable_unprepare(ourport->clk);
- 		}
- 	}
 -- 
 2.20.1
 
