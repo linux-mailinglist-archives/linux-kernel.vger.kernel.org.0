@@ -2,129 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88E15101A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 08:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4156B101A64
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 08:38:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfKSHiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 02:38:51 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:24437 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfKSHiu (ORCPT
+        id S1727255AbfKSHik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 02:38:40 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45721 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfKSHij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 02:38:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574149129;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:References:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=NpOIjRJnqmN7G5qwAWt8nG3TxC9QZhn3+hpNnkE7dVE=;
-        b=UaXrKEQd4lY4nkEI3B+phzkbu2o4+5jWDu4TLCKkR1Ns8i9+zkk+c0QMnljT425qOq
-        mVS60eKq2nGMVrQPAG52AuTDUwqF7PDi2amWochTG4OtdA+TXxW3isC8tPXgLZuEmB3H
-        ncAMcLRqbNeqQ7jCgmKsaID4ZawonTC32w/HLYKAAAtTI+IeoBkx8iZHy8KyYeM6OCxj
-        Xcogw9s+T7V27I0Jp1lgyi62F6MUIOkfob6+yPUOT4dyGLmEyWtp0ZKUXylScBkUvqpP
-        bjgB2iJYka77s/pm0PrWZwKQkKml49SUyDgwTrempWic+oCA1DPxkVWS0aoCu90zZqOS
-        JLOA==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3PMaViOoLMJVch5l0xf"
-X-RZG-CLASS-ID: mo00
-Received: from [192.168.1.177]
-        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
-        with ESMTPSA id C03a03vAJ7Zk28J
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 19 Nov 2019 08:35:46 +0100 (CET)
-Subject: Re: KMSAN: uninit-value in can_receive
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        syzbot <syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com>,
-        davem@davemloft.net, glider@google.com, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000005c08d10597a3a05d@google.com>
- <a5f73d92-fdf2-2590-c863-39a181dca8e1@hartkopp.net>
- <deedd609-6f3b-8035-47e1-252ab221faa1@pengutronix.de>
- <7934bc2b-597f-0bb3-be2d-32f3b07b4de9@hartkopp.net>
- <7f5c4546-0c1a-86ae-581e-0203b5fca446@pengutronix.de>
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <1f7d6ea7-152e-ff18-549c-b196d8b5e3a7@hartkopp.net>
-Date:   Tue, 19 Nov 2019 08:35:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 19 Nov 2019 02:38:39 -0500
+Received: by mail-ot1-f67.google.com with SMTP id r24so17007726otk.12;
+        Mon, 18 Nov 2019 23:38:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xkk8ZmmhL1Tvq4SyXNXmWfQK6jIKt9U01DfpeWL7Exg=;
+        b=U3qky6gZAJASs8j5fw8I68kepKBzc613R6y8/xtUJEhoSSqwD+m6omFaFI9P7yE9/W
+         n0N7mUD3M/JRSaXc67yvO8dqTxAl5xmlMC6Ov/+laeJ6c7vQ2l77ylN4GrhGZdzfIkrO
+         TjjLZ9Yy6Uy4VCnB39zbB7G6cNAD17R+lFSgukfVxUg0vO2L31XDYN17ELABRA2jSZBK
+         wbbI2tKUy/KVHw96S/Ikv8uKVVi5h6w9DE33XInB58OZ4ZKD30lPic1LxP2kmq7CON3x
+         9lpWNAJu36W5/gp6WeHwNZ/NQuCeMxjuUB9IEK7qKPguL5VimoduRq8+Noo3HnAPzzMl
+         ECwA==
+X-Gm-Message-State: APjAAAWyiZBOEkChyNoqeKsKAe/zvP7WWkZkRYhGiAYV8mruVhmWnlTK
+        2ACRXeEwTE7NP2RDFCqMIf2qrmu6Qe2DBC6iz+M=
+X-Google-Smtp-Source: APXvYqyyRGl+VnIo7G8JoHpe7CM1DZDcx0jvynVczgsZNDCB7eI/tKx/44kJ+KYHVQUomn+I8tITzps/uhar16e+VaE=
+X-Received: by 2002:a9d:5511:: with SMTP id l17mr2644213oth.145.1574149118761;
+ Mon, 18 Nov 2019 23:38:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7f5c4546-0c1a-86ae-581e-0203b5fca446@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20d33517-6df0-9104-fc0a-7f621f87192e@infradead.org>
+In-Reply-To: <20d33517-6df0-9104-fc0a-7f621f87192e@infradead.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Nov 2019 08:38:27 +0100
+Message-ID: <CAMuHMdU0Vx1E9V+h8XYTyAJitPT42NdGvgzLAfG-=1BVZd-rbA@mail.gmail.com>
+Subject: Re: [PATCH] arch/sh/: fix NUMA build errors
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Randy,
 
+On Tue, Nov 19, 2019 at 1:55 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> Fix SUPERH builds that select SYS_SUPPORTS_NUMA but do not select
+> SYS_SUPPORTS_SMP and SMP.
+>
+> kernel/sched/topology.c is only built for CONFIG_SMP and then the NUMA
+> code + data inside topology.c is only built when CONFIG_NUMA is
+> set/enabled, so these arch/sh/ configs need to select SMP and
+> SYS_SUPPORTS_SMP to build the NUMA support.
+>
+> Fixes this build error in 3 different SUPERH configs:
+>
+> mm/page_alloc.o: In function `get_page_from_freelist':
+> page_alloc.c:(.text+0x2ca8): undefined reference to `node_reclaim_distance'
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: linux-sh@vger.kernel.org
+> ---
+> or maybe these should be fixed in the defconfig files?
+>
+> or alternatively, does it make any sense to support NUMA without SMP?
 
-On 18/11/2019 22.15, Marc Kleine-Budde wrote:
-> On 11/18/19 9:49 PM, Oliver Hartkopp wrote:
->>
->>
->> On 18/11/2019 21.29, Marc Kleine-Budde wrote:
->>> On 11/18/19 9:25 PM, Oliver Hartkopp wrote:
->>
->>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>>> Reported-by: syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com
->>>>>
->>>>> =====================================================
->>>>> BUG: KMSAN: uninit-value in can_receive+0x23c/0x5e0 net/can/af_can.c:649
->>>>> CPU: 1 PID: 3490 Comm: syz-executor.2 Not tainted 5.4.0-rc5+ #0
->>
->>>>
->>>> In line 649 of 5.4.0-rc5+ we can find a while() statement:
->>>>
->>>> while (!(can_skb_prv(skb)->skbcnt))
->>>> 	can_skb_prv(skb)->skbcnt = atomic_inc_return(&skbcounter);
->>>>
->>>> In linux/include/linux/can/skb.h we see:
->>>>
->>>> static inline struct can_skb_priv *can_skb_prv(struct sk_buff *skb)
->>>> {
->>>> 	return (struct can_skb_priv *)(skb->head);
->>>> }
->>>>
->>>> IMO accessing can_skb_prv(skb)->skbcnt at this point is a valid
->>>> operation which has no uninitialized value.
->>>>
->>>> Can this probably be a false positive of KMSAN?
->>>
->>> The packet is injected via the packet socket into the kernel. Where does
->>> skb->head point to in this case? When the skb is a proper
->>> kernel-generated skb containing a CAN-2.0 or CAN-FD frame skb->head is
->>> maybe properly initialized?
->>
->> The packet is either received via vcan or vxcan which checks via
->> can_dropped_invalid_skb() if we have a valid ETH_P_CAN type skb.
-> 
-> According to the call stack it's injected into the kernel via a packet
-> socket and not via v(x)can.
+I think it does.  From arch/sh/mm/Kconfig config NUMA help:
 
-See ioctl$ifreq https://syzkaller.appspot.com/x/log.txt?x=14563416e00000
+        Some SH systems have many various memories scattered around
+        the address space, each with varying latencies. This enables
+        support for these blocks by binding them to nodes and allowing
+        memory policies to be used for prioritizing and controlling
+        allocation behaviour.
 
-23:11:34 executing program 2:
-r0 = socket(0x200000000000011, 0x3, 0x0)
-ioctl$ifreq_SIOCGIFINDEX_vcan(r0, 0x8933, 
-&(0x7f0000000040)={'vxcan1\x00', <r1=>0x0})
-bind$packet(r0, &(0x7f0000000300)={0x11, 0xc, r1}, 0x14)
-sendmmsg(r0, &(0x7f0000000d00), 0x400004e, 0x0)
+Probably the NUMA-core is too server/x86-centric, by assuming NUMA is
+used only on systems with multiple CPUs, each with their own RAM.
 
-We only can receive skbs from (v(x))can devices.
-No matter if someone wrote to them via PF_CAN or PF_PACKET.
-We check for ETH_P_CAN(FD) type and ARPHRD_CAN dev type at rx time.
+AFAIK, none of the SoCs below are SMP:
 
->> We additionally might think about introducing a check whether we have a
->> can_skb_reserve() created skbuff.
->>
->> But even if someone forged a skbuff without this reserved space the
->> access to can_skb_prv(skb)->skbcnt would point into some CAN frame
->> content - which is still no access to uninitialized content, right?
+> --- lnx-54-rc8.orig/arch/sh/Kconfig
+> +++ lnx-54-rc8/arch/sh/Kconfig
+> @@ -508,6 +508,8 @@ config CPU_SUBTYPE_SH7722
+>         select CPU_SHX2
+>         select ARCH_SHMOBILE
+>         select ARCH_SPARSEMEM_ENABLE
+> +       select SYS_SUPPORTS_SMP
+> +       select SMP
+>         select SYS_SUPPORTS_NUMA
+>         select SYS_SUPPORTS_SH_CMT
+>         select PINCTRL
+> @@ -518,6 +520,8 @@ config CPU_SUBTYPE_SH7366
+>         select CPU_SHX2
+>         select ARCH_SHMOBILE
+>         select ARCH_SPARSEMEM_ENABLE
+> +       select SYS_SUPPORTS_SMP
+> +       select SMP
+>         select SYS_SUPPORTS_NUMA
+>         select SYS_SUPPORTS_SH_CMT
 
-So this question remains still valid whether we have a false positive 
-from KMSAN here.
+BTW, you didn't have the issue with CPU_SHX3 and CPU_SUBTYPE_SH7785?
 
-Regards,
-Oliver
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
