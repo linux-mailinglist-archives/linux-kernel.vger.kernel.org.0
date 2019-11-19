@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6827E1019C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4379E1019B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:52:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbfKSGvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:51:36 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8392 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbfKSGvR (ORCPT
+        id S1727939AbfKSGvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:51:21 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14339 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727892AbfKSGvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 01:51:17 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd390e40001>; Mon, 18 Nov 2019 22:51:16 -0800
+        Tue, 19 Nov 2019 01:51:18 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd390e20002>; Mon, 18 Nov 2019 22:51:14 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Nov 2019 22:51:15 -0800
+  Mon, 18 Nov 2019 22:51:17 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 22:51:15 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
- 2019 06:51:15 +0000
+        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 22:51:17 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
+ 2019 06:51:16 +0000
 Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
- 2019 06:51:15 +0000
+ 2019 06:51:16 +0000
 Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 19 Nov 2019 06:51:15 +0000
+ Transport; Tue, 19 Nov 2019 06:51:16 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.175.254]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dd390e00002>; Mon, 18 Nov 2019 22:51:14 -0800
+        id <B5dd390e30000>; Mon, 18 Nov 2019 22:51:16 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <digetx@gmail.com>,
@@ -45,9 +45,9 @@ CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 14/17] dt-bindings: Add Tegra PMC clock configuration bindings
-Date:   Mon, 18 Nov 2019 22:50:31 -0800
-Message-ID: <1574146234-3871-15-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 15/17] dt-bindings: tegra186-pmc: Add Tegra PMC clock bindings
+Date:   Mon, 18 Nov 2019 22:50:32 -0800
+Message-ID: <1574146234-3871-16-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
 References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
@@ -55,16 +55,16 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574146276; bh=8xZY11tbp+usm/Nb6Z9xjnnoWn2JHFMyJbgWjmLOHXY=;
+        t=1574146274; bh=G7T/VBzC6jgpoi4v7NU2+pO/USNPyUXRGIQX4N7GGMA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=RQGyHB1XOJXfSAWza0wiwB5OonczD++hm/D7Rafd59D3ZWA9Li5QBPjYqAvqVewP4
-         QF7eXYrb7XZ6e/EU+9FMkc/7u9CWOeWcmgDdjNj6nyj+MjasoG1smDbr2UcfYFhfIS
-         LfdCEmjGf2azi561IMXMXRcz0Um0VnV3/E2xGXT4mIv6qxS3+wEHSSw415kJMq6Vy/
-         wL9uilxf2mj0lkJ2xEbxBn/JVZdtTr/KSaTxWYw/25646jCQu2YdAcwNm96hd1OWVq
-         5p97gRP+YKxhaOVa5SgEtd2ZEnJByFuNJ6z2VM1uAfdLzTZ72N7yfxMEGC7ejgzTWt
-         mQ4HYQugsDn1g==
+        b=qixSZeDVAGBlCTnUbZKAPWoRGF1e0Ng9EV35HOoonh+TKycDSEvfturUTFKu3kVzf
+         ZNy5pWvEwfaI+XuxnSUy2LYTGIyWs1fgHELJsjUvY0gC3qIh5BkRDEEv9zDtpnxvGX
+         ZWqhwV1yL9BLc0yqO8BTEIfFq+XyHdu0ZeflRbZ9oCwTL+ZS9jVV8GKiuT58JrsCr3
+         jxeVsecAB3KiB9qI21/2zF/dH6RkeREoP11Bps5vkD3a2gv8vGMebyzHTkPR6sD+aI
+         Gq4q/6ivDp1n9FNbsG/ll96pmadCp06KSydxLRwxEP7CwEQ3FIv/sSt697mdt1jUd6
+         NiyABHLnyn9pA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -76,41 +76,25 @@ these clocks.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index cb12f33a247f..602a1ac5c0b6 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -21,6 +21,10 @@ Required properties:
- - clock-names : Must include the following entries:
-   "pclk" (The Tegra clock of that name),
-   "clk32k_in" (The 32KHz clock input to Tegra).
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+index 2d89cdc39eb0..4576de92e4cc 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+@@ -12,6 +12,10 @@ Required properties:
+   - "aotag"
+   - "scratch"
+   - "misc" (Only for Tegra194)
 +- #clock-cells : Should be 1 for Tegra30 and higher.
 +  In clock consumers, this cell represents the PMC clock ID.
 +  The assignments may be found in header file
 +  <dt-bindings/soc/tegra-pmc.h>.
  
  Optional properties:
- - nvidia,invert-interrupt : If present, inverts the PMU interrupt signal.
-@@ -171,6 +175,7 @@ Example:
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 
- 		powergates {
- 			pd_audio: aud {
-@@ -260,6 +265,7 @@ Pad configuration state example:
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 
- 		...
- 
-@@ -298,3 +304,39 @@ Pinctrl client example:
+ - nvidia,invert-interrupt: If present, inverts the PMU interrupt signal.
+@@ -130,3 +134,43 @@ Pinctrl client example:
  		pinctrl-1 = <&hdmi_on>;
  		pinctrl-names = "hdmi-on", "hdmi-off";
  	};
@@ -124,11 +108,15 @@ index cb12f33a247f..602a1ac5c0b6 100644
 +
 +Clock configuration example:
 +	pmc: pmc@7000e400 {
-+		compatible = "nvidia,tegra210-pmc";
-+		reg = <0x0 0x7000e400 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
-+		clock-names = "pclk", "clk32k_in";
++		compatible = "nvidia,tegra186-pmc";
++		reg = <0 0x0c360000 0 0x10000>,
++		      <0 0x0c370000 0 0x10000>,
++		      <0 0x0c380000 0 0x10000>,
++		      <0 0x0c390000 0 0x10000>;
++		reg-names = "pmc", "wake", "aotag", "scratch";
++		...
 +		#clock-cells = <1>;
++		...
 +	};
 +
 +Clock consumer example:
