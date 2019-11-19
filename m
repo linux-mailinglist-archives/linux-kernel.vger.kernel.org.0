@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB4F1018EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0311018EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbfKSFYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:24:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40596 "EHLO mail.kernel.org"
+        id S1728218AbfKSFYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:24:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728195AbfKSFY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:24:26 -0500
+        id S1727452AbfKSFY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:24:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 571CA222ED;
-        Tue, 19 Nov 2019 05:24:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83A5221783;
+        Tue, 19 Nov 2019 05:24:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141065;
-        bh=fUrFUQ0VcsIJkVEdn4DWVyWlVpEN5y6KkxK0GRYbpqI=;
+        s=default; t=1574141069;
+        bh=3pZtjJxg82RJ4bLROtW2plxaPpzpKc7U4x+pscgL8z4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cu8iCPhuX5/FpqzfpuJLyiIypDrD1jiVbMk/mtGj5a1EuTJSQ0GiormOhWmKPmtUV
-         x3A9O+Td1hwx4EgOYTZ7JPwdzcDS5VqZRUA0MCIkHKU23nuRvWa/rVG23ik7su7iHm
-         vNfYyaWgxSBLjqVWnd5M/rbddrarIV2DxJBLu1k4=
+        b=ljLjFQMWMVPxJQZnrHhbXy6/rdYzzr6AY10IY58sMRDbEJ+xYPkP1zMI8cnNn9Tzi
+         MiKD9fTYmPh/MYHDYuQipZUowUDtxzorF3FNhfKObsuxfpcrYzCtBqLWaTWf6OfFna
+         sexJYcIxT0U3u8Vq7rtmmgX5fcR9h0k0Hto2eaGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/422] iio: adc: max9611: explicitly cast gain_selectors
-Date:   Tue, 19 Nov 2019 06:13:50 +0100
-Message-Id: <20191119051402.157233793@linuxfoundation.org>
+Subject: [PATCH 4.19 034/422] tee: optee: take DT status property into account
+Date:   Tue, 19 Nov 2019 06:13:51 +0100
+Message-Id: <20191119051402.211777274@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,40 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit b1ec0802503820ccbc894aadfd2a44da20232f5e ]
+[ Upstream commit db878f76b9ff7487da9bb0f686153f81829f1230 ]
 
-After finding a reasonable gain, the function converts the configured
-gain to a gain configuration option selector enum max9611_csa_gain.
-Make the conversion clearly visible by using an explicit cast. This
-also avoids a warning seen with clang:
-  drivers/iio/adc/max9611.c:292:16: warning: implicit conversion from
-      enumeration type 'enum max9611_conf_ids' to different enumeration
-      type 'enum max9611_csa_gain' [-Wenum-conversion]
-                        *csa_gain = gain_selectors[i];
-                                  ~ ^~~~~~~~~~~~~~~~~
+DT nodes may have a 'status' property which, if set to anything other
+than 'ok' or 'okay', indicates to the OS that the DT node should be
+treated as if it was not present. So add that missing logic to the
+OP-TEE driver.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/max9611.c | 2 +-
+ drivers/tee/optee/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-index 49c1956e6a674..0884435eec68d 100644
---- a/drivers/iio/adc/max9611.c
-+++ b/drivers/iio/adc/max9611.c
-@@ -289,7 +289,7 @@ static int max9611_read_csa_voltage(struct max9611_dev *max9611,
- 			return ret;
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index e1aafe842d660..34dce850067b9 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -696,7 +696,7 @@ static int __init optee_driver_init(void)
+ 		return -ENODEV;
  
- 		if (*adc_raw > 0) {
--			*csa_gain = gain_selectors[i];
-+			*csa_gain = (enum max9611_csa_gain)gain_selectors[i];
- 			return 0;
- 		}
- 	}
+ 	np = of_find_matching_node(fw_np, optee_match);
+-	if (!np)
++	if (!np || !of_device_is_available(np))
+ 		return -ENODEV;
+ 
+ 	optee = optee_probe(np);
 -- 
 2.20.1
 
