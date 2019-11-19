@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E62101740
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1FBE1017DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731745AbfKSF6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:58:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45616 "EHLO mail.kernel.org"
+        id S1730204AbfKSFia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:38:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731414AbfKSFtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:49:01 -0500
+        id S1729706AbfKSFi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:38:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 216AA20862;
-        Tue, 19 Nov 2019 05:48:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF79B21783;
+        Tue, 19 Nov 2019 05:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142540;
-        bh=fyEovHonIi28L8n/cm3MK/odCyRSRZIyQ7OjuLbLtdA=;
+        s=default; t=1574141906;
+        bh=lEQzvuo/J49Mv9aF5nepvQGDuy/fag8KPX8/WX6w/8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=in8DGZx7cCrl1yDixAK9lWA9kAe95AUIKFbRDvQLMcUXAUMvuJareo94QR9kht/HL
-         ZGegzzea5jdrNzttVU/bBuUZEyJjZeiGrbI3oiJqvjkvwP6pCq20A+QNdkYfv5f0/o
-         DlusjFy7qfF0YC/5N/UlAYEEKs9BKFTmJ3a7aMeA=
+        b=vDl3LD0dib2NF9X6zgTPcViyEmsxQ1KywVMgdqDutbCK8HgjJYdncgjRHd8qpkLRY
+         MRtWbafYY0IKD5j+mtVQQiEdmhS6/NIUIcEhWuB1ZNW6hOdwB0tljRzqJnN8RdQJNx
+         n78FiBGflNPBOWFDJqrg8oQGPYlXDRpc+bk7U4C8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Modra <amodra@gmail.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 115/239] powerpc/vdso: Correct call frame information
-Date:   Tue, 19 Nov 2019 06:18:35 +0100
-Message-Id: <20191119051328.957111578@linuxfoundation.org>
+        stable@vger.kernel.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>,
+        Aristeu Rozanski <aris@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 322/422] EDAC: Correct DIMM capacity unit symbol
+Date:   Tue, 19 Nov 2019 06:18:39 +0100
+Message-Id: <20191119051419.862928802@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,98 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Modra <amodra@gmail.com>
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 
-[ Upstream commit 56d20861c027498b5a1112b4f9f05b56d906fdda ]
+[ Upstream commit 6f6da136046294a1e8d2944336eb97412751f653 ]
 
-Call Frame Information is used by gdb for back-traces and inserting
-breakpoints on function return for the "finish" command.  This failed
-when inside __kernel_clock_gettime.  More concerning than difficulty
-debugging is that CFI is also used by stack frame unwinding code to
-implement exceptions.  If you have an app that needs to handle
-asynchronous exceptions for some reason, and you are unlucky enough to
-get one inside the VDSO time functions, your app will crash.
+The {i3200|i7core|sb|skx}_edac drivers show DIMM capacity using the
+wrong unit symbol: 'Mb' - megabit. Fix them by replacing 'Mb' with
+'MiB' - mebibyte.
 
-What's wrong:  There is control flow in __kernel_clock_gettime that
-reaches label 99 without saving lr in r12.  CFI info however is
-interpreted by the unwinder without reference to control flow: It's a
-simple matter of "Execute all the CFI opcodes up to the current
-address".  That means the unwinder thinks r12 contains the return
-address at label 99.  Disabuse it of that notion by resetting CFI for
-the return address at label 99.
+[Tony: These are all "edac_dbg()" messages, so this won't break scripts
+       that parse console logs.]
 
-Note that the ".cfi_restore lr" could have gone anywhere from the
-"mtlr r12" a few instructions earlier to the instruction at label 99.
-I put the CFI as late as possible, because in general that's best
-practice (and if possible grouped with other CFI in order to reduce
-the number of CFI opcodes executed when unwinding).  Using r12 as the
-return address is perfectly fine after the "mtlr r12" since r12 on
-that code path still contains the return address.
-
-__get_datapage also has a CFI error.  That function temporarily saves
-lr in r0, and reflects that fact with ".cfi_register lr,r0".  A later
-use of r0 means the CFI at that point isn't correct, as r0 no longer
-contains the return address.  Fix that too.
-
-Signed-off-by: Alan Modra <amodra@gmail.com>
-Tested-by: Reza Arbab <arbab@linux.ibm.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Aristeu Rozanski <aris@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919003433.16475-1-tony.luck@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/vdso32/datapage.S     | 1 +
- arch/powerpc/kernel/vdso32/gettimeofday.S | 1 +
- arch/powerpc/kernel/vdso64/datapage.S     | 1 +
- arch/powerpc/kernel/vdso64/gettimeofday.S | 1 +
- 4 files changed, 4 insertions(+)
+ drivers/edac/i3200_edac.c  | 2 +-
+ drivers/edac/i7core_edac.c | 2 +-
+ drivers/edac/sb_edac.c     | 2 +-
+ drivers/edac/skx_edac.c    | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kernel/vdso32/datapage.S b/arch/powerpc/kernel/vdso32/datapage.S
-index 3745113fcc652..2a7eb5452aba7 100644
---- a/arch/powerpc/kernel/vdso32/datapage.S
-+++ b/arch/powerpc/kernel/vdso32/datapage.S
-@@ -37,6 +37,7 @@ data_page_branch:
- 	mtlr	r0
- 	addi	r3, r3, __kernel_datapage_offset-data_page_branch
- 	lwz	r0,0(r3)
-+  .cfi_restore lr
- 	add	r3,r0,r3
- 	blr
-   .cfi_endproc
-diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
-index 769c2624e0a6b..1e0bc5955a400 100644
---- a/arch/powerpc/kernel/vdso32/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
-@@ -139,6 +139,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
- 	 */
- 99:
- 	li	r0,__NR_clock_gettime
-+  .cfi_restore lr
- 	sc
- 	blr
-   .cfi_endproc
-diff --git a/arch/powerpc/kernel/vdso64/datapage.S b/arch/powerpc/kernel/vdso64/datapage.S
-index abf17feffe404..bf96686915116 100644
---- a/arch/powerpc/kernel/vdso64/datapage.S
-+++ b/arch/powerpc/kernel/vdso64/datapage.S
-@@ -37,6 +37,7 @@ data_page_branch:
- 	mtlr	r0
- 	addi	r3, r3, __kernel_datapage_offset-data_page_branch
- 	lwz	r0,0(r3)
-+  .cfi_restore lr
- 	add	r3,r0,r3
- 	blr
-   .cfi_endproc
-diff --git a/arch/powerpc/kernel/vdso64/gettimeofday.S b/arch/powerpc/kernel/vdso64/gettimeofday.S
-index 3820213248836..09b2a49f6dd53 100644
---- a/arch/powerpc/kernel/vdso64/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso64/gettimeofday.S
-@@ -124,6 +124,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
- 	 */
- 99:
- 	li	r0,__NR_clock_gettime
-+  .cfi_restore lr
- 	sc
- 	blr
-   .cfi_endproc
+diff --git a/drivers/edac/i3200_edac.c b/drivers/edac/i3200_edac.c
+index d92d56cee1017..299b441647cd5 100644
+--- a/drivers/edac/i3200_edac.c
++++ b/drivers/edac/i3200_edac.c
+@@ -399,7 +399,7 @@ static int i3200_probe1(struct pci_dev *pdev, int dev_idx)
+ 			if (nr_pages == 0)
+ 				continue;
+ 
+-			edac_dbg(0, "csrow %d, channel %d%s, size = %ld Mb\n", i, j,
++			edac_dbg(0, "csrow %d, channel %d%s, size = %ld MiB\n", i, j,
+ 				 stacked ? " (stacked)" : "", PAGES_TO_MiB(nr_pages));
+ 
+ 			dimm->nr_pages = nr_pages;
+diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
+index f1d19504a0281..4a3300c2da333 100644
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -597,7 +597,7 @@ static int get_dimm_config(struct mem_ctl_info *mci)
+ 			/* DDR3 has 8 I/O banks */
+ 			size = (rows * cols * banks * ranks) >> (20 - 3);
+ 
+-			edac_dbg(0, "\tdimm %d %d Mb offset: %x, bank: %d, rank: %d, row: %#x, col: %#x\n",
++			edac_dbg(0, "\tdimm %d %d MiB offset: %x, bank: %d, rank: %d, row: %#x, col: %#x\n",
+ 				 j, size,
+ 				 RANKOFFSET(dimm_dod[j]),
+ 				 banks, ranks, rows, cols);
+diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+index 7447f1453200d..53074ad361e58 100644
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -1622,7 +1622,7 @@ static int __populate_dimms(struct mem_ctl_info *mci,
+ 				size = ((u64)rows * cols * banks * ranks) >> (20 - 3);
+ 				npages = MiB_TO_PAGES(size);
+ 
+-				edac_dbg(0, "mc#%d: ha %d channel %d, dimm %d, %lld Mb (%d pages) bank: %d, rank: %d, row: %#x, col: %#x\n",
++				edac_dbg(0, "mc#%d: ha %d channel %d, dimm %d, %lld MiB (%d pages) bank: %d, rank: %d, row: %#x, col: %#x\n",
+ 					 pvt->sbridge_dev->mc, pvt->sbridge_dev->dom, i, j,
+ 					 size, npages,
+ 					 banks, ranks, rows, cols);
+diff --git a/drivers/edac/skx_edac.c b/drivers/edac/skx_edac.c
+index 4ba92f1dd0f74..dd209e0dd9abb 100644
+--- a/drivers/edac/skx_edac.c
++++ b/drivers/edac/skx_edac.c
+@@ -364,7 +364,7 @@ static int get_dimm_info(u32 mtr, u32 amap, struct dimm_info *dimm,
+ 	size = ((1ull << (rows + cols + ranks)) * banks) >> (20 - 3);
+ 	npages = MiB_TO_PAGES(size);
+ 
+-	edac_dbg(0, "mc#%d: channel %d, dimm %d, %lld Mb (%d pages) bank: %d, rank: %d, row: %#x, col: %#x\n",
++	edac_dbg(0, "mc#%d: channel %d, dimm %d, %lld MiB (%d pages) bank: %d, rank: %d, row: %#x, col: %#x\n",
+ 		 imc->mc, chan, dimmno, size, npages,
+ 		 banks, 1 << ranks, rows, cols);
+ 
+@@ -424,7 +424,7 @@ unknown_size:
+ 	dimm->mtype = MEM_NVDIMM;
+ 	dimm->edac_mode = EDAC_SECDED; /* likely better than this */
+ 
+-	edac_dbg(0, "mc#%d: channel %d, dimm %d, %llu Mb (%u pages)\n",
++	edac_dbg(0, "mc#%d: channel %d, dimm %d, %llu MiB (%u pages)\n",
+ 		 imc->mc, chan, dimmno, size >> 20, dimm->nr_pages);
+ 
+ 	snprintf(dimm->label, sizeof(dimm->label), "CPU_SrcID#%u_MC#%u_Chan#%u_DIMM#%u",
 -- 
 2.20.1
 
