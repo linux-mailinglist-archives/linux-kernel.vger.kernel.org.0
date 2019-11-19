@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD2710157B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61BD910149E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfKSFog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:44:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
+        id S1729852AbfKSFft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:35:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728279AbfKSFoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:34 -0500
+        id S1728962AbfKSFfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:35:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D61A2075E;
-        Tue, 19 Nov 2019 05:44:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 866E0206EC;
+        Tue, 19 Nov 2019 05:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142273;
-        bh=MRSC/rpnl5+bhnmzznhBQPp4qw0a6pfP0cTuKURpk84=;
+        s=default; t=1574141742;
+        bh=xHgii6MAlq5HkqOsnVMUg3pugEAxzewLlAAU64EAO/c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rovGv277GmyqDCXs7wwPzyc3yxi8x56iJMD6eDspWsXARuDu/E4MmE8iE70Qa/guj
-         B5kI8Gg5fiXlrnd5fQVWxTDohRTxw7BBampOziXuEpoXuhw9QfmoxDz+GCFHnowF1e
-         ASEnbkNS7IF/8yDL7BcrEcyi7P64sDgZNentYZxs=
+        b=CvxtifbK24dLJRfN6yd516H4UlxkFYOZ/wT3U0diFYR38LKUfgt/vDlA5R7ZqEjqV
+         ropyVmAxHq+bPiejnhWJzilygsAK+tx7n6wxN3prRUv5NBtwbrDaCIWgnt52WAwnVn
+         bOHD0uCxCFWFMPcvBPFxxFCBWlbhCG3LxXgwsSPo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Shakeel Butt <shakeeb@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Koutn <mkoutny@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 025/239] mm: memcg: switch to css_tryget() in get_mem_cgroup_from_mm()
+        stable@vger.kernel.org, Jiri Benc <jbenc@redhat.com>,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 228/422] ip_gre: fix parsing gre header in ipgre_err
 Date:   Tue, 19 Nov 2019 06:17:05 +0100
-Message-Id: <20191119051302.643328780@linuxfoundation.org>
+Message-Id: <20191119051413.414949209@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,80 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-commit 00d484f354d85845991b40141d40ba9e5eb60faf upstream.
+[ Upstream commit b0350d51f001e6edc13ee4f253b98b50b05dd401 ]
 
-We've encountered a rcu stall in get_mem_cgroup_from_mm():
+gre_parse_header stops parsing when csum_err is encountered, which means
+tpi->key is undefined and ip_tunnel_lookup will return NULL improperly.
 
-  rcu: INFO: rcu_sched self-detected stall on CPU
-  rcu: 33-....: (21000 ticks this GP) idle=6c6/1/0x4000000000000002 softirq=35441/35441 fqs=5017
-  (t=21031 jiffies g=324821 q=95837) NMI backtrace for cpu 33
-  <...>
-  RIP: 0010:get_mem_cgroup_from_mm+0x2f/0x90
-  <...>
-   __memcg_kmem_charge+0x55/0x140
-   __alloc_pages_nodemask+0x267/0x320
-   pipe_write+0x1ad/0x400
-   new_sync_write+0x127/0x1c0
-   __kernel_write+0x4f/0xf0
-   dump_emit+0x91/0xc0
-   writenote+0xa0/0xc0
-   elf_core_dump+0x11af/0x1430
-   do_coredump+0xc65/0xee0
-   get_signal+0x132/0x7c0
-   do_signal+0x36/0x640
-   exit_to_usermode_loop+0x61/0xd0
-   do_syscall_64+0xd4/0x100
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+This patch introduce a NULL pointer as csum_err parameter. Even when
+csum_err is encountered, it won't return error and continue parsing gre
+header as expected.
 
-The problem is caused by an exiting task which is associated with an
-offline memcg.  We're iterating over and over in the do {} while
-(!css_tryget_online()) loop, but obviously the memcg won't become online
-and the exiting task won't be migrated to a live memcg.
-
-Let's fix it by switching from css_tryget_online() to css_tryget().
-
-As css_tryget_online() cannot guarantee that the memcg won't go offline,
-the check is usually useless, except some rare cases when for example it
-determines if something should be presented to a user.
-
-A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
-css_tryget() instead of css_tryget_online() in task_get_css()").
-
-Johannes:
-
-: The bug aside, it doesn't matter whether the cgroup is online for the
-: callers.  It used to matter when offlining needed to evacuate all charges
-: from the memcg, and so needed to prevent new ones from showing up, but we
-: don't care now.
-
-Link: http://lkml.kernel.org/r/20191106225131.3543616-1-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Shakeel Butt <shakeeb@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Michal Koutn <mkoutny@suse.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 9f57c67c379d ("gre: Remove support for sharing GRE protocol hook.")
+Reported-by: Jiri Benc <jbenc@redhat.com>
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memcontrol.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/gre_demux.c | 7 ++++---
+ net/ipv4/ip_gre.c    | 9 +++------
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -725,7 +725,7 @@ static struct mem_cgroup *get_mem_cgroup
- 			if (unlikely(!memcg))
- 				memcg = root_mem_cgroup;
+diff --git a/net/ipv4/gre_demux.c b/net/ipv4/gre_demux.c
+index f21ea6125fc2d..511b32ea25331 100644
+--- a/net/ipv4/gre_demux.c
++++ b/net/ipv4/gre_demux.c
+@@ -87,13 +87,14 @@ int gre_parse_header(struct sk_buff *skb, struct tnl_ptk_info *tpi,
+ 
+ 	options = (__be32 *)(greh + 1);
+ 	if (greh->flags & GRE_CSUM) {
+-		if (skb_checksum_simple_validate(skb)) {
++		if (!skb_checksum_simple_validate(skb)) {
++			skb_checksum_try_convert(skb, IPPROTO_GRE, 0,
++						 null_compute_pseudo);
++		} else if (csum_err) {
+ 			*csum_err = true;
+ 			return -EINVAL;
  		}
--	} while (!css_tryget_online(&memcg->css));
-+	} while (!css_tryget(&memcg->css));
- 	rcu_read_unlock();
- 	return memcg;
- }
+ 
+-		skb_checksum_try_convert(skb, IPPROTO_GRE, 0,
+-					 null_compute_pseudo);
+ 		options++;
+ 	}
+ 
+diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
+index 758a0f86d499f..681276111310b 100644
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -232,13 +232,10 @@ static void gre_err(struct sk_buff *skb, u32 info)
+ 	const int type = icmp_hdr(skb)->type;
+ 	const int code = icmp_hdr(skb)->code;
+ 	struct tnl_ptk_info tpi;
+-	bool csum_err = false;
+ 
+-	if (gre_parse_header(skb, &tpi, &csum_err, htons(ETH_P_IP),
+-			     iph->ihl * 4) < 0) {
+-		if (!csum_err)		/* ignore csum errors. */
+-			return;
+-	}
++	if (gre_parse_header(skb, &tpi, NULL, htons(ETH_P_IP),
++			     iph->ihl * 4) < 0)
++		return;
+ 
+ 	if (type == ICMP_DEST_UNREACH && code == ICMP_FRAG_NEEDED) {
+ 		ipv4_update_pmtu(skb, dev_net(skb->dev), info,
+-- 
+2.20.1
+
 
 
