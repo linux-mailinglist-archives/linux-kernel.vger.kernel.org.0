@@ -2,136 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C01DF101189
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E581E101199
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfKSDFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 22:05:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59375 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727217AbfKSDFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 22:05:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574132729;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MGZRPhYF1Y/dzL7KaRw06TGUBnCFB2IvLddTdnFImp8=;
-        b=P2mHl9QueDhK4WsLIXtyBGju7tbXTlYuEJ2vJM28TH0Dav+oOgR5Mqqy1BwZG+eHNI9IX6
-        B51Jl5kgMZh355vgbLC35TDTuMWN2y1RX9SrZKbzUe0EWkSB2U0QmPoE2PrnrHJF8RmdCY
-        lXHZHwqT3U+qF77hKoJ2Ne3MxfpWQxs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-301-rUB0BZtSNwuf6b0UF2q_tQ-1; Mon, 18 Nov 2019 22:05:28 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9829A802680;
-        Tue, 19 Nov 2019 03:05:22 +0000 (UTC)
-Received: from [10.72.12.132] (ovpn-12-132.pek2.redhat.com [10.72.12.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F095828D3A;
-        Tue, 19 Nov 2019 03:04:52 +0000 (UTC)
-Subject: Re: [PATCH V13 6/6] docs: sample driver to demonstrate how to
- implement virtio-mdev framework
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
-        gregkh@linuxfoundation.org, jgg@mellanox.com,
-        netdev@vger.kernel.org, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, eperezma@redhat.com,
-        lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com, rdunlap@infradead.org, hch@infradead.org,
-        aadam@redhat.com, jakub.kicinski@netronome.com, jiri@mellanox.com,
-        jeffrey.t.kirsher@intel.com
-References: <20191118105923.7991-1-jasowang@redhat.com>
- <20191118105923.7991-7-jasowang@redhat.com>
- <20191118164510.549c097b.cohuck@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <8a4e504d-abb9-44f1-73ea-e337f596bf75@redhat.com>
-Date:   Tue, 19 Nov 2019 11:04:51 +0800
+        id S1727522AbfKSDJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 22:09:16 -0500
+Received: from mga02.intel.com ([134.134.136.20]:21052 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727018AbfKSDJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 22:09:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 19:09:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,322,1569308400"; 
+   d="scan'208";a="204265404"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Nov 2019 19:09:13 -0800
+Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>
+Subject: Re: [PATCH v2 04/10] iommu/vt-d: Match CPU and IOMMU paging mode
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Auger Eric <eric.auger@redhat.com>
+References: <1574106153-45867-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1574106153-45867-5-git-send-email-jacob.jun.pan@linux.intel.com>
+ <601ca9c3-9f83-3d95-8d26-d4f46eee82ba@redhat.com>
+ <20191118135238.49f5d957@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <ad3c3d58-dd1a-4b83-8b30-31e5be9e9c39@linux.intel.com>
+Date:   Tue, 19 Nov 2019 11:06:10 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191118164510.549c097b.cohuck@redhat.com>
+In-Reply-To: <20191118135238.49f5d957@jacob-builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: rUB0BZtSNwuf6b0UF2q_tQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Eric and Jacob,
 
-On 2019/11/18 =E4=B8=8B=E5=8D=8811:45, Cornelia Huck wrote:
-> On Mon, 18 Nov 2019 18:59:23 +0800
-> Jason Wang <jasowang@redhat.com> wrote:
->
-> [Note: I have not looked into the reworked architecture of this *at all*
-> so far; just something that I noted...]
->
->> This sample driver creates mdev device that simulate virtio net device
->> over virtio mdev transport. The device is implemented through vringh
->> and workqueue. A device specific dma ops is to make sure HVA is used
->> directly as the IOVA. This should be sufficient for kernel virtio
->> driver to work.
+On 11/19/19 5:52 AM, Jacob Pan wrote:
+> On Mon, 18 Nov 2019 21:55:03 +0100
+> Auger Eric <eric.auger@redhat.com> wrote:
+> 
+>> Hi Jacob,
 >>
->> Only 'virtio' type is supported right now. I plan to add 'vhost' type
->> on top which requires some virtual IOMMU implemented in this sample
->> driver.
+>> On 11/18/19 8:42 PM, Jacob Pan wrote:
+>>> When setting up first level page tables for sharing with CPU, we
+>>> need to ensure IOMMU can support no less than the levels supported
+>>> by the CPU.
+>>> It is not adequate, as in the current code, to set up 5-level paging
+>>> in PASID entry First Level Paging Mode(FLPM) solely based on CPU.
+>>>
+>>> Fixes: 437f35e1cd4c8 ("iommu/vt-d: Add first level page table
+>>> interface")
+>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>> Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>> ---
+>>>   drivers/iommu/intel-pasid.c | 12 ++++++++++--
+>>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/intel-pasid.c
+>>> b/drivers/iommu/intel-pasid.c index 040a445be300..e7cb0b8a7332
+>>> 100644 --- a/drivers/iommu/intel-pasid.c
+>>> +++ b/drivers/iommu/intel-pasid.c
+>>> @@ -499,8 +499,16 @@ int intel_pasid_setup_first_level(struct
+>>> intel_iommu *iommu, }
+>>>   
+>>>   #ifdef CONFIG_X86
+>>> -	if (cpu_feature_enabled(X86_FEATURE_LA57))
+>>> -		pasid_set_flpm(pte, 1);
+>>> +	/* Both CPU and IOMMU paging mode need to match */
+>>> +	if (cpu_feature_enabled(X86_FEATURE_LA57)) {
+>>> +		if (cap_5lp_support(iommu->cap)) {
+>>> +			pasid_set_flpm(pte, 1);
+>>> +		} else {
+>>> +			pr_err("VT-d has no 5-level paging support
+>>> for CPU\n");
+>>> +			pasid_clear_entry(pte);
+>>> +			return -EINVAL;
+>> Can it happen? If I am not wrong intel_pasid_setup_first_level() only
+>> seems to be called from intel_svm_bind_mm which now checks the
+>> SVM_CAPABLE flag.
 >>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   MAINTAINERS                        |   1 +
->>   samples/Kconfig                    |  10 +
->>   samples/vfio-mdev/Makefile         |   1 +
->>   samples/vfio-mdev/mvnet_loopback.c | 690 +++++++++++++++++++++++++++++
->>   4 files changed, 702 insertions(+)
->>   create mode 100644 samples/vfio-mdev/mvnet_loopback.c
->>
->> +static struct mvnet_dev {
->> +=09struct class=09*vd_class;
->> +=09struct idr=09vd_idr;
->> +=09struct device=09dev;
->> +} mvnet_dev;
-> This structure embeds a struct device (a reference-counted structure),
-> yet it is a static variable. This is giving a bad example to potential
-> implementers; just allocate it dynamically.
+> You are right, this check is not needed any more. I will drop the patch.
+>> Thanks
 
+I'd suggest to keep this. This helper is not only for svm, although
+currently svm is the only caller. For first level pasid setup, let's
+set an assumption that hardware should never report mismatching paging
+modes, this is helpful especially when running vIOMMU in VM guests.
 
-Yes, as spotted by Greg.
-
-
->
->> +static void mvnet_device_release(struct device *dev)
->> +{
->> +=09dev_dbg(dev, "mvnet: released\n");
-> And that also means you need a proper release function here, of
-> course.
-
-
-Right.
-
-Thanks
-
-
->
->> +}
-
+Best regards,
+baolu
