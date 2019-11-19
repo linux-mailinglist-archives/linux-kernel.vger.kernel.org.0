@@ -2,55 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9172A1026A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF061026A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:29:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfKSO2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:28:55 -0500
-Received: from ms.lwn.net ([45.79.88.28]:38514 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726378AbfKSO2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:28:54 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id EB26C2B2;
-        Tue, 19 Nov 2019 14:28:53 +0000 (UTC)
-Date:   Tue, 19 Nov 2019 07:28:52 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Giovanni Mascellani <gio@debian.org>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
-        linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] dell-smm-hwmon: Add documentation
-Message-ID: <20191119072852.683885f6@lwn.net>
-In-Reply-To: <20191119134921.168424-2-gio@debian.org>
-References: <20191119134921.168424-1-gio@debian.org>
-        <20191119134921.168424-2-gio@debian.org>
-Organization: LWN.net
+        id S1727937AbfKSO3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:29:21 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46780 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727096AbfKSO3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:29:20 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e9so23541201ljp.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 06:29:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6sNcMIRGVALNQmfCoOl6isJBOVyA7zcFBph0eG9kcTE=;
+        b=X8thbqFEidQ+5TbZYwyYc3+2/23nQdjsHW/Rsf2n0DtmZqXiUke25AM3h3+AKmGQI1
+         nZSFJXxzeoOb0MQm4M2slhRG3hdAOzUfno+2o4ok/CgkZ/ItEFrBs7o2jNzUvg3ZWcba
+         nUdzB5+cqDak9xGFtYqYtN1Vza2f4UvVu9FS1FEidNabfhEEaihuWsZauWeCpJo/+bDR
+         MGIdsg6s89W+bfR+rOtdJiQBODJp9EXpHR6tTuxh5HrLNTCJkYkdWYh3vwK+EusRW0VB
+         nQnkTe2Fml3/+DnHob7PuW0aCiQsz17mkSYXtYuTWNBrUsCXWOSND9u+T1U5x3edUCQ6
+         1BDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6sNcMIRGVALNQmfCoOl6isJBOVyA7zcFBph0eG9kcTE=;
+        b=OAK9raN8xjI3e8ZLShZrXrErgc7jfB/Sj4zSucMiWzKtscWKr1ElCmBjZvHjj3VkTI
+         qQzC6tFKbPH6aIOZ6Qr/lVeSOsCpYni2Nuio8E0ZntOPhar0XSQbZv1iYXqtqyTabLQS
+         uIdY2GtrMtsQ3BrKRkDZG+mEbeDAt3pb/C5cFy/nsktyi3x0q6cgFTtAqfLJh6LauGG8
+         gOWlHnzN9zf8VKB8w82pjyiHiMO9uHlSSQQAdm+CqYduX/X3D9e0N+PlfwDya4LZnMgP
+         sXdBQMuTz5fs+wZt1YN8YQkdDGnOBFvZHEdMpz7v7YocIBR6ab0cnOxAWm1nhBVQcnr0
+         GDTQ==
+X-Gm-Message-State: APjAAAU2NuZ9PX6CUr8OnHY6cuzV0HtuabgKlj/8zCR2UvuSSO1rK1k4
+        Zt0hAUFEqlJMRRGLmOopKRqI3ghHwKz4M4vQyP3ddW1aEys=
+X-Google-Smtp-Source: APXvYqwGMNJbpjx1M8t1gc9I1w6Y8MsDjoR/Pq74R8UC/6e1zXoMpKROXOqmTmNcU+cIJQXxASZ46PrJBMcP0STvsv0=
+X-Received: by 2002:a2e:90b:: with SMTP id 11mr4038963ljj.233.1574173758800;
+ Tue, 19 Nov 2019 06:29:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+References: <20191117222732.283673-1-stephan@gerhold.net>
+In-Reply-To: <20191117222732.283673-1-stephan@gerhold.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 19 Nov 2019 15:29:07 +0100
+Message-ID: <CACRpkdZtsg9g2m7w4Uk9mZ9a6KvQADfb9m1W4DKxbFismk82pg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: ux500: snowball: Remove unused PRCMU cpufreq node
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 14:49:21 +0100
-Giovanni Mascellani <gio@debian.org> wrote:
+On Sun, Nov 17, 2019 at 11:28 PM Stephan Gerhold <stephan@gerhold.net> wrote:
 
-> Part of the documentation is taken from the README of the userspace
-> utils (https://github.com/vitorafsr/i8kutils). The license is GPL-2+
-> and the author Massimo Dal Zotto is already credited as author of
-> the module. Therefore there should be no copyright problem.
+> Commit a435adbec264 ("ARM: dts: augment Ux500 to use DT cpufreq")
+> switched the Ux500 device tree to use the generic DT cpufreq driver
+> and removed the PRCMU cpufreq node.
+>
+> The snowball DTS still references it, without effect, since cpufreq
+> is now enabled by default. Remove the unused node.
+>
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 
-Given that you know the details, could you maybe put an SPDX tag at the
-top with the licensing information?
+Patch applied for the v5.6 kernel cycle!
 
-Otherwise looks good.
-
-Thanks,
-
-jon
+Yours,
+Linus Walleij
