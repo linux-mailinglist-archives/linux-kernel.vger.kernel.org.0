@@ -2,212 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF1B41028C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:59:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 543421028C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:00:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfKSP7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 10:59:43 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42393 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfKSP7m (ORCPT
+        id S1728442AbfKSQA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 11:00:27 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46179 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbfKSQA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:59:42 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t20so25132591qtn.9;
-        Tue, 19 Nov 2019 07:59:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m9owisihVoUKEdIZBWaiOa7IHVOtGuTKDH0fF9E2sX4=;
-        b=Al9cWTCEmFGh3dhfC5/fKcqfTRLGohNSOfErqJi+7K5fc2lSuvvijW3iX/vmJK0cWt
-         a7OLToGABHj2RVK4WJXwnBBbElEEJlGKwYwVUlJ52L8p78++2L4n6HtoV8AtcOKD+2C/
-         7vFPhoVONDnEZqcEmMGL5evbFvsW30sXKhrn+TTIFoy7RfZatqKB7gvS/2FwGdnxoHvP
-         6cSgUAhZwQGSbzWeOQtHk55l1Ot1TlKDR7qiEur+j4UukR0Wt0j8STLHQmNwUzVWz+Pp
-         +f69kGr++ExDEWmSOKPLovTztggqQWUOfD7XZKBLZMhXEfWYMXaLHfWF96fxB5xNeMmj
-         Umkg==
+        Tue, 19 Nov 2019 11:00:26 -0500
+Received: by mail-oi1-f195.google.com with SMTP id n14so19350085oie.13;
+        Tue, 19 Nov 2019 08:00:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m9owisihVoUKEdIZBWaiOa7IHVOtGuTKDH0fF9E2sX4=;
-        b=IHfFVgAXWQ/42yz6XIiq5XpI6WbMhfaLu5G74jgtYYUf7lKDsDz8ig/x/V5xiBbjpJ
-         2tDD48Vyah1V79/3GZ6ArpMNCAtXsFDcZkYs9+2LEKbkfu0nBrsoXrH9ad+OhFTWI/EH
-         nsHFYsqR5Fdn0ZnXyxxJa8ZVArlAJl/aKnz3h8oB0LH0k021LnEkkbNQrfQMawrvOw3d
-         LF79nufp7mwE6pGUa0rXC4hhz0/ddze59cgGbGe7p5HHRRhRtGP+U6p++jk65sk64z3r
-         rJk/Nn4nEcOZO+B9dRXwg9i5aMWa9dcPW//SGfY5gB4HnR+Bl8V0fck+MZilfnx+5xQz
-         hFSQ==
-X-Gm-Message-State: APjAAAWwWacJRuV4KQA1XYe5RKoNp57FMqCCr0w1YzpI2FnrEWy4k2wz
-        2qPji2rCcwzDilDHdt5xea0=
-X-Google-Smtp-Source: APXvYqxw/mipy1xv+BDJlBvv52s6KA03uNVaG1x2rooAK6M1x9d1rm+UBPPUswr6Wmfn2RDN9gzhiw==
-X-Received: by 2002:ac8:342b:: with SMTP id u40mr32830412qtb.87.1574179179727;
-        Tue, 19 Nov 2019 07:59:39 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id w5sm10141364qkf.43.2019.11.19.07.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 07:59:39 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id E981D40D3E; Tue, 19 Nov 2019 12:59:36 -0300 (-03)
-Date:   Tue, 19 Nov 2019 12:59:36 -0300
-To:     lqqq341 <liuqi115@hisilicon.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, ak@linux.intel.com,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxarm@huawei.com, john.garry@huawei.com,
-        zhangshaokun@hisilicon.com, huangdaode@hisilicon.com,
-        linyunsheng@huawei.com
-Subject: Re: [PATCH] Perf stat: Fix the ratio comments of miss-events
-Message-ID: <20191119155936.GC24290@kernel.org>
-References: <1573890521-56450-1-git-send-email-liuqi115@hisilicon.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lOp09REXBJlIhxRQLG3yF3pkOzVMqVXKGYr5zOkYKTU=;
+        b=tvirj1n2/8raLM1mnIsqp2gtwTG5uKIyP1xLwQY0vY3qjRyRnMTQn215elCAXasSfy
+         WSyp8Uwl85PcYNgWjZwZCCdkqTskSJ7Rg1xm3satC2WKj3DCWtIcVjDP0SHl9JfadCE7
+         iQzb2KSMDGkLqXoZ4QACKQLtKY3Q7Mxtk0GCW53GI6ZE3T4ApWiG6V6gSuFNhNyUc/Zb
+         0a/IjQe5z6lDgHz8T0LrFt3P57rYJKyytp5fk+au0tF9Mz2CIDBpgZN0BPu/OZv7iZxX
+         Rt8K5H761gL0OeumSjzBiNg5XjPK7ROO/j9j68puMeduawUwkVi0Ii3t4994/lK3JRSY
+         QfEg==
+X-Gm-Message-State: APjAAAU8JKYPSL1ZgPixnZpQwmt6hecZN3aEXOBQkZEKuEurNgWD71f2
+        JpBl0Ntpex8oGGzdJhPHeyLiWU3wsUy5mfxGH/g=
+X-Google-Smtp-Source: APXvYqyFjVcr3DV/kDkPHFaPjGoNOAPUlx3qgBTMVdhzS/Ov2hib4acxOvn1dSc2R4bN1wN/M0QqvauTflblBxgZCm8=
+X-Received: by 2002:aca:fc92:: with SMTP id a140mr4573964oii.153.1574179223502;
+ Tue, 19 Nov 2019 08:00:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573890521-56450-1-git-send-email-liuqi115@hisilicon.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191119144315.11261-1-krzk@kernel.org>
+In-Reply-To: <20191119144315.11261-1-krzk@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Nov 2019 17:00:05 +0100
+Message-ID: <CAMuHMdUnn8uYyQ+D=6rp1+R1sE_W-SS1t+EuNHm=vWaKQ9Z6tQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: power: Fix path to power-domain.txt bindings
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        etnaviv@lists.freedesktop.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno@lists.freedesktop.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sat, Nov 16, 2019 at 03:48:41PM +0800, lqqq341 escreveu:
-> From: Qi Liu <liuqi115@hisilicon.com>
-> 
-> Perf stat displays miss ratio of L1-dcache, L1-icache, dTLB cache,
-> iTLB cache and LL-cache. Take L1-dcache for example, its miss ratio
-> is caculated as "L1-dcache-load-misses/L1-dcache-loads". So "of all
-> L1-dcache hits" is unsuitable to describe it, and "of all L1-dcache
-> accesses" seems better. The comments of L1-icache, dTLB cache, iTLB
-> cache and LL-cache are fixed in the same way.
-> 
-> Signed-off-by: Qi Liu <liuqi115@hisilicon.com>
-> ---
->  tools/perf/util/stat-shadow.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-> index 2c41d47..a3bdf2b 100644
-> --- a/tools/perf/util/stat-shadow.c
-> +++ b/tools/perf/util/stat-shadow.c
-> @@ -506,7 +506,8 @@ static void print_l1_dcache_misses(struct perf_stat_config *config,
->  
->  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
->  
-> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
-> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
-> +			  "of all L1-dcache accesses", ratio);
+Hi Krzysztof,
 
+On Tue, Nov 19, 2019 at 3:43 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> With split of power domain controller bindings to power-domain.yaml, the
+> consumer part was renamed to power-domain.txt.  Update the references in
+> other bindings.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: abb4805e343a ("dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Why have you reflowed all those lines? This patch should have been like:
+Thanks for your patch!
 
--	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache accesses", ratio);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Notice how it is easier to compare the changes, and also to keep the
-flowing like it was before your change,
+>  .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt           | 2 +-
 
-Thanks,
+Please note this file is no longer present in next.
+But robh/for-next still has it.
 
-- Arnaldo
+Gr{oetje,eeting}s,
 
->  }
->  
->  static void print_l1_icache_misses(struct perf_stat_config *config,
-> @@ -527,7 +528,8 @@ static void print_l1_icache_misses(struct perf_stat_config *config,
->  		ratio = avg / total * 100.0;
->  
->  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
-> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-icache hits", ratio);
-> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
-> +			  "of all L1-icache accesses", ratio);
->  }
->  
->  static void print_dtlb_cache_misses(struct perf_stat_config *config,
-> @@ -547,7 +549,8 @@ static void print_dtlb_cache_misses(struct perf_stat_config *config,
->  		ratio = avg / total * 100.0;
->  
->  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
-> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all dTLB cache hits", ratio);
-> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
-> +			  "of all dTLB cache accesses", ratio);
->  }
->  
->  static void print_itlb_cache_misses(struct perf_stat_config *config,
-> @@ -567,7 +570,8 @@ static void print_itlb_cache_misses(struct perf_stat_config *config,
->  		ratio = avg / total * 100.0;
->  
->  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
-> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all iTLB cache hits", ratio);
-> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
-> +			  "of all iTLB cache accesses", ratio);
->  }
->  
->  static void print_ll_cache_misses(struct perf_stat_config *config,
-> @@ -587,7 +591,8 @@ static void print_ll_cache_misses(struct perf_stat_config *config,
->  		ratio = avg / total * 100.0;
->  
->  	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
-> -	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all LL-cache hits", ratio);
-> +	out->print_metric(config, out->ctx, color, "%7.2f%%",
-> +			  "of all LL-cache accesses", ratio);
->  }
->  
->  /*
-> @@ -872,7 +877,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
->  		if (runtime_stat_n(st, STAT_L1_DCACHE, ctx, cpu) != 0)
->  			print_l1_dcache_misses(config, cpu, evsel, avg, out, st);
->  		else
-> -			print_metric(config, ctxp, NULL, NULL, "of all L1-dcache hits", 0);
-> +			print_metric(config, ctxp, NULL, NULL,
-> +				     "of all L1-dcache accesses", 0);
->  	} else if (
->  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
->  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_L1I |
-> @@ -882,7 +888,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
->  		if (runtime_stat_n(st, STAT_L1_ICACHE, ctx, cpu) != 0)
->  			print_l1_icache_misses(config, cpu, evsel, avg, out, st);
->  		else
-> -			print_metric(config, ctxp, NULL, NULL, "of all L1-icache hits", 0);
-> +			print_metric(config, ctxp, NULL, NULL,
-> +				     "of all L1-icache accesses", 0);
->  	} else if (
->  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
->  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_DTLB |
-> @@ -892,7 +899,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
->  		if (runtime_stat_n(st, STAT_DTLB_CACHE, ctx, cpu) != 0)
->  			print_dtlb_cache_misses(config, cpu, evsel, avg, out, st);
->  		else
-> -			print_metric(config, ctxp, NULL, NULL, "of all dTLB cache hits", 0);
-> +			print_metric(config, ctxp, NULL, NULL,
-> +				     "of all dTLB cache accesses", 0);
->  	} else if (
->  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
->  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_ITLB |
-> @@ -902,7 +910,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
->  		if (runtime_stat_n(st, STAT_ITLB_CACHE, ctx, cpu) != 0)
->  			print_itlb_cache_misses(config, cpu, evsel, avg, out, st);
->  		else
-> -			print_metric(config, ctxp, NULL, NULL, "of all iTLB cache hits", 0);
-> +			print_metric(config, ctxp, NULL, NULL,
-> +				     "of all iTLB cache accesses", 0);
->  	} else if (
->  		evsel->core.attr.type == PERF_TYPE_HW_CACHE &&
->  		evsel->core.attr.config ==  ( PERF_COUNT_HW_CACHE_LL |
-> @@ -912,7 +921,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
->  		if (runtime_stat_n(st, STAT_LL_CACHE, ctx, cpu) != 0)
->  			print_ll_cache_misses(config, cpu, evsel, avg, out, st);
->  		else
-> -			print_metric(config, ctxp, NULL, NULL, "of all LL-cache hits", 0);
-> +			print_metric(config, ctxp, NULL, NULL,
-> +				     "of all LL-cache accesses", 0);
->  	} else if (perf_evsel__match(evsel, HARDWARE, HW_CACHE_MISSES)) {
->  		total = runtime_stat_avg(st, STAT_CACHEREFS, ctx, cpu);
->  
-> -- 
-> 2.8.1
+                        Geert
 
 -- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-- Arnaldo
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
