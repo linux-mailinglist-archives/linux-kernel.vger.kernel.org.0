@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69DF610156C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F06101464
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730793AbfKSFnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38818 "EHLO mail.kernel.org"
+        id S1728432AbfKSFdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:33:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730778AbfKSFnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:43:49 -0500
+        id S1729517AbfKSFdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:33:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D40EF2075E;
-        Tue, 19 Nov 2019 05:43:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BADE621783;
+        Tue, 19 Nov 2019 05:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142229;
-        bh=LqMI0tEsXsqQ8LnuUkkaJDxRVpqdAujD1Vwxg1ehTU8=;
+        s=default; t=1574141598;
+        bh=3R1O+2sefDUBuO2KrxNRutCSxBn0BF/KyQKfUA/8QQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ZwJTZnD5+mXEn5favhqAXtViNw/7MAz3z/VVBWiOzeMeHY0gDvOrWeMUhz2aDIrS
-         uQXnl741MsCIgVRu+iiuam12fZw3iWvjIoiidYkliVeq+NG/iLoBQkV3+OfGbsCqVG
-         487kEKschL+y68xbpaG/1HBekDzL6o8gk08fb3DM=
+        b=PvhJq7VlBpE8sHTfD0QtUSv3L09zK5QyOHSG6pGyZAFLUkyqwx1i2xcBZJYNPlWZP
+         /3+Y0HjVS2XreuGQ1Ot5SpLBQMDQOawLlXrsHZEKHTC6hDu4/l111bR9u6yUkssrN4
+         N243hpGmiRAer2W8eSfIX17PhTruoJusuVAbK/Sc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        syzbot+abe1ab7afc62c6bb6377@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 011/239] ALSA: usb-audio: Fix missing error check at mixer resolution test
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 214/422] ARM: dts: sunxi: Fix I2C bus warnings
 Date:   Tue, 19 Nov 2019 06:16:51 +0100
-Message-Id: <20191119051300.187161524@linuxfoundation.org>
+Message-Id: <20191119051412.467259994@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Rob Herring <robh@kernel.org>
 
-commit 167beb1756791e0806365a3f86a0da10d7a327ee upstream.
+[ Upstream commit 0729b4af5753b65aa031f58c435da53dbbf56d19 ]
 
-A check of the return value from get_cur_mix_raw() is missing at the
-resolution test code in get_min_max_with_quirks(), which may leave the
-variable untouched, leading to a random uninitialized value, as
-detected by syzkaller fuzzer.
+dtc has new checks for I2C buses. Fix the warnings in unit-addresses.
 
-Add the missing return error check for fixing that.
+arch/arm/boot/dts/sun8i-a23-gt90h-v4.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: I2C bus unit address format error, expected "40"
+arch/arm/boot/dts/sun8i-a23-inet86dz.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: I2C bus unit address format error, expected "40"
+arch/arm/boot/dts/sun8i-a23-polaroid-mid2407pxe03.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: I2C bus unit address format error, expected "40"
+arch/arm/boot/dts/sun8i-a23-polaroid-mid2809pxe04.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: I2C bus unit address format error, expected "40"
+arch/arm/boot/dts/sun8i-a33-ga10h-v1.1.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: I2C bus unit address format error, expected "40"
+arch/arm/boot/dts/sun8i-a33-inet-d978-rev2.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: missing or empty reg property
+arch/arm/boot/dts/sun8i-a33-ippo-q8h-v1.2.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: missing or empty reg property
+arch/arm/boot/dts/sun8i-a33-q8-tablet.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2ac00/touchscreen@0: missing or empty reg property
+arch/arm/boot/dts/sun5i-a13-utoo-p66.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2b000/touchscreen: I2C bus unit address format error, expected "40"
+arch/arm/boot/dts/sun5i-a13-difrnce-dit4350.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2b000/touchscreen: missing or empty reg property
+arch/arm/boot/dts/sun5i-a13-empire-electronix-m712.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2b000/touchscreen: missing or empty reg property
+arch/arm/boot/dts/sun5i-a13-inet-98v-rev2.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2b000/touchscreen: missing or empty reg property
+arch/arm/boot/dts/sun5i-a13-q8-tablet.dtb: Warning (i2c_bus_reg): /soc@1c00000/i2c@1c2b000/touchscreen: missing or empty reg property
 
-Reported-and-tested-by: syzbot+abe1ab7afc62c6bb6377@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191109181658.30368-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/mixer.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi | 3 ++-
+ arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi | 3 ++-
+ arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts    | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1052,7 +1052,8 @@ static int get_min_max_with_quirks(struc
- 		if (cval->min + cval->res < cval->max) {
- 			int last_valid_res = cval->res;
- 			int saved, test, check;
--			get_cur_mix_raw(cval, minchn, &saved);
-+			if (get_cur_mix_raw(cval, minchn, &saved) < 0)
-+				goto no_res_check;
- 			for (;;) {
- 				test = saved;
- 				if (test < cval->max)
-@@ -1072,6 +1073,7 @@ static int get_min_max_with_quirks(struc
- 			snd_usb_set_cur_mix_value(cval, minchn, 0, saved);
- 		}
+diff --git a/arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi b/arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi
+index 8acbaab14fe51..d2a2eb8b3f262 100644
+--- a/arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi
++++ b/arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi
+@@ -92,7 +92,8 @@
+ 	 */
+ 	clock-frequency = <400000>;
  
-+no_res_check:
- 		cval->initialized = 1;
- 	}
+-	touchscreen: touchscreen {
++	touchscreen: touchscreen@40 {
++		reg = <0x40>;
+ 		interrupt-parent = <&pio>;
+ 		interrupts = <6 11 IRQ_TYPE_EDGE_FALLING>; /* EINT11 (PG11) */
+ 		pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi b/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
+index 880096c7e2523..5e8a95af89b8c 100644
+--- a/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
++++ b/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
+@@ -69,7 +69,8 @@
+ 	 */
+ 	clock-frequency = <400000>;
  
+-	touchscreen: touchscreen@0 {
++	touchscreen: touchscreen@40 {
++		reg = <0x40>;
+ 		interrupt-parent = <&pio>;
+ 		interrupts = <1 5 IRQ_TYPE_EDGE_FALLING>; /* PB5 */
+ 		pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+index 35859d8f3267f..bf97f6244c233 100644
+--- a/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
++++ b/arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts
+@@ -95,7 +95,7 @@
+ &i2c0 {
+ 	status = "okay";
+ 
+-	axp22x: pmic@68 {
++	axp22x: pmic@34 {
+ 		compatible = "x-powers,axp221";
+ 		reg = <0x34>;
+ 		interrupt-parent = <&nmi_intc>;
+-- 
+2.20.1
+
 
 
