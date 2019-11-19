@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E6F31016D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D78CD10155E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbfKSF4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:56:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        id S1728034AbfKSFn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:43:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730838AbfKSFxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:53:00 -0500
+        id S1730734AbfKSFnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:43:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 421C8208C3;
-        Tue, 19 Nov 2019 05:52:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9741721939;
+        Tue, 19 Nov 2019 05:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142779;
-        bh=Nt/j/Quy+7hqRj6CUCAC/l4/pPFaooAS5ODSYfQ2Llc=;
+        s=default; t=1574142203;
+        bh=RTN9fRlW3hdSlWehYKYMeAfRyZpS7tmEpqOc3F+6y0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RUb9EE+tV11C2iujtMATf6eFf/e3oDytsbYvzqfqnAeBBr+Z2XoQdxi+tZb7m6Cc8
-         f6qHTnaNQA5JRsXEE43479rOQ57+ZJenBanUnJqLwFJSalU5lpxiVha1PsTQ1/gHib
-         yfBbF3zNeDg72ZUAeNjVODyfA2l3TQ9CgfeZRS5U=
+        b=zaRe8XJdmL/XnPCYHk8RCK8NFHtToz7DjEoMW8hStZkVjWOzb3EY1Rl3z2YGKrgVR
+         f3nsephPhrcRXfZUZ1+hne7vGJ9QH79brzMYYbPRFo8F8OHTXJXZVhygKmnhd3XxDs
+         6Uu2Oc+6mQ3XC9v1aogEhf5wEAY2VQ4LXBPe5FgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 197/239] misc: genwqe: should return proper error value.
+Subject: [PATCH 4.19 400/422] scsi: NCR5380: Have NCR5380_select() return a bool
 Date:   Tue, 19 Nov 2019 06:19:57 +0100
-Message-Id: <20191119051336.102553427@linuxfoundation.org>
+Message-Id: <20191119051425.063628516@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,80 +45,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 02241995b004faa7d9ff628e97f24056190853f8 ]
+[ Upstream commit dad8261e643849ea134c7cd5c8e794e31d93b9eb ]
 
-The function should return -EFAULT when copy_from_user fails. Even
-though the caller does not distinguish them. but we should keep backward
-compatibility.
+The return value is taken to mean "retry" or "don't retry". Change it to bool
+to improve readability. Fix related comments. No functional change.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/genwqe/card_utils.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/scsi/NCR5380.c | 46 +++++++++++++++++++-----------------------
+ drivers/scsi/NCR5380.h |  2 +-
+ 2 files changed, 22 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
-index cb12409851575..f55e6e822bea4 100644
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -298,7 +298,7 @@ static int genwqe_sgl_size(int num_pages)
- int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
- 			  void __user *user_addr, size_t user_size)
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index d0bbb20518048..d600d3e94ba4a 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -904,20 +904,16 @@ static irqreturn_t __maybe_unused NCR5380_intr(int irq, void *dev_id)
+ 	return IRQ_RETVAL(handled);
+ }
+ 
+-/*
+- * Function : int NCR5380_select(struct Scsi_Host *instance,
+- * struct scsi_cmnd *cmd)
+- *
+- * Purpose : establishes I_T_L or I_T_L_Q nexus for new or existing command,
+- * including ARBITRATION, SELECTION, and initial message out for
+- * IDENTIFY and queue messages.
++/**
++ * NCR5380_select - attempt arbitration and selection for a given command
++ * @instance: the Scsi_Host instance
++ * @cmd: the scsi_cmnd to execute
+  *
+- * Inputs : instance - instantiation of the 5380 driver on which this
+- * target lives, cmd - SCSI command to execute.
++ * This routine establishes an I_T_L nexus for a SCSI command. This involves
++ * ARBITRATION, SELECTION and MESSAGE OUT phases and an IDENTIFY message.
+  *
+- * Returns cmd if selection failed but should be retried,
+- * NULL if selection failed and should not be retried, or
+- * NULL if selection succeeded (hostdata->connected == cmd).
++ * Returns true if the operation should be retried.
++ * Returns false if it should not be retried.
+  *
+  * Side effects :
+  * If bus busy, arbitration failed, etc, NCR5380_select() will exit
+@@ -925,16 +921,15 @@ static irqreturn_t __maybe_unused NCR5380_intr(int irq, void *dev_id)
+  * SELECT_ENABLE will be set appropriately, the NCR5380
+  * will cease to drive any SCSI bus signals.
+  *
+- * If successful : I_T_L or I_T_L_Q nexus will be established,
+- * instance->connected will be set to cmd.
++ * If successful : the I_T_L nexus will be established, and
++ * hostdata->connected will be set to cmd.
+  * SELECT interrupt will be disabled.
+  *
+  * If failed (no target) : cmd->scsi_done() will be called, and the
+  * cmd->result host byte set to DID_BAD_TARGET.
+  */
+ 
+-static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+-                                        struct scsi_cmnd *cmd)
++static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
+ 	__releases(&hostdata->lock) __acquires(&hostdata->lock)
  {
--	int rc;
-+	int ret = -ENOMEM;
- 	struct pci_dev *pci_dev = cd->pci_dev;
+ 	struct NCR5380_hostdata *hostdata = shost_priv(instance);
+@@ -942,6 +937,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 	unsigned char *data;
+ 	int len;
+ 	int err;
++	bool ret = true;
  
- 	sgl->fpage_offs = offset_in_page((unsigned long)user_addr);
-@@ -317,7 +317,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
- 	if (get_order(sgl->sgl_size) > MAX_ORDER) {
- 		dev_err(&pci_dev->dev,
- 			"[%s] err: too much memory requested!\n", __func__);
--		return -ENOMEM;
-+		return ret;
+ 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
+ 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
+@@ -950,7 +946,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 	/*
+ 	 * Arbitration and selection phases are slow and involve dropping the
+ 	 * lock, so we have to watch out for EH. An exception handler may
+-	 * change 'selecting' to NULL. This function will then return NULL
++	 * change 'selecting' to NULL. This function will then return false
+ 	 * so that the caller will forget about 'cmd'. (During information
+ 	 * transfer phases, EH may change 'connected' to NULL.)
+ 	 */
+@@ -986,7 +982,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 	if (!hostdata->selecting) {
+ 		/* Command was aborted */
+ 		NCR5380_write(MODE_REG, MR_BASE);
+-		return NULL;
++		return false;
+ 	}
+ 	if (err < 0) {
+ 		NCR5380_write(MODE_REG, MR_BASE);
+@@ -1035,7 +1031,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 	if (!hostdata->selecting) {
+ 		NCR5380_write(MODE_REG, MR_BASE);
+ 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
+-		return NULL;
++		return false;
  	}
  
- 	sgl->sgl = __genwqe_alloc_consistent(cd, sgl->sgl_size,
-@@ -325,7 +325,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
- 	if (sgl->sgl == NULL) {
- 		dev_err(&pci_dev->dev,
- 			"[%s] err: no memory available!\n", __func__);
--		return -ENOMEM;
-+		return ret;
+ 	dsprintk(NDEBUG_ARBITRATION, instance, "won arbitration\n");
+@@ -1118,13 +1114,13 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 
+ 		/* Can't touch cmd if it has been reclaimed by the scsi ML */
+ 		if (!hostdata->selecting)
+-			return NULL;
++			return false;
+ 
+ 		cmd->result = DID_BAD_TARGET << 16;
+ 		complete_cmd(instance, cmd);
+ 		dsprintk(NDEBUG_SELECTION, instance,
+ 			"target did not respond within 250ms\n");
+-		cmd = NULL;
++		ret = false;
+ 		goto out;
  	}
  
- 	/* Only use buffering on incomplete pages */
-@@ -338,7 +338,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
- 		/* Sync with user memory */
- 		if (copy_from_user(sgl->fpage + sgl->fpage_offs,
- 				   user_addr, sgl->fpage_size)) {
--			rc = -EFAULT;
-+			ret = -EFAULT;
- 			goto err_out;
- 		}
+@@ -1156,7 +1152,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
  	}
-@@ -351,7 +351,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
- 		/* Sync with user memory */
- 		if (copy_from_user(sgl->lpage, user_addr + user_size -
- 				   sgl->lpage_size, sgl->lpage_size)) {
--			rc = -EFAULT;
-+			ret = -EFAULT;
- 			goto err_out2;
- 		}
+ 	if (!hostdata->selecting) {
+ 		do_abort(instance);
+-		return NULL;
++		return false;
  	}
-@@ -373,7 +373,8 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
- 	sgl->sgl = NULL;
- 	sgl->sgl_dma_addr = 0;
- 	sgl->sgl_size = 0;
--	return -ENOMEM;
-+
+ 
+ 	dsprintk(NDEBUG_SELECTION, instance, "target %d selected, going into MESSAGE OUT phase.\n",
+@@ -1172,7 +1168,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 		cmd->result = DID_ERROR << 16;
+ 		complete_cmd(instance, cmd);
+ 		dsprintk(NDEBUG_SELECTION, instance, "IDENTIFY message transfer failed\n");
+-		cmd = NULL;
++		ret = false;
+ 		goto out;
+ 	}
+ 
+@@ -1187,13 +1183,13 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
+ 
+ 	initialize_SCp(cmd);
+ 
+-	cmd = NULL;
++	ret = false;
+ 
+ out:
+ 	if (!hostdata->selecting)
+ 		return NULL;
+ 	hostdata->selecting = NULL;
+-	return cmd;
 +	return ret;
  }
  
- int genwqe_setup_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ /*
+diff --git a/drivers/scsi/NCR5380.h b/drivers/scsi/NCR5380.h
+index 8a6d002e67894..5935fd6d1a058 100644
+--- a/drivers/scsi/NCR5380.h
++++ b/drivers/scsi/NCR5380.h
+@@ -275,7 +275,7 @@ static irqreturn_t NCR5380_intr(int irq, void *dev_id);
+ static void NCR5380_main(struct work_struct *work);
+ static const char *NCR5380_info(struct Scsi_Host *instance);
+ static void NCR5380_reselect(struct Scsi_Host *instance);
+-static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *, struct scsi_cmnd *);
++static bool NCR5380_select(struct Scsi_Host *, struct scsi_cmnd *);
+ static int NCR5380_transfer_dma(struct Scsi_Host *instance, unsigned char *phase, int *count, unsigned char **data);
+ static int NCR5380_transfer_pio(struct Scsi_Host *instance, unsigned char *phase, int *count, unsigned char **data);
+ static int NCR5380_poll_politely2(struct NCR5380_hostdata *,
 -- 
 2.20.1
 
