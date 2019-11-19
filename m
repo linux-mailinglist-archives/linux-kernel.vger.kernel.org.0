@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BCDD10152E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A29101655
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730546AbfKSFlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
+        id S1731888AbfKSFwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:52:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730526AbfKSFl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:29 -0500
+        id S1731880AbfKSFwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:52:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E835208C3;
-        Tue, 19 Nov 2019 05:41:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8224F20721;
+        Tue, 19 Nov 2019 05:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142088;
-        bh=NW5M5tG5jivL/ewIrjwbSjVjsD2EhZihRfAaDgW/z/4=;
+        s=default; t=1574142729;
+        bh=DP1jfNu4aHL5M50qkZNBYtOAk/jdIlmo3e5Knv60bf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aC0GfEfeBVjSxwLumRx/mQieGcsx+Cd3v7HGiRNQ2AMY/xEMI7r4SZSWQGIz/+Xx5
-         Qnut76C4b/6fEsFKKBZD+F01m6UVwpciDCHcZfDZkR2PTmDunG5a9pF42Enz/CNkJQ
-         t+ZT0xbU17qRDH5k+Je4IUpQ7ZShFJG0jQe45E9E=
+        b=HCgREd+VsaXVOhdQPR/MuEyjW5Co1ZVjGWFhnnFPpRfitqBZQzBJaZpltLzHGkQ2H
+         tWnBn2bgQ91xH+scoiBMCoD4V+suyorvlzC6B52BJnvwkDqqOrr1xjZH0L0Qb0Bh5J
+         g2Tq9UtXkU0GEs1UsZGA9OLkycfnoe9i0OOCZfZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 383/422] firmware: dell_rbu: Make payload memory uncachable
-Date:   Tue, 19 Nov 2019 06:19:40 +0100
-Message-Id: <20191119051423.887664218@linuxfoundation.org>
+Subject: [PATCH 4.14 181/239] media: davinci: Fix implicit enum conversion warning
+Date:   Tue, 19 Nov 2019 06:19:41 +0100
+Message-Id: <20191119051334.618302398@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 6aecee6ad41cf97c0270f72da032c10eef025bf0 ]
+[ Upstream commit 4158757395b300b6eb308fc20b96d1d231484413 ]
 
-The dell_rbu driver takes firmware update payloads and puts them in memory so
-the system BIOS can find them after a reboot.  This sometimes fails (though
-rarely), because the memory containing the payload is in the CPU cache but
-never gets written back to main memory before the system is rebooted (CPU
-cache contents are lost on reboot).
+Clang warns when one enumerated type is implicitly converted to another.
 
-With this patch, the payload memory will be changed to uncachable to ensure
-that the payload is actually in main memory before the system is rebooted.
+drivers/media/platform/davinci/vpbe_display.c:524:24: warning: implicit
+conversion from enumeration type 'enum osd_v_exp_ratio' to different
+enumeration type 'enum osd_h_exp_ratio' [-Wenum-conversion]
+                        layer_info->h_exp = V_EXP_6_OVER_5;
+                                          ~ ^~~~~~~~~~~~~~
+1 warning generated.
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This appears to be a copy and paste error judging from the couple of
+lines directly above this statement and the way that height is handled
+in the if block above this one.
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/dell_rbu.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/platform/davinci/vpbe_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
-index fb8af5cb7c9bf..ccefa84f73057 100644
---- a/drivers/firmware/dell_rbu.c
-+++ b/drivers/firmware/dell_rbu.c
-@@ -45,6 +45,7 @@
- #include <linux/moduleparam.h>
- #include <linux/firmware.h>
- #include <linux/dma-mapping.h>
-+#include <asm/set_memory.h>
- 
- MODULE_AUTHOR("Abhay Salunke <abhay_salunke@dell.com>");
- MODULE_DESCRIPTION("Driver for updating BIOS image on DELL systems");
-@@ -181,6 +182,11 @@ static int create_packet(void *data, size_t length)
- 			packet_data_temp_buf = NULL;
- 		}
- 	}
-+	/*
-+	 * set to uncachable or it may never get written back before reboot
-+	 */
-+	set_memory_uc((unsigned long)packet_data_temp_buf, 1 << ordernum);
-+
- 	spin_lock(&rbu_data.lock);
- 
- 	newpacket->data = packet_data_temp_buf;
-@@ -349,6 +355,8 @@ static void packet_empty_list(void)
- 		 * to make sure there are no stale RBU packets left in memory
- 		 */
- 		memset(newpacket->data, 0, rbu_data.packetsize);
-+		set_memory_wb((unsigned long)newpacket->data,
-+			1 << newpacket->ordernum);
- 		free_pages((unsigned long) newpacket->data,
- 			newpacket->ordernum);
- 		kfree(newpacket);
+diff --git a/drivers/media/platform/davinci/vpbe_display.c b/drivers/media/platform/davinci/vpbe_display.c
+index 13d027031ff04..82b06cc48bd16 100644
+--- a/drivers/media/platform/davinci/vpbe_display.c
++++ b/drivers/media/platform/davinci/vpbe_display.c
+@@ -518,7 +518,7 @@ vpbe_disp_calculate_scale_factor(struct vpbe_display *disp_dev,
+ 		else if (v_scale == 4)
+ 			layer_info->v_zoom = ZOOM_X4;
+ 		if (v_exp)
+-			layer_info->h_exp = V_EXP_6_OVER_5;
++			layer_info->v_exp = V_EXP_6_OVER_5;
+ 	} else {
+ 		/* no scaling, only cropping. Set display area to crop area */
+ 		cfg->ysize = expected_ysize;
 -- 
 2.20.1
 
