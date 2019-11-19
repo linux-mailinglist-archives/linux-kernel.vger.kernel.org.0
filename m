@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 315BA10152B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2622C101651
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbfKSFlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35790 "EHLO mail.kernel.org"
+        id S1731872AbfKSFwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:52:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfKSFlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:20 -0500
+        id S1730634AbfKSFwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:52:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF79F21823;
-        Tue, 19 Nov 2019 05:41:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE54B214D9;
+        Tue, 19 Nov 2019 05:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142080;
-        bh=8YwN1mIPCq0li5Fv10AaqXAk7tANchOV30SvSfyabI8=;
+        s=default; t=1574142723;
+        bh=0V0ylmDejaYia5CRLo0lS05lj+Q0a8zKivPVI6lYOYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fDd96QiEp1XXXZaJnlVahfiWzc12CzcE60MAcaMst8Xh+zLi7dccvPuEz8sxFfGBq
-         jh6xyF4f0KIwzXvvnA4Udd3TT8tJ3UB6VTco4DMgr5G66RB79e+Q4qxA0pkPsAqQc0
-         U6g0wiII8RgaBy4GFnAljTpOktHuCS59kJZkP05I=
+        b=uelFJmv3Y/KElNgqzNXbSZC6vx5xcVv/ORa1JM6G5HpCPwBcqX5qE6WyKz6NFLcci
+         png+d47DybrWbhYABaLEJ0DICp6q1HCBRrWp3G2RSossEyPr3ijqH3W3yh/z+qlNrL
+         AG1zleFgGnKUYAFBoG6rbkEqLIAFC6E4vgPJ4YE4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Justin Ernst <justin.ernst@hpe.com>,
-        Borislav Petkov <bp@suse.de>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 381/422] EDAC: Raise the maximum number of memory controllers
-Date:   Tue, 19 Nov 2019 06:19:38 +0100
-Message-Id: <20191119051423.753292334@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 179/239] media: pci: ivtv: Fix a sleep-in-atomic-context bug in ivtv_yuv_init()
+Date:   Tue, 19 Nov 2019 06:19:39 +0100
+Message-Id: <20191119051334.507452836@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,61 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Justin Ernst <justin.ernst@hpe.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 6b58859419554fb824e09cfdd73151a195473cbc ]
+[ Upstream commit 8d11eb847de7d89c2754988c944d51a4f63e219b ]
 
-We observe an oops in the skx_edac module during boot:
+The driver may sleep in a interrupt handler.
 
-  EDAC MC0: Giving out device to module skx_edac controller Skylake Socket#0 IMC#0
-  EDAC MC1: Giving out device to module skx_edac controller Skylake Socket#0 IMC#1
-  EDAC MC2: Giving out device to module skx_edac controller Skylake Socket#1 IMC#0
-  ...
-  EDAC MC13: Giving out device to module skx_edac controller Skylake Socket#0 IMC#1
-  EDAC MC14: Giving out device to module skx_edac controller Skylake Socket#1 IMC#0
-  EDAC MC15: Giving out device to module skx_edac controller Skylake Socket#1 IMC#1
-  Too many memory controllers: 16
-  EDAC MC: Removed device 0 for skx_edac Skylake Socket#0 IMC#0
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-We observe there are two memory controllers per socket, with a limit
-of 16. Raise the maximum number of memory controllers from 16 to 2 *
-MAX_NUMNODES (1024).
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/media/pci/ivtv/ivtv-yuv.c, 938:
+	kzalloc in ivtv_yuv_init
+drivers/media/pci/ivtv/ivtv-yuv.c, 960:
+	ivtv_yuv_init in ivtv_yuv_next_free
+drivers/media/pci/ivtv/ivtv-yuv.c, 1126:
+	ivtv_yuv_next_free in ivtv_yuv_setup_stream_frame
+drivers/media/pci/ivtv/ivtv-irq.c, 827:
+	ivtv_yuv_setup_stream_frame in ivtv_irq_dec_data_req
+drivers/media/pci/ivtv/ivtv-irq.c, 1013:
+	ivtv_irq_dec_data_req in ivtv_irq_handler
 
-[ bp: This is just a band-aid fix until we've sorted out the whole issue
-  with the bus_type association and handling in EDAC and can get rid of
-  this arbitrary limit. ]
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-Signed-off-by: Justin Ernst <justin.ernst@hpe.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Russ Anderson <russ.anderson@hpe.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180925143449.284634-1-justin.ernst@hpe.com
+This bug is found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/edac.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/pci/ivtv/ivtv-yuv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index bffb97828ed67..958d69332c1d5 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -17,6 +17,7 @@
- #include <linux/completion.h>
- #include <linux/workqueue.h>
- #include <linux/debugfs.h>
-+#include <linux/numa.h>
+diff --git a/drivers/media/pci/ivtv/ivtv-yuv.c b/drivers/media/pci/ivtv/ivtv-yuv.c
+index 44936d6d7c396..1380474519f2b 100644
+--- a/drivers/media/pci/ivtv/ivtv-yuv.c
++++ b/drivers/media/pci/ivtv/ivtv-yuv.c
+@@ -935,7 +935,7 @@ static void ivtv_yuv_init(struct ivtv *itv)
+ 	}
  
- #define EDAC_DEVICE_NAME_LEN	31
- 
-@@ -670,6 +671,6 @@ struct mem_ctl_info {
- /*
-  * Maximum number of memory controllers in the coherent fabric.
-  */
--#define EDAC_MAX_MCS	16
-+#define EDAC_MAX_MCS	2 * MAX_NUMNODES
- 
- #endif
+ 	/* We need a buffer for blanking when Y plane is offset - non-fatal if we can't get one */
+-	yi->blanking_ptr = kzalloc(720 * 16, GFP_KERNEL|__GFP_NOWARN);
++	yi->blanking_ptr = kzalloc(720 * 16, GFP_ATOMIC|__GFP_NOWARN);
+ 	if (yi->blanking_ptr) {
+ 		yi->blanking_dmaptr = pci_map_single(itv->pdev, yi->blanking_ptr, 720*16, PCI_DMA_TODEVICE);
+ 	} else {
 -- 
 2.20.1
 
