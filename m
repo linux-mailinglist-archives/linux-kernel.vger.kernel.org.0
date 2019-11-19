@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40210101753
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95CDE101856
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:07:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730971AbfKSFpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:45:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41120 "EHLO mail.kernel.org"
+        id S1729495AbfKSGHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:07:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730965AbfKSFp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:45:26 -0500
+        id S1729502AbfKSFdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:33:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F23A221783;
-        Tue, 19 Nov 2019 05:45:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C383221783;
+        Tue, 19 Nov 2019 05:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142326;
-        bh=ADyp6Rzsx2MfrdWW4FOXRRHYUFvd+5cFilVBnnNmt8I=;
+        s=default; t=1574141589;
+        bh=AnQeayZI8Q5t0IuDvtp0ycef/61y+WT5LaZc9K/UZ0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aIXdjD3vnUYkZcRyrwvr8cI3OM55zXL6afdPVhATbdjnKk/sNg+Eu3aeCH59F3gaZ
-         hxxLAEayggWaYUOUNiCafPTPiMQ666njfmsOf2xGFA5HM3ppCkDL6M+bqAtfjOTOAw
-         IFqO5Vc/yWxMwWlUyu3/3xrYrp5N2zJtwjNPO+ew=
+        b=HOYmxRHE78vqrtjnHX+g5qo4hrWGXA/7jMAxT49hk1Q0B+dR+G0AdMv7xi8QSzcu/
+         TdcPGc1mjdk+cc7z2HXZx/EqBpQlC7o/rFXWUDcdS1D5omIW6A5SZu1jYVYGlWi79x
+         f/rINGpY7WUhH7PQYyLuryE5M+eUbM7+G4lKwhx8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a8d4acdad35e6bbca308@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 008/239] ax88172a: fix information leak on short answers
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-aspeed@lists.ozlabs.org, Rob Herring <robh@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 211/422] ARM: dts: aspeed: Fix I2C bus warnings
 Date:   Tue, 19 Nov 2019 06:16:48 +0100
-Message-Id: <20191119051259.171362433@linuxfoundation.org>
+Message-Id: <20191119051412.266011758@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,32 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit a9a51bd727d141a67b589f375fe69d0e54c4fe22 ]
+[ Upstream commit 1426d40e11f730e0c0fd3700a7048082f87b0e6e ]
 
-If a malicious device gives a short MAC it can elicit up to
-5 bytes of leaked memory out of the driver. We need to check for
-ETH_ALEN instead.
+dtc has new checks for I2C buses. The ASpeed dts files have a node named
+'i2c' which causes a false positive warning. As the node is a 'simple-bus',
+correct the node name to be 'bus' to fix the warnings.
 
-Reported-by: syzbot+a8d4acdad35e6bbca308@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-opp-romulus.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-ast2500-evb.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-opp-zaius.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+arch/arm/boot/dts/aspeed-bmc-quanta-q71l.dtb: Warning (i2c_bus_bridge): /ahb/apb/i2c@1e78a000: incorrect #size-cells for I2C bus
+
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-aspeed@lists.ozlabs.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/ax88172a.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/aspeed-g4.dtsi | 2 +-
+ arch/arm/boot/dts/aspeed-g5.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -208,7 +208,7 @@ static int ax88172a_bind(struct usbnet *
+diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+index b23a983f95a53..69f6b9d2e7e7d 100644
+--- a/arch/arm/boot/dts/aspeed-g4.dtsi
++++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+@@ -350,7 +350,7 @@
+ 				status = "disabled";
+ 			};
  
- 	/* Get the MAC address */
- 	ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID, 0, 0, ETH_ALEN, buf, 0);
--	if (ret < 0) {
-+	if (ret < ETH_ALEN) {
- 		netdev_err(dev->net, "Failed to read MAC address: %d\n", ret);
- 		goto free;
- 	}
+-			i2c: i2c@1e78a000 {
++			i2c: bus@1e78a000 {
+ 				compatible = "simple-bus";
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index 87fdc146ff525..d107459fc0f89 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -410,7 +410,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			i2c: i2c@1e78a000 {
++			i2c: bus@1e78a000 {
+ 				compatible = "simple-bus";
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-- 
+2.20.1
+
 
 
