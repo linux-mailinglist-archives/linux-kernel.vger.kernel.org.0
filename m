@@ -2,99 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B564101EB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 09:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B89101EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 09:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfKSIzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 03:55:22 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22350 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726722AbfKSIzV (ORCPT
+        id S1727296AbfKSI4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 03:56:50 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45027 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbfKSI4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 03:55:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574153720;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=e8OB6fCB1y6zlTa1uYexcpvgkBoKI6v48iGviwUiQTo=;
-        b=CxR33jRjXFZR3YL/3fECcI30ZotdW68OFRMbJI+tLPk7j59FKzBhRGPoY13KTnKopD1yKB
-        SsEa9wAIJkoMu9JGG9/cJLudHHLH+BfGdsNnxUc0vB6D8K0vbRxSgU8VK6ymgzG4qxOQtn
-        xWeo6CfPhRYr9Lmedr6xgh/K5K4oPec=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-335-imTtDVtfOrmhV9elyPYRGw-1; Tue, 19 Nov 2019 03:55:17 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48BB1DB61;
-        Tue, 19 Nov 2019 08:55:15 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-32.pek2.redhat.com [10.72.8.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 532532AF82;
-        Tue, 19 Nov 2019 08:54:56 +0000 (UTC)
-Date:   Tue, 19 Nov 2019 16:54:52 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191119085452.GA8252@ming.t460p>
-References: <20191114113153.GB4213@ming.t460p>
- <20191114235415.GL4614@dread.disaster.area>
- <20191115010824.GC4847@ming.t460p>
- <20191115045634.GN4614@dread.disaster.area>
- <20191115070843.GA24246@ming.t460p>
- <20191115234005.GO4614@dread.disaster.area>
- <20191118162633.GC32306@linux.vnet.ibm.com>
- <20191118211804.GW4614@dread.disaster.area>
-MIME-Version: 1.0
-In-Reply-To: <20191118211804.GW4614@dread.disaster.area>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: imTtDVtfOrmhV9elyPYRGw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        Tue, 19 Nov 2019 03:56:49 -0500
+Received: by mail-ot1-f68.google.com with SMTP id c19so17161934otr.11;
+        Tue, 19 Nov 2019 00:56:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3Iq2A2za3LRkXVrjN2ctAH16mhQC1NN0zdxdgyGUSpw=;
+        b=QVZqXxIujhcRQBmxlGsAODnAZDBV/wZb3e2f4GxyKxkEsDr3msrq42Zo5s1MIITgwa
+         exjNuLeI5Zz3dBgda+AND+YoFEIbZOw2yVZmofV6tf1YgKrEQFynNXJte1AeKUTy+QYk
+         NpkVjqt0bih3OO689TFWKOz+X/qn3qeImyPbsanweNjSyCUbMTuoC75ZdfCHBG5IopEI
+         2ukbA1y0LMEi6FyePT+MEQB8xHjFnyr7P3GU6tXRPCmYAbhbTiPm+Na2DNJwPFgBTqfG
+         m1ybl7PDAk67o/DzSKhDUDDUmB6P+6pERReituXTrFWWLrjp5+hZ+G+M9G+evSyfnKS8
+         XFsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3Iq2A2za3LRkXVrjN2ctAH16mhQC1NN0zdxdgyGUSpw=;
+        b=FSlBRpiG2Eh8tr5nylRYLBJE9ki0oiHS/LvMaL59RBBtm9w7WImom20Kx2Rb4FCLOj
+         TbbkXdBphRfRaSKSL6E0mthw5YssqWBwT/LWloF0CiwzAr0n9SshuckeD8QYJM2exaR1
+         t+egm4ee+xu6sUYAmsDZ5I9dQvhO4mXesFzMOiyYv0X5kHcM3npKqTxzYJmqy4LLsnyc
+         b8shxVKZvt72FRQ0CDt3Ajmp5ELz7ZDOj0UgJH4qWV3t22JZ9n7kTB9rMHeNCdLYB9hg
+         Hvly8bhAUYM8M+LvVQvuEL59ju9/skuoPzKQnMV2R1ReAKub2MV/heeJ13ibk2vUs/H5
+         dXUA==
+X-Gm-Message-State: APjAAAXUVhcRSY1Bpz24NByqhdSdihbKVL7m/1k4h/9zSfOgeljK7O4H
+        GAebKB7YJGKuTBXAs9acUFI=
+X-Google-Smtp-Source: APXvYqzHUGh6OUnm8C32TSJ8dlR7JWh+4KF65K4wPyfLARH9bbwT+qssv8cUFzERJITVIn4G/0L9ag==
+X-Received: by 2002:a9d:6f87:: with SMTP id h7mr2918368otq.216.1574153808967;
+        Tue, 19 Nov 2019 00:56:48 -0800 (PST)
+Received: from localhost ([32.97.110.55])
+        by smtp.gmail.com with ESMTPSA id k9sm6955406oik.18.2019.11.19.00.56.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Nov 2019 00:56:48 -0800 (PST)
+From:   Lei YU <mine260309@gmail.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Lei YU <mine260309@gmail.com>
+Subject: [PATCH] docs: i2c: Fix return value of i2c_smbus_xxx functions
+Date:   Tue, 19 Nov 2019 16:56:18 +0800
+Message-Id: <1574153778-59977-1-git-send-email-mine260309@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 08:18:04AM +1100, Dave Chinner wrote:
-> On Mon, Nov 18, 2019 at 09:56:33PM +0530, Srikar Dronamraju wrote:
-> > * Dave Chinner <david@fromorbit.com> [2019-11-16 10:40:05]:
-> >=20
-> > > On Fri, Nov 15, 2019 at 03:08:43PM +0800, Ming Lei wrote:
-> > > > On Fri, Nov 15, 2019 at 03:56:34PM +1100, Dave Chinner wrote:
-> > > > > On Fri, Nov 15, 2019 at 09:08:24AM +0800, Ming Lei wrote:
-> > > > I can reproduce the issue with 4k block size on another RH system, =
-and
-> > > > the login info of that system has been shared to you in RH BZ.
-> > > >=20
-> > > > 1)
-> > >=20
-> > > Almost all the fio task migrations are coming from migration/X
-> > > kernel threads. i.e it's the scheduler active balancing that is
-> > > causing the fio thread to bounce around.
-> > >=20
-> >=20
-> > Can we try with the below patch.
->=20
-> That makes things much, much worse.
+In i2c/dev-interface.rst it said
 
-Yeah, it is same with my test result, basically the fio io thread
-migration counts is increased from 5k to 8k.
+> All these transactions return -1 on failure
 
-Thanks,
-Ming
+But actually the i2c_smbus_xxx functions return negative error numbers
+on failure, instead of -1.
+
+Fix the document.
+
+Signed-off-by: Lei YU <mine260309@gmail.com>
+---
+ Documentation/i2c/dev-interface.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/i2c/dev-interface.rst b/Documentation/i2c/dev-interface.rst
+index 69c23a3..73b77c3 100644
+--- a/Documentation/i2c/dev-interface.rst
++++ b/Documentation/i2c/dev-interface.rst
+@@ -163,8 +163,8 @@ for details) through the following functions::
+   __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length,
+                                    __u8 *values);
+ 
+-All these transactions return -1 on failure; you can read errno to see
+-what happened. The 'write' transactions return 0 on success; the
++All these transactions return negative value on failure; you can read errno to
++see what happened. The 'write' transactions return 0 on success; the
+ 'read' transactions return the read value, except for read_block, which
+ returns the number of values read. The block buffers need not be longer
+ than 32 bytes.
+-- 
+2.7.4
 
