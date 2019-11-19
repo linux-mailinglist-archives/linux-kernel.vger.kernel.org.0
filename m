@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171C11018E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 436DD1018E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfKSFYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:24:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40920 "EHLO mail.kernel.org"
+        id S1728303AbfKSFZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:25:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728230AbfKSFYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:24:38 -0500
+        id S1727296AbfKSFYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:24:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 206CB2230F;
-        Tue, 19 Nov 2019 05:24:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A81D2222A2;
+        Tue, 19 Nov 2019 05:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141077;
-        bh=BPACXaFVQTm9exWl0MhTgT5qlYmiPd+LkRsxeBV1D1Y=;
+        s=default; t=1574141095;
+        bh=ujdttuElqsOnSKDmfVVumqMuvbvm6Lae0q5bpYUe7iE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=domZy7MI8StpR0mj7iP1Wj7HO0sHYIcllZiP7n2/3FirBfQv3kYAZ1fq5S8KR1XGn
-         7T4oPqNTokd2oH/z5SRnt73aYkqRmtqqAefLd86HfRj+yKW9mY64qKSpnMpR+TZdec
-         uyrilR3n0bOW9anxF/jx/QNSwUpL93qHatIQk4oI=
+        b=ZfNB3r4UY9FS4HGT5W8hRkZR+fOPdeEOjp706+1ef0WC8hIYx9plLJlq+ti8gA6A1
+         t1X9dvg1Pvhe7vYg9dVxeCdLN5gizOFR5sMbE3cw6pKleNEMnPLerHcVrGSGbrQD7O
+         a2s9MrLBpdaw3f+VSM9bZV2YTje0nO9QLeo6y/so=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rongyi Chen <chenyi@tt-cool.com>,
-        Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 037/422] clk: sunxi-ng: h6: fix PWM gate/reset offset
-Date:   Tue, 19 Nov 2019 06:13:54 +0100
-Message-Id: <20191119051402.386696523@linuxfoundation.org>
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 042/422] arm64: dts: allwinner: a64: NanoPi-A64: Fix DCDC1 voltage
+Date:   Tue, 19 Nov 2019 06:13:59 +0100
+Message-Id: <20191119051402.656472507@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,38 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rongyi Chen <chenyi@tt-cool.com>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit 58c0f79887d5e425fe6a9fd542778e50df69e9c6 ]
+[ Upstream commit 480f58cdbe392d4387a2193b6131a277e0111dd0 ]
 
-Currently the register offset of the PWM bus gate in Allwinner H6 clock
-driver is wrong.
+According to the NanoPi-A64 schematics, DCDC1 is connected to a voltage
+rail named "VDD_SYS_3.3V". All users seem to expect 3.3V here: the
+Ethernet PHY, the uSD card slot, the camera interface and the GPIO pins
+on the headers.
+Fix up the voltage on the regulator to lift it up to 3.3V.
 
-Fix this issue.
-
-Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-Signed-off-by: Rongyi Chen <chenyi@tt-cool.com>
-[Icenowy: refactor commit message]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 0f7a0ffd3f706..d425b47cef179 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -352,7 +352,7 @@ static SUNXI_CCU_GATE(bus_dbg_clk, "bus-dbg", "psi-ahb1-ahb2",
- static SUNXI_CCU_GATE(bus_psi_clk, "bus-psi", "psi-ahb1-ahb2",
- 		      0x79c, BIT(0), 0);
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index 98dbff19f5ccc..5caba225b4f78 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -125,9 +125,9 @@
  
--static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x79c, BIT(0), 0);
-+static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x7ac, BIT(0), 0);
+ &reg_dcdc1 {
+ 	regulator-always-on;
+-	regulator-min-microvolt = <3000000>;
+-	regulator-max-microvolt = <3000000>;
+-	regulator-name = "vcc-3v";
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-3v3";
+ };
  
- static SUNXI_CCU_GATE(bus_iommu_clk, "bus-iommu", "apb1", 0x7bc, BIT(0), 0);
- 
+ &reg_dcdc2 {
 -- 
 2.20.1
 
