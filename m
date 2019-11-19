@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B94E91014F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DEB8101648
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730249AbfKSFjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:39:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33042 "EHLO mail.kernel.org"
+        id S1731382AbfKSFvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728966AbfKSFjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:02 -0500
+        id S1731839AbfKSFvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D5762071A;
-        Tue, 19 Nov 2019 05:39:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11F8D21783;
+        Tue, 19 Nov 2019 05:51:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141941;
-        bh=byiQ1KJydIEPDJZeT7ApWnKgaGGor+z5jzj2loxTwys=;
+        s=default; t=1574142705;
+        bh=63nU4fdCgX2p8UUb5OJm+yB5Xgb0CqU3zNEb9oVmn4Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZnWZp/BlHsMtH+6OXFCjO2UTGEklGJLm4n9VmO0zVMbOv4nPoXjWkVAIzZ5rs2cQI
-         P6ArdhsShGp2pJ2U7areSoFuiR4M1W2P/PIqEPsubRPDMxuASgZsh9+njWnEBKTcNk
-         MLhLw521rgzNK6WMvK490/+7H2nKuD9xVS99b5Vo=
+        b=Y/BnRmczu+NpPpYmd4lv1IKQelcKPZJUvdkeTVZ1YUpFmUsjX/fCkWNTv2+5xNZfL
+         YUwZbJqaLAeHpY/7r17mf5DuZenPRJedE3nc2YS+TfyVnzEW2Y+mSX8F3oC2oZRLOk
+         x5eykw1+Ib+Xwm1aP4diX9RzxsFroJyLnLjn8XcA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Elder <paul.elder@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 333/422] usb: gadget: uvc: configfs: Sort frame intervals upon writing
-Date:   Tue, 19 Nov 2019 06:18:50 +0100
-Message-Id: <20191119051420.595225222@linuxfoundation.org>
+Subject: [PATCH 4.14 131/239] PCI/ACPI: Correct error message for ASPM disabling
+Date:   Tue, 19 Nov 2019 06:18:51 +0100
+Message-Id: <20191119051330.707132807@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Elder <paul.elder@ideasonboard.com>
+From: Sinan Kaya <okaya@kernel.org>
 
-[ Upstream commit 89969a842e72b1b653140a4bbddd927b242736d0 ]
+[ Upstream commit 1ad61b612b95980a4d970c52022aa01dfc0f6068 ]
 
-There is an issue where the host is unable to tell the gadget what frame
-rate it wants if the dwFrameIntervals in the interface descriptors are
-not in ascending order. This means that when instantiating a uvc gadget
-via configfs the user must make sure the dwFrameIntervals are in
-ascending order.
+If _OSC execution fails today for platforms without an _OSC entry, code is
+printing a misleading message saying disabling ASPM as follows:
 
-Instead of silently failing the breaking of this rule, we sort the
-dwFrameIntervals upon writing to configfs.
+  acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
 
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+We need to ensure that platform supports ASPM to begin with.
+
+Reported-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/uvc_configfs.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/acpi/pci_root.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index 9478a7cdb1433..2e4c0391b5836 100644
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -9,6 +9,9 @@
-  *
-  * Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-  */
-+
-+#include <linux/sort.h>
-+
- #include "u_uvc.h"
- #include "uvc_configfs.h"
- 
-@@ -31,6 +34,14 @@ static struct configfs_attribute prefix##attr_##cname = { \
- 	.show		= prefix##cname##_show,				\
- }
- 
-+static int uvcg_config_compare_u32(const void *l, const void *r)
-+{
-+	u32 li = *(const u32 *)l;
-+	u32 ri = *(const u32 *)r;
-+
-+	return li < ri ? -1 : li == ri ? 0 : 1;
-+}
-+
- static inline struct f_uvc_opts *to_f_uvc_opts(struct config_item *item)
- {
- 	return container_of(to_config_group(item), struct f_uvc_opts,
-@@ -1134,6 +1145,8 @@ static ssize_t uvcg_frame_dw_frame_interval_store(struct config_item *item,
- 	kfree(ch->dw_frame_interval);
- 	ch->dw_frame_interval = frm_intrv;
- 	ch->frame.b_frame_interval_type = n;
-+	sort(ch->dw_frame_interval, n, sizeof(*ch->dw_frame_interval),
-+	     uvcg_config_compare_u32, NULL);
- 	ret = len;
- 
- end:
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index eb857d6ea1fef..96911360a28e7 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -454,8 +454,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm)
+ 	decode_osc_support(root, "OS supports", support);
+ 	status = acpi_pci_osc_support(root, support);
+ 	if (ACPI_FAILURE(status)) {
+-		dev_info(&device->dev, "_OSC failed (%s); disabling ASPM\n",
+-			 acpi_format_exception(status));
++		dev_info(&device->dev, "_OSC failed (%s)%s\n",
++			 acpi_format_exception(status),
++			 pcie_aspm_support_enabled() ? "; disabling ASPM" : "");
+ 		*no_aspm = 1;
+ 		return;
+ 	}
 -- 
 2.20.1
 
