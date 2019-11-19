@@ -2,129 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B333101461
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3853C10147E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbfKSFdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:33:15 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:43106 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729504AbfKSFdM (ORCPT
+        id S1729663AbfKSFe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:34:27 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52534 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729643AbfKSFeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:12 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ5TF0E134981;
-        Tue, 19 Nov 2019 05:32:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=X+d/DvKGRe+3ht5uGLcFVUVOi2MtdYAju2LrusN0PB8=;
- b=Eg57Xk7Dlr+oDb9WxKzCghU3rGfM/tKiWrrIlOnoMFTkUEIMtm2GGkDhwqr7QmVhvDmn
- I7xE5Ge7ycQseksjeyn1gKpChkowEZK6oI+Gx9G0L7SmSNoNWsTeAYg7EBwH/pTOtPpu
- lFmk56hCZGESru2ZgZWw05LkwxyF/dEiyQ1y9CJepKXRJycnt2iYW76Eqzj5C5J9b3gF
- DxSWY0Ui5q694tSUhsZwX0Sr7NOuWM0h5bRgAMPnp2ZlaP+RyW0FucXNGedoojmzEcAx
- nBVnBv7Is9MTP68ucX8p5W75u2uJ49PLjVXt7qjuNl4KaJHn95UB4/Wra2iYi4H+RvXU EA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2wa8htmkds-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 05:32:52 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ5SNWL016943;
-        Tue, 19 Nov 2019 05:32:51 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2wbxm3nx20-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 05:32:51 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJ5Wo7G012724;
-        Tue, 19 Nov 2019 05:32:50 GMT
-Received: from kadam (/41.210.141.188)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Nov 2019 21:32:47 -0800
-Date:   Tue, 19 Nov 2019 08:32:30 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        security@kernel.org, ben.dooks@codethink.co.uk
-Subject: Re: [PATCH] exec: warn if process starts with executable stack
-Message-ID: <20191119053230.GC5626@kadam>
-References: <20191118145114.GA9228@avx2>
- <20191118125457.778e44dfd4740d24795484c7@linux-foundation.org>
- <20191118215227.GA24536@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191118215227.GA24536@avx2>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=587
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190050
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=714 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190050
+        Tue, 19 Nov 2019 00:34:24 -0500
+Received: from mail-pg1-f198.google.com ([209.85.215.198])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iWw9e-00070O-Cz
+        for linux-kernel@vger.kernel.org; Tue, 19 Nov 2019 05:34:22 +0000
+Received: by mail-pg1-f198.google.com with SMTP id x22so11321918pgh.19
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 21:34:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=jusLe6eRW9S01oAaldUJb/F5NSqPDxkFugLOtbNZF6k=;
+        b=VqBIvRcIeJSbdLqezQc6l/Nyv9pkD3T0Xp6ZdHyOor1M/hkK6pnoByRAXyY6bqwKqm
+         88U1Fl+Cg4ftwfvWbccSm/KmbawZlbEP1sHYJu06rNCk/mov3HE6VgzaTAVX7T83nUMn
+         zaObCMsb59kkFGnk5P0tlQBdu0Jshl0ZpPrZSO87Q5PPAymy1Yr0vV7E96FQCoRXhdzo
+         R/hVJErhZa4aCSeF/nQn4KvoZKe9+gUk3X2fH0UGYgQvYlbKIHSNkOmjC4uE3oGJehY/
+         Mm72SO7We+Poos5+0Qg8O5w9lIVRqzzTG7Z6lstNZup0eOrqSEWbfjqkzequJdDxCjEs
+         3AGA==
+X-Gm-Message-State: APjAAAUvmOiaJ6tKfsAKX6vHC2LhIeUIqWgugKLqsGT3szYEqnGZ611k
+        /Jfg/9PaOMIsxy6UbgIzI5GrHwcuvjNOS+lOZTrWdvhaNQS0DZWFW03atfBnI/ZduXvT8Odj5Bu
+        hlJ655hpwDjlC+eC2keQfjrAbb6NTRffE5AD5ptkLpg==
+X-Received: by 2002:a17:90a:6505:: with SMTP id i5mr3838069pjj.36.1574141660900;
+        Mon, 18 Nov 2019 21:34:20 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx3WmZjeKQxzxHHa/AxPTyXq45+6LekFE+w8NKygfXAW2Bw76jJ/WXvbY4tY2IwvbPVF3uyww==
+X-Received: by 2002:a17:90a:6505:: with SMTP id i5mr3838043pjj.36.1574141660626;
+        Mon, 18 Nov 2019 21:34:20 -0800 (PST)
+Received: from 2001-b011-380f-3c42-d02c-da56-2d00-ce2a.dynamic-ip6.hinet.net (2001-b011-380f-3c42-d02c-da56-2d00-ce2a.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:d02c:da56:2d00:ce2a])
+        by smtp.gmail.com with ESMTPSA id e8sm22516084pga.17.2019.11.18.21.34.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Nov 2019 21:34:20 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
+Subject: Re: [PATCH 1/2] Input: synaptics-rmi4 - clear irqs before set irqs
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <189fc7c3-d0f7-a25e-9d4d-446b095e853f@canonical.com>
+Date:   Tue, 19 Nov 2019 13:34:14 +0800
+Cc:     Aaron Ma <aaron.ma@canonical.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Cheiny@synaptics.com, aduggan@synaptics.com,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <E08F41E2-8708-49AE-813D-6079561F876F@canonical.com>
+References: <20190220164200.31044-1-aaron.ma@canonical.com>
+ <20190609165551.GB90002@dtor-ws>
+ <7da443d0-f433-c5a5-5194-707362eb2ee5@canonical.com>
+ <20190611173545.GE143729@dtor-ws>
+ <189fc7c3-d0f7-a25e-9d4d-446b095e853f@canonical.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+X-Mailer: Apple Mail (2.3601.0.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 12:52:27AM +0300, Alexey Dobriyan wrote:
-> There were few episodes of silent downgrade to an executable stack:
-> 
-> 1) linking innocent looking assembly file
-> 
-> 	$ cat f.S
-> 	.intel_syntax noprefix
-> 	.text
-> 	.globl f
-> 	f:
-> 	        ret
-> 
-> 	$ cat main.c
-> 	void f(void);
-> 	int main(void)
-> 	{
-> 	        f();
-> 	        return 0;
-> 	}
-> 
-> 	$ gcc main.c f.S
-> 	$ readelf -l ./a.out
-> 	  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
->                          0x0000000000000000 0x0000000000000000  RWE    0x10
-> 
-> 2) converting C99 nested function into a closure
-> https://nullprogram.com/blog/2019/11/15/
-> 
-> 	void intsort2(int *base, size_t nmemb, _Bool invert)
-> 	{
-> 	    int cmp(const void *a, const void *b)
-> 	    {
-> 	        int r = *(int *)a - *(int *)b;
-> 	        return invert ? -r : r;
-> 	    }
-> 	    qsort(base, nmemb, sizeof(*base), cmp);
-> 	}
-> 
-> will silently require stack trampolines while non-closure version will not.
-> 
-> While without a double this behaviour is documented somewhere, add a warning
-                  ^^^^^^
-doubt
+Hi Dmitry,
 
-> so that developers and users can at least notice. After so many years of x86_64
-> having proper executable stack support it should not cause too much problems.
+> On Jun 14, 2019, at 12:26, Aaron Ma <aaron.ma@canonical.com> wrote:
 > 
-> If the system is old or CPU is old, then there will be an early warning
-> against init and/or support personnel will write that "uh-oh, our Enterprise
-> Software absolutely requires executable stack" and close tickets and customers
-> will nod heads and life moves on.
+> On 6/12/19 1:35 AM, Dmitry Torokhov wrote:
+>> On Tue, Jun 11, 2019 at 12:55:58AM +0800, Aaron Ma wrote:
+>>> On 6/10/19 12:55 AM, Dmitry Torokhov wrote:
+>>>> Hi Aaron,
+>>>> 
+>>>> On Wed, Feb 20, 2019 at 05:41:59PM +0100, Aaron Ma wrote:
+>>>>> rmi4 got spam data after S3 resume on some ThinkPads.
+>>>>> Then TrackPoint lost when be detected by psmouse.
+>>>>> Clear irqs status before set irqs will make TrackPoint back.
+>>>> Could you please give me an idea as to what this spam data is?
+>>>> 
+>>> It should be some data 0 during suspend/resume.
+>>> Actually I don't know how these data 0 is produced.
+>>> Not all synaptics touchpads have this issue.
+>>> 
+>>>> In F03 probe we clear all pending data before enabling the function,
+>>> Yes we did, but not after resume.
+>> Yes, I understand that. The question I was asking: if we add code
+>> consuming all pending data to f03->suspend(), similarly to what we are
+>> doing at probe time, will it fix the issue with trackstick losing
+>> synchronization and attempting disconnect?
+>> 
 > 
+> I just do some test via adding code in suspend or resume.
+> But they didn't work out.
+> 
+>>>> maybe the same needs to be done on resume, instead of changing the way
+>>>> we handle IRQ bits?
+>>> This patch is supposed to clear irq status like it in fn probe. Not
+>>> changing IRQ bits.
+>> What I meant is changing how we enable IRQ bits. I would really prefer
+>> we did not lose IRQ state for other functions when we enable interrupts
+>> for given function.
+>> 
+> 
+> Not only F03 with problem, F12 too which is touchpad .
+> User verified this patch fixes problem of F12 too.
+> Clear IRQ status before enable IRQ should be safe.
+> 
+> Or we can add code before enable IRQ in F03/F12.
 
-regards,
-dan carpenter
+Users reported that  patch [1/2] alone can solve the issue.
+
+Do we need more information before making this fix merged?
+
+Kai-Heng
+
+> 
+> Thanks,
+> Aaron
+> 
+>> Thanks.
+>> 
+>> -- Dmitry
+
