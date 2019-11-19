@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37906102434
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 746B7102442
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbfKSMYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:24:02 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53134 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725798AbfKSMYC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:24:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574166240;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C6C32uts1Uhc4+2A9laxGruBZKmAzLGPWUERpPutUIA=;
-        b=iwVghIqJ9HGYxxOhlo+BqeC7KQVXwOvBp/5rrXhU5UFiasJBM2dlg9LEUqa8PL1RyxO1P7
-        A9cF1cKXvXWxH+tVuTFX8SK2dkXA5m1opyPMADFTsFJUEcL95ArU7crJy8iUwZbB+lzjsH
-        3FYsqHUW2Qwmp+kd6tAsz9xOMCWYIao=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-HfaLaDUnOAK8q8zgiYEWmg-1; Tue, 19 Nov 2019 07:23:57 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728115AbfKSMY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:24:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728055AbfKSMYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 07:24:21 -0500
+Received: from localhost (unknown [89.205.136.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B883800686;
-        Tue, 19 Nov 2019 12:23:56 +0000 (UTC)
-Received: from [10.36.117.126] (ovpn-117-126.ams2.redhat.com [10.36.117.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F4714DA10;
-        Tue, 19 Nov 2019 12:23:55 +0000 (UTC)
-Subject: Re: [PATCH 1/2] mm/memory-failure.c: PageHuge is handled at the
- beginning of memory_failure
-To:     Wei Yang <richardw.yang@linux.intel.com>,
-        n-horiguchi@ah.jp.nec.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20191118082003.26240-1-richardw.yang@linux.intel.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <1e61c115-5787-9ef4-a449-2e490c53fca7@redhat.com>
-Date:   Tue, 19 Nov 2019 13:23:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        by mail.kernel.org (Postfix) with ESMTPSA id E7D00222A0;
+        Tue, 19 Nov 2019 12:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574166260;
+        bh=SSH7vaJkbgV5ugiuRokCYx/zatWjKWwhP+0/2KTvfX4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jM58IC6IPx6LnbGkZauR/YnYJqEcxwSm1zDA4hjoM3IR1YrFIdS+fEqh+GEcmneUo
+         gv/keV1O3l7j+gLr6f0r6SU7uTxlBKci91wHnnixUYn+ri4ktrQJgcPyS7Zttz2+tx
+         x2Q+tUGiB+3i0JRNj2Cz5YADamxtmg14W8dz2pNc=
+Date:   Tue, 19 Nov 2019 13:24:17 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/422] 4.19.85-stable review
+Message-ID: <20191119122417.GA1913916@kroah.com>
+References: <20191119051400.261610025@linuxfoundation.org>
+ <20468dbc-5b88-f86e-9d5d-5edca4e4be2b@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20191118082003.26240-1-richardw.yang@linux.intel.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: HfaLaDUnOAK8q8zgiYEWmg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20468dbc-5b88-f86e-9d5d-5edca4e4be2b@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.11.19 09:20, Wei Yang wrote:
-> PageHuge is handled by memory_failure_hugetlb(), so this case could be
-> removed.
->=20
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> ---
->   mm/memory-failure.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
->=20
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 3151c87dff73..392ac277b17d 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1359,10 +1359,7 @@ int memory_failure(unsigned long pfn, int flags)
->   =09 * page_remove_rmap() in try_to_unmap_one(). So to determine page st=
-atus
->   =09 * correctly, we save a copy of the page flags at this time.
->   =09 */
-> -=09if (PageHuge(p))
-> -=09=09page_flags =3D hpage->flags;
-> -=09else
-> -=09=09page_flags =3D p->flags;
-> +=09page_flags =3D p->flags;
->  =20
->   =09/*
->   =09 * unpoison always clear PG_hwpoison inside page lock
->=20
+On Tue, Nov 19, 2019 at 09:18:03AM +0000, Jon Hunter wrote:
+> 
+> On 19/11/2019 05:13, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.19.85 release.
+> > There are 422 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.85-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> 
+> ...
+> 
+> > Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> >     ARM: dts: meson8b: odroidc1: enable the SAR ADC
+> 
+> This commit is generating the following compilation error for ARM ...
+> 
+> arch/arm/boot/dts/meson8b-odroidc1.dtb: ERROR (phandle_references): /soc/cbus@c1100000/adc@8680: Reference to non-existent node or label "vcc_1v8"
+> 
+> ERROR: Input tree has errors, aborting (use -f to force output)
+> scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/meson8b-odroidc1.dtb' failed
+> make[1]: *** [arch/arm/boot/dts/meson8b-odroidc1.dtb] Error 2
+> arch/arm/Makefile:348: recipe for target 'dtbs' failed
+> make: *** [dtbs] Error 2
 
-I somewhat miss a proper explanation why this is safe to do. We access=20
-page flags here, so why is it safe to refer to the ones of the sub-page?
+Thanks, will go remove that patch.
 
---=20
-
-Thanks,
-
-David / dhildenb
-
+greg k-h
