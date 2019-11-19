@@ -2,75 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 127C010252C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:08:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67023102538
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfKSNH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:07:57 -0500
-Received: from mga11.intel.com ([192.55.52.93]:26649 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfKSNH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:07:57 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 05:07:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,324,1569308400"; 
-   d="scan'208";a="215538033"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 19 Nov 2019 05:07:51 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 19 Nov 2019 15:07:51 +0200
-Date:   Tue, 19 Nov 2019 15:07:51 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [GIT PULL] Thunderbolt change for v5.5 part 2
-Message-ID: <20191119130751.GK11621@lahna.fi.intel.com>
+        id S1727509AbfKSNOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:14:45 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725280AbfKSNOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 08:14:45 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5757D396F74BACAF5382;
+        Tue, 19 Nov 2019 21:14:41 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 19 Nov 2019
+ 21:14:38 +0800
+Subject: Re: [GIT] Networking
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Miller <davem@davemloft.net>
+References: <20191116.133321.709008936600873428.davem@davemloft.net>
+ <CAMuHMdX8Fi1PDEcrPJ3frsg+LG04hCN2vbgJ=+NyEArnqmcb1Q@mail.gmail.com>
+CC:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <32c02bd4-6c6a-5e55-7a47-1a42d2c9c1af@huawei.com>
+Date:   Tue, 19 Nov 2019 21:14:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAMuHMdX8Fi1PDEcrPJ3frsg+LG04hCN2vbgJ=+NyEArnqmcb1Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On 2019/11/19 21:01, Geert Uytterhoeven wrote:
+> On Sat, Nov 16, 2019 at 10:37 PM David Miller <davem@davemloft.net> wrote:
+>> YueHaibing (1):
+>>       mdio_bus: Fix PTR_ERR applied after initialization to constant
+> 
+> FTR, this causes a boot regression if CONFIG_RESET_CONTROLLER=n.
+> Patch sent
+> https://lore.kernel.org/lkml/20191119112524.24841-1-geert+renesas@glider.be/
 
-There is one more Thunderbolt driver improvement that I would like to
-get into v5.5 merge window. Please consider pulling.
+Sorry for this.
 
-Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
-The following changes since commit 354a7a7716edb377953a324421915d7788e0bca9:
-
-  thunderbolt: Do not start firmware unless asked by the user (2019-11-02 12:13:31 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git tags/thunderbolt-for-v5.5-2
-
-for you to fetch changes up to b001da2905e70014b15e98dddf62d0c61b132527:
-
-  thunderbolt: Power cycle the router if NVM authentication fails (2019-11-15 14:48:53 +0300)
-
-----------------------------------------------------------------
-thunderbolt: Change for v5.5 merge window part 2
-
-This includes one more improvement for v5.5 merge window. If the router
-NVM firmware authentication fails for some reason this power cycles the
-router so it should become functional again.
-
-----------------------------------------------------------------
-Mika Westerberg (1):
-      thunderbolt: Power cycle the router if NVM authentication fails
-
- drivers/thunderbolt/switch.c | 54 ++++++++++++++++++++++++++++++++++----------
- 1 file changed, 42 insertions(+), 12 deletions(-)
