@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A16E2101772
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4DD10184A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbfKSFn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39030 "EHLO mail.kernel.org"
+        id S1729538AbfKSFdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:33:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730787AbfKSFnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:43:53 -0500
+        id S1729526AbfKSFdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:33:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F7022309;
-        Tue, 19 Nov 2019 05:43:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CFF221823;
+        Tue, 19 Nov 2019 05:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142232;
-        bh=ImmlDRzMG4QM7y293HzEHL2Nt8F3ObbdD/6TybDalBU=;
+        s=default; t=1574141604;
+        bh=ITiLQa7PhFYebKtxc6Fl3GvTzg0Y6H8CyAE5H5v51fg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EzF74PGnAi1fNKaHsdVwMmoLKxK/FV8cwFTPb1+3IQMlW5WWOfQIR2WNxfeJqw+a4
-         BAgzj3j5AFg1MmjIGy5M61XrCoQ3EacuIXMsoIUhD+7NuZWvhgxf4/AI58u+qJWySI
-         BtDX80cullpHOT7RUbcQp+rrV1Al01PpkFNJAM/Y=
+        b=rJtCI1ij6uWRskH8nMZ157rYNUL1TqqaEvd4WvZ6IFFN02u4SDmrFeKjuuMHjtZ+M
+         K2/HbSlKQ3ZoO3ffWb0VvPjDVuuIoWFkITL357Kq1/SK4m7wRwngw+gQZjUCOwEAoY
+         QCivxQA02qV1NjYKzmYDlX3aui3+SSSla3C2D01o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 012/239] ALSA: usb-audio: not submit urb for stopped endpoint
-Date:   Tue, 19 Nov 2019 06:16:52 +0100
-Message-Id: <20191119051300.421710143@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 216/422] ARM: dts: sun9i: Fix I2C bus warnings
+Date:   Tue, 19 Nov 2019 06:16:53 +0100
+Message-Id: <20191119051412.605588409@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
+From: Rob Herring <robh@kernel.org>
 
-commit 528699317dd6dc722dccc11b68800cf945109390 upstream.
+[ Upstream commit 57a83c5222c1b5e7b3acc72c6e60fce00a38991a ]
 
-While output urb's snd_complete_urb() is executing, calling
-prepare_outbound_urb() may cause endpoint stopped before
-prepare_outbound_urb() returns and result in next urb submitted
-to stopped endpoint. usb-audio driver cannot re-use it afterwards as
-the urb is still hold by usb stack.
+dtc has new checks for I2C buses. The sun9i-a80 dts file has a node named
+'i2c' which causes a false positive warning. As the node is a RSB bus,
+correct the node name to be 'rsb' to fix the warnings.
 
-This change checks EP_FLAG_RUNNING flag after prepare_outbound_urb() again
-to let snd_complete_urb() know the endpoint already stopped and does not
-submit next urb. Below kind of error will be fixed:
+arch/arm/boot/dts/sun9i-a80-cubieboard4.dtb: Warning (i2c_bus_reg): /soc/i2c@8003400/codec@e89:reg: I2C address must be less than 10-bits, got "0xe89"
+arch/arm/boot/dts/sun9i-a80-cubieboard4.dtb: Warning (i2c_bus_reg): /soc/i2c@8003400/pmic@745:reg: I2C address must be less than 10-bits, got "0x745"
+arch/arm/boot/dts/sun9i-a80-optimus.dtb: Warning (i2c_bus_reg): /soc/i2c@8003400/codec@e89:reg: I2C address must be less than 10-bits, got "0xe89"
+arch/arm/boot/dts/sun9i-a80-optimus.dtb: Warning (i2c_bus_reg): /soc/i2c@8003400/pmic@745:reg: I2C address must be less than 10-bits, got "0x745"
 
-[  213.153103] usb 1-2: timeout: still 1 active urbs on EP #1
-[  213.164121] usb 1-2: cannot submit urb 0, error -16: unknown error
-
-Signed-off-by: Henry Lin <henryl@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191113021420.13377-1-henryl@nvidia.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/endpoint.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/sun9i-a80.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -403,6 +403,9 @@ static void snd_complete_urb(struct urb
- 		}
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index 25591d6883ef2..d9532fb1ef650 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -1196,7 +1196,7 @@
+ 			};
+ 		};
  
- 		prepare_outbound_urb(ep, ctx);
-+		/* can be stopped during prepare callback */
-+		if (unlikely(!test_bit(EP_FLAG_RUNNING, &ep->flags)))
-+			goto exit_clear;
- 	} else {
- 		retire_inbound_urb(ep, ctx);
- 		/* can be stopped during retire callback */
+-		r_rsb: i2c@8003400 {
++		r_rsb: rsb@8003400 {
+ 			compatible = "allwinner,sun8i-a23-rsb";
+ 			reg = <0x08003400 0x400>;
+ 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.20.1
+
 
 
