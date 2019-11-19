@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6813510241C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72431102451
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:25:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfKSMSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:18:08 -0500
-Received: from mga05.intel.com ([192.55.52.43]:64330 "EHLO mga05.intel.com"
+        id S1728152AbfKSMZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:25:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725280AbfKSMSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:18:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 04:18:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,322,1569308400"; 
-   d="scan'208";a="209179842"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2019 04:18:06 -0800
-Message-ID: <5DD3DF17.9050504@intel.com>
-Date:   Tue, 19 Nov 2019 20:24:55 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1726351AbfKSMZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 07:25:39 -0500
+Received: from localhost (unknown [89.205.136.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93C2B20730;
+        Tue, 19 Nov 2019 12:25:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574166338;
+        bh=J+SzVvZ2+0zMFsSFLLMumu9PACqhfdbEv9L05QqiNZA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mic8M8rEdYATHdtFuUKGJLWkJBKkKF1q2pExTxUM+gSUUkzO9xpjcB3mXky2gtETk
+         S/g+7tz3aTTokDdpT2ASGvkgwvFqh7q9D0kEDKm2FPO9i0comLFGoTAIL0GBND1HLQ
+         C7bbHaiiU84rOXFOyupALwXDyYQDAyyFFpcwSmd8=
+Date:   Tue, 19 Nov 2019 13:25:35 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/239] 4.14.155-stable review
+Message-ID: <20191119122535.GB1913916@kroah.com>
+References: <20191119051255.850204959@linuxfoundation.org>
+ <cc1129c8-797d-7a1d-e59b-16c826270fad@nvidia.com>
 MIME-Version: 1.0
-To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-CC:     Khazhismel Kumykov <khazhy@google.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 2/2] virtio_balloon: divide/multiply instead of shifts
-References: <20191119102838.39380-1-mst@redhat.com> <20191119102838.39380-2-mst@redhat.com>
-In-Reply-To: <20191119102838.39380-2-mst@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc1129c8-797d-7a1d-e59b-16c826270fad@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/2019 06:29 PM, Michael S. Tsirkin wrote:
-> We managed to get confused about the shift direction at least once.
-> Let's switch to division/multiplcation instead. Add a number of pages
-> macro for this purpose.  We still keep the order macro around too since
-> this is what alloc/free pages want.
->
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->   drivers/virtio/virtio_balloon.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index b6a95cd28d9f..dc1ebd638e9b 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -36,6 +36,7 @@
->   /* The size of a free page block in bytes */
->   #define VIRTIO_BALLOON_HINT_BLOCK_BYTES \
->   	(1 << (VIRTIO_BALLOON_HINT_BLOCK_ORDER + PAGE_SHIFT))
-> +#define VIRTIO_BALLOON_HINT_BLOCK_PAGES (1 << VIRTIO_BALLOON_HINT_BLOCK_ORDER)
->   
->   #ifdef CONFIG_BALLOON_COMPACTION
->   static struct vfsmount *balloon_mnt;
-> @@ -765,11 +766,11 @@ static unsigned long shrink_free_pages(struct virtio_balloon *vb,
->   	unsigned long blocks_to_free, blocks_freed;
->   
->   	pages_to_free = round_up(pages_to_free,
-> -				 1 << VIRTIO_BALLOON_HINT_BLOCK_ORDER);
-> -	blocks_to_free = pages_to_free >> VIRTIO_BALLOON_HINT_BLOCK_ORDER;
-> +				 VIRTIO_BALLOON_HINT_BLOCK_PAGES);
-> +	blocks_to_free = pages_to_free / VIRTIO_BALLOON_HINT_BLOCK_PAGES;
->   	blocks_freed = return_free_pages_to_mm(vb, blocks_to_free);
->   
-> -	return blocks_freed << VIRTIO_BALLOON_HINT_BLOCK_ORDER;
-> +	return blocks_freed * VIRTIO_BALLOON_HINT_BLOCK_PAGES;
->   }
->   
->   static unsigned long leak_balloon_pages(struct virtio_balloon *vb,
-> @@ -825,7 +826,7 @@ static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
->   	unsigned long count;
->   
->   	count = vb->num_pages / VIRTIO_BALLOON_PAGES_PER_PAGE;
-> -	count += vb->num_free_page_blocks << VIRTIO_BALLOON_HINT_BLOCK_ORDER;
-> +	count += vb->num_free_page_blocks * VIRTIO_BALLOON_HINT_BLOCK_PAGES;
->   
->   	return count;
->   }
+On Tue, Nov 19, 2019 at 09:12:48AM +0000, Jon Hunter wrote:
+> 
+> On 19/11/2019 05:16, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.155 release.
+> > There are 239 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.155-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> 
+> ...
+> 
+> > Heiko Stuebner <heiko@sntech.de>
+> >     arm64: dts: rockchip: enable display nodes on rk3328-rock64
+> The above commit is causing the following build error for ARM64 ...
+> 
+> Error: arch/arm64/boot/dts/rockchip/rk3328-rock64.dts:149.1-6 Label or path hdmi not found
+> Error: arch/arm64/boot/dts/rockchip/rk3328-rock64.dts:153.1-9 Label or path hdmiphy not found
+> Error: arch/arm64/boot/dts/rockchip/rk3328-rock64.dts:345.1-5 Label or path vop not found
+> FATAL ERROR: Syntax error parsing input tree
+> scripts/Makefile.lib:317: recipe for target 'arch/arm64/boot/dts/rockchip/rk3328-rock64.dtb' failed
+> make[2]: *** [arch/arm64/boot/dts/rockchip/rk3328-rock64.dtb] Error 1
+> scripts/Makefile.build:585: recipe for target 'arch/arm64/boot/dts/rockchip' failed
+> make[1]: *** [arch/arm64/boot/dts/rockchip] Error 2
+> arch/arm64/Makefile:138: recipe for target 'dtbs' failed
+> make: *** [dtbs] Error 2
 
-Reviewed-by: Wei Wang <wei.w.wang@intel.com>
+Will go drop this, thanks.
 
-Best,
-Wei
+greg k-h
