@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1EDB101542
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E921016F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbfKSFmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:42:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36812 "EHLO mail.kernel.org"
+        id S1731731AbfKSFvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728825AbfKSFmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:42:10 -0500
+        id S1730856AbfKSFvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 378C421783;
-        Tue, 19 Nov 2019 05:42:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B10C20862;
+        Tue, 19 Nov 2019 05:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142129;
-        bh=laLOVN9b3e7blkEA0eFOdsXXjtlukZsyKhx2FPSNf5o=;
+        s=default; t=1574142661;
+        bh=ChU4/sQIlhrMtWXNKZFawHzXhtYBs37P5LZKj8KiEgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z8joRWgeBgiWVyDKc4b50hSfiftwcRgc/zZbLE9USofkfMb/UWBumKCXEf7KMCLah
-         OgyjztljMMcmHnKgYZBp8vbk4IFdAQ8IhqVwdxsmlultnJcRAcBKHCp5iy2wLbJ2/b
-         SL9eOPm9VKjTjOpEKH/AXztB7qWoASkPqJrfE1bg=
+        b=I9lgThtJgDT7UbowH3hcMR4eez/rIpH5iE3fbw4ziH4B/pJWNP3Yiw5h41qrieVL2
+         xWUGqfc5VPnBTeRbPTP0rAtSY2Im1HtllDvwWbwEwAsPD+D9Bupr2QFXqnKAIYcfAZ
+         nqyrStlJUeSi1TrBwEfa77imI3sT1R6HFwFwAqJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Qiang <liq3ea@gmail.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Nicolas Adell <nicolas.adell@actia.fr>,
+        Peter Chen <peter.chen@nxp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 358/422] vfio/pci: Fix potential memory leak in vfio_msi_cap_len
-Date:   Tue, 19 Nov 2019 06:19:15 +0100
-Message-Id: <20191119051422.215326869@linuxfoundation.org>
+Subject: [PATCH 4.14 156/239] usb: chipidea: imx: enable OTG overcurrent in case USB subsystem is already started
+Date:   Tue, 19 Nov 2019 06:19:16 +0100
+Message-Id: <20191119051333.071793617@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li Qiang <liq3ea@gmail.com>
+From: Nicolas Adell <nicolas.adell@actia.fr>
 
-[ Upstream commit 30ea32ab1951c80c6113f300fce2c70cd12659e4 ]
+[ Upstream commit 1dedbdf2bbb1ede8d96f35f9845ecae179dc1988 ]
 
-Free allocated vdev->msi_perm in error path.
+When initializing the USB subsystem before starting the kernel,
+OTG overcurrent detection is disabled. In case the OTG polarity of
+overcurrent is low active, the overcurrent detection is never enabled
+again and events cannot be reported as expected. Because imx usb
+overcurrent polarity is low active by default, only detection needs
+to be enable in usbmisc init function.
 
-Signed-off-by: Li Qiang <liq3ea@gmail.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Nicolas Adell <nicolas.adell@actia.fr>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci_config.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/chipidea/usbmisc_imx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index 115a36f6f4039..62023b4a373b4 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1180,8 +1180,10 @@ static int vfio_msi_cap_len(struct vfio_pci_device *vdev, u8 pos)
- 		return -ENOMEM;
+diff --git a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
+index 9f4a0185dd609..b7477fd4443a3 100644
+--- a/drivers/usb/chipidea/usbmisc_imx.c
++++ b/drivers/usb/chipidea/usbmisc_imx.c
+@@ -343,6 +343,8 @@ static int usbmisc_imx6q_init(struct imx_usbmisc_data *data)
+ 	} else if (data->oc_polarity == 1) {
+ 		/* High active */
+ 		reg &= ~(MX6_BM_OVER_CUR_DIS | MX6_BM_OVER_CUR_POLARITY);
++	} else {
++		reg &= ~(MX6_BM_OVER_CUR_DIS);
+ 	}
+ 	writel(reg, usbmisc->base + data->index * 4);
  
- 	ret = init_pci_cap_msi_perm(vdev->msi_perm, len, flags);
--	if (ret)
-+	if (ret) {
-+		kfree(vdev->msi_perm);
- 		return ret;
-+	}
- 
- 	return len;
- }
 -- 
 2.20.1
 
