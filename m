@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB344101AA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 08:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24442101A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 08:54:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfKSH7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 02:59:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfKSH7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 02:59:03 -0500
-Received: from localhost (unknown [89.205.134.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF19822312;
-        Tue, 19 Nov 2019 07:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574150342;
-        bh=Ld566us/253H4UlC/U9J6/5di2INvcC40kur0c0jF1Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zPYSBYy8xvhgn0yPWzrvPImskm4fnvhCIg585Y5wEaE89cA+XBqwinRXsqZp3kl5z
-         kuZpPqvc0qXjERxs58j0Teu5ZsV1hG8A5bf27Yr4maB3LOIuDnwy8GPVvKk4dSd4uy
-         z2pNo35jmNeuL1zSZSTqMMyL6zeGQLv9dcV4f2qM=
-Date:   Tue, 19 Nov 2019 08:58:59 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     rui_feng@realsil.com.cn
-Cc:     arnd@arndb.de, dan.carpenter@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: rtsx: Fix impossible condition
-Message-ID: <20191119075859.GC1858193@kroah.com>
-References: <1574148825-2797-1-git-send-email-rui_feng@realsil.com.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574148825-2797-1-git-send-email-rui_feng@realsil.com.cn>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1727202AbfKSHyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 02:54:11 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:35520 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfKSHyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 02:54:11 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ7rsp9033794;
+        Tue, 19 Nov 2019 07:53:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2019-08-05;
+ bh=IyCiBE5FqGw0GPcIHmU7QGVoSGyMN7SqqTP1wqihQRo=;
+ b=GOgXevtc2/R5pg/O4/aIHosMydLGb31489wC/o0L+0RAAtoSbW9KasR+3jol/TGg2DWj
+ YYm3WaynA1ugeQmiB3WrR9O46wieuA8UPEwejgIpLEtbNA4CQd9nAw1zVbqOBGMMkmtJ
+ GdnKmQlZxLNMjlVdhj3eNtqTpoAU4DbfCG854A+Nl5haDKXxxZfDZa/BXJMZnBdOGrWF
+ ESbIRH7b9iwAWoBWVMflYime/k5LN+oC5ZCF63C07HLrva5a8FA3xMDIfTYp0EXdP8PG
+ X6inrZKcewuw5EuvlO+5okj7Iu8+XSlLtPGURT3ltaidIvkmQVe4NRja9Q8sykfLC2fR Tw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wa92pn24c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 07:53:58 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ7rnqe063648;
+        Tue, 19 Nov 2019 07:53:57 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2wc0afxk2w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 07:53:56 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJ7rt05016094;
+        Tue, 19 Nov 2019 07:53:55 GMT
+Received: from shipfan.cn.oracle.com (/10.113.210.105)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Nov 2019 23:53:54 -0800
+From:   Zhu Yanjun <yanjun.zhu@oracle.com>
+To:     mchehab+samsung@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, netdev@vger.kernel.org, yanjun.zhu@oracle.com,
+        rain.1986.08.12@gmail.com
+Subject: [PATCH 1/1] MAINTAINERS: forcedeth: Change Zhu Yanjun's email address
+Date:   Tue, 19 Nov 2019 03:03:48 -0500
+Message-Id: <1574150628-3905-1-git-send-email-yanjun.zhu@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=903
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190073
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=988 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190073
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 03:33:45PM +0800, rui_feng@realsil.com.cn wrote:
-> From: Rui Feng <rui_feng@realsil.com.cn>
-> 
-> A u8 can only go up to 255, condition n > 396 is
-> impossible, so change u8 to u16.
-> 
-> Signed-off-by: Rui Feng <rui_feng@realsil.com.cn>
-> ---
->  drivers/misc/cardreader/rts5261.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/misc/cardreader/rts5261.c b/drivers/misc/cardreader/rts5261.c
-> index 32dcec2..8dba0bf 100644
-> --- a/drivers/misc/cardreader/rts5261.c
-> +++ b/drivers/misc/cardreader/rts5261.c
-> @@ -628,7 +628,8 @@ int rts5261_pci_switch_clock(struct rtsx_pcr *pcr, unsigned int card_clock,
->  		u8 ssc_depth, bool initial_mode, bool double_clk, bool vpclk)
->  {
->  	int err, clk;
-> -	u8 n, clk_divider, mcu_cnt, div;
-> +	u16 n;
-> +	u8 clk_divider, mcu_cnt, div;
->  	static const u8 depth[] = {
->  		[RTSX_SSC_DEPTH_4M] = RTS5261_SSC_DEPTH_4M,
->  		[RTSX_SSC_DEPTH_2M] = RTS5261_SSC_DEPTH_2M,
-> @@ -661,9 +662,9 @@ int rts5261_pci_switch_clock(struct rtsx_pcr *pcr, unsigned int card_clock,
->  		return 0;
->  
->  	if (pcr->ops->conv_clk_and_div_n)
-> -		n = (u8)pcr->ops->conv_clk_and_div_n(clk, CLK_TO_DIV_N);
-> +		n = (u16)pcr->ops->conv_clk_and_div_n(clk, CLK_TO_DIV_N);
->  	else
-> -		n = (u8)(clk - 4);
-> +		n = (u16)(clk - 4);
+I prefer to use my personal email address for kernel related work.
 
-Why is the cast now needed?  Same for everywhere else.
+Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e4f170d..8165658 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -643,7 +643,7 @@ F:	drivers/net/ethernet/alacritech/*
+ 
+ FORCEDETH GIGABIT ETHERNET DRIVER
+ M:	Rain River <rain.1986.08.12@gmail.com>
+-M:	Zhu Yanjun <yanjun.zhu@oracle.com>
++M:	Zhu Yanjun <zyjzyj2000@gmail.com>
+ L:	netdev@vger.kernel.org
+ S:	Maintained
+ F:	drivers/net/ethernet/nvidia/*
+-- 
+2.7.4
 
-greg k-h
