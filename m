@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9301012FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:21:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 255C9101304
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfKSFVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:21:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        id S1727417AbfKSFVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:21:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727243AbfKSFVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:21:23 -0500
+        id S1727352AbfKSFVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:21:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 442A52235D;
-        Tue, 19 Nov 2019 05:21:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8AB722360;
+        Tue, 19 Nov 2019 05:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574140881;
-        bh=VuFC/eywt7h/O4gNzTZEFXUuvrmosZ8nF36EuyKYbEg=;
+        s=default; t=1574140890;
+        bh=QC+V1tYQv2kcCsgM5J5KFyDYc0wc3K5DsLF2z0GGSD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AYWvtxXhCaaJZawBt+IkFHsSO/Q5ZO6DciMK+11YJr4fbmXVRaz8bdmR8KcrsoWBt
-         v6mYAS674g5j1UHZoGR92Vtt79r0uBmT9RAaL0+xI+Vpk9eIf/02hD8cC0bbrjxFOS
-         0rR7DYsmij4cmf3SdilBKEwokQ9hcP410GGGYu1Y=
+        b=chGmP3awS6XzDW9luJ0Vknl7a+Jcs991DPJ+ZR+AxifUhSBUkTYkBTFDQD7MbgXBb
+         uCqp0/H4mccRuqurbUZ+pnU0+QguH+y6sylEK0wetBHqYP+DM9zkcObSpdJGueqzCz
+         dZwVEWM7Vf8znyFMALPySJoyLsL0zU+vvvp97/vs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
-        Bruce Ashfield <bruce.ashfield@gmail.com>
-Subject: [PATCH 5.3 19/48] cgroup: freezer: call cgroup_enter_frozen() with preemption disabled in ptrace_stop()
-Date:   Tue, 19 Nov 2019 06:19:39 +0100
-Message-Id: <20191119051003.108253979@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.3 21/48] Input: synaptics-rmi4 - fix video buffer size
+Date:   Tue, 19 Nov 2019 06:19:41 +0100
+Message-Id: <20191119051004.939549514@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
 References: <20191119050946.745015350@linuxfoundation.org>
@@ -44,37 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov <oleg@redhat.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 937c6b27c73e02cd4114f95f5c37ba2c29fadba1 upstream.
+commit 003f01c780020daa9a06dea1db495b553a868c29 upstream.
 
-ptrace_stop() does preempt_enable_no_resched() to avoid the preemption,
-but after that cgroup_enter_frozen() does spin_lock/unlock and this adds
-another preemption point.
+The video buffer used by the queue is a vb2_v4l2_buffer, not a plain
+vb2_buffer. Using the wrong type causes the allocation of the buffer
+storage to be too small, causing a out of bounds write when
+__init_vb2_v4l2_buffer initializes the buffer.
 
-Reported-and-tested-by: Bruce Ashfield <bruce.ashfield@gmail.com>
-Fixes: 76f969e8948d ("cgroup: cgroup v2 freezer")
-Cc: stable@vger.kernel.org # v5.2+
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Fixes: 3a762dbd5347 ("[media] Input: synaptics-rmi4 - add support for F54 diagnostics")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191104114454.10500-1-l.stach@pengutronix.de
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/signal.c |    2 +-
+ drivers/input/rmi4/rmi_f54.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, i
- 		 */
- 		preempt_disable();
- 		read_unlock(&tasklist_lock);
--		preempt_enable_no_resched();
- 		cgroup_enter_frozen();
-+		preempt_enable_no_resched();
- 		freezable_schedule();
- 		cgroup_leave_frozen(true);
- 	} else {
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -359,7 +359,7 @@ static const struct vb2_ops rmi_f54_queu
+ static const struct vb2_queue rmi_f54_queue = {
+ 	.type = V4L2_BUF_TYPE_VIDEO_CAPTURE,
+ 	.io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF | VB2_READ,
+-	.buf_struct_size = sizeof(struct vb2_buffer),
++	.buf_struct_size = sizeof(struct vb2_v4l2_buffer),
+ 	.ops = &rmi_f54_queue_ops,
+ 	.mem_ops = &vb2_vmalloc_memops,
+ 	.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC,
 
 
