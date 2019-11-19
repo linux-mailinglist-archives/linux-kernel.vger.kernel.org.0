@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9108C10181D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 348F7101823
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbfKSFfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:35:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56454 "EHLO mail.kernel.org"
+        id S1727994AbfKSFfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:35:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729817AbfKSFfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:35:30 -0500
+        id S1728370AbfKSFfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:35:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D095B20862;
-        Tue, 19 Nov 2019 05:35:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD77B20862;
+        Tue, 19 Nov 2019 05:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141730;
-        bh=jXkiVzZYSLUq0yhlysGpFlmVqSm2aSwxQEawDZL8+xY=;
+        s=default; t=1574141745;
+        bh=COVWsDCNKbR38Yw+05vHLBxceN6cUCoS+2GIdiYO/IE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g8oWlJfevFGkyuuQOvCt3m2ptRut+0ojU3TgsjnFt8IVMcsUMHL6yIB3eImi190Uk
-         bpSlZMOn71yyEYAIovCVy+SQ5tsx3C7aB+++/aRkewe8gba8vDcfVZ3vrekvhl/UaM
-         L6MjJO6DE8f5SyJvEa/7h853drMLV8O9o9W550m4=
+        b=mCiTWyp0g4/jRW1HfbRpPopYZVaePxioQFuQlh00dkaOmad/K0S9J15hF9UG0D2yC
+         FWJ93OGksyYATiookJyEtHOWbXnA6vMwlKfUJpKB7dl2lplvoQdjDArkkV413VHyD2
+         vp/IQ9oaFo5YheqqKO33sLZmM1l4y1NHPw5SQEK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        stable@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 260/422] powerpc/iommu: Avoid derefence before pointer check
-Date:   Tue, 19 Nov 2019 06:17:37 +0100
-Message-Id: <20191119051415.839491019@linuxfoundation.org>
+Subject: [PATCH 4.19 264/422] powerpc/pseries: Disable CPU hotplug across migrations
+Date:   Tue, 19 Nov 2019 06:17:41 +0100
+Message-Id: <20191119051416.098423218@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,38 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
 
-[ Upstream commit 984ecdd68de0fa1f63ce205d6c19ef5a7bc67b40 ]
+[ Upstream commit 85a88cabad57d26d826dd94ea34d3a785824d802 ]
 
-The tbl pointer is being derefenced by IOMMU_PAGE_SIZE prior the check
-if it is not NULL.
+When performing partition migrations all present CPUs must be online
+as all present CPUs must make the H_JOIN call as part of the migration
+process. Once all present CPUs make the H_JOIN call, one CPU is returned
+to make the rtas call to perform the migration to the destination system.
 
-Just moving the dereference code to after the check, where there will
-be guarantee that 'tbl' will not be NULL.
+During testing of migration and changing the SMT state we have found
+instances where CPUs are offlined, as part of the SMT state change,
+before they make the H_JOIN call. This results in a hung system where
+every CPU is either in H_JOIN or offline.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
+To prevent this this patch disables CPU hotplug during the migration
+process.
+
+Signed-off-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/rtas.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index 19b4c628f3bec..f0dc680e659af 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -785,9 +785,9 @@ dma_addr_t iommu_map_page(struct device *dev, struct iommu_table *tbl,
+diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
+index 9e41a9de43235..95d1264ba7952 100644
+--- a/arch/powerpc/kernel/rtas.c
++++ b/arch/powerpc/kernel/rtas.c
+@@ -985,6 +985,7 @@ int rtas_ibm_suspend_me(u64 handle)
+ 		goto out;
+ 	}
  
- 	vaddr = page_address(page) + offset;
- 	uaddr = (unsigned long)vaddr;
--	npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
++	cpu_hotplug_disable();
+ 	stop_topology_update();
  
- 	if (tbl) {
-+		npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
- 		align = 0;
- 		if (tbl->it_page_shift < PAGE_SHIFT && size >= PAGE_SIZE &&
- 		    ((unsigned long)vaddr & ~PAGE_MASK) == 0)
+ 	/* Call function on all CPUs.  One of us will make the
+@@ -999,6 +1000,7 @@ int rtas_ibm_suspend_me(u64 handle)
+ 		printk(KERN_ERR "Error doing global join\n");
+ 
+ 	start_topology_update();
++	cpu_hotplug_enable();
+ 
+ 	/* Take down CPUs not online prior to suspend */
+ 	cpuret = rtas_offline_cpus_mask(offline_mask);
 -- 
 2.20.1
 
