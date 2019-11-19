@@ -2,172 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A266B102628
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 398BA10266A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbfKSOQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:16:35 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:20287 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727255AbfKSOQe (ORCPT
+        id S1728421AbfKSOSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:18:23 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53628 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbfKSOST (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:16:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574172993;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VC3V3Jxjtko1SYQH3MBBOMxUY3xpVbVtJKD+tE80Bi8=;
-        b=UKHM7JQ3Tjs+90CQXSKfP6fmeJDSGEooe1s+88zsz3LuWcTT+eCLxh7KUA2MoykHIVRB7S
-        hk6kUDQOf9eysJJEr+SsyKWk1ZcZpasWXdf5xYimiAaGPLIvQgdBpVPz66xA+5EZ5Rw2gs
-        J1uO98NUNxXAQYLlA4b4bpf6AIPUyTQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-9OzMB_CeNSaU2ssn_ay_0g-1; Tue, 19 Nov 2019 09:16:29 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 017E99A697;
-        Tue, 19 Nov 2019 14:16:27 +0000 (UTC)
-Received: from [10.36.117.126] (ovpn-117-126.ams2.redhat.com [10.36.117.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B33435E7A6;
-        Tue, 19 Nov 2019 14:16:23 +0000 (UTC)
-Subject: Re: [PATCH v6 04/10] mm/memory_hotplug: Don't access uninitialized
- memmaps in shrink_zone_span()
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, x86@kernel.org,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-References: <20191006085646.5768-1-david@redhat.com>
- <20191006085646.5768-5-david@redhat.com>
- <5a4573de-bd8a-6cd3-55d0-86d503a236fd@redhat.com>
- <20191014121719.cb9b9efe51a7e9e985b38075@linux-foundation.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <8bbbd4f1-e2c9-b654-ab73-aa4314135f21@redhat.com>
-Date:   Tue, 19 Nov 2019 15:16:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 19 Nov 2019 09:18:19 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJEE7LC179048;
+        Tue, 19 Nov 2019 14:16:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=9axEBLXvj4bEnlBdKi9wA/X7OLcK/RilJpfkNrxlABU=;
+ b=nrjic0b/IL0yHUl6tYQJ+1JjgqN9GEbl1vBlt09+UgdkckeqHhrYsVKzdc12+IkP/F04
+ geD9Wy6y7OBdUjS7R5kjugU5ZrK1GQ+/UBAO1SzEInHYPw5GO++7wkSoCP73y9sgCqtG
+ JhMB24xq7hSp+NXcCjLEFfw8sDsOL0OTh9s9+gYkU3V31DviUjPgkUFuHonVb89sIGIK
+ PW5r4AGhYbtFqPPVVX28tT+lrks3wRthnqMS1UZCheYwkf2STc7ubv/VpgfnARA75b4S
+ M4cV+AEHn3iDbhL/QK7iwbN6Ocxg+pegrgYr6mq7P+kRCR0Yu4Y5PCnIugNOBaleI+DE HA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2wa8htq6eq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 14:16:51 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJEE2RY013345;
+        Tue, 19 Nov 2019 14:16:50 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wc0agf6k0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 14:16:50 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJEGkkS023554;
+        Tue, 19 Nov 2019 14:16:46 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 06:16:45 -0800
+Date:   Tue, 19 Nov 2019 17:16:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, djkurtz@google.com,
+        Akshu.Agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 1/6] ASoC: amd:Create multiple I2S platform device
+ endpoint
+Message-ID: <20191119141628.GD30789@kadam>
+References: <1574172508-26546-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574172508-26546-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20191014121719.cb9b9efe51a7e9e985b38075@linux-foundation.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: 9OzMB_CeNSaU2ssn_ay_0g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574172508-26546-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=984
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.10.19 21:17, Andrew Morton wrote:
-> On Mon, 14 Oct 2019 11:32:13 +0200 David Hildenbrand <david@redhat.com> w=
-rote:
->=20
->>> Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
->>
->> @Andrew, can you convert that to
->>
->> Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded
->> memory to zones until online") # visible after d0dc12e86b319
->>
->> and add
->>
->> Cc: stable@vger.kernel.org # v4.13+
->=20
-> Done, thanks.
->=20
+On Tue, Nov 19, 2019 at 07:38:23PM +0530, Ravulapati Vishnu vardhan rao wrote:
+> @@ -56,10 +56,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  		irqflags = 0;
+>  
+>  	addr = pci_resource_start(pci, 0);
+> -	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
+> +	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
+> +					pci_resource_len(pci, 0));
+>  	if (!adata->acp3x_base) {
+>  		ret = -ENOMEM;
+> -		goto release_regions;
+> +		goto disable_msi;
 
-Just a note that Toshiki reported a BUG (race between delayed
-initialization of ZONE_DEVICE memmaps without holding the memory
-hotplug lock and concurrent zone shrinking).
+This is a bug fix.  :)
 
-https://lkml.org/lkml/2019/11/14/1040
+>  	}
+>  	pci_set_master(pci);
+>  	pci_set_drvdata(pci, adata);
 
-"Iteration of create and destroy namespace causes the panic as below:
+This patch is fine.
 
-[   41.207694] kernel BUG at mm/page_alloc.c:535!
-[   41.208109] invalid opcode: 0000 [#1] SMP PTI
-[   41.208508] CPU: 7 PID: 2766 Comm: ndctl Not tainted 5.4.0-rc4 #6
-[   41.209064] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-[   41.210175] RIP: 0010:set_pfnblock_flags_mask+0x95/0xf0
-[   41.210643] Code: 04 41 83 e2 3c 48 8d 04 a8 48 c1 e0 07 48 03 04 dd e0 =
-59 55 bb 48 8b 58 68 48 39 da 73 0e 48 c7 c6 70 ac 11 bb e8 1b b2 fd ff <0f=
-> 0b 48 03 58 78 48 39 da 73 e9 49 01 ca b9 3f 00 00 00 4f 8d 0c
-[   41.212354] RSP: 0018:ffffac0d41557c80 EFLAGS: 00010246
-[   41.212821] RAX: 000000000000004a RBX: 0000000000244a00 RCX: 00000000000=
-00000
-[   41.213459] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffbb1=
-197dc
-[   41.214100] RBP: 000000000000000c R08: 0000000000000439 R09: 00000000000=
-00059
-[   41.214736] R10: 0000000000000000 R11: ffffac0d41557b08 R12: ffff8be475e=
-a72b0
-[   41.215376] R13: 000000000000fa00 R14: 0000000000250000 R15: 00000000fff=
-c0bb5
-[   41.216008] FS:  00007f30862ab600(0000) GS:ffff8be57bc40000(0000) knlGS:=
-0000000000000000
-[   41.216771] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   41.217299] CR2: 000055e824d0d508 CR3: 0000000231dac000 CR4: 00000000000=
-006e0
-[   41.217934] Call Trace:
-[   41.218225]  memmap_init_zone_device+0x165/0x17c
-[   41.218642]  memremap_pages+0x4c1/0x540
-[   41.218989]  devm_memremap_pages+0x1d/0x60
-[   41.219367]  pmem_attach_disk+0x16b/0x600 [nd_pmem]
-[   41.219804]  ? devm_nsio_enable+0xb8/0xe0
-[   41.220172]  nvdimm_bus_probe+0x69/0x1c0
-[   41.220526]  really_probe+0x1c2/0x3e0
-[   41.220856]  driver_probe_device+0xb4/0x100
-[   41.221238]  device_driver_attach+0x4f/0x60
-[   41.221611]  bind_store+0xc9/0x110
-[   41.221919]  kernfs_fop_write+0x116/0x190
-[   41.222326]  vfs_write+0xa5/0x1a0
-[   41.222626]  ksys_write+0x59/0xd0
-[   41.222927]  do_syscall_64+0x5b/0x180
-[   41.223264]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   41.223714] RIP: 0033:0x7f30865d0ed8
-[   41.224037] Code: 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 =
-f3 0f 1e fa 48 8d 05 45 78 0d 00 8b 00 85 c0 75 17 b8 01 00 00 00 0f 05 <48=
-> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 41 54 49 89 d4 55
-[   41.225920] RSP: 002b:00007fffe5d30a78 EFLAGS: 00000246 ORIG_RAX: 000000=
-0000000001
-[   41.226608] RAX: ffffffffffffffda RBX: 000055e824d07f40 RCX: 00007f30865=
-d0ed8
-[   41.227242] RDX: 0000000000000007 RSI: 000055e824d07f40 RDI: 00000000000=
-00004
-[   41.227870] RBP: 0000000000000007 R08: 0000000000000007 R09: 00000000000=
-00006
-[   41.228753] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000=
-00004
-[   41.229419] R13: 00007f30862ab528 R14: 0000000000000001 R15: 000055e824d=
-07f40
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-While creating a namespace and initializing memmap, if you destroy the name=
-space
-and shrink the zone, it will initialize the memmap outside the zone and
-trigger VM_BUG_ON_PAGE(!zone_spans_pfn(page_zone(page), pfn), page) in
-set_pfnblock_flags_mask()."
-
-
-This BUG is also mitigated by this commit, where we for now stop to
-shrink the ZONE_DEVICE zone until we can do it in a safe and clean
-way.
-
---=20
-
-Thanks,
-
-David / dhildenb
+regards,
+dan carpenter
 
