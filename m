@@ -2,118 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0CAB102E4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 755A9102E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:39:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbfKSVhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 16:37:37 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36043 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbfKSVhg (ORCPT
+        id S1727431AbfKSVjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 16:39:03 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:42505 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbfKSVjC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 16:37:36 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c22so5575840wmd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 13:37:35 -0800 (PST)
+        Tue, 19 Nov 2019 16:39:02 -0500
+Received: by mail-pg1-f202.google.com with SMTP id p8so16520746pgm.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 13:39:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flameeyes-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EUCwF1LzJLvsN7CqOcV9XgCxKH6O+I2o02sRA/ocWcg=;
-        b=tE/C24EcDf+siaLLJiKehEkKir67hqAqLZ0CHsfvHjfepvqomS5j8L+YyH9DV9SKxA
-         uGKwRZYH1QiqH6RDhfaWfatt2qbn+2at2x69Sni3SM2VAJHrBd5/ZCRthKelOU2OPjNb
-         ay9f21f1ge1diCNOla/Bjar232huEqoyPOlrGzO7Z9/yIDUVPG4b4WBlSV2ArT+PZg30
-         XIH/ZfPil28uM0L2tG5xUqUbQMvFyO2cAnlcdqK/ieRNONBRNrj/hXvXJFRMkoE1vxlz
-         1q8Z+uqCm3pf2X+XW9cosK+Pt22yBz9flJfp4PcCf+rkr+jbMEwW5I+rOr67JiHq/B2L
-         +0ag==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=6Oh8ez2vQeUAb5PnTKMOWQGApcFEd8vMEamkT67anhA=;
+        b=l8EMZDoz0ncUEb4shgTBSTIj1pS4wqZFXkz7gFMBxdZSjfycv6kM3MA/0efHq1TYGS
+         bQ8xu8kr0EfaIywUvuBjrpKOZi+dpA4ASU4DQ1F50s2oLIDMJoC9A34cXKw+U8S5PhIm
+         zpo/Ytsfiy2l4Yx9wr9SsWw5NgSv89oqfO88TPOozgedrlP/chHEcbHua5kRWywRgwVI
+         z4rLgpQBiC6iy6pW7ClaYLFfwCTYTjrkB0C5pAAINwyTnCzjCkKf2pZSlLEK17fwKFoG
+         xJOzucXyeHBIJowKHjryY3FrpF78uFB24kMuBxJ+3BIJxazcaKAI6D3qJz0UVXv1cOho
+         hSgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EUCwF1LzJLvsN7CqOcV9XgCxKH6O+I2o02sRA/ocWcg=;
-        b=KX/26EcotmF9RrND+W4hO7Hmxrqa5yQmQXO71a7675ssGn9WTpgNEfxIuVkxWlPu37
-         Zrslrn/AV0lY46D1XmP0ryb/o13fqkqMPWpe2ZhoAYr+wBBtLIN0WZMmwNGy/WlFoeR9
-         b+xvZRXZ3R3MJ95TGdOhhY9Wf2rx5ePKwEEh31DC8jyE9C5O5M374n7CtwLnW6EaZJM4
-         4n4UaJNWXg0Dae/zRsanXJOzVFKrOge4+Gmoe1nsruZi7R0gO47dOsP2W4K+W5OexKOT
-         SpLrcZqdyUxbhI+MVGOcd87NBnAUobNih4hm2S8SbUsja5Omk4XS6fVQ2UOJ4QImlhRo
-         hHvA==
-X-Gm-Message-State: APjAAAWd0tY/2XJ+UkOFJ7757xvTcNk09cy0oYho3dn1NL+zabieQNIT
-        iptUVzYPL/G2p8BbWEMvjLpDNw==
-X-Google-Smtp-Source: APXvYqy7q9ekcOYfFtC6xl/Y4NYVCXMi/bH334HVz/Mi24sqmyw0R+YampRJBYl4L4HGXpVje1mWng==
-X-Received: by 2002:a05:600c:1002:: with SMTP id c2mr8464689wmc.79.1574199454277;
-        Tue, 19 Nov 2019 13:37:34 -0800 (PST)
-Received: from localhost ([2a01:4b00:80c6:1000:283d:d5ff:fee6:36c5])
-        by smtp.gmail.com with ESMTPSA id w12sm4393628wmi.17.2019.11.19.13.37.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Nov 2019 13:37:33 -0800 (PST)
-From:   =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: [PATCH 2/2] sr_vendor: support Beurer GL50 evo CD-on-a-chip devices.
-Date:   Tue, 19 Nov 2019 21:37:09 +0000
-Message-Id: <20191119213709.10900-2-flameeyes@flameeyes.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191119213709.10900-1-flameeyes@flameeyes.com>
-References: <20191119213709.10900-1-flameeyes@flameeyes.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=6Oh8ez2vQeUAb5PnTKMOWQGApcFEd8vMEamkT67anhA=;
+        b=rzmhOr7Oro4JKvdSEN0c8nV7jd7ALblaKF/OfUhJtyu3YmIhpDb8z8OoPA5fv632yc
+         fd4yaTRO5F38SWA6HeCDq/fU08AvHBnE5im1FJI/gdoA07l0/sC5QfElGpj4ndrBBqvv
+         pNLHJPdLZzZfJlsbeq3KZom+99NfErTqjPMJqmXyO1hGyKM7X7hy/q/Aj0mgvJdopDd3
+         a7FJ3eR4Zo4QctaxnYL7lTbd2Y/i7LrwAMnwVZA+My641HD+nFmpv6+ljx8TArRek8HK
+         oIsYYwrUhkBltA+NHV21l5cpMm6LW9/Xq6l55pPJ9mnEIbk4V2wVeCWYEtL9FJz1XtSx
+         XpcQ==
+X-Gm-Message-State: APjAAAVeA2Hus2D3nh38q5ZZeNIYrlZl9iBWsURkrep6Bjcoik2vB1yS
+        alMbPDWQrMCh4NZNXuvUnjpIRWVrMgGrnHcQ7kILuA==
+X-Google-Smtp-Source: APXvYqyih2Ae2jisYX7fb/lrrEwx4vhyeYz8YkVDI9WOTJOniDNVRainjgvbEDqanmXZtuTtyPFGrgSb+6dOtRyyh5t1Pw==
+X-Received: by 2002:a65:5648:: with SMTP id m8mr2923798pgs.286.1574199541054;
+ Tue, 19 Nov 2019 13:39:01 -0800 (PST)
+Date:   Tue, 19 Nov 2019 13:38:34 -0800
+Message-Id: <20191119213834.175992-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH linux-kselftest/test v1] Documentation: kunit: fix typos and
+ gramatical errors
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     shuah@kernel.org, davidgow@google.com
+Cc:     kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+        corbet@lwn.net, heidifahim@google.com, trishalfonso@google.com,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Beurer GL50 evo uses a Cygnal-manufactured CD-on-a-chip that only
-accepts a subset of SCSI commands, and supports neither audio commands
-nor generic packet commands.
+Fix typos and gramatical errors in the Getting Started and Usage guide
+for KUnit.
 
-Actually sending those commands bring the device to an unrecoverable
-state that causes the device to hang and reset.
-
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org
-Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Link: https://patchwork.kernel.org/patch/11156481/
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- drivers/scsi/sr_vendor.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ Documentation/dev-tools/kunit/start.rst |  6 +++---
+ Documentation/dev-tools/kunit/usage.rst | 22 +++++++++++-----------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/scsi/sr_vendor.c b/drivers/scsi/sr_vendor.c
-index e3b0ce25162b..17a56c87d383 100644
---- a/drivers/scsi/sr_vendor.c
-+++ b/drivers/scsi/sr_vendor.c
-@@ -61,6 +61,7 @@
- #define VENDOR_NEC             2
- #define VENDOR_TOSHIBA         3
- #define VENDOR_WRITER          4	/* pre-scsi3 writers */
-+#define VENDOR_CYGNAL_85ED     5	/* CD-on-a-chip */
+diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
+index f4d9a4fa914f8..db146c7d77490 100644
+--- a/Documentation/dev-tools/kunit/start.rst
++++ b/Documentation/dev-tools/kunit/start.rst
+@@ -26,7 +26,7 @@ For more information on this wrapper (also called kunit_tool) checkout the
  
- #define VENDOR_TIMEOUT	30*HZ
+ Creating a kunitconfig
+ ======================
+-The Python script is a thin wrapper around Kbuild as such, it needs to be
++The Python script is a thin wrapper around Kbuild. As such, it needs to be
+ configured with a ``kunitconfig`` file. This file essentially contains the
+ regular Kernel config, with the specific test targets as well.
  
-@@ -99,6 +100,23 @@ void sr_vendor_init(Scsi_CD *cd)
- 	} else if (!strncmp(vendor, "TOSHIBA", 7)) {
- 		cd->vendor = VENDOR_TOSHIBA;
+@@ -62,8 +62,8 @@ If everything worked correctly, you should see the following:
+ followed by a list of tests that are run. All of them should be passing.
  
-+	} else if (!strncmp(vendor, "Beurer", 6) &&
-+		   !strncmp(model, "Gluco Memory", 12)) {
-+		/* The Beurer GL50 evo uses a Cygnal-manufactured CD-on-a-chip
-+		   that only accepts a subset of SCSI commands.  Most of the
-+		   not-implemented commands are fine to fail, but a few,
-+		   particularly around the MMC or Audio commands, will put the
-+		   device into an unrecoverable state, so they need to be
-+		   avoided at all costs.
-+		*/
-+		cd->vendor = VENDOR_CYGNAL_85ED;
-+		cd->cdi.mask |= (
-+			CDC_MULTI_SESSION |
-+			CDC_CLOSE_TRAY | CDC_OPEN_TRAY |
-+			CDC_LOCK |
-+			CDC_GENERIC_PACKET |
-+			CDC_PLAY_AUDIO
-+			);
- 	}
- #endif
- }
+ .. note::
+-   Because it is building a lot of sources for the first time, the ``Building
+-   kunit kernel`` step may take a while.
++	Because it is building a lot of sources for the first time, the
++	``Building KUnit kernel`` step may take a while.
+ 
+ Writing your first test
+ =======================
+diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
+index c6e69634e274b..ae42a0d128c27 100644
+--- a/Documentation/dev-tools/kunit/usage.rst
++++ b/Documentation/dev-tools/kunit/usage.rst
+@@ -16,7 +16,7 @@ Organization of this document
+ =============================
+ 
+ This document is organized into two main sections: Testing and Isolating
+-Behavior. The first covers what a unit test is and how to use KUnit to write
++Behavior. The first covers what unit tests are and how to use KUnit to write
+ them. The second covers how to use KUnit to isolate code and make it possible
+ to unit test code that was otherwise un-unit-testable.
+ 
+@@ -174,13 +174,13 @@ Test Suites
+ ~~~~~~~~~~~
+ 
+ Now obviously one unit test isn't very helpful; the power comes from having
+-many test cases covering all of your behaviors. Consequently it is common to
+-have many *similar* tests; in order to reduce duplication in these closely
+-related tests most unit testing frameworks provide the concept of a *test
+-suite*, in KUnit we call it a *test suite*; all it is is just a collection of
+-test cases for a unit of code with a set up function that gets invoked before
+-every test cases and then a tear down function that gets invoked after every
+-test case completes.
++many test cases covering all of a unit's behaviors. Consequently it is common
++to have many *similar* tests; in order to reduce duplication in these closely
++related tests most unit testing frameworks - including KUnit - provide the
++concept of a *test suite*. A *test suite* is just a collection of test cases
++for a unit of code with a set up function that gets invoked before every test
++case and then a tear down function that gets invoked after every test case
++completes.
+ 
+ Example:
+ 
+@@ -211,7 +211,7 @@ KUnit test framework.
+ .. note::
+    A test case will only be run if it is associated with a test suite.
+ 
+-For a more information on these types of things see the :doc:`api/test`.
++For more information on these types of things see the :doc:`api/test`.
+ 
+ Isolating Behavior
+ ==================
+@@ -454,7 +454,7 @@ KUnit on non-UML architectures
+ By default KUnit uses UML as a way to provide dependencies for code under test.
+ Under most circumstances KUnit's usage of UML should be treated as an
+ implementation detail of how KUnit works under the hood. Nevertheless, there
+-are instances where being able to run architecture specific code, or test
++are instances where being able to run architecture specific code or test
+ against real hardware is desirable. For these reasons KUnit supports running on
+ other architectures.
+ 
+@@ -557,7 +557,7 @@ run your tests on your hardware setup just by compiling for your architecture.
+ .. important::
+    Always prefer tests that run on UML to tests that only run under a particular
+    architecture, and always prefer tests that run under QEMU or another easy
+-   (and monitarily free) to obtain software environment to a specific piece of
++   (and monetarily free) to obtain software environment to a specific piece of
+    hardware.
+ 
+ Nevertheless, there are still valid reasons to write an architecture or hardware
 -- 
-2.23.0
+2.24.0.432.g9d3f5f5b63-goog
 
