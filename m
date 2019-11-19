@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 254381015CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81EDE101487
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730960AbfKSFr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:47:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43768 "EHLO mail.kernel.org"
+        id S1729749AbfKSFex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:34:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730714AbfKSFrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:47:25 -0500
+        id S1727835AbfKSFeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:34:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BE292071B;
-        Tue, 19 Nov 2019 05:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AB4A214DE;
+        Tue, 19 Nov 2019 05:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142443;
-        bh=RKRTRBPAlk+f+aw3C7A6A3UDnlrwH0Cc8yXEXBYKvkA=;
+        s=default; t=1574141689;
+        bh=4B1lfGVTlTuZKRFOEPEp1APClwPQiys1+IGzeX5ARuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hAyURS4nP0LAubSYxncjvCGQCmaWa1j7bb1A+mLeqpND+cYt9wGzUPCXuCBeQ4ZU2
-         /lbI56blQtu3CwWyLVxp8Rq+sCxytdeSwETI5TLUzBYSvJPulCfvSKvcezTJbPBHjU
-         7mCfesy/L5IHtrGdaE6iLdd9c93uqZWboC8X10gU=
+        b=19+z9un1TXwp70r+RLs7ePHKDm0R+/DzLG6OLQkBMIF1FdqhvS1kKFmKrNrtpZsZe
+         AkkZ/l0l+fbAhbGFZAXVu25ZpBHjbcoZG1WwgLT+2uUPaxw0N/TXT+VyG2ppP7nCZQ
+         xTaGseDPNn6TLEd/4uPUkKBmgdaYBPyr0wt8Cgus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 043/239] ath10k: limit available channels via DT ieee80211-freq-limit
-Date:   Tue, 19 Nov 2019 06:17:23 +0100
-Message-Id: <20191119051306.116827965@linuxfoundation.org>
+Subject: [PATCH 4.19 247/422] tty: serial: qcom_geni_serial: Fix serial when not used as console
+Date:   Tue, 19 Nov 2019 06:17:24 +0100
+Message-Id: <20191119051415.000288263@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +44,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 34d5629d2ca89d847b7040762b87964c696c14da ]
+[ Upstream commit c362272bdea32bf048d6916b0a2dc485eb9cf787 ]
 
-Tri-band devices (1x 2.4GHz + 2x 5GHz) often incorporate special filters in
-the RX and TX path. These filtered channel can in theory still be used by
-the hardware but the signal strength is reduced so much that it makes no
-sense.
+If you've got the "console" serial port setup to use just as a UART
+(AKA there is no "console=ttyMSMX" on the kernel command line) then
+certain initialization is skipped.  When userspace later tries to do
+something with the port then things go boom (specifically, on my
+system, some sort of exception hit that caused the system to reboot
+itself w/ no error messages).
 
-There is already a DT property to limit the available channels but ath10k
-has to manually call this functionality to limit the currrently set wiphy
-channels further.
+Let's cleanup / refactor the init so that we always run the same init
+code regardless of whether we're using the console.
 
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+To make this work, we make rely on qcom_geni_serial_pm doing its job
+to turn resources on.
+
+For the record, here is a trace of the order of things (after this
+patch) when console= is specified on the command line and we have an
+agetty on the port:
+  qcom_geni_serial_pm: 4 (undefined) => 0 (on)
+  qcom_geni_console_setup
+  qcom_geni_serial_port_setup
+  qcom_geni_serial_console_write
+  qcom_geni_serial_startup
+  qcom_geni_serial_start_tx
+
+...and here is the order of things (after this patch) when console= is
+_NOT_ specified on the command line and we have an agetty port:
+  qcom_geni_serial_pm: 4 => 0
+  qcom_geni_serial_pm: 0 => 3
+  qcom_geni_serial_pm: 3 => 0
+  qcom_geni_serial_startup
+  qcom_geni_serial_port_setup
+  qcom_geni_serial_pm: 0 => 3
+  qcom_geni_serial_pm: 3 => 0
+  qcom_geni_serial_startup
+  qcom_geni_serial_start_tx
+
+Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/qcom_geni_serial.c | 55 +++++++++++++--------------
+ 1 file changed, 26 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 58a3c42c4aedb..8c4bb56c262f6 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -17,6 +17,7 @@
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 5b96df4ad5b30..69b980bb8ac29 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -851,6 +851,23 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+ {
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 	unsigned int rxstale = DEFAULT_BITS_PER_CHAR * STALE_TIMEOUT;
++	u32 proto;
++
++	if (uart_console(uport))
++		port->tx_bytes_pw = 1;
++	else
++		port->tx_bytes_pw = 4;
++	port->rx_bytes_pw = RX_BYTES_PW;
++
++	proto = geni_se_read_proto(&port->se);
++	if (proto != GENI_SE_UART) {
++		dev_err(uport->dev, "Invalid FW loaded, proto: %d\n", proto);
++		return -ENXIO;
++	}
++
++	qcom_geni_serial_stop_rx(uport);
++
++	get_tx_fifo_size(port);
  
- #include "mac.h"
+ 	set_rfr_wm(port);
+ 	writel_relaxed(rxstale, uport->membase + SE_UART_RX_STALE_CNT);
+@@ -874,30 +891,19 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+ 			return -ENOMEM;
+ 	}
+ 	port->setup = true;
++
+ 	return 0;
+ }
  
-+#include <net/cfg80211.h>
- #include <net/mac80211.h>
- #include <linux/etherdevice.h>
- #include <linux/acpi.h>
-@@ -8174,6 +8175,7 @@ int ath10k_mac_register(struct ath10k *ar)
- 		ar->hw->wiphy->bands[NL80211_BAND_5GHZ] = band;
+ static int qcom_geni_serial_startup(struct uart_port *uport)
+ {
+ 	int ret;
+-	u32 proto;
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 
+ 	scnprintf(port->name, sizeof(port->name),
+ 		  "qcom_serial_%s%d",
+ 		(uart_console(uport) ? "console" : "uart"), uport->line);
+ 
+-	if (!uart_console(uport)) {
+-		port->tx_bytes_pw = 4;
+-		port->rx_bytes_pw = RX_BYTES_PW;
+-	}
+-	proto = geni_se_read_proto(&port->se);
+-	if (proto != GENI_SE_UART) {
+-		dev_err(uport->dev, "Invalid FW loaded, proto: %d\n", proto);
+-		return -ENXIO;
+-	}
+-
+-	get_tx_fifo_size(port);
+ 	if (!port->setup) {
+ 		ret = qcom_geni_serial_port_setup(uport);
+ 		if (ret)
+@@ -1056,6 +1062,7 @@ static int __init qcom_geni_console_setup(struct console *co, char *options)
+ 	int bits = 8;
+ 	int parity = 'n';
+ 	int flow = 'n';
++	int ret;
+ 
+ 	if (co->index >= GENI_UART_CONS_PORTS  || co->index < 0)
+ 		return -ENXIO;
+@@ -1071,21 +1078,10 @@ static int __init qcom_geni_console_setup(struct console *co, char *options)
+ 	if (unlikely(!uport->membase))
+ 		return -ENXIO;
+ 
+-	if (geni_se_resources_on(&port->se)) {
+-		dev_err(port->se.dev, "Error turning on resources\n");
+-		return -ENXIO;
+-	}
+-
+-	if (unlikely(geni_se_read_proto(&port->se) != GENI_SE_UART)) {
+-		geni_se_resources_off(&port->se);
+-		return -ENXIO;
+-	}
+-
+ 	if (!port->setup) {
+-		port->tx_bytes_pw = 1;
+-		port->rx_bytes_pw = RX_BYTES_PW;
+-		qcom_geni_serial_stop_rx(uport);
+-		qcom_geni_serial_port_setup(uport);
++		ret = qcom_geni_serial_port_setup(uport);
++		if (ret)
++			return ret;
  	}
  
-+	wiphy_read_of_freq_limits(ar->hw->wiphy);
- 	ath10k_mac_setup_ht_vht_cap(ar);
+ 	if (options)
+@@ -1203,11 +1199,12 @@ static void qcom_geni_serial_pm(struct uart_port *uport,
+ {
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
  
- 	ar->hw->wiphy->interface_modes =
++	/* If we've never been called, treat it as off */
++	if (old_state == UART_PM_STATE_UNDEFINED)
++		old_state = UART_PM_STATE_OFF;
++
+ 	if (new_state == UART_PM_STATE_ON && old_state == UART_PM_STATE_OFF)
+ 		geni_se_resources_on(&port->se);
+-	else if (!uart_console(uport) && (new_state == UART_PM_STATE_ON &&
+-				old_state == UART_PM_STATE_UNDEFINED))
+-		geni_se_resources_on(&port->se);
+ 	else if (new_state == UART_PM_STATE_OFF &&
+ 			old_state == UART_PM_STATE_ON)
+ 		geni_se_resources_off(&port->se);
 -- 
 2.20.1
 
