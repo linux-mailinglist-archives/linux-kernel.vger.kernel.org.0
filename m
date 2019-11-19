@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8097D101587
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 026C610158A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbfKSFpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:45:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
+        id S1730929AbfKSFpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:45:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730439AbfKSFo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:57 -0500
+        id S1730908AbfKSFpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:45:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A73A82071B;
-        Tue, 19 Nov 2019 05:44:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5493C208C3;
+        Tue, 19 Nov 2019 05:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142297;
-        bh=LSJuR6xuJV+Zd/1X8vuZZ7n0Yx4USt8B+Uah0jtEuXg=;
+        s=default; t=1574142299;
+        bh=dkQQjEz/3AL8lCoqR+WhrS+wxdB8zSvy0TZOHAZ0ujY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LOgDJfMrz9LtQ0pW9dZFGSKlzqj4ijaDIou1iO9UUs9rvEFX3ZzOxZs5OjZZb1yCt
-         jkRry9FH5vocZ1rAgjTgNVxoeu+fujp7ek7sWPV+KYyBL8+ykWd3015xOdTcHRbKkZ
-         5YUA9l6lwLQS+cBYKymPvxRY8gG7YmuYiW4doljA=
+        b=clKd9zEMbtwQt5cMTl+lCciovaHDzg/WHLgY4faYhlMwpQgS6TTd0O1JunI98FqvL
+         lbssxFJOLP0vVB6xfpprZZukls/JOI2lFnZKeOPR35U4RhvODB1dmP9EUoD3LCEcLu
+         mjlLxx1Cusyg4BldvwylCjE7gGC0JzOevVQ5Zvz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Martin Lucina <martin@lucina.net>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 032/239] arm64: dts: allwinner: a64: Olinuxino: fix DRAM voltage
-Date:   Tue, 19 Nov 2019 06:17:12 +0100
-Message-Id: <20191119051303.669678206@linuxfoundation.org>
+Subject: [PATCH 4.14 033/239] arm64: dts: allwinner: a64: NanoPi-A64: Fix DCDC1 voltage
+Date:   Tue, 19 Nov 2019 06:17:13 +0100
+Message-Id: <20191119051303.951967036@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -47,47 +46,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit 93366b49a35f3a190052734b3f32c8fe2535b53f ]
+[ Upstream commit 480f58cdbe392d4387a2193b6131a277e0111dd0 ]
 
-The Olinuxino board uses DDR3L chips which are supposed to be driven
-with 1.35V. The reset default of the AXP is properly set to 1.36V.
-
-While technically the chips can also run at 1.5 volts, changing the
-voltage on the fly while booting Linux is asking for trouble. Also
-running at a lower voltage saves power.
-
-So fix the DCDC5 value to match the actual board design.
+According to the NanoPi-A64 schematics, DCDC1 is connected to a voltage
+rail named "VDD_SYS_3.3V". All users seem to expect 3.3V here: the
+Ethernet PHY, the uSD card slot, the camera interface and the GPIO pins
+on the headers.
+Fix up the voltage on the regulator to lift it up to 3.3V.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Tested-by: Martin Lucina <martin@lucina.net>
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 338e786155b1f..2ef779b027572 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -120,10 +120,14 @@
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index 2beef9e6cb885..aa0b3844ad63e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -126,9 +126,9 @@
  
- /* DCDC3 is polyphased with DCDC2 */
- 
-+/*
-+ * The board uses DDR3L DRAM chips. 1.36V is the closest to the nominal
-+ * 1.35V that the PMIC can drive.
-+ */
- &reg_dcdc5 {
+ &reg_dcdc1 {
  	regulator-always-on;
--	regulator-min-microvolt = <1500000>;
--	regulator-max-microvolt = <1500000>;
-+	regulator-min-microvolt = <1360000>;
-+	regulator-max-microvolt = <1360000>;
- 	regulator-name = "vcc-ddr3";
+-	regulator-min-microvolt = <3000000>;
+-	regulator-max-microvolt = <3000000>;
+-	regulator-name = "vcc-3v";
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-3v3";
  };
  
+ &reg_dcdc2 {
 -- 
 2.20.1
 
