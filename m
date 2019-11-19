@@ -2,111 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F079710278E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB31F10279A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:05:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfKSPDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 10:03:10 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41393 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbfKSPDJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:03:09 -0500
-Received: by mail-lj1-f196.google.com with SMTP id m4so18754449ljj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 07:03:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PbOCer/DbEIDkV9HM4Ua32e1t8DBngr+pDXysIFGRg8=;
-        b=ghhb7CWnwNxAbrzbSuXvrfTWrUaikmjOuxcxbZzhekhweUFV9we26m0KktjuUT12cy
-         DozWtpM03n61uITyiCInX3tY4YBxpKlEOG2nSGKyK5N9nZYuhQI7I8nlgr7v9u4WTAiC
-         azEp+p7C9AEL7DBegmAPPbrND76N9Jjf0OWzfEkUmTdIa55WHk3ybiz29nshZn4Gtits
-         Bc0GjA0BnNBYKZpWPx7MQIa9cxGUQeloQ3M7jYsv2LvZQFDeLGf0L2qUnJTskweJCjCu
-         156mBCrJ72nFj2G7luKBxfO5xwCFDuJ3NdbRLreV7CtFnrHx/itCksfMS1Fxmfo83llm
-         eq1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PbOCer/DbEIDkV9HM4Ua32e1t8DBngr+pDXysIFGRg8=;
-        b=DWKjl4XqWhyecbilTdZ+RxmhkdbJu8vu+8YRCVAjqTPQ1RD7eQGRCha9HpwZupAyoy
-         KAEiedbn8kq0Bv3mhNwVeErjbg2fD5bi0ko7MIunTWp5tJF5+TK7P4pKULLv1Cv0tIqS
-         Ys9Xtqw+E+SFW3KDdSp2XY/qihA6kQaOyaoQxUEGC9Q0xd/8RhDznVyirg1DYQDlhPQZ
-         i92Gc+3uMLEkOE36EpXldoK3s2IMV4YV1Fvif3mVFySq0aCcZbKhDOiTmp85yrYsJ0+f
-         V+H9nWxsbUNKBMhu37aBA7oIuxO9yQdlGtKOgMiqU8uBGXvjUid56dPH1IqSI9ZAJoNz
-         zX+Q==
-X-Gm-Message-State: APjAAAXHjCMzTCMD+Wo9jY5UHO1q2/QMm0vT6Wg5aeAOB+9ZrdIJezUh
-        UEtsNVyrxlMJYyNVxXf4pxJ2I42BYsvgvijWlcyJoQ==
-X-Google-Smtp-Source: APXvYqxK4BLaj4M+k3bwc7DPGWsPytu2MBOD+HBWoGml8EjxWn/fiVfiTHJU/tL8gTg0U5x+X6BHUCC0vamRMq4wY+M=
-X-Received: by 2002:a2e:8597:: with SMTP id b23mr4384572lji.218.1574175787982;
- Tue, 19 Nov 2019 07:03:07 -0800 (PST)
-MIME-Version: 1.0
-References: <1573560684-48104-1-git-send-email-yash.shah@sifive.com>
- <1573560684-48104-4-git-send-email-yash.shah@sifive.com> <CAMpxmJWcuV7goPWxOWv_Og9GwzGrioF62SfS1LCiHf9eDX=vdw@mail.gmail.com>
- <CH2PR13MB33680443C101511E66ECADF08C4D0@CH2PR13MB3368.namprd13.prod.outlook.com>
- <CAMpxmJU+P=nWe9fpp45Jw=GwX3+V0sVVshRcE7AD1Kyz_F0qJQ@mail.gmail.com>
-In-Reply-To: <CAMpxmJU+P=nWe9fpp45Jw=GwX3+V0sVVshRcE7AD1Kyz_F0qJQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 19 Nov 2019 16:02:56 +0100
-Message-ID: <CACRpkdb9KKPsu7dkjVmHbgQcdo1Zx9uC_jtd6HFwM+RO2EA4nw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] gpio: sifive: Add GPIO driver for SiFive SoCs
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Yash Shah <yash.shah@sifive.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "bmeng.cn@gmail.com" <bmeng.cn@gmail.com>,
-        "atish.patra@wdc.com" <atish.patra@wdc.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        id S1728128AbfKSPFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 10:05:16 -0500
+Received: from mail-eopbgr20055.outbound.protection.outlook.com ([40.107.2.55]:57060
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727066AbfKSPFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 10:05:16 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y3J7sl6K6BbWEBa0jVfc+TRXZ9cO0NVO9RP6hcsyN/yi239OxqVlRu3tNcB2Z4PvKo1exIrxiqiFeRlwugxwCvSDHHyV38AtzLyUyH+/TLkK4Hqd5HCHTvw9JqbY9K7VONkTR3NOO9SeS3OS6JyeOqBQhAdjUOvIACx4YWDoN1vz6+d+P3ayeMtAPn5L03ScXzB02Wdyy4EEW/jbLzUypXOfDfSI5HZFnf925VeroL1RgnEyFdDfgyd9IpU7L2ytWcccyPS8/E0ZvyfEZ+Ks0X9ivwSBpROCgzM0YJFMX2/Q07dCBOLfifFoyREY6kkxQAHNmCn/yAgwT4l89585mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X/k4jdrsDHtc82q20JIAXTpNLKbFGNMFBc3vbvMQueM=;
+ b=Mt04W/NMoWeRpq3/7Snt+b/IOEEpaDiqnyCTOW7IETGPqvqjD08qBySsRcq/t7vKRAq84DhA30y4a+AJh3OdXIkyn/8qWworm+syR5IBxp1LdnGCDP/mEr/Beu8rWzzXH0gwe6un7/Qv/0Ly/7rpCHgvHhZ/ZVz/hQuLlrqWSjQb+JshvQyhrIGIfkrYNO2KUlDbu1Z9o9atTZTCsJflYdST7V/GcFmw9U/NF+9lSuVN7axPZxYfMpnOrZ4M/J/Ij6zd3yoVOhaCfD+aF2fLZAHLpND4wndzwy1NSxZNomB7guehQ9wtwELU+9lyaSq7YIJRLVLWzZjr5mtMj9H49Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X/k4jdrsDHtc82q20JIAXTpNLKbFGNMFBc3vbvMQueM=;
+ b=Pc+UREXu8lqQCsXzNWSxR7ohpM5dU2daF/96S3b7RdqqTH4B3R01doXIiBit3ckBV0x8ruReQ8TDGqlhUeKXBpR/+U2MGxDaUtEavFu/iollH8d8u7wLBEa3SaK2GBFDMEJZKhX7PUjPaEZ/oJUZpJ9ql6uy3QSOVQLzw7YIJIQ=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3920.eurprd04.prod.outlook.com (52.134.17.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.27; Tue, 19 Nov 2019 15:05:12 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::89e1:552e:a24d:e72]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::89e1:552e:a24d:e72%3]) with mapi id 15.20.2474.015; Tue, 19 Nov 2019
+ 15:05:12 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 04/12] crypto: caam - refactor ahash_edesc_alloc
+Thread-Topic: [PATCH 04/12] crypto: caam - refactor ahash_edesc_alloc
+Thread-Index: AQHVnZazrPktEYxsFUGlA3OloV904g==
+Date:   Tue, 19 Nov 2019 15:05:12 +0000
+Message-ID: <VI1PR0402MB3485A8C1320F32659B95776B984C0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1574029845-22796-1-git-send-email-iuliana.prodan@nxp.com>
+ <1574029845-22796-5-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0da5732f-9645-4150-9d36-08d76d01e06e
+x-ms-traffictypediagnostic: VI1PR0402MB3920:|VI1PR0402MB3920:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB39203C03D04FA7A8DD458102984C0@VI1PR0402MB3920.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-forefront-prvs: 022649CC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(346002)(39860400002)(396003)(189003)(199004)(33656002)(4744005)(102836004)(25786009)(229853002)(7696005)(66446008)(26005)(81166006)(8676002)(52536014)(64756008)(4326008)(86362001)(81156014)(91956017)(14444005)(256004)(76116006)(76176011)(14454004)(8936002)(99286004)(44832011)(486006)(476003)(5660300002)(3846002)(446003)(66556008)(66476007)(71190400001)(71200400001)(6246003)(66946007)(6636002)(6116002)(186003)(2906002)(478600001)(66066001)(6436002)(55016002)(54906003)(110136005)(316002)(74316002)(305945005)(53546011)(6506007)(7736002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3920;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: zXJ+sCIvzUUmYbl30N97QBu6xZZGT/vjXT+Uer9pa8PyOpMJEmdxzzTErUNg9Jd4qftjKjBM2SRwgCqJ0F8hi7Pve/Wg+qC21lFUf+ndOXpjJ7xGmhZ8AD232tjDnEndlAjKPT67z25SyuIDkMyf6Qtr5JP/vbU++dpFntkskUfng+j+RJhLKB8oez2gqV3moh7B4dOdcwKgslYAaKhv0ek/ol1Teh7bveP7lY5TnCboCsuWgewUUgTkpD8SOiz8aFmE7bG/BeRA4+NsAAXYiO9Ts8QHFtCliWZISNJzMSYyTP8yCbBFJTRa7S1dUAW72VGaq4oPInQ+mqI/g5Td5YnLISZDCfqyiycF3kdHV8mj0AVKuGOmtTFmBb7vHhKuhlEvlcI1YJpyEBbi+nWA+0TmrGHU6po7/nQ6rp780W+Xb69hvrCzxwwNLiLkdOil
+Content-Type: text/plain; charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0da5732f-9645-4150-9d36-08d76d01e06e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 15:05:12.2735
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rpIhjleBcQUpDeUdbqJjUsuheuWUbCDqVwnc//am5/GbKLwzcwGPxY9eXyS/9YfSIfbJHh/ZJZ8d42RmCWZT4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3920
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 11:15 AM Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
-> pon., 18 lis 2019 o 11:03 Yash Shah <yash.shah@sifive.com> napisa=C5=82(a=
-):
-
-> > As suggested in the comments received on the RFC version of this patch[=
-0], I am trying to use regmap MMIO by looking at gpio-mvebu.c. I got your p=
-oint regarding the usage of own locks is not making any sense.
-> > Here is what I will do in v2:
-> > 1. drop the usage of own locks
-> > 2. consistently use regmap_* apis for register access (replace all iowr=
-ites).
-> > Does this make sense now?
->
-> The thing is: the gpio-mmio code you're (correctly) reusing uses a
-> different lock - namely: bgpio_lock in struct gpio_chip. If you want
-> to use regmap for register operations, then you need to set
-> disable_locking in regmap_config to true and then take this lock
-> manually on every access.
-
-Is it really so? The bgpio_lock does protect the registers used
-by regmap-mmio but unless the interrupt code is also using the
-same registers it is fine to have a different lock for those.
-
-Is the interrupt code really poking into the very same registers
-as passed to bgpio_init()?
-
-Of course it could be seen as a bit dirty to poke around in the
-same memory space with regmap and the bgpio_* accessors
-but in practice it's no problem if they never touch the same
-things.
-
-Yours,
-Linus Walleij
+On 11/18/2019 12:31 AM, Iuliana Prodan wrote:=0A=
+> Changed parameters for ahash_edesc_alloc function:=0A=
+> - remove flags since they can be computed in=0A=
+> ahash_edesc_alloc, the only place they are needed;=0A=
+> - use ahash_request instead of caam_hash_ctx, which=0A=
+> can be obtained from request.=0A=
+> =0A=
+Technically, the use of ahash_request is to allow for access to=0A=
+request flags. The change is needed only to be able to refactor=0A=
+the computation of gfp flags.=0A=
+=0A=
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
