@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA802101427
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:30:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F5C101429
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbfKSFax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:30:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49740 "EHLO mail.kernel.org"
+        id S1729190AbfKSFa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:30:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727906AbfKSFav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:30:51 -0500
+        id S1727906AbfKSFay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:30:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF483222DC;
-        Tue, 19 Nov 2019 05:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92C85222A2;
+        Tue, 19 Nov 2019 05:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141451;
-        bh=sJpnYYA+MXxb7Zkkl21ND/xHqtmHcYZH+6QgZoeKKU0=;
+        s=default; t=1574141454;
+        bh=OORbBAMXynYK2z/1JuxkMgDLq34729Lcgd17vriR7xw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMUn2xaCwuLpWtjECNtqELObPAQcA2QLq+fx/r26V8e1r14MtVdMOeq+KjNAwT3ru
-         ZekOy8j1ZdNeC/8Sa0IzVGd1FMn1N8lWuHexBpcGkY2bnnzMyqd7prZ7hLe4K58HKS
-         dkFgcTW5JQCXQUZ70y98sPJZIyu+rUMxP87H/FUM=
+        b=x/bO3GIdZ8VVB2FZW6pwGyE241Y7L3nkEGMQzYxC8uRc7R2LbaAX4axQv11sN4lAs
+         RlOGxXWVbVZSBKzvC4ZuRapqSU3tV/WTaHR8WpLzIBuUhbQnqERN9KxD6IlBgmBdJp
+         Qxe/6AHdqjfaxUrw/24BGXJ5scc11Vo4trs+l8to=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 165/422] f2fs: fix memory leak of write_io in fill_super()
-Date:   Tue, 19 Nov 2019 06:16:02 +0100
-Message-Id: <20191119051409.140969784@linuxfoundation.org>
+Subject: [PATCH 4.19 166/422] f2fs: fix memory leak of percpu counter in fill_super()
+Date:   Tue, 19 Nov 2019 06:16:03 +0100
+Message-Id: <20191119051409.193853097@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -46,31 +46,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 0b2103e886e6de9802e1170e57c573443286a483 ]
+[ Upstream commit 4a70e255449c9a13eed7a6eeecc85a1ea63cef76 ]
 
-It needs to release memory allocated for sbi->write_io in error path,
-otherwise, it will cause memory leak.
+In fill_super -> init_percpu_info, we should destroy percpu counter
+in error path, otherwise memory allcoated for percpu counter will
+leak.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/super.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d9106bbe7df63..58931d55dc1d2 100644
+index 58931d55dc1d2..c5d28e92d146e 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2929,7 +2929,7 @@ try_onemore:
- 				     GFP_KERNEL);
- 		if (!sbi->write_io[i]) {
- 			err = -ENOMEM;
--			goto free_options;
-+			goto free_bio_info;
- 		}
+@@ -2516,8 +2516,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
  
- 		for (j = HOT; j < n; j++) {
+-	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
++	err = percpu_counter_init(&sbi->total_valid_inode_count, 0,
+ 								GFP_KERNEL);
++	if (err)
++		percpu_counter_destroy(&sbi->alloc_valid_block_count);
++
++	return err;
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
 -- 
 2.20.1
 
