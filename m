@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703991014E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3525A1015FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:49:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbfKSFie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:38:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60386 "EHLO mail.kernel.org"
+        id S1731459AbfKSFtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:49:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730197AbfKSFiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:38:24 -0500
+        id S1730779AbfKSFtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:49:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB6D214DE;
-        Tue, 19 Nov 2019 05:38:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A67EF20721;
+        Tue, 19 Nov 2019 05:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141903;
-        bh=ejzH4C0ZMnnrZTHEFtbFTF8j1yCHZmWtysIfU/gwCGI=;
+        s=default; t=1574142550;
+        bh=2UhFLBsOtNLWkKSg9OQa1ADu0rYZXbSSRK1EzggFSac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h8rOPD0EUy227idSLqFgP9DQpkUITzStc8yR5qs3/ZcA78uqLcNhgQLo/obCHOvff
-         ej7P17ucKDbWfdrFIQ+xYM0WoBtMohPmxJjaeE8itcBFtTI4Z2G4qnuibhfBbafH7G
-         qkUDflOT3gfaNjGqY8BXyZ0lonXtDm5sZHtEjVyw=
+        b=NY1h7S0LJLom4J5p8nbNIT6KljhqmppY7NGvewg4GQ6i5gJVowSiSxJH0pRg4Qssz
+         iIHpTJuu6zX70UNBTF9thgkb04Iy8B/h2jqi6CGgvMzzMiq3nDIwlAmHY8dFHbcFiq
+         EpXPxDuqWWRF4u0MoTP3SjCu+hinjblaRAQklhKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Matthew Whitehead <tedheadster@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 321/422] x86/CPU: Change query logic so CPUID is enabled before testing
+Subject: [PATCH 4.14 118/239] cxgb4: Fix endianness issue in t4_fwcache()
 Date:   Tue, 19 Nov 2019 06:18:38 +0100
-Message-Id: <20191119051419.796318097@linuxfoundation.org>
+Message-Id: <20191119051329.386570360@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,60 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Whitehead <tedheadster@gmail.com>
+From: Ganesh Goudar <ganeshgr@chelsio.com>
 
-[ Upstream commit 2893cc8ff892fa74972d8dc0e1d0dc65116daaa3 ]
+[ Upstream commit 0dc235afc59a226d951352b0adf4a89b532a9d13 ]
 
-Presently we check first if CPUID is enabled. If it is not already
-enabled, then we next call identify_cpu_without_cpuid() and clear
-X86_FEATURE_CPUID.
+Do not put host-endian 0 or 1 into big endian feild.
 
-Unfortunately, identify_cpu_without_cpuid() is the function where CPUID
-becomes _enabled_ on Cyrix 6x86/6x86L CPUs.
-
-Reverse the calling sequence so that CPUID is first enabled, and then
-check a second time to see if the feature has now been activated.
-
-[ bp: Massage commit message and remove trailing whitespace. ]
-
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Andy Lutomirski <luto@amacapital.net>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180921212041.13096-3-tedheadster@gmail.com
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 1e07814f02bc6..a6458ab499c21 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1133,6 +1133,9 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 	memset(&c->x86_capability, 0, sizeof c->x86_capability);
- 	c->extended_cpuid_level = 0;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+index 1802debbd3c7e..39bcf27902e4b 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -3750,7 +3750,7 @@ int t4_fwcache(struct adapter *adap, enum fw_params_param_dev_fwcache op)
+ 	c.param[0].mnem =
+ 		cpu_to_be32(FW_PARAMS_MNEM_V(FW_PARAMS_MNEM_DEV) |
+ 			    FW_PARAMS_PARAM_X_V(FW_PARAMS_PARAM_DEV_FWCACHE));
+-	c.param[0].val = (__force __be32)op;
++	c.param[0].val = cpu_to_be32(op);
  
-+	if (!have_cpuid_p())
-+		identify_cpu_without_cpuid(c);
-+
- 	/* cyrix could have cpuid enabled via c_identify()*/
- 	if (have_cpuid_p()) {
- 		cpu_detect(c);
-@@ -1150,7 +1153,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		if (this_cpu->c_bsp_init)
- 			this_cpu->c_bsp_init(c);
- 	} else {
--		identify_cpu_without_cpuid(c);
- 		setup_clear_cpu_cap(X86_FEATURE_CPUID);
- 	}
- 
+ 	return t4_wr_mbox(adap, adap->mbox, &c, sizeof(c), NULL);
+ }
 -- 
 2.20.1
 
