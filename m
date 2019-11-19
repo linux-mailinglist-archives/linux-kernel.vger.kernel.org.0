@@ -2,108 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB3D1014FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1146101577
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfKSFjV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 19 Nov 2019 00:39:21 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:35537 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730261AbfKSFjS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:18 -0500
-Received: from marcel-macbook.holtmann.net (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 3950ACECED;
-        Tue, 19 Nov 2019 06:48:23 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH v6 3/4] dt-bindings: net: broadcom-bluetooth: Add pcm
- config
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20191118110335.v6.3.I18b06235e381accea1c73aa2f9db358645d9f201@changeid>
-Date:   Tue, 19 Nov 2019 06:39:16 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-bluetooth@vger.kernel.org, dianders@chromium.org,
-        devicetree@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <079C85BE-FBC5-4A2B-9EBF-0CEDB6F30C18@holtmann.org>
-References: <20191118192123.82430-1-abhishekpandit@chromium.org>
- <20191118110335.v6.3.I18b06235e381accea1c73aa2f9db358645d9f201@changeid>
-To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-X-Mailer: Apple Mail (2.3601.0.10)
+        id S1730349AbfKSFob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730000AbfKSFo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:27 -0500
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B201D21939;
+        Tue, 19 Nov 2019 05:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574142267;
+        bh=UwBJZoz9GrgalpPxw28oDcIL0daCumvlEcO2T7STbEs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0FVUZTd4avgbrAMuNCS1RvWbmrPLVm430fPw6jrJTMwXh7Mhzvx3lFj6EYWkNOFV3
+         EhJTOw1z7fSvtDvvHvlfRIZFvJSX94aTuKrTkuphj/KsKCdi3XXzGHTZe+tZQmrO1l
+         g908XS9+zNWTs1gmM2q+w+zXmTAbmRrFZEjg2DC8=
+Date:   Mon, 18 Nov 2019 21:44:25 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+787bcbef9b5fec61944b@syzkaller.appspotmail.com>
+Cc:     alexander.levin@microsoft.com, davem@davemloft.net,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, mchehab+samsung@kernel.org,
+        paulmck@linux.ibm.com, syzkaller-bugs@googlegroups.com,
+        valdis.kletnieks@vt.edu
+Subject: Re: WARNING in bdev_read
+Message-ID: <20191119054425.GO163020@sol.localdomain>
+References: <00000000000073309e05951e2dc1@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00000000000073309e05951e2dc1@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
-
-> Add documentation for pcm parameters.
+On Thu, Oct 17, 2019 at 10:02:07AM -0700, syzbot wrote:
+> Hello,
 > 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> ---
+> syzbot found the following crash on:
 > 
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
+> HEAD commit:    bc88f85c kthread: make __kthread_queue_delayed_work static
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14e25608e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e0ac4d9b35046343
+> dashboard link: https://syzkaller.appspot.com/bug?extid=787bcbef9b5fec61944b
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159fd353600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e82173600000
 > 
-> .../bindings/net/broadcom-bluetooth.txt       | 16 ++++++++++
-> include/dt-bindings/bluetooth/brcm.h          | 32 +++++++++++++++++++
-> 2 files changed, 48 insertions(+)
-> create mode 100644 include/dt-bindings/bluetooth/brcm.h
+> The bug was bisected to:
 > 
-> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> index c749dc297624..8561e4684378 100644
-> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> @@ -29,10 +29,20 @@ Optional properties:
->    - "lpo": external low power 32.768 kHz clock
->  - vbat-supply: phandle to regulator supply for VBAT
->  - vddio-supply: phandle to regulator supply for VDDIO
-> + - brcm,bt-sco-routing: PCM, Transport, Codec, I2S
-> + - brcm,bt-pcm-interface-rate: 128KBps, 256KBps, 512KBps, 1024KBps, 2048KBps
-> + - brcm,bt-pcm-frame-type: short, long
-> + - brcm,bt-pcm-sync-mode: slave, master
-> + - brcm,bt-pcm-clock-mode: slave, master
+> commit c48c9f7ff32b8b3965a08e40eb6763682d905b5d
+> Author: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+> Date:   Wed Aug 28 16:08:17 2019 +0000
 > 
-> +See include/dt-bindings/bluetooth/brcm.h for SCO/PCM parameters. The default
-> +value for all these values are 0 (except for brcm,bt-sco-routing which requires
-> +a value) if you choose to leave it out.
-> 
-> Example:
-> 
-> +#include <dt-bindings/bluetooth/brcm.h>
-> +
-> &uart2 {
->        pinctrl-names = "default";
->        pinctrl-0 = <&uart2_pins>;
-> @@ -40,5 +50,11 @@ Example:
->        bluetooth {
->                compatible = "brcm,bcm43438-bt";
->                max-speed = <921600>;
-> +
-> +               brcm,bt-sco-routing        = <BRCM_SCO_ROUTING_TRANSPORT>;
+>     staging: exfat: add exfat filesystem code to staging
 
-in case you use transport which means HCI, you would not have values below. It is rather PCM here in the example.
+This bisection looks correct.
 
-> +               brcm,bt-pcm-interface-rate = <BRCM_PCM_IF_RATE_512KBPS>;
-> +               brcm,bt-pcm-frame-type     = <BRCM_PCM_FRAME_TYPE_SHORT>;
-> +               brcm,bt-pcm-sync-mode      = <BRCM_PCM_SYNC_MODE_MASTER>;
-> +               brcm,bt-pcm-clock-mode     = <BRCM_PCM_CLOCK_MODE_MASTER>;
->        };
-> };
+On a related topic: it seems the exfat filesystem is missing a mailing list.
 
-And I am asking this again. Is this adding any value to use an extra include file? Inside the driver we are not really needing these values since they are handed to the hardware.
-
-Regards
-
-Marcel
-
+- Eric
