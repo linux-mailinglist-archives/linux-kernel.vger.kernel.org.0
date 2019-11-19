@@ -2,135 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F6C1026CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ABDF1026D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:33:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfKSOcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:32:19 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41427 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbfKSOcT (ORCPT
+        id S1728238AbfKSOdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:33:02 -0500
+Received: from mail-pj1-f52.google.com ([209.85.216.52]:46839 "EHLO
+        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727910AbfKSOdB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:32:19 -0500
-Received: by mail-pl1-f193.google.com with SMTP id d29so11854545plj.8;
-        Tue, 19 Nov 2019 06:32:18 -0800 (PST)
+        Tue, 19 Nov 2019 09:33:01 -0500
+Received: by mail-pj1-f52.google.com with SMTP id a16so2719071pjs.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 06:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QWmqlctb3ZXD7WfpFuk6bq+a9VLtf6IJ8PZ6YsU1YoM=;
+        b=tjRNaFMoRrBRw9kvHh1STRh+ec2EbaeYs4lSdlbdbF6xhhBUPny3SlYNdd01TM9voB
+         8vmkWae4TqZalSxb1lVl/WqxASoxDRmfflkvdn7az6TlBoiepGiORPyi+8JB5DjS74NH
+         8lYVXAaxyobnH5Dc+f24lg9WUz2ecxJ1OAJ9LC3UFjphQKHShmyFB1hkAr7hIptE2QuN
+         91+kaFm+pdhG7sRSaLzNxE8e/bw/kF72VjuwuYJh/dIFtf5E4FV0s342iYnHuUYAVhdy
+         vjKKOpw++UagcnK0Ej0HqC7MIU/5SWCoXuWZWnMp0tPKp9ue+coc1bcGWocChiX/u34h
+         rqKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eBb56gUBpWkIX0FYW+z97CZQ4gz538W2egeN9/8KSE8=;
-        b=pZXXu3lBLRApHusvZrYkz2ouGihJZRI8gQ44a4dmRKQHcBZO7yODWVqgNEoRN781vE
-         H9ILCAWDXG7KJbWOkpr9g6EPgbrUQhSOL06m2U0pNBavdBSTLUTT3aVMMPsFtRwsoD6T
-         sUCNxtQLSo2jnLf2WyJRbgCH1IPEYFV7mBcy2HFhNtIqmUKYB8XcXMsH2gqd2l9EinZD
-         L4UZavYG0HisciKki9I9cINZEO5+bL4YeSG0ql2h+d5FqKax9oDT9wd9K8g0jGu0WiQb
-         jUBBB91lC9Km+MOroiXk0wnlqLS24eWxiBDM7PupsZ2I1jBdXo+ECV4VQwAnS5Bw2FqV
-         hYDQ==
-X-Gm-Message-State: APjAAAWq/buJeUyG9W3WnFse8GD1fpPTKr+0RjekoSuJoSN+04ppKg6d
-        5yHJnM8+XER6J8eFvbfmH7naQevb
-X-Google-Smtp-Source: APXvYqwwGsoq53FUp+0XzND+b9LLSYSKvrjBZwNTHzre77bCa3jKZ67sI4NXD0mR6B+oWVnerf80Lg==
-X-Received: by 2002:a17:90a:5d17:: with SMTP id s23mr6591558pji.55.1574173937748;
-        Tue, 19 Nov 2019 06:32:17 -0800 (PST)
-Received: from kozik-lap ([118.189.143.39])
-        by smtp.googlemail.com with ESMTPSA id z62sm28857634pfz.135.2019.11.19.06.32.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Nov 2019 06:32:16 -0800 (PST)
-Date:   Tue, 19 Nov 2019 22:32:11 +0800
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: Convert Generic Power Domain
- bindings to json-schema
-Message-ID: <20191119143211.GA7804@kozik-lap>
-References: <20191030173216.5993-1-krzk@kernel.org>
- <20191105194257.GA16066@bogus>
- <20191114125923.GA3084@kozik-lap>
- <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
- <CAMuHMdXYg4u1SF+j=doJqaDFw+O61g2th8ppt+CBrez8QAgJRA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QWmqlctb3ZXD7WfpFuk6bq+a9VLtf6IJ8PZ6YsU1YoM=;
+        b=mm56K1nFfjt5l8DLf57hNvKmJ0933p5NuXrJoxcM4mqlwpffUHoaqWwuvYQ3RfKsXD
+         6Wg7I56rX/bnNWDGdc/B+kYRmMsFcqs9T2yv3r/JNcyExPFe5iXw6RoJART6Gp8+uMnA
+         IK4WXmzs6Z+aKjyMcdFC0n9YVYpEomS1/V0INFAbvYRXlZWiZ509SgIDCgx/xammPIxw
+         9G8rCv27y5wR2kSPj7PVhQQh5Fnxvq4sD5LTGavUDhkGRNBgYvhF3awe5IqrKMUHP5H6
+         VNwOqSMysbbGhcBURynjZDqlu5IhvdyO4f5pfJXj+sCHneD8HrRrenEIoGpozKLNH8dg
+         hHMw==
+X-Gm-Message-State: APjAAAXaBSBiD7qSD1ADqEmlNlxsVS52RDNSj++fElgJgeORA1PwoUB2
+        yBRwJFNApUoEQ8TQROk/Btb556qG26yEBgkxviSPOg==
+X-Google-Smtp-Source: APXvYqwvB8z7JKHK0FBF93atWvKuTGWQhtP8yLuQ3OI887t6FDkGv4DBSg8nzPLVPcHXZLb8md4U9G7TfFvupiFlIV8=
+X-Received: by 2002:a17:90b:438b:: with SMTP id in11mr6904277pjb.129.1574173978895;
+ Tue, 19 Nov 2019 06:32:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXYg4u1SF+j=doJqaDFw+O61g2th8ppt+CBrez8QAgJRA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <000000000000dece03058f87bf11@google.com> <00000000000091301a058fabc3f1@google.com>
+ <CAAeHK+zV2TXWtdmLj8Fjpfg9DPNNWrZXnbtLJ_bEhMJUjiua9Q@mail.gmail.com> <1574173039.28617.13.camel@suse.com>
+In-Reply-To: <1574173039.28617.13.camel@suse.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 19 Nov 2019 15:32:40 +0100
+Message-ID: <CAAeHK+yuUyz6P-3kHaJbA-KziwawKKDduz6=5KVgqnFZ_iUONA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in wdm_int_callback
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     syzbot <syzbot+1a3765ef3c0d49d36a75@syzkaller.appspotmail.com>,
+        baijiaju1990@gmail.com, bigeasy@linutronix.de,
+        Colin Ian King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        yuehaibing@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 10:58:11AM +0100, Geert Uytterhoeven wrote:
-> Hi Rob, Krzysztof,
-> 
-> On Thu, Nov 14, 2019 at 5:42 PM Rob Herring <robh@kernel.org> wrote:
-> > On Thu, Nov 14, 2019 at 6:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > On Tue, Nov 05, 2019 at 01:42:58PM -0600, Rob Herring wrote:
-> > > > On Wed, 30 Oct 2019 18:32:15 +0100, Krzysztof Kozlowski wrote:
-> > > > > Convert Generic Power Domain bindings to DT schema format using
-> > > > > json-schema.
-> > > > >
-> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > > > >
-> > > > > ---
-> > > > >
-> > > > > Changes since v2:
-> > > > > 1. Keep description of consumers in power-domain.txt,
-> > > > > 2. Rename power_domain.txt to power-domain.txt,
-> > > > > 3. Indent example with four spaces (more readable).
-> > > > >
-> > > > > Changes since v1:
-> > > > > 1. Select all nodes for consumers,
-> > > > > 2. Remove from consumers duplicated properties with dt-schema,
-> > > > > 3. Fix power domain pattern,
-> > > > > 4. Remove unneeded types.
-> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > ---
-> > > > >  .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
-> > > > >  .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
-> > > > >  .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
-> > > > >  .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
-> > > > >  .../bindings/clock/ti/davinci/psc.txt         |   2 +-
-> > > > >  .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
-> > > > >  .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
-> > > > >  .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
-> > > > >  .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
-> > > > >  .../{power_domain.txt => power-domain.txt}    |  95 +------------
-> > > > >  .../bindings/power/power-domain.yaml          | 133 ++++++++++++++++++
-> > > > >  .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
-> > > > >  .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
-> > > > >  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
-> > > > >  .../bindings/soc/mediatek/scpsys.txt          |   2 +-
-> > > > >  .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
-> > > > >  MAINTAINERS                                   |   2 +-
-> > > > >  17 files changed, 149 insertions(+), 109 deletions(-)
-> > > > >  rename Documentation/devicetree/bindings/power/{power_domain.txt => power-domain.txt} (51%)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
-> > > > >
-> > > >
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > >
-> > > The patches should apply cleanly in top of your tree so maybe you can
-> > > pick them up?
+On Tue, Nov 19, 2019 at 3:17 PM Oliver Neukum <oneukum@suse.com> wrote:
+>
+> Am Dienstag, den 19.11.2019, 14:46 +0100 schrieb Andrey Konovalov:
 > >
-> > I didn't on this one because it touches a lot of files. Though on
-> > second thought, they are all across the tree, so I might as well apply
-> > them.
-> 
-> There are still several leftover references to power_domain.txt.
-> Krzysztof: Do you plan to convert these, too, or do you expect the
-> individual maintainers to handle that?
+> > #syz dup: WARNING in wdm_write/usb_submit_urb
+> >
+> > https://syzkaller.appspot.com/bug?extid=d232cca6ec42c2edb3fc
+>
+> Hi,
+>
+> this is a bit odd. A fix for that bug went in quite some time ago.
+> Is the kernel tree these tests are running on regularly updated?
 
-Ahh, I think that's my fault after one of iterations of the patchset. I
-can fix it up fast and maybe let's queue it through the same tree (Rob's).
+Hi Oliver,
 
-Best regards,
-Krzysztof
+The fix went in a while ago indeed, and the original WARNING bug got
+closed. But this bug was never marked to be somehow related to the fix
+or the WARNING bug and therefore was never closed.
 
+Thanks!
