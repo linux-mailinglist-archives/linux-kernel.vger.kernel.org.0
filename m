@@ -2,100 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C447110240F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:16:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF78E1023F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbfKSMQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:16:02 -0500
-Received: from foss.arm.com ([217.140.110.172]:51704 "EHLO foss.arm.com"
+        id S1727751AbfKSMLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:11:20 -0500
+Received: from mga06.intel.com ([134.134.136.31]:55483 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbfKSMQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:16:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 934E11FB;
-        Tue, 19 Nov 2019 04:16:01 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70F813F703;
-        Tue, 19 Nov 2019 04:16:01 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 15D23682956; Tue, 19 Nov 2019 12:16:00 +0000 (GMT)
-Date:   Tue, 19 Nov 2019 12:16:00 +0000
-From:   Liviu Dudau <liviu.dudau@arm.com>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: arm: juno: Fix UART frequency
-Message-ID: <20191119121559.7grzoz2yoxhg23nf@e110455-lin.cambridge.arm.com>
-References: <20191119120331.28243-1-andre.przywara@arm.com>
+        id S1725798AbfKSMLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 07:11:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 04:11:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,322,1569308400"; 
+   d="scan'208";a="357091891"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by orsmga004.jf.intel.com with ESMTP; 19 Nov 2019 04:11:15 -0800
+Message-ID: <5DD3DD7B.8000503@intel.com>
+Date:   Tue, 19 Nov 2019 20:18:03 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119120331.28243-1-andre.przywara@arm.com>
-User-Agent: NeoMutt/20180716
+To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+CC:     Khazhismel Kumykov <khazhy@google.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 1/2] virtio_balloon: name cleanups
+References: <20191119102838.39380-1-mst@redhat.com>
+In-Reply-To: <20191119102838.39380-1-mst@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 12:03:31PM +0000, Andre Przywara wrote:
-> Older versions of the Juno *SoC* TRM [1] recommended that the UART clock
-> source should be 7.2738 MHz, whereas the *system* TRM [2] stated a more
-> correct value of 7.3728 MHz. Somehow the wrong value managed to end up in
-> our DT.
-> Doing a prime factorisation, a modulo divide by 115200 and trying
-> to buy a 7.2738 MHz crystal at your favourite electronics dealer suggest
-> that the old value was actually a typo. The actual UART clock is driven
-> by a PLL, configured via a parameter in some board.txt file in the
-> firmware, which reads 7.37 MHz (sic!).
-> 
-> Fix this to correct the baud rate divisor calculation on the Juno board.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> 
-> [1] http://infocenter.arm.com/help/topic/com.arm.doc.ddi0515b.b/DDI0515B_b_juno_arm_development_platform_soc_trm.pdf
-> [2] http://infocenter.arm.com/help/topic/com.arm.doc.100113_0000_07_en/arm_versatile_express_juno_development_platform_(v2m_juno)_technical_reference_manual_100113_0000_07_en.pdf
-
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
+On 11/19/2019 06:29 PM, Michael S. Tsirkin wrote:
+> free_page_order is a confusing name. It's not a page order
+> actually, it's the order of the block of memory we are hinting.
+> Rename to hint_block_order. Also, rename SIZE to BYTES
+> to make it clear it's the block size in bytes.
+>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 > ---
->  arch/arm64/boot/dts/arm/juno-clocks.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-> index e5e265dfa902..2870b5eeb198 100644
-> --- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-> +++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-> @@ -8,10 +8,10 @@
->   */
->  / {
->  	/* SoC fixed clocks */
-> -	soc_uartclk: refclk7273800hz {
-> +	soc_uartclk: refclk7372800hz {
->  		compatible = "fixed-clock";
->  		#clock-cells = <0>;
-> -		clock-frequency = <7273800>;
-> +		clock-frequency = <7372800>;
->  		clock-output-names = "juno:uartclk";
->  	};
->  
-> -- 
-> 2.17.1
-> 
+>   drivers/virtio/virtio_balloon.c | 24 ++++++++++++------------
+>   1 file changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> index 65df40f261ab..b6a95cd28d9f 100644
+> --- a/drivers/virtio/virtio_balloon.c
+> +++ b/drivers/virtio/virtio_balloon.c
+> @@ -32,10 +32,10 @@
+>   #define VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG (__GFP_NORETRY | __GFP_NOWARN | \
+>   					     __GFP_NOMEMALLOC)
+>   /* The order of free page blocks to report to host */
+> -#define VIRTIO_BALLOON_FREE_PAGE_ORDER (MAX_ORDER - 1)
+> +#define VIRTIO_BALLOON_HINT_BLOCK_ORDER (MAX_ORDER - 1)
+>   /* The size of a free page block in bytes */
+> -#define VIRTIO_BALLOON_FREE_PAGE_SIZE \
+> -	(1 << (VIRTIO_BALLOON_FREE_PAGE_ORDER + PAGE_SHIFT))
+> +#define VIRTIO_BALLOON_HINT_BLOCK_BYTES \
+> +	(1 << (VIRTIO_BALLOON_HINT_BLOCK_ORDER + PAGE_SHIFT))
+>   
+>   #ifdef CONFIG_BALLOON_COMPACTION
+>   static struct vfsmount *balloon_mnt;
+> @@ -380,7 +380,7 @@ static unsigned long return_free_pages_to_mm(struct virtio_balloon *vb,
+>   		if (!page)
+>   			break;
+>   		free_pages((unsigned long)page_address(page),
+> -			   VIRTIO_BALLOON_FREE_PAGE_ORDER);
+> +			   VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+>   	}
+>   	vb->num_free_page_blocks -= num_returned;
+>   	spin_unlock_irq(&vb->free_page_list_lock);
+> @@ -582,7 +582,7 @@ static int get_free_page_and_send(struct virtio_balloon *vb)
+>   		;
+>   
+>   	page = alloc_pages(VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG,
+> -			   VIRTIO_BALLOON_FREE_PAGE_ORDER);
+> +			   VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+>   	/*
+>   	 * When the allocation returns NULL, it indicates that we have got all
+>   	 * the possible free pages, so return -EINTR to stop.
+> @@ -591,13 +591,13 @@ static int get_free_page_and_send(struct virtio_balloon *vb)
+>   		return -EINTR;
+>   
+>   	p = page_address(page);
+> -	sg_init_one(&sg, p, VIRTIO_BALLOON_FREE_PAGE_SIZE);
+> +	sg_init_one(&sg, p, VIRTIO_BALLOON_HINT_BLOCK_BYTES);
+>   	/* There is always 1 entry reserved for the cmd id to use. */
+>   	if (vq->num_free > 1) {
+>   		err = virtqueue_add_inbuf(vq, &sg, 1, p, GFP_KERNEL);
+>   		if (unlikely(err)) {
+>   			free_pages((unsigned long)p,
+> -				   VIRTIO_BALLOON_FREE_PAGE_ORDER);
+> +				   VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+>   			return err;
+>   		}
+>   		virtqueue_kick(vq);
+> @@ -610,7 +610,7 @@ static int get_free_page_and_send(struct virtio_balloon *vb)
+>   		 * The vq has no available entry to add this page block, so
+>   		 * just free it.
+>   		 */
+> -		free_pages((unsigned long)p, VIRTIO_BALLOON_FREE_PAGE_ORDER);
+> +		free_pages((unsigned long)p, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+>   	}
+>   
+>   	return 0;
+> @@ -765,11 +765,11 @@ static unsigned long shrink_free_pages(struct virtio_balloon *vb,
+>   	unsigned long blocks_to_free, blocks_freed;
+>   
+>   	pages_to_free = round_up(pages_to_free,
+> -				 1 << VIRTIO_BALLOON_FREE_PAGE_ORDER);
+> -	blocks_to_free = pages_to_free >> VIRTIO_BALLOON_FREE_PAGE_ORDER;
+> +				 1 << VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+> +	blocks_to_free = pages_to_free >> VIRTIO_BALLOON_HINT_BLOCK_ORDER;
+>   	blocks_freed = return_free_pages_to_mm(vb, blocks_to_free);
+>   
+> -	return blocks_freed << VIRTIO_BALLOON_FREE_PAGE_ORDER;
+> +	return blocks_freed << VIRTIO_BALLOON_HINT_BLOCK_ORDER;
+>   }
+>   
+>   static unsigned long leak_balloon_pages(struct virtio_balloon *vb,
+> @@ -825,7 +825,7 @@ static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
+>   	unsigned long count;
+>   
+>   	count = vb->num_pages / VIRTIO_BALLOON_PAGES_PER_PAGE;
+> -	count += vb->num_free_page_blocks << VIRTIO_BALLOON_FREE_PAGE_ORDER;
+> +	count += vb->num_free_page_blocks << VIRTIO_BALLOON_HINT_BLOCK_ORDER;
+>   
+>   	return count;
+>   }
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+
+Reviewed-by: Wei Wang <wei.w.wang@intel.com>
+
+Best,
+Wei
+
