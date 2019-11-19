@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C8E1014B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEED51014B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729986AbfKSFgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:36:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
+        id S1729990AbfKSFgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:36:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729978AbfKSFgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:36:35 -0500
+        id S1728472AbfKSFgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:36:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D53E222A4;
-        Tue, 19 Nov 2019 05:36:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1C3620862;
+        Tue, 19 Nov 2019 05:36:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141795;
-        bh=UcedAKmJKOMClQiJe28VF5OGfa6QxtsLch4F49QvOxk=;
+        s=default; t=1574141798;
+        bh=8a5AlZCsb1Xf90Q9T0DttIH8Ll4wN+BtclWVVTiNXeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rPpEfRKZ4xO/tt7MLLCfFDp9dFmZL81FvBEM5sMYT0+8YFGM+JS+z4uUVssZugbJ7
-         ssUi3TV/7uBwqmEMue6rZj5E11T+hPy8LZ6tXmsy7n68Hh08WnUV+n6CITtbn5d5E3
-         QLSaekVczx/XEy+4QPVQlyrvJV5CJDUJJmTAJBd4=
+        b=f8mPitmmWhx9omF4fqwtydQL4gObDPPC1amD/GfA1Z4tG2MtzspMHAoT/O46KaxUS
+         roH+Dwgi2U8Wb3SryImh0nyhMsVCuUk3xxslvz7+PUCao0Dvm26CJ9wF6LYy6F5wHf
+         4yfIvsw0neLfqMel+NIpqe3G3Q6+g92K0maUGZNw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 284/422] net: hns3: Fix parameter type for q_id in hclge_tm_q_to_qs_map_cfg()
-Date:   Tue, 19 Nov 2019 06:18:01 +0100
-Message-Id: <20191119051417.388279921@linuxfoundation.org>
+Subject: [PATCH 4.19 285/422] nfp: provide a better warning when ring allocation fails
+Date:   Tue, 19 Nov 2019 06:18:02 +0100
+Message-Id: <20191119051417.453469183@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -46,40 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 32c7fbc8ffd752c6aa05d2dd7c13b0f0aa00ddaa ]
+[ Upstream commit 23d9f5531c7c28546954b0bf332134a9b8a38c0a ]
 
-So far all the places calling hclge_tm_q_to_qs_map_cfg() are assigning
-an u16 type value to "q_id", and in the processing of
-hclge_tm_q_to_qs_map_cfg(), it also converts the "q_id" to le16.
+NFP supports fairly enormous ring sizes (up to 256k descriptors).
+In commit 466271703867 ("nfp: use kvcalloc() to allocate SW buffer
+descriptor arrays") we have started using kvcalloc() functions to
+make sure the allocation of software state arrays doesn't hit
+the MAX_ORDER limit.  Unfortunately, we can't use virtual mappings
+for the DMA region holding HW descriptors.  In case this allocation
+fails instead of the generic (and fairly scary) warning/splat in
+the logs print a helpful message explaining what happened and
+suggesting how to fix it.
 
-The max tqp number for pf can be more than 256, we should use "u16" to
-store the queue id, instead of "u8", which may cause data lost.
-
-Fixes: 848440544b41 ("net: hns3: Add support of TX Scheduler & Shaper to HNS3 driver")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/ethernet/netronome/nfp/nfp_net_common.c  | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 11e9259ca0407..0d45d045706c7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -298,7 +298,7 @@ static int hclge_tm_qs_to_pri_map_cfg(struct hclge_dev *hdev,
- }
+diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+index c6d29fdbb880f..d288c7eebacd8 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+@@ -2187,9 +2187,13 @@ nfp_net_tx_ring_alloc(struct nfp_net_dp *dp, struct nfp_net_tx_ring *tx_ring)
  
- static int hclge_tm_q_to_qs_map_cfg(struct hclge_dev *hdev,
--				    u8 q_id, u16 qs_id)
-+				    u16 q_id, u16 qs_id)
- {
- 	struct hclge_nq_to_qs_link_cmd *map;
- 	struct hclge_desc desc;
+ 	tx_ring->size = array_size(tx_ring->cnt, sizeof(*tx_ring->txds));
+ 	tx_ring->txds = dma_zalloc_coherent(dp->dev, tx_ring->size,
+-					    &tx_ring->dma, GFP_KERNEL);
+-	if (!tx_ring->txds)
++					    &tx_ring->dma,
++					    GFP_KERNEL | __GFP_NOWARN);
++	if (!tx_ring->txds) {
++		netdev_warn(dp->netdev, "failed to allocate TX descriptor ring memory, requested descriptor count: %d, consider lowering descriptor count\n",
++			    tx_ring->cnt);
+ 		goto err_alloc;
++	}
+ 
+ 	tx_ring->txbufs = kvcalloc(tx_ring->cnt, sizeof(*tx_ring->txbufs),
+ 				   GFP_KERNEL);
+@@ -2341,9 +2345,13 @@ nfp_net_rx_ring_alloc(struct nfp_net_dp *dp, struct nfp_net_rx_ring *rx_ring)
+ 	rx_ring->cnt = dp->rxd_cnt;
+ 	rx_ring->size = array_size(rx_ring->cnt, sizeof(*rx_ring->rxds));
+ 	rx_ring->rxds = dma_zalloc_coherent(dp->dev, rx_ring->size,
+-					    &rx_ring->dma, GFP_KERNEL);
+-	if (!rx_ring->rxds)
++					    &rx_ring->dma,
++					    GFP_KERNEL | __GFP_NOWARN);
++	if (!rx_ring->rxds) {
++		netdev_warn(dp->netdev, "failed to allocate RX descriptor ring memory, requested descriptor count: %d, consider lowering descriptor count\n",
++			    rx_ring->cnt);
+ 		goto err_alloc;
++	}
+ 
+ 	rx_ring->rxbufs = kvcalloc(rx_ring->cnt, sizeof(*rx_ring->rxbufs),
+ 				   GFP_KERNEL);
 -- 
 2.20.1
 
