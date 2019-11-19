@@ -2,159 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AF0F102BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4312102BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 19:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfKSS1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 13:27:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbfKSS1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 13:27:52 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60938223B0;
-        Tue, 19 Nov 2019 18:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574188071;
-        bh=ZX0qREYxvXYiQU0o4IOxrUDjzoY9t93bO4CzRpKKWv4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CVXg25ql5giAFD67wekUOE9ljOR+5XPNF7MMcO8Ke4qnK7EOOzQdrL97/s8E5nEI6
-         YV72COid3kWI2hwSmlOqH1wj3gdW6bpOhum8eFan6j4LyjbaWH1Y/eRgNpapuKlwwD
-         TAszxgfWdD8sPHySkV2btUg3GC0FjbF+BjR97m0o=
-Date:   Tue, 19 Nov 2019 18:27:45 +0000
-From:   Will Deacon <will@kernel.org>
-To:     kernel test robot <rong.a.chen@intel.com>,
-        ocfs2-devel@oss.oracle.com
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, lkp@lists.01.org
-Subject: Re: [refcount] 84b21d1291:
- WARNING:at_lib/refcount.c:#refcount_warn_saturate
-Message-ID: <20191119182745.GA11397@willie-the-truck>
-References: <20191113030749.GC6910@shao2-debian>
+        id S1727253AbfKSSd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 13:33:57 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43648 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfKSSd4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 13:33:56 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAJIXgds037810;
+        Tue, 19 Nov 2019 12:33:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574188422;
+        bh=8pK3SXLXjYCxY82v7l4ZX3F1pn7se04Pm/vVlaxoCso=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=V6SuhijJgP4JlwdJ1DVfiviwwoS40GyKCK0Wn/5rQWdlzTx/wGOVlGB/NGnHJqcOQ
+         07b6VGs8ChQo3Lc3xww+nFTehMSQK7bq23Q8s9a3iA0aKOWTPn+ChogmVCHRHpCqwt
+         Bwn3TkaYNHbkn0C5rhb43DWypnoQcN7f4b5myp2Q=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAJIXgH4103677
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Nov 2019 12:33:42 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 19
+ Nov 2019 12:33:42 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 19 Nov 2019 12:33:42 -0600
+Received: from [10.250.33.226] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAJIXfXh105615;
+        Tue, 19 Nov 2019 12:33:42 -0600
+Subject: Re: [PATCH v2 3/4] leds: tps6105x: add driver for mfd chip led mode
+To:     Sven Van Asbroeck <thesven73@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Grigoryev Denis <grigoryev@fastwel.ru>,
+        Axel Lin <axel.lin@ingics.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20191119154611.29625-1-TheSven73@gmail.com>
+ <20191119154611.29625-4-TheSven73@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <23217b5b-90f4-748a-c008-9ae7ef82c6dd@ti.com>
+Date:   Tue, 19 Nov 2019 12:32:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113030749.GC6910@shao2-debian>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191119154611.29625-4-TheSven73@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 11:07:49AM +0800, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 84b21d1291c67ac216f8106783609007a51baa78 ("refcount: Consolidate implementations of refcount_t")
-> https://git.kernel.org/cgit/linux/kernel/git/arm64/linux.git for-kernelci
-> 
-> in testcase: ocfs2test
+Sven
 
-Looks like the same issue I previously reported here:
+On 11/19/19 9:46 AM, Sven Van Asbroeck wrote:
+> This driver adds support for the led operational mode of the
+> tps6105x mfd device.
+How many LEDs does this device support?
+>
+> Example usage, devicetree:
+>
+> i2c0 {
+> 	tps61052@33 {
+> 		compatible = "ti,tps61052";
+> 		reg = <0x33>;
+>
+> 		led {
+> 			label = "tps-led";
+> 		};
+> 	};
+> };
+>
+> Example usage, platform data in machine layer:
+>
+>   #include <linux/mfd/tps6105x.h>
+>
+>   struct tps6105x_platform_data pdata = {
+>           .mode = TPS6105X_MODE_TORCH,
+>           .led_label = "tps-led",
+>   };
+>
+> Tree: next-20191118
+> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+> ---
+>   drivers/leds/Kconfig         | 10 +++++
+>   drivers/leds/Makefile        |  1 +
+>   drivers/leds/leds-tps6105x.c | 87 ++++++++++++++++++++++++++++++++++++
+>   include/linux/mfd/tps6105x.h |  1 +
+>   4 files changed, 99 insertions(+)
+>   create mode 100644 drivers/leds/leds-tps6105x.c
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 4b68520ac251..7c7ceaa824a2 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -836,6 +836,16 @@ config LEDS_LM36274
+>   	  Say Y to enable the LM36274 LED driver for TI LMU devices.
+>   	  This supports the LED device LM36274.
+>   
+> +config LEDS_TPS6105X
+> +	tristate "LED support for TI TPS6105X"
+> +	depends on LEDS_CLASS
+> +	depends on TPS6105X
+> +	default y if TPS6105X
+> +	help
+> +	  This driver supports TPS61050/TPS61052 led chips.
+> +	  It is a single boost converter primarily for white LEDs and
+> +	  audio amplifiers.
+> +
+>   comment "LED Triggers"
+>   source "drivers/leds/trigger/Kconfig"
+>   
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 2da39e896ce8..d7e1107753fb 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -85,6 +85,7 @@ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+>   obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
+>   obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
+>   obj-$(CONFIG_LEDS_LM36274)		+= leds-lm36274.o
+> +obj-$(CONFIG_LEDS_TPS6105X)		+= leds-tps6105x.o
+>   
+>   # LED SPI Drivers
+>   obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+> diff --git a/drivers/leds/leds-tps6105x.c b/drivers/leds/leds-tps6105x.c
+> new file mode 100644
+> index 000000000000..87dbe4846df6
+> --- /dev/null
+> +++ b/drivers/leds/leds-tps6105x.c
+> @@ -0,0 +1,87 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/tps6105x.h>
+> +#include <linux/regmap.h>
+> +
+> +struct tps6105x_priv {
+> +	struct regmap *regmap;
+> +	struct led_classdev cdev;
+> +};
+> +
+> +static int tps6105x_brightness_set(struct led_classdev *cdev,
+> +				  enum led_brightness brightness)
+> +{
+> +	struct tps6105x_priv *priv = container_of(cdev, struct tps6105x_priv,
+> +							cdev);
+> +
+> +	return regmap_update_bits(priv->regmap, TPS6105X_REG_0,
+> +		TPS6105X_REG0_TORCHC_MASK,
+> +		brightness << TPS6105X_REG0_TORCHC_SHIFT);
+> +}
+> +
+> +static const char *label_from_dt(struct device *dev)
+> +{
+> +	struct device_node *led =
+> +		of_get_child_by_name(dev->parent->of_node, "led");
+Prefer device_* calls as opposed to of_* calls.
+> +	const char *label;
+> +
+> +	if (!led) {
+> +		dev_err(dev, "led node not found");
+> +		return NULL;
+> +	}
+> +	if (of_property_read_string(led, "label", &label))
+same as above
+> +		label = NULL;
+> +	of_node_put(led);
+> +
+> +	return label;
+> +}
+> +
+> +static int tps6105x_led_probe(struct platform_device *pdev)
+> +{
+> +	struct tps6105x *tps6105x = dev_get_platdata(&pdev->dev);
+> +	struct tps6105x_platform_data *pdata = tps6105x->pdata;
+> +	struct tps6105x_priv *priv;
+> +	const char *label;
+> +	int ret;
+> +
+> +	/* This instance is not set for torch mode so bail out */
+> +	if (pdata->mode != TPS6105X_MODE_TORCH) {
+> +		dev_info(&pdev->dev,
+> +			"chip not in torch mode, exit probe");
+> +		return -EINVAL;
+> +	}
+> +
+> +	label = pdata->led_label ?: label_from_dt(&pdev->dev);
 
-https://lore.kernel.org/lkml/20190912105640.2l6mtdjmcyyhmyun@willie-the-truck/
+Since this is a new driver do we really have to continue to use the 
+pdata for the init
 
-Will
+data?  Can't we just get the label from the DT node now like other drivers?
 
-> [   69.895894] BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1533
-> [   69.898664] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 2462, name: mount.ocfs2
-> [   69.900964] CPU: 1 PID: 2462 Comm: mount.ocfs2 Not tainted 5.4.0-rc2-00008-g84b21d1291c67 #1
-> [   69.904287] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   69.907871] Call Trace:
-> [   69.909860]  dump_stack+0x5c/0x7b
-> [   69.911534]  ___might_sleep+0x102/0x120
-> [   69.913579]  down_write+0x1c/0x50
-> [   69.915478]  configfs_depend_item+0x3a/0xb0
-> [   69.917386]  o2hb_region_pin+0xf9/0x180 [ocfs2_nodemanager]
-> [   69.919990]  ? inode_doinit_with_dentry+0x250/0x4e0
-> [   69.922010]  o2hb_register_callback+0xc6/0x2a0 [ocfs2_nodemanager]
-> [   69.924758]  dlm_join_domain+0xbd/0x790 [ocfs2_dlm]
-> [   69.927195]  ? debugfs_create_dir+0xc4/0x100
-> [   69.928725]  ? dlm_alloc_ctxt+0x42f/0x560 [ocfs2_dlm]
-> [   69.930592]  dlm_register_domain+0x31f/0x440 [ocfs2_dlm]
-> [   69.932605]  ? _cond_resched+0x19/0x30
-> [   69.934177]  o2cb_cluster_connect+0x132/0x2c0 [ocfs2_stack_o2cb]
-> [   69.936181]  ocfs2_cluster_connect+0x14b/0x220 [ocfs2_stackglue]
-> [   69.938109]  ocfs2_dlm_init+0x2e9/0x4b0 [ocfs2]
-> [   69.939740]  ? ocfs2_init_node_maps+0x50/0x50 [ocfs2]
-> [   69.941364]  ocfs2_fill_super+0xcf4/0x12a0 [ocfs2]
-> [   69.943471]  ? ocfs2_initialize_super+0x1030/0x1030 [ocfs2]
-> [   69.945609]  mount_bdev+0x173/0x1b0
-> [   69.947146]  legacy_get_tree+0x27/0x40
-> [   69.948647]  vfs_get_tree+0x25/0xc0
-> [   69.950164]  do_mount+0x715/0x9a0
-> [   69.951543]  ksys_mount+0x80/0xd0
-> [   69.952573]  __x64_sys_mount+0x21/0x30
-> [   69.953894]  do_syscall_64+0x5b/0x1d0
-> [   69.955682]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   69.957023] RIP: 0033:0x7f5f35af548a
-> [   69.958086] Code: 48 8b 0d 11 fa 2a 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d de f9 2a 00 f7 d8 64 89 01 48
-> [   69.962124] RSP: 002b:00007ffdf0bdd3a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-> [   69.963869] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5f35af548a
-> [   69.965508] RDX: 000055a529b593ee RSI: 000055a52b7e20b0 RDI: 000055a52b7e2310
-> [   69.967187] RBP: 00007ffdf0bdd550 R08: 000055a52b7e22b0 R09: 0000000000000020
-> [   69.968831] R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffdf0bdd440
-> [   69.970483] R13: 0000000000000000 R14: 000055a52b7e3000 R15: 00007ffdf0bdd3c0
-> [   69.980629] o2dlm: Joining domain B7CA1824044F4C99924CDC31E1E40968 
-> [   69.980630] ( 
-> [   69.982192] 1 
-> [   69.983075] ) 1 nodes
-> [   69.990740] JBD2: Ignoring recovery information on journal
-> [   70.000782] ocfs2: Mounting device (8,0) on (node 1, slot 0) with ordered data mode.
-> [   70.020367] mount /dev/sda /mnt/ocfs2 /dev/sda          16515072      243712    16271360   2% /mnt/ocfs2
-> [   70.020369] 
-> [   70.026416] OK
-> [   70.026418] 
-> [   70.031238] create testdir /mnt/ocfs2/20191113_002600
-> [   70.031240] 
-> [   70.043257] create 15890 files .
-> [   70.043259] 
-> [   70.046469] 
-> [   74.089735] o2dlm: Leaving domain B7CA1824044F4C99924CDC31E1E40968
-> [   74.155669] blk_update_request: I/O error, dev fd0, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [   74.157766] floppy: error 10 while reading block 0
-> [   76.034283] ocfs2: Unmounting device (8,0) on (node 1)
-> [   76.036255] ------------[ cut here ]------------
-> [   76.037559] refcount_t: underflow; use-after-free.
-> [   76.039312] WARNING: CPU: 1 PID: 2523 at lib/refcount.c:28 refcount_warn_saturate+0x8d/0xf0
-> [   76.042310] Modules linked in: ocfs2_stack_o2cb ocfs2_dlm ocfs2 ocfs2_nodemanager ocfs2_stackglue jbd2 intel_rapl_msr intel_rapl_common crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel sr_mod cdrom ata_generic pata_acpi sd_mod sg ppdev bochs_drm drm_vram_helper ttm aesni_intel drm_kms_helper crypto_simd syscopyarea sysfillrect sysimgblt fb_sys_fops cryptd drm glue_helper snd_pcm ata_piix snd_timer libata snd joydev serio_raw soundcore pcspkr virtio_scsi i2c_piix4 parport_pc parport floppy ip_tables
-> [   76.056817] CPU: 1 PID: 2523 Comm: umount Tainted: G        W         5.4.0-rc2-00008-g84b21d1291c67 #1
-> [   76.058930] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   76.060887] RIP: 0010:refcount_warn_saturate+0x8d/0xf0
-> [   76.062346] Code: 05 ae 76 37 01 01 e8 62 a7 c1 ff 0f 0b c3 80 3d a1 76 37 01 00 75 ad 48 c7 c7 10 9a 93 b4 c6 05 91 76 37 01 01 e8 43 a7 c1 ff <0f> 0b c3 80 3d 85 76 37 01 00 75 8e 48 c7 c7 90 99 93 b4 c6 05 75
-> [   76.066602] RSP: 0018:ffffb13780483e20 EFLAGS: 00010282
-> [   76.068139] RAX: 0000000000000000 RBX: ffff9858997d9000 RCX: 0000000000000000
-> [   76.069951] RDX: ffff9858ffd27640 RSI: ffff9858ffd17778 RDI: ffff9858ffd17778
-> [   76.071781] RBP: ffff9858a0009800 R08: 0000000000000506 R09: 0000000000aaaaaa
-> [   76.073606] R10: ffff985899777900 R11: ffff9858d79ccd10 R12: ffffb13780483e34
-> [   76.075447] R13: ffff9858997d9240 R14: ffff9858997d90c8 R15: 0000000000000000
-> [   76.077285] FS:  00007f139509ee40(0000) GS:ffff9858ffd00000(0000) knlGS:0000000000000000
-> [   76.079283] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   76.080899] CR2: 00000000004216d0 CR3: 00000001d5e56000 CR4: 00000000000406e0
-> [   76.082717] Call Trace:
-> [   76.083876]  ocfs2_dismount_volume+0x32a/0x3e0 [ocfs2]
-> [   76.085389]  generic_shutdown_super+0x6c/0x120
-> [   76.086812]  kill_block_super+0x21/0x50
-> [   76.088112]  deactivate_locked_super+0x3f/0x70
-> [   76.089502]  cleanup_mnt+0xb8/0x150
-> [   76.090748]  task_work_run+0xa3/0xe0
-> [   76.092005]  exit_to_usermode_loop+0xeb/0xf0
-> [   76.093357]  do_syscall_64+0x1a7/0x1d0
-> [   76.094637]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   76.096130] RIP: 0033:0x7f1394982d77
-> [   76.097386] Code: 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f1 00 2b 00 f7 d8 64 89 01 48
-> [   76.101690] RSP: 002b:00007ffd3220b638 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> [   76.103605] RAX: 0000000000000000 RBX: 000056324cf1f080 RCX: 00007f1394982d77
-> [   76.105430] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000056324cf1f260
-> [   76.107277] RBP: 000056324cf1f260 R08: 000056324cf20600 R09: 0000000000000015
-> [   76.109125] R10: 00000000000006b4 R11: 0000000000000246 R12: 00007f1394e84e64
-> [   76.110980] R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffd3220b8c0
-> [   76.112828] ---[ end trace 60d2f00fc8257cff ]---
+Dan
+
+
