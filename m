@@ -2,160 +2,380 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66561102482
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:35:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5787410249B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbfKSMfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:35:10 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:33160 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbfKSMfK (ORCPT
+        id S1727733AbfKSMiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:38:52 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38572 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfKSMiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:35:10 -0500
-Received: by mail-io1-f69.google.com with SMTP id p19so15830504iog.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 04:35:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=y6Aku7oJX0gIXknWTEbNW7ai/Guio2J9Sp/4M8zhwsg=;
-        b=Roe956fPJwp8PC+k15JvzkqJTHVdoExPWuRnIvj6wRjwfhICYBG1KICITGQGS7qZBH
-         TZoygy9hB2wROxN6AFqVsW2aT7tAobNEmKJcyvRNsZ1zSgJYQ83uel3MTYdA7va6DvTh
-         2P70N3WfgPMBYqtRda7TN52Hz6UMDP73FnHRaLtIt/5S18gFk5Pj9yiGyzVBH5mtmG8/
-         K6uxMQpSW8lJtA+270rfh40WKAVia13PQZuFgQ0AfJ5V9BWYRRU/GVwDBbmDDEDMgf5E
-         wGq9Nbx2nxFxKt8X22hWG8dtHhwwsjJ8iNYew8sQKVhqL15Uu5u0aJ5PAHsPH8qbK5xE
-         2Udw==
-X-Gm-Message-State: APjAAAWu/QtMZqhmdAS56aGistnzvldZO3GgZ69uVVMHtwxR0HEMCMSD
-        6DWon8Gp2I1HFxIXrAfgRiKGnGhRO7GNYCeZX5EY3SPS7rmP
-X-Google-Smtp-Source: APXvYqzhcxgq7Vwsl8zS3M2nFVJF3Ew5GOS7hyZ3meIPc/CYzLwtsco9MojsVoH9eASy8nV1W9Vj5opw2ytMlMhk+Ij4Pd1O0E2z
+        Tue, 19 Nov 2019 07:38:52 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJCOETM069076;
+        Tue, 19 Nov 2019 12:36:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=G4C/OBGSQj6Rpmyhw8nXepKxoQaXDaP/8PfpPecSB/0=;
+ b=YluPSUBzz9OC6CnxjhKqVI9CaznglJfLy214AKHilJej0LKEOorInwcOdXBG50mlgSMA
+ 8dZk0jMVboOGQHaIzmH8aioQLz83CsDjKUuopuM2ANxfL2to4OREl60NMzB9pM8iGDte
+ jtZQdyZVSbxhNEe+x4mJPJM84acpop1idbV/uG/boHi+DP48Uh4LxXeO+R0nISQ+U307
+ dgOJF4JOKFhmavef6n8nIQVKoJMJjT8s8JQz/SBYLDeLuIrBqW09kRxg2F7F0M8CG5qM
+ i5qvwm41vNfl5h7tAnUy0GwDOCJPaW55rn7cZmxyFs2TEGggIwtmfJry2n3POoDX9zdE 2g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2wa92pph96-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 12:36:05 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJCS6CG117679;
+        Tue, 19 Nov 2019 12:36:05 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2wc09xapjw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 12:36:04 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJCZufY025862;
+        Tue, 19 Nov 2019 12:35:57 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 04:35:53 -0800
+Date:   Tue, 19 Nov 2019 15:35:31 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, djkurtz@google.com,
+        Akshu.Agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v9 6/6] ASoC: amd: Added ACP3x system resume and
+ runtime pm
+Message-ID: <20191119123531.GA30789@kadam>
+References: <1574165476-24987-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574165476-24987-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f60f:: with SMTP id n15mr16567480ioh.263.1574166906854;
- Tue, 19 Nov 2019 04:35:06 -0800 (PST)
-Date:   Tue, 19 Nov 2019 04:35:06 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004ce83f0597b24bba@google.com>
-Subject: general protection fault in virtio_transport_release
-From:   syzbot <syzbot+e2e5c07bf353b2f79daa@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, idosch@mellanox.com,
-        jakub.kicinski@netronome.com, jiri@mellanox.com, kafai@fb.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, songliubraving@fb.com, stefanha@redhat.com,
-        syzkaller-bugs@googlegroups.com, vadimp@mellanox.com,
-        virtualization@lists.linux-foundation.org, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574165476-24987-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+I can't apply this because I'm not CC'd on patches 2-5.
 
-syzbot found the following crash on:
+On Tue, Nov 19, 2019 at 05:41:16PM +0530, Ravulapati Vishnu vardhan rao wrote:
+> +static int acp3x_power_on(void __iomem *acp3x_base)
+> +{
+> +	u32 val;
+> +	u32 timeout;
+> +
+> +	timeout = 0;
+> +	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> +
+> +	if (val == 0)
+> +		return val;
+> +
+> +	if (!((val & ACP_PGFSM_STATUS_MASK) ==
+> +				ACP_POWER_ON_IN_PROGRESS))
+> +		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
+> +			acp3x_base + mmACP_PGFSM_CONTROL);
+> +	while (++timeout) {
 
-HEAD commit:    1e8795b1 mscc.c: fix semicolon.cocci warnings
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d77406e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e855e9c92c9474fe
-dashboard link: https://syzkaller.appspot.com/bug?extid=e2e5c07bf353b2f79daa
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1537f46ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11359c6ae00000
+while (++timeout < 500) 
 
-The bug was bisected to:
-
-commit f366cd2a2e510b155e18b21a2d149332aa08eb61
-Author: Vadim Pasternak <vadimp@mellanox.com>
-Date:   Mon Oct 21 10:30:30 2019 +0000
-
-     mlxsw: reg: Add macro for getting QSFP module EEPROM page number
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=148945aae00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=168945aae00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=128945aae00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e2e5c07bf353b2f79daa@syzkaller.appspotmail.com
-Fixes: f366cd2a2e51 ("mlxsw: reg: Add macro for getting QSFP module EEPROM  
-page number")
-
-RDX: 0000000000000010 RSI: 00000000200000c0 RDI: 0000000000000004
-RBP: 0000000000000005 R08: 0000000000000001 R09: 00007ffd5b250031
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401e00
-R13: 0000000000401e90 R14: 0000000000000000 R15: 0000000000000000
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8862 Comm: syz-executor079 Not tainted 5.4.0-rc6+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:virtio_transport_release+0x13b/0xcb0  
-net/vmw_vsock/virtio_transport_common.c:826
-Code: e8 aa e6 2b fa 66 41 83 fd 01 0f 84 34 02 00 00 e8 3a e5 2b fa 48 8b  
-95 30 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 22 0a 00 00 48 8b bb 98 00 00 00 48 b8 00 00 00
-RSP: 0018:ffff888092dbfaf0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff87474aa0
-RDX: 0000000000000013 RSI: ffffffff874747d6 RDI: 0000000000000001
-RBP: ffff888092dbfc00 R08: ffff88809245a380 R09: fffffbfff1555fe1
-R10: fffffbfff1555fe0 R11: 0000000000000003 R12: ffff888092dbfbd8
-R13: 0000000000000007 R14: 0000000000000007 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200000c4 CR3: 0000000008e6d000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __vsock_release+0x80/0x2d0 net/vmw_vsock/af_vsock.c:733
-  vsock_release+0x35/0xa0 net/vmw_vsock/af_vsock.c:806
-  __sock_release+0xce/0x280 net/socket.c:590
-  sock_close+0x1e/0x30 net/socket.c:1268
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x904/0x2e60 kernel/exit.c:817
-  do_group_exit+0x135/0x360 kernel/exit.c:921
-  __do_sys_exit_group kernel/exit.c:932 [inline]
-  __se_sys_exit_group kernel/exit.c:930 [inline]
-  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:930
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43f1d8
-Code: Bad RIP value.
-RSP: 002b:00007ffd5b25f838 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f1d8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004befa8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 4b9b883ea3ab661f ]---
-RIP: 0010:virtio_transport_release+0x13b/0xcb0  
-net/vmw_vsock/virtio_transport_common.c:826
-Code: e8 aa e6 2b fa 66 41 83 fd 01 0f 84 34 02 00 00 e8 3a e5 2b fa 48 8b  
-95 30 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 22 0a 00 00 48 8b bb 98 00 00 00 48 b8 00 00 00
-RSP: 0018:ffff888092dbfaf0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff87474aa0
-RDX: 0000000000000013 RSI: ffffffff874747d6 RDI: 0000000000000001
-RBP: ffff888092dbfc00 R08: ffff88809245a380 R09: fffffbfff1555fe1
-R10: fffffbfff1555fe0 R11: 0000000000000003 R12: ffff888092dbfbd8
-R13: 0000000000000007 R14: 0000000000000007 R15: 0000000000000000
-FS:  00000000009db880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000043f1ae CR3: 0000000008e6d000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> +		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+                   ^^
+Extra space character.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +		if (!val)
+> +			break;
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+return 0;
+
+> +		udelay(1);
+> +		if (timeout > 500) {
+> +			pr_err("ACP is Not Powered ON\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +	}
+> +	return 0;
+
+Since we combined the ++timeout and the < 500 this becomes
+"return -ETIMEOUT;" here.
+
+
+> +}
+> +
+> +static int acp3x_power_off(void __iomem *acp3x_base)
+> +{
+> +	u32 val;
+> +	u32 timeout, ret;
+
+Both ret and timeout should just be int.  Please update this throughout.
+
+> +
+> +	timeout = 0;
+
+Move the timeout = 0 next to the loop or put it in the initializer.
+
+> +	rv_writel(ACP_PGFSM_CNTL_POWER_OFF_MASK,
+> +			acp3x_base + mmACP_PGFSM_CONTROL);
+> +	while (++timeout) {
+
+while (++timeout < 500) {
+
+> +		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+
+Extra space char.
+
+> +		if ((val & ACP_PGFSM_STATUS_MASK) == ACP_POWERED_OFF) {
+> +			ret = 0;
+> +			break;
+
+return 0;
+
+> +		}
+> +		udelay(1);
+> +		if (timeout > 500) {
+> +			pr_err("ACP is Not Powered OFF\n");
+> +			ret = -ETIMEDOUT;
+> +			break;
+> +		}
+> +	}
+> +	return ret;
+> +}
+> +
+> +static int acp3x_reset(void __iomem *acp3x_base)
+> +{
+> +	u32 val, timeout;
+> +
+> +	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
+> +	timeout = 0;
+> +	while (++timeout) {
+> +		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
+> +		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
+> +							timeout > 100) {
+
+This timeout > 100 limit was difficult to spot.  Like finding Waldo.
+
+> +			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
+> +				break;
+
+This is a duplicate condition.
+
+> +			return -ENODEV;
+> +		}
+> +		cpu_relax();
+> +	}
+> +	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
+> +	timeout = 0;
+> +	while (++timeout) {
+> +		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
+> +		if (!val)
+> +			break;
+> +		if (timeout > 100)
+> +			return -ENODEV;
+> +		cpu_relax();
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int acp3x_init(void __iomem *acp3x_base)
+> +{
+> +	int ret;
+> +
+> +	/* power on */
+> +	ret = acp3x_power_on(acp3x_base);
+> +	if (ret) {
+> +		pr_err("ACP3x power on failed\n");
+> +		return ret;
+> +	}
+> +	/* Reset */
+> +	ret = acp3x_reset(acp3x_base);
+> +	if (ret) {
+> +		pr_err("ACP3x reset failed\n");
+> +		return ret;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int acp3x_deinit(void __iomem *acp3x_base)
+> +{
+> +	int ret;
+> +
+> +	/* Reset */
+> +	ret = acp3x_reset(acp3x_base);
+> +	if (ret) {
+> +		pr_err("ACP3x reset failed\n");
+> +		return ret;
+> +	}
+> +	/* power off */
+> +	ret = acp3x_power_off(acp3x_base);
+> +	if (ret) {
+> +		pr_err("ACP3x power off failed\n");
+> +		return ret;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int snd_acp3x_probe(struct pci_dev *pci,
+>  			   const struct pci_device_id *pci_id)
+>  {
+> @@ -64,6 +186,9 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  	}
+>  	pci_set_master(pci);
+>  	pci_set_drvdata(pci, adata);
+> +	ret = acp3x_init(adata->acp3x_base);
+> +	if (ret)
+> +		goto disable_msi;
+>  
+>  	val = rv_readl(adata->acp3x_base + mmACP_I2S_PIN_CONFIG);
+>  	switch (val) {
+> @@ -73,7 +198,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  					  GFP_KERNEL);
+>  		if (!adata->res) {
+>  			ret = -ENOMEM;
+> -			goto disable_msi;
+> +			goto de_init;
+>  		}
+>  
+>  		adata->res[0].name = "acp3x_i2s_iomem";
+> @@ -134,12 +259,23 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  		ret = -ENODEV;
+>  		goto disable_msi;
+>  	}
+> +	pm_runtime_set_autosuspend_delay(&pci->dev, 5000);
+> +	pm_runtime_use_autosuspend(&pci->dev);
+> +	pm_runtime_set_active(&pci->dev);
+> +	pm_runtime_put_noidle(&pci->dev);
+> +	pm_runtime_enable(&pci->dev);
+>  	return 0;
+>  
+>  unregister_devs:
+>  	if (val == I2S_MODE)
+>  		for (i = 0 ; i < ACP3x_DEVS ; i++)
+>  			platform_device_unregister(adata->pdev[i]);
+> +de_init:
+> +	ret = acp3x_deinit(adata->acp3x_base);
+> +	if (ret)
+> +		dev_err(&pci->dev, "ACP de-init failed\n");
+> +	else
+> +		dev_dbg(&pci->dev, "ACP de-initialized\n");
+
+
+We can't overwrite ret (probe failed even if deinit() succeeded).  I
+dont' know that the debug printk is useful.
+
+de_init:
+	if (acp3x_deinit(adata->acp3x_base))
+		dev_err(&pci->dev, "ACP de-init failed in probe error handling\n");
+
+
+>  disable_msi:
+>  	pci_disable_msi(pci);
+>  release_regions:
+> @@ -150,15 +286,58 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  	return ret;
+>  }
+>  
+> +static int  snd_acp3x_suspend(struct device *dev)
+             ^^
+Extra space char
+
+> +{
+> +	int status;
+
+int ret;
+
+> +	struct acp3x_dev_data *adata;
+> +
+> +	adata = dev_get_drvdata(dev);
+> +	status = acp3x_deinit(adata->acp3x_base);
+> +	if (status)
+> +		dev_err(dev, "ACP de-init failed\n");
+> +	else
+> +		dev_dbg(dev, "ACP de-initialized\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static int  snd_acp3x_resume(struct device *dev)
+             ^^
+Extra space
+
+> +{
+> +	int status;
+> +	struct acp3x_dev_data *adata;
+> +
+> +	adata = dev_get_drvdata(dev);
+> +	status = acp3x_init(adata->acp3x_base);
+> +	if (status) {
+> +		dev_err(dev, "ACP init failed\n");
+> +		return status;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops acp3x_pm = {
+> +	.runtime_suspend = snd_acp3x_suspend,
+> +	.runtime_resume =  snd_acp3x_resume,
+> +	.resume =       snd_acp3x_resume,
+
+Fix whitespace.
+
+> +};
+> +
+>  static void snd_acp3x_remove(struct pci_dev *pci)
+>  {
+> -	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
+
+This was fine.  Leave it as-is.
+
+> -	int i;
+> +	struct acp3x_dev_data *adata;
+> +	int i, ret;
+>  
+> +	adata = pci_get_drvdata(pci);
+>  	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
+>  		for (i = 0 ; i <  ACP3x_DEVS ; i++)
+                                ^^
+There is an extra space char here as well.  I guess I missed it when I
+reviewed patch 1.
+
+>  			platform_device_unregister(adata->pdev[i]);
+>  	}
+> +	ret = acp3x_deinit(adata->acp3x_base);
+> +	if (ret)
+> +		dev_err(&pci->dev, "ACP de-init failed\n");
+> +	else
+> +		dev_dbg(&pci->dev, "ACP de-initialized\n");
+
+Put the printk in acp3x_deinit() itself and remove it from all the
+callers.
+
+regards,
+dan carpenter
+
