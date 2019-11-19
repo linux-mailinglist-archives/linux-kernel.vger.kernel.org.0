@@ -2,290 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F4C1022AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 12:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 229371022BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 12:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfKSLNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 06:13:25 -0500
-Received: from foss.arm.com ([217.140.110.172]:50826 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfKSLNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 06:13:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D85D51FB;
-        Tue, 19 Nov 2019 03:13:23 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4197A3F703;
-        Tue, 19 Nov 2019 03:13:23 -0800 (PST)
-Date:   Tue, 19 Nov 2019 11:13:21 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     maz@kernel.org, linux-kernel@vger.kernel.org,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        jeremy.linton@arm.com, "David S. Miller" <davem@davemloft.net>,
-        Bjorn Helgaas <bhelgaas@google.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH v2 1/6] linux/log2.h: Add roundup/rounddown_pow_two64()
- family of functions
-Message-ID: <20191119111320.GP43905@e119886-lin.cambridge.arm.com>
-References: <20191112155926.16476-1-nsaenzjulienne@suse.de>
- <20191112155926.16476-2-nsaenzjulienne@suse.de>
+        id S1727753AbfKSLPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 06:15:38 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43324 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfKSLPh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 06:15:37 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJBEhmG012119;
+        Tue, 19 Nov 2019 11:14:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=TLz55deBTOPUc26gtut2U7xNXx6/No2sxu52r3KcQXw=;
+ b=Y7Jb/cKm91JDsBLQ39hghY2OTvQFWWRID7tegmXtpJheNKEYuhaRn9FIHqQbx8uggWcF
+ ujMPiVEWOBY9wvd9P00pivq4Rft7H+AfRfG70K9yzaLH6MNQ5hqS2aB4D8Fjf6+iLSny
+ Iss33Fcr54eF3D2J17CTHqmpdRzMd5/QwrRqVmvJIWobdikdi9/w9kS8L6Bz++CGwB8y
+ bJ1pT0Q0eZQPhg2ZmOBX57hadTwxZSp8lF1kh3jlc7u6/LPyZTj59eYLmgJrOlYckZxI
+ MME7oY/ZuV7a9oHRukpCK/9uQYBgnVa4PSOnrrxyVcn+KyOWFJd1V66kdmTBJoV3pWgU +A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wa92pp519-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 11:14:43 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJBD33V191019;
+        Tue, 19 Nov 2019 11:14:43 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wcem8d5cm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 11:14:43 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJBEcJ1005137;
+        Tue, 19 Nov 2019 11:14:38 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 03:14:36 -0800
+Date:   Tue, 19 Nov 2019 14:14:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, djkurtz@google.com,
+        Akshu.Agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 1/6] ASoC: amd:Create multiple I2S platform device
+ endpoint
+Message-ID: <20191119111424.GD5626@kadam>
+References: <1574155967-1315-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574155967-1315-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112155926.16476-2-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <1574155967-1315-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=591
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190105
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=660 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 04:59:20PM +0100, Nicolas Saenz Julienne wrote:
-> Some users need to make sure their rounding function accepts and returns
-> 64bit long variables regardless of the architecture. Sadly
-> roundup/rounddown_pow_two() takes and returns unsigned longs. Create a
-> new generic 64bit variant of the function and cleanup rougue custom
-> implementations.
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> ---
->  drivers/net/ethernet/mellanox/mlx4/en_clock.c |  3 +-
->  drivers/pci/controller/pcie-cadence-ep.c      |  7 +--
->  drivers/pci/controller/pcie-cadence.c         |  7 +--
->  drivers/pci/controller/pcie-rockchip-ep.c     |  9 ++--
-
-Thanks for making this change. See comments inline...
-
->  include/linux/log2.h                          | 52 +++++++++++++++++++
->  kernel/dma/direct.c                           |  3 +-
->  6 files changed, 63 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-> index 024788549c25..027bd72505e2 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-> @@ -33,6 +33,7 @@
->  
->  #include <linux/mlx4/device.h>
->  #include <linux/clocksource.h>
-> +#include <linux/log2.h>
->  
->  #include "mlx4_en.h"
->  
-> @@ -252,7 +253,7 @@ static u32 freq_to_shift(u16 freq)
+On Tue, Nov 19, 2019 at 03:02:42PM +0530, Ravulapati Vishnu vardhan rao wrote:
+>  static int snd_acp3x_probe(struct pci_dev *pci,
+>  			   const struct pci_device_id *pci_id)
 >  {
->  	u32 freq_khz = freq * 1000;
->  	u64 max_val_cycles = freq_khz * 1000 * MLX4_EN_WRAP_AROUND_SEC;
-> -	u64 max_val_cycles_rounded = 1ULL << fls64(max_val_cycles - 1);
-> +	u64 max_val_cycles_rounded = roundup_pow_of_two64(max_val_cycles);
->  	/* calculate max possible multiplier in order to fit in 64bit */
->  	u64 max_mul = div64_u64(ULLONG_MAX, max_val_cycles_rounded);
->  
-> diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
-> index def7820cb824..26ff424b16f5 100644
-> --- a/drivers/pci/controller/pcie-cadence-ep.c
-> +++ b/drivers/pci/controller/pcie-cadence-ep.c
-> @@ -10,6 +10,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/sizes.h>
-> +#include <linux/log2.h>
->  
->  #include "pcie-cadence.h"
->  
-> @@ -90,11 +91,7 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
->  
->  	/* BAR size is 2^(aperture + 7) */
->  	sz = max_t(size_t, epf_bar->size, CDNS_PCIE_EP_MIN_APERTURE);
-> -	/*
-> -	 * roundup_pow_of_two() returns an unsigned long, which is not suited
-> -	 * for 64bit values.
-> -	 */
-> -	sz = 1ULL << fls64(sz - 1);
-> +	sz = roundup_pow_of_two64(sz);
->  	aperture = ilog2(sz) - 7; /* 128B -> 0, 256B -> 1, 512B -> 2, ... */
->  
->  	if ((flags & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
-> diff --git a/drivers/pci/controller/pcie-cadence.c b/drivers/pci/controller/pcie-cadence.c
-> index cd795f6fc1e2..b2278e6b955c 100644
-> --- a/drivers/pci/controller/pcie-cadence.c
-> +++ b/drivers/pci/controller/pcie-cadence.c
-> @@ -4,6 +4,7 @@
->  // Author: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
->  
->  #include <linux/kernel.h>
-> +#include <linux/log2.h>
->  
->  #include "pcie-cadence.h"
->  
-> @@ -11,11 +12,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 fn,
->  				   u32 r, bool is_io,
->  				   u64 cpu_addr, u64 pci_addr, size_t size)
->  {
-> -	/*
-> -	 * roundup_pow_of_two() returns an unsigned long, which is not suited
-> -	 * for 64bit values.
-> -	 */
-> -	u64 sz = 1ULL << fls64(size - 1);
-> +	u64 sz = roundup_pow_of_two64(size);
->  	int nbits = ilog2(sz);
->  	u32 addr0, addr1, desc0, desc1;
->  
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index d743b0a48988..ed50aaf27784 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -16,6 +16,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pci-epf.h>
->  #include <linux/sizes.h>
-> +#include <linux/log2.h>
->  
->  #include "pcie-rockchip.h"
->  
-> @@ -70,7 +71,7 @@ static void rockchip_pcie_prog_ep_ob_atu(struct rockchip_pcie *rockchip, u8 fn,
->  					 u32 r, u32 type, u64 cpu_addr,
->  					 u64 pci_addr, size_t size)
->  {
-> -	u64 sz = 1ULL << fls64(size - 1);
-> +	u64 sz = roundup_pow_of_two64(size);
->  	int num_pass_bits = ilog2(sz);
->  	u32 addr0, addr1, desc0, desc1;
->  	bool is_nor_msg = (type == AXI_WRAPPER_NOR_MSG);
-> @@ -172,11 +173,7 @@ static int rockchip_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
->  	/* BAR size is 2^(aperture + 7) */
->  	sz = max_t(size_t, epf_bar->size, MIN_EP_APERTURE);
->  
-> -	/*
-> -	 * roundup_pow_of_two() returns an unsigned long, which is not suited
-> -	 * for 64bit values.
-> -	 */
-> -	sz = 1ULL << fls64(sz - 1);
-> +	sz = roundup_pow_of_two64(sz);
->  	aperture = ilog2(sz) - 7; /* 128B -> 0, 256B -> 1, 512B -> 2, ... */
->  
->  	if ((flags & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
-> diff --git a/include/linux/log2.h b/include/linux/log2.h
-> index 83a4a3ca3e8a..db12d92ab6eb 100644
-> --- a/include/linux/log2.h
-> +++ b/include/linux/log2.h
-> @@ -67,6 +67,24 @@ unsigned long __rounddown_pow_of_two(unsigned long n)
->  	return 1UL << (fls_long(n) - 1);
->  }
->  
-> +/**
-> + * __roundup_pow_of_two64() - round 64bit value up to nearest power of two
-> + * @n: value to round up
-> + */
-> +static inline __attribute__((const)) __u64 __roundup_pow_of_two64(__u64 n)
+> -	int ret;
+> -	u32 addr, val;
+>  	struct acp3x_dev_data *adata;
+> -	struct platform_device_info pdevinfo;
+> +	struct platform_device_info pdevinfo[ACP3x_DEVS];
+>  	unsigned int irqflags;
+> +	int ret, val, i;
 
-To be consistent with other functions in the same file (__ilog_u64) you may
-want to rename this to __roundup_pow_of_two_u64.
+val should stay as u32.
 
-Also do you know why u64 is used in some places and __u64 in others?
+> +	u32 addr;
+>  
+>  	if (pci_enable_device(pci)) {
+>  		dev_err(&pci->dev, "pci_enable_device failed\n");
+> @@ -43,7 +43,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  			     GFP_KERNEL);
+>  	if (!adata) {
+>  		ret = -ENOMEM;
+> -		goto release_regions;
+> +		goto adata_free;
 
-> +{
-> +	return 1UL << fls64(n - 1);
-
-Does this need to be (and for the others):
-
-return 1ULL << fls64(n - 1);
-
-Notice that the PCI drivers you convert, all use 1ULL.
-
-Thanks,
-
-Andrew Murray 
+Release regions was the correct label name because if you do the goto
+then it will call release_regions().
 
 
-> +}
+>  	}
+>  
+>  	/* check for msi interrupt support */
+> @@ -56,7 +56,8 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  		irqflags = 0;
+>  
+>  	addr = pci_resource_start(pci, 0);
+> -	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
+> +	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
+> +					pci_resource_len(pci, 0));
+>  	if (!adata->acp3x_base) {
+>  		ret = -ENOMEM;
+>  		goto release_regions;
+> @@ -68,11 +69,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  	switch (val) {
+>  	case I2S_MODE:
+>  		adata->res = devm_kzalloc(&pci->dev,
+> -					  sizeof(struct resource) * 2,
+> +					  sizeof(struct resource) * 4,
+>  					  GFP_KERNEL);
+>  		if (!adata->res) {
+>  			ret = -ENOMEM;
+> -			goto unmap_mmio;
+> +			goto release_regions;
+>  		}
+>  
+>  		adata->res[0].name = "acp3x_i2s_iomem";
+> @@ -80,41 +81,68 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>  		adata->res[0].start = addr;
+>  		adata->res[0].end = addr + (ACP3x_REG_END - ACP3x_REG_START);
+>  
+> -		adata->res[1].name = "acp3x_i2s_irq";
+> -		adata->res[1].flags = IORESOURCE_IRQ;
+> -		adata->res[1].start = pci->irq;
+> -		adata->res[1].end = pci->irq;
+> +		adata->res[1].name = "acp3x_i2s_sp";
+> +		adata->res[1].flags = IORESOURCE_MEM;
+> +		adata->res[1].start = addr + ACP3x_I2STDM_REG_START;
+> +		adata->res[1].end = addr + ACP3x_I2STDM_REG_END;
 > +
-> +/**
-> + * __rounddown_pow_of_two64() - round 64bit value down to nearest power of two
-> + * @n: value to round down
-> + */
-> +static inline __attribute__((const)) __u64 __rounddown_pow_of_two64(__u64 n)
-> +{
-> +	return 1UL << (fls64(n) - 1);
-> +}
+> +		adata->res[2].name = "acp3x_i2s_bt";
+> +		adata->res[2].flags = IORESOURCE_MEM;
+> +		adata->res[2].start = addr + ACP3x_BT_TDM_REG_START;
+> +		adata->res[2].end = addr + ACP3x_BT_TDM_REG_END;
 > +
->  /**
->   * const_ilog2 - log base 2 of 32-bit or a 64-bit constant unsigned value
->   * @n: parameter
-> @@ -194,6 +212,40 @@ unsigned long __rounddown_pow_of_two(unsigned long n)
->  	__rounddown_pow_of_two(n)		\
->   )
+> +		adata->res[3].name = "acp3x_i2s_irq";
+> +		adata->res[3].flags = IORESOURCE_IRQ;
+> +		adata->res[3].start = pci->irq;
+> +		adata->res[3].end = adata->res[3].start;
 >  
-> +/**
-> + * roundup_pow_of_two64 - round the given 64bit value up to nearest power of
-> + * two
-> + * @n: parameter
-> + *
-> + * round the given value up to the nearest power of two
-> + * - the result is undefined when n == 0
-> + * - this can be used to initialise global variables from constant data
-> + */
-> +#define roundup_pow_of_two64(n)			\
-> +(						\
-> +	__builtin_constant_p(n) ? (		\
-> +		(n == 1) ? 1 :			\
-> +		(1UL << (ilog2((n) - 1) + 1))	\
-> +				   ) :		\
-> +	__roundup_pow_of_two64(n)		\
-> +)
+>  		adata->acp3x_audio_mode = ACP3x_I2S_MODE;
+>  
+>  		memset(&pdevinfo, 0, sizeof(pdevinfo));
+> -		pdevinfo.name = "acp3x_rv_i2s";
+> -		pdevinfo.id = 0;
+> -		pdevinfo.parent = &pci->dev;
+> -		pdevinfo.num_res = 2;
+> -		pdevinfo.res = adata->res;
+> -		pdevinfo.data = &irqflags;
+> -		pdevinfo.size_data = sizeof(irqflags);
+> -
+> -		adata->pdev = platform_device_register_full(&pdevinfo);
+> -		if (IS_ERR(adata->pdev)) {
+> -			dev_err(&pci->dev, "cannot register %s device\n",
+> -				pdevinfo.name);
+> -			ret = PTR_ERR(adata->pdev);
+> -			goto unmap_mmio;
+> +		pdevinfo[0].name = "acp3x_rv_i2s_dma";
+> +		pdevinfo[0].id = 0;
+> +		pdevinfo[0].parent = &pci->dev;
+> +		pdevinfo[0].num_res = 4;
+> +		pdevinfo[0].res = &adata->res[0];
+> +		pdevinfo[0].data = &irqflags;
+> +		pdevinfo[0].size_data = sizeof(irqflags);
 > +
-> +/**
-> + * rounddown_pow_of_two64 - round the given 64bit value down to nearest power
-> + * of two
-> + * @n: parameter
-> + *
-> + * round the given value down to the nearest power of two
-> + * - the result is undefined when n == 0
-> + * - this can be used to initialise global variables from constant data
-> + */
-> +#define rounddown_pow_of_two64(n)		\
-> +(						\
-> +	__builtin_constant_p(n) ? (		\
-> +		(1UL << ilog2(n))) :		\
-> +	__rounddown_pow_of_two64(n)		\
-> +)
+> +		pdevinfo[1].name = "acp3x_i2s_playcap";
+> +		pdevinfo[1].id = 0;
+> +		pdevinfo[1].parent = &pci->dev;
+> +		pdevinfo[1].num_res = 1;
+> +		pdevinfo[1].res = &adata->res[1];
 > +
->  static inline __attribute_const__
->  int __order_base_2(unsigned long n)
->  {
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index b9e1744999d9..a419530abd3e 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -15,6 +15,7 @@
->  #include <linux/vmalloc.h>
->  #include <linux/set_memory.h>
->  #include <linux/swiotlb.h>
-> +#include <linux/log2.h>
+> +		pdevinfo[2].name = "acp3x_i2s_playcap";
+> +		pdevinfo[2].id = 1;
+> +		pdevinfo[2].parent = &pci->dev;
+> +		pdevinfo[2].num_res = 1;
+> +		pdevinfo[2].res = &adata->res[2];
+> +		for (i = 0; i < ACP3x_DEVS ; i++) {
+> +			adata->pdev[i] =
+> +				platform_device_register_full(&pdevinfo[i]);
+> +			if (IS_ERR(adata->pdev[i])) {
+> +				dev_err(&pci->dev, "cannot register %s device\n",
+> +					pdevinfo[i].name);
+> +				ret = PTR_ERR(adata->pdev[i]);
+> +				goto unmap_mmio;
+> +			}
+>  		}
+>  		break;
+>  	default:
+>  		dev_err(&pci->dev, "Invalid ACP audio mode : %d\n", val);
+>  		ret = -ENODEV;
+> -		goto unmap_mmio;
+> +		goto release_regions;
+>  	}
+>  	return 0;
 >  
->  /*
->   * Most architectures use ZONE_DMA for the first 16 Megabytes, but some use it
-> @@ -53,7 +54,7 @@ u64 dma_direct_get_required_mask(struct device *dev)
->  {
->  	u64 max_dma = phys_to_dma_direct(dev, (max_pfn - 1) << PAGE_SHIFT);
->  
-> -	return (1ULL << (fls64(max_dma) - 1)) * 2 - 1;
-> +	return rounddown_pow_of_two64(max_dma) * 2 - 1;
->  }
->  
->  static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
-> -- 
-> 2.24.0
-> 
+>  unmap_mmio:
+> -	pci_disable_msi(pci);
+> -	iounmap(adata->acp3x_base);
+> +	if (val == I2S_MODE)
+> +		for (i = 0 ; i < ACP3x_DEVS ; i++)
+> +			platform_device_unregister(adata->pdev[i]);
+
+This label used to unmap, but now we're using devm_ so it doesn't any
+more.  Change it to unregister_devices or something.
+
+>  release_regions:
+> +	pci_disable_msi(pci);
+
+This should be "disable_msi" or something.
+
+> +adata_free:
+>  	pci_release_regions(pci);
+
+release_regions:
+
+>  disable_pci:
+>  	pci_disable_device(pci);
+
+regards,
+dan carpenter
+
