@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 694FD10157F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E166E1014A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbfKSFos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:44:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40218 "EHLO mail.kernel.org"
+        id S1729462AbfKSFgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:36:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730389AbfKSFop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:45 -0500
+        id S1729911AbfKSFgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:36:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13DB721783;
-        Tue, 19 Nov 2019 05:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D8CF20672;
+        Tue, 19 Nov 2019 05:36:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142285;
-        bh=IMTxs0Vg3w+Hwrt3XgNErfmtrm2IarEi/exW/jkwuQc=;
+        s=default; t=1574141765;
+        bh=7e2XOAxRCZkEiFfovhqWgSe7n5iO8CPSFgffFPsUjWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N+xDokePfH3mNKRFI3uo4SvdTpu+9PChnXsxocEAAdaNbnm4m1AfevJgIwNrLlKsY
-         bo80nKZiZXMhTPNTqoy1+1xbxqL1Fzg41dfEDV7LCvj4H+5jA5Qcqu9vJoIh7NUSkW
-         9nfK8iLYoGdwJXHWfbjGYwwpYL2ssx3pR5U19GgA=
+        b=TOz2HwTK9Ip9yRdhMOV44KhaIGcmI4DQ3/jcZYPvilcJCRX4dr15ukY/jEsbIF5ar
+         PrR2L5wLxXWswDz3Al4PWyeyDJ3VDxQ/FdPPlKmAA5HLMMXj6UAKB6gfk/v3KCgm3f
+         Idmc/FQ5xtnfZRrie7Xp1sNt0W6gOiyg+spZRA+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 029/239] tee: optee: take DT status property into account
-Date:   Tue, 19 Nov 2019 06:17:09 +0100
-Message-Id: <20191119051303.264037709@linuxfoundation.org>
+Subject: [PATCH 4.19 233/422] netfilter: nf_tables: avoid BUG_ON usage
+Date:   Tue, 19 Nov 2019 06:17:10 +0100
+Message-Id: <20191119051414.205983228@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit db878f76b9ff7487da9bb0f686153f81829f1230 ]
+[ Upstream commit fa5950e498e7face21a1761f327e6c1152f778c3 ]
 
-DT nodes may have a 'status' property which, if set to anything other
-than 'ok' or 'okay', indicates to the OS that the DT node should be
-treated as if it was not present. So add that missing logic to the
-OP-TEE driver.
+None of these spots really needs to crash the kernel.
+In one two cases we can jsut report error to userspace, in the other
+cases we can just use WARN_ON (and leak memory instead).
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tee/optee/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_tables_api.c | 9 ++++++---
+ net/netfilter/nft_cmp.c       | 6 ++++--
+ net/netfilter/nft_reject.c    | 6 ++++--
+ 3 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-index edb6e4e9ef3ac..ca79c2ba2ef2a 100644
---- a/drivers/tee/optee/core.c
-+++ b/drivers/tee/optee/core.c
-@@ -590,7 +590,7 @@ static int __init optee_driver_init(void)
- 		return -ENODEV;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 24fddf0322790..289d079008ee8 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1031,7 +1031,8 @@ static int nf_tables_deltable(struct net *net, struct sock *nlsk,
  
- 	np = of_find_matching_node(fw_np, optee_match);
--	if (!np)
-+	if (!np || !of_device_is_available(np))
- 		return -ENODEV;
+ static void nf_tables_table_destroy(struct nft_ctx *ctx)
+ {
+-	BUG_ON(ctx->table->use > 0);
++	if (WARN_ON(ctx->table->use > 0))
++		return;
  
- 	optee = optee_probe(np);
+ 	rhltable_destroy(&ctx->table->chains_ht);
+ 	kfree(ctx->table->name);
+@@ -1446,7 +1447,8 @@ static void nf_tables_chain_destroy(struct nft_ctx *ctx)
+ {
+ 	struct nft_chain *chain = ctx->chain;
+ 
+-	BUG_ON(chain->use > 0);
++	if (WARN_ON(chain->use > 0))
++		return;
+ 
+ 	/* no concurrent access possible anymore */
+ 	nf_tables_chain_free_chain_rules(chain);
+@@ -7253,7 +7255,8 @@ int __nft_release_basechain(struct nft_ctx *ctx)
+ {
+ 	struct nft_rule *rule, *nr;
+ 
+-	BUG_ON(!nft_is_base_chain(ctx->chain));
++	if (WARN_ON(!nft_is_base_chain(ctx->chain)))
++		return 0;
+ 
+ 	nf_tables_unregister_hook(ctx->net, ctx->chain->table, ctx->chain);
+ 	list_for_each_entry_safe(rule, nr, &ctx->chain->rules, list) {
+diff --git a/net/netfilter/nft_cmp.c b/net/netfilter/nft_cmp.c
+index fa90a8402845d..79d48c1d06f4d 100644
+--- a/net/netfilter/nft_cmp.c
++++ b/net/netfilter/nft_cmp.c
+@@ -79,7 +79,8 @@ static int nft_cmp_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
+ 
+ 	err = nft_data_init(NULL, &priv->data, sizeof(priv->data), &desc,
+ 			    tb[NFTA_CMP_DATA]);
+-	BUG_ON(err < 0);
++	if (err < 0)
++		return err;
+ 
+ 	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
+ 	err = nft_validate_register_load(priv->sreg, desc.len);
+@@ -129,7 +130,8 @@ static int nft_cmp_fast_init(const struct nft_ctx *ctx,
+ 
+ 	err = nft_data_init(NULL, &data, sizeof(data), &desc,
+ 			    tb[NFTA_CMP_DATA]);
+-	BUG_ON(err < 0);
++	if (err < 0)
++		return err;
+ 
+ 	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
+ 	err = nft_validate_register_load(priv->sreg, desc.len);
+diff --git a/net/netfilter/nft_reject.c b/net/netfilter/nft_reject.c
+index 29f5bd2377b0d..b48e58cceeb72 100644
+--- a/net/netfilter/nft_reject.c
++++ b/net/netfilter/nft_reject.c
+@@ -94,7 +94,8 @@ static u8 icmp_code_v4[NFT_REJECT_ICMPX_MAX + 1] = {
+ 
+ int nft_reject_icmp_code(u8 code)
+ {
+-	BUG_ON(code > NFT_REJECT_ICMPX_MAX);
++	if (WARN_ON_ONCE(code > NFT_REJECT_ICMPX_MAX))
++		return ICMP_NET_UNREACH;
+ 
+ 	return icmp_code_v4[code];
+ }
+@@ -111,7 +112,8 @@ static u8 icmp_code_v6[NFT_REJECT_ICMPX_MAX + 1] = {
+ 
+ int nft_reject_icmpv6_code(u8 code)
+ {
+-	BUG_ON(code > NFT_REJECT_ICMPX_MAX);
++	if (WARN_ON_ONCE(code > NFT_REJECT_ICMPX_MAX))
++		return ICMPV6_NOROUTE;
+ 
+ 	return icmp_code_v6[code];
+ }
 -- 
 2.20.1
 
