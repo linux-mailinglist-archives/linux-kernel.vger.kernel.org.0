@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7E5101560
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE52101562
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbfKSFnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38328 "EHLO mail.kernel.org"
+        id S1730755AbfKSFnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:43:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727715AbfKSFn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:43:29 -0500
+        id S1730750AbfKSFnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:43:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28AE208C3;
-        Tue, 19 Nov 2019 05:43:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D680208C3;
+        Tue, 19 Nov 2019 05:43:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142209;
-        bh=pnTi5kM2MNUO2j8B8uTwK81cNF2ix0cGem+wJRYU2cU=;
+        s=default; t=1574142211;
+        bh=OVPd61lh52XnKI/5MBHrjcApo0Y+YUQqhVuZpSLUWyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lrA0hLgjbhP7l/HMZDWmZ62o+cEvqlEoS+U80reBmDOpdIJqxSFqNi5AOOwSu/0BO
-         y3VdM76I7Jppi/BFpWVseQMD3JrZoK8aCJZH/xRwOFjHX++H/vLTys5PxIcREZxUxI
-         vpZOYgvyaHP4aOBlG5Q8IFt1a9cPcgRfS9XNx7H4=
+        b=Uz2XvfclTLKWySC5dQdduJnKSq97wEGkeCkr8Ju61aE9VF631IDGSuGE+ffj14D4P
+         TG3CsGegcHeayQmpVAv8dDGaPOi5+7WI7+NpqWdJc/oO8JtmyDVGuq6HLTiN4W+7UR
+         igCX3qwwXIQbYg1jd0xQBWVkcZ2zdGVA2C0mQfJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Finn Thain <fthain@telegraphics.com.au>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 402/422] scsi: NCR5380: Use DRIVER_SENSE to indicate valid sense data
-Date:   Tue, 19 Nov 2019 06:19:59 +0100
-Message-Id: <20191119051425.202395399@linuxfoundation.org>
+Subject: [PATCH 4.19 403/422] scsi: NCR5380: Check for invalid reselection target
+Date:   Tue, 19 Nov 2019 06:20:00 +0100
+Message-Id: <20191119051425.275005083@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -47,56 +47,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 070356513963be6196142acff56acc8359069fa1 ]
+[ Upstream commit 7ef55f6744c45e3d7c85a3f74ada39b67ac741dd ]
 
-When sense data is valid, call set_driver_byte(cmd, DRIVER_SENSE).  Otherwise
-some callers of scsi_execute() will ignore sense data.  Don't set DID_ERROR or
-DID_RESET just because sense data is missing.
+The X3T9.2 specification (draft) says, under "6.1.4.1 RESELECTION", that "the
+initiator shall not respond to a RESELECTION phase if other than two SCSI ID
+bits are on the DATA BUS." This issue (too many bits set) has been observed in
+the wild, so add a check.
 
 Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/scsi/NCR5380.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 144bb0c2b3064..90136942f4882 100644
+index 90136942f4882..c67f476447372 100644
 --- a/drivers/scsi/NCR5380.c
 +++ b/drivers/scsi/NCR5380.c
-@@ -513,11 +513,12 @@ static void complete_cmd(struct Scsi_Host *instance,
+@@ -2008,6 +2008,11 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
+ 	NCR5380_write(MODE_REG, MR_BASE);
  
- 	if (hostdata->sensing == cmd) {
- 		/* Autosense processing ends here */
--		if ((cmd->result & 0xff) != SAM_STAT_GOOD) {
-+		if (status_byte(cmd->result) != GOOD) {
- 			scsi_eh_restore_cmnd(cmd, &hostdata->ses);
--			set_host_byte(cmd, DID_ERROR);
--		} else
-+		} else {
- 			scsi_eh_restore_cmnd(cmd, &hostdata->ses);
-+			set_driver_byte(cmd, DRIVER_SENSE);
-+		}
- 		hostdata->sensing = NULL;
- 	}
+ 	target_mask = NCR5380_read(CURRENT_SCSI_DATA_REG) & ~(hostdata->id_mask);
++	if (!target_mask || target_mask & (target_mask - 1)) {
++		shost_printk(KERN_WARNING, instance,
++			     "reselect: bad target_mask 0x%02x\n", target_mask);
++		return;
++	}
  
-@@ -2265,7 +2266,6 @@ static int NCR5380_abort(struct scsi_cmnd *cmd)
- 	if (list_del_cmd(&hostdata->autosense, cmd)) {
- 		dsprintk(NDEBUG_ABORT, instance,
- 		         "abort: removed %p from sense queue\n", cmd);
--		set_host_byte(cmd, DID_ERROR);
- 		complete_cmd(instance, cmd);
- 	}
+ 	dsprintk(NDEBUG_RESELECTION, instance, "reselect\n");
  
-@@ -2344,7 +2344,6 @@ static int NCR5380_host_reset(struct scsi_cmnd *cmd)
- 	list_for_each_entry(ncmd, &hostdata->autosense, list) {
- 		struct scsi_cmnd *cmd = NCR5380_to_scmd(ncmd);
- 
--		set_host_byte(cmd, DID_RESET);
- 		cmd->scsi_done(cmd);
- 	}
- 	INIT_LIST_HEAD(&hostdata->autosense);
 -- 
 2.20.1
 
