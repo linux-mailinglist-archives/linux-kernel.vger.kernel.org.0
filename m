@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 196AA101636
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AABB101546
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731751AbfKSFvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
+        id S1730626AbfKSFmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:42:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731151AbfKSFvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:11 -0500
+        id S1729307AbfKSFmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:42:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEB18208C3;
-        Tue, 19 Nov 2019 05:51:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A014721783;
+        Tue, 19 Nov 2019 05:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142670;
-        bh=q4tBSuVCw5ZqWJJuSnB2wXUj3FJfplMx+MeJUnBneKM=;
+        s=default; t=1574142141;
+        bh=cgb0xVVEc5WcURXKLpKTPZhyFAvDBAizIGsLfS6kJAI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QWLCsn2Ow2A03p8zvpZtuJ0z8o/R5O12B4FMI3CDapMdR3qVnhJphg/trM8WOHv0Q
-         MuvqqhWpki/T6jdbX3aunBRPNv7xwMMO7LWTU3DIqBghSMxb3xceKkyZitrBDDrPWE
-         fOyBaYNqKk+B+VO5ixbEbfOAAtd2HUkH8mHwoZmU=
+        b=NwZ9mo870zC1vNZonnVT9VsYO0CQep5oIwCNweBNNGKCjAu8VEazC2eF2ocry/yxY
+         w60CnvHG8vpAbO3cUG40ebb+FLee2jRmnNLAjxw4DILfNchhgcaKdXvayiIFkOogei
+         tXgdeurmYik57vK3cNhz3CvFOeUKBbQntbyrP4v4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 159/239] ARM: dts: am335x-evm: fix number of cpsw
+Subject: [PATCH 4.19 362/422] f2fs: fix remount problem of option io_bits
 Date:   Tue, 19 Nov 2019 06:19:19 +0100
-Message-Id: <20191119051333.264951714@linuxfoundation.org>
+Message-Id: <20191119051422.473116024@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Chengguang Xu <cgxu519@gmx.com>
 
-[ Upstream commit dcbf6b18d81bcdc51390ca1b258c17e2e13b7d0c ]
+[ Upstream commit c6b1867b1da3b1203b4c49988afeebdcbdf65499 ]
 
-am335x-evm has only one CPSW external port physically wired, but DT defines
-2 ext. ports. As result, PHY connection failure reported for the second
-ext. port.
+Currently we show mount option "io_bits=%u" as "io_size=%uKB",
+it will cause option parsing problem(unrecognized mount option)
+in remount.
 
-Update DT to reflect am335x-evm board HW configuration, and, while here,
-switch to use phy-handle instead of phy_id.
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am335x-evm.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/am335x-evm.dts b/arch/arm/boot/dts/am335x-evm.dts
-index 478434ebff92d..27ff3e689e96e 100644
---- a/arch/arm/boot/dts/am335x-evm.dts
-+++ b/arch/arm/boot/dts/am335x-evm.dts
-@@ -724,6 +724,7 @@
- 	pinctrl-0 = <&cpsw_default>;
- 	pinctrl-1 = <&cpsw_sleep>;
- 	status = "okay";
-+	slaves = <1>;
- };
- 
- &davinci_mdio {
-@@ -731,15 +732,14 @@
- 	pinctrl-0 = <&davinci_mdio_default>;
- 	pinctrl-1 = <&davinci_mdio_sleep>;
- 	status = "okay";
--};
- 
--&cpsw_emac0 {
--	phy_id = <&davinci_mdio>, <0>;
--	phy-mode = "rgmii-txid";
-+	ethphy0: ethernet-phy@0 {
-+		reg = <0>;
-+	};
- };
- 
--&cpsw_emac1 {
--	phy_id = <&davinci_mdio>, <1>;
-+&cpsw_emac0 {
-+	phy-handle = <&ethphy0>;
- 	phy-mode = "rgmii-txid";
- };
- 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c5d28e92d146e..b05e10c332b7e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1336,7 +1336,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 				from_kgid_munged(&init_user_ns,
+ 					F2FS_OPTION(sbi).s_resgid));
+ 	if (F2FS_IO_SIZE_BITS(sbi))
+-		seq_printf(seq, ",io_size=%uKB", F2FS_IO_SIZE_KB(sbi));
++		seq_printf(seq, ",io_bits=%u",
++				F2FS_OPTION(sbi).write_io_size_bits);
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (test_opt(sbi, FAULT_INJECTION)) {
+ 		seq_printf(seq, ",fault_injection=%u",
 -- 
 2.20.1
 
