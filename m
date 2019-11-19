@@ -2,50 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0235B101083
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 02:08:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9210310108A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 02:13:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfKSBIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 20:08:48 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:52032 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfKSBIs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 20:08:48 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2D56E150FA0F8;
-        Mon, 18 Nov 2019 17:08:47 -0800 (PST)
-Date:   Mon, 18 Nov 2019 17:08:46 -0800 (PST)
-Message-Id: <20191118.170846.498950498885489049.davem@davemloft.net>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, idosch@mellanox.com, tglx@linutronix.de,
-        gregkh@linuxfoundation.org, dsahern@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: atm: Reduce the severity of logging in
- unlink_clip_vcc
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191117202837.7462-1-pakki001@umn.edu>
-References: <20191117202837.7462-1-pakki001@umn.edu>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1727102AbfKSBNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 20:13:55 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6249 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726775AbfKSBNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 20:13:54 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id F23E3FCA1D89BD2D1402;
+        Tue, 19 Nov 2019 09:13:52 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 19 Nov 2019
+ 09:13:46 +0800
+Subject: Re: [RFC PATCH v2] arm64: cpufeatures: add support for tlbi range
+ instructions
+To:     Marc Zyngier <maz@kernel.org>, Zhenyu Ye <yezhenyu2@huawei.com>
+CC:     Will Deacon <will@kernel.org>, <catalin.marinas@arm.com>,
+        <suzuki.poulose@arm.com>, <mark.rutland@arm.com>,
+        <tangnianyao@huawei.com>, <xiexiangyou@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <arm@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        wanghuiqiang <wanghuiqiang@huawei.com>
+References: <5DC960EB.9050503@huawei.com>
+ <20191111132716.GA9394@willie-the-truck> <5DC96660.8040505@huawei.com>
+ <d4542758f83b3df3ab391341499fecfb@www.loen.fr>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <c9dfb341-9d14-1a62-0c34-6ec8bd9b4c55@huawei.com>
+Date:   Tue, 19 Nov 2019 09:13:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <d4542758f83b3df3ab391341499fecfb@www.loen.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 18 Nov 2019 17:08:47 -0800 (PST)
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
-Date: Sun, 17 Nov 2019 14:28:36 -0600
++Cc linux-arm-kernel mailing list and Shaokun.
 
-> In case of errors in unlink_clip_vcc, the logging level is set to
-> pr_crit but failures in clip_setentry are handled by pr_err().
-> The patch changes the severity consistent across invocations.
+Hi Marc,
+
+On 2019/11/11 22:04, Marc Zyngier wrote:
+> On 2019-11-11 14:56, Zhenyu Ye wrote:
+>> On 2019/11/11 21:27, Will Deacon wrote:
+>>> On Mon, Nov 11, 2019 at 09:23:55PM +0800, Zhenyu Ye wrote:
+[...]
+>>>
+>>> How does this address my concerns here:
+>>>
+>>>
+>>> https://lore.kernel.org/linux-arm-kernel/20191031131649.GB27196@willie-the-truck/
+>>>
+>>> ?
+>>>
+>>> Will
+>>
+>> I think your concern is more about the hardware level, and we can do
+>> nothing about
+>> this at all. The interconnect/DVM implementation is not exposed to
+>> software layer
+>> (and no need), and may should be constrained at hardware level.
 > 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> You're missing the point here: the instruction may be implemented
+> and perfectly working at the CPU level, and yet not carried over
+> the interconnect. In this situation, other CPUs may not observe
+> the DVM messages instructing them of such invalidation, and you'll end
+> up with memory corruption.
+> 
+> So, in the absence of an architectural guarantee that range invalidation
+> is supported and observed by all the DVM agents in the system, there must
+> be a firmware description for it on which the kernel can rely.
 
-Applied.
+I'm thinking of how to add a firmware description for it, how about this:
+
+Adding a system level flag to indicate the supporting of TIBi by range,
+which means adding a binding name for example "tlbi-by-range" at system
+level in the dts file, or a tlbi by range flag in ACPI FADT table, then
+we use the ID register per-cpu and the system level flag as
+
+if (cpus_have_const_cap(ARM64_HAS_TLBI_BY_RANGE) && system_level_tlbi_by_range)
+	flush_tlb_by_range()
+else
+	flush_tlb_range()
+
+And this seems work for heterogeneous system (olny parts of the CPU support
+TLBi by range) as well, correct me if anything wrong.
+
+Thanks
+Hanjun
+
