@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B3F910138C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:25:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CE710138E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:25:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbfKSFZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:25:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
+        id S1728365AbfKSFZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:25:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728326AbfKSFZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:25:07 -0500
+        id S1728357AbfKSFZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:25:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65DB121823;
-        Tue, 19 Nov 2019 05:25:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D2D0222A2;
+        Tue, 19 Nov 2019 05:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141106;
-        bh=VKcieq0ARls4eteR5hLrrJ5YCzzxNlWyVtNRCKYMwmA=;
+        s=default; t=1574141115;
+        bh=0ELM6zDJ08rmARJey1y7Zf1Nztqs6EAE8lZ79+tiF/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3PCyqyAYX0wtqn2aEIUXXt+zuATKxXWjzJxDHtcL+8iKSqEqzz0jZL72sOkMNr1U
-         eLiG8gi4YOP63FIInccB2hUWcNq+5EnriekFIZnq50NHBTRQxCk5sOtMMo/GxMa6AB
-         HhKfvFPHjaFASm7+A6HUuM3TxCI4PbDu8HLh6gJA=
+        b=qlLxV3zaAFgAGlogLiUkoCQ5S0TCBfzTL9bGyn/pT4BKNvKHTDpBTtjI4DN9WkZed
+         FMTi06XxhO5+6AihsefO6kgQKQkFIOgFTi4fI38LCiD6ifszXQ/QMwjIcBDX1U/Nrl
+         aYS7BCUx8iIQRreehISIi9zS/nwRGP8Itw+jcE7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Jay Foster <jayfoster@ieee.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 046/422] y2038: make do_gettimeofday() and get_seconds() inline
-Date:   Tue, 19 Nov 2019 06:14:03 +0100
-Message-Id: <20191119051402.870151067@linuxfoundation.org>
+Subject: [PATCH 4.19 048/422] ARM: dts: at91/trivial: Fix USART1 definition for at91sam9g45
+Date:   Tue, 19 Nov 2019 06:14:05 +0100
+Message-Id: <20191119051402.977272617@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -43,127 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jay Foster <jayfoster@ieee.org>
 
-[ Upstream commit 33e26418193f58d1895f2f968e1953b1caf8deb7 ]
+[ Upstream commit 10af10db8c76fa5b9bf1f52a895c1cb2c0ac24da ]
 
-get_seconds() and do_gettimeofday() are only used by a few modules now any
-more (waiting for the respective patches to get accepted), and they are
-among the last holdouts of code that is not y2038 safe in the core kernel.
+Fix a typo. No functional change made by this patch.
 
-Move the implementation into the timekeeping32.h header to clean up
-the core kernel and isolate the old interfaces further.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jay Foster <jayfoster@ieee.org>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/timekeeping32.h | 15 +++++++++++++--
- kernel/time/time.c            | 15 +++++++++------
- kernel/time/timekeeping.c     | 24 ------------------------
- 3 files changed, 22 insertions(+), 32 deletions(-)
+ arch/arm/boot/dts/at91sam9g45.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/timekeeping32.h b/include/linux/timekeeping32.h
-index 8762c2f45f8bf..479da36be8c82 100644
---- a/include/linux/timekeeping32.h
-+++ b/include/linux/timekeeping32.h
-@@ -6,8 +6,19 @@
-  * over time so we can remove the file here.
-  */
+diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sam9g45.dtsi
+index 1ee25a475be87..d16db1fa7e15c 100644
+--- a/arch/arm/boot/dts/at91sam9g45.dtsi
++++ b/arch/arm/boot/dts/at91sam9g45.dtsi
+@@ -570,7 +570,7 @@
+ 					};
+ 				};
  
--extern void do_gettimeofday(struct timeval *tv);
--unsigned long get_seconds(void);
-+static inline void do_gettimeofday(struct timeval *tv)
-+{
-+	struct timespec64 now;
-+
-+	ktime_get_real_ts64(&now);
-+	tv->tv_sec = now.tv_sec;
-+	tv->tv_usec = now.tv_nsec/1000;
-+}
-+
-+static inline unsigned long get_seconds(void)
-+{
-+	return ktime_get_real_seconds();
-+}
- 
- static inline struct timespec current_kernel_time(void)
- {
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index be057d6579f13..f7d4fa5ddb9e2 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -144,9 +144,11 @@ SYSCALL_DEFINE2(gettimeofday, struct timeval __user *, tv,
- 		struct timezone __user *, tz)
- {
- 	if (likely(tv != NULL)) {
--		struct timeval ktv;
--		do_gettimeofday(&ktv);
--		if (copy_to_user(tv, &ktv, sizeof(ktv)))
-+		struct timespec64 ts;
-+
-+		ktime_get_real_ts64(&ts);
-+		if (put_user(ts.tv_sec, &tv->tv_sec) ||
-+		    put_user(ts.tv_nsec / 1000, &tv->tv_usec))
- 			return -EFAULT;
- 	}
- 	if (unlikely(tz != NULL)) {
-@@ -227,10 +229,11 @@ COMPAT_SYSCALL_DEFINE2(gettimeofday, struct compat_timeval __user *, tv,
- 		       struct timezone __user *, tz)
- {
- 	if (tv) {
--		struct timeval ktv;
-+		struct timespec64 ts;
- 
--		do_gettimeofday(&ktv);
--		if (compat_put_timeval(&ktv, tv))
-+		ktime_get_real_ts64(&ts);
-+		if (put_user(ts.tv_sec, &tv->tv_sec) ||
-+		    put_user(ts.tv_nsec / 1000, &tv->tv_usec))
- 			return -EFAULT;
- 	}
- 	if (tz) {
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index c2708e1f0c69f..81ee5b83c9200 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1214,22 +1214,6 @@ int get_device_system_crosststamp(int (*get_time_fn)
- }
- EXPORT_SYMBOL_GPL(get_device_system_crosststamp);
- 
--/**
-- * do_gettimeofday - Returns the time of day in a timeval
-- * @tv:		pointer to the timeval to be set
-- *
-- * NOTE: Users should be converted to using getnstimeofday()
-- */
--void do_gettimeofday(struct timeval *tv)
--{
--	struct timespec64 now;
--
--	getnstimeofday64(&now);
--	tv->tv_sec = now.tv_sec;
--	tv->tv_usec = now.tv_nsec/1000;
--}
--EXPORT_SYMBOL(do_gettimeofday);
--
- /**
-  * do_settimeofday64 - Sets the time of day.
-  * @ts:     pointer to the timespec64 variable containing the new time
-@@ -2177,14 +2161,6 @@ void getboottime64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL_GPL(getboottime64);
- 
--unsigned long get_seconds(void)
--{
--	struct timekeeper *tk = &tk_core.timekeeper;
--
--	return tk->xtime_sec;
--}
--EXPORT_SYMBOL(get_seconds);
--
- void ktime_get_coarse_real_ts64(struct timespec64 *ts)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
+-				uart1 {
++				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =
+ 							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_NONE
 -- 
 2.20.1
 
