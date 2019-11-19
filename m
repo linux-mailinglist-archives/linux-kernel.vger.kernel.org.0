@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A6A102710
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6493B10270D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:42:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfKSOmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:42:09 -0500
-Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:57742 "EHLO
+        id S1728208AbfKSOmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:42:02 -0500
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:41586 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728015AbfKSOl4 (ORCPT
+        by vger.kernel.org with ESMTP id S1727316AbfKSOl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:41:56 -0500
+        Tue, 19 Nov 2019 09:41:57 -0500
 Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B80EFC2ECC;
-        Tue, 19 Nov 2019 14:41:54 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D2D53C2577;
+        Tue, 19 Nov 2019 14:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1574174515; bh=UxM7GkeegeLhnO6SHHYpc+n30A4Lz5lkq5h2P2p9FQo=;
+        t=1574174517; bh=y/UJ6x3VYOJt5fIAD/1jTDgF9YTH0srcaXkWR4OGbd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i5vTu8yZfQa4+mw1sqUYNzugmQthZjEJt3/ZT1uYV2Y+D2JGXbhwxh40P6yGqqfDe
-         3aZHMPa15xx9fBL9E8Teuz/z4Ztwrv+Xv9tNdEz8QjHWKtAn87l9RCwKJ4E4LbZRCa
-         DPe6biz0gtzfH2ZDJ0pAKAiuGTc/mJxKlZzakiZTcc+/YZN0goEYxdu4xuAtiPTG+e
-         NKgjzjCvzaiH+muaNqiYX/7lCfXwoBtabxNAlxdPNo1r7Svpmk6PiiBm1khv4iiufZ
-         W60qCJ+qKmruGJkXg8DPx7SR7+EaeNBKLZQrU8hWQKSMWfPrnwQgzaBMoDvRyUfSZ3
-         onwIolGHwO9jQ==
+        b=fPtTti2LVDPM9DgKHzdr1nFE/0ZhNsu3lkSW1EvgO3qMMEaJ2jmBoYY+fZOcw3wet
+         4EdJL/drirgbr5SPdnJATxMYvflcxei+311eYSEc1UqC+D4yqpKCOi/nGKgkhdq6NB
+         u16RzcMaAu74XfVgGrgBi6L0/aE1I0JifzdswhnSTiI0o8P5Wx5USGSFXMu4s4BH6R
+         3A8bzMEHS+c4px5RSnAnQ6d/OvzSX7T6t1HT0ObSi+yW3kRMRWeZXOr77t34lyHQGI
+         aTJoi/sgyKANCULKv+0SvFWR9C2CVac6GPcWSdwoWLaDKWx6AYlA4glo4Jdv/4cjyv
+         gn9EB64ZGggFw==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.76])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 096C6A0066;
-        Tue, 19 Nov 2019 14:41:52 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTP id A75AEA0069;
+        Tue, 19 Nov 2019 14:41:53 +0000 (UTC)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     dri-devel@lists.freedesktop.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>
@@ -36,9 +36,9 @@ Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 2/4] DRM: ARC: PGU: cleanup supported format list code
-Date:   Tue, 19 Nov 2019 17:41:45 +0300
-Message-Id: <20191119144147.8022-3-Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 3/4] DRM: ARC: PGU: replace unsupported by HW RGB888 format by XRGB888
+Date:   Tue, 19 Nov 2019 17:41:46 +0300
+Message-Id: <20191119144147.8022-4-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191119144147.8022-1-Eugeniy.Paltsev@synopsys.com>
 References: <20191119144147.8022-1-Eugeniy.Paltsev@synopsys.com>
@@ -49,79 +49,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get rid of 'simplefb_format' structure usage as we only use its
-'fourcc' field.
+ARC PGU doesn't support RGB888 (24 bit) format but supports
+XRGB888 (32 bit) format. Fix incorrect format list in a driver.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- drivers/gpu/drm/arc/arcpgu_crtc.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/arc/arcpgu_crtc.c | 6 +++---
+ drivers/gpu/drm/arc/arcpgu_regs.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/arc/arcpgu_crtc.c b/drivers/gpu/drm/arc/arcpgu_crtc.c
-index 31d9824c46cc..5473b19a52ee 100644
+index 5473b19a52ee..980e00180e6f 100644
 --- a/drivers/gpu/drm/arc/arcpgu_crtc.c
 +++ b/drivers/gpu/drm/arc/arcpgu_crtc.c
-@@ -20,9 +20,9 @@
+@@ -22,7 +22,7 @@
  
- #define ENCODE_PGU_XY(x, y)	((((x) - 1) << 16) | ((y) - 1))
- 
--static struct simplefb_format supported_formats[] = {
--	{ "r5g6b5", 16, {11, 5}, {5, 6}, {0, 5}, {0, 0}, DRM_FORMAT_RGB565 },
--	{ "r8g8b8", 24, {16, 8}, {8, 8}, {0, 8}, {0, 0}, DRM_FORMAT_RGB888 },
-+static const u32 arc_pgu_supported_formats[] = {
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_RGB888,
+ static const u32 arc_pgu_supported_formats[] = {
+ 	DRM_FORMAT_RGB565,
+-	DRM_FORMAT_RGB888,
++	DRM_FORMAT_XRGB8888,
  };
  
  static void arc_pgu_set_pxl_fmt(struct drm_crtc *crtc)
-@@ -30,20 +30,20 @@ static void arc_pgu_set_pxl_fmt(struct drm_crtc *crtc)
- 	struct arcpgu_drm_private *arcpgu = crtc_to_arcpgu_priv(crtc);
- 	const struct drm_framebuffer *fb = crtc->primary->state->fb;
- 	uint32_t pixel_format = fb->format->format;
--	struct simplefb_format *format = NULL;
-+	u32 format = DRM_FORMAT_INVALID;
- 	int i;
- 	u32 reg_ctrl;
- 
--	for (i = 0; i < ARRAY_SIZE(supported_formats); i++) {
--		if (supported_formats[i].fourcc == pixel_format)
--			format = &supported_formats[i];
-+	for (i = 0; i < ARRAY_SIZE(arc_pgu_supported_formats); i++) {
-+		if (arc_pgu_supported_formats[i] == pixel_format)
-+			format = arc_pgu_supported_formats[i];
- 	}
- 
--	if (WARN_ON(!format))
-+	if (WARN_ON(format == DRM_FORMAT_INVALID))
- 		return;
+@@ -44,9 +44,9 @@ static void arc_pgu_set_pxl_fmt(struct drm_crtc *crtc)
  
  	reg_ctrl = arc_pgu_read(arcpgu, ARCPGU_REG_CTRL);
--	if (format->fourcc == DRM_FORMAT_RGB565)
-+	if (format == DRM_FORMAT_RGB565)
- 		reg_ctrl &= ~ARCPGU_MODE_RGB888_MASK;
+ 	if (format == DRM_FORMAT_RGB565)
+-		reg_ctrl &= ~ARCPGU_MODE_RGB888_MASK;
++		reg_ctrl &= ~ARCPGU_MODE_XRGB8888;
  	else
- 		reg_ctrl |= ARCPGU_MODE_RGB888_MASK;
-@@ -195,18 +195,15 @@ static struct drm_plane *arc_pgu_plane_init(struct drm_device *drm)
- {
- 	struct arcpgu_drm_private *arcpgu = drm->dev_private;
- 	struct drm_plane *plane = NULL;
--	u32 formats[ARRAY_SIZE(supported_formats)], i;
- 	int ret;
+-		reg_ctrl |= ARCPGU_MODE_RGB888_MASK;
++		reg_ctrl |= ARCPGU_MODE_XRGB8888;
+ 	arc_pgu_write(arcpgu, ARCPGU_REG_CTRL, reg_ctrl);
+ }
  
- 	plane = devm_kzalloc(drm->dev, sizeof(*plane), GFP_KERNEL);
- 	if (!plane)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/gpu/drm/arc/arcpgu_regs.h b/drivers/gpu/drm/arc/arcpgu_regs.h
+index dab2c380f7f3..b689a382d556 100644
+--- a/drivers/gpu/drm/arc/arcpgu_regs.h
++++ b/drivers/gpu/drm/arc/arcpgu_regs.h
+@@ -25,7 +25,7 @@
+ #define ARCPGU_CTRL_VS_POL_OFST	0x3
+ #define ARCPGU_CTRL_HS_POL_MASK	0x1
+ #define ARCPGU_CTRL_HS_POL_OFST	0x4
+-#define ARCPGU_MODE_RGB888_MASK	0x04
++#define ARCPGU_MODE_XRGB8888	BIT(2)
+ #define ARCPGU_STAT_BUSY_MASK	0x02
  
--	for (i = 0; i < ARRAY_SIZE(supported_formats); i++)
--		formats[i] = supported_formats[i].fourcc;
--
- 	ret = drm_universal_plane_init(drm, plane, 0xff, &arc_pgu_plane_funcs,
--				       formats, ARRAY_SIZE(formats),
-+				       arc_pgu_supported_formats,
-+				       ARRAY_SIZE(arc_pgu_supported_formats),
- 				       NULL,
- 				       DRM_PLANE_TYPE_PRIMARY, NULL);
- 	if (ret)
+ #endif
 -- 
 2.21.0
 
