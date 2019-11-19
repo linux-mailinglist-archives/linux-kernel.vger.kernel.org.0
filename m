@@ -2,132 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A86010258A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D378102583
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:35:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfKSNhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:37:13 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37574 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfKSNhN (ORCPT
+        id S1727929AbfKSNfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:35:54 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62308 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725798AbfKSNfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:37:13 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJDYJsw142439;
-        Tue, 19 Nov 2019 13:34:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=zeT1T5F4u/9t9rqf7pRcWtmarJGMaGO5YjAnx2eEqyo=;
- b=ERpzotDSLHZmw2HCw7RKqcEvDqjcLJRsdk7QizAlNvOKi0LhoStogrFjvgiyf//iMCeR
- pU98NNr39sva/nm9BsKBfmUQqTqQAUwUshf/SrB/Q+tkuU11pNEEUykOCVKxbYedLVbq
- 6I7G/wqLRC1vtPUPaLV7MRyg60gpJxMlJ2uF8dHVuplQGImtoxOlUMzFfIVcANf0gkb5
- T4vKCvgWcxD2svCxH3OSOWXMa3ix52480yQto2fyxkFEZrRf0SdhixWXysHTqOtqIqex
- a8SeLc7rUmnu68q/Jj/1lzYEOaa/kY4buLqBG5d5RkLkcR0KTNeloZptD6SuFbmzxInM 9w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2wa8htpxbt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 13:34:45 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJDVkE7105282;
-        Tue, 19 Nov 2019 13:34:44 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2wc0agdf4g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 13:34:44 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJDYbd0020028;
-        Tue, 19 Nov 2019 13:34:37 GMT
-Received: from kadam (/41.210.141.188)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Nov 2019 05:34:35 -0800
-Date:   Tue, 19 Nov 2019 16:34:16 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     vishnu <vravulap@amd.com>
-Cc:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>, Alexander.Deucher@amd.com,
-        djkurtz@google.com, Akshu.Agrawal@amd.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v9 6/6] ASoC: amd: Added ACP3x system resume and
- runtime pm
-Message-ID: <20191119133416.GB30789@kadam>
-References: <1574165476-24987-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1574165476-24987-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <20191119123531.GA30789@kadam>
- <3321478e-de8f-2eb6-6e6f-6eb621b8434b@amd.com>
+        Tue, 19 Nov 2019 08:35:53 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAJDSoBs024969;
+        Tue, 19 Nov 2019 14:34:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=iRVctjJDP4VsySTwcBDAz4gTqwDw4MWcibi48UpEjC8=;
+ b=eM/jA03T0mUh0nUcKYMA7qjZdWuCbnQtsSm0RJ08xgdmGPjThBTi6jqfITX0vednD69s
+ wcRW5Fx9fQGaOmJ+DuOBa9RBS1+xIU5hSk3jeT9bCSBP335SLzae/FcbCvgkQjFkGpWy
+ sr02JbnfMJdQK801CqUaKzy4DjdV33ZAAR/IldJWRLhLon7E0MkDV2N8vZcjm3M+fv50
+ tVuf/fQSeAMbc5CQy37AlFRvfA2xhe6E36SEQYqOeTaozgYbGmw2+Niz55VDYf1KDlmQ
+ tDCcjUPIp19Ifc/ygTCmrq/sDmN7VMgwhRFb5I5EakJ0Z9VEmK7cQZ8KiSH/+pgUkV4b rg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wa9uhyj70-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 19 Nov 2019 14:34:38 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 09FB410002A;
+        Tue, 19 Nov 2019 14:34:38 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ECEE92BC103;
+        Tue, 19 Nov 2019 14:34:37 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 19 Nov 2019 14:34:37
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <sean@poorly.run>, <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] drm/rect: remove useless call to clamp_t
+Date:   Tue, 19 Nov 2019 14:34:35 +0100
+Message-ID: <20191119133435.22525-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3321478e-de8f-2eb6-6e6f-6eb621b8434b@amd.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190124
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190125
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-19_04:2019-11-15,2019-11-19 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 06:26:17PM +0530, vishnu wrote:
-> 
-> 
-> On 19/11/19 6:05 PM, Dan Carpenter wrote:
-> > I can't apply this because I'm not CC'd on patches 2-5.
-> > 
-> > On Tue, Nov 19, 2019 at 05:41:16PM +0530, Ravulapati Vishnu vardhan rao wrote:
-> > > +static int acp3x_power_on(void __iomem *acp3x_base)
-> > > +{
-> > > +	u32 val;
-> > > +	u32 timeout;
-> > > +
-> > > +	timeout = 0;
-> > > +	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-> > > +
-> > > +	if (val == 0)
-> > > +		return val;
-> > > +
-> > > +	if (!((val & ACP_PGFSM_STATUS_MASK) ==
-> > > +				ACP_POWER_ON_IN_PROGRESS))
-> > > +		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
-> > > +			acp3x_base + mmACP_PGFSM_CONTROL);
-> > > +	while (++timeout) {
-> > 
-> > while (++timeout < 500)
-> > 
-> 
-> If I check with timeout<500 and in next condition i have
-> if(timeout >500) this never happens.
+Clamping a value between INT_MIN and INT_MAX always return the value itself
+and generate warnings when compiling with W=1.
 
-I was maybe not clear enough.  Please don't write:
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ drivers/gpu/drm/drm_rect.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-	while (++timeout) {
-
-That doesn't make sense as a loop.  It looks like you are trying to
-loop UINT_MAX times.  Put the ++ and the limit on the same line.
-
-There is only one real bug in my review but there is just a lot of clean
-up left.  Can you have a co-worker review your patch before resending?
-The patch 1/6 looks pretty good now but I haven't seen patches 2-5 so
-I'm worried there is a lot of cleanup left to do.
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/drm_rect.c b/drivers/gpu/drm/drm_rect.c
+index b8363aaa9032..681f1fd09357 100644
+--- a/drivers/gpu/drm/drm_rect.c
++++ b/drivers/gpu/drm/drm_rect.c
+@@ -89,7 +89,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+ 		u32 new_src_w = clip_scaled(drm_rect_width(src),
+ 					    drm_rect_width(dst), diff);
+ 
+-		src->x1 = clamp_t(int64_t, src->x2 - new_src_w, INT_MIN, INT_MAX);
++		src->x1 = src->x2 - new_src_w;
+ 		dst->x1 = clip->x1;
+ 	}
+ 	diff = clip->y1 - dst->y1;
+@@ -97,7 +97,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+ 		u32 new_src_h = clip_scaled(drm_rect_height(src),
+ 					    drm_rect_height(dst), diff);
+ 
+-		src->y1 = clamp_t(int64_t, src->y2 - new_src_h, INT_MIN, INT_MAX);
++		src->y1 = src->y2 - new_src_h;
+ 		dst->y1 = clip->y1;
+ 	}
+ 	diff = dst->x2 - clip->x2;
+@@ -105,7 +105,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+ 		u32 new_src_w = clip_scaled(drm_rect_width(src),
+ 					    drm_rect_width(dst), diff);
+ 
+-		src->x2 = clamp_t(int64_t, src->x1 + new_src_w, INT_MIN, INT_MAX);
++		src->x2 = src->x1 + new_src_w;
+ 		dst->x2 = clip->x2;
+ 	}
+ 	diff = dst->y2 - clip->y2;
+@@ -113,7 +113,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+ 		u32 new_src_h = clip_scaled(drm_rect_height(src),
+ 					    drm_rect_height(dst), diff);
+ 
+-		src->y2 = clamp_t(int64_t, src->y1 + new_src_h, INT_MIN, INT_MAX);
++		src->y2 = src->y1 + new_src_h;
+ 		dst->y2 = clip->y2;
+ 	}
+ 
+-- 
+2.15.0
 
