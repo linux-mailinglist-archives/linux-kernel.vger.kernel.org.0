@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E071026DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA28A1026EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:36:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbfKSOfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:35:05 -0500
+        id S1728129AbfKSOfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:35:08 -0500
 Received: from mga04.intel.com ([192.55.52.120]:64761 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbfKSOfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:35:04 -0500
+        id S1726637AbfKSOfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:35:06 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 06:35:04 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 06:35:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,324,1569308400"; 
-   d="scan'208";a="215552360"
+   d="scan'208";a="215552366"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.50])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Nov 2019 06:35:03 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 19 Nov 2019 06:35:05 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@redhat.com, mingo@kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     jolsa@kernel.org, namhyung@kernel.org, vitaly.slobodskoy@intel.com,
         pavel.gerasimov@intel.com, ak@linux.intel.com, eranian@google.com,
         mpe@ellerman.id.au, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 00/13] Stitch LBR call stack
-Date:   Tue, 19 Nov 2019 06:33:58 -0800
-Message-Id: <20191119143411.3482-1-kan.liang@linux.intel.com>
+Subject: [PATCH V4 01/13] perf/core: Add new branch sample type for LBR TOS
+Date:   Tue, 19 Nov 2019 06:33:59 -0800
+Message-Id: <20191119143411.3482-2-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191119143411.3482-1-kan.liang@linux.intel.com>
+References: <20191119143411.3482-1-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -37,222 +39,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
+In LBR call stack mode, the depth of reconstructed LBR call stack limits
+to the number of LBR registers. With LBR Top-of-Stack (TOS) information,
+perf tool may stitch the stacks of two samples. The reconstructed LBR
+call stack can break the HW limitation.
 
-Changes since V3
-- Add the new branch sample type at the end of enum
-  perf_branch_sample_type.
-- Rebase the user space patch on top of acme's perf/core branch
-
-Changes since V2
-- Move tos into struct perf_branch_stack
-
-Changes since V1
-- Add a new branch sample type for LBR TOS. Drop the sample type in V1.
-- Add check in perf header to detect unknown input bits in event attr
-- Save and use the LBR cursor nodes from previous sample to avoid
-  duplicate calculation of cursor nodes.
-- Add fast path for duplicate entries check. It benefits all call stack
-  parsing, not just for stitch LBR call stack. It can be merged
-  independetely.
-
-Start from Haswell, Linux perf can utilize the existing Last Branch
-Record (LBR) facility to record call stack. However, the depth of the
-reconstructed LBR call stack limits to the number of LBR registers.
-E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
-That's because HW will overwrite the oldest LBR registers when it's
-full.
-
-However, the overwritten LBRs may still be retrieved from previous
-sample. At that moment, HW hasn't overwritten the LBR registers yet.
-Perf tools can stitch those overwritten LBRs on current call stacks to
-get a more complete call stack.
-
-To determine if LBRs can be stitched, the physical index of LBR
-registers is required. A new branch sample type is introduced in
-patch 1 to 3 to dump the LBR Top-of-Stack (TOS) information for perf
-tools.
+Add a new branch sample type to retrieve LBR TOS. The new type is PMU
+specific. Add it at the end of enum perf_branch_sample_type.
+Add a macro to retrieve defined bits of branch sample type.
+Update perf_copy_attr() to handle the new bit.
 
 Only when the new branch sample type is set, the TOS information is
-dumped into the PERF_SAMPLE_BRANCH_STACK output. Perf tool should check
-the attr.branch_sample_type, and apply the corresponding format for
-PERF_SAMPLE_BRANCH_STACK samples. The check is introduced in Patch 4.
-
-Besides, the maximum number of LBRs is required as well. Patch 5 & 6
-retrieve the capabilities information from sysfs and save them in perf
-header.
-
-Patch 7 & 8 implements the LBR stitching approach.
-
-Users can use the options introduced in patch 9-12 to enable the LBR
-stitching approach for perf report, script, top and c2c.
-
-Patch 13 adds fast path for duplicate entries check. It benefits all
-call stack parsing, not just for stitch LBR call stack. It can be
-merged independetely.
-
-
-The stitching approach base on LBR call stack technology. The known
-limitations of LBR call stack technology still apply to the approach,
-e.g. Exception handing such as setjmp/longjmp will have calls/returns
-not match.
-This approach is not full proof. There can be cases where it creates
-incorrect call stacks from incorrect matches. There is no attempt
-to validate any matches in another way. So it is not enabled by default.
-However in many common cases with call stack overflows it can recreate
-better call stacks than the default lbr call stack output. So if there
-are problems with LBR overflows this is a possible workaround.
-
-Regression:
-Users may collect LBR call stack on a machine with new perf tool and
-new kernel (support LBR TOS). However, they may parse the perf.data with
-old perf tool (not support LBR TOS). The old tool doesn't check
-attr.branch_sample_type. Users probably get incorrect information
+dumped into the PERF_SAMPLE_BRANCH_STACK output.
+Perf tool should check the attr.branch_sample_type, and apply the
+corresponding format for PERF_SAMPLE_BRANCH_STACK samples.
+Otherwise, some user case may be broken. For example, users may parse a
+perf.data, which include the new branch sample type, with an old version
+perf tool (without the check). Users probably get incorrect information
 without any warning.
 
-Performance impact:
-The processing time may increase with the LBR stitching approach
-enabled. The impact depends on the increased depth of call stacks.
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ include/linux/perf_event.h      |  2 ++
+ include/uapi/linux/perf_event.h | 16 ++++++++++++++--
+ kernel/events/core.c            | 13 ++++++++++++-
+ 3 files changed, 28 insertions(+), 3 deletions(-)
 
-For a simple test case tchain_edit with 43 depth of call stacks.
-perf record --call-graph lbr -- ./tchain_edit
-perf report --stitch-lbr
-
-Without --stitch-lbr, perf report only display 32 depth of call stacks.
-With --stitch-lbr, perf report can display all 43 depth of call stacks.
-The depth of call stacks increase 34.3%.
-
-Correspondingly, the processing time of perf report increases 39%,
-Without --stitch-lbr:                           11.0 sec
-With --stitch-lbr:                              15.3 sec
-
-The source code of tchain_edit.c is something similar as below.
-noinline void f43(void)
-{
-        int i;
-        for (i = 0; i < 10000;) {
-
-                if(i%2)
-                        i++;
-                else
-                        i++;
-        }
-}
-
-noinline void f42(void)
-{
-        int i;
-        for (i = 0; i < 100; i++) {
-                f43();
-                f43();
-                f43();
-        }
-}
-
-noinline void f41(void)
-{
-        int i;
-        for (i = 0; i < 100; i++) {
-                f42();
-                f42();
-                f42();
-        }
-}
-
-noinline void f40(void)
-{
-        f41();
-}
-
-... ...
-
-noinline void f32(void)
-{
-        f33();
-}
-
-noinline void f31(void)
-{
-        int i;
-
-        for (i = 0; i < 10000; i++) {
-                if(i%2)
-                        i++;
-                else
-                        i++;
-        }
-
-        f32();
-}
-
-noinline void f30(void)
-{
-        f31();
-}
-
-... ...
-
-noinline void f1(void)
-{
-        f2();
-}
-
-int main()
-{
-        f1();
-}
-
-Kan Liang (13):
-  perf/core: Add new branch sample type for LBR TOS
-  perf/x86/intel: Output LBR TOS information
-  perf tools: Support new branch sample type for LBR TOS
-  perf header: Add check for event attr
-  perf pmu: Add support for PMU capabilities
-  perf header: Support CPU PMU capabilities
-  perf machine: Refine the function for LBR call stack reconstruction
-  perf tools: Stitch LBR call stack
-  perf report: Add option to enable the LBR stitching approach
-  perf script: Add option to enable the LBR stitching approach
-  perf top: Add option to enable the LBR stitching approach
-  perf c2c: Add option to enable the LBR stitching approach
-  perf hist: Add fast path for duplicate entries check
-
- arch/x86/events/intel/lbr.c                   |   9 +
- include/linux/perf_event.h                    |   2 +
- include/uapi/linux/perf_event.h               |  16 +-
- kernel/events/core.c                          |  13 +-
- tools/include/uapi/linux/perf_event.h         |  16 +-
- tools/perf/Documentation/perf-c2c.txt         |  11 +
- tools/perf/Documentation/perf-report.txt      |  11 +
- tools/perf/Documentation/perf-script.txt      |  11 +
- tools/perf/Documentation/perf-top.txt         |   9 +
- .../Documentation/perf.data-file-format.txt   |  16 +
- tools/perf/builtin-c2c.c                      |   6 +
- tools/perf/builtin-record.c                   |   3 +
- tools/perf/builtin-report.c                   |   6 +
- tools/perf/builtin-script.c                   |   6 +
- tools/perf/builtin-stat.c                     |   1 +
- tools/perf/builtin-top.c                      |  11 +
- tools/perf/util/branch.h                      |   5 +-
- tools/perf/util/callchain.h                   |  12 +-
- tools/perf/util/env.h                         |   3 +
- tools/perf/util/event.h                       |   1 +
- tools/perf/util/evsel.c                       |  20 +-
- tools/perf/util/evsel.h                       |   6 +
- tools/perf/util/header.c                      | 148 +++++++
- tools/perf/util/header.h                      |   1 +
- tools/perf/util/hist.c                        |  23 +
- tools/perf/util/machine.c                     | 409 +++++++++++++++---
- tools/perf/util/parse-branch-options.c        |   3 +-
- tools/perf/util/perf_event_attr_fprintf.c     |   3 +-
- tools/perf/util/pmu.c                         |  87 ++++
- tools/perf/util/pmu.h                         |  12 +
- tools/perf/util/sort.c                        |   2 +-
- tools/perf/util/sort.h                        |   2 +
- tools/perf/util/thread.c                      |   2 +
- tools/perf/util/thread.h                      |  34 ++
- tools/perf/util/top.h                         |   1 +
- 35 files changed, 843 insertions(+), 78 deletions(-)
-
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 011dcbdbccc2..761021c7ee8a 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -93,6 +93,7 @@ struct perf_raw_record {
+ /*
+  * branch stack layout:
+  *  nr: number of taken branches stored in entries[]
++ *  tos: Top-of-Stack (TOS) information. PMU specific data.
+  *
+  * Note that nr can vary from sample to sample
+  * branches (to, from) are stored from most recent
+@@ -101,6 +102,7 @@ struct perf_raw_record {
+  */
+ struct perf_branch_stack {
+ 	__u64				nr;
++	__u64				tos; /* PMU specific data */
+ 	struct perf_branch_entry	entries[0];
+ };
+ 
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index bb7b271397a6..c2da61c9ace7 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -180,7 +180,10 @@ enum perf_branch_sample_type_shift {
+ 
+ 	PERF_SAMPLE_BRANCH_TYPE_SAVE_SHIFT	= 16, /* save branch type */
+ 
+-	PERF_SAMPLE_BRANCH_MAX_SHIFT		/* non-ABI */
++	PERF_SAMPLE_BRANCH_MAX_SHIFT		= 17, /* non-ABI */
++
++	/* PMU specific */
++	PERF_SAMPLE_BRANCH_LBR_TOS_SHIFT	= 63, /* save LBR TOS */
+ };
+ 
+ enum perf_branch_sample_type {
+@@ -208,8 +211,13 @@ enum perf_branch_sample_type {
+ 		1U << PERF_SAMPLE_BRANCH_TYPE_SAVE_SHIFT,
+ 
+ 	PERF_SAMPLE_BRANCH_MAX		= 1U << PERF_SAMPLE_BRANCH_MAX_SHIFT,
++
++	PERF_SAMPLE_BRANCH_LBR_TOS	= 1ULL << PERF_SAMPLE_BRANCH_LBR_TOS_SHIFT,
+ };
+ 
++#define PERF_SAMPLE_BRANCH_MASK		((PERF_SAMPLE_BRANCH_MAX - 1) |\
++					 PERF_SAMPLE_BRANCH_LBR_TOS)
++
+ /*
+  * Common flow change classification
+  */
+@@ -849,7 +857,11 @@ enum perf_event_type {
+ 	 *	  char                  data[size];}&& PERF_SAMPLE_RAW
+ 	 *
+ 	 *	{ u64                   nr;
+-	 *        { u64 from, to, flags } lbr[nr];} && PERF_SAMPLE_BRANCH_STACK
++	 *        { u64 from, to, flags } lbr[nr];
++	 *
++	 *        # only available if PERF_SAMPLE_BRANCH_LBR_TOS is set
++	 *        u64			tos;
++	 *      } && PERF_SAMPLE_BRANCH_STACK
+ 	 *
+ 	 * 	{ u64			abi; # enum perf_sample_regs_abi
+ 	 * 	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index cfd89b4a02d8..8aff3aad43b5 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6391,6 +6391,11 @@ static void perf_output_read(struct perf_output_handle *handle,
+ 		perf_output_read_one(handle, event, enabled, running);
+ }
+ 
++static inline bool perf_sample_save_lbr_tos(struct perf_event *event)
++{
++	return event->attr.branch_sample_type & PERF_SAMPLE_BRANCH_LBR_TOS;
++}
++
+ void perf_output_sample(struct perf_output_handle *handle,
+ 			struct perf_event_header *header,
+ 			struct perf_sample_data *data,
+@@ -6480,6 +6485,8 @@ void perf_output_sample(struct perf_output_handle *handle,
+ 
+ 			perf_output_put(handle, data->br_stack->nr);
+ 			perf_output_copy(handle, data->br_stack->entries, size);
++			if (perf_sample_save_lbr_tos(event))
++				perf_output_put(handle, data->br_stack->tos);
+ 		} else {
+ 			/*
+ 			 * we always store at least the value of nr
+@@ -6667,7 +6674,11 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 		if (data->br_stack) {
+ 			size += data->br_stack->nr
+ 			      * sizeof(struct perf_branch_entry);
++
++			if (perf_sample_save_lbr_tos(event))
++				size += sizeof(u64);
+ 		}
++
+ 		header->size += size;
+ 	}
+ 
+@@ -10731,7 +10742,7 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ 		u64 mask = attr->branch_sample_type;
+ 
+ 		/* only using defined bits */
+-		if (mask & ~(PERF_SAMPLE_BRANCH_MAX-1))
++		if (mask & ~PERF_SAMPLE_BRANCH_MASK)
+ 			return -EINVAL;
+ 
+ 		/* at least one branch bit must be set */
 -- 
 2.17.1
 
