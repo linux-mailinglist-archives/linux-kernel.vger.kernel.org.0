@@ -2,105 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E581E101199
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:09:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA50101190
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:08:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfKSDJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 22:09:16 -0500
-Received: from mga02.intel.com ([134.134.136.20]:21052 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727018AbfKSDJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 22:09:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 19:09:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,322,1569308400"; 
-   d="scan'208";a="204265404"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Nov 2019 19:09:13 -0800
-Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>
-Subject: Re: [PATCH v2 04/10] iommu/vt-d: Match CPU and IOMMU paging mode
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Auger Eric <eric.auger@redhat.com>
-References: <1574106153-45867-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1574106153-45867-5-git-send-email-jacob.jun.pan@linux.intel.com>
- <601ca9c3-9f83-3d95-8d26-d4f46eee82ba@redhat.com>
- <20191118135238.49f5d957@jacob-builder>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <ad3c3d58-dd1a-4b83-8b30-31e5be9e9c39@linux.intel.com>
-Date:   Tue, 19 Nov 2019 11:06:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727435AbfKSDIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 22:08:21 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49378 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727018AbfKSDIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 22:08:21 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A434E11915CCDBACB518;
+        Tue, 19 Nov 2019 11:08:18 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 19 Nov 2019 11:08:11 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
+        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
+        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH -next] KVM: x86: remove set but not used variable 'called'
+Date:   Tue, 19 Nov 2019 11:06:40 +0800
+Message-ID: <20191119030640.25097-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191118135238.49f5d957@jacob-builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric and Jacob,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 11/19/19 5:52 AM, Jacob Pan wrote:
-> On Mon, 18 Nov 2019 21:55:03 +0100
-> Auger Eric <eric.auger@redhat.com> wrote:
-> 
->> Hi Jacob,
->>
->> On 11/18/19 8:42 PM, Jacob Pan wrote:
->>> When setting up first level page tables for sharing with CPU, we
->>> need to ensure IOMMU can support no less than the levels supported
->>> by the CPU.
->>> It is not adequate, as in the current code, to set up 5-level paging
->>> in PASID entry First Level Paging Mode(FLPM) solely based on CPU.
->>>
->>> Fixes: 437f35e1cd4c8 ("iommu/vt-d: Add first level page table
->>> interface")
->>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>> Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
->>> ---
->>>   drivers/iommu/intel-pasid.c | 12 ++++++++++--
->>>   1 file changed, 10 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/iommu/intel-pasid.c
->>> b/drivers/iommu/intel-pasid.c index 040a445be300..e7cb0b8a7332
->>> 100644 --- a/drivers/iommu/intel-pasid.c
->>> +++ b/drivers/iommu/intel-pasid.c
->>> @@ -499,8 +499,16 @@ int intel_pasid_setup_first_level(struct
->>> intel_iommu *iommu, }
->>>   
->>>   #ifdef CONFIG_X86
->>> -	if (cpu_feature_enabled(X86_FEATURE_LA57))
->>> -		pasid_set_flpm(pte, 1);
->>> +	/* Both CPU and IOMMU paging mode need to match */
->>> +	if (cpu_feature_enabled(X86_FEATURE_LA57)) {
->>> +		if (cap_5lp_support(iommu->cap)) {
->>> +			pasid_set_flpm(pte, 1);
->>> +		} else {
->>> +			pr_err("VT-d has no 5-level paging support
->>> for CPU\n");
->>> +			pasid_clear_entry(pte);
->>> +			return -EINVAL;
->> Can it happen? If I am not wrong intel_pasid_setup_first_level() only
->> seems to be called from intel_svm_bind_mm which now checks the
->> SVM_CAPABLE flag.
->>
-> You are right, this check is not needed any more. I will drop the patch.
->> Thanks
+arch/x86/kvm/x86.c: In function kvm_make_scan_ioapic_request_mask:
+arch/x86/kvm/x86.c:7911:7: warning: variable called set but not
+used [-Wunused-but-set-variable]
 
-I'd suggest to keep this. This helper is not only for svm, although
-currently svm is the only caller. For first level pasid setup, let's
-set an assumption that hardware should never report mismatching paging
-modes, this is helpful especially when running vIOMMU in VM guests.
+It is not used since commit 7ee30bc132c6 ("KVM: x86: deliver KVM
+IOAPIC scan request to target vCPUs")
 
-Best regards,
-baolu
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ arch/x86/kvm/x86.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0d0a682..870f0bc 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7908,12 +7908,11 @@ void kvm_make_scan_ioapic_request_mask(struct kvm *kvm,
+ 				       unsigned long *vcpu_bitmap)
+ {
+ 	cpumask_var_t cpus;
+-	bool called;
+ 
+ 	zalloc_cpumask_var(&cpus, GFP_ATOMIC);
+ 
+-	called = kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
+-					     vcpu_bitmap, cpus);
++	kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
++				    vcpu_bitmap, cpus);
+ 
+ 	free_cpumask_var(cpus);
+ }
+-- 
+2.7.4
+
