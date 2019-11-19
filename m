@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE377101472
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF1D101474
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbfKSFd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:33:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54582 "EHLO mail.kernel.org"
+        id S1729603AbfKSFeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:34:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728843AbfKSFd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:56 -0500
+        id S1729597AbfKSFeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:34:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A00D1206EC;
-        Tue, 19 Nov 2019 05:33:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5D8220672;
+        Tue, 19 Nov 2019 05:33:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141636;
-        bh=tU1uL0kgHbeIfHi2VXruJE3ZdOm5oSbiBE7SyjAQ0hs=;
+        s=default; t=1574141639;
+        bh=hVTmL0FORV+KWz1VpzuweX8Ats/8839pboW72CRooBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X7kesEVqZYerwY76senzfHpws9cTcWPJuhLCCKafRKluQGPAGUmDgW5KKVsmcwLRZ
-         5Rbtr4R5LdqNTmjR5ePW/+M8V0Dri/JKB7a839JI+ITN66qKIQ/jPVjjltD155l3KH
-         KlDFoLjFS7ftHjpLQbzHzG3Fj5TSMmnYewYjTH8Q=
+        b=Gbs8l+9UKhqqWMjcKUSfc1YeCZConPMldrWybIVVFDFvrmVnVS+Z7OGT5g0mzJMUO
+         mZUKAqObaVmLydLFstp+3Cz7x2HlRAaGAwnlCdCGX/F6VjbbwIsri0Ry75H4mn8qxC
+         OBNsRvhjsckieA+GJfV1MwXo41IXC1ldF/yx7J5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 188/422] nvmem: core: return error code instead of NULL from nvmem_device_get
-Date:   Tue, 19 Nov 2019 06:16:25 +0100
-Message-Id: <20191119051410.688562851@linuxfoundation.org>
+Subject: [PATCH 4.19 189/422] media: dt-bindings: adv748x: Fix decimal unit addresses
+Date:   Tue, 19 Nov 2019 06:16:26 +0100
+Message-Id: <20191119051410.759767849@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,34 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit ca6ac25cecf0e740d7cc8e03e0ebbf8acbeca3df ]
+[ Upstream commit 27582f0ea97fe3e4a38beb98ab36cce4b6f029d5 ]
 
-nvmem_device_get() should return ERR_PTR() on error or valid pointer
-on success, but one of the code path seems to return NULL, so fix it.
+With recent dtc and W=1:
 
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Warning (graph_port): video-receiver@70/port@10: graph node unit address error, expected "a"
+    Warning (graph_port): video-receiver@70/port@11: graph node unit address error, expected "b"
+
+Unit addresses are always hexadecimal (without prefix), while the bases
+of reg property values depend on their prefixes.
+
+Fixes: e69595170b1cad85 ("media: adv748x: Add adv7481, adv7482 bindings")
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvmem/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index d32eba11c000f..30c040786fde2 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -692,7 +692,7 @@ static struct nvmem_device *nvmem_find(const char *name)
- 	d = bus_find_device_by_name(&nvmem_bus_type, NULL, name);
+diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+index 21ffb5ed81830..54d1d3bc18694 100644
+--- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
++++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+@@ -73,7 +73,7 @@ Example:
+ 			};
+ 		};
  
- 	if (!d)
--		return NULL;
-+		return ERR_PTR(-ENOENT);
+-		port@10 {
++		port@a {
+ 			reg = <10>;
  
- 	return to_nvmem_device(d);
- }
+ 			adv7482_txa: endpoint {
+@@ -83,7 +83,7 @@ Example:
+ 			};
+ 		};
+ 
+-		port@11 {
++		port@b {
+ 			reg = <11>;
+ 
+ 			adv7482_txb: endpoint {
 -- 
 2.20.1
 
