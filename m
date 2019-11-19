@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C8F10188B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C35E41018AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfKSFZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:25:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42100 "EHLO mail.kernel.org"
+        id S1727702AbfKSF1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:27:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727640AbfKSFZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:25:11 -0500
+        id S1728713AbfKSF1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:27:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A02C821783;
-        Tue, 19 Nov 2019 05:25:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9005F222DC;
+        Tue, 19 Nov 2019 05:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141110;
-        bh=vFmPq7PNhXDOpLhB/RDsLsk5lYZk6ybGv47b1LMINsk=;
+        s=default; t=1574141240;
+        bh=1ncexue4n6XrwQ4mQKCgUMZp6wvmhDDwaJNENcy7V0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xtA0ILHcIroh0C3Qm87kBOhzmwuIBDWIFAqVobF7OVODnGwMSzkOF5wIYyXfveTW6
-         62P8U8fGJYztlbhE2C/LsH70Dd+SikyoGh615FOYo7UOg+hC9/Jm+L2cW6eVxDlCDJ
-         NThqXor2c0XIbXG4y032kbcp332jeU56LA2FoW68=
+        b=q4VzC3Sei/6VQYXhtWMYPtXK+KDskrB/CKdZF+eX4qtLxPl0Tn0kMsBii5TVV6Hit
+         J6O5VSsOJpVTCa50A++/HaMbkAa+9TqLBfH5X3wFxK2UkNzbbGijIS9ZdlZ63k0l6x
+         58UG/6pOPFNHxxCZrySA1z0jTgCI7jub/fJSAF8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 047/422] ARM: dts: rcar: Correct SATA device sizes to 2 MiB
-Date:   Tue, 19 Nov 2019 06:14:04 +0100
-Message-Id: <20191119051402.923163298@linuxfoundation.org>
+Subject: [PATCH 4.19 056/422] ath9k: fix tx99 with monitor mode interface
+Date:   Tue, 19 Nov 2019 06:14:13 +0100
+Message-Id: <20191119051403.407225522@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -45,83 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 441f61e3aa9e7386731ce1405044d484bd81f911 ]
+[ Upstream commit d9c52fd17cb483bd8a470398afcb79f86c1b77c8 ]
 
-Update the SATA device nodes on R-Car H1, H2, and M2-W to use a 2 MiB
-I/O space, as specified in Rev.1.0 of the R-Car H1 and R-Car Gen2
-hardware user manuals.
+Tx99 is typically configured via a monitor mode interface, which does
+not get added to the driver as a vif. Since the code currently expects
+a configured virtual interface for tx99, enabling tx99 via debugfs fails.
+Since the vif is not needed anyway, remove all checks for it.
 
-See also commit e9f0089b2d8a3d45 ("arm64: dts: r8a7795: Correct SATA
-device size to 2MiB").
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+[kvalo@codeaurora.org: s/CPTCFG/CONFIG/]
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- arch/arm/boot/dts/r8a7790.dtsi | 4 ++--
- arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath9k/ath9k.h |  1 -
+ drivers/net/wireless/ath/ath9k/main.c  | 12 +++---------
+ drivers/net/wireless/ath/ath9k/tx99.c  |  9 ---------
+ drivers/net/wireless/ath/ath9k/xmit.c  |  2 +-
+ 4 files changed, 4 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 6b997bc016ee8..03919714645ae 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -344,7 +344,7 @@
+diff --git a/drivers/net/wireless/ath/ath9k/ath9k.h b/drivers/net/wireless/ath/ath9k/ath9k.h
+index 0fca44e91a712..50206a6d8a850 100644
+--- a/drivers/net/wireless/ath/ath9k/ath9k.h
++++ b/drivers/net/wireless/ath/ath9k/ath9k.h
+@@ -1074,7 +1074,6 @@ struct ath_softc {
  
- 	sata: sata@fc600000 {
- 		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
--		reg = <0xfc600000 0x2000>;
-+		reg = <0xfc600000 0x200000>;
- 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
- 		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 0925bdca438fe..52a757f47bf08 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1559,7 +1559,7 @@
- 		sata0: sata@ee300000 {
- 			compatible = "renesas,sata-r8a7790",
- 				     "renesas,rcar-gen2-sata";
--			reg = <0 0xee300000 0 0x2000>;
-+			reg = <0 0xee300000 0 0x200000>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
- 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-@@ -1570,7 +1570,7 @@
- 		sata1: sata@ee500000 {
- 			compatible = "renesas,sata-r8a7790",
- 				     "renesas,rcar-gen2-sata";
--			reg = <0 0xee500000 0 0x2000>;
-+			reg = <0 0xee500000 0 0x200000>;
- 			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 814>;
- 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 991ac6feedd5b..25b6a99dd87a2 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1543,7 +1543,7 @@
- 		sata0: sata@ee300000 {
- 			compatible = "renesas,sata-r8a7791",
- 				     "renesas,rcar-gen2-sata";
--			reg = <0 0xee300000 0 0x2000>;
-+			reg = <0 0xee300000 0 0x200000>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
- 			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-@@ -1554,7 +1554,7 @@
- 		sata1: sata@ee500000 {
- 			compatible = "renesas,sata-r8a7791",
- 				     "renesas,rcar-gen2-sata";
--			reg = <0 0xee500000 0 0x2000>;
-+			reg = <0 0xee500000 0 0x200000>;
- 			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 814>;
- 			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 	struct ath_spec_scan_priv spec_priv;
+ 
+-	struct ieee80211_vif *tx99_vif;
+ 	struct sk_buff *tx99_skb;
+ 	bool tx99_state;
+ 	s16 tx99_power;
+diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
+index 1049773378f27..6ce4b9f1dcb44 100644
+--- a/drivers/net/wireless/ath/ath9k/main.c
++++ b/drivers/net/wireless/ath/ath9k/main.c
+@@ -1251,15 +1251,10 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
+ 	struct ath_vif *avp = (void *)vif->drv_priv;
+ 	struct ath_node *an = &avp->mcast_node;
+ 
+-	mutex_lock(&sc->mutex);
++	if (IS_ENABLED(CONFIG_ATH9K_TX99))
++		return -EOPNOTSUPP;
+ 
+-	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
+-		if (sc->cur_chan->nvifs >= 1) {
+-			mutex_unlock(&sc->mutex);
+-			return -EOPNOTSUPP;
+-		}
+-		sc->tx99_vif = vif;
+-	}
++	mutex_lock(&sc->mutex);
+ 
+ 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
+ 	sc->cur_chan->nvifs++;
+@@ -1342,7 +1337,6 @@ static void ath9k_remove_interface(struct ieee80211_hw *hw,
+ 	ath9k_p2p_remove_vif(sc, vif);
+ 
+ 	sc->cur_chan->nvifs--;
+-	sc->tx99_vif = NULL;
+ 	if (!ath9k_is_chanctx_enabled())
+ 		list_del(&avp->list);
+ 
+diff --git a/drivers/net/wireless/ath/ath9k/tx99.c b/drivers/net/wireless/ath/ath9k/tx99.c
+index ce50d8f5835e0..9b05ffb68c34a 100644
+--- a/drivers/net/wireless/ath/ath9k/tx99.c
++++ b/drivers/net/wireless/ath/ath9k/tx99.c
+@@ -54,12 +54,6 @@ static struct sk_buff *ath9k_build_tx99_skb(struct ath_softc *sc)
+ 	struct ieee80211_hdr *hdr;
+ 	struct ieee80211_tx_info *tx_info;
+ 	struct sk_buff *skb;
+-	struct ath_vif *avp;
+-
+-	if (!sc->tx99_vif)
+-		return NULL;
+-
+-	avp = (struct ath_vif *)sc->tx99_vif->drv_priv;
+ 
+ 	skb = alloc_skb(len, GFP_KERNEL);
+ 	if (!skb)
+@@ -77,14 +71,11 @@ static struct sk_buff *ath9k_build_tx99_skb(struct ath_softc *sc)
+ 	memcpy(hdr->addr2, hw->wiphy->perm_addr, ETH_ALEN);
+ 	memcpy(hdr->addr3, hw->wiphy->perm_addr, ETH_ALEN);
+ 
+-	hdr->seq_ctrl |= cpu_to_le16(avp->seq_no);
+-
+ 	tx_info = IEEE80211_SKB_CB(skb);
+ 	memset(tx_info, 0, sizeof(*tx_info));
+ 	rate = &tx_info->control.rates[0];
+ 	tx_info->band = sc->cur_chan->chandef.chan->band;
+ 	tx_info->flags = IEEE80211_TX_CTL_NO_ACK;
+-	tx_info->control.vif = sc->tx99_vif;
+ 	rate->count = 1;
+ 	if (ah->curchan && IS_CHAN_HT(ah->curchan)) {
+ 		rate->flags |= IEEE80211_TX_RC_MCS;
+diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
+index 4b7a7fc2a0fe0..3ae8d0585b6f3 100644
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -2974,7 +2974,7 @@ int ath9k_tx99_send(struct ath_softc *sc, struct sk_buff *skb,
+ 		return -EINVAL;
+ 	}
+ 
+-	ath_set_rates(sc->tx99_vif, NULL, bf);
++	ath_set_rates(NULL, NULL, bf);
+ 
+ 	ath9k_hw_set_desc_link(sc->sc_ah, bf->bf_desc, bf->bf_daddr);
+ 	ath9k_hw_tx99_start(sc->sc_ah, txctl->txq->axq_qnum);
 -- 
 2.20.1
 
