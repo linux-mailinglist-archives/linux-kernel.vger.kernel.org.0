@@ -2,209 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3D71010F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 02:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26EA11010F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 02:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfKSBot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 20:44:49 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:47236 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727427AbfKSBoh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 20:44:37 -0500
-Received: by mail-pl1-f202.google.com with SMTP id p23so4472259plo.14
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 17:44:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=vOGdWKkLZw+fnwsKztc5Xhx6sgiytcIM3uQq3wSpoPY=;
-        b=ae7SAUyRl+afwJjPYWHUh238QkT8TPlv+uLlQdmyNQJZlTCOIWGSZlOKTEetLzBhCy
-         Coeco7M+ofuKsaMhZTUwJih265NFLB0rweLZkM+o9afBA5bmO9Squatev3m2zgfxzecb
-         sZI/bTHikAvdCvLfQkCbI6aUhs5z6mRO50dq/9rUpMrz4teQKs1I6f2hymSIv58HUvfU
-         aasXDfIesdHIwA+aZzk11ZUiumZGY8hk5egqYlMrEWzctBBBvQX5y64LKMQwB4vcMmpf
-         lRKRp9LJlDwUxYTclvvh4N5AxQgOpNr/Mm36deZfIgTS31+scAIIKhpRwKCZnMO9O/P1
-         fsQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=vOGdWKkLZw+fnwsKztc5Xhx6sgiytcIM3uQq3wSpoPY=;
-        b=UvFSE9g1ynwyjP23l3aYtYh9axRTYlc0PVFaNsjQtQs8n1XUHtCiSXT78plrBczmDT
-         WK9glCGuY4CU5SBFlcqihldhNlQUIQM9A9sP3hWhnNqGqElpT6o8cTyzk8G9LIugXbvn
-         u7kdOv3lq2l4VlxioTqknA7mtADHhJBlzHHov2a8vycOhzs4iJTrDmUUsdEO6PFd/goX
-         teIdPyQRXpLKsIr3nGf2ojQNxWbSIK9l1r30tuYA0U1D0mjn7xfwp35F86ERDbT6LjCx
-         ZOkP5jTLq4xYI8iN7DnzCvh/JXIv67ps659xX2GeUsmbmrJpscc1jqK8IPHvMDl+OC5k
-         Yy4w==
-X-Gm-Message-State: APjAAAXXEBMEtA+07H46sbWc0706lUUG1LgaS9jE3dlzXYVR2qm9nMOI
-        poQJ7FSyq56qjXlH9gBen6kepWSvl1bM
-X-Google-Smtp-Source: APXvYqyysPK7uFHLsTejqiiFUyzQuAwLBfeWk+ZOfNeGUvoHECBR2YcqktgomekVGfvRDQv9o+fSoZRotwhf
-X-Received: by 2002:a63:a05c:: with SMTP id u28mr2703600pgn.333.1574127876542;
- Mon, 18 Nov 2019 17:44:36 -0800 (PST)
-Date:   Mon, 18 Nov 2019 17:43:57 -0800
-In-Reply-To: <20191119014357.98465-1-brianvv@google.com>
-Message-Id: <20191119014357.98465-10-brianvv@google.com>
-Mime-Version: 1.0
-References: <20191119014357.98465-1-brianvv@google.com>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH bpf-next 9/9] selftests/bpf: add batch ops testing to array
- bpf map
-From:   Brian Vazquez <brianvv@google.com>
-To:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     Yonghong Song <yhs@fb.com>, Stanislav Fomichev <sdf@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Brian Vazquez <brianvv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727479AbfKSBoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 20:44:44 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34146 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727428AbfKSBon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 20:44:43 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1F9D0F7A586CDEA13F47;
+        Tue, 19 Nov 2019 09:44:41 +0800 (CST)
+Received: from huawei.com (10.175.104.225) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Tue, 19 Nov 2019
+ 09:44:36 +0800
+From:   Hewenliang <hewenliang4@huawei.com>
+To:     <rostedt@goodmis.org>, <acme@redhat.com>, <tstoyanov@vmware.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] tools lib traceevent: Fix memory leakage in copy_filter_type
+Date:   Mon, 18 Nov 2019 20:44:15 -0500
+Message-ID: <20191119014415.57210-1-hewenliang4@huawei.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20191113154044.5b591bf8@gandalf.local.home>
+References: <20191113154044.5b591bf8@gandalf.local.home>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested bpf_map_lookup_batch() and bpf_map_update_batch()
-functionality.
+It is necessary to free the memory that we have allocated when error occurs.
 
-  $ ./test_maps
-      ...
-        test_map_lookup_and_delete_batch_array:PASS
-      ...
-
-Signed-off-by: Brian Vazquez <brianvv@google.com>
-Signed-off-by: Yonghong Song <yhs@fb.com>
+Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filter_type()")
+Signed-off-by: Hewenliang <hewenliang4@huawei.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../map_lookup_and_delete_batch_array.c       | 119 ++++++++++++++++++
- 1 file changed, 119 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/map_tests/map_lookup_and_delete_batch_array.c
+ tools/lib/traceevent/parse-filter.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/map_tests/map_lookup_and_delete_batch_array.c b/tools/testing/selftests/bpf/map_tests/map_lookup_and_delete_batch_array.c
-new file mode 100644
-index 0000000000000..cbec72ad38609
---- /dev/null
-+++ b/tools/testing/selftests/bpf/map_tests/map_lookup_and_delete_batch_array.c
-@@ -0,0 +1,119 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <errno.h>
-+#include <string.h>
-+
-+#include <bpf/bpf.h>
-+#include <bpf/libbpf.h>
-+
-+#include <test_maps.h>
-+
-+static void map_batch_update(int map_fd, __u32 max_entries, int *keys,
-+			     int *values)
-+{
-+	int i, err;
-+
-+	for (i = 0; i < max_entries; i++) {
-+		keys[i] = i;
-+		values[i] = i + 1;
-+	}
-+
-+	err = bpf_map_update_batch(map_fd, keys, values, &max_entries, 0, 0);
-+	CHECK(err, "bpf_map_update_batch()", "error:%s\n", strerror(errno));
-+}
-+
-+static void map_batch_verify(int *visited, __u32 max_entries,
-+			     int *keys, int *values)
-+{
-+	int i;
-+
-+	memset(visited, 0, max_entries * sizeof(*visited));
-+	for (i = 0; i < max_entries; i++) {
-+		CHECK(keys[i] + 1 != values[i], "key/value checking",
-+		      "error: i %d key %d value %d\n", i, keys[i], values[i]);
-+		visited[i] = 1;
-+	}
-+	for (i = 0; i < max_entries; i++) {
-+		CHECK(visited[i] != 1, "visited checking",
-+		      "error: keys array at index %d missing\n", i);
-+	}
-+}
-+
-+void test_map_lookup_and_delete_batch_array(void)
-+{
-+	struct bpf_create_map_attr xattr = {
-+		.name = "array_map",
-+		.map_type = BPF_MAP_TYPE_ARRAY,
-+		.key_size = sizeof(int),
-+		.value_size = sizeof(int),
-+	};
-+	int map_fd, *keys, *values, *visited;
-+	__u32 count, total, total_success;
-+	const __u32 max_entries = 10;
-+	int err, i, step;
-+	bool nospace_err;
-+	__u64 batch = 0;
-+
-+	xattr.max_entries = max_entries;
-+	map_fd = bpf_create_map_xattr(&xattr);
-+	CHECK(map_fd == -1,
-+	      "bpf_create_map_xattr()", "error:%s\n", strerror(errno));
-+
-+	keys = malloc(max_entries * sizeof(int));
-+	values = malloc(max_entries * sizeof(int));
-+	visited = malloc(max_entries * sizeof(int));
-+	CHECK(!keys || !values || !visited, "malloc()", "error:%s\n",
-+	      strerror(errno));
-+
-+	/* populate elements to the map */
-+	map_batch_update(map_fd, max_entries, keys, values);
-+
-+	/* test 1: lookup in a loop with various steps. */
-+	total_success = 0;
-+	for (step = 1; step < max_entries; step++) {
-+		map_batch_update(map_fd, max_entries, keys, values);
-+		memset(keys, 0, max_entries * sizeof(*keys));
-+		memset(values, 0, max_entries * sizeof(*values));
-+		batch = 0;
-+		total = 0;
-+		i = 0;
-+		/* iteratively lookup/delete elements with 'step'
-+		 * elements each.
-+		 */
-+		count = step;
-+		nospace_err = false;
-+		while (true) {
-+			err = bpf_map_lookup_batch(map_fd,
-+						total ? &batch : NULL, &batch,
-+						keys + total,
-+						values + total,
-+						&count, 0, 0);
-+
-+			CHECK((err && errno != ENOENT), "lookup with steps",
-+			      "error: %s\n", strerror(errno));
-+
-+			total += count;
-+
-+			if (err)
-+				break;
-+
-+			i++;
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index 552592d153fb..f3cbf86e51ac 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -1473,8 +1473,10 @@ static int copy_filter_type(struct tep_event_filter *filter,
+ 	if (strcmp(str, "TRUE") == 0 || strcmp(str, "FALSE") == 0) {
+ 		/* Add trivial event */
+ 		arg = allocate_arg();
+-		if (arg == NULL)
++		if (arg == NULL) {
++			free(str);
+ 			return -1;
 +		}
-+
-+		if (nospace_err == true)
-+			continue;
-+
-+		CHECK(total != max_entries, "lookup with steps",
-+		      "total = %u, max_entries = %u\n", total, max_entries);
-+
-+		map_batch_verify(visited, max_entries, keys, values);
-+
-+		total_success++;
-+	}
-+
-+	CHECK(total_success == 0, "check total_success",
-+	      "unexpected failure\n");
-+
-+	printf("%s:PASS\n", __func__);
-+}
+ 
+ 		arg->type = TEP_FILTER_ARG_BOOLEAN;
+ 		if (strcmp(str, "TRUE") == 0)
+@@ -1483,8 +1485,11 @@ static int copy_filter_type(struct tep_event_filter *filter,
+ 			arg->boolean.value = 0;
+ 
+ 		filter_type = add_filter_type(filter, event->id);
+-		if (filter_type == NULL)
++		if (filter_type == NULL) {
++			free(str);
++			free_arg(arg);
+ 			return -1;
++		}
+ 
+ 		filter_type->filter = arg;
+ 
 -- 
-2.24.0.432.g9d3f5f5b63-goog
+2.19.1
 
