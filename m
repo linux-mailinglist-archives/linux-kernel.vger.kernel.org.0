@@ -2,163 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A72102575
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A86010258A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:37:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfKSNdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:33:49 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36971 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfKSNds (ORCPT
+        id S1727631AbfKSNhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:37:13 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37574 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfKSNhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:33:48 -0500
-Received: by mail-pl1-f196.google.com with SMTP id bb5so11776522plb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:33:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rJwVIsRx3AazC18GtEPRsLmuOqGwQRmE+0eQ3O5nq0w=;
-        b=s1nTY8lIAmSwKqbsnP/zO1Qtk0Q6pZ7MsmpAv4Us4+AlTpFfQcUqJGyAQQK7Q1aH8E
-         +AJtV6B4l/dGQ7c1swwfSXZYtwUS5KWCgd/Xs3p6pwIqYhS3qkx/anVSbKsDBQWrYQiP
-         g8d3TzuWQEoyCmWQh0scuODR+ZBEMV90nJru6HAuuut707l0lu0s76oY4UqsgMon7Y7f
-         6oFe6CJY6p2Pnsf0NfvTOSYhEUEHxliatE5nxmgmJqeAisOHpKn+6mvstuAE2iFYBEgP
-         /8d9N9oxajG2CnKa3blysQbEHsuSXgyglAFnvP8+uPPceNGBW7FspjmxMrLDFlEdysDM
-         0tHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rJwVIsRx3AazC18GtEPRsLmuOqGwQRmE+0eQ3O5nq0w=;
-        b=QkOAca4uJ0litOqbwCWjF3a0pvEVAlzUInasijydz+KzwVIpbM543mvr+RSSRsXnlS
-         7+UNhj5gXsNyAtuBOCO4/vYIHmGrsXgqFpTNUKllRF8pmFJqHT6/SFLhO5za+k6mtj5M
-         PNKvpDC+FLN4Zl40Q8oHZC9L06vnf+0gHmvrIVVWK7wcmyRfgcnxebcqRFnnwhq2zHFW
-         oRZZregjebp3JjBqa5vma5BwKRjGuaO/xlXg+/yD0Pq2lY94QS+X/N1LKj0WOJ+8LRfh
-         +SymcaTDIwnHQgxzQeNiBoXJQppdkCZDDfSfqHOG85p6EoiLHBL47ayx7cQq71k2qGh/
-         yuqA==
-X-Gm-Message-State: APjAAAXaH6HBXkmLUsyx7OeihyCuvYdrgKqZQbZkFxPZqmAJ49XOj5EC
-        29Gce5BaqBYOgEFtijl1ECUvMUJxZZNHwOZbqQiNuUjhk/s=
-X-Google-Smtp-Source: APXvYqygC5QgVi6scwq1SsK5M2ZG6A0RvZmIHZlXlYYMsAhejCNKfjmbCP9HTKyv2i4mF4qDlkimVavZrbMl24oYCGc=
-X-Received: by 2002:a17:90a:35d0:: with SMTP id r74mr6485311pjb.47.1574170427315;
- Tue, 19 Nov 2019 05:33:47 -0800 (PST)
-MIME-Version: 1.0
-References: <000000000000a901ed058d51adc3@google.com>
-In-Reply-To: <000000000000a901ed058d51adc3@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 19 Nov 2019 14:33:34 +0100
-Message-ID: <CAAeHK+xEqkHCmnu8e0MJ63DCQ4dqi0zneoL6wffzRe4jw30SWA@mail.gmail.com>
-Subject: Re: WARNING in iforce_get_id_packet/usb_submit_urb
-To:     syzbot <syzbot+9584b712baf1965b590c@syzkaller.appspotmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 19 Nov 2019 08:37:13 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJDYJsw142439;
+        Tue, 19 Nov 2019 13:34:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=zeT1T5F4u/9t9rqf7pRcWtmarJGMaGO5YjAnx2eEqyo=;
+ b=ERpzotDSLHZmw2HCw7RKqcEvDqjcLJRsdk7QizAlNvOKi0LhoStogrFjvgiyf//iMCeR
+ pU98NNr39sva/nm9BsKBfmUQqTqQAUwUshf/SrB/Q+tkuU11pNEEUykOCVKxbYedLVbq
+ 6I7G/wqLRC1vtPUPaLV7MRyg60gpJxMlJ2uF8dHVuplQGImtoxOlUMzFfIVcANf0gkb5
+ T4vKCvgWcxD2svCxH3OSOWXMa3ix52480yQto2fyxkFEZrRf0SdhixWXysHTqOtqIqex
+ a8SeLc7rUmnu68q/Jj/1lzYEOaa/kY4buLqBG5d5RkLkcR0KTNeloZptD6SuFbmzxInM 9w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2wa8htpxbt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 13:34:45 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJDVkE7105282;
+        Tue, 19 Nov 2019 13:34:44 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2wc0agdf4g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 13:34:44 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJDYbd0020028;
+        Tue, 19 Nov 2019 13:34:37 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 05:34:35 -0800
+Date:   Tue, 19 Nov 2019 16:34:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     vishnu <vravulap@amd.com>
+Cc:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>, Alexander.Deucher@amd.com,
+        djkurtz@google.com, Akshu.Agrawal@amd.com,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        YueHaibing <yuehaibing@huawei.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v9 6/6] ASoC: amd: Added ACP3x system resume and
+ runtime pm
+Message-ID: <20191119133416.GB30789@kadam>
+References: <1574165476-24987-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574165476-24987-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <20191119123531.GA30789@kadam>
+ <3321478e-de8f-2eb6-6e6f-6eb621b8434b@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3321478e-de8f-2eb6-6e6f-6eb621b8434b@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 1:07 PM syzbot
-<syzbot+9584b712baf1965b590c@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15b6b3f8600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9584b712baf1965b590c
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d09e28600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1410e1f7a00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9584b712baf1965b590c@syzkaller.appspotmail.com
->
-> usb 1-1: config 0 interface 47 altsetting 0 bulk endpoint 0x8A has invalid
-> maxpacket 0
-> usb 1-1: New USB device found, idVendor=061c, idProduct=c0a4,
-> bcdDevice=4e.a0
-> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> usb 1-1: config 0 descriptor??
-> ------------[ cut here ]------------
-> URB 0000000044363614 submitted while active
-> WARNING: CPU: 0 PID: 12 at drivers/usb/core/urb.c:362
-> usb_submit_urb+0x10c1/0x13b0 drivers/usb/core/urb.c:362
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc6+ #13
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xca/0x13e lib/dump_stack.c:113
->   panic+0x292/0x6c9 kernel/panic.c:219
->   __warn.cold+0x20/0x4b kernel/panic.c:576
->   report_bug+0x262/0x2a0 lib/bug.c:186
->   fixup_bug arch/x86/kernel/traps.c:179 [inline]
->   fixup_bug arch/x86/kernel/traps.c:174 [inline]
->   do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
->   do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
->   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
-> RIP: 0010:usb_submit_urb+0x10c1/0x13b0 drivers/usb/core/urb.c:362
-> Code: 89 de e8 72 dd e8 fd 84 db 0f 85 42 f6 ff ff e8 35 dc e8 fd 4c 89 fe
-> 48 c7 c7 00 23 1a 86 c6 05 4b 78 57 04 01 e8 ca a0 be fd <0f> 0b e9 20 f6
-> ff ff c7 44 24 14 01 00 00 00 e9 d7 f6 ff ff 41 bd
-> RSP: 0018:ffff8881d9e0f010 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3c1df4
-> RBP: ffff8881d4b67d00 R08: ffff8881d9df9800 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881cf2c9980
-> R13: 00000000fffffff0 R14: ffffffff862df820 R15: ffff8881d4b67d00
->   iforce_get_id_packet+0x19c/0x52c
-> drivers/input/joystick/iforce/iforce-packets.c:238
->   iforce_init_device+0x391/0x138d
-> drivers/input/joystick/iforce/iforce-main.c:293
->   iforce_usb_probe+0x97c/0xd90 drivers/input/joystick/iforce/iforce-usb.c:163
->   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
->   really_probe+0x281/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
->   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x16f0 drivers/base/core.c:2111
->   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
->   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
->   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
->   really_probe+0x281/0x660 drivers/base/dd.c:509
->   driver_probe_device+0x104/0x210 drivers/base/dd.c:670
->   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
->   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:843
->   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x16f0 drivers/base/core.c:2111
->   usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
->   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
->   process_one_work+0x905/0x1570 kernel/workqueue.c:2269
->   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
->   kthread+0x30b/0x410 kernel/kthread.c:255
->   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+On Tue, Nov 19, 2019 at 06:26:17PM +0530, vishnu wrote:
+> 
+> 
+> On 19/11/19 6:05 PM, Dan Carpenter wrote:
+> > I can't apply this because I'm not CC'd on patches 2-5.
+> > 
+> > On Tue, Nov 19, 2019 at 05:41:16PM +0530, Ravulapati Vishnu vardhan rao wrote:
+> > > +static int acp3x_power_on(void __iomem *acp3x_base)
+> > > +{
+> > > +	u32 val;
+> > > +	u32 timeout;
+> > > +
+> > > +	timeout = 0;
+> > > +	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> > > +
+> > > +	if (val == 0)
+> > > +		return val;
+> > > +
+> > > +	if (!((val & ACP_PGFSM_STATUS_MASK) ==
+> > > +				ACP_POWER_ON_IN_PROGRESS))
+> > > +		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
+> > > +			acp3x_base + mmACP_PGFSM_CONTROL);
+> > > +	while (++timeout) {
+> > 
+> > while (++timeout < 500)
+> > 
+> 
+> If I check with timeout<500 and in next condition i have
+> if(timeout >500) this never happens.
 
-#syz dup: WARNING in __iforce_usb_xmit/usb_submit_urb
+I was maybe not clear enough.  Please don't write:
+
+	while (++timeout) {
+
+That doesn't make sense as a loop.  It looks like you are trying to
+loop UINT_MAX times.  Put the ++ and the limit on the same line.
+
+There is only one real bug in my review but there is just a lot of clean
+up left.  Can you have a co-worker review your patch before resending?
+The patch 1/6 looks pretty good now but I haven't seen patches 2-5 so
+I'm worried there is a lot of cleanup left to do.
+
+regards,
+dan carpenter
+
