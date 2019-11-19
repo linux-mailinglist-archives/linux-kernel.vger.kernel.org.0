@@ -2,74 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1EFC102506
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2105D102510
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:02:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfKSM6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:58:41 -0500
-Received: from mga18.intel.com ([134.134.136.126]:58643 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727255AbfKSM6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:58:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 04:58:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,324,1569308400"; 
-   d="scan'208";a="237322627"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Nov 2019 04:58:39 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 1F64E250; Tue, 19 Nov 2019 14:58:37 +0200 (EET)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] regmap: regmap-w1: Drop unreachable code
-Date:   Tue, 19 Nov 2019 15:58:37 +0300
-Message-Id: <20191119125837.47619-1-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727988AbfKSNCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:02:01 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36729 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbfKSNCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 08:02:00 -0500
+Received: by mail-ot1-f66.google.com with SMTP id f10so17771170oto.3;
+        Tue, 19 Nov 2019 05:02:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A80rOA/HPVUI/KT/4AcxA87yUcN6KfN0Zy7hYDumNmw=;
+        b=ZOjOvt1v/e7M74MHMVfRPHEAYhXCLYXjzmVG37Be5BcAsX3BqwhBk1054NMQHo5iwp
+         KQEzGvz43buwr8OT+HJWjJ7QXIAy4T06E7qgYsPi6TyBvp46J4zufd54D5nb9c53rUMq
+         2ANZNpnVzI5XReQjZ4yJFw07GrVlWRv8LBGt+Z/ohr+X1+QH5h+A/1Rbpvc6V5gka1Mx
+         2CLrkfsFfgCoYzK7IgzZoFEi90YVZdI43HF9jWC6MeZKgyM3R0PBaLN6WkZoJaKJi6GX
+         kmlyqTWJrd90XNXy5uwdhCnWniyIrBBeQ7FgHakDhNDOJ7mVzxiFTNkD558FCB9+T51K
+         DE4Q==
+X-Gm-Message-State: APjAAAVvqN6qcMeXeDeiciOd3p7y2pK6QzbOqQOcpCBn2nWYv+tr4Qth
+        WkBBKAoTRXZqkat3PEZzJq8X6XVhrtRDaOgj+bk=
+X-Google-Smtp-Source: APXvYqwtIRqepxJOw62ZUdb3ua57orsKqT5LbVR1CEZK/axGtNgixYaSSCYR8QZnvA02c+3kdJ1N4c/+PnZHWPpEHPg=
+X-Received: by 2002:a9d:17ca:: with SMTP id j68mr3607192otj.250.1574168519957;
+ Tue, 19 Nov 2019 05:01:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191116.133321.709008936600873428.davem@davemloft.net>
+In-Reply-To: <20191116.133321.709008936600873428.davem@davemloft.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Nov 2019 14:01:48 +0100
+Message-ID: <CAMuHMdX8Fi1PDEcrPJ3frsg+LG04hCN2vbgJ=+NyEArnqmcb1Q@mail.gmail.com>
+Subject: Re: [GIT] Networking
+To:     David Miller <davem@davemloft.net>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both init functions have a stray "return NULL" at the end which is never
-reached so drop them.
+On Sat, Nov 16, 2019 at 10:37 PM David Miller <davem@davemloft.net> wrote:
+> YueHaibing (1):
+>       mdio_bus: Fix PTR_ERR applied after initialization to constant
 
-Fixes: cc5d0db390b0 ("regmap: Add 1-Wire bus support")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/base/regmap/regmap-w1.c | 4 ----
- 1 file changed, 4 deletions(-)
+FTR, this causes a boot regression if CONFIG_RESET_CONTROLLER=n.
+Patch sent
+https://lore.kernel.org/lkml/20191119112524.24841-1-geert+renesas@glider.be/
 
-diff --git a/drivers/base/regmap/regmap-w1.c b/drivers/base/regmap/regmap-w1.c
-index 3a7d30b8c3ac..1fbaaad71ca5 100644
---- a/drivers/base/regmap/regmap-w1.c
-+++ b/drivers/base/regmap/regmap-w1.c
-@@ -215,8 +215,6 @@ struct regmap *__regmap_init_w1(struct device *w1_dev,
- 
- 	return __regmap_init(w1_dev, bus, w1_dev, config,
- 			 lock_key, lock_name);
--
--	return NULL;
- }
- EXPORT_SYMBOL_GPL(__regmap_init_w1);
- 
-@@ -233,8 +231,6 @@ struct regmap *__devm_regmap_init_w1(struct device *w1_dev,
- 
- 	return __devm_regmap_init(w1_dev, bus, w1_dev, config,
- 				 lock_key, lock_name);
--
--	return NULL;
- }
- EXPORT_SYMBOL_GPL(__devm_regmap_init_w1);
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.24.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
