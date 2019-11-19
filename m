@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D9E10162B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B7F810152C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfKSFuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:50:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48068 "EHLO mail.kernel.org"
+        id S1730539AbfKSFl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730300AbfKSFuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:50:50 -0500
+        id S1730526AbfKSFl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:41:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B3B4214D9;
-        Tue, 19 Nov 2019 05:50:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D0FE22319;
+        Tue, 19 Nov 2019 05:41:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142650;
-        bh=Fqy9Df9VV1p/fXocuqWjl0pJ6+pzlHmrrdfJKPeH+lM=;
+        s=default; t=1574142086;
+        bh=6QOu04gevsHMOBxWy6PWqmiXuBC1YuqReUNHXNe1Ai4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCQYShrtaKMFPdcUukprgBJM6k2//mbac7gafhEsKv3feTphRR7rj+cH7GwdVXwYs
-         9v2WYERadfwHFLSxmF7VK98u8j+rCfzNP8OGid+nrYa2Y0WvWdNnkF7i2188BVD5Nk
-         SCJfpVJwDalL6+cw0CF3xtRn9OHbZMGsTs0ZNXcY=
+        b=YCEkv8xfM4LGYp0K8FuKBnSag7Q7pnpsF0dkhnDWnUKlDltynnaTyeSoCez1D9jWi
+         1DL5+A9/3peqTjekp6QMvISs4RH28UKx2JT5HnFQzK8wb1Vsj+Nu6eci0zddZc20Ho
+         cUvduOsFN+pfDK9/wRhQa4lb3MRtyoTjDNzOvLgg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 153/239] net: hns3: Fix for setting speed for phy failed problem
+Subject: [PATCH 4.19 356/422] misc: genwqe: should return proper error value.
 Date:   Tue, 19 Nov 2019 06:19:13 +0100
-Message-Id: <20191119051332.842670211@linuxfoundation.org>
+Message-Id: <20191119051422.087695033@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-[ Upstream commit fd8133148eb6a733f9cfdaecd4d99f378e21d582 ]
+[ Upstream commit 02241995b004faa7d9ff628e97f24056190853f8 ]
 
-The function of genphy_read_status is that reading phy information
-from HW and using these information to update SW variable. If user
-is using ethtool to setting the speed of phy and service task is calling
-by hclge_get_mac_phy_link, the result of speed setting is uncertain.
-Because ethtool cmd will modified phydev and hclge_get_mac_phy_link also
-will modified phydev.
+The function should return -EFAULT when copy_from_user fails. Even
+though the caller does not distinguish them. but we should keep backward
+compatibility.
 
-Because phy state machine will update phy link periodically, we can
-just use phydev->link to check the link status. This patch removes
-function call of genphy_read_status. To ensure accuracy, this patch
-adds a phy state check. If phy state is not PHY_RUNNING, we consider
-link is down. Because in some scenarios, phydev->link may be link up,
-but phy state is not PHY_RUNNING. This is just an intermediate state.
-In fact, the link is not ready yet.
-
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/genwqe/card_utils.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 86523e8993cb9..3bb6181ff0548 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2179,7 +2179,7 @@ static int hclge_get_mac_phy_link(struct hclge_dev *hdev)
- 	mac_state = hclge_get_mac_link_status(hdev);
+diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
+index f68435df76d48..22301bba8c495 100644
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -298,7 +298,7 @@ static int genwqe_sgl_size(int num_pages)
+ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 			  void __user *user_addr, size_t user_size, int write)
+ {
+-	int rc;
++	int ret = -ENOMEM;
+ 	struct pci_dev *pci_dev = cd->pci_dev;
  
- 	if (hdev->hw.mac.phydev) {
--		if (!genphy_read_status(hdev->hw.mac.phydev))
-+		if (hdev->hw.mac.phydev->state == PHY_RUNNING)
- 			link_stat = mac_state &
- 				hdev->hw.mac.phydev->link;
- 		else
+ 	sgl->fpage_offs = offset_in_page((unsigned long)user_addr);
+@@ -318,7 +318,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 	if (get_order(sgl->sgl_size) > MAX_ORDER) {
+ 		dev_err(&pci_dev->dev,
+ 			"[%s] err: too much memory requested!\n", __func__);
+-		return -ENOMEM;
++		return ret;
+ 	}
+ 
+ 	sgl->sgl = __genwqe_alloc_consistent(cd, sgl->sgl_size,
+@@ -326,7 +326,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 	if (sgl->sgl == NULL) {
+ 		dev_err(&pci_dev->dev,
+ 			"[%s] err: no memory available!\n", __func__);
+-		return -ENOMEM;
++		return ret;
+ 	}
+ 
+ 	/* Only use buffering on incomplete pages */
+@@ -339,7 +339,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 		/* Sync with user memory */
+ 		if (copy_from_user(sgl->fpage + sgl->fpage_offs,
+ 				   user_addr, sgl->fpage_size)) {
+-			rc = -EFAULT;
++			ret = -EFAULT;
+ 			goto err_out;
+ 		}
+ 	}
+@@ -352,7 +352,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 		/* Sync with user memory */
+ 		if (copy_from_user(sgl->lpage, user_addr + user_size -
+ 				   sgl->lpage_size, sgl->lpage_size)) {
+-			rc = -EFAULT;
++			ret = -EFAULT;
+ 			goto err_out2;
+ 		}
+ 	}
+@@ -374,7 +374,8 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 	sgl->sgl = NULL;
+ 	sgl->sgl_dma_addr = 0;
+ 	sgl->sgl_size = 0;
+-	return -ENOMEM;
++
++	return ret;
+ }
+ 
+ int genwqe_setup_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
 -- 
 2.20.1
 
