@@ -2,88 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0751A101A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 08:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB344101AA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 08:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbfKSH52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 02:57:28 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9526 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727007AbfKSH52 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 02:57:28 -0500
-X-UUID: a7163a41c1394fa3b0f25bf86255122d-20191119
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=yBnu1NtPajEa00aUiIIxVlbDQ8eChoLCV7rmSdXtLH4=;
-        b=PDT3vL3EhKmVaDjFzp+2dEvjD54PpDO7kDG3B9MDJev5ur3npY9ZwcSTCtnxiKFKMA5UthNLEWgWtbILacQXvBHVftLSuitUIsefXCobp5KDTiYwhm57SkTqZC7od2q/tcEes1DyMM+U+lvbds7ABaRHhV9cSd7xRYzWqk+YlSs=;
-X-UUID: a7163a41c1394fa3b0f25bf86255122d-20191119
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1361509069; Tue, 19 Nov 2019 15:57:22 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Nov
- 2019 15:57:21 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by mtkcas07.mediatek.inc
- (172.21.101.84) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Nov
- 2019 15:57:08 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 19 Nov 2019 15:57:08 +0800
-Message-ID: <1574150240.19262.7.camel@mtksdccf07>
-Subject: Re: [RESEND, PATCH 1/1] arm: dts: mediatek: add mt7629 pwm support
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 19 Nov 2019 15:57:20 +0800
-In-Reply-To: <31fddc2b-65c7-02e8-dca2-b5d6dc050f87@gmail.com>
-References: <1571751001-28588-1-git-send-email-sam.shih@mediatek.com>
-         <1571751001-28588-2-git-send-email-sam.shih@mediatek.com>
-         <31fddc2b-65c7-02e8-dca2-b5d6dc050f87@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1727505AbfKSH7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 02:59:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbfKSH7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 02:59:03 -0500
+Received: from localhost (unknown [89.205.134.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF19822312;
+        Tue, 19 Nov 2019 07:59:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574150342;
+        bh=Ld566us/253H4UlC/U9J6/5di2INvcC40kur0c0jF1Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zPYSBYy8xvhgn0yPWzrvPImskm4fnvhCIg585Y5wEaE89cA+XBqwinRXsqZp3kl5z
+         kuZpPqvc0qXjERxs58j0Teu5ZsV1hG8A5bf27Yr4maB3LOIuDnwy8GPVvKk4dSd4uy
+         z2pNo35jmNeuL1zSZSTqMMyL6zeGQLv9dcV4f2qM=
+Date:   Tue, 19 Nov 2019 08:58:59 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     rui_feng@realsil.com.cn
+Cc:     arnd@arndb.de, dan.carpenter@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: rtsx: Fix impossible condition
+Message-ID: <20191119075859.GC1858193@kroah.com>
+References: <1574148825-2797-1-git-send-email-rui_feng@realsil.com.cn>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574148825-2797-1-git-send-email-rui_feng@realsil.com.cn>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU3VuLCAyMDE5LTExLTEwIGF0IDIxOjUxICswMTAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
-Og0KPiANCj4gT24gMjIvMTAvMjAxOSAxNTozMCwgU2FtIFNoaWggd3JvdGU6DQo+ID4gVGhpcyBh
-ZGRzIHB3bSBzdXBwb3J0IGZvciBNVDc2MjkuDQo+ID4gVXNlZDoNCj4gPiBodHRwczovL3BhdGNo
-d29yay5rZXJuZWwub3JnL3BhdGNoLzExMTYwODUxLw0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6
-IFNhbSBTaGloIDxzYW0uc2hpaEBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJt
-L2Jvb3QvZHRzL210NzYyOS5kdHNpIHwgMTUgKysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBj
-aGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
-L2Jvb3QvZHRzL210NzYyOS5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvbXQ3NjI5LmR0c2kNCj4g
-PiBpbmRleCA5NjA4YmMyY2NiM2YuLjI0Mzc1ZmM1ZjkzNiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNo
-L2FybS9ib290L2R0cy9tdDc2MjkuZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL210
-NzYyOS5kdHNpDQo+ID4gQEAgLTI0MSw2ICsyNDEsMjEgQEANCj4gPiAgCQkJc3RhdHVzID0gImRp
-c2FibGVkIjsNCj4gPiAgCQl9Ow0KPiA+ICANCj4gPiArCQlwd206IHB3bUAxMTAwNjAwMCB7DQo+
-ID4gKwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ3NjI5LXB3bSI7DQo+ID4gKwkJCXJlZyA9
-IDwweDExMDA2MDAwIDB4MTAwMD47DQo+ID4gKwkJCWludGVycnVwdHMgPSA8R0lDX1NQSSA3NyBJ
-UlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiA+ICsJCQljbG9ja3MgPSA8JnRvcGNrZ2VuIENMS19UT1Bf
-UFdNX1NFTD4sDQo+ID4gKwkJCQkgPCZwZXJpY2ZnIENMS19QRVJJX1BXTV9QRD4sDQo+ID4gKwkJ
-CQkgPCZwZXJpY2ZnIENMS19QRVJJX1BXTTFfUEQ+Ow0KPiA+ICsJCQljbG9jay1uYW1lcyA9ICJ0
-b3AiLCAibWFpbiIsICJwd20xIjsNCj4gPiArCQkJYXNzaWduZWQtY2xvY2tzID0gPCZ0b3Bja2dl
-biBDTEtfVE9QX1BXTV9TRUw+Ow0KPiA+ICsJCQlhc3NpZ25lZC1jbG9jay1wYXJlbnRzID0NCj4g
-PiArCQkJCQk8JnRvcGNrZ2VuIENMS19UT1BfVU5JVlBMTDJfRDQ+Ow0KPiA+ICsJCQludW0tcHdt
-cyA9IDwxPjsNCj4gDQo+IG51bS1wd21zIGlzIG5vdCBkZWZpbmVkLiBEaWQgeW91IG1lYW4gcHdt
-LWNlbGxzPw0KPiANCj4gUmVnYXJkcywNCj4gTWF0dGhpYXMNCj4gDQo+ID4gKwkJCXN0YXR1cyA9
-ICJkaXNhYmxlZCI7DQo+ID4gKwkJfTsNCj4gPiArDQo+ID4gIAkJaTJjOiBpMmNAMTEwMDcwMDAg
-ew0KPiA+ICAJCQljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10NzYyOS1pMmMiLA0KPiA+ICAJCQkJ
-ICAgICAibWVkaWF0ZWssbXQyNzEyLWkyYyI7DQo+ID4gDQo+IA0KPiBfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBMaW51eC1tZWRpYXRlayBtYWlsaW5n
-IGxpc3QNCj4gTGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBodHRwOi8vbGlz
-dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LW1lZGlhdGVrDQoNCg0KU29y
-cnkgZm9yIHRoZSBMYXRlIFJlcGx5LA0KVGhlIG51bS1wd21zIGZpZWxkIGlzIHJlZHVuZGFudCBh
-ZnRlciB3ZSBkZXJpdmUgaXQgZnJvbSB0aGUgY29tcGF0aWJsZQ0Kc3RyaW5nLiBJIGZvcmdvdCB0
-byByZW1vdmUgaXQgZnJvbSB0aGUgZGV2aWNlIHRyZWUuDQpJIHdpbGwgc2VuZCBhIG5ldyB2ZXJz
-aW9uLg0KDQpUaGFua3MsDQpCZXN0IFJlZ2FyZHMsDQpTYW0gU2hpaA0KDQo=
+On Tue, Nov 19, 2019 at 03:33:45PM +0800, rui_feng@realsil.com.cn wrote:
+> From: Rui Feng <rui_feng@realsil.com.cn>
+> 
+> A u8 can only go up to 255, condition n > 396 is
+> impossible, so change u8 to u16.
+> 
+> Signed-off-by: Rui Feng <rui_feng@realsil.com.cn>
+> ---
+>  drivers/misc/cardreader/rts5261.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/misc/cardreader/rts5261.c b/drivers/misc/cardreader/rts5261.c
+> index 32dcec2..8dba0bf 100644
+> --- a/drivers/misc/cardreader/rts5261.c
+> +++ b/drivers/misc/cardreader/rts5261.c
+> @@ -628,7 +628,8 @@ int rts5261_pci_switch_clock(struct rtsx_pcr *pcr, unsigned int card_clock,
+>  		u8 ssc_depth, bool initial_mode, bool double_clk, bool vpclk)
+>  {
+>  	int err, clk;
+> -	u8 n, clk_divider, mcu_cnt, div;
+> +	u16 n;
+> +	u8 clk_divider, mcu_cnt, div;
+>  	static const u8 depth[] = {
+>  		[RTSX_SSC_DEPTH_4M] = RTS5261_SSC_DEPTH_4M,
+>  		[RTSX_SSC_DEPTH_2M] = RTS5261_SSC_DEPTH_2M,
+> @@ -661,9 +662,9 @@ int rts5261_pci_switch_clock(struct rtsx_pcr *pcr, unsigned int card_clock,
+>  		return 0;
+>  
+>  	if (pcr->ops->conv_clk_and_div_n)
+> -		n = (u8)pcr->ops->conv_clk_and_div_n(clk, CLK_TO_DIV_N);
+> +		n = (u16)pcr->ops->conv_clk_and_div_n(clk, CLK_TO_DIV_N);
+>  	else
+> -		n = (u8)(clk - 4);
+> +		n = (u16)(clk - 4);
 
+Why is the cast now needed?  Same for everywhere else.
+
+thanks,
+
+greg k-h
