@@ -2,155 +2,303 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E4891023ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7101023F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:12:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfKSMJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:09:15 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33352 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbfKSMJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:09:14 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w9so23553864wrr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 04:09:12 -0800 (PST)
+        id S1727872AbfKSMMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:12:36 -0500
+Received: from mail-eopbgr790088.outbound.protection.outlook.com ([40.107.79.88]:43791
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727809AbfKSMMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 07:12:36 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A+771/W0Y41/uSZhUh0RHUWiUYMv20x1qCQqEuX5TkjpryomKKAT/jshsg15x7MwGiSL/uF+CfNf1h1h4bL/cwL4rZ56oajMPv4ECkZlbQ68z6NYwrZfmPSd1iEQi8y5CWUTywhfYRGCSTlURvkxs8dRWN/d5MkAtGkm9WU5W7weuFzwgo1WKtnJhBH4DJ/5pfQqRYnlnYvjAuMc+32ubm3vZTZHJ1UPsyOA2dM0uQSFf20Upvhbn87rIU4deAIIdMFyYmI2678NMfS6/CMU3VFt9kboxrzld3C0NE7pjqBCCPglaeTLV7mJipCtMBCToMndkP0nLBZOfMYb1YPoSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kHtyt9MZvqldLJO2OBG9Yfg1Jmv8fU9HitUJQS5/qMs=;
+ b=RAE/EDkhRQCl65AT/Cly0IbfzhJwE5vu57jEhXhomGehIG1bhyvR3HIBBYl1FuR1w4RyGC4h1npeFXtOhRcLFAkXACHtNvGhWDPmPN4qhKPI0VN8OmjBUbvw7YCwxPWvWO1XIIH3Mx3ruMJh+M2ly/S7iZgR362Mh88hZVdc34ksLRtocZAzcqBVMcsJ6V8WKImnhNL7sENnaBEgWiW3NFMJ1UdLKK4ct3d2U0M4g/eTr+8ucYJZZNQNiBMiij78Kp3/gpSOJ4n9vCxUDWHOXm9rpCCj/HTdv2eCRTYJln3VV3tkbKeFpI5qiRwXO60wK8abh8pXPeysZYp1HGMGpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
+ dmarc=permerror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ivBxIQiw/QvtMfmpR5iQrO/2f3Dutvsc0GR6a8pfJQ0=;
-        b=RSaaXLGGQlX7yfXlu5Z0jagMZpyaCg6RuPa26b20m/OvaqlU5ocVtDiZCnVIEt8kMu
-         ZvwwC3bFBzFqAWIVjrZTaobfuXs5UZnbmdfsiILEmizj50l29O+7U4uYt1ArPz+kNZRh
-         hDiWZwZexe9ifx4uU/MBeZAVyBde6hOCmojuRoP08SVjUDBKnsX1uP3WiQ/IvYIIueUg
-         UXNL+Q3Nbdjx43nM2xHZl4aj1ft4lWWVIY8rA9tK6fxYdMTA/kSD/z6lHBLjBo3Phl+q
-         L89HkBiLMWoxtzjTSRZTZlbePnCR7tHPJRkk8PtkPvIV3udwFbVA0RFT4JGDzmIEZEQa
-         fY9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ivBxIQiw/QvtMfmpR5iQrO/2f3Dutvsc0GR6a8pfJQ0=;
-        b=J/ZJneKaECdlYx5xC++8FXn+2qgquC0dkx16Cju7tKXnocRB2KAqdGlD+umSIRgvGa
-         EfqFav4vF5gkQWIRBLiT9vNY103G2qnJJS6/i7zJhayadxmERC5TgSVbu4v+yLluwjwu
-         v2j1rROBQeebTn2YKuLogmRfXXoh2kCv7vY8yy4E1qiMmtufWcJl3kyjaQAZkFCo6JLc
-         u/hmsAWzjISrDL9OE+jxCphtrDn8tIn1+ktOOHz8Bx3MMUc7rN4G8orEHf6tB+zPU+oy
-         eSGoy1k4yw+L21+Ysh7V9rSqLmNh9KExZU5UC5A1hKHIgnkWxvEOcLhm85DR4QF8utCb
-         5erA==
-X-Gm-Message-State: APjAAAUQa+1cNgYfMbsjd0JgABuD69oS9Qn/2D3PhYybAPy1X3gGM2nH
-        CamZTQR2mdgXfVkqjIxi9DZqwMGq/wNN1p3my8jGuw==
-X-Google-Smtp-Source: APXvYqzVh5wmA90P19s7zmbb2x7Na4wJQqfpSJjjGSz8H0l9CWz1oPf8pw9K4u4+qFJI0+MGYo/t6MxvnfJIJ9zAjTc=
-X-Received: by 2002:adf:b1cb:: with SMTP id r11mr400801wra.246.1574165351430;
- Tue, 19 Nov 2019 04:09:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20191119002121.4107-1-sean.j.christopherson@intel.com> <20191119111012.GA109842@gmail.com>
-In-Reply-To: <20191119111012.GA109842@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 19 Nov 2019 12:09:07 +0000
-Message-ID: <CAKv+Gu9C132peF9_j2rRwRh4s+aWZBY82rgjqmwaE_X=_6y4Zw@mail.gmail.com>
-Subject: Re: [PATCH 00/12] treewide: break dependencies on x86's RM header
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Nadav Amit <namit@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kHtyt9MZvqldLJO2OBG9Yfg1Jmv8fU9HitUJQS5/qMs=;
+ b=3yj6jeKZWFPVCGKJpMtWZUOnkWCU9wizouC2fz8P8gbb/SS44eSG0x1N+kRtlEdaUhT+riXFZ7iXhq9ORcFIQbAXdTz3R25UciBU8MKD7DA2FuJKdqqbyo/TeSQh/WqoXVvSAAEyOCjAPVYuveBEwXOtbYr7/4aXAxmUfYc9ycU=
+Received: from BN8PR12CA0029.namprd12.prod.outlook.com (2603:10b6:408:60::42)
+ by SN6PR12MB2717.namprd12.prod.outlook.com (2603:10b6:805:70::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2451.23; Tue, 19 Nov
+ 2019 12:12:31 +0000
+Received: from BN8NAM11FT014.eop-nam11.prod.protection.outlook.com
+ (2a01:111:f400:7eae::201) by BN8PR12CA0029.outlook.office365.com
+ (2603:10b6:408:60::42) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2451.23 via Frontend
+ Transport; Tue, 19 Nov 2019 12:12:31 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXMB02.amd.com (165.204.84.17) by
+ BN8NAM11FT014.mail.protection.outlook.com (10.13.177.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.20.2451.23 via Frontend Transport; Tue, 19 Nov 2019 12:12:31 +0000
+Received: from SATLEXMB01.amd.com (10.181.40.142) by SATLEXMB02.amd.com
+ (10.181.40.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 19 Nov
+ 2019 06:12:30 -0600
+Received: from vishnu-All-Series.amd.com (10.180.168.240) by
+ SATLEXMB01.amd.com (10.181.40.142) with Microsoft SMTP Server id 15.1.1713.5
+ via Frontend Transport; Tue, 19 Nov 2019 06:12:27 -0600
+From:   Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+CC:     <Alexander.Deucher@amd.com>, <djkurtz@google.com>,
+        <Akshu.Agrawal@amd.com>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm <linux-pm@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+        "Takashi Iwai" <tiwai@suse.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 1/6] ASoC: amd:Create multiple I2S platform device endpoint
+Date:   Tue, 19 Nov 2019 17:41:11 +0530
+Message-ID: <1574165476-24987-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1574165476-24987-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+References: <1574165476-24987-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(346002)(39860400002)(136003)(428003)(199004)(189003)(8676002)(81156014)(81166006)(50226002)(26005)(50466002)(11346002)(7696005)(51416003)(86362001)(54906003)(70206006)(53416004)(316002)(36756003)(70586007)(16586007)(47776003)(8936002)(48376002)(76176011)(6666004)(1671002)(5660300002)(356004)(2906002)(486006)(478600001)(305945005)(476003)(426003)(336012)(126002)(4326008)(2616005)(109986005)(186003)(446003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2717;H:SATLEXMB02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d85c1bb8-90ad-48a4-57d4-08d76ce9c0fb
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2717:
+X-Microsoft-Antispam-PRVS: <SN6PR12MB27174042078F01D2E01B0642E74C0@SN6PR12MB2717.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:182;
+X-Forefront-PRVS: 022649CC2C
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nutrsDg5C0rjluctOrNuKTQdmFWB+GQ5/sw1HRYWeYs68TU/EBKdpY+ycMTQou5EdLRQRwbi2XO6E64sPpoSd6Rq9WQ4y0DcsjZewESKM9kkUmjq43Md21z1uJ9Yy4uZmPw2Osu7CbZxuoUcr2Dq8oUhXjl6yinvB5FozxyyWSE1hv8tTpvRUhbefp8LatIDuD8U81tALHodsp0yQnnmuo5p5OpovKNL4OCR8tw7yi2XiUtuw5y7pt6dKhhx1VGVawEz/P9oCLt6TmeuFxIh/1e8vJq0KjdpW+zqV8T0wgevj1OJqyySwFQk0ows9BWMxp047LKT+Wt2DtECspEWn2yPfWTmEB9rVEwz+AD5py0SFvCAC1Ws77ryBctSHHmePnx+9MYlRW8OLHZJKYC/uB64eBQyQpZ1BsWvvwSzSch6go1v2QczmTQsScCOCLNN
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2019 12:12:31.6651
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d85c1bb8-90ad-48a4-57d4-08d76ce9c0fb
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB02.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2717
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 at 12:10, Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Sean Christopherson <sean.j.christopherson@intel.com> wrote:
->
-> > x86's asm/realmode.h, which defines low level structures, variables and
-> > helpers used to bring up APs during SMP boot, ends up getting included in
-> > practically every nook and cranny of the kernel because the address used
-> > by ACPI for resuming from S3 also happens to be stored in the real mode
-> > header, and ACPI bleeds the dependency into its widely included headers.
-> >
-> > As a result, modifying realmode.h for even the most trivial change to the
-> > boot code triggers a full kernel rebuild, which is frustrating to say the
-> > least as it some of the most difficult code to get exactly right *and* is
-> > also some of the most functionally isolated code in the kernel.
-> >
-> > To break the kernel's widespread dependency on realmode.h, add a wrapper
-> > in the aforementioned ACPI S3 code to access the real mode header instead
-> > of derefencing the header directly in asm/acpi.h and thereby exposing it
-> > to the world via linux/acpi.h.
-> >
-> > Build tested on x86 with allyesconfig and allmodconfig, so hopefully there
-> > aren't more build issues lurking, but at this point it wouldn't surprise
-> > me in the least if this somehow manages to break the build.
-> >
-> > Based on tip/master, commit ceceaf1f12ba ("Merge branch 'WIP.x86/cleanups'").
-> >
-> > Patch Synopsis:
-> >   - Patches 01-09 fix a variety of build errors that arise when patch 12
-> >     drops realmode.h from asm/acpi.h.  Most of the errors are quite absurb
-> >     as they have no relation whatsoever to x86's RM boot code, but occur
-> >     because realmode.h happens to include asm/io.h.
->
-> Yeah, these kind of parasitic header dependencies are the main driving
-> force behind kernel header spaghetti hell: it's super easy to add a new
-> header, but very hard to remove them...
->
-> Hence they practically only accumulate.
->
-> As a result header removal patches get priority, from me at least. :-)
->
-> >   - Patch 10 removes a spurious include of realmode.h from an ACPI header.
-> >
-> >   - Patches 11 and 12 implement the wrapper and move it out of acpi.h.
->
-> So if the ACPI maintainers are fine with -tip carrying patches #11 and #12
-> then I'd be glad to route these patches upstream.
->
-> I've applied them to tip:WIP.core/headers as a work-in-progress tree, and
-> I'm testing them on randconfigs to make sure there's no broken
-> dependencies. I'll wait for the ACPI acks.
->
-> I edited the title of patch 12 slightly, to:
->
->    c8bceb321209: x86/ACPI/sleep: Move acpi_wakeup_address() definition into sleep.c, remove <asm/realmode.h> from <asm/acpi.h>
->
-> to make sure the big header dependency change is obvious at first sight.
->
+Creates Platform Device endpoints for multiple
+I2S instances: SP and  BT endpoints device.
+Pass PCI resources like MMIO, irq to the platform devices.
 
-I'm fine with the patches but can we drop the fixes headers please?
-This doesn't actually fix anything, and touching early boot stuff for
-no good reason should be avoided imo.
+Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+---
+ sound/soc/amd/raven/acp3x.h     |  5 +++
+ sound/soc/amd/raven/pci-acp3x.c | 95 +++++++++++++++++++++++++++--------------
+ 2 files changed, 68 insertions(+), 32 deletions(-)
+
+diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
+index 4f2cadd..2f15fe1 100644
+--- a/sound/soc/amd/raven/acp3x.h
++++ b/sound/soc/amd/raven/acp3x.h
+@@ -7,10 +7,15 @@
+ 
+ #include "chip_offset_byte.h"
+ 
++#define ACP3x_DEVS		3
+ #define ACP3x_PHY_BASE_ADDRESS 0x1240000
+ #define	ACP3x_I2S_MODE	0
+ #define	ACP3x_REG_START	0x1240000
+ #define	ACP3x_REG_END	0x1250200
++#define ACP3x_I2STDM_REG_START	0x1242400
++#define ACP3x_I2STDM_REG_END	0x1242410
++#define ACP3x_BT_TDM_REG_START	0x1242800
++#define ACP3x_BT_TDM_REG_END	0x1242810
+ #define I2S_MODE	0x04
+ #define	BT_TX_THRESHOLD 26
+ #define	BT_RX_THRESHOLD 25
+diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
+index facec24..94f5f21 100644
+--- a/sound/soc/amd/raven/pci-acp3x.c
++++ b/sound/soc/amd/raven/pci-acp3x.c
+@@ -16,17 +16,17 @@ struct acp3x_dev_data {
+ 	void __iomem *acp3x_base;
+ 	bool acp3x_audio_mode;
+ 	struct resource *res;
+-	struct platform_device *pdev;
++	struct platform_device *pdev[ACP3x_DEVS];
+ };
+ 
+ static int snd_acp3x_probe(struct pci_dev *pci,
+ 			   const struct pci_device_id *pci_id)
+ {
+-	int ret;
+-	u32 addr, val;
+ 	struct acp3x_dev_data *adata;
+-	struct platform_device_info pdevinfo;
++	struct platform_device_info pdevinfo[ACP3x_DEVS];
+ 	unsigned int irqflags;
++	int ret, i;
++	u32 addr, val;
+ 
+ 	if (pci_enable_device(pci)) {
+ 		dev_err(&pci->dev, "pci_enable_device failed\n");
+@@ -56,10 +56,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		irqflags = 0;
+ 
+ 	addr = pci_resource_start(pci, 0);
+-	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
++	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
++					pci_resource_len(pci, 0));
+ 	if (!adata->acp3x_base) {
+ 		ret = -ENOMEM;
+-		goto release_regions;
++		goto disable_msi;
+ 	}
+ 	pci_set_master(pci);
+ 	pci_set_drvdata(pci, adata);
+@@ -68,11 +69,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 	switch (val) {
+ 	case I2S_MODE:
+ 		adata->res = devm_kzalloc(&pci->dev,
+-					  sizeof(struct resource) * 2,
++					  sizeof(struct resource) * 4,
+ 					  GFP_KERNEL);
+ 		if (!adata->res) {
+ 			ret = -ENOMEM;
+-			goto unmap_mmio;
++			goto disable_msi;
+ 		}
+ 
+ 		adata->res[0].name = "acp3x_i2s_iomem";
+@@ -80,40 +81,67 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		adata->res[0].start = addr;
+ 		adata->res[0].end = addr + (ACP3x_REG_END - ACP3x_REG_START);
+ 
+-		adata->res[1].name = "acp3x_i2s_irq";
+-		adata->res[1].flags = IORESOURCE_IRQ;
+-		adata->res[1].start = pci->irq;
+-		adata->res[1].end = pci->irq;
++		adata->res[1].name = "acp3x_i2s_sp";
++		adata->res[1].flags = IORESOURCE_MEM;
++		adata->res[1].start = addr + ACP3x_I2STDM_REG_START;
++		adata->res[1].end = addr + ACP3x_I2STDM_REG_END;
++
++		adata->res[2].name = "acp3x_i2s_bt";
++		adata->res[2].flags = IORESOURCE_MEM;
++		adata->res[2].start = addr + ACP3x_BT_TDM_REG_START;
++		adata->res[2].end = addr + ACP3x_BT_TDM_REG_END;
++
++		adata->res[3].name = "acp3x_i2s_irq";
++		adata->res[3].flags = IORESOURCE_IRQ;
++		adata->res[3].start = pci->irq;
++		adata->res[3].end = adata->res[3].start;
+ 
+ 		adata->acp3x_audio_mode = ACP3x_I2S_MODE;
+ 
+ 		memset(&pdevinfo, 0, sizeof(pdevinfo));
+-		pdevinfo.name = "acp3x_rv_i2s";
+-		pdevinfo.id = 0;
+-		pdevinfo.parent = &pci->dev;
+-		pdevinfo.num_res = 2;
+-		pdevinfo.res = adata->res;
+-		pdevinfo.data = &irqflags;
+-		pdevinfo.size_data = sizeof(irqflags);
+-
+-		adata->pdev = platform_device_register_full(&pdevinfo);
+-		if (IS_ERR(adata->pdev)) {
+-			dev_err(&pci->dev, "cannot register %s device\n",
+-				pdevinfo.name);
+-			ret = PTR_ERR(adata->pdev);
+-			goto unmap_mmio;
++		pdevinfo[0].name = "acp3x_rv_i2s_dma";
++		pdevinfo[0].id = 0;
++		pdevinfo[0].parent = &pci->dev;
++		pdevinfo[0].num_res = 4;
++		pdevinfo[0].res = &adata->res[0];
++		pdevinfo[0].data = &irqflags;
++		pdevinfo[0].size_data = sizeof(irqflags);
++
++		pdevinfo[1].name = "acp3x_i2s_playcap";
++		pdevinfo[1].id = 0;
++		pdevinfo[1].parent = &pci->dev;
++		pdevinfo[1].num_res = 1;
++		pdevinfo[1].res = &adata->res[1];
++
++		pdevinfo[2].name = "acp3x_i2s_playcap";
++		pdevinfo[2].id = 1;
++		pdevinfo[2].parent = &pci->dev;
++		pdevinfo[2].num_res = 1;
++		pdevinfo[2].res = &adata->res[2];
++		for (i = 0; i < ACP3x_DEVS ; i++) {
++			adata->pdev[i] =
++				platform_device_register_full(&pdevinfo[i]);
++			if (IS_ERR(adata->pdev[i])) {
++				dev_err(&pci->dev, "cannot register %s device\n",
++					pdevinfo[i].name);
++				ret = PTR_ERR(adata->pdev[i]);
++				goto unregister_devs;
++			}
+ 		}
+ 		break;
+ 	default:
+ 		dev_err(&pci->dev, "Invalid ACP audio mode : %d\n", val);
+ 		ret = -ENODEV;
+-		goto unmap_mmio;
++		goto disable_msi;
+ 	}
+ 	return 0;
+ 
+-unmap_mmio:
++unregister_devs:
++	if (val == I2S_MODE)
++		for (i = 0 ; i < ACP3x_DEVS ; i++)
++			platform_device_unregister(adata->pdev[i]);
++disable_msi:
+ 	pci_disable_msi(pci);
+-	iounmap(adata->acp3x_base);
+ release_regions:
+ 	pci_release_regions(pci);
+ disable_pci:
+@@ -125,10 +153,12 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ static void snd_acp3x_remove(struct pci_dev *pci)
+ {
+ 	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
++	int i;
+ 
+-	platform_device_unregister(adata->pdev);
+-	iounmap(adata->acp3x_base);
+-
++	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
++		for (i = 0 ; i <  ACP3x_DEVS ; i++)
++			platform_device_unregister(adata->pdev[i]);
++	}
+ 	pci_disable_msi(pci);
+ 	pci_release_regions(pci);
+ 	pci_disable_device(pci);
+@@ -151,6 +181,7 @@ static struct pci_driver acp3x_driver  = {
+ 
+ module_pci_driver(acp3x_driver);
+ 
++MODULE_AUTHOR("Vishnuvardhanrao.Ravulapati@amd.com");
+ MODULE_AUTHOR("Maruthi.Bayyavarapu@amd.com");
+ MODULE_DESCRIPTION("AMD ACP3x PCI driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
+
