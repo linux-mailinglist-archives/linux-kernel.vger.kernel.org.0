@@ -2,138 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E08910122A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:27:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC3A10122B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:27:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfKSD1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 22:27:21 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41012 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727018AbfKSD1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 22:27:20 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAJ3RHsY098836
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 22:27:18 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2way6ah2un-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 22:27:17 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
-        Tue, 19 Nov 2019 03:27:07 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Nov 2019 03:27:00 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAJ3Qx2f37617726
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 03:26:59 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A85D452050;
-        Tue, 19 Nov 2019 03:26:59 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 53B995204E;
-        Tue, 19 Nov 2019 03:26:59 +0000 (GMT)
-Received: from [9.81.206.200] (unknown [9.81.206.200])
-        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 4CE4DA012A;
-        Tue, 19 Nov 2019 14:26:53 +1100 (AEDT)
-Subject: Re: [PATCH 08/10] nvdimm: Add driver for OpenCAPI Storage Class
- Memory
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>
-Cc:     Oscar Salvador <osalvador@suse.com>,
-        Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Qian Cai <cai@lca.pw>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20191025044721.16617-1-alastair@au1.ibm.com>
- <20191025044721.16617-9-alastair@au1.ibm.com>
- <8232c1a6-d52a-6c32-6178-de082174a92a@linux.ibm.com>
- <CAPcyv4g9b6PyREurH9NcQf4BO2YcRGJPBZDqGKy-Vz91mBKjew@mail.gmail.com>
- <02374c9a-39fb-5693-3d9c-aa7e7674a6c1@linux.ibm.com>
- <7fd5a4571062a06da8f09f18300794b48ead5dc1.camel@au1.ibm.com>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Date:   Tue, 19 Nov 2019 14:26:53 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727569AbfKSD1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 22:27:33 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48802 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727018AbfKSD1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Nov 2019 22:27:33 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C966391C286B9FECAB46;
+        Tue, 19 Nov 2019 11:27:30 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 19 Nov 2019
+ 11:27:21 +0800
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <gregkh@linuxfoundation.org>, <bvanassche@acm.org>,
+        <alexander.h.duyck@linux.intel.com>, <bhelgaas@google.com>,
+        <sakari.ailus@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Subject: [PATCH v3] async: Let kfree() out of the critical area of the lock
+Message-ID: <89da0082-ebad-25c0-d82f-4a2feae628e6@huawei.com>
+Date:   Tue, 19 Nov 2019 11:26:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <7fd5a4571062a06da8f09f18300794b48ead5dc1.camel@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19111903-0020-0000-0000-0000038A10F5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111903-0021-0000-0000-000021E03A94
-Message-Id: <33b6f6b2-5ca1-7c08-01db-6aad73f9a0ec@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-18_08:2019-11-15,2019-11-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=909 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1911190029
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/11/19 1:48 pm, Alastair D'Silva wrote:
-> On Tue, 2019-11-19 at 10:47 +1100, Andrew Donnellan wrote:
->> On 15/11/19 3:35 am, Dan Williams wrote:
->>>> Have you discussed with the directory owner if it's ok to split
->>>> the
->>>> driver over several files?
->>>
->>> My thought is to establish drivers/opencapi/ and move this and the
->>> existing drivers/misc/ocxl/ bits there.
->>
->> Is there any other justification for this we can think of apart from
->> not
->> wanting to put this driver in the nvdimm directory? OpenCAPI drivers
->> aren't really a category of driver unto themselves.
->>
-> 
-> There is a precedent for bus-based dirs, eg. drivers/(ide|w1|spi) all
-> contain drivers for both controllers & connected devices.
-> 
-> Fred, how do you feel about moving the generic OpenCAPI driver out of
-> drivers/misc?
+The async_lock is big global lock, and kfree() is not always cheap, it
+will increase lock contention. it's better let kfree() outside the lock
+to keep the critical area as short as possible.
 
-Instinctively I don't like the idea of creating a whole opencapi 
-directory, as OpenCAPI is a generic bus which is not tightly coupled to 
-any particular application area, and drivers for other OpenCAPI devices 
-are already spread throughout the tree (e.g. cxlflash in drivers/scsi).
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+---
+v2 -> v3:
+ - move kfree() after wake_up(&async_done)
 
+v1 -> v2:
+ - update the description
+ - add "Reviewed-by"
 
+ kernel/async.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/async.c b/kernel/async.c
+index 4f9c1d614016..d2ab75e8b1ab 100644
+--- a/kernel/async.c
++++ b/kernel/async.c
+@@ -135,14 +135,14 @@ static void async_run_entry_fn(struct work_struct *work)
+ 	list_del_init(&entry->domain_list);
+ 	list_del_init(&entry->global_list);
+
+-	/* 3) free the entry */
+-	kfree(entry);
+ 	atomic_dec(&entry_count);
+-
+ 	spin_unlock_irqrestore(&async_lock, flags);
+
+-	/* 4) wake up any waiters */
++	/* 3) wake up any waiters */
+ 	wake_up(&async_done);
++
++	/* 4) free the entry */
++	kfree(entry);
+ }
+
+ /**
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+2.7.4
 
