@@ -2,84 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89C7101278
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 05:32:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E1810127E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 05:34:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfKSEcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 23:32:20 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:52462 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfKSEcT (ORCPT
+        id S1727653AbfKSEe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 23:34:29 -0500
+Received: from mail-pl1-f169.google.com ([209.85.214.169]:42667 "EHLO
+        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727217AbfKSEe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 23:32:19 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ4OmS8077737;
-        Tue, 19 Nov 2019 04:32:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=YPFopZtNTtJ7m8+xHQwOpluHkZEMRGqnuCyjK1sjWnY=;
- b=lvGes7x4VMLvXcRWukdmsNPTcxOdxwo40foCRsw1s2lSZJFXUl8slYvz9nBYJpu767Lq
- GXD9r4//LignCgnrP3kiOGN3W37IS6VTiNYR1GtXOn2rqyJ2Xoo3oei3Rtl5Mc9YCOXX
- 0RPwc3rPPf1uSwGsD0lAmzgPbaPh/VqVYqbyXRUei1StjT5JTtxwZsmDrpSE53K+7Oa5
- L3dH4EK/tDyvm/rl/bRHppS9zHRMoyxV9oPCwEBSOeHEdoRgRpmU0apm1VPOLZqdw/uY
- yBgV3ySex22ZUrPA0/TJi9GYG7qf36itijk3zyyR7NOORhd9Sop/nyBWMDOzkc25RUyP AA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2wa92pmasf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 04:32:14 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ4SuAj190345;
-        Tue, 19 Nov 2019 04:32:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2wc09wq3p5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 04:32:13 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJ4W6Ns030237;
-        Tue, 19 Nov 2019 04:32:07 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Nov 2019 20:32:06 -0800
-To:     Colin King <colin.king@canonical.com>
-Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Ching Huang <ching2048@areca.com.tw>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: arcmsr: fix indentation issues
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20191114180007.325856-1-colin.king@canonical.com>
-Date:   Mon, 18 Nov 2019 23:32:03 -0500
-In-Reply-To: <20191114180007.325856-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 14 Nov 2019 18:00:07 +0000")
-Message-ID: <yq1imngjxks.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Mon, 18 Nov 2019 23:34:28 -0500
+Received: by mail-pl1-f169.google.com with SMTP id j12so11033411plt.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 20:34:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rkdEpR62sDVJxgsklhz1UnFEmVbcNibLh8/QnTcfFDc=;
+        b=QxRyOWEATY2cC2tVR5io3QZcV+0POPsUjI9K7u3AsC/BnxcStwWEfJUlXHl0Vi791Q
+         Io6aVIdnaAJRnpxHlJEpBsiNM58/23Ti/xY5Ge5bZp80Z0bCNHXJtcFtHdbiDZenPI09
+         PKFZNRtVzPyhTH/hzpAn0eFyDgIcZyTbRgiMdIYuOqaMSVnEoyAlU5RDlhVmnlGGLMAW
+         j2nw7EU7CUklvXki/4UaU2nPoGgjr+laZc020JOvx3acdSInUg46Qu6OC5UXAJF9LXdS
+         kmSfLrmPjbYJBiFx0vHl43XvtDqbJEVpR8AGeGRQbXBHGq41ywd0nP0brZuC6EyE47IC
+         brHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rkdEpR62sDVJxgsklhz1UnFEmVbcNibLh8/QnTcfFDc=;
+        b=Eo6wa6/eB38fLarUVIh+aiYIZk840utHp0RrjTxycPKVj+hhuITJ1BpG9+KATQKFSV
+         I1haVqBgHTQZ3k6AcHLRczIaneNfKuDoENrSKrdI4Ky2PFCMv7cXvR+jfgIDyEZ8EOcm
+         osWPOS93vpyyA8vi+nFFM2sCZ6trE9VhRAIWUHnKyagXzVxvVavNkKle/lD9U050SDIv
+         nzlI4DI8RnekiYk00QCJcScMjsI6af/TXil7MFXw54ZTBnJVD26UBCIcH/JoL3iyhNDZ
+         IIJj0rRCWqiY5fw9rVx4xw0qY1Vr0rHozRl9zu7lVqJX4pjRLdQysIOxREMJ/3oeNVwm
+         +ZrQ==
+X-Gm-Message-State: APjAAAXIcD+/OCfzzyIZ1qF1ml5GqQoQvCjdRjnTSeGDjSIfxgvikikC
+        yTrdOlBqm1xyfwDiPhFZnkPUAg==
+X-Google-Smtp-Source: APXvYqwS6dQ3WixHS9SBX1WTB0MYVtzBe/zIaYNktn/PyxM7sW/RB1GkPzkJraCwg45ZOoaYSWA9Lg==
+X-Received: by 2002:a17:90a:22a6:: with SMTP id s35mr3454079pjc.3.1574138067544;
+        Mon, 18 Nov 2019 20:34:27 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.79])
+        by smtp.gmail.com with ESMTPSA id s2sm21838748pgv.48.2019.11.18.20.34.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Nov 2019 20:34:26 -0800 (PST)
+Subject: Re: INFO: task hung in io_wq_destroy
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     syzbot <syzbot+0f1cc17f85154f400465@syzkaller.appspotmail.com>,
+        andriy.shevchenko@linux.intel.com, davem@davemloft.net,
+        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+        idosch@mellanox.com, kimbrownkd@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, petrm@mellanox.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk, wanghai26@huawei.com,
+        yuehaibing@huawei.com
+References: <000000000000f86a4f0595fdb152@google.com>
+ <f1a79e81-b41f-ba48-9bf3-aeae708f73ba@kernel.dk>
+ <20191119022330.GC3147@sol.localdomain>
+ <bc52115c-3951-54c6-7810-86797d8c4644@kernel.dk>
+Message-ID: <c7b9c600-724b-6df1-84ba-b74999d6f4a6@kernel.dk>
+Date:   Mon, 18 Nov 2019 21:34:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=764
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190039
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=849 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190039
+In-Reply-To: <bc52115c-3951-54c6-7810-86797d8c4644@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/18/19 8:15 PM, Jens Axboe wrote:
+> On 11/18/19 7:23 PM, Eric Biggers wrote:
+>> Hi Jens,
+>>
+>> On Mon, Oct 28, 2019 at 03:00:08PM -0600, Jens Axboe wrote:
+>>> This is fixed in my for-next branch for a few days at least, unfortunately
+>>> linux-next is still on the old one. Next version should be better.
+>>
+>> This is still occurring on linux-next.  Here's a report on next-20191115 from
+>> https://syzkaller.appspot.com/text?tag=CrashReport&x=16fa3d1ce00000
+> 
+> Hmm, I'll take a look. Looking at the reproducer, it's got a massive
+> sleep at the end. I take it this triggers before that time actually
+> passes? Because that's around 11.5 days of sleep.
+> 
+> No luck reproducing this so far, I'll try on linux-next.
 
-Colin,
+I see what it is - if the io-wq is setup and torn down before the
+manager thread is started, then we won't create the workers we already
+expected. The manager thread will exit without doing anything, but
+teardown will wait for the expected workers to exit before being
+allowed to proceed. That never happens.
 
-> There are a few statements that are indented incorrectly, fix these.
-
-Applied to 5.5/scsi-queue, thanks!
+I've got a patch for this, but I'll test it a bit and send it out
+tomorrow.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Jens Axboe
+
