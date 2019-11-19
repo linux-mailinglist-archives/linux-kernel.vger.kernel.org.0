@@ -2,74 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9F51021C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 11:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 127ED1021C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 11:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfKSKKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 05:10:16 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:34793 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfKSKKQ (ORCPT
+        id S1727255AbfKSKM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 05:12:29 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51839 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfKSKM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:10:16 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 1A1CD23E27;
-        Tue, 19 Nov 2019 11:10:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
-        s=mail2016061301; t=1574158214;
-        bh=2gjaAluYE5S671JdpVIbeRx1/CVxFO29m3oWfUtycpY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Hi6LHHBy2qIJem7KFASOPmhSvCuMPqbkuvnU6Pgxg8QcFXTg41roDgM8mMZlONRl/
-         YBdYLvVnSi2u1/zDZW7C/+7i1aF7pN570c/ORCzCIGd4s/GEarTgWVOGr30XVDFlY1
-         O1pH51ETD1qoT4oKCIOoc5vSf647aMU9odpK+1Os=
+        Tue, 19 Nov 2019 05:12:29 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iX0UX-0001XN-Bb; Tue, 19 Nov 2019 11:12:13 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E47B11C19C7;
+        Tue, 19 Nov 2019 11:12:12 +0100 (CET)
+Date:   Tue, 19 Nov 2019 10:12:12 -0000
+From:   "tip-bot2 for Jan Beulich" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/stackframe/32: Repair 32-bit Xen PV
+Cc:     Jan Beulich <jbeulich@suse.com>, <stable@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Message-ID: <157415833282.12247.2847277914358020515.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 19 Nov 2019 11:10:14 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     olteanv@gmail.com
-Cc:     bgolaszewski@baylibre.com, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vladimir.oltean@nxp.com
-Subject: Re: [PATCH] gpio: mpc8xxx: Don't overwrite default irq_set_type
- callback
-In-Reply-To: <20191115125551.31061-1-olteanv@gmail.com>
-Message-ID: <81c15c43b1d1228a0d015f232ce7ec46@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Virus-Scanned: clamav-milter 0.101.4 at web
-X-Virus-Status: Clean
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The per-SoC devtype structures can contain their own callbacks that
-> overwrite mpc8xxx_gpio_devtype_default.
-> 
-> The clear intention is that mpc8xxx_irq_set_type is used in case the 
-> SoC
-> does not specify a more specific callback. But what happens is that if
-> the SoC doesn't specify one, its .irq_set_type is de-facto NULL, and
-> this overwrites mpc8xxx_irq_set_type to a no-op. This means that the
-> following SoCs are affected:
-> 
-> - fsl,mpc8572-gpio
-> - fsl,ls1028a-gpio
-> - fsl,ls1088a-gpio
-> 
-> On these boards, the irq_set_type does exactly nothing, and the GPIO
-> controller keeps its GPICR register in the hardware-default state. On
-> the LS1028A, that is ACTIVE_BOTH, which means 2 interrupts are raised
-> even if the IRQ client requests LEVEL_HIGH. Another implication is that
-> the IRQs are not checked (e.g. level-triggered interrupts are not
-> rejected, although they are not supported).
-> 
-> Fixes: 82e39b0d8566 ("gpio: mpc8xxx: handle differences between 
-> incarnations at a single place")
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Tested-by: Michael Walle <michael@walle.cc>
+Commit-ID:     189eb7f3d7ec70ceeaa195221ddfd95016e10ace
+Gitweb:        https://git.kernel.org/tip/189eb7f3d7ec70ceeaa195221ddfd95016e10ace
+Author:        Jan Beulich <jbeulich@suse.com>
+AuthorDate:    Mon, 18 Nov 2019 16:21:12 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 19 Nov 2019 09:01:59 +01:00
+
+x86/stackframe/32: Repair 32-bit Xen PV
+
+Once again RPL checks have been introduced which don't account for a
+32-bit kernel living in ring 1 when running in a PV Xen domain. The
+case in FIXUP_FRAME has been preventing boot. Adjust BUG_IF_WRONG_CR3
+as well to guard against future uses of the macro on a code path
+reachable when running in PV mode under Xen; I have to admit that I
+stopped at a certain point trying to figure out whether there are
+present ones.
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Cc: <stable@vger.kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: xen-devel@lists.xenproject.org <xen-devel@lists.xenproject.org>
+Fixes: 3c88c692c287 ("x86/stackframe/32: Provide consistent pt_regs")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/entry_32.S      |  4 ++--
+ arch/x86/include/asm/segment.h | 12 ++++++++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index f83ca5a..3f847d8 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -172,7 +172,7 @@
+ 	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
+ 	.if \no_user_check == 0
+ 	/* coming from usermode? */
+-	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
++	testl	$USER_SEGMENT_RPL_MASK, PT_CS(%esp)
+ 	jz	.Lend_\@
+ 	.endif
+ 	/* On user-cr3? */
+@@ -217,7 +217,7 @@
+ 	testl	$X86_EFLAGS_VM, 4*4(%esp)
+ 	jnz	.Lfrom_usermode_no_fixup_\@
+ #endif
+-	testl	$SEGMENT_RPL_MASK, 3*4(%esp)
++	testl	$USER_SEGMENT_RPL_MASK, 3*4(%esp)
+ 	jnz	.Lfrom_usermode_no_fixup_\@
+ 
+ 	orl	$CS_FROM_KERNEL, 3*4(%esp)
+diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
+index ac38929..6669164 100644
+--- a/arch/x86/include/asm/segment.h
++++ b/arch/x86/include/asm/segment.h
+@@ -31,6 +31,18 @@
+  */
+ #define SEGMENT_RPL_MASK	0x3
+ 
++/*
++ * When running on Xen PV, the actual privilege level of the kernel is 1,
++ * not 0. Testing the Requested Privilege Level in a segment selector to
++ * determine whether the context is user mode or kernel mode with
++ * SEGMENT_RPL_MASK is wrong because the PV kernel's privilege level
++ * matches the 0x3 mask.
++ *
++ * Testing with USER_SEGMENT_RPL_MASK is valid for both native and Xen PV
++ * kernels because privilege level 2 is never used.
++ */
++#define USER_SEGMENT_RPL_MASK	0x2
++
+ /* User mode is privilege level 3: */
+ #define USER_RPL		0x3
+ 
