@@ -2,141 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9817102B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:55:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 628B9102AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:51:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfKSRyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:54:10 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:50892 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbfKSRyJ (ORCPT
+        id S1727233AbfKSRvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:51:06 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39151 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfKSRvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:54:09 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJHn0vv188889;
-        Tue, 19 Nov 2019 17:50:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=eGldFY/fdxBy01jg0jeU/6PLveepyeamI3FRO0lD350=;
- b=h6eODU0EJiq3o2QTXI19rr6e6AkpE9fYa6M+lDX7zDcMAnwj5cr68NDqU+6EnSEETpjP
- Jr1Dm5pKnyXSjP3KlACP23UOjPGnCdozRmA8BrtCtAqa71yK9V6pXRGF4V5xEt9qb4tn
- /fFIneEdAn75RofFjfI2Gezz9Eiow75LIjGQ+f+eNcLXG3/zaZPKvdm4289oU/+JUqiB
- aIcpb46WUOua1Z/Jw7H6B11zu8HfxjZBVZkHqSpbOu1XXzGXF3x2yscM6ElN+jw/Zb2q
- g1a5GHnSYW5JquZNrQTB59gEhHIWQoo9nyD7y1cldhQgnT9rh3WIQKflRbP3wFV3UF6p Yg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2wa8htrmke-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 17:50:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJHnICs049201;
-        Tue, 19 Nov 2019 17:50:18 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2wcema8sqn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 17:50:17 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJHoFYP011014;
-        Tue, 19 Nov 2019 17:50:15 GMT
-Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Nov 2019 09:50:15 -0800
-Subject: Re: Ping: [PATCH 0/2] x86/Xen/32: xen_iret_crit_fixup adjustments
-To:     Jan Beulich <jbeulich@suse.com>, Juergen Gross <jgross@suse.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-References: <d66b1da4-8096-9b77-1ca6-d6b9954b113c@suse.com>
- <09359c00-5769-0e0d-4af9-963897d3b498@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <40267a5b-8f1b-6463-72cd-f8f354c58bc4@oracle.com>
-Date:   Tue, 19 Nov 2019 12:50:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 19 Nov 2019 12:51:05 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l7so24928978wrp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 09:51:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=HGunqTxsSVrmsqxuAQRNx41lItIocTvSzHu9usFa0ec=;
+        b=DLlyXCBFgTcOzP3m56mvDuC1gid0j/57FTNBDJxQaHFBG+Mx73qzutr+HGMESEb3A5
+         vuRsXpJCLZNNzVyQDQO/62U0ux+IrJ9sfX6QLgKQXmNbEb1I0cQlfSpYYRolt+G25giX
+         Pjq4+dxzUkdmtju7EWJwH4ksQG4019NT+UMhBKBR5d1CcSgqV4ddqgCzXyG63G4ZN5yG
+         rfj2+E41/H+NCa7PzXYtFM7QIbkhb4h5MtWnpxD1xAhSzN6+AtKToyw3ft4DGP05KN1v
+         kELG90MeWObEexvWT74khnbgAHVy3/01ovV46ywzRKkbiiGMyhWNATDau6DdmSxCVcaZ
+         5kTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=HGunqTxsSVrmsqxuAQRNx41lItIocTvSzHu9usFa0ec=;
+        b=rxzS1ey7XiDbyZdOEOGy1ZwD/fbMu9ngtOk0LKRHTUfV8bohkJZeW0sHTdNhuzlDqg
+         VfE6dbhQH2oSYn0bvRBcc3GVlEZS4+dHXr8CYT4CR2e6nWcfSyHAMKxMzVinP1HoRYsD
+         T0n2DlI+iW0Kv7HEOFXiQJ4lu896Gu4XETKM2nOhkRPgooQ54aslWLT4zjJBPce1qXw1
+         4cSRQleqdP6TDySLfDmHl7q4AEwGOPNifYnCI0BjodWUrxRgMO+32bDkLdqFI7plSVrX
+         Xtyp12YR6LvF42/wpgyHt4cQMUs9/iqRYE+fok2xAZbwksgr9+WmdlTRlUP+j34bilgZ
+         oqTw==
+X-Gm-Message-State: APjAAAX/94A92rcpRGpfoChnCfAE4GllaYmRXwrBdJB17CfeAut/eTRW
+        UAgIBTQKCr9d1sx12jAB2xcsDg==
+X-Google-Smtp-Source: APXvYqxvHwtfcRuwAWPYF4jX+cThARsQRa6mXcf9IMifxx+BP/IyrbeuDGKqDEpRqWoAPCya8LiZ0g==
+X-Received: by 2002:adf:e301:: with SMTP id b1mr4336744wrj.280.1574185862662;
+        Tue, 19 Nov 2019 09:51:02 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id l13sm3766223wmh.12.2019.11.19.09.51.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 09:51:01 -0800 (PST)
+Message-ID: <5dd42b85.1c69fb81.36825.244a@mx.google.com>
+Date:   Tue, 19 Nov 2019 09:51:01 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <09359c00-5769-0e0d-4af9-963897d3b498@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9446 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190152
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9446 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190152
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Lab-Name: lab-collabora
+X-Kernelci-Branch: master
+X-Kernelci-Tree: next
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Kernel: next-20191119
+Subject: next/master bisection: boot on peach-pi
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        mgalka@collabora.com, Christoph Hellwig <hch@lst.de>,
+        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com, Michael Ellerman <mpe@ellerman.id.au>
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Paul Burton <paulburton@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/19 7:58 AM, Jan Beulich wrote:
-> On 11.11.2019 15:30, Jan Beulich wrote:
->> The first patch here fixes another regression from 3c88c692c287
->> ("x86/stackframe/32: Provide consistent pt_regs"), besides the
->> one already addressed by
->> https://lists.xenproject.org/archives/html/xen-devel/2019-10/msg01988.html.
->> The second patch is a minimal bit of cleanup on top.
->>
->> 1: make xen_iret_crit_fixup independent of frame layout
->> 2: simplify xen_iret_crit_fixup's ring check
-> Seeing that the other regression fix has been taken into -tip,
-> what is the situation here? Should 5.4 really ship with this
-> still unfixed?
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+next/master bisection: boot on peach-pi
+
+Summary:
+  Start:      5d1131b4d61e Add linux-next specific files for 20191119
+  Details:    https://kernelci.org/boot/id/5dd3cc9559b5147f05cf54d1
+  Plain log:  https://storage.kernelci.org//next/master/next-20191119/arm/e=
+xynos_defconfig/gcc-8/lab-collabora/boot-exynos5800-peach-pi.txt
+  HTML log:   https://storage.kernelci.org//next/master/next-20191119/arm/e=
+xynos_defconfig/gcc-8/lab-collabora/boot-exynos5800-peach-pi.html
+  Result:     b037b220e71d dma-direct: unify the dma_capable definitions
+
+Checks:
+  revert:     PASS
+  verify:     PASS
+
+Parameters:
+  Tree:       next
+  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git
+  Branch:     master
+  Target:     peach-pi
+  CPU arch:   arm
+  Lab:        lab-collabora
+  Compiler:   gcc-8
+  Config:     exynos_defconfig
+  Test suite: boot
+
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit b037b220e71dcbb34cb710e00ffad2ec025b9163
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Nov 12 17:06:04 2019 +0100
+
+    dma-direct: unify the dma_capable definitions
+    =
+
+    Currently each architectures that wants to override dma_to_phys and
+    phys_to_dma also has to provide dma_capable.  But there isn't really
+    any good reason for that.  powerpc and mips just have copies of the
+    generic one minus the latests fix, and the arm one was the inspiration
+    for said fix, but misses the bus_dma_mask handling.
+    Make all architectures use the generic version instead.
+    =
+
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+    Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+
+diff --git a/arch/arm/include/asm/dma-direct.h b/arch/arm/include/asm/dma-d=
+irect.h
+index b67e5fc1fe43..7c3001a6a775 100644
+--- a/arch/arm/include/asm/dma-direct.h
++++ b/arch/arm/include/asm/dma-direct.h
+@@ -14,23 +14,4 @@ static inline phys_addr_t __dma_to_phys(struct device *d=
+ev, dma_addr_t dev_addr)
+ 	return __pfn_to_phys(dma_to_pfn(dev, dev_addr)) + offset;
+ }
+ =
+
+-static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t=
+ size)
+-{
+-	u64 limit, mask;
+-
+-	if (!dev->dma_mask)
+-		return 0;
+-
+-	mask =3D *dev->dma_mask;
+-
+-	limit =3D (mask + 1) & ~mask;
+-	if (limit && size > limit)
+-		return 0;
+-
+-	if ((addr | (addr + size - 1)) & ~mask)
+-		return 0;
+-
+-	return 1;
+-}
+-
+ #endif /* ASM_ARM_DMA_DIRECT_H */
+diff --git a/arch/mips/include/asm/dma-direct.h b/arch/mips/include/asm/dma=
+-direct.h
+index b5c240806e1b..14e352651ce9 100644
+--- a/arch/mips/include/asm/dma-direct.h
++++ b/arch/mips/include/asm/dma-direct.h
+@@ -2,14 +2,6 @@
+ #ifndef _MIPS_DMA_DIRECT_H
+ #define _MIPS_DMA_DIRECT_H 1
+ =
+
+-static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t=
+ size)
+-{
+-	if (!dev->dma_mask)
+-		return false;
+-
+-	return addr + size - 1 <=3D *dev->dma_mask;
+-}
+-
+ dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr);
+ phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t daddr);
+ =
+
+diff --git a/arch/powerpc/include/asm/dma-direct.h b/arch/powerpc/include/a=
+sm/dma-direct.h
+index a2912b47102c..e29e8a236b8d 100644
+--- a/arch/powerpc/include/asm/dma-direct.h
++++ b/arch/powerpc/include/asm/dma-direct.h
+@@ -2,15 +2,6 @@
+ #ifndef ASM_POWERPC_DMA_DIRECT_H
+ #define ASM_POWERPC_DMA_DIRECT_H 1
+ =
+
+-static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t=
+ size)
+-{
+-	if (!dev->dma_mask)
+-		return false;
+-
+-	return addr + size - 1 <=3D
+-		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
+-}
+-
+ static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t pad=
+dr)
+ {
+ 	if (!dev)
+diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+index 6db863c3eb93..991f8aa2676e 100644
+--- a/include/linux/dma-direct.h
++++ b/include/linux/dma-direct.h
+@@ -24,6 +24,7 @@ static inline phys_addr_t __dma_to_phys(struct device *de=
+v, dma_addr_t dev_addr)
+ =
+
+ 	return paddr + ((phys_addr_t)dev->dma_pfn_offset << PAGE_SHIFT);
+ }
++#endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+ =
+
+ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t=
+ size)
+ {
+@@ -38,7 +39,6 @@ static inline bool dma_capable(struct device *dev, dma_ad=
+dr_t addr, size_t size)
+ =
+
+ 	return end <=3D min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
+ }
+-#endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+ =
+
+ #ifdef CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED
+ bool force_dma_unencrypted(struct device *dev);
+---------------------------------------------------------------------------=
+----
 
 
-I am still unable to boot a 32-bit guest with those patches, crashing in
-int3_exception_notify with regs->sp zero.
+Git bisection log:
 
-When I revert to 3c88c692c287 the guest actually boots so my (?) problem
-was introduced somewhere in-between.
-
--boris
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [af42d3466bdc8f39806b26f593604fdc54140bcb] Linux 5.4-rc8
+git bisect good af42d3466bdc8f39806b26f593604fdc54140bcb
+# bad: [5d1131b4d61e52e5702e0fa4bcbec81ac7d6ef52] Add linux-next specific f=
+iles for 20191119
+git bisect bad 5d1131b4d61e52e5702e0fa4bcbec81ac7d6ef52
+# bad: [c5e9a8e6d8139cfdabb7774c9a39c5589b8d45d0] Merge remote-tracking bra=
+nch 'crypto/master'
+git bisect bad c5e9a8e6d8139cfdabb7774c9a39c5589b8d45d0
+# bad: [cefecf6f6be345ac0e5c4f878e4d29787918adfb] Merge remote-tracking bra=
+nch 'pstore/for-next/pstore'
+git bisect bad cefecf6f6be345ac0e5c4f878e4d29787918adfb
+# bad: [7b46e62e776e6a55199625b511d42518e4b98d8f] Merge remote-tracking bra=
+nch 'reset/reset/next'
+git bisect bad 7b46e62e776e6a55199625b511d42518e4b98d8f
+# good: [5f1f15283419ded3e16617ac0b79abc6f2b73bba] Merge tag 'omap-for-v5.5=
+/dt-late-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/li=
+nux-omap into arm/dt
+git bisect good 5f1f15283419ded3e16617ac0b79abc6f2b73bba
+# good: [e1351090dd4a172fb26317ae6fa846ab13c50199] ARM: Document merges
+git bisect good e1351090dd4a172fb26317ae6fa846ab13c50199
+# bad: [9050eefca89eb3853d600a61e249fc9fdd8ba332] Merge remote-tracking bra=
+nch 'arm/for-next'
+git bisect bad 9050eefca89eb3853d600a61e249fc9fdd8ba332
+# good: [0632e899eb046db54d3b1c993811e0b1b7b90b04] Merge remote-tracking br=
+anch 'spdx/spdx-linus'
+git bisect good 0632e899eb046db54d3b1c993811e0b1b7b90b04
+# bad: [13fb7b3bb3e314cadfe6dec3132aac31d06950b5] Merge remote-tracking bra=
+nch 'dma-mapping/for-next'
+git bisect bad 13fb7b3bb3e314cadfe6dec3132aac31d06950b5
+# good: [0241ea8cae19b49fc1b1459f7bbe9a77f4f9cc89] modpost: free ns_deps_bu=
+f.p after writing ns_deps files
+git bisect good 0241ea8cae19b49fc1b1459f7bbe9a77f4f9cc89
+# good: [e380a0394c36a3a878c858418d5dd7f5f195b6fc] x86/PCI: sta2x11: use de=
+fault DMA address translation
+git bisect good e380a0394c36a3a878c858418d5dd7f5f195b6fc
+# good: [fcbb8461fd2376ba3782b5b8bd440c929b8e4980] kbuild: remove header co=
+mpile test
+git bisect good fcbb8461fd2376ba3782b5b8bd440c929b8e4980
+# bad: [e4d2bda544c7df90abed8aaa099b5daf1870bcf8] dma-direct: avoid a forwa=
+rd declaration for phys_to_dma
+git bisect bad e4d2bda544c7df90abed8aaa099b5daf1870bcf8
+# bad: [b037b220e71dcbb34cb710e00ffad2ec025b9163] dma-direct: unify the dma=
+_capable definitions
+git bisect bad b037b220e71dcbb34cb710e00ffad2ec025b9163
+# good: [9f0e56e96c7b2039edb4bda64410216c6e9fe93f] dma-mapping: drop the de=
+v argument to arch_sync_dma_for_*
+git bisect good 9f0e56e96c7b2039edb4bda64410216c6e9fe93f
+# first bad commit: [b037b220e71dcbb34cb710e00ffad2ec025b9163] dma-direct: =
+unify the dma_capable definitions
+---------------------------------------------------------------------------=
+----
