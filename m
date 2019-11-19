@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746B7102442
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6813510241C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:18:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfKSMY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:24:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51266 "EHLO mail.kernel.org"
+        id S1727854AbfKSMSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:18:08 -0500
+Received: from mga05.intel.com ([192.55.52.43]:64330 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728055AbfKSMYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:24:21 -0500
-Received: from localhost (unknown [89.205.136.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7D00222A0;
-        Tue, 19 Nov 2019 12:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574166260;
-        bh=SSH7vaJkbgV5ugiuRokCYx/zatWjKWwhP+0/2KTvfX4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jM58IC6IPx6LnbGkZauR/YnYJqEcxwSm1zDA4hjoM3IR1YrFIdS+fEqh+GEcmneUo
-         gv/keV1O3l7j+gLr6f0r6SU7uTxlBKci91wHnnixUYn+ri4ktrQJgcPyS7Zttz2+tx
-         x2Q+tUGiB+3i0JRNj2Cz5YADamxtmg14W8dz2pNc=
-Date:   Tue, 19 Nov 2019 13:24:17 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/422] 4.19.85-stable review
-Message-ID: <20191119122417.GA1913916@kroah.com>
-References: <20191119051400.261610025@linuxfoundation.org>
- <20468dbc-5b88-f86e-9d5d-5edca4e4be2b@nvidia.com>
+        id S1725280AbfKSMSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 07:18:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 04:18:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,322,1569308400"; 
+   d="scan'208";a="209179842"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2019 04:18:06 -0800
+Message-ID: <5DD3DF17.9050504@intel.com>
+Date:   Tue, 19 Nov 2019 20:24:55 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20468dbc-5b88-f86e-9d5d-5edca4e4be2b@nvidia.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+CC:     Khazhismel Kumykov <khazhy@google.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 2/2] virtio_balloon: divide/multiply instead of shifts
+References: <20191119102838.39380-1-mst@redhat.com> <20191119102838.39380-2-mst@redhat.com>
+In-Reply-To: <20191119102838.39380-2-mst@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 09:18:03AM +0000, Jon Hunter wrote:
-> 
-> On 19/11/2019 05:13, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.85 release.
-> > There are 422 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.85-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> 
-> ...
-> 
-> > Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> >     ARM: dts: meson8b: odroidc1: enable the SAR ADC
-> 
-> This commit is generating the following compilation error for ARM ...
-> 
-> arch/arm/boot/dts/meson8b-odroidc1.dtb: ERROR (phandle_references): /soc/cbus@c1100000/adc@8680: Reference to non-existent node or label "vcc_1v8"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/meson8b-odroidc1.dtb' failed
-> make[1]: *** [arch/arm/boot/dts/meson8b-odroidc1.dtb] Error 2
-> arch/arm/Makefile:348: recipe for target 'dtbs' failed
-> make: *** [dtbs] Error 2
+On 11/19/2019 06:29 PM, Michael S. Tsirkin wrote:
+> We managed to get confused about the shift direction at least once.
+> Let's switch to division/multiplcation instead. Add a number of pages
+> macro for this purpose.  We still keep the order macro around too since
+> this is what alloc/free pages want.
+>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>   drivers/virtio/virtio_balloon.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> index b6a95cd28d9f..dc1ebd638e9b 100644
+> --- a/drivers/virtio/virtio_balloon.c
+> +++ b/drivers/virtio/virtio_balloon.c
+> @@ -36,6 +36,7 @@
+>   /* The size of a free page block in bytes */
+>   #define VIRTIO_BALLOON_HINT_BLOCK_BYTES \
+>   	(1 << (VIRTIO_BALLOON_HINT_BLOCK_ORDER + PAGE_SHIFT))
+> +#define VIRTIO_BALLOON_HINT_BLOCK_PAGES (1 << VIRTIO_BALLOON_HINT_BLOCK_ORDER)
+>   
+>   #ifdef CONFIG_BALLOON_COMPACTION
+>   static struct vfsmount *balloon_mnt;
+> @@ -765,11 +766,11 @@ static unsigned long shrink_free_pages(struct virtio_balloon *vb,
+>   	unsigned long blocks_to_free, blocks_freed;
+>   
+>   	pages_to_free = round_up(pages_to_free,
+> -				 1 << VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+> -	blocks_to_free = pages_to_free >> VIRTIO_BALLOON_HINT_BLOCK_ORDER;
+> +				 VIRTIO_BALLOON_HINT_BLOCK_PAGES);
+> +	blocks_to_free = pages_to_free / VIRTIO_BALLOON_HINT_BLOCK_PAGES;
+>   	blocks_freed = return_free_pages_to_mm(vb, blocks_to_free);
+>   
+> -	return blocks_freed << VIRTIO_BALLOON_HINT_BLOCK_ORDER;
+> +	return blocks_freed * VIRTIO_BALLOON_HINT_BLOCK_PAGES;
+>   }
+>   
+>   static unsigned long leak_balloon_pages(struct virtio_balloon *vb,
+> @@ -825,7 +826,7 @@ static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
+>   	unsigned long count;
+>   
+>   	count = vb->num_pages / VIRTIO_BALLOON_PAGES_PER_PAGE;
+> -	count += vb->num_free_page_blocks << VIRTIO_BALLOON_HINT_BLOCK_ORDER;
+> +	count += vb->num_free_page_blocks * VIRTIO_BALLOON_HINT_BLOCK_PAGES;
+>   
+>   	return count;
+>   }
 
-Thanks, will go remove that patch.
+Reviewed-by: Wei Wang <wei.w.wang@intel.com>
 
-greg k-h
+Best,
+Wei
