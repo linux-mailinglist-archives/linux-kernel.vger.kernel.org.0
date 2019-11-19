@@ -2,99 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF9B2102E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E9EE102E4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 22:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfKSVgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 16:36:54 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:60288
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727038AbfKSVgy (ORCPT
+        id S1727407AbfKSVhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 16:37:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46278 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbfKSVhg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 16:36:54 -0500
-X-IronPort-AV: E=Sophos;i="5.69,219,1571695200"; 
-   d="scan'208";a="327306099"
-Received: from abo-228-123-68.mrs.modulonet.fr (HELO hadrien) ([85.68.123.228])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 22:36:52 +0100
-Date:   Tue, 19 Nov 2019 22:36:51 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-Subject: Re: [PATCH 2/4] coccinelle: platform_get_irq: handle 2-statement
- branches
-In-Reply-To: <d178b6b3-7ef1-4ad7-a747-d65249a9667a@web.de>
-Message-ID: <alpine.DEB.2.21.1911192235010.2592@hadrien>
-References: <1574184500-29870-3-git-send-email-Julia.Lawall@lip6.fr> <d178b6b3-7ef1-4ad7-a747-d65249a9667a@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 19 Nov 2019 16:37:36 -0500
+Received: by mail-wr1-f65.google.com with SMTP id b3so25688004wrs.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 13:37:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flameeyes-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R1v6jei2+smOpO/lPVxq55FmAnu1W+lEkKGBufTcw6E=;
+        b=hZSoa+i7vo9hvX2AHPQ4+JbrH7osRbDC0Ak7JW2iiBBAzQvmbNXrcU/SYG3HfVbcgu
+         1ukf5ZaR1jtgJU0+QBEMB18YcSXeTM146r42Q2f3e4mUWFd8KjYYvetUEmB+6ZQd52nc
+         rOEs1SJKibHi21rUYZp1gZBtdJECFf3M7tjVKbyHdGQcoeK04cCSL8BdfNquuxSbIGns
+         Ak8Fc6EOO/K7gsy0w9YQwyGedQa7jm22s25o+6JGDt+R747OW3+/MSWsxJCb9eMNRhST
+         69j1BeESEIqAieiQBuLvY+EIGqgAIMTv+MaDy2N8Ls59j5Haq2HGvHkATH6lpvPBHOAm
+         agqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R1v6jei2+smOpO/lPVxq55FmAnu1W+lEkKGBufTcw6E=;
+        b=WV7pIa3FNWdX10tUI2+CLr2XLctGfpGiugulTsOmacy86DmWBhXKK/OGbSrBQkXcJZ
+         gXrCu90bIXsHKKWGXuYnDFRdQkqPVKBGEUC/axV0M5xjlQSk0S2LlpFUzixQaGHgNkCw
+         SHZ8vkWpscERv6amU2zGd7NoKEvl4X68xM/KI1IXI/6u8kgOtU0BxSYnXlEo7GlH8MIv
+         Yv0GOGy/XL5gJFK2zvg1p7IzDue56LhDKcVXIcTWjpLE9kvHGlBONWKAzzgOo1Vgv6Yn
+         /nSxY1LkAUUM0L/PTtNVNLwpBbcdXyQtSz0oSmJnK48MI55SlW6GYNa3mMidPepRLkhO
+         p2/Q==
+X-Gm-Message-State: APjAAAWHo1LXrKrDK8Euu+43qjzXqsF8s+xJZ54sfxMjkKIVxtu22EpF
+        vps/LEcbZ8qy3frCuxue658okg==
+X-Google-Smtp-Source: APXvYqxsYfsmW5gQiC6VpYKyR++2rIKlDLXMDCRFGY4HA1WqGtvm5N9Zbi7MTOKijIKh++cCkP6HpA==
+X-Received: by 2002:adf:c00a:: with SMTP id z10mr39513868wre.81.1574199452788;
+        Tue, 19 Nov 2019 13:37:32 -0800 (PST)
+Received: from localhost ([2a01:4b00:80c6:1000:283d:d5ff:fee6:36c5])
+        by smtp.gmail.com with ESMTPSA id w11sm32617693wra.83.2019.11.19.13.37.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Nov 2019 13:37:31 -0800 (PST)
+From:   =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: [PATCH 1/2] cdrom: respect device capabilities during opening action
+Date:   Tue, 19 Nov 2019 21:37:08 +0000
+Message-Id: <20191119213709.10900-1-flameeyes@flameeyes.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-319011006-1574199412=:2592"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Reading the TOC only works if the device can play audio, otherwise
+these commands fail (and possibly bring the device to an unhealthy
+state.)
 
---8323329-319011006-1574199412=:2592
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Similarly, cdrom_mmc3_profile() should only be called if the device
+supports generic packet commands.
 
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.com>
+---
+ drivers/cdrom/cdrom.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+index ac42ae4651ce..eebdcbef0578 100644
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -996,6 +996,12 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
+ 	tracks->xa = 0;
+ 	tracks->error = 0;
+ 	cd_dbg(CD_COUNT_TRACKS, "entering cdrom_count_tracks\n");
++
++	if (!CDROM_CAN(CDC_PLAY_AUDIO)) {
++		tracks->error = CDS_NO_INFO;
++		return;
++	}
++
+ 	/* Grab the TOC header so we can see how many tracks there are */
+ 	ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCHDR, &header);
+ 	if (ret) {
+@@ -1162,7 +1168,8 @@ int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
+ 		ret = open_for_data(cdi);
+ 		if (ret)
+ 			goto err;
+-		cdrom_mmc3_profile(cdi);
++		if (CDROM_CAN(CDC_GENERIC_PACKET))
++			cdrom_mmc3_profile(cdi);
+ 		if (mode & FMODE_WRITE) {
+ 			ret = -EROFS;
+ 			if (cdrom_open_write(cdi))
+@@ -2882,6 +2889,9 @@ int cdrom_get_last_written(struct cdrom_device_info *cdi, long *last_written)
+ 	   it doesn't give enough information or fails. then we return
+ 	   the toc contents. */
+ use_toc:
++	if (!CDROM_CAN(CDC_PLAY_AUDIO))
++		return -ENOSYS;
++
+ 	toc.cdte_format = CDROM_MSF;
+ 	toc.cdte_track = CDROM_LEADOUT;
+ 	if ((ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCENTRY, &toc)))
+-- 
+2.23.0
 
-On Tue, 19 Nov 2019, Markus Elfring wrote:
-
-> > From: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> I wonder about this information.
-> Would you like to use the tag “Suggested-by” instead?
-
-Sorry, I seem to have done something quite wrong on this patch.  I will
-fix it.
-
->
->
-> …
-> > +++ b/scripts/coccinelle/api/platform_get_irq.cocci
-> > @@ -31,6 +31,25 @@ if ( \( ret < 0 \| ret <= 0 \) )
-> …
-> > +ret =
-> > +(
-> > +platform_get_irq
-> > +|
-> > +platform_get_irq_byname
-> > +)(E, ...);
-> > +
-> > +if ( \( ret < 0 \| ret <= 0 \) )
-> > +-{
-> > +-dev_err(...);
-> > +S
-> > +-}
->
-> How do you think about to use the following SmPL code variant?
-
-And the benefit is what?
-
-julia
-
-> + ret =
-> +(platform_get_irq
-> +|platform_get_irq_byname
-> +)(E, ...);
-> +
-> + if ( \( ret < 0 \| ret <= 0 \) )
-> +-{
-> +-dev_err(...);
-> + S
-> +-}
->
-> Regards,
-> Markus
->
---8323329-319011006-1574199412=:2592--
