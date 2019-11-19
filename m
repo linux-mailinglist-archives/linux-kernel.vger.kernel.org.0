@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C522A1015D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E24D1014C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:37:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfKSFrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:47:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44120 "EHLO mail.kernel.org"
+        id S1730060AbfKSFhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:37:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730978AbfKSFrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:47:45 -0500
+        id S1730026AbfKSFhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:37:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFF4F208C3;
-        Tue, 19 Nov 2019 05:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BE49214DE;
+        Tue, 19 Nov 2019 05:37:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142464;
-        bh=ZD0xjZxf+rBGGbulxvdMIUcuFcIPAo9Xn7A7JcL8GCg=;
+        s=default; t=1574141827;
+        bh=c8KsAEiMdXpU+ct8AoP47mQ6yVted/wuYpqdIaHF2vo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mVDylcLy2MzlnRY+QXIbCv4efRawyixXg8KmhEYae5/or1hgNoPRcGIHX4ecqplNs
-         msxKv9VuSaNDRlR1Obdprx0NCJAISRi/jNK9Jtz2FChY166dfrDiTaJxAlai4YPiNS
-         QxGWuKqraTAMUGNEe4R6iFykEiVjAFJRi+IDy+eM=
+        b=0xJoWmIdeaO62ui5Xb1iF2Lyk6wHAn9lcYnwOv2GbAF+ybQ0kZ3kpMNsaEpV2GN0B
+         7PtSNmHzZryjeswvG8EJugVG9VFpXEBBef35YXwrLsZIyTtnhrKjik7ochMMIhkx5j
+         S3Z0W3X6kuwfuKCR6sJoRxGgb/HydHABhEXpER7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 091/239] signal: Always ignore SIGKILL and SIGSTOP sent to the global init
+Subject: [PATCH 4.19 294/422] mlxsw: spectrum: Init shaper for TCs 8..15
 Date:   Tue, 19 Nov 2019 06:18:11 +0100
-Message-Id: <20191119051319.779339966@linuxfoundation.org>
+Message-Id: <20191119051418.043038302@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit 86989c41b5ea08776c450cb759592532314a4ed6 ]
+[ Upstream commit a9f36656b519a9a21309793c306941a3cd0eeb8f ]
 
-If the first process started (aka /sbin/init) receives a SIGKILL it
-will panic the system if it is delivered.  Making the system unusable
-and undebugable.  It isn't much better if the first process started
-receives SIGSTOP.
+With introduction of MC-aware mode to mlxsw, it became necessary to
+configure TCs above 7 as well. There is now code in mlxsw to disable ETS
+for these higher classes, but disablement of max shaper was neglected.
 
-So always ignore SIGSTOP and SIGKILL sent to init.
+By default, max shaper is currently disabled to begin with, so the
+problem is just cosmetic. However, for symmetry, do like we do for ETS
+configuration, and call mlxsw_sp_port_ets_maxrate_set() for both TC i
+and i + 8.
 
-This is done in a separate clause in sig_task_ignored as force_sig_info
-can clear SIG_UNKILLABLE and this protection should work even then.
-
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/signal.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index bb801156628ee..c9b203875001e 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -77,6 +77,10 @@ static int sig_task_ignored(struct task_struct *t, int sig, bool force)
- 
- 	handler = sig_handler(t, sig);
- 
-+	/* SIGKILL and SIGSTOP may not be sent to the global init */
-+	if (unlikely(is_global_init(t) && sig_kernel_only(sig)))
-+		return true;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index ccd9aca281b37..1c170a0fd2cc9 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -2815,6 +2815,13 @@ static int mlxsw_sp_port_ets_init(struct mlxsw_sp_port *mlxsw_sp_port)
+ 						    MLXSW_REG_QEEC_MAS_DIS);
+ 		if (err)
+ 			return err;
 +
- 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
- 	    handler == SIG_DFL && !(force && sig_kernel_only(sig)))
- 		return 1;
++		err = mlxsw_sp_port_ets_maxrate_set(mlxsw_sp_port,
++						    MLXSW_REG_QEEC_HIERARCY_TC,
++						    i + 8, i,
++						    MLXSW_REG_QEEC_MAS_DIS);
++		if (err)
++			return err;
+ 	}
+ 
+ 	/* Map all priorities to traffic class 0. */
 -- 
 2.20.1
 
