@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C87F1101847
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CE0101763
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbfKSGHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:07:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54326 "EHLO mail.kernel.org"
+        id S1730843AbfKSFoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727963AbfKSFdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:42 -0500
+        id S1729643AbfKSFoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37762222ED;
-        Tue, 19 Nov 2019 05:33:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CE2721939;
+        Tue, 19 Nov 2019 05:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141621;
-        bh=g6zAEREEgLTWT7LnJikRiT6qbd4YDdqTAfzWJ67n6H4=;
+        s=default; t=1574142258;
+        bh=m62rd/VoPELFkpVvDzmIaxu9iWdd2W3F7jVlw2VCWX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1zvrWFeTx4gUPkg4OJ6IImyge7W28hQ2JUhkblvUAteZQfTSJW3QSB2d9L7D5EPjC
-         kR2j0qVs/e6klo92CY/77jRp7opg8++OzrmrxpANMTKvnh8ma+5uL4Y7tEL3P5jI4H
-         IFrtnhDMcds+bAiVKgOu+lJoVP01mGYngNnaaQeg=
+        b=svw4yGrUTBUw0D7NbHSJiKZ5s1MEpH9qkwAXlJevuy3/MscDSyl3lW/8e/FHiOUPi
+         /RF6pc+DzYX9NE+HfoWQ35KOGayt8zbAozACnKyZmgCEqyYm6YyXzhzFzvZZwmN7Pr
+         gPYqfAdkMu1i/BmJ9aHa/VZIit36I/fuTdNnIxyU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 221/422] blok, bfq: do not plug I/O if all queues are weight-raised
-Date:   Tue, 19 Nov 2019 06:16:58 +0100
-Message-Id: <20191119051412.950455318@linuxfoundation.org>
+        stable@vger.kernel.org, youling 257 <youling257@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 4.14 020/239] i2c: acpi: Force bus speed to 400KHz if a Silead touchscreen is present
+Date:   Tue, 19 Nov 2019 06:17:00 +0100
+Message-Id: <20191119051301.594479546@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,70 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit c8765de0adfcaaf4ffb2d951e07444f00ffa9453 ]
+commit 7574c0db2e68c4d0bae9d415a683bdd8b2a761e9 upstream.
 
-To reduce latency for interactive and soft real-time applications, bfq
-privileges the bfq_queues containing the I/O of these
-applications. These privileged queues, referred-to as weight-raised
-queues, get a much higher share of the device throughput
-w.r.t. non-privileged queues. To preserve this higher share, the I/O
-of any non-weight-raised queue must be plugged whenever a sync
-weight-raised queue, while being served, remains temporarily empty. To
-attain this goal, bfq simply plugs any I/O (from any queue), if a sync
-weight-raised queue remains empty while in service.
+Many cheap devices use Silead touchscreen controllers. Testing has shown
+repeatedly that these touchscreen controllers work fine at 400KHz, but for
+unknown reasons do not work properly at 100KHz. This has been seen on
+both ARM and x86 devices using totally different i2c controllers.
 
-Unfortunately, this plugging typically lowers throughput with random
-I/O, on devices with internal queueing (because it reduces the filling
-level of the internal queues of the device).
+On some devices the ACPI tables list another device at the same I2C-bus
+as only being capable of 100KHz, testing has shown that these other
+devices work fine at 400KHz (as can be expected of any recent I2C hw).
 
-This commit addresses this issue by restricting the cases where
-plugging is performed: if a sync weight-raised queue remains empty
-while in service, then I/O plugging is performed only if some of the
-active bfq_queues are *not* weight-raised (which is actually the only
-circumstance where plugging is needed to preserve the higher share of
-the throughput of weight-raised queues). This restriction proved able
-to boost throughput in really many use cases needing only maximum
-throughput.
+This commit makes i2c_acpi_find_bus_speed() always return 400KHz if a
+Silead touchscreen controller is present, fixing the touchscreen not
+working on devices which ACPI tables' wrongly list another device on the
+same bus as only being capable of 100KHz.
 
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Specifically this fixes the touchscreen on the Jumper EZpad 6 m4 not
+working.
+
+Reported-by: youling 257 <youling257@gmail.com>
+Tested-by: youling 257 <youling257@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+[wsa: rewording warning a little]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- block/bfq-iosched.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/i2c/i2c-core-acpi.c |   28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 35ddaa820737c..66b1ebc21ce4f 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -3593,7 +3593,12 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- 	 * whether bfqq is being weight-raised, because
- 	 * bfq_symmetric_scenario() does not take into account also
- 	 * weight-raised queues (see comments on
--	 * bfq_weights_tree_add()).
-+	 * bfq_weights_tree_add()). In particular, if bfqq is being
-+	 * weight-raised, it is important to idle only if there are
-+	 * other, non-weight-raised queues that may steal throughput
-+	 * to bfqq. Actually, we should be even more precise, and
-+	 * differentiate between interactive weight raising and
-+	 * soft real-time weight raising.
- 	 *
- 	 * As a side note, it is worth considering that the above
- 	 * device-idling countermeasures may however fail in the
-@@ -3605,7 +3610,8 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- 	 * to let requests be served in the desired order until all
- 	 * the requests already queued in the device have been served.
- 	 */
--	asymmetric_scenario = bfqq->wr_coeff > 1 ||
-+	asymmetric_scenario = (bfqq->wr_coeff > 1 &&
-+			       bfqd->wr_busy_queues < bfqd->busy_queues) ||
- 		!bfq_symmetric_scenario(bfqd);
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -43,6 +43,7 @@ struct i2c_acpi_lookup {
+ 	int index;
+ 	u32 speed;
+ 	u32 min_speed;
++	u32 force_speed;
+ };
  
- 	/*
--- 
-2.20.1
-
+ static int i2c_acpi_fill_info(struct acpi_resource *ares, void *data)
+@@ -240,6 +241,19 @@ i2c_acpi_match_device(const struct acpi_
+ 	return acpi_match_device(matches, &client->dev);
+ }
+ 
++static const struct acpi_device_id i2c_acpi_force_400khz_device_ids[] = {
++	/*
++	 * These Silead touchscreen controllers only work at 400KHz, for
++	 * some reason they do not work at 100KHz. On some devices the ACPI
++	 * tables list another device at their bus as only being capable
++	 * of 100KHz, testing has shown that these other devices work fine
++	 * at 400KHz (as can be expected of any recent i2c hw) so we force
++	 * the speed of the bus to 400 KHz if a Silead device is present.
++	 */
++	{ "MSSL1680", 0 },
++	{}
++};
++
+ static acpi_status i2c_acpi_lookup_speed(acpi_handle handle, u32 level,
+ 					   void *data, void **return_value)
+ {
+@@ -258,6 +272,9 @@ static acpi_status i2c_acpi_lookup_speed
+ 	if (lookup->speed <= lookup->min_speed)
+ 		lookup->min_speed = lookup->speed;
+ 
++	if (acpi_match_device_ids(adev, i2c_acpi_force_400khz_device_ids) == 0)
++		lookup->force_speed = 400000;
++
+ 	return AE_OK;
+ }
+ 
+@@ -295,7 +312,16 @@ u32 i2c_acpi_find_bus_speed(struct devic
+ 		return 0;
+ 	}
+ 
+-	return lookup.min_speed != UINT_MAX ? lookup.min_speed : 0;
++	if (lookup.force_speed) {
++		if (lookup.force_speed != lookup.min_speed)
++			dev_warn(dev, FW_BUG "DSDT uses known not-working I2C bus speed %d, forcing it to %d\n",
++				 lookup.min_speed, lookup.force_speed);
++		return lookup.force_speed;
++	} else if (lookup.min_speed != UINT_MAX) {
++		return lookup.min_speed;
++	} else {
++		return 0;
++	}
+ }
+ EXPORT_SYMBOL_GPL(i2c_acpi_find_bus_speed);
+ 
 
 
