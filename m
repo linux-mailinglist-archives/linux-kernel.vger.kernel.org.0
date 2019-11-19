@@ -2,103 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9451910290E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6637E10291A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbfKSQNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 11:13:38 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33970 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfKSQNh (ORCPT
+        id S1728317AbfKSQPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 11:15:39 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39270 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727909AbfKSQPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:13:37 -0500
-Received: by mail-io1-f67.google.com with SMTP id q83so23895279iod.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 08:13:37 -0800 (PST)
+        Tue, 19 Nov 2019 11:15:39 -0500
+Received: by mail-io1-f65.google.com with SMTP id k1so23857769ioj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 08:15:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CuQtXznqoyz5kssTjNmYau458WwEA/pCkBJj2OVVqhw=;
-        b=Y5yP5yxkELILFBRuBu782FQosIibbXWrJ8k7FKQ7MfRe6h15lWXrRvR/RpmAanLRyb
-         sOHSEKJc89xwSjmr0aegjdhW95nfNpI0UBLLh/Dod62dh7jjr0LmY5JpGhIWiQFzl4TD
-         TqqIeS4cy8gEAvmpofDPnro5dCnkUcrWaIFQ5SNWHTKLsb1snDYcJaA15KuscmjBbAis
-         aU3lD8Ws7FIG/mm/iqeJvgZaE3kh+ku6pu5ubn37PAFNRkVs9omWdk3Txfk8JteJpZBr
-         keK4Ips74YC+7A92ul65nGHBp+l0JtVT6IBmXKVW70OM9pqqrn0Pf4YuMMHNaOcwr9kj
-         3/gw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2QzBsf1/Q8hKzbeSju/cjkym48KF1RXo6Ozgcc+ilbY=;
+        b=B557JxbRmG6bGxoMH25hjkkFa/8uMFElraHUqwVWyBdVL88O6yOK24tlKofwQfELla
+         kmgnZl6NqlnvT6F9knFUlLByW1Zg0wY/TW/qEZThA5fDnn23pf/AEWg1Jf/VK1UrnZ2U
+         oPdawl1BJ8P9/x7dPwEqvvP/zs4Mh4g6P1ZwKfLK36mmAp/5JlJoZpR+zEKSNM7SgdGF
+         Z4XqXq5jvbIdTomXYzj0YUVs4ONUOs97XMsDZpsbtnwj5Rntr0Q4oekV0hBAQRlnvZ+G
+         etTsVpGZ/+y5WR9tDtcuJWDITRco+L9s1OAZeDEXCMKe/TOtqEdmS8L98pBTwJ2S0t9s
+         XjmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CuQtXznqoyz5kssTjNmYau458WwEA/pCkBJj2OVVqhw=;
-        b=FqN6smmmnA9F90PrEV9bM8JQ4w5a3MT8vs0n7pJ92NZyX5Xq+tB47q9oJLze6XOulk
-         W5zedVe8VCDPgsf+ZFOAu/b9bUoqTFfj/m8SPyqLETAzPRENeIrZObbSgxJeX38G0Sl4
-         3eNuL2EttCt6mif+5ls6vHrVuvnErJuEXLRvUwS1YkAapfYoLCN5YK739NBTV6Jg6oI8
-         ZueoM24xldJUDNWJqY1PdJjeXPI9D8Nk2taREDk/l1Q3JlVpcHZ0k/MFGUvLM+HCgTEZ
-         j/RoMOoImN0eq9tv+yeAaRXB1dJJvQLdyAQCsf2MJxi+5JScJ9mu0TzMz7ku8O+pMyH+
-         I+fw==
-X-Gm-Message-State: APjAAAXOOn08MXwKbZbWpchTFKX1Qvl2tZcjfeN7V5+RRjXDjGk1ZEFo
-        vZcQXSv6yCR80ArdtUpjlsRxvQ==
-X-Google-Smtp-Source: APXvYqyrsEqORsYQXRnAbGvk2VKAQluxp4RFlBrdGsPXjw9zQza5QmSohcjFAyNMdDM3atBr+47PwQ==
-X-Received: by 2002:a05:6602:251a:: with SMTP id i26mr18935296ioe.302.1574180016622;
-        Tue, 19 Nov 2019 08:13:36 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t11sm5546611ild.38.2019.11.19.08.13.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Nov 2019 08:13:35 -0800 (PST)
-Subject: Re: [v2] nbd:fix memory leak in nbd_get_socket()
-To:     Sun Ke <sunke32@huawei.com>, josef@toxicpanda.com,
-        linux-block@vger.kernel.org, nbd@other.debian.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mike Christie <mchristi@redhat.com>
-References: <1574143751-138680-1-git-send-email-sunke32@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d68d17be-0c4e-1286-4327-0e3ba6600eca@kernel.dk>
-Date:   Tue, 19 Nov 2019 09:13:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2QzBsf1/Q8hKzbeSju/cjkym48KF1RXo6Ozgcc+ilbY=;
+        b=QxIcfv7uIHcwsIFxpK1IFsXXcccDwv4LUFxBHl6j2dORtOEvYP4wxuGG4ZfjjDnwHO
+         wKdW8P4lEp0JnNZvKEAoH6DGSfGI1SI9O3nz/of5jjnnbLFF+AelECx2jwEi0hyPpe7J
+         xlz36f20cxIn3ukl+OimhLsABM2SFDisbytoGKyNqn22yOYZt/4WRfPw9ndtm1QGvlsY
+         DuIPIT3lHauJJt+LEH6cW0uJOB76OVygtAiE1gZXFUi+vkxfWJZMWXQXZFsopSI+U+Ar
+         yYNqsgnpSCUvistLhDU28hu8poBnnuKzgAMNh1aiMGN8Mr5pqB1McFGuJq5JLOHTuB3K
+         Qkow==
+X-Gm-Message-State: APjAAAWRHDEN5hAGyr1KhLHsjeMo5lLTA9i1D2Mvik7qCLc++als0A2k
+        4MdDl2R6T5uYK4icez9sDNVGN8DbN3uhMxsOBtPr+KySIdg=
+X-Google-Smtp-Source: APXvYqw503RqDWWROFTPpdWnnJSfJY3YAq7SFnY1QjLQaYOndzuBk+hWJoZO8CCxZ/+343iUr17+gMnAVu7eO4Quu/g=
+X-Received: by 2002:a6b:2c95:: with SMTP id s143mr5938031ios.57.1574180138026;
+ Tue, 19 Nov 2019 08:15:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1574143751-138680-1-git-send-email-sunke32@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191118185207.30441-1-mathieu.poirier@linaro.org>
+ <20191118185207.30441-2-mathieu.poirier@linaro.org> <20191119043044.GB1446085@kroah.com>
+In-Reply-To: <20191119043044.GB1446085@kroah.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 19 Nov 2019 09:15:27 -0700
+Message-ID: <CANLsYkwaYZbQPoqr1D2jB+OKirR-2F1m1cqdAcHHwqvu27HxQg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] coresight: funnel: Fix missing spin_lock_init()
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/18/19 11:09 PM, Sun Ke wrote:
-> Before return NULL,put the sock first.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: cf1b2326b734 ("nbd: verify socket is supported during setup")
-> Signed-off-by: Sun Ke <sunke32@huawei.com>
+On Mon, 18 Nov 2019 at 21:30, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Nov 18, 2019 at 11:52:06AM -0700, Mathieu Poirier wrote:
+> > From: Wei Yongjun <weiyongjun1@huawei.com>
+> >
+> > The driver allocates the spinlock but not initialize it.
+> > Use spin_lock_init() on it to initialize it correctly.
+> >
+> > This is detected by Coccinelle semantic patch.
+> >
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > Tested-by: Yabin Cui <yabinc@google.com>
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  drivers/hwtracing/coresight/coresight-funnel.c | 1 +
+> >  1 file changed, 1 insertion(+)
+>
+> Is this, and the 2/2 patch here, needed for stable releases?
 
-Please always CC the author of the patch you're fixing.
+No as the code they fix is new to this cycle[1].
 
-Mike, Josef - we probably need to get this upstream ASAP.
+Thanks for being inquisitive,
+Mathieu
 
-> ---
-> v2: add cc:stable tag
-> ---
->   drivers/block/nbd.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index a94ee45..19e7599 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -993,6 +993,7 @@ static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
->   	if (sock->ops->shutdown == sock_no_shutdown) {
->   		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
->   		*err = -EINVAL;
-> +		sockfd_put(sock);
->   		return NULL;
->   	}
->   
-> 
+[1]. https://lkml.org/lkml/2019/11/4/726
 
-
--- 
-Jens Axboe
-
+>
+> thanks,
+>
+> greg k-h
