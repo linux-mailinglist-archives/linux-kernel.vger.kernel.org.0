@@ -2,166 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 259E4102B03
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0B7102B46
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfKSRwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:52:07 -0500
-Received: from mga07.intel.com ([134.134.136.100]:14025 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727394AbfKSRwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:52:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:52:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,218,1571727600"; 
-   d="scan'208";a="209488291"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 19 Nov 2019 09:51:58 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v3 8/8] iommu/vt-d: Misc macro clean up for SVM
-Date:   Tue, 19 Nov 2019 09:56:32 -0800
-Message-Id: <1574186193-30457-9-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574186193-30457-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1574186193-30457-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1727194AbfKSR5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:57:40 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42845 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfKSR5k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 12:57:40 -0500
+Received: by mail-oi1-f195.google.com with SMTP id o12so9658569oic.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 09:57:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=/EQvR6e0tbbuaUDnkN8OiM31to2qcy0I5BWW+CDqK8o=;
+        b=iYvlsq6FXHuHOzPto030rJnfYaISTffrDSX6r+KYiMTlKewcOy4zVn9sqdW6K7AuLQ
+         0MscHSEJmJJNUEdG5fvILf4NuqezGrygIzmrPraCCH+3XmWl/IlRJkLry1kM068obwLm
+         us+GCPpoa/D3oKW0hFdd7qrgNQNbYFLFeQ5y1s6FmWSJ80lNWUOP/QvPdYr0JpKkn1OC
+         XxYpSpcCooiwtDXt8eyg9nq7l7aBYicq6LCtih5wjdf97Nm67DEfxN30y2TR+4ASyYpw
+         ge2YhQNdPquFb54kn6n5IM3Zg0nARuFXJjovfo4fVFZIG99W+6SHgiKR06hqAWIcAFPk
+         8dbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=/EQvR6e0tbbuaUDnkN8OiM31to2qcy0I5BWW+CDqK8o=;
+        b=thNnrMIMfJlsUW6X8kw85T/Pqey12waqhZesnLLrt/YirsbSQmbruCs7Jct7zMF5j6
+         eYF0hXuNY8z85HBCXOVJMWASHVGl50v9loZGhTqvRq7DuoyduGE+r7nXGwEuU0Toadwc
+         vxUHudKKV8cqwrL/cHSEOu/TCWmQE9jZQwFbC6UueCKwm12Oov8Je4Cs6aE9is7DaIXW
+         BBJPfhOLKVVFJclbZp97ShONlgzQ9qOXLdJKOxwpLpGpRY1JchOGxReXxyZVFCTw5HMM
+         74bY//ps67J+hAoo4kklBLYlUWxbWVXjWmdHFLSvvBmoozMITox64Ac0szHIeEAYKez1
+         O2BQ==
+X-Gm-Message-State: APjAAAV6M+L0XPmqsns/kcQxJUY7/zXRXjuhmC3NGYtBTOmLtdBf0SMb
+        2/F2AvAhL43gLJisJD890gwQyH7Kh2xQcs/jZQ==
+X-Google-Smtp-Source: APXvYqxHx3FKsD4obgvRwCYfPbM/SIQC0MZqGAdBFC/rj9fhMEzp4AGm9jAjaUosCjSlkyMhhQLulhF5GyFWQZ8VQEc=
+X-Received: by 2002:a05:6808:d:: with SMTP id u13mr5309388oic.155.1574186259192;
+ Tue, 19 Nov 2019 09:57:39 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a4a:7509:0:0:0:0:0 with HTTP; Tue, 19 Nov 2019 09:57:38
+ -0800 (PST)
+Reply-To: brianjesse343@gmail.com
+From:   brianjesse <cleanmichel66@gmail.com>
+Date:   Tue, 19 Nov 2019 17:57:38 +0000
+Message-ID: <CAJnAYk8zKsgFT926-uf3D1=1D9fOmTrgaeOHpgkAim9cn0MzHw@mail.gmail.com>
+Subject: Hl
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use combined macros for_each_svm_dev() to simplify SVM device iteration
-and error checking.
-
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-svm.c | 81 ++++++++++++++++++++++-------------------------
- 1 file changed, 38 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 4eecc24412dc..5b4224871e34 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -226,6 +226,10 @@ static const struct mmu_notifier_ops intel_mmuops = {
- static DEFINE_MUTEX(pasid_mutex);
- static LIST_HEAD(global_svm_list);
- 
-+#define for_each_svm_dev(sdev, svm, d)			\
-+	list_for_each_entry((sdev), &(svm)->devs, list)	\
-+		if ((d) != (sdev)->dev) {} else
-+
- int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
- {
- 	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
-@@ -274,15 +278,13 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 				goto out;
- 			}
- 
--			list_for_each_entry(sdev, &svm->devs, list) {
--				if (dev == sdev->dev) {
--					if (sdev->ops != ops) {
--						ret = -EBUSY;
--						goto out;
--					}
--					sdev->users++;
--					goto success;
-+			for_each_svm_dev(sdev, svm, dev) {
-+				if (sdev->ops != ops) {
-+					ret = -EBUSY;
-+					goto out;
- 				}
-+				sdev->users++;
-+				goto success;
- 			}
- 
- 			break;
-@@ -427,43 +429,36 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 		goto out;
- 	}
- 
--	if (!svm)
--		goto out;
--
--	list_for_each_entry(sdev, &svm->devs, list) {
--		if (dev == sdev->dev) {
--			ret = 0;
--			sdev->users--;
--			if (!sdev->users) {
--				list_del_rcu(&sdev->list);
--				/* Flush the PASID cache and IOTLB for this device.
--				 * Note that we do depend on the hardware *not* using
--				 * the PASID any more. Just as we depend on other
--				 * devices never using PASIDs that they have no right
--				 * to use. We have a *shared* PASID table, because it's
--				 * large and has to be physically contiguous. So it's
--				 * hard to be as defensive as we might like. */
--				intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
--				intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
--				kfree_rcu(sdev, rcu);
--
--				if (list_empty(&svm->devs)) {
--					ioasid_free(svm->pasid);
--					if (svm->mm)
--						mmu_notifier_unregister(&svm->notifier, svm->mm);
--
--					list_del(&svm->list);
--
--					/* We mandate that no page faults may be outstanding
--					 * for the PASID when intel_svm_unbind_mm() is called.
--					 * If that is not obeyed, subtle errors will happen.
--					 * Let's make them less subtle... */
--					memset(svm, 0x6b, sizeof(*svm));
--					kfree(svm);
--				}
-+	for_each_svm_dev(sdev, svm, dev) {
-+		ret = 0;
-+		sdev->users--;
-+		if (!sdev->users) {
-+			list_del_rcu(&sdev->list);
-+			/* Flush the PASID cache and IOTLB for this device.
-+			 * Note that we do depend on the hardware *not* using
-+			 * the PASID any more. Just as we depend on other
-+			 * devices never using PASIDs that they have no right
-+			 * to use. We have a *shared* PASID table, because it's
-+			 * large and has to be physically contiguous. So it's
-+			 * hard to be as defensive as we might like. */
-+			intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
-+			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
-+			kfree_rcu(sdev, rcu);
-+
-+			if (list_empty(&svm->devs)) {
-+				ioasid_free(svm->pasid);
-+				if (svm->mm)
-+					mmu_notifier_unregister(&svm->notifier, svm->mm);
-+				list_del(&svm->list);
-+				/* We mandate that no page faults may be outstanding
-+				 * for the PASID when intel_svm_unbind_mm() is called.
-+				 * If that is not obeyed, subtle errors will happen.
-+				 * Let's make them less subtle... */
-+				memset(svm, 0x6b, sizeof(*svm));
-+				kfree(svm);
- 			}
--			break;
- 		}
-+		break;
- 	}
-  out:
- 	mutex_unlock(&pasid_mutex);
--- 
-2.7.4
-
+Hello,  Kindly be informed that this email that came to your mailbox is not
+an error but was specifically addressed to you for your consideration. I
+have a proposal of ($7.500.000.00) left by my late client Engineer Carlos
+who bears the same name with you, who used to work and lived here in Lome
+Togo My late client and family were involved in a car accident that took
+their lives. I am contacting you as the next of kin to the deceased so you
+could receive the funds upon claims. Upon your speedy response I will
+inform you the modes of the execution of this covenant.contact me on
+this (brianjesse343@gmail.com)
