@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D791E1015BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20D561014DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731152AbfKSFqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:46:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
+        id S1728120AbfKSFiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:38:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731128AbfKSFqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:46:46 -0500
+        id S1727176AbfKSFiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:38:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DBD32075E;
-        Tue, 19 Nov 2019 05:46:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA5AB208C3;
+        Tue, 19 Nov 2019 05:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142405;
-        bh=JMzbT0jpHdIV1pZ8eUDKVYmn7oMS7LIGuRRUm5UaNrk=;
+        s=default; t=1574141880;
+        bh=6rLXOOpyhENEwIWRMZg72JBdXNe4tH+Hrc/ZYftRZBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJlk2pi0hfnIfS2PckIXQFdEwbLVu4k2lE2B7T79l0zgs5IBdelmm/F8WR58iKtq0
-         SfzyXz/C8AEex3yKf2f0nt32dZ+pA7MhqLBkYpp/Rwm8w+6EPSGBMGByznE5VX3++J
-         maeQV4Gv8CMpmS9StpPgK+FpievA1N0LtU2Rz6t0=
+        b=n5i99zOZdl9J2wN1/SV4ArQ3qBlj2ZIo6XVpk2Kkx4+kTfcxdc7FTG/abcmDP+wvT
+         j03svwM94m3Y3fA36aoP7lICn89IPAUtzrt7ih1pVsKCX3BBZLXAqJNP1oyTgPTwTI
+         8febHINGRY8XB6XKlseq3U5yUUt5vDJ9ZsKnP6Xg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erik Stromdahl <erik.stromdahl@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 069/239] ath10k: wmi: disable softirqs while calling ieee80211_rx
+Subject: [PATCH 4.19 272/422] power: supply: twl4030_charger: disable eoc interrupt on linear charge
 Date:   Tue, 19 Nov 2019 06:17:49 +0100
-Message-Id: <20191119051312.930008187@linuxfoundation.org>
+Message-Id: <20191119051416.614384894@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erik Stromdahl <erik.stromdahl@gmail.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 37f62c0d5822f631b786b29a1b1069ab714d1a28 ]
+[ Upstream commit 079cdff3d0a09c5da10ae1be35def7a116776328 ]
 
-This is done in order not to trig the below warning in
-ieee80211_rx_napi:
+This avoids getting woken up from suspend after power interruptions
+when the bci wrongly thinks the battery is full just because
+of input current going low because of low input power
 
-WARN_ON_ONCE(softirq_count() == 0);
-
-ieee80211_rx_napi requires that softirq's are disabled during
-execution.
-
-The High latency bus drivers (SDIO and USB) sometimes call the wmi
-ep_rx_complete callback from non softirq context, resulting in a trigger
-of the above warning.
-
-Calling ieee80211_rx_ni with softirq's already disabled (e.g., from
-softirq context) should be safe as the local_bh_disable and
-local_bh_enable functions (called from ieee80211_rx_ni) are fully
-reentrant.
-
-Signed-off-by: Erik Stromdahl <erik.stromdahl@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/power/supply/twl4030_charger.c | 27 +++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index ab8eb9cdfda0f..4d6c2986c40dd 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -2414,7 +2414,8 @@ int ath10k_wmi_event_mgmt_rx(struct ath10k *ar, struct sk_buff *skb)
- 		   status->freq, status->band, status->signal,
- 		   status->rate_idx);
+diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
+index adcaa0a10a6f4..0e202d4273fb6 100644
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -440,6 +440,7 @@ static void twl4030_current_worker(struct work_struct *data)
+ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
+ {
+ 	int ret;
++	u32 reg;
  
--	ieee80211_rx(ar->hw, skb);
-+	ieee80211_rx_ni(ar->hw, skb);
-+
- 	return 0;
- }
+ 	if (bci->usb_mode == CHARGE_OFF)
+ 		enable = false;
+@@ -453,14 +454,38 @@ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
+ 			bci->usb_enabled = 1;
+ 		}
  
+-		if (bci->usb_mode == CHARGE_AUTO)
++		if (bci->usb_mode == CHARGE_AUTO) {
++			/* Enable interrupts now. */
++			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_ICHGEOC |
++					TWL4030_TBATOR2 | TWL4030_TBATOR1 |
++					TWL4030_BATSTS);
++			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
++				       TWL4030_INTERRUPTS_BCIIMR1A);
++			if (ret < 0) {
++				dev_err(bci->dev,
++					"failed to unmask interrupts: %d\n",
++					ret);
++				return ret;
++			}
+ 			/* forcing the field BCIAUTOUSB (BOOT_BCI[1]) to 1 */
+ 			ret = twl4030_clear_set_boot_bci(0, TWL4030_BCIAUTOUSB);
++		}
+ 
+ 		/* forcing USBFASTMCHG(BCIMFSTS4[2]) to 1 */
+ 		ret = twl4030_clear_set(TWL_MODULE_MAIN_CHARGE, 0,
+ 			TWL4030_USBFASTMCHG, TWL4030_BCIMFSTS4);
+ 		if (bci->usb_mode == CHARGE_LINEAR) {
++			/* Enable interrupts now. */
++			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_TBATOR2 |
++					TWL4030_TBATOR1 | TWL4030_BATSTS);
++			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
++				       TWL4030_INTERRUPTS_BCIIMR1A);
++			if (ret < 0) {
++				dev_err(bci->dev,
++					"failed to unmask interrupts: %d\n",
++					ret);
++				return ret;
++			}
+ 			twl4030_clear_set_boot_bci(TWL4030_BCIAUTOAC|TWL4030_CVENAC, 0);
+ 			/* Watch dog key: WOVF acknowledge */
+ 			ret = twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0x33,
 -- 
 2.20.1
 
