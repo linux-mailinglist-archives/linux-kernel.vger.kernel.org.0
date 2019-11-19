@@ -2,89 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6FA610161D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8672C1016D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731619AbfKSFu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:50:26 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:34118 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730774AbfKSFuX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:50:23 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ5huvb132126;
-        Tue, 19 Nov 2019 05:50:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=qypDKl94mesip5g2Yd4v0FaRyXY1OqCoOiPXzwPXz0w=;
- b=S3noAXMnqQxfCTbAXElErsKykDwUkFf48rUpmvOjTBc+4713kZT1kLw/LsFwmOr4lrkV
- 4PJXmrTunpbcsCZoeKPdKtANj7NevY9oO77MYP4QAx8Pe9aqjd+TQEWPq2IDdNMnjvGN
- eUjdgRIU0zrk4YlteeGHruNjp2s8vBWnf9qTaX6qyshUqDlxqNotaXQU7dVeHKRev8We
- 1LGczkVy5zEDVDbo2a5VucM9E8t5hqKwo8xBDUtVJBOLuoI4nZkzIWPnxPbB1fr8QLUL
- /lk7VpQdsevOwdLdcaXRXT2FAn7UPmKptQM0sLyJgrEvNysrvDYEDzpV5kd6kgh8zKFW 9A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2wa92pmjd0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 05:50:17 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ5hOVr013308;
-        Tue, 19 Nov 2019 05:50:16 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2wbxge8wab-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 05:50:16 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJ5oEQn008331;
-        Tue, 19 Nov 2019 05:50:15 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Nov 2019 21:50:14 -0800
-To:     Can Guo <cang@codeaurora.org>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v4 1/5] scsi: Adjust DBD setting in mode sense for caching mode page per LLD
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1573624824-671-1-git-send-email-cang@codeaurora.org>
-        <1573624824-671-2-git-send-email-cang@codeaurora.org>
-Date:   Tue, 19 Nov 2019 00:50:11 -0500
-In-Reply-To: <1573624824-671-2-git-send-email-cang@codeaurora.org> (Can Guo's
-        message of "Tue, 12 Nov 2019 22:00:19 -0800")
-Message-ID: <yq1tv70h0to.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1731882AbfKSF41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:56:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:50535 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731204AbfKSFxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:53:31 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47HFP53LRMzB3vv;
+        Tue, 19 Nov 2019 16:53:29 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1574142809;
+        bh=jb7dTqxFpJxsRgcQPIuEXZVSto0BIWmREranK2PFIr0=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=h7/kk6ZtFkQRQlA/Ck8jL74zTQ3dP7YYzbWBluWN1D0Vc6khCLw6hNIb3fxTzOppr
+         b0s726Vz/6B3Uc8qvoJLQJEpX0/qLY8v2XaG+TlH3mHSI9j8DtyUxvtgveq3KjfdGA
+         D692bfxUswq69bu33cti14yfMyw7OSFlzw5uuIO7d6M2BPQ3pvEch/3iWWsTkkwZ1s
+         s4XvgCDKSXFdzBZj7ub2HcAQorooC6S5PoueO+7b3qEbUohTko2T5qLgg7+U5/nhOu
+         yl5Y09UN70Y+P0pQpdJ8lDVUcEEe0TdxjcbifQcZ1ipZqjI3CzTgO0BO0FB3gkawVC
+         PeEu3/tSPr6QQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Chen Wandun <chenwandun@huawei.com>, tyreld@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        mahesh@linux.vnet.ibm.com, paulus@samba.org
+Cc:     chenwandun@huawei.com
+Subject: Re: [PATCH] powerpc/pseries: remove variable 'status' set but not used
+In-Reply-To: <1573873650-62511-1-git-send-email-chenwandun@huawei.com>
+References: <1573873650-62511-1-git-send-email-chenwandun@huawei.com>
+Date:   Tue, 19 Nov 2019 16:53:26 +1100
+Message-ID: <87blt8csyx.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=795
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190053
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=866 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Chen Wandun <chenwandun@huawei.com> writes:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> arch/powerpc/platforms/pseries/ras.c: In function ras_epow_interrupt:
+> arch/powerpc/platforms/pseries/ras.c:319:6: warning: variable status set but not used [-Wunused-but-set-variable]
 
-Can,
+Thanks for the patch.
 
-> UFS JEDEC standards require DBD field to be set to 1 in mode sense
-> command.  This patch allows LLD to define the setting of DBD if
-> required.
+But it almost certainly is wrong to not check the status.
 
-These changes look OK to me, btw. Please make sure each patch has a
-changelog which reflects how the review feedback was addressed.
+It's calling firmware and just assuming that the call succeeded. It then
+goes on to use the result that should have been written by firmware, but
+is now potentially random junk.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+So I'd much rather a patch to change it to check the status. 
+
+> diff --git a/arch/powerpc/platforms/pseries/ras.c b/arch/powerpc/platforms/pseries/ras.c
+> index 1d7f973..4a61d0f 100644
+> --- a/arch/powerpc/platforms/pseries/ras.c
+> +++ b/arch/powerpc/platforms/pseries/ras.c
+> @@ -316,12 +316,11 @@ static irqreturn_t ras_hotplug_interrupt(int irq, void *dev_id)
+>  /* Handle environmental and power warning (EPOW) interrupts. */
+>  static irqreturn_t ras_epow_interrupt(int irq, void *dev_id)
+>  {
+> -	int status;
+>  	int state;
+>  	int critical;
+>  
+> -	status = rtas_get_sensor_fast(EPOW_SENSOR_TOKEN, EPOW_SENSOR_INDEX,
+> -				      &state);
+> +	rtas_get_sensor_fast(EPOW_SENSOR_TOKEN, EPOW_SENSOR_INDEX,
+> +			     &state);
+
+This is calling a helper which already does some translation of the
+return value, any value < 0 indicates an error.
+
+> @@ -330,12 +329,12 @@ static irqreturn_t ras_epow_interrupt(int irq, void *dev_id)
+>  
+>  	spin_lock(&ras_log_buf_lock);
+>  
+> -	status = rtas_call(ras_check_exception_token, 6, 1, NULL,
+> -			   RTAS_VECTOR_EXTERNAL_INTERRUPT,
+> -			   virq_to_hw(irq),
+> -			   RTAS_EPOW_WARNING,
+> -			   critical, __pa(&ras_log_buf),
+> -				rtas_get_error_log_max());
+> +	rtas_call(ras_check_exception_token, 6, 1, NULL,
+> +		  RTAS_VECTOR_EXTERNAL_INTERRUPT,
+> +		  virq_to_hw(irq),
+> +		  RTAS_EPOW_WARNING,
+> +		  critical, __pa(&ras_log_buf),
+> +		  rtas_get_error_log_max());
+
+This is directly calling firmware.
+
+As documented in LoPAPR, a negative status indicates an error, 0
+indicates a new error log was found (ie. the function should continue),
+or 1 there was no error log (ie. nothing to do).
+
+cheers
+
+>  	log_error(ras_log_buf, ERR_TYPE_RTAS_LOG, 0);
+>  
+> -- 
+> 2.7.4
