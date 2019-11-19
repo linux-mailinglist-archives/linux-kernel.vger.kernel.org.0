@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 450C01014EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF01310164D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfKSFir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:38:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
+        id S1731859AbfKSFv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730211AbfKSFin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:38:43 -0500
+        id S1729923AbfKSFvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3C45214DE;
-        Tue, 19 Nov 2019 05:38:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36889208C3;
+        Tue, 19 Nov 2019 05:51:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141921;
-        bh=0V0ylmDejaYia5CRLo0lS05lj+Q0a8zKivPVI6lYOYA=;
+        s=default; t=1574142714;
+        bh=yghk864Qu3p4uLxrXvRwD8kPFl/idh9sgYH6Bz1/LXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xDgfgPgzvUFzIg2Coev+CScMwwJzINuAZz15qDOpmRz9KtZ47KGqt5ZmrMov+PvHd
-         tj0vBMnR5jm0SiywtmjlKW06dJrpwHwO/0KJEamEpjioIsKq4EQ39Au26lY3EG5GOq
-         tD99sCIbS7iXS30PgowbiYVCj4D6WdpHZ8/agG2M=
+        b=A4avoM3SoNsAz3s4p83ojYU8ZGWb8XmZF2g+IxQGuvXpXD3TJQEP6davK1NIovcRf
+         oV4m2e8W1ijCXemn9VLu9WjoWb5/FSx7ouxgjhiMaUtbN6nL3CTwaGP1qFcj3c6B+/
+         0bm/po37VCV8PWtkwPwfOVL1Wv0PabW9NF73vPls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 327/422] media: pci: ivtv: Fix a sleep-in-atomic-context bug in ivtv_yuv_init()
+Subject: [PATCH 4.14 124/239] component: fix loop condition to call unbind() if bind() fails
 Date:   Tue, 19 Nov 2019 06:18:44 +0100
-Message-Id: <20191119051420.206074147@linuxfoundation.org>
+Message-Id: <20191119051330.260309886@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Banajit Goswami <bgoswami@codeaurora.org>
 
-[ Upstream commit 8d11eb847de7d89c2754988c944d51a4f63e219b ]
+[ Upstream commit bdae566d5d9733b6e32b378668b84eadf28a94d4 ]
 
-The driver may sleep in a interrupt handler.
+During component_bind_all(), if bind() fails for any
+particular component associated with a master, unbind()
+should be called for all previous components in that
+master's match array, whose bind() might have completed
+successfully. As per the current logic, if bind() fails
+for the component at position 'n' in the master's match
+array, it would start calling unbind() from component in
+'n'th position itself and work backwards, and will always
+skip calling unbind() for component in 0th position in the
+master's match array.
+Fix this by updating the loop condition, and the logic to
+refer to the components in master's match array, so that
+unbind() is called for all components starting from 'n-1'st
+position in the array, until (and including) component in
+0th position.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
-
-[FUNC] kzalloc(GFP_KERNEL)
-drivers/media/pci/ivtv/ivtv-yuv.c, 938:
-	kzalloc in ivtv_yuv_init
-drivers/media/pci/ivtv/ivtv-yuv.c, 960:
-	ivtv_yuv_init in ivtv_yuv_next_free
-drivers/media/pci/ivtv/ivtv-yuv.c, 1126:
-	ivtv_yuv_next_free in ivtv_yuv_setup_stream_frame
-drivers/media/pci/ivtv/ivtv-irq.c, 827:
-	ivtv_yuv_setup_stream_frame in ivtv_irq_dec_data_req
-drivers/media/pci/ivtv/ivtv-irq.c, 1013:
-	ivtv_irq_dec_data_req in ivtv_irq_handler
-
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/ivtv/ivtv-yuv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/component.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/pci/ivtv/ivtv-yuv.c b/drivers/media/pci/ivtv/ivtv-yuv.c
-index 44936d6d7c396..1380474519f2b 100644
---- a/drivers/media/pci/ivtv/ivtv-yuv.c
-+++ b/drivers/media/pci/ivtv/ivtv-yuv.c
-@@ -935,7 +935,7 @@ static void ivtv_yuv_init(struct ivtv *itv)
- 	}
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 89b032f2ffd22..08da6160e94dd 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -461,9 +461,9 @@ int component_bind_all(struct device *master_dev, void *data)
+ 		}
  
- 	/* We need a buffer for blanking when Y plane is offset - non-fatal if we can't get one */
--	yi->blanking_ptr = kzalloc(720 * 16, GFP_KERNEL|__GFP_NOWARN);
-+	yi->blanking_ptr = kzalloc(720 * 16, GFP_ATOMIC|__GFP_NOWARN);
- 	if (yi->blanking_ptr) {
- 		yi->blanking_dmaptr = pci_map_single(itv->pdev, yi->blanking_ptr, 720*16, PCI_DMA_TODEVICE);
- 	} else {
+ 	if (ret != 0) {
+-		for (; i--; )
+-			if (!master->match->compare[i].duplicate) {
+-				c = master->match->compare[i].component;
++		for (; i > 0; i--)
++			if (!master->match->compare[i - 1].duplicate) {
++				c = master->match->compare[i - 1].component;
+ 				component_unbind(c, master, data);
+ 			}
+ 	}
 -- 
 2.20.1
 
