@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ACC9101396
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E168101398
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbfKSFZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:25:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
+        id S1728432AbfKSFZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:25:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728409AbfKSFZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:25:34 -0500
+        id S1728409AbfKSFZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:25:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09255208C3;
-        Tue, 19 Nov 2019 05:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A704E21823;
+        Tue, 19 Nov 2019 05:25:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141133;
-        bh=n0hSoyCt+a7Qwm0d+IWQ9s8PCzkBt2QJMIFcCIC1V2o=;
+        s=default; t=1574141136;
+        bh=KmV30vfzaz3Zgwoqs9ty1PdCpMMPsXaQ232gg+9G3SY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FfbS68UqA4jZm56XtvdI2IPrMDbZo9opi4rVaoWWBND2/iHuOMjX4LgnYpQdfNsLe
-         6z0CMMTOt4vTDrmJAu1SGW5FlGPKGMrkuQFD44f6MioeaLdlE2Y3aO0cnef0oAhmzL
-         61079krbf9cCDI7PqZBT1q5iKljYyJoM2+SZZujs=
+        b=DfQN8i25Hy0eOt5+RVEdOeVjIqA4rMBgQDQZ1DqCQxdxJ0naig1D8UeEVqGFg6Xnw
+         T9DgZ84bvcU56hV0zYGGLl7rByrGRp6fbNy8ZrCFz8QgBC5Og0OPlbX/kckJH8xzgW
+         LnyqFofXug0l0nMG97MhZEP6Q8+RzrroB2+vMe04=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        syzbot+b6c55daa701fc389e286@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 015/422] Input: ff-memless - kill timer in destroy()
-Date:   Tue, 19 Nov 2019 06:13:32 +0100
-Message-Id: <20191119051401.126739322@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 016/422] Input: synaptics-rmi4 - fix video buffer size
+Date:   Tue, 19 Nov 2019 06:13:33 +0100
+Message-Id: <20191119051401.180625294@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,40 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit fa3a5a1880c91bb92594ad42dfe9eedad7996b86 upstream.
+commit 003f01c780020daa9a06dea1db495b553a868c29 upstream.
 
-No timer must be left running when the device goes away.
+The video buffer used by the queue is a vb2_v4l2_buffer, not a plain
+vb2_buffer. Using the wrong type causes the allocation of the buffer
+storage to be too small, causing a out of bounds write when
+__init_vb2_v4l2_buffer initializes the buffer.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-and-tested-by: syzbot+b6c55daa701fc389e286@syzkaller.appspotmail.com
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Fixes: 3a762dbd5347 ("[media] Input: synaptics-rmi4 - add support for F54 diagnostics")
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/1573726121.17351.3.camel@suse.com
+Link: https://lore.kernel.org/r/20191104114454.10500-1-l.stach@pengutronix.de
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/ff-memless.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/input/rmi4/rmi_f54.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/ff-memless.c
-+++ b/drivers/input/ff-memless.c
-@@ -501,6 +501,15 @@ static void ml_ff_destroy(struct ff_devi
- {
- 	struct ml_device *ml = ff->private;
- 
-+	/*
-+	 * Even though we stop all playing effects when tearing down
-+	 * an input device (via input_device_flush() that calls into
-+	 * input_ff_flush() that stops and erases all effects), we
-+	 * do not actually stop the timer, and therefore we should
-+	 * do it here.
-+	 */
-+	del_timer_sync(&ml->timer);
-+
- 	kfree(ml->private);
- }
- 
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -362,7 +362,7 @@ static const struct vb2_ops rmi_f54_queu
+ static const struct vb2_queue rmi_f54_queue = {
+ 	.type = V4L2_BUF_TYPE_VIDEO_CAPTURE,
+ 	.io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF | VB2_READ,
+-	.buf_struct_size = sizeof(struct vb2_buffer),
++	.buf_struct_size = sizeof(struct vb2_v4l2_buffer),
+ 	.ops = &rmi_f54_queue_ops,
+ 	.mem_ops = &vb2_vmalloc_memops,
+ 	.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC,
 
 
