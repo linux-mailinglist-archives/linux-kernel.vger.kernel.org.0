@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DEB8101648
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E3E1014F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731382AbfKSFvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49274 "EHLO mail.kernel.org"
+        id S1729154AbfKSFjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731839AbfKSFvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:46 -0500
+        id S1729113AbfKSFjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F8D21783;
-        Tue, 19 Nov 2019 05:51:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ED90206EC;
+        Tue, 19 Nov 2019 05:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142705;
-        bh=63nU4fdCgX2p8UUb5OJm+yB5Xgb0CqU3zNEb9oVmn4Y=;
+        s=default; t=1574141945;
+        bh=NMPNEBM0ZqzblQuub571ZXHEph2ZQyjpjHS66QSs94U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/BnRmczu+NpPpYmd4lv1IKQelcKPZJUvdkeTVZ1YUpFmUsjX/fCkWNTv2+5xNZfL
-         YUwZbJqaLAeHpY/7r17mf5DuZenPRJedE3nc2YS+TfyVnzEW2Y+mSX8F3oC2oZRLOk
-         x5eykw1+Ib+Xwm1aP4diX9RzxsFroJyLnLjn8XcA=
+        b=GYFKn/5YlOFXEcvTY8xIB0WDy9n8fon/VAyazlZFtj0v+WaJheplbYni4blrkbQIU
+         uNeTeOeK79PHhLb7BWHGcDcHiTG7U/WQYhDlQ38cqY3WNhzFiG72guNe27ydpv1SvS
+         RStg8p+QZDvV/wVzaOaXFpaLef4zENJhSlr741vs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 131/239] PCI/ACPI: Correct error message for ASPM disabling
+Subject: [PATCH 4.19 334/422] ARM: dts: exynos: Correct audio subsystem parent clock on Peach Chromebooks
 Date:   Tue, 19 Nov 2019 06:18:51 +0100
-Message-Id: <20191119051330.707132807@linuxfoundation.org>
+Message-Id: <20191119051420.660741996@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sinan Kaya <okaya@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 1ad61b612b95980a4d970c52022aa01dfc0f6068 ]
+[ Upstream commit ff1e37c6809daab75f7b2dea1efe69330e8eb65b ]
 
-If _OSC execution fails today for platforms without an _OSC entry, code is
-printing a misleading message saying disabling ASPM as follows:
+The proper parent clock for audio subsystem for Exynos5420 and Exynos5800
+SoCs is CLK_MAU_EPLL. This fixes following warning:
 
-  acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
+    clk: failed to reparent mout_audss to fout_epll: -22
 
-We need to ensure that platform supports ASPM to begin with.
-
-Reported-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: ed7d1307077e: ARM: dts: exynos: Enable HDMI audio support on Peach Pit
+Fixes: bae0f445c1e7: ARM: dts: exynos: Enable HDMI audio support on Peach Pi
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/pci_root.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 2 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index eb857d6ea1fef..96911360a28e7 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -454,8 +454,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm)
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
- 	if (ACPI_FAILURE(status)) {
--		dev_info(&device->dev, "_OSC failed (%s); disabling ASPM\n",
--			 acpi_format_exception(status));
-+		dev_info(&device->dev, "_OSC failed (%s)%s\n",
-+			 acpi_format_exception(status),
-+			 pcie_aspm_support_enabled() ? "; disabling ASPM" : "");
- 		*no_aspm = 1;
- 		return;
- 	}
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 769d60d6c9006..9eb48cabcca45 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -153,7 +153,7 @@
+ 
+ &clock_audss {
+ 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
+-	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
++	assigned-clock-parents = <&clock CLK_MAU_EPLL>;
+ };
+ 
+ &cpu0 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 492e2cd2e559e..4398f2d1fe881 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -153,7 +153,7 @@
+ 
+ &clock_audss {
+ 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
+-	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
++	assigned-clock-parents = <&clock CLK_MAU_EPLL>;
+ };
+ 
+ &cpu0 {
 -- 
 2.20.1
 
