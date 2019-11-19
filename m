@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 574DA10155F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0595C10166D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:53:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbfKSFn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38304 "EHLO mail.kernel.org"
+        id S1731425AbfKSFxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:53:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730740AbfKSFn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:43:26 -0500
+        id S1731969AbfKSFxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:53:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FDC122309;
-        Tue, 19 Nov 2019 05:43:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AE0F20721;
+        Tue, 19 Nov 2019 05:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142205;
-        bh=h74CyComC6k5V4ED1SOpCza5IBa+Ykwmr9amfdKUrkU=;
+        s=default; t=1574142785;
+        bh=laLOVN9b3e7blkEA0eFOdsXXjtlukZsyKhx2FPSNf5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B6ogc4w7af8HiCdAyRbm1fVV3gEm0j7AVpVPDxcZWB1VWikTjnwW9WvNXlFC7v7Xv
-         s2jGIhbb4LsDiEiLhoo+TibRBHfSiMwugENgmqG4Mn/9hOo7jRhYXi4GkgyegaA7oK
-         0DeMaAE0rhx//UmeEHIqzzs45KD0klLRjbzPkB6M=
+        b=mbW4xEkB6s/9gghrcvE0grYyGg0v+s2SoZ618RG0kxL3ngTKiXFmzL6Dj8yGkbxxU
+         qe7aKL4vPSA9d564fr/DG94cp2lSoCqQOcJxQcodlnfWOhVjY/lktum+ayH5+dkq3q
+         qGmgOyeRl+JCWKuKfZ9vq3XfsPAFNN2p1POjWdos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Li Qiang <liq3ea@gmail.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 401/422] scsi: NCR5380: Withhold disconnect privilege for REQUEST SENSE
+Subject: [PATCH 4.14 198/239] vfio/pci: Fix potential memory leak in vfio_msi_cap_len
 Date:   Tue, 19 Nov 2019 06:19:58 +0100
-Message-Id: <20191119051425.132924551@linuxfoundation.org>
+Message-Id: <20191119051336.178667019@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Li Qiang <liq3ea@gmail.com>
 
-[ Upstream commit 7c8ed783c2faa1e3f741844ffac41340338ea0f4 ]
+[ Upstream commit 30ea32ab1951c80c6113f300fce2c70cd12659e4 ]
 
-This is mostly needed because an AztecMonster II target has been observed
-disconnecting REQUEST SENSE commands and then failing to reselect properly.
+Free allocated vdev->msi_perm in error path.
 
-Suggested-by: Michael Schmitz <schmitzmic@gmail.com>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Li Qiang <liq3ea@gmail.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 4 +++-
+ drivers/vfio/pci/vfio_pci_config.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index d600d3e94ba4a..144bb0c2b3064 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -938,6 +938,8 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
- 	int len;
- 	int err;
- 	bool ret = true;
-+	bool can_disconnect = instance->irq != NO_IRQ &&
-+			      cmd->cmnd[0] != REQUEST_SENSE;
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index 115a36f6f4039..62023b4a373b4 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -1180,8 +1180,10 @@ static int vfio_msi_cap_len(struct vfio_pci_device *vdev, u8 pos)
+ 		return -ENOMEM;
  
- 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
- 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
-@@ -1157,7 +1159,7 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
+ 	ret = init_pci_cap_msi_perm(vdev->msi_perm, len, flags);
+-	if (ret)
++	if (ret) {
++		kfree(vdev->msi_perm);
+ 		return ret;
++	}
  
- 	dsprintk(NDEBUG_SELECTION, instance, "target %d selected, going into MESSAGE OUT phase.\n",
- 	         scmd_id(cmd));
--	tmp[0] = IDENTIFY(((instance->irq == NO_IRQ) ? 0 : 1), cmd->device->lun);
-+	tmp[0] = IDENTIFY(can_disconnect, cmd->device->lun);
- 
- 	len = 1;
- 	data = tmp;
+ 	return len;
+ }
 -- 
 2.20.1
 
