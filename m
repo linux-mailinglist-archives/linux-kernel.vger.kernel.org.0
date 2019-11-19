@@ -2,171 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C297D10273E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:47:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21CCD102749
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:48:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfKSOrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:47:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfKSOrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:47:12 -0500
-Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 256DB222D1;
-        Tue, 19 Nov 2019 14:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574174831;
-        bh=gDox6nHTvPDLYkDr0P7VZdMIOKHTU1y6ZfkQibEdeqY=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=nkyzsi3CC68t2roIyojFz6hHMc8BpahtgdhYcQzsb7zj9RVkfOYo90feQ8Hzc7LEk
-         CUiBN+PMozu+9IVJdT5Ub5V2Eiw6PTT5TqinkBtvISHH/Ehe7Zhlz40fzRkFpuRAXF
-         d8ZpH1y8RZ0HZW0D3ZxYnkcRDMpHulmJNlW3dwig=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id C8E0C3520B06; Tue, 19 Nov 2019 06:47:10 -0800 (PST)
-Date:   Tue, 19 Nov 2019 06:47:10 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH RT] locking: Make spinlock_t and rwlock_t a RCU section
- on RT
-Message-ID: <20191119144710.GW2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191119084640.wgsxghvc62mxlqc3@linutronix.de>
+        id S1727991AbfKSOs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:48:28 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43238 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbfKSOs1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:48:27 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y23so23626602ljh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 06:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=byAFlXzzH8jPBQ/aAVNrm3vOvpWN1xVTx4/MeZUVxQY=;
+        b=yEbnVhm3gtJp5uGUSL7Pok3vTzWxNUWEt1wdLYeOpm9jbdCBolEwskTVQ5PPDzUlh5
+         aasWp3wAeGWK7XJ7cTRBQEJmRMZF4DXusWa+M/9ixNWaB0xYJHE1+6XNAUcksjyT8/AY
+         bVsChNiPEolUgUcff17R6SZYq72sKm00riC8Rvd02w9Ihz5auKvSUFdJfW0mEc51weHj
+         4i4Mm+CCIg0kl4HPX2swUJOd4+Fj5InmXm+KjvmXCTl60j/d+VgpY/bnKkbsSw9mlopQ
+         LtYKgQfjNOS+Q4ycfuSJGIVlUp3c+E0sJppMRHweG5oK4v+M/reknYklyUJDp4bE5/NO
+         KwIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=byAFlXzzH8jPBQ/aAVNrm3vOvpWN1xVTx4/MeZUVxQY=;
+        b=KrCQ23SCmiSnc60NuVW3U51Xui14kS41vyxw+hgMiKjcPQdZik5Fr5E301RzQdqQXA
+         CqxDTZkpEDynj18MpZYB28xwkTa06BfSdW0/EC1O9WT3IUnE8y8j46HxU7a1P89ME7uE
+         ouS3g1cy6tqETWR1YCKnVE6zLLCPBpdCdB/rf/X8K9nwT+rh2J4/TX7YvB5vhgLwtIw0
+         +iXb9/oU67/Ips/2LRoMaVj8Efamg5oxJ3ww/WdUmPxku/7xpJF4myZvPltKyfSlJ46q
+         QtudBdqNPno4cTzm+fXZ6A0+VxwA+7fYSoeS6GnQjKdovFjKQuGciHHxARbrBriNBIEb
+         JI9w==
+X-Gm-Message-State: APjAAAWDKnPBCscszt3gpVey9NuSIml2UVivcoX0f8eyx1iEqcQiKrBa
+        HBNZSZubc5y9DCLEza+x1v80Tp+i7uh2LdowuttRPQ==
+X-Google-Smtp-Source: APXvYqypBpdcDjYi+awRNbMnaJ0xM8pEhAZMyB5wBSCbVU5PNhff35CN/EVhx1NFDxhNSxkHQUg4ODsr5mR56jda/Ns=
+X-Received: by 2002:a2e:9a12:: with SMTP id o18mr4247059lji.191.1574174905582;
+ Tue, 19 Nov 2019 06:48:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119084640.wgsxghvc62mxlqc3@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191116005240.15722-1-robh@kernel.org>
+In-Reply-To: <20191116005240.15722-1-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 19 Nov 2019 15:48:12 +0100
+Message-ID: <CACRpkdbiBAU451Tt1NqTGhemg800CH-sZQ7YMZ-RR18rzjv6fw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: PCI: Convert Arm Versatile binding to DT schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 09:46:40AM +0100, Sebastian Andrzej Siewior wrote:
-> On !RT a locked spinlock_t and rwlock_t disables preemption which
-> implies a RCU read section. There is code that relies on that behaviour.
-> 
-> Add an explicit RCU read section on RT while a sleeping lock (a lock
-> which would disables preemption on !RT) acquired.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Sat, Nov 16, 2019 at 1:52 AM Rob Herring <robh@kernel.org> wrote:
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+> Convert the Arm Versatile PCI host binding to a DT schema.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Andrew Murray <andrew.murray@arm.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-> ---
->  kernel/locking/rtmutex.c   | 6 ++++++
->  kernel/locking/rwlock-rt.c | 6 ++++++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-> index cf09f8e7ed0f4..602eb7821a1b1 100644
-> --- a/kernel/locking/rtmutex.c
-> +++ b/kernel/locking/rtmutex.c
-> @@ -1141,6 +1141,7 @@ void __sched rt_spin_lock_slowunlock(struct rt_mutex *lock)
->  void __lockfunc rt_spin_lock(spinlock_t *lock)
->  {
->  	sleeping_lock_inc();
-> +	rcu_read_lock();
->  	migrate_disable();
->  	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
->  	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
-> @@ -1156,6 +1157,7 @@ void __lockfunc __rt_spin_lock(struct rt_mutex *lock)
->  void __lockfunc rt_spin_lock_nested(spinlock_t *lock, int subclass)
->  {
->  	sleeping_lock_inc();
-> +	rcu_read_lock();
->  	migrate_disable();
->  	spin_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
->  	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
-> @@ -1169,6 +1171,7 @@ void __lockfunc rt_spin_unlock(spinlock_t *lock)
->  	spin_release(&lock->dep_map, 1, _RET_IP_);
->  	rt_spin_lock_fastunlock(&lock->lock, rt_spin_lock_slowunlock);
->  	migrate_enable();
-> +	rcu_read_unlock();
->  	sleeping_lock_dec();
->  }
->  EXPORT_SYMBOL(rt_spin_unlock);
-> @@ -1200,6 +1203,7 @@ int __lockfunc rt_spin_trylock(spinlock_t *lock)
->  	ret = __rt_mutex_trylock(&lock->lock);
->  	if (ret) {
->  		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
-> +		rcu_read_lock();
->  	} else {
->  		migrate_enable();
->  		sleeping_lock_dec();
-> @@ -1216,6 +1220,7 @@ int __lockfunc rt_spin_trylock_bh(spinlock_t *lock)
->  	ret = __rt_mutex_trylock(&lock->lock);
->  	if (ret) {
->  		sleeping_lock_inc();
-> +		rcu_read_lock();
->  		migrate_disable();
->  		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
->  	} else
-> @@ -1232,6 +1237,7 @@ int __lockfunc rt_spin_trylock_irqsave(spinlock_t *lock, unsigned long *flags)
->  	ret = __rt_mutex_trylock(&lock->lock);
->  	if (ret) {
->  		sleeping_lock_inc();
-> +		rcu_read_lock();
->  		migrate_disable();
->  		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
->  	}
-> diff --git a/kernel/locking/rwlock-rt.c b/kernel/locking/rwlock-rt.c
-> index c3b91205161cc..0ae8c62ea8320 100644
-> --- a/kernel/locking/rwlock-rt.c
-> +++ b/kernel/locking/rwlock-rt.c
-> @@ -310,6 +310,7 @@ int __lockfunc rt_read_trylock(rwlock_t *rwlock)
->  	ret = do_read_rt_trylock(rwlock);
->  	if (ret) {
->  		rwlock_acquire_read(&rwlock->dep_map, 0, 1, _RET_IP_);
-> +		rcu_read_lock();
->  	} else {
->  		migrate_enable();
->  		sleeping_lock_dec();
-> @@ -327,6 +328,7 @@ int __lockfunc rt_write_trylock(rwlock_t *rwlock)
->  	ret = do_write_rt_trylock(rwlock);
->  	if (ret) {
->  		rwlock_acquire(&rwlock->dep_map, 0, 1, _RET_IP_);
-> +		rcu_read_lock();
->  	} else {
->  		migrate_enable();
->  		sleeping_lock_dec();
-> @@ -338,6 +340,7 @@ EXPORT_SYMBOL(rt_write_trylock);
->  void __lockfunc rt_read_lock(rwlock_t *rwlock)
->  {
->  	sleeping_lock_inc();
-> +	rcu_read_lock();
->  	migrate_disable();
->  	rwlock_acquire_read(&rwlock->dep_map, 0, 0, _RET_IP_);
->  	do_read_rt_lock(rwlock);
-> @@ -347,6 +350,7 @@ EXPORT_SYMBOL(rt_read_lock);
->  void __lockfunc rt_write_lock(rwlock_t *rwlock)
->  {
->  	sleeping_lock_inc();
-> +	rcu_read_lock();
->  	migrate_disable();
->  	rwlock_acquire(&rwlock->dep_map, 0, 0, _RET_IP_);
->  	do_write_rt_lock(rwlock);
-> @@ -358,6 +362,7 @@ void __lockfunc rt_read_unlock(rwlock_t *rwlock)
->  	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
->  	do_read_rt_unlock(rwlock);
->  	migrate_enable();
-> +	rcu_read_unlock();
->  	sleeping_lock_dec();
->  }
->  EXPORT_SYMBOL(rt_read_unlock);
-> @@ -367,6 +372,7 @@ void __lockfunc rt_write_unlock(rwlock_t *rwlock)
->  	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
->  	do_write_rt_unlock(rwlock);
->  	migrate_enable();
-> +	rcu_read_unlock();
->  	sleeping_lock_dec();
->  }
->  EXPORT_SYMBOL(rt_write_unlock);
-> -- 
-> 2.24.0
-> 
+Thanks for doing this.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
