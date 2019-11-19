@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8563410164A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C6E1014F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfKSFvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49350 "EHLO mail.kernel.org"
+        id S1729945AbfKSFjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731843AbfKSFvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:49 -0500
+        id S1729797AbfKSFjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38EE6208C3;
-        Tue, 19 Nov 2019 05:51:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38F812071A;
+        Tue, 19 Nov 2019 05:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142708;
-        bh=2Ryiu54J7RjdKSMXF03LaKQ2DIslLnR9lwAhh7kigR0=;
+        s=default; t=1574141947;
+        bh=nQTEW2sPLQXF4S3Lvl9L5CzIUmUDreOj4jlhRJhdpGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=en3qPCVROYEmx0OoprYHXcbE0j+rSXkJfGg5wdHo5S9M/ixWJxl64MTYKvMs0alB5
-         ZXOiQ0MK8+GGrqgF2UeAJKjUeRDN+XS/vBfIhbjonBk+XvHia/KzXjc1wjrRSlzBie
-         hbG5husIqJS6olvXgKhGyEgdDFac8k7CBepRY6WA=
+        b=fBOOcBwXIrj5Rru64Gqqy3NY78Gu8IeYTtw36O2PMvt2Z5FkpI4+tOZOJs6+Zvu5s
+         YukTrG1itR+k2FEWVXO5qSwG4w9DsgrvoEq9FveP7WzuiG808J+6o9QhNRvSAA1x5B
+         3h1wqAUTZht30dTHfWS2kDmy+xzQKTA3H/+t0M3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nava kishore Manne <navam@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
+        stable@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 132/239] serial: uartps: Fix suspend functionality
+Subject: [PATCH 4.19 335/422] i2c: aspeed: fix invalid clock parameters for very large divisors
 Date:   Tue, 19 Nov 2019 06:18:52 +0100
-Message-Id: <20191119051330.773039084@linuxfoundation.org>
+Message-Id: <20191119051420.726405318@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,102 +46,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+From: Brendan Higgins <brendanhiggins@google.com>
 
-[ Upstream commit 4b9d33c6a30688344a3e95179654ea31b07f59b7 ]
+[ Upstream commit 17ccba67109cd0631f206cf49e17986218b47854 ]
 
-The driver's suspend/resume functions were buggy.
-If UART node contains any child node in the DT and
-the child is established a communication path with
-the parent UART. The relevant /dev/ttyPS* node will
-be not available for other operations.
-If the driver is trying to do any operations like
-suspend/resume without checking the tty->dev status
-it leads to the kernel crash/hang.
+The function that computes clock parameters from divisors did not
+respect the maximum size of the bitfields that the parameters were
+written to. This fixes the bug.
 
-This patch fix this issue by call the device_may_wake()
-with the generic parameter of type struct device.
-in the uart suspend and resume paths.
+This bug can be reproduced with (and this fix verified with) the test
+at: https://kunit-review.googlesource.com/c/linux/+/1035/
 
-It also fixes a race condition in the uart suspend
-path(i.e uart_suspend_port() should be called at the
-end of cdns_uart_suspend API this path updates the same)
-
-Signed-off-by: Nava kishore Manne <navam@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Discovered-by-KUnit: https://kunit-review.googlesource.com/c/linux/+/1035/
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+Reviewed-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/xilinx_uartps.c | 41 +++++++++---------------------
- 1 file changed, 12 insertions(+), 29 deletions(-)
+ drivers/i2c/busses/i2c-aspeed.c | 65 +++++++++++++++++++++++----------
+ 1 file changed, 45 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index b0da63737aa19..0dbfd02e3b196 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1342,24 +1342,11 @@ static struct uart_driver cdns_uart_uart_driver = {
- static int cdns_uart_suspend(struct device *device)
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index a19fbff168617..d9401b5191069 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -137,7 +137,8 @@ struct aspeed_i2c_bus {
+ 	/* Synchronizes I/O mem access to base. */
+ 	spinlock_t			lock;
+ 	struct completion		cmd_complete;
+-	u32				(*get_clk_reg_val)(u32 divisor);
++	u32				(*get_clk_reg_val)(struct device *dev,
++							   u32 divisor);
+ 	unsigned long			parent_clk_frequency;
+ 	u32				bus_frequency;
+ 	/* Transaction state. */
+@@ -686,16 +687,27 @@ static const struct i2c_algorithm aspeed_i2c_algo = {
+ #endif /* CONFIG_I2C_SLAVE */
+ };
+ 
+-static u32 aspeed_i2c_get_clk_reg_val(u32 clk_high_low_max, u32 divisor)
++static u32 aspeed_i2c_get_clk_reg_val(struct device *dev,
++				      u32 clk_high_low_mask,
++				      u32 divisor)
  {
- 	struct uart_port *port = dev_get_drvdata(device);
--	struct tty_struct *tty;
--	struct device *tty_dev;
--	int may_wake = 0;
--
--	/* Get the tty which could be NULL so don't assume it's valid */
--	tty = tty_port_tty_get(&port->state->port);
--	if (tty) {
--		tty_dev = tty->dev;
--		may_wake = device_may_wakeup(tty_dev);
--		tty_kref_put(tty);
--	}
-+	int may_wake;
- 
--	/*
--	 * Call the API provided in serial_core.c file which handles
--	 * the suspend.
--	 */
--	uart_suspend_port(&cdns_uart_uart_driver, port);
--	if (!(console_suspend_enabled && !may_wake)) {
-+	may_wake = device_may_wakeup(device);
+-	u32 base_clk, clk_high, clk_low, tmp;
++	u32 base_clk_divisor, clk_high_low_max, clk_high, clk_low, tmp;
 +
-+	if (console_suspend_enabled && may_wake) {
- 		unsigned long flags = 0;
- 
- 		spin_lock_irqsave(&port->lock, flags);
-@@ -1374,7 +1361,11 @@ static int cdns_uart_suspend(struct device *device)
- 		spin_unlock_irqrestore(&port->lock, flags);
- 	}
- 
--	return 0;
 +	/*
-+	 * Call the API provided in serial_core.c file which handles
-+	 * the suspend.
++	 * SCL_high and SCL_low represent a value 1 greater than what is stored
++	 * since a zero divider is meaningless. Thus, the max value each can
++	 * store is every bit set + 1. Since SCL_high and SCL_low are added
++	 * together (see below), the max value of both is the max value of one
++	 * them times two.
 +	 */
-+	return uart_suspend_port(&cdns_uart_uart_driver, port);
++	clk_high_low_max = (clk_high_low_mask + 1) * 2;
+ 
+ 	/*
+ 	 * The actual clock frequency of SCL is:
+ 	 *	SCL_freq = APB_freq / (base_freq * (SCL_high + SCL_low))
+ 	 *		 = APB_freq / divisor
+ 	 * where base_freq is a programmable clock divider; its value is
+-	 *	base_freq = 1 << base_clk
++	 *	base_freq = 1 << base_clk_divisor
+ 	 * SCL_high is the number of base_freq clock cycles that SCL stays high
+ 	 * and SCL_low is the number of base_freq clock cycles that SCL stays
+ 	 * low for a period of SCL.
+@@ -705,47 +717,59 @@ static u32 aspeed_i2c_get_clk_reg_val(u32 clk_high_low_max, u32 divisor)
+ 	 *	SCL_low	 = clk_low + 1
+ 	 * Thus,
+ 	 *	SCL_freq = APB_freq /
+-	 *		((1 << base_clk) * (clk_high + 1 + clk_low + 1))
++	 *		((1 << base_clk_divisor) * (clk_high + 1 + clk_low + 1))
+ 	 * The documentation recommends clk_high >= clk_high_max / 2 and
+ 	 * clk_low >= clk_low_max / 2 - 1 when possible; this last constraint
+ 	 * gives us the following solution:
+ 	 */
+-	base_clk = divisor > clk_high_low_max ?
++	base_clk_divisor = divisor > clk_high_low_max ?
+ 			ilog2((divisor - 1) / clk_high_low_max) + 1 : 0;
+-	tmp = (divisor + (1 << base_clk) - 1) >> base_clk;
+-	clk_low = tmp / 2;
+-	clk_high = tmp - clk_low;
+ 
+-	if (clk_high)
+-		clk_high--;
++	if (base_clk_divisor > ASPEED_I2CD_TIME_BASE_DIVISOR_MASK) {
++		base_clk_divisor = ASPEED_I2CD_TIME_BASE_DIVISOR_MASK;
++		clk_low = clk_high_low_mask;
++		clk_high = clk_high_low_mask;
++		dev_err(dev,
++			"clamping clock divider: divider requested, %u, is greater than largest possible divider, %u.\n",
++			divisor, (1 << base_clk_divisor) * clk_high_low_max);
++	} else {
++		tmp = (divisor + (1 << base_clk_divisor) - 1)
++				>> base_clk_divisor;
++		clk_low = tmp / 2;
++		clk_high = tmp - clk_low;
++
++		if (clk_high)
++			clk_high--;
+ 
+-	if (clk_low)
+-		clk_low--;
++		if (clk_low)
++			clk_low--;
++	}
+ 
+ 
+ 	return ((clk_high << ASPEED_I2CD_TIME_SCL_HIGH_SHIFT)
+ 		& ASPEED_I2CD_TIME_SCL_HIGH_MASK)
+ 			| ((clk_low << ASPEED_I2CD_TIME_SCL_LOW_SHIFT)
+ 			   & ASPEED_I2CD_TIME_SCL_LOW_MASK)
+-			| (base_clk & ASPEED_I2CD_TIME_BASE_DIVISOR_MASK);
++			| (base_clk_divisor
++			   & ASPEED_I2CD_TIME_BASE_DIVISOR_MASK);
  }
  
- /**
-@@ -1388,17 +1379,9 @@ static int cdns_uart_resume(struct device *device)
- 	struct uart_port *port = dev_get_drvdata(device);
- 	unsigned long flags = 0;
- 	u32 ctrl_reg;
--	struct tty_struct *tty;
--	struct device *tty_dev;
--	int may_wake = 0;
--
--	/* Get the tty which could be NULL so don't assume it's valid */
--	tty = tty_port_tty_get(&port->state->port);
--	if (tty) {
--		tty_dev = tty->dev;
--		may_wake = device_may_wakeup(tty_dev);
--		tty_kref_put(tty);
--	}
-+	int may_wake;
-+
-+	may_wake = device_may_wakeup(device);
+-static u32 aspeed_i2c_24xx_get_clk_reg_val(u32 divisor)
++static u32 aspeed_i2c_24xx_get_clk_reg_val(struct device *dev, u32 divisor)
+ {
+ 	/*
+ 	 * clk_high and clk_low are each 3 bits wide, so each can hold a max
+ 	 * value of 8 giving a clk_high_low_max of 16.
+ 	 */
+-	return aspeed_i2c_get_clk_reg_val(16, divisor);
++	return aspeed_i2c_get_clk_reg_val(dev, GENMASK(2, 0), divisor);
+ }
  
- 	if (console_suspend_enabled && !may_wake) {
- 		struct cdns_uart *cdns_uart = port->private_data;
+-static u32 aspeed_i2c_25xx_get_clk_reg_val(u32 divisor)
++static u32 aspeed_i2c_25xx_get_clk_reg_val(struct device *dev, u32 divisor)
+ {
+ 	/*
+ 	 * clk_high and clk_low are each 4 bits wide, so each can hold a max
+ 	 * value of 16 giving a clk_high_low_max of 32.
+ 	 */
+-	return aspeed_i2c_get_clk_reg_val(32, divisor);
++	return aspeed_i2c_get_clk_reg_val(dev, GENMASK(3, 0), divisor);
+ }
+ 
+ /* precondition: bus.lock has been acquired. */
+@@ -758,7 +782,7 @@ static int aspeed_i2c_init_clk(struct aspeed_i2c_bus *bus)
+ 	clk_reg_val &= (ASPEED_I2CD_TIME_TBUF_MASK |
+ 			ASPEED_I2CD_TIME_THDSTA_MASK |
+ 			ASPEED_I2CD_TIME_TACST_MASK);
+-	clk_reg_val |= bus->get_clk_reg_val(divisor);
++	clk_reg_val |= bus->get_clk_reg_val(bus->dev, divisor);
+ 	writel(clk_reg_val, bus->base + ASPEED_I2C_AC_TIMING_REG1);
+ 	writel(ASPEED_NO_TIMEOUT_CTRL, bus->base + ASPEED_I2C_AC_TIMING_REG2);
+ 
+@@ -874,7 +898,8 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
+ 	if (!match)
+ 		bus->get_clk_reg_val = aspeed_i2c_24xx_get_clk_reg_val;
+ 	else
+-		bus->get_clk_reg_val = (u32 (*)(u32))match->data;
++		bus->get_clk_reg_val = (u32 (*)(struct device *, u32))
++				match->data;
+ 
+ 	/* Initialize the I2C adapter */
+ 	spin_lock_init(&bus->lock);
 -- 
 2.20.1
 
