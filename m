@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4193101538
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:42:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B570110165F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfKSFlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36390 "EHLO mail.kernel.org"
+        id S1731476AbfKSFwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:52:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728636AbfKSFlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:50 -0500
+        id S1731910AbfKSFw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:52:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E77C21939;
-        Tue, 19 Nov 2019 05:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46CE720721;
+        Tue, 19 Nov 2019 05:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142109;
-        bh=lA9ReJAonRl749F32IGcIapOZ9Sgo4WuiE5TEmF+pk0=;
+        s=default; t=1574142746;
+        bh=5WJiAT5XHNPt7tsfOK7uUb9wu5fkg7bQm1JKF/rfFXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ei2weQGZ1nM5lMssZPuEfY5wX02PjGL1B9ObXrRNhpDrSMLBOLwS5Uc5jmuM3ogXH
-         d/wqgzqTtyzbjJ8DZtndhK52PhF850xQ5LLPpjmk132A1niSHb01M0DNccFOoIZaMY
-         ckDWgxaFkAqKp3uZJHeIFBrpFg/2NWo6s4wTCxn8=
+        b=b4BK/dZDKme5aY2wp/OdB7kRKppazbA+WkwdkrPIKFVFvOkBSzzFyaiMpIx28f7CG
+         w8tk5ZjlhjE+X/TyPwz235GP03LegUm5TZiR5+0Fv2yO3hE9vTfQHEKCXYnF1cgR+u
+         rvabx/aMQWZ0u+RBIeFZ2lK9jktNZ08JlmWvdimQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Dan Aloni <dan@kernelim.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 390/422] crypto: fix a memory leak in rsa-kcs1pads encryption mode
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 187/239] phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
 Date:   Tue, 19 Nov 2019 06:19:47 +0100
-Message-Id: <20191119051424.384280022@linuxfoundation.org>
+Message-Id: <20191119051335.261452229@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Aloni <dan@kernelim.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit 3944f139d5592790b70bc64f197162e643a8512b ]
+[ Upstream commit 09938ea9d136243e8d1fed6d4d7a257764f28f6d ]
 
-The encryption mode of pkcs1pad never uses out_sg and out_buf, so
-there's no need to allocate the buffer, which presently is not even
-being freed.
+This patch fixes and issue that the vbus_ctrl is disabled by
+rcar_gen3_init_from_a_peri_to_a_host(), so a usb host cannot
+supply the vbus.
 
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: linux-crypto@vger.kernel.org
-CC: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: Dan Aloni <dan@kernelim.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Note that this condition will exit when the otg irq happens
+even if we don't apply this patch.
+
+Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/rsa-pkcs1pad.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
-index 9893dbfc1af45..812476e468213 100644
---- a/crypto/rsa-pkcs1pad.c
-+++ b/crypto/rsa-pkcs1pad.c
-@@ -261,15 +261,6 @@ static int pkcs1pad_encrypt(struct akcipher_request *req)
- 	pkcs1pad_sg_set_buf(req_ctx->in_sg, req_ctx->in_buf,
- 			ctx->key_size - 1 - req->src_len, req->src);
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index e8fe80312820d..7f5e36bfeee8d 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -195,7 +195,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+ 	val = readl(usb2_base + USB2_OBINTEN);
+ 	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
  
--	req_ctx->out_buf = kmalloc(ctx->key_size, GFP_KERNEL);
--	if (!req_ctx->out_buf) {
--		kfree(req_ctx->in_buf);
--		return -ENOMEM;
--	}
--
--	pkcs1pad_sg_set_buf(req_ctx->out_sg, req_ctx->out_buf,
--			ctx->key_size, NULL);
--
- 	akcipher_request_set_tfm(&req_ctx->child_req, ctx->child);
- 	akcipher_request_set_callback(&req_ctx->child_req, req->base.flags,
- 			pkcs1pad_encrypt_sign_complete_cb, req);
+-	rcar_gen3_enable_vbus_ctrl(ch, 0);
++	rcar_gen3_enable_vbus_ctrl(ch, 1);
+ 	rcar_gen3_init_for_host(ch);
+ 
+ 	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
 -- 
 2.20.1
 
