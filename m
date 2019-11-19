@@ -2,108 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119DB102FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:12:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F18E5102FCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:13:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfKSXMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 18:12:42 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45108 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfKSXMm (ORCPT
+        id S1727431AbfKSXNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 18:13:37 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46095 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfKSXNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 18:12:42 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 203so2652858lfa.12
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 15:12:41 -0800 (PST)
+        Tue, 19 Nov 2019 18:13:37 -0500
+Received: by mail-qk1-f193.google.com with SMTP id h15so19523980qka.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 15:13:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=J6djBZAZ4NKmoE5rDlXQqbYC4TEITCNxIlH5HQol9VI=;
-        b=Vjz8znJ6cb48JQjUqD6uTuZV0ePVCQHg2q8rjcLMUst/MwnYK5I8QKVAODVhtFGomV
-         Nc2qf1AXDeKZGyVudF42PKOCi42xtrwsdb9l6Gt2B2JBAxUt8ZQZCbPB7XPRyBZ8XRos
-         Cmu34UdrptldO+ncwB3Txz9DFyC4ZNmpBXK+iRmZ3V+R/wTj4aZ6NiRUgHwiepjkouFJ
-         iE3cC7RZudMqPTkXB/GWq6Ba6+EAC2vMqxvluLSRQZ93TZt39k8kq4/P2oMS8lc5pFG/
-         qylQEC6Vrz/MNPE/ic5RLYJldRFhSeDSkbb0wjV77HbUgUZwA7iUaVbV/1DgZRNMfje2
-         ebyQ==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=17yvYiAWU0HGRGp9KcOWNDREPdtmfZAOUWmEXa5IV8Q=;
+        b=CFH6B8zXYbvy1pYUJJbcu8xh9P/QVD9z5JiNaOpP03dFNMTRSirDeSciisIuN1TsQA
+         As/ijGNvAx9+OyE4Hnp1DTwaPgjRcoWWq+wiBHbdq7EhD17YdSipISWg1TICLdaMuIXY
+         lM/H1EChksx8g0UiRlsq0Y+KPp0tlPL8gbAsgj2UFVJ6GZ56v1/7ShRrNC83MmE56Mty
+         /F4A+sZS8mMHYRF2AmUmsD/CJquhlsSwT99zGQSlFyFCQj7eYOxXZCzRsxMIwt4BzBwB
+         HTtkNUPosiSiG5VzFAK0aWuUW9tXvIFDKo/43Zb30icp121XVTBDnTlDnBB4yim04UzW
+         KUAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=J6djBZAZ4NKmoE5rDlXQqbYC4TEITCNxIlH5HQol9VI=;
-        b=VjBhD2h1cpnjltDs36A77153CSVolB5tBNYoiYsQ//YX29FE5lAh8ALhAdfVt4T/8r
-         5V8ydpBVhBmsgLRBtygdfqHYeecF3H2NclHmC8HncN1UgWbtLdqjYK/NSVgdyiR7mCmC
-         P8AeR3GOWYHgCbnF0a896PizprlsEuM/u2YoHrJWbckwHheNRyIKGZmyIR75uka/sp0z
-         fhAuaabhOfrxszO2Pjs61tesk4IsZQAmsj0CAgcmZDSYqkITHMA2iXysctKhN7exXJ8S
-         iFCI4Vj2zuF3fUCxUfR0bQZeaeG7uEr3L+dYMDCoQGL/MxTdfegkNd02NgVWzUE0E0cp
-         D9Xg==
-X-Gm-Message-State: APjAAAWXT3xrfptwKfE7+41Al6YqUoDKHECrX/mVXQdN0hPnDJnURK4s
-        9k/mNNZ4oKIDHuEjgxbxp4CC3GaGgrs=
-X-Google-Smtp-Source: APXvYqzEPJDu2v7/BPSwTZzTsuB/P5qIDv0tkxu6tWkp9wShP1RJG9l88xRd/STrMH9vn7E9/djg9Q==
-X-Received: by 2002:ac2:53ba:: with SMTP id j26mr147420lfh.92.1574205160201;
-        Tue, 19 Nov 2019 15:12:40 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id p88sm11086298ljp.13.2019.11.19.15.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 15:12:39 -0800 (PST)
-Date:   Tue, 19 Nov 2019 15:12:21 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     <netdev@vger.kernel.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 net-next 07/13] net: ethernet: ti: introduce cpsw 
- switchdev based driver part 1 - dual-emac
-Message-ID: <20191119151221.14ff2d28@cakuba.netronome.com>
-In-Reply-To: <20191119221925.28426-8-grygorii.strashko@ti.com>
-References: <20191119221925.28426-1-grygorii.strashko@ti.com>
-        <20191119221925.28426-8-grygorii.strashko@ti.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=17yvYiAWU0HGRGp9KcOWNDREPdtmfZAOUWmEXa5IV8Q=;
+        b=Qe0y00YY1W3Ei26ubtA6/ZNsmR15wT0aIxmoOUC+nYNGPZ/rtUyzMek/JxzdwV4VK+
+         LrAomLtFvWcMjUvAKVH+Kxgu+CmBDNpqZc1gx3NHpQLVzhSI/17bPZlFpBZo1nfYSTWs
+         hkgU5g4YH9RXEan1m3jc0SnZH9OW1sCkV7nXx9R+FzcaHc7pRSct7oiVciGKB7AQ1r7E
+         /sSQNfWdMKHhtuc++ahP2e2WRtOLnuf1utcA14YxIDGrDpu4JhRxDqbsS1fgQyQoG4sM
+         uzqb2/0ilakJrOQ02OFr4xNYCkQMfDLZkdq4lMz4U7t7Se4LvNWo8SBsqm6lm5aFdi1i
+         7JoQ==
+X-Gm-Message-State: APjAAAUo27M4Mcr8vtfJQMP9uU9NTwqJx1vI9YJOXouosgg/jYQHy1FY
+        GdHICnPKxsmnvM+Udqm3u7mZ2A==
+X-Google-Smtp-Source: APXvYqxkAxQNe/mh+W9e4zwMrMhZARAyEI1xOqHgisjcDpSWmv77QsRLXTnzw8xWHepRdkYoW9QjIQ==
+X-Received: by 2002:ae9:e702:: with SMTP id m2mr106007qka.269.1574205216019;
+        Tue, 19 Nov 2019 15:13:36 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id b4sm297485qka.75.2019.11.19.15.13.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Nov 2019 15:13:35 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iXCgh-0004m0-03; Tue, 19 Nov 2019 19:13:35 -0400
+Date:   Tue, 19 Nov 2019 19:13:34 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Rao Shoaib <rao.shoaib@oracle.com>
+Cc:     monis@mellanox.com, dledford@redhat.com, sean.hefty@intel.com,
+        hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] Introduce maximum WQE size to check limits
+Message-ID: <20191119231334.GO4991@ziepe.ca>
+References: <1574106879-19211-1-git-send-email-rao.shoaib@oracle.com>
+ <1574106879-19211-2-git-send-email-rao.shoaib@oracle.com>
+ <20191119203138.GA13145@ziepe.ca>
+ <44d1242a-fc32-9918-dd53-cd27ebf61811@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44d1242a-fc32-9918-dd53-cd27ebf61811@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019 00:19:19 +0200, Grygorii Strashko wrote:
-> From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+On Tue, Nov 19, 2019 at 02:38:23PM -0800, Rao Shoaib wrote:
 > 
-> Part 1:
->  Introduce basic CPSW dual_mac driver (cpsw_new.c) which is operating in
-> dual-emac mode by default, thus working as 2 individual network interfaces.
-> Main differences from legacy CPSW driver are:
-> 
->  - optimized promiscuous mode: The P0_UNI_FLOOD (both ports) is enabled in
-> addition to ALLMULTI (current port) instead of ALE_BYPASS. So, Ports in
-> promiscuous mode will keep possibility of mcast and vlan filtering, which
-> is provides significant benefits when ports are joined to the same bridge,
-> but without enabling "switch" mode, or to different bridges.
->  - learning disabled on ports as it make not too much sense for
->    segregated ports - no forwarding in HW.
->  - enabled basic support for devlink.
-> 
-> 	devlink dev show
-> 		platform/48484000.switch
-> 
-> 	devlink dev param show
-> 	 platform/48484000.switch:
-> 	name ale_bypass type driver-specific
-> 	 values:
-> 		cmode runtime value false
-> 
->  - "ale_bypass" devlink driver parameter allows to enable
-> ALE_CONTROL(4).BYPASS mode for debug purposes.
->  - updated DT bindings.
+> On 11/19/19 12:31 PM, Jason Gunthorpe wrote:
+> > On Mon, Nov 18, 2019 at 11:54:38AM -0800, rao Shoaib wrote:
+> > > From: Rao Shoaib <rao.shoaib@oracle.com>
+> > > 
+> > > Introduce maximum WQE size to impose limits on max SGE's and inline data
+> > > 
+> > > Signed-off-by: Rao Shoaib <rao.shoaib@oracle.com>
+> > >   drivers/infiniband/sw/rxe/rxe_param.h | 3 ++-
+> > >   drivers/infiniband/sw/rxe/rxe_qp.c    | 7 +++++--
+> > >   2 files changed, 7 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/infiniband/sw/rxe/rxe_param.h b/drivers/infiniband/sw/rxe/rxe_param.h
+> > > index 1b596fb..31fb5c7 100644
+> > > +++ b/drivers/infiniband/sw/rxe/rxe_param.h
+> > > @@ -68,7 +68,6 @@ enum rxe_device_param {
+> > >   	RXE_HW_VER			= 0,
+> > >   	RXE_MAX_QP			= 0x10000,
+> > >   	RXE_MAX_QP_WR			= 0x4000,
+> > > -	RXE_MAX_INLINE_DATA		= 400,
+> > >   	RXE_DEVICE_CAP_FLAGS		= IB_DEVICE_BAD_PKEY_CNTR
+> > >   					| IB_DEVICE_BAD_QKEY_CNTR
+> > >   					| IB_DEVICE_AUTO_PATH_MIG
+> > > @@ -79,7 +78,9 @@ enum rxe_device_param {
+> > >   					| IB_DEVICE_RC_RNR_NAK_GEN
+> > >   					| IB_DEVICE_SRQ_RESIZE
+> > >   					| IB_DEVICE_MEM_MGT_EXTENSIONS,
+> > > +	RXE_MAX_WQE_SIZE		= 0x2d0, /* For RXE_MAX_SGE */
+> > This shouldn't just be a random constant, I think you are trying to
+> > say:
+> > 
+> >    RXE_MAX_WQE_SIZE = sizeof(struct rxe_send_wqe) + sizeof(struct ib_sge)*RXE_MAX_SGE
 
-Could you please add documentation for the devlink parameter under
-Documentation/networking/devlink-params-* ?
+> I thought you wanted this value to be independent of RXE_MAX_SGE, else why
+> are defining it.
+
+Then define 
+
+   RXE_MAX_SGE = (RXE_MAX_WQE_SIZE - sizeof(rxe_send_wqe))/sizeof(rxe_sge)
+
+And drive everything off RXE_MAX_WQE_SIZE, which sounds good
+
+> > Just say that
+> > 
+> > >   	RXE_MAX_SGE			= 32,
+> > > +	RXE_MAX_INLINE_DATA		= RXE_MAX_WQE_SIZE,
+> > This is mixed up now, it should be
+> > 
+> >    RXE_MAX_INLINE_DATA = RXE_MAX_WQE_SIZE - sizeof(rxe_send_wqe)
+> 
+> I agree to what you are suggesting, it will make the current patch better.
+> However, In my previous patch I had
+> 
+> RXE_MAX_INLINE_DATA		= RXE_MAX_SGE * sizeof(struct ib_sge)
+> 
+> IMHO that conveys the intent much better. I do not see the reason for
+> defining RXE_MAX_WQE_SIZE, ib_device_attr does not even have an entry for it
+> and hence the value is not used anywhere by rxe or by any other relevant
+> driver.
+
+Because WQE_SIZE is what you are actually concerned with here, using
+MAX_SGE as a proxy for the max WQE is confusing
+
+Jason
