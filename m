@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 576D1101576
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7990F101478
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbfKSFo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:44:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39718 "EHLO mail.kernel.org"
+        id S1729623AbfKSFeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:34:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728629AbfKSFoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:44:22 -0500
+        id S1729109AbfKSFeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:34:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 488E12075E;
-        Tue, 19 Nov 2019 05:44:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57D2920672;
+        Tue, 19 Nov 2019 05:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142261;
-        bh=XOZGKUDKELZbuYuJ99nsyJpYiikG2/sMmY+svnf4Fpw=;
+        s=default; t=1574141647;
+        bh=TW1UJ3v+CH/LPjjD9VAJXk8Gc7Yo8euonvZXeuV1Gl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k/DCgbc4MR3OlDLL//+I04HWUz+qG49tP1j6Bl8wlMQkFuGocIkcLHJ9635n135Uu
-         j6i0x+zzn+4EyNOlKOGuI5emvHskfnkBBRG5uG6K8msTpkkKrgsaQAWS3g50EY2X3d
-         g4Xm4FXNiRjbDAlgMMlEPY1FfA7LyAfn4s6Knm58=
+        b=0RjMymQSgK1g26nSTTa0BsoCxnEztUMHMxQS1YUZvwwcdo8MTqns4INOXLtiJpf3K
+         xqlHm/eUw6SF355CE+sg1idRQRW6zfU31tkTX5tmuCDJmrb3DJjnfxDuSe0wpynepS
+         23JmJIbvY0goNQ2NFd+6HnUyrgWejCjm6Ae+DCzo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Feng Tang <feng.tang@intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 021/239] x86/quirks: Disable HPET on Intel Coffe Lake platforms
-Date:   Tue, 19 Nov 2019 06:17:01 +0100
-Message-Id: <20191119051301.677858088@linuxfoundation.org>
+        stable@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 225/422] power: supply: max8998-charger: Fix platform data retrieval
+Date:   Tue, 19 Nov 2019 06:17:02 +0100
+Message-Id: <20191119051413.215842302@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-commit fc5db58539b49351e76f19817ed1102bf7c712d0 upstream.
+[ Upstream commit cb90a2c6f77fe9b43d1e3f759bb2f13fe7fa1811 ]
 
-Some Coffee Lake platforms have a skewed HPET timer once the SoCs entered
-PC10, which in consequence marks TSC as unstable because HPET is used as
-watchdog clocksource for TSC.
+Since the max8998 MFD driver supports instantiation by DT, platform data
+retrieval is handled in MFD probe and cell drivers should get use
+the pdata field of max8998_dev struct to obtain them.
 
-Harry Pan tried to work around it in the clocksource watchdog code [1]
-thereby creating a circular dependency between HPET and TSC. This also
-ignores the fact, that HPET is not only unsuitable as watchdog clocksource
-on these systems, it becomes unusable in general.
-
-Disable HPET on affected platforms.
-
-Suggested-by: Feng Tang <feng.tang@intel.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203183
-Link: https://lore.kernel.org/lkml/20190516090651.1396-1-harry.pan@intel.com/ [1]
-Link: https://lkml.kernel.org/r/20191016103816.30650-1-kai.heng.feng@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/early-quirks.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/power/supply/max8998_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/early-quirks.c
-+++ b/arch/x86/kernel/early-quirks.c
-@@ -681,6 +681,8 @@ static struct chipset early_qrk[] __init
- 	 */
- 	{ PCI_VENDOR_ID_INTEL, 0x0f00,
- 		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
-+	{ PCI_VENDOR_ID_INTEL, 0x3ec4,
-+		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
- 	{ PCI_VENDOR_ID_BROADCOM, 0x4331,
- 	  PCI_CLASS_NETWORK_OTHER, PCI_ANY_ID, 0, apple_airport_reset},
- 	{}
+diff --git a/drivers/power/supply/max8998_charger.c b/drivers/power/supply/max8998_charger.c
+index cad7d1a8feec7..aa65e6c36c55e 100644
+--- a/drivers/power/supply/max8998_charger.c
++++ b/drivers/power/supply/max8998_charger.c
+@@ -86,7 +86,7 @@ static const struct power_supply_desc max8998_battery_desc = {
+ static int max8998_battery_probe(struct platform_device *pdev)
+ {
+ 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max8998_platform_data *pdata = dev_get_platdata(iodev->dev);
++	struct max8998_platform_data *pdata = iodev->pdata;
+ 	struct power_supply_config psy_cfg = {};
+ 	struct max8998_battery_data *max8998;
+ 	struct i2c_client *i2c;
+-- 
+2.20.1
+
 
 
