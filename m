@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1447101499
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7570B1015A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:46:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbfKSFfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:35:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56326 "EHLO mail.kernel.org"
+        id S1730427AbfKSFqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729802AbfKSFfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:35:25 -0500
+        id S1730774AbfKSFqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:46:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB549206EC;
-        Tue, 19 Nov 2019 05:35:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3FFF2075E;
+        Tue, 19 Nov 2019 05:46:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141724;
-        bh=LthHNK7NLU//nPk0VbPBWYGPgKRhhbxZ34wx4xWUD1E=;
+        s=default; t=1574142361;
+        bh=RloCVusTu2nmMd+17/acGPUt6gZueL7/1blIIxEjGAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0n4NjOm022sxhv/99OcsXRP44UujDUMtT5lWhQJ431eUukElHfNcw2gk4z9TgVudB
-         +Q1LOjEJsWR+sZfSorJMTAlJHWvqGUoTHpjmtwoQGsn8HC+hziHuKsN/eybTYad4xP
-         CQDlCas712i12bk77fBnokkpQ1qgkIuK8/QyO1MM=
+        b=vhcu/bIeyMVMXdpCmqYlfsTZu4/9GN0p4Z63787gvJodfezXhWjajORTN5MZJ3K6i
+         z8kBh7Kb2lUxJbNWlwaGS+OmJokNHRa3an0KTyS2tR6enlBuqdVcK5i1sG6hR3df0h
+         jcVUEFKFfkLmVb1HAH5/LsV/1THhh5ZghVBDYAvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 258/422] net: cavium: fix return type of ndo_start_xmit function
-Date:   Tue, 19 Nov 2019 06:17:35 +0100
-Message-Id: <20191119051415.705616949@linuxfoundation.org>
+Subject: [PATCH 4.14 056/239] iwlwifi: mvm: avoid sending too many BARs
+Date:   Tue, 19 Nov 2019 06:17:36 +0100
+Message-Id: <20191119051308.895668289@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit ac1172dea10b6ba51de9346d3130db688b5196c5 ]
+[ Upstream commit 1a19c139be18ed4d6d681049cc48586fae070120 ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+When we receive TX response, we may release a few packets
+due to a hole that was closed in the transmission window.
 
-Found by coccinelle.
+However, if that frame failed, we will mark all the released
+frames as failed and will send multiple BARs.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This affects statistics badly, and cause unnecessary frames
+transmission.
+
+Instead, mark all the following packets as success, with the
+desired result of sending a bar for the failed frame only.
+
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/liquidio/lio_main.c    | 2 +-
- drivers/net/ethernet/cavium/liquidio/lio_vf_main.c | 2 +-
- drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c  | 5 +++--
- drivers/net/ethernet/cavium/octeon/octeon_mgmt.c   | 5 +++--
- 4 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index 6fb13fa73b271..304e4b9436276 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -2324,7 +2324,7 @@ static inline int send_nic_timestamp_pkt(struct octeon_device *oct,
-  * @returns whether the packet was transmitted to the device okay or not
-  *             (NETDEV_TX_OK or NETDEV_TX_BUSY)
-  */
--static int liquidio_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t liquidio_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct lio *lio;
- 	struct octnet_buf_free_info *finfo;
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c
-index b77835724dc84..d83773bc0dd7f 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c
-@@ -1390,7 +1390,7 @@ static int send_nic_timestamp_pkt(struct octeon_device *oct,
-  * @returns whether the packet was transmitted to the device okay or not
-  *             (NETDEV_TX_OK or NETDEV_TX_BUSY)
-  */
--static int liquidio_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t liquidio_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct octnet_buf_free_info *finfo;
- 	union octnic_cmd_setup cmdsetup;
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-index c99b59fe4c8fb..a1bda1683ebfc 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-@@ -31,7 +31,8 @@
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+index efef28012a6b9..ac1e05b93a9ad 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+@@ -1378,6 +1378,14 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
+ 			break;
+ 		}
  
- static int lio_vf_rep_open(struct net_device *ndev);
- static int lio_vf_rep_stop(struct net_device *ndev);
--static int lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev);
-+static netdev_tx_t lio_vf_rep_pkt_xmit(struct sk_buff *skb,
-+				       struct net_device *ndev);
- static void lio_vf_rep_tx_timeout(struct net_device *netdev);
- static int lio_vf_rep_phys_port_name(struct net_device *dev,
- 				     char *buf, size_t len);
-@@ -382,7 +383,7 @@ lio_vf_rep_packet_sent_callback(struct octeon_device *oct,
- 		netif_wake_queue(ndev);
- }
++		/*
++		 * If we are freeing multiple frames, mark all the frames
++		 * but the first one as acked, since they were acknowledged
++		 * before
++		 * */
++		if (skb_freed > 1)
++			info->flags |= IEEE80211_TX_STAT_ACK;
++
+ 		iwl_mvm_tx_status_check_trigger(mvm, status);
  
--static int
-+static netdev_tx_t
- lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct lio_vf_rep_desc *vf_rep = netdev_priv(ndev);
-diff --git a/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c b/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-index 592fb9e847b95..0957e735cdc4d 100644
---- a/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-+++ b/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-@@ -1268,12 +1268,13 @@ static int octeon_mgmt_stop(struct net_device *netdev)
- 	return 0;
- }
- 
--static int octeon_mgmt_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t
-+octeon_mgmt_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct octeon_mgmt *p = netdev_priv(netdev);
- 	union mgmt_port_ring_entry re;
- 	unsigned long flags;
--	int rv = NETDEV_TX_BUSY;
-+	netdev_tx_t rv = NETDEV_TX_BUSY;
- 
- 	re.d64 = 0;
- 	re.s.tstamp = ((skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) != 0);
+ 		info->status.rates[0].count = tx_resp->failure_frame + 1;
 -- 
 2.20.1
 
