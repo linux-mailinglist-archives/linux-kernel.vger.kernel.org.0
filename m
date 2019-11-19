@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5931015F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DD6E1014E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:38:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbfKSFtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:49:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45676 "EHLO mail.kernel.org"
+        id S1730198AbfKSFiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:38:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731012AbfKSFtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:49:04 -0500
+        id S1730182AbfKSFiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:38:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 668B120721;
-        Tue, 19 Nov 2019 05:49:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC999208C3;
+        Tue, 19 Nov 2019 05:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142543;
-        bh=nrwlX0+o3IBQvyjj/20EPhRXPTRgqzdCYKUR/stkalw=;
+        s=default; t=1574141900;
+        bh=yTksp1ZKXV82zjImAK+llrk3ZT07sr7e/NIZf/IX/ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHsgPknTN0XLQ1NyaHfkDKHjoUbhUKiUbmE1+nVy9PzALh5dE77x41Nv/s/iBNhaP
-         iS0piYSWv9+xv9vz1mrcgZAla4cWrvvSiWB7x/x/GOe3R0sRk2CWPoKudTc9ADM7Er
-         Yjd7LMnidk69lSeihNsh7PITpMIXUON1JturenwM=
+        b=l90v3VWAeg9mQAuvVwRjbdyAUmsCeWRsM3QbshTD5ALEuuQvVwVYk2bHkaxUivNVB
+         sBZjryWJSkq8bB1Ym1zwrsMvElbL2vrwvCvzjNzvDhbrjDrUIzwHYSlcpuZpXUErIw
+         IdfXpYshtH5uV+Nrdni8hyqMEC1PJy2JyOo8CNJ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org, Matthew Whitehead <tedheadster@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 116/239] ARM: dts: socfpga: Fix I2C bus unit-address error
-Date:   Tue, 19 Nov 2019 06:18:36 +0100
-Message-Id: <20191119051329.015669223@linuxfoundation.org>
+Subject: [PATCH 4.19 320/422] x86/CPU: Use correct macros for Cyrix calls
+Date:   Tue, 19 Nov 2019 06:18:37 +0100
+Message-Id: <20191119051419.731975303@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +50,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+From: Matthew Whitehead <tedheadster@gmail.com>
 
-[ Upstream commit cbbc488ed85061a765cf370c3e41f383c1e0add6 ]
+[ Upstream commit 03b099bdcdf7125d4a63dc9ddeefdd454e05123d ]
 
-dtc has new checks for I2C buses. Fix the warnings in unit-addresses.
+There are comments in processor-cyrix.h advising you to _not_ make calls
+using the deprecated macros in this style:
 
-arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dtb: Warning (i2c_bus_reg): /soc/i2c@ffc04000/adxl345@0: I2C bus unit address format error, expected "53"
+  setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+This is because it expands the macro into a non-functioning calling
+sequence. The calling order must be:
+
+  outb(CX86_CCR2, 0x22);
+  inb(0x23);
+
+>From the comments:
+
+ * When using the old macros a line like
+ *   setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x88);
+ * gets expanded to:
+ *  do {
+ *    outb((CX86_CCR2), 0x22);
+ *    outb((({
+ *        outb((CX86_CCR2), 0x22);
+ *        inb(0x23);
+ *    }) | 0x88), 0x23);
+ *  } while (0);
+
+The new macros fix this problem, so use them instead.
+
+Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Andy Lutomirski <luto@amacapital.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180921212041.13096-2-tedheadster@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts | 2 +-
+ arch/x86/kernel/cpu/cyrix.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-index b280e64941938..31b01a998b2ed 100644
---- a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-+++ b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-@@ -88,7 +88,7 @@
- 	status = "okay";
- 	clock-frequency = <100000>;
- 
--	adxl345: adxl345@0 {
-+	adxl345: adxl345@53 {
- 		compatible = "adi,adxl345";
- 		reg = <0x53>;
- 
+diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
+index fa61c870ada94..1d9b8aaea06c8 100644
+--- a/arch/x86/kernel/cpu/cyrix.c
++++ b/arch/x86/kernel/cpu/cyrix.c
+@@ -437,7 +437,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
+ 			/* enable MAPEN  */
+ 			setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);
+ 			/* enable cpuid  */
+-			setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
++			setCx86(CX86_CCR4, getCx86(CX86_CCR4) | 0x80);
+ 			/* disable MAPEN */
+ 			setCx86(CX86_CCR3, ccr3);
+ 			local_irq_restore(flags);
 -- 
 2.20.1
 
