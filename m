@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DCB61017D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:04:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC921017DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfKSFiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:38:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60060 "EHLO mail.kernel.org"
+        id S1730165AbfKSFiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:38:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728852AbfKSFiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:38:06 -0500
+        id S1729755AbfKSFiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:38:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9E0D214DE;
-        Tue, 19 Nov 2019 05:38:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F3472231C;
+        Tue, 19 Nov 2019 05:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141886;
-        bh=D5UD31YPEPzoWVL36ZwrigouBgaR3lwqyWzXMX6oYMs=;
+        s=default; t=1574141888;
+        bh=Pa+1bqzlHTxkfUjfKa31CFk8+ScYZo409VTH4/09YAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lh7KRwmMX0KYrVHjF9EascdS3coZgdtyvClDazZ22VKazVx3e0roXrivcIv8DAxZB
-         S/wy8PNz7NE3/D0RB97HyMX6wvc/ZSAIHu8qJ2FkhuR6kQpY30KzxDsNUMJxcHlPoo
-         Hx6VvxqPnKCJM3IOcDiORfg41bFeLvvNbEJmVKUo=
+        b=RIWUMng1PbfJeDluwnyTxsCHWzdRdRKAB7Ym7mVpRXdsBCWQ/vIClymWnrejexlMV
+         ZqLvu4V7iuPwOThl/wzWXiRhYEOESvUa7EChiZbiNO1izyiymko3vMHy89UuQ2S/gT
+         +B443KyYpnUpF+qeRXNrT8L4Cre826BRwsxxV3Qs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 274/422] net: marvell: fix return type of ndo_start_xmit function
-Date:   Tue, 19 Nov 2019 06:17:51 +0100
-Message-Id: <20191119051416.744682141@linuxfoundation.org>
+Subject: [PATCH 4.19 275/422] net: toshiba: fix return type of ndo_start_xmit function
+Date:   Tue, 19 Nov 2019 06:17:52 +0100
+Message-Id: <20191119051416.808773223@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -46,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit f03508ce3f9650148262c176e0178413e16c902b ]
+[ Upstream commit bacade822524e02f662d88f784d2ae821a5546fb ]
 
 The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
 which is a typedef for an enum type, so make sure the implementation in
@@ -59,51 +59,81 @@ Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c           | 2 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
- drivers/net/ethernet/marvell/pxa168_eth.c       | 3 ++-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/toshiba/ps3_gelic_net.c | 4 ++--
+ drivers/net/ethernet/toshiba/ps3_gelic_net.h | 2 +-
+ drivers/net/ethernet/toshiba/spider_net.c    | 4 ++--
+ drivers/net/ethernet/toshiba/tc35815.c       | 6 ++++--
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 28762314353f9..4313bbb2396f4 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2394,7 +2394,7 @@ error:
- }
- 
- /* Main tx processing */
--static int mvneta_tx(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t mvneta_tx(struct sk_buff *skb, struct net_device *dev)
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+index 88d74aef218a2..75237c81c63d6 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+@@ -845,9 +845,9 @@ static int gelic_card_kick_txdma(struct gelic_card *card,
+  * @skb: packet to send out
+  * @netdev: interface device structure
+  *
+- * returns 0 on success, <0 on failure
++ * returns NETDEV_TX_OK on success, NETDEV_TX_BUSY on failure
+  */
+-int gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
++netdev_tx_t gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
  {
- 	struct mvneta_port *pp = netdev_priv(dev);
- 	u16 txq_id = skb_get_queue_mapping(skb);
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 29f1260535325..1cc0e8fda4d5e 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -2901,7 +2901,7 @@ release:
- }
- 
- /* Main tx processing */
--static int mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct mvpp2_port *port = netdev_priv(dev);
- 	struct mvpp2_tx_queue *txq, *aggr_txq;
-diff --git a/drivers/net/ethernet/marvell/pxa168_eth.c b/drivers/net/ethernet/marvell/pxa168_eth.c
-index 3a9730612a704..ff2fea0f8b751 100644
---- a/drivers/net/ethernet/marvell/pxa168_eth.c
-+++ b/drivers/net/ethernet/marvell/pxa168_eth.c
-@@ -1260,7 +1260,8 @@ static int pxa168_rx_poll(struct napi_struct *napi, int budget)
- 	return work_done;
- }
- 
--static int pxa168_eth_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	struct gelic_card *card = netdev_card(netdev);
+ 	struct gelic_descr *descr;
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.h b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
+index 003d0452d9cb1..fbbf9b54b173b 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.h
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
+@@ -370,7 +370,7 @@ void gelic_card_up(struct gelic_card *card);
+ void gelic_card_down(struct gelic_card *card);
+ int gelic_net_open(struct net_device *netdev);
+ int gelic_net_stop(struct net_device *netdev);
+-int gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev);
++netdev_tx_t gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev);
+ void gelic_net_set_multi(struct net_device *netdev);
+ void gelic_net_tx_timeout(struct net_device *netdev);
+ int gelic_net_setup_netdev(struct net_device *netdev, struct gelic_card *card);
+diff --git a/drivers/net/ethernet/toshiba/spider_net.c b/drivers/net/ethernet/toshiba/spider_net.c
+index d925b82039966..23417266b7ecc 100644
+--- a/drivers/net/ethernet/toshiba/spider_net.c
++++ b/drivers/net/ethernet/toshiba/spider_net.c
+@@ -880,9 +880,9 @@ out:
+  * @skb: packet to send out
+  * @netdev: interface device structure
+  *
+- * returns 0 on success, !0 on failure
++ * returns NETDEV_TX_OK on success, NETDEV_TX_BUSY on failure
+  */
+-static int
 +static netdev_tx_t
-+pxa168_eth_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ spider_net_xmit(struct sk_buff *skb, struct net_device *netdev)
  {
- 	struct pxa168_eth_private *pep = netdev_priv(dev);
- 	struct net_device_stats *stats = &dev->stats;
+ 	int cnt;
+diff --git a/drivers/net/ethernet/toshiba/tc35815.c b/drivers/net/ethernet/toshiba/tc35815.c
+index 9146068979d2c..03afc4d8c3ec1 100644
+--- a/drivers/net/ethernet/toshiba/tc35815.c
++++ b/drivers/net/ethernet/toshiba/tc35815.c
+@@ -474,7 +474,8 @@ static void free_rxbuf_skb(struct pci_dev *hwdev, struct sk_buff *skb, dma_addr_
+ /* Index to functions, as function prototypes. */
+ 
+ static int	tc35815_open(struct net_device *dev);
+-static int	tc35815_send_packet(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t	tc35815_send_packet(struct sk_buff *skb,
++					    struct net_device *dev);
+ static irqreturn_t	tc35815_interrupt(int irq, void *dev_id);
+ static int	tc35815_rx(struct net_device *dev, int limit);
+ static int	tc35815_poll(struct napi_struct *napi, int budget);
+@@ -1248,7 +1249,8 @@ tc35815_open(struct net_device *dev)
+  * invariant will hold if you make sure that the netif_*_queue()
+  * calls are done at the proper times.
+  */
+-static int tc35815_send_packet(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++tc35815_send_packet(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct tc35815_local *lp = netdev_priv(dev);
+ 	struct TxFD *txfd;
 -- 
 2.20.1
 
