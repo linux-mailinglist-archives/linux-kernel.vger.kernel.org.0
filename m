@@ -2,172 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C00BD1024A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAB21024B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbfKSMjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:39:04 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42252 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbfKSMjD (ORCPT
+        id S1728054AbfKSMnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:43:37 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43074 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfKSMnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:39:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id j12so11699039plt.9;
-        Tue, 19 Nov 2019 04:39:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qpwNQdLDEKp3mHj6bhdJa/Rq4oFAWkNqox9VT/5kxaE=;
-        b=ltSecJN5dv6Eibo6pRLuD+iAe9yVQaHC4TL5a/T/Hp7KM4+GTbSEzMBUlRBFPT3Lpa
-         6HYEE3iYly2QjLrr/CEW/l0f+qZaxMuhIRvTMR6xK28UW2aWNnS0Bp1Drdj1WMQR5t5T
-         OKMkdRURBZ1z4kOSxCPt8gkW2qo0vnUbLQzLNq8rRdnTgYbprZkfUOOOnm2p2A7EF6wE
-         sHfG/BAOBc1uz9plhJm+pw3/GvLUKfu4zB4N6QB5+TmJKbRicc4psQtOVStnO7KxXFAt
-         nHQUFoj3buSHslm/eRzFaHvhxZVMyZVwFhBhO0tfGl449RToViaFGi1gGPr0v20curZJ
-         yTWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qpwNQdLDEKp3mHj6bhdJa/Rq4oFAWkNqox9VT/5kxaE=;
-        b=alWbt0rzY0dv4gh11HzgUIuf7BlbDlww27faFJN9spvrLNBjHe761N9oyTqH7SPgaJ
-         mlo4BnPImIJKLHfwmlY4BjW2HbLNCKL1Oh2i936AsUKgCGSkRMOsOpgdMn4luxDJGDB0
-         u4TuDz30LV39xw7/hWHuyW2h7zTnOSDigpPDYxB4G61iVi9RV9pdrv/xBNNsNMKNqIb/
-         qUu2D5Bwk3rasghVh43TP5yIqyLJCXxAH42oPj+BmrcOLc5pORv0CefVzFR27kladYAr
-         t3osYsXLd5Bn8MbTEemZl/rBmAdPdhMaPly73BsuJOi2vhkTT3GohKnXm8PaKC3vIycW
-         q7/A==
-X-Gm-Message-State: APjAAAVv6E4kc4CVL2T8YOTThV57KkXdkEe1y55TlcygngtTwX4Ur5ts
-        OUDQx68/I//Q+YG1UxBwF5ns7F6WyaVRAkCY4MU=
-X-Google-Smtp-Source: APXvYqwbCUL/eximB8mpj2VKlrZgFfSMeoldq7a7WGfu5alkQzf/cM2q5535Tqgna1MJCwUak2duJRDsdSgol0JrIKM=
-X-Received: by 2002:a17:90a:c68f:: with SMTP id n15mr6302731pjt.20.1574167142073;
- Tue, 19 Nov 2019 04:39:02 -0800 (PST)
+        Tue, 19 Nov 2019 07:43:37 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJCPNIB069833;
+        Tue, 19 Nov 2019 12:42:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=J1DVFWDWgRDlJNqhrtPfMZhXf4YNBEMKWsybmojvTLo=;
+ b=JgnqN+VBvqZZJ86GuNVp+b1Ft61fTaXz3I1+uwYOAS5cE8ccyiXt3+XDKCQErW4byYg7
+ LOUIJNY9zoyFWLXgfu77EZLnt7zaH08pKn0ucWpmFEcXSVYeqIotvFgfxFIapIAbLMqC
+ 5GNH1EwRat2Z1PGDhwT4/m4JKOl5+MqlWL6TayJ/jhrBtFAyaHkfjBqx3zYmAzWtQyGw
+ weoD1PTW2+I1lvoj+EkgSUY4+UNNIukOkr0LDPUoqpZoUpWDgl9+gFMHdW+ctdKnGfMx
+ 5OTXTBAlnwApcHzY13V4I43jmorxsV98qvVi8vPb19OLm2tpmRgOdDOKVsSMjQaupnQt gg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wa92ppj87-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 12:42:17 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJCSEIk167569;
+        Tue, 19 Nov 2019 12:40:17 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wcem8sa94-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 12:40:17 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJCeDVh026432;
+        Tue, 19 Nov 2019 12:40:13 GMT
+Received: from kadam (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Nov 2019 04:40:12 -0800
+Date:   Tue, 19 Nov 2019 15:39:56 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Mao Wenan <maowenan@huawei.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] KVM: x86: remove set but not used variable 'called'
+Message-ID: <20191119123956.GC5604@kadam>
+References: <20191119030640.25097-1-maowenan@huawei.com>
+ <87o8x8gjr5.fsf@vitty.brq.redhat.com>
+ <20191119121423.GB5604@kadam>
+ <87imnggidr.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20191119002121.4107-1-sean.j.christopherson@intel.com>
- <20191119111012.GA109842@gmail.com> <20191119120655.GA31444@gmail.com>
-In-Reply-To: <20191119120655.GA31444@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 19 Nov 2019 14:38:51 +0200
-Message-ID: <CAHp75VeYXonBT9eYhqvS9qyOogdaCu8ERv0XMg12hrVBYt6hnw@mail.gmail.com>
-Subject: Re: [PATCH] x86/platform/intel/quark: Explicitly include linux/io.h
- for virt_to_phys()
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Nadav Amit <namit@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87imnggidr.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 2:07 PM Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Ingo Molnar <mingo@kernel.org> wrote:
->
-> > I've applied them to tip:WIP.core/headers as a work-in-progress tree,
-> > and I'm testing them on randconfigs to make sure there's no broken
-> > dependencies. I'll wait for the ACPI acks.
->
-> One more fix was needed, for the intel-quark driver that is only built on
-> 32-bit configs:
->
-> ==================>
-> From: Ingo Molnar <mingo@kernel.org>
-> Date: Tue, 19 Nov 2019 12:51:56 +0100
-> Subject: [PATCH] x86/platform/intel/quark: Explicitly include linux/io.h for virt_to_phys()
->
-> Similarly to the previous patches by Sean Christopherson:
->
->  "Through a labyrinthian sequence of includes, usage of virt_to_phys() is
->   dependent on the include of asm/io.h in x86's asm/realmode.h, which is
->   included in x86's asm/acpi.h and thus by linux/acpi.h.  Explicitly
->   include linux/io.h to break the dependency on realmode.h so that a
->   future patch can remove the realmode.h include from acpi.h without
->   breaking the build."
->
+On Tue, Nov 19, 2019 at 01:28:32PM +0100, Vitaly Kuznetsov wrote:
+> Dan Carpenter <dan.carpenter@oracle.com> writes:
+> 
+> > On Tue, Nov 19, 2019 at 12:58:54PM +0100, Vitaly Kuznetsov wrote:
+> >> Mao Wenan <maowenan@huawei.com> writes:
+> >> 
+> >> > Fixes gcc '-Wunused-but-set-variable' warning:
+> >> >
+> >> > arch/x86/kvm/x86.c: In function kvm_make_scan_ioapic_request_mask:
+> >> > arch/x86/kvm/x86.c:7911:7: warning: variable called set but not
+> >> > used [-Wunused-but-set-variable]
+> >> >
+> >> > It is not used since commit 7ee30bc132c6 ("KVM: x86: deliver KVM
+> >> > IOAPIC scan request to target vCPUs")
+> >> 
+> >> Better expressed as 
+> >> 
+> >> Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to target vCPUs")
+> >> 
+> >
+> > There is sort of a debate about this whether the Fixes tag should be
+> > used if it's only a cleanup.
+> >
+> 
+> I have to admit I'm involved in doing backporting sometimes and I really
+> appreciate Fixes: tags. Just so you know on which side of the debate I
+> am :-)
 
-LGTM,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+But we're not going to backport this hopefully?
 
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  arch/x86/platform/intel-quark/imr.c          | 2 ++
->  arch/x86/platform/intel-quark/imr_selftest.c | 2 ++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/arch/x86/platform/intel-quark/imr.c b/arch/x86/platform/intel-quark/imr.c
-> index 6dd25dc5f027..e9d97d52475e 100644
-> --- a/arch/x86/platform/intel-quark/imr.c
-> +++ b/arch/x86/platform/intel-quark/imr.c
-> @@ -29,6 +29,8 @@
->  #include <asm/cpu_device_id.h>
->  #include <asm/imr.h>
->  #include <asm/iosf_mbi.h>
-> +#include <asm/io.h>
+regards,
+dan carpenter
 
-A nit: perhaps put it after imr.h.
-
-> +
->  #include <linux/debugfs.h>
->  #include <linux/init.h>
->  #include <linux/mm.h>
-> diff --git a/arch/x86/platform/intel-quark/imr_selftest.c b/arch/x86/platform/intel-quark/imr_selftest.c
-> index 42f879b75f9b..4307830e1b6f 100644
-> --- a/arch/x86/platform/intel-quark/imr_selftest.c
-> +++ b/arch/x86/platform/intel-quark/imr_selftest.c
-> @@ -14,6 +14,8 @@
->  #include <asm-generic/sections.h>
->  #include <asm/cpu_device_id.h>
->  #include <asm/imr.h>
-> +#include <asm/io.h>
-> +
->  #include <linux/init.h>
->  #include <linux/mm.h>
->  #include <linux/types.h>
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
