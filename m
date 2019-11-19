@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D452101527
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0DD010167F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbfKSFlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35596 "EHLO mail.kernel.org"
+        id S1732090AbfKSFxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729126AbfKSFlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:11 -0500
+        id S1732080AbfKSFxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:53:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90395208C3;
-        Tue, 19 Nov 2019 05:41:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD5AB20721;
+        Tue, 19 Nov 2019 05:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142071;
-        bh=YnD9x+eja6JGX98NJrMj97iJQaEMDMj5uSFc7nwljo0=;
+        s=default; t=1574142832;
+        bh=yTksp1ZKXV82zjImAK+llrk3ZT07sr7e/NIZf/IX/ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sXf+E5rPGIMnus1xJv/CJH03h4BV9V6vsHDL0cXOq7yyiDWETkMkJF2tXlLQQM7TN
-         oOXzzobZVwCZsBqecsPq374p3LjQeKYoh9TltTbJ/uPxVIDR/puHVBLhCkuiI2ANO7
-         eGfUPP9B4wPQnUSmKbnUQPv/VoVq2jIGvx4EURh4=
+        b=kVFW9LECNvk/2iWy/x8spzFEc6o7jtkgy9qo/YqjeEp8K1BM/ecbdIDzOPRLuIk0C
+         pqkN1HoQLLHN1fa77gksK0mMRbitPwpsXalu13/HHuMSWSwGT7u68SFq/0IHEUfluF
+         76LqgsS9z4SdZyv5ZJdK5wRsYBbj76iDSwy7sVEg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Matthew Whitehead <tedheadster@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 378/422] f2fs: fix to recover inodes project id during POR
+Subject: [PATCH 4.14 175/239] x86/CPU: Use correct macros for Cyrix calls
 Date:   Tue, 19 Nov 2019 06:19:35 +0100
-Message-Id: <20191119051423.537799061@linuxfoundation.org>
+Message-Id: <20191119051334.250360631@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +50,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Matthew Whitehead <tedheadster@gmail.com>
 
-[ Upstream commit f4474aa6e5e901ee4af21f39f1b9115aaaaec503 ]
+[ Upstream commit 03b099bdcdf7125d4a63dc9ddeefdd454e05123d ]
 
-Testcase to reproduce this bug:
-1. mkfs.f2fs -O extra_attr -O project_quota /dev/sdd
-2. mount -t f2fs /dev/sdd /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. sync
-5. chattr -p 1 /mnt/f2fs/file
-6. xfs_io -f /mnt/f2fs/file -c "fsync"
-7. godown /mnt/f2fs
-8. umount /mnt/f2fs
-9. mount -t f2fs /dev/sdd /mnt/f2fs
-10. lsattr -p /mnt/f2fs/file
+There are comments in processor-cyrix.h advising you to _not_ make calls
+using the deprecated macros in this style:
 
-    0 -----------------N- /mnt/f2fs/file
+  setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
 
-But actually, we expect the correct result is:
+This is because it expands the macro into a non-functioning calling
+sequence. The calling order must be:
 
-    1 -----------------N- /mnt/f2fs/file
+  outb(CX86_CCR2, 0x22);
+  inb(0x23);
 
-The reason is we didn't recover inode.i_projid field during mount,
-fix it.
+>From the comments:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+ * When using the old macros a line like
+ *   setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x88);
+ * gets expanded to:
+ *  do {
+ *    outb((CX86_CCR2), 0x22);
+ *    outb((({
+ *        outb((CX86_CCR2), 0x22);
+ *        inb(0x23);
+ *    }) | 0x88), 0x23);
+ *  } while (0);
+
+The new macros fix this problem, so use them instead.
+
+Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Andy Lutomirski <luto@amacapital.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180921212041.13096-2-tedheadster@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/kernel/cpu/cyrix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 2c5d2c25d37e3..01636d996ba41 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -218,6 +218,19 @@ static void recover_inode(struct inode *inode, struct page *page)
- 	inode->i_mode = le16_to_cpu(raw->i_mode);
- 	i_uid_write(inode, le32_to_cpu(raw->i_uid));
- 	i_gid_write(inode, le32_to_cpu(raw->i_gid));
-+
-+	if (raw->i_inline & F2FS_EXTRA_ATTR) {
-+		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)->sb) &&
-+			F2FS_FITS_IN_INODE(raw, le16_to_cpu(raw->i_extra_isize),
-+								i_projid)) {
-+			projid_t i_projid;
-+
-+			i_projid = (projid_t)le32_to_cpu(raw->i_projid);
-+			F2FS_I(inode)->i_projid =
-+				make_kprojid(&init_user_ns, i_projid);
-+		}
-+	}
-+
- 	f2fs_i_size_write(inode, le64_to_cpu(raw->i_size));
- 	inode->i_atime.tv_sec = le64_to_cpu(raw->i_atime);
- 	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
+diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
+index fa61c870ada94..1d9b8aaea06c8 100644
+--- a/arch/x86/kernel/cpu/cyrix.c
++++ b/arch/x86/kernel/cpu/cyrix.c
+@@ -437,7 +437,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
+ 			/* enable MAPEN  */
+ 			setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);
+ 			/* enable cpuid  */
+-			setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
++			setCx86(CX86_CCR4, getCx86(CX86_CCR4) | 0x80);
+ 			/* disable MAPEN */
+ 			setCx86(CX86_CCR3, ccr3);
+ 			local_irq_restore(flags);
 -- 
 2.20.1
 
