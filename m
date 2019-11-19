@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F5C101644
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A771014F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731832AbfKSFvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:51:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49158 "EHLO mail.kernel.org"
+        id S1730240AbfKSFjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731821AbfKSFvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:51:40 -0500
+        id S1729113AbfKSFi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:38:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21317214D9;
-        Tue, 19 Nov 2019 05:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96266206EC;
+        Tue, 19 Nov 2019 05:38:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142699;
-        bh=pfDF5o5Sf/FZB9G8qxf3rgn8Br81z+BJhC63kU1YSUw=;
+        s=default; t=1574141939;
+        bh=Iu7gAt/xIf/ir9J21Ao8/LJXs4C083qHyOe+HTPl+4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2MM8K+MEbxwPIK3Hn8EaifFOihgiDbRmkhPHHdxK2XJmyzTjGbuPYrH/rzuF4tp2l
-         y6V9OJ48T638xv5gXsRvjUBsLJ+KsMwQd5MhSsrmwa2iEXrj9nh8B570Nr9t26TPWY
-         9uevkNAiTv3tyZBT7IC/Uty0o2rv52+EFcrEenQ0=
+        b=etz7z4/BpNyr09Ve5y7E8AEujpEji4f8txdstCZZZvQh2hWApmJn6Tx9OoWJDor5n
+         qa6vqwMqvr+uxw15+ua89/5KJwLrheVldIfIp37N89vLq4DKmawYtpENSkEbQSaSYg
+         euXADpyYR2b4QtUPy6fIoHRggHzAXz7Lk1WJ/N+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Joel Pepper <joel.pepper@rwth-aachen.de>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 129/239] ath9k: Fix a locking bug in ath9k_add_interface()
+Subject: [PATCH 4.19 332/422] usb: gadget: uvc: configfs: Prevent format changes after linking header
 Date:   Tue, 19 Nov 2019 06:18:49 +0100
-Message-Id: <20191119051330.569269677@linuxfoundation.org>
+Message-Id: <20191119051420.530974951@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Joel Pepper <joel.pepper@rwth-aachen.de>
 
-[ Upstream commit 461cf036057477805a8a391e5fd0f5264a5e56a8 ]
+[ Upstream commit cb2200f7af8341aaf0c6abd7ba37e4c667c41639 ]
 
-We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
-mode interface") but accidentally missed part of the locking change.
+While checks are in place to avoid attributes and children of a format
+being manipulated after the format is linked into the streaming header,
+the linked flag was never actually set, invalidating the protections.
+Update the flag as appropriate in the header link calls.
 
-The lock has to be held earlier so that we're holding it when we do
-"sc->tx99_vif = vif;" and also there in the current code there is a
-stray unlock before we have taken the lock.
-
-Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Joel Pepper <joel.pepper@rwth-aachen.de>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/gadget/function/uvc_configfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index 3589f1f3e744d..72ad84fde5c18 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -1250,6 +1250,7 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 	struct ath_vif *avp = (void *)vif->drv_priv;
- 	struct ath_node *an = &avp->mcast_node;
+diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
+index dc4edba95a478..9478a7cdb1433 100644
+--- a/drivers/usb/gadget/function/uvc_configfs.c
++++ b/drivers/usb/gadget/function/uvc_configfs.c
+@@ -766,6 +766,7 @@ static int uvcg_streaming_header_allow_link(struct config_item *src,
+ 	format_ptr->fmt = target_fmt;
+ 	list_add_tail(&format_ptr->entry, &src_hdr->formats);
+ 	++src_hdr->num_fmt;
++	++target_fmt->linked;
  
-+	mutex_lock(&sc->mutex);
- 	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
- 		if (sc->cur_chan->nvifs >= 1) {
- 			mutex_unlock(&sc->mutex);
-@@ -1258,8 +1259,6 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 		sc->tx99_vif = vif;
- 	}
+ out:
+ 	mutex_unlock(&opts->lock);
+@@ -803,6 +804,8 @@ static void uvcg_streaming_header_drop_link(struct config_item *src,
+ 			break;
+ 		}
  
--	mutex_lock(&sc->mutex);
--
- 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
- 	sc->cur_chan->nvifs++;
- 
++	--target_fmt->linked;
++
+ out:
+ 	mutex_unlock(&opts->lock);
+ 	mutex_unlock(su_mutex);
 -- 
 2.20.1
 
