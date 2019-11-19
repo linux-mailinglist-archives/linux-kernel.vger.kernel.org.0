@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDCF110147B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D6FA101589
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:45:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfKSFeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:34:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55012 "EHLO mail.kernel.org"
+        id S1730920AbfKSFpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729631AbfKSFeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:34:17 -0500
+        id S1728024AbfKSFpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:45:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6614F20672;
-        Tue, 19 Nov 2019 05:34:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6366E2082F;
+        Tue, 19 Nov 2019 05:45:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141656;
-        bh=n6QzZCLFvjcRY9Gen25EumCUyRvB0LU/DHo9DES47YM=;
+        s=default; t=1574142302;
+        bh=n+9XzrVxtEeVuhRwZ4HPS0if8MXX+eA8pGGYJcSjOfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VuTh8EkfacZIgIWA0je7ab1Oh17Uw8hn+Et95imG702PlNCRsb7yITDdiiNeWTkLv
-         5egzIzmHP5f7ZRV9wPE/XPTRGbyFXK6lbl+siX5li7Gdim7B6Agvti/J8CA4gnETod
-         bHsNd2cLPHE/8ExljaR3fe633XmQUwOQ/FQI8aWY=
+        b=myDBQxiBHue9sFQVefLQsuEjqU1kikSdyJveLEqMRLXUxjipa0gj2y+IrE910TSNA
+         pIe6fAd+AQg74PIUnjyGHYAQtRC3Ok9VviBaHj+XRcOULn6QFTJoHHav7wFIzV+WBH
+         jzpcdlTzZsegQpF+5cpTuGNid7T7gQvUE3semer8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 236/422] s390/qeth: invoke softirqs after napi_schedule()
-Date:   Tue, 19 Nov 2019 06:17:13 +0100
-Message-Id: <20191119051414.378040494@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 034/239] ALSA: pcm: signedness bug in snd_pcm_plug_alloc()
+Date:   Tue, 19 Nov 2019 06:17:14 +0100
+Message-Id: <20191119051304.154353444@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 4d19db777a2f32c9b76f6fd517ed8960576cb43e ]
+[ Upstream commit 6f128fa41f310e1f39ebcea9621d2905549ecf52 ]
 
-Calling napi_schedule() from process context does not ensure that the
-NET_RX softirq is run in a timely fashion. So trigger it manually.
+The "frames" variable is unsigned so the error handling doesn't work
+properly.
 
-This is no big issue with current code. A call to ndo_open() is usually
-followed by a ndo_set_rx_mode() call, and for qeth this contains a
-spin_unlock_bh(). Except for OSN, where qeth_l2_set_rx_mode() bails out
-early.
-Nevertheless it's best to not depend on this behaviour, and just fix
-the issue at its source like all other drivers do. For instance see
-commit 83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule").
-
-Fixes: a1c3ed4c9ca0 ("qeth: NAPI support for l2 and l3 discipline")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_l2_main.c | 3 +++
- drivers/s390/net/qeth_l3_main.c | 3 +++
- 2 files changed, 6 insertions(+)
+ sound/core/oss/pcm_plugin.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index c1c35eccd5b65..95669d47c389e 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -789,7 +789,10 @@ static int __qeth_l2_open(struct net_device *dev)
- 
- 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
- 		napi_enable(&card->napi);
-+		local_bh_disable();
- 		napi_schedule(&card->napi);
-+		/* kick-start the NAPI softirq: */
-+		local_bh_enable();
- 	} else
- 		rc = -EIO;
- 	return rc;
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index 9c5e801b3f6cb..52e0ae4dc7241 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -2414,7 +2414,10 @@ static int __qeth_l3_open(struct net_device *dev)
- 
- 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
- 		napi_enable(&card->napi);
-+		local_bh_disable();
- 		napi_schedule(&card->napi);
-+		/* kick-start the NAPI softirq: */
-+		local_bh_enable();
- 	} else
- 		rc = -EIO;
- 	return rc;
+diff --git a/sound/core/oss/pcm_plugin.c b/sound/core/oss/pcm_plugin.c
+index 617845d4a811b..b8ab46b8298de 100644
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -111,7 +111,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_substream *plug, snd_pcm_uframes_t frames)
+ 		while (plugin->next) {
+ 			if (plugin->dst_frames)
+ 				frames = plugin->dst_frames(plugin, frames);
+-			if (snd_BUG_ON(frames <= 0))
++			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
+ 				return -ENXIO;
+ 			plugin = plugin->next;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
+@@ -123,7 +123,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_substream *plug, snd_pcm_uframes_t frames)
+ 		while (plugin->prev) {
+ 			if (plugin->src_frames)
+ 				frames = plugin->src_frames(plugin, frames);
+-			if (snd_BUG_ON(frames <= 0))
++			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
+ 				return -ENXIO;
+ 			plugin = plugin->prev;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
 -- 
 2.20.1
 
