@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9DA101482
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB652101579
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbfKSFek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:34:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55386 "EHLO mail.kernel.org"
+        id S1730053AbfKSFoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729702AbfKSFei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:34:38 -0500
+        id S1730335AbfKSFoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86B41208C3;
-        Tue, 19 Nov 2019 05:34:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D19052075E;
+        Tue, 19 Nov 2019 05:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141678;
-        bh=djqdZXlQ3iLn+R5cPJY6lBtwWI+0PBuh+RGdpxjWQW0=;
+        s=default; t=1574142270;
+        bh=qY8kNGZCeM6NceBn+zddWC4YNFqdDr+j3XHmgF9RCn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YfqscCqfTI+O3T0VNKb2Im/2Hfa0r+y+fkGswlIVhxggbTGeWgpo/PHuDTvOws92Y
-         dgq9NfUSoUQUhXUankT7vYhK3RR3ew3sv+i2LO+9gmFbEATOY//arccliB3+qX976m
-         KrGpzeNSjDSqDQixaqvkDOTwUy6QZLVGjU3mPw2Y=
+        b=wUMdy3XkSYMADCYw8aIFZhDGsI61cLnhypgh5nfvUQbIbT7U7GLyqfvVjte1IF8NF
+         oj2Xmaby9Z5u+tOeHhtV0XGAljqgj/K0C4dzKS6j3l8o1qlpqT8aBuYP/gqdCwgu/b
+         M3Rx43l36k+qOYbqjGi+IF/njCnuBjWPBGOAN1oo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 226/422] component: fix loop condition to call unbind() if bind() fails
-Date:   Tue, 19 Nov 2019 06:17:03 +0100
-Message-Id: <20191119051413.281574543@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.14 024/239] iommu/vt-d: Fix QI_DEV_IOTLB_PFSID and QI_DEV_EIOTLB_PFSID macros
+Date:   Tue, 19 Nov 2019 06:17:04 +0100
+Message-Id: <20191119051302.319903116@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Banajit Goswami <bgoswami@codeaurora.org>
+From: Eric Auger <eric.auger@redhat.com>
 
-[ Upstream commit bdae566d5d9733b6e32b378668b84eadf28a94d4 ]
+commit 4e7120d79edb31e4ee68e6f8421448e4603be1e9 upstream.
 
-During component_bind_all(), if bind() fails for any
-particular component associated with a master, unbind()
-should be called for all previous components in that
-master's match array, whose bind() might have completed
-successfully. As per the current logic, if bind() fails
-for the component at position 'n' in the master's match
-array, it would start calling unbind() from component in
-'n'th position itself and work backwards, and will always
-skip calling unbind() for component in 0th position in the
-master's match array.
-Fix this by updating the loop condition, and the logic to
-refer to the components in master's match array, so that
-unbind() is called for all components starting from 'n-1'st
-position in the array, until (and including) component in
-0th position.
+For both PASID-based-Device-TLB Invalidate Descriptor and
+Device-TLB Invalidate Descriptor, the Physical Function Source-ID
+value is split according to this layout:
 
-Signed-off-by: Banajit Goswami <bgoswami@codeaurora.org>
+PFSID[3:0] is set at offset 12 and PFSID[15:4] is put at offset 52.
+Fix the part laid out at offset 52.
+
+Fixes: 0f725561e1684 ("iommu/vt-d: Add definitions for PFSID")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Acked-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: stable@vger.kernel.org # v4.19+
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/base/component.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/intel-iommu.h |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index 8946dfee4768e..e8d676fad0c95 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -536,9 +536,9 @@ int component_bind_all(struct device *master_dev, void *data)
- 		}
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -282,7 +282,8 @@ enum {
+ #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
+ #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
+ #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
+-#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
++#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | \
++				   ((u64)((pfsid >> 4) & 0xfff) << 52))
+ #define QI_DEV_IOTLB_SIZE	1
+ #define QI_DEV_IOTLB_MAX_INVS	32
  
- 	if (ret != 0) {
--		for (; i--; )
--			if (!master->match->compare[i].duplicate) {
--				c = master->match->compare[i].component;
-+		for (; i > 0; i--)
-+			if (!master->match->compare[i - 1].duplicate) {
-+				c = master->match->compare[i - 1].component;
- 				component_unbind(c, master, data);
- 			}
- 	}
--- 
-2.20.1
-
+@@ -307,7 +308,8 @@ enum {
+ #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
+ #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
+ #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
+-#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
++#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | \
++				    ((u64)((pfsid >> 4) & 0xfff) << 52))
+ #define QI_DEV_EIOTLB_MAX_INVS	32
+ 
+ #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
 
 
