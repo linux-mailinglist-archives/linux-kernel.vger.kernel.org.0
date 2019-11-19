@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AAA610145E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EB8101596
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:46:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbfKSFdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:33:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53508 "EHLO mail.kernel.org"
+        id S1730964AbfKSFp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:45:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729482AbfKSFdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:33:04 -0500
+        id S1730953AbfKSFpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:45:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02D6C21783;
-        Tue, 19 Nov 2019 05:33:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B82E12071B;
+        Tue, 19 Nov 2019 05:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141583;
-        bh=ZcfI9Io9gL+K+leh9xNl/+x3gDLhi0YCH+sL9MOr5HY=;
+        s=default; t=1574142323;
+        bh=OYfmMb3m2nCIOs2EeM9NS1uXNPRrO6cIesaP/zHuJJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F+G1FccHWR3FPiUx+Oyxyyov+8wsfzSMsvQPy4wXM+rTSy3aTnaxAVxAlRLuD5sn2
-         Ul7Vu5NsPvzp8zqM+aNrU0bf7qXhDrMgfWdDi+EqzkRo2vqY9R3yH6OmYY7b2uwyoq
-         Gmse9rHsjgOjWOIqhEpXApCd8JsMHaxkbRNjJrmE=
+        b=RtPVNGLbOOOpEq239OjKLgSKHYWNk+WfXtYOqepcrH0IQ5xatU0mxSkfsqLrVY2NZ
+         tEwycatKXh1RF+BwIqUoGldvYEOLTHSP5l6enm2xY7RuUsciTDN+9c3rfbCwgidoBs
+         GLrymaWn5bMf2KERKZrM5wae/zk1opZlJKMdae9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 210/422] ARM: dts: bcm: Fix SPI bus warnings
+        stable@vger.kernel.org, Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>
+Subject: [PATCH 4.14 007/239] powerpc/perf: Fix kfree memory allocated for nest pmus
 Date:   Tue, 19 Nov 2019 06:16:47 +0100
-Message-Id: <20191119051412.201481107@linuxfoundation.org>
+Message-Id: <20191119051258.907487839@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,59 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Anju T Sudhakar <anju@linux.vnet.ibm.com>
 
-[ Upstream commit ab0b47d2eff413d60b0a1fc0c1f87f87f0d7f375 ]
+commit 110df8bd3e418b3476cae80babe8add48a8ea523 upstream.
 
-dtc has new checks for SPI buses. Fix the warnings in node names.
+imc_common_cpuhp_mem_free() is the common function for all
+IMC (In-memory Collection counters) domains to unregister cpuhotplug
+callback and free memory. Since kfree of memory allocated for
+nest-imc (per_nest_pmu_arr) is in the common code, all
+domains (core/nest/thread) can do the kfree in the failure case.
 
-arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dtb: Warning (spi_bus_bridge): /axi@18000000/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958525er.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958525xmc.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958622hr.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958625hr.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm988312hr.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
+This could potentially create a call trace as shown below, where
+core(/thread/nest) imc pmu initialization fails and in the failure
+path imc_common_cpuhp_mem_free() free the memory(per_nest_pmu_arr),
+which is allocated by successfully registered nest units.
 
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The call trace is generated in a scenario where core-imc
+initialization is made to fail and a cpuhotplug is performed in a p9
+system. During cpuhotplug ppc_nest_imc_cpu_offline() tries to access
+per_nest_pmu_arr, which is already freed by core-imc.
+
+  NIP [c000000000cb6a94] mutex_lock+0x34/0x90
+  LR [c000000000cb6a88] mutex_lock+0x28/0x90
+  Call Trace:
+    mutex_lock+0x28/0x90 (unreliable)
+    perf_pmu_migrate_context+0x90/0x3a0
+    ppc_nest_imc_cpu_offline+0x190/0x1f0
+    cpuhp_invoke_callback+0x160/0x820
+    cpuhp_thread_fun+0x1bc/0x270
+    smpboot_thread_fn+0x250/0x290
+    kthread+0x1a8/0x1b0
+    ret_from_kernel_thread+0x5c/0x74
+
+To address this scenario do the kfree(per_nest_pmu_arr) only in case
+of nest-imc initialization failure, and when there is no other nest
+units registered.
+
+Fixes: 73ce9aec65b1 ("powerpc/perf: Fix IMC_MAX_PMU macro")
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/bcm-hr2.dtsi | 2 +-
- arch/arm/boot/dts/bcm-nsp.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/perf/imc-pmu.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm-hr2.dtsi b/arch/arm/boot/dts/bcm-hr2.dtsi
-index 3084a7c957339..e4d49731287f6 100644
---- a/arch/arm/boot/dts/bcm-hr2.dtsi
-+++ b/arch/arm/boot/dts/bcm-hr2.dtsi
-@@ -216,7 +216,7 @@
- 			reg = <0x33000 0x14>;
- 		};
+--- a/arch/powerpc/perf/imc-pmu.c
++++ b/arch/powerpc/perf/imc-pmu.c
+@@ -1189,6 +1189,7 @@ static void imc_common_cpuhp_mem_free(st
+ 		if (nest_pmus == 1) {
+ 			cpuhp_remove_state(CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE);
+ 			kfree(nest_imc_refc);
++			kfree(per_nest_pmu_arr);
+ 		}
  
--		qspi: qspi@27200 {
-+		qspi: spi@27200 {
- 			compatible = "brcm,spi-bcm-qspi", "brcm,spi-nsp-qspi";
- 			reg = <0x027200 0x184>,
- 			      <0x027000 0x124>,
-diff --git a/arch/arm/boot/dts/bcm-nsp.dtsi b/arch/arm/boot/dts/bcm-nsp.dtsi
-index 09ba850463228..2b219addeb449 100644
---- a/arch/arm/boot/dts/bcm-nsp.dtsi
-+++ b/arch/arm/boot/dts/bcm-nsp.dtsi
-@@ -273,7 +273,7 @@
- 			brcm,nand-has-wp;
- 		};
+ 		if (nest_pmus > 0)
+@@ -1213,7 +1214,6 @@ static void imc_common_cpuhp_mem_free(st
+ 		kfree(pmu_ptr->attr_groups[IMC_EVENT_ATTR]->attrs);
+ 	kfree(pmu_ptr->attr_groups[IMC_EVENT_ATTR]);
+ 	kfree(pmu_ptr);
+-	kfree(per_nest_pmu_arr);
+ 	return;
+ }
  
--		qspi: qspi@27200 {
-+		qspi: spi@27200 {
- 			compatible = "brcm,spi-bcm-qspi", "brcm,spi-nsp-qspi";
- 			reg = <0x027200 0x184>,
- 			      <0x027000 0x124>,
--- 
-2.20.1
-
+@@ -1327,6 +1327,8 @@ int init_imc_pmu(struct device_node *par
+ 			ret = nest_pmu_cpumask_init();
+ 			if (ret) {
+ 				mutex_unlock(&nest_init_lock);
++				kfree(nest_imc_refc);
++				kfree(per_nest_pmu_arr);
+ 				goto err_free;
+ 			}
+ 		}
 
 
