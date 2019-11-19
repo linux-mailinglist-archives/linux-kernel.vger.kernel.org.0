@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 798FD10160C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C522A1015D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731531AbfKSFtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:49:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46572 "EHLO mail.kernel.org"
+        id S1727226AbfKSFrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:47:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731526AbfKSFtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:49:42 -0500
+        id S1730978AbfKSFrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:47:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C941920721;
-        Tue, 19 Nov 2019 05:49:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFF4F208C3;
+        Tue, 19 Nov 2019 05:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142582;
-        bh=JKIZoRZ7nmPBq/9//pG2xcnSF0372UaTNuRC9ECEowg=;
+        s=default; t=1574142464;
+        bh=ZD0xjZxf+rBGGbulxvdMIUcuFcIPAo9Xn7A7JcL8GCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h2V7qcvaZOrgRIiFRJvuF177vYVe8Jj3X2QAAiv0G7l2OzFpbeEFo3yhDY0zKkNXH
-         c3X/hTIcybuJMp6cO3Kovdxu6PrQLezWahaQZ7RltSNnHQ4Vn7LVPFxcFEPeV/9loX
-         o1i8vO0Y7PIxSsZTegvRd5U71W6017OqjnhEm/0g=
+        b=mVDylcLy2MzlnRY+QXIbCv4efRawyixXg8KmhEYae5/or1hgNoPRcGIHX4ecqplNs
+         msxKv9VuSaNDRlR1Obdprx0NCJAISRi/jNK9Jtz2FChY166dfrDiTaJxAlai4YPiNS
+         QxGWuKqraTAMUGNEe4R6iFykEiVjAFJRi+IDy+eM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 090/239] IB/hfi1: Missing return value in error path for user sdma
-Date:   Tue, 19 Nov 2019 06:18:10 +0100
-Message-Id: <20191119051319.378077036@linuxfoundation.org>
+Subject: [PATCH 4.14 091/239] signal: Always ignore SIGKILL and SIGSTOP sent to the global init
+Date:   Tue, 19 Nov 2019 06:18:11 +0100
+Message-Id: <20191119051319.779339966@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
 References: <20191119051255.850204959@linuxfoundation.org>
@@ -46,42 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-[ Upstream commit 2bf4b33f83dfe521c4c7c407b6b150aeec04d69c ]
+[ Upstream commit 86989c41b5ea08776c450cb759592532314a4ed6 ]
 
-If the set_txreq_header_agh() function returns an error, the exit path
-is chosen.
+If the first process started (aka /sbin/init) receives a SIGKILL it
+will panic the system if it is delivered.  Making the system unusable
+and undebugable.  It isn't much better if the first process started
+receives SIGSTOP.
 
-In this path, the code fails to set the return value.  This will cause
-the caller to not realize an error has occurred.
+So always ignore SIGSTOP and SIGKILL sent to init.
 
-Set the return value correctly in the error path.
+This is done in a separate clause in sig_task_ignored as force_sig_info
+can clear SIG_UNKILLABLE and this protection should work even then.
 
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/user_sdma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/signal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hfi1/user_sdma.c b/drivers/infiniband/hw/hfi1/user_sdma.c
-index 75275f9e363de..4854a4a453b5f 100644
---- a/drivers/infiniband/hw/hfi1/user_sdma.c
-+++ b/drivers/infiniband/hw/hfi1/user_sdma.c
-@@ -856,8 +856,10 @@ static int user_sdma_send_pkts(struct user_sdma_request *req, unsigned maxpkts)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index bb801156628ee..c9b203875001e 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -77,6 +77,10 @@ static int sig_task_ignored(struct task_struct *t, int sig, bool force)
  
- 				changes = set_txreq_header_ahg(req, tx,
- 							       datalen);
--				if (changes < 0)
-+				if (changes < 0) {
-+					ret = changes;
- 					goto free_tx;
-+				}
- 			}
- 		} else {
- 			ret = sdma_txinit(&tx->txreq, 0, sizeof(req->hdr) +
+ 	handler = sig_handler(t, sig);
+ 
++	/* SIGKILL and SIGSTOP may not be sent to the global init */
++	if (unlikely(is_global_init(t) && sig_kernel_only(sig)))
++		return true;
++
+ 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
+ 	    handler == SIG_DFL && !(force && sig_kernel_only(sig)))
+ 		return 1;
 -- 
 2.20.1
 
