@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BEF10173A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA6911017F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731627AbfKSF62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:58:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46246 "EHLO mail.kernel.org"
+        id S1730040AbfKSFhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:37:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730917AbfKSFtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:49:31 -0500
+        id S1730032AbfKSFhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:37:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A31C020721;
-        Tue, 19 Nov 2019 05:49:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EC93214DE;
+        Tue, 19 Nov 2019 05:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142570;
-        bh=UfxJx9uniduwgP9FegUeu7x2UFPsH3p8h2KakbrthM8=;
+        s=default; t=1574141821;
+        bh=JimTXPtAbX8YoTT19Gr8WHDW98DSZBe8ND3dur/LtAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fWvOkmQzjKpa4lQ9EWRrgw3PnH4m4YUzNL6tC0IiaIGyIMQVQgJj7347nZTvjt5c4
-         G7/aBC9jQV6KRWfcYQBsmotslRQ7J6jeVJZiorZ0xSZx1h4rQJpq3WFkC0LaRpEqxV
-         Wk4GJz8aONnjFBw3oHBtA3RKzwwevVOMbg/vX0qg=
+        b=lpcIpKXhTiQOoT+DOFIrYUUggtdcYwUMzQorWT4gCj0zYLfWjCqz0wVUcvkeuauLX
+         X2sS0ej+Vp4vUwzUgBKv2NwSFC4mUUwzBdyGYycR0afAekQa+J2jMuZM0el84pzmlm
+         HBvthojrCckgngzk5wgf7cjJ9Kyfvb3SWXHVrDtQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Aristeu Rozanski <aris@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 086/239] EDAC, sb_edac: Return early on ADDRV bit and address type test
-Date:   Tue, 19 Nov 2019 06:18:06 +0100
-Message-Id: <20191119051318.011363831@linuxfoundation.org>
+Subject: [PATCH 4.19 292/422] brcmfmac: increase buffer for obtaining firmware capabilities
+Date:   Tue, 19 Nov 2019 06:18:09 +0100
+Message-Id: <20191119051417.914114118@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,139 +48,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-[ Upstream commit dcc960b225ceb2bd66c45e0845d03e577f7010f9 ]
+[ Upstream commit 59c2a30d36c8ae430d26a902c4c9665ea33ccee5 ]
 
-Users of the mce_register_decode_chain() are called for every logged
-error. EDAC drivers should check:
+When obtaining the firmware capability a buffer is provided of 512
+bytes. However, if all features in firmware are supported the buffer
+needs to be 565 bytes as otherwise truncated information is retrieved
+from firmware. Increasing the buffer to 768 bytes on stack.
 
-1) Is this a memory error? [bit 7 in status register]
-2) Is there a valid address? [bit 58 in status register]
-3) Is the address a system address? [bitfield 8:6 in misc register]
-
-The sb_edac driver performed test "1" twice. Waited far too long to
-perform check "2". Didn't do check "3" at all.
-
-Fix it by moving the test for valid address from
-sbridge_mce_output_error() into sbridge_mce_check_error() and add a test
-for the type immediately after. Delete the redundant check for the type
-of the error from sbridge_mce_output_error().
-
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Aristeu Rozanski <aris@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180907230828.13901-2-tony.luck@intel.com
-[ Re-word commit message. ]
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/sb_edac.c | 68 ++++++++++++++++++++++--------------------
- 1 file changed, 35 insertions(+), 33 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index b0b390a1da154..ddd5990211f8a 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -2915,35 +2915,27 @@ static void sbridge_mce_output_error(struct mem_ctl_info *mci,
- 	 *	cccc = channel
- 	 * If the mask doesn't match, report an error to the parsing logic
- 	 */
--	if (! ((errcode & 0xef80) == 0x80)) {
--		optype = "Can't parse: it is not a mem";
--	} else {
--		switch (optypenum) {
--		case 0:
--			optype = "generic undef request error";
--			break;
--		case 1:
--			optype = "memory read error";
--			break;
--		case 2:
--			optype = "memory write error";
--			break;
--		case 3:
--			optype = "addr/cmd error";
--			break;
--		case 4:
--			optype = "memory scrubbing error";
--			break;
--		default:
--			optype = "reserved";
--			break;
--		}
-+	switch (optypenum) {
-+	case 0:
-+		optype = "generic undef request error";
-+		break;
-+	case 1:
-+		optype = "memory read error";
-+		break;
-+	case 2:
-+		optype = "memory write error";
-+		break;
-+	case 3:
-+		optype = "addr/cmd error";
-+		break;
-+	case 4:
-+		optype = "memory scrubbing error";
-+		break;
-+	default:
-+		optype = "reserved";
-+		break;
- 	}
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
+index 8347da632a5b0..4c5a3995dc352 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
+@@ -178,7 +178,7 @@ static void brcmf_feat_iovar_data_set(struct brcmf_if *ifp,
+ 	ifp->fwil_fwerr = false;
+ }
  
--	/* Only decode errors with an valid address (ADDRV) */
--	if (!GET_BITFIELD(m->status, 58, 58))
--		return;
--
- 	if (pvt->info.type == KNIGHTS_LANDING) {
- 		if (channel == 14) {
- 			edac_dbg(0, "%s%s err_code:%04x:%04x EDRAM bank %d\n",
-@@ -3049,17 +3041,11 @@ static int sbridge_mce_check_error(struct notifier_block *nb, unsigned long val,
+-#define MAX_CAPS_BUFFER_SIZE	512
++#define MAX_CAPS_BUFFER_SIZE	768
+ static void brcmf_feat_firmware_capabilities(struct brcmf_if *ifp)
  {
- 	struct mce *mce = (struct mce *)data;
- 	struct mem_ctl_info *mci;
--	struct sbridge_pvt *pvt;
- 	char *type;
- 
- 	if (edac_get_report_status() == EDAC_REPORTING_DISABLED)
- 		return NOTIFY_DONE;
- 
--	mci = get_mci_for_node_id(mce->socketid, IMC0);
--	if (!mci)
--		return NOTIFY_DONE;
--	pvt = mci->pvt_info;
--
- 	/*
- 	 * Just let mcelog handle it if the error is
- 	 * outside the memory controller. A memory error
-@@ -3069,6 +3055,22 @@ static int sbridge_mce_check_error(struct notifier_block *nb, unsigned long val,
- 	if ((mce->status & 0xefff) >> 7 != 1)
- 		return NOTIFY_DONE;
- 
-+	/* Check ADDRV bit in STATUS */
-+	if (!GET_BITFIELD(mce->status, 58, 58))
-+		return NOTIFY_DONE;
-+
-+	/* Check MISCV bit in STATUS */
-+	if (!GET_BITFIELD(mce->status, 59, 59))
-+		return NOTIFY_DONE;
-+
-+	/* Check address type in MISC (physical address only) */
-+	if (GET_BITFIELD(mce->misc, 6, 8) != 2)
-+		return NOTIFY_DONE;
-+
-+	mci = get_mci_for_node_id(mce->socketid, IMC0);
-+	if (!mci)
-+		return NOTIFY_DONE;
-+
- 	if (mce->mcgstatus & MCG_STATUS_MCIP)
- 		type = "Exception";
- 	else
+ 	char caps[MAX_CAPS_BUFFER_SIZE];
 -- 
 2.20.1
 
