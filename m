@@ -2,99 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E34101054
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 01:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87ADB10105E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 01:49:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfKSAoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 19:44:44 -0500
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:35886 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfKSAoo (ORCPT
+        id S1727128AbfKSAtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 19:49:08 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46922 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfKSAtI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 19:44:44 -0500
-Received: by mail-ot1-f50.google.com with SMTP id f10so16328528oto.3;
-        Mon, 18 Nov 2019 16:44:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KK5FYD8PxRF0A+U6gGDQIfKZHAve6NPMN8YtVyh0Ls4=;
-        b=TX7NBv3RMPn9zsA4hKKt9yCAudhBXoXrsk1080njT7aXGRA4iSr6DF7Ac7Rhvi+Qo2
-         7DmmaebQw4bl7AV6yAvFf+QMqwhKLfobWh3o+lQTA0HM+gvsnFGM6YEpoxI5asGIuEPh
-         rP5Z2gLEOzNSqXqhqmkSWJyNnrJiQK3DhI00oZCclZlGQg/TJ+bN0yknml+Vgj2KfKpN
-         /tA6RT1kDOomgIdhAtHb+fqKT3wcKMnwYTPV5yCrJHvyk2iqxWRLwVt7cy840hsNpHHK
-         QF2yoMgynVKLz7T4PpZ03HCTrj0sIrBbxLUaVZ6ByTU1lvcPcSNssY0+rRGBzMrne7nS
-         yKWg==
-X-Gm-Message-State: APjAAAVd3XN3hRlRwXr9y8clWjl952CtZu1QejKReglMf41J16QbmHCX
-        ubh4d0ViMPZ2mwPn500C1oVGf+WbjJ90EI/oBnU=
-X-Google-Smtp-Source: APXvYqz8vlbzWtw6HaYn2YK7CSJv8YIqAwxUC5AlU5cHaNxx+FVcsQ6Zxsu3Nnk0YdAKCbEdeBf9P5RAIwTpaJL28n8=
-X-Received: by 2002:a9d:6649:: with SMTP id q9mr1568242otm.106.1574124283140;
- Mon, 18 Nov 2019 16:44:43 -0800 (PST)
+        Mon, 18 Nov 2019 19:49:08 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ0htno109073;
+        Tue, 19 Nov 2019 00:48:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
+ references : to : cc : from : message-id : date : mime-version :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=1YpNQImsbOY2XvuXHptOUdXQSplh3oG1AGe2pyP9gNU=;
+ b=QjE+xGiItWVREUg96rzbIILSkWZjn6IuaPtImcl6XeHJBOGvCt/UvC3rKySCmz6JEmql
+ hphWm3+SG6u/iu5rCUSLt30BzACcm0ObIJpLWzLt5jNHQNf68GyDXmffz52WA2irl7DO
+ XD/8EijyXGrmjqdwhKIkfiDpnaC33Wx7HjF52Q8S39kl3pZD8Q0EpVBmra1tP5ld3Gcf
+ c9MGS42IgfIVQhaoliZg7t0I+YqxPt7vS0VZDd9bvEoK548VPbaqRZNHIhP8cGWVqHPm
+ Cda/Uwm1bJSieTg0L0gq6ZedCTJxckLitq2zkhSApH2vEI9mTyXP9y9ZRVXzbiKI4Yjb Iw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2wa9rqbn08-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 00:48:36 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ0lrEe020048;
+        Tue, 19 Nov 2019 00:48:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2wc0affd4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 00:48:36 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAJ0mYhr032125;
+        Tue, 19 Nov 2019 00:48:34 GMT
+Received: from [10.132.95.199] (/10.132.95.199)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Nov 2019 16:48:33 -0800
+Reply-To: prakash.sangappa@oracle.com
+Subject: Re: [RESEND RFC PATCH 1/1] Selectively allow CAP_SYS_NICE capability
+ inside user namespaces
+References: <1574096478-11520-1-git-send-email-prakash.sangappa@oracle.com>
+ <1574096478-11520-2-git-send-email-prakash.sangappa@oracle.com>
+ <CAG48ez1i9LUd2DPoP9na9OyqXDZVRJZQqBbS1H6Dz_h7mtJ=Mw@mail.gmail.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>
+From:   "prakash.sangappa" <prakash.sangappa@oracle.com>
+Message-ID: <9b2dd6f5-5b0b-9c9b-e853-5795c352e092@oracle.com>
+Date:   Mon, 18 Nov 2019 16:46:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-References: <20191117101545.6406-1-matwey@sai.msu.ru> <1784520.t1z2W423De@phil>
- <CAJs94EZPLedH4w3+5vfJA+f+1+zLETBdETpqNPytp3LG63az9Q@mail.gmail.com>
-In-Reply-To: <CAJs94EZPLedH4w3+5vfJA+f+1+zLETBdETpqNPytp3LG63az9Q@mail.gmail.com>
-From:   Tom Cubie <tom@radxa.com>
-Date:   Tue, 19 Nov 2019 08:44:06 +0800
-Message-ID: <CAFjve-AT6c-yweF0mOPea-caG3n43nZzVPcwef-qp+n35JN9ig@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Enable PCIe for Radxa Rock Pi 4 board
-To:     "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Akash Gajjar <akash@openedev.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "moderated list:ARM/Rockchip SoC support" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAG48ez1i9LUd2DPoP9na9OyqXDZVRJZQqBbS1H6Dz_h7mtJ=Mw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190004
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190003
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Matwey
 
-On Tue, Nov 19, 2019 at 2:41 AM Matwey V. Kornilov
-<matwey.kornilov@gmail.com> wrote:
+
+On 11/18/2019 11:30 AM, Jann Horn wrote:
+> On Mon, Nov 18, 2019 at 6:04 PM Prakash Sangappa
+> <prakash.sangappa@oracle.com> wrote:
+>> Allow CAP_SYS_NICE to take effect for processes having effective uid of a
+>> root user from init namespace.
+> [...]
+>> @@ -4548,6 +4548,8 @@ int can_nice(const struct task_struct *p, const int nice)
+>>          int nice_rlim = nice_to_rlimit(nice);
+>>
+>>          return (nice_rlim <= task_rlimit(p, RLIMIT_NICE) ||
+>> +               (ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE) &&
+>> +               uid_eq(current_euid(), GLOBAL_ROOT_UID)) ||
+>>                  capable(CAP_SYS_NICE));
+> I very strongly dislike tying such a feature to GLOBAL_ROOT_UID.
+> Wouldn't it be better to control this through procfs, similar to
+> uid_map and gid_map? If you really need an escape hatch to become
+> privileged outside a user namespace, then I'd much prefer a file
+> "cap_map" that lets someone with appropriate capabilities in the outer
+> namespace write a bitmask of capabilities that should have effect
+> outside the container, or something like that. And limit that to bits
+> where that's sane, like CAP_SYS_NICE.
+
+Sounds reasonable. Adding a 'cap_map' file to user namespace, would give 
+more control. We could allow the  capability in 'cap_map' to take effect 
+only if corresponding capability is enabled for the user inside the user 
+namespace Ex uid 0. Start with support for CAP_SYS_NICE?
+
+
 >
-> Current schematics
-> (https://dl.radxa.com/rockpi4/docs/hw/rockpi4/rockpi4_v13_sch_20181112.pdf)
-> is controversial on 1.8 supply:
->
-> On sheet 15 it says that 1.8 is supplied by VCC_1V8
-> at the same time on sheet 3 it says that it is supplied by VCCA_1V8
+> If we tie features like this to GLOBAL_ROOT_UID, more people are going
+> to run their containers with GLOBAL_ROOT_UID. Which is a terrible,
+> terrible idea. GLOBAL_ROOT_UID gives you privilege over all sorts of
+> files that you shouldn't be able to access, and only things like mount
+> namespaces and possibly LSMs prevent you from exercising that
+> privilege. GLOBAL_ROOT_UID should only ever be given to processes that
+> you trust completely.
 
-I am sorry for the confusion of the schematic. Please ignore the power
-tree on sheet 3, it's from the original reference design, I think we
-have different power paths on ROCK Pi 4. Please refer the circuits
-starting from sheet 5 below. It reflects the real hardware. We will
-fix the power tree and upload a new version of the schematic.
+Agreed.
 
->
-> >
-> > Thanks
-> > Heiko
-> >
-> >
->
->
-> --
-> With best regards,
-> Matwey V. Kornilov
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
-
-
--- 
-radxa rock pi 4 - the next generation Pi.
-
-radxa.com
