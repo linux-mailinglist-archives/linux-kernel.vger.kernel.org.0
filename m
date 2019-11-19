@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8951101526
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5829010167E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbfKSFlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35538 "EHLO mail.kernel.org"
+        id S1732081AbfKSFxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:53:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730491AbfKSFlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:09 -0500
+        id S1732073AbfKSFxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:53:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDE1321783;
-        Tue, 19 Nov 2019 05:41:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4C272084D;
+        Tue, 19 Nov 2019 05:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142068;
-        bh=4tVHdXxnr2nmS5HAhsqoyBMeGWaB5sri6kDgiem2kdo=;
+        s=default; t=1574142829;
+        bh=yf2g5LS7CSR6EimOmXLQw28lqB88ShIVUmK5hDk1gAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CV+mSzrwXKaFq1Q1/OBQ6ebuF1h/HP+s3eUAgjMrnw4dvr9ySzTdkbZ3PghAXkRi6
-         LG96M+WxiLJj1/xUMqrxTMNRiGj1SmDXL4ZST2av6668+/7JdY9V91qQ1ALuDMQ0XM
-         xgPWPG7VkupxMnfVW+QODZcy6tK3sC1wnUiSHQcA=
+        b=FrUp/1R3y0RziyKwb96gV3dftUe/qnOXpBoDm+7lQdXDGgIbcwEP4kmtBzKzs0C2a
+         H2PE8K096ZNaGKs8Q18ihi3A1ggnUljuAVW0ndhXB6Ttw82hmzq2PgJhObuqnqrcEq
+         mN3naxgLItvRdk5UoBZbitzwL9tPzO58kgsXVC9w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 377/422] f2fs: update i_size after DIO completion
+Subject: [PATCH 4.14 174/239] net: freescale: fix return type of ndo_start_xmit function
 Date:   Tue, 19 Nov 2019 06:19:34 +0100
-Message-Id: <20191119051423.467819205@linuxfoundation.org>
+Message-Id: <20191119051334.175237707@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,83 +44,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 0a4daae5ffea39f5015334e4d18a6a80b447cae4 ]
+[ Upstream commit 06983aa526c759ebdf43f202d8d0491d9494e2f4 ]
 
-This is related to
-ee70daaba82d ("xfs: update i_size after unwritten conversion in dio completion")
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-If we update i_size during dio_write, dio_read can read out stale data, which
-breaks xfstests/465.
+Found by coccinelle.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/data.c | 15 +++++++--------
- fs/f2fs/f2fs.h |  1 +
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c        | 3 ++-
+ drivers/net/ethernet/freescale/fec_mpc52xx.c          | 3 ++-
+ drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 3 ++-
+ drivers/net/ethernet/freescale/gianfar.c              | 4 ++--
+ drivers/net/ethernet/freescale/ucc_geth.c             | 3 ++-
+ 5 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b4a634da1372b..3a2fd66769660 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -889,7 +889,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	struct f2fs_summary sum;
- 	struct node_info ni;
- 	block_t old_blkaddr;
--	pgoff_t fofs;
- 	blkcnt_t count = 1;
- 	int err;
- 
-@@ -918,12 +917,10 @@ alloc:
- 					old_blkaddr, old_blkaddr);
- 	f2fs_set_data_blkaddr(dn);
- 
--	/* update i_size */
--	fofs = f2fs_start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
--							dn->ofs_in_node;
--	if (i_size_read(dn->inode) < ((loff_t)(fofs + 1) << PAGE_SHIFT))
--		f2fs_i_size_write(dn->inode,
--				((loff_t)(fofs + 1) << PAGE_SHIFT));
-+	/*
-+	 * i_size will be updated by direct_IO. Otherwise, we'll get stale
-+	 * data from unwritten block via dio_read.
-+	 */
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index d5f8bf87519ac..39b8b6730e77c 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2036,7 +2036,8 @@ static inline int dpaa_xmit(struct dpaa_priv *priv,
  	return 0;
  }
  
-@@ -1089,6 +1086,8 @@ next_block:
- 					last_ofs_in_node = dn.ofs_in_node;
- 				}
- 			} else {
-+				WARN_ON(flag != F2FS_GET_BLOCK_PRE_DIO &&
-+					flag != F2FS_GET_BLOCK_DIO);
- 				err = __allocate_data_block(&dn,
- 							map->m_seg_type);
- 				if (!err)
-@@ -1268,7 +1267,7 @@ static int get_data_block_dio(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh_result, int create)
+-static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
++static netdev_tx_t
++dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
  {
- 	return __get_data_block(inode, iblock, bh_result, create,
--						F2FS_GET_BLOCK_DEFAULT, NULL,
-+						F2FS_GET_BLOCK_DIO, NULL,
- 						f2fs_rw_hint_to_seg_type(
- 							inode->i_write_hint));
+ 	const int queue_mapping = skb_get_queue_mapping(skb);
+ 	bool nonlinear = skb_is_nonlinear(skb);
+diff --git a/drivers/net/ethernet/freescale/fec_mpc52xx.c b/drivers/net/ethernet/freescale/fec_mpc52xx.c
+index 6d7269d87a850..b90bab72efdb3 100644
+--- a/drivers/net/ethernet/freescale/fec_mpc52xx.c
++++ b/drivers/net/ethernet/freescale/fec_mpc52xx.c
+@@ -305,7 +305,8 @@ static int mpc52xx_fec_close(struct net_device *dev)
+  * invariant will hold if you make sure that the netif_*_queue()
+  * calls are done at the proper times.
+  */
+-static int mpc52xx_fec_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++mpc52xx_fec_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct mpc52xx_fec_priv *priv = netdev_priv(dev);
+ 	struct bcom_fec_bd *bd;
+diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+index 28bd4cf61741b..708082c255d09 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
++++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+@@ -481,7 +481,8 @@ static struct sk_buff *tx_skb_align_workaround(struct net_device *dev,
  }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6d361c8c61306..2dc49a5419070 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -600,6 +600,7 @@ enum {
- 	F2FS_GET_BLOCK_DEFAULT,
- 	F2FS_GET_BLOCK_FIEMAP,
- 	F2FS_GET_BLOCK_BMAP,
-+	F2FS_GET_BLOCK_DIO,
- 	F2FS_GET_BLOCK_PRE_DIO,
- 	F2FS_GET_BLOCK_PRE_AIO,
- 	F2FS_GET_BLOCK_PRECACHE,
+ #endif
+ 
+-static int fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct fs_enet_private *fep = netdev_priv(dev);
+ 	cbd_t __iomem *bdp;
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 63daae120b2d4..27d0e3b9833cd 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -112,7 +112,7 @@
+ const char gfar_driver_version[] = "2.0";
+ 
+ static int gfar_enet_open(struct net_device *dev);
+-static int gfar_start_xmit(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t gfar_start_xmit(struct sk_buff *skb, struct net_device *dev);
+ static void gfar_reset_task(struct work_struct *work);
+ static void gfar_timeout(struct net_device *dev);
+ static int gfar_close(struct net_device *dev);
+@@ -2334,7 +2334,7 @@ static inline bool gfar_csum_errata_76(struct gfar_private *priv,
+ /* This is called by the kernel when a frame is ready for transmission.
+  * It is pointed to by the dev->hard_start_xmit function pointer
+  */
+-static int gfar_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t gfar_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct gfar_private *priv = netdev_priv(dev);
+ 	struct gfar_priv_tx_q *tx_queue = NULL;
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index 94df1ddc5dcba..bddf4c25ee6ea 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -3085,7 +3085,8 @@ static int ucc_geth_startup(struct ucc_geth_private *ugeth)
+ 
+ /* This is called by the kernel when a frame is ready for transmission. */
+ /* It is pointed to by the dev->hard_start_xmit function pointer */
+-static int ucc_geth_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++ucc_geth_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ucc_geth_private *ugeth = netdev_priv(dev);
+ #ifdef CONFIG_UGETH_TX_ON_DEMAND
 -- 
 2.20.1
 
