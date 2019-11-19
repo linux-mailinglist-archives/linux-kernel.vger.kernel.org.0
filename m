@@ -2,119 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D83102A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 167AD102A61
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 18:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbfKSRCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 12:02:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56818 "EHLO mail.kernel.org"
+        id S1728578AbfKSRCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 12:02:02 -0500
+Received: from mga03.intel.com ([134.134.136.65]:23294 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbfKSRCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:02:49 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 098CC208D4;
-        Tue, 19 Nov 2019 17:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574182968;
-        bh=26SqJtwqUIdvM5q69X4Z0ZK5vY+WBJi/1p1ohl/CxeM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=weWl/rVlmNUOESJVshvd6j9+y2V6ybSbqVwbPWbzdoRTEMBaeRE8aJ2AnRUIl1io0
-         e7izHqdVmb6aWEHyTiqnCZaAvF9offkgUF6LxcLFEPeNqtfvUMX0Jm4JbYXeuAQB8L
-         PNpL2SKwScuvSQrxO1vW89Ynhj3Ku+HE/hhS8tQk=
-Date:   Tue, 19 Nov 2019 18:02:46 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Chris Paterson <Chris.Paterson2@renesas.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "patches@kernelci.org" <patches@kernelci.org>,
-        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
-        "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.19 000/422] 4.19.85-stable review
-Message-ID: <20191119170246.GA2139063@kroah.com>
-References: <20191119051400.261610025@linuxfoundation.org>
- <TYAPR01MB22854E4F20C28F3A10DA65E3B74C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <20191119122909.GC1913916@kroah.com>
- <20191119164626.GA5739@roeck-us.net>
+        id S1728071AbfKSRCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 12:02:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 09:01:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,218,1571727600"; 
+   d="scan'208";a="289664932"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2019 09:01:53 -0800
+Date:   Tue, 19 Nov 2019 09:06:28 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     Auger Eric <eric.auger@redhat.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 01/10] iommu/vt-d: Introduce native SVM capable flag
+Message-ID: <20191119090628.7295cd7d@jacob-builder>
+In-Reply-To: <efe5a47d-1209-2c09-bc66-b1ebbc671439@linux.intel.com>
+References: <1574106153-45867-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1574106153-45867-2-git-send-email-jacob.jun.pan@linux.intel.com>
+        <cb44724d-a396-0291-63c4-0039788fd26b@redhat.com>
+        <20191118134809.66b9fda4@jacob-builder>
+        <efe5a47d-1209-2c09-bc66-b1ebbc671439@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119164626.GA5739@roeck-us.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 08:46:26AM -0800, Guenter Roeck wrote:
-> On Tue, Nov 19, 2019 at 01:29:09PM +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Nov 19, 2019 at 08:54:25AM +0000, Chris Paterson wrote:
-> > > Hello Greg, all,
-> > > 
-> > > > From: stable-owner@vger.kernel.org <stable-owner@vger.kernel.org> On
-> > > > Behalf Of Greg Kroah-Hartman
-> > > > Sent: 19 November 2019 05:13
-> > > > 
-> > > > This is the start of the stable review cycle for the 4.19.85 release.
-> > > > There are 422 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > 
-> > > I'm seeing some build issues with module compilation with this release (1b1960cc Linux 4.19.85-rc1), I also saw them with the previous two versions of Linux 4.19.85-rc1 (cd21ecdb and 1fd0ac64).
-> > > 
-> > > Full log available on GitLab [0]. Build conf [1].
-> > > [0] https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/354591285
-> > > [1] https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/354591285/artifacts/file/output/4.19.85-rc1_1b1960cc7/x86/siemens_iot2000.config/config/.config
-> > > 
-> > > Main error below:
-> > > 
-> > > 3907   CC [M]  drivers/net/ethernet/mellanox/mlx4/main.o
-> > > 3908   LD [M]  fs/ntfs/ntfs.o
-> > > 3909   CC [M]  drivers/net/ethernet/intel/i40evf/i40e_txrx.o
-> > > 3910   CC [M]  drivers/usb/musb/musb_core.o
-> > > 3911   CC [M]  drivers/net/ethernet/nvidia/forcedeth.o
-> > > 3912   CC [M]  fs/udf/balloc.o
-> > > 3913   CC [M]  drivers/net/ethernet/intel/fm10k/fm10k_debugfs.o
-> > > 3914   CC [M]  fs/udf/dir.o
-> > > 3915   CC [M]  drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.o
-> > > 3916   CC [M]  drivers/net/ethernet/intel/i40e/i40e_ptp.o
-> > > 3917 drivers/net/ethernet/mellanox/mlx4/main.c: In function 'mlx4_init_one':
-> > > 3918 drivers/net/ethernet/mellanox/mlx4/main.c:3985:2: error: implicit declaration of function 'devlink_reload_enable'; did you mean 'devlink_region_create'? [-Werror=implicit-function-declaration]
-> > > 3919   devlink_reload_enable(devlink);
-> > > 3920   ^~~~~~~~~~~~~~~~~~~~~
-> > > 3921   devlink_region_create
-> > > 3922   CC [M]  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.o
-> > > 3923 drivers/net/ethernet/mellanox/mlx4/main.c: In function 'mlx4_remove_one':
-> > > 3924 drivers/net/ethernet/mellanox/mlx4/main.c:4097:2: error: implicit declaration of function 'devlink_reload_disable'; did you mean 'devlink_region_destroy'? [-Werror=implicit-function-declaration]
-> > > 3925   devlink_reload_disable(devlink);
-> > > 3926   ^~~~~~~~~~~~~~~~~~~~~~
-> > > 3927   devlink_region_destroy
-> > > 3928   CC [M]  drivers/net/ethernet/packetengines/hamachi.o
-> > > 3929   CC [M]  fs/udf/file.o
-> > > 3930   LD [M]  drivers/net/ethernet/intel/fm10k/fm10k.o
-> > > 
-> > > I haven't tried to trace the issue further yet, sorry.
-> > 
-> > Any chance you can bisect this?  I don't see any obvious reason why this
-> > error should be happening, and it isn't showing up here :(
-> > 
-> I see the problem as well, with powerpc:defconfig.
+On Tue, 19 Nov 2019 10:55:29 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
+
+> Hi,
 > 
-> Underlying issue is that devlink_reload_disable() is only declared in the
-> include file if CONFIG_NET_DEVLINK is enabled. There is no dummy otherwise.
-> The dummy declarations which still exist in 4.19 were removed with commit
-> f6b19b354d50c ("net: devlink: select NET_DEVLINK from drivers") in the
-> upstream kernel.
+> On 11/19/19 5:48 AM, Jacob Pan wrote:
+> > On Mon, 18 Nov 2019 21:33:53 +0100
+> > Auger Eric <eric.auger@redhat.com> wrote:
+> >   
+> >> Hi Jacob,
+> >>
+> >> On 11/18/19 8:42 PM, Jacob Pan wrote:  
+> >>> Shared Virtual Memory(SVM) is based on a collective set of
+> >>> hardware features detected at runtime. There are requirements for
+> >>> matching CPU and IOMMU capabilities.
+> >>>
+> >>> This patch introduces a flag which will be used to mark and test
+> >>> the capability of SVM.
+> >>>
+> >>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> >>> Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+> >>> ---
+> >>>   include/linux/intel-iommu.h | 1 +
+> >>>   1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/include/linux/intel-iommu.h
+> >>> b/include/linux/intel-iommu.h index ed11ef594378..63118991824c
+> >>> 100644 --- a/include/linux/intel-iommu.h
+> >>> +++ b/include/linux/intel-iommu.h
+> >>> @@ -433,6 +433,7 @@ enum {
+> >>>   
+> >>>   #define VTD_FLAG_TRANS_PRE_ENABLED	(1 << 0)
+> >>>   #define VTD_FLAG_IRQ_REMAP_PRE_ENABLED	(1 << 1)
+> >>> +#define VTD_FLAG_SVM_CAPABLE		(1 << 2)  
+> >>
+> >> I think I would rather squash this into the next patch as there is
+> >> no user here.
+> >>  
+> > Sure, I don't have strong preference. Baolu, what is your call?  
+> 
+> It's okay for me.
+> 
+will squash then.
+Thanks!
+> Best regards,
+> baolu
 
-Ok, let me take part of that patch and backport it.  I'll push out a
--rc3 now to hopefully resolve this issue.
-
-thanks,
-
-greg k-h
+[Jacob Pan]
