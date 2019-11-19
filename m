@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3CD10155D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC331016A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbfKSFnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38104 "EHLO mail.kernel.org"
+        id S1732264AbfKSFzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:55:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730707AbfKSFnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:43:14 -0500
+        id S1731694AbfKSFzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:55:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B759B21783;
-        Tue, 19 Nov 2019 05:43:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC974208C3;
+        Tue, 19 Nov 2019 05:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142194;
-        bh=YoOdhLDsccXJu821EOv0qP752hFVRTq/feQk1vt7ELE=;
+        s=default; t=1574142914;
+        bh=ty4jM+l1o5jHcZfIlJd9naAI9QaKwSjPCQLnsWRdjcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JLyXBPpp0QSE4BAJQY+Ya+frIKK+qy4JRgaUj4kblayiX1ycykXSLIAy0MiYIukEV
-         uQDucJ7wjHSL4pdjlNrQVNG+FdKqbQ/plEJGtWrN8CkRAGbGxgayaCwT57e2vkjY+D
-         X5fv2OWVrlQlko10baWZw9s2sLol4lo/Otl73L4w=
+        b=c1w1GuY8RaJN4jc3yMpf46/SvOm0q4kPkS0l+A8onAn2v8dcKb0W8nhvqZnAazl31
+         d0G7vtbU5a7RiGKqfb1iP1k0UWqsEm6NqpcxAZOadOLo8byNhZTWYbhUgy1Xi9ISpE
+         SN8sXcP4QdWDGwo5W+K/NDZmAS8Uh3EFOzV2FgzA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 421/422] net: phy: mdio-bcm-unimac: mark PM functions as __maybe_unused
+Subject: [PATCH 4.14 218/239] iwlwifi: api: annotate compressed BA notif array sizes
 Date:   Tue, 19 Nov 2019 06:20:18 +0100
-Message-Id: <20191119051426.475173994@linuxfoundation.org>
+Message-Id: <20191119051339.315389232@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 9b97123a584f60a5bca5a2663485768a1f6cd0a4 ]
+[ Upstream commit 6f68cc367ab6578a33cca21b6056804165621f00 ]
 
-The newly added runtime-pm support causes a harmless warning
-when CONFIG_PM is disabled:
+Annotate the compressed BA notification array sizes and
+make both of them 0-length since the length of 1 is just
+confusing - it may be different than that and the offset
+to the second one needs to be calculated in the C code
+anyhow.
 
-drivers/net/phy/mdio-bcm-unimac.c:330:12: error: 'unimac_mdio_resume' defined but not used [-Werror=unused-function]
- static int unimac_mdio_resume(struct device *d)
-drivers/net/phy/mdio-bcm-unimac.c:321:12: error: 'unimac_mdio_suspend' defined but not used [-Werror=unused-function]
- static int unimac_mdio_suspend(struct device *d)
-
-Marking the functions as __maybe_unused is the easiest workaround
-and avoids adding #ifdef checks.
-
-Fixes: b78ac6ecd1b6 ("net: phy: mdio-bcm-unimac: Allow configuring MDIO clock divider")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/mdio-bcm-unimac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/fw/api/tx.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
-index 80b9583eaa952..df75efa96a7d9 100644
---- a/drivers/net/phy/mdio-bcm-unimac.c
-+++ b/drivers/net/phy/mdio-bcm-unimac.c
-@@ -318,7 +318,7 @@ static int unimac_mdio_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+index 14ad9fb895f93..a9c8352a76418 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+@@ -722,9 +722,9 @@ enum iwl_mvm_ba_resp_flags {
+  * @tfd_cnt: number of TFD-Q elements
+  * @ra_tid_cnt: number of RATID-Q elements
+  * @tfd: array of TFD queue status updates. See &iwl_mvm_compressed_ba_tfd
+- *	for details.
++ *	for details. Length in @tfd_cnt.
+  * @ra_tid: array of RA-TID queue status updates. For debug purposes only. See
+- *	&iwl_mvm_compressed_ba_ratid for more details.
++ *	&iwl_mvm_compressed_ba_ratid for more details. Length in @ra_tid_cnt.
+  */
+ struct iwl_mvm_compressed_ba_notif {
+ 	__le32 flags;
+@@ -741,7 +741,7 @@ struct iwl_mvm_compressed_ba_notif {
+ 	__le32 tx_rate;
+ 	__le16 tfd_cnt;
+ 	__le16 ra_tid_cnt;
+-	struct iwl_mvm_compressed_ba_tfd tfd[1];
++	struct iwl_mvm_compressed_ba_tfd tfd[0];
+ 	struct iwl_mvm_compressed_ba_ratid ra_tid[0];
+ } __packed; /* COMPRESSED_BA_RES_API_S_VER_4 */
  
--static int unimac_mdio_suspend(struct device *d)
-+static int __maybe_unused unimac_mdio_suspend(struct device *d)
- {
- 	struct unimac_mdio_priv *priv = dev_get_drvdata(d);
- 
-@@ -327,7 +327,7 @@ static int unimac_mdio_suspend(struct device *d)
- 	return 0;
- }
- 
--static int unimac_mdio_resume(struct device *d)
-+static int __maybe_unused unimac_mdio_resume(struct device *d)
- {
- 	struct unimac_mdio_priv *priv = dev_get_drvdata(d);
- 	int ret;
 -- 
 2.20.1
 
