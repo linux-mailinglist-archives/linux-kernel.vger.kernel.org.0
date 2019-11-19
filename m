@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D3F1017CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:04:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3EBC101732
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfKSGD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:03:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33416 "EHLO mail.kernel.org"
+        id S1731576AbfKSFuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:50:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730263AbfKSFjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:19 -0500
+        id S1730200AbfKSFuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:50:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D37F920721;
-        Tue, 19 Nov 2019 05:39:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89CAF20721;
+        Tue, 19 Nov 2019 05:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141959;
-        bh=2enzXx7lcGEUB/VfRd3pDz675b+yj6Xt/n4BUBuGZ00=;
+        s=default; t=1574142603;
+        bh=pcXpAcOVE3NvxebTUdEuPJe/gAbBCH1+DZ41goKBY2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BBVrgCysaK2tjWougu14Uw836ju+zzYc9yICNlkb+4tYXcxiDvM+qhxYhB9MCG79p
-         ytjlyABo3hAWdND0s27GkpkB+IpYxu7dOdY5ogOXxWPrrUcHK9lnmm9kBS9f6vOR4j
-         BryBWmuQM61KsL0njHmHTu/uWPre1XKZLn/f4H0g=
+        b=U7YVKSYnpuAkjXL8uC7hfs4ZWoGoGjTL4XHsgPBDJdoizRkQ2Bco25R5PoCUu4sDJ
+         i0CmXl00epYZBnfQOwQT3vch6SI/mEtLtRe0YUDpWwlwcRgMSvhmi1+ZRvRtI+9g0O
+         lTtEWskVs34pOK3DTsM39gWx0bpXXohj1M69vrF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 339/422] phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
-Date:   Tue, 19 Nov 2019 06:18:56 +0100
-Message-Id: <20191119051420.984413140@linuxfoundation.org>
+Subject: [PATCH 4.14 138/239] net: hns3: fix return type of ndo_start_xmit function
+Date:   Tue, 19 Nov 2019 06:18:58 +0100
+Message-Id: <20191119051331.386693914@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 09938ea9d136243e8d1fed6d4d7a257764f28f6d ]
+[ Upstream commit c9c3941186c5637caed131c4f4064411d6882299 ]
 
-This patch fixes and issue that the vbus_ctrl is disabled by
-rcar_gen3_init_from_a_peri_to_a_host(), so a usb host cannot
-supply the vbus.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, also the implementation in this
+driver has returns 'netdev_tx_t' value, so just change the function
+return type to netdev_tx_t.
 
-Note that this condition will exit when the otg irq happens
-even if we don't apply this patch.
+Found by coccinelle.
 
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hip04_eth.c    | 3 ++-
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 6fb2b69695905..d22b1ec2e58c7 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -199,7 +199,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- 	val = readl(usb2_base + USB2_OBINTEN);
- 	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
+index ebc056b9a0fd2..84c0f22ac2db0 100644
+--- a/drivers/net/ethernet/hisilicon/hip04_eth.c
++++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
+@@ -424,7 +424,8 @@ static void hip04_start_tx_timer(struct hip04_priv *priv)
+ 			       ns, HRTIMER_MODE_REL);
+ }
  
--	rcar_gen3_enable_vbus_ctrl(ch, 0);
-+	rcar_gen3_enable_vbus_ctrl(ch, 1);
- 	rcar_gen3_init_for_host(ch);
+-static int hip04_mac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t
++hip04_mac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct hip04_priv *priv = netdev_priv(ndev);
+ 	struct net_device_stats *stats = &ndev->stats;
+diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+index 25a6c8722ecac..aab6fb10af94a 100644
+--- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+@@ -736,7 +736,7 @@ static int hix5hd2_fill_sg_desc(struct hix5hd2_priv *priv,
+ 	return 0;
+ }
  
- 	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+-static int hix5hd2_net_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t hix5hd2_net_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct hix5hd2_priv *priv = netdev_priv(dev);
+ 	struct hix5hd2_desc *desc;
 -- 
 2.20.1
 
