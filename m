@@ -2,40 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9954F10165B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:52:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3738101535
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731907AbfKSFwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:52:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49998 "EHLO mail.kernel.org"
+        id S1730128AbfKSFlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731297AbfKSFwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:52:19 -0500
+        id S1729655AbfKSFll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:41:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA71320721;
-        Tue, 19 Nov 2019 05:52:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFEDD21783;
+        Tue, 19 Nov 2019 05:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142738;
-        bh=1i+vQmOAwXrZq0x2DsTWc7B130SaqeQXm6f1QAqJXH0=;
+        s=default; t=1574142100;
+        bh=LlzMNDJ0JCchkYkAHu29SOMVRQeTRHAAwXM9PKy8u+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WW+0H9ZD/4ecQyXXkQO/76dN09CzjnhXGqSw5rJu2DCSo9sS8EfRyK/TtF2cbu1W8
-         4mAMa+P0gdlbaDCqpWE+jGMNKiD6hFB+gVKDxcQKK41eLF4KF2PSYKu0b2BuJT1Ul8
-         8xcJUaN07s44nwhlAYSX5JTMOVSkF7qlGOfhcsmc=
+        b=gmd1X9nnuM2kwiJCcQjM/4dLqZ/njsfobu0HIgEk8p4F5RS+4bJc+Zk4dHW3aPPTH
+         GhGR/YM2PMieMp+HE/fTo6251/PUvGLVaMyhUeuSh1KcdrixK92XpKW4kVd2WMu1bM
+         5c0rPgLZ+3o0m5C0n3sGfTd2Qd/cO187gn6TVhi0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Pepper <joel.pepper@rwth-aachen.de>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        Olaf Aepfle <olaf@aepfle.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Marcelo Cerri <marcelo.cerri@canonical.com>,
+        Josh Poulson <jopoulso@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 184/239] usb: gadget: uvc: configfs: Prevent format changes after linking header
+Subject: [PATCH 4.19 387/422] x86/hyperv: Suppress "PCI: Fatal: No config space access function found"
 Date:   Tue, 19 Nov 2019 06:19:44 +0100
-Message-Id: <20191119051334.983203021@linuxfoundation.org>
+Message-Id: <20191119051424.164699533@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +56,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Pepper <joel.pepper@rwth-aachen.de>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit cb2200f7af8341aaf0c6abd7ba37e4c667c41639 ]
+[ Upstream commit 2f285f46240d67060061d153786740d4df53cd78 ]
 
-While checks are in place to avoid attributes and children of a format
-being manipulated after the format is linked into the streaming header,
-the linked flag was never actually set, invalidating the protections.
-Update the flag as appropriate in the header link calls.
+A Generation-2 Linux VM on Hyper-V doesn't have the legacy PCI bus, and
+users always see the scary warning, which is actually harmless.
 
-Signed-off-by: Joel Pepper <joel.pepper@rwth-aachen.de>
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Suppress it.
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: KY Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+Cc: Olaf Aepfle <olaf@aepfle.de>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Marcelo Cerri <marcelo.cerri@canonical.com>
+Cc: Josh Poulson <jopoulso@microsoft.com>
+Link: https://lkml.kernel.org/r/ <KU1P153MB0166D977DC930996C4BF538ABF1D0@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/uvc_configfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/hyperv/hv_init.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index fc604439b25a1..57f6e8a668cf5 100644
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -765,6 +765,7 @@ static int uvcg_streaming_header_allow_link(struct config_item *src,
- 	format_ptr->fmt = target_fmt;
- 	list_add_tail(&format_ptr->entry, &src_hdr->formats);
- 	++src_hdr->num_fmt;
-+	++target_fmt->linked;
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 3fb8551552862..8a9cff1f129dc 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -17,6 +17,7 @@
+  *
+  */
  
- out:
- 	mutex_unlock(&opts->lock);
-@@ -802,6 +803,8 @@ static void uvcg_streaming_header_drop_link(struct config_item *src,
- 			break;
- 		}
++#include <linux/efi.h>
+ #include <linux/types.h>
+ #include <asm/apic.h>
+ #include <asm/desc.h>
+@@ -257,6 +258,22 @@ static int hv_cpu_die(unsigned int cpu)
+ 	return 0;
+ }
  
-+	--target_fmt->linked;
++static int __init hv_pci_init(void)
++{
++	int gen2vm = efi_enabled(EFI_BOOT);
 +
- out:
- 	mutex_unlock(&opts->lock);
- 	mutex_unlock(su_mutex);
++	/*
++	 * For Generation-2 VM, we exit from pci_arch_init() by returning 0.
++	 * The purpose is to suppress the harmless warning:
++	 * "PCI: Fatal: No config space access function found"
++	 */
++	if (gen2vm)
++		return 0;
++
++	/* For Generation-1 VM, we'll proceed in pci_arch_init().  */
++	return 1;
++}
++
+ /*
+  * This function is to be invoked early in the boot sequence after the
+  * hypervisor has been detected.
+@@ -333,6 +350,8 @@ void __init hyperv_init(void)
+ 
+ 	hv_apic_init();
+ 
++	x86_init.pci.arch_init = hv_pci_init;
++
+ 	/*
+ 	 * Register Hyper-V specific clocksource.
+ 	 */
 -- 
 2.20.1
 
