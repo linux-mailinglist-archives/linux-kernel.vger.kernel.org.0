@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0771014FF
+	by mail.lfdr.de (Postfix) with ESMTP id F1562101500
 	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfKSFjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:39:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33576 "EHLO mail.kernel.org"
+        id S1730304AbfKSFje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:39:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730285AbfKSFj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:29 -0500
+        id S1728530AbfKSFjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:39:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D01A4208C3;
-        Tue, 19 Nov 2019 05:39:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B915218BA;
+        Tue, 19 Nov 2019 05:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141968;
-        bh=VnAEBOD27XWMulR9/EeVPCt6n+USTqJyjGRRcoqKhTc=;
+        s=default; t=1574141971;
+        bh=omwOzQ1GYBx3czjCUu721WovaJfWUuozGWizC3g46PU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uD/ry+kBVYsieQoF4rn+pjwiPmpcumYj/tvyd/DdJNGlq0joSa+n8yRrDn4+YERP7
-         wzCspRkpJg0MlEmeIJyhT19LJ4CQ0avx1GKzFdqLMd/k7w1L2A4V2yoRxpHp+2vZKJ
-         g2vJQQTvtXSQNmWHMpHn+clwKqmJrgGM7Bq3ExLk=
+        b=YkmjMdIHjzN1YBA1KfRnwFpr6vg+SmmULkiKFAxTzt6fvO7nU4Pvc3vdA9IzUzU+2
+         e+j6XKL9BOFdfYwRChgx22wV+iRdueS/RY8tmkDXwFZhhfW3yOWSxD8TjR7dNx2XBP
+         YnOt0agb/SY2RtcAexVv7KPkXITLjQ2EaVq66wY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 341/422] ARM: dts: imx6ull: update vdd_soc voltage for 900MHz operating point
-Date:   Tue, 19 Nov 2019 06:18:58 +0100
-Message-Id: <20191119051421.112711980@linuxfoundation.org>
+Subject: [PATCH 4.19 342/422] usb: gadget: uvc: Factor out video USB request queueing
+Date:   Tue, 19 Nov 2019 06:18:59 +0100
+Message-Id: <20191119051421.176956317@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -46,35 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[ Upstream commit 245f880c25dbd8927af0f33aa5d1404370013957 ]
+[ Upstream commit 9d1ff5dcb3cd3390b1e56f1c24ae42c72257c4a3 ]
 
-Update VDD_SOC voltage to 1.25V for 900MHz operating point
-according to datasheet Rev. 1.3, 08/2018, 25mV is added to
-the minimum allowed values to cover power supply ripple.
+USB requests for video data are queued from two different locations in
+the driver, with the same code block occurring twice. Factor it out to a
+function.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Paul Elder <paul.elder@ideasonboard.com>
+Tested-by: Paul Elder <paul.elder@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6ull.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/function/uvc_video.c | 30 ++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6ull.dtsi b/arch/arm/boot/dts/imx6ull.dtsi
-index cd1776a7015ac..796ed35d4ac9a 100644
---- a/arch/arm/boot/dts/imx6ull.dtsi
-+++ b/arch/arm/boot/dts/imx6ull.dtsi
-@@ -22,7 +22,7 @@
- 	>;
- 	fsl,soc-operating-points = <
- 		/* KHz	uV */
--		900000	1175000
-+		900000	1250000
- 		792000	1175000
- 		528000	1175000
- 		396000	1175000
+diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
+index d3567b90343a4..a95c8e2364edc 100644
+--- a/drivers/usb/gadget/function/uvc_video.c
++++ b/drivers/usb/gadget/function/uvc_video.c
+@@ -125,6 +125,19 @@ uvc_video_encode_isoc(struct usb_request *req, struct uvc_video *video,
+  * Request handling
+  */
+ 
++static int uvcg_video_ep_queue(struct uvc_video *video, struct usb_request *req)
++{
++	int ret;
++
++	ret = usb_ep_queue(video->ep, req, GFP_ATOMIC);
++	if (ret < 0) {
++		printk(KERN_INFO "Failed to queue request (%d).\n", ret);
++		usb_ep_set_halt(video->ep);
++	}
++
++	return ret;
++}
++
+ /*
+  * I somehow feel that synchronisation won't be easy to achieve here. We have
+  * three events that control USB requests submission:
+@@ -189,14 +202,13 @@ uvc_video_complete(struct usb_ep *ep, struct usb_request *req)
+ 
+ 	video->encode(req, video, buf);
+ 
+-	if ((ret = usb_ep_queue(ep, req, GFP_ATOMIC)) < 0) {
+-		printk(KERN_INFO "Failed to queue request (%d).\n", ret);
+-		usb_ep_set_halt(ep);
+-		spin_unlock_irqrestore(&video->queue.irqlock, flags);
++	ret = uvcg_video_ep_queue(video, req);
++	spin_unlock_irqrestore(&video->queue.irqlock, flags);
++
++	if (ret < 0) {
+ 		uvcg_queue_cancel(queue, 0);
+ 		goto requeue;
+ 	}
+-	spin_unlock_irqrestore(&video->queue.irqlock, flags);
+ 
+ 	return;
+ 
+@@ -316,15 +328,13 @@ int uvcg_video_pump(struct uvc_video *video)
+ 		video->encode(req, video, buf);
+ 
+ 		/* Queue the USB request */
+-		ret = usb_ep_queue(video->ep, req, GFP_ATOMIC);
++		ret = uvcg_video_ep_queue(video, req);
++		spin_unlock_irqrestore(&queue->irqlock, flags);
++
+ 		if (ret < 0) {
+-			printk(KERN_INFO "Failed to queue request (%d)\n", ret);
+-			usb_ep_set_halt(video->ep);
+-			spin_unlock_irqrestore(&queue->irqlock, flags);
+ 			uvcg_queue_cancel(queue, 0);
+ 			break;
+ 		}
+-		spin_unlock_irqrestore(&queue->irqlock, flags);
+ 	}
+ 
+ 	spin_lock_irqsave(&video->req_lock, flags);
 -- 
 2.20.1
 
