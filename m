@@ -2,172 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C38102430
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51BCF102436
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfKSMWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:22:25 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52697 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfKSMWY (ORCPT
+        id S1727884AbfKSMYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:24:12 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42887 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725798AbfKSMYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:22:24 -0500
-Received: by mail-wm1-f67.google.com with SMTP id l1so2957356wme.2;
-        Tue, 19 Nov 2019 04:22:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pCZ+boQU06taG0uRqRU5p4OOluIcsIWA0zaH1C287a4=;
-        b=FM53ORQwVWjNBirpF/b/+wjx/e/Vkp4KItN0WlU1fYzCw4RAjrqFTtnM1/Uby3dVdK
-         FCJ2nKsQJhpo4l/bZk7Mn4z199l/383/1X7afTKdZblq/CJAKCWCvta88xxwyXl3UZci
-         FtloJoF1fjzEmTqusleWmxmV53XzWbjgfOHucCsGFLIiuaTkoC1uNxNy5sBv/8lhagE6
-         qPoSqMrrhpbvXhW6fyDB0xkiv1z9FaKX0j/tQHxrrf3tAq/TC3/EF3T/oJvmKOTtL1V4
-         N712FUpDdceOhaggMDCiLsd2aHyJNLUosvD4PCEhff6lFjUG8qXy5FvJ1ReseK+Bt2hx
-         mF/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pCZ+boQU06taG0uRqRU5p4OOluIcsIWA0zaH1C287a4=;
-        b=lHeN7EUjL5NLJYDz+114Mv/SSlosmyuf/Pz1LnQQcB1tr9F1klZKEQ9PWtINBVbbFr
-         kT2ZVcfBAUiGs7sQundvmhwcqQ2WAw7R3CsrhQ+52hAsLogadqRsA5784TGy0F+wzA5O
-         ytw6K7ngVSDElLXppU5MADYYUGBgml5nPH6nQVWEgdS04ZSqtugdtIXzmnVqf8bW0laB
-         KyI1Q/XWmouTA/8xyt0DVFkm2v2aYwexh/jP8bOt9qv5oFYBCu7R9i0Agb6W8EdpTCHV
-         MF1AzWy7K54VXSCCdhckfCe2XE+Bx/ukOiyfhnrhYC+TMLwT6c3YBTA/VkgiUhon/S4+
-         M9mQ==
-X-Gm-Message-State: APjAAAWj1drV98LvoEbCWEFuNgfB1kwgp+93LCGbK/5m2tG91Jg8INBX
-        KSYv8rYNdxqn0mgTfE6rjp4=
-X-Google-Smtp-Source: APXvYqx8J0A9Fq4xFkjwZhw6QIza/BfWFpr6MygFUiV3WR/Xgy1tZfffFAp6e+6ePrvxr9A8W8GhgQ==
-X-Received: by 2002:a1c:a556:: with SMTP id o83mr5077222wme.165.1574166141047;
-        Tue, 19 Nov 2019 04:22:21 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id o187sm2916196wmo.20.2019.11.19.04.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 04:22:20 -0800 (PST)
-Date:   Tue, 19 Nov 2019 13:22:17 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Nadav Amit <namit@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm <linux-pm@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 00/12] treewide: break dependencies on x86's RM header
-Message-ID: <20191119122217.GA24878@gmail.com>
-References: <20191119002121.4107-1-sean.j.christopherson@intel.com>
- <20191119111012.GA109842@gmail.com>
- <CAKv+Gu9C132peF9_j2rRwRh4s+aWZBY82rgjqmwaE_X=_6y4Zw@mail.gmail.com>
+        Tue, 19 Nov 2019 07:24:12 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0TiYlW.J_1574166244;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TiYlW.J_1574166244)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 19 Nov 2019 20:24:04 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, hannes@cmpxchg.org
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>
+Subject: [PATCH v4 0/9] per lruvec lru_lock for memcg
+Date:   Tue, 19 Nov 2019 20:23:14 +0800
+Message-Id: <1574166203-151975-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9C132peF9_j2rRwRh4s+aWZBY82rgjqmwaE_X=_6y4Zw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+This patchset move lru_lock into lruvec, give a lru_lock for each of
+lruvec, thus bring a lru_lock for each of memcg per node.
 
-> On Tue, 19 Nov 2019 at 12:10, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> >
-> > > x86's asm/realmode.h, which defines low level structures, variables and
-> > > helpers used to bring up APs during SMP boot, ends up getting included in
-> > > practically every nook and cranny of the kernel because the address used
-> > > by ACPI for resuming from S3 also happens to be stored in the real mode
-> > > header, and ACPI bleeds the dependency into its widely included headers.
-> > >
-> > > As a result, modifying realmode.h for even the most trivial change to the
-> > > boot code triggers a full kernel rebuild, which is frustrating to say the
-> > > least as it some of the most difficult code to get exactly right *and* is
-> > > also some of the most functionally isolated code in the kernel.
-> > >
-> > > To break the kernel's widespread dependency on realmode.h, add a wrapper
-> > > in the aforementioned ACPI S3 code to access the real mode header instead
-> > > of derefencing the header directly in asm/acpi.h and thereby exposing it
-> > > to the world via linux/acpi.h.
-> > >
-> > > Build tested on x86 with allyesconfig and allmodconfig, so hopefully there
-> > > aren't more build issues lurking, but at this point it wouldn't surprise
-> > > me in the least if this somehow manages to break the build.
-> > >
-> > > Based on tip/master, commit ceceaf1f12ba ("Merge branch 'WIP.x86/cleanups'").
-> > >
-> > > Patch Synopsis:
-> > >   - Patches 01-09 fix a variety of build errors that arise when patch 12
-> > >     drops realmode.h from asm/acpi.h.  Most of the errors are quite absurb
-> > >     as they have no relation whatsoever to x86's RM boot code, but occur
-> > >     because realmode.h happens to include asm/io.h.
-> >
-> > Yeah, these kind of parasitic header dependencies are the main driving
-> > force behind kernel header spaghetti hell: it's super easy to add a new
-> > header, but very hard to remove them...
-> >
-> > Hence they practically only accumulate.
-> >
-> > As a result header removal patches get priority, from me at least. :-)
-> >
-> > >   - Patch 10 removes a spurious include of realmode.h from an ACPI header.
-> > >
-> > >   - Patches 11 and 12 implement the wrapper and move it out of acpi.h.
-> >
-> > So if the ACPI maintainers are fine with -tip carrying patches #11 and #12
-> > then I'd be glad to route these patches upstream.
-> >
-> > I've applied them to tip:WIP.core/headers as a work-in-progress tree, and
-> > I'm testing them on randconfigs to make sure there's no broken
-> > dependencies. I'll wait for the ACPI acks.
-> >
-> > I edited the title of patch 12 slightly, to:
-> >
-> >    c8bceb321209: x86/ACPI/sleep: Move acpi_wakeup_address() definition into sleep.c, remove <asm/realmode.h> from <asm/acpi.h>
-> >
-> > to make sure the big header dependency change is obvious at first sight.
-> >
-> 
-> I'm fine with the patches but can we drop the fixes headers please?
-> This doesn't actually fix anything, and touching early boot stuff for
-> no good reason should be avoided imo.
+According to Daniel Jordan's suggestion, I run 64 'dd' with on 32
+containers on my 2s* 8 core * HT box with the modefied case:
+  https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git/tree/case-lru-file-readtwice
 
-Agreed and done.
+With this change above lru_lock censitive testing improved 17% with multiple
+containers scenario. And no performance lose w/o mem_cgroup.
 
-Thanks,
+Thanks Hugh Dickins and Konstantin Khlebnikov, they both brought the same idea
+7 years ago. Now I believe considering my testing result, and google internal
+using fact. This feature is clearly benefit multi-container users.
 
-	Ingo
+So I'd like to introduce it here.
+
+Thanks all the comments from Hugh Dickins, Konstantin Khlebnikov, Daniel Jordan, 
+Johannes Weiner, Mel Gorman, Shakeel Butt, Rong Chen, Fengguang Wu, Yun Wang etc.
+
+v4: 
+  a, fix the page->mem_cgroup dereferencing issue, thanks Johannes Weiner
+  b, remove the irqsave flags changes, thanks Metthew Wilcox
+  c, merge/split patches for better understanding and bisection purpose
+
+v3: rebase on linux-next, and fold the relock fix patch into introduceing patch
+
+v2: bypass a performance regression bug and fix some function issues
+
+v1: initial version, aim testing show 5% performance increase
+
+
+Alex Shi (9):
+  mm/swap: fix uninitialized compiler warning
+  mm/huge_memory: fix uninitialized compiler warning
+  mm/lru: replace pgdat lru_lock with lruvec lock
+  mm/mlock: only change the lru_lock iff page's lruvec is different
+  mm/swap: only change the lru_lock iff page's lruvec is different
+  mm/vmscan: only change the lru_lock iff page's lruvec is different
+  mm/pgdat: remove pgdat lru_lock
+  mm/lru: likely enhancement
+  mm/lru: revise the comments of lru_lock
+
+ Documentation/admin-guide/cgroup-v1/memcg_test.rst | 15 +----
+ Documentation/admin-guide/cgroup-v1/memory.rst     |  6 +-
+ Documentation/trace/events-kmem.rst                |  2 +-
+ Documentation/vm/unevictable-lru.rst               | 22 +++----
+ include/linux/memcontrol.h                         | 68 ++++++++++++++++++++
+ include/linux/mm_types.h                           |  2 +-
+ include/linux/mmzone.h                             |  5 +-
+ mm/compaction.c                                    | 67 +++++++++++++------
+ mm/filemap.c                                       |  4 +-
+ mm/huge_memory.c                                   | 17 ++---
+ mm/memcontrol.c                                    | 75 +++++++++++++++++-----
+ mm/mlock.c                                         | 27 ++++----
+ mm/mmzone.c                                        |  1 +
+ mm/page_alloc.c                                    |  1 -
+ mm/page_idle.c                                     |  5 +-
+ mm/rmap.c                                          |  2 +-
+ mm/swap.c                                          | 74 +++++++++------------
+ mm/vmscan.c                                        | 74 ++++++++++-----------
+ 18 files changed, 287 insertions(+), 180 deletions(-)
+
+-- 
+1.8.3.1
+
