@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 479D0101529
+	by mail.lfdr.de (Postfix) with ESMTP id BB43710152A
 	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbfKSFlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35660 "EHLO mail.kernel.org"
+        id S1730516AbfKSFlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730504AbfKSFlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:15 -0500
+        id S1729946AbfKSFlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:41:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2D3B208C3;
-        Tue, 19 Nov 2019 05:41:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6285821783;
+        Tue, 19 Nov 2019 05:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142074;
-        bh=CtT6uTW0IPM2Nq6HBc1wilGUrLZyI4sUEyoHHr7e/+0=;
+        s=default; t=1574142076;
+        bh=xscJ7EClHwitBaxZMa5jBEldDG3fG8cJaiC13LZuq10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=07Yo3q9mc1lnEL8/Z9gEMZDxmId1WiD0CIXSDHHemtm4jDY0kzChh7lSGGIKT9k2X
-         nAjW4n+dYDvdWgQLwd9wq0iQ/aFjoaVxAA5hK/8tlsIlYRgA4wUsLVh1a/b4MNwJza
-         odze3IEzUA3aXVIUoPSi6x3w8CYZzKbTaV2/0lxg=
+        b=XuL6+aSW1++/cMN4rn0S8rVfX9G77aay8qLXKGcnWdqqzh9tv/KMN73zjHxaZuUl8
+         +41qiEzIBd/L49IUvQIx/77B4VLJqC160fhKWi+TmSOYFwmLrUIhADMm0c6RVu7jeG
+         uu2m5ICPoU4bc8hk9LDQwYWWFWzgW1phjuiF+4x4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 379/422] f2fs: mark inode dirty explicitly in recover_inode()
-Date:   Tue, 19 Nov 2019 06:19:36 +0100
-Message-Id: <20191119051423.606527864@linuxfoundation.org>
+Subject: [PATCH 4.19 380/422] RDMA: Fix dependencies for rdma_user_mmap_io
+Date:   Tue, 19 Nov 2019 06:19:37 +0100
+Message-Id: <20191119051423.687303372@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,33 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 4a1728cad6340bfbe17bd17fd158b2165cd99508 ]
+[ Upstream commit 46bdf777685677c1cc6b3da9220aace9da690731 ]
 
-Mark inode dirty explicitly in the end of recover_inode() to make sure
-that all recoverable fields can be persisted later.
+The mlx4 driver produces a link error when it is configured
+as built-in while CONFIG_INFINIBAND_USER_ACCESS is set to =m:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+drivers/infiniband/hw/mlx4/main.o: In function `mlx4_ib_mmap':
+main.c:(.text+0x1af4): undefined reference to `rdma_user_mmap_io'
+
+The same function is called from mlx5, which already has a
+dependency to ensure we can call it, and from hns, which
+appears to suffer from the same problem.
+
+This adds the same dependency that mlx5 uses to the other two.
+
+Fixes: 6745d356ab39 ("RDMA/hns: Use rdma_user_mmap_io")
+Fixes: c282da4109e4 ("RDMA/mlx4: Use rdma_user_mmap_io")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/hns/Kconfig  | 1 +
+ drivers/infiniband/hw/mlx4/Kconfig | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 01636d996ba41..733f005b85d65 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -247,6 +247,8 @@ static void recover_inode(struct inode *inode, struct page *page)
- 
- 	recover_inline_flags(inode, raw);
- 
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+
- 	if (file_enc_name(inode))
- 		name = "<encrypted>";
- 	else
+diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
+index fddb5fdf92de8..21c2100b2ea98 100644
+--- a/drivers/infiniband/hw/hns/Kconfig
++++ b/drivers/infiniband/hw/hns/Kconfig
+@@ -1,6 +1,7 @@
+ config INFINIBAND_HNS
+ 	tristate "HNS RoCE Driver"
+ 	depends on NET_VENDOR_HISILICON
++	depends on INFINIBAND_USER_ACCESS || !INFINIBAND_USER_ACCESS
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	---help---
+ 	  This is a RoCE/RDMA driver for the Hisilicon RoCE engine. The engine
+diff --git a/drivers/infiniband/hw/mlx4/Kconfig b/drivers/infiniband/hw/mlx4/Kconfig
+index db4aa13ebae0c..d1de3285fd885 100644
+--- a/drivers/infiniband/hw/mlx4/Kconfig
++++ b/drivers/infiniband/hw/mlx4/Kconfig
+@@ -1,6 +1,7 @@
+ config MLX4_INFINIBAND
+ 	tristate "Mellanox ConnectX HCA support"
+ 	depends on NETDEVICES && ETHERNET && PCI && INET
++	depends on INFINIBAND_USER_ACCESS || !INFINIBAND_USER_ACCESS
+ 	depends on MAY_USE_DEVLINK
+ 	select NET_VENDOR_MELLANOX
+ 	select MLX4_CORE
 -- 
 2.20.1
 
