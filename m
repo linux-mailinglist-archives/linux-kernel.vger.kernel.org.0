@@ -2,64 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DBB51011B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:13:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B20CC10120A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 04:15:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbfKSDNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 22:13:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38176 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbfKSDNK (ORCPT
+        id S1727951AbfKSDPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 22:15:23 -0500
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:47036 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfKSDPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 22:13:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=w1ly8URM0uOTflt/kZy0TJgrnspB9XQu8w6aCtnLvW8=; b=KtVyMulpSnDq9tntYDC+RCTtm
-        3c6gDhbbLXKTBKKG74KEtprK1lDyXcTafqs2dcpktR3n0+xokaPZNR9T5WyQjEbwEdEds3DhdXZ4d
-        0Ro+8OLmVNDYLs9rZ1FpweXI1r26UTL/od3f2b/k1dap9wL/AKYGlAU9fmVHeSYf8OgCg6OS9baB+
-        Us/Iy6vf8X/rVjc52xbJxiW7osJxNcjlB9jznCRfyQadI2nKpiDMU1fQWMwvqMOxKn5n6uOTzoE0i
-        neVNEEJz7xBHo/L5sPOuSyVX1gF3xDEMd74hnHPXbJjX5qIccAbE088ZoeCm3qSzLSOhtcykJek+c
-        YsXsmBv6A==;
-Received: from [2601:1c0:6280:3f0::5a22]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iWtwt-0000dD-JO; Tue, 19 Nov 2019 03:13:03 +0000
-Subject: Re: [PATCH V13 4/6] mdev: introduce mediated virtio bus
-To:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
-        gregkh@linuxfoundation.org, jgg@mellanox.com
-Cc:     netdev@vger.kernel.org, cohuck@redhat.com,
-        maxime.coquelin@redhat.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, rob.miller@broadcom.com,
-        xiao.w.wang@intel.com, haotian.wang@sifive.com,
-        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
-        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
-        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
-        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, eperezma@redhat.com,
-        lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com, hch@infradead.org, aadam@redhat.com,
-        jakub.kicinski@netronome.com, jiri@mellanox.com,
-        jeffrey.t.kirsher@intel.com
-References: <20191118105923.7991-1-jasowang@redhat.com>
- <20191118105923.7991-5-jasowang@redhat.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6c5f6e9e-0a4a-f514-2c26-08476b9a09f8@infradead.org>
-Date:   Mon, 18 Nov 2019 19:13:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Mon, 18 Nov 2019 22:15:23 -0500
+Received: by mail-pg1-f176.google.com with SMTP id r18so10592862pgu.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 19:15:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bH6OLsChq8B4WKZCYOfbbfHHWXx5dkcLTpl8Z48ELMU=;
+        b=obijPTVfPqbQjXb8wUyaih7dcb6kS+xNNWHqdnXMjVNeT1lcYOCBOpyxgxorkDBHvn
+         52yXfwMHEdrjKBQqD/PZpLZf89S6PrZF8AKptIXTtlkjVMwLRRwa/rB2wlILsWAZrmJU
+         VqcGRPjmMU7IChjMma2IJNz7RsrozxK95g+XHnPhyi1qPT+D/RbOlahyxJ9g+6eNoDKQ
+         APbpkdpBCxg52Ud5pnv/6IwqPJcEr/X4ZNk4IliqiSxFFjLhkuML1heqKWIztz0UYeq6
+         WepOivB5v6/3HSHNnc5M/LLE/HCZtlkFdR7SDsX3Lpz6x7YORZ0d2WK56btNP7gUHvpS
+         L7Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bH6OLsChq8B4WKZCYOfbbfHHWXx5dkcLTpl8Z48ELMU=;
+        b=RUcD0/tHlI7JdzUqaM4WID5+E/AjCSUnj7YftgHqe2exbvn87YigNWHxkGWkpqx0wd
+         ACOvqakTKV2ouHPgwsOluLu3m36LJjgRY2m3+qT+XTbtHj4roAup4FL4oPB6RADaW7uI
+         32MGWDXBeGvXjpa4YP6uVfZk87chuUqId1fL3iTbpU5wZMyDvz0HLHwpglgfjVRC2g14
+         QXgwLeto6Uu3kBaw01gQ5DzO9wznSCjlI7qBhPrffTAwmbpolStWwvfCgpsd0qF7MEri
+         D0e1z6BF8HoXfhaB9gRDwSSgCtKeZeoUR6RVdbLk8P+pD9VK3mQ2VjpTpBinQkvroiPO
+         WvFg==
+X-Gm-Message-State: APjAAAVQlMK3O1mur55ejU//5Ju14GEGjt0KYISL+wBtNFWDHdg6Rlym
+        vfoIaLZpKyG164SFh++/9XcZSw==
+X-Google-Smtp-Source: APXvYqyiN/c0l7XM+isQKPQTt9x2vwfNw9PIhgFIu/fFIV1jIOFt0Uko/Pd18EjD1a52tcohw6pFSg==
+X-Received: by 2002:a63:f716:: with SMTP id x22mr2927463pgh.351.1574133322366;
+        Mon, 18 Nov 2019 19:15:22 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.79])
+        by smtp.gmail.com with ESMTPSA id 23sm21319175pgw.8.2019.11.18.19.15.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Nov 2019 19:15:21 -0800 (PST)
+Subject: Re: INFO: task hung in io_wq_destroy
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     syzbot <syzbot+0f1cc17f85154f400465@syzkaller.appspotmail.com>,
+        andriy.shevchenko@linux.intel.com, davem@davemloft.net,
+        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+        idosch@mellanox.com, kimbrownkd@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, petrm@mellanox.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk, wanghai26@huawei.com,
+        yuehaibing@huawei.com
+References: <000000000000f86a4f0595fdb152@google.com>
+ <f1a79e81-b41f-ba48-9bf3-aeae708f73ba@kernel.dk>
+ <20191119022330.GC3147@sol.localdomain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bc52115c-3951-54c6-7810-86797d8c4644@kernel.dk>
+Date:   Mon, 18 Nov 2019 20:15:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191118105923.7991-5-jasowang@redhat.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20191119022330.GC3147@sol.localdomain>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,36 +75,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 11/18/19 7:23 PM, Eric Biggers wrote:
+> Hi Jens,
+> 
+> On Mon, Oct 28, 2019 at 03:00:08PM -0600, Jens Axboe wrote:
+>> This is fixed in my for-next branch for a few days at least, unfortunately
+>> linux-next is still on the old one. Next version should be better.
+> 
+> This is still occurring on linux-next.  Here's a report on next-20191115 from
+> https://syzkaller.appspot.com/text?tag=CrashReport&x=16fa3d1ce00000
 
-On 11/18/19 2:59 AM, Jason Wang wrote:
-> diff --git a/drivers/mdev/Kconfig b/drivers/mdev/Kconfig
-> index 4561f2d4178f..cd84d4670552 100644
-> --- a/drivers/mdev/Kconfig
-> +++ b/drivers/mdev/Kconfig
-> @@ -17,3 +17,13 @@ config VFIO_MDEV
->  	  more details.
->  
->  	  If you don't know what do here, say N.
-> +
-> +config MDEV_VIRTIO
-> +       tristate "Mediated VIRTIO bus"
-> +       depends on VIRTIO && MDEV
-> +       default n
-> +       help
-> +	  Proivdes a mediated BUS for virtio. It could be used by
+Hmm, I'll take a look. Looking at the reproducer, it's got a massive
+sleep at the end. I take it this triggers before that time actually
+passes? Because that's around 11.5 days of sleep.
 
-	  Provides
-
-> +          either kenrel driver or userspace driver.
-
-	            kernel
-
-> +
-> +	  If you don't know what do here, say N.
-
-All of these lines should be indented with one tab, not spaces.
+No luck reproducing this so far, I'll try on linux-next.
 
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Jens Axboe
+
