@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC6D101681
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 479D0101529
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731495AbfKSFx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:53:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51944 "EHLO mail.kernel.org"
+        id S1730514AbfKSFlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732091AbfKSFxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:53:55 -0500
+        id S1730504AbfKSFlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:41:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 636932084D;
-        Tue, 19 Nov 2019 05:53:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2D3B208C3;
+        Tue, 19 Nov 2019 05:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142834;
-        bh=pLU2em+gidaipwiPpe17mwLmm03YkEkQWrNziFfIf9M=;
+        s=default; t=1574142074;
+        bh=CtT6uTW0IPM2Nq6HBc1wilGUrLZyI4sUEyoHHr7e/+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RfcxS6hUaiAN1+1DJ61GbjTmLwMLGQcQf25xKK11P0gLQC5wZwalfJ6XdRMlWtuIv
-         7PsOMY8R+sLeS2WblnYxY2KmLBrTaEIIK7bAFw4GarxlvM2ovC9WzrIpnc+EveZ9jT
-         b4j2NTH/PaO9zezaAEB27Kupl6pAiLhc4xUqyhbU=
+        b=07Yo3q9mc1lnEL8/Z9gEMZDxmId1WiD0CIXSDHHemtm4jDY0kzChh7lSGGIKT9k2X
+         nAjW4n+dYDvdWgQLwd9wq0iQ/aFjoaVxAA5hK/8tlsIlYRgA4wUsLVh1a/b4MNwJza
+         odze3IEzUA3aXVIUoPSi6x3w8CYZzKbTaV2/0lxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Matthew Whitehead <tedheadster@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 176/239] x86/CPU: Change query logic so CPUID is enabled before testing
+Subject: [PATCH 4.19 379/422] f2fs: mark inode dirty explicitly in recover_inode()
 Date:   Tue, 19 Nov 2019 06:19:36 +0100
-Message-Id: <20191119051334.309340122@linuxfoundation.org>
+Message-Id: <20191119051423.606527864@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,60 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Whitehead <tedheadster@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 2893cc8ff892fa74972d8dc0e1d0dc65116daaa3 ]
+[ Upstream commit 4a1728cad6340bfbe17bd17fd158b2165cd99508 ]
 
-Presently we check first if CPUID is enabled. If it is not already
-enabled, then we next call identify_cpu_without_cpuid() and clear
-X86_FEATURE_CPUID.
+Mark inode dirty explicitly in the end of recover_inode() to make sure
+that all recoverable fields can be persisted later.
 
-Unfortunately, identify_cpu_without_cpuid() is the function where CPUID
-becomes _enabled_ on Cyrix 6x86/6x86L CPUs.
-
-Reverse the calling sequence so that CPUID is first enabled, and then
-check a second time to see if the feature has now been activated.
-
-[ bp: Massage commit message and remove trailing whitespace. ]
-
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Andy Lutomirski <luto@amacapital.net>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180921212041.13096-3-tedheadster@gmail.com
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/recovery.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index c0c9c5a44e82c..3d805e8b37396 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1066,6 +1066,9 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 	memset(&c->x86_capability, 0, sizeof c->x86_capability);
- 	c->extended_cpuid_level = 0;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 01636d996ba41..733f005b85d65 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -247,6 +247,8 @@ static void recover_inode(struct inode *inode, struct page *page)
  
-+	if (!have_cpuid_p())
-+		identify_cpu_without_cpuid(c);
+ 	recover_inline_flags(inode, raw);
+ 
++	f2fs_mark_inode_dirty_sync(inode, true);
 +
- 	/* cyrix could have cpuid enabled via c_identify()*/
- 	if (have_cpuid_p()) {
- 		cpu_detect(c);
-@@ -1082,7 +1085,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		if (this_cpu->c_bsp_init)
- 			this_cpu->c_bsp_init(c);
- 	} else {
--		identify_cpu_without_cpuid(c);
- 		setup_clear_cpu_cap(X86_FEATURE_CPUID);
- 	}
- 
+ 	if (file_enc_name(inode))
+ 		name = "<encrypted>";
+ 	else
 -- 
 2.20.1
 
