@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4B91017B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:03:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D9A1017AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:03:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfKSFk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:40:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
+        id S1730464AbfKSFk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:40:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730393AbfKSFkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:40:23 -0500
+        id S1730458AbfKSFky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:40:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 815ED21783;
-        Tue, 19 Nov 2019 05:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15E3F208C3;
+        Tue, 19 Nov 2019 05:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142022;
-        bh=oNMpK4uCT6FqDAbQaOrbyYV5qSgpW9C8QAqC4iyX9LQ=;
+        s=default; t=1574142053;
+        bh=k8d5s75KhVKjgm3jmwxPY/yUWZ6JYWL1KLUdROsgTKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bGjgvlP0caNDgRTbOwhp6a6Ejz0BDtwAslkdAAzFd7AR3Kq2czry2CVk8EiNkUSB9
-         /9M/f5FbvXv57jsMzNy6t3cO++BjB9hPhWFsECXPWssU/xDiKJo3nYCPbXDux2k4ZO
-         IJ+Tk9ttcc4A6ebVznivXhepU6tri2snFh+SyfVs=
+        b=g7AaRCcBxppnbYZ6rkLcA8bgrNDBTANvr4jmVmePF/IYtKFule66w0lCar/iJdCm5
+         /JkXnTcQHiUqT33lSEyYa5nJWUqZGVfyo99nAeffbkvdgZFA0bdvn/CwGkRI+6OEry
+         1Vl1CNTpNISGFKIZ4Rx7puEVjNywWl3DWxKc+1EU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 354/422] silmbus: ngd: register controller after power up.
-Date:   Tue, 19 Nov 2019 06:19:11 +0100
-Message-Id: <20191119051421.958702318@linuxfoundation.org>
+Subject: [PATCH 4.19 355/422] misc: kgdbts: Fix restrict error
+Date:   Tue, 19 Nov 2019 06:19:12 +0100
+Message-Id: <20191119051422.023773594@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -44,82 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 94fe5f2b45c4108885e4b71f6b181068632ec904 ]
+[ Upstream commit fa0218ef733e6f247a1a3986e3eb12460064ac77 ]
 
-Register slimbus controller only after finishing powerup sequnce so that we
-do not endup in situation where core starts sending transactions before
-the controller is ready.
+kgdbts current fails when compiled with restrict:
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+drivers/misc/kgdbts.c: In function ‘configure_kgdbts’:
+drivers/misc/kgdbts.c:1070:2: error: ‘strcpy’ source argument is the same as destination [-Werror=restrict]
+  strcpy(config, opt);
+  ^~~~~~~~~~~~~~~~~~~
+
+As the error says, config is being used in both the source and destination.
+Refactor the code to avoid the extra copy and put the parsing closer to
+the actual location.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/slimbus/qcom-ngd-ctrl.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/misc/kgdbts.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-index e587be9064e74..d72f8eed2e8b7 100644
---- a/drivers/slimbus/qcom-ngd-ctrl.c
-+++ b/drivers/slimbus/qcom-ngd-ctrl.c
-@@ -1234,8 +1234,17 @@ static int qcom_slim_ngd_enable(struct qcom_slim_ngd_ctrl *ctrl, bool enable)
- 			pm_runtime_resume(ctrl->dev);
- 		pm_runtime_mark_last_busy(ctrl->dev);
- 		pm_runtime_put(ctrl->dev);
+diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+index eb4d90b7d99e1..8b01257783dd8 100644
+--- a/drivers/misc/kgdbts.c
++++ b/drivers/misc/kgdbts.c
+@@ -985,6 +985,12 @@ static void kgdbts_run_tests(void)
+ 	int nmi_sleep = 0;
+ 	int i;
+ 
++	verbose = 0;
++	if (strstr(config, "V1"))
++		verbose = 1;
++	if (strstr(config, "V2"))
++		verbose = 2;
 +
-+		ret = slim_register_controller(&ctrl->ctrl);
-+		if (ret) {
-+			dev_err(ctrl->dev, "error adding slim controller\n");
-+			return ret;
-+		}
-+
-+		dev_info(ctrl->dev, "SLIM controller Registered\n");
- 	} else {
- 		qcom_slim_qmi_exit(ctrl);
-+		slim_unregister_controller(&ctrl->ctrl);
+ 	ptr = strchr(config, 'F');
+ 	if (ptr)
+ 		fork_test = simple_strtol(ptr + 1, NULL, 10);
+@@ -1068,13 +1074,6 @@ static int kgdbts_option_setup(char *opt)
+ 		return -ENOSPC;
  	}
- 
+ 	strcpy(config, opt);
+-
+-	verbose = 0;
+-	if (strstr(config, "V1"))
+-		verbose = 1;
+-	if (strstr(config, "V2"))
+-		verbose = 2;
+-
  	return 0;
-@@ -1360,11 +1369,6 @@ static int qcom_slim_ngd_probe(struct platform_device *pdev)
- 	int ret;
+ }
  
- 	ctrl->ctrl.dev = dev;
--	ret = slim_register_controller(&ctrl->ctrl);
--	if (ret) {
--		dev_err(dev, "error adding slim controller\n");
--		return ret;
--	}
+@@ -1086,9 +1085,6 @@ static int configure_kgdbts(void)
  
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_set_autosuspend_delay(dev, QCOM_SLIM_NGD_AUTOSUSPEND);
-@@ -1374,7 +1378,7 @@ static int qcom_slim_ngd_probe(struct platform_device *pdev)
- 	ret = qcom_slim_ngd_qmi_svc_event_init(ctrl);
- 	if (ret) {
- 		dev_err(&pdev->dev, "QMI service registration failed:%d", ret);
--		goto err;
-+		return ret;
- 	}
+ 	if (!strlen(config) || isspace(config[0]))
+ 		goto noconfig;
+-	err = kgdbts_option_setup(config);
+-	if (err)
+-		goto noconfig;
  
- 	INIT_WORK(&ctrl->m_work, qcom_slim_ngd_master_worker);
-@@ -1386,8 +1390,6 @@ static int qcom_slim_ngd_probe(struct platform_device *pdev)
- 	}
- 
- 	return 0;
--err:
--	slim_unregister_controller(&ctrl->ctrl);
- wq_err:
- 	qcom_slim_ngd_qmi_svc_event_deinit(&ctrl->qmi);
- 	if (ctrl->mwq)
-@@ -1460,7 +1462,7 @@ static int qcom_slim_ngd_remove(struct platform_device *pdev)
- 	struct qcom_slim_ngd_ctrl *ctrl = platform_get_drvdata(pdev);
- 
- 	pm_runtime_disable(&pdev->dev);
--	slim_unregister_controller(&ctrl->ctrl);
-+	qcom_slim_ngd_enable(ctrl, false);
- 	qcom_slim_ngd_exit_dma(ctrl);
- 	qcom_slim_ngd_qmi_svc_event_deinit(&ctrl->qmi);
- 	if (ctrl->mwq)
+ 	final_ack = 0;
+ 	run_plant_and_detach_test(1);
 -- 
 2.20.1
 
