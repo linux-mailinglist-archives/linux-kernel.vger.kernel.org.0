@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447981015C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2436C1014AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731184AbfKSFrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:47:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43210 "EHLO mail.kernel.org"
+        id S1729941AbfKSFgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:36:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730637AbfKSFq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:46:58 -0500
+        id S1729931AbfKSFgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:36:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E09522071B;
-        Tue, 19 Nov 2019 05:46:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3249620862;
+        Tue, 19 Nov 2019 05:36:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142417;
-        bh=xhf/4H4yFczKL2kdqA8IiqG5aMFJ7x0hqVi3LZjt9Bg=;
+        s=default; t=1574141774;
+        bh=TWMtyGoTPlsTVwTgBV9Um9JUDKWHvmdAk1nWhp7XC/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z4RrEoz7qOxw9Lpx+lYmmp9OnBHzu2R5hU2MREMBv0Mc7SIdM6S8ZA8PyalVIqApp
-         ke8cbi/Bqej2Zu3pBjM8IUja4UkGhBNcxfbQrOx3repWKeJu0aZYhg4a8M2vtMhKaC
-         F7HMfd6SDnNfclVUkEpm0K5PfPPHCeFKbnO5CmNU=
+        b=oUAW1IwaqReMWhgjs4QlqE/XZQnK4KWZh+5qzkeJhAm/c2Ybg6O5p8wQPqT3QoTSK
+         2W6txk1Y3MOa/pjnsoMAU6VsznHWvqnyeTig+xnA0XB0RoWQoV1QB7OuwHupG7y9ac
+         onxlUICsBvJDrnyXAeO6EEoR4ud3tXlZg/5jHk8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ding Xiang <dingxiang@cmss.chinamobile.com>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        Paul Burton <paul.burton@mips.com>, ralf@linux-mips.org,
-        jhogan@kernel.org, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 073/239] mips: txx9: fix iounmap related issue
-Date:   Tue, 19 Nov 2019 06:17:53 +0100
-Message-Id: <20191119051313.532172161@linuxfoundation.org>
+Subject: [PATCH 4.19 277/422] net: broadcom: fix return type of ndo_start_xmit function
+Date:   Tue, 19 Nov 2019 06:17:54 +0100
+Message-Id: <20191119051416.936428380@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,45 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ding Xiang <dingxiang@cmss.chinamobile.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit c6e1241a82e6e74d1ae5cc34581dab2ffd6022d0 ]
+[ Upstream commit 0c13b8d1aee87c35a2fbc1d85a1f766227cf54b5 ]
 
-if device_register return error, iounmap should be called, also iounmap
-need to call before put_device.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
-Reviewed-by: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20476/
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Found by coccinelle.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/txx9/generic/setup.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c | 5 +++--
+ drivers/net/ethernet/broadcom/sb1250-mac.c   | 4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
-index 1791a44ee570a..20aaf77166e85 100644
---- a/arch/mips/txx9/generic/setup.c
-+++ b/arch/mips/txx9/generic/setup.c
-@@ -959,12 +959,11 @@ void __init txx9_sramc_init(struct resource *r)
- 		goto exit_put;
- 	err = sysfs_create_bin_file(&dev->dev.kobj, &dev->bindata_attr);
- 	if (err) {
--		device_unregister(&dev->dev);
- 		iounmap(dev->base);
--		kfree(dev);
-+		device_unregister(&dev->dev);
- 	}
- 	return;
- exit_put:
-+	iounmap(dev->base);
- 	put_device(&dev->dev);
--	return;
- }
+diff --git a/drivers/net/ethernet/broadcom/bcm63xx_enet.c b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+index 897302adc38ec..50f8a377596e1 100644
+--- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
++++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+@@ -568,12 +568,13 @@ static irqreturn_t bcm_enet_isr_dma(int irq, void *dev_id)
+ /*
+  * tx request callback
+  */
+-static int bcm_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++bcm_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct bcm_enet_priv *priv;
+ 	struct bcm_enet_desc *desc;
+ 	u32 len_stat;
+-	int ret;
++	netdev_tx_t ret;
+ 
+ 	priv = netdev_priv(dev);
+ 
+diff --git a/drivers/net/ethernet/broadcom/sb1250-mac.c b/drivers/net/ethernet/broadcom/sb1250-mac.c
+index ef4a0c326736d..7e3f9642ba6c5 100644
+--- a/drivers/net/ethernet/broadcom/sb1250-mac.c
++++ b/drivers/net/ethernet/broadcom/sb1250-mac.c
+@@ -299,7 +299,7 @@ static enum sbmac_state sbmac_set_channel_state(struct sbmac_softc *,
+ static void sbmac_promiscuous_mode(struct sbmac_softc *sc, int onoff);
+ static uint64_t sbmac_addr2reg(unsigned char *ptr);
+ static irqreturn_t sbmac_intr(int irq, void *dev_instance);
+-static int sbmac_start_tx(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t sbmac_start_tx(struct sk_buff *skb, struct net_device *dev);
+ static void sbmac_setmulti(struct sbmac_softc *sc);
+ static int sbmac_init(struct platform_device *pldev, long long base);
+ static int sbmac_set_speed(struct sbmac_softc *s, enum sbmac_speed speed);
+@@ -2028,7 +2028,7 @@ static irqreturn_t sbmac_intr(int irq,void *dev_instance)
+  *  Return value:
+  *  	   nothing
+  ********************************************************************* */
+-static int sbmac_start_tx(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t sbmac_start_tx(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct sbmac_softc *sc = netdev_priv(dev);
+ 	unsigned long flags;
 -- 
 2.20.1
 
