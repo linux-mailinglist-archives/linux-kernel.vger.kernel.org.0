@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E3E1014F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8563410164A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:51:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbfKSFjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:39:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
+        id S1728457AbfKSFvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:51:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729113AbfKSFjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:39:05 -0500
+        id S1731843AbfKSFvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:51:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7ED90206EC;
-        Tue, 19 Nov 2019 05:39:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38EE6208C3;
+        Tue, 19 Nov 2019 05:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141945;
-        bh=NMPNEBM0ZqzblQuub571ZXHEph2ZQyjpjHS66QSs94U=;
+        s=default; t=1574142708;
+        bh=2Ryiu54J7RjdKSMXF03LaKQ2DIslLnR9lwAhh7kigR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GYFKn/5YlOFXEcvTY8xIB0WDy9n8fon/VAyazlZFtj0v+WaJheplbYni4blrkbQIU
-         uNeTeOeK79PHhLb7BWHGcDcHiTG7U/WQYhDlQ38cqY3WNhzFiG72guNe27ydpv1SvS
-         RStg8p+QZDvV/wVzaOaXFpaLef4zENJhSlr741vs=
+        b=en3qPCVROYEmx0OoprYHXcbE0j+rSXkJfGg5wdHo5S9M/ixWJxl64MTYKvMs0alB5
+         ZXOiQ0MK8+GGrqgF2UeAJKjUeRDN+XS/vBfIhbjonBk+XvHia/KzXjc1wjrRSlzBie
+         hbG5husIqJS6olvXgKhGyEgdDFac8k7CBepRY6WA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Nava kishore Manne <navam@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 334/422] ARM: dts: exynos: Correct audio subsystem parent clock on Peach Chromebooks
-Date:   Tue, 19 Nov 2019 06:18:51 +0100
-Message-Id: <20191119051420.660741996@linuxfoundation.org>
+Subject: [PATCH 4.14 132/239] serial: uartps: Fix suspend functionality
+Date:   Tue, 19 Nov 2019 06:18:52 +0100
+Message-Id: <20191119051330.773039084@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Nava kishore Manne <nava.manne@xilinx.com>
 
-[ Upstream commit ff1e37c6809daab75f7b2dea1efe69330e8eb65b ]
+[ Upstream commit 4b9d33c6a30688344a3e95179654ea31b07f59b7 ]
 
-The proper parent clock for audio subsystem for Exynos5420 and Exynos5800
-SoCs is CLK_MAU_EPLL. This fixes following warning:
+The driver's suspend/resume functions were buggy.
+If UART node contains any child node in the DT and
+the child is established a communication path with
+the parent UART. The relevant /dev/ttyPS* node will
+be not available for other operations.
+If the driver is trying to do any operations like
+suspend/resume without checking the tty->dev status
+it leads to the kernel crash/hang.
 
-    clk: failed to reparent mout_audss to fout_epll: -22
+This patch fix this issue by call the device_may_wake()
+with the generic parameter of type struct device.
+in the uart suspend and resume paths.
 
-Fixes: ed7d1307077e: ARM: dts: exynos: Enable HDMI audio support on Peach Pit
-Fixes: bae0f445c1e7: ARM: dts: exynos: Enable HDMI audio support on Peach Pi
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+It also fixes a race condition in the uart suspend
+path(i.e uart_suspend_port() should be called at the
+end of cdns_uart_suspend API this path updates the same)
+
+Signed-off-by: Nava kishore Manne <navam@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 2 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/xilinx_uartps.c | 41 +++++++++---------------------
+ 1 file changed, 12 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 769d60d6c9006..9eb48cabcca45 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -153,7 +153,7 @@
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index b0da63737aa19..0dbfd02e3b196 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1342,24 +1342,11 @@ static struct uart_driver cdns_uart_uart_driver = {
+ static int cdns_uart_suspend(struct device *device)
+ {
+ 	struct uart_port *port = dev_get_drvdata(device);
+-	struct tty_struct *tty;
+-	struct device *tty_dev;
+-	int may_wake = 0;
+-
+-	/* Get the tty which could be NULL so don't assume it's valid */
+-	tty = tty_port_tty_get(&port->state->port);
+-	if (tty) {
+-		tty_dev = tty->dev;
+-		may_wake = device_may_wakeup(tty_dev);
+-		tty_kref_put(tty);
+-	}
++	int may_wake;
  
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
--	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
-+	assigned-clock-parents = <&clock CLK_MAU_EPLL>;
- };
+-	/*
+-	 * Call the API provided in serial_core.c file which handles
+-	 * the suspend.
+-	 */
+-	uart_suspend_port(&cdns_uart_uart_driver, port);
+-	if (!(console_suspend_enabled && !may_wake)) {
++	may_wake = device_may_wakeup(device);
++
++	if (console_suspend_enabled && may_wake) {
+ 		unsigned long flags = 0;
  
- &cpu0 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 492e2cd2e559e..4398f2d1fe881 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -153,7 +153,7 @@
+ 		spin_lock_irqsave(&port->lock, flags);
+@@ -1374,7 +1361,11 @@ static int cdns_uart_suspend(struct device *device)
+ 		spin_unlock_irqrestore(&port->lock, flags);
+ 	}
  
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
--	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
-+	assigned-clock-parents = <&clock CLK_MAU_EPLL>;
- };
+-	return 0;
++	/*
++	 * Call the API provided in serial_core.c file which handles
++	 * the suspend.
++	 */
++	return uart_suspend_port(&cdns_uart_uart_driver, port);
+ }
  
- &cpu0 {
+ /**
+@@ -1388,17 +1379,9 @@ static int cdns_uart_resume(struct device *device)
+ 	struct uart_port *port = dev_get_drvdata(device);
+ 	unsigned long flags = 0;
+ 	u32 ctrl_reg;
+-	struct tty_struct *tty;
+-	struct device *tty_dev;
+-	int may_wake = 0;
+-
+-	/* Get the tty which could be NULL so don't assume it's valid */
+-	tty = tty_port_tty_get(&port->state->port);
+-	if (tty) {
+-		tty_dev = tty->dev;
+-		may_wake = device_may_wakeup(tty_dev);
+-		tty_kref_put(tty);
+-	}
++	int may_wake;
++
++	may_wake = device_may_wakeup(device);
+ 
+ 	if (console_suspend_enabled && !may_wake) {
+ 		struct cdns_uart *cdns_uart = port->private_data;
 -- 
 2.20.1
 
