@@ -2,109 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC851102830
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B524102838
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 16:38:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbfKSPhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 10:37:38 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39934 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbfKSPhi (ORCPT
+        id S1728319AbfKSPiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 10:38:10 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35509 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfKSPiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:37:38 -0500
-Received: by mail-lj1-f195.google.com with SMTP id p18so23856299ljc.6;
-        Tue, 19 Nov 2019 07:37:36 -0800 (PST)
+        Tue, 19 Nov 2019 10:38:09 -0500
+Received: by mail-io1-f65.google.com with SMTP id x21so23715846ior.2;
+        Tue, 19 Nov 2019 07:38:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xAyUdfmJiJi4RpgjaU0REjjASDaV/bWU7/WG+YER0uc=;
-        b=fS5ID8C8Ou3hctvXS249gt3CgzjMHu6QOznB0d4VTxqRkdLzJoQc4Juz7F0SjgYoDM
-         /rhuxUNH7ktJpyqkCV0DVsvKMeh9GTQZrD4JyHWuxdewlgEgvBlguPaE7RK9rvO5XRfH
-         sdk3uRQBula1q2w5uvVf2fXq2AdbNDg8s41w7CN3LLW2r1pAGNyDkQElIX7/b6uZrekV
-         /z8c73jF5ZfMT5LncrJBsGihL99X3+tjCMa4cgWhiz+0IOe4CibvLD4yzXC2OYkM3crB
-         jk3EoJOETFTzJMzi9pseRuqH2jeo/stYJugWSweN9pDMetK2Y8oyYs72BGOqUV2CEOLr
-         DQIQ==
+        bh=+aA8kllhbmf7SaJ49Rl3eadbxFpnLArVBB5k6qFkePI=;
+        b=tgR7O9KctrJr2cHitt43wLn244YdnM8UGcA97A4tnRg3Cr+V+h0xdvnoOj5dFMlwlH
+         eGY6BbfHF7EDq2cCEvIlbtvMAyrzmMrIxPRKxv5bHgqiIO/eQuEv5HZyqKJJoK34XeUk
+         RGoZRAk1koI1ij5Q3fxClec4Qy0xJaz6JIc50CIYsDA0Cu2sfRQZN0JVYSAjELI0rirT
+         CzUx/vTlgtIW0QPJmb0XMofbWK2/ncYbwedDDpowhoKEuhjZdN1vb5dtP30UY7IBrk2p
+         3wFjFzK6IqZiis2j2242TU+TYblUFupQfgOyvD8GZ66n0YSlzzG/apFDgxgbvZJK8PhD
+         pp3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xAyUdfmJiJi4RpgjaU0REjjASDaV/bWU7/WG+YER0uc=;
-        b=J1fIAKzpwWIc4P2Cvf+SnBOlV1YRYNqjGnPGhMahpAGG9XwnMKOhFiVJd9h57dTegt
-         B2tdx22faIk2vy+oYttQu5EeC/fmusq9zcJs4RU93RdPnCV88c4kNBkT8VrbC0DEyTD3
-         2cU5NVNLrqrrzvQYXLf0VnuFO+w6VKeZebX3YzaBKQe51HiGUfenDgDqVL7+uNHnthLP
-         PVQqeXSxmAgowCqLD+0tQGqPBHNpnuE3S8IZuo4FJL3jJs5VRjIRRH+N5C/ZspPFOoYb
-         Qol49O71MXCf1k+UUucFHr4lJX/XIpyn32z9b7iRN6vPplXiG+AIffgbQRVMTz9BNRKZ
-         Qodg==
-X-Gm-Message-State: APjAAAX9TuFYj07OK3xMhbAaAR3fJugFCAesbM2Y+JnPjTTckSV53jzM
-        +73rDmO+wb6TpsILXgNtHCcBiiygUIC937Nk/0o=
-X-Google-Smtp-Source: APXvYqwM5CuCM0cMaXsnBmFFYQh73bBkZRAdGfG3BteYMFXCaRaY935y4lBJiyme/ufuVZgdkox3YAKYAYngH5QeuYI=
-X-Received: by 2002:a2e:970a:: with SMTP id r10mr4614470lji.142.1574177855313;
- Tue, 19 Nov 2019 07:37:35 -0800 (PST)
+        bh=+aA8kllhbmf7SaJ49Rl3eadbxFpnLArVBB5k6qFkePI=;
+        b=MMuq6dSk8w4oVUHxzY7UsJVkSAWBDrZYy2TBcRGhQkcPLPhsowRz4jY0LxhVyQ24/q
+         CPBoqPHW34ij+L7uwSXQnmjEmi3J6xleuKSD/uK+jsfUbGOQ8COvhVIBEpm/ToysBQOr
+         YeBlGLNfqX7XLGTxrkH02mJtBSTCjL1/EP2/PU/pCkwv0gBojFkde6TCsaqqbXPmY38j
+         vIpDHIkYgioDZxyurnULZLp8iGhM1KTDipTJdmtNuPAHogGFAbknta0j9NOKx0sNoybx
+         PQujzz5dy3B+tiYFO9tNkJOtEZtTL6g8ZgLkcGTmzD9+g4TTcAeGBLOSSlB7RBbFobVJ
+         Zlhw==
+X-Gm-Message-State: APjAAAVyLipIncEfvpjLp53lFM4a9s0jil9l1nKLPNtngqw3D/GUMdLx
+        Z87CZHyR6C9yHnDE2+JxvI4vx7L8pyPr+f1HK/Q=
+X-Google-Smtp-Source: APXvYqwAFFo0t0y1g8caum4zUH2fgSu3r8rkRHLGEpTBTxhzhQB12bzMfxB4EzLgHiS+gW+7Bos6JSbmeo7zNxl/F+o=
+X-Received: by 2002:a6b:7846:: with SMTP id h6mr13839903iop.33.1574177889000;
+ Tue, 19 Nov 2019 07:38:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20191114194636.811109457@goodmis.org> <20191114194738.938540273@goodmis.org>
- <20191115215125.mbqv7taqnx376yed@ast-mbp.dhcp.thefacebook.com>
- <20191117171835.35af6c0e@gandalf.local.home> <CAADnVQ+OzTikM9EhrfsC7NFsVYhATW1SVHxK64w3xn9qpk81pg@mail.gmail.com>
- <20191119091304.2c775b35@gandalf.local.home>
-In-Reply-To: <20191119091304.2c775b35@gandalf.local.home>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 19 Nov 2019 07:37:23 -0800
-Message-ID: <CAADnVQJ7ymcPRCw4iWBuec-tYLXSH-62r96WNAVNwQTLA+DGsg@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] ftrace: Add modify_ftrace_direct()
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
+References: <20191119011823.379100-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20191119011823.379100-1-bjorn.andersson@linaro.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Tue, 19 Nov 2019 08:37:58 -0700
+Message-ID: <CAOCk7NrvmVFu5PgQsaDJO69kpMAzWdV9DCiGrtQyQRFf6xX5Nw@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: msm8998-mtp: Add alias for blsp1_uart3
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 6:13 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Nov 18, 2019 at 6:18 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 >
-> On Mon, 18 Nov 2019 22:04:28 -0800
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> The msm_serial driver has a predefined set of uart ports defined, which
+> is allocated either by reading aliases or if no match is found a simple
+> counter, starting at index 0. But there's no logic in place to prevent
+> these two allocation mechanism from colliding. As a result either none
+> or all of the active msm_serial instances must be listed as aliases.
 >
-> > I took your for-next without the extra patch and used it from bpf trampoline.
-> > It's looking good so far. Passed basic testing. Will add more stress tests.
-> >
-> > Do you mind doing:
-> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> > index 73eb2e93593f..6ddb203ca550 100644
-> > --- a/include/linux/ftrace.h
-> > +++ b/include/linux/ftrace.h
-> > @@ -256,16 +256,16 @@ struct ftrace_direct_func
-> > *ftrace_find_direct_func(unsigned long addr);
-> >  # define ftrace_direct_func_count 0
-> >  static inline int register_ftrace_direct(unsigned long ip, unsigned long addr)
-> >  {
-> > -       return -ENODEV;
-> > +       return -ENOTSUPP;
-> >  }
-> >  static inline int unregister_ftrace_direct(unsigned long ip, unsigned
-> > long addr)
-> >  {
-> > -       return -ENODEV;
-> > +       return -ENOTSUPP;
-> >  }
-> >  static inline int modify_ftrace_direct(unsigned long ip,
-> >                                        unsigned long old_addr,
-> > unsigned long new_addr)
-> >  {
-> > -       return -ENODEV;
-> > +       return -ENOTSUPP;
-> >  }
-> >
-> > otherwise ENODEV is a valid error when ip is incorrect which is
-> > indistinguishable from ftrace not compiled in.
+> Define blsp1_uart3 as "serial1" to mitigate this problem.
 >
-> Sure I can add this. Want to add a Signed-off-by to it, and I'll just
-> pull it in directly? I can write up the change log.
+> Fixes: 4cffb9f2c700 ("arm64: dts: qcom: msm8998-mtp: Enable bluetooth")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Whichever way is easier for you.
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Thanks!
+Seems good to me.
 
-> -- Steve
+Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+
+> ---
+>
+> Changes since v1:
+> - Rewrote commit message
+>
+>  arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> index 5f101a20a20a..e08fcb426bbf 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> @@ -9,6 +9,7 @@
+>  / {
+>         aliases {
+>                 serial0 = &blsp2_uart1;
+> +               serial1 = &blsp1_uart3;
+>         };
+>
+>         chosen {
+> --
+> 2.23.0
+>
