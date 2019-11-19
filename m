@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176EA101565
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9863D101673
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbfKSFnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38528 "EHLO mail.kernel.org"
+        id S1732016AbfKSFxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:53:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730761AbfKSFni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:43:38 -0500
+        id S1732008AbfKSFxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:53:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E6F0222A4;
-        Tue, 19 Nov 2019 05:43:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A74F21783;
+        Tue, 19 Nov 2019 05:53:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142217;
-        bh=pf2pAqyeX+jV3FFFGFlVj7wA519RpuOPTu8xAEris6o=;
+        s=default; t=1574142799;
+        bh=AVsTff8XYCIJMMJe5wlggyX8gJLBRn9KGyjOJ6ZA1Ag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Du9jgxbIBpR9HjAljCWRf4oOXTLkWLzjmaZh4z3Gtf3FkirGckZwYs5eBfpsEoMz9
-         N81bM5OFs5CEy49uos839n6QqGGXn5110tboD3ULEt0qeXS6P72S/ADEYUXKWZZ1aG
-         19BxYCVHMp7b2zxyb/hq9RoDdHH7FluRLrqw9Em0=
+        b=z7ITVRpfRXgUYUVMCxpm960dy982Y90ZMvg+OUPlLl2hXWoPpOj5dlxP4sAmFNBMe
+         GK6qhi9UgANxMCzKgBem9yV8RL68ktEdK4b1LQ1lgy89vtkfJxzPauTybeEUUOMzbr
+         Cu0CvB5oMTj2kBcHhza60ErQKAeWsIjuD1U1vgB0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 405/422] scsi: NCR5380: Dont call dsprintk() following reselection interrupt
-Date:   Tue, 19 Nov 2019 06:20:02 +0100
-Message-Id: <20191119051425.420744944@linuxfoundation.org>
+Subject: [PATCH 4.14 203/239] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Date:   Tue, 19 Nov 2019 06:20:03 +0100
+Message-Id: <20191119051336.698327594@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit 08267216b3f8aa5adc204bdccf8deb72c1cd7665 ]
+[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
 
-The X3T9.2 specification (draft) says, under "6.1.4.1 RESELECTION",
+Fix MMC1 cmd pin pull-up causing issues on carrier boards without
+external pull-up.
 
-    ... The reselected initiator shall then assert the BSY signal
-    within a selection abort time of its most recent detection of being
-    reselected; this is required for correct operation of the time-out
-    procedure.
-
-The selection abort time is only 200 us which may be insufficient time for a
-printk() call. Move the diagnostics to the error paths.
-
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 227ceb5197555..5c3ffb466bb10 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -2015,8 +2015,6 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
- 		return;
- 	}
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index faa8cd2914e8b..b9368d40bc6fb 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -166,14 +166,14 @@
  
--	dsprintk(NDEBUG_RESELECTION, instance, "reselect\n");
--
- 	/*
- 	 * At this point, we have detected that our SCSI ID is on the bus,
- 	 * SEL is true and BSY was false for at least one bus settle delay
-@@ -2029,6 +2027,7 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
- 	NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE | ICR_ASSERT_BSY);
- 	if (NCR5380_poll_politely(hostdata,
- 	                          STATUS_REG, SR_SEL, 0, 2 * HZ) < 0) {
-+		shost_printk(KERN_ERR, instance, "reselect: !SEL timeout\n");
- 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
- 		return;
- 	}
-@@ -2040,6 +2039,7 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
- 
- 	if (NCR5380_poll_politely(hostdata,
- 	                          STATUS_REG, SR_REQ, SR_REQ, 2 * HZ) < 0) {
-+		shost_printk(KERN_ERR, instance, "reselect: REQ timeout\n");
- 		do_abort(instance);
- 		return;
- 	}
+ 			/* Apalis MMC1 */
+ 			sdmmc3_clk_pa6 {
+-				nvidia,pins = "sdmmc3_clk_pa6",
+-					      "sdmmc3_cmd_pa7";
++				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_dat0_pb7 {
+-				nvidia,pins = "sdmmc3_dat0_pb7",
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
+ 					      "sdmmc3_dat1_pb6",
+ 					      "sdmmc3_dat2_pb5",
+ 					      "sdmmc3_dat3_pb4",
 -- 
 2.20.1
 
