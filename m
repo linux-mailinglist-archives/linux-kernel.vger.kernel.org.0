@@ -2,388 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC61110197E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C02A101987
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:50:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfKSGke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 01:40:34 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:41737 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbfKSGkd (ORCPT
+        id S1727337AbfKSGuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 01:50:52 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14216 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfKSGuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 01:40:33 -0500
-Received: by mail-pj1-f67.google.com with SMTP id gc1so2287385pjb.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 22:40:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MRQG5nJu7nwqAH42LpwKdzXc/U/hMSOKXLJecc/2fMY=;
-        b=SxpI8ZZYKjVOUzSSgkynyPl5H+G65bjneu7wv31XqUb4ZNoKaOFZt78ycsN+rVfATb
-         V2PE6tDkSn514B8NrSJsrN6wW4IN8/qwbaG0pVVvMO1ttaTTjJdjIdHbtI60LONuDph6
-         lHFPfPQ13OmH+FvxF52lMyh7tFe3n4q/OMJ1K+bLTQvZPAWPlvhmf2UNLa1TjjMoKp1I
-         5ybqE6AVttwDYMMI7AX9w3G0nlYrJPu62nWpY+FWjj/V/FoLJ3VjHcWX+Qg87rTjbwPt
-         HWL1HYN603WEgKOJ4UIyON+xh5fpONeBOQ8ft2pqwycacVJzVU6aJ7J6SQBVi03OolNS
-         5eEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MRQG5nJu7nwqAH42LpwKdzXc/U/hMSOKXLJecc/2fMY=;
-        b=Yt180gK9lvpCc0tJhN/EszouiEalzmrCd8+LJlxLzBUlpVepD3LbZ3QTTP+ZMqDfqL
-         LwIKj38vEqpcqunNtxMSEuJnOItty+wBMH8xY/cBkWlTYNmUVRHmnObN0Zq+4UqrEtvV
-         4hnDy+3ElFmcl4JjrRMrpuHfwlRBdxd3wDPXImkz49tJww10JFlnhzcFLD04CHVPTumq
-         WUVLw3su6ljhlXgEvH4JQhovddHfFfxFHwdDHLaLJW56RUATa3Isvuw++IqtQMNzsvGi
-         6HtRHtYisyUHAaCv77K2wmRRwRzHKdxZ5bNAwakV0PuBMMTXmnnWawIhqmpdzzCiyXJO
-         RYnQ==
-X-Gm-Message-State: APjAAAWiqZWw23CjMqzotfFX93z5VvtFcmtJh62TO962Cxym4rPYNcRk
-        wx0f69euAkq+LICnA1y4Q2zuRg==
-X-Google-Smtp-Source: APXvYqyKvUabBtrBX50z/baZAwlhdtn+pq1nEUc71w/53EXcQX5QRw6ouS2vW6pQHua1wIlhgIpG8Q==
-X-Received: by 2002:a17:902:904c:: with SMTP id w12mr33683271plz.144.1574145630199;
-        Mon, 18 Nov 2019 22:40:30 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c12sm24163279pfp.178.2019.11.18.22.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 22:40:29 -0800 (PST)
-Date:   Mon, 18 Nov 2019 22:40:26 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
-        tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        rnayak@codeaurora.org
-Subject: Re: [PATCH 1/3] soc: qcom: Introduce Protection Domain Restart
- helpers
-Message-ID: <20191119064026.GE18024@yoga>
-References: <20191118142728.30187-1-sibis@codeaurora.org>
- <0101016e7ee9be5e-1d6bbe06-4bab-434d-9040-ebfa3918b213-000000@us-west-2.amazonses.com>
+        Tue, 19 Nov 2019 01:50:52 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd390c80000>; Mon, 18 Nov 2019 22:50:48 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 18 Nov 2019 22:50:51 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 22:50:51 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
+ 2019 06:50:50 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 19 Nov 2019 06:50:50 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.175.254]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dd390c90000>; Mon, 18 Nov 2019 22:50:50 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 00/17] Remove direct Tegra PMC access in clock driver
+Date:   Mon, 18 Nov 2019 22:50:17 -0800
+Message-ID: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0101016e7ee9be5e-1d6bbe06-4bab-434d-9040-ebfa3918b213-000000@us-west-2.amazonses.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574146248; bh=KhvH3a4Cvl4xWtjCv7po3TayPmHArH1qRxX3HoKIC7Y=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=aXFtn85bVVYAl2J+qxAIaHNRqVTk756e0C+wgcPCXERJMZQisoXIERJMvBZRpvy9n
+         zIZ1D8QbKel+spkGXqnwhCETmIfmCGSskehPHeQjYs2y7IKxmltjEoXw8iHrOTSBvC
+         RMOVXivWLt3PSIvK7LvX93Nvs8Mb3VwoRB1NVZ+5AuBFjSXalBRCS2xlsDe1D4cP+Z
+         MgWwB2ZU4WkqNvxrACh/2GWTnamD2wtey9gYYRUgBCe8rUKgjkWhf1l+wJAdx0SK/f
+         GRlPKcKJ2SW+FKHkptMzi6PHRc/zvUm8g8WF2lj4BrGa2Zzgsz7486asr6KzMbhYTu
+         e83lcaf1PTMrg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 18 Nov 06:27 PST 2019, Sibi Sankar wrote:
-> diff --git a/drivers/soc/qcom/pdr_interface.c b/drivers/soc/qcom/pdr_interface.c
-[..]
-> +static void pdr_indack_work(struct work_struct *work)
-> +{
-> +	struct pdr_handle *pdr = container_of(work, struct pdr_handle,
-> +					      indack_work);
-> +	struct pdr_list_node *ind, *tmp;
-> +	struct pdr_service *pds;
-> +
-> +	list_for_each_entry_safe(ind, tmp, &pdr->indack_list, node) {
-> +		pds = ind->pds;
-> +		pdr_send_indack_msg(pdr, pds, ind->transaction_id);
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+are currently registered by Tegra clock driver using clk_regiser_mux and
+clk_register_gate which performs direct Tegra PMC register access.
 
-So when we et a ind_cb with the new status, we need to send an ack
-request, which will result in a response, just to confirm that we got
-the event?
+When Tegra PMC is in secure mode, any access from non-secure world will
+not go through.
 
-Seems like we should fix the qmi code to make it possible to send a
-request from the indication handler and then we could simply ignore the
-response. Or do we need to not pdr->status() until we get the response
-for some reason?
+This patch series adds these Tegra PMC clocks and blink controls to Tegra
+PMC driver with PMC as clock provider and removed them from Tegra clock
+driver. This also adds PMC specific clock id's to use in device tree and
+removed clock ids of PMC clock from Tegra clock driver.
+
+This series also includes patch to update clock provider from tegra_car
+to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
+
+Tegra PMC also has WB0 PLLM overrides and PLLE pads IDDQ controls which
+are currently configured by Tegra clock driver using direct PMC access.
+
+This series also includes patches that adds helper functions in Tegra PMC
+driver to allow programming these from Tegra clock driver and removes
+direct PMC access from the clock driver.
 
 
-Regardless, I'm fine with scheduling this for now...
+Sowjanya Komatineni (17):
+  soc: tegra: pmc: Add helper functions for PLLM overrides
+  soc: tegra: pmc: Add helper function for PLLE IDDQ override
+  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
+  soc: tegra: Add Tegra PMC clock registrations into PMC driver
+  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+  soc: pmc: Add blink output clock registration to Tegra PMC
+  clk: tegra: Use Tegra PMC helper functions for PLLM overrides
+  clk: tegra: Use Tegra PMC helper function for PLLE IDDQ
+  clk: tegra: Remove PMC base references from clock registration
+  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
+  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+  arm: tegra: Add clock-cells property to Tegra pmc
+  arm64: tegra: Add clock-cells property to Tegra pmc
+  dt-bindings: Add Tegra PMC clock configuration bindings
+  dt-bindings: tegra186-pmc: Add Tegra PMC clock bindings
+  arm64: tegra: smaug: Change clk_out_2 provider from tegra_car to pmc
+  ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
 
-> +		pdr->status(pdr, pds);
-> +		list_del(&ind->node);
-> +		kfree(ind);
-> +	}
-> +}
-> +
-> +static void pdr_servreg_ind_cb(struct qmi_handle *qmi,
-> +			       struct sockaddr_qrtr *sq,
-> +			       struct qmi_txn *txn, const void *data)
-> +{
-> +	struct pdr_handle *pdr = container_of(qmi, struct pdr_handle,
-> +					      servreg_client);
-> +	const struct servreg_state_updated_ind *ind_msg = data;
-> +	struct pdr_list_node *ind;
-> +	struct pdr_service *pds;
-> +
-> +	if (!ind_msg || !ind_msg->service_path ||
-> +	    strlen(ind_msg->service_path) > (SERVREG_NAME_LENGTH + 1))
-> +		return;
-> +
-> +	list_for_each_entry(pds, &pdr->lookups, node) {
-> +		if (!strcmp(pds->service_path, ind_msg->service_path))
-> +			goto found;
-> +	}
-> +	return;
-> +
-> +found:
-> +	pds->state = ind_msg->curr_state;
-> +
-> +	ind = kzalloc(sizeof(*ind), GFP_KERNEL);
-> +	if (!ind)
-> +		return;
-> +
-> +	pr_info("PDR: Indication received from %s, state: 0x%x, trans-id: %d\n",
-> +		ind_msg->service_path, ind_msg->curr_state,
-> +		ind_msg->transaction_id);
-> +
-> +	ind->transaction_id = ind_msg->transaction_id;
-> +	ind->pds = pds;
-> +
-> +	mutex_lock(&pdr->list_lock);
-> +	list_add_tail(&ind->node, &pdr->indack_list);
-> +	mutex_unlock(&pdr->list_lock);
-> +
-> +	queue_work(pdr->indack_wq, &pdr->indack_work);
-> +}
-> +
-> +static struct qmi_msg_handler qmi_indication_handler[] = {
-> +	{
-> +		.type = QMI_INDICATION,
-> +		.msg_id = SERVREG_STATE_UPDATED_IND_ID,
-> +		.ei = servreg_state_updated_ind_ei,
-> +		.decoded_size = sizeof(struct servreg_state_updated_ind),
-> +		.fn = pdr_servreg_ind_cb,
-> +	},
-> +	{}
-> +};
-> +
-> +static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
-> +			       struct servreg_get_domain_list_resp *resp,
-> +			       struct pdr_handle *pdr)
-> +{
-> +	struct qmi_txn txn;
-> +	int ret;
-> +
-> +	ret = qmi_txn_init(&pdr->servloc_client, &txn,
-> +			   servreg_get_domain_list_resp_ei, resp);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = qmi_send_request(&pdr->servloc_client,
-> +			       &pdr->servloc_addr,
-> +			       &txn, SERVREG_GET_DOMAIN_LIST_REQ,
-> +			       SERVREG_GET_DOMAIN_LIST_REQ_MAX_LEN,
-> +			       servreg_get_domain_list_req_ei,
-> +			       req);
-> +	if (ret < 0) {
-> +		qmi_txn_cancel(&txn);
-> +		return ret;
-> +	}
-> +
-> +	ret = qmi_txn_wait(&txn, 5 * HZ);
-> +	if (ret < 0) {
-> +		pr_err("PDR: %s get domain list txn wait failed: %d\n",
-> +		       req->service_name, ret);
-> +		return ret;
-> +	}
-> +
-> +	/* Check the response */
-> +	if (resp->resp.result != QMI_RESULT_SUCCESS_V01) {
-> +		pr_err("PDR: %s get domain list failed: 0x%x\n",
-> +		       req->service_name, resp->resp.error);
-> +		return -EREMOTEIO;
-> +	}
-> +
-> +	return ret;
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  44 ++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++
+ .../devicetree/bindings/sound/nau8825.txt          |   2 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   2 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   2 +
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 +
+ drivers/clk/tegra/Makefile                         |   1 -
+ drivers/clk/tegra/clk-id.h                         |   7 -
+ drivers/clk/tegra/clk-pll.c                        | 135 ++---
+ drivers/clk/tegra/clk-tegra-audio.c                |   4 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |   8 +-
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |  11 +-
+ drivers/clk/tegra/clk-tegra114.c                   |  75 +--
+ drivers/clk/tegra/clk-tegra124.c                   |  86 +--
+ drivers/clk/tegra/clk-tegra20.c                    |  30 +-
+ drivers/clk/tegra/clk-tegra210.c                   |  74 +--
+ drivers/clk/tegra/clk-tegra30.c                    |  59 +-
+ drivers/clk/tegra/clk.h                            |  48 +-
+ drivers/soc/tegra/pmc.c                            | 598 ++++++++++++++++++++-
+ include/dt-bindings/clock/tegra114-car.h           |  14 +-
+ include/dt-bindings/clock/tegra124-car-common.h    |  14 +-
+ include/dt-bindings/clock/tegra20-car.h            |   2 +-
+ include/dt-bindings/clock/tegra210-car.h           |  14 +-
+ include/dt-bindings/clock/tegra30-car.h            |  14 +-
+ include/dt-bindings/soc/tegra-pmc.h                |  17 +
+ include/soc/tegra/pmc.h                            |   6 +
+ 31 files changed, 879 insertions(+), 450 deletions(-)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
 
-ret here will be the number of bytes decoded, but you really only care
-about if this was an error or not. So I would suggest that you just
-return 0 here.
+-- 
+2.7.4
 
-> +}
-> +
-> +static int pdr_locate_service(struct pdr_handle *pdr, struct pdr_service *pds)
-> +{
-> +	struct servreg_get_domain_list_resp *resp = NULL;
-> +	struct servreg_get_domain_list_req req;
-> +	int db_rev_count = 0, domains_read = 0;
-> +	struct servreg_location_entry *entry;
-> +	int ret, i;
-> +
-> +	resp = kzalloc(sizeof(*resp), GFP_KERNEL);
-> +	if (!resp)
-> +		return -ENOMEM;
-> +
-> +	/* Prepare req message */
-> +	strcpy(req.service_name, pds->service_name);
-> +	req.domain_offset_valid = true;
-> +	req.domain_offset = 0;
-> +
-> +	do {
-> +		req.domain_offset = domains_read;
-> +		ret = pdr_get_domain_list(&req, resp, pdr);
-> +		if (ret < 0)
-> +			goto out;
-> +
-> +		if (!domains_read)
-> +			db_rev_count = resp->db_rev_count;
-> +
-> +		if (db_rev_count != resp->db_rev_count) {
-> +			ret = -EAGAIN;
-> +			goto out;
-> +		}
-> +
-> +		for (i = domains_read; i < resp->domain_list_len; i++) {
-> +			entry = &resp->domain_list[i];
-> +
-> +			if (strlen(entry->name) > (SERVREG_NAME_LENGTH + 1))
-
-In the event that the incoming string isn't NUL-terminated this will run
-off the array.
-
-if (strnlen(entry->name, SERVREG_NAME_LENGTH + 1) == SERVREG_NAME_LENGTH + 1)
-
-or perhaps, relying on sizeof instead of duplicating the knowledge that
-it is SERVREG_NAME_LENGTH + 1:
-
-if (strnlen(entry->name, sizeof(entry->name)) == sizeof(entry->name))
-
-> +				continue;
-> +
-> +			if (!strcmp(entry->name, pds->service_path)) {
-> +				pds->service_data_valid = entry->service_data_valid;
-> +				pds->service_data = entry->service_data;
-> +				pds->instance = entry->instance;
-> +				goto out;
-> +			}
-> +		}
-> +
-> +		/* Update ret to indicate that the service is not yet found */
-> +		ret = -EINVAL;
-> +
-> +		/* Always read total_domains from the response msg */
-> +		if (resp->domain_list_len >  resp->total_domains)
-
-Double space after '>'
-
-> +			resp->domain_list_len = resp->total_domains;
-> +
-> +		domains_read += resp->domain_list_len;
-> +	} while (domains_read < resp->total_domains);
-> +out:
-> +	kfree(resp);
-> +	return ret;
-> +}
-> +
-> +static void pdr_servloc_work(struct work_struct *work)
-> +{
-> +	struct pdr_handle *pdr = container_of(work, struct pdr_handle,
-> +					      servloc_work);
-> +	struct pdr_list_node *servloc, *tmp;
-> +	struct pdr_service *pds;
-> +	int ret;
-> +
-> +	list_for_each_entry_safe(servloc, tmp, &pdr->servloc_list, node) {
-> +		pds = servloc->pds;
-> +
-> +		/* wait for PD Mapper to come up */
-> +		ret = wait_for_completion_timeout(&pdr->locator_available, 10 * HZ);
-
-Afaict this means that we will only look for the locator during the 10
-seconds that follows a pdr_add_lookup().
-
-How about changing this so that you bail before the loop if the locator
-hasn't showed up yet and schedule this worker when the locator is
-registered?
-
-> +		if (!ret) {
-> +			pr_err("PDR: SERVICE LOCATOR service wait failed\n");
-> +			ret = -ETIMEDOUT;
-> +			goto err;
-> +		}
-> +
-> +		ret = pdr_locate_service(pdr, pds);
-> +		if (ret < 0) {
-> +			pr_err("PDR: service lookup for %s failed: %d\n",
-> +			       pds->service_name, ret);
-> +			goto err;
-> +		}
-> +
-> +		qmi_add_lookup(&pdr->servreg_client, pds->service, 1,
-> +			       pds->instance);
-> +err:
-> +		list_del(&servloc->node);
-> +		kfree(servloc);
-> +
-> +		/* cleanup pds on error */
-> +		if (ret < 0) {
-> +			pds->state = SERVREG_LOCATOR_ERR;
-> +			pdr->status(pdr, pds);
-> +			list_del(&pds->node);
-> +			kfree(pds);
-> +		}
-> +	}
-> +}
-[..]
-> +int pdr_add_lookup(struct pdr_handle *pdr, const char *service_name,
-> +		   const char *service_path)
-> +{
-> +	struct pdr_service *pds, *pds_iter, *tmp;
-> +	struct pdr_list_node *servloc;
-> +	int ret;
-> +
-> +	if (!service_name || strlen(service_name) > (SERVREG_NAME_LENGTH + 1) ||
-> +	    !service_path || strlen(service_path) > (SERVREG_NAME_LENGTH + 1))
-
-When strlen(x) == SERVREG_NAME_LENGTH + 1 your strcpy below would write
-SERVREG_NAME_LENGTH + 2 bytes to service_name and service_path, so drop
-the + 1 from the comparisons.
-
-> +		return -EINVAL;
-> +
-> +	servloc = kzalloc(sizeof(*servloc), GFP_KERNEL);
-> +	if (!servloc)
-> +		return -ENOMEM;
-> +
-> +	pds = kzalloc(sizeof(*pds), GFP_KERNEL);
-> +	if (!pds) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	pds->service = SERVREG_NOTIFIER_SERVICE;
-> +	strcpy(pds->service_name, service_name);
-> +	strcpy(pds->service_path, service_path);
-[..]
-> +int pdr_restart_pd(struct pdr_handle *pdr, const char *service_path)
-> +{
-> +	struct servreg_restart_pd_req req;
-> +	struct servreg_restart_pd_resp resp;
-> +	struct pdr_service *pds = NULL, *pds_iter, *tmp;
-> +	struct qmi_txn txn;
-> +	int ret;
-> +
-> +	if (!service_path || strlen(service_path) > (SERVREG_NAME_LENGTH + 1))
-
-As above, drop the + 1
-
-> +		return -EINVAL;
-> +
-[..]
-> +int pdr_handle_init(struct pdr_handle *pdr,
-> +		    int (*status)(struct pdr_handle *pdr,
-> +				  struct pdr_service *pds))
-> +{
-[..]
-> +	pdr->servreg_wq = create_singlethread_workqueue("pdr_servreg_wq");
-> +	if (!pdr->servreg_wq)
-> +		return -ENOMEM;
-> +
-> +	pdr->indack_wq = alloc_ordered_workqueue("pdr_indack_wq", WQ_HIGHPRI);
-
-The two workqueues means that we should be able to call pdr->status()
-rom two concurrent contexts, I don't think our clients will expect that.
-
-> +	if (!pdr->indack_wq) {
-> +		ret = -ENOMEM;
-> +		goto destroy_servreg;
-> +	}
-> +
-
-Regards,
-Bjorn
