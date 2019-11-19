@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E52101301
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFF8F10130F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbfKSFV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:21:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36362 "EHLO mail.kernel.org"
+        id S1727606AbfKSFWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:22:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727352AbfKSFVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:21:24 -0500
+        id S1727539AbfKSFV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:21:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E550B22319;
-        Tue, 19 Nov 2019 05:21:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CF2022317;
+        Tue, 19 Nov 2019 05:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574140884;
-        bh=JLP7szQGWaL0GZjB1YwtzSnQAmxx0vSHSdJiTVwIWl4=;
+        s=default; t=1574140916;
+        bh=Jx7N3naRKuizoBu6BtVpPJsrEwHfHDwHNVNCUvzTgPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iX24WFgdlqZC3n3bQuJvO6B2cWHs2BMsGQ5rBGZBPZi9fGsRa3aUvK5R4TI/MIipd
-         FlB1PGxteX5npZ1TP0hf3frinP8hXSvL+7dtuChUYO4yRHdFOGy9jizHY85+s4IjZz
-         uPIN5sQx/lI/un09yaSzqrEiYN+nOUVnynDu8LT0=
+        b=WqN1/A2GzX74/6RQCRxmQyW2iDKgSe9FfNyXPeWhl4sBlG3eJuZlICpWyTNrEFKqh
+         Yde5In4m7OPh0SpXOpYPF0UMfrbYlGr4+wl6H8wXy2XI/jPLa7rWxHzcKoE9tM0Bl0
+         Ic50pB2X3OeCIJnTElIOg/Uercyrjjj/d+pTN/Jw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a8d4acdad35e6bbca308@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 02/48] ax88172a: fix information leak on short answers
-Date:   Tue, 19 Nov 2019 06:19:22 +0100
-Message-Id: <20191119050948.189229977@linuxfoundation.org>
+Subject: [PATCH 5.3 03/48] devlink: disallow reload operation during device cleanup
+Date:   Tue, 19 Nov 2019 06:19:23 +0100
+Message-Id: <20191119050949.815080213@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
 References: <20191119050946.745015350@linuxfoundation.org>
@@ -45,32 +44,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Jiri Pirko <jiri@mellanox.com>
 
-[ Upstream commit a9a51bd727d141a67b589f375fe69d0e54c4fe22 ]
+[ Upstream commit 5a508a254bed9a2e36a5fb96c9065532a6bf1e9c ]
 
-If a malicious device gives a short MAC it can elicit up to
-5 bytes of leaked memory out of the driver. We need to check for
-ETH_ALEN instead.
+There is a race between driver code that does setup/cleanup of device
+and devlink reload operation that in some drivers works with the same
+code. Use after free could we easily obtained by running:
 
-Reported-by: syzbot+a8d4acdad35e6bbca308@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
+while true; do
+        echo "0000:00:10.0" >/sys/bus/pci/drivers/mlxsw_spectrum2/bind
+        devlink dev reload pci/0000:00:10.0 &
+        echo "0000:00:10.0" >/sys/bus/pci/drivers/mlxsw_spectrum2/unbind
+done
+
+Fix this by enabling reload only after setup of device is complete and
+disabling it at the beginning of the cleanup process.
+
+Reported-by: Ido Schimmel <idosch@mellanox.com>
+Fixes: 2d8dc5bbf4e7 ("devlink: Add support for reload")
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/ax88172a.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx4/main.c  |    3 ++
+ drivers/net/ethernet/mellanox/mlxsw/core.c |    6 +++-
+ drivers/net/netdevsim/dev.c                |    2 +
+ include/net/devlink.h                      |    3 ++
+ net/core/devlink.c                         |   39 ++++++++++++++++++++++++++++-
+ 5 files changed, 51 insertions(+), 2 deletions(-)
 
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -196,7 +196,7 @@ static int ax88172a_bind(struct usbnet *
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -3982,6 +3982,7 @@ static int mlx4_init_one(struct pci_dev
+ 		goto err_params_unregister;
  
- 	/* Get the MAC address */
- 	ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID, 0, 0, ETH_ALEN, buf, 0);
--	if (ret < 0) {
-+	if (ret < ETH_ALEN) {
- 		netdev_err(dev->net, "Failed to read MAC address: %d\n", ret);
- 		goto free;
- 	}
+ 	devlink_params_publish(devlink);
++	devlink_reload_enable(devlink);
+ 	pci_save_state(pdev);
+ 	return 0;
+ 
+@@ -4093,6 +4094,8 @@ static void mlx4_remove_one(struct pci_d
+ 	struct devlink *devlink = priv_to_devlink(priv);
+ 	int active_vfs = 0;
+ 
++	devlink_reload_disable(devlink);
++
+ 	if (mlx4_is_slave(dev))
+ 		persist->interface_state |= MLX4_INTERFACE_STATE_NOWAIT;
+ 
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -1128,8 +1128,10 @@ __mlxsw_core_bus_device_register(const s
+ 	if (err)
+ 		goto err_thermal_init;
+ 
+-	if (mlxsw_driver->params_register)
++	if (mlxsw_driver->params_register) {
+ 		devlink_params_publish(devlink);
++		devlink_reload_enable(devlink);
++	}
+ 
+ 	return 0;
+ 
+@@ -1191,6 +1193,8 @@ void mlxsw_core_bus_device_unregister(st
+ {
+ 	struct devlink *devlink = priv_to_devlink(mlxsw_core);
+ 
++	if (!reload)
++		devlink_reload_disable(devlink);
+ 	if (mlxsw_core->reload_fail) {
+ 		if (!reload)
+ 			/* Only the parts that were not de-initialized in the
+--- a/drivers/net/netdevsim/dev.c
++++ b/drivers/net/netdevsim/dev.c
+@@ -297,6 +297,7 @@ nsim_dev_create(struct nsim_bus_dev *nsi
+ 	if (err)
+ 		goto err_debugfs_exit;
+ 
++	devlink_reload_enable(devlink);
+ 	return nsim_dev;
+ 
+ err_debugfs_exit:
+@@ -314,6 +315,7 @@ static void nsim_dev_destroy(struct nsim
+ {
+ 	struct devlink *devlink = priv_to_devlink(nsim_dev);
+ 
++	devlink_reload_disable(devlink);
+ 	nsim_bpf_dev_exit(nsim_dev);
+ 	nsim_dev_debugfs_exit(nsim_dev);
+ 	devlink_unregister(devlink);
+--- a/include/net/devlink.h
++++ b/include/net/devlink.h
+@@ -35,6 +35,7 @@ struct devlink {
+ 	struct device *dev;
+ 	possible_net_t _net;
+ 	struct mutex lock;
++	u8 reload_enabled:1;
+ 	char priv[0] __aligned(NETDEV_ALIGN);
+ };
+ 
+@@ -594,6 +595,8 @@ struct ib_device;
+ struct devlink *devlink_alloc(const struct devlink_ops *ops, size_t priv_size);
+ int devlink_register(struct devlink *devlink, struct device *dev);
+ void devlink_unregister(struct devlink *devlink);
++void devlink_reload_enable(struct devlink *devlink);
++void devlink_reload_disable(struct devlink *devlink);
+ void devlink_free(struct devlink *devlink);
+ int devlink_port_register(struct devlink *devlink,
+ 			  struct devlink_port *devlink_port,
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -2677,7 +2677,7 @@ static int devlink_nl_cmd_reload(struct
+ 	struct devlink *devlink = info->user_ptr[0];
+ 	int err;
+ 
+-	if (!devlink->ops->reload)
++	if (!devlink->ops->reload || !devlink->reload_enabled)
+ 		return -EOPNOTSUPP;
+ 
+ 	err = devlink_resources_validate(devlink, NULL, info);
+@@ -5559,6 +5559,8 @@ EXPORT_SYMBOL_GPL(devlink_register);
+ void devlink_unregister(struct devlink *devlink)
+ {
+ 	mutex_lock(&devlink_mutex);
++	WARN_ON(devlink_reload_supported(devlink) &&
++		devlink->reload_enabled);
+ 	devlink_notify(devlink, DEVLINK_CMD_DEL);
+ 	list_del(&devlink->list);
+ 	mutex_unlock(&devlink_mutex);
+@@ -5566,6 +5568,41 @@ void devlink_unregister(struct devlink *
+ EXPORT_SYMBOL_GPL(devlink_unregister);
+ 
+ /**
++ *	devlink_reload_enable - Enable reload of devlink instance
++ *
++ *	@devlink: devlink
++ *
++ *	Should be called at end of device initialization
++ *	process when reload operation is supported.
++ */
++void devlink_reload_enable(struct devlink *devlink)
++{
++	mutex_lock(&devlink_mutex);
++	devlink->reload_enabled = true;
++	mutex_unlock(&devlink_mutex);
++}
++EXPORT_SYMBOL_GPL(devlink_reload_enable);
++
++/**
++ *	devlink_reload_disable - Disable reload of devlink instance
++ *
++ *	@devlink: devlink
++ *
++ *	Should be called at the beginning of device cleanup
++ *	process when reload operation is supported.
++ */
++void devlink_reload_disable(struct devlink *devlink)
++{
++	mutex_lock(&devlink_mutex);
++	/* Mutex is taken which ensures that no reload operation is in
++	 * progress while setting up forbidded flag.
++	 */
++	devlink->reload_enabled = false;
++	mutex_unlock(&devlink_mutex);
++}
++EXPORT_SYMBOL_GPL(devlink_reload_disable);
++
++/**
+  *	devlink_free - Free devlink instance resources
+  *
+  *	@devlink: devlink
 
 
