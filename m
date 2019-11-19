@@ -2,120 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC7B1025C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31CC7102694
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:25:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfKSNu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:50:27 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50547 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725798AbfKSNu1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:50:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574171425;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hp7W7RNfhc4fmpQq4Mc6vtf7wCYXA0mzEIx90nGdbd0=;
-        b=gP6mxHTpvwuPWEu/sI7Yt8f4TxI5uoD0nN3UXCoMc4PlnUG3wkzKQEP5UO/NUhWMVB/XdT
-        66J7D4p0CZ4lBsS+D69NT/1PWf+lYUPsZmEjmVa2Nd1foZwsz5SaHJ+IAQIFR4dHSgEui+
-        1LnoQCdT0sn7YNmPHqnPo7ywXh2oMyI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-8AEZ8-_sNK-LibEEUlzj0A-1; Tue, 19 Nov 2019 08:50:22 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 06F7B107AD4E;
-        Tue, 19 Nov 2019 13:50:21 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F8265037E;
-        Tue, 19 Nov 2019 13:50:11 +0000 (UTC)
-Subject: Re: [PATCH 5/5] locking/percpu-rwsem: Remove the embedded rwsem
-To:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
-        will@kernel.org
-Cc:     oleg@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
-        bristot@redhat.com, dave@stgolabs.net, jack@suse.com
-References: <20191113102115.116470462@infradead.org>
- <20191113102855.925208237@infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <ee75fc38-c3c8-3f9e-13ba-5c8312d61325@redhat.com>
-Date:   Tue, 19 Nov 2019 08:50:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727809AbfKSOZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:25:44 -0500
+Received: from mga11.intel.com ([192.55.52.93]:32089 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbfKSOZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 09:25:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 06:25:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,324,1569308400"; 
+   d="scan'208";a="215551232"
+Received: from trgallx-mobl.amr.corp.intel.com (HELO [10.251.154.79]) ([10.251.154.79])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Nov 2019 06:25:42 -0800
+Subject: Re: [alsa-devel] [PATCH v8 2/6] ASoC: amd: Refactoring of DAI from
+ DMA driver
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alexander.Deucher@amd.com
+References: <1574155967-1315-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574155967-1315-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <0c3d3545-b0ee-4bb3-558a-045633a30e46@linux.intel.com>
+Date:   Tue, 19 Nov 2019 07:53:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <20191113102855.925208237@infradead.org>
+In-Reply-To: <1574155967-1315-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: 8AEZ8-_sNK-LibEEUlzj0A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/19 5:21 AM, Peter Zijlstra wrote:
-> +static int percpu_rwsem_wake_function(struct wait_queue_entry *wq_entry,
-> +=09=09=09=09      unsigned int mode, int wake_flags,
-> +=09=09=09=09      void *key)
+
+
+> +static int acp3x_dai_probe(struct platform_device *pdev)
 > +{
-> +=09struct task_struct *p =3D get_task_struct(wq_entry->private);
-> +=09bool reader =3D wq_entry->flags & WQ_FLAG_CUSTOM;
-> +=09struct percpu_rw_semaphore *sem =3D key;
+> +	struct resource *res;
+> +	struct i2s_dev_data *adata;
+> +	int status;
 > +
-> +=09/* concurrent against percpu_down_write(), can get stolen */
-> +=09if (!__percpu_rwsem_trylock(sem, reader))
-> +=09=09return 1;
+> +	adata = devm_kzalloc(&pdev->dev, sizeof(struct i2s_dev_data),
+> +			GFP_KERNEL);
+> +	if (!adata)
+> +		return -ENOMEM;
 > +
-> +=09list_del_init(&wq_entry->entry);
-> +=09smp_store_release(&wq_entry->private, NULL);
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "IORESOURCE_MEM FAILED\n");
+> +		return -ENOMEM;
+> +	}
 > +
-> +=09wake_up_process(p);
-> +=09put_task_struct(p);
+> +	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
+> +			resource_size(res));
+> +	if (IS_ERR(adata->acp3x_base))
+> +		return PTR_ERR(adata->acp3x_base);
 > +
-> +=09return !reader; /* wake 'all' readers and 1 writer */
+> +	adata->i2s_irq = res->start;
+> +	dev_set_drvdata(&pdev->dev, adata);
+> +	status = devm_snd_soc_register_component(&pdev->dev,
+> +			&acp3x_dai_component, &acp3x_i2s_dai, 1);
+> +	if (status) {
+> +		dev_err(&pdev->dev, "Fail to register acp i2s dai\n");
+> +		return -ENODEV;
+> +	}
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+
+question: here you want to use pm_runtime for this platform device...
+
+> +	return 0;
 > +}
 > +
-> +static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem, bool read=
-er)
+> +static int acp3x_dai_remove(struct platform_device *pdev)
 > +{
-> +=09DEFINE_WAIT_FUNC(wq_entry, percpu_rwsem_wake_function);
-> +=09bool wait;
-> +
-> +=09spin_lock_irq(&sem->waiters.lock);
-> +=09/*
-> +=09 * Serialize against the wakeup in percpu_up_write(), if we fail
-> +=09 * the trylock, the wakeup must see us on the list.
-> +=09 */
-> +=09wait =3D !__percpu_rwsem_trylock(sem, reader);
-> +=09if (wait) {
-> +=09=09wq_entry.flags |=3D WQ_FLAG_EXCLUSIVE | reader * WQ_FLAG_CUSTOM;
-> +=09=09__add_wait_queue_entry_tail(&sem->waiters, &wq_entry);
-> +=09}
-> +=09spin_unlock_irq(&sem->waiters.lock);
-> +
-> +=09while (wait) {
-> +=09=09set_current_state(TASK_UNINTERRUPTIBLE);
-> +=09=09if (!smp_load_acquire(&wq_entry.private))
-> +=09=09=09break;
-> +=09=09schedule();
-> +=09}
+> +	pm_runtime_disable(&pdev->dev);
+> +	return 0;
+> +}
+> +static struct platform_driver acp3x_dai_driver = {
+> +	.probe = acp3x_dai_probe,
+> +	.remove = acp3x_dai_remove,
+> +	.driver = {
+> +		.name = "acp3x_i2s_playcap",
 
-If I read the function correctly, you are setting the WQ_FLAG_EXCLUSIVE
-for both readers and writers and __wake_up() is called with an exclusive
-count of one. So only one reader or writer is woken up each time.
-However, the comment above said we wake 'all' readers and 1 writer. That
-doesn't match the actual code, IMO. To match the comments, you should
-have set WQ_FLAG_EXCLUSIVE flag only on writer. In this case, you
-probably don't need WQ_FLAG_CUSTOM to differentiate between readers and
-writers.
+... but here there is no .pm structure and I don't see any 
+suspend/resume routines for this driver...
 
-Cheers,
-Longman
+> +	},
+> +};
+
+> @@ -774,13 +586,14 @@ static struct platform_driver acp3x_dma_driver = {
+>   	.probe = acp3x_audio_probe,
+>   	.remove = acp3x_audio_remove,
+>   	.driver = {
+> -		.name = "acp3x_rv_i2s",
+> +		.name = "acp3x_rv_i2s_dma",
+>   		.pm = &acp3x_pm_ops,
+>   	},
+
+... but for this other platform_driver you do have a .pm structure and 
+suspend-resume implementations.
+
+Wondering if this is a miss or a feature?
 
