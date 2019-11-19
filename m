@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE03101720
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFBBC1017EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731349AbfKSFsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:48:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44816 "EHLO mail.kernel.org"
+        id S1729551AbfKSFht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731340AbfKSFsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:48:17 -0500
+        id S1729673AbfKSFhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:37:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DF7E2071B;
-        Tue, 19 Nov 2019 05:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D22206EC;
+        Tue, 19 Nov 2019 05:37:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142496;
-        bh=nHTNft2ct8Swzv59J+uQWEJCYKeLMnBCYuaPYwe5Hmo=;
+        s=default; t=1574141865;
+        bh=UI1J+tDPK+dDqNQkuwW+1DwMI88CGJiKXEB/ID8jN98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXhT/2wZCcWOuaKAy4eJyd58BNGLuO1EOOSxVbPUYcx2NaxPV8KA7hv2ySDfFVQAp
-         G1LHVKUgsdpRWEm/fSwQVB5hEBrQgL2wwbsDpcC4qsJTypzQAFKpmynw9Ti2/4nKLm
-         5vYTRF8RJxyZHlj85I9FjXTtrLdYrxHa2iFDmt5k=
+        b=X1trF26yzpdlINHSiqygi6TLN4r4sVT/FMvAfKRhVBVw4JTclE2VJd7jsMKGFuIX/
+         rxO7rBSXvnqhk0s/c3qGi8ewWQuSakMWKeJAIX43YqAxPBz8PoCJ95yPXL8+S/D6YG
+         bqeIvEFm4hvNJL2lGfvgkmzlWq1ttt6p0YB3U0DI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Deepak Ukey <deepak.ukey@microchip.com>,
-        Viswas G <Viswas.G@microchip.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 101/239] scsi: pm80xx: Corrected dma_unmap_sg() parameter
-Date:   Tue, 19 Nov 2019 06:18:21 +0100
-Message-Id: <20191119051324.684685846@linuxfoundation.org>
+Subject: [PATCH 4.19 306/422] crypto: arm/crc32 - avoid warning when compiling with Clang
+Date:   Tue, 19 Nov 2019 06:18:23 +0100
+Message-Id: <20191119051418.829007409@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
-References: <20191119051255.850204959@linuxfoundation.org>
+In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
+References: <20191119051400.261610025@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,35 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Deepak Ukey <deepak.ukey@microchip.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 76cb25b058034d37244be6aca97a2ad52a5fbcad ]
+[ Upstream commit cd560235d8f9ddd94aa51e1c4dabdf3212b9b241 ]
 
-For the function dma_unmap_sg(), the <nents> parameter should be number of
-elements in the scatter list prior to the mapping, not after the mapping.
+The table id (second) argument to MODULE_DEVICE_TABLE is often
+referenced otherwise. This is not the case for CPU features. This
+leads to a warning when building the kernel with Clang:
+  arch/arm/crypto/crc32-ce-glue.c:239:33: warning: variable
+    'crc32_cpu_feature' is not needed and will not be emitted
+    [-Wunneeded-internal-declaration]
+  static const struct cpu_feature crc32_cpu_feature[] = {
+                                  ^
 
-Signed-off-by: Deepak Ukey <deepak.ukey@microchip.com>
-Signed-off-by: Viswas G <Viswas.G@microchip.com>
-Acked-by: Jack Wang <jinpu.wang@profitbricks.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
+("modules: mark __inittest/__exittest as __maybe_unused").
+
+Fixes: 2a9faf8b7e43 ("crypto: arm/crc32 - enable module autoloading based on CPU feature bits")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/pm8001/pm8001_sas.c | 2 +-
+ arch/arm/crypto/crc32-ce-glue.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
-index ce584c31d36e5..d1fcd21f7f7dd 100644
---- a/drivers/scsi/pm8001/pm8001_sas.c
-+++ b/drivers/scsi/pm8001/pm8001_sas.c
-@@ -466,7 +466,7 @@ err_out:
- 	dev_printk(KERN_ERR, pm8001_ha->dev, "pm8001 exec failed[%d]!\n", rc);
- 	if (!sas_protocol_ata(t->task_proto))
- 		if (n_elem)
--			dma_unmap_sg(pm8001_ha->dev, t->scatter, n_elem,
-+			dma_unmap_sg(pm8001_ha->dev, t->scatter, t->num_scatter,
- 				t->data_dir);
- out_done:
- 	spin_unlock_irqrestore(&pm8001_ha->lock, flags);
+diff --git a/arch/arm/crypto/crc32-ce-glue.c b/arch/arm/crypto/crc32-ce-glue.c
+index 96e62ec105d06..cd9e93b46c2dd 100644
+--- a/arch/arm/crypto/crc32-ce-glue.c
++++ b/arch/arm/crypto/crc32-ce-glue.c
+@@ -236,7 +236,7 @@ static void __exit crc32_pmull_mod_exit(void)
+ 				  ARRAY_SIZE(crc32_pmull_algs));
+ }
+ 
+-static const struct cpu_feature crc32_cpu_feature[] = {
++static const struct cpu_feature __maybe_unused crc32_cpu_feature[] = {
+ 	{ cpu_feature(CRC32) }, { cpu_feature(PMULL) }, { }
+ };
+ MODULE_DEVICE_TABLE(cpu, crc32_cpu_feature);
 -- 
 2.20.1
 
