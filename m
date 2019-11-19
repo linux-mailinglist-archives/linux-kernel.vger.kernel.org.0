@@ -2,130 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33D15101418
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 958DA1012DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfKSFaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:30:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729079AbfKSFaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:30:11 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C197C2235E;
-        Tue, 19 Nov 2019 05:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141410;
-        bh=YaAnZe6wyX9fxEM1lRGTju1octGXXJSXfSe4283HvmY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vqHR17Uyuzfvz7UvjyuaatYbFFUcLC7sRYpCxTST76yqs2PBycgd8hfzOqFnaj7dd
-         FJcC7eH+/EMpT1b0Mb9xF2MZz1/rJuw9v3kFhcGyqSYRDvQt8xExB3NbK0k8ukEXq7
-         s7rHL7EA5Ku7HsJlJhvHbW3vS5dI6cJVJwlPvCeg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 152/422] usb: mtu3: disable vbus rise/fall interrupts of ltssm
-Date:   Tue, 19 Nov 2019 06:15:49 +0100
-Message-Id: <20191119051408.462467925@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726784AbfKSFRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:17:31 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5661 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfKSFRa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:17:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd37aeb0000>; Mon, 18 Nov 2019 21:17:32 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 18 Nov 2019 21:17:29 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 21:17:29 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
+ 2019 05:17:28 +0000
+Subject: Re: [PATCH v5 10/24] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+To:     Jan Kara <jack@suse.cz>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+References: <20191115055340.1825745-1-jhubbard@nvidia.com>
+ <20191115055340.1825745-11-jhubbard@nvidia.com>
+ <20191118101601.GF17319@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <aa15a76f-7054-2db2-4a47-8fbe1594295a@nvidia.com>
+Date:   Mon, 18 Nov 2019 21:17:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191118101601.GF17319@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574140652; bh=j4L4ESflFWPcWXUSa4QBFr0g8LzukvpI57j3tX0u+LI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=HbjIjhLqDGlCz9fdO9WJ5XZ1MylRhdOt3hOrXOPV4rhTnQVDZpbMvOZlSwNGJc66E
+         /dS/T8ygBehTtSzMJwZ3TOTHElFkCJKdPHvXGZaLpQt9mjPgsblK2PBNnMrg02Wmdh
+         9Qm8oCkWiYkFORrigI0hEzL7aY7iY3cHZ1DrJYjhRQ5sx+Tmm0Tw8QlCh7Z2iKTLps
+         yMslWIbYXkh6S/YZKISH7oHSmmR+hcZRdC+ZCjemhpD6kLdzSXTQ0ykjer3SCrjsmC
+         1w7ai76vYnn+iNTaSLHytmXdlQYChVn5NpYDDm4H81+ayvHDf9eTllSFjtIJNz8Xoj
+         cb1UR17mTvf1w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+On 11/18/19 2:16 AM, Jan Kara wrote:
+> On Thu 14-11-19 21:53:26, John Hubbard wrote:
+>>  /*
+>> - * NOTE on FOLL_LONGTERM:
+>> + * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
+>> + * other. Here is what they mean, and how to use them:
+>>   *
+>>   * FOLL_LONGTERM indicates that the page will be held for an indefinite time
+>> - * period _often_ under userspace control.  This is contrasted with
+>> - * iov_iter_get_pages() where usages which are transient.
+>> + * period _often_ under userspace control.  This is in contrast to
+>> + * iov_iter_get_pages(), where usages which are transient.
+>                           ^^^ when you touch this, please fix also the
+> second sentense. It doesn't quite make sense to me... I'd probably write
+> there "whose usages are transient" but maybe you can come up with something
+> even better.
 
-[ Upstream commit 0eae49582b4dee1a0e96007e1dea5122db98371a ]
+Fixed, using your wording, as I didn't see any obvious improvements beyond that.
 
-The vbus rise & fall interrupts are used to enable and disable
-U3 function of device automatically, this cause some issues when
-class driver is initialized as deactivated, and will skip over
-software-controlled connect by pullup(), but UDC wants to keep
-disconnect until usb_gadget_activate() is called which calls
-pullup() if needed. So we disable vbus rise & fall interrupts
-and just use pullup() to enable & disable U3 function, and reset
-mtu3 state when disconnect instead when vbus fall.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/mtu3/mtu3_core.c   |  4 ++--
- drivers/usb/mtu3/mtu3_gadget.c | 22 ++++++++++++++--------
- 2 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index 48d10a61e271c..8606935201326 100644
---- a/drivers/usb/mtu3/mtu3_core.c
-+++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -185,8 +185,8 @@ static void mtu3_intr_enable(struct mtu3 *mtu)
- 
- 	if (mtu->is_u3_ip) {
- 		/* Enable U3 LTSSM interrupts */
--		value = HOT_RST_INTR | WARM_RST_INTR | VBUS_RISE_INTR |
--		    VBUS_FALL_INTR | ENTER_U3_INTR | EXIT_U3_INTR;
-+		value = HOT_RST_INTR | WARM_RST_INTR |
-+			ENTER_U3_INTR | EXIT_U3_INTR;
- 		mtu3_writel(mbase, U3D_LTSSM_INTR_ENABLE, value);
- 	}
- 
-diff --git a/drivers/usb/mtu3/mtu3_gadget.c b/drivers/usb/mtu3/mtu3_gadget.c
-index 5c60a8c5a0b5c..bbcd3332471dc 100644
---- a/drivers/usb/mtu3/mtu3_gadget.c
-+++ b/drivers/usb/mtu3/mtu3_gadget.c
-@@ -585,6 +585,17 @@ static const struct usb_gadget_ops mtu3_gadget_ops = {
- 	.udc_stop = mtu3_gadget_stop,
- };
- 
-+static void mtu3_state_reset(struct mtu3 *mtu)
-+{
-+	mtu->address = 0;
-+	mtu->ep0_state = MU3D_EP0_STATE_SETUP;
-+	mtu->may_wakeup = 0;
-+	mtu->u1_enable = 0;
-+	mtu->u2_enable = 0;
-+	mtu->delayed_status = false;
-+	mtu->test_mode = false;
-+}
-+
- static void init_hw_ep(struct mtu3 *mtu, struct mtu3_ep *mep,
- 		u32 epnum, u32 is_in)
- {
-@@ -702,6 +713,7 @@ void mtu3_gadget_disconnect(struct mtu3 *mtu)
- 		spin_lock(&mtu->lock);
- 	}
- 
-+	mtu3_state_reset(mtu);
- 	usb_gadget_set_state(&mtu->g, USB_STATE_NOTATTACHED);
- }
- 
-@@ -712,12 +724,6 @@ void mtu3_gadget_reset(struct mtu3 *mtu)
- 	/* report disconnect, if we didn't flush EP state */
- 	if (mtu->g.speed != USB_SPEED_UNKNOWN)
- 		mtu3_gadget_disconnect(mtu);
--
--	mtu->address = 0;
--	mtu->ep0_state = MU3D_EP0_STATE_SETUP;
--	mtu->may_wakeup = 0;
--	mtu->u1_enable = 0;
--	mtu->u2_enable = 0;
--	mtu->delayed_status = false;
--	mtu->test_mode = false;
-+	else
-+		mtu3_state_reset(mtu);
- }
+thanks,
 -- 
-2.20.1
+John Hubbard
+NVIDIA
 
 
-
+> 
+> Otherwise the patch looks good to me so feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
