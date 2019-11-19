@@ -2,51 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DCB102FC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 119DB102FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 00:12:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfKSXNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 18:13:04 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:34902 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbfKSXNE (ORCPT
+        id S1727354AbfKSXMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 18:12:42 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45108 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbfKSXMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 18:13:04 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 4A77D285D9;
-        Tue, 19 Nov 2019 18:12:58 -0500 (EST)
-Date:   Wed, 20 Nov 2019 10:12:21 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Kars de Jong <jongk@linux-m68k.org>
-cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] esp_scsi: Clear Transfer Count registers before PIO
- transfers
-In-Reply-To: <alpine.LNX.2.21.1.1911190923120.8@nippy.intranet>
-Message-ID: <alpine.LNX.2.21.1.1911201006520.10@nippy.intranet>
-References: <2bbb6359d542f5882be67c415ecc25ad2d9eeb5e.1573875417.git.fthain@telegraphics.com.au> <CACz-3rjHAyi6kMQ6j9YALLm1ApYrsqKiTnGNPUhxqqEuRJ9TjQ@mail.gmail.com> <alpine.LNX.2.21.1.1911180947020.8@nippy.intranet> <CACz-3rhr_R+_mJpg+Rvgoj=1GC5AO3YKxYxS_0ShAfQ-NiFDtg@mail.gmail.com>
- <alpine.LNX.2.21.1.1911190923120.8@nippy.intranet>
+        Tue, 19 Nov 2019 18:12:42 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so2652858lfa.12
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 15:12:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=J6djBZAZ4NKmoE5rDlXQqbYC4TEITCNxIlH5HQol9VI=;
+        b=Vjz8znJ6cb48JQjUqD6uTuZV0ePVCQHg2q8rjcLMUst/MwnYK5I8QKVAODVhtFGomV
+         Nc2qf1AXDeKZGyVudF42PKOCi42xtrwsdb9l6Gt2B2JBAxUt8ZQZCbPB7XPRyBZ8XRos
+         Cmu34UdrptldO+ncwB3Txz9DFyC4ZNmpBXK+iRmZ3V+R/wTj4aZ6NiRUgHwiepjkouFJ
+         iE3cC7RZudMqPTkXB/GWq6Ba6+EAC2vMqxvluLSRQZ93TZt39k8kq4/P2oMS8lc5pFG/
+         qylQEC6Vrz/MNPE/ic5RLYJldRFhSeDSkbb0wjV77HbUgUZwA7iUaVbV/1DgZRNMfje2
+         ebyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=J6djBZAZ4NKmoE5rDlXQqbYC4TEITCNxIlH5HQol9VI=;
+        b=VjBhD2h1cpnjltDs36A77153CSVolB5tBNYoiYsQ//YX29FE5lAh8ALhAdfVt4T/8r
+         5V8ydpBVhBmsgLRBtygdfqHYeecF3H2NclHmC8HncN1UgWbtLdqjYK/NSVgdyiR7mCmC
+         P8AeR3GOWYHgCbnF0a896PizprlsEuM/u2YoHrJWbckwHheNRyIKGZmyIR75uka/sp0z
+         fhAuaabhOfrxszO2Pjs61tesk4IsZQAmsj0CAgcmZDSYqkITHMA2iXysctKhN7exXJ8S
+         iFCI4Vj2zuF3fUCxUfR0bQZeaeG7uEr3L+dYMDCoQGL/MxTdfegkNd02NgVWzUE0E0cp
+         D9Xg==
+X-Gm-Message-State: APjAAAWXT3xrfptwKfE7+41Al6YqUoDKHECrX/mVXQdN0hPnDJnURK4s
+        9k/mNNZ4oKIDHuEjgxbxp4CC3GaGgrs=
+X-Google-Smtp-Source: APXvYqzEPJDu2v7/BPSwTZzTsuB/P5qIDv0tkxu6tWkp9wShP1RJG9l88xRd/STrMH9vn7E9/djg9Q==
+X-Received: by 2002:ac2:53ba:: with SMTP id j26mr147420lfh.92.1574205160201;
+        Tue, 19 Nov 2019 15:12:40 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id p88sm11086298ljp.13.2019.11.19.15.12.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 15:12:39 -0800 (PST)
+Date:   Tue, 19 Nov 2019 15:12:21 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     <netdev@vger.kernel.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 net-next 07/13] net: ethernet: ti: introduce cpsw 
+ switchdev based driver part 1 - dual-emac
+Message-ID: <20191119151221.14ff2d28@cakuba.netronome.com>
+In-Reply-To: <20191119221925.28426-8-grygorii.strashko@ti.com>
+References: <20191119221925.28426-1-grygorii.strashko@ti.com>
+        <20191119221925.28426-8-grygorii.strashko@ti.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019, I wrote:
-
+On Wed, 20 Nov 2019 00:19:19 +0200, Grygorii Strashko wrote:
+> From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
 > 
-> But this is a theoretical problem so far. You may need to use sg_utils 
-> to generate a SCSI command like that.
+> Part 1:
+>  Introduce basic CPSW dual_mac driver (cpsw_new.c) which is operating in
+> dual-emac mode by default, thus working as 2 individual network interfaces.
+> Main differences from legacy CPSW driver are:
 > 
-> (For a DMA controller subject to, say, 24-bit boundaries, there are 
-> additional ways to end up with short transfers.)
+>  - optimized promiscuous mode: The P0_UNI_FLOOD (both ports) is enabled in
+> addition to ALLMULTI (current port) instead of ALE_BYPASS. So, Ports in
+> promiscuous mode will keep possibility of mcast and vlan filtering, which
+> is provides significant benefits when ports are joined to the same bridge,
+> but without enabling "switch" mode, or to different bridges.
+>  - learning disabled on ports as it make not too much sense for
+>    segregated ports - no forwarding in HW.
+>  - enabled basic support for devlink.
 > 
+> 	devlink dev show
+> 		platform/48484000.switch
+> 
+> 	devlink dev param show
+> 	 platform/48484000.switch:
+> 	name ale_bypass type driver-specific
+> 	 values:
+> 		cmode runtime value false
+> 
+>  - "ale_bypass" devlink driver parameter allows to enable
+> ALE_CONTROL(4).BYPASS mode for debug purposes.
+>  - updated DT bindings.
 
-On reflection these probably can't happen in practice. I was being 
-over-cautious. So I'll leave this patch out-of-tree until there's a need 
-for it (i.e. some driver that uses both DMA and PIO in data phases).
-
--- 
+Could you please add documentation for the devlink parameter under
+Documentation/networking/devlink-params-* ?
