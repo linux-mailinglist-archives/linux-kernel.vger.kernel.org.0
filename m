@@ -2,98 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ADC810272D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A96102726
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfKSOpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:45:18 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:50916 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfKSOpS (ORCPT
+        id S1728326AbfKSOoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:44:04 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37001 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728313AbfKSOoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:45:18 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAJEitb1007682;
-        Tue, 19 Nov 2019 08:44:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574174695;
-        bh=Xb17bFFvyyPqVZH3JQh33Q09iDlqcgXHhX0DKwO4lwQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kwYmH3N4LCqQEjuhK3qaWi51suMy+3umddzaTsp68YsDKKJpN9AxFnguws3i5Ylik
-         0QP08Mym8xE93voINGsQByrWfLgeOhHk4hGcMMCRFi+VVIgEbCrwxqxBN2MSQ4ZkcY
-         i+Y1p1VfHx69Y1Uen+jVcHTgFxJs+MsO4l6VuPaU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAJEituH016789
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Nov 2019 08:44:55 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 19
- Nov 2019 08:44:54 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 19 Nov 2019 08:44:54 -0600
-Received: from [10.250.33.226] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAJEirca010193;
-        Tue, 19 Nov 2019 08:44:54 -0600
-Subject: Re: [PATCH 1/2] can: m_can_platform: set net_device structure as
- driver data
-To:     Pankaj Sharma <pankj.sharma@samsung.com>,
-        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
-        <rcsekar@samsung.com>, <pankaj.dubey@samsung.com>,
-        Sriram Dash <sriram.dash@samsung.com>
-References: <1574158838-4616-1-git-send-email-pankj.sharma@samsung.com>
- <CGME20191119102155epcas5p34ca3dfaba9eef8de24d1bc9d64ef5335@epcas5p3.samsung.com>
- <1574158838-4616-2-git-send-email-pankj.sharma@samsung.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <cb975009-2d89-40b9-8c28-e5cf40bf20a2@ti.com>
-Date:   Tue, 19 Nov 2019 08:43:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 19 Nov 2019 09:44:02 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so17294259lfp.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 06:44:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3HGForXYrnzKKwFOiKAr5qSOuuqdU2k4wA1CfbalcbQ=;
+        b=o8/7NQNCdscgcAzoUXE+jNTk/DJagMvuw5Z5JaWY30/Z/muA51WNthzWcG+/MtHPBP
+         ny6dVonMKRnen+it9ngeeXt1nR2rMvm4MxOKRsW5mUt9arjSEhZM4tMEKXJRcjqQx8t8
+         UwAYBSUYodJCrJjJxwSpcnYicu7wJuE+0By/ddHV3P+BQR3Lp7t+G1kjRHchnAx24qMJ
+         SA9vVP9M+gd+aI6o0RnPHJ0b1q0yRooX6UUA86zcAYvWai/ge//6X1NsbP93Bwm+VLIX
+         BqN6l+PH8M5Cw6YFIvmW/Ygb/vNNIT3uU4vu68nKXH9wt785xkMpxaAXLMSC4C3ZTGrO
+         vEUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3HGForXYrnzKKwFOiKAr5qSOuuqdU2k4wA1CfbalcbQ=;
+        b=saekyfG2gv23MXI1A9UN1tuxzeRygEmp1NDrugZQzPDLOAak1gRB7d7JiADdH/R3W8
+         P52VEqM/PYShG19TwJFPo7HpbGzMMK6Yjs0U42oX8FWn4Y9rLQcYNbMCnZ7iLi79R8nG
+         Cnfqsc2nNgoEW14sOp0JcI8sD+ajoVBRsNSfdHFKQcxSIysaEKwwz45LqQ2/q1mZ9YrP
+         /DIprE/PnkN4yPagaJyNznbfR6p1wCoWqOLUyneRlijMnV81DyRzDdxrWrABSxdM+tJQ
+         DL2JGeXyZ8OQTxNOrRi9XXzras41+GQewK1QGCbjPBQSrbXz6Ot5Hirj1sw7fIJQscpu
+         EF3w==
+X-Gm-Message-State: APjAAAWXTDInRF7SqTNd1ccqjjWLkKuysjbAIZ6I4sitzBlHbjep3gOv
+        WyXr2lfNmbjBv4p5V7CPFKRlPC2GfC1f4VhTihh8eA==
+X-Google-Smtp-Source: APXvYqxiJDKtjaMparegwwsvRl+fvmQtXcsqSKBMv1kiOZ+otWv/0CzoTQp+omLTRtPr/aKLvkVblynEb9GKo+vyzx0=
+X-Received: by 2002:a19:651b:: with SMTP id z27mr4166813lfb.117.1574174639988;
+ Tue, 19 Nov 2019 06:43:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1574158838-4616-2-git-send-email-pankj.sharma@samsung.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com> <8dd9dad2765d47fd6c6fec20566326d00e48a696.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <8dd9dad2765d47fd6c6fec20566326d00e48a696.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 19 Nov 2019 15:43:47 +0100
+Message-ID: <CACRpkdY_2WzAnK01bQdMF69KsDvHHu9TXuyRoBcmiQMziux=eQ@mail.gmail.com>
+Subject: Re: [PATCH v5 10/16] gpio: devres: Add devm_gpiod_get_parent_array
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pankaj
+On Mon, Nov 18, 2019 at 7:58 AM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
 
-On 11/19/19 4:20 AM, Pankaj Sharma wrote:
-> A device driver for CAN controller hardware registers itself with the
-> Linux network layer as a network device. So, the driver data for m_can
-> should ideally be of type net_device.
+> Bunch of MFD sub-devices which are instantiated by MFD do not have
+> own device-tree nodes but have (for example) the GPIO consumer
+> information in parent device's DT node. Add resource managed
+> devm_gpiod_get_array() for such devices so that they can get the
+> consumer information from parent DT while still binding the GPIO
+> reservation life-time to this sub-device life time.
 >
-> Fixes: f524f829b75a ("can: m_can: Create a m_can platform framework")
+> If devm_gpiod_get_array is used as such - then unloading and then
+> re-loading the child device fails as the GPIOs reserved during first
+> load are not freed when driver for sub-device is unload (if parent
+> stays there).
 >
-> Signed-off-by: Pankaj Sharma <pankj.sharma@samsung.com>
-> Signed-off-by: Sriram Dash <sriram.dash@samsung.com>
-> ---
->   drivers/net/can/m_can/m_can_platform.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+(...)
+> +static struct gpio_descs *__must_check
+> +__devm_gpiod_get_array(struct device *gpiodev,
+> +                      struct device *managed,
+> +                      const char *con_id,
+> +                      enum gpiod_flags flags)
+
+I'm opposed to functions named __underscore_something()
+so find a proper name for this function.
+devm_gpiod_get_array_common() works if nothing else.
+
+> @@ -292,19 +284,62 @@ struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
+>         if (!dr)
+>                 return ERR_PTR(-ENOMEM);
 >
-> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_can/m_can_platform.c
-> index 6ac4c35..2eaa354 100644
-> --- a/drivers/net/can/m_can/m_can_platform.c
-> +++ b/drivers/net/can/m_can/m_can_platform.c
-> @@ -107,7 +107,7 @@ static int m_can_plat_probe(struct platform_device *pdev)
->   
->   	mcan_class->is_peripheral = false;
->   
-> -	platform_set_drvdata(pdev, mcan_class->dev);
-> +	platform_set_drvdata(pdev, mcan_class->net);
->   
->   	m_can_init_ram(mcan_class);
->   
+> -       descs = gpiod_get_array(dev, con_id, flags);
+> +       descs = gpiod_get_array(gpiodev, con_id, flags);
+>         if (IS_ERR(descs)) {
+>                 devres_free(dr);
+>                 return descs;
+>         }
+>
+>         *dr = descs;
+> -       devres_add(dev, dr);
+> +       if (managed)
+> +               devres_add(managed, dr);
+> +       else
+> +               devres_add(gpiodev, dr);
 
-Thanks for the fix.
+So we only get managed resources if the "managed" device is
+passed in.
 
-Acked-by: Dan Murphy <dmurphy@ti.com>
+> +/**
+> + * devm_gpiod_get_array - Resource-managed gpiod_get_array()
 
+And this function is supposed to be resource managed for sure.
+
+> + * @dev:       GPIO consumer
+> + * @con_id:    function within the GPIO consumer
+> + * @flags:     optional GPIO initialization flags
+> + *
+> + * Managed gpiod_get_array(). GPIO descriptors returned from this function are
+> + * automatically disposed on driver detach. See gpiod_get_array() for detailed
+> + * information about behavior and return values.
+> + */
+> +struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
+> +                                                    const char *con_id,
+> +                                                    enum gpiod_flags flags)
+> +{
+> +       return __devm_gpiod_get_array(dev, NULL, con_id, flags);
+
+So what is this? NULL?
+
+Doesn't that mean you just removed all resource management for this
+call?
+
+Or am I reading it wrong?
+
+Yours,
+Linus Walleij
