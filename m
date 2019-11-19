@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E102D1017E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AE03101720
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 07:00:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfKSFhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:37:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59370 "EHLO mail.kernel.org"
+        id S1731349AbfKSFsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:48:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729163AbfKSFhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:37:31 -0500
+        id S1731340AbfKSFsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:48:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8302821783;
-        Tue, 19 Nov 2019 05:37:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DF7E2071B;
+        Tue, 19 Nov 2019 05:48:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141851;
-        bh=5UlIQR2DCq+pOvDPurmJbhIK5FNedXV0/VZEjZx8hAs=;
+        s=default; t=1574142496;
+        bh=nHTNft2ct8Swzv59J+uQWEJCYKeLMnBCYuaPYwe5Hmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rhzauzkDPLi8fSoKziZfusqjjZBX1+Xq0tgdqf1zJC8vkZ3l9oXTY2wqZXNcyZYTJ
-         ZgS5IFI1nyyrmppjwIoFdjUs4bSnIWMSY9EH+sPTygBcMPgM+aAGdpVf2ddrTiOYT0
-         1bXsZy4i2NsmeCj5wOkQj26Ql8dNaMHVU7TCpXho=
+        b=GXhT/2wZCcWOuaKAy4eJyd58BNGLuO1EOOSxVbPUYcx2NaxPV8KA7hv2ySDfFVQAp
+         G1LHVKUgsdpRWEm/fSwQVB5hEBrQgL2wwbsDpcC4qsJTypzQAFKpmynw9Ti2/4nKLm
+         5vYTRF8RJxyZHlj85I9FjXTtrLdYrxHa2iFDmt5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Deepak Ukey <deepak.ukey@microchip.com>,
+        Viswas G <Viswas.G@microchip.com>,
+        Jack Wang <jinpu.wang@profitbricks.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 301/422] ARM: dts: ux500: Fix LCDA clock line muxing
-Date:   Tue, 19 Nov 2019 06:18:18 +0100
-Message-Id: <20191119051418.506508118@linuxfoundation.org>
+Subject: [PATCH 4.14 101/239] scsi: pm80xx: Corrected dma_unmap_sg() parameter
+Date:   Tue, 19 Nov 2019 06:18:21 +0100
+Message-Id: <20191119051324.684685846@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Deepak Ukey <deepak.ukey@microchip.com>
 
-[ Upstream commit ecde29569e3484e1d0a032bf4074449bce4d4a03 ]
+[ Upstream commit 76cb25b058034d37244be6aca97a2ad52a5fbcad ]
 
-The "lcdaclk_b_1" group is muxed with the function "lcd"
-but needs a separate entry to be muxed in with "lcda"
-rather than "lcd".
+For the function dma_unmap_sg(), the <nents> parameter should be number of
+elements in the scatter list prior to the mapping, not after the mapping.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Deepak Ukey <deepak.ukey@microchip.com>
+Signed-off-by: Viswas G <Viswas.G@microchip.com>
+Acked-by: Jack Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/ste-href-family-pinctrl.dtsi | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/pm8001/pm8001_sas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
-index 5c5cea232743d..1ec193b0c5065 100644
---- a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
-@@ -607,16 +607,20 @@
- 
- 			mcde {
- 				lcd_default_mode: lcd_default {
--					default_mux {
-+					default_mux1 {
- 						/* Mux in VSI0 and all the data lines */
- 						function = "lcd";
- 						groups =
- 						"lcdvsi0_a_1", /* VSI0 for LCD */
- 						"lcd_d0_d7_a_1", /* Data lines */
- 						"lcd_d8_d11_a_1", /* TV-out */
--						"lcdaclk_b_1", /* Clock line for TV-out */
- 						"lcdvsi1_a_1"; /* VSI1 for HDMI */
- 					};
-+					default_mux2 {
-+						function = "lcda";
-+						groups =
-+						"lcdaclk_b_1"; /* Clock line for TV-out */
-+					};
- 					default_cfg1 {
- 						pins =
- 						"GPIO68_E1", /* VSI0 */
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index ce584c31d36e5..d1fcd21f7f7dd 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -466,7 +466,7 @@ err_out:
+ 	dev_printk(KERN_ERR, pm8001_ha->dev, "pm8001 exec failed[%d]!\n", rc);
+ 	if (!sas_protocol_ata(t->task_proto))
+ 		if (n_elem)
+-			dma_unmap_sg(pm8001_ha->dev, t->scatter, n_elem,
++			dma_unmap_sg(pm8001_ha->dev, t->scatter, t->num_scatter,
+ 				t->data_dir);
+ out_done:
+ 	spin_unlock_irqrestore(&pm8001_ha->lock, flags);
 -- 
 2.20.1
 
