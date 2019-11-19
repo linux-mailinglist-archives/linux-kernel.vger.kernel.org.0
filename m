@@ -2,111 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AAB21024B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D93B1024AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 13:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfKSMnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 07:43:37 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43074 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfKSMnh (ORCPT
+        id S1727852AbfKSMk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 07:40:59 -0500
+Received: from a27-55.smtp-out.us-west-2.amazonses.com ([54.240.27.55]:36250
+        "EHLO a27-55.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725280AbfKSMk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 07:43:37 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJCPNIB069833;
-        Tue, 19 Nov 2019 12:42:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=J1DVFWDWgRDlJNqhrtPfMZhXf4YNBEMKWsybmojvTLo=;
- b=JgnqN+VBvqZZJ86GuNVp+b1Ft61fTaXz3I1+uwYOAS5cE8ccyiXt3+XDKCQErW4byYg7
- LOUIJNY9zoyFWLXgfu77EZLnt7zaH08pKn0ucWpmFEcXSVYeqIotvFgfxFIapIAbLMqC
- 5GNH1EwRat2Z1PGDhwT4/m4JKOl5+MqlWL6TayJ/jhrBtFAyaHkfjBqx3zYmAzWtQyGw
- weoD1PTW2+I1lvoj+EkgSUY4+UNNIukOkr0LDPUoqpZoUpWDgl9+gFMHdW+ctdKnGfMx
- 5OTXTBAlnwApcHzY13V4I43jmorxsV98qvVi8vPb19OLm2tpmRgOdDOKVsSMjQaupnQt gg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2wa92ppj87-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 12:42:17 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJCSEIk167569;
-        Tue, 19 Nov 2019 12:40:17 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2wcem8sa94-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 12:40:17 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJCeDVh026432;
-        Tue, 19 Nov 2019 12:40:13 GMT
-Received: from kadam (/41.210.141.188)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Nov 2019 04:40:12 -0800
-Date:   Tue, 19 Nov 2019 15:39:56 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Mao Wenan <maowenan@huawei.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] KVM: x86: remove set but not used variable 'called'
-Message-ID: <20191119123956.GC5604@kadam>
-References: <20191119030640.25097-1-maowenan@huawei.com>
- <87o8x8gjr5.fsf@vitty.brq.redhat.com>
- <20191119121423.GB5604@kadam>
- <87imnggidr.fsf@vitty.brq.redhat.com>
+        Tue, 19 Nov 2019 07:40:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574167257;
+        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID;
+        bh=CEhdhlN+M1OpAxIH/yMj19nrltuBHW5P13jllfaEM2s=;
+        b=mLOdS0dXbzUa+uX0R/zereNz9q7MmiC6XbuSA4SDhW8YZfJ6tYJ5OB+o3xIvzskf
+        9jOOQ0mrBuZ83orFXlon1SuZ3ERwQQ8TZe3xN2KEKLs63O4M0DEjq4+2uAFJd7dUXVb
+        XPO+D71/lymMwfaUYGdlk4oLTUDHv9I8rbdQ/db8=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574167257;
+        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID:Feedback-ID;
+        bh=CEhdhlN+M1OpAxIH/yMj19nrltuBHW5P13jllfaEM2s=;
+        b=LBrMfl4hZtt/1kyZzzfdG/56L+NfPWasqDltYDL6JXxHCD4wEvq5KtVlqkdVz2XC
+        JDyV6ObB0Z+migTZEg4UC+PgLWxnqgR14k/+nZbtfgTI1ixIu+50Y8HK8u3H8E0sxnQ
+        qKEj4GJz4fo+4sLsNf9zZKl97v4kYzg4AVjujMDI=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87imnggidr.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190116
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 19 Nov 2019 12:40:57 +0000
+From:   dhar@codeaurora.org
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Subject: Re: [v2] msm: disp: dpu1: add support to access hw irqs regs
+ depending on revision
+In-Reply-To: <5dcd8f05.1c69fb81.bdd4.2b0a@mx.google.com>
+References: <1573710976-27551-1-git-send-email-dhar@codeaurora.org>
+ <5dcd8f05.1c69fb81.bdd4.2b0a@mx.google.com>
+Message-ID: <0101016e83ae22b5-7a05918b-c1c4-40f1-ae17-5dd36a003c36-000000@us-west-2.amazonses.com>
+X-Sender: dhar@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
+X-SES-Outgoing: 2019.11.19-54.240.27.55
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 01:28:32PM +0100, Vitaly Kuznetsov wrote:
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
+On 2019-11-14 22:59, Stephen Boyd wrote:
+> Quoting Shubhashree Dhar (2019-11-13 21:56:16)
+>> Current code assumes that all the irqs registers offsets can be
+>> accessed in all the hw revisions; this is not the case for some
+>> targets that should not access some of the irq registers.
 > 
-> > On Tue, Nov 19, 2019 at 12:58:54PM +0100, Vitaly Kuznetsov wrote:
-> >> Mao Wenan <maowenan@huawei.com> writes:
-> >> 
-> >> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >> >
-> >> > arch/x86/kvm/x86.c: In function kvm_make_scan_ioapic_request_mask:
-> >> > arch/x86/kvm/x86.c:7911:7: warning: variable called set but not
-> >> > used [-Wunused-but-set-variable]
-> >> >
-> >> > It is not used since commit 7ee30bc132c6 ("KVM: x86: deliver KVM
-> >> > IOAPIC scan request to target vCPUs")
-> >> 
-> >> Better expressed as 
-> >> 
-> >> Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to target vCPUs")
-> >> 
-> >
-> > There is sort of a debate about this whether the Fixes tag should be
-> > used if it's only a cleanup.
-> >
+> What happens if we read the irq registers that we "should not access"?
+> Does the system reset? It would be easier to make those registers 
+> return
+> 0 when read indicating no interrupt and ignore writes so that 
+> everything
+> keeps working without having to skip registers.
 > 
-> I have to admit I'm involved in doing backporting sometimes and I really
-> appreciate Fixes: tags. Just so you know on which side of the debate I
-> am :-)
+In some of the hw revisions, the whole hw block is absent and trying to 
+access those
+registers causes system panic(bus noc error).
 
-But we're not going to backport this hopefully?
-
-regards,
-dan carpenter
-
+>> This change adds the support to selectively remove the irqs that
+>> are not supported in some of the hw revisions.
+>> 
+>> Change-Id: I6052b8237b703a1a9edd53893e04f7bd72223da1
+> 
+> Please remove these before sending upstream.
+> 
+>> Signed-off-by: Shubhashree Dhar <dhar@codeaurora.org>
+>> ---
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |  1 +
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |  3 +++
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 22 
+>> +++++++++++++++++-----
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h |  1 +
+>>  4 files changed, 22 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h 
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> index ec76b868..def8a3f 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> @@ -646,6 +646,7 @@ struct dpu_perf_cfg {
+>>   * @dma_formats        Supported formats for dma pipe
+>>   * @cursor_formats     Supported formats for cursor pipe
+>>   * @vig_formats        Supported formats for vig pipe
+>> + * @mdss_irqs          Bitmap with the irqs supported by the target
+> 
+> Hmm pretty sure there needs to be a colon so that kernel-doc can match
+> this but maybe I'm wrong.
+> 
+>>   */
+>>  struct dpu_mdss_cfg {
+>>         u32 hwversion;
