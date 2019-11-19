@@ -2,106 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 398BA10266A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:18:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F6B10262D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 15:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbfKSOSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 09:18:23 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:53628 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfKSOST (ORCPT
+        id S1727728AbfKSORC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 09:17:02 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47260 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbfKSORB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:18:19 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJEE7LC179048;
-        Tue, 19 Nov 2019 14:16:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=9axEBLXvj4bEnlBdKi9wA/X7OLcK/RilJpfkNrxlABU=;
- b=nrjic0b/IL0yHUl6tYQJ+1JjgqN9GEbl1vBlt09+UgdkckeqHhrYsVKzdc12+IkP/F04
- geD9Wy6y7OBdUjS7R5kjugU5ZrK1GQ+/UBAO1SzEInHYPw5GO++7wkSoCP73y9sgCqtG
- JhMB24xq7hSp+NXcCjLEFfw8sDsOL0OTh9s9+gYkU3V31DviUjPgkUFuHonVb89sIGIK
- PW5r4AGhYbtFqPPVVX28tT+lrks3wRthnqMS1UZCheYwkf2STc7ubv/VpgfnARA75b4S
- M4cV+AEHn3iDbhL/QK7iwbN6Ocxg+pegrgYr6mq7P+kRCR0Yu4Y5PCnIugNOBaleI+DE HA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2wa8htq6eq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 14:16:51 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJEE2RY013345;
-        Tue, 19 Nov 2019 14:16:50 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2wc0agf6k0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 14:16:50 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJEGkkS023554;
-        Tue, 19 Nov 2019 14:16:46 GMT
-Received: from kadam (/41.210.141.188)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Nov 2019 06:16:45 -0800
-Date:   Tue, 19 Nov 2019 17:16:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     Alexander.Deucher@amd.com, djkurtz@google.com,
-        Akshu.Agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 1/6] ASoC: amd:Create multiple I2S platform device
- endpoint
-Message-ID: <20191119141628.GD30789@kadam>
-References: <1574172508-26546-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1574172508-26546-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        Tue, 19 Nov 2019 09:17:01 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAJEH0cW128198;
+        Tue, 19 Nov 2019 08:17:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574173020;
+        bh=nGL+xcmjiAdxXQX0bc5dlV6JtO6JcpMQGzaqANFB+WQ=;
+        h=From:To:CC:Subject:Date;
+        b=umOcv352EnUHeMSxZngvWydKwdkY+JUqNoxpITujezcrP9pqJAOdMe6uUcNf+yhSf
+         olKRUSN3jMHrU3arL0uvoCnZ1PaYOPVoxqzoqnCXfxrnYsEGM8n3QZas5BFgbL/Y6f
+         WBhN1Z6mLlSvQJwtLFwrxVE+IrnkRv8ElqCg26XM=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAJEH0iB099924
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Nov 2019 08:17:00 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 19
+ Nov 2019 08:16:59 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 19 Nov 2019 08:16:59 -0600
+Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAJEGvYr027070;
+        Tue, 19 Nov 2019 08:16:58 -0600
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <s-anna@ti.com>
+Subject: [PATCHv2 00/15] Remoteproc: updates for OMAP remoteproc support
+Date:   Tue, 19 Nov 2019 16:16:30 +0200
+Message-ID: <20191119141645.19777-1-t-kristo@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574172508-26546-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=984
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190132
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 07:38:23PM +0530, Ravulapati Vishnu vardhan rao wrote:
-> @@ -56,10 +56,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->  		irqflags = 0;
->  
->  	addr = pci_resource_start(pci, 0);
-> -	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
-> +	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
-> +					pci_resource_len(pci, 0));
->  	if (!adata->acp3x_base) {
->  		ret = -ENOMEM;
-> -		goto release_regions;
-> +		goto disable_msi;
+Hi,
 
-This is a bug fix.  :)
+This is v2 of the series [1], addressing comments from Bjorn and Rob.
+Bindings patch is funnily v2.5, as I posted v2 already and wanted to
+keep this somehow in sync. Individual patches contain comments about the
+changes, or Reviewed-by tags provided if there are no changes.
 
->  	}
->  	pci_set_master(pci);
->  	pci_set_drvdata(pci, adata);
+I also dropped the conversion patch to SPDX licensing until I can
+confirm the license we want to use. Lets just keep the existing in place
+until that.
 
-This patch is fine.
+This series still depends on the reset + clock patches posted earlier,
+but both of those dependencies are in linux-next now.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+-Tero
 
-regards,
-dan carpenter
+[1] https://patchwork.kernel.org/cover/11215421/
 
+
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
