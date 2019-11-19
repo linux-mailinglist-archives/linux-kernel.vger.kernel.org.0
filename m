@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82C91014A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 576D1101576
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:44:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbfKSFgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:36:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57288 "EHLO mail.kernel.org"
+        id S1730850AbfKSFo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:44:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728141AbfKSFgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:36:09 -0500
+        id S1728629AbfKSFoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:44:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5015D20862;
-        Tue, 19 Nov 2019 05:36:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 488E12075E;
+        Tue, 19 Nov 2019 05:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141768;
-        bh=8C77Ah9eGNmpKFrXn+KY6E4yKZ1R8Yn9FxFLckt44Sg=;
+        s=default; t=1574142261;
+        bh=XOZGKUDKELZbuYuJ99nsyJpYiikG2/sMmY+svnf4Fpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LLgMpwsd/Ot3mF914VUUu/s9mYeapZ3C9Svd5lRKKnF1CGC4sdK6YvKVn/KI6+0UT
-         oImx3eNtxaOE1OhpFneg8tjrHfpkjPnjFl8M9Ox7qSa09P0OHparrcuViLT5wIV71+
-         1CMikSIx4DwcrHmX/mkED7O1/98oiamEkstXoDsI=
+        b=k/DCgbc4MR3OlDLL//+I04HWUz+qG49tP1j6Bl8wlMQkFuGocIkcLHJ9635n135Uu
+         j6i0x+zzn+4EyNOlKOGuI5emvHskfnkBBRG5uG6K8msTpkkKrgsaQAWS3g50EY2X3d
+         g4Xm4FXNiRjbDAlgMMlEPY1FfA7LyAfn4s6Knm58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 224/422] power: reset: at91-poweroff: do not procede if at91_shdwc is allocated
+        stable@vger.kernel.org, Feng Tang <feng.tang@intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 021/239] x86/quirks: Disable HPET on Intel Coffe Lake platforms
 Date:   Tue, 19 Nov 2019 06:17:01 +0100
-Message-Id: <20191119051413.150080240@linuxfoundation.org>
+Message-Id: <20191119051301.677858088@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 9f1e44774be578fb92776add95f1fcaf8284d692 ]
+commit fc5db58539b49351e76f19817ed1102bf7c712d0 upstream.
 
-There should be only one instance of struct shdwc in the system. This is
-referenced through at91_shdwc. Return in probe if at91_shdwc is already
-allocated.
+Some Coffee Lake platforms have a skewed HPET timer once the SoCs entered
+PC10, which in consequence marks TSC as unstable because HPET is used as
+watchdog clocksource for TSC.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Harry Pan tried to work around it in the clocksource watchdog code [1]
+thereby creating a circular dependency between HPET and TSC. This also
+ignores the fact, that HPET is not only unsuitable as watchdog clocksource
+on these systems, it becomes unusable in general.
+
+Disable HPET on affected platforms.
+
+Suggested-by: Feng Tang <feng.tang@intel.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203183
+Link: https://lore.kernel.org/lkml/20190516090651.1396-1-harry.pan@intel.com/ [1]
+Link: https://lkml.kernel.org/r/20191016103816.30650-1-kai.heng.feng@canonical.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/power/reset/at91-sama5d2_shdwc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/early-quirks.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/reset/at91-sama5d2_shdwc.c
-index 0206cce328b3d..d9493e893d64e 100644
---- a/drivers/power/reset/at91-sama5d2_shdwc.c
-+++ b/drivers/power/reset/at91-sama5d2_shdwc.c
-@@ -246,6 +246,9 @@ static int __init at91_shdwc_probe(struct platform_device *pdev)
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
- 
-+	if (at91_shdwc)
-+		return -EBUSY;
-+
- 	at91_shdwc = devm_kzalloc(&pdev->dev, sizeof(*at91_shdwc), GFP_KERNEL);
- 	if (!at91_shdwc)
- 		return -ENOMEM;
--- 
-2.20.1
-
+--- a/arch/x86/kernel/early-quirks.c
++++ b/arch/x86/kernel/early-quirks.c
+@@ -681,6 +681,8 @@ static struct chipset early_qrk[] __init
+ 	 */
+ 	{ PCI_VENDOR_ID_INTEL, 0x0f00,
+ 		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
++	{ PCI_VENDOR_ID_INTEL, 0x3ec4,
++		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
+ 	{ PCI_VENDOR_ID_BROADCOM, 0x4331,
+ 	  PCI_CLASS_NETWORK_OTHER, PCI_ANY_ID, 0, apple_airport_reset},
+ 	{}
 
 
