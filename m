@@ -2,170 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF3610252F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D790B102523
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 14:04:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfKSNJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 08:09:47 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39027 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfKSNJr (ORCPT
+        id S1727911AbfKSNEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 08:04:41 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29240 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727638AbfKSNEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 08:09:47 -0500
-Received: by mail-ed1-f68.google.com with SMTP id l25so17004836edt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:09:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VEavlwL1+rDzs+L+hM6nx0dnrMPSn2yWoKd3exKBnKI=;
-        b=b6eiXfq4vDKE47zZ4PvxoN61Q1BY37X7wcxDr/SiVmRRP0VtNsmCMMkrX3qi2LrRtu
-         P92lSpOaIxSROrtWuDJJ0XrRgaTiZBAJJ6z6l46VSE06O0MjhbBzsnYdD72zjhau3pF3
-         WCNJR5qHibROyv1OB4bctwVa86YYWorAOoycA=
+        Tue, 19 Nov 2019 08:04:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574168679;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1u2WSPm0ixutLDhHPQFbAB3e6YssvhaqnOP7EqAOnTM=;
+        b=b66DK+eq2+StNfml/T+qhpItbk3H8heiQd72aVVVBrLMA/ACwbHvhUqUMSh6VEwXn//wiv
+        ZjWzBUTD7Gc4ZP192g1mQuKqZjoIU8UBvejrZ0EJRYJeB9XtchGOAYvsxRbxYpKMzEN+/o
+        GfxCpXNaqz+8HDqrF3AaHG4MmoKAzqU=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-21-5s073ncJMM-AfqiUC9Kk2g-1; Tue, 19 Nov 2019 08:04:38 -0500
+Received: by mail-qt1-f197.google.com with SMTP id v92so14530268qtd.18
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:04:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VEavlwL1+rDzs+L+hM6nx0dnrMPSn2yWoKd3exKBnKI=;
-        b=bSaTH8JezjGVGGbTfzDrveN/YK/3aGFfgj9CdC5u5q3PqjGgrW/ESOW6IsvHUiFvkz
-         VxZ8Oyb8dwhXihccr01im0xbWn+MsT8Xfd0KsdEqTjHMqC3Hyy8a4cGECg4BqP+MUa0U
-         4KlCz2CgOJKuMy2IGPOfyrYPSWPiavLu2PVEAx6rsmUuA6yJWdLUw9mbUU9km90aCvF7
-         P8/spX/4AspnfAm6iwMl4f85XD5ABIMc5yITJ7OP6VLeu2jKH6BmTq9OJ4UOHDgWaFMq
-         gfwdRtSQXNC6lL7rXDpr2BT0yFYH3NBLZ84n9BKx4HRyBUkvI5ZRDJfo3bv2oVu6pRhe
-         9Mtw==
-X-Gm-Message-State: APjAAAWFt1zhxTy5gxogdD7jME3o29pbo5lDe0+4POp9Bbkw85OV2Qv/
-        Ax1fBujkXaXKE8xkcC+UNu1HvNH9qdcLdA==
-X-Google-Smtp-Source: APXvYqyi7VyGF04nrp0FD7XxKIMU7peUyxddHM2uVH/F4ypmOHUZQ3/qB/XqrN3ZnYv9ZSibZci55w==
-X-Received: by 2002:a17:906:b80f:: with SMTP id dv15mr35974432ejb.188.1574168983486;
-        Tue, 19 Nov 2019 05:09:43 -0800 (PST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id e19sm557254eds.71.2019.11.19.05.09.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2019 05:09:43 -0800 (PST)
-Received: by mail-wr1-f51.google.com with SMTP id e6so23805464wrw.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 05:09:43 -0800 (PST)
-X-Received: by 2002:adf:e505:: with SMTP id j5mr33584239wrm.46.1574168650324;
- Tue, 19 Nov 2019 05:04:10 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wVazQdPSJMsHL4OK3xhjgyvdKos3XKZz6J3/eg1KCyU=;
+        b=DFkoeiKbmWOtH/QoAkYKkaqYOuqJdI3+5UoySB6GvFHwHBKZDzMuv1eeqfDPn6nuG3
+         gtg7q49lB6WYQ53enKjTFdIV+7PpjS0jOLEnPjmRZnCVp+vx5JQrqTizRAkHefxasv+/
+         l5d3fxhZzZ8ypUk5svZKuEmgB1Kk66MWrYm9owy/g/2480ENWhcjUakQ4V6lgcG2aARb
+         hwkjfKp/TJjTiZnXfmVfk9OYROPVgQ8uBOc7/ewuxUjufec3PNogG6kuDZhbHC75XMt/
+         JsG22ypS7a4mCKCCaQkveykYl3tdKdsE3AeGNSaZ1nj85KQD/rYdwQPrB4BQ04cJUWKg
+         y/9w==
+X-Gm-Message-State: APjAAAW33N7szQdetFGPINCo2wKsl3wi2D5vlJMku47cvlynPOp/GEFg
+        GzlFrGw+CT09bboNM0IU5aGV8WTcRs7EPk072Q/HsMKob+oych62+HAl8/BZWmIu32KXT08R+eb
+        ZFVn1UMFBkaUtlXGPGsgUfrMS
+X-Received: by 2002:a37:9bc2:: with SMTP id d185mr28179241qke.299.1574168677411;
+        Tue, 19 Nov 2019 05:04:37 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzFd/pD/dAXOX6+NHhk5vVmoZGCOTtkClfM8PPmjU9d3WO6EyImxneoYY7/W44Z8WPeVOogig==
+X-Received: by 2002:a37:9bc2:: with SMTP id d185mr28179213qke.299.1574168677150;
+        Tue, 19 Nov 2019 05:04:37 -0800 (PST)
+Received: from redhat.com (bzq-79-176-6-42.red.bezeqint.net. [79.176.6.42])
+        by smtp.gmail.com with ESMTPSA id w30sm12605312qtc.47.2019.11.19.05.04.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 05:04:36 -0800 (PST)
+Date:   Tue, 19 Nov 2019 08:04:29 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+        linux-s390@vger.kernel.org, Michael Mueller <mimu@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Christoph Hellwig <hch@lst.de>, Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/1] virtio_ring: fix return code on DMA mapping fails
+Message-ID: <20191119080420-mutt-send-email-mst@kernel.org>
+References: <20191114124646.74790-1-pasic@linux.ibm.com>
+ <20191119121022.03aed69a.pasic@linux.ibm.com>
 MIME-Version: 1.0
-References: <20191114051242.14651-1-helen.koike@collabora.com>
- <20191114051242.14651-3-helen.koike@collabora.com> <09d4f683-d03d-46c9-e9d2-b8cceb72446e@xs4all.nl>
- <9cb116f6-64f4-1510-b128-8657d6d4889b@collabora.com> <CAFLEztRQfYE_Mssiq4KxK-QyJEe+KT4eTsvnLZQK5T=uVADUqA@mail.gmail.com>
- <4135d35cd581b31d08b547852ac43e959957abf5.camel@collabora.com>
-In-Reply-To: <4135d35cd581b31d08b547852ac43e959957abf5.camel@collabora.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 19 Nov 2019 22:03:59 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BPwSnY51vJboCB6Hr2Yz4jMqt4VWLNNLTpiwenGo_Wew@mail.gmail.com>
-Message-ID: <CAAFQd5BPwSnY51vJboCB6Hr2Yz4jMqt4VWLNNLTpiwenGo_Wew@mail.gmail.com>
-Subject: Re: [PATCH v11 02/11] media: staging: rkisp1: add document for rkisp1
- meta buffer format
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     Jacob Chen <jacobchen110@gmail.com>,
-        Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        Eddie Cai <eddie.cai.linux@gmail.com>, kernel@collabora.com,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jacob Chen <jacob-chen@rock-chips.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191119121022.03aed69a.pasic@linux.ibm.com>
+X-MC-Unique: 5s073ncJMM-AfqiUC9Kk2g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 9:56 PM Ezequiel Garcia <ezequiel@collabora.com> wr=
-ote:
->
-> Hello Jacob,
->
-> Thanks for the insight.
->
-> On Tue, 2019-11-19 at 18:16 +0800, Jacob Chen wrote:
-> > Hi Helen ,
-> >
-> > Helen Koike <helen.koike@collabora.com> =E4=BA=8E2019=E5=B9=B411=E6=9C=
-=8814=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=886:59=E5=86=99=E9=81=93=
-=EF=BC=9A
-> > >
-> > >
-> > > On 11/14/19 6:21 AM, Hans Verkuil wrote:
-> > > > On 11/14/19 6:12 AM, Helen Koike wrote:
-> > > > > From: Jacob Chen <jacob2.chen@rock-chips.com>
-> > > > >
-> > > > > This commit add document for rkisp1 meta buffer format
-> > > > >
-> > > > > Signed-off-by: Jacob Chen <jacob-chen@rock-chips.com>
-> > > > > [refactored for upstream]
-> > > > > Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> > > >
-> > > > checkpatch gives me:
-> > > >
-> > > > WARNING: Missing Signed-off-by: line by nominal patch author 'Jacob=
- Chen <jacob2.chen@rock-chips.com>'
-> > > >
-> > > > Looking at this series I see duplicate Signed-off-by entries for Ja=
-cob Chen and a total
-> > > > of three different email addresses:
-> > > >
-> > > > jacob2.chen@rock-chips.com
-> > > > jacob-chen@rock-chips.com
-> > > > cc@rock-chips.com
-> > >
-> > > And I see a name in the Maintainers file as Jacob Chen <jacob-chen@io=
-twrt.com>.
-> > > I was wondering if I could replace the email by jacob-chen@iotwrt.com=
-, or if I should
-> > > keep the original ones.
-> > >
-> > > Helen
-> > >
-> >
-> > "jacob2.chen@rock-chips.com"/"jacob-chen@rock-chips.com" is me and
-> > "cc@rock-chips.com" is another one.
-> > ' jacob-chen@rock-chips.com' is invalid now,  so you could replace the
-> > email by 'jacob-chen@iotwrt.com'.
-> >
->
-> Authorship and SOB can't be changed freely, the original must be retained=
-,
-> because this gives proper credit to the company that sponsored the work.
->
-> I.e. if your mail used to be jacob2.chen at rock-chips.com, then I think
-> we can use that. And if cc at rock-chips.com is a different engineer,
-> also named Jacob Chen, perhaps we can mention that somewhere to reduce th=
-e
-> confusion.
+Will be in the next pull request.
 
-Some patches have been developed by Jacob <jacob2.chen at
-rock-chips.com>, some by Jacob <cc at rock-chips.com> and some by
-both.
+On Tue, Nov 19, 2019 at 12:10:22PM +0100, Halil Pasic wrote:
+> ping
+>=20
+> On Thu, 14 Nov 2019 13:46:46 +0100
+> Halil Pasic <pasic@linux.ibm.com> wrote:
+>=20
+> > Commit 780bc7903a32 ("virtio_ring: Support DMA APIs")  makes
+> > virtqueue_add() return -EIO when we fail to map our I/O buffers. This i=
+s
+> > a very realistic scenario for guests with encrypted memory, as swiotlb
+> > may run out of space, depending on it's size and the I/O load.
+> >=20
+> > The virtio-blk driver interprets -EIO form virtqueue_add() as an IO
+> > error, despite the fact that swiotlb full is in absence of bugs a
+> > recoverable condition.
+> >=20
+> > Let us change the return code to -ENOMEM, and make the block layer
+> > recover form these failures when virtio-blk encounters the condition
+> > described above.
+> >=20
+> > Fixes: 780bc7903a32 ("virtio_ring: Support DMA APIs")
+> > Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> > Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> > ---
+> >=20
+> > Notes
+> > =3D=3D=3D=3D=3D
+> >=20
+> > * When out of descriptors (which might regarded as a similar out of
+> > resources condition) virtio uses -ENOSPC, this however seems wrong,
+> > as ENOSPC is defined as -ENOSPC. Thus I choose -ENOMEM over -ENOSPC.
+> >=20
+> > * In virtio_queue_rq() in virtio_blk.c both -ENOMEM and -ENOSPC are
+> > handled as BLK_STS_DEV_RESOURCE. Returning BLK_STS_RESOURCE however
+> > seems more appropriate for dma mapping failed as we are talking about
+> > a global, and not a device local resource. Both seem to do the trick.
+> >=20
+> > * Mimu tested the patch with virtio-blk and virtio-net (thanks!). We
+> > should look into how other virtio devices behave when DMA mapping fails=
+.
+> > ---
+> >  drivers/virtio/virtio_ring.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.=
+c
+> > index a8041e451e9e..867c7ebd3f10 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -583,7 +583,7 @@ static inline int virtqueue_add_split(struct virtqu=
+eue *_vq,
+> >  =09=09kfree(desc);
+> > =20
+> >  =09END_USE(vq);
+> > -=09return -EIO;
+> > +=09return -ENOMEM;
+> >  }
+> > =20
+> >  static bool virtqueue_kick_prepare_split(struct virtqueue *_vq)
+> > @@ -1085,7 +1085,7 @@ static int virtqueue_add_indirect_packed(struct v=
+ring_virtqueue *vq,
+> >  =09kfree(desc);
+> > =20
+> >  =09END_USE(vq);
+> > -=09return -EIO;
+> > +=09return -ENOMEM;
+> >  }
+> > =20
+> >  static inline int virtqueue_add_packed(struct virtqueue *_vq,
 
-Some patches have been also re-posted by Jacob after leaving Rockchip
-AFAIR, from the <jacob-chen at iotwrt.com> address. Those should have
-<jacob2.chen at rock-chips.com> as From: and include sign-offs from
-both <jacob2.chen at rock-chips.com> and <jacob-chen at iotwrt.com>.
-
-So the conclusion is that the original sign-offs should be retained
-+/- typos fixed.
-
-For typos, was <jacob-chen at rock-chips.com> a typo of <jacob2.chen
-at rock-chips.com> or a typo of <jacob-chen at iotwrt.com>?
-
-Best regards,
-Tomasz
