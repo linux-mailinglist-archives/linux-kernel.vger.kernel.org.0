@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18E1F101536
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F12F1016E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:57:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbfKSFls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36326 "EHLO mail.kernel.org"
+        id S1731912AbfKSFw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:52:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729655AbfKSFlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:41:46 -0500
+        id S1731297AbfKSFwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:52:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5A98222F2;
-        Tue, 19 Nov 2019 05:41:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E6A2208C3;
+        Tue, 19 Nov 2019 05:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574142106;
-        bh=irSFSlP4lDy18Th9gU+TMXSW4JZxVtRA522JoQhDzh0=;
+        s=default; t=1574142744;
+        bh=kTWHcQgmOh92E8ZW7W0vJ+QVMthQ0RSoHstpcaD/z3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nEpXHHQgiwcxIztirYmF2m769NYYUzD4a8vumLQo2CdVPaHn7y/Rp7wR5qSNbV83a
-         W5hlUq3w51yoGzrBVTn7d62mLVH5WXRDmHT8ayFVzy25YEyny3yzehSBMsErAXzevs
-         TD2/hzRCiU4U9E6SVm8+O/244WRsPf+ZnAv610i0=
+        b=gosw+WNPB7+nMafji7JJDhZUxc5pHQa3vVXyDk9ZvFwmx6utqWTELuxjAm7YSFq7c
+         BR+RETDvDXYI8Pn6HQXIauHpGPErczGUd1TRSLQRPb9R4jKqA7cOH2mL0n7yzFQ1pW
+         1VedtDFuuADynRbvMGzJfZ9iEEUJugUcX4qyHD5o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoph Manszewski <c.manszewski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 389/422] crypto: s5p-sss: Fix Fix argument list alignment
+Subject: [PATCH 4.14 186/239] phy: brcm-sata: allow PHY_BRCM_SATA driver to be built for DSL SoCs
 Date:   Tue, 19 Nov 2019 06:19:46 +0100
-Message-Id: <20191119051424.311206784@linuxfoundation.org>
+Message-Id: <20191119051335.200929962@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,43 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Manszewski <c.manszewski@samsung.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 6c12b6ba45490eeb820fdceccf5a53f42a26799c ]
+[ Upstream commit 26728df4b254ae06247726a9a6e64823e39ac504 ]
 
-Fix misalignment of continued argument list.
+Broadcom ARM-based DSL SoCs (BCM63xx product line) have the same
+Broadcom SATA PHY that other SoCs are using, make it possible to select
+that driver on these platforms.
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/s5p-sss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/phy/broadcom/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 9021ad9df0c45..b7216935236f0 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -491,7 +491,7 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
- }
+diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
+index 64fc59c3ae6d9..181b8fde2bfe6 100644
+--- a/drivers/phy/broadcom/Kconfig
++++ b/drivers/phy/broadcom/Kconfig
+@@ -60,7 +60,8 @@ config PHY_NS2_USB_DRD
  
- static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
--			    struct scatterlist **dst)
-+			   struct scatterlist **dst)
- {
- 	void *pages;
- 	int len;
-@@ -1889,7 +1889,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev *dev,
- }
- 
- static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
--				struct ablkcipher_request *req)
-+				 struct ablkcipher_request *req)
- {
- 	struct scatterlist *sg;
- 	int err;
+ config PHY_BRCM_SATA
+ 	tristate "Broadcom SATA PHY driver"
+-	depends on ARCH_BRCMSTB || ARCH_BCM_IPROC || BMIPS_GENERIC || COMPILE_TEST
++	depends on ARCH_BRCMSTB || ARCH_BCM_IPROC || BMIPS_GENERIC || \
++		   ARCH_BCM_63XX || COMPILE_TEST
+ 	depends on OF
+ 	select GENERIC_PHY
+ 	default ARCH_BCM_IPROC
 -- 
 2.20.1
 
