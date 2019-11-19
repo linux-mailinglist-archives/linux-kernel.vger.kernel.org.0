@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D28A1013E0
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8211013E1
 	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:28:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfKSF2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:28:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46480 "EHLO mail.kernel.org"
+        id S1728239AbfKSF2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:28:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727513AbfKSF2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:28:04 -0500
+        id S1727513AbfKSF2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:28:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39F9922312;
-        Tue, 19 Nov 2019 05:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ADC4208C3;
+        Tue, 19 Nov 2019 05:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141283;
-        bh=l5eDrJZdYwLniJsJUyQLApbmXinBmUoHA75bjz8sMss=;
+        s=default; t=1574141286;
+        bh=kxpznDMExbY+NIj9/CH/dtzZrDEOQHhlfV8VAdGz+C4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=heb/V8vcbRjlX8M+K1h/6rVIL0OAgrRHp50NAZM90UTXisvBKG/QiSDEtdmP6zith
-         7pxkkHt5nJhx2gWQO0BNK4JWR2pEDP5GQ4Dmuj0T7/Ce20epJ3FJej1fO09slWB2Zf
-         JNdGS4O9COuu2Le6+QgxMtlWjgbKIsQPK8nHNtpo=
+        b=GvS3Kgx/PID3X/+ksIPJgUSIRjbhVWopD07vQ05oa1HuTYowPjcY3/P0Xig5gacLw
+         8gES4lHi06dYdwk/ROs3kJF/U9UbHo250gqyW8cHuhMeV/6adBiCyTJxi+533hHMbw
+         9AOBw2qU8u6TZiXKmde2anyKn/OoRp0MuuClKlJ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 109/422] net: phy: mscc: read vsc8531, edge-slowdown as an u32
-Date:   Tue, 19 Nov 2019 06:15:06 +0100
-Message-Id: <20191119051406.207718500@linuxfoundation.org>
+Subject: [PATCH 4.19 110/422] ARM: dts: meson8: fix the clock controller register size
+Date:   Tue, 19 Nov 2019 06:15:07 +0100
+Message-Id: <20191119051406.261890686@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
 References: <20191119051400.261610025@linuxfoundation.org>
@@ -45,55 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quentin Schulz <quentin.schulz@bootlin.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 36c53cf0f46526b898390659b125155939f67892 ]
+[ Upstream commit f7f9da89bc4f61e33f7b9f5c75c4efdc1f0455d8 ]
 
-In the DT binding, it is specified nowhere that 'vsc8531,edge-slowdown'
-is an u8, even though it's read as an u8 in the driver.
+The clock controller registers are not 0x460 wide because the reset
+controller starts at CBUS 0x4404. This currently overlaps with the
+clock controller (which is at CBUS 0x4000).
 
-Let's update the driver to take into consideration that the
-'vsc8531,edge-slowdown' property is of the default type u32.
+There is no public documentation available on the actual size of the
+clock controller's register area (also called "HHI"). However, in
+Amlogic's GPL kernel sources the last "HHI" register is
+HHI_HDMI_PHY_CNTL2 at CBUS + 0x43a8. 0x400 was chosen because that size
+doesn't seem unlikely.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2c323c43a3d619 ("ARM: dts: meson8: add and use the real clock controller")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/mscc.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/meson8.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index 53d63a71a03e2..36647b70b9a36 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -112,7 +112,7 @@ struct vsc8531_private {
- #ifdef CONFIG_OF_MDIO
- struct vsc8531_edge_rate_table {
- 	u32 vddmac;
--	u8 slowdown[8];
-+	u32 slowdown[8];
- };
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index d77dcf890cfc8..7162e0ca05b0a 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -194,7 +194,7 @@
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 		compatible = "amlogic,meson8-clkc";
+-		reg = <0x8000 0x4>, <0x4000 0x460>;
++		reg = <0x8000 0x4>, <0x4000 0x400>;
+ 	};
  
- static const struct vsc8531_edge_rate_table edge_table[] = {
-@@ -375,8 +375,7 @@ out_unlock:
- #ifdef CONFIG_OF_MDIO
- static int vsc85xx_edge_rate_magic_get(struct phy_device *phydev)
- {
--	u8 sd;
--	u32 vdd;
-+	u32 vdd, sd;
- 	int rc, i, j;
- 	struct device *dev = &phydev->mdio.dev;
- 	struct device_node *of_node = dev->of_node;
-@@ -389,7 +388,7 @@ static int vsc85xx_edge_rate_magic_get(struct phy_device *phydev)
- 	if (rc != 0)
- 		vdd = MSCC_VDDMAC_3300;
- 
--	rc = of_property_read_u8(of_node, "vsc8531,edge-slowdown", &sd);
-+	rc = of_property_read_u32(of_node, "vsc8531,edge-slowdown", &sd);
- 	if (rc != 0)
- 		sd = 0;
- 
+ 	reset: reset-controller@4404 {
 -- 
 2.20.1
 
