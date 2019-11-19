@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF931014C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:37:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FF01015DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 06:48:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730075AbfKSFhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 00:37:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58942 "EHLO mail.kernel.org"
+        id S1730771AbfKSFr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 00:47:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbfKSFhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:37:13 -0500
+        id S1731288AbfKSFry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 00:47:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E492221823;
-        Tue, 19 Nov 2019 05:37:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3F0C21823;
+        Tue, 19 Nov 2019 05:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574141833;
-        bh=VHqwNr/2MI7GULDENmCysXqgEJ5Gz68MXJ5DolXPSlw=;
+        s=default; t=1574142473;
+        bh=ZOehDVMaWStqEmiOOoCjPotJCupJyzR/F/AhshevsMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvQKEFJxYricu7D1larYF6UuD0qcjc1yHzVqO7SllOlh3tsPoYdPaVIjua7qOwQtM
-         0NiLHmMqBpX9w2TSZdBBXud6+t5S/3gzL+leHTGOrivdnmnS62U2EI4xKPNyw5ZjPg
-         9s72HrrN5YPu/l8Pq5SZr8AdymGusLQF5LhxL+KU=
+        b=fXIoMVJVct3B4vllb1oNowmf4Q68JfNgBpthdckLCtXyRCNF5jLtBKmUHt755QbVA
+         9kkSwBj+vVMv4/y3x+yqoSGPeN+to1vAy6E3pV1d+5CbLzAa2F34Cke0Kpj+zK5411
+         C8Fk0YMU+IWFumu7Jy9Ltac9EARJqvW37LSt9y2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 296/422] ARM: dts: am335x-evm: fix number of cpsw
-Date:   Tue, 19 Nov 2019 06:18:13 +0100
-Message-Id: <20191119051418.171853121@linuxfoundation.org>
+Subject: [PATCH 4.14 094/239] f2fs: fix memory leak of percpu counter in fill_super()
+Date:   Tue, 19 Nov 2019 06:18:14 +0100
+Message-Id: <20191119051321.328671665@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191119051400.261610025@linuxfoundation.org>
-References: <20191119051400.261610025@linuxfoundation.org>
+In-Reply-To: <20191119051255.850204959@linuxfoundation.org>
+References: <20191119051255.850204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit dcbf6b18d81bcdc51390ca1b258c17e2e13b7d0c ]
+[ Upstream commit 4a70e255449c9a13eed7a6eeecc85a1ea63cef76 ]
 
-am335x-evm has only one CPSW external port physically wired, but DT defines
-2 ext. ports. As result, PHY connection failure reported for the second
-ext. port.
+In fill_super -> init_percpu_info, we should destroy percpu counter
+in error path, otherwise memory allcoated for percpu counter will
+leak.
 
-Update DT to reflect am335x-evm board HW configuration, and, while here,
-switch to use phy-handle instead of phy_id.
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am335x-evm.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/super.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/am335x-evm.dts b/arch/arm/boot/dts/am335x-evm.dts
-index 20bbb899b3b76..cc59e42c91342 100644
---- a/arch/arm/boot/dts/am335x-evm.dts
-+++ b/arch/arm/boot/dts/am335x-evm.dts
-@@ -731,6 +731,7 @@
- 	pinctrl-0 = <&cpsw_default>;
- 	pinctrl-1 = <&cpsw_sleep>;
- 	status = "okay";
-+	slaves = <1>;
- };
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0f3209b23c940..e4aabfc21bd43 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2123,8 +2123,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
  
- &davinci_mdio {
-@@ -738,15 +739,14 @@
- 	pinctrl-0 = <&davinci_mdio_default>;
- 	pinctrl-1 = <&davinci_mdio_sleep>;
- 	status = "okay";
--};
+-	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
++	err = percpu_counter_init(&sbi->total_valid_inode_count, 0,
+ 								GFP_KERNEL);
++	if (err)
++		percpu_counter_destroy(&sbi->alloc_valid_block_count);
++
++	return err;
+ }
  
--&cpsw_emac0 {
--	phy_id = <&davinci_mdio>, <0>;
--	phy-mode = "rgmii-txid";
-+	ethphy0: ethernet-phy@0 {
-+		reg = <0>;
-+	};
- };
- 
--&cpsw_emac1 {
--	phy_id = <&davinci_mdio>, <1>;
-+&cpsw_emac0 {
-+	phy-handle = <&ethphy0>;
- 	phy-mode = "rgmii-txid";
- };
- 
+ #ifdef CONFIG_BLK_DEV_ZONED
 -- 
 2.20.1
 
