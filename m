@@ -2,215 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36B51010C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 02:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D64D51010DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 02:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfKSBg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 18 Nov 2019 20:36:28 -0500
-Received: from a27-187.smtp-out.us-west-2.amazonses.com ([54.240.27.187]:53526
-        "EHLO a27-187.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726761AbfKSBg2 (ORCPT
+        id S1727053AbfKSBoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 18 Nov 2019 20:44:05 -0500
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:50504 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfKSBoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Nov 2019 20:36:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574127387;
-        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID;
-        bh=gu0VjLFeEaynap/88TiNlWcXPPYqNHDR0ClbwmBdRGY=;
-        b=VAAUxtrZIz+6M1F7k1+jk+qa1T4ZmM1W40ccZ9muxYtXhfR/85SlGZBBMFXRiASA
-        yKOj+XCvq5Mwr4oVw0+w8/T9gT/Jua67g3c+ZXC2R3SKfaS+SNcf+0c5fkGuOIS1qe7
-        /smkQXwesa8x/nAzOyiHSQOsfvtlrERGrcA0LFH0=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574127387;
-        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID:Feedback-ID;
-        bh=gu0VjLFeEaynap/88TiNlWcXPPYqNHDR0ClbwmBdRGY=;
-        b=LRZnYRxWv1tToV9a+xDGcOe1bjySH1viP7qAWDYUSjmk3Z2Xb55F43IC3AZqE2L3
-        cf4jGGZzvko8j1KCcsjipHFE6sfGOAYOU8rO9DUXHFp/YU9uIltEupQFjnAlANBvGwf
-        CDBJyIyVcA0tnXzkdi/Dj3xG2y/re4WZErMB9t6Q=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 19 Nov 2019 01:36:27 +0000
-From:   cang@codeaurora.org
-To:     Alim Akhtar <alim.akhtar@gmail.com>
-Cc:     Can Guo <cang@qti.qualcomm.com>, asutoshd@codeaurora.org,
-        nguyenb@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, Mark Salyzyn <salyzyn@google.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] scsi: ufs: Complete pending requests in host reset
- and restore path
-In-Reply-To: <CAGOxZ53Z6je9Omuh2k=wVJrGVKZDfsfx6=mUJ-8QiRk-2q3u0g@mail.gmail.com>
-References: <1574049061-11417-1-git-send-email-cang@qti.qualcomm.com>
- <1574049061-11417-5-git-send-email-cang@qti.qualcomm.com>
- <CAGOxZ53Z6je9Omuh2k=wVJrGVKZDfsfx6=mUJ-8QiRk-2q3u0g@mail.gmail.com>
-Message-ID: <0101016e814dc1ec-bde59f85-9e2c-48f9-bae3-202b2a3d24bd-000000@us-west-2.amazonses.com>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
-X-SES-Outgoing: 2019.11.19-54.240.27.187
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Mon, 18 Nov 2019 20:44:05 -0500
+Received: by mail-pl1-f201.google.com with SMTP id c18so12175501plo.17
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2019 17:44:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=cGWE/qyVtF0Xm0XRgmS6v65MJoSNg2ouKO2ndi7seNg=;
+        b=bY/KO6kxybSTMKllU0VSmuUp+hH40TarSc/VXouqS7EBfHj591iNMpKxkqYuVxFYHx
+         RvL8p5NL+w33OCuaho+ZKJsPc4VJZuOx8JnxfZiYvZIu3CDdSIHY8/ep7GUTHBZQPKHv
+         N6vRZOcQeGBrbAcztIl7TsIzRJeiQkfdPF3u3dTu2+vMg2A99GH/vkECiIa10i0L124M
+         jcTZVaX0jLsElwKI6XDWBJVmHXRlzIYfEGjIkNfrKlU43Ixu4zekvM2oc4M/AGLTMoIn
+         cIXJ50FH0992QNNkzwQ64vWbxzxzzaamsnZBqfoRrO0YmEmXORQz6zb/1yXwDM7Il87G
+         FUEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=cGWE/qyVtF0Xm0XRgmS6v65MJoSNg2ouKO2ndi7seNg=;
+        b=qQtW8qdZVCWgtftEUX0MAgK4fR51EOrbReCOgWLbr+Fs2pRSCzMYF5LSPqxmsMe2V+
+         4c5b2l/YlZLKVibt/djJc+dGzjvG2lqFBiRbMbTUwGlVZhdquGzETX55RX5SccEoqEhO
+         CifGO30HwShl4ULFffnMrigvnnvxSgZ6ZPQoGGLgZCLVpNUm6fkXqO6nivdyd5ExXCy3
+         OoIINkPEPI5xbsx7MZrtOBB8LiohNaA4gswqn9vNOOFgHxpTSo+T5hm/F7BAOlekrO4D
+         lS6dz7MgCLOYZn8zadDhgUEEl6b91xl6ItmB9u4AwMbTsoMntP9VEY8042mtw7l3KGav
+         RcdA==
+X-Gm-Message-State: APjAAAV4P1mc5smL/nUg7Oia2vRYq9VSttUA5D7ms+MzXbUphCKvt67m
+        IJFr/EvsYx+Dfd9C+0eKo8tIYvqZLCQY
+X-Google-Smtp-Source: APXvYqzp94KW+lXm0LZaQQNGcUtXuvrutP74p5xG+E2LoUBDzNYsDXea2jiZSeUfPgrKOo233sI5FDiQ+9Xu
+X-Received: by 2002:a63:e26:: with SMTP id d38mr2621764pgl.44.1574127844187;
+ Mon, 18 Nov 2019 17:44:04 -0800 (PST)
+Date:   Mon, 18 Nov 2019 17:43:48 -0800
+Message-Id: <20191119014357.98465-1-brianvv@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH bpf-next 0/9] add bpf batch ops to process more than 1 elem
+From:   Brian Vazquez <brianvv@google.com>
+To:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     Yonghong Song <yhs@fb.com>, Stanislav Fomichev <sdf@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Brian Vazquez <brianvv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-18 21:23, Alim Akhtar wrote:
-> On Mon, Nov 18, 2019 at 9:22 AM Can Guo <cang@qti.qualcomm.com> wrote:
->> 
->> From: Can Guo <cang@codeaurora.org>
->> 
->> In UFS host reset and restore path, before probe, we stop and start 
->> the
->> host controller once. After host controller is stopped, the pending
->> requests, if any, are cleared from the doorbell, but no completion IRQ
->> would be raised due to the hba is stopped.
->> These pending requests shall be completed along with the first NOP_OUT
->> command(as it is the first command which can raise a transfer 
->> completion
->> IRQ) sent during probe.
->> Since the OCSs of these pending requests are not SUCCESS(because they 
->> are
->> not yet literally finished), their UPIUs shall be dumped. When there 
->> are
->> multiple pending requests, the UPIU dump can be overwhelming and may 
->> lead
->> to stability issues because it is in atomic context.
->> Therefore, before probe, complete these pending requests right after 
->> host
->> controller is stopped and silence the UPIU dump from them.
->> 
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
-> 
-> Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-> 
-> Please add all previous Ack/reviewed and tested-by tags so that we are
-> aware what need to be done for this patch.
-> Thanks
-> 
+This patch series introduce batch ops that can be added to bpf maps to
+lookup/lookup_and_delete/update/delete more than 1 element at the time,
+this is specially useful when syscall overhead is a problem and in case
+of hmap it will provide a reliable way of traversing them.
 
-Hi Alim,
+The implementation inclues a generic approach that could potentially be
+used by any bpf map and adds it to arraymap, it also includes the specific
+implementation of hashmaps which are traversed using buckets instead
+of keys.
 
-Thanks for pointing out it. I updated the patch a little bit so I think 
-the
-prevoius tags are not valid any more.
+The bpf syscall subcommands introduced are:
 
-Best Regards,
-Can Guo.
+  BPF_MAP_LOOKUP_BATCH
+  BPF_MAP_LOOKUP_AND_DELETE_BATCH
+  BPF_MAP_UPDATE_BATCH
+  BPF_MAP_DELETE_BATCH
 
->>  drivers/scsi/ufs/ufshcd.c | 24 ++++++++++--------------
->>  drivers/scsi/ufs/ufshcd.h |  2 ++
->>  2 files changed, 12 insertions(+), 14 deletions(-)
->> 
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index 5950a7c..b92a3f4 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -4845,7 +4845,7 @@ static void ufshcd_slave_destroy(struct 
->> scsi_device *sdev)
->>                 break;
->>         } /* end of switch */
->> 
->> -       if (host_byte(result) != DID_OK)
->> +       if ((host_byte(result) != DID_OK) && !hba->silence_err_logs)
->>                 ufshcd_print_trs(hba, 1 << lrbp->task_tag, true);
->>         return result;
->>  }
->> @@ -5404,8 +5404,8 @@ static void ufshcd_err_handler(struct 
->> work_struct *work)
->> 
->>         /*
->>          * if host reset is required then skip clearing the pending
->> -        * transfers forcefully because they will automatically get
->> -        * cleared after link startup.
->> +        * transfers forcefully because they will get cleared during
->> +        * host reset and restore
->>          */
->>         if (needs_reset)
->>                 goto skip_pending_xfer_clear;
->> @@ -6333,9 +6333,15 @@ static int ufshcd_host_reset_and_restore(struct 
->> ufs_hba *hba)
->>         int err;
->>         unsigned long flags;
->> 
->> -       /* Reset the host controller */
->> +       /*
->> +        * Stop the host controller and complete the requests
->> +        * cleared by h/w
->> +        */
->>         spin_lock_irqsave(hba->host->host_lock, flags);
->>         ufshcd_hba_stop(hba, false);
->> +       hba->silence_err_logs = true;
->> +       ufshcd_complete_requests(hba);
->> +       hba->silence_err_logs = false;
->>         spin_unlock_irqrestore(hba->host->host_lock, flags);
->> 
->>         /* scale up clocks to max frequency before full 
->> reinitialization */
->> @@ -6369,7 +6375,6 @@ static int ufshcd_host_reset_and_restore(struct 
->> ufs_hba *hba)
->>  static int ufshcd_reset_and_restore(struct ufs_hba *hba)
->>  {
->>         int err = 0;
->> -       unsigned long flags;
->>         int retries = MAX_HOST_RESET_RETRIES;
->> 
->>         do {
->> @@ -6379,15 +6384,6 @@ static int ufshcd_reset_and_restore(struct 
->> ufs_hba *hba)
->>                 err = ufshcd_host_reset_and_restore(hba);
->>         } while (err && --retries);
->> 
->> -       /*
->> -        * After reset the door-bell might be cleared, complete
->> -        * outstanding requests in s/w here.
->> -        */
->> -       spin_lock_irqsave(hba->host->host_lock, flags);
->> -       ufshcd_transfer_req_compl(hba);
->> -       ufshcd_tmc_handler(hba);
->> -       spin_unlock_irqrestore(hba->host->host_lock, flags);
->> -
->>         return err;
->>  }
->> 
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->> index e0fe247..1e51034 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -513,6 +513,7 @@ struct ufs_stats {
->>   * @uic_error: UFS interconnect layer error status
->>   * @saved_err: sticky error mask
->>   * @saved_uic_err: sticky UIC error mask
->> + * @silence_err_logs: flag to silence error logs
->>   * @dev_cmd: ufs device management command information
->>   * @last_dme_cmd_tstamp: time stamp of the last completed DME command
->>   * @auto_bkops_enabled: to track whether bkops is enabled in device
->> @@ -670,6 +671,7 @@ struct ufs_hba {
->>         u32 saved_err;
->>         u32 saved_uic_err;
->>         struct ufs_stats ufs_stats;
->> +       bool silence_err_logs;
->> 
->>         /* Device management request data */
->>         struct ufs_dev_cmd dev_cmd;
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
->> 
+The UAPI attribute is:
+
+  struct { /* struct used by BPF_MAP_*_BATCH commands */
+         __aligned_u64   in_batch;       /* start batch,
+                                          * NULL to start from beginning
+                                          */
+         __aligned_u64   out_batch;      /* output: next start batch */
+         __aligned_u64   keys;
+         __aligned_u64   values;
+         __u32           count;          /* input/output:
+                                          * input: # of key/value
+                                          * elements
+                                          * output: # of filled elements
+                                          */
+         __u32           map_fd;
+         __u64           elem_flags;
+         __u64           flags;
+  } batch;
+
+
+in_batch and out_batch are only used for lookup and lookup_and_delete since
+those are the only two operations that attempt to traverse the map.
+
+update/delete batch ops should provide the keys/values that user wants
+to modify.
+
+Here are the previous discussions on the batch processing:
+ - https://lore.kernel.org/bpf/20190724165803.87470-1-brianvv@google.com/
+ - https://lore.kernel.org/bpf/20190829064502.2750303-1-yhs@fb.com/
+ - https://lore.kernel.org/bpf/20190906225434.3635421-1-yhs@fb.com/
+
+Changelog since RFC:
+ - Change batch to in_batch and out_batch to support more flexible opaque
+   values to iterate the bpf maps.
+ - Remove update/delete specific batch ops for htab and use the generic
+   implementations instead.
+
+Brian Vazquez (6):
+  bpf: add bpf_map_{value_size,update_value,map_copy_value} functions
+  bpf: add generic support for lookup and lookup_and_delete batch ops
+  bpf: add generic support for update and delete batch ops
+  bpf: add lookup and updated batch ops to arraymap
+  tools/bpf: sync uapi header bpf.h
+  selftests/bpf: add batch ops testing to array bpf map
+
+Yonghong Song (3):
+  bpf: add batch ops to all htab bpf map
+  libbpf: add libbpf support to batch ops
+  selftests/bpf: add batch ops testing for hmap and hmap_percpu
+
+ include/linux/bpf.h                           |  21 +
+ include/uapi/linux/bpf.h                      |  21 +
+ kernel/bpf/arraymap.c                         |   2 +
+ kernel/bpf/hashtab.c                          | 244 ++++++++
+ kernel/bpf/syscall.c                          | 571 ++++++++++++++----
+ tools/include/uapi/linux/bpf.h                |  21 +
+ tools/lib/bpf/bpf.c                           |  61 ++
+ tools/lib/bpf/bpf.h                           |  14 +
+ tools/lib/bpf/libbpf.map                      |   4 +
+ .../map_lookup_and_delete_batch_array.c       | 119 ++++
+ .../map_lookup_and_delete_batch_htab.c        | 257 ++++++++
+ 11 files changed, 1215 insertions(+), 120 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/map_tests/map_lookup_and_delete_batch_array.c
+ create mode 100644 tools/testing/selftests/bpf/map_tests/map_lookup_and_delete_batch_htab.c
+
+-- 
+2.24.0.432.g9d3f5f5b63-goog
+
