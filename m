@@ -2,112 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD0471029E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:56:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AB211029E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2019 17:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfKSQ4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 11:56:13 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37318 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728320AbfKSQ4N (ORCPT
+        id S1728587AbfKSQ4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 11:56:44 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:18988 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728573AbfKSQ4n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:56:13 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b20so17691489lfp.4;
-        Tue, 19 Nov 2019 08:56:11 -0800 (PST)
+        Tue, 19 Nov 2019 11:56:43 -0500
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAJGtBKk011541;
+        Tue, 19 Nov 2019 08:56:32 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=5psJY5oRd+BdV8GGSj8SFj9lpONmcHRW3/jk1UbNueg=;
+ b=YUgib2XXQZDrvKhGBcWhb+DF9CxCyGp5I7ia25uAypZPY9tYGd7cHdhcyZf66RukaXXZ
+ WouJolJlyhRi70nBYISQKnNTFzagXUsICXjDI48fswEGsW85Sam92V7Ki4ImivH0/lrE
+ aZyyA5mAshXT8g2IIUGQlL5zq2om+xR8tcIQvX8LOzJe+Z6YDd7BydTczvEAjqsXQ8lS
+ QrzMmDSBAvPH0QOnSgI8zUNfZ5lZUPbvzGuMqSy5GLGixV/6BhnOzSox2UTb2Ap2iJyo
+ GkR8hBVi+epxOqAhB12IaAH0OfysMfCD5uNmvZIybgPdXH3+MYGlXU3d2z7O6Z/8FKR5 uQ== 
+Received: from sc-exch02.marvell.com ([199.233.58.182])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2wc82vjwf9-9
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 19 Nov 2019 08:56:32 -0800
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH02.marvell.com
+ (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 19 Nov
+ 2019 08:56:25 -0800
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (104.47.32.52) by
+ SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Tue, 19 Nov 2019 08:56:25 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OQW2KKuOodPcUReL4durhQouaL6jaISx/L+FxoktVaEauT2Gf7JHubej3rWFcIIpl7RxSqjCFm4cJHpwtPlWMnLfuiF5JrOxHuXC07pkX1RswNqWY12wJqnJDueZ7V+OqpdNLFeWfO3RHLJvAXT2feAXb1kzFAlNYoiSZcJ70M7FVDxG4LSkla0qdWn7TBGrxkuvjC2nvODWWtUe7mqezJa6fWmun4070+QntGOEpEiF8m08katHbK9WyiA3B1ashpn8VJY1Podfa2eMfl+pq5udz5Le8Qb+5nT9BvImHfQMbNfhrf/ZDYzH0wxXGCp8+gIMC6RchTaNPLUtq2L56w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5psJY5oRd+BdV8GGSj8SFj9lpONmcHRW3/jk1UbNueg=;
+ b=EzeLDl5AEbvHm2LFshH86xwUmzxQwcbdaBLTHi3XUe0OgaQan0rE1yM4xmvQYg5GpG3YC2RzZZEM9U48XCwwRFbMoAat18bxuIpg3jBedSXTUVJ2tKEG807mSLIhz0boYTp1JJ/CA6d0te2CLE/6+fcN+9lG969dCvV4wrZeL00P/IAmA3grh8SsZU+QG7qhOuYlbKHPxpx22XF2AhcRcc66m4Cy6wYVJKar5AqFwOidxCTtVSFx9cqCCLUarfKRW/DeMxTGCX7qs7XmQu1MI7XW31ubONupxxIvl5cB5DQ5hjNdMLPMTgghqheVJEtcgUowi9GNlMxbVi3W6Ip8bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=giMwmMYCTfwG4t/m7GcZ9wpvpN8uV7OEh8vHMV0l5S0=;
-        b=rmUv4RO88MDLOtSHN6/ZZBmKiLjFBYSKFwhCyvhX3/1sXT3xESgFLG8mDpW2oWH9Fl
-         /MfigHIV5FK4dGGKcQlfHlByQhnj00/6hvQcYo1wWB7dBUD8eHQMeEwxOEoWmnnVKGSc
-         nQJSsYZDKVtWGVfuvbXM6B+41ei9mpONcrBi+fugiqwLgu1MUPi8oAKsectEI8YLv/dI
-         kAW37irsEiTAX/lnlI1WTqe4rYtLERlsK4V7V4XtpddzJUX+adAdAvABrH3WAwMjq+6k
-         hYJw8Ib3vdKZeQ0RAnz05RAoR7kawTZB6A7zVCgmKR+MzDnAxlanLh+6Q//2fwcmgLZ9
-         djdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=giMwmMYCTfwG4t/m7GcZ9wpvpN8uV7OEh8vHMV0l5S0=;
-        b=jol/VHYGBFkRRoojYyTzz3/VhRXRO5Ot73HB0yCrhL4CQY9vDJWoK3tx8JLp72BCg+
-         xB/0PZ51r3k/5zdPNl93LTRY01g3r2QQ/bEzXU4Qi27Mmm99KOzdN1TNBC7Rx3j21soV
-         OUYfjdfCsZ9+uHbwv0mNl/NTRQ8RcDv93PzLn+HfnviX2uB6Ah+dJF/Zw43H5fDfLK44
-         nbGWRUgKtZrLeRO7feYc1Y4MgEkyakrl0j/DokErMJZrik73E26XEs1HZ8YqxavJuD5j
-         Fr52ykj85IqUfeyF64UgjBPsbNS7TjnPb1crVRV8dBVwW/xLzWRzUpMBgUwVWIYsJglk
-         FPrw==
-X-Gm-Message-State: APjAAAXCJS3BwVwbv9/vUBGfWv2hYK46JB4TLaBBkT1S9pjEeU6elJSn
-        YyQZc0z+ZxHAzKySpbVr+88w4anL
-X-Google-Smtp-Source: APXvYqzthkVZ1hMtk0VsW3K9xsqiauD6RdH04NOkFmKx3D6tdSccWVopfg3OX5PNStxfi+4MYkk1mw==
-X-Received: by 2002:ac2:5967:: with SMTP id h7mr4671524lfp.119.1574182570172;
-        Tue, 19 Nov 2019 08:56:10 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id y5sm10749907lfg.5.2019.11.19.08.56.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2019 08:56:09 -0800 (PST)
-Subject: Re: [PATCH v1 08/29] dt-bindings: interconnect: tegra: Add initial
- IDs
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-9-digetx@gmail.com> <20191119062535.GC2462695@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8cff3af3-42c7-3312-5f98-cd5eb98b7b7a@gmail.com>
-Date:   Tue, 19 Nov 2019 19:56:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20191119062535.GC2462695@ulmo>
-Content-Type: text/plain; charset=utf-8
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5psJY5oRd+BdV8GGSj8SFj9lpONmcHRW3/jk1UbNueg=;
+ b=KGeaE/dPtJ2MFGWqlrQufQuDMJnb7mfmdGM4j1eIPmxrD8Ksyw06QWuxR8JQM0uYmQgWPlleIRN+ohSqLcmhGewcEro6bEdumSAK+DD4ZY/yHDQkbnFE8Wjur2LVH5itF4isLULIBIhNisq3D3peAG+CDs0NkVSh6L5/xt0MvX4=
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.237.10) by
+ MN2PR18MB2846.namprd18.prod.outlook.com (20.179.21.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.29; Tue, 19 Nov 2019 16:56:24 +0000
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::657c:6c81:859d:106]) by MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::657c:6c81:859d:106%7]) with mapi id 15.20.2451.029; Tue, 19 Nov 2019
+ 16:56:24 +0000
+From:   Robert Richter <rrichter@marvell.com>
+To:     Arnd Bergmann <arnd@arndb.de>, arm soc <arm@kernel.org>
+CC:     Jan Glauber <jglauber@marvell.com>,
+        Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+        George Cherian <gcherian@marvell.com>,
+        "Ganapatrao Prabhakerrao Kulkarni" <gkulkarni@marvell.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "soc@kernel.org" <soc@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robert Richter <rrichter@marvell.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] MAINTAINERS: update Cavium ThunderX drivers
+Thread-Topic: [PATCH 1/2] MAINTAINERS: update Cavium ThunderX drivers
+Thread-Index: AQHVnvpGhPZ0pb7yrke8Hp6sbUjcEw==
+Date:   Tue, 19 Nov 2019 16:56:24 +0000
+Message-ID: <20191119165549.14570-2-rrichter@marvell.com>
+References: <20191119165549.14570-1-rrichter@marvell.com>
+In-Reply-To: <20191119165549.14570-1-rrichter@marvell.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1P192CA0020.EURP192.PROD.OUTLOOK.COM (2603:10a6:3:fe::30)
+ To MN2PR18MB3408.namprd18.prod.outlook.com (2603:10b6:208:165::10)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-originating-ip: [31.208.96.227]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 350810f7-9800-4a29-73fa-08d76d116900
+x-ms-traffictypediagnostic: MN2PR18MB2846:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR18MB2846E0E9B5834F3EDE3D8479D94C0@MN2PR18MB2846.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 022649CC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(366004)(39860400002)(136003)(376002)(199004)(189003)(186003)(6506007)(64756008)(478600001)(66446008)(386003)(6486002)(66946007)(476003)(486006)(2616005)(8676002)(6116002)(3846002)(14444005)(110136005)(54906003)(86362001)(316002)(36756003)(11346002)(99286004)(256004)(14454004)(7736002)(4326008)(305945005)(66066001)(25786009)(2906002)(81156014)(66556008)(66476007)(6436002)(102836004)(26005)(5660300002)(76176011)(52116002)(446003)(6306002)(6512007)(71200400001)(71190400001)(1076003)(50226002)(81166006)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2846;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: J9l69TJrYPzNaCcA9Pk44qRpqwnL6Qe6cVagEDcn/RseUMGVLfTfiJyuhFb/PasoffVj2HUGQ8/qLeEC8IUSIGsmKx5zeG8B7Xn2SFIJnpeICpmgHByquw70xnQ4piPim7a0dDXqd5uhH2Rtj5yIYYVIeF8w1/XMWrMgigbGCnrAL9coV7tvHgj5+FyVv3nnqDAQo2Znhy6H2qw6iuhXBg6s+l5XpZBy6JJtVJJBY1NTqSKPcjeqJEARZrkQ5nuk7Sc+AbMWgnRrIanpvLmzH8ktAvMFFp6OmEyvpuKDnPyLujj3sgBzUL/W10/XFK0BWQotmsoEp4ImDWbo3uTDtjuaLi9lB21lRm6uvrIQEz5M/ds9+2dxriN1V/SUZnqzAs3jnxthfDhd54g/1Y41lyzqXDY2knrkiFcfQrdsnSk5k8S4+jXEbSMWcvOzbwDd
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 350810f7-9800-4a29-73fa-08d76d116900
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 16:56:24.1642
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9UmezCUSG1SkfbO50vl/EFduSdmkcIOyfvdvH4UAI8YZyzG7nzhfp2xdekMhQNRkDYUUdc1fzDqG3qPNwNia0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2846
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-19_05:2019-11-15,2019-11-19 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-19.11.2019 09:25, Thierry Reding пишет:
-> On Mon, Nov 18, 2019 at 11:02:26PM +0300, Dmitry Osipenko wrote:
->> Define interconnect IDs for memory controller (MC), external memory
->> controller (EMC), external memory (EMEM) and memory clients of display
->> controllers (DC).
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  include/dt-bindings/interconnect/tegra-icc.h | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>  create mode 100644 include/dt-bindings/interconnect/tegra-icc.h
+From: Jan Glauber <jglauber@marvell.com>
 
+Remove my maintainer entries for ThunderX drivers as I'm moving on
+and won't have access to ThunderX hardware anymore and add Robert.
+Also remove the obsolete addresses of David Daney and Steven Hill.
 
-Hello Thierry,
+Add an entry to .mailmap for my various email addresses.
 
-> There was a bit of discussion regarding this for a recent patch that I
-> was working on, see:
-> 
-> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=140318
+Cc: Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>
+Cc: soc@kernel.org
+Signed-off-by: Jan Glauber <jglauber@marvell.com>
+Signed-off-by: Robert Richter <rrichter@marvell.com>
+---
+ MAINTAINERS | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-Thank you very much for the link.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eb19fad370d7..2bef41729946 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3705,8 +3705,7 @@ S:	Maintained
+ F:	drivers/net/wireless/ath/carl9170/
+=20
+ CAVIUM I2C DRIVER
+-M:	Jan Glauber <jglauber@cavium.com>
+-M:	David Daney <david.daney@cavium.com>
++M:	Robert Richter <rrichter@marvell.com>
+ W:	http://www.cavium.com
+ S:	Supported
+ F:	drivers/i2c/busses/i2c-octeon*
+@@ -3722,9 +3721,7 @@ S:	Supported
+ F:	drivers/net/ethernet/cavium/liquidio/
+=20
+ CAVIUM MMC DRIVER
+-M:	Jan Glauber <jglauber@cavium.com>
+-M:	David Daney <david.daney@cavium.com>
+-M:	Steven J. Hill <Steven.Hill@cavium.com>
++M:	Robert Richter <rrichter@marvell.com>
+ W:	http://www.cavium.com
+ S:	Supported
+ F:	drivers/mmc/host/cavium*
+@@ -5834,15 +5831,14 @@ F:	drivers/edac/highbank*
+=20
+ EDAC-CAVIUM OCTEON
+ M:	Ralf Baechle <ralf@linux-mips.org>
+-M:	David Daney <david.daney@cavium.com>
++M:	Robert Richter <rrichter@marvell.com>
+ L:	linux-edac@vger.kernel.org
+ L:	linux-mips@vger.kernel.org
+ S:	Supported
+ F:	drivers/edac/octeon_edac*
+=20
+ EDAC-CAVIUM THUNDERX
+-M:	David Daney <david.daney@cavium.com>
+-M:	Jan Glauber <jglauber@cavium.com>
++M:	Robert Richter <rrichter@marvell.com>
+ L:	linux-edac@vger.kernel.org
+ S:	Supported
+ F:	drivers/edac/thunderx_edac*
+@@ -12629,7 +12625,7 @@ F:	Documentation/devicetree/bindings/pci/axis,artpe=
+c*
+ F:	drivers/pci/controller/dwc/*artpec*
+=20
+ PCIE DRIVER FOR CAVIUM THUNDERX
+-M:	David Daney <david.daney@cavium.com>
++M:	Robert Richter <rrichter@marvell.com>
+ L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+@@ -16137,7 +16133,7 @@ S:	Maintained
+ F:	drivers/net/thunderbolt.c
+=20
+ THUNDERX GPIO DRIVER
+-M:	David Daney <david.daney@cavium.com>
++M:	Robert Richter <rrichter@marvell.com>
+ S:	Maintained
+ F:	drivers/gpio/gpio-thunderx.c
+=20
+@@ -17916,7 +17912,6 @@ F:	drivers/char/xillybus/
+=20
+ XLP9XX I2C DRIVER
+ M:	George Cherian <george.cherian@cavium.com>
+-M:	Jan Glauber <jglauber@cavium.com>
+ L:	linux-i2c@vger.kernel.org
+ W:	http://www.cavium.com
+ S:	Supported
+--=20
+2.20.1
 
-> I'd rather not use an additional set of definitions for this. The memory
-> controller already has a set of native IDs for memory clients that I
-> think we can reuse for this.
-
-I missed that it's fine to have multiple ICC connections defined
-per-path, at quick glance looks like indeed it should be fine to re-use
-MC IDs.
-
-> I've only added these client IDs for Tegra194 because that's where we
-> need it to actually describe a specific hardware quirk, but I can come
-> up with the equivalent for older chips as well.
-
-Older Tegra SoCs have hardware units connected to MC through AHB bus,
-like USB for example. These units do not have MC client IDs and there is
-no MC ID defined for the AHB bus either, but probably it won't be a
-problem to define IDs for them if will be necessary.
