@@ -2,134 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A672E103474
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 07:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DED9310348C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 07:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfKTGsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 01:48:07 -0500
-Received: from mail-eopbgr800078.outbound.protection.outlook.com ([40.107.80.78]:30592
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1727802AbfKTGsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 01:48:50 -0500
+Received: from mail-eopbgr30064.outbound.protection.outlook.com ([40.107.3.64]:37892
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727653AbfKTGsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 01:48:04 -0500
+        id S1726880AbfKTGsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 01:48:50 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Cflh3nuIbmam+J9xSg6BswMABhJK04JAi4UUNZtLWN+QsAN817z/3DsMRaclJ6ghbIqst0m58NvIPQVWRwxAbn2UdRsU286aoJKHqbdDiyxgTkDdeD/yv9bxulzyoeTOkFd/yL8eTUDkqtNuSP2I8HFjOwnUwyxAkm73PMV5gXMCIeVOUNNHixaQNtUpkQl1QJ9Z42OTWoKUDyVDVKtUSFD/aycuLl0djLOKhP7U8EIkPXkLDc6No/J1eiuVR/7Sf+5qHwW5mmR/mpbxSZ+8bcFfVLUwaUZZCkSMZsZnIHawhCYz7mR31YhF/4GQ3qmRY9ipDoph3doNelFvbEj7pA==
+ b=MywdcaNfUoXwboFXnTWWiz9pQ0rfEvQy10bHKUSQ3EoNckbUm0fEIA5RNXAfD7QQaLAH6ihI9RZ0SECm+97pZUzTmgp09GO6C+p3Y2hZZQH3j4TFtdXQkQWvju3WGfIv04XT+fXk+8p4HZZAmu2lj6zzHSb9sLKevVsMdE/HW1SFNEff0YBbtFnwlY7AknOW92aC/EN7mIe1xAIGAvXjdysXcrTkn1xdqQsqpAG7qRFO4CNf9gy9UAA+hsP1Pl1mqfMISx70nFuGblqoZLoVUmArMaPMkELp2cLZeJ7g7pFxdUjhjlUwmcx4FDnf9wk5EhSne7i+js5bfa+OxCU/mQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Udku058SngQ7wpfOosf9pc5TwObQvXMpjT5bhsyST58=;
- b=hF9nvbPBU89YMXoMLr01UBfEc2qK35gIwrEHKn5G6rfp5oMNQCA18FLgfbKvtOk6VkAw6IpxFJeRgLYB+yGEsRa0v668WyJ6uClhOUbuBWnTRB7BQRt1Djh6VL0ToOVvRDWZNOWfjFre92XzeYFF4oRNHPU7XDW+Lalq9p8aJqP/DTrzAR5trS071TisPPym+GUwDVzc2QkHMNpslgAXt77nlu5mxHZQ3VXDNgXauOm2gi50i+PCrKYfdCP6VbLxHPzNENPwe2wskdndiqblIRuWX+SjLH9blgapmj7IoaDo3LSyK+nvFgVDowwiBA3+HOqxFygJwkoLBYqPCrWggQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ bh=OE4wwLvuXgSjPKi+br6ukVBWvo8q9PudQXLCtsLbgAo=;
+ b=R+XtPtOeMGX7Ngk1O1hz3Fw1hWzKBsgHFuZJre17NPKkS7iQO88t0W1L3yZ/5IdhpkCibDCEWrl4AjXoMqXRLUclg2Wsy25HlD/yUYkxXfZD6g+0UpiSW1iuuM7422np/3nGj6BZrBdHViJO18Pbapo/skAdki8pXcFnZZSWa2ELh0bRCvJg6apKy2gUcf5hpAzu6u9Pj7g459nmw0kJFLnESqVgsYm53U22KUWLhBjQ8fx2D/45bQ8Xea4UTjr81Cet1BCN7ZfqeUmhz1gA6aMJqzFhCpa3vayxvCgeeUYuh53J98ruvNSoAeO6Ha9DplsWezHPrbmJulIdUm5u1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Udku058SngQ7wpfOosf9pc5TwObQvXMpjT5bhsyST58=;
- b=L3/S1C1YeD1wFlYZvjK1s7EDo/904l7Be0lZHcYXKV54roP072nboJu1GXhftzu8yJy8rFKgRuq+G+rqZsr135rCqFjQ+MCIGlU5cR9aIFkIxCyPghKE3J5Pm+ihMpKBqyExsCcvCFXj2UqzaMDEdmc6mK+Lri4xo+jqg52rmE8=
-Received: from CY4PR02CA0046.namprd02.prod.outlook.com (2603:10b6:903:117::32)
- by BYAPR02MB3973.namprd02.prod.outlook.com (2603:10b6:a02:f9::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17; Wed, 20 Nov
- 2019 06:47:59 +0000
-Received: from BL2NAM02FT011.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::200) by CY4PR02CA0046.outlook.office365.com
- (2603:10b6:903:117::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17 via Frontend
- Transport; Wed, 20 Nov 2019 06:47:59 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT011.mail.protection.outlook.com (10.152.77.5) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
- via Frontend Transport; Wed, 20 Nov 2019 06:47:59 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1iXJmQ-00062q-Dp; Tue, 19 Nov 2019 22:47:58 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1iXJmL-0004C6-AR; Tue, 19 Nov 2019 22:47:53 -0800
-Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xAK6llBk027319;
-        Tue, 19 Nov 2019 22:47:48 -0800
-Received: from [172.30.17.107]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1iXJmF-0004BZ-Mo; Tue, 19 Nov 2019 22:47:47 -0800
-Subject: Re: [PATCH] phy: mdio_bus: Check ENOTSUPP instead of ENOSYS in
- mdiobus_register_reset
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org
-References: <8712e54912598b3ca6f00d00ff8fbfdd1c53e7e8.1574170028.git.michal.simek@xilinx.com>
- <99a8ea54-9a27-9e0a-9aaa-8aeef7feabe2@gmail.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <3435da8a-6942-d292-c901-df1bd7fb5d94@xilinx.com>
-Date:   Wed, 20 Nov 2019 07:47:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <99a8ea54-9a27-9e0a-9aaa-8aeef7feabe2@gmail.com>
-Content-Type: text/plain; charset=utf-8
+ bh=OE4wwLvuXgSjPKi+br6ukVBWvo8q9PudQXLCtsLbgAo=;
+ b=DuBfJgC0DP5gTJDrHEeU9DG7kPhs4fb3kceRcUBBk6q4yXUPI876yBYWgaPhzDSmnXeH5jJP6Ut/oo6agA52NBm6FnYRXIqwTYE04YtSVSMlJmGlBsq4Xh7TfWfYZ2Wcwlz3BYKlUXnLkq8Y+oCWMYi3B4HANLTD7VxcUug3Gcs=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB2718.eurprd04.prod.outlook.com (10.175.21.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.28; Wed, 20 Nov 2019 06:48:46 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::89e1:552e:a24d:e72]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::89e1:552e:a24d:e72%3]) with mapi id 15.20.2474.015; Wed, 20 Nov 2019
+ 06:48:46 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 07/12] crypto: caam - refactor caam_jr_enqueue
+Thread-Topic: [PATCH 07/12] crypto: caam - refactor caam_jr_enqueue
+Thread-Index: AQHVnZa0sS6CFfezokOAnr5a2apfuA==
+Date:   Wed, 20 Nov 2019 06:48:46 +0000
+Message-ID: <VI1PR0402MB3485EAC0D46F50CCF68AC891984F0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1574029845-22796-1-git-send-email-iuliana.prodan@nxp.com>
+ <1574029845-22796-8-git-send-email-iuliana.prodan@nxp.com>
+ <VI1PR0402MB34853893505F95195F4C125B984C0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <VI1PR04MB44452654BA9716CA43992AA68C4C0@VI1PR04MB4445.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(376002)(136003)(189003)(199004)(186003)(14444005)(478600001)(486006)(70206006)(2486003)(44832011)(966005)(4744005)(58126008)(316002)(2906002)(50466002)(23676004)(8676002)(6636002)(8936002)(36386004)(31696002)(4326008)(70586007)(6306002)(110136005)(31686004)(76176011)(305945005)(54906003)(106002)(81166006)(81156014)(356004)(426003)(336012)(36756003)(26005)(476003)(229853002)(47776003)(65956001)(446003)(65806001)(230700001)(6246003)(2616005)(11346002)(9786002)(53546011)(126002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB3973;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1496eb9a-8d26-4448-de99-08d76d8594dc
-X-MS-TrafficTypeDiagnostic: BYAPR02MB3973:
-X-MS-Exchange-PUrlCount: 1
-X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-X-Microsoft-Antispam-PRVS: <BYAPR02MB3973017E6259B733F73B9C96C64F0@BYAPR02MB3973.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:327;
-X-Forefront-PRVS: 02272225C5
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 09r8u3uxM9m+ZywnCgoUONYsVwy2avbatkXGFj3KXIJ5rjfJYGkquz1HtdJN1N7TMoDLWK9UYfNOaQwblmTKuwpOZ+C2almP40tH8uKBLUQ+gUcw3yD1xLyHT1cQxnY/aNsqcv/xN7PMzLIYsUjkOa6EbNgzNtnrnQqKKg1u6sNTkHurreKgz4kFOcnA7r5WGGBdSNlu0H6IPWakW9wknNdSO9q6Lwns1U7Jdu8X3Hxw1ifEDpXP1Y83z15MvnvvwTOLPj9R0Za6RhUTxPehEeK185wV740PAvAJun4xWyDPmIRWxQjRbHPgs3AccRyA7STCdo9OtoxEEjsl6Z1fKA6PJb59AbMbhhWkW/CGBGjMucnTn5L2L23+5eN5EycbYRjjZJR5HYzK5v3XLstVpmqtJLa2bYOf+7Y0OjpXpUCeEiu0eQ8FN8regX6z2lWeXH5/ALbMu1bFyD6gj2KLwuV1nVoje/OcIdpqTNr5yUc=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2019 06:47:59.0043
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bfa70ebc-be06-48c9-9fc4-08d76d85b133
+x-ms-traffictypediagnostic: VI1PR0402MB2718:|VI1PR0402MB2718:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB27182128A95F30A76F895AB7984F0@VI1PR0402MB2718.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2512;
+x-forefront-prvs: 02272225C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(396003)(136003)(39860400002)(189003)(199004)(8676002)(6246003)(316002)(4326008)(81166006)(7696005)(81156014)(71190400001)(33656002)(91956017)(25786009)(44832011)(476003)(5660300002)(55016002)(8936002)(76116006)(229853002)(9686003)(186003)(486006)(66066001)(99286004)(6506007)(53546011)(6436002)(86362001)(66946007)(110136005)(446003)(76176011)(6636002)(478600001)(14454004)(74316002)(66446008)(26005)(6116002)(102836004)(64756008)(66556008)(14444005)(52536014)(2906002)(71200400001)(7736002)(3846002)(54906003)(66476007)(305945005)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2718;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: TvLU7SuwCILgPL1mB+GxJsBTgPJ8YmI78KlhUJvMvSu/M87Qs72GciU1CeBy9tqY2w09aFt7kAiqPs0awnIQ4LP35sjPvREvIQtqaAJvRZAMHX3Kh+9gsc4iP1EOx6fru7qDonEayGnZC87x/TQIGSuY62Kc6dY9u7LSV7z1PkOsrM83abZGNDuBBcsBycfoMPWWPHdVWxaSQJlT+kIBHp5Vj1Mv4uFdTpqFT82YP2/VsKvAt3vTQLC8IHl/9k/KjB5qYZ7gL/pnPGEWy+rukfbJAh60+Y9wV7Q4HnBL1ZwmdsfVSSb057kMM5E+JejVXQDbrsUOGDv8xYPumoeG8fCm/dCHoT4NnAu0mpKsFzWhfvmnjUOw6AJ2SdtfgBki65CJm7ifh2oQXWM6AjYyJ5LgaXcu9AYiXJgoHGC+/1fZ4VP+zBdez3+/on+aY8Jq
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfa70ebc-be06-48c9-9fc4-08d76d85b133
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 06:48:46.6013
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1496eb9a-8d26-4448-de99-08d76d8594dc
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB3973
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Smik4Jj11py1morsMbIkxmcmB5uqTCz0HZbXIjiJVblh31ekj6S1aH20CRdzlUAUeK+yo7cV98ZaHFqQvsJW7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2718
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 11. 19 19:04, Florian Fainelli wrote:
-> On 11/19/19 5:27 AM, Michal Simek wrote:
->> Origin patch was using ENOTSUPP instead of ENOSYS. Silently changing error
->> value ends up in an access to bad area on Microblaze with axi ethernet
->> driver.
->>
->> Fixes: 1d4639567d97 ("mdio_bus: Fix PTR_ERR applied after initialization to constant")
->> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> 
-> This has been fixed in the "net" tree already:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=075e238d12c21c8bde700d21fb48be7a3aa80194
-> 
-
-Works for me.
-
-Thanks,
-Michal
+On 11/20/2019 12:49 AM, Iuliana Prodan wrote:=0A=
+> On 11/19/2019 7:55 PM, Horia Geanta wrote:=0A=
+>> On 11/18/2019 12:31 AM, Iuliana Prodan wrote:=0A=
+>>> diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamh=
+ash.c=0A=
+>>> index baf4ab1..d9de3dc 100644=0A=
+>>> --- a/drivers/crypto/caam/caamhash.c=0A=
+>>> +++ b/drivers/crypto/caam/caamhash.c=0A=
+>> [...]=0A=
+>>> @@ -933,11 +943,13 @@ static int ahash_final_ctx(struct ahash_request *=
+req)=0A=
+>>>   			     DUMP_PREFIX_ADDRESS, 16, 4, desc, desc_bytes(desc),=0A=
+>>>   			     1);=0A=
+>>>   =0A=
+>>> -	ret =3D caam_jr_enqueue(jrdev, desc, ahash_done_ctx_src, req);=0A=
+>>> +	jrentry =3D &edesc->jrentry;=0A=
+>>> +=0A=
+>>> +	ret =3D caam_jr_enqueue(jrdev, desc, ahash_done_ctx_src, jrentry);=0A=
+>>>   	if (ret =3D=3D -EINPROGRESS)=0A=
+>>>   		return ret;=0A=
+>>>   =0A=
+>>> - unmap_ctx:=0A=
+>>> +unmap_ctx:=0A=
+>> That's correct, however whitespace fixing should be done separately.=0A=
+>>=0A=
+> Should I make a separate patch for these two whitespaces?=0A=
+> =0A=
+Whitespace fixes should be moved out of this patch set.=0A=
+In general, patches handling this go through the whole file / driver.=0A=
+=0A=
+Horia=0A=
