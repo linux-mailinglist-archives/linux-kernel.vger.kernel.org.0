@@ -2,87 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CE70103423
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 07:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F1B103437
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 07:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbfKTGIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 01:08:02 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:56287 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726014AbfKTGIB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 01:08:01 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 8120168AD;
-        Wed, 20 Nov 2019 01:08:00 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 20 Nov 2019 01:08:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=DsuQsdMCwuKKG1c6E9zMMunZDORO9yG
-        MRO643pGAkco=; b=Fd0L4n9gK6ybYYBcSg1jQ+1Anq3REZ7jgGzCovtPqAE/Qf7
-        nibUPdKv3eDWgqvMYN2XxG0LYtAm7iqdLElZ2SU2EcuQDU97upof3y5/rKu7J0qj
-        4wd+UsSZoz5ns+jTk6oFghvBCuGKVESjgCqmLYDqvvMIi8+7PGqQ97iXDXslWWB/
-        hNys4hZmVfu9EB1q9yAK+U3HRuFeXrqidnlTdgVLOoMhdzR+kWFII8B2uTCkRJ/i
-        H3DuC4ThZzInqSom3lkAxl6YHjictrV9Ubn3izRoEoA3rng2VGb8fEoG5XienYtR
-        FIIk6KuzAAevM6ygdCWFFcjQDifODP/tQjoe5Bg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=DsuQsd
-        MCwuKKG1c6E9zMMunZDORO9yGMRO643pGAkco=; b=wSfHHMIqeIxz7uUn2d14w+
-        RVJjFGK++vJnIvk+WVWo+2LhVPANmImCx1DFfogwrz0w4+XWbNfJ5f6BIeoQeW+q
-        yV+f3UxVN3dKbrGFNSp5QtlhwEgHbMsXh5PgNmZ1pfC7bxvF9YAWORWMzKNGpCtK
-        uYBODeLR5kopolY3BPcOKPzqLljOVF5GUaZ0PAW/nvvKFjlYXqihy0iUl14pKLlS
-        99bgQBQ82BSvwtROesF3tUuZu085Htvrm59DQiGUOyMOGmIDZWK5MpS4x3GHFP3g
-        IfM6Frwfacx1N8JxtCfmqswSgX0v2QgQUqvzplK5741QIJTyzljQcbEJKTc3SXvQ
-        ==
-X-ME-Sender: <xms:QNjUXWJ2ujlBAKIfuc9xx6W73U9KNM57P4vef5G9WMlmfLGd-1iX0g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudegledgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:QNjUXV626hPjxjiHuOLWBVDS-F3NZe_zGbxRynf3AD9D_lPoK1etCw>
-    <xmx:QNjUXbuJg1QQvHvrn9xtjvmCsDQSdZkBc2ntB7i2C9AJEZqIqAGP8w>
-    <xmx:QNjUXTZh-E3-mu7lCLDC6Av9Czb4yjJMXjLnR-9fqX_lO6ChGEgxVw>
-    <xmx:QNjUXTZvhspj1tktg1bwvQlCwqHwSasFZ_W2ijcrQRSSGu_GuGIyrQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 49FE6E00A3; Wed, 20 Nov 2019 01:08:00 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-578-g826f590-fmstable-20191119v1
-Mime-Version: 1.0
-Message-Id: <ebe4c175-a1a0-47d3-9c01-1dfeeffc97e5@www.fastmail.com>
-In-Reply-To: <20191118104646.3838-2-i.mikhaylov@yadro.com>
-References: <20191118104646.3838-1-i.mikhaylov@yadro.com>
- <20191118104646.3838-2-i.mikhaylov@yadro.com>
-Date:   Wed, 20 Nov 2019 16:39:25 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Ivan Mikhaylov" <i.mikhaylov@yadro.com>
-Cc:     "Joel Stanley" <joel@jms.id.au>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Adrian Hunter" <adrian.hunter@intel.com>,
-        "Ulf Hansson" <ulf.hansson@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v3 1/3] aspeed: dts: add sd card for vesnin
-Content-Type: text/plain
+        id S1727313AbfKTGN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 01:13:29 -0500
+Received: from mga03.intel.com ([134.134.136.65]:13895 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfKTGN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 01:13:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 22:13:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,220,1571727600"; 
+   d="scan'208";a="218501484"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 19 Nov 2019 22:13:27 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Remove incorrect PSI capability check
+Date:   Wed, 20 Nov 2019 14:10:16 +0800
+Message-Id: <20191120061016.31386-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The PSI (Page Selective Invalidation) bit in the capability register
+is only valid for second-level translation. Intel IOMMU supporting
+scalable mode must support page/address selective IOTLB invalidation
+for first-level translation. Remove the PSI capability check in SVA
+cache invalidation code.
 
+Fixes: 8744daf4b0699 ("iommu/vt-d: Remove global page flush support")
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-svm.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-On Mon, 18 Nov 2019, at 21:16, Ivan Mikhaylov wrote:
-> Presence signal is inverted for vesnin boards, 'cd-inverted' added
-> for invertion signal enablement. Vesnin BMC uses microSD, there is
-> no WP switch, 'disable-wp' is used for this purpose.
-> 
-> Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 9b159132405d..dca88f9fdf29 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -104,11 +104,7 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
+ {
+ 	struct qi_desc desc;
+ 
+-	/*
+-	 * Do PASID granu IOTLB invalidation if page selective capability is
+-	 * not available.
+-	 */
+-	if (pages == -1 || !cap_pgsel_inv(svm->iommu->cap)) {
++	if (pages == -1) {
+ 		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+ 			QI_EIOTLB_DID(sdev->did) |
+ 			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+-- 
+2.17.1
 
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
