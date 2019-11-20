@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBFBC1038DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 415781038EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:41:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbfKTLkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 06:40:37 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42368 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbfKTLkh (ORCPT
+        id S1729339AbfKTLlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 06:41:44 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:32814 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728495AbfKTLlo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 06:40:37 -0500
-Received: by mail-wr1-f66.google.com with SMTP id a15so27746454wrf.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 03:40:35 -0800 (PST)
+        Wed, 20 Nov 2019 06:41:44 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t26so961787wmi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 03:41:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=69RZrXkuGAApUnr4iO+YhE+hxS3D9Hh/3GfnGeQJbmc=;
-        b=EKkBQD69Gr4Z6m+PltZcvf2lyKMN28VnVBoTIsxuMo6oNvu54mMflXP5btNhxLkS6K
-         QIJtg9f/WtVbHCy3ez5vviEOQSYed/yMcdaCaPXiso9d2ZXC7XweMCCbf+Bz6DgYV1SJ
-         6Wiz0SfeYU3htABZha+ZUZQJRg5Q7HkfORy9Fwuuzsvd19VTQXdoETPgJZ3Jbm70MpKk
-         lzwuJiPnfPRYNLezUmLx0Ae0Rqa+iKsfg8qtZ95WtV4j+CFUSaFcCDSy/VaQPV0IMU4T
-         hp5fJGuKKOOR9xy99nLo15+PvCPV8OqBeSlUZll8N/ihBIoxqAZMJxSgdq1M806MytiT
-         u8sQ==
+        bh=x9xVJ7mXWw8oZuqrstfEkI3veCueqnyo7bS5uNfNe1c=;
+        b=eXkRJGZLZ6D4XKijtgh5kgmQXmomYEzldhHOXjpAShGyutxPONvJiJC4EZGctWpzSj
+         5ssGLcJxTVEw9mrmWAB1F//yLDm8n3sOdxC0/Hc7BSCW2BejLTxW2kcak2TBQiisTnrV
+         Mzi2keltM1sJcXNTmSz674CvfJRWRJzTugVBfDfJgcm3/atSKA0j6NyHgzWqIQjmZKa8
+         Ci6i4m/BLT1ZPUFHRKmhfBejleTr8n8W3Mb6O1G4ztzDgy07Gdgs328NOjMm/+d29nCA
+         Df2iPdhnyYCUmYKpY2UXTyclgjNBCqeVu7DgkdGFtkfE7HLwXd9jYPYaegDu6s14q8p0
+         TI9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=69RZrXkuGAApUnr4iO+YhE+hxS3D9Hh/3GfnGeQJbmc=;
-        b=S8pZPbSWf0Kk8g2PcfxREcDLgTDx1Hvh+9WMGbTHfcAIqhwKVzkA/zMCom2bIehyJa
-         Km7jY7y9ZfmS34m3ViaR3CgavwI//72GrLYgEpZMHhrQDxIK7+E+Kx1xiAWTi04zOxw7
-         3D2W4IzEWI9M11bnf/4BSweEY8X3mAJtfDy7GfGPR38pczCx6Fv8kXjMFJm2BdIy5y08
-         R4sMyl937hbB4sM/lIdfDSHQ2EIwmKRRE533TmFBqml1bpONq0y3ealvs+jbf+4ALe/S
-         NlY8C/zNiNx4yocKJa3Anngvj0XRs0E51lqKDY2OrTS7TsQE4DLIA8pC6R+EVP79Rf7k
-         GaKQ==
-X-Gm-Message-State: APjAAAVmJJsRuWZNioKYkBUWut6NGOzo6LZURLeOK6gM7INmx8Kj+Zn6
-        OQvQWqfDJmBEEjjPawPXJug=
-X-Google-Smtp-Source: APXvYqxTXqiNRTyBoZo27pWW4ARai/hloRxCrn3CqnCkF8MPGCanO2Plxq9PCXCmpF+2R5eXizwIuA==
-X-Received: by 2002:a5d:66cf:: with SMTP id k15mr2692723wrw.38.1574250034732;
-        Wed, 20 Nov 2019 03:40:34 -0800 (PST)
+        bh=x9xVJ7mXWw8oZuqrstfEkI3veCueqnyo7bS5uNfNe1c=;
+        b=kY0uLUd5y+Lpvzuz/sEznO/6qZ93oqWnT6zyQFxFf85ELQ6+8QZmX3MuHx1i9v8fFB
+         azFmB0wANn1Y2ehJoHOSkfX+hcc4w69cfd+KCsVtG8TGrJy9CR6bfFmk4UvEL77LnwLd
+         fvOTfejMH978oMd0/lhNXPwQCVySpWeVNrCHkdcxPpORIrVid/RokT1ZhQqX+w1nawPj
+         JP7h3ZArvW3m7J/2j3C4imBpp6LiG/V02VJLxd24X3fy2r+5aXDDZSfHyD89LPfdThRg
+         S5v0/fpoOX7+N2nRvRuUsG0MMXkrKmwxUmQtolqL6hizja6bopnVeU0os8wKaZG3Pqby
+         FQ+g==
+X-Gm-Message-State: APjAAAXTF65x4g3bj3H6VfQ9yTcvJ67rN8e8iUxe+KnXWYJPAWkA4QbP
+        8C5KOtZGAuqCfJ1iBp0CPXo=
+X-Google-Smtp-Source: APXvYqyiZKPwWo7Sl4WENLYinPVTV8jqx8gj6VXdS001xRV97w79Gg/SoSdNfSu7LVSPnKVqLd0cqw==
+X-Received: by 2002:a1c:a512:: with SMTP id o18mr2592588wme.4.1574250101878;
+        Wed, 20 Nov 2019 03:41:41 -0800 (PST)
 Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id s11sm30289635wrr.43.2019.11.20.03.40.33
+        by smtp.gmail.com with ESMTPSA id v128sm6875441wmb.14.2019.11.20.03.41.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 03:40:34 -0800 (PST)
-Date:   Wed, 20 Nov 2019 12:40:31 +0100
+        Wed, 20 Nov 2019 03:41:41 -0800 (PST)
+Date:   Wed, 20 Nov 2019 12:41:39 +0100
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>,
@@ -59,10 +59,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Andrey Konovalov <andreyknvl@google.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        Sean Christopherson <sean.j.christopherson@intel.com>
 Subject: Re: [PATCH v2 2/3] x86/traps: Print non-canonical address on #GP
-Message-ID: <20191120114031.GA83574@gmail.com>
+Message-ID: <20191120114139.GB83574@gmail.com>
 References: <20191115191728.87338-1-jannh@google.com>
  <20191115191728.87338-2-jannh@google.com>
  <20191118142144.GC6363@zn.tnic>
@@ -70,10 +69,11 @@ References: <20191115191728.87338-1-jannh@google.com>
  <CAG48ez1AWW7FkvU31ahy=0ZiaAreSMz=FFA0u8-XkXT9hNdWKA@mail.gmail.com>
  <CACT4Y+bfF86YY_zEGWO1sK0NwuYgr8Cx0wFewRDq0WL_GBgO0Q@mail.gmail.com>
  <20191118164407.GH6363@zn.tnic>
+ <20191118173850.GL6363@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191118164407.GH6363@zn.tnic>
+In-Reply-To: <20191118173850.GL6363@zn.tnic>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -83,70 +83,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 * Borislav Petkov <bp@alien8.de> wrote:
 
-> On Mon, Nov 18, 2019 at 05:29:42PM +0100, Dmitry Vyukov wrote:
-> > > And of not having a standard way to signal "this line starts something
-> > > that should be reported as a bug"? Maybe as a longer-term idea, it'd
-> > > help to have some sort of extra prefix byte that the kernel can print
-> > > to say "here comes a bug report, first line should be the subject", or
-> > > something like that, similar to how we have loglevels...
+> On Mon, Nov 18, 2019 at 05:44:07PM +0100, Borislav Petkov wrote:
+> > [    2.523708] Write protecting the kernel read-only data: 16384k
+> > [    2.524729] Freeing unused kernel image (text/rodata gap) memory: 2040K
+> > [    2.525594] Freeing unused kernel image (rodata/data gap) memory: 368K
+> > [    2.541414] x86/mm: Checked W+X mappings: passed, no W+X pages found.
 > > 
-> > This would be great.
-> > Also a way to denote crash end.
-> > However we have lots of special logic for subjects, not sure if kernel
-> > could provide good subject:
-> > https://github.com/google/syzkaller/blob/1daed50ac33511e1a107228a9c3b80e5c4aebb5c/pkg/report/linux.go#L537-L1588
-> > Probably it could, but it won't be completely trivial. E.g. if there
-> > is a stall inside of a timer function, it should give the name of the
-> > actual timer callback as identity ("stall in timer_subsystem_foo"). Or
-> > for syscalls we use more disambiguation b/c "in sys_ioclt" is not much
-> > different than saying "there is a bug in kernel" :)
+> > <--- important first splat starts here:
+> > 
+> > [    2.542218] [*] general protection fault while derefing a non-canonical address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
+> 		  ^
 > 
-> While external tools are fine and cool, they can't really block kernel
-> development and printk strings format is not an ABI. And yeah, we have
-> this discussion each time someone proposes changes to those "magic"
-> strings but I guess it is about time to fix this in a way that any
-> future changes don't break tools.
+> Btw, tglx just suggested on IRC to simply slap the die_counter number here so
+> that you have
 > 
-> And so I like the idea of marking *only* the first splat with some small
-> prefix char as that first splat is the special and very important one.
-> I.e., the one where die_counter is 0.
-> 
-> So I could very well imagine something like:
-> 
+> [    2.543343] [1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc8+ #8
+> [    2.544138] [1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
 > ...
-> [    2.523708] Write protecting the kernel read-only data: 16384k
-> [    2.524729] Freeing unused kernel image (text/rodata gap) memory: 2040K
-> [    2.525594] Freeing unused kernel image (rodata/data gap) memory: 368K
-> [    2.541414] x86/mm: Checked W+X mappings: passed, no W+X pages found.
 > 
-> <--- important first splat starts here:
-> 
-> [    2.542218] [*] general protection fault while derefing a non-canonical address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
-> [    2.543343] [*] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc8+ #8
-> [    2.544138] [*] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
-> [    2.545120] [*] RIP: 0010:kernel_init+0x58/0x107
-> [    2.546055] [*] Code: 48 c7 c7 e0 5c e7 81 e8 eb d2 90 ff c7 05 77 d6 95 00 02 00 00 00 e8 4e 1d a2 ff e8 69 b7 91 ff 48 b8 01 00 00 00 00 00 ff df <ff> e0 48 8b 3d fe 54 d7 00 48 85 ff 74 22 e8 76 93 84 ff 85 c0 89
+> which also tells you to which splat the line belongs to.
+>
+> Also useful.
 
-> <--- and ends here.
-> 
-> to denote that first splat. And the '*' thing is just an example - it
-> can be any char - whatever's easier to grep for.
+Yeah - but I think it would be even better to make it part of the 
+timestamp - most tools will already discard the [] bit, so why not merge 
+the two:
 
-Well, this would break various pieces of tooling I'm sure.
-
-Maybe it would be nicer to tooling to embedd the splat-counter in the 
-timestamp in a way:
-
-> [    2.542218-#1] general protection fault while derefing a non-canonical address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
 > [    2.543343-#1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc8+ #8
 > [    2.544138-#1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
-> [    2.545120-#1] RIP: 0010:kernel_init+0x58/0x107
-> [    2.546055-#1] Code: 48 c7 c7 e0 5c e7 81 e8 eb d2 90 ff c7 05 77 d6 95 00 02 00 00 00 e8 4e 1d a2 ff e8 69 b7 91 ff 48 b8 01 00 00 00 00 00 ff df <ff> e0 48 8b 3d fe 54 d7 00 48 85 ff 74 22 e8 76 93 84 ff 85 c0 89
-
-That way we'd not only know that it's the first splat, but we'd know it 
-from all the *other* splats as well where they are in the splat-rank ;-)
-
-(Also Cc:-ed Linus.)
 
 Thanks,
 
