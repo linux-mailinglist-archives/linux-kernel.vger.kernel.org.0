@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E42EA103BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 815DF103BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbfKTNgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:36:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42620 "EHLO mail.kernel.org"
+        id S1730794AbfKTNg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:36:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728030AbfKTNgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:36:19 -0500
+        id S1728030AbfKTNgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:36:24 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8015421939;
-        Wed, 20 Nov 2019 13:36:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2249F21939;
+        Wed, 20 Nov 2019 13:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574256979;
-        bh=RUNB9hOTUZ4qmRoduYIQryJyG12dotmMLmkW3l5nh1Q=;
+        s=default; t=1574256983;
+        bh=6BvqkSk8AIwBhUKqtp6RBtg7rVitYauvILovxIcQx8s=;
         h=From:To:Cc:Subject:Date:From;
-        b=G077Hz9yCb4/C6pS9QFs0Zr0Vm/BpcgOE2TeFgrlAYK3BASuwj3uFk5xGTd1uIaUp
-         zuXnhBY4Yv9oz0uAN+lX4TPPUuXgi11Xo2cd05PDv/+hxUXozGfvLteI1jEMyQI54o
-         UmR7rOt9BUOaOLSFYKMz7ynRyki8yzp84+crlir4=
+        b=J+gKNBmppFpbzaC+DLXN2imnQ+Ix9vzshMFKKzSe67vJOqQ/+gO08NYC1qKJmwVHL
+         WeqhAvh22Hh64EAiEfSU94lqEH3XB6QHNVRBa0qkn6f32SxElT5XUhBG/+809q3At6
+         IfGHsNeXZbNT6/dQY0BpWsgWVLg3mRCmz/39XzwM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/omap: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:36:14 +0800
-Message-Id: <20191120133615.11329-1-krzk@kernel.org>
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH] drm/nouveau: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:36:19 +0800
+Message-Id: <20191120133619.11415-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,91 +45,22 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/gpu/drm/omapdrm/displays/Kconfig |  6 +++---
- drivers/gpu/drm/omapdrm/dss/Kconfig      | 12 ++++++------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/nouveau/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/displays/Kconfig b/drivers/gpu/drm/omapdrm/displays/Kconfig
-index 240dda102845..b562a8cd61bf 100644
---- a/drivers/gpu/drm/omapdrm/displays/Kconfig
-+++ b/drivers/gpu/drm/omapdrm/displays/Kconfig
-@@ -8,18 +8,18 @@ config DRM_OMAP_ENCODER_OPA362
- 	  through a GPIO.
- 
- config DRM_OMAP_ENCODER_TPD12S015
--        tristate "TPD12S015 HDMI ESD protection and level shifter"
-+	tristate "TPD12S015 HDMI ESD protection and level shifter"
- 	help
- 	  Driver for TPD12S015, which offers HDMI ESD protection and level
- 	  shifting.
- 
- config DRM_OMAP_CONNECTOR_HDMI
--        tristate "HDMI Connector"
-+	tristate "HDMI Connector"
- 	help
- 	  Driver for a generic HDMI connector.
- 
- config DRM_OMAP_CONNECTOR_ANALOG_TV
--        tristate "Analog TV Connector"
-+	tristate "Analog TV Connector"
- 	help
- 	  Driver for a generic analog TV connector.
- 
-diff --git a/drivers/gpu/drm/omapdrm/dss/Kconfig b/drivers/gpu/drm/omapdrm/dss/Kconfig
-index 956f23e1452d..72ae79c0c9b4 100644
---- a/drivers/gpu/drm/omapdrm/dss/Kconfig
-+++ b/drivers/gpu/drm/omapdrm/dss/Kconfig
-@@ -6,12 +6,12 @@ config OMAP_DSS_BASE
- 	tristate
- 
- menuconfig OMAP2_DSS
--        tristate "OMAP2+ Display Subsystem support"
-+	tristate "OMAP2+ Display Subsystem support"
- 	select OMAP_DSS_BASE
- 	select VIDEOMODE_HELPERS
- 	select OMAP2_DSS_INIT
- 	select HDMI
--        help
-+	help
- 	  OMAP2+ Display Subsystem support.
- 
- if OMAP2_DSS
-@@ -52,7 +52,7 @@ config OMAP2_DSS_DPI
- 
- config OMAP2_DSS_VENC
- 	bool "VENC support"
--        default y
-+	default y
- 	help
- 	  OMAP Video Encoder support for S-Video and composite TV-out.
- 
-@@ -61,7 +61,7 @@ config OMAP2_DSS_HDMI_COMMON
- 
- config OMAP4_DSS_HDMI
- 	bool "HDMI support for OMAP4"
--        default y
-+	default y
- 	select OMAP2_DSS_HDMI_COMMON
- 	help
- 	  HDMI support for OMAP4 based SoCs.
-@@ -85,7 +85,7 @@ config OMAP5_DSS_HDMI
- 
- config OMAP2_DSS_SDI
- 	bool "SDI support"
--        default n
-+	default n
- 	help
- 	  SDI (Serial Display Interface) support.
- 
-@@ -94,7 +94,7 @@ config OMAP2_DSS_SDI
- 
- config OMAP2_DSS_DSI
- 	bool "DSI support"
--        default n
-+	default n
- 	help
- 	  MIPI DSI (Display Serial Interface) support.
- 
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index 3558df043592..9c990266e876 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -2,7 +2,7 @@
+ config DRM_NOUVEAU
+ 	tristate "Nouveau (NVIDIA) cards"
+ 	depends on DRM && PCI && MMU
+-        select FW_LOADER
++	select FW_LOADER
+ 	select DRM_KMS_HELPER
+ 	select DRM_TTM
+ 	select BACKLIGHT_CLASS_DEVICE if DRM_NOUVEAU_BACKLIGHT
 -- 
 2.17.1
 
