@@ -2,227 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E099C1042A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F561042B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfKTR5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 12:57:20 -0500
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:37982 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfKTR5U (ORCPT
+        id S1728026AbfKTR7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 12:59:49 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37756 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727442AbfKTR7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 12:57:20 -0500
-IronPort-SDR: 8cj0s1h4R302fAKjpD1OYqkMDvFAyQP8R56v/HlxzJhPuU8HiOPXMocl3sTUOr5N7tRe2WSYhJ
- Kf1vDflPuU4YXBnhGKzTpdfeiV6ttViRPGp9QIQdw6h0FD5sQlZYJCu2NvwBE37zNT4/9JU2iu
- Dgv5K1U2IA/2LZKDnOI4GyLVDhpLqQiX1+QWaogXSJmTDcyTsIvbJlCHFAW5azfEQCCjsr1vEz
- v5rFVpZJXsPi3NXrrbRI84mVwfRXk+78kKTTm4qmAr8Zb9znzCHu13sY8Tm71ZVDhO2XlW1qGh
- A3Q=
-X-IronPort-AV: E=Sophos;i="5.69,222,1571731200"; 
-   d="scan'208";a="43299666"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 20 Nov 2019 09:57:19 -0800
-IronPort-SDR: U4ezTC14YwiNdT+RwZz7ugpGkGTNSs7V9ZU80RveK2zNvt5qQ67NJjXD1KEXK8NW7GDBd33Fxx
- mgV1RvycdnXc2mtPA8bS/wIGhW7Npn2p3DUaFkstaev0YfX75cjVQuncsTZ+H7Yhju3t9xe/PQ
- SvH/P3+ln8EDX9aJoFzFnDBdCa3Jr5oEFcVAGP9pr04sGZQmRMpY9MermLkt6ZiIUegX/My5OQ
- ieXitmKSWQoAEEKPuSGUoZZFO0CztTKDMPGcsEvcKKwN40Jv9yQDVDxEhV3ffsYCE48I+xu56a
- JFc=
-From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
-To:     'Takashi Iwai' <tiwai@suse.de>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Timo Wischer <twischer@de.adit-jv.com>
-References: <20191120115856.4125-1-andrew_gabbasov@mentor.com>  <20191120115856.4125-2-andrew_gabbasov@mentor.com>      <20191120115856.4125-3-andrew_gabbasov@mentor.com>      <20191120115856.4125-4-andrew_gabbasov@mentor.com>      <20191120115856.4125-5-andrew_gabbasov@mentor.com>      <20191120115856.4125-6-andrew_gabbasov@mentor.com>      <20191120115856.4125-7-andrew_gabbasov@mentor.com>      <s5hh82y8vn5.wl-tiwai@suse.de>  <000001d59fb6$4ca36aa0$e5ea3fe0$@mentor.com>    <s5h5zje8sxl.wl-tiwai@suse.de>  <000101d59fb8$a288a280$e799e780$@mentor.com> <s5h36ei8rph.wl-tiwai@suse.de>
-In-Reply-To: <s5h36ei8rph.wl-tiwai@suse.de>
-Subject: RE: [PATCH v4 6/7] ALSA: aloop: Support selection of snd_timer instead of jiffies
-Date:   Wed, 20 Nov 2019 20:56:31 +0300
-Organization: Mentor Graphics Corporation
-Message-ID: <000201d59fcb$d895a180$89c0e480$@mentor.com>
+        Wed, 20 Nov 2019 12:59:48 -0500
+Received: by mail-ot1-f67.google.com with SMTP id d5so393810otp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 09:59:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zBB9OsnBCrlScEEQaEUduHBYkfuZALzvxczmYt/dJsU=;
+        b=pc6KYITr55wk4fIuuuVxbZoQJq2MyolGgD5/wpYGI/zQUtSgjQYggQfJT6cL4U7V/L
+         4oe8BBXiYpeA+N8BK8gel1M0B0qYtku9mBSMjQHRFEoAD/1TAg2EFE3ji1sNO91AwhZE
+         Z5SvB0Spg+YCOkvqXsXR00Dp7A4LAF7aW1xLscACCzsOn3Y3PGOKgO4hG7otc3TWaNY4
+         tbJvUB8tnWw6xuOo/boDUm0PhRTP7WjLBDd3221SIVJvpOxRndUZkCdJPWkzNPbUYk38
+         mmtg+3I2GrMlN4yPAsHmdLSnj/nIpi+vdn9PG7r6MVJ7BDFVnj4PeLwg7n7Ozq4WqQbD
+         JRDQ==
+X-Gm-Message-State: APjAAAVlPW+63vcMy83V2olpsJJ89XAipQrfkLr8VPS/Nddqt5ZNHtXz
+        uP4fuc5GdoxZNwc7xfUGbZyKa6lh
+X-Google-Smtp-Source: APXvYqzgyX8+wGptCdurAvWhRC2tBLrufmFLmBMrjTrUNQQMIvDDZlBrEpdQZtFUWmxFVbVr1Yb8nw==
+X-Received: by 2002:a9d:4003:: with SMTP id m3mr3209204ote.50.1574272787102;
+        Wed, 20 Nov 2019 09:59:47 -0800 (PST)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com. [209.85.210.43])
+        by smtp.gmail.com with ESMTPSA id 9sm252248oiq.33.2019.11.20.09.59.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2019 09:59:46 -0800 (PST)
+Received: by mail-ot1-f43.google.com with SMTP id r24so336992otk.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 09:59:46 -0800 (PST)
+X-Received: by 2002:a9d:173:: with SMTP id 106mr3009123otu.205.1574272785900;
+ Wed, 20 Nov 2019 09:59:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQHVn7tmhCAU3Kkkmk2hDkJrcybUyqeUV53A
-Content-Language: en-us
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+References: <20191118112324.22725-1-linux@rasmusvillemoes.dk> <20191118112324.22725-14-linux@rasmusvillemoes.dk>
+In-Reply-To: <20191118112324.22725-14-linux@rasmusvillemoes.dk>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Wed, 20 Nov 2019 11:59:34 -0600
+X-Gmail-Original-Message-ID: <CADRPPNT4+zZd6fezcDcN=0EcezR4mHqnrOBBEexqBLyrV_THXQ@mail.gmail.com>
+Message-ID: <CADRPPNT4+zZd6fezcDcN=0EcezR4mHqnrOBBEexqBLyrV_THXQ@mail.gmail.com>
+Subject: Re: [PATCH v5 13/48] powerpc/83xx: remove mpc83xx_ipic_and_qe_init_IRQ
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Scott Wood <oss@buserror.net>
+Cc:     Qiang Zhao <qiang.zhao@nxp.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Timur Tabi <timur@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Takashi,
+On Mon, Nov 18, 2019 at 5:29 AM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
 
-> -----Original Message-----
-> From: Takashi Iwai [mailto:tiwai@suse.de]
-> Sent: Wednesday, November 20, 2019 6:59 PM
-> To: Gabbasov, Andrew
-> Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org; Jaroslav
-> Kysela; Takashi Iwai; Timo Wischer
-> Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of snd_timer
-> instead of jiffies
-> 
-> On Wed, 20 Nov 2019 16:39:00 +0100,
-> Andrew Gabbasov wrote:
-> >
-> > Hello Takashi,
-> >
-> > > -----Original Message-----
-> > > From: Takashi Iwai [mailto:tiwai@suse.de]
-> > > Sent: Wednesday, November 20, 2019 6:32 PM
-> > > To: Gabbasov, Andrew
-> > > Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org;
-Jaroslav
-> > > Kysela; Takashi Iwai; Timo Wischer
-> > > Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of
-snd_timer
-> > > instead of jiffies
-> > >
-> > > On Wed, 20 Nov 2019 16:21:36 +0100,
-> > > Andrew Gabbasov wrote:
-> > > >
-> > > > Hello Takashi,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Takashi Iwai [mailto:tiwai@suse.de]
-> > > > > Sent: Wednesday, November 20, 2019 5:34 PM
-> > > > > To: Gabbasov, Andrew
-> > > > > Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org;
-> > Jaroslav
-> > > > > Kysela; Takashi Iwai; Timo Wischer
-> > > > > Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of
-> > snd_timer
-> > > > > instead of jiffies
-> > > > >
-> > > > > On Wed, 20 Nov 2019 12:58:55 +0100,
-> > > > > Andrew Gabbasov wrote:
-> > > > > > +/* call in loopback->cable_lock */
-> > > > > > +static int loopback_snd_timer_open(struct loopback_pcm *dpcm)
-> > > > > > +{
-> > > > > > +	int err = 0;
-> > > > > > +	struct snd_timer_id tid = {
-> > > > > > +		.dev_class = SNDRV_TIMER_CLASS_PCM,
-> > > > > > +		.dev_sclass = SNDRV_TIMER_SCLASS_APPLICATION,
-> > > > > > +	};
-> > > > > > +	struct snd_timer_instance *timeri;
-> > > > > > +	struct loopback_cable *cable = dpcm->cable;
-> > > > > > +
-> > > > > > +	spin_lock_irq(&cable->lock);
-> > > > > > +
-> > > > > > +	/* check if timer was already opened. It is only opened once
-> > > > > > +	 * per playback and capture subdevice (aka cable).
-> > > > > > +	 */
-> > > > > > +	if (cable->snd_timer.instance)
-> > > > > > +		goto unlock;
-> > > > > > +
-> > > > > > +	err = loopback_parse_timer_id(dpcm->loopback->timer_source,
-> > > &tid);
-> > > > > > +	if (err < 0) {
-> > > > > > +		pcm_err(dpcm->substream->pcm,
-> > > > > > +			"Parsing timer source \'%s\' failed with
-> > %d",
-> > > > > > +			dpcm->loopback->timer_source, err);
-> > > > > > +		goto unlock;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	cable->snd_timer.stream = dpcm->substream->stream;
-> > > > > > +	cable->snd_timer.id = tid;
-> > > > > > +
-> > > > > > +	timeri = snd_timer_instance_new(dpcm->loopback->card->id);
-> > > > > > +	if (!timeri) {
-> > > > > > +		err = -ENOMEM;
-> > > > > > +		goto unlock;
-> > > > > > +	}
-> > > > > > +	/* The callback has to be called from another tasklet. If
-> > > > > > +	 * SNDRV_TIMER_IFLG_FAST is specified it will be called from
-> > > the
-> > > > > > +	 * snd_pcm_period_elapsed() call of the selected sound card.
-> > > > > > +	 * snd_pcm_period_elapsed() helds
-> > > snd_pcm_stream_lock_irqsave().
-> > > > > > +	 * Due to our callback loopback_snd_timer_function() also
-> > > calls
-> > > > > > +	 * snd_pcm_period_elapsed() which calls
-> > > > > snd_pcm_stream_lock_irqsave().
-> > > > > > +	 * This would end up in a dead lock.
-> > > > > > +	 */
-> > > > > > +	timeri->flags |= SNDRV_TIMER_IFLG_AUTO;
-> > > > > > +	timeri->callback = loopback_snd_timer_function;
-> > > > > > +	timeri->callback_data = (void *)cable;
-> > > > > > +	timeri->ccallback = loopback_snd_timer_event;
-> > > > > > +
-> > > > > > +	/* snd_timer_close() and snd_timer_open() should not be
-> > called
-> > > with
-> > > > > > +	 * locked spinlock because both functions can block on a
-> > > mutex. The
-> > > > > > +	 * mutex loopback->cable_lock is kept locked. Therefore
-> > > > > snd_timer_open()
-> > > > > > +	 * cannot be called a second time by the other device of the
-> > > same
-> > > > > cable.
-> > > > > > +	 * Therefore the following issue cannot happen:
-> > > > > > +	 * [proc1] Call loopback_timer_open() ->
-> > > > > > +	 *	   Unlock cable->lock for snd_timer_close/open()
-> > call
-> > > > > > +	 * [proc2] Call loopback_timer_open() -> snd_timer_open(),
-> > > > > > +	 *	   snd_timer_start()
-> > > > > > +	 * [proc1] Call snd_timer_open() and overwrite running timer
-> > > > > > +	 *	   instance
-> > > > > > +	 */
-> > > > > > +	spin_unlock_irq(&cable->lock);
-> > > > > > +	err = snd_timer_open(timeri, &cable->snd_timer.id, current-
-> > > >pid);
-> > > > > > +	if (err < 0) {
-> > > > > > +		pcm_err(dpcm->substream->pcm,
-> > > > > > +			"snd_timer_open (%d,%d,%d) failed with %d",
-> > > > > > +			cable->snd_timer.id.card,
-> > > > > > +			cable->snd_timer.id.device,
-> > > > > > +			cable->snd_timer.id.subdevice,
-> > > > > > +			err);
-> > > > > > +		snd_timer_instance_free(timeri);
-> > > > > > +		return err;
-> > > > > > +	}
-> > > > > > +	spin_lock_irq(&cable->lock);
-> > > > > > +
-> > > > > > +	cable->snd_timer.instance = timeri;
-> > > > > > +
-> > > > > > +	/* initialise a tasklet used for draining */
-> > > > > > +	tasklet_init(&cable->snd_timer.event_tasklet,
-> > > > > > +		     loopback_snd_timer_tasklet, (unsigned
-> > > long)timeri);
-> > > > >
-> > > > > This has to be set before snd_timer_open().  The callback might be
-> > > > > called immediately after snd_timer_open().
-> > > >
-> > > > This tasklet is used/scheduled only in ccallback (not regular tick
-> > > > callback),
-> > > > and only for SNDRV_TIMER_EVENT_MSTOP event. Can this event really
-> happen
-> > > > immediately after snd_timer_open()?
-> > >
-> > > Why not?  The master timer can be stopped at any time, even between
-> > > these two lines.
-> > >
-> > > Beware that there are fuzzer programs that can trigger such racy
-> > > things, and you're adding the code to the target that is actively
-> > > slapped by them :)
-> >
-> > OK, got it.
-> > I'll move this initialization to before snd_timer_open() in the next
-> > update together with the fixes for the other issues you will find
-> > in this version.
-> 
-> I have no other issues, so you can just resubmit only that patch,
-> too.
+Hi Scott,
 
-I'm not sure how to correctly format resubmitting of a single patch from
-a patch set, so I'm submitting the next version v5 of the whole patch set:
-https://mailman.alsa-project.org/pipermail/alsa-devel/2019-November/158939.h
-tml
+What do you think of the PowerPC related changes(patch 13,14)?  Can we
+have you ACK and merge the series from soc tree?
 
-Thanks!
-
-Best regards,
-Andrew
-
+Regards,
+Leo
+>
+> This is now exactly the same as mpc83xx_ipic_init_IRQ, so just use
+> that directly.
+>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+>  arch/powerpc/platforms/83xx/km83xx.c      | 2 +-
+>  arch/powerpc/platforms/83xx/misc.c        | 7 -------
+>  arch/powerpc/platforms/83xx/mpc832x_mds.c | 2 +-
+>  arch/powerpc/platforms/83xx/mpc832x_rdb.c | 2 +-
+>  arch/powerpc/platforms/83xx/mpc836x_mds.c | 2 +-
+>  arch/powerpc/platforms/83xx/mpc836x_rdk.c | 2 +-
+>  arch/powerpc/platforms/83xx/mpc83xx.h     | 5 -----
+>  7 files changed, 5 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/83xx/km83xx.c b/arch/powerpc/platforms/83xx/km83xx.c
+> index 5c6227f7bc37..3d89569e9e71 100644
+> --- a/arch/powerpc/platforms/83xx/km83xx.c
+> +++ b/arch/powerpc/platforms/83xx/km83xx.c
+> @@ -177,7 +177,7 @@ define_machine(mpc83xx_km) {
+>         .name           = "mpc83xx-km-platform",
+>         .probe          = mpc83xx_km_probe,
+>         .setup_arch     = mpc83xx_km_setup_arch,
+> -       .init_IRQ       = mpc83xx_ipic_and_qe_init_IRQ,
+> +       .init_IRQ       = mpc83xx_ipic_init_IRQ,
+>         .get_irq        = ipic_get_irq,
+>         .restart        = mpc83xx_restart,
+>         .time_init      = mpc83xx_time_init,
+> diff --git a/arch/powerpc/platforms/83xx/misc.c b/arch/powerpc/platforms/83xx/misc.c
+> index 6935a5b9fbd1..1d8306eb2958 100644
+> --- a/arch/powerpc/platforms/83xx/misc.c
+> +++ b/arch/powerpc/platforms/83xx/misc.c
+> @@ -88,13 +88,6 @@ void __init mpc83xx_ipic_init_IRQ(void)
+>         ipic_set_default_priority();
+>  }
+>
+> -#ifdef CONFIG_QUICC_ENGINE
+> -void __init mpc83xx_ipic_and_qe_init_IRQ(void)
+> -{
+> -       mpc83xx_ipic_init_IRQ();
+> -}
+> -#endif /* CONFIG_QUICC_ENGINE */
+> -
+>  static const struct of_device_id of_bus_ids[] __initconst = {
+>         { .type = "soc", },
+>         { .compatible = "soc", },
+> diff --git a/arch/powerpc/platforms/83xx/mpc832x_mds.c b/arch/powerpc/platforms/83xx/mpc832x_mds.c
+> index 1c73af104d19..6fa5402ebf20 100644
+> --- a/arch/powerpc/platforms/83xx/mpc832x_mds.c
+> +++ b/arch/powerpc/platforms/83xx/mpc832x_mds.c
+> @@ -101,7 +101,7 @@ define_machine(mpc832x_mds) {
+>         .name           = "MPC832x MDS",
+>         .probe          = mpc832x_sys_probe,
+>         .setup_arch     = mpc832x_sys_setup_arch,
+> -       .init_IRQ       = mpc83xx_ipic_and_qe_init_IRQ,
+> +       .init_IRQ       = mpc83xx_ipic_init_IRQ,
+>         .get_irq        = ipic_get_irq,
+>         .restart        = mpc83xx_restart,
+>         .time_init      = mpc83xx_time_init,
+> diff --git a/arch/powerpc/platforms/83xx/mpc832x_rdb.c b/arch/powerpc/platforms/83xx/mpc832x_rdb.c
+> index 87f68ca06255..622c625d5ce4 100644
+> --- a/arch/powerpc/platforms/83xx/mpc832x_rdb.c
+> +++ b/arch/powerpc/platforms/83xx/mpc832x_rdb.c
+> @@ -219,7 +219,7 @@ define_machine(mpc832x_rdb) {
+>         .name           = "MPC832x RDB",
+>         .probe          = mpc832x_rdb_probe,
+>         .setup_arch     = mpc832x_rdb_setup_arch,
+> -       .init_IRQ       = mpc83xx_ipic_and_qe_init_IRQ,
+> +       .init_IRQ       = mpc83xx_ipic_init_IRQ,
+>         .get_irq        = ipic_get_irq,
+>         .restart        = mpc83xx_restart,
+>         .time_init      = mpc83xx_time_init,
+> diff --git a/arch/powerpc/platforms/83xx/mpc836x_mds.c b/arch/powerpc/platforms/83xx/mpc836x_mds.c
+> index 5b484da9533e..219a83ab6c00 100644
+> --- a/arch/powerpc/platforms/83xx/mpc836x_mds.c
+> +++ b/arch/powerpc/platforms/83xx/mpc836x_mds.c
+> @@ -208,7 +208,7 @@ define_machine(mpc836x_mds) {
+>         .name           = "MPC836x MDS",
+>         .probe          = mpc836x_mds_probe,
+>         .setup_arch     = mpc836x_mds_setup_arch,
+> -       .init_IRQ       = mpc83xx_ipic_and_qe_init_IRQ,
+> +       .init_IRQ       = mpc83xx_ipic_init_IRQ,
+>         .get_irq        = ipic_get_irq,
+>         .restart        = mpc83xx_restart,
+>         .time_init      = mpc83xx_time_init,
+> diff --git a/arch/powerpc/platforms/83xx/mpc836x_rdk.c b/arch/powerpc/platforms/83xx/mpc836x_rdk.c
+> index b7119e443920..b4aac2cde849 100644
+> --- a/arch/powerpc/platforms/83xx/mpc836x_rdk.c
+> +++ b/arch/powerpc/platforms/83xx/mpc836x_rdk.c
+> @@ -41,7 +41,7 @@ define_machine(mpc836x_rdk) {
+>         .name           = "MPC836x RDK",
+>         .probe          = mpc836x_rdk_probe,
+>         .setup_arch     = mpc836x_rdk_setup_arch,
+> -       .init_IRQ       = mpc83xx_ipic_and_qe_init_IRQ,
+> +       .init_IRQ       = mpc83xx_ipic_init_IRQ,
+>         .get_irq        = ipic_get_irq,
+>         .restart        = mpc83xx_restart,
+>         .time_init      = mpc83xx_time_init,
+> diff --git a/arch/powerpc/platforms/83xx/mpc83xx.h b/arch/powerpc/platforms/83xx/mpc83xx.h
+> index d343f6ce2599..f37d04332fc7 100644
+> --- a/arch/powerpc/platforms/83xx/mpc83xx.h
+> +++ b/arch/powerpc/platforms/83xx/mpc83xx.h
+> @@ -72,11 +72,6 @@ extern int mpc837x_usb_cfg(void);
+>  extern int mpc834x_usb_cfg(void);
+>  extern int mpc831x_usb_cfg(void);
+>  extern void mpc83xx_ipic_init_IRQ(void);
+> -#ifdef CONFIG_QUICC_ENGINE
+> -extern void mpc83xx_ipic_and_qe_init_IRQ(void);
+> -#else
+> -#define mpc83xx_ipic_and_qe_init_IRQ mpc83xx_ipic_init_IRQ
+> -#endif /* CONFIG_QUICC_ENGINE */
+>
+>  #ifdef CONFIG_PCI
+>  extern void mpc83xx_setup_pci(void);
+> --
+> 2.23.0
+>
