@@ -2,61 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CAF103FA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84CB8103FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbfKTPpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:45:34 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:51878 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729722AbfKTPpb (ORCPT
+        id S1732519AbfKTPqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:46:13 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59114 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732502AbfKTPqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:45:31 -0500
-Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id UFlV2100J5USYZQ01FlVea; Wed, 20 Nov 2019 16:45:29 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iXSAb-0002mv-96; Wed, 20 Nov 2019 16:45:29 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iXSAb-0004FN-6U; Wed, 20 Nov 2019 16:45:29 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: of: Fix bogus reference to gpiod_get_count()
-Date:   Wed, 20 Nov 2019 16:45:21 +0100
-Message-Id: <20191120154521.16273-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Wed, 20 Nov 2019 10:46:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y+r4uRt0HfEzC6FA94CrzjLBOB4pZm30/6RDjRbTH2g=; b=tSmjMhQWEB6+CN5nvKQYwrE4j
+        KN9lA3Wy9FdbarML5HFOnBe/e5P+FIJNuzW/qZfMiWe8AAYY+17KukZlabN24ozKEMqVR6yr/CgUN
+        V5RxLT241bf/rr2fd7497JpuAT5hQ0Tvl5dzLOvhVpsbu543my2G37XYlFxxR737pWXCLKiJeCnNw
+        UPmEIM/qcuFPEOtrNXLHssgN5YfiEmEq/0ILBivrDgxVDqspH26C3K70zyBx6dxc6j5NGVl8olIwF
+        3Je8ZTgYWEvDuYtIg469g95Cyue9Mvu2MnRgBKJ6jrz4SvlO/zPwgwlnsF7Aqm3uriAzfK3z88Acv
+        01CiO8UcA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iXSAy-0003As-3v; Wed, 20 Nov 2019 15:45:52 +0000
+Date:   Wed, 20 Nov 2019 07:45:52 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     zhengbin <zhengbin13@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, hughd@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, houtao1@huawei.com,
+        yi.zhang@huawei.com
+Subject: Re: [PATCH] tmpfs: use ida to get inode number
+Message-ID: <20191120154552.GS20752@bombadil.infradead.org>
+References: <1574259798-144561-1-git-send-email-zhengbin13@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574259798-144561-1-git-send-email-zhengbin13@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recommended function is called gpiod_count(), not gpiod_get_count().
+On Wed, Nov 20, 2019 at 10:23:18PM +0800, zhengbin wrote:
+> I have tried to change last_ino type to unsigned long, while this was
+> rejected, see details on https://patchwork.kernel.org/patch/11023915.
 
-Fixes: f626d6dfb7098525 ("gpio: of: Break out OF-only code")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpiolib-of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Did you end up trying sbitmap?
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index bd06743a5d7cd2cc..dc27b1a88e9343a8 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -27,7 +27,7 @@
-  * This is used by external users of of_gpio_count() from <linux/of_gpio.h>
-  *
-  * FIXME: get rid of those external users by converting them to GPIO
-- * descriptors and let them all use gpiod_get_count()
-+ * descriptors and let them all use gpiod_count()
-  */
- int of_gpio_get_count(struct device *dev, const char *con_id)
- {
--- 
-2.17.1
+What I think is fundamentally wrong with this patch is that you've found a
+problem in get_next_ino() and decided to use a different scheme for this
+one filesystem, leaving every other filesystem which uses get_next_ino()
+facing the same problem.
 
+That could be acceptable if you explained why tmpfs is fundamentally
+different from all the other filesystems that use get_next_ino(), but
+you haven't (and I don't think there is such a difference.  eg pipes,
+autofs and ipc mqueue could all have the same problem.
+
+There are some other problems I noticed, but they're not worth bringing
+up until this fundamental design choice is justified.
