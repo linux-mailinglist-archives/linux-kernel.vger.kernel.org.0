@@ -2,201 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C8E61030F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 02:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4AD91030FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 02:12:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfKTBGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 20:06:47 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:43505 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727494AbfKTBGo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 20:06:44 -0500
-Received: by mail-pj1-f67.google.com with SMTP id a10so3417178pju.10
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 17:06:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0T61AzxnAvwa4rB+CZumfDDidufAJnp+U8GPCQMxTB4=;
-        b=a82EApFVTEe9phvCSrJOP3TlCmeHwEbc7lBntv/Y4A3SIjXWLzIYaza53B34WSAvIO
-         M/p/3ECy6DvVgT1DcT27ZKc9hqk61OMYWbeg8Ie4sWtPigLH57V9lJaYWI9PwzZgGuQN
-         +goyCf8HKTHNdfpJZrJyL8SxxITM+b1kefwFs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0T61AzxnAvwa4rB+CZumfDDidufAJnp+U8GPCQMxTB4=;
-        b=kvMEKd5jr04u5IySxAqgxNJw40TGhaFXwyUgTC+CxKAdn1uaauP1g+hmWwrL33U8hN
-         qN9A9l0N3K9sHwsnqxsWqIysoqMO/iTTjioe1V0B/Jrc/7FbLYFWVt9I1MihCeuXA7fP
-         gz5glAVAZlpzqiHw9ws2PH9O2RzO3zFoMIIXbxDep7uqTYutC+PCX7+qI7jcZbUeMSsX
-         cjJZr9GHIOO7ZFGouHWMEyQMcMCQk6/adbafGqqLFt0hiwFRCAAYsFPMrMY2doJslvMD
-         evVduGQb0laz1WjIq9D0w0PF0meUzI4m9BaYjnLfZyfQ9xS+kY++pt0MtfGvsrkBEnO9
-         Ul7g==
-X-Gm-Message-State: APjAAAWJcqRVZHzX2xVjTjtKdVeBRhe0LQ+TgrM4MT7dtXgs4J5IJ8rG
-        6ryOSclWg3NgiXxvSoLzVHMMmg==
-X-Google-Smtp-Source: APXvYqwMjjdQ2rf3CZ9jjyiv4G3ZP7tQU+Lm0RTG8f4dInndtCYLfPklkPViLPE1GjBEoqneZ6KF6w==
-X-Received: by 2002:a17:902:561:: with SMTP id 88mr155318plf.127.1574212003854;
-        Tue, 19 Nov 2019 17:06:43 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u24sm24440563pgf.6.2019.11.19.17.06.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 17:06:41 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Elena Petrova <lenaptr@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH 3/3] lkdtm/bugs: Add arithmetic overflow and array bounds checks
-Date:   Tue, 19 Nov 2019 17:06:36 -0800
-Message-Id: <20191120010636.27368-4-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191120010636.27368-1-keescook@chromium.org>
-References: <20191120010636.27368-1-keescook@chromium.org>
+        id S1727506AbfKTBMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 20:12:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727262AbfKTBMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 20:12:18 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA892245C;
+        Wed, 20 Nov 2019 01:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574212337;
+        bh=YVHFJP4Tg+uw9cqmlPx827g2cuX+27hpz2I8QmaOS+E=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=QmEXo52I896jnaFA1ELwMs8w57Kzti/fIf87OBz7rLXE31Q5zdp+oLYAhOP+HkaBj
+         elfKj6ziCzfzU9TF1DxdlhYnovU1XYAFD93P/XlWopjt6X+VyNybvJeLqz3+O3dQ3u
+         5iyiPL+e4mvcU2WjoXjNLeXIek5fNCgsRUsnXoA8=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 45B9435227AB; Tue, 19 Nov 2019 17:12:17 -0800 (PST)
+Date:   Tue, 19 Nov 2019 17:12:17 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     anders.roxell@linaro.org, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ipmr: fix suspicious RCU warning
+Message-ID: <20191120011217.GM2889@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191118090925.2474-1-anders.roxell@linaro.org>
+ <20191119.145048.487849503145486152.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191119.145048.487849503145486152.davem@davemloft.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds LKDTM tests for arithmetic overflow (both signed and unsigned),
-as well as array bounds checking.
+On Tue, Nov 19, 2019 at 02:50:48PM -0800, David Miller wrote:
+> From: Anders Roxell <anders.roxell@linaro.org>
+> Date: Mon, 18 Nov 2019 10:09:25 +0100
+> 
+> > @@ -108,9 +108,18 @@ static void igmpmsg_netlink_event(struct mr_table *mrt, struct sk_buff *pkt);
+> >  static void mroute_clean_tables(struct mr_table *mrt, int flags);
+> >  static void ipmr_expire_process(struct timer_list *t);
+> >  
+> > +#ifdef CONFIG_PROVE_LOCKING
+> > +int ip_mr_initialized;
+> > +void ip_mr_now_initialized(void) { ip_mr_initialized = 1; }
+> > +#else
+> > +const int ip_mr_initialized = 1;
+> > +void ip_mr_now_initialized(void) { }
+> > +#endif
+> 
+> This seems excessive and a bit not so pretty.
+> 
+> > +
+> >  #ifdef CONFIG_IP_MROUTE_MULTIPLE_TABLES
+> >  #define ipmr_for_each_table(mrt, net) \
+> > -	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list)
+> > +	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list, \
+> > +			(lockdep_rtnl_is_held() || !ip_mr_initialized))
+> >  
+> >  static struct mr_table *ipmr_mr_table_iter(struct net *net,
+> >  					   struct mr_table *mrt)
+> 
+> The problematic code path is ipmr_rules_init() done during ipmr_net_init().
+> 
+> You can just wrap this call around RCU locking or take the RTNL mutex.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/misc/lkdtm/bugs.c  | 75 ++++++++++++++++++++++++++++++++++++++
- drivers/misc/lkdtm/core.c  |  3 ++
- drivers/misc/lkdtm/lkdtm.h |  3 ++
- 3 files changed, 81 insertions(+)
+Agreed, that would work quite well.
 
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index 7284a22b1a09..8b4ef30f53c6 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -11,6 +11,7 @@
- #include <linux/sched/signal.h>
- #include <linux/sched/task_stack.h>
- #include <linux/uaccess.h>
-+#include <linux/slab.h>
- 
- struct lkdtm_list {
- 	struct list_head node;
-@@ -171,6 +172,80 @@ void lkdtm_HUNG_TASK(void)
- 	schedule();
- }
- 
-+volatile unsigned int huge = INT_MAX - 2;
-+volatile unsigned int ignored;
-+
-+void lkdtm_OVERFLOW_SIGNED(void)
-+{
-+	int value;
-+
-+	value = huge;
-+	pr_info("Normal signed addition ...\n");
-+	value += 1;
-+	ignored = value;
-+
-+	pr_info("Overflowing signed addition ...\n");
-+	value += 4;
-+	ignored = value;
-+}
-+
-+
-+void lkdtm_OVERFLOW_UNSIGNED(void)
-+{
-+	unsigned int value;
-+
-+	value = huge;
-+	pr_info("Normal unsigned addition ...\n");
-+	value += 1;
-+	ignored = value;
-+
-+	pr_info("Overflowing unsigned addition ...\n");
-+	value += 4;
-+	ignored = value;
-+}
-+
-+/* Intentially using old-style flex array definition of 1 byte. */
-+struct array_bounds_flex_array {
-+	int one;
-+	int two;
-+	char data[1];
-+};
-+
-+struct array_bounds {
-+	int one;
-+	int two;
-+	char data[8];
-+	int three;
-+};
-+
-+void lkdtm_ARRAY_BOUNDS(void)
-+{
-+	struct array_bounds_flex_array *not_checked;
-+	struct array_bounds *checked;
-+	int i;
-+
-+	not_checked = kmalloc(sizeof(*not_checked) * 2, GFP_KERNEL);
-+	checked = kmalloc(sizeof(*checked) * 2, GFP_KERNEL);
-+
-+	pr_info("Array access within bounds ...\n");
-+	/* For both, touch all bytes in the actual member size. */
-+	for (i = 0; i < sizeof(checked->data); i++)
-+		checked->data[i] = 'A';
-+	/*
-+	 * For the uninstrumented flex array member, also touch 1 byte
-+	 * beyond to verify it is correctly uninstrumented.
-+	 */
-+	for (i = 0; i < sizeof(not_checked->data) + 1; i++)
-+		not_checked->data[i] = 'A';
-+
-+	pr_info("Array access beyond bounds ...\n");
-+	for (i = 0; i < sizeof(checked->data) + 1; i++)
-+		checked->data[i] = 'B';
-+
-+	kfree(not_checked);
-+	kfree(checked);
-+}
-+
- void lkdtm_CORRUPT_LIST_ADD(void)
- {
- 	/*
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index cbc4c9045a99..25879f7b0768 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -129,6 +129,9 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(HARDLOCKUP),
- 	CRASHTYPE(SPINLOCKUP),
- 	CRASHTYPE(HUNG_TASK),
-+	CRASHTYPE(OVERFLOW_SIGNED),
-+	CRASHTYPE(OVERFLOW_UNSIGNED),
-+	CRASHTYPE(ARRAY_BOUNDS),
- 	CRASHTYPE(EXEC_DATA),
- 	CRASHTYPE(EXEC_STACK),
- 	CRASHTYPE(EXEC_KMALLOC),
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index ab446e0bde97..2cd0c5031eea 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -22,6 +22,9 @@ void lkdtm_SOFTLOCKUP(void);
- void lkdtm_HARDLOCKUP(void);
- void lkdtm_SPINLOCKUP(void);
- void lkdtm_HUNG_TASK(void);
-+void lkdtm_OVERFLOW_SIGNED(void);
-+void lkdtm_OVERFLOW_UNSIGNED(void);
-+void lkdtm_ARRAY_BOUNDS(void);
- void lkdtm_CORRUPT_LIST_ADD(void);
- void lkdtm_CORRUPT_LIST_DEL(void);
- void lkdtm_CORRUPT_USER_DS(void);
--- 
-2.17.1
+							Thanx, Paul
 
+> That way you don't need to rediculous ip_mr_initialized knob which frankly
+> doesn't even seem accurate to me.  It's a centralized global variable
+> which is holding state about multiple network namespace objects which makes
+> absolutely no sense at all, it's wrong.
