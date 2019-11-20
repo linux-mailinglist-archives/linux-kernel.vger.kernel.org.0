@@ -2,140 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E9310447F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:46:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2DCB104485
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfKTTqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 14:46:24 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40908 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbfKTTqX (ORCPT
+        id S1727786AbfKTTqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 14:46:51 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:56085 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbfKTTqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:46:23 -0500
-Received: by mail-pl1-f195.google.com with SMTP id f9so263039plr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 11:46:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JWQRhlesp4rx0iZXH5RDESHA9Y4raAckzn7wyOlg0PU=;
-        b=TTS7k6dF12So4K2AiukGmARNAC4VPjnprfAYa19cmr3RY5ZetQcSPvqI9EJNJ3RSyC
-         /BYijGBylA+7sWQwS/uv1yxPc02Jotnzc8QQYb8jpfRI3R12JElsHUFRiIy/S09TI3G2
-         5wwjzNXqVumFvmybfxosuM3JdjpquE4qzekkvPGqF3Rq9+TmPBcgquR2cbv85e0XtKRv
-         Df4+IvP+gfZzRbxsVk6VRDoQvI5gucc6jdm7p0gVYn9BAkNQmx84fxdFnmo7+njK9L1F
-         1mmzZSHKcHZLq9iuG4fWT3TOdCM8a+e48EgWESaYYOen18+Z810kNGxk0FOi0TfIS4FN
-         0WSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JWQRhlesp4rx0iZXH5RDESHA9Y4raAckzn7wyOlg0PU=;
-        b=TkYdzoP2RF1IgRtcSvASBOXT/gCxFaWY2zEKez1kiXw91h3Pjz91YFHIhrcJqzr+zv
-         t82zD+aPa2yU6vYinIzqFcbDjqUn4iJP09PzPW8RsikVJabsgJB9b33EjuRsVPybYark
-         /veq+ZgeXM9NJnSFyRbwsBHSjdGDWbTZvL9SXmHL4zeGp6iUKRvGr0PKV0CH4+thrGw+
-         b3ZYOqhry3PPb9ZNz+7OUdEDCem+oVKi4JRjQp+s3BzbRxiSkG+9opyTSvVdUuvYy9ed
-         aaISSz4j029+BzkBhUGHUbC0KYcWMKR12lwCIMA7s7TEDXkE2k3SMi91Ck1D0o7g4tHK
-         BaZQ==
-X-Gm-Message-State: APjAAAVqZ1ze75JkG6Owf4OBTRk9OuumAW8VXsoWd++VSqi8RRFv5QqN
-        MvbS2F6jjUNVHBz0aXDYueHvcw==
-X-Google-Smtp-Source: APXvYqxjXMFyy7LYekLsZkeE/2v6Xsp1AbcHHzWQImsf2JBx6DvYlprINlJDduyr4x5PddsPUWGG6Q==
-X-Received: by 2002:a17:90a:98d:: with SMTP id 13mr6167964pjo.98.1574279182414;
-        Wed, 20 Nov 2019 11:46:22 -0800 (PST)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id o23sm26553pgj.90.2019.11.20.11.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 11:46:22 -0800 (PST)
-Date:   Wed, 20 Nov 2019 11:46:11 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     <lantianyu1986@gmail.com>, <cohuck@redhat.com>,
-        "KY Srinivasan" <kys@microsoft.com>,
-        "Haiyang Zhang" <haiyangz@microsoft.com>,
-        "Stephen Hemminger" <sthemmin@microsoft.com>, <sashal@kernel.org>,
-        <mchehab+samsung@kernel.org>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>,
-        <Jonathan.Cameron@huawei.com>, <paulmck@linux.ibm.com>,
-        "Michael Kelley" <mikelley@microsoft.com>,
-        "Tianyu Lan" <Tianyu.Lan@microsoft.com>,
-        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <linux-hyperv@vger.kernel.org>, "vkuznets" <vkuznets@redhat.com>
-Subject: Re: [PATCH] VFIO/VMBUS: Add VFIO VMBUS driver support
-Message-ID: <20191120114611.4721a7e9@hermes.lan>
-In-Reply-To: <20191120120715.0cecf5ea@x1.home>
-References: <20191111084507.9286-1-Tianyu.Lan@microsoft.com>
-        <20191119165620.0f42e5ba@x1.home>
-        <20191120103503.5f7bd7c4@hermes.lan>
-        <20191120120715.0cecf5ea@x1.home>
+        Wed, 20 Nov 2019 14:46:48 -0500
+Received: from mail-qt1-f181.google.com ([209.85.160.181]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1McpW6-1hyjPo2WXK-00Zvn5; Wed, 20 Nov 2019 20:46:46 +0100
+Received: by mail-qt1-f181.google.com with SMTP id t8so857044qtc.6;
+        Wed, 20 Nov 2019 11:46:46 -0800 (PST)
+X-Gm-Message-State: APjAAAU51hy9Hz0YQS3JNRr2UAbkYPU2asSe5zDLE+Sl/k8UAuBTpy3n
+        BrKrBh9TIJc4gtQGUwu2fon7o/OS5cH/AlBv8Xg=
+X-Google-Smtp-Source: APXvYqxPZzv5p9M0S54RVzyCQ3+IKHoZHHwaet1h8egEPSf91VBYkxihnAwuFZfH1zdk4pgEJL+YwqwpgpxJECT1PWs=
+X-Received: by 2002:ac8:18eb:: with SMTP id o40mr4514073qtk.304.1574279205448;
+ Wed, 20 Nov 2019 11:46:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191108203435.112759-1-arnd@arndb.de> <20191108203435.112759-7-arnd@arndb.de>
+ <41baf20a190039443cb2b82aea0c2a8ec872cfed.camel@codethink.co.uk>
+In-Reply-To: <41baf20a190039443cb2b82aea0c2a8ec872cfed.camel@codethink.co.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Nov 2019 20:46:29 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3U0GWCyU9WOnrGQ2tqnHoyAbJ=HdYJGfTHuxVqcww0wg@mail.gmail.com>
+Message-ID: <CAK8P3a3U0GWCyU9WOnrGQ2tqnHoyAbJ=HdYJGfTHuxVqcww0wg@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH 6/8] lp: fix sparc64 LPSETTIMEOUT ioctl
+To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:hSbHdgcgUeQgXlEmJ4EKRoKgZD9UulCtypIgHNsbgkKidt/myew
+ 7klpYhHFggiuBVAmwNkcUnfUrJDiRg0U7PzUaiO+MW9RQZi/Wo0ut5pTDc25UCjiCpw1zT5
+ BfmTsRxFk5o/19TXgk4xdXOtFvxSFsl5Kh1yAHBnGEF1B8vAPDBZoaDnOBlE+EAe43yVsRs
+ 8E12ft1ifcWDEEiwYdIHA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lSDmNxSpplg=:Sdqq8e/aFeeyZsdBAJ274E
+ 4J1Exa+yWf6evZgi9nr3xLR8IDFZFQiGgg1dYkkP5SMvm0/TD1OXf6zJG+HNwQVWz2zz5FdFb
+ 5FiP6nOy/rPmuvyDwm3HpgTIqg9+2gAIudlf/6KdeLkiiP1EddK1Gw9ivZYi715uiyfeWbi/r
+ 4HE44BicCjHI6Uj5/gJFOs1B3s2W6ZpV3wqhDnT/zAd2vz/r45pe53hFHw1m5dENtwTNnkgG1
+ D9A7N5vEpAs0hYXR0jghj2HyGX0/ll94MPyiNdecBcLH/4jQH0H4Tfva4Gg9qpCSr0bu2cscK
+ 2eZJPU6dH++nPU1zFfE49eE8qOyK7cpHkp+nx+jnnvS1ztehVstF5tKn6lXS1ofocgmbDzd+f
+ PGt06QQKyeu/2ZhEXvhXQPDU3f0D3HdRqfgUbjwLUBKVsEx6PoJpC3SRv0vyMA+8wVs3QE0aH
+ GVCHzvK5pxBtuhZ22r0jLUOXfOml4ujKVIZFhqGt+A6I/hHihx+Mntq7lMeN4jRe4rokY1tgv
+ bR8L97XCJHnFAdoy1a16lqQbZwBoAyNf3XTkYlNHbLCYZcg/8hJaJoC2Opn73/F8htenN6ayZ
+ 9E4ikI30aNDAjjLr9s1jR7dMfSZjI9ZLeMEQlI0HqSO9KZXI31kOSypHEqVXo+qUdX86EYCYs
+ NMhBj9cz6DfAnTzruvbmxf4FY2+4femfGsXmkTUXp8Iz0QDj8bLB1WobWHcdd9ylmjvlhKEMd
+ yc1ylLCGDRmkcGxvrRG/5ca6N2CNHHvsxM4L7rBJi+U6lbOvjWaUICuoCaU60rH9crfRXfs9m
+ 9GW6j/ZMKf6hzW6S5qhQ+Mkwz+KKQYy6dDUyGy/GTZRVgu1sIOufWR8ciotz9jSjFlromntYv
+ IicryZ8Unp11GgycQISg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019 12:07:15 -0700
-Alex Williamson <alex.williamson@redhat.com> wrote:
+On Wed, Nov 20, 2019 at 8:27 PM Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+>
+> On Fri, 2019-11-08 at 21:34 +0100, Arnd Bergmann wrote:
+> > The layout of struct timeval is different on sparc64 from
+> > anything else, and the patch I did long ago failed to take
+> > this into account.
+> >
+> > Change it now to handle sparc64 user space correctly again.
+> >
+> > Quite likely nobody cares about parallel ports on sparc64,
+> > but there is no reason not to fix it.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 9a450484089d ("lp: support 64-bit time_t user space")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/char/lp.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/char/lp.c b/drivers/char/lp.c
+> > index 7c9269e3477a..bd95aba1f9fe 100644
+> > --- a/drivers/char/lp.c
+> > +++ b/drivers/char/lp.c
+> > @@ -713,6 +713,10 @@ static int lp_set_timeout64(unsigned int minor, void __user *arg)
+> >       if (copy_from_user(karg, arg, sizeof(karg)))
+> >               return -EFAULT;
+> >
+> > +     /* sparc64 suseconds_t is 32-bit only */
+> > +     if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
+> > +             karg[1] >>= 32;
+> > +
+> >       return lp_set_timeout(minor, karg[0], karg[1]);
+> >  }
+> >
+>
+> It seems like it would make way more sense to use __kernel_old_timeval.
 
-> On Wed, 20 Nov 2019 10:35:03 -0800
-> Stephen Hemminger <stephen@networkplumber.org> wrote:
-> 
-> > On Tue, 19 Nov 2019 15:56:20 -0800
-> > "Alex Williamson" <alex.williamson@redhat.com> wrote:
-> >   
-> > > On Mon, 11 Nov 2019 16:45:07 +0800
-> > > lantianyu1986@gmail.com wrote:
-> > >     
-> > > > From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> > > > 
-> > > > This patch is to add VFIO VMBUS driver support in order to expose
-> > > > VMBUS devices to user space drivers(Reference Hyper-V UIO driver).
-> > > > DPDK now has netvsc PMD driver support and it may get VMBUS resources
-> > > > via VFIO interface with new driver support.
-> > > > 
-> > > > So far, Hyper-V doesn't provide virtual IOMMU support and so this
-> > > > driver needs to be used with VFIO noiommu mode.      
-> > > 
-> > > Let's be clear here, vfio no-iommu mode taints the kernel and was a
-> > > compromise that we can re-use vfio-pci in its entirety, so it had a
-> > > high code reuse value for minimal code and maintenance investment.  It
-> > > was certainly not intended to provoke new drivers that rely on this mode
-> > > of operation.  In fact, no-iommu should be discouraged as it provides
-> > > absolutely no isolation.  I'd therefore ask, why should this be in the
-> > > kernel versus any other unsupportable out of tree driver?  It appears
-> > > almost entirely self contained.  Thanks,
-> > > 
-> > > Alex    
-> > 
-> > The current VMBUS access from userspace is from uio_hv_generic
-> > there is (and will not be) any out of tree driver for this.  
-> 
-> I'm talking about the driver proposed here.  It can only be used in a
-> mode that taints the kernel that its running on, so why would we sign
-> up to support 400 lines of code that has no safe way to use it?
->  
-> > The new driver from Tianyu is to make VMBUS behave like PCI.
-> > This simplifies the code for DPDK and other usermode device drivers
-> > because it can use the same API's for VMBus as is done for PCI.  
-> 
-> But this doesn't re-use the vfio-pci API at all, it explicitly defines
-> a new vfio-vmbus API over the vfio interfaces.  So a user mode driver
-> might be able to reuse some vfio support, but I don't see how this has
-> anything to do with PCI.
-> 
-> > Unfortunately, since Hyper-V does not support virtual IOMMU yet,
-> > the only usage modle is with no-iommu taint.  
-> 
-> Which is what makes it unsupportable and prompts the question why it
-> should be included in the mainline kernel as it introduces a
-> maintenance burden and normalizes a usage model that's unsafe.  Thanks,
+Right, that would work. I tried to keep the patch small here, changing
+it to __kernel_old_timeval would require make it all more complicated
+since it would still need to check some conditional to tell the difference
+between sparc32 and sparc64.
 
-Many existing userspace drivers are unsafe:
-  - out of tree DPDK igb_uio is unsafe.
-  - VFIO with noiommu is unsafe.
-  - hv_uio_generic is unsafe.
+I think this patch (relative to the version I posted) would work the same:
 
-This new driver is not any better or worse. This sounds like a complete
-repeat of the discussion that occurred before introducing VFIO noiommu mode.
+diff --git a/drivers/char/lp.c b/drivers/char/lp.c
+index bd95aba1f9fe..86994421ee97 100644
+--- a/drivers/char/lp.c
++++ b/drivers/char/lp.c
+@@ -713,13 +713,19 @@ static int lp_set_timeout64(unsigned int minor,
+void __user *arg)
+        if (copy_from_user(karg, arg, sizeof(karg)))
+                return -EFAULT;
 
-Shouldn't vmbus vfio taint the kernel in the same way as vfio noiommu does?
+-       /* sparc64 suseconds_t is 32-bit only */
+-       if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
+-               karg[1] >>= 32;
+-
+        return lp_set_timeout(minor, karg[0], karg[1]);
+ }
+
++static int lp_set_timeout(unsigned int minor, void __user *arg)
++{
++       __kernel_old_timeval tv;
++
++       if (copy_from_user(tv, arg, sizeof(karg)))
++               return -EFAULT;
++
++       return lp_set_timeout(minor, tv->tv_sec, tv->tv_usec);
++}
++
+ static long lp_ioctl(struct file *file, unsigned int cmd,
+                        unsigned long arg)
+ {
+@@ -730,11 +736,8 @@ static long lp_ioctl(struct file *file, unsigned int cmd,
+        mutex_lock(&lp_mutex);
+        switch (cmd) {
+        case LPSETTIMEOUT_OLD:
+-               if (BITS_PER_LONG == 32) {
+-                       ret = lp_set_timeout32(minor, (void __user *)arg);
+-                       break;
+-               }
+-               /* fall through - for 64-bit */
++               ret = lp_set_timeout(minor, (void __user *)arg);
++               break;
+        case LPSETTIMEOUT_NEW:
+                ret = lp_set_timeout64(minor, (void __user *)arg);
+                break;
+
+Do you like that better? One difference here is the handling of
+LPSETTIMEOUT_NEW on sparc64, which would continue to use
+the 64/64 layout rather than the 64/32/pad layout, but that should
+be ok, since sparc64 user space using ppdev (if any exists)
+would use LPSETTIMEOUT_OLD, not LPSETTIMEOUT_NEW.
+
+> Then you don't have to explicitly handle the sparc64 oddity.
+>
+> As it is, this still over-reads from user-space which might result in a
+> spurious -EFAULT.
+
+I think you got this wrong: sparc64 like most architectures naturally
+aligns 64-bit members, so 'struct timeval' still uses 16 bytes including
+the four padding bytes at the end, it just has the nanoseconds in
+a different position from all other big-endian architectures.
+
+      Arnd
