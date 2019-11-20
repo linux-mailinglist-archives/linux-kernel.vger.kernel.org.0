@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3873103BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:39:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24183103C00
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:39:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfKTNj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:39:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47048 "EHLO mail.kernel.org"
+        id S1728961AbfKTNjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:39:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728683AbfKTNjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:39:25 -0500
+        id S1728541AbfKTNj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:39:29 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A342224FA;
-        Wed, 20 Nov 2019 13:39:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EED3B224FA;
+        Wed, 20 Nov 2019 13:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257164;
-        bh=WxqSkloPNvIniE0B1PNU8Et/vKN6RNMG2IiFN6/e2mA=;
+        s=default; t=1574257169;
+        bh=YhYeclBfcRAmQRKEfK1UPHgzQsEwwbB0zzIWoJvZqI0=;
         h=From:To:Cc:Subject:Date:From;
-        b=Y7TZ4KjgFZ6iZsKf3fXADVSsXbBnSEvM1WHpXoXZlFnTvrMf9gpXFBft+G+AzBRvj
-         dlKzVqlpbYFZoKDZbcO3SB3UTnEIP2uaLHCvILtjduJXmAMKJJeQIOKe1bAGDMWUSx
-         PFc3TnB2NuCvbQalMLbptes5BnOo1mo7JCevaRYk=
+        b=wJk2StoOjc+BeWfmw2WdeZn48fkLo9n6eHL1g95WZq0jKf+UHvFMrdwopSulLlcwb
+         /Rm2NvkQHogA71WaWOH2JIwhCMLTdf9LPronRGRKIK0fx6PH3x0Zl6SfY1/sYEaRVz
+         o6h7jtqcjNqgBvYayTOGbO4Y1ci/zC7IlxNrNMok=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH] soc: rockchip: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:39:20 +0800
-Message-Id: <20191120133920.13657-1-krzk@kernel.org>
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH] soc: qcom: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:39:25 +0800
+Message-Id: <20191120133925.13712-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -44,38 +44,62 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/soc/rockchip/Kconfig | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/soc/qcom/Kconfig | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/soc/rockchip/Kconfig b/drivers/soc/rockchip/Kconfig
-index b71b73bf5fc5..3e2057f22bbc 100644
---- a/drivers/soc/rockchip/Kconfig
-+++ b/drivers/soc/rockchip/Kconfig
-@@ -15,15 +15,15 @@ config ROCKCHIP_GRF
- 	  to make some of them conform to expectations of the kernel.
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 79d826553ac8..d0a73e76d563 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -45,13 +45,13 @@ config QCOM_GLINK_SSR
+ 	  neighboring subsystems going up or down.
  
- config ROCKCHIP_PM_DOMAINS
--        bool "Rockchip generic power domain"
--        depends on PM
--        select PM_GENERIC_DOMAINS
+ config QCOM_GSBI
+-        tristate "QCOM General Serial Bus Interface"
+-        depends on ARCH_QCOM || COMPILE_TEST
+-        select MFD_SYSCON
 -        help
--          Say y here to enable power domain support.
--          In order to meet high performance and low power requirements, a power
--          management unit is designed or saving power when RK3288 in low power
--          mode. The RK3288 PMU is dedicated for managing the power of the whole chip.
-+	bool "Rockchip generic power domain"
-+	depends on PM
-+	select PM_GENERIC_DOMAINS
+-          Say y here to enable GSBI support.  The GSBI provides control
+-          functions for connecting the underlying serial UART, SPI, and I2C
+-          devices to the output pins.
++	tristate "QCOM General Serial Bus Interface"
++	depends on ARCH_QCOM || COMPILE_TEST
++	select MFD_SYSCON
 +	help
-+	  Say y here to enable power domain support.
-+	  In order to meet high performance and low power requirements, a power
-+	  management unit is designed or saving power when RK3288 in low power
-+	  mode. The RK3288 PMU is dedicated for managing the power of the whole chip.
++	  Say y here to enable GSBI support.  The GSBI provides control
++	  functions for connecting the underlying serial UART, SPI, and I2C
++	  devices to the output pins.
  
--          If unsure, say N.
-+	  If unsure, say N.
+ config QCOM_LLCC
+ 	tristate "Qualcomm Technologies, Inc. LLCC driver"
+@@ -71,10 +71,10 @@ config QCOM_OCMEM
+ 	depends on ARCH_QCOM
+ 	select QCOM_SCM
+ 	help
+-          The On Chip Memory (OCMEM) allocator allows various clients to
+-          allocate memory from OCMEM based on performance, latency and power
+-          requirements. This is typically used by the GPU, camera/video, and
+-          audio components on some Snapdragon SoCs.
++	  The On Chip Memory (OCMEM) allocator allows various clients to
++	  allocate memory from OCMEM based on performance, latency and power
++	  requirements. This is typically used by the GPU, camera/video, and
++	  audio components on some Snapdragon SoCs.
  
- endif
+ config QCOM_PM
+ 	bool "Qualcomm Power Management"
+@@ -198,8 +198,8 @@ config QCOM_APR
+ 	depends on ARCH_QCOM || COMPILE_TEST
+ 	depends on RPMSG
+ 	help
+-          Enable APR IPC protocol support between
+-          application processor and QDSP6. APR is
+-          used by audio driver to configure QDSP6
+-          ASM, ADM and AFE modules.
++	  Enable APR IPC protocol support between
++	  application processor and QDSP6. APR is
++	  used by audio driver to configure QDSP6
++	  ASM, ADM and AFE modules.
+ endmenu
 -- 
 2.17.1
 
