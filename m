@@ -2,74 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CD45103146
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 02:48:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92BC9103154
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 02:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfKTBsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 20:48:30 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6252 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727140AbfKTBsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 20:48:30 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3A98710A35CD555D8F51;
-        Wed, 20 Nov 2019 09:48:26 +0800 (CST)
-Received: from [127.0.0.1] (10.74.149.191) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 20 Nov 2019
- 09:48:18 +0800
-Subject: Re: [PATCH V2 net] net: hns3: fix a wrong reset interrupt status mask
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>
-References: <1574214285-43543-1-git-send-email-tanhuazhong@huawei.com>
-From:   tanhuazhong <tanhuazhong@huawei.com>
-Message-ID: <6561cf1f-1af5-7852-8de7-1377b228f2a5@huawei.com>
-Date:   Wed, 20 Nov 2019 09:48:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1727343AbfKTB5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 20:57:44 -0500
+Received: from mail-qk1-f173.google.com ([209.85.222.173]:37254 "EHLO
+        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbfKTB5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 20:57:44 -0500
+Received: by mail-qk1-f173.google.com with SMTP id e187so19902407qkf.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 17:57:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=jDLYL+zBe4kreijHVGC8TNgtqSKIWy0jlSmvFFF1wow=;
+        b=XE3eYNarcfPSYm9f+g9Svrep/XeafIOM6otEnnSlC2RmjZGnO3N/k496JOpdpWzMB/
+         HHVsh6HuL7MBfdqEWd80aeHe8TMnsc2WnXvWuZ1I7R1B+JvoKa0MrrQRZ2K7vQSBdfTU
+         CsCGSQPTDV9/bkYMAE9dOGSGd7Iv+27Kd74U9MFKxa3/zkXE1Q9Dd99CeALch/N1GG76
+         rGG0ah/Im8iCmQMxvKmXqmm4alUxEKwyrNa+ZoWxoNp/ae1g3il95HJLQ1jxKi80ItqH
+         MQt1BTIIlWZkcv+EvQpPyrmSuklqPYvo/u2kpLy/OhJaJnjqon5TD3vnH4GZLFbdJ1H4
+         PmYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=jDLYL+zBe4kreijHVGC8TNgtqSKIWy0jlSmvFFF1wow=;
+        b=Ug9UaNFoiqNw0T6abNahS6IHxaz1MWrIOgnisdFx2ZBsZjbZwL5Gvrs6IdciXB9DOn
+         IuvhDriJ2yAMGubVziBhoxXg5/YY4O/dt4lV3c6OKqIcGac6KX1vqrvG/8Ld4dtqk4JD
+         mDWnk6DOpVOcgQn4D0Ksyfp1gcO9GOsR6mpa4mDtvoc0gnDS1behvfHET7VkCHIAChL7
+         /R8JlfnFJvRXgmkb3QcbxHBJJBsRbXmsg+ubOpHK/jS8n1BElRVK2tQ061LOMqKeKqZo
+         VmjX5X+BwCfsxZvHgxMtYMCHQKVic76T2e+VUUHB4r75IWACCnDk+UDi92hKf++mZaQR
+         cvhA==
+X-Gm-Message-State: APjAAAUnh4lvBdRLlHZskGD9IOhvhg4CGaBX7nBPCtQf4eRIHAnJdbNW
+        NTWUnIK4CBwVhdxjrtSOJyGBHC032OA+mUe5FQ23F5uA
+X-Google-Smtp-Source: APXvYqxGGyIXJ2afy9maPHp0aKxd0uhUW+6mA0F6Rw5OkLcYe0amj160qW/Gxu/ndP9Pqtl5ER8it9mgZtdysvm9tQs=
+X-Received: by 2002:ae9:e501:: with SMTP id w1mr263813qkf.271.1574215061060;
+ Tue, 19 Nov 2019 17:57:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1574214285-43543-1-git-send-email-tanhuazhong@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.149.191]
-X-CFilter-Loop: Reflected
+References: <20191119233047.5447495C0DE7@us180.sjc.aristanetworks.com>
+In-Reply-To: <20191119233047.5447495C0DE7@us180.sjc.aristanetworks.com>
+From:   Francesco Ruggeri <fruggeri@arista.com>
+Date:   Tue, 19 Nov 2019 17:57:30 -0800
+Message-ID: <CA+HUmGi_7b1Ywt4dqhqkDds4La=fuAmGaYLGOZHS1+4qrMLaCQ@mail.gmail.com>
+Subject: Re: Kernel panic when reading /sys/firmware/acpi/tables/data/BERT
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Francesco Ruggeri <fruggeri@arista.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, please ignore this patch.
-Will resend later.
+On Tue, Nov 19, 2019 at 3:30 PM Francesco Ruggeri <fruggeri@arista.com> wrote:
+>
+> If I run
+>
+> for ((i=0; i<10; i++))
+>         do for ((j=0; j<1000000; j++))
+>                 do cat /sys/firmware/acpi/tables/data/BERT >/dev/null
+>         done &
+> done
+>
+> I see this panic in 5.3.11. I see a similar panic in 4.19.84.
+>
 
-On 2019/11/20 9:44, Huazhong Tan wrote:
-> According to hardware user manual, bits5~7 in register
-> HCLGE_MISC_VECTOR_INT_STS means reset interrupts status,
-> but HCLGE_RESET_INT_M is defined as bits0~2 now. So it
-> will make hclge_reset_err_handle() read the wrong reset
-> interrupt status.
-> 
-> This patch fixes this wrong bit mask.
-> 
-> Fixes: 2336f19d7892 ("net: hns3: check reset interrupt status when reset fails")
-> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-> ---
->   drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-> index 59b8243..615cde1 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-> @@ -166,7 +166,7 @@ enum HLCGE_PORT_TYPE {
->   #define HCLGE_GLOBAL_RESET_BIT		0
->   #define HCLGE_CORE_RESET_BIT		1
->   #define HCLGE_IMP_RESET_BIT		2
-> -#define HCLGE_RESET_INT_M		GENMASK(2, 0)
-> +#define HCLGE_RESET_INT_M		GENMASK(7, 5)
->   #define HCLGE_FUN_RST_ING		0x20C00
->   #define HCLGE_FUN_RST_ING_B		0
->   
-> 
+The issue seems to be that acpi_os_map_cleanup does not execute under
+mutex_lock(&acpi_ioremap_lock), so more than one process may end up
+freeing the same map.
+I will prepare a patch.
 
+Francesco Ruggeri
