@@ -2,109 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2A99104386
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 19:39:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529BB10438B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 19:39:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfKTSjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 13:39:06 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41744 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbfKTSfO (ORCPT
+        id S1727227AbfKTSjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 13:39:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39990 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfKTSjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 13:35:14 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 207so139437pge.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 10:35:12 -0800 (PST)
+        Wed, 20 Nov 2019 13:39:43 -0500
+Received: by mail-pg1-f195.google.com with SMTP id e17so147388pgd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 10:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SguOXdXD06UvXlpJTQF3X/gOJzOdybHb3TZxh+LFCwE=;
-        b=M/k0aGFFVeGdcEMo7ik+UWlR4SsoP7CucR9U2FHwRbjsoS6Jxqcz+93aeJIKZnBOzz
-         Pc2jMYjAyvzMe3GuRy2XS+vsHKuraV6vaRry8HP7s2ycXSVK14bhkWt0MHSY9/CrZrdK
-         lqj5Uq3IVc1Ruu12WucILWSR/ZVulbvVir963Af99szrifaRyz40CQxsJreqUZ2NW7tt
-         BKXdpeVpeahKlUXC1lcurEuXhuKmhgK4D48SlaAxPptv067Vwgdtd8/EG2o9CrfnSEwT
-         NOo3JtRemeRmdsJLTsEbcx7959y1TZcjFUgLWdAojE5jZX7AqeRishMiOyM+3npTA7DT
-         iLGA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ejQvp2mMhcLjLkJFrbwtDbRkBaOa3f2P+DfAVSm5cWM=;
+        b=MmHV5tnSJvM6Xbp4h4iP3aD+pzQonOilRaITchmPt3mXh5oVeLLFFT3gHqcr5a3Sz7
+         DNsJ/BJuc7iVDSt9BJu5x+QFUzD4pB2/BZI3vq7ypwojjWi1ueus8ADVM4QKuBKHjK2w
+         xm5ysjceeOsiEe77puq7vierIEQOqIfdVjfn8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SguOXdXD06UvXlpJTQF3X/gOJzOdybHb3TZxh+LFCwE=;
-        b=THCWxjXOVPQF2m5MZsMFv4fGcMmft0UGaI1QYHhkqWjhaOVtCH9FY4N6RfPwBlt7/4
-         c9t+pdznHXWtJp8uqAYp6QDLEr+VhBfK7xTRXcvkLMGsn7PT7NxWWqtuhS3cOTTdngq2
-         Yq9xTKnOQAnGVJmeAv+ePlPJj99q9cQdXvFfQjlI+r9bH8V/L6Wafrr5OI2WggSHWZDB
-         wRO8EAJmd7nXZ8RR667Kr1oeb4/HUSweqcUhfvG/Z6L0OWe9xXsaC6O1AV0wr+YJG/RM
-         E6B6IWRdKn7lhQcZWsGTQ8SgUBROR7fyoNwtQSmbNL5uVoHAObe1OcqUnF79mjpmLU7Z
-         I34w==
-X-Gm-Message-State: APjAAAXpxRQXI3RhGl7WZaUcEDp+Xzj5Bj6BeRAufFSCd2M91wmFldGd
-        XR14dwdAxhXwWzfAvHCOf59QVg==
-X-Google-Smtp-Source: APXvYqxyYAth7L1wiJL1kecEmScQt3Ogum8pKto+OQyv1LHRbY3avm8XD4YP/3EEZhm/qCZxoniQDg==
-X-Received: by 2002:a63:ec4b:: with SMTP id r11mr4749669pgj.147.1574274912209;
-        Wed, 20 Nov 2019 10:35:12 -0800 (PST)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id p123sm78577pfg.30.2019.11.20.10.35.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ejQvp2mMhcLjLkJFrbwtDbRkBaOa3f2P+DfAVSm5cWM=;
+        b=Y8xRZmN1CsCbcZWxC6p4BHojuJu5GuTuhkWAPFFIGKJfNvHhRXDs2tc7DcgcdmWNY/
+         NvYJJk6TSKxLjjqvRyn+Jgmvc3mQIjRdPS5ht2A9fEzZ96BewREt3AjuBXQzyyF2fw/C
+         qsyYWZd8u5TJy1gxH99GHtnokq4vSxavKwJ1rPrZjggdgF4adAdXv52/0r0yo0zTnd04
+         AWCD+69y8GugKyBrSOfNNJ/PKsaccfyRVyAE93XYGAxG1a3nfFJMQa8fIkEglDqenCLN
+         9pzbCRpWJsHrjQiK6KnThAYcixe9e09p7ok3KVp6yJPFF0Yakr86HjdJ5ZobfnD4rOcx
+         jcWw==
+X-Gm-Message-State: APjAAAVzlVu7IDxS15N+rBvanT6YMDGpOVERs7auDjSaJoX1tOpFML9C
+        lJeHtQuae71hB63dti01WkFJIQ==
+X-Google-Smtp-Source: APXvYqwDfSxzXFKk+yeiWvCvoVgPyhysspKSu+YKFuBuBCafawfStM/29GHG+oqBMrlFpxursVWuaA==
+X-Received: by 2002:aa7:9589:: with SMTP id z9mr5855499pfj.184.1574275183016;
+        Wed, 20 Nov 2019 10:39:43 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id r184sm70789pfc.106.2019.11.20.10.39.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 10:35:11 -0800 (PST)
-Date:   Wed, 20 Nov 2019 10:35:03 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     "Alex Williamson" <alex.williamson@redhat.com>
-Cc:     <lantianyu1986@gmail.com>, <cohuck@redhat.com>,
-        "KY Srinivasan" <kys@microsoft.com>,
-        "Haiyang Zhang" <haiyangz@microsoft.com>,
-        "Stephen Hemminger" <sthemmin@microsoft.com>, <sashal@kernel.org>,
-        <mchehab+samsung@kernel.org>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>,
-        <Jonathan.Cameron@huawei.com>, <paulmck@linux.ibm.com>,
-        "Michael Kelley" <mikelley@microsoft.com>,
-        "Tianyu Lan" <Tianyu.Lan@microsoft.com>,
-        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <linux-hyperv@vger.kernel.org>, "vkuznets" <vkuznets@redhat.com>
-Subject: Re: [PATCH] VFIO/VMBUS: Add VFIO VMBUS driver support
-Message-ID: <20191120103503.5f7bd7c4@hermes.lan>
-In-Reply-To: <20191119165620.0f42e5ba@x1.home>
-References: <20191111084507.9286-1-Tianyu.Lan@microsoft.com>
-        <20191119165620.0f42e5ba@x1.home>
+        Wed, 20 Nov 2019 10:39:41 -0800 (PST)
+Date:   Wed, 20 Nov 2019 10:39:40 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Bala S <balas2380@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Suggested Patch is not working for 22851 Bugzilla issue
+Message-ID: <201911201032.67566C6BF@keescook>
+References: <CAJKzgVtzD7ULwCDVRSLMCmGJNaMqvx+jVO619t3xuv2oiEsPMQ@mail.gmail.com>
+ <20191119095708.GB21113@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191119095708.GB21113@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 15:56:20 -0800
-"Alex Williamson" <alex.williamson@redhat.com> wrote:
+On Tue, Nov 19, 2019 at 10:57:08AM +0100, Michal Hocko wrote:
+> let me add Kees Cook and Linus to the cc list. I didn't have much
+> time to study the bug report and cannot really comment on the security
+> aspect of it. But let me point out that a big part of
+> MAP_FIXED_NOREPLACE usage has been removed from the loader code just
+> recently because it has caused some regressions
+> http://lkml.kernel.org/r/20191005233227.GB25745@shell.armlinux.org.uk
+> b212921b13bd ("elf: don't use MAP_FIXED_NOREPLACE for elf executable mappings").
+> So you definitely want to look at the current Linus tree for your future
+> experiments.
 
-> On Mon, 11 Nov 2019 16:45:07 +0800
-> lantianyu1986@gmail.com wrote:
+Hi!
+
+Yes, as Michal mentions, there were legitimate binaries that expected to
+overlap mappings, so we had to revert the MAP_FIXED_NOREPLACE logic for
+now. At the time I added a TODO item for fixing this up correctly here:
+https://github.com/KSPP/linux/issues/17
+
+Speaking to the ldd issue (not the kernel binfmt_elf.c loader, which
+is very separate), there isn't a security issue here: ldd can in many
+cases _execute_ the binaries it is examining. This is a well known flaw
+(as Florian points out in the bug report).
+
+Is there some other piece of this puzzle you're trying to solve? I'm
+always open to hearing new ideas in this space.
+
+Thanks!
+
+-Kees
+
 > 
-> > From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> On Tue 19-11-19 10:37:44, Bala S wrote:
+> > Hi Mhocko,
 > > 
-> > This patch is to add VFIO VMBUS driver support in order to expose
-> > VMBUS devices to user space drivers(Reference Hyper-V UIO driver).
-> > DPDK now has netvsc PMD driver support and it may get VMBUS resources
-> > via VFIO interface with new driver support.
+> > https://sourceware.org/bugzilla/show_bug.cgi?id=22851
+> > For the above issue, I have found the patch.
 > > 
-> > So far, Hyper-V doesn't provide virtual IOMMU support and so this
-> > driver needs to be used with VFIO noiommu mode.  
+> > Patch link:
+> > https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1561935.html
+> > 
+> > Only change i noticed is 'MAP_FIXED_NOREPLACE' is used instead of
+> > 'MAP_FIXED_SAFE'.
+> > 
+> > I ran test case on the following targets with this patch:
+> > 
+> > 1. For X86-64, Still i could see the reported issue( 'libevil.so' just
+> > runs ‘cat /etc/passwd')
+> > 
+> > 2. For MIPS-64, i am not seeing the malicious file content as
+> > reported. But ‘ldd’ could not found ‘libevil.so’.
+> > 
+> > root@qemumips64:~/LIN1019-1806# ldd ./main
+> >         linux-vdso.so.1 (0x000000fff1f20000)
+> >         libevil.so => not found
+> >         libc.so.6 => /lib/libc.so.6 (0x0000005e46f70000)
+> >         /lib/ld.so.1 (0x000000fff7888000)
+> > 
+> > I am not clear why this patch is not working for X86-64? But it is
+> > working for MIPS-64 with some issue.
+> > Please let me know, if anything is pending on this patch for the reported issue.
+> > 
+> > Thanks,
+> > Bala
 > 
-> Let's be clear here, vfio no-iommu mode taints the kernel and was a
-> compromise that we can re-use vfio-pci in its entirety, so it had a
-> high code reuse value for minimal code and maintenance investment.  It
-> was certainly not intended to provoke new drivers that rely on this mode
-> of operation.  In fact, no-iommu should be discouraged as it provides
-> absolutely no isolation.  I'd therefore ask, why should this be in the
-> kernel versus any other unsupportable out of tree driver?  It appears
-> almost entirely self contained.  Thanks,
-> 
-> Alex
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-The current VMBUS access from userspace is from uio_hv_generic
-there is (and will not be) any out of tree driver for this.
-
-The new driver from Tianyu is to make VMBUS behave like PCI.
-This simplifies the code for DPDK and other usermode device drivers
-because it can use the same API's for VMBus as is done for PCI.
-
-Unfortunately, since Hyper-V does not support virtual IOMMU yet,
-the only usage modle is with no-iommu taint.
+-- 
+Kees Cook
