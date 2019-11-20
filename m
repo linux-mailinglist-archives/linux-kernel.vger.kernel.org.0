@@ -2,134 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5512510364C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DAAE103652
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfKTJCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:02:16 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:15402 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728092AbfKTJCP (ORCPT
+        id S1728129AbfKTJCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 04:02:53 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:49060 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728042AbfKTJCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:02:15 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191120090213epoutp01faaf4eff15c67dfa7a9a04e607cef53a~Y02yRxwMQ0933209332epoutp01K
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 09:02:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191120090213epoutp01faaf4eff15c67dfa7a9a04e607cef53a~Y02yRxwMQ0933209332epoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574240533;
-        bh=dfMXCj9n8r6qNtIvUmluN1atQMpnLaKyM+8HLByEO3I=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=bVTwoeiS/BbOxoUOpTAwpLOZ5ioT87+QZ5MHnWVdd+yOcKkVn8NagXq+lkTEhAAsO
-         8yB8gv8eykLnmPpBMKG9jRaumGWF7iIZ29DKS9qd+Q3ST8lWllngNhZROa5xDwVW6E
-         U0CSnAaH1sFZCSSAGxCHYWuKrvmCuRsDKVO+2/g4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191120090212epcas1p340b21382da1d3b4cabfcbb2215b4fb62~Y02xpLbnt0972109721epcas1p3F;
-        Wed, 20 Nov 2019 09:02:12 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47HxXM2qtYzMqYkV; Wed, 20 Nov
-        2019 09:02:11 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0D.8D.04237.31105DD5; Wed, 20 Nov 2019 18:02:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191120090210epcas1p4d0f2fd524052392f5046495f4851809c~Y02wWQDD62759327593epcas1p4I;
-        Wed, 20 Nov 2019 09:02:10 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191120090210epsmtrp2ce5f70798920b9d801f8ec9fa69ad4f9~Y02wVhflp0720607206epsmtrp2k;
-        Wed, 20 Nov 2019 09:02:10 +0000 (GMT)
-X-AuditID: b6c32a39-913ff7000000108d-64-5dd501135724
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2C.DC.03814.21105DD5; Wed, 20 Nov 2019 18:02:10 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191120090210epsmtip15237292a741392c1dc5b598a195a08db~Y02wL_zj52993029930epsmtip1D;
-        Wed, 20 Nov 2019 09:02:10 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Markus Elfring'" <Markus.Elfring@web.de>
-Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "'Christoph Hellwig'" <hch@lst.de>,
-        "'Daniel Wagner'" <dwagner@suse.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>,
-        <linkinjeon@gmail.com>, <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <705cb02b-7707-af52-c2b5-70660debc619@web.de>
-Subject: RE: [PATCH v3 10/13] exfat: add nls operations
-Date:   Wed, 20 Nov 2019 18:02:10 +0900
-Message-ID: <00b701d59f81$319c1d90$94d458b0$@samsung.com>
+        Wed, 20 Nov 2019 04:02:53 -0500
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xAK92nZm005778
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 18:02:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xAK92nZm005778
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1574240570;
+        bh=m7KBfeLVUaVldoeCBn57xyKRXioAEHJWAKA15h/kKOw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yrPlmMLjrm/420zfmfGBS/I0SF/s2iL/7hwEfaEhsOs+k8UHF2vDwkAoNgAVpZxy7
+         YEynptZPHZuFMMjbYHVD7PQYxaicQ09vQ7jKxTKMR7WjTMx4xUoh8UAc/vzW7DDM11
+         r3vKSYZvXjmigjkK2Nq9FQEfvLP2bxo/CIsMdx+q73pYa727Ckh2cBGsfmluZnVjk4
+         cd00+k1Q6NuMXioEzpsV5x2NBuwUZC90uqjNtsrVB94x2CJVRe0WlWlr2Jw4lOX+vD
+         NEYfzpQvVMWLTjBLsZ6qOEOhnhKpJrR/wJrP6HovZn/ZXzjvMzlT3ARKBKj9jHoPcJ
+         UhFPpHNSeV6Tg==
+X-Nifty-SrcIP: [209.85.221.175]
+Received: by mail-vk1-f175.google.com with SMTP id l5so5833566vkb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 01:02:50 -0800 (PST)
+X-Gm-Message-State: APjAAAXB7uQtr6sUdXLBd9aVfYLe8h5wkNMi50RZyZWNSS782sdaEk2I
+        lxUZ6ZbwRubNkGYb4tlixtBMy5am2E9+JCkcVB0=
+X-Google-Smtp-Source: APXvYqzHf4xseGQAK2EkTNNwcmQcZHl3J1GGFg4Z1/Q9olKn7GOSfLFb/CAj4UlR2ei54LDLujGeeSWN3AoM04Sd0IY=
+X-Received: by 2002:a1f:7387:: with SMTP id o129mr807276vkc.73.1574240569015;
+ Wed, 20 Nov 2019 01:02:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 14.0
-Content-Language: ko
-Thread-Index: AQKGiVEIZXutAv+r8fum7Kkxtbdn/QHzs3lyAdI0Re0CJVjUg6YCisKg
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0hTcRTut3t379Vc3KbVyajWLYkSdXNOr6IRJXUjISH6I2vYxV3U2qvd
-        GT3J6D1Kyv6IrhnWIMhFhplptaytrBVFqT20J2o5VEyLXhTV5l3kf9/5znfO+c7vQWHqW0Q8
-        VWp1Cg4rb2aIaLzRPy8lKRY9NWp/dKhZf08lye521xHsOc8dBXu5axr7/HUXxl73BnC2/epJ
-        gv0j9SnZht+3lWzbx2F8YTTXLL0muZbq8yR3rbOc4CoaahF36cE27nP9DM53ZZDgXn5oxPOp
-        AnN2icCbBIdGsBbZTKXW4hxm+crCxYWGdK0uSZfJZjAaK28RcpjcvPykJaXmkEVGs4k3l4Wo
-        fF4UmZQF2Q5bmVPQlNhEZw4j2E1mu05rTxZ5i1hmLU4uslmydFptqiGkXGcu8fSdI+3umM01
-        nj68HH0f70JRFNBpcMb7DXOhaEpNNyGobB5AcvAJQWPrW0IOviKoedSt/FcyUnURlxNeBDdq
-        n0VK+hG43wdGVQSdBL9/tRBhHEcnQ+WgXxkWYfSwAlrdARRORNFZ4Hl1KYQpKpbOgBPS4jCN
-        0wlQ3vlCEcYqOhMe3qwkZTwRAid68TDG6EQ4e3oAkx1poOnhAJL5OKg6uA+T5y4Bz+3W0blA
-        HyPh04ceUi7IhftnayPrxEL/3YYIHw+fh7xE2A/Q22CkJdL/AILgtxwZ66Gz7qIyLMHoeVB3
-        NUWmZ0Hzz+qIhQkw9OWQUu6iggP71LIkASra/AoZTwPX/mHyCGKkMYtJYxaTxiwj/R9Wg/Ba
-        NFmwi5ZiQdTZDWMvux6NPt/5mU2o9VGeD9EUYmJURzrajWolv0ncYvEhoDAmTnX9eYdRrTLx
-        W7YKDluho8wsiD5kCJ37USx+UpEt9BmszkKdIVWv17Np6RnpBj0zRUV9f2JU08W8U9ggCHbB
-        8a9OQUXFl6M5O3e+7M87NdT1NZH6kRgz25+1jjt2V3PZp20YGY7p28uu3x7lxptuVNSvXjHS
-        Fly1qJQ+tcPV3T6dkx48Tj0ZvJAwbsrjqjcbgj3McRP17n3aVHPjigVS9i6jodfVnRuNvwve
-        W7N25sIJ+UsLAmkFGu/gsrneZRs3Hr65tpd0i3sYXCzhdfMxh8j/Bd3Mn63UAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnK4Q49VYg5lLTC0OP57EbtG8eD2b
-        xcrVR5kstt6Strh+9xazxZ69J1ksLu+aw2bxf9ZzVost/46wWlx6/4HFgctj56y77B77565h
-        99h9s4HNo2/LKkaPzaerPT5vkvM4tP0Nm8ftZ9tYAjiiuGxSUnMyy1KL9O0SuDKWbHzNXDCT
-        s+Jd3yWmBsZb7F2MnBwSAiYSH2dvYOli5OIQEtjNKLHm+wVmiIS0xLETZ4BsDiBbWOLw4WKI
-        mheMEq+XNDKB1LAJ6Er8+7OfDcQWEdCTmPTmMCtIEbPANyaJ25/PsEN0vGGUmHvxHlgHp4CV
-        xOo7mxlBpgoLmEvMnOUMEmYRUJVouHkDrIRXwFLi7IFJ7BC2oMTJmU9YQGxmAW2J3oetjDD2
-        soWvoQ5VkNhx9jVUXERidmcbM8RBbhKrjxxjncAoPAvJqFlIRs1CMmoWkvYFjCyrGCVTC4pz
-        03OLDQuM8lLL9YoTc4tL89L1kvNzNzGC41BLawfjiRPxhxgFOBiVeHgnXLkcK8SaWFZcmXuI
-        UYKDWUmEd8/1K7FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4
-        OKUaGAUmzg+UNT5puy/zGueKN1kXS28L50vo+vstf9J58brWfaUvF09dZVus+iFwwocCXUHb
-        cn/bt6uOPljZ92G+5SqTkv9PmNOfvssTPKjEIqugy6P8t/+0oJx59HW941+Dl8iwZOm2diY8
-        b3Z2evb+f46AZ0Xs5gDxRPtVPR27k49eu+43ecO5zUosxRmJhlrMRcWJAF/Xf42/AgAA
-X-CMS-MailID: 20191120090210epcas1p4d0f2fd524052392f5046495f4851809c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
-        <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
-        <20191119093718.3501-11-namjae.jeon@samsung.com>
-        <705cb02b-7707-af52-c2b5-70660debc619@web.de>
+References: <20190906154706.2449696-1-arnd@arndb.de> <CAMuHMdUMgDBo1gkvQ_Bd8mjMiPjdWWY=9AU6K1S7NcJy5jhvGQ@mail.gmail.com>
+ <CAK7LNASNp4jPYHmh3e4QYwenYbVrK69tvB_LLyK_ew1eqBNrEw@mail.gmail.com>
+ <20191113114517.GO25745@shell.armlinux.org.uk> <CAMuHMdXk9sWBpYWC-X6V3rp2e0+f5ebdRFFXn8Heuy0qkLq0GQ@mail.gmail.com>
+ <20191113170058.GP25745@shell.armlinux.org.uk>
+In-Reply-To: <20191113170058.GP25745@shell.armlinux.org.uk>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 20 Nov 2019 18:02:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARiQnc+A0j4ORC-M8ZcbtDYdRF7tU1Zv8Lbst-g8dqmVQ@mail.gmail.com>
+Message-ID: <CAK7LNARiQnc+A0j4ORC-M8ZcbtDYdRF7tU1Zv8Lbst-g8dqmVQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: don't export unused return_address()
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Enrico Weigelt <info@metux.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> =E2=80=A6=0D=0A>=20>=20+++=20b/fs/exfat/nls.c=0D=0A>=20=E2=80=A6=0D=0A>=
-=20>=20+static=20int=20exfat_load_upcase_table(struct=20super_block=20*sb,=
-=0D=0A>=20>=20+=09=09sector_t=20sector,=20unsigned=20long=20long=20num_sect=
-ors,=0D=0A>=20>=20+=09=09unsigned=20int=20utbl_checksum)=0D=0A>=20>=20+=7B=
-=0D=0A>=20=E2=80=A6=0D=0A>=20>=20+error:=0D=0A>=20>=20+=09if=20(bh)=0D=0A>=
-=20>=20+=09=09brelse(bh);=0D=0A>=20=0D=0A>=20I=20am=20informed=20in=20the=
-=20way=20that=20this=20function=20tolerates=20the=20passing=0D=0A>=20of=20n=
-ull=20pointers.=0D=0A>=20https://protect2.fireeye.com/url?k=3D58476862-0589=
-69b1-5846e32d-000babff317b-=0D=0A>=202bdcc1db1dc57528&u=3Dhttps://git.kerne=
-l.org/pub/scm/linux/kernel/git/torvalds/=0D=0A>=20linux.git/tree/include/li=
-nux/buffer_head.h?id=3Daf42d3466bdc8f39806b26f593604f=0D=0A>=20dc54140bcb=
-=23n292=0D=0A>=20https://protect2.fireeye.com/url?k=3D625424d5-3f9a2506-625=
-5af9a-000babff317b-=0D=0A>=20a544a35424b18c18&u=3Dhttps://elixir.bootlin.co=
-m/linux/v5.4-=0D=0A>=20rc8/source/include/linux/buffer_head.h=23L292=0D=0A>=
-=20=0D=0A>=20Thus=20I=20suggest=20to=20omit=20the=20extra=20pointer=20check=
-=20also=20at=20similar=20places.=0D=0A>=20=0D=0A>=20Can=20the=20label=20=E2=
-=80=9Crelease_bh=E2=80=9D=20be=20more=20helpful?=0D=0AHi=20Markus,=0D=0A=0D=
-=0AI=20checked=20not=20only=20review=20point=20but=20also=20your=20review=
-=20points=20in=0D=0Aother=20patches,=20I=20will=20fix=20them=20on=20v4.=0D=
-=0A=0D=0AThanks=20for=20your=20review=21=0D=0A>=20=0D=0A>=20Regards,=0D=0A>=
-=20Markus=0D=0A=0D=0A
+Hi Arnd,
+
+
+
+On Thu, Nov 14, 2019 at 2:01 AM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> On Wed, Nov 13, 2019 at 02:15:00PM +0100, Geert Uytterhoeven wrote:
+> > Hi Russell,
+> >
+> > On Wed, Nov 13, 2019 at 12:45 PM Russell King - ARM Linux admin
+> > <linux@armlinux.org.uk> wrote:
+> > > On Wed, Nov 13, 2019 at 08:40:39PM +0900, Masahiro Yamada wrote:
+> > > > On Tue, Oct 1, 2019 at 11:31 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > On Fri, Sep 6, 2019 at 5:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > > Without the frame pointer enabled, return_address() is an inline
+> > > > > > function and does not need to be exported, as shown by this warning:
+> > > > > >
+> > > > > > WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> > > > > >
+> > > > > > Move the EXPORT_SYMBOL_GPL() into the #ifdef as well.
+> > > > > >
+> > > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > >
+> > > > > Thanks for your patch!
+> > > > >
+> > > > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > >
+> > > > > > --- a/arch/arm/kernel/return_address.c
+> > > > > > +++ b/arch/arm/kernel/return_address.c
+> > > > > > @@ -53,6 +53,7 @@ void *return_address(unsigned int level)
+> > > > > >                 return NULL;
+> > > > > >  }
+> > > > > >
+> > > > >
+> > > > > Checkpatch doesn't like the empty line above:
+> > > > >
+> > > > > WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/variable
+> > > > >
+> > > > > > +EXPORT_SYMBOL_GPL(return_address);
+> > > > > > +
+> > > > > >  #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) */
+> > > > > >
+> > > > > > -EXPORT_SYMBOL_GPL(return_address);
+> >
+> > > > What has happened to this patch?
+> > > >
+> > > > I still see this warning.
+> > >
+> > > Simple - it got merged, it caused build regressions, it got dropped.
+> > > A new version is pending me doing another round of patch merging.
+> >
+> > I believe that was not Arnd's patch, but Ben Dooks' alternative solution[*]?
+>
+> I don't keep track of who did what, sorry.
+
+
+Arnd,
+
+I believe this patch is the correct fix.
+Could you please put it into Russell's patch tracker?
+(patches@arm.linux.org.uk)
+
+
+
+
+
+> >
+> > [*] Commit 0b0617e5a610fe12 ("ARM: 8918/1: only build return_address() if
+> >     needed"), which I discovered in next-20191031 when checking if Arnd's
+> >     patch was applied....
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> According to speedtest.net: 11.9Mbps down 500kbps up
+
+
+-- 
+Best Regards
+Masahiro Yamada
