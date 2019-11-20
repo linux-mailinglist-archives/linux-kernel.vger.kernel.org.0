@@ -2,82 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3900A103ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:08:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A4B9103AC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730089AbfKTNIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:08:32 -0500
-Received: from mga11.intel.com ([192.55.52.93]:50971 "EHLO mga11.intel.com"
+        id S1728672AbfKTNMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:12:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730079AbfKTNIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:08:31 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 05:08:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
-   d="scan'208";a="406803216"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2019 05:08:27 -0800
-Received: from andy by smile with local (Exim 4.93-RC1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1iXPic-0005Ei-Tk; Wed, 20 Nov 2019 15:08:26 +0200
-Date:   Wed, 20 Nov 2019 15:08:26 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, helgaas@kernel.org, jingoohan1@gmail.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Subject: Re: [PATCH v8 2/3] dwc: PCI: intel: PCIe RC controller driver
-Message-ID: <20191120130826.GM32742@smile.fi.intel.com>
-References: <cover.1574158309.git.eswara.kota@linux.intel.com>
- <71262d29ca564060331e7e2c1ceb41158109cb92.1574158309.git.eswara.kota@linux.intel.com>
+        id S1727958AbfKTNMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:12:35 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFCFA22519;
+        Wed, 20 Nov 2019 13:12:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574255554;
+        bh=Y1YHQvbgqBVBtYfXoF968NFfUCGRtYRaQ43ufvzwMQs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pdvavX/auzZdjuvYtAjnH7kGUHtTRVMH9RMGBCtfUp/dqm7hOuVcoXzICSr+4KR0X
+         k+nzkC7879TNvYXHP9DvftbfnqeOGzK6+67GMqnl4NTsBdP5WtE5+VpNXlSY/GBk2/
+         z8P65MllnB3+r6jPfIVRXO0FujcJWL/TDXoOsIHI=
+Date:   Wed, 20 Nov 2019 13:12:30 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] selinux: Don't call avc_compute_av() from RCU
+ path walk
+Message-ID: <20191120131229.GA21500@willie-the-truck>
+References: <20191119184057.14961-1-will@kernel.org>
+ <20191119184057.14961-2-will@kernel.org>
+ <5e51f9a5-ba76-a42d-fc2b-9255f8544859@tycho.nsa.gov>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <71262d29ca564060331e7e2c1ceb41158109cb92.1574158309.git.eswara.kota@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <5e51f9a5-ba76-a42d-fc2b-9255f8544859@tycho.nsa.gov>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 03:43:01PM +0800, Dilip Kota wrote:
-> Add support to PCIe RC controller on Intel Gateway SoCs.
-> PCIe controller is based of Synopsys DesignWare PCIe core.
+Hi Stephen,
+
+Thanks for the quick reply.
+
+On Tue, Nov 19, 2019 at 01:59:40PM -0500, Stephen Smalley wrote:
+> On 11/19/19 1:40 PM, Will Deacon wrote:
+> > 'avc_compute_av()' can block, so we carefully exit the RCU read-side
+> > critical section before calling it in 'avc_has_perm_noaudit()'.
+> > Unfortunately, if we're calling from the VFS layer on the RCU path walk
+> > via 'selinux_inode_permission()' then we're still actually in an RCU
+> > read-side critical section and must not block.
 > 
-> Intel PCIe driver requires Upconfigure support, Fast Training
-> Sequence and link speed configurations. So adding the respective
-> helper functions in the PCIe DesignWare framework.
-> It also programs hardware autonomous speed during speed
-> configuration so defining it in pci_regs.h.
+> avc_compute_av() should never block AFAIK. The blocking concern was with
+> slow_avc_audit(), and even that appears dubious to me. That seems to be more
+> about misuse of d_find_alias in dump_common_audit_data() than anything.
 
-> +static void pcie_app_wr_mask(struct intel_pcie_port *lpp,
-> +			     u32 ofs, u32 mask, u32 val)
+Apologies, I lost track of GFP_ATOMIC when I reading the code and didn't
+think it was propagated down to all of the potential allocations and
+string functions. Having looked at it again, I can't see where it blocks.
 
-It seems your editor is misconfigured. First line should be
+Might be worth a comment in avc_compute_av(), because the temporary
+dropping of rcu_read_lock() looks really dodgy when we could be running
+on the RCU path walk path anyway.
 
-static void pcie_app_wr_mask(struct intel_pcie_port *lpp, u32 ofs,
-
-in case you would like to split it logically.
-
-> +static void pcie_rc_cfg_wr_mask(struct intel_pcie_port *lpp,
-> +				u32 ofs, u32 mask, u32 val)
-
-Ditto.
-
-> +	pcie_app_wr(lpp,  PCIE_APP_IRNCR, PCIE_APP_IRN_INT);
-
-Extra white space.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Will
