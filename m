@@ -2,93 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5A81036CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E911036D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbfKTJix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:38:53 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7150 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728456AbfKTJiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:38:51 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7E4DD4BC424209F8601B;
-        Wed, 20 Nov 2019 17:38:49 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 20 Nov 2019
- 17:38:47 +0800
-Subject: Re: [PATCH net v2] net: dsa: ocelot: add dependency for
- NET_DSA_MSCC_FELIX
-To:     David Miller <davem@davemloft.net>
-CC:     <vladimir.oltean@nxp.com>, <claudiu.manoil@nxp.com>,
-        <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
-        <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20191119.154125.1492881397881625788.davem@davemloft.net>
- <20191120014722.8075-1-maowenan@huawei.com>
- <20191119.185323.1049045586606004090.davem@davemloft.net>
-From:   maowenan <maowenan@huawei.com>
-Message-ID: <3e9d6100-6965-da85-c310-6e1a9318f61d@huawei.com>
-Date:   Wed, 20 Nov 2019 17:38:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1728526AbfKTJjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 04:39:07 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38359 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728466AbfKTJiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 04:38:52 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c13so13950189pfp.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 01:38:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JKn/ypHBJEQaLSoXlZSCwq2PzKzgmEP1tdAmz9/2rE8=;
+        b=URpWrUxARABgIbO1nebn1hxneaIAyiBzMBbyjmZPF8gcmlp+hlXB6sT+7CuuYn5uXj
+         9xgpmClXkG6HXoru5zSAj9wUf+nQoEY8D2NBbjfRCJ1ookRgYKsQz5zf2CRX1PQVEvDD
+         BIKsAgdjhgKoOnZHs/eLzHmRbi4WHPIPuygGnoKSF5E0cXFHgXTO1Y7zP8JjMEsFEBIW
+         NMYHMgGknk73rZXI//caJKGrfmVEz3sNL642VCNQJsPOYvxRwU9ojZ3lFGi0n+SNps/I
+         agP0t05TI+OGzJiNcUUnOmMq4OCke9oJ2XCZzAf8y26fy7Ril66S3tbnGV6aGNypi7jd
+         8UoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JKn/ypHBJEQaLSoXlZSCwq2PzKzgmEP1tdAmz9/2rE8=;
+        b=OBk00hJVIXHl5Oiw9P42CprBs/ECCbdTQqYfAJg2PFoL2VeodmpHHWR51dvuZaGesN
+         Pz5v7JhA/QuzYcpfUNtmDfqL7dA9DrSeA2bpHnbMxkwu4uhjBC+rqq2f6Usb1+HPWTRF
+         eeajJE7MqL2Bx4wExPzR4OFlU2Kb6qfBkGKfpgMvnaz6szmVT9p2uTqumfMKzfz6/DXC
+         OpP0DJ8ek7xxm3qaTSeSRs9Nk4Mbv8w1T51+8zb4KuGdeyaYOmqRu+aswzVKzpExh+cb
+         1+Sa8BvbPDpxWk+dAaHO6IXGzE1AHL3E8qAQpGNtV7OypF6xTgP+GP5gRapOZ+Jecw5y
+         CrKQ==
+X-Gm-Message-State: APjAAAUeqZTYbDxIvaBlsO1uaqid/WulFQKbjGuGzoMP8uV4nNJQj5Mz
+        53cOBV5NwsqhBD7SG5fCuS2fcQ==
+X-Google-Smtp-Source: APXvYqwgGngAsrnl1Ni7lgI4C9rbWtfZQ6ZApFqsNSwIF7o7TVFDnSi+fJw+CqR95WKruzfgNboVzA==
+X-Received: by 2002:a65:5542:: with SMTP id t2mr2155255pgr.74.1574242731587;
+        Wed, 20 Nov 2019 01:38:51 -0800 (PST)
+Received: from localhost ([223.226.74.76])
+        by smtp.gmail.com with ESMTPSA id c1sm6858272pjc.23.2019.11.20.01.38.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Nov 2019 01:38:50 -0800 (PST)
+Date:   Wed, 20 Nov 2019 15:08:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Doug Smythies <dsmythies@telus.net>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH] PM: QoS: Invalidate frequency QoS requests after removal
+Message-ID: <20191120093849.u7gelifptikwv632@vireshk-i7>
+References: <12409907.uLZWGnKmhe@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <20191119.185323.1049045586606004090.davem@davemloft.net>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.96.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12409907.uLZWGnKmhe@kreacher>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-ÔÚ 2019/11/20 10:53, David Miller Ð´µÀ:
-> From: Mao Wenan <maowenan@huawei.com>
-> Date: Wed, 20 Nov 2019 09:47:22 +0800
+On 20-11-19, 10:33, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
->> If CONFIG_NET_DSA_MSCC_FELIX=y, and CONFIG_NET_VENDOR_MICROSEMI=n,
->> below errors can be found:
->> drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_del':
->> felix.c:(.text+0x26e): undefined reference to `ocelot_vlan_del'
->> drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_add':
->> felix.c:(.text+0x352): undefined reference to `ocelot_vlan_add'
->>
->> and warning as below:
->> WARNING: unmet direct dependencies detected for MSCC_OCELOT_SWITCH
->> Depends on [n]: NETDEVICES [=y] && ETHERNET [=y] &&
->> NET_VENDOR_MICROSEMI [=n] && NET_SWITCHDEV [=y] && HAS_IOMEM [=y]
->> Selected by [y]:
->> NET_DSA_MSCC_FELIX [=y] && NETDEVICES [=y] && HAVE_NET_DSA [=y]
->> && NET_DSA [=y] && PCI [=y]
->>
->> This patch is to select NET_VENDOR_MICROSEMI for NET_DSA_MSCC_FELIX.
->>
->> Fixes: 56051948773e ("net: dsa: ocelot: add driver for Felix switch family")
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> Switching cpufreq drivers (or switching operation modes of the
+> intel_pstate driver from "active" to "passive" and vice versa)
+> does not work on some x86 systems with ACPI after commit
+> 3000ce3c52f8 ("cpufreq: Use per-policy frequency QoS"), because
+> the ACPI _PPC and thermal code uses the same frequency QoS request
+> object for a given CPU every time a cpufreq driver is registered
+> and freq_qos_remove_request() does not invalidate the request after
+> removing it from its QoS list, so freq_qos_add_request() complains
+> and fails when that request is passed to it again.
 > 
-> You did not read my feedback, read it again please.
-Sorry for that, do you mean firstly to resolve dependencies according to MSCC_OCELOT_SWITCH,
-config MSCC_OCELOT_SWITCH
-        tristate "Ocelot switch driver"
-        depends on NET_SWITCHDEV
-        depends on HAS_IOMEM
-
-after that to select in MSCC_OCELOT_SWITCH in NET_DSA_MSCC_FELIX,
-config NET_DSA_MSCC_FELIX
-        tristate "Ocelot / Felix Ethernet switch support"
-        depends on NET_DSA && PCI
-+	select NET_VENDOR_MICROSEMI
-+       depends on NET_SWITCHDEV
-+	depends on HAS_IOMEM
-        select MSCC_OCELOT_SWITCH
-        select NET_DSA_TAG_OCELOT
-        help
-
-
+> Fix the issue by modifying freq_qos_remove_request() to clear the qos
+> and type fields of the frequency request pointed to by its argument
+> after removing it from its QoS list so as to invalidate it.
 > 
-> .
+> Fixes: 3000ce3c52f8 ("cpufreq: Use per-policy frequency QoS")
+> Reported-and-tested-by: Doug Smythies <dsmythies@telus.net>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  kernel/power/qos.c |    8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
+> Index: linux-pm/kernel/power/qos.c
+> ===================================================================
+> --- linux-pm.orig/kernel/power/qos.c
+> +++ linux-pm/kernel/power/qos.c
+> @@ -814,6 +814,8 @@ EXPORT_SYMBOL_GPL(freq_qos_update_reques
+>   */
+>  int freq_qos_remove_request(struct freq_qos_request *req)
+>  {
+> +	int ret;
+> +
+>  	if (!req)
+>  		return -EINVAL;
+>  
+> @@ -821,7 +823,11 @@ int freq_qos_remove_request(struct freq_
+>  		 "%s() called for unknown object\n", __func__))
+>  		return -EINVAL;
+>  
+> -	return freq_qos_apply(req, PM_QOS_REMOVE_REQ, PM_QOS_DEFAULT_VALUE);
+> +	ret = freq_qos_apply(req, PM_QOS_REMOVE_REQ, PM_QOS_DEFAULT_VALUE);
+> +	req->qos = NULL;
+> +	req->type = 0;
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(freq_qos_remove_request);
 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
