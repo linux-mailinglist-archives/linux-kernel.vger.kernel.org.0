@@ -2,58 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9E210403F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9F310404A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:07:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbfKTQCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:02:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40976 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728345AbfKTQCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:02:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12B67B2CAE;
-        Wed, 20 Nov 2019 16:02:51 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: ipconfig: Wait for deferred device probes
-Date:   Wed, 20 Nov 2019 17:02:36 +0100
-Message-Id: <20191120160236.4459-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1732168AbfKTQHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729187AbfKTQHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:07:17 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8019B20674;
+        Wed, 20 Nov 2019 16:07:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574266037;
+        bh=JqtM3uieK4F0AT1KOQl+ms5JG2OW35LEmqi8mfgeS28=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IdN+TGHv8cjFuVQV2V+NWGv5035/01gZw8/X/NiN/YfSKsHhl/sH+J896AiOfEmRv
+         CwcngduCPLQ7Mr5M966I+uIwfPJPOIZKoZU/BcQHt+VVUeAMLIhuwIS+0L3sjbzid+
+         WhOiVNmkpTRFefgOsN5CMmtmURo3D/cH/QDQXyFU=
+Date:   Wed, 20 Nov 2019 16:07:12 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc:     robin.murphy@arm.com, joro@8bytes.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        xuwei5@hisilicon.com, linuxarm@huawei.com
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Populate VMID field for
+ CMDQ_OP_TLBI_NH_VA
+Message-ID: <20191120160711.GA31165@willie-the-truck>
+References: <20191113161138.22336-1-shameerali.kolothum.thodi@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191113161138.22336-1-shameerali.kolothum.thodi@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If network device drives are using deferred probing, it was possible
-that waiting for devices to show up in ipconfig was already over,
-when the device eventually showed up. By calling wait_for_device_probe()
-we now make sure deferred probing is done before checking for available
-devices.
+On Wed, Nov 13, 2019 at 04:11:38PM +0000, Shameer Kolothum wrote:
+> CMDQ_OP_TLBI_NH_VA requires VMID and this was missing since
+> commit 1c27df1c0a82 ("iommu/arm-smmu: Use correct address mask
+> for CMD_TLBI_S2_IPA"). Add it back.
+> 
+> Fixes: 1c27df1c0a82 ("iommu/arm-smmu: Use correct address mask for CMD_TLBI_S2_IPA")
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
+> This came to light while verifying the "SMMUv3 Nested Stage Setup"
+> series by Eric. Please find the discusiion here,
+> https://lore.kernel.org/patchwork/cover/1099617/
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 8da93e730d6f..9b5274346df0 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -856,6 +856,7 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+>  		cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_RANGE, 31);
+>  		break;
+>  	case CMDQ_OP_TLBI_NH_VA:
+> +		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
+>  		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
+>  		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_LEAF, ent->tlbi.leaf);
+>  		cmd[1] |= ent->tlbi.addr & CMDQ_TLBI_1_VA_MASK;
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
- net/ipv4/ipconfig.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks. I don't think this matters with the way things currently work (we
+only have VMID 0 for stage-1 domains), so I'll queue it for 5.6.
 
-diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index 9bcca08efec9..49b2381e857e 100644
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -1412,6 +1412,9 @@ static int __init wait_for_devices(void)
- 		struct net_device *dev;
- 		int found = 0;
- 
-+		/* make sure deferred device probes are finished */
-+		wait_for_device_probe();
-+
- 		rtnl_lock();
- 		for_each_netdev(&init_net, dev) {
- 			if (ic_is_init_dev(dev)) {
--- 
-2.16.4
-
+Will
