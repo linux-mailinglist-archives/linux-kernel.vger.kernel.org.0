@@ -2,131 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A59B1040C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F1E6104105
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732801AbfKTQ15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:27:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:42262 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729857AbfKTQ15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:27:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8079E1FB;
-        Wed, 20 Nov 2019 08:27:56 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3148F3F703;
-        Wed, 20 Nov 2019 08:27:55 -0800 (PST)
-Date:   Wed, 20 Nov 2019 16:27:50 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: of: Restore alignment/indentation in host bridge
- window table
-Message-ID: <20191120162750.GA3279@e121166-lin.cambridge.arm.com>
-References: <20191119191505.25286-1-geert+renesas@glider.be>
+        id S1732842AbfKTQlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:41:42 -0500
+Received: from protonic.xs4all.nl ([83.163.252.89]:34198 "EHLO protonic.nl"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729448AbfKTQll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:41:41 -0500
+X-Greylist: delayed 538 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 11:41:40 EST
+Received: from webmail.promanet.nl (edge2.prtnl [192.168.1.170])
+        by sparta (Postfix) with ESMTP id B38DC44A0065;
+        Wed, 20 Nov 2019 17:34:53 +0100 (CET)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119191505.25286-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 20 Nov 2019 17:32:38 +0100
+From:   robin <robin@protonic.nl>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        "linux-input @ vger . kernel . org" <linux-input@vger.kernel.org>,
+        "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        "linux-arm-kernel @ lists . infradead . org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] input: keyboard: snvs_pwrkey: Send key events for
+ i.MX6 S, DL and Q
+In-Reply-To: <20191120092749.7rru5fj7eybs4tl6@pengutronix.de>
+References: <20190904062329.97520-1-robin@protonic.nl>
+ <20190912201300.GA636@penguin>
+ <803592d161b9ca75d6ac1c2c54e891a1@protonic.nl>
+ <VE1PR04MB663896B94C68B5EF9AE0BE36898C0@VE1PR04MB6638.eurprd04.prod.outlook.com>
+ <20190916233701.GH237523@dtor-ws>
+ <20191120092749.7rru5fj7eybs4tl6@pengutronix.de>
+Message-ID: <fb98fa1fde9a367d7ab33d04a5804684@protonic.nl>
+X-Sender: robin@protonic.nl
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 08:15:05PM +0100, Geert Uytterhoeven wrote:
-> Since the printing of the inbound resources was added, alignment and
-> indentation of the host bridge window table is broken because of two
-> reasons:
->   1. The "IB MEM" row header is longer than the other headers,
->   2. Inbound ranges typically extend beyond 32-bit address space, and thus
->      don't fit in "#010llx".
+On 2019-11-20 10:27, Marco Felsch wrote:
+> Hi Robin,
 > 
-> Fix this by extending the row header field to 6 characters, and the
-> format string to 40-bit addresses.
+> On 19-09-16 16:37, Dmitry Torokhov wrote:
+>> On Mon, Sep 16, 2019 at 07:45:37AM +0000, Robin Gong wrote:
+>> > On 2019/9/13 15:31 robin <robin@protonic.nl> wrote:>
+>> > > Hi Dmitry,
+>> > >
+>> > > On 2019-09-12 22:13, Dmitry Torokhov wrote:
+>> > > > Hi Robin,
+>> > > >
+>> > > > On Wed, Sep 04, 2019 at 06:23:29AM +0000, Robin van der Gracht wrote:
+>> > > >> The first generation i.MX6 processors does not send an interrupt when
+>> > > >> the power key is pressed. It sends a power down request interrupt if
+>> > > >> the key is released before a hard shutdown (5 second press). This
+>> > > >> should allow software to bring down the SoC safely.
+>> > > >>
+>> > > >> For this driver to work as a regular power key with the older SoCs,
+>> > > >> we need to send a keypress AND release when we get the power down
+>> > > >> request irq.
+>> > > >>
+>> > > >> Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+>> > > >> ---
+>> > > >> @@ -67,13 +83,17 @@ static irqreturn_t imx_snvs_pwrkey_interrupt(int
+>> > > >> irq, void *dev_id)  {
+>> > > >>  	struct platform_device *pdev = dev_id;
+>> > > >>  	struct pwrkey_drv_data *pdata = platform_get_drvdata(pdev);
+>> > > >> +	unsigned long expire = jiffies;
+>> > > >>  	u32 lp_status;
+>> > > >>
+>> > > >>  	pm_wakeup_event(pdata->input->dev.parent, 0);
+>> > > >>
+>> > > >>  	regmap_read(pdata->snvs, SNVS_LPSR_REG, &lp_status);
+>> > > >> -	if (lp_status & SNVS_LPSR_SPO)
+>> > > >> -		mod_timer(&pdata->check_timer, jiffies +
+>> > > >> msecs_to_jiffies(DEBOUNCE_TIME));
+>> > > >> +	if (lp_status & SNVS_LPSR_SPO) {
+>> > > >> +		if (pdata->minor_rev > 0)
+>> > > >> +			expire = jiffies + msecs_to_jiffies(DEBOUNCE_TIME);
+>> > > >> +		mod_timer(&pdata->check_timer, expire);
+>> > > >
+>> > > > Why do we even need to fire the timer in case of the first generation
+>> > > > hardware? Just send press and release events directly from the ISR.
+>> > That timer looks like a software debounce to prevent unexpected and
+>> > meaningless interrupt/event caused by quick press/release.
+>> 
+>> Right, but in case of the first generation hardware we schedule the
+>> timer immediately (expire == 0) and do not check state of the hardware
+>> in the timer handler, but rather simply emit down/up events, so we do
+>> not really get any benefit from the timer (again, I am talking about
+>> first generation hardware only).
 > 
-> Use "%6s" to handle field size and right-alignment, instead of manual
-> preparation using error-prone snprintf() calls.  Use the exact same
-> format string for both cases, to allow sharing.
-> 
-> Impact on kernel boot log on r8a7791/koelsch:
-> 
->      rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
->     -rcar-pcie fe000000.pcie:    IO 0xfe100000..0xfe1fffff -> 0x00000000
->     -rcar-pcie fe000000.pcie:   MEM 0xfe200000..0xfe3fffff -> 0xfe200000
->     -rcar-pcie fe000000.pcie:   MEM 0x30000000..0x37ffffff -> 0x30000000
->     -rcar-pcie fe000000.pcie:   MEM 0x38000000..0x3fffffff -> 0x38000000
->     -rcar-pcie fe000000.pcie: IB MEM 0x40000000..0xbfffffff -> 0x40000000
->     -rcar-pcie fe000000.pcie: IB MEM 0x200000000..0x2ffffffff -> 0x200000000
->     +rcar-pcie fe000000.pcie:       IO 0x00fe100000..0x00fe1fffff -> 0x0000000000
->     +rcar-pcie fe000000.pcie:      MEM 0x00fe200000..0x00fe3fffff -> 0x00fe200000
->     +rcar-pcie fe000000.pcie:      MEM 0x0030000000..0x0037ffffff -> 0x0030000000
->     +rcar-pcie fe000000.pcie:      MEM 0x0038000000..0x003fffffff -> 0x0038000000
->     +rcar-pcie fe000000.pcie:   IB MEM 0x0040000000..0x00bfffffff -> 0x0040000000
->     +rcar-pcie fe000000.pcie:   IB MEM 0x0200000000..0x02ffffffff -> 0x0200000000
-> 
-> Fixes: 52ac576f88f9f701 ("PCI: of: Add inbound resource parsing to helpers")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/pci/of.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Did you prepared a v4? Just ask to avoid a duplicated work :)
 
-Hi Rob,
+No I haven't. Not sure what the public wants. Use timer, don't use 
+timer..
 
-do you mind if I squash this patch in the Fixes: above ?
+v3 has had long term testing though ;)
 
-Thanks,
-Lorenzo
-
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index e7e12adcff3a3836..81ceeaa6f1d5a2c5 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -265,7 +265,7 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  	struct resource *bus_range;
->  	struct of_pci_range range;
->  	struct of_pci_range_parser parser;
-> -	char range_type[4];
-> +	const char *range_type;
->  	int err;
->  
->  	if (io_base)
-> @@ -299,12 +299,12 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  	for_each_of_pci_range(&parser, &range) {
->  		/* Read next ranges element */
->  		if ((range.flags & IORESOURCE_TYPE_BITS) == IORESOURCE_IO)
-> -			snprintf(range_type, 4, " IO");
-> +			range_type = "IO";
->  		else if ((range.flags & IORESOURCE_TYPE_BITS) == IORESOURCE_MEM)
-> -			snprintf(range_type, 4, "MEM");
-> +			range_type = "MEM";
->  		else
-> -			snprintf(range_type, 4, "err");
-> -		dev_info(dev, "  %s %#010llx..%#010llx -> %#010llx\n",
-> +			range_type = "err";
-> +		dev_info(dev, "  %6s %#012llx..%#012llx -> %#012llx\n",
->  			 range_type, range.cpu_addr,
->  			 range.cpu_addr + range.size - 1, range.pci_addr);
->  
-> @@ -359,8 +359,8 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  		    range.cpu_addr == OF_BAD_ADDR || range.size == 0)
->  			continue;
->  
-> -		dev_info(dev, "IB MEM %#010llx..%#010llx -> %#010llx\n",
-> -			 range.cpu_addr,
-> +		dev_info(dev, "  %6s %#012llx..%#012llx -> %#012llx\n",
-> +			 "IB MEM", range.cpu_addr,
->  			 range.cpu_addr + range.size - 1, range.pci_addr);
->  
->  
-> -- 
-> 2.17.1
-> 
+Regards,
+Robin van der Gracht
