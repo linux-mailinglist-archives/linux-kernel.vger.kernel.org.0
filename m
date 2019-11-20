@@ -2,640 +2,591 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67837103680
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16A3A103678
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfKTJTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:19:38 -0500
-Received: from mga06.intel.com ([134.134.136.31]:61597 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728176AbfKTJTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:19:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 01:19:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,221,1571727600"; 
-   d="scan'208";a="237660962"
-Received: from unknown (HELO localhost.localdomain.bj.intel.com) ([10.240.193.79])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2019 01:19:32 -0800
-From:   Zhu Lingshan <lingshan.zhu@intel.com>
-To:     mst@redhat.com, jasowang@redhat.com, alex.williamson@redhat.com
-Cc:     linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
-        zhiyuan.lv@intel.com, Zhu Lingshan <lingshan.zhu@intel.com>
-Subject: [RFC V4 2/2] This commit introduced IFC operations for vdpa
-Date:   Wed, 20 Nov 2019 17:17:11 +0800
-Message-Id: <1574241431-24792-3-git-send-email-lingshan.zhu@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1574241431-24792-1-git-send-email-lingshan.zhu@intel.com>
-References: <1574241431-24792-1-git-send-email-lingshan.zhu@intel.com>
+        id S1728121AbfKTJTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 04:19:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38504 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726689AbfKTJTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 04:19:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5DDFFB4AD;
+        Wed, 20 Nov 2019 09:19:03 +0000 (UTC)
+Subject: Re: [PATCH v2 06/13] exfat: add exfat entry operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        linkinjeon@gmail.com, Markus.Elfring@web.de, sj1557.seo@samsung.com
+References: <20191119071107.1947-1-namjae.jeon@samsung.com>
+ <CGME20191119071405epcas1p29e1af8242cce221c45eb529921028e48@epcas1p2.samsung.com>
+ <20191119071107.1947-7-namjae.jeon@samsung.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <93d33e8b-b75b-61ee-ee74-2257a4ec5acf@suse.com>
+Date:   Wed, 20 Nov 2019 11:19:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191119071107.1947-7-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit intends to implement ops which complying to
-virtio_mdev and vhost_mdev interfaces, handles IFC VF initialization,
-configuration and removal.
 
-Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
----
- drivers/vhost/ifcvf/ifcvf_main.c | 582 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 582 insertions(+)
- create mode 100644 drivers/vhost/ifcvf/ifcvf_main.c
 
-diff --git a/drivers/vhost/ifcvf/ifcvf_main.c b/drivers/vhost/ifcvf/ifcvf_main.c
-new file mode 100644
-index 0000000..cdc804f
---- /dev/null
-+++ b/drivers/vhost/ifcvf/ifcvf_main.c
-@@ -0,0 +1,582 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2019 Intel Corporation.
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/mdev.h>
-+#include <linux/pci.h>
-+#include <linux/sysfs.h>
-+#include "ifcvf_base.h"
-+
-+#define VERSION_STRING	"0.1"
-+#define DRIVER_AUTHOR	"Intel Corporation"
-+#define IFCVF_DRIVER_NAME	"ifcvf"
-+
-+static struct ifcvf_hw *mdev_to_vf(struct mdev_device *mdev)
-+{
-+	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-+	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-+
-+	return vf;
-+}
-+
-+static irqreturn_t ifcvf_intr_handler(int irq, void *arg)
-+{
-+	struct vring_info *vring = arg;
-+
-+	if (vring->cb.callback)
-+		return vring->cb.callback(vring->cb.private);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static u64 ifcvf_mdev_get_features(struct mdev_device *mdev)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	return ifcvf_get_features(vf);
-+}
-+
-+static int ifcvf_mdev_set_features(struct mdev_device *mdev, u64 features)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	vf->req_features = features;
-+
-+	return 0;
-+}
-+
-+static u64 ifcvf_mdev_get_vq_state(struct mdev_device *mdev, u16 qid)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+	u16 last_avail_idx;
-+	u16 __iomem *idx_addr;
-+
-+	idx_addr = (u16 __iomem*)(vf->lm_cfg + IFCVF_LM_RING_STATE_OFFSET +
-+			(qid / 2) * IFCVF_LM_CFG_SIZE + (qid % 2) * 4);
-+
-+	last_avail_idx = ioread16(idx_addr);
-+
-+	return last_avail_idx;
-+}
-+
-+static int ifcvf_mdev_set_vq_state(struct mdev_device *mdev, u16 qid, u64 num)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	vf->vring[qid].last_avail_idx = num;
-+
-+	return 0;
-+}
-+
-+static int ifcvf_mdev_set_vq_address(struct mdev_device *mdev, u16 idx,
-+				     u64 desc_area, u64 driver_area,
-+				     u64 device_area)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	vf->vring[idx].desc = desc_area;
-+	vf->vring[idx].avail = driver_area;
-+	vf->vring[idx].used = device_area;
-+
-+	return 0;
-+}
-+
-+static void ifcvf_mdev_set_vq_num(struct mdev_device *mdev, u16 qid, u32 num)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	vf->vring[qid].size = num;
-+}
-+
-+static void ifcvf_mdev_set_vq_ready(struct mdev_device *mdev,
-+				    u16 qid, bool ready)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	vf->vring[qid].ready = ready;
-+}
-+
-+static bool ifcvf_mdev_get_vq_ready(struct mdev_device *mdev, u16 qid)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	return vf->vring[qid].ready;
-+}
-+
-+static void ifcvf_mdev_set_vq_cb(struct mdev_device *mdev, u16 idx,
-+				 struct virtio_mdev_callback *cb)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	vf->vring[idx].cb = *cb;
-+}
-+
-+static void ifcvf_mdev_kick_vq(struct mdev_device *mdev, u16 idx)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	ifcvf_notify_queue(vf, idx);
-+}
-+
-+static u8 ifcvf_mdev_get_status(struct mdev_device *mdev)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	return ifcvf_get_status(vf);
-+}
-+
-+static u32 ifcvf_mdev_get_generation(struct mdev_device *mdev)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	return ioread8(&vf->common_cfg->config_generation);
-+}
-+
-+static u32 ifcvf_mdev_get_device_id(struct mdev_device *mdev)
-+{
-+	return VIRTIO_ID_NET;
-+}
-+
-+static u32 ifcvf_mdev_get_vendor_id(struct mdev_device *mdev)
-+{
-+	return IFCVF_VENDOR_ID;
-+}
-+
-+static u16 ifcvf_mdev_get_vq_align(struct mdev_device *mdev)
-+{
-+	return IFCVF_QUEUE_ALIGNMENT;
-+}
-+
-+static int ifcvf_start_datapath(void *private)
-+{
-+	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(private);
-+	struct ifcvf_adapter *ifcvf;
-+	int ret = 0;
-+	u8 status;
-+
-+	ifcvf = container_of(vf, struct ifcvf_adapter, vf);
-+	vf->nr_vring = IFCVF_MAX_QUEUE_PAIRS * 2;
-+	ret = ifcvf_start_hw(vf);
-+
-+	if (ret) {
-+		status = ifcvf_get_status(vf);
-+		status |= VIRTIO_CONFIG_S_FAILED;
-+		ifcvf_set_status(vf, status);
-+	}
-+
-+	return ret;
-+}
-+
-+static int ifcvf_stop_datapath(void *private)
-+{
-+	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(private);
-+	int i;
-+
-+	for (i = 0; i < IFCVF_MAX_QUEUES; i++)
-+		vf->vring[i].cb.callback = NULL;
-+
-+	ifcvf_stop_hw(vf);
-+
-+	return 0;
-+}
-+
-+static void ifcvf_reset_vring(struct ifcvf_adapter *adapter)
-+{
-+	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-+	int i;
-+
-+	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		vf->vring[i].last_used_idx = 0;
-+		vf->vring[i].last_avail_idx = 0;
-+		vf->vring[i].desc = 0;
-+		vf->vring[i].avail = 0;
-+		vf->vring[i].used = 0;
-+		vf->vring[i].ready = 0;
-+		vf->vring->cb.callback = NULL;
-+		vf->vring->cb.private = NULL;
-+
-+	}
-+
-+	ifcvf_reset(vf);
-+}
-+
-+static void ifcvf_mdev_set_status(struct mdev_device *mdev, u8 status)
-+{
-+	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
-+	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-+	int ret = 0;
-+
-+	if (status == 0) {
-+		ifcvf_stop_datapath(adapter);
-+		ifcvf_reset_vring(adapter);
-+		return;
-+	}
-+
-+	if (status & VIRTIO_CONFIG_S_DRIVER_OK) {
-+		ret = ifcvf_start_datapath(adapter);
-+
-+		if (ret)
-+			IFC_ERR(adapter->dev, "Failed to set mdev status %u\n",
-+				status);
-+	}
-+
-+	ifcvf_set_status(vf, status);
-+}
-+
-+static u16 ifcvf_mdev_get_vq_num_max(struct mdev_device *mdev)
-+{
-+
-+	return (u16)IFCVF_QUEUE_MAX;
-+}
-+static void ifcvf_mdev_get_config(struct mdev_device *mdev, unsigned int offset,
-+			     void *buf, unsigned int len)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	WARN_ON(offset + len > sizeof(struct virtio_net_config));
-+	ifcvf_read_net_config(vf, offset, buf, len);
-+}
-+
-+static void ifcvf_mdev_set_config(struct mdev_device *mdev, unsigned int offset,
-+			     const void *buf, unsigned int len)
-+{
-+	struct ifcvf_hw *vf = mdev_to_vf(mdev);
-+
-+	WARN_ON(offset + len > sizeof(struct virtio_net_config));
-+	ifcvf_write_net_config(vf, offset, buf, len);
-+}
-+
-+static struct mdev_virtio_ops ifc_mdev_ops = {
-+	.get_features  = ifcvf_mdev_get_features,
-+	.set_features  = ifcvf_mdev_set_features,
-+	.get_status    = ifcvf_mdev_get_status,
-+	.set_status    = ifcvf_mdev_set_status,
-+	.get_vq_num_max = ifcvf_mdev_get_vq_num_max,
-+	.get_vq_state   = ifcvf_mdev_get_vq_state,
-+	.set_vq_state   = ifcvf_mdev_set_vq_state,
-+	.set_vq_cb      = ifcvf_mdev_set_vq_cb,
-+	.set_vq_ready   = ifcvf_mdev_set_vq_ready,
-+	.get_vq_ready	= ifcvf_mdev_get_vq_ready,
-+	.set_vq_num     = ifcvf_mdev_set_vq_num,
-+	.set_vq_address = ifcvf_mdev_set_vq_address,
-+	.kick_vq        = ifcvf_mdev_kick_vq,
-+	.get_generation	= ifcvf_mdev_get_generation,
-+	.get_device_id	= ifcvf_mdev_get_device_id,
-+	.get_vendor_id	= ifcvf_mdev_get_vendor_id,
-+	.get_vq_align	= ifcvf_mdev_get_vq_align,
-+	.get_config	= ifcvf_mdev_get_config,
-+	.set_config	= ifcvf_mdev_set_config,
-+};
-+
-+static int ifcvf_init_msix(struct ifcvf_adapter *adapter)
-+{
-+	struct pci_dev *pdev = to_pci_dev(adapter->dev);
-+	struct ifcvf_hw *vf = &adapter->vf;
-+	int vector, i, ret, irq;
-+
-+	ret = pci_alloc_irq_vectors(pdev, IFCVF_MAX_INTR,
-+				    IFCVF_MAX_INTR, PCI_IRQ_MSIX);
-+	if (ret < 0) {
-+		IFC_ERR(adapter->dev, "Failed to alloc irq vectors\n");
-+		return ret;
-+	}
-+
-+	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		vector = i + IFCVF_MSI_QUEUE_OFF;
-+		irq = pci_irq_vector(pdev, vector);
-+		ret = request_irq(irq, ifcvf_intr_handler, 0,
-+				pci_name(pdev), &vf->vring[i]);
-+		if (ret) {
-+			IFC_ERR(adapter->dev,
-+				"Failed to request irq for vq %d\n", i);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void ifcvf_destroy_adapter(struct ifcvf_adapter *adapter)
-+{
-+	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
-+	struct pci_dev *pdev = to_pci_dev(adapter->dev);
-+	int i, vector, irq;
-+
-+	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		vector = i + IFCVF_MSI_QUEUE_OFF;
-+		irq = pci_irq_vector(pdev, vector);
-+		free_irq(irq, &vf->vring[i]);
-+	}
-+}
-+
-+static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
-+{
-+	const char *name = "IFC VF virtio/vhost accelerator (virtio ring compatible)";
-+
-+	return sprintf(buf, "%s\n", name);
-+}
-+MDEV_TYPE_ATTR_RO(name);
-+
-+static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
-+			       char *buf)
-+{
-+	//return sprintf(buf, "%s\n", VIRTIO_MDEV_DEVICE_API_STRING);
-+	return sprintf(buf, "%s\n", "virtio_mdev");
-+}
-+MDEV_TYPE_ATTR_RO(device_api);
-+
-+static ssize_t available_instances_show(struct kobject *kobj,
-+					struct device *dev, char *buf)
-+{
-+	struct pci_dev *pdev;
-+	struct ifcvf_adapter *adapter;
-+
-+	pdev = to_pci_dev(dev);
-+	adapter = pci_get_drvdata(pdev);
-+
-+	return sprintf(buf, "%d\n", adapter->mdev_count);
-+}
-+
-+MDEV_TYPE_ATTR_RO(available_instances);
-+
-+static ssize_t type_show(struct kobject *kobj,
-+			struct device *dev, char *buf)
-+{
-+	return sprintf(buf, "%s\n", "net");
-+}
-+
-+MDEV_TYPE_ATTR_RO(type);
-+
-+
-+static struct attribute *mdev_types_attrs[] = {
-+	&mdev_type_attr_name.attr,
-+	&mdev_type_attr_device_api.attr,
-+	&mdev_type_attr_available_instances.attr,
-+	&mdev_type_attr_type.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group mdev_type_group_virtio = {
-+	.name  = "virtio_mdev",
-+	.attrs = mdev_types_attrs,
-+};
-+
-+static struct attribute_group mdev_type_group_vhost = {
-+	.name  = "vhost_mdev",
-+	.attrs = mdev_types_attrs,
-+};
-+
-+static struct attribute_group *mdev_type_groups[] = {
-+	&mdev_type_group_virtio,
-+	&mdev_type_group_vhost,
-+	NULL,
-+};
-+
-+const struct attribute_group *mdev_dev_groups[] = {
-+	NULL,
-+};
-+
-+static int ifcvf_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
-+{
-+	struct device *dev = mdev_parent_dev(mdev);
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-+	int ret = 0;
-+
-+	mutex_lock(&adapter->mdev_lock);
-+
-+	if (adapter->mdev_count < IFCVF_MDEV_LIMIT) {
-+		IFC_ERR(&pdev->dev,
-+			"Can not create mdev, reached limitation %d\n",
-+			IFCVF_MDEV_LIMIT);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	mdev_virtio_set_ops(mdev, &ifc_mdev_ops);
-+
-+	if (!strcmp(kobj->name, "ifcvf-virtio_mdev"))
-+		mdev_virtio_set_class_id(mdev,MDEV_VIRTIO_CLASS_ID_VIRTIO);
-+
-+	if (!strcmp(kobj->name, "ifcvf-vhost_mdev"))
-+		mdev_virtio_set_class_id(mdev,MDEV_VIRTIO_CLASS_ID_VHOST);
-+
-+	mdev_set_drvdata(mdev, adapter);
-+	mdev_set_iommu_device(mdev_dev(mdev), dev);
-+	adapter->mdev_count--;
-+
-+out:
-+	mutex_unlock(&adapter->mdev_lock);
-+	return ret;
-+}
-+
-+static int ifcvf_mdev_remove(struct mdev_device *mdev)
-+{
-+	struct device *dev = mdev_parent_dev(mdev);
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-+
-+	mutex_lock(&adapter->mdev_lock);
-+	adapter->mdev_count++;
-+	mutex_unlock(&adapter->mdev_lock);
-+
-+	return 0;
-+}
-+
-+static struct mdev_parent_ops ifcvf_mdev_fops = {
-+	.owner			= THIS_MODULE,
-+	.supported_type_groups	= mdev_type_groups,
-+	.mdev_attr_groups	= mdev_dev_groups,
-+	.create			= ifcvf_mdev_create,
-+	.remove			= ifcvf_mdev_remove,
-+};
-+
-+static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct ifcvf_adapter *adapter;
-+	struct ifcvf_hw *vf;
-+	int ret, i;
-+
-+	adapter = kzalloc(sizeof(struct ifcvf_adapter), GFP_KERNEL);
-+
-+	if (adapter == NULL) {
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	mutex_init(&adapter->mdev_lock);
-+	adapter->mdev_count = IFCVF_MDEV_LIMIT;
-+	adapter->dev = dev;
-+	pci_set_drvdata(pdev, adapter);
-+	ret = pci_enable_device(pdev);
-+
-+	if (ret) {
-+		IFC_ERR(adapter->dev, "Failed to enable device\n");
-+		goto free_adapter;
-+	}
-+
-+	ret = pci_request_regions(pdev, IFCVF_DRIVER_NAME);
-+
-+	if (ret) {
-+		IFC_ERR(adapter->dev, "Failed to request MMIO region\n");
-+		goto disable_device;
-+	}
-+
-+	pci_set_master(pdev);
-+	ret = ifcvf_init_msix(adapter);
-+
-+	if (ret) {
-+		IFC_ERR(adapter->dev, "Failed to initialize MSI-X\n");
-+		goto free_msix;
-+	}
-+
-+	vf = &adapter->vf;
-+	
-+	for (i = 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
-+		vf->mem_resource[i].phys_addr = pci_resource_start(pdev, i);
-+		vf->mem_resource[i].len = pci_resource_len(pdev, i);
-+		if (!vf->mem_resource[i].len) {
-+			vf->mem_resource[i].addr = NULL;
-+			continue;
-+		}
-+
-+		vf->mem_resource[i].addr = pci_iomap_range(pdev, i, 0,
-+				vf->mem_resource[i].len);
-+		if (!vf->mem_resource[i].addr) {
-+			IFC_ERR(adapter->dev, "Failed to map IO resource %d\n",
-+				i);
-+			ret = -1;
-+			goto free_msix;
-+		}
-+	}
-+
-+	if (ifcvf_init_hw(vf, pdev) < 0) {
-+		ret = -1;
-+		goto destroy_adapter;
-+	}
-+
-+	ret = mdev_virtio_register_device(dev, &ifcvf_mdev_fops);
-+
-+	if (ret) {
-+		IFC_ERR(adapter->dev,  "Failed to register mdev device\n");
-+		goto destroy_adapter;
-+	}
-+
-+	return 0;
-+
-+destroy_adapter:
-+	ifcvf_destroy_adapter(adapter);
-+free_msix:
-+	pci_free_irq_vectors(pdev);
-+	pci_release_regions(pdev);
-+disable_device:
-+	pci_disable_device(pdev);
-+free_adapter:
-+	kfree(adapter);
-+fail:
-+	return ret;
-+}
-+
-+static void ifcvf_remove(struct pci_dev *pdev)
-+{
-+	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+	struct ifcvf_hw *vf;
-+	int i;
-+
-+	mdev_virtio_unregister_device(dev);
-+
-+	vf = &adapter->vf;
-+	for (i = 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
-+		if (vf->mem_resource[i].addr) {
-+			pci_iounmap(pdev, vf->mem_resource[i].addr);
-+			vf->mem_resource[i].addr = NULL;
-+		}
-+	}
-+
-+	ifcvf_destroy_adapter(adapter);
-+	pci_free_irq_vectors(pdev);
-+	pci_release_regions(pdev);
-+	pci_disable_device(pdev);
-+	kfree(adapter);
-+}
-+
-+static struct pci_device_id ifcvf_pci_ids[] = {
-+	{ PCI_DEVICE_SUB(IFCVF_VENDOR_ID,
-+			IFCVF_DEVICE_ID,
-+			IFCVF_SUBSYS_VENDOR_ID,
-+			IFCVF_SUBSYS_DEVICE_ID) },
-+	{ 0 },
-+};
-+MODULE_DEVICE_TABLE(pci, ifcvf_pci_ids);
-+
-+static struct pci_driver ifcvf_driver = {
-+	.name     = IFCVF_DRIVER_NAME,
-+	.id_table = ifcvf_pci_ids,
-+	.probe    = ifcvf_probe,
-+	.remove   = ifcvf_remove,
-+};
-+
-+static int __init ifcvf_init_module(void)
-+{
-+	int ret;
-+
-+	ret = pci_register_driver(&ifcvf_driver);
-+	return ret;
-+}
-+
-+static void __exit ifcvf_exit_module(void)
-+{
-+	pci_unregister_driver(&ifcvf_driver);
-+}
-+
-+module_init(ifcvf_init_module);
-+module_exit(ifcvf_exit_module);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_VERSION(VERSION_STRING);
-+MODULE_AUTHOR(DRIVER_AUTHOR);
--- 
-1.8.3.1
+On 19.11.19 г. 9:11 ч., Namjae Jeon wrote:
+> This adds the implementation of exfat entry operations for exfat.
+> 
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+> ---
+>  fs/exfat/fatent.c | 475 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 475 insertions(+)
+>  create mode 100644 fs/exfat/fatent.c
+> 
+> diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+> new file mode 100644
+> index 000000000000..006c513ae5c0
+> --- /dev/null
+> +++ b/fs/exfat/fatent.c
+> @@ -0,0 +1,475 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
+> + */
+> +
+> +#include <linux/slab.h>
+> +#include <asm/unaligned.h>
+> +#include <linux/buffer_head.h>
+> +
+> +#include "exfat_raw.h"
+> +#include "exfat_fs.h"
+> +
+> +static int __exfat_ent_get(struct super_block *sb, unsigned int loc,
+> +		unsigned int *content)
+> +{
+> +	unsigned int off, _content;
+> +	sector_t sec;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct buffer_head *bh;
+> +
+> +	sec = sbi->FAT1_start_sector + (loc >> (sb->s_blocksize_bits-2));
+> +	off = (loc << 2) & (sb->s_blocksize - 1);
+> +
+> +	bh = sb_bread(sb, sec);
+> +	if (!bh)
+> +		return -EIO;
+> +
+> +	_content = le32_to_cpu(*(__le32 *)(&bh->b_data[off]));
+> +
+> +	/* remap reserved clusters to simplify code */
+> +	if (_content >= CLUSTER_32(0xFFFFFFF8))
+> +		_content = EOF_CLUSTER;
+> +
+> +	*content = CLUSTER_32(_content);
+> +	brelse(bh);
+> +	return 0;
+> +}
+> +
+> +int exfat_ent_set(struct super_block *sb, unsigned int loc,
+> +		unsigned int content)
+> +{
+> +	unsigned int off;
+> +	sector_t sec;
+> +	__le32 *fat_entry;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct buffer_head *bh;
+> +
+> +	sec = sbi->FAT1_start_sector + (loc >> (sb->s_blocksize_bits-2));
+> +	off = (loc << 2) & (sb->s_blocksize - 1);
+> +
+> +	bh = sb_bread(sb, sec);
+> +	if (!bh)
+> +		return -EIO;
+> +
+> +	fat_entry = (__le32 *)&(bh->b_data[off]);
+> +	*fat_entry = cpu_to_le32(content);
+> +	exfat_update_bh(sb, bh, sb->s_flags & SB_SYNCHRONOUS);
+> +	exfat_mirror_bh(sb, sec, bh);
+> +	brelse(bh);
+> +	return 0;
+> +}
+> +
+> +static inline bool is_reserved_cluster(unsigned int clus)
+> +{
+> +	if (clus == FREE_CLUSTER || clus == EOF_CLUSTER || clus == BAD_CLUSTER)
+> +		return true;
+> +	return false;
+> +}
+> +
+> +static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+> +		unsigned int clus)
+> +{
+> +	if (clus < BASE_CLUSTER || sbi->num_clusters <= clus)
+> +		return false;
+> +	return true;
+> +}
+> +
+> +int exfat_ent_get(struct super_block *sb, unsigned int loc,
+> +		unsigned int *content)
+> +{
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	int err;
+> +
+> +	if (!is_valid_cluster(sbi, loc)) {
+> +		exfat_fs_error(sb, "invalid access to FAT (entry 0x%08x)",
+> +			loc);
+> +		return -EIO;
+> +	}
+> +
+> +	err = __exfat_ent_get(sb, loc, content);
+> +	if (err) {
+> +		exfat_fs_error(sb,
+> +			"failed to access to FAT (entry 0x%08x, err:%d)",
+> +			loc, err);
+> +		return err;
+> +	}
+> +
+> +	if (!is_reserved_cluster(*content) &&
+> +			!is_valid_cluster(sbi, *content)) {
+> +		exfat_fs_error(sb,
+> +			"invalid access to FAT (entry 0x%08x) bogus content (0x%08x)",
+> +			loc, *content);
+> +		return -EIO;
+> +	}
+> +
+> +	if (*content == FREE_CLUSTER) {
+> +		exfat_fs_error(sb,
+> +			"invalid access to FAT free cluster (entry 0x%08x)",
+> +			loc);
+> +		return -EIO;
+> +	}
+> +
+> +	if (*content == BAD_CLUSTER) {
+> +		exfat_fs_error(sb,
+> +			"invalid access to FAT bad cluster (entry 0x%08x)",
+> +			loc);
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int exfat_chain_cont_cluster(struct super_block *sb, unsigned int chain,
+> +		unsigned int len)
+> +{
+> +	if (!len)
+> +		return 0;
+> +
+> +	while (len > 1) {
+> +		if (exfat_ent_set(sb, chain, chain + 1))
+> +			return -EIO;
+> +		chain++;
+> +		len--;
+> +	}
+> +
+> +	if (exfat_ent_set(sb, chain, EOF_CLUSTER))
+> +		return -EIO;
+> +	return 0;
+> +}
+> +
+> +int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain)
+> +{
+> +	unsigned int num_clusters = 0;
+> +	unsigned int clu;
+> +	struct super_block *sb = inode->i_sb;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +
+> +	/* invalid cluster number */
+> +	if (p_chain->dir == FREE_CLUSTER || p_chain->dir == EOF_CLUSTER)
+> +		return 0;
+> +
+> +	/* no cluster to truncate */
+> +	if (p_chain->size == 0)
+> +		return 0;
+> +
+> +	/* check cluster validation */
+> +	if (p_chain->dir < 2 && p_chain->dir >= sbi->num_clusters) {
+> +		exfat_msg(sb, KERN_ERR, "invalid start cluster (%u)",
+> +				p_chain->dir);
+> +		return -EIO;
+> +	}
+> +
+> +	WRITE_ONCE(sbi->s_dirt, true);
+> +	clu = p_chain->dir;
+> +
+> +	if (p_chain->flags == 0x03) {
 
+magic constant
+
+> +		do {
+> +			exfat_clear_bitmap(inode, clu-2);
+> +			clu++;
+> +
+> +			num_clusters++;
+> +		} while (num_clusters < p_chain->size);
+> +	} else {
+> +		do {
+> +			exfat_clear_bitmap(inode, (clu - BASE_CLUSTER));
+> +
+> +			if (exfat_get_next_cluster(sb, &clu))
+> +				goto out;
+> +
+> +			num_clusters++;
+> +		} while (clu != EOF_CLUSTER);
+> +	}
+> +
+> +out:
+> +	sbi->used_clusters -= num_clusters;
+> +	return 0;
+> +}
+> +
+> +int exfat_find_last_cluster(struct super_block *sb, struct exfat_chain *p_chain,
+> +		unsigned int *ret_clu)
+> +{
+> +	unsigned int clu, next;
+> +	unsigned int count = 0;
+> +
+> +	next = p_chain->dir;
+> +	if (p_chain->flags == 0x03) {
+
+ditto
+
+> +		*ret_clu = next + p_chain->size - 1;
+> +		return 0;
+> +	}
+> +
+> +	do {
+> +		count++;
+> +		clu = next;
+> +		if (exfat_ent_get(sb, clu, &next))
+> +			return -EIO;
+> +	} while (next != EOF_CLUSTER);
+> +
+> +	if (p_chain->size != count) {
+> +		exfat_fs_error(sb,
+> +			"bogus directory size (clus : ondisk(%d) != counted(%d))",
+> +			p_chain->size, count);
+> +		return -EIO;
+> +	}
+> +
+> +	*ret_clu = clu;
+> +	return 0;
+> +}
+> +
+> +static inline int exfat_sync_bhs(struct buffer_head **bhs, int nr_bhs)
+> +{
+> +	int i, err = 0;
+> +
+> +	for (i = 0; i < nr_bhs; i++)
+> +		write_dirty_buffer(bhs[i], 0);
+> +
+> +	for (i = 0; i < nr_bhs; i++) {
+> +		wait_on_buffer(bhs[i]);
+> +		if (!err && !buffer_uptodate(bhs[i]))
+> +			err = -EIO;
+> +	}
+> +	return err;
+> +}
+> +
+> +int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
+> +{
+> +	struct super_block *sb = dir->i_sb;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct buffer_head *bhs[MAX_BUF_PER_PAGE];
+> +	int nr_bhs = MAX_BUF_PER_PAGE;
+> +	sector_t blknr, last_blknr;
+> +	int err, i, n;
+> +
+> +	blknr = exfat_cluster_to_sector(sbi, clu);
+> +	last_blknr = blknr + sbi->sect_per_clus;
+> +
+> +	if (last_blknr > sbi->num_sectors && sbi->num_sectors > 0) {
+> +		exfat_fs_error_ratelimit(sb,
+> +			"%s: out of range(sect:%llu len:%u)",
+> +			__func__, (unsigned long long)blknr,
+> +			sbi->sect_per_clus);
+> +		return -EIO;
+> +	}
+> +
+> +	/* Zeroing the unused blocks on this cluster */
+> +	n = 0;
+> +	while (blknr < last_blknr) {
+> +		bhs[n] = sb_getblk(sb, blknr);
+> +		if (!bhs[n]) {
+> +			err = -ENOMEM;
+> +			goto error;
+> +		}
+> +		memset(bhs[n]->b_data, 0, sb->s_blocksize);
+> +		exfat_update_bh(sb, bhs[n], 0);
+> +
+> +		n++;
+> +		blknr++;
+> +
+> +		if (n == nr_bhs) {
+> +			if (IS_DIRSYNC(dir)) {
+> +				err = exfat_sync_bhs(bhs, n);
+> +				if (err)
+> +					goto error;
+> +			}
+> +
+> +			for (i = 0; i < n; i++)
+> +				brelse(bhs[i]);
+> +			n = 0;
+> +		}
+> +	}
+> +
+> +	if (IS_DIRSYNC(dir)) {
+> +		err = exfat_sync_bhs(bhs, n);
+> +		if (err)
+> +			goto error;
+> +	}
+> +
+> +	for (i = 0; i < n; i++)
+> +		brelse(bhs[i]);
+> +
+> +	return 0;
+> +
+> +error:
+> +	exfat_msg(sb, KERN_ERR, "failed zeroed sect %llu\n",
+> +		(unsigned long long)blknr);
+> +	for (i = 0; i < n; i++)
+> +		bforget(bhs[i]);
+> +
+> +	return err;
+> +}
+> +
+> +int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+> +		struct exfat_chain *p_chain)
+> +{
+> +	int ret = -ENOSPC;
+> +	unsigned int num_clusters = 0, total_cnt;
+> +	unsigned int hint_clu, new_clu, last_clu = EOF_CLUSTER;
+> +	struct super_block *sb = inode->i_sb;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +
+> +	total_cnt = sbi->num_clusters - BASE_CLUSTER;
+> +
+> +	if (unlikely(total_cnt < sbi->used_clusters)) {
+> +		exfat_fs_error_ratelimit(sb,
+> +			"%s: invalid used clusters(t:%u,u:%u)\n",
+> +			__func__, total_cnt, sbi->used_clusters);
+> +		return -EIO;
+> +	}
+> +
+> +	if (num_alloc > total_cnt - sbi->used_clusters)
+> +		return -ENOSPC;
+> +
+> +	hint_clu = p_chain->dir;
+> +	/* find new cluster */
+> +	if (hint_clu == EOF_CLUSTER) {
+> +		if (sbi->clu_srch_ptr < BASE_CLUSTER) {
+> +			exfat_msg(sb, KERN_ERR,
+> +				"sbi->clu_srch_ptr is invalid (%u)\n",
+> +				sbi->clu_srch_ptr);
+> +			sbi->clu_srch_ptr = BASE_CLUSTER;
+> +		}
+> +
+> +		hint_clu = exfat_test_bitmap(sb,
+> +				sbi->clu_srch_ptr - BASE_CLUSTER);
+> +		if (hint_clu == EOF_CLUSTER)
+> +			return -ENOSPC;
+> +	}
+> +
+> +	/* check cluster validation */
+> +	if (hint_clu < BASE_CLUSTER && hint_clu >= sbi->num_clusters) {
+> +		exfat_msg(sb, KERN_ERR, "hint_cluster is invalid (%u)\n",
+> +			hint_clu);
+> +		hint_clu = BASE_CLUSTER;
+> +		if (p_chain->flags == 0x03) {
+ditto
+> +			if (exfat_chain_cont_cluster(sb, p_chain->dir,
+> +					num_clusters))
+> +				return -EIO;
+> +			p_chain->flags = 0x01;
+ditto
+> +		}
+> +	}
+> +
+> +	WRITE_ONCE(sbi->s_dirt, true);
+> +
+> +	p_chain->dir = EOF_CLUSTER;
+> +
+> +	while ((new_clu = exfat_test_bitmap(sb,
+> +			hint_clu - BASE_CLUSTER)) != EOF_CLUSTER) {
+> +		if (new_clu != hint_clu && p_chain->flags == 0x03) {
+ditto
+> +			if (exfat_chain_cont_cluster(sb, p_chain->dir,
+> +					num_clusters)) {
+> +				ret = -EIO;
+> +				goto error;
+> +			}
+> +			p_chain->flags = 0x01;
+ditto
+> +		}
+> +
+> +		/* update allocation bitmap */
+> +		if (exfat_set_bitmap(inode, new_clu - BASE_CLUSTER)) {
+> +			ret = -EIO;
+> +			goto error;
+> +		}
+> +
+> +		num_clusters++;
+> +
+> +		/* update FAT table */
+> +		if (p_chain->flags == 0x01) {
+ditto
+> +			if (exfat_ent_set(sb, new_clu, EOF_CLUSTER)) {
+> +				ret = -EIO;
+> +				goto error;
+> +			}
+> +		}
+> +
+> +		if (p_chain->dir == EOF_CLUSTER) {
+> +			p_chain->dir = new_clu;
+> +		} else if (p_chain->flags == 0x01) {
+ditto
+> +			if (exfat_ent_set(sb, last_clu, new_clu)) {
+> +				ret = -EIO;
+> +				goto error;
+> +			}
+> +		}
+> +		last_clu = new_clu;
+> +
+> +		if (--num_alloc == 0) {
+> +			sbi->clu_srch_ptr = hint_clu;
+> +			sbi->used_clusters += num_clusters;
+> +
+> +			p_chain->size += num_clusters;
+> +			return 0;
+> +		}
+> +
+> +		hint_clu = new_clu + 1;
+> +		if (hint_clu >= sbi->num_clusters) {
+> +			hint_clu = BASE_CLUSTER;
+> +
+> +			if (p_chain->flags == 0x03) {
+ditto
+> +				if (exfat_chain_cont_cluster(sb, p_chain->dir,
+> +						num_clusters)) {
+> +					ret = -EIO;
+> +					goto error;
+> +				}
+> +				p_chain->flags = 0x01;
+ditto
+> +			}
+> +		}
+> +	}
+> +error:
+> +	if (num_clusters)
+> +		exfat_free_cluster(inode, p_chain);
+> +	return ret;
+> +}
+> +
+> +int exfat_count_num_clusters(struct super_block *sb,
+> +		struct exfat_chain *p_chain, unsigned int *ret_count)
+> +{
+> +	unsigned int i, count;
+> +	unsigned int clu;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +
+> +	if (!p_chain->dir || p_chain->dir == EOF_CLUSTER) {
+> +		*ret_count = 0;
+> +		return 0;
+> +	}
+> +
+> +	if (p_chain->flags == 0x03) {
+ditto
+> +		*ret_count = p_chain->size;
+> +		return 0;
+> +	}
+> +
+> +	clu = p_chain->dir;
+> +	count = 0;
+> +	for (i = BASE_CLUSTER; i < sbi->num_clusters; i++) {
+> +		count++;
+> +		if (exfat_ent_get(sb, clu, &clu))
+> +			return -EIO;
+> +		if (clu == EOF_CLUSTER)
+> +			break;
+> +	}
+> +
+> +	*ret_count = count;
+> +	return 0;
+> +}
+> +
+> +int exfat_mirror_bh(struct super_block *sb, sector_t sec,
+> +		struct buffer_head *bh)
+> +{
+> +	struct buffer_head *c_bh;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	sector_t sec2;
+> +	int err = 0;
+> +
+> +	if (sbi->FAT2_start_sector != sbi->FAT1_start_sector) {
+> +		sec2 = sec - sbi->FAT1_start_sector + sbi->FAT2_start_sector;
+> +		c_bh = sb_getblk(sb, sec2);
+> +		if (!c_bh) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +		memcpy(c_bh->b_data, bh->b_data, sb->s_blocksize);
+> +		set_buffer_uptodate(c_bh);
+> +		mark_buffer_dirty(c_bh);
+> +		if (sb->s_flags & SB_SYNCHRONOUS)
+> +			err = sync_dirty_buffer(c_bh);
+> +		brelse(c_bh);
+> +	}
+> +out:
+> +	return err;
+> +}
+> 
