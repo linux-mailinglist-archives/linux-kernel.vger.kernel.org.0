@@ -2,104 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1773C103FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44CAF103FA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732511AbfKTPqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:46:12 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39274 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732503AbfKTPqK (ORCPT
+        id S1731026AbfKTPpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:45:34 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:51878 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbfKTPpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:46:10 -0500
-Received: by mail-pl1-f193.google.com with SMTP id o9so14000824plk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 07:46:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=XsaIBKQXmIKdbRdQ/GaM37eqJC/1U/v/pIK3m7cBLow=;
-        b=FVXrQCwGGlFa8AiYBJLxFUB/FwOeAS6Iyd+JEgzbLkClNVuIjQ3OetLej32TbAu2aP
-         MxQu2vBBglMV9Uwx934dgYhz8BoF8vm7yZS+vOEqXl6QmiezSAJWHw/Bn+mVFlDZNMFW
-         cqg6O8KhRBst6sZ/DfDMK00auNWQr7GsgDHm0vX31D9JbEOEfS/lBRFkuMOcX4c8OYCe
-         aOUT9+CS9AAmyM/s7C5zAQeA7vzsaEMYa1Qgm+qiXY4n7u4nhIH9OZ+4sg57WP5KyBRY
-         UzGjLg202ZnsAGtWqHFCMXq9SFn01hDQwfWWWnxkeMbpqWmsB9rttG9ol1F5VQMMoMXS
-         O6jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=XsaIBKQXmIKdbRdQ/GaM37eqJC/1U/v/pIK3m7cBLow=;
-        b=pCssbE9UcgdQBecgRtfx1Awhx56A5M+/E5P0RVd1sdNVRVyN0lyR3zJSYKUQgx6FCD
-         RXuj4rjB6FNaHVl/KL802xK04+CpO7jdK3Xc/+yElk4obvyFW73Ssh76FL+dbW+tExPc
-         VwH1j4MkdLvLEJpOJ5azVwY6shOQaw5m+6d0rZhUaSz4Q2HNsds6NY3nCDq7BWd+fwrB
-         Y+hq8wgNOYVVg7V1cX7g8o+DGDDq21Q4tb516javHVJ4fmDsHcLIrajnM4GTy/v/Bvxl
-         qXomoSCSzqlDCJWMFRLV5BIkRHzU9fM52heo/NVZQ1o7rGLubpr8sM70rhIg3QF5bXnV
-         kVQQ==
-X-Gm-Message-State: APjAAAWf2jqhPisTR2zI5ctla4sS4EAnZ3m9fg2mpuVGIi7cFpJOuZ+Z
-        uKmAvytOsFnh12H2fX+eWl3uGp2Una49BQ==
-X-Google-Smtp-Source: APXvYqwSje57oE5y3bBVJjGXG2B2M4xxUYYkxaLEakRWmjFy/GHedrja+GYKVJcVdFnwtR7GHryhvg==
-X-Received: by 2002:a17:90b:3108:: with SMTP id gc8mr4878371pjb.54.1574264769037;
-        Wed, 20 Nov 2019 07:46:09 -0800 (PST)
-Received: from localhost ([14.96.110.98])
-        by smtp.gmail.com with ESMTPSA id o16sm7414811pjp.23.2019.11.20.07.46.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Nov 2019 07:46:08 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Javi Merino <javi.merino@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jun Nie <jun.nie@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: [PATCH v2 11/11] thermal: zx2967: Appease the kernel-doc deity
-Date:   Wed, 20 Nov 2019 21:15:20 +0530
-Message-Id: <1b4f6fb91e2e713ad5135f0d40dcded65dee9d0e.1574242756.git.amit.kucheria@linaro.org>
+        Wed, 20 Nov 2019 10:45:31 -0500
+Received: from ramsan ([84.195.182.253])
+        by laurent.telenet-ops.be with bizsmtp
+        id UFlV2100J5USYZQ01FlVea; Wed, 20 Nov 2019 16:45:29 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iXSAb-0002mv-96; Wed, 20 Nov 2019 16:45:29 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iXSAb-0004FN-6U; Wed, 20 Nov 2019 16:45:29 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: of: Fix bogus reference to gpiod_get_count()
+Date:   Wed, 20 Nov 2019 16:45:21 +0100
+Message-Id: <20191120154521.16273-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix up the following warning when compiled with make W=1:
+The recommended function is called gpiod_count(), not gpiod_get_count().
 
-linux.git/drivers/thermal/zx2967_thermal.c:57: warning: Function
-parameter or member 'dev' not described in 'zx2967_thermal_priv'
-
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: f626d6dfb7098525 ("gpio: of: Break out OF-only code")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/thermal/zx2967_thermal.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib-of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
-index 7c8a82c8e1e9..8e3a2d3c2f9a 100644
---- a/drivers/thermal/zx2967_thermal.c
-+++ b/drivers/thermal/zx2967_thermal.c
-@@ -45,6 +45,7 @@
-  * @clk_topcrm: topcrm clk structure
-  * @clk_apb: apb clk structure
-  * @regs: pointer to base address of the thermal sensor
-+ * @dev: struct device pointer
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index bd06743a5d7cd2cc..dc27b1a88e9343a8 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -27,7 +27,7 @@
+  * This is used by external users of of_gpio_count() from <linux/of_gpio.h>
+  *
+  * FIXME: get rid of those external users by converting them to GPIO
+- * descriptors and let them all use gpiod_get_count()
++ * descriptors and let them all use gpiod_count()
   */
- 
- struct zx2967_thermal_priv {
+ int of_gpio_get_count(struct device *dev, const char *con_id)
+ {
 -- 
-2.20.1
+2.17.1
 
