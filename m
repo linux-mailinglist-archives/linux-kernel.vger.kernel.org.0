@@ -2,219 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1CEF104472
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:45:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3804F104479
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfKTTpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 14:45:09 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4268 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726440AbfKTTpJ (ORCPT
+        id S1727637AbfKTTpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 14:45:25 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51514 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbfKTTpZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:45:09 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAKJh0ha016754;
-        Wed, 20 Nov 2019 20:44:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=o+X8AS60Eijt7vdoaqRux4/FQnWUKnnAr6CTV+AlGXM=;
- b=X8k7SKgaUjmjxDgXAXQdxnmhpNMsaptUcPY7z1F3uJXc/0NuOMiuz0Cv6hyVhWeaLFFg
- vtTGtUo8g/PMQnWFX+qmqoDmqrmqo7NkcOKiGxWxejqdOIegNYdGI7t6R2tR0ZHeUQXe
- 49TnW9w6lDujkIAgLIlEUu9KpM0Ww8gL5LugaZ8faDWv62/K2CoJSSnBQEfmbrKWWhVO
- 9ILx6W7KzVtj2TiWF+anxVimp5nDmZKwD1xXawdN5V6ZcXG8F39GSZv9+g2zHv8zdU0E
- +o4dbF4qiweG9vYlJJgHcxw3HXeJ+x539KRTXOGxvFHDtwEEPHx7UD5XzQhCpqisIs1e uw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2wa9usfca3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 Nov 2019 20:44:51 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 88E39100034;
-        Wed, 20 Nov 2019 20:44:46 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6CD952C6151;
-        Wed, 20 Nov 2019 20:44:46 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 20 Nov 2019 20:44:45
- +0100
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>
-CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v2] dt-bindings: spi: Convert stm32 QSPI bindings to json-schema
-Date:   Wed, 20 Nov 2019 20:44:44 +0100
-Message-ID: <20191120194444.10540-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Wed, 20 Nov 2019 14:45:25 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAKJi655056805;
+        Wed, 20 Nov 2019 19:45:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=sEesESEYpLIlatJUbLqzdyEqW5b7T2dYR2CSmmTIChk=;
+ b=JVnKJLYEP9tsUjMoNlXpAAtTlFMrRhANCKXk8fUIPxgqdHX/BFyOMg8r45ITyZYJ4Doh
+ opj61ydHHGlR0pkPG0+KxWecCxCwGOStf56VKdsxisKN3O3EkTpwESIDLjvnINh1Al87
+ 0zRFigvy0Ih2lGsljpdoPU8p41xgrAOqILEuA+DIuXppGFinAnQxCsZTEtZ+g/GOr4wv
+ 3ku1YAi5G4YkNu3NErFOSHSIaHtlRxy0Q0lLwGEnYOkAov1n3sk+nsiwoUvgm5ZUAxpM
+ LNUTlLvZZ8se+/LWGlBNRc16IMmMmPCfbuOn6JCOusf4aSpgBr3zeA81Os0C6vhMgOJC sg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wa92pyrus-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Nov 2019 19:45:14 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAKJh2g7039918;
+        Wed, 20 Nov 2019 19:45:14 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2wcemhhtgx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Nov 2019 19:45:14 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAKJj9r6023179;
+        Wed, 20 Nov 2019 19:45:09 GMT
+Received: from localhost (/10.159.246.236)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Nov 2019 11:45:09 -0800
+Date:   Wed, 20 Nov 2019 11:45:07 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 2/2] loop: Better discard support for block devices
+Message-ID: <20191120194507.GW6235@magnolia>
+References: <20191114235008.185111-1-evgreen@chromium.org>
+ <20191114154903.v7.2.I4d476bddbf41a61422ad51502f4361e237d60ad4@changeid>
+ <20191120022518.GU6235@magnolia>
+ <CAE=gft4mjKc4QKFKxp2FX9G2rUMuE3_eDuW_3Oq7NqTYBQwEjg@mail.gmail.com>
+ <20191120191302.GV6235@magnolia>
+ <CAE=gft6x1TmkkNTj+gktYMkHcysYyuYL50cavYusQ7hd9zChvA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-20_06:2019-11-20,2019-11-20 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE=gft6x1TmkkNTj+gktYMkHcysYyuYL50cavYusQ7hd9zChvA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911200162
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911200162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the STM32 QSPI binding to DT schema format using json-schema
+On Wed, Nov 20, 2019 at 11:25:48AM -0800, Evan Green wrote:
+> On Wed, Nov 20, 2019 at 11:13 AM Darrick J. Wong
+> <darrick.wong@oracle.com> wrote:
+> >
+> > On Wed, Nov 20, 2019 at 10:56:30AM -0800, Evan Green wrote:
+> > > On Tue, Nov 19, 2019 at 6:25 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > >
+> > > > On Thu, Nov 14, 2019 at 03:50:08PM -0800, Evan Green wrote:
+> > > > > If the backing device for a loop device is itself a block device,
+> > > > > then mirror the "write zeroes" capabilities of the underlying
+> > > > > block device into the loop device. Copy this capability into both
+> > > > > max_write_zeroes_sectors and max_discard_sectors of the loop device.
+> > > > >
+> > > > > The reason for this is that REQ_OP_DISCARD on a loop device translates
+> > > > > into blkdev_issue_zeroout(), rather than blkdev_issue_discard(). This
+> > > > > presents a consistent interface for loop devices (that discarded data
+> > > > > is zeroed), regardless of the backing device type of the loop device.
+> > > > > There should be no behavior change for loop devices backed by regular
+> > > > > files.
+> 
+> (marking this spot for below)
+> 
+> > > > >
+> > > > > This change fixes blktest block/003, and removes an extraneous
+> > > > > error print in block/013 when testing on a loop device backed
+> > > > > by a block device that does not support discard.
+> > > > >
+> > > > > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > > > > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> > > > > Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> > > > > ---
+> > > > >
+> > > > > Changes in v7:
+> > > > > - Rebase on top of Darrick's patch
+> > > > > - Tweak opening line of commit description (Darrick)
+> > > > >
+> > > > > Changes in v6: None
+> > > > > Changes in v5:
+> > > > > - Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
+> > > > >
+> > > > > Changes in v4:
+> > > > > - Mirror blkdev's write_zeroes into loopdev's discard_sectors.
+> > > > >
+> > > > > Changes in v3:
+> > > > > - Updated commit description
+> > > > >
+> > > > > Changes in v2: None
+> > > > >
+> > > > >  drivers/block/loop.c | 40 +++++++++++++++++++++++++++++-----------
+> > > > >  1 file changed, 29 insertions(+), 11 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > > > > index 6a9fe1f9fe84..e8f23e4b78f7 100644
+> > > > > --- a/drivers/block/loop.c
+> > > > > +++ b/drivers/block/loop.c
+> > > > > @@ -427,11 +427,12 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+> > > > >        * information.
+> > > > >        */
+> > > > >       struct file *file = lo->lo_backing_file;
+> > > > > +     struct request_queue *q = lo->lo_queue;
+> > > > >       int ret;
+> > > > >
+> > > > >       mode |= FALLOC_FL_KEEP_SIZE;
+> > > > >
+> > > > > -     if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+> > > > > +     if (!blk_queue_discard(q)) {
+> > > > >               ret = -EOPNOTSUPP;
+> > > > >               goto out;
+> > > > >       }
+> > > > > @@ -862,6 +863,21 @@ static void loop_config_discard(struct loop_device *lo)
+> > > > >       struct file *file = lo->lo_backing_file;
+> > > > >       struct inode *inode = file->f_mapping->host;
+> > > > >       struct request_queue *q = lo->lo_queue;
+> > > > > +     struct request_queue *backingq;
+> > > > > +
+> > > > > +     /*
+> > > > > +      * If the backing device is a block device, mirror its zeroing
+> > > > > +      * capability. REQ_OP_DISCARD translates to a zero-out even when backed
+> > > > > +      * by block devices to keep consistent behavior with file-backed loop
+> > > > > +      * devices.
+> > > > > +      */
+> > > > > +     if (S_ISBLK(inode->i_mode) && !lo->lo_encrypt_key_size) {
+> > > > > +             backingq = bdev_get_queue(inode->i_bdev);
+> > > > > +             blk_queue_max_discard_sectors(q,
+> > > > > +                     backingq->limits.max_write_zeroes_sectors);
+> > > >
+> > > > max_discard_sectors?
+> > >
+> > > I didn't plumb max_discard_sectors because for my scenario it never
+> > > ends up hitting the block device that way.
+> > >
+> > > The loop device either uses FL_ZERO_RANGE or FL_PUNCH_HOLE. When
+> > > backed by a block device, that ends up in blkdev_fallocate(), which
+> > > always translates both of those into blkdev_issue_zeroout(), not
+> > > blkdev_issue_discard(). So it's really the zeroing capabilities of the
+> > > block device that matters, even for loop discard operations. It seems
+> > > weird, but I think this is the right thing because it presents a
+> > > consistent interface to loop device users whether backed by a file
+> > > system file, or directly by a block device. That is, a previously
+> > > discarded range will read back as zeroes.
+> >
+> > Ah, right.  Could you add this paragraph as a comment explaining why
+> > we're setting max_discard_sectors from max_write_zeroes_sectors?
+> 
+> Sure. I put an explanation in the commit description (see spot I
+> marked above), but I agree a comment is probably also worthwhile.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
-changes in version 2:
-- fix subject
-- remove useless minItems and maxItems
- .../devicetree/bindings/spi/spi-stm32-qspi.txt     | 47 ------------
- .../devicetree/bindings/spi/st,stm32-qspi.yaml     | 83 ++++++++++++++++++++++
- 2 files changed, 83 insertions(+), 47 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-stm32-qspi.txt
- create mode 100644 Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
+<nod> Sorry about the churn here.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-stm32-qspi.txt b/Documentation/devicetree/bindings/spi/spi-stm32-qspi.txt
-deleted file mode 100644
-index bfc038b9478d..000000000000
---- a/Documentation/devicetree/bindings/spi/spi-stm32-qspi.txt
-+++ /dev/null
-@@ -1,47 +0,0 @@
--* STMicroelectronics Quad Serial Peripheral Interface(QSPI)
--
--Required properties:
--- compatible: should be "st,stm32f469-qspi"
--- reg: the first contains the register location and length.
--       the second contains the memory mapping address and length
--- reg-names: should contain the reg names "qspi" "qspi_mm"
--- interrupts: should contain the interrupt for the device
--- clocks: the phandle of the clock needed by the QSPI controller
--- A pinctrl must be defined to set pins in mode of operation for QSPI transfer
--
--Optional properties:
--- resets: must contain the phandle to the reset controller.
--
--A spi flash (NOR/NAND) must be a child of spi node and could have some
--properties. Also see jedec,spi-nor.txt.
--
--Required properties:
--- reg: chip-Select number (QSPI controller may connect 2 flashes)
--- spi-max-frequency: max frequency of spi bus
--
--Optional properties:
--- spi-rx-bus-width: see ./spi-bus.txt for the description
--- dmas: DMA specifiers for tx and rx dma. See the DMA client binding,
--Documentation/devicetree/bindings/dma/dma.txt.
--- dma-names: DMA request names should include "tx" and "rx" if present.
--
--Example:
--
--qspi: spi@a0001000 {
--	compatible = "st,stm32f469-qspi";
--	reg = <0xa0001000 0x1000>, <0x90000000 0x10000000>;
--	reg-names = "qspi", "qspi_mm";
--	interrupts = <91>;
--	resets = <&rcc STM32F4_AHB3_RESET(QSPI)>;
--	clocks = <&rcc 0 STM32F4_AHB3_CLOCK(QSPI)>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_qspi0>;
--
--	flash@0 {
--		compatible = "jedec,spi-nor";
--		reg = <0>;
--		spi-rx-bus-width = <4>;
--		spi-max-frequency = <108000000>;
--		...
--	};
--};
-diff --git a/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml b/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
-new file mode 100644
-index 000000000000..3665a5fe6b7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
-@@ -0,0 +1,83 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/st,stm32-qspi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32 Quad Serial Peripheral Interface (QSPI) bindings
-+
-+maintainers:
-+  - Christophe Kerello <christophe.kerello@st.com>
-+  - Patrice Chotard <patrice.chotard@st.com>
-+
-+allOf:
-+  - $ref: "spi-controller.yaml#"
-+
-+properties:
-+  compatible:
-+    const: st,stm32f469-qspi
-+
-+  reg:
-+    items:
-+      - description: registers
-+      - description: memory mapping
-+
-+  reg-names:
-+    items:
-+     - const: qspi
-+     - const: qspi_mm
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  dmas:
-+    items:
-+      - description: tx DMA channel
-+      - description: rx DMA channel
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - interrupts
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    #include <dt-bindings/reset/stm32mp1-resets.h>
-+    spi@58003000 {
-+      compatible = "st,stm32f469-qspi";
-+      reg = <0x58003000 0x1000>, <0x70000000 0x10000000>;
-+      reg-names = "qspi", "qspi_mm";
-+      interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-+      dmas = <&mdma1 22 0x10 0x100002 0x0 0x0>,
-+             <&mdma1 22 0x10 0x100008 0x0 0x0>;
-+      dma-names = "tx", "rx";
-+      clocks = <&rcc QSPI_K>;
-+      resets = <&rcc QSPI_R>;
-+
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      flash@0 {
-+        compatible = "jedec,spi-nor";
-+        reg = <0>;
-+        spi-rx-bus-width = <4>;
-+        spi-max-frequency = <108000000>;
-+      };
-+    };
-+
-+...
--- 
-2.15.0
+I have a strong preference towards documenting decisions like these
+directly in the code because (a) I suck at reading patch prologues, (b)
+someone reading the code after this gets committed will see it
+immediately and right next to the relevant code, and (c) spelunking
+through the git history of a file for commit messages is kind of clunky.
 
+Dunno if that's just my age showing (mmm, pre-bk linux) or what. :/
+
+--D
+
+> >
+> > --D
+> >
+> > > -Evan
