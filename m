@@ -2,135 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB561043F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 194D71043FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:10:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbfKTTIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 14:08:52 -0500
-Received: from mail-eopbgr730054.outbound.protection.outlook.com ([40.107.73.54]:40672
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726634AbfKTTIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:08:51 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KTpftedokf5WrcpYfbx7g2QZrq091u9rbj+UEkT1okJOEKwo2dIqjvrC3KY59cPgRlZgwZ0v0F1N/0vx2+OZV+TeZoI3UQxiFTzM19a/Xno2tpFgkgDrzvkGXiqzppJF8MQVBBnKBnPyVDgD2IKqo0MAu7PwJIHtbilmB3X+fJww184WSWIHOZZ6KSXTBCOBTcKu22RprpOfTQxwImKWZJzXiU+2DAN1Jv4x/Ihg7GjELZqYTdS5ibW2MXqO8zi/uz0qF0O5MNL2KtpIY+Fjufy9F++he+4RV2sWwJQzv0Aeb467A8I0WG89WlFZjVU4kliOiMFQuVJ3XAFy3ZnKOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=prW9p7/6ffhCc0rfTfLLUtbekk/fgldFk/xQBPUuz2g=;
- b=HA1xfBz7ZQAh/4xO08/ALlxxa9+vmscCqNpYxNdeJOx5kj2dNGjGUozNWTq7GVGtLwyXSJ/ZnVYLprgjxHvMGmm/pH5wUzyHrf3cbJjbPjNRoUIsjKoy4iAARcsr9gvSLdGCmYIqbW8T01aA4dt+QDh1OaMfKoUXKxqp8koK3b5Oj8KDz2CiI9yIZFdfLlxiUUOhwWNiG+sBZGUNgA4ZtsamvYvE2lKNlIHZOiJ01CN1yVNkNeQWX5OHlwshUg4ny4y8u/UUs62dk45GzEe6aIOhtIgd7iSYTgUgfxVcDcSTng5SbARt93ZZtyMkA37Pla3AFtyhQx87hKkhBpdcDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=prW9p7/6ffhCc0rfTfLLUtbekk/fgldFk/xQBPUuz2g=;
- b=gYI0Ha/4PuymkcWMvhl8/R18Qv4nunRLF3/tQAoJRUbjscWmDELL0FE3+b60LI0bzY96XutRUjkRI7axyfUMsxhK1F2aV7y55OMDp3aVZ5z5FQo0bze7V8q0tTySo/XmKwonLbqRZskKez7jpLSs+RhgxkV9cvwYFZ5qhr2w8+k=
-Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.230.25) by
- CH2PR02MB6150.namprd02.prod.outlook.com (52.132.229.84) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.23; Wed, 20 Nov 2019 19:08:49 +0000
-Received: from CH2PR02MB6359.namprd02.prod.outlook.com
- ([fe80::e81d:489c:2bd7:918a]) by CH2PR02MB6359.namprd02.prod.outlook.com
- ([fe80::e81d:489c:2bd7:918a%7]) with mapi id 15.20.2451.031; Wed, 20 Nov 2019
- 19:08:49 +0000
-From:   Dragan Cvetic <draganc@xilinx.com>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Derek Kiernan <dkiernan@xilinx.com>
-Subject: RE: [PATCH] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
-Thread-Topic: [PATCH] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
-Thread-Index: AQHVnzbvRwd5Ss/ZH0ugJQL96aPqOKeUNshQgAAkIoCAABHVkA==
-Date:   Wed, 20 Nov 2019 19:08:49 +0000
-Message-ID: <CH2PR02MB6359A3A9D842021B15E89E7BCB4F0@CH2PR02MB6359.namprd02.prod.outlook.com>
-References: <20191120001030.30779-1-luc.vanoostenryck@gmail.com>
- <CH2PR02MB6359CE45D06E908634CDA855CB4F0@CH2PR02MB6359.namprd02.prod.outlook.com>
- <20191120180229.frd5padrsdxf7hag@ltop.local>
-In-Reply-To: <20191120180229.frd5padrsdxf7hag@ltop.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=draganc@xilinx.com; 
-x-originating-ip: [149.199.80.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0db8a9bc-c31a-4717-1dd0-08d76ded1332
-x-ms-traffictypediagnostic: CH2PR02MB6150:|CH2PR02MB6150:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR02MB61503E147EBC52079B08C0B5CB4F0@CH2PR02MB6150.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
-x-forefront-prvs: 02272225C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(396003)(366004)(136003)(13464003)(189003)(199004)(51914003)(2906002)(9686003)(55016002)(6436002)(71190400001)(3846002)(6116002)(6246003)(305945005)(33656002)(7736002)(74316002)(99286004)(107886003)(66066001)(486006)(54906003)(316002)(229853002)(66946007)(5660300002)(11346002)(446003)(476003)(4326008)(71200400001)(186003)(64756008)(66556008)(14454004)(256004)(25786009)(66476007)(66446008)(81156014)(76176011)(7696005)(478600001)(102836004)(26005)(6506007)(53546011)(52536014)(86362001)(6916009)(81166006)(76116006)(8936002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6150;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NkW1MhS43+CXdiBAXPNnbX0JhOZxb6NoL7w/CJb3Qdz8PkHLQGe7zwRbRw5RdNcB34GnLMCxJIzwELePWJmzhmb8I/QT4/iusCbMJQc/1vbV2uTTVTOWgFRq9hc57RKvzgpMCyKuAHgXD3XfI3L63ZN9VSKfXeRqkRw0Vz0qhiS3r0MmHhQqgVQEX3TKCH1XJ+WUDWQLdSvJ3BvmPbRoruANtUeTB4CcUBJN8b9Xt7zRMtJl0wjfynWD6Qnfx+QJkyFZafofKLuhoRcv/NBj7H6sRoeTDtm5/eQpwBt4cQH/xVcWoVqIYcs/AwXjkkOiVhHNAXW1eDAWNb39ru+vZ7LPKoRdIfxQ/JKunJtNb4lbk0BRYCD/E4QvPBGE0kgttCJrjjKUeFwehd8rSbCLxv5BFztKHKiU6Woi5tPApim8T8o4n994iEv02/nSc2pw
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727491AbfKTTKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 14:10:32 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17100 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfKTTKc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 14:10:32 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd58fa50001>; Wed, 20 Nov 2019 11:10:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 20 Nov 2019 11:10:28 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 20 Nov 2019 11:10:28 -0800
+Received: from [10.2.175.254] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 20 Nov
+ 2019 19:10:27 +0000
+Subject: Re: [PATCH v1 04/17] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
+        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
+        <tglx@linutronix.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+ <1574146234-3871-5-git-send-email-skomatineni@nvidia.com>
+ <d072bd37-9628-4eb2-1706-a1f640606b8d@gmail.com>
+ <d76f4689-5986-9239-9c67-9dd125f6547e@nvidia.com>
+ <a87a08c1-5104-a534-89c4-73463c08abba@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <eff0e0f5-a94d-cca5-3558-247d1d90d28d@nvidia.com>
+Date:   Wed, 20 Nov 2019 11:09:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0db8a9bc-c31a-4717-1dd0-08d76ded1332
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 19:08:49.1943
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: r0efDqtYW18IlrKd9zmuYFjJRVJ/Uw52WMKMCmsgnYM196L7OVVpTO4K9JtXxcW44JnKJ5SX/2o+9zYjb4Fndw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6150
+In-Reply-To: <a87a08c1-5104-a534-89c4-73463c08abba@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574277030; bh=JdVfNtDRnnw+p38nai+nOdloVWvXp+n5L6JxeOZT3s0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=iF3geYjUijLCuINOr33qQKiGBl0gemXxeOJ8Mp9+YYv7R5Sxn+ZQvE5KZTLs/bp6q
+         lj/26izjYfNNqFu/U8wTy+F7jcmy7M+/kaDoOj2+vwj3PHufokTCIp+uHsBXobta/X
+         tx54hFvXOaeU2aq+BPEUKwdH0SuWf51lh0aEhrGelLYXaWMzh6q0JADEfQfwJJm4G3
+         s0pNRB0Ynr7IEBzsbP2Cju6x7l5jB+rh8IYuPREQq020aj9NMwofu4/n4iliQem9yh
+         6gQAPE1468nc52gkYRLmUqTgdsxO9/YqD1OonNfXPRxhR4Gx1UA9QzRBEGDX4hoBcr
+         xOj3D+/dsu6nQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luc,
 
-Thanks for the really useful answer.
-
-I promise I'll test this soon.
-
-Thanks
-Dragan
-
-
-> -----Original Message-----
-> From: Luc Van Oostenryck [mailto:luc.vanoostenryck@gmail.com]
-> Sent: Wednesday 20 November 2019 18:02
-> To: Dragan Cvetic <draganc@xilinx.com>
-> Cc: linux-kernel@vger.kernel.org; Derek Kiernan <dkiernan@xilinx.com>
-> Subject: Re: [PATCH] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
->=20
-> On Wed, Nov 20, 2019 at 03:59:24PM +0000, Dragan Cvetic wrote:
-> > Hi Luc,
-> >
-> > For the sake of my understanding I'd like to ask you when the .pole met=
-hod is defined
-> > Why I'm asking this? I have a fairly new book (published in 2017) which=
- suggests what is implemented in SDFEC driver.
-> >
-> > I'll test your suggestions and will come back to you soon.
->=20
-> Well, yes, it changed in July 2017.
->=20
-> The current definition can be found in include/linux/fs.h:
-> 	struct file_operations {
-> 		...
-> 		__poll_t (*poll) (struct file *, struct poll_table_struct *);
-> 		...
->=20
-> The main commit making the change is:
->     a3f8683bf7d5 ("->poll() methods should return __poll_t")
->=20
->=20
-> The result can be verified by compiling the driver with the command
-> 	make C=3D2 path/to/the/driver.o
-> which will use the static analyser 'sparse' to make additional checks
-> where the difference between 'unsigned int' and __poll_t will matter.
-> See Documentation/dev-tools/sparse.rst for more info about it.
->=20
-> Best regards,
-> -- Luc Van Oostenryck
+On 11/20/19 9:46 AM, Dmitry Osipenko wrote:
+> 19.11.2019 23:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 11/19/19 11:33 AM, Dmitry Osipenko wrote:
+>>> 19.11.2019 09:50, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with mux and gate for
+>>>> each of these clocks.
+>>>>
+>>>> Currently these PMC clocks are registered by Tegra clock driver using
+>>>> clk_register_mux and clk_register_gate by passing PMC base address
+>>>> and register offsets and PMC programming for these clocks happens
+>>>> through direct PMC access by the clock driver.
+>>>>
+>>>> With this, when PMC is in secure mode any direct PMC access from the
+>>>> non-secure world does not go through and these clocks will not be
+>>>> functional.
+>>>>
+>>>> This patch adds these clocks registration with PMC as a clock provider
+>>>> for these clocks. clk_ops callback implementations for these clocks
+>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC programmi=
+ng
+>>>> in secure mode and non-secure mode.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>  =C2=A0 drivers/soc/tegra/pmc.c | 330
+>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>  =C2=A0 1 file changed, 330 insertions(+)
+>>>>
+>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>> index 7a5aab0b993b..790a6619ba32 100644
+>>>> --- a/drivers/soc/tegra/pmc.c
+>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>> @@ -13,6 +13,9 @@
+>>>>  =C2=A0 =C2=A0 #include <linux/arm-smccc.h>
+>>>>  =C2=A0 #include <linux/clk.h>
+>>>> +#include <linux/clk-provider.h>
+>>>> +#include <linux/clkdev.h>
+>>>> +#include <linux/clk/clk-conf.h>
+>>>>  =C2=A0 #include <linux/clk/tegra.h>
+>>>>  =C2=A0 #include <linux/debugfs.h>
+>>>>  =C2=A0 #include <linux/delay.h>
+>>>> @@ -48,6 +51,7 @@
+>>>>  =C2=A0 #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>>>>  =C2=A0 #include <dt-bindings/gpio/tegra186-gpio.h>
+>>>>  =C2=A0 #include <dt-bindings/gpio/tegra194-gpio.h>
+>>>> +#include <dt-bindings/soc/tegra-pmc.h>
+>>>>  =C2=A0 =C2=A0 #define PMC_CNTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0
+>>>>  =C2=A0 #define=C2=A0 PMC_CNTRL_INTR_POLARITY=C2=A0=C2=A0=C2=A0 BIT(17=
+) /* inverts INTR
+>>>> polarity */
+>>>> @@ -108,6 +112,7 @@
+>>>>  =C2=A0 #define PMC_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0x168
+>>>>  =C2=A0 #define PMC_SW_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 0x16c
+>>>>  =C2=A0 +#define PMC_CLK_OUT_CNTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0x1a8
+>>>>  =C2=A0 #define PMC_SATA_PWRGT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1ac
+>>>>  =C2=A0 #define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
+>>>>  =C2=A0 #define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
+>>>> @@ -170,6 +175,78 @@
+>>>>  =C2=A0 #define=C2=A0 TEGRA_SMC_PMC_READ=C2=A0=C2=A0=C2=A0 0xaa
+>>>>  =C2=A0 #define=C2=A0 TEGRA_SMC_PMC_WRITE=C2=A0=C2=A0=C2=A0 0xbb
+>>>>  =C2=A0 +struct pmc_clk_mux {
+>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
+>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
+>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mask=
+;
+>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 shif=
+t;
+>>>> +=C2=A0=C2=A0=C2=A0 /* register lock */
+>>>> +=C2=A0=C2=A0=C2=A0 spinlock_t=C2=A0=C2=A0=C2=A0 *lock;
+>>>> +};
+>>>> +
+>>>> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct pmc_clk_mux, hw)
+>>>> +
+>>>> +struct pmc_clk_gate {
+>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
+>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
+>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 shif=
+t;
+>>>> +=C2=A0=C2=A0=C2=A0 /* register lock */
+>>>> +=C2=A0=C2=A0=C2=A0 spinlock_t=C2=A0=C2=A0=C2=A0 *lock;
+> Why clk_out_lock is needed at all? CCLK framework already takes care of
+> the clock's locking and then nothing else in PMC code uses that lock to
+> avoid races, thus that spinlock doesn't do anything useful and should be
+> removed from both mux and gate.
+Will remove spinlock in next version.
+>>>> +};
+>>>> +
+>>>> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, h=
+w)
+>>>> +
+>>>> +struct pmc_clk_init_data {
+>>>> +=C2=A0=C2=A0=C2=A0 char *mux_name;
+>>>> +=C2=A0=C2=A0=C2=A0 char *gate_name;
+>>>> +=C2=A0=C2=A0=C2=A0 const char **parents;
+>>>> +=C2=A0=C2=A0=C2=A0 int num_parents;
+>>>> +=C2=A0=C2=A0=C2=A0 int mux_id;
+>>>> +=C2=A0=C2=A0=C2=A0 int gate_id;
+>>>> +=C2=A0=C2=A0=C2=A0 char *dev_name;
+>>>> +=C2=A0=C2=A0=C2=A0 u8 mux_shift;
+>>>> +=C2=A0=C2=A0=C2=A0 u8 gate_shift;
+>>>> +=C2=A0=C2=A0=C2=A0 u8 init_parent;
+>>>> +=C2=A0=C2=A0=C2=A0 int init_state;
+>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux mux;
+>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate gate;
+>>>> +};
+>>>> +
+>>>> +#define PMC_CLK(_num, _mux_shift, _gate_shift, _init_parent,
+>>>> _init_state)\
+>>>> +=C2=A0=C2=A0=C2=A0 {\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D "clk_out_" #=
+_num "_mux",\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =3D "clk_out_" =
+#_num,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out ##_nu=
+m ##_parents,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRAY_SIZ=
+E(clk_out ##_num ##_parents),\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D TEGRA_PMC_CLK_=
+OUT_ ##_num ##_MUX,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D TEGRA_PMC_CLK=
+_OUT_ ##_num,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D "extern" #_n=
+um,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D _mux_shift,=
+\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D _gate_shif=
+t,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent =3D _init_par=
+ent,\
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =3D _init_stat=
+e,\
+>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>> +
+>>>> +static DEFINE_SPINLOCK(clk_out_lock);
+>>>> +
+>>>> +static const char *clk_out1_parents[] =3D { "clk_m", "clk_m_div2",
+>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern1",
+>>>> +};
+>>>> +
+>>>> +static const char *clk_out2_parents[] =3D { "clk_m", "clk_m_div2",
+>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern2",
+>>>> +};
+>>>> +
+>>>> +static const char *clk_out3_parents[] =3D { "clk_m", "clk_m_div2",
+>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern3",
+>>>> +};
+>>> Why these are unused?
+>> They are used in PMC_CLK macro
+> Looks like it will better to define those three structs directly,
+> without the PMC_CLK macro.
+>
+> [snip]
+ok, will define structs directly in next version.
