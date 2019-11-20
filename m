@@ -2,134 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA31103E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29FC103E1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:17:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbfKTPQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:16:33 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:30161 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726771AbfKTPQd (ORCPT
+        id S1729143AbfKTPRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:17:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34174 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfKTPRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:16:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574262991;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4piZeHXh2vQrSJuyApu6KjdQRH+Y2uRbdZotE0ABqcc=;
-        b=dKsUYA7zBQ1gMBk45kZIe0CpH3XStd2fqAsVz5affO2mpoJ1TCS63EsdsP18wUkmJMGKP4
-        JrLOrpM1rdT3+F7+mHIXuEE1LNYD8WIbSKHTvfEhPIFyTFc4AddMjCd7lqvhKKFsjFnm0R
-        aIvHNvywjjEQvDQsdQhy+1+4LCMUdaE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-83-KXJGfSn8PX-ftAkfmAoMcg-1; Wed, 20 Nov 2019 10:16:28 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 670F5107ACC4;
-        Wed, 20 Nov 2019 15:16:27 +0000 (UTC)
-Received: from krava (unknown [10.40.205.57])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6DF362AA8A;
-        Wed, 20 Nov 2019 15:16:26 +0000 (UTC)
-Date:   Wed, 20 Nov 2019 16:16:25 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Optimize perf stat for large number of events/cpus
-Message-ID: <20191120151625.GG4007@krava>
-References: <20191116055229.62002-1-andi@firstfloor.org>
-MIME-Version: 1.0
-In-Reply-To: <20191116055229.62002-1-andi@firstfloor.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: KXJGfSn8PX-ftAkfmAoMcg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        Wed, 20 Nov 2019 10:17:15 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t2so270470wrr.1;
+        Wed, 20 Nov 2019 07:17:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zNe+B/f1+GJmh7J9+ReN7Gml0+9dDHHFBQ2k30K1xB4=;
+        b=f/ItMUe5As0Rec87lUZ/KBKvYsrOPgVbTorC9MElQhIGF9UTcSgzcKjn8G3uHuXFTZ
+         e5drqyZ3kO5BpCuq3p3j/1xajnfJ3n556MlD38tskqTTZcCKqmdu9cEdBpAnWHzeFZnp
+         IIb72a+XpNtQEeMrBhAu/38p/lniRaGg+KZlNnSUvS5EuG4tf/r/raFX+YmUMjGVRIwy
+         OPSbD6+AmZoQABOEc5j3P6+o9c2JGVveyOxt37hHCWGsoCXvl2b0yRKE1/9Dy7nn66K8
+         jhe7Dob5kKSDHZvHK9P9PYwP8TVlnHjupFhnJvNsD5LfPZ35qw4Oo1fI6vEBC4/g16Pe
+         y+9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zNe+B/f1+GJmh7J9+ReN7Gml0+9dDHHFBQ2k30K1xB4=;
+        b=I2F4wqvXpF2LAs3IuLFoaYInM15PuxdJn70cgzlLrXJnheAGxwad5oyMP2UU971dIt
+         tOf47dRcGsSM93GUr8QIFSZdOnsYN0ttpM0HU29HAd/oVl/zlrS2X6Ki4WOk4ozCT5rK
+         1lMufIeVXBAXqmhZOjtPZGyaMXpL/ndjf3ajcaylGqok39rONROGQXfDAgccZbapEmdE
+         5oAfK4BuJuf8mI0LfpmaLgX/LzALp0Qpmf+Hq6ANmxuq1OwXbv6bFQAjrJ/CIbOqVHws
+         s8wPlX8m9Hhye8XDWED7rXsL7j643VfUj8RGLpIknT9ve0DLwqa7ap/P9glFwB3LjnOQ
+         RRSQ==
+X-Gm-Message-State: APjAAAVx/nDR5O2ph2SqN97lSDfiTIcyJbRAnXiFjcYSjiz4Flf2KxsI
+        vSd7YGVZv3MLVg2PhslvVlw=
+X-Google-Smtp-Source: APXvYqx/M7yd99FDF6FQ/cJiU2pIGWU89akDb3eKzw3rVxeRQJfNwGTnECzvvEeUlDhEvc3czzMWGw==
+X-Received: by 2002:a5d:6390:: with SMTP id p16mr3797094wru.55.1574263033616;
+        Wed, 20 Nov 2019 07:17:13 -0800 (PST)
+Received: from debian.office.codethink.co.uk ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id y19sm7306119wmd.29.2019.11.20.07.17.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Nov 2019 07:17:12 -0800 (PST)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 1/2] tty: remove unused argument from tty_open_by_driver()
+Date:   Wed, 20 Nov 2019 15:17:08 +0000
+Message-Id: <20191120151709.14148-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 09:52:17PM -0800, Andi Kleen wrote:
-> [v7: Address review feedback. Fix python script problem
-> reported by 0day. Drop merged patches.]
->=20
-> This patch kit optimizes perf stat for a large number of events=20
-> on systems with many CPUs and PMUs.
->=20
-> Some profiling shows that the most overhead is doing IPIs to
-> all the target CPUs. We can optimize this by using sched_setaffinity
-> to set the affinity to a target CPU once and then doing
-> the perf operation for all events on that CPU. This requires
-> some restructuring, but cuts the set up time quite a bit.
->=20
-> In theory we could go further by parallelizing these setups
-> too, but that would be much more complicated and for now just batching it
-> per CPU seems to be sufficient. At some point with many more cores=20
-> parallelization or a better bulk perf setup API might be needed though.
->=20
-> In addition perf does a lot of redundant /sys accesses with
-> many PMUs, which can be also expensve. This is also optimized.
->=20
-> On a large test case (>700 events with many weak groups) on a 94 CPU
-> system I go from
->=20
-> real=090m8.607s
-> user=090m0.550s
-> sys=090m8.041s
->=20
-> to=20
->=20
-> real=090m3.269s
-> user=090m0.760s
-> sys=090m1.694s
->=20
-> so shaving ~6 seconds of system time, at slightly more cost
-> in perf stat itself. On a 4 socket system with the savings
-> are more dramatic:
->=20
-> real=090m15.641s
-> user=090m0.873s
-> sys=090m14.729s
->=20
-> to=20
->=20
-> real=090m4.493s
-> user=090m1.578s
-> sys=090m2.444s
->=20
-> so 11s difference in the user visible set up time.
->=20
-> Also available in=20
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/stat-sca=
-le-10
->=20
-> v1: Initial post.
-> v2: Rebase. Fix some minor issues.
-> v3: Rebase. Address review feedback. Fix one minor issue
-> v4: Modified based on review feedback. Now it maintains
-> all_cpus per evlist. There is still a need for cpu_index iteration
-> to get the correct index for indexing the file descriptors.
-> Fix bug with unsorted cpu maps, now they are always sorted.
-> Some cleanups and refactoring.
-> v5: Split patches. Redo loop iteration again. Fix cpu map
-> merging for uncore. Remove duplicates from cpumaps. Add unit
-> tests.
-> v6: Address review feedback. Fix some bugs. Add more comments.
-> Merge one invalid patch split.
-> v7: Address review feedback. Fix python scripting (thanks 0day)
-> Minor updates.
+The argument 'inode' passed to tty_open_by_driver() was not being used.
+Remove the extra argument.
 
-I posted another 2 comments, but other than that I think it's ok
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/tty/tty_io.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-I don't like it, but can't see a better way ;-) and the speedup
-is really impressive
-
-thanks,
-jirka
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index a81807b394d1..cb6370906a6d 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1925,7 +1925,6 @@ EXPORT_SYMBOL_GPL(tty_kopen);
+ /**
+  *	tty_open_by_driver	-	open a tty device
+  *	@device: dev_t of device to open
+- *	@inode: inode of device file
+  *	@filp: file pointer to tty
+  *
+  *	Performs the driver lookup, checks for a reopen, or otherwise
+@@ -1938,7 +1937,7 @@ EXPORT_SYMBOL_GPL(tty_kopen);
+  *	  - concurrent tty driver removal w/ lookup
+  *	  - concurrent tty removal from driver table
+  */
+-static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
++static struct tty_struct *tty_open_by_driver(dev_t device,
+ 					     struct file *filp)
+ {
+ 	struct tty_struct *tty;
+@@ -2030,7 +2029,7 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 
+ 	tty = tty_open_current_tty(device, filp);
+ 	if (!tty)
+-		tty = tty_open_by_driver(device, inode, filp);
++		tty = tty_open_by_driver(device, filp);
+ 
+ 	if (IS_ERR(tty)) {
+ 		tty_free_file(filp);
+-- 
+2.11.0
 
