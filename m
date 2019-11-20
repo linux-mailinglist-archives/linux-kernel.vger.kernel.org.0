@@ -2,139 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A667E103C7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26709103C81
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730817AbfKTNpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:45:20 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:56787 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728864AbfKTNpU (ORCPT
+        id S1731007AbfKTNpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:45:55 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:36435 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730907AbfKTNpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:45:20 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 2D8A26D7E;
-        Wed, 20 Nov 2019 08:45:18 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 20 Nov 2019 08:45:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=HBx0ATlKQS6ihzQSYv4eFhcuYSS
-        PpHvcXAzdap35ALg=; b=Qdf+s0c6K29kIsyee9j5q260GaF4jDcAo0GQQ6gkp4Q
-        yUVBdzDtMj53LVevwTruYcbrmy/gmHSjoxamS2Tp5821kOl5cic7yYbsyjwAK8jY
-        oixZ+bF0I2GjgirWKoxyWk5ukBbn5wwqXT76jY9p5WLVxfieohaTEkKObHtGzVXa
-        qUHsBUUencFEmB/hEUn8bwnot0SYhl9ls76VBZ04fWtsW+uy+3l5Jj8H643jOY3k
-        U6W7+XTHQEMgXtZyI9tawjOEZWQpJZsBrKGTSuNRgLwcukIAUfERGawLyCNZF67Z
-        89kmJa7rVF7fkUFPhS+sD2Nz6WgolyBZg3321NYFkMg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=HBx0AT
-        lKQS6ihzQSYv4eFhcuYSSPpHvcXAzdap35ALg=; b=FiTS/f3biHcEjumFoNSr83
-        cEkQDdPPF5gXfS6x7bDYXhxjC7Iel8YcpAsQiFuZHX2grHpDBrJSmvWeckJ25Ub1
-        SFsawfjNc42FpLlWF1Jfyl+RUXqY4ns9T3sy4GjkI6pQLXsKX7tGPlJgzOULQQIK
-        7lTSD+3mNDVXGlGYofVfcVPhZvsHgrTtZvcMVCEQzaeURJeFsbRQIqiXBNWJXB+W
-        RBf0VpGkO77+Uf7KkIbX4fwWw+w/o69LvjVe5KuYjd/WfqBu507qKRwAR0gOzw1j
-        cUSfTnhur60lSUOfQwZ1VgB7eQ2oe8MPC6EpOCwVZZGlbjc/vyW2bimnBX7zz1Nw
-        ==
-X-ME-Sender: <xms:bEPVXax4TLeYfctjJJuDqvOblirexd-crZZuxDZ7ItSGmgXPu-KDxg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehtddgheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehgtd
-    erredtredvnecuhfhrohhmpeforgigihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegt
-    vghrnhhordhtvggthheqnecukfhppeeltddrkeelrdeikedrjeeinecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghhnecuvehluhhsthgvrhfu
-    ihiivgeptd
-X-ME-Proxy: <xmx:bEPVXZA11E6gv42UuV4XONXEtEWft7RrWUoPPhlSmIt-yJ1RqyGezw>
-    <xmx:bEPVXZPJlgwz6Bj3TaiAVKDmSq9_s6_mggHS53shxelXTzOjzkYORg>
-    <xmx:bEPVXYCW0B-zSjPGJdAMrMBphmir5ONEYd7SKR_bqR5Kflkshb7orQ>
-    <xmx:bkPVXZUt6NOpAuSIaklt96euI_I_Inap8YbJ34VwIg6sqbHJP5kt-A>
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 82DF080059;
-        Wed, 20 Nov 2019 08:45:16 -0500 (EST)
-Date:   Wed, 20 Nov 2019 14:45:14 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     Maxime Ripard <mripard@kernel.org>, davem@davemloft.net,
-        herbert@gondor.apana.org.au, mark.rutland@arm.com,
-        robh+dt@kernel.org, wens@csie.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 2/3] ARM: dts: sun8i: a33: add the new SecuritySystem
- compatible
-Message-ID: <20191120134514.GA4345@gilmour.lan>
-References: <20191114144812.22747-1-clabbe.montjoie@gmail.com>
- <20191114144812.22747-3-clabbe.montjoie@gmail.com>
- <20191118111143.GF4345@gilmour.lan>
- <20191119073924.GA32060@Red>
+        Wed, 20 Nov 2019 08:45:54 -0500
+Received: by mail-il1-f194.google.com with SMTP id s75so23461333ilc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 05:45:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CgtC9U1pFRMoXuEqIqpJlmsw3VQlHrD4MMxLF0Vx8xg=;
+        b=f9v0k+tmuEKwj5AFNUmMvv40wkogZJAKmCuPbUcRSyVSro9EOqDDGQUbGbNnFxuafy
+         M8+nR8SfAxXQSWe5lkbuIRV42ZNm0BUahg5Pa7RSMFMqj4aT1Prn3NpFgDUDOxzOIBz2
+         S4kZCLvmzc+qOhteX9wJjgzlrGNGsYocmCcus=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CgtC9U1pFRMoXuEqIqpJlmsw3VQlHrD4MMxLF0Vx8xg=;
+        b=blz/bjBcgxG7Z8rDEf+kwwTuV69ycxDcxrOKRrsOGXGNJotZKa10o5vP4OLKTIYgYU
+         4LrPb/xnfB7PycOxYJ3bjFui6UQwWIVr/8RtoZusojZgAt5sDA08Dep7dqgyhs96DXpO
+         CqJA+1sh5xezaZFUnMI9stEIXc0nstwIqWHajmv0P+4ZtK32JYZz0K11JSojCK5R3tMu
+         B9tdaIXAJhsWOZYfE6IfZVfHk3UVdSDC9XNu4YK+jkQtLU3ao2d3RwiwMYMDi6xV0HgX
+         D0zzUCITXXPYtUmgsBQdTqmkWt/ZqFmnNnAbIo8iKzbP22P7swXjFZEgjB9aV+l2ivmW
+         1sVg==
+X-Gm-Message-State: APjAAAXnvLzrtgWNNoKZzZFLreRRLEnbJj84N/cZpWHtbfbmS2dnkoTE
+        RHReEUc5P3YFpE/fwiybVQeGcxWvcwCvt/CwrGOMsA==
+X-Google-Smtp-Source: APXvYqw3MjUmdfjEYcoiBovAQmlP74ZDtmiuO4AZQCwKvD8ckXU62L4h/ai9eP9F51LEWbRnEd7dIEmZ63LdAHGL5Ac=
+X-Received: by 2002:a92:5d8f:: with SMTP id e15mr3572412ilg.173.1574257548126;
+ Wed, 20 Nov 2019 05:45:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RbXZOS5Wid+xb0VD"
-Content-Disposition: inline
-In-Reply-To: <20191119073924.GA32060@Red>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191120113923.11685-1-jagan@amarulasolutions.com>
+ <20191120113923.11685-5-jagan@amarulasolutions.com> <5644395.EDGZVd1YuU@diego>
+In-Reply-To: <5644395.EDGZVd1YuU@diego>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 20 Nov 2019 19:15:35 +0530
+Message-ID: <CAMty3ZA+p2pWokLrwnkv6_q0G8d76AntE5Kar4JN8MN48O9VSw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ARM: dts: rockchip: Add Radxa Carrier board
+To:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Tom Cubie <tom@radxa.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Akash Gajjar <akash@openedev.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Heiko,
 
---RbXZOS5Wid+xb0VD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-On Tue, Nov 19, 2019 at 08:39:24AM +0100, Corentin Labbe wrote:
-> On Mon, Nov 18, 2019 at 12:11:43PM +0100, Maxime Ripard wrote:
-> > Hi,
-> >
-> > On Thu, Nov 14, 2019 at 03:48:11PM +0100, Corentin Labbe wrote:
-> > > Add the new A33 SecuritySystem compatible to the crypto node.
-> > >
-> > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> > > ---
-> > >  arch/arm/boot/dts/sun8i-a33.dtsi | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-> > > index 1532a0e59af4..5680fa1de102 100644
-> > > --- a/arch/arm/boot/dts/sun8i-a33.dtsi
-> > > +++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-> > > @@ -215,7 +215,8 @@
-> > >  		};
-> > >
-> > >  		crypto: crypto-engine@1c15000 {
-> > > -			compatible = "allwinner,sun4i-a10-crypto";
-> > > +			compatible = "allwinner,sun8i-a33-crypto",
-> > > +				     "allwinner,sun4i-a10-crypto";
-> >
-> > If some algorithms aren't working properly, we can't really fall back
-> > to it, we should just use the a33 compatible.
+On Wed, Nov 20, 2019 at 6:55 PM Heiko St=C3=BCbner <heiko@sntech.de> wrote:
 >
-> Since crypto selftest detect the problem, the fallback could be used
-> and SS will just be in degraded mode (no sha1).
+> Hi Jagan,
 >
-> But since nobody reported this problem since 4 years (when SS was
-> added in a33 dts), the absence of sha1 is clearly not an issue.
+> Am Mittwoch, 20. November 2019, 12:39:22 CET schrieb Jagan Teki:
+> > Carrier board often referred as baseboard. For making
+> > complete SBC, the associated SOM will mount on top of
+> > this carrier board.
+> >
+> > Radxa has a carrier board which supports on board
+> > peripherals, ports like USB-2.0, USB-3.0, HDMI, MIPI DSI/CSI,
+> > eDP, Ethernet, PCIe, USB-C, 40-Pin GPIO header and etc.
+> >
+> > Currently this carrier board can be used together with
+> > VMARC RK3399Por SOM for making Rock PI N10 SBC.
+> >
+> > So add this carrier board dtsi as a separate file in
+> > ARM directory, so-that the same can reuse it in both
+> > arm32 and arm64 variants of Rockchip SOMs.
+>
+> Do you really think someone will create an arm32 soc using that
+> carrier board?
 
-It's not really the point though. There's a bug, it's something that
-was overlooked and it's unfortunate. The bug is still there though,
-and the only option to fix it properly is to simply fix, not claim
-that it's somewhat ok to keep it around since no one really uses it
-anyway.
+Yes, we have Rock Pi N8 which is using same carrier board design with
+(+ external codec) on top of RK3288 SOM. I didn't mentioned on the
+commit message since radxa doesn't officially announced on the
+website.
 
-Maxime
+>
+> Similarly so far I don't think we haven't even seen a lot of reuse
+> of existing carrier boards at all, other than their initial combination.
+>
+> So maybe just having the content of your
+>         rockchip-radxa-carrierboard.dtsi
+> in
+>         rockchip/rk3399pro-rock-pi-n10.dts
+> from patch 5 might be a better start - at least until there is any
+> further usage - if at all?
 
---RbXZOS5Wid+xb0VD
-Content-Type: application/pgp-signature; name="signature.asc"
+But, this particular design has proper use case.
+1. rk3399pro SOM + carrier board (Rock Pi N10)
+2. rk3288 SOM + carrier board (Rock Pi N8)
 
------BEGIN PGP SIGNATURE-----
+>
+> Also rockchip-radxa-carrierboard might even be overly generic
+> as there may be multiple carrierboards from Radxa later on.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXdVDagAKCRDj7w1vZxhR
-xTr+AP9nKc+hE3dn5vXfY2IR4cUybDQj7CLHiRPioS1Ywc9IhAD+LubNk4yjxFc4
-TLXqQL0OKbRm9agqiHxjDu4XR85jMgQ=
-=Xjtr
------END PGP SIGNATURE-----
+I'm slightly disagree of having overlay here, since these are fixed
+design combinations. where SOM with respective carrier board is
+mandatory to make final board. Understand that we can have a
+maintenance over-ahead if we have multiple carrier boards, but right
+now radxa has only one carrier board with 2 sets of SOM's combinations
+that indeed fit like a dev board, so there is unused carrier board.
 
---RbXZOS5Wid+xb0VD--
+Jagan.
