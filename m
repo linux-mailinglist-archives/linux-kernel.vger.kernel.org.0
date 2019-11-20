@@ -2,131 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBCF8103D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E539D103D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731624AbfKTOV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 09:21:27 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40389 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730018AbfKTOVU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:21:20 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y5so1832699wmi.5
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 06:21:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Hc8hYB3tbZIod+IQ6MbwVcYHzkJ7GhB4LPUoKfpHBhg=;
-        b=bbGGdIG8CJ1VEwyvm3y8H9OEzouxX5YUlVCLvoh6v+C2mp5+I3HC5s5lrDBbxANKk1
-         cW3mLQhthQBpB6dK1G8UH5qpHOayPMkgVbLUim7e2ePY/pq0TNd5Add/viZsjSZQl+si
-         //3W73zDWghkbFXIWkkWUPHTfv4GUJFnmTEdzN9U/9pWsk+dVTAfD0F6wnhVRf36ISDi
-         CZTcdbRZPmQ1EfsMkC1gq3kwLiieQA48/nSscfZhpIgL5hO5bxJKF9O2KIHQRMCfCto4
-         1uRDYDVbbUUvqxjiUkoHfHQe6cKiJGK/6NlZdiR4Q5tdmuFEBN7pqTQp6iC0fEqVH2AW
-         jGtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Hc8hYB3tbZIod+IQ6MbwVcYHzkJ7GhB4LPUoKfpHBhg=;
-        b=o+k4AWh53bbkPH31KmK94+jLFvPdqNrXozwI8Df4etI6Uyudd5+OtMHjeuXTfdq2hi
-         Esi/Tquci0mCMmdwOzSvVpgVdtC4/PivzmxD2SSThFgGrWN7jQ2t9dA3NTqxOudbCR55
-         C20d1nsuKkjhCPWhm+gfpCARxTBa5lqSXC5qVqBizmtwEcWVYUk8+0e/uf6PYz+PW2ny
-         9MNq25q3IIXARKWYEFs55EXm+c06wbkDbtHu5+pDXKUDb74TKP1+chI6DPqOSAU61CDG
-         QcnmbLnTgUlOgZFtQeAa5Z+Ys9z+zdNOx2DwNtim4j0Snk+vXrKPERqx6MH/FtzAWYoC
-         vR6w==
-X-Gm-Message-State: APjAAAUH/5ad5gaA42SgOOC2UnNlBtemOakRad5vmYYMxS4DtMcI/6nR
-        0snzm69pGzfV8nJ77wZg056lcg==
-X-Google-Smtp-Source: APXvYqxwZ6NxHy5lxmuWtOfJ8fr/iWLuyRSEw7VcXF5Wp1+axm988/wxsbwGi9rjW87fA0wtR/au+w==
-X-Received: by 2002:a1c:7d16:: with SMTP id y22mr3453604wmc.106.1574259678325;
-        Wed, 20 Nov 2019 06:21:18 -0800 (PST)
-Received: from khouloud-ThinkPad-T470p.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id a6sm34544352wrh.69.2019.11.20.06.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 06:21:17 -0800 (PST)
-From:   Khouloud Touil <ktouil@baylibre.com>
-To:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, srinivas.kandagatla@linaro.org,
-        baylibre-upstreaming@groups.io
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linus.walleij@linaro.org,
-        Khouloud Touil <ktouil@baylibre.com>
-Subject: [PATCH 4/4] eeprom: at24: remove the write-protect pin support
-Date:   Wed, 20 Nov 2019 15:20:38 +0100
-Message-Id: <20191120142038.30746-5-ktouil@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191120142038.30746-1-ktouil@baylibre.com>
-References: <20191120142038.30746-1-ktouil@baylibre.com>
+        id S1731660AbfKTOQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 09:16:07 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45688 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730191AbfKTOQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 09:16:07 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2BFB02E04DBF7C2534C7;
+        Wed, 20 Nov 2019 22:16:03 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 20 Nov 2019
+ 22:15:55 +0800
+From:   zhengbin <zhengbin13@huawei.com>
+To:     <willy@infradead.org>, <viro@zeniv.linux.org.uk>,
+        <hughd@google.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+        <zhengbin13@huawei.com>
+Subject: [PATCH] tmpfs: use ida to get inode number
+Date:   Wed, 20 Nov 2019 22:23:18 +0800
+Message-ID: <1574259798-144561-1-git-send-email-zhengbin13@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NVMEM framework is an interface for the at24 EEPROMs as well as for
-other drivers, instead of passing the wp-gpios over the different
-drivers each time, it would be better to pass it over the NVMEM
-subsystem once and for all.
+Use a script to test tmpfs, after 10 days, there will be files share the
+same inode number, thus bug happens.
+The script is as follows:
+while(1) {
+  create a file
+  dlopen it
+  ...
+  remove it
+}
 
-Removing the support for the write-protect pin after adding it to the
-NVMEM subsystem.
+I have tried to change last_ino type to unsigned long, while this was
+rejected, see details on https://patchwork.kernel.org/patch/11023915.
 
-Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+Use ida to get inode number, from the fs_mark test, performance impact
+is small.
+
+CPU core: 128  memory: 8G
+Use fs_mark to create ten million files first in tmpfs.
+
+Then test performance in the following command(test five times):
+rm -rf /tmp/fsmark_test
+sync
+echo 3 > /proc/sys/vm/drop_caches
+sleep 10
+fs_mark -t 20 -s 0 -n 102400 -D 64 -N 1600 -L 3 -d /tmp/fsmark_test
+
+result is file creation speed(Files/sec).
+get_next_ino  |  use ida
+439506.7      |  423219.0
+441453.0      |  406832.7
+439868.0      |  441283.3
+445642.3      |  428221.3
+441776.7      |  438129.0
+average:
+441649.34     |  427537.06
+
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
 ---
- drivers/misc/eeprom/at24.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ mm/shmem.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index 2cccd82a3106..eec2a34b7051 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -22,7 +22,6 @@
- #include <linux/nvmem-provider.h>
- #include <linux/regmap.h>
- #include <linux/pm_runtime.h>
--#include <linux/gpio/consumer.h>
- 
- /* Address pointer is 16 bit. */
- #define AT24_FLAG_ADDR16	BIT(7)
-@@ -89,8 +88,6 @@ struct at24_data {
- 
- 	struct nvmem_device *nvmem;
- 
--	struct gpio_desc *wp_gpio;
--
- 	/*
- 	 * Some chips tie up multiple I2C addresses; dummy devices reserve
- 	 * them for us, and we'll use them with SMBus calls.
-@@ -457,12 +454,10 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
- 	 * from this host, but not from other I2C masters.
- 	 */
- 	mutex_lock(&at24->lock);
--	gpiod_set_value_cansleep(at24->wp_gpio, 0);
- 
- 	while (count) {
- 		ret = at24_regmap_write(at24, buf, off, count);
- 		if (ret < 0) {
--			gpiod_set_value_cansleep(at24->wp_gpio, 1);
- 			mutex_unlock(&at24->lock);
- 			pm_runtime_put(dev);
- 			return ret;
-@@ -472,7 +467,6 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
- 		count -= ret;
- 	}
- 
--	gpiod_set_value_cansleep(at24->wp_gpio, 1);
- 	mutex_unlock(&at24->lock);
- 
- 	pm_runtime_put(dev);
-@@ -662,9 +656,6 @@ static int at24_probe(struct i2c_client *client)
- 	at24->client[0].client = client;
- 	at24->client[0].regmap = regmap;
- 
--	at24->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_HIGH);
--	if (IS_ERR(at24->wp_gpio))
--		return PTR_ERR(at24->wp_gpio);
- 
- 	writable = !(flags & AT24_FLAG_READONLY);
- 	if (writable) {
--- 
-2.17.1
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 5b93877..6b5e01b 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -258,6 +258,7 @@ static const struct inode_operations shmem_dir_inode_operations;
+ static const struct inode_operations shmem_special_inode_operations;
+ static const struct vm_operations_struct shmem_vm_ops;
+ static struct file_system_type shmem_fs_type;
++static DEFINE_IDA(shmem_inode_ida);
+
+ bool vma_is_shmem(struct vm_area_struct *vma)
+ {
+@@ -1138,6 +1139,7 @@ static void shmem_evict_inode(struct inode *inode)
+
+ 	simple_xattrs_free(&info->xattrs);
+ 	WARN_ON(inode->i_blocks);
++	ida_simple_remove(&shmem_inode_ida, inode->i_ino);
+ 	shmem_free_inode(inode->i_sb);
+ 	clear_inode(inode);
+ }
+@@ -2213,13 +2215,20 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+ 	struct inode *inode;
+ 	struct shmem_inode_info *info;
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
++	int i_ino;
+
+ 	if (shmem_reserve_inode(sb))
+ 		return NULL;
+
++	i_ino = ida_simple_get(&shmem_inode_ida, 0, 0, GFP_KERNEL);
++	if (i_ino < 0) {
++		shmem_free_inode(sb);
++		return NULL;
++	}
++
+ 	inode = new_inode(sb);
+ 	if (inode) {
+-		inode->i_ino = get_next_ino();
++		inode->i_ino = i_ino;
+ 		inode_init_owner(inode, dir, mode);
+ 		inode->i_blocks = 0;
+ 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+@@ -2263,8 +2272,11 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+ 		}
+
+ 		lockdep_annotate_inode_mutex_key(inode);
+-	} else
++	} else {
++		ida_simple_remove(&shmem_inode_ida, i_ino);
+ 		shmem_free_inode(sb);
++	}
++
+ 	return inode;
+ }
+
+--
+2.7.4
 
