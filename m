@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0AE103AFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BFD7103AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:21:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730341AbfKTNVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:21:33 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56816 "EHLO
+        id S1730370AbfKTNVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:21:37 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56834 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730264AbfKTNVY (ORCPT
+        with ESMTP id S1730286AbfKTNV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:24 -0500
+        Wed, 20 Nov 2019 08:21:27 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPv5-0007Ez-Kl; Wed, 20 Nov 2019 14:21:19 +0100
+        id 1iXPvA-0007F9-Qt; Wed, 20 Nov 2019 14:21:24 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5C8011C1A1E;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 803C71C1A1F;
         Wed, 20 Nov 2019 14:21:06 +0100 (CET)
 Date:   Wed, 20 Nov 2019 13:21:06 -0000
 From:   "tip-bot2 for Florian Fainelli" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
+Subject: [tip: irq/core] dt-bindings: Document brcm, irq-can-wake for brcm,
+ bcm7038-l1-intc.txt
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191024201415.23454-4-f.fainelli@gmail.com>
-References: <20191024201415.23454-4-f.fainelli@gmail.com>
+        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191024201415.23454-3-f.fainelli@gmail.com>
+References: <20191024201415.23454-3-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Message-ID: <157425606627.12247.18304172423061718891.tip-bot2@tip-bot2>
+Message-ID: <157425606646.12247.14831145441040729864.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,37 +49,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     27eebb60357ed5aa6659442f92907c0f7368d6ae
-Gitweb:        https://git.kernel.org/tip/27eebb60357ed5aa6659442f92907c0f7368d6ae
+Commit-ID:     b94f9008f2ad551f4d6a9537b10238847cb81e5d
+Gitweb:        https://git.kernel.org/tip/b94f9008f2ad551f4d6a9537b10238847cb81e5d
 Author:        Florian Fainelli <f.fainelli@gmail.com>
-AuthorDate:    Thu, 24 Oct 2019 13:14:13 -07:00
+AuthorDate:    Thu, 24 Oct 2019 13:14:12 -07:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sun, 10 Nov 2019 18:47:47 
+CommitterDate: Sun, 10 Nov 2019 18:47:46 
 
-irqchip/irq-bcm7038-l1: Enable parent IRQ if necessary
+dt-bindings: Document brcm, irq-can-wake for brcm, bcm7038-l1-intc.txt
 
-If the 'brcm,irq-can-wake' property is specified, make sure we also
-enable the corresponding parent interrupt we are attached to.
+The BCM7038 L1 interrupt controller can be used as a wake-up interrupt
+controller on MIPS and ARM-based systems, document the brcm,irq-can-wake
+which has been "standardized" across Broadcom interrupt controllers.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20191024201415.23454-4-f.fainelli@gmail.com
+Acked-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20191024201415.23454-3-f.fainelli@gmail.com
 ---
- drivers/irqchip/irq-bcm7038-l1.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
-index 689e487..45879e5 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -286,6 +286,10 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
- 		pr_err("failed to map parent interrupt %d\n", parent_irq);
- 		return -EINVAL;
- 	}
-+
-+	if (of_property_read_bool(dn, "brcm,irq-can-wake"))
-+		enable_irq_wake(parent_irq);
-+
- 	irq_set_chained_handler_and_data(parent_irq, bcm7038_l1_irq_handle,
- 					 intc);
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt
+index 2117d4a..4eb0432 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt
+@@ -31,6 +31,11 @@ Required properties:
+ - interrupts: specifies the interrupt line(s) in the interrupt-parent controller
+   node; valid values depend on the type of parent interrupt controller
  
++Optional properties:
++
++- brcm,irq-can-wake: If present, this means the L1 controller can be used as a
++  wakeup source for system suspend/resume.
++
+ If multiple reg ranges and interrupt-parent entries are present on an SMP
+ system, the driver will allow IRQ SMP affinity to be set up through the
+ /proc/irq/ interface.  In the simplest possible configuration, only one
