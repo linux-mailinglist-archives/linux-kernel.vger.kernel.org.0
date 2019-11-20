@@ -2,119 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B66F1039C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8819D1039D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:15:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfKTMOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 07:14:33 -0500
-Received: from a27-185.smtp-out.us-west-2.amazonses.com ([54.240.27.185]:54348
-        "EHLO a27-185.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728251AbfKTMOd (ORCPT
+        id S1729347AbfKTMPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 07:15:15 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43558 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728632AbfKTMPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:14:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574252072;
-        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID;
-        bh=c3N+UHrBK1arDVU4vjMLuhdjzywq5jiY1zOpV3AvfGA=;
-        b=Cx2VVyiffg7YmwKBsWRgiv2dEGqRVXGjHboUKUMWVRZdiRDK4toF+JWkrTJqYuxh
-        inm6+MCe3FUse5lSWFXxrDtMdrooUzp+24BeOozN7wwoVd9UHYnpPSb9Q4cXIA0nhY1
-        A18D928DiB2Qsdpg9qq6djfrj7HBGiq2I+NbDe2o=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574252072;
-        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID:Feedback-ID;
-        bh=c3N+UHrBK1arDVU4vjMLuhdjzywq5jiY1zOpV3AvfGA=;
-        b=Ll5WaAjJzEj4GmQCtxPp9+RawK5sp7b/Pu0XFeEhwnd+kdvezsckAKVZ21cXubGw
-        KGEh0Ng8g5uw0921UmJWa1RHgZqyq1wrv4XcjDqWI7yif0JHlutft66PxtE0AliWkOQ
-        wJQXFjS8P8G7Q6KB4ZPZON0Cl4V7yP8mRuEZfQtQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
+        Wed, 20 Nov 2019 07:15:15 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l20so22253464oie.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 04:15:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hrG1MrWdrTxQ+fEkYluZ+Amp57CnVbQolCFc6b0yOMw=;
+        b=BCWKJcxliVFECs22XPYdzmCfq6UxJ+r0A2hwPCG3UgTsrNykDlCYRwjboF61Sqo9zp
+         +PbHVMiM3o+Il5mXnT4AU67wqndSCGbFFaWWne6Gg4O7FZS9wMcJ36OLjuWxu7976ii7
+         wvr6EQv0SNgr0jwbH3WIuZBUZhIU+W0p0OZvxvqtNGHL47oe3K5xS0d+dGbB1+TP2Axv
+         orlljVQfXprgUb+124aL1U67hFss5nkgcuhCWAi4c1n3hIQ7jy2cYiaTOUGVXkF59A5w
+         v7j+nF9ufNoSPgulO+dmQ/EqLId4xkKOpsZDhHKyG2ZzBSvtd+x3f9DO21bU6O7X/v3T
+         xB8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hrG1MrWdrTxQ+fEkYluZ+Amp57CnVbQolCFc6b0yOMw=;
+        b=FAoXWY63CbUNJBcqF2hIpYSIpjrXG19ymWkXL+1psU6FwNMLdpH07DoyrF6g1DCQwr
+         yW0Vd8cNT134TroCXZzHQq3lNvhBtMb7JP4LzxM99E8cu7IVtX6lHXOA+grHNdAVKY4O
+         JS3jcG+vMMcJAk1s6EF7FG3VquewNTkEqUJaVRLHgb7GPcaC73G8itA+qFldg+95tt89
+         WXpVjjhcB6UlktI5VttCNW0QWS2EP0ogVfq6NctI6+D2pibmu/q72WV6UEkI9BZz+Ik3
+         hmO3Ov9dF4++TPNqxiLdgJ0n0Q9uQ8gPvD2Ukh78N8ZlSndIcAdvs+l7maRS4BtoEFXq
+         i46w==
+X-Gm-Message-State: APjAAAWFKNYhPvchRYhksiGeeC9kWdVOT/vRJ8fInTr/iGlM029H/wm4
+        Xd8isHx2V8E7NQJSDgIyum8yX95Kr1uBqZhIJTWhsQ==
+X-Google-Smtp-Source: APXvYqxcPlxqj8J0oyKwlKXufQPJJz14mykqw4atAAEyEapumzz65ppRIjkCe1QaxKwYx0HcOa1j2M5szNrBXtznssg=
+X-Received: by 2002:aca:4d47:: with SMTP id a68mr2558098oib.68.1574252113967;
+ Wed, 20 Nov 2019 04:15:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 20 Nov 2019 12:14:31 +0000
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     robh+dt@kernel.org, ulf.hansson@linaro.org, rnayak@codeaurora.org,
-        agross@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        mark.rutland@arm.com, swboyd@chromium.org, dianders@chromium.org
-Subject: Re: [PATCH 1/6] soc: qcom: rpmhpd: Set 'active_only' for active only
- power domains
-In-Reply-To: <20191120023908.GP18024@yoga>
-References: <20191118173944.27043-1-sibis@codeaurora.org>
- <0101016e7f9998d8-877e9166-8b6a-4530-ab66-3c88002e1db4-000000@us-west-2.amazonses.com>
- <20191120023908.GP18024@yoga>
-Message-ID: <0101016e88bc4bf1-b1818c02-87cc-4ae8-9538-a426ce3c77ab-000000@us-west-2.amazonses.com>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
-X-SES-Outgoing: 2019.11.20-54.240.27.185
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+References: <20191120103613.63563-1-jannh@google.com> <20191120103613.63563-2-jannh@google.com>
+ <20191120111859.GA115930@gmail.com>
+In-Reply-To: <20191120111859.GA115930@gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 20 Nov 2019 13:14:47 +0100
+Message-ID: <CAG48ez0Frp4-+xHZ=UhbHh0hC_h-1VtJfwHw=kDo6NahyMv1ig@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] x86/traps: Print non-canonical address on #GP
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-20 08:09, Bjorn Andersson wrote:
-> On Mon 18 Nov 09:40 PST 2019, Sibi Sankar wrote:
-> 
->> From: Douglas Anderson <dianders@chromium.org>
->> 
->> The 'active_only' attribute was accidentally never set to true for any
->> power domains meaning that all the code handling this attribute was
->> dead.
->> 
->> NOTE that the RPM power domain code (as opposed to the RPMh one) gets
->> this right.
->> 
->> Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain 
->> driver")
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
->> Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
-> 
-> You should have added your S-o-b here to certify its origin.
-> But I picked up this patch earlier today.
+On Wed, Nov 20, 2019 at 12:19 PM Ingo Molnar <mingo@kernel.org> wrote:
+> * Jann Horn <jannh@google.com> wrote:
+>
+> > A frequent cause of #GP exceptions are memory accesses to non-canonical
+> > addresses. Unlike #PF, #GP doesn't come with a fault address in CR2, so
+> > the kernel doesn't currently print the fault address for #GP.
+> > Luckily, we already have the necessary infrastructure for decoding X86
+> > instructions and computing the memory address that is being accessed;
+> > hook it up to the #GP handler so that we can figure out whether the #GP
+> > looks like it was caused by a non-canonical address, and if so, print
+> > that address.
+[...]
+> > +/*
+> > + * On 64-bit, if an uncaught #GP occurs while dereferencing a non-canonical
+> > + * address, return that address.
+> > + */
+> > +static unsigned long get_kernel_gp_address(struct pt_regs *regs)
+> > +{
+> > +#ifdef CONFIG_X86_64
+> > +     u8 insn_bytes[MAX_INSN_SIZE];
+> > +     struct insn insn;
+> > +     unsigned long addr_ref;
+> > +
+> > +     if (probe_kernel_read(insn_bytes, (void *)regs->ip, MAX_INSN_SIZE))
+> > +             return 0;
+> > +
+> > +     kernel_insn_init(&insn, insn_bytes, MAX_INSN_SIZE);
+> > +     insn_get_modrm(&insn);
+> > +     insn_get_sib(&insn);
+> > +     addr_ref = (unsigned long)insn_get_addr_ref(&insn, regs);
+>
+> I had to look twice to realize that the 'insn_bytes' isn't an integer
+> that shows the number of bytes in the instruction, but the instruction
+> buffer itself.
+>
+> Could we please do s/insn_bytes/insn_buf or such?
 
-sry missed it
+Will change it.
 
-> 
-> Thanks,
-> Bjorn
-> 
->> ---
->>  drivers/soc/qcom/rpmhpd.c | 2 ++
->>  1 file changed, 2 insertions(+)
->> 
->> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
->> index 5741ec3fa814c..51850cc68b701 100644
->> --- a/drivers/soc/qcom/rpmhpd.c
->> +++ b/drivers/soc/qcom/rpmhpd.c
->> @@ -93,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
->> 
->>  static struct rpmhpd sdm845_mx_ao = {
->>  	.pd = { .name = "mx_ao", },
->> +	.active_only = true,
->>  	.peer = &sdm845_mx,
->>  	.res_name = "mx.lvl",
->>  };
->> @@ -107,6 +108,7 @@ static struct rpmhpd sdm845_cx = {
->> 
->>  static struct rpmhpd sdm845_cx_ao = {
->>  	.pd = { .name = "cx_ao", },
->> +	.active_only = true,
->>  	.peer = &sdm845_cx,
->>  	.parent = &sdm845_mx_ao.pd,
->>  	.res_name = "cx.lvl",
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
->> 
+> > +
+> > +     /* Bail out if insn_get_addr_ref() failed or we got a kernel address. */
+> > +     if (addr_ref >= ~__VIRTUAL_MASK)
+> > +             return 0;
+> > +
+> > +     /* Bail out if the entire operand is in the canonical user half. */
+> > +     if (addr_ref + insn.opnd_bytes - 1 <= __VIRTUAL_MASK)
+> > +             return 0;
+>
+> BTW., it would be nice to split this logic in two: return the faulting
+> address to do_general_protection(), and print it out both for
+> non-canonical and canonical addresses as well -and use the canonical
+> check to *additionally* print out a short note when the operand is
+> non-canonical?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+You mean something like this?
+
+========================
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 9b23c4bda243..16a6bdaccb51 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -516,32 +516,36 @@ dotraplinkage void do_bounds(struct pt_regs
+*regs, long error_code)
+  * On 64-bit, if an uncaught #GP occurs while dereferencing a non-canonical
+  * address, return that address.
+  */
+-static unsigned long get_kernel_gp_address(struct pt_regs *regs)
++static bool get_kernel_gp_address(struct pt_regs *regs, unsigned long *addr,
++                                          bool *non_canonical)
+ {
+ #ifdef CONFIG_X86_64
+        u8 insn_buf[MAX_INSN_SIZE];
+        struct insn insn;
+-       unsigned long addr_ref;
+
+        if (probe_kernel_read(insn_buf, (void *)regs->ip, MAX_INSN_SIZE))
+-               return 0;
++               return false;
+
+        kernel_insn_init(&insn, insn_buf, MAX_INSN_SIZE);
+        insn_get_modrm(&insn);
+        insn_get_sib(&insn);
+-       addr_ref = (unsigned long)insn_get_addr_ref(&insn, regs);
++       *addr = (unsigned long)insn_get_addr_ref(&insn, regs);
+
+-       /* Bail out if insn_get_addr_ref() failed or we got a kernel address. */
+-       if (addr_ref >= ~__VIRTUAL_MASK)
+-               return 0;
++       if (*addr == (unsigned long)-1L)
++               return false;
+
+-       /* Bail out if the entire operand is in the canonical user half. */
+-       if (addr_ref + insn.opnd_bytes - 1 <= __VIRTUAL_MASK)
+-               return 0;
++       /*
++        * Check that:
++        *  - the address is not in the kernel half or -1 (which means the
++        *    decoder failed to decode it)
++        *  - the last byte of the address is not in the user canonical half
++        */
++       *non_canonical = *addr < ~__VIRTUAL_MASK &&
++                        *addr + insn.opnd_bytes - 1 > __VIRTUAL_MASK;
+
+-       return addr_ref;
++       return true;
+ #else
+-       return 0;
++       return false;
+ #endif
+ }
+
+@@ -569,8 +573,10 @@ do_general_protection(struct pt_regs *regs, long
+error_code)
+
+        tsk = current;
+        if (!user_mode(regs)) {
+-               unsigned long non_canonical_addr = 0;
++               bool addr_resolved = false;
++               unsigned long gp_addr;
+                unsigned long flags;
++               bool non_canonical;
+                int sig;
+
+                if (fixup_exception(regs, X86_TRAP_GP, error_code, 0))
+@@ -595,18 +601,19 @@ do_general_protection(struct pt_regs *regs, long
+error_code)
+                if (error_code)
+                        snprintf(desc, sizeof(desc), "segment-related " GPFSTR);
+                else
+-                       non_canonical_addr = get_kernel_gp_address(regs);
++                       addr_resolved = get_kernel_gp_address(regs, &gp_addr,
++                                                             &non_canonical);
+
+-               if (non_canonical_addr)
++               if (addr_resolved)
+                        snprintf(desc, sizeof(desc),
+-                           GPFSTR " probably for non-canonical address 0x%lx",
+-                           non_canonical_addr);
++                           GPFSTR " probably for %saddress 0x%lx",
++                           non_canonical ? "non-canonical " : "", gp_addr);
+
+                flags = oops_begin();
+                sig = SIGSEGV;
+                __die_header(desc, regs, error_code);
+-               if (non_canonical_addr)
+-                       kasan_non_canonical_hook(non_canonical_addr);
++               if (addr_resolved && non_canonical)
++                       kasan_non_canonical_hook(gp_addr);
+                if (__die_body(desc, regs, error_code))
+                        sig = 0;
+                oops_end(flags, regs, sig);
+========================
+
+I guess that could potentially be useful if a #GP is triggered by
+something like an SSE alignment error? I'll add it in unless someone
+else complains.
+
+> > +#define GPFSTR "general protection fault"
+> >  dotraplinkage void
+>
+> Please separate macro and function definitions by an additional newline.
+
+Will change it.
