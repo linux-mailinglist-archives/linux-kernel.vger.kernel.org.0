@@ -2,79 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E74BA1035E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 09:21:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4280F1035FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 09:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfKTIVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 03:21:08 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39970 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfKTIVI (ORCPT
+        id S1727977AbfKTIaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 03:30:04 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53265 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727910AbfKTIaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 03:21:08 -0500
-Received: by mail-qk1-f194.google.com with SMTP id z16so20513347qkg.7;
-        Wed, 20 Nov 2019 00:21:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7bWG2DNPmUa6jaFc0nId1+Kbe3D+HivJV9rytpu5WPY=;
-        b=QZrEiObIzEbFCyjr965BEiSWvlU+SGbYv9hgw5h6AoO+KAuyUPet6m34THwbSdtV+K
-         O0wpzHqTRMU4VG00UkhbDpeMNNZ7jZRogCmayqenFiULLqsuzyv1Sx9xhTWqFKMSwFVJ
-         O1+X+77ju4//5sedw7x5aQkQskY3EQ7FeUssnz7/WGyR26YnKTOOJQq30iZ2pMRlVHpO
-         mWOaeG0+FCKrhTgUXj6lwc6dq4LN5fKx/Dz0tqV6tPcxT8RkfLPKl/L7eJwCH2Nh/BQG
-         dYG96I/o/pDykjUwtMqkp/MXzUkj16sUFT6XWjJ++ySttCU/KfLKRuk13fcVn1MpNjBj
-         E2KQ==
-X-Gm-Message-State: APjAAAUEsPkMfoqScWAfsivxt9jm5AHBziHei3HDzUp5+zkItMPt8VEP
-        u7DIQMMpYv7J0jo+e/kz4+UhqRRXBueYjrSZIGMLrg==
-X-Google-Smtp-Source: APXvYqzIB0kwwzIAHfPMgbcj3AR6DIy4CsJKuDki0k6Zndedh71l04nYN3XJmF7cIzuXUnRCff8wFeFS4E+83v+oC4w=
-X-Received: by 2002:a05:620a:485:: with SMTP id 5mr1270597qkr.134.1574238065027;
- Wed, 20 Nov 2019 00:21:05 -0800 (PST)
+        Wed, 20 Nov 2019 03:30:04 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1iXLN6-0004qS-8S; Wed, 20 Nov 2019 09:29:56 +0100
+Received: from mgr by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1iXLN5-0006AT-7N; Wed, 20 Nov 2019 09:29:55 +0100
+Date:   Wed, 20 Nov 2019 09:29:55 +0100
+From:   Michael Grzeschik <mgr@pengutronix.de>
+To:     Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: imx25: fix usbhost1 node
+Message-ID: <20191120082955.3ovsoziurntmv7by@pengutronix.de>
+References: <20191111114655.9583-1-m.grzeschik@pengutronix.de>
+ <20191115083415.28976-1-m.grzeschik@pengutronix.de>
+ <20191115201409.5ztt7vrhf2btpoed@pengutronix.de>
 MIME-Version: 1.0
-References: <20d33517-6df0-9104-fc0a-7f621f87192e@infradead.org>
- <CAMuHMdU0Vx1E9V+h8XYTyAJitPT42NdGvgzLAfG-=1BVZd-rbA@mail.gmail.com> <413c9aad-2123-b22a-56bc-faa5c7d38d06@infradead.org>
-In-Reply-To: <413c9aad-2123-b22a-56bc-faa5c7d38d06@infradead.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Nov 2019 09:20:53 +0100
-Message-ID: <CAMuHMdVLoHejqNMr0CK=K1bcT16fWu-h5n1w3ebsay9VtZccwQ@mail.gmail.com>
-Subject: Re: [PATCH] arch/sh/: fix NUMA build errors
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="m7xzwwcaqk6e4zvj"
+Content-Disposition: inline
+In-Reply-To: <20191115201409.5ztt7vrhf2btpoed@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:28:09 up 135 days, 14:38, 138 users,  load average: 0.22, 0.21,
+ 0.18
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy
 
-On Wed, Nov 20, 2019 at 1:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 11/18/19 11:38 PM, Geert Uytterhoeven wrote:
-> > BTW, you didn't have the issue with CPU_SHX3 and CPU_SUBTYPE_SH7785?
->
-> I don't see a defconfig with that combination.
+--m7xzwwcaqk6e4zvj
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK ;-)
+On Fri, Nov 15, 2019 at 09:14:09PM +0100, Uwe Kleine-K=F6nig wrote:
+> Hello Michael,
+>=20
+> On Fri, Nov 15, 2019 at 09:34:15AM +0100, Michael Grzeschik wrote:
+> > The usb port represented by &usbhost1 uses an USB phy internal to the
+> > SoC. We add the phy_type to the base dtsi so the board dts only have to
+> > overwrite it if they use a different configuration. While at it we also
+> > pin the usbhost port to host mode and limit the speed of the phy to
+> > full-speed only, which it is only capable of.
+>=20
+> The subject line suggests this is a fix but the commit log and the
+> actual change don't support this. Maybe better:
+>=20
+> 	ARM: dts: imx25: consolidate properties of usbhost1 in dtsi file
+>=20
 
-> Also, http://kisskb.ellerman.id.au/kisskb/branch/linus/head/af42d3466bdc8f39806b26f593604fdc54140bcb/
-> didn't report any such problem.  I only addressed the 3 build errors that were reported there as
->   page_alloc.c:(.text+0x3148): undefined reference to `node_reclaim_distance'
->
-> I did just test sdk7786_defconfig successfully, but that's no surprise since it sets CONFIG_SMP.
+Will send a new series with this suggestion.
 
-Yeah, that's one of the few real SMP SH SoCs.
+> ?=20
+>=20
+> > diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
+> > index 9a097ef014af5..40b95a290bd6b 100644
+> > --- a/arch/arm/boot/dts/imx25.dtsi
+> > +++ b/arch/arm/boot/dts/imx25.dtsi
+> > @@ -570,6 +570,9 @@
+> >  				clock-names =3D "ipg", "ahb", "per";
+> >  				fsl,usbmisc =3D <&usbmisc 1>;
+> >  				fsl,usbphy =3D <&usbphy1>;
+> > +				maximum-speed =3D "full-speed";
+> > +				phy_type =3D "serial";
+> > +				dr_mode =3D "host";
+>=20
+> Would it make sense to split this patch in two? One that moves phy_type
+> and dr_mode from the dts files using imx25.dtsi (which has no effects on
+> the resulting dtb files). And another that adds maximum-speed.
 
-Gr{oetje,eeting}s,
+And a second patch including the speed limitation change.
 
-                        Geert
+Thanks,
+Michael
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--m7xzwwcaqk6e4zvj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAl3U+YMACgkQC+njFXoe
+LGRtixAAlyFKmJgYeg6duQVqKdTinYouh9xcyRKXQ/8qMcGtZm3pad0+qZozdycj
+AjWhY3F8fJdQxMUAZN6lTgpNuGuBpTCJ+scLv9VnU+lYKS85UBCAJ9VXIZ4f0yQ+
+VolO+AkD5oLf5gv6ZU1opnpTMRam2KptGqEyRLfxoniuHGEJf046H3nrdy8hx4n6
+JxRZsgzKe3abM1T205elQSzZFy6fsDDVYZfdVwpVvs+9p/GytwHl3TKucNuWb4Qe
+4JDdIiMAS3B7Rf4RNMKHKVGBr7puibkcGAfL5lUEfG9Ta/utiFMYH7I9Php0d8Bn
+n2ZgaGwRoAoj1x7xqn6RQFgRlCaecR2Glqwko9cLwVfMzUZJGCBafaYTQgVBRTar
+7mq/BAVDSPJssowJrkaQ929NjgkUzdhcbD7avWt3OQA2ije1Syfa5aCp8RPh4RAn
+VUNqIS7i27bTOkSXa8FZaTo6C2/zqDlQIWJ7/2VlSgTqD5zrDEp7RP14Ykbgdj3M
+Au0IoymMMVbo3chEbA+1FH6bbnWY1MY2tBGPXyc3EgzufbXOK4/MiTIz26qNGnpj
++9S42DkuOijLKLV+au22M3VCVyD0sfSfQsj1qZY1QJqIEp2GPQLSo86YcqH1sZIJ
+DnBzv3mYDN5OmhvWZ4qoBLjCIB1+Ws+5EX21NkpNCn7ehQTDMH0=
+=OvER
+-----END PGP SIGNATURE-----
+
+--m7xzwwcaqk6e4zvj--
