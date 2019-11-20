@@ -2,66 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C7DF10406E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:14:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7986810407B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:15:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732704AbfKTQOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:14:07 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:34456 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729292AbfKTQOG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:14:06 -0500
-Received: (qmail 2044 invoked by uid 2102); 20 Nov 2019 11:14:05 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 20 Nov 2019 11:14:05 -0500
-Date:   Wed, 20 Nov 2019 11:14:05 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Pete Zaitcev <zaitcev@redhat.com>,
-        syzbot <syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com>
-cc:     arnd@arndb.de, <gregkh@linuxfoundation.org>,
-        <jrdr.linux@gmail.com>, <keescook@chromium.org>,
-        <kstewart@linuxfoundation.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>, <tglx@linutronix.de>,
-        <viro@zeniv.linux.org.uk>
-Subject: Re: possible deadlock in mon_bin_vma_fault
-In-Reply-To: <0000000000002da08e0597c5efbd@google.com>
-Message-ID: <Pine.LNX.4.44L0.1911201109500.1498-100000@iolanthe.rowland.org>
+        id S1729363AbfKTQPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:15:32 -0500
+Received: from mga05.intel.com ([192.55.52.43]:8039 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728305AbfKTQPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:15:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 08:15:27 -0800
+X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
+   d="scan'208";a="209788059"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 08:15:11 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [Intel-gfx] linux-next: Tree for Nov 19 (i915)
+In-Reply-To: <1d30acd4-9947-d228-967f-c4e76ebca832@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191119194658.39af50d0@canb.auug.org.au> <1d30acd4-9947-d228-967f-c4e76ebca832@infradead.org>
+Date:   Wed, 20 Nov 2019 18:15:08 +0200
+Message-ID: <87k17uwmlv.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019, syzbot wrote:
+On Tue, 19 Nov 2019, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 11/19/19 12:46 AM, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> Changes since 20191118:
+>
+>
+> on x86_64:
+>
+> ERROR: "pm_suspend_target_state" [drivers/gpu/drm/i915/i915.ko] undefined!
+>
+> # CONFIG_SUSPEND is not set
 
-> syzbot has bisected this bug to:
-> 
-> commit 46eb14a6e1585d99c1b9f58d0e7389082a5f466b
-> Author: Pete Zaitcev <zaitcev@redhat.com>
-> Date:   Mon Jan 8 21:46:41 2018 +0000
-> 
->      USB: fix usbmon BUG trigger
+a70a9e998e8e ("drm/i915: Defer rc6 shutdown to suspend_late")
 
-Here's part of the commit description:
-
-    USB: fix usbmon BUG trigger
-    
-    Automated tests triggered this by opening usbmon and accessing the
-    mmap while simultaneously resizing the buffers. This bug was with
-    us since 2006, because typically applications only size the buffers
-    once and thus avoid racing. Reported by Kirill A. Shutemov.
-
-As it happens, I spent a little time investigating this bug report just
-yesterday.  It seems to me that the easiest fix would be to disallow
-resizing the buffer while it is mapped by any users.  (Besides,
-allowing that seems like a bad idea in any case.)
-
-Pete, does that seem reasonable to you?
-
-Alan Stern
-
+-- 
+Jani Nikula, Intel Open Source Graphics Center
