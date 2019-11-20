@@ -2,80 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1306B10405E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7EC104074
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732674AbfKTQKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:10:31 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:55300 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbfKTQKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:10:31 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAKGANhS096851;
-        Wed, 20 Nov 2019 10:10:23 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574266223;
-        bh=PkkB/UusRqrX8cEGflPCrwq3y6YZdf6Bfo9p/9HiqKk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=TxFswCAt93kFi2CJS1A5NzMYEjDMwFAkyUVJwhs749XcaQ/Gl9tWPtK2WqDF2C1wu
-         Xb7vo0Ok5f2J5H0urxjqeFL8vVNb3jf5EH5eqvVtbJ3dasf0X6KRu1eLEu2wEVdr/F
-         42wUh1i0TS4SW+HSp7WnMoBk7kRtkU+EbHczBgG8=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAKGAN0S053552
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Nov 2019 10:10:23 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 20
- Nov 2019 10:10:23 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 20 Nov 2019 10:10:23 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAKGALiR007784;
-        Wed, 20 Nov 2019 10:10:22 -0600
-Subject: Re: [PATCH v2] mmc: sdhci_am654: Add Support for Command Queuing
- Engine to J721E
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>
-References: <20191118073609.22921-1-faiz_abbas@ti.com>
- <ea458eb9-f9a8-ab39-2df9-6284fef02105@intel.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <1cdaf572-02ee-d3d8-beb3-c90e1cfd89fa@ti.com>
-Date:   Wed, 20 Nov 2019 21:41:14 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <ea458eb9-f9a8-ab39-2df9-6284fef02105@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1732713AbfKTQOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:14:31 -0500
+Received: from lnfm1.sai.msu.ru ([93.180.26.255]:47874 "EHLO lnfm1.sai.msu.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729292AbfKTQOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:14:30 -0500
+Received: from dragon.sai.msu.ru (dragon.sai.msu.ru [93.180.26.172])
+        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id xAKGDCJ3002142;
+        Wed, 20 Nov 2019 19:13:17 +0300
+Received: from oak.local (unknown [92.243.181.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by dragon.sai.msu.ru (Postfix) with ESMTPSA id 293C67A53;
+        Wed, 20 Nov 2019 19:13:13 +0300 (MSK)
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+To:     tom@radxa.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Akash Gajjar <akash@openedev.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Pragnesh Patel <Pragnesh_Patel@mentor.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC
+        support),
+        linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     matwey.kornilov@gmail.com,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC
+        support),
+        linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] arm64: dts: rockchip: Add regulators for PCIe for Radxa Rock Pi 4 board
+Date:   Wed, 20 Nov 2019 19:12:54 +0300
+Message-Id: <20191120161302.5157-1-matwey@sai.msu.ru>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <CAFjve-AT6c-yweF0mOPea-caG3n43nZzVPcwef-qp+n35JN9ig@mail.gmail.com>
+References: <CAFjve-AT6c-yweF0mOPea-caG3n43nZzVPcwef-qp+n35JN9ig@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adrian,
+Add 0.9V and 1.8V voltage regulators for Radxa Rock Pi 4 board PCIe.
 
-On 20/11/19 1:29 PM, Adrian Hunter wrote:
-> On 18/11/19 9:36 AM, Faiz Abbas wrote:
->> Add Support for CQHCI (Command Queuing Host Controller Interface)
->> for each of the host controllers present in TI's J721E devices.
->> Add cqhci_ops and a .irq() callback to handle cqhci specific interrupts.
->>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> That "Reported-by" should not be there.
-> 
+Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-The robot asked me to add the tag in its reply to v1. Not sure where
-they wanted me to add it.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
+index 01f8effd8206..215fb02b6bd0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
+@@ -53,6 +53,16 @@
+ 		vin-supply = <&vcc12v_dcin>;
+ 	};
+ 
++	vcc_0v9: vcc-0v9 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_0v9";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <900000>;
++		vin-supply = <&vcc3v3_sys>;
++	};
++
+ 	vcc3v3_pcie: vcc3v3-pcie-regulator {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
+@@ -475,6 +485,8 @@
+ 	num-lanes = <4>;
+ 	pinctrl-0 = <&pcie_clkreqnb_cpm>;
+ 	pinctrl-names = "default";
++	vpcie0v9-supply = <&vcc_0v9>;
++	vpcie1v8-supply = <&vcc_1v8>;
+ 	vpcie3v3-supply = <&vcc3v3_pcie>;
+ };
+ 
+-- 
+2.16.4
 
-Thanks,
-Faiz
