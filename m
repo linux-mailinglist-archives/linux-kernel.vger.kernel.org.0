@@ -2,198 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75445103FC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CF0103F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:42:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732474AbfKTPp6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 10:45:58 -0500
-Received: from mx1.unisoc.com ([222.66.158.135]:21667 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732444AbfKTPpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:45:53 -0500
-Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-        by SHSQR01.spreadtrum.com with ESMTPS id xAKFi1ml093237
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 20 Nov 2019 23:44:01 +0800 (CST)
-        (envelope-from Orson.Zhai@unisoc.com)
-Received: from localhost (10.0.74.112) by BJMBX02.spreadtrum.com (10.0.64.8)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 20 Nov 2019 23:43:56
- +0800
-From:   Orson Zhai <orson.zhai@unisoc.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kevin.tang@unisoc.com>, <baolin.wang@unisoc.com>,
-        <chunyan.zhang@unisoc.com>, Orson Zhai <orson.zhai@unisoc.com>
-Subject: [PATCH V2 2/2] mfd: syscon: Find syscon by names with arguments support
-Date:   Wed, 20 Nov 2019 23:41:48 +0800
-Message-ID: <20191120154148.22067-3-orson.zhai@unisoc.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191120154148.22067-1-orson.zhai@unisoc.com>
-References: <20191120154148.22067-1-orson.zhai@unisoc.com>
+        id S1732235AbfKTPmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:42:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730106AbfKTPmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 10:42:39 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8B2820709;
+        Wed, 20 Nov 2019 15:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574264557;
+        bh=lYA73il6i3J1+F/qks+KtJ7Xy1P07dI3VP4HbWEIyvs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ka7S4pOc+VaOoxYIgKYlvUAQotGBd1twFQz7recQ59AmLhA3JXhKipNLa9mk8/EWT
+         Jj3fC/FFUVznctd6dnLkLhgw/XVrvOj4xDWcIGeWjealWFCrBF16EawIgzoPmrzHXE
+         g+2++SCwKI6Pml+yrtDKg9fcIjVXaTjqRXSy10xk=
+Date:   Wed, 20 Nov 2019 16:42:35 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Cc:     jslaby@suse.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, leeyou.li@huawei.com,
+        nixiaoming@huawei.com, zhangwen8@huawei.com
+Subject: Re: [PATCH] serial: serial_core: Perform NULL checks for break_ctl
+ ops
+Message-ID: <20191120154235.GA3004157@kroah.com>
+References: <1574263133-28259-1-git-send-email-xiaojiangfeng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Originating-IP: [10.0.74.112]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-Content-Transfer-Encoding: 8BIT
-X-MAIL: SHSQR01.spreadtrum.com xAKFi1ml093237
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574263133-28259-1-git-send-email-xiaojiangfeng@huawei.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a lot of global registers used across multiple similar SoCs
-from Unisoc. It is not easy to manage all of them very well by current
-syscon helper functions.
+On Wed, Nov 20, 2019 at 11:18:53PM +0800, Jiangfeng Xiao wrote:
+> Doing fuzz test on sbsa uart device, causes a kernel crash
+> due to NULL pointer dereference:
+> 
+> ------------[ cut here ]------------
+> Unable to handle kernel paging request at virtual address fffffffffffffffc
+> pgd = ffffffe331723000
+> [fffffffffffffffc] *pgd=0000002333595003, *pud=0000002333595003, *pmd=00000
+> Internal error: Oops: 96000005 [#1] PREEMPT SMP
+> Modules linked in: ping(O) jffs2 rtos_snapshot(O) pramdisk(O) hisi_sfc(O)
+> Drv_Nandc_K(O) Drv_SysCtl_K(O) Drv_SysClk_K(O) bsp_reg(O) hns3(O)
+> hns3_uio_enet(O) hclgevf(O) hclge(O) hnae3(O) mdio_factory(O)
+> mdio_registry(O) mdio_dev(O) mdio(O) hns3_info(O) rtos_kbox_panic(O)
+> uart_suspend(O) rsm(O) stp llc tunnel4 xt_tcpudp ipt_REJECT nf_reject_ipv4
+> iptable_filter ip_tables x_tables sd_mod xhci_plat_hcd xhci_pci xhci_hcd
+> usbmon usbhid usb_storage ohci_platform ohci_pci ohci_hcd hid_generic hid
+> ehci_platform ehci_pci ehci_hcd vfat fat usbcore usb_common scsi_mod
+> yaffs2multi(O) ext4 jbd2 ext2 mbcache ofpart i2c_dev i2c_core uio ubi nand
+> nand_ecc nand_ids cfi_cmdset_0002 cfi_cmdset_0001 cfi_probe gen_probe
+> cmdlinepart chipreg mtdblock mtd_blkdevs mtd nfsd auth_rpcgss oid_registry
+> nfsv3 nfs nfs_acl lockd sunrpc grace autofs4
+> CPU: 2 PID: 2385 Comm: tty_fuzz_test Tainted: G           O    4.4.193 #1
+> task: ffffffe32b23f110 task.stack: ffffffe32bda4000
+> PC is at uart_break_ctl+0x44/0x84
+> LR is at uart_break_ctl+0x34/0x84
+> pc : [<ffffff8393196098>] lr : [<ffffff8393196088>] pstate: 80000005
+> sp : ffffffe32bda7cc0
+> x29: ffffffe32bda7cc0 x28: ffffffe32b23f110
+> x27: ffffff8393402000 x26: 0000000000000000
+> x25: ffffffe32b233f40 x24: ffffffc07a8ec680
+> x23: 0000000000005425 x22: 00000000ffffffff
+> x21: ffffffe33ed73c98 x20: 0000000000000000
+> x19: ffffffe33ed94168 x18: 0000000000000004
+> x17: 0000007f92ae9d30 x16: ffffff8392fa6064
+> x15: 0000000000000010 x14: 0000000000000000
+> x13: 0000000000000000 x12: 0000000000000000
+> x11: 0000000000000020 x10: 0000007ffdac1708
+> x9 : 0000000000000078 x8 : 000000000000001d
+> x7 : 0000000052a64887 x6 : ffffffe32bda7e08
+> x5 : ffffffe32b23c000 x4 : 0000005fbc5b0000
+> x3 : ffffff83938d5018 x2 : 0000000000000080
+> x1 : ffffffe32b23c040 x0 : ffffff83934428f8
+> virtual start addr offset is 38ac00000
+> module base offset is 2cd4cf1000
+> linear region base offset is : 0
+> Process tty_fuzz_test (pid: 2385, stack limit = 0xffffffe32bda4000)
+> Stack: (0xffffffe32bda7cc0 to 0xffffffe32bda8000)
+> 7cc0: ffffffe32bda7cf0 ffffff8393177718 ffffffc07a8ec680 ffffff8393196054
+> 7ce0: 000000001739f2e0 0000007ffdac1978 ffffffe32bda7d20 ffffff8393179a1c
+> 7d00: 0000000000000000 ffffff8393c0a000 ffffffc07a8ec680 cb88537fdc8ba600
+> 7d20: ffffffe32bda7df0 ffffff8392fa5a40 ffffff8393c0a000 0000000000005425
+> 7d40: 0000007ffdac1978 ffffffe32b233f40 ffffff8393178dcc 0000000000000003
+> 7d60: 000000000000011d 000000000000001d ffffffe32b23f110 000000000000029e
+> 7d80: ffffffe34fe8d5d0 0000000000000000 ffffffe32bda7e14 cb88537fdc8ba600
+> 7da0: ffffffe32bda7e30 ffffff8393042cfc ffffff8393c41720 ffffff8393c46410
+> 7dc0: ffffff839304fa68 ffffffe32b233f40 0000000000005425 0000007ffdac1978
+> 7de0: 000000000000011d cb88537fdc8ba600 ffffffe32bda7e70 ffffff8392fa60cc
+> 7e00: 0000000000000000 ffffffe32b233f40 ffffffe32b233f40 0000000000000003
+> 7e20: 0000000000005425 0000007ffdac1978 ffffffe32bda7e70 ffffff8392fa60b0
+> 7e40: 0000000000000280 ffffffe32b233f40 ffffffe32b233f40 0000000000000003
+> 7e60: 0000000000005425 cb88537fdc8ba600 0000000000000000 ffffff8392e02e78
+> 7e80: 0000000000000280 0000005fbc5b0000 ffffffffffffffff 0000007f92ae9d3c
+> 7ea0: 0000000060000000 0000000000000015 0000000000000003 0000000000005425
+> 7ec0: 0000007ffdac1978 0000000000000000 00000000a54c910e 0000007f92b95014
+> 7ee0: 0000007f92b95090 0000000052a64887 000000000000001d 0000000000000078
+> 7f00: 0000007ffdac1708 0000000000000020 0000000000000000 0000000000000000
+> 7f20: 0000000000000000 0000000000000010 000000556acf0090 0000007f92ae9d30
+> 7f40: 0000000000000004 000000556acdef10 0000000000000000 000000556acdebd0
+> 7f60: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> 7f80: 0000000000000000 0000000000000000 0000000000000000 0000007ffdac1840
+> 7fa0: 000000556acdedcc 0000007ffdac1840 0000007f92ae9d3c 0000000060000000
+> 7fc0: 0000000000000000 0000000000000000 0000000000000003 000000000000001d
+> 7fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> Call trace:
+> Exception stack(0xffffffe32bda7ab0 to 0xffffffe32bda7bf0)
+> 7aa0:                                   0000000000001000 0000007fffffffff
+> 7ac0: ffffffe32bda7cc0 ffffff8393196098 0000000080000005 0000000000000025
+> 7ae0: ffffffe32b233f40 ffffff83930d777c ffffffe32bda7b30 ffffff83930d777c
+> 7b00: ffffffe32bda7be0 ffffff83938d5000 ffffffe32bda7be0 ffffffe32bda7c20
+> 7b20: ffffffe32bda7b60 ffffff83930d777c ffffffe32bda7c10 ffffff83938d5000
+> 7b40: ffffffe32bda7c10 ffffffe32bda7c50 ffffff8393c0a000 ffffffe32b23f110
+> 7b60: ffffffe32bda7b70 ffffff8392e09df4 ffffffe32bda7bb0 cb88537fdc8ba600
+> 7b80: ffffff83934428f8 ffffffe32b23c040 0000000000000080 ffffff83938d5018
+> 7ba0: 0000005fbc5b0000 ffffffe32b23c000 ffffffe32bda7e08 0000000052a64887
+> 7bc0: 000000000000001d 0000000000000078 0000007ffdac1708 0000000000000020
+> 7be0: 0000000000000000 0000000000000000
+> [<ffffff8393196098>] uart_break_ctl+0x44/0x84
+> [<ffffff8393177718>] send_break+0xa0/0x114
+> [<ffffff8393179a1c>] tty_ioctl+0xc50/0xe84
+> [<ffffff8392fa5a40>] do_vfs_ioctl+0xc4/0x6e8
+> [<ffffff8392fa60cc>] SyS_ioctl+0x68/0x9c
+> [<ffffff8392e02e78>] __sys_trace_return+0x0/0x4
+> Code: b9410ea0 34000160 f9408aa0 f9402814 (b85fc280)
+> ---[ end trace 8606094f1960c5e0 ]---
+> Kernel panic - not syncing: Fatal exception
+> 
+> Fix this problem by adding NULL checks prior to calling break_ctl ops.
+> 
+> Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+> ---
+>  drivers/tty/serial/serial_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> index c4a414a..b0a6eb1 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -1111,7 +1111,7 @@ static int uart_break_ctl(struct tty_struct *tty, int break_state)
+>  	if (!uport)
+>  		goto out;
+>  
+> -	if (uport->type != PORT_UNKNOWN)
+> +	if (uport->type != PORT_UNKNOWN && uport->ops->break_ctl)
 
-Add helper functions to get regmap and arguments by syscon-names all
-together.
+What serial driver does not define break_ctl?
 
-This patch does not affect original syscon code and usage. It may help
-other SoC vendors if they have the same trouble as well.
+You are running with a bunch of "out-of-tree" drivers, perhaps one of
+those needs to be fixed here instead?
 
-Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
----
- drivers/mfd/syscon.c       | 75 ++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/syscon.h | 26 +++++++++++++
- 2 files changed, 101 insertions(+)
+thanks,
 
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index 660723276481..e818decc7bf2 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -225,6 +225,81 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
-
-+struct regmap *syscon_regmap_lookup_by_name(struct device_node *np,
-+                                       const char *list_name,
-+                                       const char *cell_name)
-+{
-+       struct device_node *syscon_np;
-+       struct of_phandle_args args;
-+       struct regmap *regmap;
-+       unsigned int index = 0, cell_count = 0;
-+       int rc;
-+
-+       if (list_name)
-+               index = of_property_match_string(np, "syscon-names", list_name);
-+
-+       if (index < 0)
-+               return ERR_PTR(-EINVAL);
-+
-+
-+       if (cell_name && of_property_read_u32(np, cell_name, &cell_count))
-+               return ERR_PTR(-EINVAL);
-+
-+       rc = of_parse_phandle_with_fixed_args(np, "syscons", cell_count,
-+                                                index, &args);
-+       if (rc)
-+               return ERR_PTR(rc);
-+
-+       syscon_np = args.np;
-+
-+       if (!syscon_np)
-+               return ERR_PTR(-ENODEV);
-+
-+       regmap = syscon_node_to_regmap(syscon_np);
-+
-+       of_node_put(syscon_np);
-+
-+       return regmap;
-+}
-+EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_name);
-+
-+int syscon_get_args_by_name(struct device_node *np,
-+                       const char *list_name,
-+                       const char *cell_name,
-+                       int arg_count,
-+                       unsigned int *out_args)
-+{
-+       struct of_phandle_args args;
-+       unsigned int index = 0, cell_count = 0;
-+
-+       int rc;
-+
-+       if (list_name)
-+               index = of_property_match_string(np, "syscon-names", list_name);
-+
-+       if (index < 0)
-+               return -EINVAL;
-+
-+       if (cell_name && of_property_read_u32(np, cell_name, &cell_count))
-+               return -EINVAL;
-+
-+       rc = of_parse_phandle_with_fixed_args(np, "syscons", cell_count,
-+                                               index, &args);
-+       if (rc)
-+               return rc;
-+
-+       if (arg_count > args.args_count)
-+               arg_count = args.args_count;
-+
-+       for (index = 0; index < arg_count; index++)
-+               out_args[index] = args.args[index];
-+
-+       of_node_put(args.np);
-+
-+       return arg_count;
-+}
-+EXPORT_SYMBOL_GPL(syscon_get_args_by_name);
-+
- static int syscon_probe(struct platform_device *pdev)
- {
-        struct device *dev = &pdev->dev;
-diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-index 112dc66262cc..96bdaf3e63fd 100644
---- a/include/linux/mfd/syscon.h
-+++ b/include/linux/mfd/syscon.h
-@@ -23,6 +23,15 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
- extern struct regmap *syscon_regmap_lookup_by_phandle(
-                                        struct device_node *np,
-                                        const char *property);
-+extern struct regmap *syscon_regmap_lookup_by_name(
-+                                       struct device_node *np,
-+                                       const char *list_name,
-+                                       const char *cell_name);
-+extern int syscon_get_args_by_name(struct device_node *np,
-+                               const char *list_name,
-+                               const char *cell_name,
-+                               int arg_count,
-+                               unsigned int *out_args);
- #else
- static inline struct regmap *device_node_to_regmap(struct device_node *np)
- {
-@@ -45,6 +54,23 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
- {
-        return ERR_PTR(-ENOTSUPP);
- }
-+
-+static inline struct regmap *syscon_regmap_lookup_by_name(
-+                                       struct device_node *np,
-+                                       const char *list_name,
-+                                       const char *cell_name)
-+{
-+       return ERR_PTR(-ENOTSUPP);
-+}
-+
-+static int syscon_get_args_by_name(struct device_node *np,
-+                               const char *list_name,
-+                               const char *cell_name,
-+                               int arg_count,
-+                               unsigned int *out_args)
-+{
-+       return -ENOTSUPP;
-+}
- #endif
-
- #endif /* __LINUX_MFD_SYSCON_H__ */
---
-2.18.0
-
-________________________________
- This email (including its attachments) is intended only for the person or entity to which it is addressed and may contain information that is privileged, confidential or otherwise protected from disclosure. Unauthorized use, dissemination, distribution or copying of this email or the information herein or taking any action in reliance on the contents of this email or the information herein, by anyone other than the intended recipient, or an employee or agent responsible for delivering the message to the intended recipient, is strictly prohibited. If you are not the intended recipient, please do not read, copy, use or disclose any part of this e-mail to others. Please notify the sender immediately and permanently delete this e-mail and any attachments if you received it in error. Internet communications cannot be guaranteed to be timely, secure, error-free or virus-free. The sender does not accept liability for any errors or omissions.
-本邮件及其附件具有保密性质，受法律保护不得泄露，仅发送给本邮件所指特定收件人。严禁非经授权使用、宣传、发布或复制本邮件或其内容。若非该特定收件人，请勿阅读、复制、 使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件的方式即刻告知发件人。无法保证互联网通信及时、安全、无误或防毒。发件人对任何错漏均不承担责任。
+greg k-h
