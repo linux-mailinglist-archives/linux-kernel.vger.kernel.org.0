@@ -2,274 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E100C1036C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 440F31036CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfKTJie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:38:34 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55858 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728342AbfKTJic (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:38:32 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXMRP-0003zw-5h; Wed, 20 Nov 2019 10:38:27 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A103C1C1A00;
-        Wed, 20 Nov 2019 10:38:26 +0100 (CET)
-Date:   Wed, 20 Nov 2019 09:38:26 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] futex: Move futex exit handling into futex code
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191106224556.049705556@linutronix.de>
-References: <20191106224556.049705556@linutronix.de>
+        id S1728497AbfKTJiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 04:38:55 -0500
+Received: from mout.web.de ([212.227.15.3]:52759 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728060AbfKTJiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 04:38:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574242716;
+        bh=Klh70ypKVZwG0vorqxo8Kr0EXRaOdGQiO6NuWZzKH/U=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=QUWCfHAW0hTXFwF70kiwSO/382XAL/zKaXMn+nz75kdXlrH4Hl1F5O+2s1o7lfhMr
+         EOGoLvq3skUp0PyMdxvlLgbAVq4l8j9jfEbuzND7SN74fu3RbLOBgXiZcXt7oR0j34
+         waaxcdoiEYyf7xQpiCOVnzaVj0gI6JdEBGyEH77U=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([93.132.176.80]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MGRYe-1iboQW10c4-00DIfr; Wed, 20
+ Nov 2019 10:38:36 +0100
+Subject: Re: [2/4] coccinelle: platform_get_irq: handle 2-statement branches
+To:     Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+References: <1574184500-29870-3-git-send-email-Julia.Lawall@lip6.fr>
+ <d178b6b3-7ef1-4ad7-a747-d65249a9667a@web.de>
+ <alpine.DEB.2.21.1911192235010.2592@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <5de8c4b9-2537-283d-4ef0-49fb22c18fe6@web.de>
+Date:   Wed, 20 Nov 2019 10:38:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Message-ID: <157424270659.12247.7040310917937860904.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <alpine.DEB.2.21.1911192235010.2592@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:T+o+3+wcDZ6iHs0UNx2mVfOOUHufPMF7VJk7RRJ+wP7BSLaMwZ9
+ cFhUrtKbE30XpXwEg8wvY2awlMM7STDM1QD0wl969LprDJmSjrc1eq1kuViRn2qCDVSVjVx
+ hbQ9fWoxLU1W/xGwb1WVSZhSuOzyqwapZvPBdfv500MaMCkGpwwqrmEAjbzcXfia1Iixbix
+ 3aTM4W5qKC6dBe3ky85Fg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SO6Z82X9oRs=:+YEvJWAqJ/mkJYmh/E8UxC
+ 8aGEg0O5MFQj5m+ngLpr7PkbyayM720Mt4NvjCpkAXEynJEwFYXfJeO/lUis7NQD/3TZTpHt+
+ Nh7qi/MQaDQGO+SDgEuq+ZlPWMWDMkIgT2NBcJ6SVQ2bMOwf0fLuxZJ17iWUvsxeQLMFuOgI8
+ +w8oOvlJTIAQ2NtbEy4iPZneIyXm9BejZD+QF3jWm+3CWfHDHpQeaqN2Mt5eDSIxoxsrpAUw+
+ FZZPyUzb1CmmBz8p8pcr2AvCR5xahCAAM9OIr4Cl+TQf2x+hMGylmEPymiB7F91Gl0amlnnJ2
+ +oKX7/qU5Zl69eNQ4Vrjw74PYoFacorAnYvhaTHlJkC/RriA0iRynrgbCvzy/yzAPoq6eW8iG
+ 9olzrxvMShgsLWmQeBpARDjZe8VTtEyCfkDjRF/7fORoTRdwftjKmlzIgq2uJF/m4DD3stH7A
+ KO9kQ4oJmyya9ETAp+Abrj+3Wq4JN+Ri8HOUvgj/y9lsF8PzOBpFtZuE22bp5+qOVTuP+GnY8
+ cC6i45AfoKifOS1TgtSrIiQa4b6qdLwWZ7vuC+JQtslajKd8yPx99YeFoPzqjNZhqc/31jm36
+ zkzbU2gQ7HXFlJ+BTfQmNYGm75JAGiQipeknjSleTAFsL9F2kz3uvvSCgdHA/x7gz/5YUlgyY
+ Smtb6YHZZ4e9cn9i41f0CS+vKszRu4Uuii4C5tahrQFX+9r3XD7dPx2/ftLCsvUBL5xzAHOWd
+ hQ/jmxduAWHZBtDwuanf8AQtdwFwTT4P7lgrpXJwej8bu4oIKEQtsCK+rj/MtkM/xFpEfQIOF
+ Sc9xLdIQJwebzndCm5JseOm2ttsLTo7IPkUwbVtBIQ9GW/VgdxmV8dQ6nO1MIpNlzI/GHPEEq
+ jztXcXxEqb+2JdO50grge3RTuIEk7G55o7arkDxJRy9y4CvB9o8I7tehuPtjFVhGxalha8/IF
+ 6+C9wY03wrCU5iLkpxba2tmH/dXcX2R2rHcD6HlHX8tfnvBvVhCNFrFds5ArYWcgMv2xCnFAc
+ lDXAYTuiYfqet5YE0jogbekX02RGwmkkNd96UqdEdQR6yg3hzyEVQjCELv+MPIHlRPK4l/aig
+ tqnwiQ9Hf9lMJw4k4NudSfIKEf5lh8ojCWwHYc9Iej9VagwKl+EpQ32Xn6k4bsnX/gIbAbK5+
+ Q3QBR24PLvYxZmLwiDipTRS5UzrwAQzp4PhyeMuuaQl7Xazfu6I0tl3Us6nTONQRpQ1cSsMTU
+ AsZ7jReEYEue6z9vOfZ0C64ThSbWDB4x4UmYzSnJz0fozbSdK7j35iyuM76Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+> Sorry, I seem to have done something quite wrong on this patch.
 
-Commit-ID:     ba31c1a48538992316cc71ce94fa9cd3e7b427c0
-Gitweb:        https://git.kernel.org/tip/ba31c1a48538992316cc71ce94fa9cd3e7b427c0
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 06 Nov 2019 22:55:36 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 20 Nov 2019 09:40:07 +01:00
-
-futex: Move futex exit handling into futex code
-
-The futex exit handling is #ifdeffed into mm_release() which is not pretty
-to begin with. But upcoming changes to address futex exit races need to add
-more functionality to this exit code.
-
-Split it out into a function, move it into futex code and make the various
-futex exit functions static.
-
-Preparatory only and no functional change.
-
-Folded build fix from Borislav.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.049705556@linutronix.de
+Interesting =E2=80=A6
 
 
----
- include/linux/compat.h |  2 --
- include/linux/futex.h  | 29 ++++++++++++++++-------------
- kernel/fork.c          | 25 +++----------------------
- kernel/futex.c         | 33 +++++++++++++++++++++++++++++----
- 4 files changed, 48 insertions(+), 41 deletions(-)
+> I will fix it.
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 16dafd9..c4c389c 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -410,8 +410,6 @@ struct compat_kexec_segment;
- struct compat_mq_attr;
- struct compat_msgbuf;
- 
--extern void compat_exit_robust_list(struct task_struct *curr);
--
- #define BITS_PER_COMPAT_LONG    (8*sizeof(compat_long_t))
- 
- #define BITS_TO_COMPAT_LONGS(bits) DIV_ROUND_UP(bits, BITS_PER_COMPAT_LONG)
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index ccaef00..d6ed11c 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -2,7 +2,9 @@
- #ifndef _LINUX_FUTEX_H
- #define _LINUX_FUTEX_H
- 
-+#include <linux/sched.h>
- #include <linux/ktime.h>
-+
- #include <uapi/linux/futex.h>
- 
- struct inode;
-@@ -48,15 +50,24 @@ union futex_key {
- #define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = NULL } }
- 
- #ifdef CONFIG_FUTEX
--extern void exit_robust_list(struct task_struct *curr);
- 
--long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
--	      u32 __user *uaddr2, u32 val2, u32 val3);
--#else
--static inline void exit_robust_list(struct task_struct *curr)
-+static inline void futex_init_task(struct task_struct *tsk)
- {
-+	tsk->robust_list = NULL;
-+#ifdef CONFIG_COMPAT
-+	tsk->compat_robust_list = NULL;
-+#endif
-+	INIT_LIST_HEAD(&tsk->pi_state_list);
-+	tsk->pi_state_cache = NULL;
- }
- 
-+void futex_mm_release(struct task_struct *tsk);
-+
-+long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
-+	      u32 __user *uaddr2, u32 val2, u32 val3);
-+#else
-+static inline void futex_init_task(struct task_struct *tsk) { }
-+static inline void futex_mm_release(struct task_struct *tsk) { }
- static inline long do_futex(u32 __user *uaddr, int op, u32 val,
- 			    ktime_t *timeout, u32 __user *uaddr2,
- 			    u32 val2, u32 val3)
-@@ -65,12 +76,4 @@ static inline long do_futex(u32 __user *uaddr, int op, u32 val,
- }
- #endif
- 
--#ifdef CONFIG_FUTEX_PI
--extern void exit_pi_state_list(struct task_struct *curr);
--#else
--static inline void exit_pi_state_list(struct task_struct *curr)
--{
--}
--#endif
--
- #endif
-diff --git a/kernel/fork.c b/kernel/fork.c
-index bcdf531..bd7c218 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1286,20 +1286,7 @@ static int wait_for_vfork_done(struct task_struct *child,
- void mm_release(struct task_struct *tsk, struct mm_struct *mm)
- {
- 	/* Get rid of any futexes when releasing the mm */
--#ifdef CONFIG_FUTEX
--	if (unlikely(tsk->robust_list)) {
--		exit_robust_list(tsk);
--		tsk->robust_list = NULL;
--	}
--#ifdef CONFIG_COMPAT
--	if (unlikely(tsk->compat_robust_list)) {
--		compat_exit_robust_list(tsk);
--		tsk->compat_robust_list = NULL;
--	}
--#endif
--	if (unlikely(!list_empty(&tsk->pi_state_list)))
--		exit_pi_state_list(tsk);
--#endif
-+	futex_mm_release(tsk);
- 
- 	uprobe_free_utask(tsk);
- 
-@@ -2062,14 +2049,8 @@ static __latent_entropy struct task_struct *copy_process(
- #ifdef CONFIG_BLOCK
- 	p->plug = NULL;
- #endif
--#ifdef CONFIG_FUTEX
--	p->robust_list = NULL;
--#ifdef CONFIG_COMPAT
--	p->compat_robust_list = NULL;
--#endif
--	INIT_LIST_HEAD(&p->pi_state_list);
--	p->pi_state_cache = NULL;
--#endif
-+	futex_init_task(p);
-+
- 	/*
- 	 * sigaltstack should be cleared when sharing the same VM
- 	 */
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 49eaf5b..f8f00d4 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -325,6 +325,12 @@ static inline bool should_fail_futex(bool fshared)
- }
- #endif /* CONFIG_FAIL_FUTEX */
- 
-+#ifdef CONFIG_COMPAT
-+static void compat_exit_robust_list(struct task_struct *curr);
-+#else
-+static inline void compat_exit_robust_list(struct task_struct *curr) { }
-+#endif
-+
- static inline void futex_get_mm(union futex_key *key)
- {
- 	mmgrab(key->private.mm);
-@@ -890,7 +896,7 @@ static void put_pi_state(struct futex_pi_state *pi_state)
-  * Kernel cleans up PI-state, but userspace is likely hosed.
-  * (Robust-futex cleanup is separate and might save the day for userspace.)
-  */
--void exit_pi_state_list(struct task_struct *curr)
-+static void exit_pi_state_list(struct task_struct *curr)
- {
- 	struct list_head *next, *head = &curr->pi_state_list;
- 	struct futex_pi_state *pi_state;
-@@ -960,7 +966,8 @@ void exit_pi_state_list(struct task_struct *curr)
- 	}
- 	raw_spin_unlock_irq(&curr->pi_lock);
- }
--
-+#else
-+static inline void exit_pi_state_list(struct task_struct *curr) { }
- #endif
- 
- /*
-@@ -3588,7 +3595,7 @@ static inline int fetch_robust_entry(struct robust_list __user **entry,
-  *
-  * We silently return on any sign of list-walking problem.
-  */
--void exit_robust_list(struct task_struct *curr)
-+static void exit_robust_list(struct task_struct *curr)
- {
- 	struct robust_list_head __user *head = curr->robust_list;
- 	struct robust_list __user *entry, *next_entry, *pending;
-@@ -3653,6 +3660,24 @@ void exit_robust_list(struct task_struct *curr)
- 	}
- }
- 
-+void futex_mm_release(struct task_struct *tsk)
-+{
-+	if (unlikely(tsk->robust_list)) {
-+		exit_robust_list(tsk);
-+		tsk->robust_list = NULL;
-+	}
-+
-+#ifdef CONFIG_COMPAT
-+	if (unlikely(tsk->compat_robust_list)) {
-+		compat_exit_robust_list(tsk);
-+		tsk->compat_robust_list = NULL;
-+	}
-+#endif
-+
-+	if (unlikely(!list_empty(&tsk->pi_state_list)))
-+		exit_pi_state_list(tsk);
-+}
-+
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
- 		u32 __user *uaddr2, u32 val2, u32 val3)
- {
-@@ -3780,7 +3805,7 @@ static void __user *futex_uaddr(struct robust_list __user *entry,
-  *
-  * We silently return on any sign of list-walking problem.
-  */
--void compat_exit_robust_list(struct task_struct *curr)
-+static void compat_exit_robust_list(struct task_struct *curr)
- {
- 	struct compat_robust_list_head __user *head = curr->compat_robust_list;
- 	struct robust_list __user *entry, *next_entry, *pending;
+Thanks.
+
+Development will be continued:
+https://lkml.org/lkml/2019/11/19/1681
+https://lore.kernel.org/patchwork/patch/1156089/
+https://lore.kernel.org/cocci/1574197705-31132-3-git-send-email-Julia.Lawa=
+ll@lip6.fr/
+
+
+>> How do you think about to use the following SmPL code variant?
+>
+> And the benefit is what?
+=E2=80=A6
+>> + ret =3D
+>> +(platform_get_irq
+>> +|platform_get_irq_byname
+>> +)(E, ...);
+>> +
+>> + if ( \( ret < 0 \| ret <=3D 0 \) )
+>> +-{
+>> +-dev_err(...);
+>> + S
+>> +-}
+
+* I suggest to use a different coding style for the specification of
+  two function names in the SmPL disjunction.
+
+* Would you like to avoid the mixing of code items in the first text colum=
+n?
+
+Regards,
+Markus
