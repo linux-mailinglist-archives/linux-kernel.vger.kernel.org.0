@@ -2,156 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E686103A47
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:44:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 149B9103A62
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfKTMoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 07:44:25 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35730 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbfKTMoZ (ORCPT
+        id S1728193AbfKTM4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 07:56:40 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44288 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfKTM4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:44:25 -0500
-Received: by mail-ed1-f66.google.com with SMTP id r16so20172302edq.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 04:44:23 -0800 (PST)
+        Wed, 20 Nov 2019 07:56:40 -0500
+Received: by mail-qk1-f196.google.com with SMTP id m16so21100005qki.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 04:56:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HviZfN2k+Zd+emwLWrTA9g1CfuiJpYrc79Znlkyezqg=;
-        b=arwFzBSZNJjQt0kefLROlBKMg+mng7y5GKdI5zvN0OlBIofxb3lFWA8mRhlROMiwq0
-         bq+o2vP9tLQgVaGN4HqFRUG3Io0JKJm8afxoYL/BLyddunjpqiL1wTIZKPFR+zHp7C2o
-         wfYhXWhUwQHbtDAR4TSyeUkQeN7E3E9nwDpTY=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=VNlZ/FAha3iKWfOhIc4DYO2pJ9QefE2nLob44SiCntU=;
+        b=m8Dcg7cpqnDtL5rhRGExV+fgeA7iO2Gwq0VxT5xB/ugruHtNtExvdqZYHlEwjx5Xqq
+         nzHy0TuXEEXJZL6DN7e+xvQIj4UaBePSaQ1P21paHUf9uaGFDbH3acXMl1Td3ufZNGBP
+         1vjxK4TGIFHRiVWtc32RW4X/ezDJC7aahvg7wpqG5B0GaxXDcqFgHDsg3edDhp5uTlq2
+         5DOpjO8fu27p3K0YdsjlQhaxffYNXHuCpCcBSteBBbTWKvuuHMBIjILSiLiGLRXyOhRf
+         hfQZumVuwLZlacHZbVnEpb9vZVcFvLAItwiqLnCwVIYGIT7QXAC7rlWhAumk92zHEMug
+         Y9wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HviZfN2k+Zd+emwLWrTA9g1CfuiJpYrc79Znlkyezqg=;
-        b=FqbpOV1tmhSzEw3GBuA2KsCMH9JSZa+9Z7bmCjTVB05gdG2b6fs0QQ6mqjKM/JCTgK
-         B3ZHh44aciOxXIAI+0N39oZi7JaFfxH/0KQVHA1naUsV2HLhG0FcvwUVbk48WFqH/BDp
-         M7H8Z8fPDsZSfRUHd/lcb9eL0DtHBqof1aqYKLVAkqa7r8uCaTWrLra1It5C8x8DIq96
-         l6G3LN9fa5cxiIuqy6r3L5jyAVzIc6gwLXcgh1ZWe+/Y9/fnQU7sIkwRNW7cfEV3PIWQ
-         /7e9JsGLTlO3nXOLaB8Q3DNiIkOZlL8hbb/TiKyxkxIMJqJMWWvXi0/+k3EfIoD6iQSJ
-         897A==
-X-Gm-Message-State: APjAAAUkQu9bwNyj2a5CK4MMuTcwXQcovRjr6WS4pOGpCfPMz3zwAW3v
-        ZAM1b86Ci0agWLicMt0Z9HOBT29zoN9myA==
-X-Google-Smtp-Source: APXvYqx7+8sOONp0PyOnqpfchyA4hjLFD28cV7Od+wdSzJ0AsgR4qjCrAZNM6Gd/0n6sh4iEswqYDA==
-X-Received: by 2002:a17:906:4697:: with SMTP id a23mr5211425ejr.322.1574253862819;
-        Wed, 20 Nov 2019 04:44:22 -0800 (PST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id q5sm1395682edg.66.2019.11.20.04.44.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2019 04:44:22 -0800 (PST)
-Received: by mail-wm1-f52.google.com with SMTP id u18so6845885wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 04:44:21 -0800 (PST)
-X-Received: by 2002:a1c:7fd8:: with SMTP id a207mr3051203wmd.10.1574253861317;
- Wed, 20 Nov 2019 04:44:21 -0800 (PST)
-MIME-Version: 1.0
-References: <HE1PR06MB4011EDD5F2686A05BC35F61CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
- <20191106223408.2176-1-jonas@kwiboo.se> <HE1PR06MB4011FF930111A869E4645C8CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-In-Reply-To: <HE1PR06MB4011FF930111A869E4645C8CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 20 Nov 2019 21:44:09 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
-Message-ID: <CAAFQd5CSWea=DNjySJxZmVi+2c5U4EKVPa1mf3vHh70+YrAQCA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] media: hantro: Reduce H264 extra space for motion vectors
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VNlZ/FAha3iKWfOhIc4DYO2pJ9QefE2nLob44SiCntU=;
+        b=CDdpfB2XtCv12KHXYIZAUZNgT4qJXO2yPlV3lpLrzT1gZm/u4GrzlybMwDDQInADuI
+         cS7210MmkiWR+SNtedurHR3cbO5Vgdb4xUkl9AEjSp1NAx6uxH0BcFiVAzrhfDhOaD3X
+         V0doRez8SmUVB5cf88qBKkq4q21NrQw7UKRd3xWJlwWKC/c7I086+1VEiyo09l+SQ39R
+         nPzLl7lm/UYX504JT/2BBKa0NU0WXySd6w0Vfyxb/2mS8JaEkCK/nxSfV4aow/bfE+3G
+         8p65YMJyT8+dEwMkacpJ+sWxxRxV8VLOdHJF0/Ac6iie8CcLAECzSf05iJqHyUOyFnnE
+         svRg==
+X-Gm-Message-State: APjAAAWzqglNT2UuPjZvY9of30H34I8oUekKr5w50pkaEkwglFnclLbq
+        FyCNoGynZD11BtqQoCrhnWTAKw==
+X-Google-Smtp-Source: APXvYqzVdnLKCTQuz42URSFlj8vvD4cR9tivufHNr/dclj9E8ApdhZDS2EsED/hEVq4k8S9GyrRzLA==
+X-Received: by 2002:a37:7f02:: with SMTP id a2mr2101242qkd.111.1574254598759;
+        Wed, 20 Nov 2019 04:56:38 -0800 (PST)
+Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.googlemail.com with ESMTPSA id r2sm14109637qtc.28.2019.11.20.04.56.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 20 Nov 2019 04:56:36 -0800 (PST)
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+To:     edubezval@gmail.com, rui.zhang@intel.com, ulf.hansson@linaro.org,
+        daniel.lezcano@linaro.org, bjorn.andersson@linaro.org,
+        agross@kernel.org
+Cc:     amit.kucheria@verdurent.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [Patch v4 0/7] Introduce Power domain based warming device driver
+Date:   Wed, 20 Nov 2019 07:56:26 -0500
+Message-Id: <1574254593-16078-1-git-send-email-thara.gopinath@linaro.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonas,
+Certain resources modeled as a generic power domain in linux kernel can be
+used to warm up the SoC (mx power domain on sdm845) if the temperature
+falls below certain threshold. These power domains can be considered as
+thermal warming devices.  (opposite of thermal cooling devices).
 
-On Thu, Nov 7, 2019 at 7:34 AM Jonas Karlman <jonas@kwiboo.se> wrote:
->
-> A decoded 8-bit 4:2:0 frame need memory for up to 448 bytes per
-> macroblock with additional 32 bytes on multi-core variants.
->
-> Memory layout is as follow:
->
-> +---------------------------+
-> | Y-plane   256 bytes x MBs |
-> +---------------------------+
-> | UV-plane  128 bytes x MBs |
-> +---------------------------+
-> | MV buffer  64 bytes x MBs |
-> +---------------------------+
-> | MC sync          32 bytes |
-> +---------------------------+
->
-> Reduce the extra space allocated now that motion vector buffer offset no
-> longer is based on the extra space.
->
-> Only allocate extra space for 64 bytes x MBs of motion vector buffer
-> and 32 bytes for multi-core sync.
->
-> Fixes: a9471e25629b ("media: hantro: Add core bits to support H264 decoding")
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> ---
-> Changes in v3:
->   - add memory layout to code comment (Boris)
-> Changes in v2:
->   - updated commit message
-> ---
->  drivers/staging/media/hantro/hantro_v4l2.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
->
+In kernel, these warming devices can be modeled as a thermal cooling
+device. Since linux kernel today has no instance of a resource modeled as
+a power domain acting as a thermal warming device, a generic power domain
+based thermal warming device driver that can be used pan-Socs is the
+approach taken in this patch series. Since thermal warming devices can be
+thought of as the mirror opposite of thermal cooling devices, this patch
+series re-uses thermal cooling device framework. To use these power
+domains as warming devices require further tweaks in the thermal framework
+which are out of scope of this patch series. These tweaks have been posted
+as a separate series[1].
 
-Thanks for the patch!
+The first patch in this series extends the genpd framework to export out
+the performance states of a power domain so that when a power domain is
+modeled as a cooling device, the number of possible states and current
+state of the cooling device can be retrieved from the genpd framework.
 
-What platform did you test it on and how? Was it tested with IOMMU enabled?
+The second patch implements the newly added genpd callback for Qualcomm
+RPMH power domain driver which hosts the mx power domain.
 
-Best regards,
-Tomasz
+The third patch introduces a new cooling device register API that allows
+a parent to be specified for the cooling device.
 
-> diff --git a/drivers/staging/media/hantro/hantro_v4l2.c b/drivers/staging/media/hantro/hantro_v4l2.c
-> index 3dae52abb96c..c8c896a06f58 100644
-> --- a/drivers/staging/media/hantro/hantro_v4l2.c
-> +++ b/drivers/staging/media/hantro/hantro_v4l2.c
-> @@ -240,14 +240,30 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f,
->                 v4l2_fill_pixfmt_mp(pix_mp, fmt->fourcc, pix_mp->width,
->                                     pix_mp->height);
->                 /*
-> +                * A decoded 8-bit 4:2:0 NV12 frame may need memory for up to
-> +                * 448 bytes per macroblock with additional 32 bytes on
-> +                * multi-core variants.
-> +                *
->                  * The H264 decoder needs extra space on the output buffers
->                  * to store motion vectors. This is needed for reference
->                  * frames.
-> +                *
-> +                * Memory layout is as follow:
-> +                *
-> +                * +---------------------------+
-> +                * | Y-plane   256 bytes x MBs |
-> +                * +---------------------------+
-> +                * | UV-plane  128 bytes x MBs |
-> +                * +---------------------------+
-> +                * | MV buffer  64 bytes x MBs |
-> +                * +---------------------------+
-> +                * | MC sync          32 bytes |
-> +                * +---------------------------+
->                  */
->                 if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_H264_SLICE)
->                         pix_mp->plane_fmt[0].sizeimage +=
-> -                               128 * DIV_ROUND_UP(pix_mp->width, 16) *
-> -                                     DIV_ROUND_UP(pix_mp->height, 16);
-> +                               64 * MB_WIDTH(pix_mp->width) *
-> +                                    MB_WIDTH(pix_mp->height) + 32;
->         } else if (!pix_mp->plane_fmt[0].sizeimage) {
->                 /*
->                  * For coded formats the application can specify
-> --
-> 2.17.1
->
+The fourth patch introduces the generic power domain warming device
+driver.
+
+The fifth patch extends Qualcomm RPMh power controller driver to register
+mx power domain as a thermal warming device in the kernel.
+
+The sixth patch describes the dt binding extensions for mx power domain to
+be a thermal warming device.
+
+The seventh patch introduces the DT entreis for sdm845 to register mx
+power domain as a thermal warming device.
+
+v1->v2:
+	- Rename the patch series from "qcom: Model RPMH power domains as
+	  thermal cooling devices" to "Introduce Power domain based
+thermal warming devices" as it is more appropriate.
+	- Introduce a new patch(patch 3) describing the dt-bindings for
+	  generic power domain warming device.
+	- Patch specific changes mentioned in respective patches.
+
+v2->v3:
+	- Changed power domain warming device from a virtual device node
+	  entry in DT to being a subnode of power domain controller
+binding following Rob's review comments.
+	- Implemented Ulf's review comments.
+	- The changes above introduced two new patches (patch 3 and 4)
+v3->v4:
+	- Dropped late_init hook in cooling device ops. Instead introduced
+	  a new cooling device register API that allows to define a parent
+for the cooling device.
+	- Patch specific changes mentioned in respective patches. 
+
+1. https://lkml.org/lkml/2019/9/18/1180
+
+Thara Gopinath (7):
+  PM/Domains: Add support for retrieving genpd performance states
+    information
+  soc: qcom: rpmhpd: Introduce function to retrieve power domain
+    performance state count
+  thermal: core: Allow cooling devices to register a parent.
+  thermal: Add generic power domain warming device driver.
+  soc: qcom: Extend RPMh power controller driver to register warming
+    devices.
+  dt-bindings: soc: qcom: Extend RPMh power controller binding to
+    describe thermal warming device
+  arm64: dts: qcom: Add mx power domain as thermal warming device.
+
+ .../devicetree/bindings/power/qcom,rpmpd.txt       |   5 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   5 +
+ drivers/base/power/domain.c                        |  37 ++++++
+ drivers/soc/qcom/rpmhpd.c                          |  47 ++++++-
+ drivers/thermal/Kconfig                            |  10 ++
+ drivers/thermal/Makefile                           |   2 +
+ drivers/thermal/pwr_domain_warming.c               | 138 +++++++++++++++++++++
+ drivers/thermal/thermal_core.c                     |  22 +++-
+ include/linux/pm_domain.h                          |  13 ++
+ include/linux/pwr_domain_warming.h                 |  29 +++++
+ include/linux/thermal.h                            |  15 +++
+ 11 files changed, 319 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/thermal/pwr_domain_warming.c
+ create mode 100644 include/linux/pwr_domain_warming.h
+
+-- 
+2.1.4
+
