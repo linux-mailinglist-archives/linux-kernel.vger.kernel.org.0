@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C29D8103B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2781C103AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbfKTNXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:23:05 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56714 "EHLO
+        id S1730183AbfKTNVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:21:11 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56688 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730146AbfKTNVM (ORCPT
+        with ESMTP id S1730146AbfKTNVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:12 -0500
+        Wed, 20 Nov 2019 08:21:10 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPuq-000756-NS; Wed, 20 Nov 2019 14:21:04 +0100
+        id 1iXPus-00077I-TO; Wed, 20 Nov 2019 14:21:07 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6F43F1C1A0B;
-        Wed, 20 Nov 2019 14:21:01 +0100 (CET)
-Date:   Wed, 20 Nov 2019 13:21:01 -0000
-From:   "tip-bot2 for Maulik Shah" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 03E361C1A0E;
+        Wed, 20 Nov 2019 14:21:03 +0100 (CET)
+Date:   Wed, 20 Nov 2019 13:21:02 -0000
+From:   "tip-bot2 for Paul Cercueil" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Introduce irq_chip_get/set_parent_state calls
-Cc:     Maulik Shah <mkshah@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1573855915-9841-7-git-send-email-ilina@codeaurora.org>
-References: <1573855915-9841-7-git-send-email-ilina@codeaurora.org>
+Subject: [tip: irq/core] irqchip: ingenic: Drop redundant irq_suspend /
+ irq_resume functions
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <1570015525-27018-2-git-send-email-zhouyanjie@zoho.com>
+References: <1570015525-27018-2-git-send-email-zhouyanjie@zoho.com>
 MIME-Version: 1.0
-Message-ID: <157425606136.12247.11166423156373394360.tip-bot2@tip-bot2>
+Message-ID: <157425606292.12247.1623250092467011574.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,108 +48,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     4a169a95d885fe5c050bac1a21d43c86ba955bcf
-Gitweb:        https://git.kernel.org/tip/4a169a95d885fe5c050bac1a21d43c86ba955bcf
-Author:        Maulik Shah <mkshah@codeaurora.org>
-AuthorDate:    Fri, 15 Nov 2019 15:11:49 -07:00
+Commit-ID:     20b44b4de61f2887694981e8cae74fe1bf58f950
+Gitweb:        https://git.kernel.org/tip/20b44b4de61f2887694981e8cae74fe1bf58f950
+Author:        Paul Cercueil <paul@crapouillou.net>
+AuthorDate:    Wed, 02 Oct 2019 19:25:21 +08:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sat, 16 Nov 2019 10:20:02 
+CommitterDate: Sun, 10 Nov 2019 18:55:29 
 
-genirq: Introduce irq_chip_get/set_parent_state calls
+irqchip: ingenic: Drop redundant irq_suspend / irq_resume functions
 
-On certain QTI chipsets some GPIOs are direct-connect interrupts to the
-GIC to be used as regular interrupt lines. When the GPIOs are not used
-for interrupt generation the interrupt line is disabled. But disabling
-the interrupt at GIC does not prevent the interrupt to be reported as
-pending at GIC_ISPEND. Later, when drivers call enable_irq() on the
-interrupt, an unwanted interrupt occurs.
+The same behaviour can be obtained by using the IRQCHIP_MASK_ON_SUSPEND
+flag on the IRQ chip.
 
-Introduce get and set methods for irqchip's parent to clear it's pending
-irq state. This then can be invoked by the GPIO interrupt controller on
-the parents in it hierarchy to clear the interrupt before enabling the
-interrupt.
-
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/1573855915-9841-7-git-send-email-ilina@codeaurora.org
-
-[updated commit text and minor code fixes]
+Link: https://lore.kernel.org/r/1570015525-27018-2-git-send-email-zhouyanjie@zoho.com
 ---
- include/linux/irq.h |  6 ++++++-
- kernel/irq/chip.c   | 44 ++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 50 insertions(+)
+ drivers/irqchip/irq-ingenic.c   | 24 +-----------------------
+ include/linux/irqchip/ingenic.h | 14 --------------
+ 2 files changed, 1 insertion(+), 37 deletions(-)
+ delete mode 100644 include/linux/irqchip/ingenic.h
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index fb301cf..7853eb9 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -610,6 +610,12 @@ extern int irq_chip_pm_put(struct irq_data *data);
- #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
- extern void handle_fasteoi_ack_irq(struct irq_desc *desc);
- extern void handle_fasteoi_mask_irq(struct irq_desc *desc);
-+extern int irq_chip_set_parent_state(struct irq_data *data,
-+				     enum irqchip_irq_state which,
-+				     bool val);
-+extern int irq_chip_get_parent_state(struct irq_data *data,
-+				     enum irqchip_irq_state which,
-+				     bool *state);
- extern void irq_chip_enable_parent(struct irq_data *data);
- extern void irq_chip_disable_parent(struct irq_data *data);
- extern void irq_chip_ack_parent(struct irq_data *data);
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index b76703b..b3fa2d8 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1298,6 +1298,50 @@ EXPORT_SYMBOL_GPL(handle_fasteoi_mask_irq);
- #endif /* CONFIG_IRQ_FASTEOI_HIERARCHY_HANDLERS */
+diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
+index f126255..06fa810 100644
+--- a/drivers/irqchip/irq-ingenic.c
++++ b/drivers/irqchip/irq-ingenic.c
+@@ -10,7 +10,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+ #include <linux/irqchip.h>
+-#include <linux/irqchip/ingenic.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/timex.h>
+@@ -50,26 +49,6 @@ static irqreturn_t intc_cascade(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
  
- /**
-+ * irq_chip_set_parent_state - set the state of a parent interrupt.
-+ *
-+ * @data: Pointer to interrupt specific data
-+ * @which: State to be restored (one of IRQCHIP_STATE_*)
-+ * @val: Value corresponding to @which
-+ *
-+ * Conditional success, if the underlying irqchip does not implement it.
-+ */
-+int irq_chip_set_parent_state(struct irq_data *data,
-+			      enum irqchip_irq_state which,
-+			      bool val)
-+{
-+	data = data->parent_data;
-+
-+	if (!data || !data->chip->irq_set_irqchip_state)
-+		return 0;
-+
-+	return data->chip->irq_set_irqchip_state(data, which, val);
-+}
-+EXPORT_SYMBOL_GPL(irq_chip_set_parent_state);
-+
-+/**
-+ * irq_chip_get_parent_state - get the state of a parent interrupt.
-+ *
-+ * @data: Pointer to interrupt specific data
-+ * @which: one of IRQCHIP_STATE_* the caller wants to know
-+ * @state: a pointer to a boolean where the state is to be stored
-+ *
-+ * Conditional success, if the underlying irqchip does not implement it.
-+ */
-+int irq_chip_get_parent_state(struct irq_data *data,
-+			      enum irqchip_irq_state which,
-+			      bool *state)
-+{
-+	data = data->parent_data;
-+
-+	if (!data || !data->chip->irq_get_irqchip_state)
-+		return 0;
-+
-+	return data->chip->irq_get_irqchip_state(data, which, state);
-+}
-+EXPORT_SYMBOL_GPL(irq_chip_get_parent_state);
-+
-+/**
-  * irq_chip_enable_parent - Enable the parent interrupt (defaults to unmask if
-  * NULL)
-  * @data:	Pointer to interrupt specific data
+-static void intc_irq_set_mask(struct irq_chip_generic *gc, uint32_t mask)
+-{
+-	struct irq_chip_regs *regs = &gc->chip_types->regs;
+-
+-	writel(mask, gc->reg_base + regs->enable);
+-	writel(~mask, gc->reg_base + regs->disable);
+-}
+-
+-void ingenic_intc_irq_suspend(struct irq_data *data)
+-{
+-	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
+-	intc_irq_set_mask(gc, gc->wake_active);
+-}
+-
+-void ingenic_intc_irq_resume(struct irq_data *data)
+-{
+-	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
+-	intc_irq_set_mask(gc, gc->mask_cache);
+-}
+-
+ static struct irqaction intc_cascade_action = {
+ 	.handler = intc_cascade,
+ 	.name = "SoC intc cascade interrupt",
+@@ -127,8 +106,7 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 		ct->chip.irq_mask = irq_gc_mask_disable_reg;
+ 		ct->chip.irq_mask_ack = irq_gc_mask_disable_reg;
+ 		ct->chip.irq_set_wake = irq_gc_set_wake;
+-		ct->chip.irq_suspend = ingenic_intc_irq_suspend;
+-		ct->chip.irq_resume = ingenic_intc_irq_resume;
++		ct->chip.flags = IRQCHIP_MASK_ON_SUSPEND;
+ 
+ 		irq_setup_generic_chip(gc, IRQ_MSK(32), 0, 0,
+ 				       IRQ_NOPROBE | IRQ_LEVEL);
+diff --git a/include/linux/irqchip/ingenic.h b/include/linux/irqchip/ingenic.h
+deleted file mode 100644
+index 1465588..0000000
+--- a/include/linux/irqchip/ingenic.h
++++ /dev/null
+@@ -1,14 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- *  Copyright (C) 2010, Lars-Peter Clausen <lars@metafoo.de>
+- */
+-
+-#ifndef __LINUX_IRQCHIP_INGENIC_H__
+-#define __LINUX_IRQCHIP_INGENIC_H__
+-
+-#include <linux/irq.h>
+-
+-extern void ingenic_intc_irq_suspend(struct irq_data *data);
+-extern void ingenic_intc_irq_resume(struct irq_data *data);
+-
+-#endif
