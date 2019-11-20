@@ -2,70 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E271D104230
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E25AE10423B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfKTRfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 12:35:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49624 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbfKTRfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 12:35:17 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iXTsj-0006qN-T8; Wed, 20 Nov 2019 17:35:09 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/dp_mst: fix multiple frees of tx->bytes
-Date:   Wed, 20 Nov 2019 17:35:09 +0000
-Message-Id: <20191120173509.347490-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        id S1728687AbfKTRha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 12:37:30 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33888 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727925AbfKTRha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 12:37:30 -0500
+Received: from zn.tnic (p200300EC2F0D8C00F553B94F3FB99B80.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:8c00:f553:b94f:3fb9:9b80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B40D1EC0BEC;
+        Wed, 20 Nov 2019 18:37:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1574271449;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=dt0skX+t5TApZIf10QlyBTuMhhHdR5oeyUG697yEIWI=;
+        b=gQHFgTgSinL/5JlBJMWwVcoiC4JiDWLyhR2HQfxHkmcYp0ul2Sgg3mDQ4MzrPq0mUnHo9p
+        CBFeF+pLJRnBLVYX/cxau2SUryK629DxsQFQs2PBbi74QTx1VWyHCLm70oamPWvMxAxmmq
+        bmmviKmuV4aXD3SxnSbZdu5UaYoBbH0=
+Date:   Wed, 20 Nov 2019 18:37:22 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v3 2/4] x86/traps: Print non-canonical address on #GP
+Message-ID: <20191120173722.GH2634@zn.tnic>
+References: <20191120103613.63563-1-jannh@google.com>
+ <20191120103613.63563-2-jannh@google.com>
+ <20191120111859.GA115930@gmail.com>
+ <CAG48ez0Frp4-+xHZ=UhbHh0hC_h-1VtJfwHw=kDo6NahyMv1ig@mail.gmail.com>
+ <20191120123058.GA17296@gmail.com>
+ <20191120123926.GE2634@zn.tnic>
+ <20191120132830.GB54414@gmail.com>
+ <20191120133913.GG2634@zn.tnic>
+ <20191120162143.GB32572@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191120162143.GB32572@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Nov 20, 2019 at 08:21:43AM -0800, Sean Christopherson wrote:
+> On Wed, Nov 20, 2019 at 02:39:13PM +0100, Borislav Petkov wrote:
+> > On Wed, Nov 20, 2019 at 02:28:30PM +0100, Ingo Molnar wrote:
+> > > I'd rather we not trust the decoder and the execution environment so much 
+> > > that it never produces a 0 linear address in a #GP:
+> > 
+> > I was just scratching my head whether I could trigger a #GP with address
+> > of 0. But yeah, I agree, let's be really cautious here. I wouldn't want
+> > to debug a #GP with a wrong address reported.
+> 
+> It's definitely possible, there are a handful of non-SIMD instructions that
+> generate #GP(0) it CPL=0 in 64-bit mode *and* have a memory operand.  Some
+> of them might even be legitimately encountered in the wild.
+> 
+>   - CMPXCHG16B if it's not supported by the CPU.
+>   - VMXON if CR4 is misconfigured or VMX isn't enabled in FEATURE_CONTROL.
+>   - MONITOR if ECX has an invalid hint (although MONITOR hardcodes the
+>     address in DS:RAX and so doesn't have a ModR/M byte).
+> 
+> Undoudbtedly there are other instructions with similar sources of #GP.
 
-Currently tx->bytes is being freed r->num_transactions number of
-times because tx is not being set correctly. Fix this by setting
-tx to &r->transactions[i] so that the correct objects are being
-freed on each loop iteration.
+Right, we currently put our trust in the insn decoder to handle those
+correctly too.
 
-Addresses-Coverity: ("Double free")
-Fixes: 2f015ec6eab6 ("drm/dp_mst: Add sideband down request tracing + selftests")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/drm_dp_mst_topology.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index ae5809a1f19a..2754e7e075e7 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -517,8 +517,10 @@ drm_dp_decode_sideband_req(const struct drm_dp_sideband_msg_tx *raw,
- 			}
- 
- 			if (failed) {
--				for (i = 0; i < r->num_transactions; i++)
-+				for (i = 0; i < r->num_transactions; i++) {
-+					tx = &r->transactions[i];
- 					kfree(tx->bytes);
-+				}
- 				return -ENOMEM;
- 			}
- 
 -- 
-2.24.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
