@@ -2,148 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06155104851
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:55:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C126110486A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKUBzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 20:55:10 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:40173 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfKUBzK (ORCPT
+        id S1726293AbfKUCGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 21:06:21 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46634 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfKUCGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 20:55:10 -0500
-Received: by mail-il1-f199.google.com with SMTP id x17so1516958ill.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 17:55:09 -0800 (PST)
+        Wed, 20 Nov 2019 21:06:21 -0500
+Received: by mail-pl1-f196.google.com with SMTP id l4so760142plt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 18:06:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uo9mEPcaYcwnzYyWGiXlb2tEqoly25jIf2ri/BJ7dDw=;
+        b=Am9AlC+yrXpYjI9tLZJABP+RtHy2I4MpTU3JDy2quw9lARH0E9nsUx5sZLzW3WsDXO
+         MTT+d/n1iXXdDWbHu/+5ZNlEjJkBCfuMGQ0lkn8Y7lm/Tzm4N0xy3n8V3/0Et0gCoKEN
+         La77ktcLIHHNXLrDobr2UBGIDQa807YwOkRStoKCQx7d8nF5nRTY9eGyAdB04aZCf5yD
+         rO4aRJlugOJko5ct311BHN7FOI/OtYpsdzrpnaN7mckQkPbFwVkF+LgJJq63UARVC8nL
+         O2ZgCy5Q6Agt+f5TU+Sl3EUB3XFTfODjPAndMGYek+NU+pNGWBS4nA0GY5D6/JQ4Jzi9
+         BNsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=8fbeBWdGj/FE0BKwqQYW5jR1SsZViMg8/WL8VmVrmIc=;
-        b=c7BWyQvyr/NwQhQgSk+BPB8SsuVB9n4tBy46gMcR72Bx5Im03SdZ3srNpsCyew5QKo
-         ssCSB6jzMHw1h/5FvSZB+2e8ZY3x+mzLxEL7+8OLEHa8iMRukaKUFCByYsCJ8nOVGtiu
-         AlAhlXTpadXpJ3HzMrckYOKSY40yv+tcq3R4v4dWOXxPU/gD0YNhRdKVkRy8uq57++cd
-         6Mq1Z6qSrcO9/K4Kj1K9Upk3xZuyrAUl6/gbVKZ7ejK88N+2KymrdH/E1KaYPBZErmze
-         MHBPh4xyx9KUWAtOFzw7kR7YZTipyNurRS/qfO14uSzvqK1Uxo3Ii2yb3aKQjlTMiaJc
-         i4uQ==
-X-Gm-Message-State: APjAAAVEGkni1a3Wac5RP9CVV7wGzbqEGaZyedXCt+Eq0ZmWmLRttK69
-        vHeH69+ctLWZ7VxxPiAiVqXspKKXZa7xJZyjz2NKCyLNGghi
-X-Google-Smtp-Source: APXvYqwEqU8W/u8ikBzqbAT/+RtVR9QeUYzIHwKg13jbeazZsy5qvVKFctzJ9VZ2Ss2lpcmRghJVq1Acvqr2H0pWITFFpxSnlU+d
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uo9mEPcaYcwnzYyWGiXlb2tEqoly25jIf2ri/BJ7dDw=;
+        b=oa6/PHB6zaxBF0Wz01lRnyrHPI4gm4HNoPlJeIkYIVv4VWaRkDB0OL6Yqt3Mbt9Q/t
+         yap3q55RV8F0xwf2gd+0x2tN10+I2qHEtpfnV6L2cL5C+aMq0i4BQJ0zDCU8oVsxFF6j
+         DOwz/sI5Fo6iTmP2lIm0r3u88FTcz9MVOX/ZBY7b9Z18x0HP064o/KQszFeIb1dDXKUv
+         Cn6mxCHAXCUkwBU2sSam2Zz001IdO+F2wabW5HDEa5adTeQRgB4yHXT3TIu6LSmv9LhC
+         6X9zJQLv15UunKAEjgJdn53Y222o7QxMB1UMSMsnnJu4siDOPRFeXLrDxJD2boEnjMr+
+         YpyA==
+X-Gm-Message-State: APjAAAW97WOeVYhbPb9jYea67nyMrEDOl1cEZBUxpwQefvIABmepYypa
+        zIvW1sgoKFFdQb5dht+o90OYVJ179m5mdw==
+X-Google-Smtp-Source: APXvYqytngQq8IjjeiFBpEFRQm5zInwYRJW6QSTLANZYdx6eBrIH2RFe+esQWcWUc+a6h1YGF2wf6w==
+X-Received: by 2002:a17:90a:ec13:: with SMTP id l19mr8419701pjy.0.1574301978779;
+        Wed, 20 Nov 2019 18:06:18 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.79])
+        by smtp.gmail.com with ESMTPSA id s15sm541405pjp.3.2019.11.20.18.06.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Nov 2019 18:06:17 -0800 (PST)
+Subject: Re: [PATCH -next] writeback: fix -Wformat compilation warnings
+To:     Qian Cai <cai@lca.pw>, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     jack@suse.cz, gregkh@linuxfoundation.org, cgroups@vger.kernel.org,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191114192118.GK4163745@devbig004.ftw2.facebook.com>
+ <9D52EBB0-BE48-4C59-9145-857C3247B20D@lca.pw>
+ <20191115145540.GP4163745@devbig004.ftw2.facebook.com>
+ <1574279778.9585.15.camel@lca.pw>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <26dc5699-9223-3e35-65f3-955fef7a990a@kernel.dk>
+Date:   Wed, 20 Nov 2019 16:17:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:d191:: with SMTP id z17mr7350540ilz.51.1574301309190;
- Wed, 20 Nov 2019 17:55:09 -0800 (PST)
-Date:   Wed, 20 Nov 2019 17:55:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004dccce0597d1967b@google.com>
-Subject: general protection fault in tss_update_io_bitmap
-From:   syzbot <syzbot+81e6ff9d4cdb05fd4f5e@syzkaller.appspotmail.com>
-To:     adobriyan@gmail.com, ak@linux.intel.com, bigeasy@linutronix.de,
-        bp@alien8.de, fenghua.yu@intel.com, frederic@kernel.org,
-        hpa@zytor.com, keescook@chromium.org, kernelfans@gmail.com,
-        len.brown@intel.com, linux-kernel@vger.kernel.org,
-        longman@redhat.com, luto@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rafael.j.wysocki@intel.com, riel@surriel.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        tim.c.chen@linux.intel.com, tonywwang-oc@zhaoxin.com,
-        wang.yi59@zte.com.cn, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1574279778.9585.15.camel@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 11/20/19 12:56 PM, Qian Cai wrote:
+> On Fri, 2019-11-15 at 06:55 -0800, Tejun Heo wrote:
+>> On Thu, Nov 14, 2019 at 07:26:21PM -0500, Qian Cai wrote:
+>>>
+>>>
+>>>> On Nov 14, 2019, at 2:21 PM, Tejun Heo <tj@kernel.org> wrote:
+>>>>
+>>>> Acked-by: Tejun Heo <tj@kernel.org>
+>>>
+>>> Tejun, suppose you will take this patch via your tree together with the series or should I Cc Andrew who normally handle this file?
+>>
+>> Patches in this area usually goes through Jens's block tree.
+> 
+> I remember that last time Jens had no interests in picking up trivial patches
+> like this one. See the commit d1a445d3b86c ("include/trace/events/writeback.h:
+> fix -Wstringop-truncation warnings").
+> 
+> Andrew, care to pick up this again?
+> 
+> https://lore.kernel.org/lkml/1573751861-10303-1-git-send-email-cai@lca.pw/
 
-syzbot found the following crash on:
+I'm fine with picking it up, this one isn't trivial and it's fixing
+warnings. But I didn't (and don't) carry f05499a06fb4 in my tree,
+so it'd be more logical to funnel this one through the tree that
+has the offending commit.
 
-HEAD commit:    5d1131b4 Add linux-next specific files for 20191119
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=177979d2e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b60c562d89e5a8df
-dashboard link: https://syzkaller.appspot.com/bug?extid=81e6ff9d4cdb05fd4f5e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1549ed8ce00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f91012e00000
+-- 
+Jens Axboe
 
-The bug was bisected to:
-
-commit 111e7b15cf10f6e973ccf537c70c66a5de539060
-Author: Thomas Gleixner <tglx@linutronix.de>
-Date:   Tue Nov 12 20:40:33 2019 +0000
-
-     x86/ioperm: Extend IOPL config to control ioperm() as well
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10490e86e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12490e86e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14490e86e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+81e6ff9d4cdb05fd4f5e@syzkaller.appspotmail.com
-Fixes: 111e7b15cf10 ("x86/ioperm: Extend IOPL config to control ioperm() as  
-well")
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8968 Comm: syz-executor566 Not tainted  
-5.4.0-rc8-next-20191119-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:tss_update_io_bitmap+0x138/0x590 arch/x86/kernel/process.c:395
-Code: 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 9e 03 00 00 4c 89  
-ea 4c 8b 73 68 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 72 03 00 00 4d 3b 75 00 0f 85 35 02 00 00 48 8d
-RSP: 0018:ffff8880a4effe80 EFLAGS: 00010046
-RAX: dffffc0000000000 RBX: ffff8880ae80a000 RCX: ffffffff812a3228
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff8880ae80a068
-RBP: ffff8880a4efff10 R08: 1ffff110126f5020 R09: ffffed10126f5021
-R10: ffffed10126f5020 R11: ffff8880937a8107 R12: 1ffff110149dffd2
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000001e8f880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffff01c2038 CR3: 0000000099c07000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  prepare_exit_to_usermode arch/x86/entry/common.c:201 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
-  do_syscall_64+0x685/0x790 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4400f9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffff000a2d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ac
-RAX: 0000000000000000 RBX: 00000000004002c8 RCX: 00000000004400f9
-RDX: 0000000000400a20 RSI: 0000000000000012 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000401980
-R13: 0000000000401a10 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 6bbd68071a8b58ba ]---
-RIP: 0010:tss_update_io_bitmap+0x138/0x590 arch/x86/kernel/process.c:395
-Code: 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 9e 03 00 00 4c 89  
-ea 4c 8b 73 68 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 72 03 00 00 4d 3b 75 00 0f 85 35 02 00 00 48 8d
-RSP: 0018:ffff8880a4effe80 EFLAGS: 00010046
-RAX: dffffc0000000000 RBX: ffff8880ae80a000 RCX: ffffffff812a3228
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff8880ae80a068
-RBP: ffff8880a4efff10 R08: 1ffff110126f5020 R09: ffffed10126f5021
-R10: ffffed10126f5020 R11: ffff8880937a8107 R12: 1ffff110149dffd2
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000001e8f880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffff01c2038 CR3: 0000000099c07000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
