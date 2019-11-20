@@ -2,169 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DD310411C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B331410413C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732913AbfKTQnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:43:17 -0500
-Received: from foss.arm.com ([217.140.110.172]:42500 "EHLO foss.arm.com"
+        id S1732900AbfKTQqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:46:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731673AbfKTQnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:43:15 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 254A81FB;
-        Wed, 20 Nov 2019 08:43:15 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2973A3F703;
-        Wed, 20 Nov 2019 08:43:13 -0800 (PST)
-Date:   Wed, 20 Nov 2019 16:43:08 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     jmorris@namei.org, sashal@kernel.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, steve.capper@arm.com,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        james.morse@arm.com, vladimir.murzin@arm.com, tglx@linutronix.de,
-        gregkh@linuxfoundation.org, allison@lohutok.net, info@metux.net,
-        alexios.zavras@intel.com
-Subject: Re: [PATCH] arm64: kernel: memory corruptions due non-disabled PAN
-Message-ID: <20191120164307.GA19681@lakrids.cambridge.arm.com>
-References: <20191119221006.1021520-1-pasha.tatashin@soleen.com>
+        id S1729901AbfKTQqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:46:02 -0500
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEC0020895;
+        Wed, 20 Nov 2019 16:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574268361;
+        bh=R6SyimNGQdLtKwjwUdKxJ320G/EPgQrR9kg29Psq5yU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jmceyR3LJHIz0w3HzRscmksCTlcPlDgJWFZalPz+nP0bd4CZwC1wiEUQ5u2k9vNWJ
+         DFDzBzoQ5nKbTq2QPnAzM1mA8mn1KRuWl0T0j18DrJpWia3ZyLCjArUYzukF314peb
+         aj4anLFnIvEp7JiX7R1/InSspip7Uu8sfYRH12po=
+Received: by mail-qk1-f171.google.com with SMTP id q70so321711qke.12;
+        Wed, 20 Nov 2019 08:46:00 -0800 (PST)
+X-Gm-Message-State: APjAAAW4rjpEHvJ9A7A4K4I1/D9V2P0nJAxjJ3l8lxm81v1jteeQPTq1
+        IrIESX7wL5jDNHrRe8DuB6fWN0s+f3FLhEa1kg==
+X-Google-Smtp-Source: APXvYqyQsCsFWc9QmmtpDwHH2Qlb9K29LoKr0bRhwaNQe0r2nm77ICaneDWw99PkBech78rMFBTJ7acTuCde/90tiCQ=
+X-Received: by 2002:a05:620a:205d:: with SMTP id d29mr3294545qka.152.1574268360061;
+ Wed, 20 Nov 2019 08:46:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119221006.1021520-1-pasha.tatashin@soleen.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+References: <20191119191505.25286-1-geert+renesas@glider.be> <20191120162750.GA3279@e121166-lin.cambridge.arm.com>
+In-Reply-To: <20191120162750.GA3279@e121166-lin.cambridge.arm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 20 Nov 2019 10:45:48 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL_kLOGM0QyCHo-vM14P42YQ4Ny+YJS0Ysh-3X2FDTg_A@mail.gmail.com>
+Message-ID: <CAL_JsqL_kLOGM0QyCHo-vM14P42YQ4Ny+YJS0Ysh-3X2FDTg_A@mail.gmail.com>
+Subject: Re: [PATCH] PCI: of: Restore alignment/indentation in host bridge
+ window table
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        PCI <linux-pci@vger.kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+On Wed, Nov 20, 2019 at 10:27 AM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Tue, Nov 19, 2019 at 08:15:05PM +0100, Geert Uytterhoeven wrote:
+> > Since the printing of the inbound resources was added, alignment and
+> > indentation of the host bridge window table is broken because of two
+> > reasons:
+> >   1. The "IB MEM" row header is longer than the other headers,
+> >   2. Inbound ranges typically extend beyond 32-bit address space, and thus
+> >      don't fit in "#010llx".
+> >
+> > Fix this by extending the row header field to 6 characters, and the
+> > format string to 40-bit addresses.
+> >
+> > Use "%6s" to handle field size and right-alignment, instead of manual
+> > preparation using error-prone snprintf() calls.  Use the exact same
+> > format string for both cases, to allow sharing.
+> >
+> > Impact on kernel boot log on r8a7791/koelsch:
+> >
+> >      rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
+> >     -rcar-pcie fe000000.pcie:    IO 0xfe100000..0xfe1fffff -> 0x00000000
+> >     -rcar-pcie fe000000.pcie:   MEM 0xfe200000..0xfe3fffff -> 0xfe200000
+> >     -rcar-pcie fe000000.pcie:   MEM 0x30000000..0x37ffffff -> 0x30000000
+> >     -rcar-pcie fe000000.pcie:   MEM 0x38000000..0x3fffffff -> 0x38000000
+> >     -rcar-pcie fe000000.pcie: IB MEM 0x40000000..0xbfffffff -> 0x40000000
+> >     -rcar-pcie fe000000.pcie: IB MEM 0x200000000..0x2ffffffff -> 0x200000000
+> >     +rcar-pcie fe000000.pcie:       IO 0x00fe100000..0x00fe1fffff -> 0x0000000000
+> >     +rcar-pcie fe000000.pcie:      MEM 0x00fe200000..0x00fe3fffff -> 0x00fe200000
+> >     +rcar-pcie fe000000.pcie:      MEM 0x0030000000..0x0037ffffff -> 0x0030000000
+> >     +rcar-pcie fe000000.pcie:      MEM 0x0038000000..0x003fffffff -> 0x0038000000
+> >     +rcar-pcie fe000000.pcie:   IB MEM 0x0040000000..0x00bfffffff -> 0x0040000000
+> >     +rcar-pcie fe000000.pcie:   IB MEM 0x0200000000..0x02ffffffff -> 0x0200000000
+> >
+> > Fixes: 52ac576f88f9f701 ("PCI: of: Add inbound resource parsing to helpers")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  drivers/pci/of.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> Hi Rob,
+>
+> do you mind if I squash this patch in the Fixes: above ?
 
-On Tue, Nov 19, 2019 at 05:10:06PM -0500, Pavel Tatashin wrote:
-> Userland access functions (__arch_clear_user, __arch_copy_from_user,
-> __arch_copy_in_user, __arch_copy_to_user), enable and disable PAN
-> for the duration of copy. However, when copy fails for some reason,
-> i.e. access violation the code is transferred to fixedup section,
-> where we do not disable PAN.
+No, LGTM.
 
-Thanks for reporting this. This is a very nasty bug.
-
-> The bug is a security violation as the access to userland is still
-> open when it should be disabled, but it also causes memory corruptions
-> when software emulated PAN is used: CONFIG_ARM64_SW_TTBR0_PAN=y.
-
-I see that with CONFIG_ARM64_SW_TTBR0_PAN=y, this means that we may
-leave the stale TTBR0 value installed across a context-switch (and have
-reproduced that locally), but I'm having some difficulty reproducing the
-corruption that you see.
-
-> I was able to reproduce memory corruption problem on Broadcom's SoC
-> ARMv8-A like this:
-> 
-> Enable software perf-events with PERF_SAMPLE_CALLCHAIN so userland's
-> stack is accessed and copied.
-
-IIUC this tickles the issue by performing a faulting uaccess in IRQ
-context. On the path to returnign from the exception, it directly calls
-into the scheduler as part of el1_preempt, erroneously passing the TTBR0
-value to the next task. Note that a preemption would remove the stale
-TTBR0 value as part of kernel entry.
-
-It looks like if we're in this state, and return from an exception taken
-from EL1 with SW PAN enabled, we'll also leave the stale TTBR0 value
-installed. If PAN was disabled (e.g. in the middle of a uaccess region),
-then we'll restore the correct TTBR0.
-
-> The test program performed the following on every CPU and forking many
-> processes:
-> 
-> 	unsigned long *map = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE,
-> 				  MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-> 	map[0] = getpid();
-> 	sched_yield();
-> 	if (map[0] != getpid()) {
-> 		fprintf(stderr, "Corruption detected!");
-> 	}
-> 	munmap(map, PAGE_SIZE);
-
-Can you provide the whole test, please? And precisely how you're
-launching it?
-
-I've tried turning the above into a main() function, and spawning a
-number of instances in parallel while perf is running, but I haven't
-been able to reproduce the issue locally, and I'm concerned that I'm
-missing something.
-
-> From time to time I was getting map[0] to contain pid for a different
-> process.
-
-How often is "from time to time"? How many processes are you running,
-across how many CPUs?
-
-> 
-> Fixes: 338d4f49d6f7114 ("arm64: kernel: Add support for Privileged...")
-> 
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-> ---
->  arch/arm64/lib/clear_user.S     | 1 +
->  arch/arm64/lib/copy_from_user.S | 1 +
->  arch/arm64/lib/copy_in_user.S   | 1 +
->  arch/arm64/lib/copy_to_user.S   | 1 +
->  4 files changed, 4 insertions(+)
-
-FWIW, the diff below looks correct to me, but we might want to fold this
-into the C wrappers, so that this is consistent with the other uaccess
-cases (and done in one place in the code).
-
-Thanks,
-Mark.
-
-> 
-> diff --git a/arch/arm64/lib/clear_user.S b/arch/arm64/lib/clear_user.S
-> index 10415572e82f..322b55664cca 100644
-> --- a/arch/arm64/lib/clear_user.S
-> +++ b/arch/arm64/lib/clear_user.S
-> @@ -48,5 +48,6 @@ EXPORT_SYMBOL(__arch_clear_user)
->  	.section .fixup,"ax"
->  	.align	2
->  9:	mov	x0, x2			// return the original size
-> +	uaccess_disable_not_uao x2, x3
->  	ret
->  	.previous
-> diff --git a/arch/arm64/lib/copy_from_user.S b/arch/arm64/lib/copy_from_user.S
-> index 680e74409ff9..8472dc7798b3 100644
-> --- a/arch/arm64/lib/copy_from_user.S
-> +++ b/arch/arm64/lib/copy_from_user.S
-> @@ -66,5 +66,6 @@ EXPORT_SYMBOL(__arch_copy_from_user)
->  	.section .fixup,"ax"
->  	.align	2
->  9998:	sub	x0, end, dst			// bytes not copied
-> +	uaccess_disable_not_uao x3, x4
->  	ret
->  	.previous
-> diff --git a/arch/arm64/lib/copy_in_user.S b/arch/arm64/lib/copy_in_user.S
-> index 0bedae3f3792..8e0355c1e318 100644
-> --- a/arch/arm64/lib/copy_in_user.S
-> +++ b/arch/arm64/lib/copy_in_user.S
-> @@ -68,5 +68,6 @@ EXPORT_SYMBOL(__arch_copy_in_user)
->  	.section .fixup,"ax"
->  	.align	2
->  9998:	sub	x0, end, dst			// bytes not copied
-> +	uaccess_disable_not_uao x3, x4
->  	ret
->  	.previous
-> diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
-> index 2d88c736e8f2..6085214654dc 100644
-> --- a/arch/arm64/lib/copy_to_user.S
-> +++ b/arch/arm64/lib/copy_to_user.S
-> @@ -65,5 +65,6 @@ EXPORT_SYMBOL(__arch_copy_to_user)
->  	.section .fixup,"ax"
->  	.align	2
->  9998:	sub	x0, end, dst			// bytes not copied
-> +	uaccess_disable_not_uao x3, x4
->  	ret
->  	.previous
-> -- 
-> 2.24.0
-> 
+Rob
