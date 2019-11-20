@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52395103B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BF1103B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfKTNWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:22:40 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56782 "EHLO
+        id S1730440AbfKTNWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:22:25 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56809 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730237AbfKTNVV (ORCPT
+        with ESMTP id S1730255AbfKTNVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:21 -0500
+        Wed, 20 Nov 2019 08:21:23 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPv2-0007BZ-Jt; Wed, 20 Nov 2019 14:21:16 +0100
+        id 1iXPv1-0007CN-U8; Wed, 20 Nov 2019 14:21:16 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 22AC71C1A0B;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 650971C1A1A;
         Wed, 20 Nov 2019 14:21:05 +0100 (CET)
 Date:   Wed, 20 Nov 2019 13:21:05 -0000
-From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Rajendra Nayak" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3-its: Free collection mapping on device
- teardown
-Cc:     Marc Zyngier <maz@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
+Subject: [tip: irq/core] drivers: irqchip: qcom-pdc: Move to an SoC
+ independent compatible
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191108165805.3071-2-maz@kernel.org>
-References: <20191108165805.3071-2-maz@kernel.org>
+In-Reply-To: <20191108092824.9773-7-rnayak@codeaurora.org>
+References: <20191108092824.9773-7-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Message-ID: <157425606507.12247.10617023526080442996.tip-bot2@tip-bot2>
+Message-ID: <157425606535.12247.7467882723758495211.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,46 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     898aa5ce6158c5ccfc256bfc17963bc81981eef8
-Gitweb:        https://git.kernel.org/tip/898aa5ce6158c5ccfc256bfc17963bc81981eef8
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Fri, 08 Nov 2019 16:57:55 
+Commit-ID:     8e4d5a5bde8896c7fa36b173c613dbbbf9d5dc32
+Gitweb:        https://git.kernel.org/tip/8e4d5a5bde8896c7fa36b173c613dbbbf9d5dc32
+Author:        Rajendra Nayak <rnayak@codeaurora.org>
+AuthorDate:    Fri, 08 Nov 2019 14:58:17 +05:30
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sun, 10 Nov 2019 18:47:50 
+CommitterDate: Sun, 10 Nov 2019 18:47:49 
 
-irqchip/gic-v3-its: Free collection mapping on device teardown
+drivers: irqchip: qcom-pdc: Move to an SoC independent compatible
 
-We allocate the collection mapping on device creation, but somehow
-free it on the irqdomain free path, which is pretty inconsistent
-and has led to bugs in the past.
+Remove the sdm845 SoC specific compatible to make the driver
+easily reusable across other SoC's with the same IP block.
+This will reduce further churn adding any SoC specific
+compatibles unless really needed.
 
-Move it to the point where we teardown the device, making the
-alloc/free symetric.
-
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Link: https://lore.kernel.org/r/20191108165805.3071-2-maz@kernel.org
+Reviewed-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lore.kernel.org/r/20191108092824.9773-7-rnayak@codeaurora.org
 ---
- drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ drivers/irqchip/qcom-pdc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 021e0c7..d5d8f8f 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2474,6 +2474,7 @@ static void its_free_device(struct its_device *its_dev)
- 	raw_spin_lock_irqsave(&its_dev->its->lock, flags);
- 	list_del(&its_dev->entry);
- 	raw_spin_unlock_irqrestore(&its_dev->its->lock, flags);
-+	kfree(its_dev->event_map.col_map);
- 	kfree(its_dev->itt);
- 	kfree(its_dev);
+diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+index faa7d61..c175333 100644
+--- a/drivers/irqchip/qcom-pdc.c
++++ b/drivers/irqchip/qcom-pdc.c
+@@ -309,4 +309,4 @@ fail:
+ 	return ret;
  }
-@@ -2682,7 +2683,6 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 		its_lpi_free(its_dev->event_map.lpi_map,
- 			     its_dev->event_map.lpi_base,
- 			     its_dev->event_map.nr_lpis);
--		kfree(its_dev->event_map.col_map);
  
- 		/* Unmap device/itt */
- 		its_send_mapd(its_dev, 0);
+-IRQCHIP_DECLARE(pdc_sdm845, "qcom,sdm845-pdc", qcom_pdc_init);
++IRQCHIP_DECLARE(qcom_pdc, "qcom,pdc", qcom_pdc_init);
