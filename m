@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698BA103BAC
+	by mail.lfdr.de (Postfix) with ESMTP id D7C24103BAD
 	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730827AbfKTNgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:36:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43296 "EHLO mail.kernel.org"
+        id S1730840AbfKTNgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:36:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729766AbfKTNgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:36:45 -0500
+        id S1730829AbfKTNgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:36:50 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A041F21939;
-        Wed, 20 Nov 2019 13:36:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4B76224D2;
+        Wed, 20 Nov 2019 13:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257004;
-        bh=3HKCIB7YMRDHJrkZ/3F75UmwARzPFjHhq0piLV9ZpMs=;
+        s=default; t=1574257009;
+        bh=bQX60zcLlQ0mKK3ETYbxWBd2F0HHX86vvZGfECP9sWM=;
         h=From:To:Cc:Subject:Date:From;
-        b=1w50fEh8eOSMvUdbaWMAfpUvpGBnzIKA3XQ1mcR42pvTu25jyIo48QZktSflRIiPG
-         B4R8EZlWJuG7OwKGnOOI89r01bxKVQnoZFiFPaB/GK/Fb6UdQysZ4fDkAPToIZMId3
-         JIgsPHWUjusRhrtl2v7HMZm3BcQwITt4SJeZV9sc=
+        b=jIy91amcmSDzPh6O66HZJG4hxO+kH+REAXHlOMdnGmjXJBIJsdd8YAWYTwHkvOwa8
+         4bZQFEajN5re4aD6asf+1Hj1vBiLsI2+0ondAYGPIOOH5rYcJS7Iw8byaMMcg3cqX6
+         DpnmIrY6mqrWLb65lFzJLxoYk8gGf/up19yG8WNQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:36:40 +0800
-Message-Id: <20191120133640.11659-1-krzk@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH] x86: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:36:45 +0800
+Message-Id: <20191120133645.11714-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,64 +44,52 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/gpu/drm/Kconfig | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ arch/x86/Kconfig | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 1168351267fd..ad1b6ecd2e08 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -94,18 +94,18 @@ config DRM_KMS_FB_HELPER
- 	  FBDEV helpers for KMS drivers.
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 3fc6daff2109..89598ac1deff 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -809,9 +809,9 @@ config KVM_GUEST
+ 	  timing infrastructure such as time of day, and system time
  
- config DRM_DEBUG_DP_MST_TOPOLOGY_REFS
--        bool "Enable refcount backtrace history in the DP MST helpers"
--        select STACKDEPOT
--        depends on DRM_KMS_HELPER
--        depends on DEBUG_KERNEL
--        depends on EXPERT
+ config ARCH_CPUIDLE_HALTPOLL
+-        def_bool n
+-        prompt "Disable host haltpoll when loading haltpoll driver"
 -        help
--          Enables debug tracing for topology refs in DRM's DP MST helpers. A
--          history of each topology reference/dereference will be printed to the
--          kernel log once a port or branch device's topology refcount reaches 0.
--
--          This has the potential to use a lot of memory and print some very
--          large kernel messages. If in doubt, say "N".
-+	bool "Enable refcount backtrace history in the DP MST helpers"
-+	select STACKDEPOT
-+	depends on DRM_KMS_HELPER
-+	depends on DEBUG_KERNEL
-+	depends on EXPERT
++	def_bool n
++	prompt "Disable host haltpoll when loading haltpoll driver"
 +	help
-+	  Enables debug tracing for topology refs in DRM's DP MST helpers. A
-+	  history of each topology reference/dereference will be printed to the
-+	  kernel log once a port or branch device's topology refcount reaches 0.
-+
-+	  This has the potential to use a lot of memory and print some very
-+	  large kernel messages. If in doubt, say "N".
+ 	  If virtualized under KVM, disable host haltpoll.
  
- config DRM_FBDEV_EMULATION
- 	bool "Enable legacy fbdev support for your modesetting driver"
-@@ -234,8 +234,8 @@ config DRM_RADEON
- 	tristate "ATI Radeon"
- 	depends on DRM && PCI && MMU
- 	select FW_LOADER
--        select DRM_KMS_HELPER
--        select DRM_TTM
-+	select DRM_KMS_HELPER
-+	select DRM_TTM
- 	select POWER_SUPPLY
- 	select HWMON
- 	select BACKLIGHT_CLASS_DEVICE
-@@ -294,7 +294,7 @@ config DRM_VKMS
- 	  If M is selected the module will be called vkms.
+ config PVH
+@@ -895,11 +895,11 @@ config APB_TIMER
+        select DW_APB_TIMER
+        depends on X86_INTEL_MID && SFI
+        help
+-         APB timer is the replacement for 8254, HPET on X86 MID platforms.
+-         The APBT provides a stable time base on SMP
+-         systems, unlike the TSC, but it is more expensive to access,
+-         as it is off-chip. APB timers are always running regardless of CPU
+-         C states, they are used as per CPU clockevent device when possible.
++	 APB timer is the replacement for 8254, HPET on X86 MID platforms.
++	 The APBT provides a stable time base on SMP
++	 systems, unlike the TSC, but it is more expensive to access,
++	 as it is off-chip. APB timers are always running regardless of CPU
++	 C states, they are used as per CPU clockevent device when possible.
  
- config DRM_ATI_PCIGART
--        bool
-+	bool
+ # Mark as expert because too many people got it wrong.
+ # The code disables itself when not needed.
+@@ -1998,7 +1998,7 @@ config EFI_STUB
+        depends on EFI && !X86_USE_3DNOW
+        select RELOCATABLE
+        ---help---
+-          This kernel feature allows a bzImage to be loaded directly
++	  This kernel feature allows a bzImage to be loaded directly
+ 	  by EFI firmware without the use of a bootloader.
  
- source "drivers/gpu/drm/exynos/Kconfig"
- 
+ 	  See Documentation/admin-guide/efi-stub.rst for more information.
 -- 
 2.17.1
 
