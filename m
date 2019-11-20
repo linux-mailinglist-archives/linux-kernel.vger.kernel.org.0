@@ -2,59 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B3E1037C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 11:43:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A311037ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 11:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbfKTKnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 05:43:08 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61043 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfKTKnI (ORCPT
+        id S1728873AbfKTKup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 05:50:45 -0500
+Received: from snd00011.auone-net.jp ([111.86.247.11]:17771 "EHLO
+        dmta0006-f.auone-net.jp" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727514AbfKTKup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 05:43:08 -0500
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAKAh5Es046030;
-        Wed, 20 Nov 2019 19:43:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp);
- Wed, 20 Nov 2019 19:43:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040052248.bbtec.net [126.40.52.248])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAKAh4Cc046022
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 20 Nov 2019 19:43:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: WARNING in kernfs_get
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        syzbot <syzbot+3dcb532381f98c86aeb1@syzkaller.appspotmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        syzkaller-bugs@googlegroups.com, tj@kernel.org,
-        torvalds@linux-foundation.org
-References: <000000000000f921ae05757f567c@google.com>
- <0000000000001da6b60597c2ce91@google.com>
- <20191120082958.GB2862348@kroah.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <72e04f20-ba99-6bca-a4b3-d36703719df0@i-love.sakura.ne.jp>
-Date:   Wed, 20 Nov 2019 19:42:57 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 20 Nov 2019 05:50:45 -0500
+X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 05:50:44 EST
+Received: from ppp.dion.ne.jp by dmta0009.auone-net.jp with ESMTP
+          id <20191120104350753.EWCT.12796.ppp.dion.ne.jp@dmta0009.auone-net.jp>;
+          Wed, 20 Nov 2019 19:43:50 +0900
+Date:   Wed, 20 Nov 2019 19:43:50 +0900
+From:   Kusanagi Kouichi <slash@ac.auone-net.jp>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] tracing: Remove unnecessary DEBUG_FS dependency
 MIME-Version: 1.0
-In-Reply-To: <20191120082958.GB2862348@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.2 (2019-09-21)
+Message-Id: <20191120104350753.EWCT.12796.ppp.dion.ne.jp@dmta0009.auone-net.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/11/20 17:29, Greg KH wrote:
-> Again, I think this should be resolved with ac43432cb1f5 ("driver core:
-> Fix use-after-free and double free on glue directory")
+Tracing replaced debugfs with tracefs.
 
-Last occurrence was v5.3-rc3 and that patch went to v5.3-rc4. Should be fixed.
+Signed-off-by: Kusanagi Kouichi <slash@ac.auone-net.jp>
+---
+ kernel/trace/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-#syz fix: driver core: Fix use-after-free and double free on glue directory
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index e08527f50d2a..382628b9b759 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -106,7 +106,6 @@ config PREEMPTIRQ_TRACEPOINTS
+ 
+ config TRACING
+ 	bool
+-	select DEBUG_FS
+ 	select RING_BUFFER
+ 	select STACKTRACE if STACKTRACE_SUPPORT
+ 	select TRACEPOINTS
+-- 
+2.24.0
+
