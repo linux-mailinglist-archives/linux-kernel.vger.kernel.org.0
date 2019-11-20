@@ -2,170 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE95104371
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 19:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8F710438A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 19:39:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfKTS1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 13:27:37 -0500
-Received: from foss.arm.com ([217.140.110.172]:44492 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbfKTS1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 13:27:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 642C91FB;
-        Wed, 20 Nov 2019 10:27:36 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B556C3F6C4;
-        Wed, 20 Nov 2019 10:27:34 -0800 (PST)
-Date:   Wed, 20 Nov 2019 18:27:32 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Parth Shah <parth@linux.ibm.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH v4 11/11] sched/fair: rework find_idlest_group
-Message-ID: <20191120182731.z2sh5ju7uir5s3cp@e107158-lin.cambridge.arm.com>
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <1571405198-27570-12-git-send-email-vincent.guittot@linaro.org>
- <20191120115844.scli3gprgd5vvlt4@e107158-lin.cambridge.arm.com>
- <CAKfTPtDh7HAv2Krx9cRKcA+Zy=erYkykyZZj4=nkRoTEdY=oFw@mail.gmail.com>
- <CAKfTPtCFP3_U_YxwR8+Gs+HYJPmqSWJg6B6nBdgccNru8Gh5QA@mail.gmail.com>
- <20191120173431.b7e4jbq44mjletfe@e107158-lin.cambridge.arm.com>
- <CAKfTPtCSc+ym8FTFtSeF4foUqTbsDSr1fJ1j_+j+Zmo=XOUcLA@mail.gmail.com>
- <20191120181002.lh7vukjm2ifhysbc@e107158-lin.cambridge.arm.com>
- <CAKfTPtDCv4jWxODGf8FOefmP6qyWRdfi2QVRT=wZqwYgUKg9HA@mail.gmail.com>
+        id S1727130AbfKTSjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 13:39:41 -0500
+Received: from m9a0001g.houston.softwaregrp.com ([15.124.64.66]:53124 "EHLO
+        m9a0001g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726685AbfKTSjk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 13:39:40 -0500
+X-Greylist: delayed 3256 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 13:39:40 EST
+Received: FROM m9a0001g.houston.softwaregrp.com (15.121.0.191) BY m9a0001g.houston.softwaregrp.com WITH ESMTP;
+ Wed, 20 Nov 2019 18:38:58 +0000
+Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 20 Nov 2019 17:08:57 +0000
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (15.124.72.10) by
+ M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Wed, 20 Nov 2019 17:08:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=axj59p4dn3vpkYfgIY1piwqnWfEK/Zwqsc7I6s5+ZmpRcOmT8sPQZqAw6a4iw7RUCdM7AfQP/gbkiuIuZDKy70xE6rN/gdijQn9Tl0LiVh7Haa+BF1IfgCLLlKbsoeVNMjzKApit0qdQ87bqiifUeH5Wkc54I613qLpSOlxg1f97cQZ/RqSZJHvaQredjlzzp7fMf/wTcmJExwgBFEa+VOUw7RN8j9HS0wl/42W7BO7+OMM6oJTh8/qQkxsR+CMQ1HiP7VHIb8oF8ggghK1k5QS5tL5yXEmsCNKNCzrNaDJ/NAUWVb0jIMuxRpEDFxXjI2i+loN8QEf00onALrpdHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uc5e35HhsHN2mtNoEsdMucao2SsyP1SPtEo7n1VyFn4=;
+ b=NzIIHG1GTsr+tSUJenU6IUuIN8MuMF15Ngh9zWkW0y0QxATgieXi3gHdlKG8A88LkDRalSONwEsBgrVIZGqKTfFmkmyAvAbtjVvhsnxMxnXIyKeYWYiSUpUQvZmM3FZq3KRaOcM0TgF5O0mlPBfNPfLu/Aw3bJc0jBlDbfMYlFuGGh/0TTxFZ2lfn/f7pwbOHrlCG/H+IpjrjJBAsbTvyWsm747Td75hCLrNi730CvmZzXwkmIHy5uLKCZnhqjFwbJuYM2t0MEORIVU8RkSaQbWDG4Q7MoxxuCrp7F1CKmWAnDxZ+RBxXhK/MwztnthgUAypCtzI8NJdyrn7vUJLvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from MN2PR18MB3278.namprd18.prod.outlook.com (10.255.237.204) by
+ MN2PR18MB2432.namprd18.prod.outlook.com (20.179.84.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.30; Wed, 20 Nov 2019 17:08:54 +0000
+Received: from MN2PR18MB3278.namprd18.prod.outlook.com
+ ([fe80::2914:6699:d7e5:de45]) by MN2PR18MB3278.namprd18.prod.outlook.com
+ ([fe80::2914:6699:d7e5:de45%3]) with mapi id 15.20.2451.031; Wed, 20 Nov 2019
+ 17:08:53 +0000
+From:   Lee Duncan <LDuncan@suse.com>
+To:     Tom Abraham <TAbraham@suse.com>,
+        Himanshu Madhani <hmadhani@marvell.com>
+CC:     "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>
+Subject: Re: [PATCH] scsi: qla2xxx: avoid crash in
+ qlt_handle_abts_completion() if mcmd == NULL
+Thread-Topic: [PATCH] scsi: qla2xxx: avoid crash in
+ qlt_handle_abts_completion() if mcmd == NULL
+Thread-Index: AQHVk/Mn21+AUdfikUaO7LypaxLA+6eUYm6A
+Date:   Wed, 20 Nov 2019 17:08:53 +0000
+Message-ID: <74bc094b-e534-7170-4cba-e7aa2451dd6c@suse.com>
+References: <20191104181803.5475-1-tabraham@suse.com>
+In-Reply-To: <20191104181803.5475-1-tabraham@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P123CA0035.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::23)
+ To MN2PR18MB3278.namprd18.prod.outlook.com (2603:10b6:208:168::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=LDuncan@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [73.25.22.216]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3d14aa39-264e-4cc4-4d47-08d76ddc522d
+x-ms-traffictypediagnostic: MN2PR18MB2432:|MN2PR18MB2432:
+x-ld-processed: 856b813c-16e5-49a5-85ec-6f081e13b527,ExtFwd,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR18MB24324836993AC05E9F401046DA4F0@MN2PR18MB2432.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:534;
+x-forefront-prvs: 02272225C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(136003)(346002)(39860400002)(366004)(396003)(199004)(189003)(11346002)(486006)(2616005)(66946007)(66476007)(8936002)(76176011)(186003)(52116002)(31696002)(102836004)(81166006)(86362001)(26005)(53546011)(6506007)(386003)(5660300002)(80792005)(4744005)(4326008)(25786009)(6436002)(478600001)(6486002)(229853002)(6246003)(107886003)(36756003)(66446008)(6512007)(66556008)(64756008)(14454004)(81156014)(8676002)(476003)(99286004)(31686004)(110136005)(256004)(14444005)(2906002)(316002)(66066001)(6116002)(54906003)(3846002)(71200400001)(446003)(305945005)(7736002)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB2432;H:MN2PR18MB3278.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: vo1WNhnzeZ2xsHHXPfoQaw414NDA09g+fxOR7MFKQs6LW8WYmQLllWazCsYJmxW11gB4EJTdkAppiUrH7ucqYTFmST6YAemDeCNq8kSArEnFukoPK1l9iUq+0c9TYNJcxVtqpO6urlckR0z2Wsm3R52mixhUCsImLdebndW8eJ0vPNSjF2U3OUH5uIjbO6zJclNpbvZoNBF54GCZEVM3tJLUf/3Z8et08g9GuzE1uV+RROz6MUmA2rJa+kSIB0ndFp9yylBU0U45V0XDobKEQ8/bDpyqYp/7OyCjGYQ3J2hSnJUlBiB+qOsenT9Sph7KZN1jNm1yPrSUwCzkT0Scw+JdSNc6pEmxksMSrkSYWbQKeV0FzhRr/6ASD55ULZ/7nOgFzaITM+VG4gKOJTQLe00BBe8T6S2eIsNOH4tRiY83tkbQaCsQ91eYVDlaihh4
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <84B75E3A84CB2542B23E8ACF932D259D@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDCv4jWxODGf8FOefmP6qyWRdfi2QVRT=wZqwYgUKg9HA@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d14aa39-264e-4cc4-4d47-08d76ddc522d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 17:08:53.8375
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yIphvsVIEMDoK0wsMJiMq1A95JqjORndUhzyH6ZbaGarjmFdxfjTbWSyyb4thX+mH8wFKFfHWJVG3Qx/EwYJ+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2432
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/19 19:20, Vincent Guittot wrote:
-> On Wed, 20 Nov 2019 at 19:10, Qais Yousef <qais.yousef@arm.com> wrote:
-> >
-> > On 11/20/19 18:43, Vincent Guittot wrote:
-> > > On Wed, 20 Nov 2019 at 18:34, Qais Yousef <qais.yousef@arm.com> wrote:
-> > > >
-> > > > On 11/20/19 17:53, Vincent Guittot wrote:
-> > > > > On Wed, 20 Nov 2019 at 14:21, Vincent Guittot
-> > > > > <vincent.guittot@linaro.org> wrote:
-> > > > > >
-> > > > > > Hi Qais,
-> > > > > >
-> > > > > > On Wed, 20 Nov 2019 at 12:58, Qais Yousef <qais.yousef@arm.com> wrote:
-> > > > > > >
-> > > > > > > Hi Vincent
-> > > > > > >
-> > > > > > > On 10/18/19 15:26, Vincent Guittot wrote:
-> > > > > > > > The slow wake up path computes per sched_group statisics to select the
-> > > > > > > > idlest group, which is quite similar to what load_balance() is doing
-> > > > > > > > for selecting busiest group. Rework find_idlest_group() to classify the
-> > > > > > > > sched_group and select the idlest one following the same steps as
-> > > > > > > > load_balance().
-> > > > > > > >
-> > > > > > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > > > > > ---
-> > > > > > >
-> > > > > > > LTP test has caught a regression in perf_event_open02 test on linux-next and I
-> > > > > > > bisected it to this patch.
-> > > > > > >
-> > > > > > > That is checking out next-20191119 tag and reverting this patch on top the test
-> > > > > > > passes. Without the revert the test fails.
-> > > > >
-> > > > > I haven't tried linux-next yet but LTP test is passed with
-> > > > > tip/sched/core, which includes this patch, on hikey960 which is arm64
-> > > > > too.
-> > > > >
-> > > > > Have you tried tip/sched/core on your juno ? this could help to
-> > > > > understand if it's only for juno or if this patch interact with
-> > > > > another branch merged in linux next
-> > > >
-> > > > Okay will give it a go. But out of curiosity, what is the output of your run?
-> > > >
-> > > > While bisecting on linux-next I noticed that at some point the test was
-> > > > passing but all the read values were 0. At some point I started seeing
-> > > > none-zero values.
-> > >
-> > > for tip/sched/core
-> > > linaro@linaro-developer:~/ltp/testcases/kernel/syscalls/perf_event_open$
-> > > sudo ./perf_event_open02
-> > > perf_event_open02    0  TINFO  :  overall task clock: 63724479
-> > > perf_event_open02    0  TINFO  :  hw sum: 1800900992, task clock sum: 382170311
-> > > perf_event_open02    0  TINFO  :  ratio: 5.997229
-> > > perf_event_open02    1  TPASS  :  test passed
-> > >
-> > > for next-2019119
-> > > ~/ltp/testcases/kernel/syscalls/perf_event_open$ sudo ./perf_event_open02 -v
-> > > at iteration:0 value:0 time_enabled:69795312 time_running:0
-> > > perf_event_open02    0  TINFO  :  overall task clock: 63582292
-> > > perf_event_open02    0  TINFO  :  hw sum: 0, task clock sum: 0
-> > > hw counters: 0 0 0 0
-> > > task clock counters: 0 0 0 0
-> > > perf_event_open02    0  TINFO  :  ratio: 0.000000
-> > > perf_event_open02    1  TPASS  :  test passed
-> >
-> > Okay that is weird. But ratio, hw sum, task clock sum are all 0 in your
-> > next-20191119. I'm not sure why the counters return 0 sometimes - is it
-> > dependent on some option or a bug somewhere.
-> >
-> > I just did another run and it failed for me (building with defconfig)
-> >
-> > # uname -a
-> > Linux buildroot 5.4.0-rc8-next-20191119 #72 SMP PREEMPT Wed Nov 20 17:57:48 GMT 2019 aarch64 GNU/Linux
-> >
-> > # ./perf_event_open02 -v
-> > at iteration:0 value:260700250 time_enabled:172739760 time_running:144956600
-> > perf_event_open02    0  TINFO  :  overall task clock: 166915220
-> > perf_event_open02    0  TINFO  :  hw sum: 1200718268, task clock sum: 667621320
-> > hw counters: 300179051 300179395 300179739 300180083
-> > task clock counters: 166906620 166906200 166905160 166903340
-> > perf_event_open02    0  TINFO  :  ratio: 3.999763
-> > perf_event_open02    0  TINFO  :  nhw: 0.000100
-> > perf_event_open02    1  TFAIL  :  perf_event_open02.c:370: test failed (ratio was greater than )
-> >
-> > It is a funny one for sure. I haven't tried tip/sched/core yet.
-> 
-> I confirm that on next-20191119, hw counters always return 0
-> but on tip/sched/core which has this patch and v5.4-rc7 which has not,
-> the hw counters are always different from 0
-
-It's the other way around for me. tip/sched/core returns 0 hw counters. I tried
-enabling coresight; that had no effect. Nor copying the .config that failed
-from linux-next to tip/sched/core. I'm not sure what's the dependency/breakage
-:-/
-
---
-Qais Yousef
-
-> 
-> on v5.4-rc7 i have got the same ratio :
-> linaro@linaro-developer:~/ltp/testcases/kernel/syscalls/perf_event_open$
-> sudo ./perf_event_open02 -v
-> at iteration:0 value:300157088 time_enabled:80641145 time_running:80641145
-> at iteration:1 value:300100129 time_enabled:63572917 time_running:63572917
-> at iteration:2 value:300100885 time_enabled:63569271 time_running:63569271
-> at iteration:3 value:300103998 time_enabled:63573437 time_running:63573437
-> at iteration:4 value:300101477 time_enabled:63571875 time_running:63571875
-> at iteration:5 value:300100698 time_enabled:63569791 time_running:63569791
-> at iteration:6 value:245252526 time_enabled:63650520 time_running:52012500
-> perf_event_open02    0  TINFO  :  overall task clock: 63717187
-> perf_event_open02    0  TINFO  :  hw sum: 1800857435, task clock sum: 382156248
-> hw counters: 149326575 150152481 169006047 187845928 206684169
-> 224693333 206543358 187716226 168865909 150023409
-> task clock counters: 31694792 31870834 35868749 39866666 43863541
-> 47685936 43822396 39826042 35828125 31829167
-> perf_event_open02    0  TINFO  :  ratio: 5.997695
-> perf_event_open02    1  TPASS  :  test passed
+T24gMTEvNC8xOSAxMDoxOCBBTSwgVGhvbWFzIEFicmFoYW0gd3JvdGU6DQo+IHFsdF9jdGlvX3Rv
+X2NtZCgpIHdpbGwgcmV0dXJuIGEgTlVMTCBtY21kIGlmIGggPT0gUUxBX1RHVF9TS0lQX0hBTkRM
+RS4gSWYNCj4gdGhlIGVycm9yIHN1YmNvZGVzIGRvbid0IG1hdGNoIHRoZSBleGFjdCBjb2RlcyBj
+aGVja2VkIGEgY3Jhc2ggd2lsbCBvY2N1cg0KPiB3aGVuIGNhbGxpbmcgZnJlZV9tY21kIG9uIHRo
+ZSBudWxsIG1jbWQNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFRob21hcyBBYnJhaGFtIDx0YWJyYWhh
+bUBzdXNlLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfdGFyZ2V0LmMg
+fCAzICsrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
+KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS9xbGEyeHh4L3FsYV90YXJnZXQuYyBi
+L2RyaXZlcnMvc2NzaS9xbGEyeHh4L3FsYV90YXJnZXQuYw0KPiBpbmRleCBhMDZlNTYyMjRhNTUu
+LjYxMWFiMjI0NjYyZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zY3NpL3FsYTJ4eHgvcWxhX3Rh
+cmdldC5jDQo+ICsrKyBiL2RyaXZlcnMvc2NzaS9xbGEyeHh4L3FsYV90YXJnZXQuYw0KPiBAQCAt
+NTczMiw3ICs1NzMyLDggQEAgc3RhdGljIHZvaWQgcWx0X2hhbmRsZV9hYnRzX2NvbXBsZXRpb24o
+c3RydWN0IHNjc2lfcWxhX2hvc3QgKnZoYSwNCj4gIAkJCSAgICB2aGEtPnZwX2lkeCwgZW50cnkt
+PmNvbXBsX3N0YXR1cywNCj4gIAkJCSAgICBlbnRyeS0+ZXJyb3Jfc3ViY29kZTEsDQo+ICAJCQkg
+ICAgZW50cnktPmVycm9yX3N1YmNvZGUyKTsNCj4gLQkJCWhhLT50Z3QudGd0X29wcy0+ZnJlZV9t
+Y21kKG1jbWQpOw0KPiArCQkJaWYgKG1jbWQpDQo+ICsJCQkJaGEtPnRndC50Z3Rfb3BzLT5mcmVl
+X21jbWQobWNtZCk7DQo+ICAJCX0NCj4gIAl9IGVsc2UgaWYgKG1jbWQpIHsNCj4gIAkJaGEtPnRn
+dC50Z3Rfb3BzLT5mcmVlX21jbWQobWNtZCk7DQo+IA0KDQpSZXZpZXdlZC1ieTogTGVlIER1bmNh
+biA8bGR1bmNhbkBzdXNlLmNvbT4NCg==
