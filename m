@@ -2,108 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6202E1035A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB0B10359A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfKTHv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 02:51:58 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36999 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbfKTHv6 (ORCPT
+        id S1727399AbfKTHvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 02:51:33 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38374 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbfKTHvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 02:51:58 -0500
-Received: by mail-il1-f194.google.com with SMTP id s5so2487911iln.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 23:51:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=6RukAU4yfanIMPunVIfuS2B5y73IXuIqDOCI0UMmxkk=;
-        b=PVO9AuwSNDQnHRLBSNzM0TSp1Zp1SdvCGoDnpyhmu7WVv0zg4E3qxBP4Ve8/VNVG/L
-         BJmtp+MAp8ki3sJjxVhqCnYJUW3LpbQPAm1HaL9HR3wJXMRgD4/iSvOifSbhpC6diMhi
-         r3+Oa7d3zgcFZ4mXlPNh7SlvSrOqWurTkEbpC2SQId3okyPF7qjTOnKhCUqT97c96TI1
-         4qtDVgfX49hd739zROfni6i/j3qulUrIk78hpZ51UVpieMlW2GGzTtHCtxDkLrUluVHL
-         xB0JPsoUmT/qRMPc9f7NUhpxDibstRYWiLpPC7tEkaOOLYe+0eAutu6AFiXn8s82sA/w
-         N90A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=6RukAU4yfanIMPunVIfuS2B5y73IXuIqDOCI0UMmxkk=;
-        b=Kc3R8wj+ofbxKYYZyI2O8PTELqRVskn596NEZdHJ6D/MDDVVazWLofkdr1qVnSmA0j
-         eAy7LvqRUKvve+RMEMhewf/3iGAv4MSqGGdQfTwp6qOdbYNa3vOWTqdjEpOAbj6hM18c
-         Tl3mmkAZWvGnvFEKz8V/P8PZ21C4zyYPU+vBkVcDzgSrB9vm6Az6FdMgTfqxtWNBLElH
-         sfxdQMfpWf8WkvpiwkCCjgvmzWczuwQ8LxZA+1bpbmZIkHBM3MGqHGliRQbZdHzOhWhu
-         LR5hyh3o49ZGNskB89rPnBJsTg12amm3VVnR5yA5DuJqlYhubodeTlBq/L/mXuZ13dHr
-         GZJg==
-X-Gm-Message-State: APjAAAUF7X8Tu5k0+5XxQ9Hx4fvI+yTkxrIv52QVX9YM5CuW/7xSy9DZ
-        G5E9gsH1+9jgjmmxht2lRSFWhw==
-X-Google-Smtp-Source: APXvYqxyj22gfdW5UAgMeF5MFaHfqP5hvYnwkk6L0UAliggkFBPMDJLq5pqDqo0MB5NpTRnfUdsUjw==
-X-Received: by 2002:a92:7e18:: with SMTP id z24mr2049781ilc.276.1574236317557;
-        Tue, 19 Nov 2019 23:51:57 -0800 (PST)
-Received: from localhost (67-0-26-4.albq.qwest.net. [67.0.26.4])
-        by smtp.gmail.com with ESMTPSA id f2sm4719623iog.30.2019.11.19.23.51.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 23:51:57 -0800 (PST)
-Date:   Tue, 19 Nov 2019 23:51:56 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Atish Patra <atish.patra@wdc.com>
-cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup@brainfault.org>, Gary Guo <gary@garyguo.net>,
-        linux-riscv@lists.infradead.org, Mao Han <han_mao@c-sky.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Behrens <behrensj@mit.edu>
-Subject: Re: [PATCH v3 0/4] Add support for SBI v0.2 
-In-Reply-To: <20191118224539.2171-1-atish.patra@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1911192344560.12489@viisi.sifive.com>
-References: <20191118224539.2171-1-atish.patra@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Wed, 20 Nov 2019 02:51:33 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: aratiu)
+        with ESMTPSA id 4C0C72813B8
+From:   Adrian Ratiu <adrian.ratiu@collabora.com>
+To:     Fabio Estevam <festevam@gmail.com>,
+        Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc:     "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Sjoerd Simons <sjoerd.simons@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        linux-rockchip@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>, kernel@collabora.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list\:ARM\/FREESCALE IMX \/ MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Emil Velikov <emil.velikov@collabora.com>
+Subject: Re: [PATCH v3 3/4] drm: imx: Add i.MX 6 MIPI DSI host driver
+In-Reply-To: <CAOMZO5C5gpW6KF9d-79wd=-7ZGAbXQLAXw3kLi+_5DBW_DYrTw@mail.gmail.com>
+References: <20191118152518.3374263-1-adrian.ratiu@collabora.com>
+ <20191118152518.3374263-4-adrian.ratiu@collabora.com>
+ <CAOMZO5C5gpW6KF9d-79wd=-7ZGAbXQLAXw3kLi+_5DBW_DYrTw@mail.gmail.com>
+Date:   Wed, 20 Nov 2019 09:51:56 +0200
+Message-ID: <87o8x7dlyb.fsf@iwork.i-did-not-set--mail-host-address--so-tickle-me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Atish,
+On Tue, 19 Nov 2019, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Adrian, 
 
-On Mon, 18 Nov 2019, Atish Patra wrote:
+Hi Fabio,
 
-> The Supervisor Binary Interface(SBI) specification[1] now defines a
-> base extension that provides extendability to add future extensions
-> while maintaining backward compatibility with previous versions.
-> The new version is defined as 0.2 and older version is marked as 0.1.
 > 
-> This series adds support v0.2 and a unified calling convention
-> implementation between 0.1 and 0.2. It also adds minimal SBI functions
-> from 0.2 as well to keep the series lean. 
+> On Mon, Nov 18, 2019 at 12:25 PM Adrian Ratiu 
+> <adrian.ratiu@collabora.com> wrote: 
 > 
-> [1] https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
+> Some nitpicks: 
 > 
-> The base support for SBI v0.2 is already available in OpenSBI v0.5.
-> This series needs following additional patches in OpenSBI. 
+>> + +config DRM_IMX_MIPI_DSI +       tristate "Freescale i.MX DRM 
+>> MIPI DSI" 
 > 
-> http://lists.infradead.org/pipermail/opensbi/2019-November/000704.html
+> This text seems too generic as there are i.MX SoCs that use 
+> different MIPI DSI IP. 
 > 
-> Tested on both BBL, OpenSBI with/without the above patch series. 
+> Maybe "Freescale i.MX6 DRM MIPI DSI" instead? 
 
-Just based on a quick look:
+Yes, this is a good idea, will update in a newer version to make 
+it more specific. I'll let this version sit a little more on 
+review so others also have time to review.
 
-All of the patches in this series add warnings reported by 
-'scripts/checkpatch.pl --strict'.  Could you please fix and repost?
+Thank you!
 
-Also: could you rebase these patches on top of the current RISC-V for-next 
-branch?  There are some significant conflicts after Christoph's nommu 
-work.
-
-We'll wait to send these upstream until the SBI v0.2 spec is frozen, but 
-in the meantime, it'll be good to get these into the experimental branch.
-
-thanks,
-
-- Paul
+> 
+>> +module_platform_driver(imx_mipi_dsi_driver); + 
+>> +MODULE_DESCRIPTION("i.MX MIPI DSI host controller driver"); 
+> 
+> i.MX6 MIPI DSI, please.
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
