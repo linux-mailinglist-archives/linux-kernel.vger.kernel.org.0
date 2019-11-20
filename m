@@ -2,96 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5BAB103D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:18:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4576103D29
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbfKTOSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 09:18:42 -0500
-Received: from mga04.intel.com ([192.55.52.120]:21117 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729000AbfKTOSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:18:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 06:18:42 -0800
-X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
-   d="scan'208";a="196867261"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 06:18:38 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH] drm/rect: remove useless call to clamp_t
-In-Reply-To: <20191119133435.22525-1-benjamin.gaignard@st.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20191119133435.22525-1-benjamin.gaignard@st.com>
-Date:   Wed, 20 Nov 2019 16:18:35 +0200
-Message-ID: <871ru2y6kk.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1729157AbfKTOVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 09:21:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37899 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730695AbfKTOVR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 09:21:17 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z19so8021627wmk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 06:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=ObddRrqFMGmSEw2EuOE2BBu3C/YuvLUkk+LiDHWeNuU=;
+        b=IRA6x6QOO90UY1+JzXxGLXmM8N1OnPXD5DJQv14VWlGa20JPqSKAbNbvuckP6B83oV
+         pxdFs8A0LKDb+2oRb2eKcNuICd21ibmqWaRfz/0V8qMnM2lxUilxfy+4jq8F0jHoWv6s
+         o6OutJtkYoVVM0stjcirp8hiZPnkxswtyDBEKwvt9ZNquo9LFDT5uFLXLG9n5H5nUqvi
+         3UnJQeBmubU3lqX0GumI3xuTBrfWsQLI8zjITqmDmVHLSR1y1BB/A89ViQAPtLN7z54H
+         N97h8jjoiqr2z5crsBG3ntzEoYHy5HN5J46EV6dMEaOujhLJvURDJa1t+xpoCzdJkKuM
+         8YGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ObddRrqFMGmSEw2EuOE2BBu3C/YuvLUkk+LiDHWeNuU=;
+        b=VxIun2riEtjMSd2k42BDbMBGYM60GogwKBUr3XHlHNvNwZvWs44S8BmlZlQukb7gBF
+         06iUWih9w2hi4NNHv04ssqyw7X6O8jVXmQQHhKiRzl/DOpBE8G0gmkzSYmuXjyAvVNCQ
+         Bsg6R8efCADO5UeN990E6XWCWCxm9ppE3vmOlhcRrM0jVp+bH59gQycSOFJAPF/xiaDZ
+         BnZddDeHUH+PGGLsXbI3M8O3rCznDXylG+AAbT428nJoge2x0MLhcBj3w8slxY7VIGGN
+         Uit7YxrxwSZG6h063sFuxI38CulVotB/UzJ6KjwdHDQHvYJMvVLLSuelEfjKyeysTanr
+         fdaw==
+X-Gm-Message-State: APjAAAXktIaKCYVGyeGxoUs0o+MUtq/fe0eRh7zuFGfQ63IX394lj+2b
+        GJxLxo1cA5omBwI6v+5T8o2Vlg==
+X-Google-Smtp-Source: APXvYqzbksTnApo2dPhUY4VUaSBVv8OpQXusUSD5NtnZDCEi4eJLp2ya1TSJd9aybf0Itc+YD1b9mw==
+X-Received: by 2002:a1c:cc01:: with SMTP id h1mr3441814wmb.172.1574259674456;
+        Wed, 20 Nov 2019 06:21:14 -0800 (PST)
+Received: from khouloud-ThinkPad-T470p.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id a6sm34544352wrh.69.2019.11.20.06.21.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 06:21:13 -0800 (PST)
+From:   Khouloud Touil <ktouil@baylibre.com>
+To:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, srinivas.kandagatla@linaro.org,
+        baylibre-upstreaming@groups.io
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linus.walleij@linaro.org,
+        Khouloud Touil <ktouil@baylibre.com>
+Subject: [PATCH 0/4] at24: move write-protect pin handling to nvmem core
+Date:   Wed, 20 Nov 2019 15:20:34 +0100
+Message-Id: <20191120142038.30746-1-ktouil@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019, Benjamin Gaignard <benjamin.gaignard@st.com> wrote:
-> Clamping a value between INT_MIN and INT_MAX always return the value itself
-> and generate warnings when compiling with W=1.
+The write-protect pin handling looks like a standard property that
+could benefit other users if available in the core nvmem framework.
 
-Does that hold for 32-bit too?
+Instead of modifying all the drivers to check this pin, make the
+nvmem subsystem check if the write-protect GPIO being passed
+through the nvmem_config or defined in the device tree and pull it
+low whenever writing to the memory.
 
-BR,
-Jani.
+This patchset:
 
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  drivers/gpu/drm/drm_rect.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_rect.c b/drivers/gpu/drm/drm_rect.c
-> index b8363aaa9032..681f1fd09357 100644
-> --- a/drivers/gpu/drm/drm_rect.c
-> +++ b/drivers/gpu/drm/drm_rect.c
-> @@ -89,7 +89,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_w = clip_scaled(drm_rect_width(src),
->  					    drm_rect_width(dst), diff);
->  
-> -		src->x1 = clamp_t(int64_t, src->x2 - new_src_w, INT_MIN, INT_MAX);
-> +		src->x1 = src->x2 - new_src_w;
->  		dst->x1 = clip->x1;
->  	}
->  	diff = clip->y1 - dst->y1;
-> @@ -97,7 +97,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_h = clip_scaled(drm_rect_height(src),
->  					    drm_rect_height(dst), diff);
->  
-> -		src->y1 = clamp_t(int64_t, src->y2 - new_src_h, INT_MIN, INT_MAX);
-> +		src->y1 = src->y2 - new_src_h;
->  		dst->y1 = clip->y1;
->  	}
->  	diff = dst->x2 - clip->x2;
-> @@ -105,7 +105,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_w = clip_scaled(drm_rect_width(src),
->  					    drm_rect_width(dst), diff);
->  
-> -		src->x2 = clamp_t(int64_t, src->x1 + new_src_w, INT_MIN, INT_MAX);
-> +		src->x2 = src->x1 + new_src_w;
->  		dst->x2 = clip->x2;
->  	}
->  	diff = dst->y2 - clip->y2;
-> @@ -113,7 +113,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_h = clip_scaled(drm_rect_height(src),
->  					    drm_rect_height(dst), diff);
->  
-> -		src->y2 = clamp_t(int64_t, src->y1 + new_src_h, INT_MIN, INT_MAX);
-> +		src->y2 = src->y1 + new_src_h;
->  		dst->y2 = clip->y2;
->  	}
+- adds support for the write-protect pin split into two parts.
+The first patch modifies modifies the relevant binding document,
+while the second modifies the nvmem code to pull the write-protect
+GPIO low (if present) during write operations.
+
+- removes support for the write-protect pin split into two parts.
+The first patch modifies the relevant binding document to remove
+the wp-gpio, while the second removes the relevant code in the
+at24 driver.
+
+
+Khouloud Touil (4):
+  dt-bindings: nvmem: new optional property write-protect-gpios
+  nvmem: add support for the write-protect pin
+  dt-bindings: at24: remove the optional property write-protect-gpios
+  eeprom: at24: remove the write-protect pin support
+
+ .../devicetree/bindings/eeprom/at24.yaml      |  6 ------
+ .../devicetree/bindings/nvmem/nvmem.yaml      |  6 ++++++
+ drivers/misc/eeprom/at24.c                    |  9 ---------
+ drivers/nvmem/core.c                          | 20 +++++++++++++++++--
+ drivers/nvmem/nvmem.h                         |  2 ++
+ include/linux/nvmem-provider.h                |  3 +++
+ 6 files changed, 29 insertions(+), 17 deletions(-)
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.1
+
