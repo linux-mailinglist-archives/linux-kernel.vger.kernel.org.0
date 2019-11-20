@@ -2,126 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F449103D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:26:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C56103DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbfKTO0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 09:26:22 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:41410 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730467AbfKTO0U (ORCPT
+        id S1731850AbfKTOvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 09:51:17 -0500
+Received: from ivanoab7.miniserver.com ([37.128.132.42]:58576 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728049AbfKTOvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:26:20 -0500
-Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id UESJ2100w5USYZQ06ESJDP; Wed, 20 Nov 2019 15:26:18 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iXQvy-0001ua-PW; Wed, 20 Nov 2019 15:26:18 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iXQvy-0007bb-Ob; Wed, 20 Nov 2019 15:26:18 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] reset: Align logic and flow in managed helpers
-Date:   Wed, 20 Nov 2019 15:26:14 +0100
-Message-Id: <20191120142614.29180-4-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191120142614.29180-1-geert+renesas@glider.be>
-References: <20191120142614.29180-1-geert+renesas@glider.be>
+        Wed, 20 Nov 2019 09:51:16 -0500
+X-Greylist: delayed 1634 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 09:51:16 EST
+Received: from tun252.jain.kot-begemot.co.uk ([192.168.18.6] helo=jain.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1iXQtc-0001X2-6T; Wed, 20 Nov 2019 14:23:52 +0000
+Received: from jain.kot-begemot.co.uk ([192.168.3.3])
+        by jain.kot-begemot.co.uk with esmtp (Exim 4.92)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1iXQtZ-00056K-Uh; Wed, 20 Nov 2019 14:23:51 +0000
+Subject: Re: [PATCH] um: Fix Kconfig indentation
+To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org
+References: <20191120133654.11838-1-krzk@kernel.org>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Message-ID: <0c2c2d49-563d-d7bd-bb01-26156ef8f398@cambridgegreys.com>
+Date:   Wed, 20 Nov 2019 14:23:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191120133654.11838-1-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0
+X-Spam-Score: -1.0
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__devm_reset_control_get() and devm_reset_control_array_get() are very
-similar, but they do not look similar, due to inverted logic.
-Make them more similar, following the "bail out early" paradigm.
 
-Adjust the logic and flow in devm_reset_controller_register() to match
-the two other functions.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/reset/core.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+On 20/11/2019 13:36, Krzysztof Kozlowski wrote:
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+> 	$ sed -e 's/^        /\t/' -i */Kconfig
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>   arch/um/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+> index fec6b4ca2b6e..2a6d04fcb3e9 100644
+> --- a/arch/um/Kconfig
+> +++ b/arch/um/Kconfig
+> @@ -153,7 +153,7 @@ config KERNEL_STACK_ORDER
+>   	  It is possible to reduce the stack to 1 for 64BIT and 0 for 32BIT on
+>   	  older (pre-2017) CPUs. It is not recommended on newer CPUs due to the
+>   	  increase in the size of the state which needs to be saved when handling
+> -          signals.
+> +	  signals.
+>   
+>   config MMAPPER
+>   	tristate "iomem emulation driver"
+> 
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 4ea62aa00260f82c..763f1353d386519b 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -150,13 +150,14 @@ int devm_reset_controller_register(struct device *dev,
- 		return -ENOMEM;
- 
- 	ret = reset_controller_register(rcdev);
--	if (!ret) {
--		*rcdevp = rcdev;
--		devres_add(dev, rcdevp);
--	} else {
-+	if (ret) {
- 		devres_free(rcdevp);
-+		return ret;
- 	}
- 
-+	*rcdevp = rcdev;
-+	devres_add(dev, rcdevp);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(devm_reset_controller_register);
-@@ -787,13 +788,14 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	rstc = __reset_control_get(dev, id, index, shared, optional, acquired);
--	if (rstc && !IS_ERR(rstc)) {
--		*ptr = rstc;
--		devres_add(dev, ptr);
--	} else {
-+	if (!rstc || IS_ERR(rstc)) {
- 		devres_free(ptr);
-+		return rstc;
- 	}
- 
-+	*ptr = rstc;
-+	devres_add(dev, ptr);
-+
- 	return rstc;
- }
- EXPORT_SYMBOL_GPL(__devm_reset_control_get);
-@@ -919,22 +921,21 @@ EXPORT_SYMBOL_GPL(of_reset_control_array_get);
- struct reset_control *
- devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
- {
--	struct reset_control **devres;
--	struct reset_control *rstc;
-+	struct reset_control **ptr, *rstc;
- 
--	devres = devres_alloc(devm_reset_control_release, sizeof(*devres),
--			      GFP_KERNEL);
--	if (!devres)
-+	ptr = devres_alloc(devm_reset_control_release, sizeof(*ptr),
-+			   GFP_KERNEL);
-+	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
- 	rstc = of_reset_control_array_get(dev->of_node, shared, optional, true);
- 	if (!rstc || IS_ERR(rstc)) {
--		devres_free(devres);
-+		devres_free(ptr);
- 		return rstc;
- 	}
- 
--	*devres = rstc;
--	devres_add(dev, devres);
-+	*ptr = rstc;
-+	devres_add(dev, ptr);
- 
- 	return rstc;
- }
+Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.co.uk>
+
 -- 
-2.17.1
-
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
+https://www.cambridgegreys.com/
