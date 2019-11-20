@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF281041E4
+	by mail.lfdr.de (Postfix) with ESMTP id 957EB1041E6
 	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:18:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbfKTRSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 12:18:08 -0500
-Received: from foss.arm.com ([217.140.110.172]:43292 "EHLO foss.arm.com"
+        id S1730422AbfKTRSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 12:18:10 -0500
+Received: from foss.arm.com ([217.140.110.172]:43308 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730001AbfKTRSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 12:18:07 -0500
+        id S1730176AbfKTRSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 12:18:09 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF7781045;
-        Wed, 20 Nov 2019 09:18:06 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C2AD1063;
+        Wed, 20 Nov 2019 09:18:09 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 199333F703;
-        Wed, 20 Nov 2019 09:18:05 -0800 (PST)
-Date:   Wed, 20 Nov 2019 17:18:03 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF07A3F703;
+        Wed, 20 Nov 2019 09:18:08 -0800 (PST)
+Date:   Wed, 20 Nov 2019 17:18:07 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
@@ -25,9 +25,9 @@ Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         lgirdwood@gmail.com, linus.walleij@linaro.org,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         robh+dt@kernel.org
-Subject: Applied "ASoC: pcm3168a: Update the RST gpio handling to align with documentation" to the asoc tree
-In-Reply-To: <20191120131753.6831-3-peter.ujfalusi@ti.com>
-Message-Id: <applied-20191120131753.6831-3-peter.ujfalusi@ti.com>
+Subject: Applied "ASoC: dt-bindings: pcm3168a: Update the optional RST gpio for clarity" to the asoc tree
+In-Reply-To: <20191120131753.6831-2-peter.ujfalusi@ti.com>
+Message-Id: <applied-20191120131753.6831-2-peter.ujfalusi@ti.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -36,7 +36,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: pcm3168a: Update the RST gpio handling to align with documentation
+   ASoC: dt-bindings: pcm3168a: Update the optional RST gpio for clarity
 
 has been applied to the asoc tree at
 
@@ -61,63 +61,51 @@ to this mail.
 Thanks,
 Mark
 
-From 4ec48e7cbe6e70352c802b5cb172b00ebd8af8e0 Mon Sep 17 00:00:00 2001
+From 103e5d734ae28fc1ccd80d1df9d33f44536d74a4 Mon Sep 17 00:00:00 2001
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Wed, 20 Nov 2019 15:17:53 +0200
-Subject: [PATCH] ASoC: pcm3168a: Update the RST gpio handling to align with
- documentation
+Date: Wed, 20 Nov 2019 15:17:52 +0200
+Subject: [PATCH] ASoC: dt-bindings: pcm3168a: Update the optional RST gpio for
+ clarity
 
-The RST (reset-gpios) is low active so the driver must handle it
+Use the standard name for the gpion in DT: reset-gpios
+
+Document that the RST line is low active and update the example
 accordingly.
 
-Add comments to explain clearly how the line is used.
-
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20191120131753.6831-3-peter.ujfalusi@ti.com
+Link: https://lore.kernel.org/r/20191120131753.6831-2-peter.ujfalusi@ti.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/pcm3168a.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/sound/ti,pcm3168a.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-index f3475134b519..9711fab296eb 100644
---- a/sound/soc/codecs/pcm3168a.c
-+++ b/sound/soc/codecs/pcm3168a.c
-@@ -707,11 +707,15 @@ int pcm3168a_probe(struct device *dev, struct regmap *regmap)
- 	dev_set_drvdata(dev, pcm3168a);
+diff --git a/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt b/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt
+index f30aebc7603a..a02ecaab5183 100644
+--- a/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt
++++ b/Documentation/devicetree/bindings/sound/ti,pcm3168a.txt
+@@ -27,9 +27,10 @@ For required properties on SPI/I2C, consult SPI/I2C device tree documentation
  
- 	/*
--	 * Request the RST gpio line as non exclusive as the same reset line
--	 * might be connected to multiple pcm3168a codec
-+	 * Request the reset (connected to RST pin) gpio line as non exclusive
-+	 * as the same reset line might be connected to multiple pcm3168a codec
-+	 *
-+	 * The RST is low active, we want the GPIO line to be high initially, so
-+	 * request the initial level to LOW which in practice means DEASSERTED:
-+	 * The deasserted level of GPIO_ACTIVE_LOW is HIGH.
- 	 */
--	pcm3168a->gpio_rst = devm_gpiod_get_optional(dev, "rst",
--						GPIOD_OUT_HIGH |
-+	pcm3168a->gpio_rst = devm_gpiod_get_optional(dev, "reset",
-+						GPIOD_OUT_LOW |
- 						GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	if (IS_ERR(pcm3168a->gpio_rst)) {
- 		ret = PTR_ERR(pcm3168a->gpio_rst);
-@@ -814,7 +818,13 @@ void pcm3168a_remove(struct device *dev)
- {
- 	struct pcm3168a_priv *pcm3168a = dev_get_drvdata(dev);
+ Optional properties:
  
--	gpiod_set_value_cansleep(pcm3168a->gpio_rst, 0);
-+	/*
-+	 * The RST is low active, we want the GPIO line to be low when the
-+	 * driver is removed, so set level to 1 which in practice means
-+	 * ASSERTED:
-+	 * The asserted level of GPIO_ACTIVE_LOW is LOW.
-+	 */
-+	gpiod_set_value_cansleep(pcm3168a->gpio_rst, 1);
- 	pm_runtime_disable(dev);
- #ifndef CONFIG_PM
- 	pcm3168a_disable(dev);
+-  - rst-gpios : Optional RST gpio line for the codec
+-		RST = low: device power-down
+-		RST = high: device is enabled
++  - reset-gpios : Optional reset gpio line connected to RST pin of the codec.
++		  The RST line is low active:
++		  RST = low: device power-down
++		  RST = high: device is enabled
+ 
+ Examples:
+ 
+@@ -40,7 +41,7 @@ i2c0: i2c0@0 {
+ 	pcm3168a: audio-codec@44 {
+ 		compatible = "ti,pcm3168a";
+ 		reg = <0x44>;
+-		rst-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
+ 		clocks = <&clk_core CLK_AUDIO>;
+ 		clock-names = "scki";
+ 		VDD1-supply = <&supply3v3>;
 -- 
 2.20.1
 
