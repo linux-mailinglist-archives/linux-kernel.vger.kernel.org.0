@@ -2,66 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21407103BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:38:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 141D8103BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:38:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731005AbfKTNiT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 08:38:19 -0500
-Received: from mga03.intel.com ([134.134.136.65]:43545 "EHLO mga03.intel.com"
+        id S1731016AbfKTNiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:38:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729792AbfKTNiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:38:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 05:38:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
-   d="scan'208";a="200717654"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
-  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2019 05:38:13 -0800
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Wen Yang <wenyang@linux.alibaba.com>
-Cc:     zhiche.yy@alibaba-inc.com, xlpang@linux.alibaba.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH] intel_th: avoid double free in error flow
-In-Reply-To: <7e2a501f-955a-5bd1-f70d-ad69e7223981@linux.alibaba.com>
-References: <20191119173447.2454-1-wenyang@linux.alibaba.com> <87y2wad7e5.fsf@ashishki-desk.ger.corp.intel.com> <7e2a501f-955a-5bd1-f70d-ad69e7223981@linux.alibaba.com>
-Date:   Wed, 20 Nov 2019 15:38:12 +0200
-Message-ID: <87v9red5x7.fsf@ashishki-desk.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        id S1729792AbfKTNiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:38:21 -0500
+Received: from localhost.localdomain (unknown [118.189.143.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31F5B22529;
+        Wed, 20 Nov 2019 13:38:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574257101;
+        bh=1Y8Y9+h/5x7XSU+qi38AKjd0Z798Std1Vl6r4SrMKYw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N3z6xeqkkWSjHXcrtqTrxqijWDtRG0dJ4gjhN53p45j+riq5MyrOSYSbLizAm/OrG
+         ybwxJVy1Xnu0SI6Hb2HBzO6HN984r5FjzDh3078uhRG+YbI9nH94AbAbGyqcjxzUkm
+         0U5mBVmDpJImRQ3L4olSMeuX/ZohQ6EXOV9mFHUk=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org
+Subject: [PATCH] certs: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:38:17 +0800
+Message-Id: <20191120133817.12854-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wen Yang <wenyang@linux.alibaba.com> writes:
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
 
-> Another example after a few lines lower:
->
->          err = device_add(&thdev->dev);
->
->          if (err) {
->                   put_device(&thdev->dev);
->                   goto fail_free_res;
->
->           }
->
-> device_add() has increased the reference count,
->
-> so when it returns an error, an additional call to put_device()
->
-> is needed here to reduce the reference count.
->
-> So the code in this place is correct.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ certs/Kconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-No, device_add() drops its own extra reference in case of error (as it
-should), so in "if (err) ..." branch we still only have just one
-reference before it goes free.
+diff --git a/certs/Kconfig b/certs/Kconfig
+index c94e93d8bccf..0358c66d3d7c 100644
+--- a/certs/Kconfig
++++ b/certs/Kconfig
+@@ -6,14 +6,14 @@ config MODULE_SIG_KEY
+ 	default "certs/signing_key.pem"
+ 	depends on MODULE_SIG
+ 	help
+-         Provide the file name of a private key/certificate in PEM format,
+-         or a PKCS#11 URI according to RFC7512. The file should contain, or
+-         the URI should identify, both the certificate and its corresponding
+-         private key.
++	 Provide the file name of a private key/certificate in PEM format,
++	 or a PKCS#11 URI according to RFC7512. The file should contain, or
++	 the URI should identify, both the certificate and its corresponding
++	 private key.
+ 
+-         If this option is unchanged from its default "certs/signing_key.pem",
+-         then the kernel will automatically generate the private key and
+-         certificate as described in Documentation/admin-guide/module-signing.rst
++	 If this option is unchanged from its default "certs/signing_key.pem",
++	 then the kernel will automatically generate the private key and
++	 certificate as described in Documentation/admin-guide/module-signing.rst
+ 
+ config SYSTEM_TRUSTED_KEYRING
+ 	bool "Provide system-wide ring of trusted keys"
+-- 
+2.17.1
 
-Regards,
---
-Alex
