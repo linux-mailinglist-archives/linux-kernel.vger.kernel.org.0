@@ -2,69 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D1810354C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B5F010355E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbfKTHj6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 02:39:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47148 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725268AbfKTHj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 02:39:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 008F2B346;
-        Wed, 20 Nov 2019 07:39:56 +0000 (UTC)
-Date:   Wed, 20 Nov 2019 08:39:55 +0100
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     David Miller <davem@davemloft.net>
-Cc:     corbet@lwn.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ipconfig: Make device wait timeout
- configurable
-Message-Id: <20191120083955.4c3dc7149a33518e9594293a@suse.de>
-In-Reply-To: <20191119.184446.1007728375771623470.davem@davemloft.net>
-References: <20191119120647.31547-1-tbogendoerfer@suse.de>
-        <20191119.184446.1007728375771623470.davem@davemloft.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        id S1727438AbfKTHni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 02:43:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:58410 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbfKTHnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 02:43:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 23:43:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,221,1571727600"; 
+   d="scan'208";a="204641422"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Nov 2019 23:43:20 -0800
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+To:     gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
+        andrew.murray@arm.com, helgaas@kernel.org, jingoohan1@gmail.com,
+        robh@kernel.org, martin.blumenstingl@googlemail.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        andriy.shevchenko@intel.com
+Cc:     linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        Dilip Kota <eswara.kota@linux.intel.com>
+Subject: [PATCH v8 0/3] PCI: Add Intel PCIe Driver and respective dt-binding yaml file
+Date:   Wed, 20 Nov 2019 15:42:58 +0800
+Message-Id: <cover.1574158309.git.eswara.kota@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019 18:44:46 -0800 (PST)
-David Miller <davem@davemloft.net> wrote:
+Intel PCIe is Synopsys based controller. Intel PCIe driver uses
+DesignWare PCIe framework for host initialization and register
+configurations.
 
-> From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> Date: Tue, 19 Nov 2019 13:06:46 +0100
-> 
-> > If network device drivers are using deferred probing it's possible
-> > that waiting for devices to show up in ipconfig is already over,
-> > when the device eventually shows up. With the new netdev_max_wait
-> > kernel cmdline pataremter it's now possible to extend this time.
-> > 
-> > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> 
-> This is one of those "user's shouldn't have to figure this crap out"
-> situations.
-> 
-> To me, a knob is always a step backwards, and makes Linux harder to
-> use.
-> 
-> The irony in all of this, is that the kernel knows when this stuff is
-> happening.  So the ipconfig code should be taught that drivers are
-> still plugging themselves together and probing, instead of setting
-> some arbitrary timeout to wait for these things to occur.
+Dilip Kota (3):
+  dt-bindings: PCI: intel: Add YAML schemas for the PCIe RC controller
+  dwc: PCI: intel: PCIe RC controller driver
+  PCI: artpec6: Configure FTS with dwc helper function
 
-fine with, I'll have a look how to solve it taht way.
-
-Thomas.
+ .../devicetree/bindings/pci/intel-gw-pcie.yaml     | 138 ++++++
+ drivers/pci/controller/dwc/Kconfig                 |  10 +
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pcie-artpec6.c          |   8 +-
+ drivers/pci/controller/dwc/pcie-designware.c       |  57 +++
+ drivers/pci/controller/dwc/pcie-designware.h       |  12 +
+ drivers/pci/controller/dwc/pcie-intel-gw.c         | 545 +++++++++++++++++++++
+ include/uapi/linux/pci_regs.h                      |   1 +
+ 8 files changed, 765 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-intel-gw.c
 
 -- 
-SUSE Software Solutions Germany GmbH
-HRB 36809 (AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
+2.11.0
+
