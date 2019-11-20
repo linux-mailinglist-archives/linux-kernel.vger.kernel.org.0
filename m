@@ -2,113 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58F8C103AE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFCB103AF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbfKTNSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:18:15 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:32916 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730053AbfKTNSM (ORCPT
+        id S1730209AbfKTNVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:21:16 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56693 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730151AbfKTNVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:18:12 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAKDI4AL033449;
-        Wed, 20 Nov 2019 07:18:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574255884;
-        bh=D7ZpGl2GOQVl1LRPY+tj5e7FhNzsNfXiSHrb52YKorU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=idf7kk/SKW+n+VPi6VHNfUmXqbu9DunvBJm74dYACuYsioLK7uY7gjc0QrJTTvGQV
-         6awdD6aj6/IarAZvQTEXJmushWd5CIxh7TH5nklx43Q20QnZcvwMVUXCVAFpTmwSar
-         mqhEZNWAqWqKLE8iYTa/VvjaUBhlx3LIhpN7NTkU=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAKDI4OI092105
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Nov 2019 07:18:04 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 20
- Nov 2019 07:18:02 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 20 Nov 2019 07:18:02 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAKDHru7067880;
-        Wed, 20 Nov 2019 07:17:59 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>
-CC:     <alsa-devel@alsa-project.org>, <kuninori.morimoto.gx@renesas.com>,
-        <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] ASoC: pcm3168a: Update the RST gpio handling to align with documentation
-Date:   Wed, 20 Nov 2019 15:17:53 +0200
-Message-ID: <20191120131753.6831-3-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191120131753.6831-1-peter.ujfalusi@ti.com>
-References: <20191120131753.6831-1-peter.ujfalusi@ti.com>
+        Wed, 20 Nov 2019 08:21:11 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iXPum-00073T-7O; Wed, 20 Nov 2019 14:21:00 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D30531C1998;
+        Wed, 20 Nov 2019 14:20:59 +0100 (CET)
+Date:   Wed, 20 Nov 2019 13:20:59 -0000
+From:   "tip-bot2 for Lina Iyer" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] pinctrl/sdm845: Add PDC wakeup interrupt map for GPIOs
+Cc:     Lina Iyer <ilina@codeaurora.org>, Marc Zyngier <maz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1573855915-9841-10-git-send-email-ilina@codeaurora.org>
+References: <1573855915-9841-10-git-send-email-ilina@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-ID: <157425605969.12247.13808010297317474629.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RST (reset-gpios) is low active so the driver must handle it
-accordingly.
+The following commit has been merged into the irq/core branch of tip:
 
-Add comments to explain clearly how the line is used.
+Commit-ID:     585d1183ffeea5cbe2cd24863bbc90196d827257
+Gitweb:        https://git.kernel.org/tip/585d1183ffeea5cbe2cd24863bbc90196d827257
+Author:        Lina Iyer <ilina@codeaurora.org>
+AuthorDate:    Fri, 15 Nov 2019 15:11:52 -07:00
+Committer:     Marc Zyngier <maz@kernel.org>
+CommitterDate: Sat, 16 Nov 2019 10:23:48 
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+pinctrl/sdm845: Add PDC wakeup interrupt map for GPIOs
+
+Add interrupt parents for wakeup capable GPIOs for Qualcomm SDM845 SoC.
+
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lore.kernel.org/r/1573855915-9841-10-git-send-email-ilina@codeaurora.org
 ---
- sound/soc/codecs/pcm3168a.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-sdm845.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-index f3475134b519..9711fab296eb 100644
---- a/sound/soc/codecs/pcm3168a.c
-+++ b/sound/soc/codecs/pcm3168a.c
-@@ -707,11 +707,15 @@ int pcm3168a_probe(struct device *dev, struct regmap *regmap)
- 	dev_set_drvdata(dev, pcm3168a);
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+index ce49597..2834d2c 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
+  */
  
- 	/*
--	 * Request the RST gpio line as non exclusive as the same reset line
--	 * might be connected to multiple pcm3168a codec
-+	 * Request the reset (connected to RST pin) gpio line as non exclusive
-+	 * as the same reset line might be connected to multiple pcm3168a codec
-+	 *
-+	 * The RST is low active, we want the GPIO line to be high initially, so
-+	 * request the initial level to LOW which in practice means DEASSERTED:
-+	 * The deasserted level of GPIO_ACTIVE_LOW is HIGH.
- 	 */
--	pcm3168a->gpio_rst = devm_gpiod_get_optional(dev, "rst",
--						GPIOD_OUT_HIGH |
-+	pcm3168a->gpio_rst = devm_gpiod_get_optional(dev, "reset",
-+						GPIOD_OUT_LOW |
- 						GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	if (IS_ERR(pcm3168a->gpio_rst)) {
- 		ret = PTR_ERR(pcm3168a->gpio_rst);
-@@ -814,7 +818,13 @@ void pcm3168a_remove(struct device *dev)
- {
- 	struct pcm3168a_priv *pcm3168a = dev_get_drvdata(dev);
+ #include <linux/acpi.h>
+@@ -1282,6 +1282,24 @@ static const int sdm845_acpi_reserved_gpios[] = {
+ 	0, 1, 2, 3, 81, 82, 83, 84, -1
+ };
  
--	gpiod_set_value_cansleep(pcm3168a->gpio_rst, 0);
-+	/*
-+	 * The RST is low active, we want the GPIO line to be low when the
-+	 * driver is removed, so set level to 1 which in practice means
-+	 * ASSERTED:
-+	 * The asserted level of GPIO_ACTIVE_LOW is LOW.
-+	 */
-+	gpiod_set_value_cansleep(pcm3168a->gpio_rst, 1);
- 	pm_runtime_disable(dev);
- #ifndef CONFIG_PM
- 	pcm3168a_disable(dev);
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
++static const struct msm_gpio_wakeirq_map sdm845_pdc_map[] = {
++	{ 1, 30 }, { 3, 31 }, { 5, 32 }, { 10, 33 }, { 11, 34 },
++	{ 20, 35 }, { 22, 36 }, { 24, 37 }, { 26, 38 }, { 30, 39 },
++	{ 31, 117 }, { 32, 41 }, { 34, 42 }, { 36, 43 }, { 37, 44 },
++	{ 38, 45 }, { 39, 46 }, { 40, 47 }, { 41, 115 }, { 43, 49 },
++	{ 44, 50 }, { 46, 51 }, { 48, 52 }, { 49, 118 }, { 52, 54 },
++	{ 53, 55 }, { 54, 56 }, { 56, 57 }, { 57, 58 }, { 58, 59 },
++	{ 59, 60 }, { 60, 61 }, { 61, 62 }, { 62, 63 }, { 63, 64 },
++	{ 64, 65 }, { 66, 66 }, { 68, 67 }, { 71, 68 }, { 73, 69 },
++	{ 77, 70 }, { 78, 71 }, { 79, 72 }, { 80, 73 }, { 84, 74 },
++	{ 85, 75 }, { 86, 76 }, { 88, 77 }, { 89, 116 }, { 91, 79 },
++	{ 92, 80 }, { 95, 81 }, { 96, 82 }, { 97, 83 }, { 101, 84 },
++	{ 103, 85 }, { 104, 86 }, { 115, 90 }, { 116, 91 }, { 117, 92 },
++	{ 118, 93 }, { 119, 94 }, { 120, 95 }, { 121, 96 }, { 122, 97 },
++	{ 123, 98 }, { 124, 99 }, { 125, 100 }, { 127, 102 }, { 128, 103 },
++	{ 129, 104 }, { 130, 105 }, { 132, 106 }, { 133, 107 }, { 145, 108 },
++};
++
+ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.pins = sdm845_pins,
+ 	.npins = ARRAY_SIZE(sdm845_pins),
+@@ -1290,6 +1308,9 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.groups = sdm845_groups,
+ 	.ngroups = ARRAY_SIZE(sdm845_groups),
+ 	.ngpios = 151,
++	.wakeirq_map = sdm845_pdc_map,
++	.nwakeirq_map = ARRAY_SIZE(sdm845_pdc_map),
++
+ };
+ 
+ static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
