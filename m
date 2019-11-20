@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F41EE103C24
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87AC5103C27
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:41:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbfKTNlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:41:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48850 "EHLO mail.kernel.org"
+        id S1731260AbfKTNlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:41:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729146AbfKTNlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:41:01 -0500
+        id S1729146AbfKTNlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:41:06 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07E9F22506;
-        Wed, 20 Nov 2019 13:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAC93224FC;
+        Wed, 20 Nov 2019 13:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257260;
-        bh=7H0hDxFQSuoC/CUw3yrgP4s6eMs211OMo3Zuj/UprCA=;
+        s=default; t=1574257265;
+        bh=fK6N4bmS3Tzb3Vf/HY/FY3CiI/zKE/77M0yzIbf4RjE=;
         h=From:To:Cc:Subject:Date:From;
-        b=SVmSepDAoZgeE/3T5OFiUPpPT87P8JG+GrWssLQT2vnYdObTUPshiGcpoWm42Hrh6
-         swIM3HLZ0GATcFkpfVmlkSDkKMnwb/P59r77/4cNJEs6TxTHvOhxUTUSj0b3EUErF7
-         m/2xGJgGXbvacWpWYxBuv4/nZdoHz/FHtp3JnAPg=
+        b=Xr8VgbTwDLQjMwVz6aWqjyOwN08YfxLZq5L7XBqL328/QlZPUL3t+D8ruupjCcWka
+         sCQCYI5t36twzlEX4GWevejh59yIQcodY9BF9eLeciJwceoN+6AI7Gx6P1hjDui7gc
+         9nUgAIQ0mKORaJDf8rUXT3Kcn9Jdc53LJWj+CY5A=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Derek Kiernan <derek.kiernan@xilinx.com>,
-        Dragan Cvetic <dragan.cvetic@xilinx.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] misc: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:40:56 +0800
-Message-Id: <20191120134056.14677-1-krzk@kernel.org>
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH] memstick: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:41:01 +0800
+Message-Id: <20191120134101.14738-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,45 +44,62 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/misc/Kconfig | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/memstick/core/Kconfig | 18 +++++++++---------
+ drivers/memstick/host/Kconfig |  4 ++--
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 94b14abb5404..b93757efb058 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -338,14 +338,14 @@ config SENSORS_TSL2550
- 	  will be called tsl2550.
+diff --git a/drivers/memstick/core/Kconfig b/drivers/memstick/core/Kconfig
+index 516f454fde14..08192fd70eb4 100644
+--- a/drivers/memstick/core/Kconfig
++++ b/drivers/memstick/core/Kconfig
+@@ -6,16 +6,16 @@
+ comment "MemoryStick drivers"
  
- config SENSORS_BH1770
--         tristate "BH1770GLC / SFH7770 combined ALS - Proximity sensor"
--         depends on I2C
--         ---help---
--           Say Y here if you want to build a driver for BH1770GLC (ROHM) or
-+	 tristate "BH1770GLC / SFH7770 combined ALS - Proximity sensor"
-+	 depends on I2C
-+	 ---help---
-+	   Say Y here if you want to build a driver for BH1770GLC (ROHM) or
- 	   SFH7770 (Osram) combined ambient light and proximity sensor chip.
+ config MEMSTICK_UNSAFE_RESUME
+-        bool "Allow unsafe resume (DANGEROUS)"
+-        help
+-          If you say Y here, the MemoryStick layer will assume that all
+-          cards stayed in their respective slots during the suspend. The
+-          normal behaviour is to remove them at suspend and
+-          redetecting them at resume. Breaking this assumption will
+-          in most cases result in data corruption.
++	bool "Allow unsafe resume (DANGEROUS)"
++	help
++	  If you say Y here, the MemoryStick layer will assume that all
++	  cards stayed in their respective slots during the suspend. The
++	  normal behaviour is to remove them at suspend and
++	  redetecting them at resume. Breaking this assumption will
++	  in most cases result in data corruption.
  
--           To compile this driver as a module, choose M here: the
--           module will be called bh1770glc. If unsure, say N here.
-+	   To compile this driver as a module, choose M here: the
-+	   module will be called bh1770glc. If unsure, say N here.
+-          This option is usually just for embedded systems which use
+-          a MemoryStick card for rootfs. Most people should say N here.
++	  This option is usually just for embedded systems which use
++	  a MemoryStick card for rootfs. Most people should say N here.
  
- config SENSORS_APDS990X
- 	 tristate "APDS990X combined als and proximity sensors"
-@@ -450,8 +450,8 @@ config PCI_ENDPOINT_TEST
- 	select CRC32
- 	tristate "PCI Endpoint Test driver"
- 	---help---
--           Enable this configuration option to enable the host side test driver
--           for PCI Endpoint.
-+	   Enable this configuration option to enable the host side test driver
-+	   for PCI Endpoint.
+ config MSPRO_BLOCK
+ 	tristate "MemoryStick Pro block device driver"
+diff --git a/drivers/memstick/host/Kconfig b/drivers/memstick/host/Kconfig
+index 446c93ecef8f..4113343da056 100644
+--- a/drivers/memstick/host/Kconfig
++++ b/drivers/memstick/host/Kconfig
+@@ -18,7 +18,7 @@ config MEMSTICK_TIFM_MS
+ 	  'Misc devices: TI Flash Media PCI74xx/PCI76xx host adapter support
+ 	  (TIFM_7XX1)'.
  
- config XILINX_SDFEC
- 	tristate "Xilinx SDFEC 16"
+-          To compile this driver as a module, choose M here: the
++	  To compile this driver as a module, choose M here: the
+ 	  module will be called tifm_ms.
+ 
+ config MEMSTICK_JMICRON_38X
+@@ -29,7 +29,7 @@ config MEMSTICK_JMICRON_38X
+ 	  Say Y here if you want to be able to access MemoryStick cards with
+ 	  the JMicron(R) JMB38X MemoryStick card reader.
+ 
+-          To compile this driver as a module, choose M here: the
++	  To compile this driver as a module, choose M here: the
+ 	  module will be called jmb38x_ms.
+ 
+ config MEMSTICK_R592
 -- 
 2.17.1
 
