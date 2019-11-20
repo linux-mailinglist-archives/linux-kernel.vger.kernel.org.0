@@ -2,167 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6D9103B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06767103B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbfKTN1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:27:03 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:47732 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728080AbfKTN1C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:27:02 -0500
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191120132659epoutp01b7963067ad051a9a617a75386f7a34b8~Y4d9otqNQ1742317423epoutp01J
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 13:26:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191120132659epoutp01b7963067ad051a9a617a75386f7a34b8~Y4d9otqNQ1742317423epoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574256419;
-        bh=FkQW2/gVwlv8TBWB7Gl7mfLPp4FHKc20kVE7ZZRny3c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bdDiyV5aMjsYLArhYtqIZVJ2KysP7W3sVnPWW92gmUGIgCD8zAe7XLNByVzHdtc/6
-         wndd1f0loMWTpZcJXvQDrEQ4i4MJZJxfthMXJwJ/Y5tOymDrLk9TuL7BW67/kEwDt0
-         5i+sQoBQVoexWljLaSOwuidxHzOloikJrjquwUFk=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20191120132658epcas5p1732a15c7f2fd3e762b8dfc81c4fe474c~Y4d8yxWtW2044820448epcas5p1B;
-        Wed, 20 Nov 2019 13:26:58 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        11.14.04074.22F35DD5; Wed, 20 Nov 2019 22:26:58 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191120132657epcas5p418542be130de4e02901825eeac7edcdb~Y4d8BJagV2494424944epcas5p4r;
-        Wed, 20 Nov 2019 13:26:57 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191120132657epsmtrp11ea69c5a37e8987f37f614310cac4a0c~Y4d8AWTdl1339613396epsmtrp1Z;
-        Wed, 20 Nov 2019 13:26:57 +0000 (GMT)
-X-AuditID: b6c32a4b-2e1ff70000000fea-b9-5dd53f221ac9
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        79.AC.03814.12F35DD5; Wed, 20 Nov 2019 22:26:57 +0900 (KST)
-Received: from ubuntu.sa.corp.samsungelectronics.net (unknown
-        [107.108.83.125]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191120132655epsmtip23470c213326649db3c9a7e424a81f4da~Y4d6byOAV2341723417epsmtip2Q;
-        Wed, 20 Nov 2019 13:26:55 +0000 (GMT)
-From:   Anvesh Salveru <anvesh.s@samsung.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        pankaj.dubey@samsung.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, bhelgaas@google.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Anvesh Salveru <anvesh.s@samsung.com>
-Subject: [PATCH v3 2/2] PCI: dwc: add support to handle ZRX-DC Compliant
- PHYs
-Date:   Wed, 20 Nov 2019 18:56:11 +0530
-Message-Id: <1574256371-617-3-git-send-email-anvesh.s@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574256371-617-1-git-send-email-anvesh.s@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42LZdlhTU1fJ/mqswcm9EhbN/7ezWpzdtZDV
-        YklThsWuux3sFiu+zGS3uPC0h83i8q45bBZvfr9gt1h6/SKTxaKtX9gtWvceYXfg9lgzbw2j
-        x85Zd9k9Fmwq9di0qpPNo2/LKkaPLfs/M3ocv7GdyePzJrkAjigum5TUnMyy1CJ9uwSujI9T
-        XjIWPBCuWNX2naWB8b5AFyMHh4SAicT1JYpdjFwcQgK7GSUermtnhnA+MUrMWDyVBcL5xijx
-        vGE7O0xHx2deiPheRolX++ZAFbUwScxaOZWpi5GTg01AW+Ln0b3sILaIgILE5t5nrCBFzAL/
-        GCWufpnHCJIQFvCX+NdwgBnEZhFQlXi5u40VxOYVcJKYvmMiG4gtISAncfNcJ1gNp4CzxLzt
-        zWwggyQELrNJ/Py5kBmiyEVi847ZLBC2sMSr41vYIWwpiZf9bVB2vkTv3aVQdo3ElLsdjBC2
-        vcSBKyAvcABdpymxfpc+SJhZgE+i9/cTJoiPeSU62oQgTCWJtpnVEI0SEovn34Q6wENi54WL
-        rJBwmMYosfDDefYJjLKzEIYuYGRcxSiZWlCcm55abFpgnJdarlecmFtcmpeul5yfu4kRnDi0
-        vHcwbjrnc4hRgINRiYc3Q+NqrBBrYllxZe4hRgkOZiUR3j3Xr8QK8aYkVlalFuXHF5XmpBYf
-        YpTmYFES553EejVGSCA9sSQ1OzW1ILUIJsvEwSnVwOgjcz7FYVXZ/YyOB3uf/7vxSGvB2fDb
-        s3OOvIzO0TYIm3k6frVYwBouO6+Oq+pdi5XvFnAaPPl86pvT0ean+9w2vdg6mUeJl+Widv3s
-        x1EnOnU5nvRsKruV7zxp3eVjZp/fa1wU2P042lNa5m+MXZxC065c5rrnL69sNAs8v9fd/kjZ
-        PCHJb1xKLMUZiYZazEXFiQBu/6QkGAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsWy7bCSvK6i/dVYg+2rFC2a/29ntTi7ayGr
-        xZKmDItddzvYLVZ8mcluceFpD5vF5V1z2Cze/H7BbrH0+kUmi0Vbv7BbtO49wu7A7bFm3hpG
-        j52z7rJ7LNhU6rFpVSebR9+WVYweW/Z/ZvQ4fmM7k8fnTXIBHFFcNimpOZllqUX6dglcGR+n
-        vGQseCBcsartO0sD432BLkYODgkBE4mOz7xdjFwcQgK7GSU6Pl5j62LkBIpLSHzZ+xXKFpZY
-        +e85O0RRE5PE966/jCAJNgFtiZ9H97KD2CICChKbe5+xghQxC3QxSaw9vQUsISzgK7Hk4HkW
-        EJtFQFXi5e42VhCbV8BJYvqOiVAb5CRunutkBrE5BZwl5m1vZgO5TgioZs1r6wmMfAsYGVYx
-        SqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgSHrZbWDsYTJ+IPMQpwMCrx8GZoXI0VYk0s
-        K67MPcQowcGsJMK75/qVWCHelMTKqtSi/Pii0pzU4kOM0hwsSuK88vnHIoUE0hNLUrNTUwtS
-        i2CyTBycUg2MSdcFDeq2H55rNuvYk7utRY7tvHmn90jVF65WkVG9xT67rvlKgScL1/F8ifRM
-        t2/JHXxSGR+Frb/uLqxT66kXZZC5/rU39J6NvvFT5iPyLNcPrL109fd6sZDPGfcsZ/WuE4/e
-        K/FCyIHxwJa6b39MwkUeuazRvvKl5LGlTl1Jp42a0fuj6plKLMUZiYZazEXFiQCnFRlbVwIA
-        AA==
-X-CMS-MailID: 20191120132657epcas5p418542be130de4e02901825eeac7edcdb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20191120132657epcas5p418542be130de4e02901825eeac7edcdb
-References: <1574256371-617-1-git-send-email-anvesh.s@samsung.com>
-        <CGME20191120132657epcas5p418542be130de4e02901825eeac7edcdb@epcas5p4.samsung.com>
+        id S1730134AbfKTN0k convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 08:26:40 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2090 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727798AbfKTN0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:26:39 -0500
+Received: from DGGEML404-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 4738F8727DE762286877;
+        Wed, 20 Nov 2019 21:26:28 +0800 (CST)
+Received: from DGGEML505-MBX.china.huawei.com ([169.254.12.31]) by
+ DGGEML404-HUB.china.huawei.com ([fe80::b177:a243:7a69:5ab8%31]) with mapi id
+ 14.03.0439.000; Wed, 20 Nov 2019 21:26:18 +0800
+From:   "wubo (T)" <wubo40@huawei.com>
+To:     Lee Duncan <LDuncan@suse.com>,
+        "cleech@redhat.com" <cleech@redhat.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "open-iscsi@googlegroups.com" <open-iscsi@googlegroups.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ulrich Windl <Ulrich.Windl@rz.uni-regensburg.de>
+CC:     Mingfangsen <mingfangsen@huawei.com>,
+        "liuzhiqiang (I)" <liuzhiqiang26@huawei.com>
+Subject: [PATCH V4] scsi: avoid potential deadlock in iscsi_if_rx func
+Thread-Topic: [PATCH V4] scsi: avoid potential deadlock in iscsi_if_rx func
+Thread-Index: AdWfpPEqf8P620ByTC6DVQFqYQ7mDQ==
+Date:   Wed, 20 Nov 2019 13:26:17 +0000
+Message-ID: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915E3D4D2@dggeml505-mbx.china.huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.173.221.252]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many platforms use DesignWare controller but the PHY can be different in
-different platforms. If the PHY is compliant is to ZRX-DC specification
-it helps in low power consumption during power states.
+In iscsi_if_rx func, after receiving one request through iscsi_if_recv_msg func,
+iscsi_if_send_reply will be called to try to reply the request in do-loop. 
+If the return of iscsi_if_send_reply func return -EAGAIN all the time, one deadlock will occur.
 
-If current data rate is 8.0 GT/s or higher and PHY is not compliant to
-ZRX-DC specification, then after every 100ms link should transition to
-recovery state during the low power states.
+For example, a client only send msg without calling recvmsg func, then it will result in the watchdog soft lockup. 
+The details are given as follows,
 
-DesignWare controller provides GEN3_ZRXDC_NONCOMPL field in
-GEN3_RELATED_OFF to specify about ZRX-DC compliant PHY.
+Details of the special case which can cause deadlock:
 
-Platforms with ZRX-DC compliant PHY can set phy_zrxdc_compliant variable
-to specify this property to the controller.
+sock_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ISCSI); 
+retval = bind(sock_fd, (struct sock addr*) & src_addr, sizeof(src_addr);
+while (1) { 
+         state_msg = sendmsg(sock_fd, &msg, 0); 
+         //Note: recvmsg(sock_fd, &msg, 0) is not processed here.
+}        
+close(sock_fd); 
 
-Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [netlink_test:253305] Sample time: 4000897528 ns(HZ: 250) Sample stat: 
+curr: user: 675503481560, nice: 321724050, sys: 448689506750, idle: 4654054240530, iowait: 40885550700, irq: 14161174020, softirq: 8104324140, st: 0
+deta: user: 0, nice: 0, sys: 3998210100, idle: 0, iowait: 0, irq: 1547170, softirq: 242870, st: 0 Sample softirq:
+         TIMER:        992
+         SCHED:          8
+Sample irqstat:
+         irq    2: delta       1003, curr:    3103802, arch_timer
+CPU: 7 PID: 253305 Comm: netlink_test Kdump: loaded Tainted: G           OE     
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+pstate: 40400005 (nZcv daif +PAN -UAO)
+pc : __alloc_skb+0x104/0x1b0
+lr : __alloc_skb+0x9c/0x1b0
+sp : ffff000033603a30
+x29: ffff000033603a30 x28: 00000000000002dd
+x27: ffff800b34ced810 x26: ffff800ba7569f00
+x25: 00000000ffffffff x24: 0000000000000000
+x23: ffff800f7c43f600 x22: 0000000000480020
+x21: ffff0000091d9000 x20: ffff800b34eff200
+x19: ffff800ba7569f00 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000
+x15: 0000000000000000 x14: 0001000101000100
+x13: 0000000101010000 x12: 0101000001010100
+x11: 0001010101010001 x10: 00000000000002dd
+x9 : ffff000033603d58 x8 : ffff800b34eff400
+x7 : ffff800ba7569200 x6 : ffff800b34eff400
+x5 : 0000000000000000 x4 : 00000000ffffffff
+x3 : 0000000000000000 x2 : 0000000000000001
+x1 : ffff800b34eff2c0 x0 : 0000000000000300 Call trace:
+__alloc_skb+0x104/0x1b0
+iscsi_if_rx+0x144/0x12bc [scsi_transport_iscsi]
+netlink_unicast+0x1e0/0x258
+netlink_sendmsg+0x310/0x378
+sock_sendmsg+0x4c/0x70
+sock_write_iter+0x90/0xf0
+__vfs_write+0x11c/0x190
+vfs_write+0xac/0x1c0
+ksys_write+0x6c/0xd8
+__arm64_sys_write+0x24/0x30
+el0_svc_common+0x78/0x130
+el0_svc_handler+0x38/0x78
+el0_svc+0x8/0xc
+
+Here, we add one limit of retry times in do-loop to avoid the deadlock.
+
+V4: 
+	- modify the patch subject, no code change.
+
+V3:  
+	- replace the error with warning as suggested by Ulrich 
+
+V2:  
+	- add some debug kernel message as suggested by Lee Duncan
+
+Signed-off-by: Bo Wu <wubo40@huawei.com>
+Reviewed-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reviewed-by: Lee Duncan <LDuncan@suse.com>
 ---
-Patchset v2 can be found at:
- - 1/2: https://lkml.org/lkml/2019/11/11/672
- - 2/2: https://lkml.org/lkml/2019/10/28/285
+drivers/scsi/scsi_transport_iscsi.c | 7 +++++++
+1 file changed, 7 insertions(+)
 
-Changes w.r.t v2:
- - Addressed review comments
- - Rebased on latest linus/master
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index 417b868d8735..ed8d9709b9b9 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -24,6 +24,8 @@
 
- drivers/pci/controller/dwc/pcie-designware.c | 6 ++++++
- drivers/pci/controller/dwc/pcie-designware.h | 4 ++++
- 2 files changed, 10 insertions(+)
+ #define ISCSI_TRANSPORT_VERSION "2.0-870"
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 820488d..36a01b7 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -556,4 +556,10 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		       PCIE_PL_CHK_REG_CHK_REG_START;
- 		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
- 	}
++#define ISCSI_SEND_MAX_ALLOWED  10
 +
-+	if (pci->phy_zrxdc_compliant) {
-+		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-+		val &= ~PORT_LOGIC_GEN3_ZRXDC_NONCOMPL;
-+		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-+	}
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 5a18e94..f43f986 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -60,6 +60,9 @@
- #define PCIE_MSI_INTR0_MASK		0x82C
- #define PCIE_MSI_INTR0_STATUS		0x830
- 
-+#define PCIE_PORT_GEN3_RELATED		0x890
-+#define PORT_LOGIC_GEN3_ZRXDC_NONCOMPL	BIT(0)
-+
- #define PCIE_ATU_VIEWPORT		0x900
- #define PCIE_ATU_REGION_INBOUND		BIT(31)
- #define PCIE_ATU_REGION_OUTBOUND	0
-@@ -249,6 +252,7 @@ struct dw_pcie {
- 	void __iomem		*atu_base;
- 	u32			num_viewport;
- 	u8			iatu_unroll_enabled;
-+	bool			phy_zrxdc_compliant;
- 	struct pcie_port	pp;
- 	struct dw_pcie_ep	ep;
- 	const struct dw_pcie_ops *ops;
--- 
-2.7.4
+#define CREATE_TRACE_POINTS
+#include <trace/events/iscsi.h>
+
+@@ -3682,6 +3684,7 @@ iscsi_if_rx(struct sk_buff *skb)
+                struct nlmsghdr       *nlh;
+                struct iscsi_uevent *ev;
+                uint32_t group;
++                int retries = ISCSI_SEND_MAX_ALLOWED;
+
+                 nlh = nlmsg_hdr(skb);
+                if (nlh->nlmsg_len < sizeof(*nlh) + sizeof(*ev) ||
+@@ -3712,6 +3715,10 @@ iscsi_if_rx(struct sk_buff *skb)
+                                   break;
+                          err = iscsi_if_send_reply(portid, nlh->nlmsg_type,
+                                                        ev, sizeof(*ev));
++                          if (err == -EAGAIN && --retries < 0) {
++                                   printk(KERN_WARNING "Send reply failed, error %d\n", err);
++                                   break;
++                          }
+                } while (err < 0 && err != -ECONNREFUSED && err != -ESRCH);
+                skb_pull(skb, rlen);
+       }
+--
+1.8.3.1
 
