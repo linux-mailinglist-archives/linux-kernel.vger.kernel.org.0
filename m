@@ -2,282 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA971038C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CFD51038C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:33:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfKTLcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 06:32:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54256 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbfKTLcJ (ORCPT
+        id S1729239AbfKTLdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 06:33:03 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:32820 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727900AbfKTLdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 06:32:09 -0500
-Received: by mail-wm1-f65.google.com with SMTP id u18so6618640wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 03:32:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flowbird.group; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Kd7NEUJnheTmaqYs2EA0DnTQEVPwxxrAK+7mAwuEhA4=;
-        b=L7/mperNHBYUfM3NQpwdvitiyyGAIMXGgCGpYfmkIDu9MFUncpNu2GAb5D1vulsrNa
-         jnv/xd3+AK2OOQAWY4H8RCbkIeYKk7RsjwbMcP0fIDc9ox73kwFiOsRwsWTHiUU6n4e1
-         bumcT3sRFdaS18hSGkatImDK3Mz6nusTpc5Xv+YtcGVTEQnokWti57nOGVhObjYEfWuB
-         scr+PqCvA/zSbUqp88gOX1re7qZNE3qBUOi7QXOJDWAE+3V/Gra6KWtgQC+D1Cjr4Qqc
-         Hxfb0/TDI5UEXspIWj8NE1IiHlhgH1eNwMwBw13WDdrIgIL1wAajHqO1imClwzg+WQsi
-         sTbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Kd7NEUJnheTmaqYs2EA0DnTQEVPwxxrAK+7mAwuEhA4=;
-        b=sivbEZdlyFTXbjGq6kL2rgilJEQFhzd8Q2xA92K3OWJNEzDTpbeI+nOupzU9KpYsAZ
-         dXb9l41V2DFq9HYwI7g+0fJxHWr2rbZGl/LAYENIxCeS7R6jX9EApKg1yEdFUSk4PhOG
-         XQA1zdqrRA6s5ELxet7GJ+/k3Hl/i9jrMgaTj23xrSAWtUoP2euBPFhDy6i6oc12DP4g
-         LNUdmdi81B8zFZoQqB+tZgyMlLnIFp9Qx+OCE4gMLixiVurdQnYyaUz9CLljp+fqq6iV
-         HD1ZD8Ut/XK1/PgHNYTHcRDtV2q0soOoGxuUvNAG7IV7NML98r9BvB+Fe8ntpajk0Eqy
-         Yc9Q==
-X-Gm-Message-State: APjAAAWMKhHjFbbXS4q9I2lekCOZvX6adXGEQBEOnPUHfhkmmvelI8S2
-        ceAb1WedNb0pvh1wJYTWDH9xzmi4ff49uw==
-X-Google-Smtp-Source: APXvYqw9WZtL9kXShc4I0L3RougDxsanXsm/guqBMyvT0D7GMngf7C3EbxE3qUlfwNjVkfZR8F8OYA==
-X-Received: by 2002:a1c:650b:: with SMTP id z11mr2584094wmb.149.1574249525940;
-        Wed, 20 Nov 2019 03:32:05 -0800 (PST)
-Received: from [10.32.50.232] ([185.149.63.251])
-        by smtp.gmail.com with ESMTPSA id x7sm35989468wrg.63.2019.11.20.03.32.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Nov 2019 03:32:05 -0800 (PST)
-Subject: Re: [PATCHv1 1/2] Input: EXC3000: add EXC80Hxx support
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ahmet Inan <inan@distec.de>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-References: <20191107181010.17211-1-sebastian.reichel@collabora.com>
-From:   Martin Fuzzey <martin.fuzzey@flowbird.group>
-Message-ID: <4e36a8fb-92e2-943e-f778-cf61e79ebbc4@flowbird.group>
-Date:   Wed, 20 Nov 2019 12:32:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20191107181010.17211-1-sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: fr
+        Wed, 20 Nov 2019 06:33:02 -0500
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 20 Nov 2019 17:03:00 +0530
+IronPort-SDR: H7IAH2QcpxkJu85EOZEfnWXQnzCR4zsjjE7TfiznoPfGGJjHn6qyIoRC+a0h5vQU7B4E6xFlG7
+ onMY7tMs9zI0kq/x+CT30kq6UF1kQ3K93c81113BfvZjuPjrunRuX+2+p08Ds54Cv63YFLZ1uD
+ GXQmt1l6OJBvs+shM8jIoj/f8/JC67ng9xH5pFNp+3/v1+kO3p5JTz+pIYGaBVuWbl+wHU585q
+ s3v3QLmgKtoreObYBJb3IbDnnsgzHxJO8E3Gniq8pNsTwW5nLzO+i/YSs32ixm8Xb6DB0ToEDS
+ DRENf4uqL1pzCN2x6pdOM4q2
+Received: from dhar-linux.qualcomm.com ([10.204.66.25])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 20 Nov 2019 17:02:36 +0530
+Received: by dhar-linux.qualcomm.com (Postfix, from userid 2306995)
+        id BA2113B25; Wed, 20 Nov 2019 17:02:34 +0530 (IST)
+From:   Shubhashree Dhar <dhar@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Shubhashree Dhar <dhar@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Subject: [PATCH] msm: disp: dpu1: add support to access hw irqs regs depending on revision
+Date:   Wed, 20 Nov 2019 17:02:31 +0530
+Message-Id: <1574249551-13212-1-git-send-email-dhar@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastien,
+Current code assumes that all the irqs registers offsets can be
+accessed in all the hw revisions; this is not the case for some
+targets that should not access some of the irq registers.
+This change adds the support to selectively remove the irqs that
+are not supported in some of the hw revisions.
 
-On 07/11/2019 19:10, Sebastian Reichel wrote:
-> This adds support for EXC80Hxx controllers, which uses
-> a different event type id and has two extra bits for the
-> resolution (so the maximum is 16384 instead of 4096).
->
-> The patch has been tested with EXC80H60 and EXC80H84.
+Changes in v1:
+ - Add support to selectively remove the hw irqs that are not
+   not supported.
 
+Changes in v2:
+ - Remove unrelated changes.
 
-Ah I'm doing the same thing :)
+Changes in v3:
+ - Remove change-id (Stephen Boyd).
+ - Add colon in variable description to match kernel-doc (Stephen Boyd).
+ - Change macro-y way of variable description (Jordon Crouse).
+ - Remove unnecessary if checks (Jordon Crouse).
+ - Remove extra blank line (Jordon Crouse).
 
+Changes in v4:
+ - Remove checkpatch errors.
 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->   .../bindings/input/touchscreen/exc3000.txt    |  6 ++--
->   drivers/input/touchscreen/exc3000.c           | 34 ++++++++++++++-----
->   2 files changed, 30 insertions(+), 10 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt b/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt
-> index 68291b94fec2..057b680f0420 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt
-> @@ -1,7 +1,9 @@
-> -* EETI EXC3000 Multiple Touch Controller
-> +* EETI EXC3000 and EXC80Hxx Multiple Touch Controller
->   
->   Required properties:
-> -- compatible: must be "eeti,exc3000"
-> +- compatible: must be one of
-> + * "eeti,exc3000"
-> + * "eeti,exc80hxx"
->   - reg: i2c slave address
->   - interrupts: touch controller interrupt
->   - touchscreen-size-x: See touchscreen.txt
-> diff --git a/drivers/input/touchscreen/exc3000.c b/drivers/input/touchscreen/exc3000.c
-> index e007e2e8f626..7d695022082c 100644
-> --- a/drivers/input/touchscreen/exc3000.c
-> +++ b/drivers/input/touchscreen/exc3000.c
-> @@ -23,11 +23,20 @@
->   #define EXC3000_SLOTS_PER_FRAME		5
->   #define EXC3000_LEN_FRAME		66
->   #define EXC3000_LEN_POINT		10
-> -#define EXC3000_MT_EVENT		6
-> +
-> +#define EXC3000_MT1_EVENT		0x06
-> +#define EXC3000_MT2_EVENT		0x18
-> +
->   #define EXC3000_TIMEOUT_MS		100
->   
-> +enum exc3000_device_type {
-> +	EETI_EXC3000,
-> +	EETI_EXC80Hxx
-> +};
-> +
->   struct exc3000_data {
->   	struct i2c_client *client;
-> +	enum exc3000_device_type type;
->   	struct input_dev *input;
->   	struct touchscreen_properties prop;
->   	struct timer_list timer;
-> @@ -76,8 +85,10 @@ static int exc3000_read_frame(struct i2c_client *client, u8 *buf)
->   	if (ret != EXC3000_LEN_FRAME)
->   		return -EIO;
->   
-> -	if (get_unaligned_le16(buf) != EXC3000_LEN_FRAME ||
-> -			buf[2] != EXC3000_MT_EVENT)
-> +	if (get_unaligned_le16(buf) != EXC3000_LEN_FRAME)
-> +		return -EINVAL;
-> +
-> +	if (buf[2] != EXC3000_MT1_EVENT && buf[2] != EXC3000_MT2_EVENT)
->   		return -EINVAL;
->   
+Signed-off-by: Shubhashree Dhar <dhar@codeaurora.org>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |  1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |  3 +++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 22 ++++++++++++++++------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h |  1 +
+ 4 files changed, 21 insertions(+), 6 deletions(-)
 
-
-Are we sure the EXC80 will *always* use MT2_EVENT (and that there is not 
-some configuration where it can send MT1_EVENTS).
-
-Because, if this happens we will have declared a 14 bit resolution to 
-the input core but  process a 12 bit value.
-
-I think it is better to declare the resolution based on the device type 
-(as you have done) but interpret the data based on the MT1 vs MT2 event 
-code, shifting 2 bits if needed.
-
-
-
-> @@ -168,8 +180,13 @@ static int exc3000_probe(struct i2c_client *client,
->   	input->name = "EETI EXC3000 Touch Screen";
-
-Shouldn't the name change too?
-
-
->   	input->id.bustype = BUS_I2C;
->   
-> -	input_set_abs_params(input, ABS_MT_POSITION_X, 0, 4095, 0, 0);
-> -	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 4095, 0, 0);
-> +	if (data->type == EETI_EXC80Hxx) {
-> +		input_set_abs_params(input, ABS_MT_POSITION_X, 0, 16383, 0, 0);
-> +		input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 16383, 0, 0);
-> +	} else {
-> +		input_set_abs_params(input, ABS_MT_POSITION_X, 0, 4095, 0, 0);
-> +		input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 4095, 0, 0);
-> +	}
->   	touchscreen_parse_properties(input, true, &data->prop);
->   
->   	error = input_mt_init_slots(input, EXC3000_NUM_SLOTS,
-> @@ -191,14 +208,15 @@ static int exc3000_probe(struct i2c_client *client,
->   }
->   
->   static const struct i2c_device_id exc3000_id[] = {
-> -	{ "exc3000", 0 },
-> -	{ }
-> +	{ "exc3000", EETI_EXC3000 },
-> +	{ "exc80hxx", EETI_EXC80Hxx }
->   };
->   MODULE_DEVICE_TABLE(i2c, exc3000_id);
->   
->   #ifdef CONFIG_OF
->   static const struct of_device_id exc3000_of_match[] = {
-> -	{ .compatible = "eeti,exc3000" },
-> +	{ .compatible = "eeti,exc3000", .data = (const void*) EETI_EXC3000 },
-> +	{ .compatible = "eeti,exc80hxx", .data = (const void*) EETI_EXC80Hxx },
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(of, exc3000_of_match);
-
-If driver_data is defined in the I2C device table and the compatible 
-string, minus the vendor prefix, matches the i2c device id it is not 
-necessary to define the driver_data in the of_match table as well.
-
-
-How about defining a "exc_device_info" structure, containing name, 
-resolution etc and storing a pointer to a constant instance of that in 
-the match tables rather than just a type code.
-
-That way the "if (data->type)" tests could be removed and the info 
-structure accessed directly.
-
-
-Something like:
-
-struct exc_dev_info {
-     const char *name;
-     u16 x_res;
-     u16 y_res;
-};
-
-static int exc3000_probe(struct i2c_client *client,
-              const struct i2c_device_id *id)
-{
-     const struct exc_dev_info *dev_info;
-...
-
-     dev_info = (const struct exc_dev_info *)id->driver_data;
-
-...
-
-     input->name = dev_info->name;
-     input->id.bustype = BUS_I2C;
-
-     input_set_abs_params(input, ABS_MT_POSITION_X, 0,
-                  dev_info->x_res - 1, 0, 0);
-     input_set_abs_params(input, ABS_MT_POSITION_Y, 0,
-                  dev_info->y_res - 1, 0, 0);
-     touchscreen_parse_properties(input, true, &data->prop);
-
-
-static const struct exc_dev_info exc3000_dev_info = {
-     .name = "EETI EXC3000 Touch Screen",
-     .x_res = 4096,
-     .y_res = 4096,
-};
-
-static const struct exc_dev_info exc80_dev_info = {
-     .name = "EETI EXC80 Touch Screen",
-     .x_res = 16384,
-     .y_res = 16384,
-};
-
-static const struct i2c_device_id exc3000_id[] = {
-     { "exc3000",    (kernel_ulong_t)&exc3000_dev_info },
-     { "exc80",    (kernel_ulong_t)&exc80_dev_info },
-     { }
-};
-MODULE_DEVICE_TABLE(i2c, exc3000_id);
-
-
-One other thing I have noticed is that the exc80h does not appear to 
-need the i2c_send before read that is done in exc3000_read_frame()
-
-The vendor "egalax_i2c" driver doesn't do it either and I can't see 
-anything in the "I2C programming guide" mentionning this.
-
-
-Ahmet's original commit introducing the driver says
-
-" To be able to work with the higher 400KHz I2C bus rate, one must
-   successfully send a special package prior _each_ read or the controller
-   will refuse to cooperate."
-
-
-This doesn't seem to be an issue at 400KHz for the 80h at least, though 
-keeping it doesn't seem to hurt either.
-
-Maybe make this device dependant too?
-
-
-Regards,
-
-Martin
-
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+index 04c8c44..88f2664 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+@@ -421,6 +421,7 @@ static void sdm845_cfg_init(struct dpu_mdss_cfg *dpu_cfg)
+ 		.reg_dma_count = 1,
+ 		.dma_cfg = sdm845_regdma,
+ 		.perf = sdm845_perf_data,
++		.mdss_irqs = 0x3ff,
+ 	};
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+index ec76b868..0fd3f50 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+@@ -646,6 +646,7 @@ struct dpu_perf_cfg {
+  * @dma_formats        Supported formats for dma pipe
+  * @cursor_formats     Supported formats for cursor pipe
+  * @vig_formats        Supported formats for vig pipe
++ * @mdss_irqs:         Bitmap with the irqs supported by the target
+  */
+ struct dpu_mdss_cfg {
+ 	u32 hwversion;
+@@ -684,6 +685,8 @@ struct dpu_mdss_cfg {
+ 	struct dpu_format_extended *dma_formats;
+ 	struct dpu_format_extended *cursor_formats;
+ 	struct dpu_format_extended *vig_formats;
++
++	unsigned long mdss_irqs;
+ };
+ 
+ struct dpu_mdss_hw_cfg_handler {
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+index 8bfa7d0..d84a84f 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+@@ -800,8 +800,8 @@ static void dpu_hw_intr_dispatch_irq(struct dpu_hw_intr *intr,
+ 		start_idx = reg_idx * 32;
+ 		end_idx = start_idx + 32;
+ 
+-		if (start_idx >= ARRAY_SIZE(dpu_irq_map) ||
+-				end_idx > ARRAY_SIZE(dpu_irq_map))
++		if (!test_bit(reg_idx, &intr->irq_mask) ||
++			start_idx >= ARRAY_SIZE(dpu_irq_map))
+ 			continue;
+ 
+ 		/*
+@@ -955,8 +955,11 @@ static int dpu_hw_intr_clear_irqs(struct dpu_hw_intr *intr)
+ 	if (!intr)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++)
+-		DPU_REG_WRITE(&intr->hw, dpu_intr_set[i].clr_off, 0xffffffff);
++	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++) {
++		if (test_bit(i, &intr->irq_mask))
++			DPU_REG_WRITE(&intr->hw,
++					dpu_intr_set[i].clr_off, 0xffffffff);
++	}
+ 
+ 	/* ensure register writes go through */
+ 	wmb();
+@@ -971,8 +974,11 @@ static int dpu_hw_intr_disable_irqs(struct dpu_hw_intr *intr)
+ 	if (!intr)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++)
+-		DPU_REG_WRITE(&intr->hw, dpu_intr_set[i].en_off, 0x00000000);
++	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++) {
++		if (test_bit(i, &intr->irq_mask))
++			DPU_REG_WRITE(&intr->hw,
++					dpu_intr_set[i].en_off, 0x00000000);
++	}
+ 
+ 	/* ensure register writes go through */
+ 	wmb();
+@@ -991,6 +997,9 @@ static void dpu_hw_intr_get_interrupt_statuses(struct dpu_hw_intr *intr)
+ 
+ 	spin_lock_irqsave(&intr->irq_lock, irq_flags);
+ 	for (i = 0; i < ARRAY_SIZE(dpu_intr_set); i++) {
++		if (!test_bit(i, &intr->irq_mask))
++			continue;
++
+ 		/* Read interrupt status */
+ 		intr->save_irq_status[i] = DPU_REG_READ(&intr->hw,
+ 				dpu_intr_set[i].status_off);
+@@ -1115,6 +1124,7 @@ struct dpu_hw_intr *dpu_hw_intr_init(void __iomem *addr,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
++	intr->irq_mask = m->mdss_irqs;
+ 	spin_lock_init(&intr->irq_lock);
+ 
+ 	return intr;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+index 4edcf40..fc9c986 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+@@ -187,6 +187,7 @@ struct dpu_hw_intr {
+ 	u32 *save_irq_status;
+ 	u32 irq_idx_tbl_size;
+ 	spinlock_t irq_lock;
++	unsigned long irq_mask;
+ };
+ 
+ /**
+-- 
+1.9.1
 
