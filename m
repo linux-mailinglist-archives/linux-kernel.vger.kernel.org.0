@@ -2,158 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37ED21035A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:54:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E288103569
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfKTHy5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 02:54:57 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:45501 "EHLO
+        id S1727953AbfKTHoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 02:44:01 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:44699 "EHLO
         mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbfKTHy5 (ORCPT
+        with ESMTP id S1725268AbfKTHoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 02:54:57 -0500
-Received: by mail-il1-f196.google.com with SMTP id o18so22527168ils.12;
-        Tue, 19 Nov 2019 23:54:56 -0800 (PST)
+        Wed, 20 Nov 2019 02:44:01 -0500
+Received: by mail-il1-f196.google.com with SMTP id i6so1196822ilr.11;
+        Tue, 19 Nov 2019 23:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QkQsYkZTBURdSBu7Km88dbeDD4v2tqzLVxlvJwXXnOc=;
+        b=MxFJyVx6PCgpMNt2O04IWjcDOolLOuLR/6AbsAd7e/3bC+tnlNFNdghV28/5eACfYt
+         ZbRyLzYtWFtJdIkz/avVtteHcmN+J3vdRPN/l6OqQZ84zvusS8DyBIRqIt3+XQgxY8+Z
+         Cd9nsmI6batsaWqIF/8luo2xdkJ3L23jacmiEsT5+JZPkwPb8ueAHQpVYQEXo3GzFczC
+         Pl1KNr2sOAIvpvhmIn9GkXTz0mnD1Uh9DJhSRW30FkQZayi3kagKP+0Dgc2qGAnnqSHm
+         8J/JgQ2f0xqLmGTrn6wIsm4Y8MkYF61DHDeh4lNgn25lvTtsbJxR1l9gw2AyjMGMreGQ
+         0L7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/rhynhwRr/LK0H9bk9F2uXXSfgIJYeknSevXiyt7NX4=;
-        b=lcCbU7pG3TLdVdSlQQ++Nl7V5GM2JYvIcSZboGQVe1zrSqWIeHfV+W7nLiAYHChwwp
-         NEmu2dHYf9bOGRoyJkWGsCiI1cnT1AZIB2doIunNFZLMqYQNO/yqoKZnC2raK6f5FZq6
-         hVFRgOodcMPv721kXa9yS963Hw2isEkDlhbJimwAUMieqHliTXr4zM5ghFJQ6nQ7Whks
-         zcMKrHGeBk38fUeIIo1rbGkWAUeCZImWyjB/wf13HN2bHwAARhJ+ye/d9HRMg4IaU8ML
-         Q8tkah77t5+kAYC7EggM2i4+P+2qJcStij/av5skHkV+ZFFyub8LJ9zJqpVouLpdsChS
-         Cgww==
-X-Gm-Message-State: APjAAAU6KryR4mzAIiPfhYsPB4wdfAHnqqAPh7M0SJxk2Tk80dW0lW2a
-        /iXSY+BVISCEuRhG1vmpufgR0TZ/XfKiVxFqYHBIfsMmljE=
-X-Google-Smtp-Source: APXvYqwxsKW0FDOOll/pMNBQu+69qDVn4EENJuA0zx7Ay45mCQurqZ+0Hc/2xqMxsoCB485lXNb/GZh02fOLHbLlqj4=
-X-Received: by 2002:a92:6609:: with SMTP id a9mr2167050ilc.131.1574236495648;
- Tue, 19 Nov 2019 23:54:55 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=QkQsYkZTBURdSBu7Km88dbeDD4v2tqzLVxlvJwXXnOc=;
+        b=HqrtLkMEF34eBKXiJtuDVqI2qmYDfQXnlW8UBvKo+QNFWlNw4D7a5KGrlspRKu47DN
+         lV6ulcVrnc3Ssec0Qh6PPETH/fo/YAoIO8hhXQebsbCK7/CZCczjXBbISk4EODI4PqsQ
+         RWJEfxDGlFGu/p9YTzKtc09utNe4rBGiBB4FvqTth8q+VyHmbGPlThPTE1DmcevYKPQZ
+         g7IdTh+qBlRtDjfaX2EC5ooeH1QdXV7/Pi5HYPFUZrmNwt3ToW2eC/RSAd+njgqzQb1f
+         0vexfssj5nOY3JdGSYiBmZZ9ElgEJO+yW8MK1RhMxNe2zyNYmTCGXSC95ZAmcuOaWPBJ
+         nhBQ==
+X-Gm-Message-State: APjAAAVpoWC0t4kzYUqIgcKyygJCuXFUk/l0k8HxxPHHnKXzinmVFT/1
+        tV9KhkQIu3nLvNoXpMq/4afvWn+wdNf28MfwruM=
+X-Google-Smtp-Source: APXvYqzNksFY5wJfyJHnWvllXmrch0W6oTDjaDq5IVkhokY3fvgAPZkK2jYw6g6gMnJBNSvLZsU/tgMYfVY182IULmk=
+X-Received: by 2002:a92:c8c4:: with SMTP id c4mr2012169ilq.272.1574235839220;
+ Tue, 19 Nov 2019 23:43:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20191031213835.11390-1-andreas@kemnade.info> <20191031213835.11390-3-andreas@kemnade.info>
-In-Reply-To: <20191031213835.11390-3-andreas@kemnade.info>
-From:   Pierre-Hugues Husson <phh@phh.me>
-Date:   Wed, 20 Nov 2019 08:54:44 +0100
-Message-ID: <CAJ-oXjTQMgF+zzTkWz21yG4ZdAszSDKkiAqocBcUjyMNEd0ozQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] mfd: rn5t618: add irq support
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Lee Jones <lee.jones@linaro.org>, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, b.galvani@gmail.com, stefan@agner.ch,
-        letux-kernel@openphoenux.org
+References: <cover.1573788882.git.yu.c.chen@intel.com> <5dcd6580b51342c0803db6bc27866dd569914b0d.1573788882.git.yu.c.chen@intel.com>
+ <20191115092420.GF18929@zn.tnic> <CADjb_WR_DNAR_4jVEJ1C4LO7Xfnc54J2u2AoqyCjZT39+AhrWA@mail.gmail.com>
+ <20191118144807.GE6363@zn.tnic>
+In-Reply-To: <20191118144807.GE6363@zn.tnic>
+From:   Yu Chen <yu.chen.surf@gmail.com>
+Date:   Wed, 20 Nov 2019 15:54:46 +0800
+Message-ID: <CADjb_WQVa0rFb0BXtu4xU7RfywUa36kLDgGLpLmUWifnLB2NAA@mail.gmail.com>
+Subject: Re: [PATCH 2/2][v2] x86/resctrl: Add task resctrl information display
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Chen Yu <yu.c.chen@intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Shakeel Butt <shakeelb@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le jeu. 31 oct. 2019 à 22:38, Andreas Kemnade <andreas@kemnade.info> a écrit :
->
-> This adds support for irq handling in the rc5t619 which is required
-> for properly implementing subdevices like rtc.
-> For now only definitions for the variant rc5t619 are included.
->
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> Changes in v2:
-> - no dead code, did some more testing and thinking for that
-> - remove extra empty lines
->  drivers/mfd/Kconfig         |  1 +
->  drivers/mfd/Makefile        |  2 +-
->  drivers/mfd/rn5t618-core.c  | 35 ++++++++++++++-
->  drivers/mfd/rn5t618-irq.c   | 85 +++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/rn5t618.h | 16 +++++++
->  5 files changed, 137 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/mfd/rn5t618-irq.c
->
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index ae24d3ea68ea..522e068d0082 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1057,6 +1057,7 @@ config MFD_RN5T618
->         depends on OF
->         select MFD_CORE
->         select REGMAP_I2C
-> +       select REGMAP_IRQ
->         help
->           Say yes here to add support for the Ricoh RN5T567,
->           RN5T618, RC5T619 PMIC.
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 110ea700231b..2906d5db67d0 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -217,7 +217,7 @@ obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
->  obj-$(CONFIG_MFD_RC5T583)      += rc5t583.o rc5t583-irq.o
->  obj-$(CONFIG_MFD_RK808)                += rk808.o
->
-> -rn5t618-objs                   := rn5t618-core.o
-> +rn5t618-objs                   := rn5t618-core.o rn5t618-irq.o
->  obj-$(CONFIG_MFD_RN5T618)      += rn5t618.o
->  obj-$(CONFIG_MFD_SEC_CORE)     += sec-core.o sec-irq.o
->  obj-$(CONFIG_MFD_SYSCON)       += syscon.o
-> diff --git a/drivers/mfd/rn5t618-core.c b/drivers/mfd/rn5t618-core.c
-> index da5cd9c92a59..d4ed2865ed8b 100644
-> --- a/drivers/mfd/rn5t618-core.c
-> +++ b/drivers/mfd/rn5t618-core.c
-> @@ -8,6 +8,7 @@
->
->  #include <linux/delay.h>
->  #include <linux/i2c.h>
-> +#include <linux/interrupt.h>
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/rn5t618.h>
->  #include <linux/module.h>
-> @@ -105,7 +106,8 @@ static int rn5t618_i2c_probe(struct i2c_client *i2c,
->
->         i2c_set_clientdata(i2c, priv);
->         priv->variant = (long)of_id->data;
-> -
-> +       priv->chip_irq = i2c->irq;
-> +       priv->dev = &i2c->dev;
->         priv->regmap = devm_regmap_init_i2c(i2c, &rn5t618_regmap_config);
->         if (IS_ERR(priv->regmap)) {
->                 ret = PTR_ERR(priv->regmap);
-> @@ -137,6 +139,11 @@ static int rn5t618_i2c_probe(struct i2c_client *i2c,
->                 return ret;
->         }
->
-> +       if (priv->chip_irq > 0) {
-> +               if (rn5t618_irq_init(priv))
-> +                       priv->chip_irq = 0;
-> +       }
-> +
->         return 0;
->  }
->
-> @@ -154,15 +161,41 @@ static int rn5t618_i2c_remove(struct i2c_client *i2c)
->         return 0;
->  }
->
-> +static int __maybe_unused rn5t618_i2c_suspend(struct device *dev)
-> +{
-> +       struct rn5t618 *priv = dev_get_drvdata(dev);
-> +
-> +       if (priv->chip_irq)
-> +               disable_irq(priv->chip_irq);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused rn5t618_i2c_resume(struct device *dev)
-> +{
-> +       struct rn5t618 *priv = dev_get_drvdata(dev);
-> +
-> +       if (priv->chip_irq)
-> +               enable_irq(priv->chip_irq);
-> +
-> +       return 0;
-> +}
+Hi Boris,
 
-For what it's worth, the boards I have (Archos 101 Oxygen and Pipo P9)
-with rc5t619 use GPIO for power button.
-So IRQ would need to be enabled in suspend for this to work.
-Also, since you actually added alarm support, perhaps you want to
-wake-up from suspend using alarm as well?
+On Mon, Nov 18, 2019 at 10:48 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Sat, Nov 16, 2019 at 11:01:12PM +0800, Ryan Chen wrote:
+> > Right, we can return 'blank' to user and let the user to parse the information.
+>
+> There is nothing to parse - the task doesn't belong to any groups. That's it.
+>
+> > And there is a similar behavior in cgroup that, for kernel thread that
+> > does not belong
+> > to any cgroup, /proc/{pid}/cgroup just show 'blank' without returning an error.
+>
+> By 'blank' I assume you mean the empty string '' ?
+>
+Yes, it is 'empty string'.
+> > Yes, only when PROC_FS is set, /proc/{pid}/resctrl
+> > can be displayed. However, CPU_RESCTRL might not
+> > depend on proc fs, it is possible that the CPU_RESCTRL
+> > is enabled but without PROC_FS set. If I understand correctly,
+> >  CPU_RESCTRL is the 'root' config for X86_CPU_RESCTRL,
+> > after reading this thread:
+> > https://lists.gt.net/linux/kernel/3211659
+>
+> I'm not sure I know what you mean here. There's no CPU_RESCTRL option - you've
+> added it in the previous patch:
+>
+> [ ~/kernel/linux> git grep -E CONFIG_CPU_RESCTRL
+> [ ~/kernel/linux> git grep -E "\WCPU_RESCTRL"
+> [ ~/kernel/linux>
+>
+> And if you want to use that option in proc/, then it needs
+> to depend on PROC_FS, like the the example I gave you with
+> CONFIG_PROC_PID_ARCH_STATUS.
+>
+> Or do you mean something else?
+>
+Previously I was thinking of introducing CONFIG_CPU_RESCTRL
+to the kernel, so that platform-independent resctrl code could be moved under
+this config. The idea was seen in the following commit log:
+commit e6d429313ea5c776d (x86/resctrl: Avoid confusion over the
+new X86_RESCTRL config)
+But since we only touch proc fs in this patch, I think a config named
+CONFIG_PROC_CPU_RESCTRL declared in fs/proc/Kconfig
+might be more appropriate(similar to CONFIG_PROC_PID_ARCH_STATUS).
+> >  If this is the case, shall we add the new file at kernel/resctrl/resctrl.c?
+> > And the generic proc_resctrl_show() could be put into this file. In the future
+> > the generic code for resctrl could be added/moved to kernel/resctrl/resctrl.c
+>
+> Not worth it for a single function. Leave it in
+> arch/x86/kernel/cpu/resctrl/rdtgroup.c where you had it.
+>
+Okay, got it. Let me send the v3 patch out and to see if it is suitable.
+Thanks,
+Chenyu
+> Thx.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
