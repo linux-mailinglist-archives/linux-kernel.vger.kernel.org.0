@@ -2,77 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BE4C1035FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 09:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC99F1035FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 09:30:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbfKTIaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 03:30:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
+        id S1727998AbfKTIaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 03:30:21 -0500
+Received: from mga09.intel.com ([134.134.136.24]:46857 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbfKTIaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 03:30:02 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1D9222312;
-        Wed, 20 Nov 2019 08:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574238601;
-        bh=JQOmElfXSzHu9Z+PGD9kkgOcTSRKyGXU0jtHg/2wKGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GtA1+jt399FcL+Wkav+tdOgD7i/XpKJjJpYB6jRyDekk3ghuztLdnTVZTyCXIqlss
-         6QbOU1JZ4RCt2pNmShKR98SjB/RqtkKW4vlxG/gtXLDn1GGWKKCefznlb0lwTdOJml
-         6Px20McEVDUMhPAkLvB9I/AbNAEpuJ050xISifU8=
-Date:   Wed, 20 Nov 2019 09:29:58 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     syzbot <syzbot+3dcb532381f98c86aeb1@syzkaller.appspotmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
-        rafael@kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: WARNING in kernfs_get
-Message-ID: <20191120082958.GB2862348@kroah.com>
-References: <000000000000f921ae05757f567c@google.com>
- <0000000000001da6b60597c2ce91@google.com>
+        id S1726647AbfKTIaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 03:30:21 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 00:30:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,221,1571727600"; 
+   d="scan'208";a="215720148"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 20 Nov 2019 00:30:17 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 20 Nov 2019 10:30:17 +0200
+Date:   Wed, 20 Nov 2019 10:30:17 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Thunderbolt change for v5.5 part 2
+Message-ID: <20191120083017.GU11621@lahna.fi.intel.com>
+References: <20191119130751.GK11621@lahna.fi.intel.com>
+ <20191119160022.GA2027670@kroah.com>
+ <20191119162018.GN11621@lahna.fi.intel.com>
+ <20191119163650.GA2031621@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000001da6b60597c2ce91@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191119163650.GA2031621@kroah.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 12:17:01AM -0800, syzbot wrote:
-> syzbot has bisected this bug to:
+On Tue, Nov 19, 2019 at 05:36:50PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Nov 19, 2019 at 06:20:18PM +0200, Mika Westerberg wrote:
+> > On Tue, Nov 19, 2019 at 05:00:22PM +0100, Greg Kroah-Hartman wrote:
+> > > On Tue, Nov 19, 2019 at 03:07:51PM +0200, Mika Westerberg wrote:
+> > > > Hi Greg,
+> > > > 
+> > > > There is one more Thunderbolt driver improvement that I would like to
+> > > > get into v5.5 merge window. Please consider pulling.
+> > > 
+> > > Hey, that sounds like the problem my laptop was having!  :)
+> > > 
+> > > Should this also go to stable for 5.4.y?
+> > 
+> > Yes, I think it makes sense to have it there. Do you want me to mark it
+> > for stable or you do it?
 > 
-> commit 726e41097920a73e4c7c33385dcc0debb1281e18
-> Author: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Date:   Tue Jul 10 00:29:10 2018 +0000
-> 
->     drivers: core: Remove glue dirs from sysfs earlier
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17a101cee00000
-> start commit:   9a568276 Merge branch 'x86-urgent-for-linus' of git://git...
-> git tree:       upstream
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=146101cee00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=106101cee00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3dcb532381f98c86aeb1
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12657f0a400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117728ae400000
-> 
-> Reported-by: syzbot+3dcb532381f98c86aeb1@syzkaller.appspotmail.com
-> Fixes: 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> I've now done it.  I had to rebase/rewrite the description, so watch out
+> for that if you pull from my tree.
 
-Again, I think this should be resolved with ac43432cb1f5 ("driver core:
-Fix use-after-free and double free on glue directory")
-
-Is there any way to run the reproducer on a newer tree?
-
-thanks,
-
-greg k-h
+Thanks Greg!
