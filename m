@@ -2,76 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6801044D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 21:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C991044EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 21:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfKTUQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 15:16:38 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39234 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfKTUQh (ORCPT
+        id S1727047AbfKTUWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 15:22:15 -0500
+Received: from forward501o.mail.yandex.net ([37.140.190.203]:45162 "EHLO
+        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726080AbfKTUWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 15:16:37 -0500
-Received: by mail-lj1-f195.google.com with SMTP id p18so564742ljc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 12:16:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=As7pKQ0itiBPr+JVzJNRbGflXyWEUqoGImZXztf0jEU=;
-        b=XEy7WaGq7tnXJWeHZWtz0DwTyLPI5ZIDiFBhpBU/p+enAkw3f0UID6GJcKUKKhDXwB
-         3zAy7hyjoieIeZcKpDx5M3kdNUoMZqzFs5gZNm984sQbeIYqSq7ZFmRck6P7s4qJdPIS
-         nydKNUoBsu2hVpIyERlo9YIrafC2SWqeJ9p0rTQXTSwsYU1flWI/42RRYkdlpdArN0Ab
-         4lwJX/mndLLYBbj3ixlqdttpycoL7TjF1Ybm1R4TIC41cf0FFFHeBY84qDEZDHRTGW6k
-         FglI8GhQAHWQFfVHDlFVgZyzB0zeTIwYjGzscfkYOoeEOlupu3J52a6Ah6QWfY/vJ25e
-         A8ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=As7pKQ0itiBPr+JVzJNRbGflXyWEUqoGImZXztf0jEU=;
-        b=hHRDLFmhigM/EYYl+qkl3M9wJ4ETdt6gmTcjH+L8irWvwkGy/Z9nWjs8/NUoDboLby
-         jUNbexXcO1dfGfmzEMCo+Rww1UUWw7RPizFBSyd4TLiwU2N2nu6yJL3Y4wYIliPzIl6u
-         qJYVND0CQ4mv3R1sLZ/1lY71dwLhZIAaiZ9OjAkI8FtjM5v1AHRD7hAYVEM5lSlbmpuh
-         Seh/VsfVK2w7XYxTn1STcojkShgmgr4Ueo2P4aBUxghHN7K+dzhK0OKKmlWc+0rK7Tgy
-         fFygkkiD0hJS3Td53Z5viUvs/WoYB3fF7EnPL/sN/G/EkhYtO+Ur6qjb2l0cZaDT7YwF
-         laeg==
-X-Gm-Message-State: APjAAAWbi6rLyz1GDRvFUJ9rDx66G/BMLQHyWOh4kBM7nCTiYQcfJZTA
-        BU4PwV6Bu5DN3Fjxj5kKWojQgikGvoTPjRoqjYbn5Q==
-X-Google-Smtp-Source: APXvYqx+bECbdnOoxTCki5xJSDVYs7EMIZ2Q1kvVZaDKVhZI1elr6NsjrHwr5uD2qsoUC1YJ0MgiOfh8fbu78lxOV2k=
-X-Received: by 2002:a2e:8597:: with SMTP id b23mr4421824lji.218.1574280992576;
- Wed, 20 Nov 2019 12:16:32 -0800 (PST)
+        Wed, 20 Nov 2019 15:22:15 -0500
+X-Greylist: delayed 342 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 15:22:14 EST
+Received: from mxback17g.mail.yandex.net (mxback17g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:317])
+        by forward501o.mail.yandex.net (Yandex) with ESMTP id 695911E80278;
+        Wed, 20 Nov 2019 23:16:30 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback17g.mail.yandex.net (mxback/Yandex) with ESMTP id jcvVD9lzvY-GTvWJpkQ;
+        Wed, 20 Nov 2019 23:16:29 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1574280989;
+        bh=9S7fCJni22zH4j8Nnc3/KM8VfE4W3KxpaUC2ZqQtD34=;
+        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
+        b=sQ2dFGQfTvHOlponnv58auiy2IrlGRkalqqItkex8tARD7zrGfkpzZTEnYr3PTqeE
+         TRn576+OwkNjEYkJxNiv/e7iuDpem5Ak1hcKOv6oCswc8UaLqNUa5byhAJ6gdw9cPY
+         686MTYmnjQeCoaIcAky4Rj2ZCON9fe0gyNzTQZAE=
+Authentication-Results: mxback17g.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by sas2-7fadb031fd9b.qloud-c.yandex.net with HTTP;
+        Wed, 20 Nov 2019 23:16:29 +0300
+From:   Evgeniy Polyakov <zbr@ioremap.net>
+Envelope-From: drustafa@yandex.ru
+To:     Angelo Dureghello <angelo.dureghello@timesys.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191019204015.61474-1-angelo.dureghello@timesys.com>
+References: <20191019204015.61474-1-angelo.dureghello@timesys.com>
+Subject: Re: [PATCH v2] w1: new driver. DS2430 chip
 MIME-Version: 1.0
-References: <20191117221053.278415-1-stephan@gerhold.net>
-In-Reply-To: <20191117221053.278415-1-stephan@gerhold.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 20 Nov 2019 21:16:20 +0100
-Message-ID: <CACRpkdYoq0E3HEmo4QBOWaAkQN8Ti=cm2OL+gjBORynsJ7D8jw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: ab8500: Document AB8505 bindings
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Wed, 20 Nov 2019 23:16:29 +0300
+Message-Id: <49814061574280989@sas2-7fadb031fd9b.qloud-c.yandex.net>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 17, 2019 at 11:14 PM Stephan Gerhold <stephan@gerhold.net> wrote:
+Hi Angelo, Greg
 
-> AB8505 can now be configured from the device tree.
-> The configuration is almost identical to AB8500, so just add a note
-> for the nodes/compatibles that differ between the two revisions.
+19.10.2019, 23:38, "Angelo Dureghello" <angelo.dureghello@timesys.com>:
+> add support for ds2430, 1 page, 256bit (32bytes) eeprom
+> (family 0x14).
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+> Signed-off-by: Angelo Dureghello <angelo.dureghello@timesys.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Looks good to me.
+Greg, please pull it into your tree.
 
-Yours,
-Linus Walleij
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
