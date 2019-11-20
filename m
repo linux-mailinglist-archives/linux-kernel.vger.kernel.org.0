@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB9D103C2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C27F103C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731354AbfKTNlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:41:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49000 "EHLO mail.kernel.org"
+        id S1731360AbfKTNlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:41:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729146AbfKTNlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:41:10 -0500
+        id S1731345AbfKTNlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:41:16 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EA5C224FC;
-        Wed, 20 Nov 2019 13:41:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD670224FC;
+        Wed, 20 Nov 2019 13:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257269;
-        bh=xPj3YzRv9jWa1IqK+64ukpSnBw5wrrabNTKuHooPq1I=;
+        s=default; t=1574257274;
+        bh=QMt/9sM/Cr69KFoh7gNUZgDY5vce/DxM6f8X5cqS0Fs=;
         h=From:To:Cc:Subject:Date:From;
-        b=bFnUTI6aLpb4O9BQ34HPPPZVqyGRs3VExNMRKIEmRp7TapJ7/OUZOAUvqRjJGVWPo
-         TfPkNgiQOnQLN2+d6drNE6TsjyBcjpgdKpP3TVTWMI3CW2MDZC7/gE4kjSqBRdRjTj
-         FtdwYKOZ84kw2CoKLxP8vxhpQwUrq0f/trXy7T/s=
+        b=GpUgyiz/QkIj7LHGXOHz+iU2cAIlFYgHvgFy3wGEIlk4Y4UdPi2yH64R6xgyl+CWp
+         UQtLBNqWHNx9Gz71uiRl/QAW3ktOZ63KvxyIDRNVH4/0aTt6VDK0KVT8fqJOaUUxag
+         KLJF8rDSqBKO+dmBFmabRsIQhSDnLoc+ph5UYCv0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:41:05 +0800
-Message-Id: <20191120134105.14799-1-krzk@kernel.org>
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Song Liu <song@kernel.org>, linux-raid@vger.kernel.org
+Subject: [PATCH] md: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:41:10 +0800
+Message-Id: <20191120134110.14859-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -43,41 +44,129 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/media/Kconfig              | 6 +++---
- drivers/media/radio/si470x/Kconfig | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/md/Kconfig | 54 +++++++++++++++++++++++-----------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
-index b36a41332867..9dfea5c4b6ab 100644
---- a/drivers/media/Kconfig
-+++ b/drivers/media/Kconfig
-@@ -208,9 +208,9 @@ config MEDIA_SUBDRV_AUTOSELECT
- 	  If unsure say Y.
+diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+index aa98953f4462..d6d5ab23c088 100644
+--- a/drivers/md/Kconfig
++++ b/drivers/md/Kconfig
+@@ -38,9 +38,9 @@ config MD_AUTODETECT
+ 	default y
+ 	---help---
+ 	  If you say Y here, then the kernel will try to autodetect raid
+-	  arrays as part of its boot process. 
++	  arrays as part of its boot process.
  
- config MEDIA_HIDE_ANCILLARY_SUBDRV
--        bool
--        depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
--        default y
-+	bool
-+	depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
-+	default y
+-	  If you don't use raid and say Y, this autodetection can cause 
++	  If you don't use raid and say Y, this autodetection can cause
+ 	  a several-second delay in the boot time due to various
+ 	  synchronisation steps that are part of this step.
  
- config MEDIA_ATTACH
- 	bool
-diff --git a/drivers/media/radio/si470x/Kconfig b/drivers/media/radio/si470x/Kconfig
-index 537f8e1601f3..a1ba8bc54b62 100644
---- a/drivers/media/radio/si470x/Kconfig
-+++ b/drivers/media/radio/si470x/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config RADIO_SI470X
--        tristate "Silicon Labs Si470x FM Radio Receiver support"
--        depends on VIDEO_V4L2
-+	tristate "Silicon Labs Si470x FM Radio Receiver support"
-+	depends on VIDEO_V4L2
- 	help
- 	  This is a driver for devices with the Silicon Labs SI470x
- 	  chip (either via USB or I2C buses).
+@@ -290,7 +290,7 @@ config DM_SNAPSHOT
+        depends on BLK_DEV_DM
+        select DM_BUFIO
+        ---help---
+-         Allow volume managers to take writable snapshots of a device.
++	 Allow volume managers to take writable snapshots of a device.
+ 
+ config DM_THIN_PROVISIONING
+        tristate "Thin provisioning target"
+@@ -298,7 +298,7 @@ config DM_THIN_PROVISIONING
+        select DM_PERSISTENT_DATA
+        select DM_BIO_PRISON
+        ---help---
+-         Provides thin provisioning and snapshots that share a data store.
++	 Provides thin provisioning and snapshots that share a data store.
+ 
+ config DM_CACHE
+        tristate "Cache target (EXPERIMENTAL)"
+@@ -307,23 +307,23 @@ config DM_CACHE
+        select DM_PERSISTENT_DATA
+        select DM_BIO_PRISON
+        ---help---
+-         dm-cache attempts to improve performance of a block device by
+-         moving frequently used data to a smaller, higher performance
+-         device.  Different 'policy' plugins can be used to change the
+-         algorithms used to select which blocks are promoted, demoted,
+-         cleaned etc.  It supports writeback and writethrough modes.
++	 dm-cache attempts to improve performance of a block device by
++	 moving frequently used data to a smaller, higher performance
++	 device.  Different 'policy' plugins can be used to change the
++	 algorithms used to select which blocks are promoted, demoted,
++	 cleaned etc.  It supports writeback and writethrough modes.
+ 
+ config DM_CACHE_SMQ
+        tristate "Stochastic MQ Cache Policy (EXPERIMENTAL)"
+        depends on DM_CACHE
+        default y
+        ---help---
+-         A cache policy that uses a multiqueue ordered by recent hits
+-         to select which blocks should be promoted and demoted.
+-         This is meant to be a general purpose policy.  It prioritises
+-         reads over writes.  This SMQ policy (vs MQ) offers the promise
+-         of less memory utilization, improved performance and increased
+-         adaptability in the face of changing workloads.
++	 A cache policy that uses a multiqueue ordered by recent hits
++	 to select which blocks should be promoted and demoted.
++	 This is meant to be a general purpose policy.  It prioritises
++	 reads over writes.  This SMQ policy (vs MQ) offers the promise
++	 of less memory utilization, improved performance and increased
++	 adaptability in the face of changing workloads.
+ 
+ config DM_WRITECACHE
+ 	tristate "Writecache target"
+@@ -343,9 +343,9 @@ config DM_ERA
+        select DM_PERSISTENT_DATA
+        select DM_BIO_PRISON
+        ---help---
+-         dm-era tracks which parts of a block device are written to
+-         over time.  Useful for maintaining cache coherency when using
+-         vendor snapshots.
++	 dm-era tracks which parts of a block device are written to
++	 over time.  Useful for maintaining cache coherency when using
++	 vendor snapshots.
+ 
+ config DM_CLONE
+        tristate "Clone target (EXPERIMENTAL)"
+@@ -353,20 +353,20 @@ config DM_CLONE
+        default n
+        select DM_PERSISTENT_DATA
+        ---help---
+-         dm-clone produces a one-to-one copy of an existing, read-only source
+-         device into a writable destination device. The cloned device is
+-         visible/mountable immediately and the copy of the source device to the
+-         destination device happens in the background, in parallel with user
+-         I/O.
++	 dm-clone produces a one-to-one copy of an existing, read-only source
++	 device into a writable destination device. The cloned device is
++	 visible/mountable immediately and the copy of the source device to the
++	 destination device happens in the background, in parallel with user
++	 I/O.
+ 
+-         If unsure, say N.
++	 If unsure, say N.
+ 
+ config DM_MIRROR
+        tristate "Mirror target"
+        depends on BLK_DEV_DM
+        ---help---
+-         Allow volume managers to mirror logical volumes, also
+-         needed for live data migration tools such as 'pvmove'.
++	 Allow volume managers to mirror logical volumes, also
++	 needed for live data migration tools such as 'pvmove'.
+ 
+ config DM_LOG_USERSPACE
+ 	tristate "Mirror userspace logging"
+@@ -483,7 +483,7 @@ config DM_FLAKEY
+        tristate "Flakey target"
+        depends on BLK_DEV_DM
+        ---help---
+-         A target that intermittently fails I/O for debugging purposes.
++	 A target that intermittently fails I/O for debugging purposes.
+ 
+ config DM_VERITY
+ 	tristate "Verity target support"
 -- 
 2.17.1
 
