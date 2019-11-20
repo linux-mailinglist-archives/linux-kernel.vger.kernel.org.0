@@ -2,47 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48885104553
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 21:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D956104567
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 21:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfKTUmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 15:42:40 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:59874 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbfKTUmk (ORCPT
+        id S1726297AbfKTU7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 15:59:18 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:50234 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbfKTU7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 15:42:40 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7358F14C25D03;
-        Wed, 20 Nov 2019 12:42:39 -0800 (PST)
-Date:   Wed, 20 Nov 2019 12:42:38 -0800 (PST)
-Message-Id: <20191120.124238.1949786507862615153.davem@davemloft.net>
-To:     wahrenst@gmx.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/2] net: qca_spi: Fix receive and reset issues
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1574270953-4119-1-git-send-email-wahrenst@gmx.net>
-References: <1574270953-4119-1-git-send-email-wahrenst@gmx.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 20 Nov 2019 12:42:39 -0800 (PST)
+        Wed, 20 Nov 2019 15:59:18 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1iXX4D-0001vK-00; Wed, 20 Nov 2019 20:59:13 +0000
+Date:   Wed, 20 Nov 2019 15:59:13 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     linux-fsdevel@vger.kernel.org, musl@lists.openwall.com,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Subject: Re: [musl] getdents64 lost direntries with SMB/NFS and buffer size <
+ unknown threshold
+Message-ID: <20191120205913.GD16318@brightrain.aerifal.cx>
+References: <20191120001522.GA25139@brightrain.aerifal.cx>
+ <8736eiqq1f.fsf@mid.deneb.enyo.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8736eiqq1f.fsf@mid.deneb.enyo.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
-Date: Wed, 20 Nov 2019 18:29:11 +0100
-
-> This small patch series fixes two major issues in the SPI driver for the
-> QCA700x.
+On Wed, Nov 20, 2019 at 08:57:32PM +0100, Florian Weimer wrote:
+> * Rich Felker:
 > 
-> It has been tested on a Charge Control C 300 (NXP i.MX6ULL +
-> 2x QCA7000).
+> > An issue was reported today on the Alpine Linux tracker at
+> > https://gitlab.alpinelinux.org/alpine/aports/issues/10960 regarding
+> > readdir results from SMB/NFS shares with musl libc.
+> >
+> > After a good deal of analysis, we determined the root cause to be that
+> > the second and subsequent calls to getdents64 are dropping/skipping
+> > direntries (that have not yet been deleted) when some entries were
+> > deleted following the previous call. The issue appears to happen only
+> > when the buffer size passed to getdents64 is below some threshold
+> > greater than 2k (the size musl uses) but less than 32k (the size glibc
+> > uses, with which we were unable to reproduce the issue).
+> 
+> >From the Gitlab issue:
+> 
+>   while ((dp = readdir(dir)) != NULL) {
+>       unlink(dp->d_name);
+>       ++file_cnt;
+>   }
+> 
+> I'm not sure that this is valid code to delete the contents of a
+> directory.  It's true that POSIX says this:
 
-Series applied, thanks.
+I think it is.
+
+> | If a file is removed from or added to the directory after the most
+> | recent call to opendir() or rewinddir(), whether a subsequent call
+> | to readdir() returns an entry for that file is unspecified.
+                                  ^^^^^^^^^^^^^
+
+POSIX only allows both behaviors (showing or not showing) the entry
+that was deleted. It does not allow deletion of one entry to cause
+other entries not to be seen.
+
+> But many file systems simply provide not the necessary on-disk data
+> structures which are need to ensure stable iteration in the face of
+> modification of the directory.  There are hacks, of course, such as
+> compacting the on-disk directory only on file creation, which solves
+> the file removal case.
+> 
+> For deleting an entire directory, that is not really a problem because
+> you can stick another loop around this while loop which re-reads the
+> directory after rewinddir.  Eventually, it will become empty.
+
+This is still a serious problem and affects usage other than deletion
+of an entire directory.
+
+Rich
