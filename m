@@ -2,154 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32AAD104173
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491B9104181
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:54:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732862AbfKTQwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:52:02 -0500
-Received: from mail-eopbgr730058.outbound.protection.outlook.com ([40.107.73.58]:60672
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728314AbfKTQwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:52:01 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VPPw4Z6hEKYGPq6k76IM4X2BfARJky8FJ4d5SbX1udcU9kzkMLkAlxwkOYvahg+JyO2Q2jvaXRicqBpXz6MyGuu96UPe4t+nOMnbom+nIxv52NmdZzieyYvC+p4czhIOmLtYxSEy6Y5OghqWIPs89UH/EG6+p+MgWKtFTaAVK9Kbea0Uwzbscw3HT022C2JZpdchycAWVX9pS6Gsn1dJJlF9vpIEd/MQ5e5diCr2VHH+40BktU9xgMHjfVXSIWquqVz3s1uAo2gHKqoJUax7KG0GbvWUCCn49LykgaBaXPx2Qw+iKZLjKc+0i4XaD9Wy/ysnVXL5SlWr/upeDNRrdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=thFrq2uC425RbwQApO4noTMRO3cIYXGjW1vhMIrLfdE=;
- b=QCpuPt3Cxuu/kMWvBfI9P6SYGQKpW7LTruHkK75v+lkT1VSdqc4gBW2jBC7TszVjvJCDsc13n2j+VAehhpxWYZZQnUQWmA5WwhZWBhJZTfPPnhCcyilQmNVMwzyA/IRw05NdGPf2pkXrw2eV1ELMv8BaAalYW2JlLjJiVr6pgYbcyduvKLWAXfXaVKfdCc00MK0Nu41jFbSKJcd5zHP9emMP5ouLsYWPf7w7WusG8Wfprxf0Dq6gapOwEPAwF+8Um8O/uuQ8K3bGg63i7OmBFggZBryCVYnSfXoeTMxGjukHcRjiRskm9bGF1acesp5wbCfHlC6SYuJ6TtBpi+20Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        id S1732918AbfKTQyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:54:54 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:34084 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731995AbfKTQyy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:54:54 -0500
+Received: by mail-pj1-f66.google.com with SMTP id bo14so103413pjb.1;
+        Wed, 20 Nov 2019 08:54:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=thFrq2uC425RbwQApO4noTMRO3cIYXGjW1vhMIrLfdE=;
- b=OB6J+IPbkhVwjzoAAC2Ob9zcDp3rYF4Txv2pixAMoXHLhGmOBxoahYVSBRQAdP4P5KKKj888dNqJ3n+Q/gcRd6gSGP2fCMD3fEiXi2yJBko651O5MVvpWwMkgqdQYWkx5eG+JozkzNi5R+VLE3s5YUYHJ6un4/o3ItFfD4ZXd9E=
-Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.230.25) by
- CH2PR02MB7045.namprd02.prod.outlook.com (20.180.11.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.16; Wed, 20 Nov 2019 16:51:59 +0000
-Received: from CH2PR02MB6359.namprd02.prod.outlook.com
- ([fe80::e81d:489c:2bd7:918a]) by CH2PR02MB6359.namprd02.prod.outlook.com
- ([fe80::e81d:489c:2bd7:918a%7]) with mapi id 15.20.2451.031; Wed, 20 Nov 2019
- 16:51:59 +0000
-From:   Dragan Cvetic <draganc@xilinx.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Derek Kiernan <dkiernan@xilinx.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH] misc: Fix Kconfig indentation
-Thread-Topic: [PATCH] misc: Fix Kconfig indentation
-Thread-Index: AQHVn6gmBH3T0s6ZdkikOAV1Uu5hCqeURYTw
-Date:   Wed, 20 Nov 2019 16:51:59 +0000
-Message-ID: <CH2PR02MB63595AD1DC283AB0E09B72BECB4F0@CH2PR02MB6359.namprd02.prod.outlook.com>
-References: <20191120134056.14677-1-krzk@kernel.org>
-In-Reply-To: <20191120134056.14677-1-krzk@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=draganc@xilinx.com; 
-x-originating-ip: [149.199.80.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 41b8b598-3764-4e80-ff6d-08d76dd9f59c
-x-ms-traffictypediagnostic: CH2PR02MB7045:|CH2PR02MB7045:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR02MB70451AAFACF52F38102EED61CB4F0@CH2PR02MB7045.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 02272225C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(39860400002)(396003)(136003)(13464003)(199004)(189003)(54906003)(26005)(186003)(256004)(446003)(53546011)(6506007)(102836004)(11346002)(4326008)(66066001)(2501003)(76176011)(6246003)(76116006)(486006)(55016002)(6436002)(229853002)(7696005)(81156014)(81166006)(3846002)(6116002)(52536014)(71190400001)(71200400001)(74316002)(5660300002)(476003)(478600001)(8676002)(14454004)(8936002)(7736002)(9686003)(305945005)(33656002)(2906002)(66556008)(25786009)(110136005)(316002)(99286004)(66446008)(66476007)(66946007)(86362001)(64756008);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB7045;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +smWHWwY+bSplQ8KMHOMNvyK7mgAPCuqMwpFNsVtrrpfpXryUHYDUD66XcO8nGSiBvgfcjwnqnsuyuO1l0tbpxfSlghTCo9L5Ad8FsXEMJXJrxSCSUvha7qHfX3TmWAFZbNZfaHqDK+wGEOIseDdda5qCr/jLkZd4V4PPHUeOSsgb5U/Ez2aPdiIfG3LTDMLCdsasF8Pe3SUX5SDHREsVDJv+j05YUJp9Vku+8yPCK3M96VN8/8iDfxSGyNMWLtisGqX4NrQKZZQ5/rWzY4Ctr8SWLjXUhr5cZNjvONz4MWEGmKq9V7wy8butlhPHBvsCO43gN8YNxOTawIDXtlKido8WpMCJfDwJYaDupLJkjsKnh9hnZacssuPkvzFuhOZZKCN4fKSbsnGElfJ6nlEfxtGUtACMhS5QeNof5bLkeFfjWT9YSKndW+gLwy1qE/x
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SmmkPL/s8+dLRBd7moGUYjQr50TV9dprre5biO+pWFE=;
+        b=A7dwQMCypoe6p4h96B9/TxzQRMiJlE0NJWcizqdgGJzf68jKTqmp/hiT1TDSHLZXrh
+         5kgOcBhMI8xn1SXXboQ9V9VYjO3AxVGb4KLqx54jO7MkmPWCMufJXhUt+X66KDVYUCP8
+         cncdn/Jn9FtaTEaR/+RzABGlvyUO3zB1ZntakO/rmj6DCX/fylGLUjMImcHC4fVQY2OF
+         XpagH4PoIhpP77h+oK1LEEKrfQSyEVjJ9zCupA7UANk1KQOzlfaB71z+ml/oa9zJj0RJ
+         kQs6/V5pX+kroPd4aas5FHTLEoOopF62oBTFGGNMhBCNfeiralaf1hDzd4pV7mGPxJYk
+         8ztw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SmmkPL/s8+dLRBd7moGUYjQr50TV9dprre5biO+pWFE=;
+        b=I6IG9Icz0Uwb/RMfhwftlBjyx2Frw3suwb9xyx8Vwqtzip7WWwmBhJra4fWR6w71Cx
+         bTqeMkgpr/MAe8nugHInlCRj09Ei71HgipqZwyWxk7Kzk2HtjqbT+dE9rva4wGdLdBYI
+         SUwGSlnZ3uO9GYojytGA3WNfsbvvVw7SlgvMkgqSn4xdpK+xUOymDBaNhkH+dAYCMq4r
+         MCJmC+ka9Ved4dlTJGYnqN6UDGOipM5eMLa/Nj/rCcn4w40yLS6TUEv9trvnxYGXwryK
+         T08CiVMng7mlqk9PJGRYvAEL7PvuVkqKu2NewUdNRwkKBL8PYO9rDeTsrYftU0lV1ceD
+         5ZQA==
+X-Gm-Message-State: APjAAAXx5YK5SIbBwZP9eAplmyOQFT8I0j/B05xRENpiVn5NcZFZAv4S
+        NF6qCz9uCmpbdJ0mGkqyETOTwOPO
+X-Google-Smtp-Source: APXvYqxfRw7lBAZELqyM7BpttNf4yc/FBABSygrhE2LduXO/T+ZEuxM63jk69xNqzsFIHhaqjRGejQ==
+X-Received: by 2002:a17:902:6b47:: with SMTP id g7mr3949682plt.87.1574268892235;
+        Wed, 20 Nov 2019 08:54:52 -0800 (PST)
+Received: from localhost.hsd1.wa.comcast.net ([2601:602:847f:811f:babe:8e8d:b27e:e6d7])
+        by smtp.gmail.com with ESMTPSA id e11sm29841483pff.104.2019.11.20.08.54.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 08:54:49 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: [PATCH v3 0/6] enable CAAM's HWRNG as default
+Date:   Wed, 20 Nov 2019 08:53:35 -0800
+Message-Id: <20191120165341.32669-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41b8b598-3764-4e80-ff6d-08d76dd9f59c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 16:51:59.1052
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9vz8TSE78qhtDx9MHg0VwQrdxOU0CdPlXClKTxR2LOhcPvrB847xzvfPpDvC08MH/Ae7ThqAfvGPMISmRzbSDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB7045
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+Everyone:
 
-This patch is not for SDFEC driver.
+This series is a continuation of original [discussion]. I don't know
+if what's in the series is enough to use CAAMs HWRNG system wide, but
+I am hoping that with enough iterations and feedback it will be.
 
-Regards
-Dragan
 
+Changes since [v1]:
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski [mailto:krzk@kernel.org]
-> Sent: Wednesday 20 November 2019 13:41
-> To: linux-kernel@vger.kernel.org
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>; Derek Kiernan <dkiernan@xilinx=
-.com>; Dragan Cvetic <draganc@xilinx.com>; Arnd
-> Bergmann <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Subject: [PATCH] misc: Fix Kconfig indentation
->=20
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/misc/Kconfig | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 94b14abb5404..b93757efb058 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -338,14 +338,14 @@ config SENSORS_TSL2550
->  	  will be called tsl2550.
->=20
->  config SENSORS_BH1770
-> -         tristate "BH1770GLC / SFH7770 combined ALS - Proximity sensor"
-> -         depends on I2C
-> -         ---help---
-> -           Say Y here if you want to build a driver for BH1770GLC (ROHM)=
- or
-> +	 tristate "BH1770GLC / SFH7770 combined ALS - Proximity sensor"
-> +	 depends on I2C
-> +	 ---help---
-> +	   Say Y here if you want to build a driver for BH1770GLC (ROHM) or
->  	   SFH7770 (Osram) combined ambient light and proximity sensor chip.
->=20
-> -           To compile this driver as a module, choose M here: the
-> -           module will be called bh1770glc. If unsure, say N here.
-> +	   To compile this driver as a module, choose M here: the
-> +	   module will be called bh1770glc. If unsure, say N here.
->=20
->  config SENSORS_APDS990X
->  	 tristate "APDS990X combined als and proximity sensors"
-> @@ -450,8 +450,8 @@ config PCI_ENDPOINT_TEST
->  	select CRC32
->  	tristate "PCI Endpoint Test driver"
->  	---help---
-> -           Enable this configuration option to enable the host side test=
- driver
-> -           for PCI Endpoint.
-> +	   Enable this configuration option to enable the host side test driver
-> +	   for PCI Endpoint.
->=20
->  config XILINX_SDFEC
->  	tristate "Xilinx SDFEC 16"
-> --
-> 2.17.1
+    - Original hw_random replaced with the one using output of TRNG directly
+
+    - SEC4 DRNG IP block exposed via crypto API
+
+    - Small fix regarding use of GFP_DMA added to the series
+
+Chagnes since [v2]:
+
+    - msleep in polling loop to avoid wasting CPU cycles
+
+    - caam_trng_read() bails out early if 'wait' is set to 'false'
+
+    - fixed typo in ZII's name
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+[discussion] https://patchwork.kernel.org/patch/9850669/
+[v1] lore.kernel.org/lkml/20191029162916.26579-1-andrew.smirnov@gmail.com
+[v2] lore.kernel.org/lkml/20191118153843.28136-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (6):
+  crypto: caam - RNG4 TRNG errata
+  crypto: caam - enable prediction resistance in HRWNG
+  crypto: caam - allocate RNG instantiation descriptor with GFP_DMA
+  crypto: caam - move RNG presense check into a shared function
+  crypto: caam - replace DRNG with TRNG for use with hw_random
+  crypto: caam - expose SEC4 DRNG via crypto RNG API
+
+ drivers/crypto/caam/Kconfig   |  15 +-
+ drivers/crypto/caam/Makefile  |   3 +-
+ drivers/crypto/caam/caamrng.c | 358 ----------------------------------
+ drivers/crypto/caam/ctrl.c    |  29 ++-
+ drivers/crypto/caam/desc.h    |   2 +
+ drivers/crypto/caam/drng.c    | 175 +++++++++++++++++
+ drivers/crypto/caam/intern.h  |  32 ++-
+ drivers/crypto/caam/jr.c      |   3 +-
+ drivers/crypto/caam/regs.h    |  14 +-
+ drivers/crypto/caam/trng.c    |  89 +++++++++
+ 10 files changed, 338 insertions(+), 382 deletions(-)
+ delete mode 100644 drivers/crypto/caam/caamrng.c
+ create mode 100644 drivers/crypto/caam/drng.c
+ create mode 100644 drivers/crypto/caam/trng.c
+
+-- 
+2.21.0
 
