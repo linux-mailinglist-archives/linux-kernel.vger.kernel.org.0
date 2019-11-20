@@ -2,42 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC8C1046B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 23:47:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC3D1046B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 23:48:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbfKTWr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 17:47:26 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:40865 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfKTWrZ (ORCPT
+        id S1726554AbfKTWsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 17:48:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59095 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfKTWsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 17:47:25 -0500
-Date:   Wed, 20 Nov 2019 22:47:19 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1574290044;
-        bh=mytNzenOMxkCNdpUH57BUxrgeeMa8hofDPFGSGOAGPI=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=JpzQVijaLnS6HyHJiKLt/WdsumkWD9HCO2gncuFrkt9L9+V/5ZsETJxTosg4KboHm
-         +cid78gNDVhtOeuZqCb5+ADVkAXoDyBidIEfVn/zf2cPaCj1WzLRwdujAe6fG9pYXO
-         EPjbyNOcy+1VV6XRfdQurHl3vTSGPaFkrMxGp1PE=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: was: Fair Pay
-Message-ID: <Uy7kETZy98lB56EHG1HqtmG1lVvZ75LT8wmSUNfUFzdfkLjOMe5ojkHyMNActHDmmjy4ZqaqQVxxJuUUKDYE-YB-uJOTuvieqdTkY7v_wJg=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Wed, 20 Nov 2019 17:48:53 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iXYmC-0000H4-Gu; Wed, 20 Nov 2019 23:48:44 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BEF351C1A27;
+        Wed, 20 Nov 2019 23:48:43 +0100 (CET)
+Date:   Wed, 20 Nov 2019 22:48:43 -0000
+From:   "tip-bot2 for Alexander Duyck" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/iopl] x86/ioperm: Fix use of deprecated config option
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rik van Riel <riel@surriel.com>, "x86-ml" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191120222426.3060.18462.stgit@localhost.localdomain>
+References: <20191120222426.3060.18462.stgit@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+Message-ID: <157429012364.21853.105281990076926777.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are ofcourse also with Just Distribution Of Means For The 99%.
+The following commit has been merged into the x86/iopl branch of tip:
 
-Peace!
+Commit-ID:     e3cb0c7102f04c83bf1a7cb1d052e92749310b46
+Gitweb:        https://git.kernel.org/tip/e3cb0c7102f04c83bf1a7cb1d052e92749310b46
+Author:        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+AuthorDate:    Wed, 20 Nov 2019 14:25:53 -08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Wed, 20 Nov 2019 23:40:05 +01:00
+
+x86/ioperm: Fix use of deprecated config option
+
+The commit
+
+  111e7b15cf10 ("x86/ioperm: Extend IOPL config to control ioperm() as well")
+
+replaced X86_IOPL_EMULATION with X86_IOPL_IOPERM. However it appears
+that there was at least one spot missed as tss_update_io_bitmap() still
+had a reference to it contained in the code.
+
+The result of this is that it exposed a NULL pointer dereference as seen
+below with a linux-next next-20191120 kernel:
+
+  BUG: kernel NULL pointer dereference, address: 0000000000000000
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 5 PID: 1542 Comm: ovs-vswitchd Tainted: G        W 5.4.0-rc8-next-20191120 #125
+  RIP: 0010:tss_update_io_bitmap+0x4e/0x180
+  Code: 10 31 c0 65 48 03 1d 69 54 5d 6d 65 48 8b 04 25 40 8c 01 00 48 8b 10 \
+	  f7 c2 00 00 40 00 0f 84 8c 00 00 00 4c 8b a0 c0 22 00 00 <49> 8b 04 \
+	  24 48 39 43 68 74 2e 8b 53 70 41 39 54 24 0c 48 8d 7b 78
+  RSP: 0018:ffffb8888a0ebf08 EFLAGS: 00010006
+  RAX: ffff8a429811a680 RBX: ffff8a4c3f946000 RCX: 0000000000000011
+  RDX: 0000000000400080 RSI: 0000000000400080 RDI: 0000000000000000
+  RBP: ffffb8888a0ebf30 R08: 00007ffffb5d7ce0 R09: 0000000000000000
+  R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+  R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  FS:  00007f68a9635c40(0000) GS:ffff8a4c3f940000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000000 CR3: 000000103572a001 CR4: 00000000001606e0
+  Call Trace:
+   ? syscall_slow_exit_work+0x39/0xdb
+   do_syscall_64+0x1a5/0x200
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  RIP: 0033:0x7f68a7aff797
+
+Fixes: 111e7b15cf10 ("x86/ioperm: Extend IOPL config to control ioperm() as well")
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191120222426.3060.18462.stgit@localhost.localdomain
+---
+ arch/x86/kernel/process.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 7964d7d..bd2a11c 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -382,8 +382,7 @@ void tss_update_io_bitmap(void)
+ 	if (test_thread_flag(TIF_IO_BITMAP)) {
+ 		struct thread_struct *t = &current->thread;
+ 
+-		if (IS_ENABLED(CONFIG_X86_IOPL_EMULATION) &&
+-		    t->iopl_emul == 3) {
++		if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
+ 			*base = IO_BITMAP_OFFSET_VALID_ALL;
+ 		} else {
+ 			struct io_bitmap *iobm = t->io_bitmap;
