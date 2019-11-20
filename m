@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A2B103FD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CFA2103FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732557AbfKTPqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:46:39 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33147 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729879AbfKTPpc (ORCPT
+        id S1732418AbfKTPpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:45:39 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38896 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbfKTPpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:45:32 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c184so14418632pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 07:45:31 -0800 (PST)
+        Wed, 20 Nov 2019 10:45:36 -0500
+Received: by mail-pl1-f195.google.com with SMTP id q18so10301317pls.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 07:45:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=UhlgzauEtpF8L0LzttCZ+lpDer0t2cSKin9iOeiQFcw=;
-        b=xUwoi8nvephl72akSmRItCtyuVQZnA8izas8jNZj+rYlyPmcb+9JkRl9ag74UJG+ml
-         a3AmBm12kC24TpIDbEdrgDbeIDEL0YhjYdsNtrjQjlyM081hL+byOlU2NFU5szpTWYtK
-         nfO3e/cnd21wuVHFsY7+BgrknzP5Hem30fzsb/D51u+zIar4n8tLYlXyekC0YXWhkdvA
-         nErhGCt2lCBYiU+tfR/AbEGfmzt6paXzzsmdpMshpDNmQ9cIykUgNZT4dGgKlurhWy/G
-         GSNYEvibA0+XSoA02bj9PeF2pjP186RgMy7enY0pwVH6wDrrHS62DaHoVH8CpcD+Bibe
-         xxsg==
+        bh=4TmU0ibaD1fY5ibWJwV7zia/u/t/2yh9Lbt7NaMlJsw=;
+        b=YEVFThbykDuFOr1GtEq6abY7duRfnHI4jaVcRFw7vzdDc2xf1gpAT3jNxbtyZtbPwZ
+         aMtfdH26aYykzeg2IB4I2NafAVv3xFEIIRY7Zs43XTowRnDpQSNLtmf4Tsf8g1Iw7pGI
+         nn/6oVBn+K0nhhX+xEIphl9eUlPv2NW8mhDmyVifedjB5F0z66LVt4bkzAJ76dgsG4S+
+         8usbneTJfpUq5fAAj6kzBspsVXaqGx4KLxWjyL8whLq67PrEwVva1wYW27YodK3cU873
+         2DXeWS/CagJITBLU8OB31P6nW7HponRuy+30OI4pi8a9Qv5CXnMP2XpGebOTKW/42S32
+         /C5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=UhlgzauEtpF8L0LzttCZ+lpDer0t2cSKin9iOeiQFcw=;
-        b=Yet4SkbvVrSDC08PIYK26njLk4pfytgmeukfyOemepruM0OJA9uh9UMiIItlpzrKH/
-         B2AcGyEldqSRqwFKiph/JiFju85MWWZ/O4vVt8tV8YjAVW9zYWImvTK3zYWoUsGflbYB
-         Lj0U3f+ZrQXvAbVxXmLnTzKAggxs3FxG6RJihzSgP/MJDDqzJmLG8nTXMMLOkZf6/DSS
-         vr3BkLQNktIxec5IPXQ25dc0mXOtsDBmjRQoGIJWBQyt5jl93SmBAo5Z5qHFbEO88VAE
-         qufrK/IgJCi0iEstfzcRdGWltpC5TuJ5VSuSY0ov8pEaFDhobbRSq2s0L5rhOYl6LBgh
-         slMQ==
-X-Gm-Message-State: APjAAAXJZKEJyuNQ8I1tjJ0Y8FO/KusxQieuRkctYk4Bes1dLKAGNArT
-        HSbLwJ2oz52PY5YMY+mPYMYKjpimInUOrg==
-X-Google-Smtp-Source: APXvYqxkcUp9jMDNLha++k3NBN56jJ2v22CFPJkdR1JKEzFx/AObWFImoUDJuhJFCF2aved+yYTp+w==
-X-Received: by 2002:a63:778b:: with SMTP id s133mr4140842pgc.406.1574264731098;
-        Wed, 20 Nov 2019 07:45:31 -0800 (PST)
+        bh=4TmU0ibaD1fY5ibWJwV7zia/u/t/2yh9Lbt7NaMlJsw=;
+        b=G8CFQe2MA0+yxfkx6Jp4SulcGv6c86R0fSx/SXbx6B1tbcKrgyL07Kx1OTNH+950MC
+         Yg6b7hd9AXfbKrpKf6zJCZ4ADyIh0+4nKQgfWGjeqrKxpnXYA4agm+5qJKTOmeFxsGOr
+         h6uQ58NrCwmJCoKHf/mbOF2xqjPkl1LidG1c1uQeHZsn+PX08Mo6P/iWd4JYTorflXRt
+         fmJG4WDa215+6H5DkWVqpwwEU+DXd18b33JoI9HOrZe/jTjpm6r8isbpO6g5diiiOHqE
+         wx6gL0eTJ6e8ps7kCfCgsBNUJdJ6VwoueSrRQly2KvycLBEBUHvbxJMPw/vRNyagjgTg
+         q/Gw==
+X-Gm-Message-State: APjAAAXHX0j9beITcT6mZoDhrJSishgYw13ExSV8h2cx2te29umcIa8z
+        zYSMhNtK3O3JrEH+1xjUZQ86FLItH+2y+g==
+X-Google-Smtp-Source: APXvYqwqWn98sIzUoybOJYVYcRSWVhMeKAFe8/0u1dMDQwQ20DewYj1vMTc1Og9g9ggVyBX4J+5vcQ==
+X-Received: by 2002:a17:902:a70b:: with SMTP id w11mr3665919plq.27.1574264734625;
+        Wed, 20 Nov 2019 07:45:34 -0800 (PST)
 Received: from localhost ([14.96.110.98])
-        by smtp.gmail.com with ESMTPSA id y11sm30781168pfq.1.2019.11.20.07.45.30
+        by smtp.gmail.com with ESMTPSA id b1sm7658518pjw.19.2019.11.20.07.45.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Nov 2019 07:45:30 -0800 (PST)
+        Wed, 20 Nov 2019 07:45:34 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
         Amit Daniel Kachhap <amit.kachhap@gmail.com>,
@@ -64,9 +64,9 @@ To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Zhang Rui <rui.zhang@intel.com>
 Cc:     linux-pm@vger.kernel.org
-Subject: [PATCH v2 01/11] thermal: of-thermal: Appease the kernel-doc deity
-Date:   Wed, 20 Nov 2019 21:15:10 +0530
-Message-Id: <dc742789bf4b3c8207b01c7946f2b401350536a7.1574242756.git.amit.kucheria@linaro.org>
+Subject: [PATCH v2 02/11] thermal: cpu_cooling: Appease the kernel-doc deity
+Date:   Wed, 20 Nov 2019 21:15:11 +0530
+Message-Id: <ddb09e9728533c274edae7ff3da515b3cf7ef231.1574242756.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
 References: <cover.1574242756.git.amit.kucheria@linaro.org>
@@ -77,31 +77,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace a comment starting with /** by simply /* to avoid having
-it interpreted as a kernel-doc comment.
+Describe the function parameter to fix the following warning with make
+W=1:
 
-Fixes the following warning when compile with make W=1:
-linux.git/drivers/thermal/of-thermal.c:761: warning: cannot understand function prototype: 'const char *trip_types[] = '
+linux.git/drivers/thermal/cpu_cooling.c:92: warning: Function parameter
+or member 'qos_req' not described in 'cpufreq_cooling_device'
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/thermal/of-thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/cpu_cooling.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index dc5093be553e..5235aed2fadd 100644
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -754,7 +754,7 @@ static int thermal_of_populate_bind_params(struct device_node *np,
- 	return ret;
- }
- 
--/**
-+/*
-  * It maps 'enum thermal_trip_type' found in include/linux/thermal.h
-  * into the device tree binding of 'trip', property type.
-  */
+diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+index 52569b27b426..53dd08f238d5 100644
+--- a/drivers/thermal/cpu_cooling.c
++++ b/drivers/thermal/cpu_cooling.c
+@@ -63,6 +63,7 @@ struct time_in_idle {
+  * @policy: cpufreq policy.
+  * @node: list_head to link all cpufreq_cooling_device together.
+  * @idle_time: idle time stats
++ * @qos_req: PM QoS contraint to apply
+  *
+  * This structure is required for keeping information of each registered
+  * cpufreq_cooling_device.
 -- 
 2.20.1
 
