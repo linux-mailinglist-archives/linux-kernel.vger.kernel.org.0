@@ -2,201 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD368103A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:42:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55657103A40
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbfKTMm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 07:42:29 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59415 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726872AbfKTMm2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:42:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574253747;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IjiqMwk1Fsou6tGghqOXQu73ReEj37ZIEa08rkPnnp0=;
-        b=izQ0z1IsBOtsVLvYkFvFVo+mD2r1BD6kgxoFFmU/MUTV4fJT+PV+nc1saMsBQYLhrdX0jE
-        Ms+Af4O2ej9yQQFizDZbYtyT0NwwLbdvY0lP/H6Ol0pGNAsy35VlmXABkYDP1nurk4Y6G6
-        mtG/OpfTP7YNLKG99ZJJV0L51QgGkE0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-21-nGJD-KGsPyyqy-xPYYGZlA-1; Wed, 20 Nov 2019 07:42:26 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E2EBA1005513;
-        Wed, 20 Nov 2019 12:42:24 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4286D67275;
-        Wed, 20 Nov 2019 12:42:24 +0000 (UTC)
-Date:   Wed, 20 Nov 2019 07:42:24 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/28] xfs: rework unreferenced inode lookups
-Message-ID: <20191120124224.GA15542@bfoster>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-29-david@fromorbit.com>
- <20191106221846.GE37080@bfoster>
- <20191114221602.GJ4614@dread.disaster.area>
- <20191115172600.GC55854@bfoster>
- <20191118010047.GS4614@dread.disaster.area>
- <20191119151344.GD10763@bfoster>
- <20191119211834.GA4614@dread.disaster.area>
+        id S1729898AbfKTMmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 07:42:54 -0500
+Received: from mout.gmx.net ([212.227.17.20]:46239 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729871AbfKTMmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 07:42:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1574253753;
+        bh=ktPNJbo11jAFf09HBqox2cKDac801mq4F4OHypBVxGQ=;
+        h=X-UI-Sender-Class:Subject:From:Reply-To:To:Cc:Date:In-Reply-To:
+         References;
+        b=BnWKQHq4iQv/xHikVEqi4Jk+I/KO93sgAGu7yQS30zu6X9GfnGwtXe3NPgCzuSw8S
+         i8ZfXJacu0l0Y/gjejKj8yHyArEtgWIt0b00cKQ18sei0e58L2qSYopTaMQMigItHz
+         /5fPNifun7W1hB4C56bOI9lOSpY0v2CP09U8uGT0=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from bear.fritz.box ([79.234.67.220]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M2wKq-1iYVm93EvU-003PRx; Wed, 20
+ Nov 2019 13:42:33 +0100
+Message-ID: <9621c697a6af55422f8c89087e73dc1ba2098154.camel@gmx.de>
+Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
+From:   Robert Stupp <snazy@gmx.de>
+Reply-To: snazy@snazy.de
+To:     Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
+Date:   Wed, 20 Nov 2019 13:42:30 +0100
+In-Reply-To: <bb7bac8adfce085cdcc080f8f26cbaae2fe916e0.camel@gmx.de>
+References: <fa6599459300c61da6348cdfd0cfda79e1c17a7a.camel@gmx.de>
+         <ad13f479-3fda-b55a-d311-ef3914fbe649@suse.cz>
+         <20191105182211.GA33242@cmpxchg.org>
+         <20191106120315.GF16085@quack2.suse.cz>
+         <4edf4dea97f6c1e3c7d4fed0e12c3dc6dff7575f.camel@gmx.de>
+         <20191106145608.ucvuwsuyijvkxz22@macbook-pro-91.dhcp.thefacebook.com>
+         <20191106150524.GL16085@quack2.suse.cz>
+         <20191106151429.swqtq2dt4uelhjzn@macbook-pro-91.dhcp.thefacebook.com>
+         <9f6b707c69ceb34e3916b1d47f2e2fa6a4f025ab.camel@gmx.de>
+         <94c71621a0245db763db9e289286b79056cc9bc5.camel@gmx.de>
+         <20191106172520.GF12685@quack2.suse.cz>
+         <bb7bac8adfce085cdcc080f8f26cbaae2fe916e0.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20191119211834.GA4614@dread.disaster.area>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: nGJD-KGsPyyqy-xPYYGZlA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+X-Provags-ID: V03:K1:c2z0reuhmHPQE6P+OOoRo7l9Ge9xmBIfqb5k89iutFiVnyp+276
+ l0a2COapDUmx2LkITh+e2gX9o1yjqio5MJG98kggthJFfh73FlKGNV8LU8x3RUkLnkOLIkN
+ 8oDWS/R0dk4R+v3PlgBk/pW7yqRqzQu7Wz26dCK2sKl3CoVtvhOl7MyC/zn5QoW8RV9wIvB
+ u1+1ZvcFlkx9n2scoraQA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Gq5FGJg3S7I=:EPzvxHr4tIAJqvgbOFbwm9
+ b4HJaOWhwkcjSKiU0S1i41mBiziVFhQYhcW/f5lG9x87nikBP3QeK5SY4IB3ezukWVhElwdB1
+ dhME2femUjg4jf26iTDnd7M0cMZv53srFdjEhE5U5hFfQnPWI31Q+4/TiJVydVnKW9NQWkwMP
+ U/eWagpD7EiDKypPuJbtzWo4UNJhIPDS89n3X7iq2dSwgCpUZzjQYK6LeRLCid2LcKaMHJ4NS
+ Oj/ZNQx6N5JzoIbFgMnoRcEwpisp/RCISRY9C3GM69t86rFytktFYtxFUDqefE71vXcwbWjOt
+ 5pWxfh9rnS27MGApHjuI5cYzI1FUkhxFbdAhHwZ9Be4rmuAfUrcTx8xR5SUlxyYg8LvumgOOm
+ 9lcMOT16Jy9whYS0DvfeGPCQwZDXr71EFTisMeZhNlKTuR65PVXeVa7ejpl4+/j9yyFR45mxo
+ uq9xjLW3cXE3A1At+MhKKc5A9Dfn09ZJt9Ik9vZkBgWJ881UTrCy667fljQKm9PwnXqLnwRVK
+ qDVo+GoN6zHHt2VRtALhfo2RL2Njsv6VgNcm5KP9S9iRWzgxc1d20jp8fqje0x5TOz91HzdBB
+ Cxb0Yz6SY2TXNnItI7ZIbgWwwvAvv+UbXQEHYPHmfdHqFiW3KfmfGLI6Gwi/EXLjx3D+4AXM4
+ 8Ken3y1/bskFJygFuNE5Gvqg567Ec2VphD7yYSfTvTxLhvCl+YDRQGOa+wed2V+Mp8pmA8+z+
+ 87147qCbiZ21Sq1Ztyx5na/UfAZs+xGtq4K3elwQ3K9O4wXvL8KC7qV/8YWa0Wwtmu0NPUDK0
+ wMGQlHPbRO+QbTZVo8f94XIlpyl1Q+jEe1CXfXYAyVoPlzaxNfDdBloOBSyJJFVt4tcUQOxCh
+ k2rK+3MDbHXblkISpmY9Es4PGm3amB4Zn9A0HdfFYMrUu+AkkHaLxT26R/YZUGt1EeZEB2Mmn
+ /OO4OULWhi7ER0EKOFNAVQ5xDRQheLBA8Fc84c23bZEixLtJ/E0DZYELXZyDEgTY0kCMbZ2wT
+ mS2XahS8hcZBo2KbUm9BTQ2xiZiEpyz1R3VfRAcaseB5RWBlWYwXxsztD7/dvTMZacRrfCmO9
+ 37/IzYXxrQFUyxroKn41c0613j6emOTGAfbs1BrD1ubH4M8aL7lmAsileyJ3MBLxreFVf1eUX
+ VCY1P3NR9NiF4/dRjt2EfIuax6SULzDR7Pz7/OT21695EoM3P6VwtYjYbgppxtYBzY+pug2FI
+ I6o8BxWv9ZcMxaIqyK/WSLZWNccgoU+GmpYna2A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 08:18:34AM +1100, Dave Chinner wrote:
-> On Tue, Nov 19, 2019 at 10:13:44AM -0500, Brian Foster wrote:
-> > On Mon, Nov 18, 2019 at 12:00:47PM +1100, Dave Chinner wrote:
-> > > On Fri, Nov 15, 2019 at 12:26:00PM -0500, Brian Foster wrote:
-> > > > On Fri, Nov 15, 2019 at 09:16:02AM +1100, Dave Chinner wrote:
-> > > > > On Wed, Nov 06, 2019 at 05:18:46PM -0500, Brian Foster wrote:
-> > > > > If so, most of this patch will go away....
-> > > > >=20
-> > > > > > > +=09 * attached to the buffer so we don't need to do anything=
- more here.
-> > > > > > >  =09 */
-> > > > > > > -=09if (ip !=3D free_ip) {
-> > > > > > > -=09=09if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
-> > > > > > > -=09=09=09rcu_read_unlock();
-> > > > > > > -=09=09=09delay(1);
-> > > > > > > -=09=09=09goto retry;
-> > > > > > > -=09=09}
-> > > > > > > -
-> > > > > > > -=09=09/*
-> > > > > > > -=09=09 * Check the inode number again in case we're racing w=
-ith
-> > > > > > > -=09=09 * freeing in xfs_reclaim_inode().  See the comments i=
-n that
-> > > > > > > -=09=09 * function for more information as to why the initial=
- check is
-> > > > > > > -=09=09 * not sufficient.
-> > > > > > > -=09=09 */
-> > > > > > > -=09=09if (ip->i_ino !=3D inum) {
-> > > > > > > +=09if (__xfs_iflags_test(ip, XFS_ISTALE)) {
-> > > > > >=20
-> > > > > > Is there a correctness reason for why we move the stale check t=
-o under
-> > > > > > ilock (in both iflush/ifree)?
-> > > > >=20
-> > > > > It's under the i_flags_lock, and so I moved it up under the looku=
-p
-> > > > > hold of the i_flags_lock so we don't need to cycle it again.
-> > > > >=20
-> > > >=20
-> > > > Yeah, but in both cases it looks like it moved to under the ilock a=
-s
-> > > > well, which comes after i_flags_lock. IOW, why grab ilock for stale
-> > > > inodes when we're just going to skip them?
-> > >=20
-> > > Because I was worrying about serialising against reclaim before
-> > > changing the state of the inode. i.e. if the inode has already been
-> > > isolated by not yet disposed of, we shouldn't touch the inode state
-> > > at all. Serialisation against reclaim in this patch is via the
-> > > ILOCK, hence we need to do that before setting ISTALE....
-> > >=20
-> >=20
-> > Yeah, I think my question still isn't clear... I'm not talking about
-> > setting ISTALE. The code I referenced above is where we test for it and
-> > skip the inode if it is already set. For example, the code referenced
-> > above in xfs_ifree_get_one_inode() currently does the following with
-> > respect to i_flags_lock, ILOCK and XFS_ISTALE:
-> >=20
-> > =09...
-> > =09spin_lock(i_flags_lock)
-> > =09xfs_ilock_nowait(XFS_ILOCK_EXCL)
-> > =09if !XFS_ISTALE
-> > =09=09skip
-> > =09set XFS_ISTALE
-> > =09...
->=20
-> There is another place in xfs_ifree_cluster that sets ISTALE without
-> the ILOCK held, so the ILOCK is being used here for a different
-> purpose...
->=20
-> > The reclaim isolate code does this, however:
-> >=20
-> > =09spin_trylock(i_flags_lock)
-> > =09if !XFS_ISTALE
-> > =09=09skip
-> > =09xfs_ilock(XFS_ILOCK_EXCL)
-> > =09...=09
->=20
-> Which is fine, because we're not trying to avoid racing with reclaim
-> here. :) i.e. all we need is the i_flags lock to check the ISTALE
-> flag safely.
->=20
-> > So my question is why not do something like the following in the
-> > _get_one_inode() case?
-> >=20
-> > =09...
-> > =09spin_lock(i_flags_lock)
-> > =09if !XFS_ISTALE
-> > =09=09skip
-> > =09xfs_ilock_nowait(XFS_ILOCK_EXCL)
-> > =09set XFS_ISTALE
-> > =09...
->=20
-> Because, like I said, I focussed on the lookup racing with reclaim
-> first. The above code could be used, but it puts object internal
-> state checks before we really know whether the object is safe to
-> access and whether we can trust it.
->=20
-> I'm just following a basic RCU/lockless lookup principle here:
-> don't try to use object state before you've fully validated that the
-> object is live and guaranteed that it can be safely referenced.
->=20
-> > IOW, what is the need, if any, to acquire ilock in the iflush/ifree
-> > paths before testing for XFS_ISTALE? Is there some specific intermediat=
-e
-> > state I'm missing or is this just unintentional?
->=20
-> It's entirely intentional - validate and claim the object we've
-> found in the lockless lookup, then run the code that checks/changes
-> the object state. Smashing state checks and lockless lookup
-> validation together is a nasty landmine to leave behind...
->=20
+Is there any chance to get a patch merged?
 
-Ok, so this is intentional, but the purpose is simplification vs.
-technically being part of the lookup dance. I'm not sure I see the
-advantage given that IMO this trades off one landmine for another, but
-I'm not worried that much about it as long as the code is correct.
-
-I guess we'll see how things change after reevaluation of the whole
-holding ilock across contexts behavior, but if we do end up with a
-similar pattern in the iflush/ifree paths please document that
-explicitly in the comments. Otherwise in a patch that swizzles this code
-around and explicitly plays games with ilock, the intent of this
-particular change is not clear to somebody reading the code IMO. In
-fact, I think it might be interesting to see if we could define a couple
-helpers (located closer to the reclaim code) to perform an unreferenced
-lookup/release of an inode, but that is secondary to nailing down the
-fundamental rules.
-
-Brian
-
-> Cheers,
->=20
-> Dave.
-> --=20
-> Dave Chinner
-> david@fromorbit.com
->=20
+On Thu, 2019-11-07 at 09:08 +0100, Robert Stupp wrote:
+> On Wed, 2019-11-06 at 18:25 +0100, Jan Kara wrote:
+> > On Wed 06-11-19 18:03:10, Robert Stupp wrote:
+> > > Oh, and I just realized, that I have two custom settings in my
+> > > /etc/rc.local - guess, I configured that when I installed that
+> > > machine
+> > > years ago. Sorry, that I haven't mentioned that earlier.
+> > >
+> > > echo 0 > /sys/block/nvme0n1/queue/read_ahead_kb
+> > > echo never >
+> > > /sys/kernel/mm/transparent_hugepage/defrag
+> > >
+> > > That setting is probably not quite standard, but I assume there
+> > > are
+> > > some database server setups out there, that set RA=3D0 as well.
+> >
+> > Ok, yes, that explains ra_pages =3D=3D 0. Thanks for the details.
+>
+> Ah! And with these settings, a fresh & clean installation of Ubuntu
+> eoan (5.3.x kernel), hangs during reboot.
+> And if the VM's booted with these settings in /etc/rc.local, the
+> mlockall(MCL_CURRENT) is reproducible as well.
+>
+>
 
