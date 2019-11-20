@@ -2,136 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E539D103D17
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:16:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE7A103D3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:24:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731660AbfKTOQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 09:16:07 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45688 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730191AbfKTOQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:16:07 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2BFB02E04DBF7C2534C7;
-        Wed, 20 Nov 2019 22:16:03 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 20 Nov 2019
- 22:15:55 +0800
-From:   zhengbin <zhengbin13@huawei.com>
-To:     <willy@infradead.org>, <viro@zeniv.linux.org.uk>,
-        <hughd@google.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-        <zhengbin13@huawei.com>
-Subject: [PATCH] tmpfs: use ida to get inode number
-Date:   Wed, 20 Nov 2019 22:23:18 +0800
-Message-ID: <1574259798-144561-1-git-send-email-zhengbin13@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730436AbfKTOYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 09:24:46 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34599 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727794AbfKTOYq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 09:24:46 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w11so1365923ote.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 06:24:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yOFfvevSyIuI2uXnhKhqs1DyN3AcbeT8ZG1uPgE2BRM=;
+        b=k0ZQSWb3hHNPjkhWrDg2UG82nir6GbQ/mlgsdzhvvgoMpyhvl+WwEu8779bjiQnu8g
+         8d5a4OB9oudrxxWTA3M+PIQA00bJVw9pxOwDdRafaWH8irq0hvJwWLtTy90novOcWX6v
+         CG9/af+Aq5GNBsYEEFoaDEKOLIR5rG1HUXON1DMCuszitFxtWbIWH1IruF11xMCusAm/
+         MkvvNaQVNSiPZLyCItyHwGJN4fLJTo4NZxDPSdSBRGFV26B9h/LxHq8BmbKlc+ObLAfH
+         7/srbRhE9fSN4novjtVNT5vl07GAt0+CJE1hiUN05VDBx+Nl1cTrDF41FIEdcvMfgtj/
+         ehxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yOFfvevSyIuI2uXnhKhqs1DyN3AcbeT8ZG1uPgE2BRM=;
+        b=NKh63KiIL+TJmJbmFIIsoY/mEIVZoJvslULuyO/WR+02Wyhv7GtL2KaYFa9pC2lAIW
+         Z0YzPbNWvE6AE+cl96mRAFV/w8KZsoe9x8fztnDsKGmK9STUJwB5xSkWAQBhFVwl06Sc
+         /C6UDYRNmeUU27qCDkl87bD9eivn1JkOGzG5kTpyPsqZ9TSW0LU8Qpdr3m+rvEdA9Jj0
+         B6F5EZlbMxqmn/ULr4fPSPsFzK6w6uv0HRKZ3W8fouv2yzwwlb4dahWJ89NIJ9/Kjc0h
+         c0W6fNYnA68lH4Lam9YjoZ+SwKTXWyVet7shitZkBqqO52pLQN8aWcDhZTtYf9KBZo46
+         hGzA==
+X-Gm-Message-State: APjAAAVzMarg6tc9lVxtoWh/uLPy/q4vsR8rd2EMfA3MElyJghDMBhch
+        kUNQro6fldDT5sttijQy77y9v03M7v0tdE/OvIEaUw==
+X-Google-Smtp-Source: APXvYqxnA8G81rljm9PRI4kMBgFx5xHF8npsvEDLPsgJihuMyGPwNDoGsLgkc8I5MZdAQ/Tvtt1EXptQF2KV3j41oYA=
+X-Received: by 2002:a9d:328:: with SMTP id 37mr2126736otv.228.1574259884942;
+ Wed, 20 Nov 2019 06:24:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+References: <20191115191728.87338-1-jannh@google.com> <20191115191728.87338-2-jannh@google.com>
+ <87lfsbfa2q.fsf@linux.intel.com> <CAG48ez2QFz9zEQ65VTc0uGB=s3uwkegR=nrH6+yoW-j4ymtq7Q@mail.gmail.com>
+ <20191120135607.GA84886@tassilo.jf.intel.com>
+In-Reply-To: <20191120135607.GA84886@tassilo.jf.intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 20 Nov 2019 15:24:17 +0100
+Message-ID: <CAG48ez11aL5OsDCTF=E6h=_DF6ojmunwp1BcWL73EsQLrmsttQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] x86/traps: Print non-canonical address on #GP
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a script to test tmpfs, after 10 days, there will be files share the
-same inode number, thus bug happens.
-The script is as follows:
-while(1) {
-  create a file
-  dlopen it
-  ...
-  remove it
-}
+On Wed, Nov 20, 2019 at 2:56 PM Andi Kleen <ak@linux.intel.com> wrote:
+> > Is there a specific concern you have about the instruction decoder? As
+> > far as I can tell, all the paths of insn_get_addr_ref() only work if
+> > the instruction has a mod R/M byte according to the instruction
+> > tables, and then figures out the address based on that. While that
+> > means that there's a wide variety of cases in which we won't be able
+> > to figure out the address, I'm not aware of anything specific that is
+> > likely to lead to false positives.
+>
+> First there will be a lot of cases you'll just print 0, even
+> though 0 is canonical if there is no operand.
 
-I have tried to change last_ino type to unsigned long, while this was
-rejected, see details on https://patchwork.kernel.org/patch/11023915.
+Why would I print zeroes if there is no operand? The decoder logic
+returns a -1 if it can't find a mod r/m byte, which causes the #GP
+handler to not print any address at all. Or are you talking about some
+weird instruction that takes an operand that is actually ignored, or
+something weird like that?
 
-Use ida to get inode number, from the fs_mark test, performance impact
-is small.
+> Then it might be that the address is canonical, but triggers
+> #GP anyways (e.g. unaligned SSE)
 
-CPU core: 128  memory: 8G
-Use fs_mark to create ten million files first in tmpfs.
+Which is an argument for printing the address even if it is canonical,
+as Ingo suggested, I guess.
 
-Then test performance in the following command(test five times):
-rm -rf /tmp/fsmark_test
-sync
-echo 3 > /proc/sys/vm/drop_caches
-sleep 10
-fs_mark -t 20 -s 0 -n 102400 -D 64 -N 1600 -L 3 -d /tmp/fsmark_test
+> Or it might be the wrong address if there is an operand,
+> there are many complex instructions that reference something
+> in memory, and usually do canonical checking there.
 
-result is file creation speed(Files/sec).
-get_next_ino  |  use ida
-439506.7      |  423219.0
-441453.0      |  406832.7
-439868.0      |  441283.3
-445642.3      |  428221.3
-441776.7      |  438129.0
-average:
-441649.34     |  427537.06
+In which case you'd probably usually see a canonical address in the
+instruction's argument, which causes the error message to not appear
+(in patch v2/v3) / to be different (in my current draft for patch v4).
+And as Ingo said over in the other thread, even if the argument is not
+directly the faulting address at all, it might still help with
+figuring out what's going on.
 
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
----
- mm/shmem.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+> And some other odd cases. For example when the instruction length
+> exceeds 15 bytes.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5b93877..6b5e01b 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -258,6 +258,7 @@ static const struct inode_operations shmem_dir_inode_operations;
- static const struct inode_operations shmem_special_inode_operations;
- static const struct vm_operations_struct shmem_vm_ops;
- static struct file_system_type shmem_fs_type;
-+static DEFINE_IDA(shmem_inode_ida);
+But this is the #GP handler. Don't overlong instructions give you #UD instead?
 
- bool vma_is_shmem(struct vm_area_struct *vma)
- {
-@@ -1138,6 +1139,7 @@ static void shmem_evict_inode(struct inode *inode)
+> I know there is fuzzing for the instruction
+> decoder, but it might be worth double checking it handles
+> all of that correctly. I'm not sure how good the fuzzer's coverage
+> is.
+>
+> At a minimum you should probably check if the address is
+> actually non canonical. Maybe that's simple enough and weeds out
+> most cases.
 
- 	simple_xattrs_free(&info->xattrs);
- 	WARN_ON(inode->i_blocks);
-+	ida_simple_remove(&shmem_inode_ida, inode->i_ino);
- 	shmem_free_inode(inode->i_sb);
- 	clear_inode(inode);
- }
-@@ -2213,13 +2215,20 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 	struct inode *inode;
- 	struct shmem_inode_info *info;
- 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
-+	int i_ino;
+The patch you're commenting on does that already; quoting the patch:
 
- 	if (shmem_reserve_inode(sb))
- 		return NULL;
-
-+	i_ino = ida_simple_get(&shmem_inode_ida, 0, 0, GFP_KERNEL);
-+	if (i_ino < 0) {
-+		shmem_free_inode(sb);
-+		return NULL;
-+	}
++       /* Bail out if insn_get_addr_ref() failed or we got a kernel address. */
++       if (addr_ref >= ~__VIRTUAL_MASK)
++               return;
 +
- 	inode = new_inode(sb);
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = i_ino;
- 		inode_init_owner(inode, dir, mode);
- 		inode->i_blocks = 0;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-@@ -2263,8 +2272,11 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 		}
++       /* Bail out if the entire operand is in the canonical user half. */
++       if (addr_ref + insn.opnd_bytes - 1 <= __VIRTUAL_MASK)
++               return;
 
- 		lockdep_annotate_inode_mutex_key(inode);
--	} else
-+	} else {
-+		ida_simple_remove(&shmem_inode_ida, i_ino);
- 		shmem_free_inode(sb);
-+	}
-+
- 	return inode;
- }
-
---
-2.7.4
-
+But at Ingo's request, I'm planning to change that in the v4 patch;
+see <https://lore.kernel.org/lkml/20191120111859.GA115930@gmail.com/>
+and <https://lore.kernel.org/lkml/CAG48ez0Frp4-+xHZ=UhbHh0hC_h-1VtJfwHw=kDo6NahyMv1ig@mail.gmail.com/>.
