@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79FD5103E3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABF5103E40
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:24:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbfKTPYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:24:14 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47088 "EHLO
+        id S1730140AbfKTPYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:24:24 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47100 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729753AbfKTPYN (ORCPT
+        with ESMTP id S1729763AbfKTPYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:24:13 -0500
+        Wed, 20 Nov 2019 10:24:14 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id CF2EA2910ED
+        with ESMTPSA id 918322910F2
 Received: by earth.universe (Postfix, from userid 1000)
-        id 2C9253C0C7A; Wed, 20 Nov 2019 16:24:08 +0100 (CET)
+        id 314213C0C7B; Wed, 20 Nov 2019 16:24:08 +0100 (CET)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
         Support Opensource <support.opensource@diasemi.com>,
@@ -26,9 +26,9 @@ Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv2 4/6] ASoC: da7213: Move set_sysclk to codec level
-Date:   Wed, 20 Nov 2019 16:24:04 +0100
-Message-Id: <20191120152406.2744-5-sebastian.reichel@collabora.com>
+Subject: [PATCHv2 5/6] ASoC: da7213: Move set_pll to codec level
+Date:   Wed, 20 Nov 2019 16:24:05 +0100
+Message-Id: <20191120152406.2744-6-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191120152406.2744-1-sebastian.reichel@collabora.com>
 References: <20191120152406.2744-1-sebastian.reichel@collabora.com>
@@ -39,72 +39,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move set_sysclk function to component level, so that it can be used at
+Move set_pll function to component level, so that it can be used at
 both component and DAI level.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- sound/soc/codecs/da7213.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sound/soc/codecs/da7213.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index 0359249118d0..9686948b16ea 100644
+index 9686948b16ea..3e6ad996741b 100644
 --- a/sound/soc/codecs/da7213.c
 +++ b/sound/soc/codecs/da7213.c
-@@ -1343,10 +1343,10 @@ static int da7213_mute(struct snd_soc_dai *dai, int mute)
- #define DA7213_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
- 			SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
+@@ -1392,10 +1392,10 @@ static int da7213_set_component_sysclk(struct snd_soc_component *component,
+ }
  
--static int da7213_set_dai_sysclk(struct snd_soc_dai *codec_dai,
--				 int clk_id, unsigned int freq, int dir)
-+static int da7213_set_component_sysclk(struct snd_soc_component *component,
-+				       int clk_id, int source,
-+				       unsigned int freq, int dir)
+ /* Supported PLL input frequencies are 32KHz, 5MHz - 54MHz. */
+-static int da7213_set_dai_pll(struct snd_soc_dai *codec_dai, int pll_id,
+-			      int source, unsigned int fref, unsigned int fout)
++static int da7213_set_component_pll(struct snd_soc_component *component,
++				    int pll_id, int source,
++				    unsigned int fref, unsigned int fout)
  {
 -	struct snd_soc_component *component = codec_dai->component;
  	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
- 	int ret = 0;
  
-@@ -1354,7 +1354,7 @@ static int da7213_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 		return 0;
- 
- 	if (((freq < 5000000) && (freq != 32768)) || (freq > 54000000)) {
--		dev_err(codec_dai->dev, "Unsupported MCLK value %d\n",
-+		dev_err(component->dev, "Unsupported MCLK value %d\n",
- 			freq);
- 		return -EINVAL;
- 	}
-@@ -1370,7 +1370,7 @@ static int da7213_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 				    DA7213_PLL_MCLK_SQR_EN);
- 		break;
- 	default:
--		dev_err(codec_dai->dev, "Unknown clock source %d\n", clk_id);
-+		dev_err(component->dev, "Unknown clock source %d\n", clk_id);
- 		return -EINVAL;
- 	}
- 
-@@ -1380,7 +1380,7 @@ static int da7213_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 		freq = clk_round_rate(da7213->mclk, freq);
- 		ret = clk_set_rate(da7213->mclk, freq);
- 		if (ret) {
--			dev_err(codec_dai->dev, "Failed to set clock rate %d\n",
-+			dev_err(component->dev, "Failed to set clock rate %d\n",
- 				freq);
- 			return ret;
- 		}
+ 	u8 pll_ctrl, indiv_bits, indiv;
 @@ -1507,7 +1507,6 @@ static int da7213_set_dai_pll(struct snd_soc_dai *codec_dai, int pll_id,
  static const struct snd_soc_dai_ops da7213_dai_ops = {
  	.hw_params	= da7213_hw_params,
  	.set_fmt	= da7213_set_dai_fmt,
--	.set_sysclk	= da7213_set_dai_sysclk,
- 	.set_pll	= da7213_set_dai_pll,
+-	.set_pll	= da7213_set_dai_pll,
  	.digital_mute	= da7213_mute,
  };
+ 
 @@ -1845,6 +1844,7 @@ static const struct snd_soc_component_driver soc_component_dev_da7213 = {
- 	.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
  	.dapm_routes		= da7213_audio_map,
  	.num_dapm_routes	= ARRAY_SIZE(da7213_audio_map),
-+	.set_sysclk		= da7213_set_component_sysclk,
+ 	.set_sysclk		= da7213_set_component_sysclk,
++	.set_pll		= da7213_set_component_pll,
  	.idle_bias_on		= 1,
  	.use_pmdown_time	= 1,
  	.endianness		= 1,
