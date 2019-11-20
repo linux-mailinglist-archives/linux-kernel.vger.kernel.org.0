@@ -2,80 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB0B10359A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:51:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A159B1035A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfKTHvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 02:51:33 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38374 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfKTHvd (ORCPT
+        id S1727867AbfKTHwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 02:52:16 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41376 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfKTHwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 02:51:33 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: aratiu)
-        with ESMTPSA id 4C0C72813B8
-From:   Adrian Ratiu <adrian.ratiu@collabora.com>
-To:     Fabio Estevam <festevam@gmail.com>,
-        Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc:     "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        linux-rockchip@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>, kernel@collabora.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "moderated list\:ARM\/FREESCALE IMX \/ MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: Re: [PATCH v3 3/4] drm: imx: Add i.MX 6 MIPI DSI host driver
-In-Reply-To: <CAOMZO5C5gpW6KF9d-79wd=-7ZGAbXQLAXw3kLi+_5DBW_DYrTw@mail.gmail.com>
-References: <20191118152518.3374263-1-adrian.ratiu@collabora.com>
- <20191118152518.3374263-4-adrian.ratiu@collabora.com>
- <CAOMZO5C5gpW6KF9d-79wd=-7ZGAbXQLAXw3kLi+_5DBW_DYrTw@mail.gmail.com>
-Date:   Wed, 20 Nov 2019 09:51:56 +0200
-Message-ID: <87o8x7dlyb.fsf@iwork.i-did-not-set--mail-host-address--so-tickle-me>
+        Wed, 20 Nov 2019 02:52:15 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b18so25468504wrj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 23:52:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SuCP5JTI0E4nMP2UPf/N4wvDe3O4fmtrt4QcYh19UfQ=;
+        b=OEXa5Z+Lwm0xTDaCT/T+TeOZiOjFm4L3T9fV44vWc+I8PXT/sFJw5HYYFp59ivfsGF
+         5krk5fPj4nkdGTkMrsEDckphZdEWylWFDDtKCkp/2fkHNfNgJ6J6YBFEoAKx7wake7NQ
+         LXZBb4cHyEMD3AyzEw250yXGQn+L6/4ViPxWjb3sJ8yvTL8AJHk0b3Bj9NGybFqNpLyC
+         gd0Og1jPFQLyeh3Q97VfE2TvMiVNzm6UFl7DIAXq/ZkDYv9GA9CoA+0uZvaXlBFIhayP
+         3Lwmrz2D9XMPlYyN9vz20u5CLE+D/mvopI5N8q9JLardnSve+s55hRkkDUfoEv/Icy+X
+         ALQg==
+X-Gm-Message-State: APjAAAX+UYnLXlXUJelssdXumnXiNHgcfsKwe/aJNxBJOeVMGO63d2xN
+        LEmt/FItMBC//k0Q6PWFyWP3JNSn
+X-Google-Smtp-Source: APXvYqzsr0Ao8O6jA7Ftffi4GO93OFuiGOoZfd06FdYMGUzZpoZhqWOAQQrfYgcNFd9W0Q4Ox8VHTw==
+X-Received: by 2002:a5d:65c5:: with SMTP id e5mr1407766wrw.311.1574236331639;
+        Tue, 19 Nov 2019 23:52:11 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id h15sm32973798wrb.44.2019.11.19.23.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2019 23:52:10 -0800 (PST)
+Date:   Wed, 20 Nov 2019 08:52:09 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Oscar Salvador <OSalvador@suse.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, sparse: do not waste pre allocated memmap space
+Message-ID: <20191120075209.GB23213@dhcp22.suse.cz>
+References: <20191119092642.31799-1-mhocko@kernel.org>
+ <def84c96-a7d0-1026-a890-a8eca2e6a458@redhat.com>
+ <20191119141047.a8e31e95b631e28f84dc0bc9@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191119141047.a8e31e95b631e28f84dc0bc9@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Adrian, 
+On Tue 19-11-19 14:10:47, Andrew Morton wrote:
+> On Tue, 19 Nov 2019 11:03:58 +0100 David Hildenbrand <david@redhat.com> wrote:
+> 
+> > > @@ -482,8 +481,13 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+> > >   {
+> > >   	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
+> > >   	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
+> > > +	/*
+> > > +	 * Pre-allocated buffer is mainly used by __populate_section_memmap
+> > > +	 * and we want it to be properly aligned to the section size - this is
+> > > +	 * especially the case for VMEMMAP which maps memmap to PMDs
+> > > +	 */
+> > >   	sparsemap_buf =
+> > > -		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
+> > > +		memblock_alloc_try_nid_raw(size, section_map_size(),
+> > >   						addr,
+> > >   						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+> > 
+> > Wow, that alignment/layout gives me nightmares  ^
+> > 
+> > None of your business, though :)
+> 
+> We're allowed to change it ;)
+> 
+> --- a/mm/sparse.c~mm-sparse-do-not-waste-pre-allocated-memmap-space-fix
+> +++ a/mm/sparse.c
+> @@ -486,10 +486,8 @@ static void __init sparse_buffer_init(un
+>  	 * and we want it to be properly aligned to the section size - this is
+>  	 * especially the case for VMEMMAP which maps memmap to PMDs
+>  	 */
+> -	sparsemap_buf =
+> -		memblock_alloc_try_nid_raw(size, section_map_size(),
+> -						addr,
+> -						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+> +	sparsemap_buf = memblock_alloc_try_nid_raw(size, section_map_size(),
+> +					addr, MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+>  	sparsemap_buf_end = sparsemap_buf + size;
+>  }
 
-Hi Fabio,
-
-> 
-> On Mon, Nov 18, 2019 at 12:25 PM Adrian Ratiu 
-> <adrian.ratiu@collabora.com> wrote: 
-> 
-> Some nitpicks: 
-> 
->> + +config DRM_IMX_MIPI_DSI +       tristate "Freescale i.MX DRM 
->> MIPI DSI" 
-> 
-> This text seems too generic as there are i.MX SoCs that use 
-> different MIPI DSI IP. 
-> 
-> Maybe "Freescale i.MX6 DRM MIPI DSI" instead? 
-
-Yes, this is a good idea, will update in a newer version to make 
-it more specific. I'll let this version sit a little more on 
-review so others also have time to review.
-
-Thank you!
-
-> 
->> +module_platform_driver(imx_mipi_dsi_driver); + 
->> +MODULE_DESCRIPTION("i.MX MIPI DSI host controller driver"); 
-> 
-> i.MX6 MIPI DSI, please.
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+I didn't bother mostly because the creative code layout made the
+intention of the patch more obvious.  But if it saves from nightmares
+then why not.
+-- 
+Michal Hocko
+SUSE Labs
