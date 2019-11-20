@@ -2,161 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 473B5104034
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A73510405F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:10:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbfKTP7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:59:30 -0500
-Received: from mail-eopbgr730041.outbound.protection.outlook.com ([40.107.73.41]:26275
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728032AbfKTP7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:59:30 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SKYaBhx1H1Mc5TzfIMYXCvmUnphvKh95kAwMemdTpMTsrlKi5P226gE9QCPrEaByWlwOoMUx1QhNK/5gzbL1fwFi/mCSernFX8qpIW1ZMudhGBGTTmZgqYgDM5JK3aTEDl2U3e1KR7ESbls0JLNrWfLMK9zxb5kXi0HZruAUQgU/fOyHfgV6AXEnLQkmh44eZqmFShNBbcWhjoKNHdUkC9/Vy2dj566g3aElNNHAvznJHdh98liWCLXZiAxFq8ebZDBFrjR5OOd85qBUtC9GwjTZRGNlN9gmvyXk71Mm9jEDQMAFwpVOAfbqFWwbg8k4ZDwnAUbSMB0MHRjOvYDKaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TW38+05mTW/8ck7Y8ZaJXJprQ8wF1U8WJTAfoGRqk6g=;
- b=QVpQzqO/plzDk3re9CRRjG0P0qHjo9ciY7mfRkNLOe2Tx2Qt3JIbMbtmX+wPLQMPL4d99qhQo2rM/o+ffgL0+2meF1X2b6+Djaj7gfxbMz4uHtOitjP0c5qeiSBKXqyNUMVBBoyri9dYkY3yKDFUJMoe19Cxat4WCD2+zGI6a5owuPd2FRr4Eg4r7egb11gZT0PPckBao5two0ZJYvb5Pub58aSTPRQfsLug/uDKS+m0zFCe6v9Fe4u1sVcH8iYY0zZEs+NyzW30wiFRyN/l4mnOswjasZsKYoTF9v2Gck+usD8aqH9r4B+4WiKCnKMG1oI+VExMovlkcQrcJWh0sQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TW38+05mTW/8ck7Y8ZaJXJprQ8wF1U8WJTAfoGRqk6g=;
- b=OLU/cHGAnthtSqUwePTBuUvdGlE2qpwCRu+Thb/qhwIn0Q7TRjl9vhpjcDcCYM7rdjujeInhKseqqxlwN168vrsbibnR5qEiyces6fiL2sZvRw/I7kXJIewVtC7t0lPGJGRJqHSePse4apeDoF3QUODdtW/rx3gfsyx0I0bRqZM=
-Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.230.25) by
- CH2PR02MB6456.namprd02.prod.outlook.com (52.132.231.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.30; Wed, 20 Nov 2019 15:59:25 +0000
-Received: from CH2PR02MB6359.namprd02.prod.outlook.com
- ([fe80::e81d:489c:2bd7:918a]) by CH2PR02MB6359.namprd02.prod.outlook.com
- ([fe80::e81d:489c:2bd7:918a%7]) with mapi id 15.20.2451.031; Wed, 20 Nov 2019
- 15:59:25 +0000
-From:   Dragan Cvetic <draganc@xilinx.com>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Derek Kiernan <dkiernan@xilinx.com>
-Subject: RE: [PATCH] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
-Thread-Topic: [PATCH] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
-Thread-Index: AQHVnzbvRwd5Ss/ZH0ugJQL96aPqOKeUNshQ
-Date:   Wed, 20 Nov 2019 15:59:24 +0000
-Message-ID: <CH2PR02MB6359CE45D06E908634CDA855CB4F0@CH2PR02MB6359.namprd02.prod.outlook.com>
-References: <20191120001030.30779-1-luc.vanoostenryck@gmail.com>
-In-Reply-To: <20191120001030.30779-1-luc.vanoostenryck@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=draganc@xilinx.com; 
-x-originating-ip: [149.199.80.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b612d33f-ceb9-4e8f-a66d-08d76dd29da3
-x-ms-traffictypediagnostic: CH2PR02MB6456:|CH2PR02MB6456:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR02MB64568DC90A782724B291CBAECB4F0@CH2PR02MB6456.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 02272225C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(396003)(376002)(189003)(199004)(13464003)(66446008)(26005)(110136005)(11346002)(476003)(76176011)(229853002)(316002)(305945005)(6116002)(3846002)(33656002)(74316002)(66476007)(8936002)(76116006)(66556008)(71190400001)(66946007)(14444005)(81166006)(81156014)(256004)(64756008)(71200400001)(52536014)(8676002)(7696005)(6506007)(5660300002)(66066001)(446003)(9686003)(486006)(102836004)(2906002)(107886003)(186003)(7736002)(14454004)(4326008)(6436002)(25786009)(99286004)(478600001)(55016002)(86362001)(2501003)(53546011)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6456;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Nje14Gx1IbB2EWyMkl6TLk8LUT061L4Pw9ISi7e6f4YYk/cGl54Gby1JdVM/uLrqKv4iBXLJNuivzxlQB0r4yqMGD0/ZYagqyng/gBSBWLvEz1fgdYaJUaNQVp/lDM/+BsSDT2Ln9zVf+dcfcHjy/M7tSuKYlh7zeB3GrtdhXhn3jdVqP5xt1/Iy5N4NXzDY31CYTdX0Fh9Pt2n5we+6BBNyNfp3eMEe5CelVRUCOM8g4UxNO8ODR6wjpUgX4HPd6G+WwoQm/5ng4x3UNflQ5dFH/Fo/OM1ejkxfubKDlXx3sMZYUUtut+YQtCZWnHlUpBXgmPQzi/zWzE6JRMfW7Xxr99+2KGIJPgWwl9VHWMDogkVpqXRcRCDOjdDQdaEaaWKUCY2QcF+YyktjhO39E8Kq9o2x6/e4QamPX6XMNMgM+82FFyobxPRLgXA4Ilnw
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1732686AbfKTQKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:10:38 -0500
+Received: from mga03.intel.com ([134.134.136.65]:54270 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728017AbfKTQKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:10:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 08:10:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
+   d="scan'208";a="204862318"
+Received: from ngoel1-mobl1.amr.corp.intel.com (HELO [10.255.66.61]) ([10.255.66.61])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Nov 2019 08:10:35 -0800
+Subject: Re: [alsa-devel] [PATCH v8 2/6] ASoC: amd: Refactoring of DAI from
+ DMA driver
+To:     vishnu <vravulap@amd.com>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alexander.Deucher@amd.com, Akshu.Agrawal@amd.com
+References: <1574155967-1315-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574155967-1315-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <0c3d3545-b0ee-4bb3-558a-045633a30e46@linux.intel.com>
+ <991a1c7a-6f34-caab-132d-5687b1f1bfa0@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <9005946f-69b6-1cc6-5a1a-b894d826b960@linux.intel.com>
+Date:   Wed, 20 Nov 2019 08:48:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b612d33f-ceb9-4e8f-a66d-08d76dd29da3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 15:59:24.9863
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 76Db1XvxDRT0LD7bpXMibBdwjtv0mIl9yBmZ9oYj9OJeSTCFNJKaoCEg7KD32abpp2J4MEeIJp3Ctqs9RP7r9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6456
+In-Reply-To: <991a1c7a-6f34-caab-132d-5687b1f1bfa0@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luc,
 
-For the sake of my understanding I'd like to ask you when the .pole method =
-is defined=20
-Why I'm asking this? I have a fairly new book (published in 2017) which sug=
-gests what is implemented in SDFEC driver.
+>>> +    pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
+>>> +    pm_runtime_use_autosuspend(&pdev->dev);
+>>> +    pm_runtime_enable(&pdev->dev);
+>>
+>> question: here you want to use pm_runtime for this platform device...
+>>
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static int acp3x_dai_remove(struct platform_device *pdev)
+>>> +{
+>>> +    pm_runtime_disable(&pdev->dev);
+>>> +    return 0;
+>>> +}
+>>> +static struct platform_driver acp3x_dai_driver = {
+>>> +    .probe = acp3x_dai_probe,
+>>> +    .remove = acp3x_dai_remove,
+>>> +    .driver = {
+>>> +        .name = "acp3x_i2s_playcap",
+>>
+>> ... but here there is no .pm structure and I don't see any 
+>> suspend/resume routines for this driver...
+>>
+>>> +    },
+>>> +};
+>>
+>>> @@ -774,13 +586,14 @@ static struct platform_driver acp3x_dma_driver = {
+>>>       .probe = acp3x_audio_probe,
+>>>       .remove = acp3x_audio_remove,
+>>>       .driver = {
+>>> -        .name = "acp3x_rv_i2s",
+>>> +        .name = "acp3x_rv_i2s_dma",
+>>>           .pm = &acp3x_pm_ops,
+>>>       },
+>>
+>> ... but for this other platform_driver you do have a .pm structure and 
+>> suspend-resume implementations.
+>>
+>> Wondering if this is a miss or a feature?
+>>
+> 
+> As per our design, ACP IP specific changes like ACP power on/off will be 
+> handled in ACP pci driver(parent device for DMA device and I2S 
+> controller(nothing but CPU DAI))
+> 
+> Where as In DMA driver during runtime suspend/resume interrupts will be 
+> disabled and enabled.
+> 
+> But in DAI driver there is nothing to be done in suspend and resume just 
+> returning zero so we have not added PM suspend/resume here in DAI.
+> 
+> So is it expected to add the suspend resumes with returning zero.Or if 
+> pm runtime is not needed in CPU DAI shall we remove the existing PM 
+> related calls in DAI.
+> 
+> Please suggest us.
 
-I'll test your suggestions and will come back to you soon.
+I am far from a pm_runtime expert but I'd remove the calls to
 
-Regards
-Dragan
++    pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
++    pm_runtime_use_autosuspend(&pdev->dev);
++    pm_runtime_enable(&pdev->dev);
 
+if you platform device does not provide any suspend/resume functions and 
+the parent takes care of everything?
 
-> -----Original Message-----
-> From: Luc Van Oostenryck [mailto:luc.vanoostenryck@gmail.com]
-> Sent: Wednesday 20 November 2019 00:11
-> To: linux-kernel@vger.kernel.org
-> Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>; Derek Kiernan <dkie=
-rnan@xilinx.com>; Dragan Cvetic
-> <draganc@xilinx.com>
-> Subject: [PATCH] misc: xilinx_sdfec: fix xsdfec_poll()'s return type
->=20
-> xsdfec_poll() is defined as returning 'unsigned int' but the
-> .poll method is declared as returning '__poll_t', a bitwise type.
->=20
-> Fix this by using the proper return type and using the EPOLL
-> constants instead of the POLL ones, as required for __poll_t.
->=20
-> CC: Derek Kiernan <derek.kiernan@xilinx.com>
-> CC: Dragan Cvetic <dragan.cvetic@xilinx.com>
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> ---
->  drivers/misc/xilinx_sdfec.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-> index 11835969e982..48ba7e02bed7 100644
-> --- a/drivers/misc/xilinx_sdfec.c
-> +++ b/drivers/misc/xilinx_sdfec.c
-> @@ -1025,25 +1025,25 @@ static long xsdfec_dev_compat_ioctl(struct file *=
-file, unsigned int cmd,
->  }
->  #endif
->=20
-> -static unsigned int xsdfec_poll(struct file *file, poll_table *wait)
-> +static __poll_t xsdfec_poll(struct file *file, poll_table *wait)
->  {
-> -	unsigned int mask =3D 0;
-> +	__poll_t mask =3D 0;
->  	struct xsdfec_dev *xsdfec;
->=20
->  	xsdfec =3D container_of(file->private_data, struct xsdfec_dev, miscdev)=
-;
->=20
->  	if (!xsdfec)
-> -		return POLLNVAL | POLLHUP;
-> +		return EPOLLNVAL | EPOLLHUP;
->=20
->  	poll_wait(file, &xsdfec->waitq, wait);
->=20
->  	/* XSDFEC ISR detected an error */
->  	spin_lock_irqsave(&xsdfec->error_data_lock, xsdfec->flags);
->  	if (xsdfec->state_updated)
-> -		mask |=3D POLLIN | POLLPRI;
-> +		mask |=3D EPOLLIN | EPOLLPRI;
->=20
->  	if (xsdfec->stats_updated)
-> -		mask |=3D POLLIN | POLLRDNORM;
-> +		mask |=3D EPOLLIN | EPOLLRDNORM;
->  	spin_unlock_irqrestore(&xsdfec->error_data_lock, xsdfec->flags);
->=20
->  	return mask;
-> --
-> 2.24.0
+IIRC the status for the platform device would be 'unsupported' but that 
+shouldn't prevent the parent from suspending/resuming.
+
+A second opinion would be desirable here...
 
