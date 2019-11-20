@@ -2,101 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E7D103B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AACE103B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:34:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730706AbfKTNdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:33:44 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:37522 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730697AbfKTNdo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:33:44 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 005D01C1A59; Wed, 20 Nov 2019 14:33:42 +0100 (CET)
-Date:   Wed, 20 Nov 2019 14:33:42 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Christoph Manszewski <c.manszewski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 389/422] crypto: s5p-sss: Fix Fix argument list
- alignment
-Message-ID: <20191120133342.GB32699@duo.ucw.cz>
-References: <20191119051400.261610025@linuxfoundation.org>
- <20191119051424.311206784@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
-Content-Disposition: inline
-In-Reply-To: <20191119051424.311206784@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730735AbfKTNdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:33:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730719AbfKTNdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:33:54 -0500
+Received: from localhost.localdomain (unknown [118.189.143.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87976219FA;
+        Wed, 20 Nov 2019 13:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574256833;
+        bh=I2ItxMWjRTEwYmAhHosn5S3+pzi92xqBKTYGklWPoUI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DXLsXb1V6t+zEdcUm0IV+EcRRH5mN6kgkgu5xpppSYvdEfjEDweqKnvvNe2Jq1PgL
+         UyiNDWj3EFBVqrvpPkA5X0jWyW2Zc8pS0qkrN+NMx7QBl5WukUMYSnzLE2Q9kSWchf
+         3sk5RnjK+QqRXtVk5CA8HYUnBzW9Z8m4aAOz0tQ4=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH] drm/rockchip: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:33:48 +0800
+Message-Id: <20191120133348.6640-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
 
---DBIVS5p969aUjpLe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/gpu/drm/rockchip/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On Tue 2019-11-19 06:19:46, Greg Kroah-Hartman wrote:
-> From: Christoph Manszewski <c.manszewski@samsung.com>
->=20
-> [ Upstream commit 6c12b6ba45490eeb820fdceccf5a53f42a26799c ]
->=20
-> Fix misalignment of continued argument list.
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index 6f4222f8beeb..1670a5cae3c7 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -28,17 +28,17 @@ config ROCKCHIP_ANALOGIX_DP
+ 	  on RK3288 or RK3399 based SoC, you should select this option.
+ 
+ config ROCKCHIP_CDN_DP
+-        bool "Rockchip cdn DP"
++	bool "Rockchip cdn DP"
+ 	depends on EXTCON=y || (EXTCON=m && DRM_ROCKCHIP=m)
+-        help
++	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the cdn DP driver. If you want to enable Dp on
+ 	  RK3399 based SoC, you should select this
+ 	  option.
+ 
+ config ROCKCHIP_DW_HDMI
+-        bool "Rockchip specific extensions for Synopsys DW HDMI"
+-        help
++	bool "Rockchip specific extensions for Synopsys DW HDMI"
++	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the Synopsys DesignWare HDMI driver. If you want to
+ 	  enable HDMI on RK3288 or RK3399 based SoC, you should select
+-- 
+2.17.1
 
-Including whitespace changes in -stable is forbidden by rules.
-
-This one is _just_ whitespace change. Please drop.
-
-									Pavel
-
-> +++ b/drivers/crypto/s5p-sss.c
-> @@ -491,7 +491,7 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
->  }
-> =20
->  static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *=
-src,
-> -			    struct scatterlist **dst)
-> +			   struct scatterlist **dst)
->  {
->  	void *pages;
->  	int len;
-> @@ -1889,7 +1889,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev =
-*dev,
->  }
-> =20
->  static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
-> -				struct ablkcipher_request *req)
-> +				 struct ablkcipher_request *req)
->  {
->  	struct scatterlist *sg;
->  	int err;
-> --=20
-> 2.20.1
->=20
->=20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---DBIVS5p969aUjpLe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXdVAtgAKCRAw5/Bqldv6
-8pKmAKDBGFlnbyzuWtGNXnw2tGuBjVOZcACeNvsmqaXMyq4Ibvw9NK3hVnZUPto=
-=bhrj
------END PGP SIGNATURE-----
-
---DBIVS5p969aUjpLe--
