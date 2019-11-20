@@ -2,79 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A538C1041DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC2C1041ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:18:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfKTRRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 12:17:19 -0500
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:33791 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727671AbfKTRRT (ORCPT
+        id S1730748AbfKTRSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 12:18:36 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:10988 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730671AbfKTRSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 12:17:19 -0500
-Received: by mail-lj1-f175.google.com with SMTP id t5so31818ljk.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 09:17:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bSyXlJi6K2335/Bgez7VUxEtGRE+HAza7pceyBB8j1U=;
-        b=QSorraurrun2yAOywBEFGjKY5bMnmpZ80LO0pSraxkXWig5mvLULXIyk3uuI9+BQQv
-         o4FK24D5wDNyBLCVuFjRk2c0iP15f0ChW375TzsYZDejfzdKFH7ONTgLbiIKDks6VOCA
-         e7+wMhSX3C3uGyl/hXxrLALy4lTQ7CQ6IzInlsN0ZvQsknb0T7dsYgbtufolDsnCkNTX
-         HiuNOnwDakvrgXyU9lXQEQ2ECcwAB79O48FBp1fWldGgwmtc6xUXpvX2b7P+LrLfJi8O
-         xRVY2Qmxn7XJzD5gPaI2qmqiGPSQz0fOFiDiTGA0/IBqadXplFMf//c9+qMHl3qC5CTT
-         Ebqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bSyXlJi6K2335/Bgez7VUxEtGRE+HAza7pceyBB8j1U=;
-        b=sFkRtCo6pSHw1ulFzGWBR4bfxnSfCV3+OkLgQXeK+ChMFtXaI3rCzMNqXpxxURQXFZ
-         lhcEblwkV9ARwMXBNQd5VYkDQobqMx5DmcuVupMx4hGFz4E54410DRcHrnNQfclUKHhT
-         CbPSM9zBOg6d41XhS1W4DMXqcdJUD7bVVIOi+o8/zhwvfzuVOsMlarpukV9+Kfq9SnzN
-         LUYbwAhKYFxlvmplhG/ZzEAvs4VcpyfFfIO34a20ZjPKkQ+Qj+FoP5JyipD2eYEXcHY5
-         cjFtFD5sRhdeC/z3KGOLqqOcT/25nzANYpDHwz5lsaP5tfoKOuufsLXuMZN/VesyCOoN
-         5T5Q==
-X-Gm-Message-State: APjAAAVE4ARTFXdN9mGV3xaI1fCbccCXzp1YfsymMVH1eOHutihm/MdO
-        vZJ0Jkcl/is4oOLteQbK9yeV3hgUQ2Ywl4rajL8=
-X-Google-Smtp-Source: APXvYqzxHdnld/ZlrUqKdpv4WuKrIK70iueq4D4crj1Nm2Jc6n5N8iRYTSKAZsJW68TD+xFkMjvTYreR/ZFvEBI/BLg=
-X-Received: by 2002:a05:651c:205b:: with SMTP id t27mr3876513ljo.143.1574270235724;
- Wed, 20 Nov 2019 09:17:15 -0800 (PST)
+        Wed, 20 Nov 2019 12:18:35 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAKGumVd014551;
+        Wed, 20 Nov 2019 09:17:27 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=XnUgr6XC4IzD6AfeWGFe7tyFyTHx0g197GkvXNNlQAI=;
+ b=IRzBIWilq+qzGIP+7uchjKdMlykE7ylA0v9ixqSYq143EAh3Ap49JrpTnYihzBOBjV58
+ Pjj0RWi0uSAKn0aaA2U7eMBuaEEF65uTRlKI2XMs+WrHVF9bVJna8MT7ZwPces+ro07w
+ mA0IE/2wsfJzD+WTZcIP1RD3OjrNx7IFgQY= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2wct98mfkk-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 20 Nov 2019 09:17:27 -0800
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-hub02.TheFacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 20 Nov 2019 09:17:25 -0800
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 20 Nov 2019 09:17:25 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R42b9aXEed+U/4Vn9GJvFVeOwiQs4MLVnHaLwjY6NV5pq6V0PW2F8M9XLUrqJ349qgv0d9lmcQaoAaGs3JF2wRBoyqtWkf+oD3QZTkEv9QQ45LZN/z/Spm7jI/j/cx1UUK/w9tf+UIKyOJCPPtoEF5FxBWzlsV8VP4PtYRY5xcsIc13SKbYkSwvoqV+pSg9vL0FZGTYjkh04hm4LzwRPN24ZLpuhqCe63FqhGB+IRsetDL/suCn/DECqZcymAL6G+gPRkyWOVcFIFKOljRypZhK92hOCBrBYBe2B+FTOWMCIUnSdY9iWDfHuEYRX17spuDNivexvo8IgGfzJjWYdvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XnUgr6XC4IzD6AfeWGFe7tyFyTHx0g197GkvXNNlQAI=;
+ b=OFabVy2S71wLSYBkaC4/gTMP/JhAl1W2b7fSMLb5yH2e/Z31UAW0SFfq+UNO03+hZtrd4uhnU0JHzZLMSFfJ+V9lI4uGh4lTAbYHshBjTZIv30o5+uHEIyyNWI9VwIeEso/HsCs0RfkDVDqtjlFkzD34dM7kfNgn0G9AlZloIENipU8uVPnYHmkm2FDsemIoqu53JVSJjTlanvMvXarlsDyQqthKCrLQa0Gxtixn99geCsz4hur3ZLKK95UFdpQAvLoC8lmwqRvDim8cDZw/smfqKKX5T5uhnOYslaSraaVnTxBubgoJyL9fWgmTJDzDQRpL/cf++XYdCWW+sY2OrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XnUgr6XC4IzD6AfeWGFe7tyFyTHx0g197GkvXNNlQAI=;
+ b=ItX8qr/HCGv4ejPO0Sp8zx1PGCrlz636S4o1kZYbtjWh3XD3LE/7NpA4uHTHcLAJNj4dcRzMTDJn5QhqJWEExGy6/iERovQP1nb8FXw4JVJ5ByzpzCSrdMkl3MqiUQmmUDBOs/oxSqHoI/0wcfBrgHcXGPGpCFCXOIefp3FjOy4=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1118.namprd15.prod.outlook.com (10.175.2.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.27; Wed, 20 Nov 2019 17:17:25 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::f831:d112:6187:90d9]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::f831:d112:6187:90d9%4]) with mapi id 15.20.2451.031; Wed, 20 Nov 2019
+ 17:17:25 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH] perf: Make the mlock accounting simple again
+Thread-Topic: [PATCH] perf: Make the mlock accounting simple again
+Thread-Index: AQHVn8Vn0sTTCanwpkymLnNHz6eF3aeUTTUA
+Date:   Wed, 20 Nov 2019 17:17:24 +0000
+Message-ID: <C0F2E8FA-925C-4D71-9628-554270034422@fb.com>
+References: <20191120170640.54123-1-alexander.shishkin@linux.intel.com>
+In-Reply-To: <20191120170640.54123-1-alexander.shishkin@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3601.0.10)
+x-originating-ip: [2620:10d:c090:180::5286]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bd1e59df-6543-43f2-d6c6-08d76ddd831e
+x-ms-traffictypediagnostic: MWHPR15MB1118:
+x-microsoft-antispam-prvs: <MWHPR15MB1118D5A37EFCE5FA8957152CB34F0@MWHPR15MB1118.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 02272225C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(366004)(39860400002)(136003)(51914003)(199004)(189003)(478600001)(46003)(36756003)(54906003)(25786009)(256004)(81166006)(6506007)(81156014)(53546011)(76116006)(6116002)(33656002)(6246003)(99286004)(8676002)(8936002)(102836004)(4326008)(186003)(50226002)(4744005)(2906002)(5660300002)(71200400001)(71190400001)(6512007)(86362001)(76176011)(6486002)(2616005)(486006)(446003)(11346002)(476003)(14454004)(6916009)(66446008)(316002)(229853002)(7736002)(64756008)(66946007)(305945005)(15650500001)(66476007)(66556008)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1118;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: v93edLv/i2F2XqLzRQxk55d8e++U9nfVUv/Ai0IZBUAhNGfjyFvRKWOi/JqvMuPn2FT/8xuK+5C8NSd1C0bb6aroyhMGsw3LgUmH/VNNhrm4zJ3ZJaXSuRIPqerZbxV+p/EARBEwObxBzmqFG6o42xr51uv/xWaSvNzLa/LIYhuxmdmL/4MLU7niZ4lP+P+QrPISKarRXkzc24olbsmpRMnF7ocj34dsJr0nEfZuGSU9ETHOIYTW3JNpMsOSC7X8PdBGIGa8NsYKrN3aOiFHRYaXT0SDbIf6Asf6uKnVElYNXeoVJjz9tyG4Hvt3Gv/Gpc18JVkWmF4Ht/IiM7tHvCVsbVMMIMdEU5XxGhNlKDZwkiW4v8cNVFT7u3lEfPgl1dyMQ+R6DnNXYE4RCGN9L0cvl3TaDjJ9ZvhqJh+8P/CX+PSi094JiFqEwnGXiFeP
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4557A4091DCD7740B8AC98C8B974F3F5@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <5d2b39bc-5952-c2b6-63b3-bce28122ffd5@molgen.mpg.de>
- <20191104142459.GC2552@lahna.fi.intel.com> <20191104144436.GD2552@lahna.fi.intel.com>
- <20191104154446.GH2552@lahna.fi.intel.com> <ea829adedf0445c0845e25d6e4b47905@AUSX13MPC105.AMER.DELL.COM>
- <d8cb6bc6-8145-eaed-5ba4-d7291478bdd7@molgen.mpg.de> <20191104162103.GI2552@lahna.fi.intel.com>
- <f0257624-920e-eec4-a2ec-7adf8ecbcc9d@molgen.mpg.de> <20191120105048.GY11621@lahna.fi.intel.com>
- <ccfa5f1a1b5e475aa4ddcbed2297b9c4@AUSX13MPC105.AMER.DELL.COM>
- <20191120152351.GJ11621@lahna.fi.intel.com> <90daf5669f064057b3d0da5fc110b3a4@AUSX13MPC105.AMER.DELL.COM>
-In-Reply-To: <90daf5669f064057b3d0da5fc110b3a4@AUSX13MPC105.AMER.DELL.COM>
-From:   Yehezkel Bernat <yehezkelshb@gmail.com>
-Date:   Wed, 20 Nov 2019 19:16:58 +0200
-Message-ID: <CA+CmpXubOwsradq=ObUF-h6WBpRF3tDx9TqaUO8TeJDqvdeGPg@mail.gmail.com>
-Subject: Re: USB devices on Dell TB16 dock stop working after resuming
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        pmenzel@molgen.mpg.de, Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>, ck@xatom.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        Anthony Wong <anthony.wong@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd1e59df-6543-43f2-d6c6-08d76ddd831e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 17:17:24.8682
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rwlVszclv6kEJOWb8MXAwmck2a2KUwwPpiYiEJcgA+UnmtgCznT6oSRRHFUCIHTlsrKM2Ifs68ciW4XzPgLzlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1118
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-20_05:2019-11-20,2019-11-20 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0
+ mlxlogscore=890 impostorscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxscore=0 clxscore=1011
+ spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911200145
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 7:06 PM <Mario.Limonciello@dell.com> wrote:
->
->
-> But I mean this is generally an unsafe (but convenient) option, it means that you
-> throw out security pre-boot, and all someone needs to do is turn off your machine,
-> plug in a malicious device, turn it on and then they have malicious device all the way
-> into OS.
 
-Only if the attacker found how to forge the device UUID (and knew what UUIDs
-are allowed), isn't it? Unless you take into account things like
-external GPU box,
-where it's pretty easy to replace the card installed inside it.
+
+> On Nov 20, 2019, at 9:06 AM, Alexander Shishkin <alexander.shishkin@linux=
+.intel.com> wrote:
+>=20
+> Commit
+>=20
+>  d44248a41337 ("perf/core: Rework memory accounting in perf_mmap()")
+>=20
+> does a lot of things to the mlock accounting arithmetics, while the only
+> thing that actually needed to happen is subtracting the part that is
+> charged to the mm from the part that is charged to the user, so that the
+> former isn't charged twice.
+>=20
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: songliubraving@fb.com
+
+Acked-by: Song Liu <songliubraving@fb.com>
+
+Thanks for the fix!
+
