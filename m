@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1360D103B47
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6B8103B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfKTNXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:23:31 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56668 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728338AbfKTNVJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730159AbfKTNVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 20 Nov 2019 08:21:09 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56658 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbfKTNVI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:21:08 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPur-00076o-99; Wed, 20 Nov 2019 14:21:05 +0100
+        id 1iXPup-00075u-GN; Wed, 20 Nov 2019 14:21:03 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C86791C1A0D;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2C7761C1A01;
         Wed, 20 Nov 2019 14:21:02 +0100 (CET)
 Date:   Wed, 20 Nov 2019 13:21:02 -0000
-From:   "tip-bot2 for Paul Cercueil" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Zhou Yanjie" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip: ingenic: Error out if IRQ domain creation failed
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <1570015525-27018-3-git-send-email-zhouyanjie@zoho.com>
-References: <1570015525-27018-3-git-send-email-zhouyanjie@zoho.com>
+Subject: [tip: irq/core] irqchip: Ingenic: Add process for more than one irq
+ at the same time.
+Cc:     Zhou Yanjie <zhouyanjie@zoho.com>, Marc Zyngier <maz@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1570015525-27018-6-git-send-email-zhouyanjie@zoho.com>
+References: <1570015525-27018-6-git-send-email-zhouyanjie@zoho.com>
 MIME-Version: 1.0
-Message-ID: <157425606271.12247.62239776985279233.tip-bot2@tip-bot2>
+Message-ID: <157425606206.12247.3466209751027396364.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,58 +49,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     52ecc87642f273a599c9913b29fd179c13de457b
-Gitweb:        https://git.kernel.org/tip/52ecc87642f273a599c9913b29fd179c13de457b
-Author:        Paul Cercueil <paul@crapouillou.net>
-AuthorDate:    Wed, 02 Oct 2019 19:25:22 +08:00
+Commit-ID:     b8b0145f7d0e24d98a58b7e54051dca0c1d77526
+Gitweb:        https://git.kernel.org/tip/b8b0145f7d0e24d98a58b7e54051dca0c1d77526
+Author:        Zhou Yanjie <zhouyanjie@zoho.com>
+AuthorDate:    Wed, 02 Oct 2019 19:25:25 +08:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sun, 10 Nov 2019 18:55:30 
+CommitterDate: Sun, 10 Nov 2019 18:55:31 
 
-irqchip: ingenic: Error out if IRQ domain creation failed
+irqchip: Ingenic: Add process for more than one irq at the same time.
 
-If we cannot create the IRQ domain, the driver should fail to probe
-instead of succeeding with just a warning message.
+Add process for the situation that more than one irq is coming to
+a single chip at the same time. The original code will only respond
+to the lowest setted bit in JZ_REG_INTC_PENDING, and then exit the
+interrupt dispatch function. After exiting the interrupt dispatch
+function, since the second interrupt has not yet responded, the
+interrupt dispatch function is again entered to process the second
+interrupt. This creates additional unnecessary overhead, and the
+more interrupts that occur at the same time, the more overhead is
+added. The improved method in this patch is to check whether there
+are still unresponsive interrupts after processing the lowest
+setted bit interrupt. If there are any, the processing will be
+processed according to the bit in JZ_REG_INTC_PENDING, and the
+interrupt dispatch function will be exited until all processing
+is completed.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/1570015525-27018-3-git-send-email-zhouyanjie@zoho.com
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Link: https://lore.kernel.org/r/1570015525-27018-6-git-send-email-zhouyanjie@zoho.com
 ---
- drivers/irqchip/irq-ingenic.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/irqchip/irq-ingenic.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
-index 06fa810..d97a3a5 100644
+index 06ab3ad..01d18b3 100644
 --- a/drivers/irqchip/irq-ingenic.c
 +++ b/drivers/irqchip/irq-ingenic.c
-@@ -87,6 +87,14 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 		goto out_unmap_irq;
- 	}
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  *  Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
+- *  JZ4740 platform IRQ support
++ *  Ingenic XBurst platform IRQ support
+  */
  
-+	domain = irq_domain_add_legacy(node, num_chips * 32,
-+				       JZ4740_IRQ_BASE, 0,
-+				       &irq_domain_simple_ops, NULL);
-+	if (!domain) {
-+		err = -ENOMEM;
-+		goto out_unmap_base;
-+	}
+ #include <linux/errno.h>
+@@ -37,18 +37,23 @@ static irqreturn_t intc_cascade(int irq, void *data)
+ 	struct ingenic_intc_data *intc = irq_get_handler_data(irq);
+ 	struct irq_domain *domain = intc->domain;
+ 	struct irq_chip_generic *gc;
+-	uint32_t irq_reg;
++	uint32_t pending;
+ 	unsigned i;
+ 
+ 	for (i = 0; i < intc->num_chips; i++) {
+ 		gc = irq_get_domain_generic_chip(domain, i * 32);
+ 
+-		irq_reg = irq_reg_readl(gc, JZ_REG_INTC_PENDING);
+-		if (!irq_reg)
++		pending = irq_reg_readl(gc, JZ_REG_INTC_PENDING);
++		if (!pending)
+ 			continue;
+ 
+-		irq = irq_find_mapping(domain, __fls(irq_reg) + (i * 32));
+-		generic_handle_irq(irq);
++		while (pending) {
++			int bit = __fls(pending);
 +
- 	for (i = 0; i < num_chips; i++) {
- 		/* Mask all irqs */
- 		writel(0xffffffff, intc->base + (i * CHIP_SIZE) +
-@@ -112,14 +120,11 @@ static int __init ingenic_intc_of_init(struct device_node *node,
- 				       IRQ_NOPROBE | IRQ_LEVEL);
++			irq = irq_find_mapping(domain, bit + (i * 32));
++			generic_handle_irq(irq);
++			pending &= ~BIT(bit);
++		}
  	}
  
--	domain = irq_domain_add_legacy(node, num_chips * 32, JZ4740_IRQ_BASE, 0,
--				       &irq_domain_simple_ops, NULL);
--	if (!domain)
--		pr_warn("unable to register IRQ domain\n");
--
- 	setup_irq(parent_irq, &intc_cascade_action);
- 	return 0;
- 
-+out_unmap_base:
-+	iounmap(intc->base);
- out_unmap_irq:
- 	irq_dispose_mapping(parent_irq);
- out_free:
+ 	return IRQ_HANDLED;
