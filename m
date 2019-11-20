@@ -2,214 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E4F10316F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 03:12:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9074010315E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 03:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfKTCMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 21:12:16 -0500
-Received: from mo-csw-fb1516.securemx.jp ([210.130.202.172]:43838 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbfKTCMQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 21:12:16 -0500
-X-Greylist: delayed 1667 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Nov 2019 21:12:15 EST
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1516) id xAK1iRDR021224; Wed, 20 Nov 2019 10:44:29 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id xAK1iDqJ031733; Wed, 20 Nov 2019 10:44:13 +0900
-X-Iguazu-Qid: 34trXMv6oTDFsoBoOZ
-X-Iguazu-QSIG: v=2; s=0; t=1574214253; q=34trXMv6oTDFsoBoOZ; m=zSb2Ql+p4RWbL6ryM4ftbL9TR6ynY+a/LXW4c1SkabI=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1512) id xAK1iCXi035032;
-        Wed, 20 Nov 2019 10:44:12 +0900
-Received: from enc01.localdomain ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id xAK1iBXU006614;
-        Wed, 20 Nov 2019 10:44:11 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.localdomain  with ESMTP id xAK1iBxv026879;
-        Wed, 20 Nov 2019 10:44:11 +0900
-Date:   Wed, 20 Nov 2019 10:44:06 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jun Gao <jun.gao@mediatek.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 127/422] i2c: mediatek: Use DMA safe buffers for i2c
- transactions
-X-TSB-HOP: ON
-Message-ID: <20191120014406.nfmrfe5ic5vm6b2l@toshiba.co.jp>
-References: <20191119051400.261610025@linuxfoundation.org>
- <20191119051407.175902069@linuxfoundation.org>
+        id S1727368AbfKTCFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 21:05:38 -0500
+Received: from ozlabs.org ([203.11.71.1]:52225 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727222AbfKTCFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Nov 2019 21:05:37 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47HmHf2vjSz9sPK;
+        Wed, 20 Nov 2019 13:05:34 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574215535;
+        bh=lSfFCEYhhKnh8tz6CK8SGQ+GHvCao8yS4zOVSz1rlKM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dY7Thfk/SmVGNhf1CwzWd0VToC3uejpJd2UkD+1eMKnDRFGIP/m4MGC/5NHt5qK94
+         dJs9BIZch687jBda5gtnBizI38pW/AKe8lDalwsLsp60g9zpp3uZuJpUW6IodCnEwe
+         1yV9h52SQS8WCLPiI0tU2CgPxUhvyYIoEf/HuUXhZ9OoZYwjcn5AglJwaKEVOc9hni
+         eF0uyVVjGQq5+R85BKALLTwcv7eRDz/kvnhjVcQW53ETUlkZ73A6m5E+hRbMYnHQCS
+         94OshlUzAuj4HykiOrhH26igKlHeo5ja1EqJIimpqK7x90GGSho5eKbSlR7buytNEA
+         so+hSKxvULK+Q==
+Date:   Wed, 20 Nov 2019 13:05:32 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <davem@davemloft.net>, <edumazet@google.com>,
+        <linuxppc-dev@ozlabs.org>
+Subject: Re: [PATCH v2] powerpc: Add const qual to local_read() parameter
+Message-ID: <20191120130532.74844fb2@canb.auug.org.au>
+In-Reply-To: <20191120011451.28168-1-mpe@ellerman.id.au>
+References: <20191120011451.28168-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119051407.175902069@linuxfoundation.org>
+Content-Type: multipart/signed; boundary="Sig_/3gHtgYrcMa6xEZr1_kkvIuh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/3gHtgYrcMa6xEZr1_kkvIuh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2019 at 06:15:24AM +0100, Greg Kroah-Hartman wrote:
-> From: Jun Gao <jun.gao@mediatek.com>
-> 
-> [ Upstream commit fc66b39fe36acfd06f716e338de7cd8f9550fad2 ]
-> 
-> DMA mode will always be used in i2c transactions, try to allocate
-> a DMA safe buffer if the buf of struct i2c_msg used is not DMA safe.
-> 
-> Signed-off-by: Jun Gao <jun.gao@mediatek.com>
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Hi all,
 
-This patch requires the following additional commit:
+On Wed, 20 Nov 2019 12:14:51 +1100 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
+>
+> From: Eric Dumazet <edumazet@google.com>
+>=20
+> A patch in net-next triggered a compile error on powerpc:
+>=20
+>   include/linux/u64_stats_sync.h: In function 'u64_stats_read':
+>   include/asm-generic/local64.h:30:37: warning: passing argument 1 of 'lo=
+cal_read' discards 'const' qualifier from pointer target type
+>=20
+> This seems reasonable to relax powerpc local_read() requirements.
+>=20
+> Fixes: 316580b69d0a ("u64_stats: provide u64_stats_t type")
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 
-commit bc1a7f75c85e226e82f183d30d75c357f92b6029
-Author: Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Fri Feb 15 17:02:02 2019 +0800
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au> # build only
 
-    i2c: mediatek: modify threshold passed to i2c_get_dma_safe_msg_buf()
+--=20
+Cheers,
+Stephen Rothwell
 
-    DMA with zero-length transfers doesn't make sense and this HW doesn't
-    support them at all, so increase the threshold.
+--Sig_/3gHtgYrcMa6xEZr1_kkvIuh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-    Fixes: fc66b39fe36a ("i2c: mediatek: Use DMA safe buffers for i2c transactions")
-    Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-    [wsa: reworded commit message]
-    Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+-----BEGIN PGP SIGNATURE-----
 
-Please apply this commit.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3Un2wACgkQAVBC80lX
+0Gy86Af8DJ2cdW4dN38n9ofBTe3NKtzh4L8r54R2/+/O/z5M730yoet72WkTZHuR
+P64gaVtiwmIDO62eS5aG/kknNnLt36MR2M36GjbES8f3/ZN2TFnXMSU8wntqYrJo
+ei9JkBWKuXbnxXSgYXV41vgCLodvxJZ6Zz72GgD7QMk4UotpB7oJsQyckpxFndLl
+OqY4vIBQs7YflJNwQP4s+RcDcb8e3Vymr0eDRV6bfzfgCub2nrFxG5mqcscTYJZg
+lgRQg+tuQBvWi1uNUZkx7PdTiTFJ4W7orhpbaLhM+RH4gH9RchsNhJ8+53y3ZuTE
+SzUFtdcMgWkABWE9uDFPONiw6PB0eA==
+=rR9i
+-----END PGP SIGNATURE-----
 
-Best regards,
-  Nobuhiro
-
-> ---
->  drivers/i2c/busses/i2c-mt65xx.c | 62 +++++++++++++++++++++++++++++----
->  1 file changed, 55 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-> index 1e57f58fcb001..a74ef76705e0c 100644
-> --- a/drivers/i2c/busses/i2c-mt65xx.c
-> +++ b/drivers/i2c/busses/i2c-mt65xx.c
-> @@ -441,6 +441,8 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
->  	u16 control_reg;
->  	u16 restart_flag = 0;
->  	u32 reg_4g_mode;
-> +	u8 *dma_rd_buf = NULL;
-> +	u8 *dma_wr_buf = NULL;
->  	dma_addr_t rpaddr = 0;
->  	dma_addr_t wpaddr = 0;
->  	int ret;
-> @@ -500,10 +502,18 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
->  	if (i2c->op == I2C_MASTER_RD) {
->  		writel(I2C_DMA_INT_FLAG_NONE, i2c->pdmabase + OFFSET_INT_FLAG);
->  		writel(I2C_DMA_CON_RX, i2c->pdmabase + OFFSET_CON);
-> -		rpaddr = dma_map_single(i2c->dev, msgs->buf,
-> +
-> +		dma_rd_buf = i2c_get_dma_safe_msg_buf(msgs, 0);
-> +		if (!dma_rd_buf)
-> +			return -ENOMEM;
-> +
-> +		rpaddr = dma_map_single(i2c->dev, dma_rd_buf,
->  					msgs->len, DMA_FROM_DEVICE);
-> -		if (dma_mapping_error(i2c->dev, rpaddr))
-> +		if (dma_mapping_error(i2c->dev, rpaddr)) {
-> +			i2c_put_dma_safe_msg_buf(dma_rd_buf, msgs, false);
-> +
->  			return -ENOMEM;
-> +		}
->  
->  		if (i2c->dev_comp->support_33bits) {
->  			reg_4g_mode = mtk_i2c_set_4g_mode(rpaddr);
-> @@ -515,10 +525,18 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
->  	} else if (i2c->op == I2C_MASTER_WR) {
->  		writel(I2C_DMA_INT_FLAG_NONE, i2c->pdmabase + OFFSET_INT_FLAG);
->  		writel(I2C_DMA_CON_TX, i2c->pdmabase + OFFSET_CON);
-> -		wpaddr = dma_map_single(i2c->dev, msgs->buf,
-> +
-> +		dma_wr_buf = i2c_get_dma_safe_msg_buf(msgs, 0);
-> +		if (!dma_wr_buf)
-> +			return -ENOMEM;
-> +
-> +		wpaddr = dma_map_single(i2c->dev, dma_wr_buf,
->  					msgs->len, DMA_TO_DEVICE);
-> -		if (dma_mapping_error(i2c->dev, wpaddr))
-> +		if (dma_mapping_error(i2c->dev, wpaddr)) {
-> +			i2c_put_dma_safe_msg_buf(dma_wr_buf, msgs, false);
-> +
->  			return -ENOMEM;
-> +		}
->  
->  		if (i2c->dev_comp->support_33bits) {
->  			reg_4g_mode = mtk_i2c_set_4g_mode(wpaddr);
-> @@ -530,16 +548,39 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
->  	} else {
->  		writel(I2C_DMA_CLR_FLAG, i2c->pdmabase + OFFSET_INT_FLAG);
->  		writel(I2C_DMA_CLR_FLAG, i2c->pdmabase + OFFSET_CON);
-> -		wpaddr = dma_map_single(i2c->dev, msgs->buf,
-> +
-> +		dma_wr_buf = i2c_get_dma_safe_msg_buf(msgs, 0);
-> +		if (!dma_wr_buf)
-> +			return -ENOMEM;
-> +
-> +		wpaddr = dma_map_single(i2c->dev, dma_wr_buf,
->  					msgs->len, DMA_TO_DEVICE);
-> -		if (dma_mapping_error(i2c->dev, wpaddr))
-> +		if (dma_mapping_error(i2c->dev, wpaddr)) {
-> +			i2c_put_dma_safe_msg_buf(dma_wr_buf, msgs, false);
-> +
->  			return -ENOMEM;
-> -		rpaddr = dma_map_single(i2c->dev, (msgs + 1)->buf,
-> +		}
-> +
-> +		dma_rd_buf = i2c_get_dma_safe_msg_buf((msgs + 1), 0);
-> +		if (!dma_rd_buf) {
-> +			dma_unmap_single(i2c->dev, wpaddr,
-> +					 msgs->len, DMA_TO_DEVICE);
-> +
-> +			i2c_put_dma_safe_msg_buf(dma_wr_buf, msgs, false);
-> +
-> +			return -ENOMEM;
-> +		}
-> +
-> +		rpaddr = dma_map_single(i2c->dev, dma_rd_buf,
->  					(msgs + 1)->len,
->  					DMA_FROM_DEVICE);
->  		if (dma_mapping_error(i2c->dev, rpaddr)) {
->  			dma_unmap_single(i2c->dev, wpaddr,
->  					 msgs->len, DMA_TO_DEVICE);
-> +
-> +			i2c_put_dma_safe_msg_buf(dma_wr_buf, msgs, false);
-> +			i2c_put_dma_safe_msg_buf(dma_rd_buf, (msgs + 1), false);
-> +
->  			return -ENOMEM;
->  		}
->  
-> @@ -578,14 +619,21 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
->  	if (i2c->op == I2C_MASTER_WR) {
->  		dma_unmap_single(i2c->dev, wpaddr,
->  				 msgs->len, DMA_TO_DEVICE);
-> +
-> +		i2c_put_dma_safe_msg_buf(dma_wr_buf, msgs, true);
->  	} else if (i2c->op == I2C_MASTER_RD) {
->  		dma_unmap_single(i2c->dev, rpaddr,
->  				 msgs->len, DMA_FROM_DEVICE);
-> +
-> +		i2c_put_dma_safe_msg_buf(dma_rd_buf, msgs, true);
->  	} else {
->  		dma_unmap_single(i2c->dev, wpaddr, msgs->len,
->  				 DMA_TO_DEVICE);
->  		dma_unmap_single(i2c->dev, rpaddr, (msgs + 1)->len,
->  				 DMA_FROM_DEVICE);
-> +
-> +		i2c_put_dma_safe_msg_buf(dma_wr_buf, msgs, true);
-> +		i2c_put_dma_safe_msg_buf(dma_rd_buf, (msgs + 1), true);
->  	}
->  
->  	if (ret == 0) {
-> -- 
-> 2.20.1
-> 
-> 
-> 
-> 
+--Sig_/3gHtgYrcMa6xEZr1_kkvIuh--
