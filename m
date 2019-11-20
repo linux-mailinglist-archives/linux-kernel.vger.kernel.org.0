@@ -2,138 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3FF10342E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 07:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B4D610343A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 07:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfKTGLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 01:11:12 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:60470 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726044AbfKTGLM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 01:11:12 -0500
-X-UUID: 000745fbbeec487f846fe50eecdea0c7-20191120
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=cnXVYOCT6jAm+zO5eJXzFKhez0AEBAzRzE76qZr3S+w=;
-        b=qj3btTHXvPS7xMlbX8vTRXC2GUqS6ADJZ2nrdKrs77bWaH13Rub+7BApAHsewfc+P/PBhnZvbDSF0FjA8RCBwQjdzpV6FH/l0jP6lQLTcF5Abu5CHdAPUYr4kWWcFaz2EimB6GVl6mKOjYzDYV9N4RLZhipFZZ59kHYreDA6MN4=;
-X-UUID: 000745fbbeec487f846fe50eecdea0c7-20191120
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1934782815; Wed, 20 Nov 2019 14:11:07 +0800
-Received: from mtkmbs05dr.mediatek.inc (172.21.101.97) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 20 Nov 2019 14:10:51 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05dr.mediatek.inc (172.21.101.97) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 20 Nov 2019 14:10:53 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 20 Nov 2019 14:10:48 +0800
-Message-ID: <1574230265.14846.1.camel@mtksdaap41>
-Subject: Re: [PATCH] arm64: dts: mt8173: Add gce setting in mmsys and
- display node
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Wed, 20 Nov 2019 14:11:05 +0800
-In-Reply-To: <20191118104252.228406-1-hsinyi@chromium.org>
-References: <20191118104252.228406-1-hsinyi@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1727604AbfKTGPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 01:15:48 -0500
+Received: from mga09.intel.com ([134.134.136.24]:33771 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfKTGPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 01:15:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 22:15:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,220,1571727600"; 
+   d="scan'208";a="357337027"
+Received: from jesusale-mobl4.ger.corp.intel.com (HELO btopel-mobl.ger.intel.com) ([10.249.32.22])
+  by orsmga004.jf.intel.com with ESMTP; 19 Nov 2019 22:15:43 -0800
+Subject: Re: [PATCH] xsk: fix xsk_poll()'s return type
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        bpf <bpf@vger.kernel.org>
+References: <20191120001042.30830-1-luc.vanoostenryck@gmail.com>
+From:   =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
+Message-ID: <103f550e-4a78-e540-4a57-bdecc2f066cf@intel.com>
+Date:   Wed, 20 Nov 2019 07:15:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191120001042.30830-1-luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTExLTE4IGF0IDE4OjQyICswODAwLCBIc2luLVlpIFdhbmcgd3JvdGU6DQo+
-IEluIG9yZGVyIHRvIHVzZSBHQ0UgZnVuY3Rpb24sIHdlIG5lZWQgYWRkIHNvbWUgaW5mb3JtYXRp
-b25zDQo+IGludG8gZGlzcGxheSBub2RlIChtYm94ZXMsIG1lZGlhdGVrLGdjZS1jbGllbnQtcmVn
-LCBtZWRpYXRlayxnY2UtZXZlbnRzKS4NCg0KVGhhbmtzIGZvciB0aGUgcGF0Y2guDQoNClJldmll
-d2VkLWJ5OiBCaWJieSBIc2llaCA8YmliYnkuaHNpZWhAbWVkaWF0ZWsuY29tPg0KDQo+IA0KPiBT
-aWduZWQtb2ZmLWJ5OiBIc2luLVlpIFdhbmcgPGhzaW55aUBjaHJvbWl1bS5vcmc+DQo+IC0tLQ0K
-PiAtIFRoaXMgaXMgYmFzZWQgb24gc2VyaWVzICJzdXBwb3J0IGdjZSBvbiBtdDgxODMgcGxhdGZv
-cm0iDQo+ICAgaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9jb3Zlci8xMTIwODMwOS8NCj4g
-LSBnY2Ugc2V0dGluZyBpbiA4MTgzOg0KPiAgIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
-cGF0Y2gvMTExMjcxMDUvDQo+IC0tLQ0KPiAgYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
-dDgxNzMuZHRzaSB8IDE2ICsrKysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNiBp
-bnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9tZWRp
-YXRlay9tdDgxNzMuZHRzaSBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTczLmR0
-c2kNCj4gaW5kZXggMTVmMTg0MmY2ZGYzLi5lODRlYzNmOTVkODEgMTAwNjQ0DQo+IC0tLSBhL2Fy
-Y2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTczLmR0c2kNCj4gKysrIGIvYXJjaC9hcm02
-NC9ib290L2R0cy9tZWRpYXRlay9tdDgxNzMuZHRzaQ0KPiBAQCAtOTExLDYgKzkxMSwxMSBAQCBt
-bXN5czogY2xvY2stY29udHJvbGxlckAxNDAwMDAwMCB7DQo+ICAJCQlhc3NpZ25lZC1jbG9ja3Mg
-PSA8JnRvcGNrZ2VuIENMS19UT1BfTU1fU0VMPjsNCj4gIAkJCWFzc2lnbmVkLWNsb2NrLXJhdGVz
-ID0gPDQwMDAwMDAwMD47DQo+ICAJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ICsJCQltYm94ZXMg
-PSA8JmdjZSAwIENNRFFfVEhSX1BSSU9fSElHSEVTVCAxPiwNCj4gKwkJCQkgPCZnY2UgMSBDTURR
-X1RIUl9QUklPX0hJR0hFU1QgMT47DQo+ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwm
-Z2NlIFNVQlNZU18xNDAwWFhYWCAwIDB4MTAwMD47DQo+ICsJCQltZWRpYXRlayxnY2UtZXZlbnRz
-ID0gPENNRFFfRVZFTlRfTVVURVgwX1NUUkVBTV9FT0Y+LA0KPiArCQkJCQkgICAgICA8Q01EUV9F
-VkVOVF9NVVRFWDFfU1RSRUFNX0VPRj47DQo+ICAJCX07DQo+ICANCj4gIAkJbWRwX3JkbWEwOiBy
-ZG1hQDE0MDAxMDAwIHsNCj4gQEAgLTk5MSw2ICs5OTYsNyBAQCBvdmwwOiBvdmxAMTQwMGMwMDAg
-ew0KPiAgCQkJY2xvY2tzID0gPCZtbXN5cyBDTEtfTU1fRElTUF9PVkwwPjsNCj4gIAkJCWlvbW11
-cyA9IDwmaW9tbXUgTTRVX1BPUlRfRElTUF9PVkwwPjsNCj4gIAkJCW1lZGlhdGVrLGxhcmIgPSA8
-JmxhcmIwPjsNCj4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0
-MDBYWFhYIDB4YzAwMCAweDEwMDA+Ow0KPiAgCQl9Ow0KPiAgDQo+ICAJCW92bDE6IG92bEAxNDAw
-ZDAwMCB7DQo+IEBAIC0xMDAxLDYgKzEwMDcsNyBAQCBvdmwxOiBvdmxAMTQwMGQwMDAgew0KPiAg
-CQkJY2xvY2tzID0gPCZtbXN5cyBDTEtfTU1fRElTUF9PVkwxPjsNCj4gIAkJCWlvbW11cyA9IDwm
-aW9tbXUgTTRVX1BPUlRfRElTUF9PVkwxPjsNCj4gIAkJCW1lZGlhdGVrLGxhcmIgPSA8JmxhcmI0
-PjsNCj4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDBYWFhY
-IDB4ZDAwMCAweDEwMDA+Ow0KPiAgCQl9Ow0KPiAgDQo+ICAJCXJkbWEwOiByZG1hQDE0MDBlMDAw
-IHsNCj4gQEAgLTEwMTEsNiArMTAxOCw3IEBAIHJkbWEwOiByZG1hQDE0MDBlMDAwIHsNCj4gIAkJ
-CWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfUkRNQTA+Ow0KPiAgCQkJaW9tbXVzID0gPCZp
-b21tdSBNNFVfUE9SVF9ESVNQX1JETUEwPjsNCj4gIAkJCW1lZGlhdGVrLGxhcmIgPSA8JmxhcmIw
-PjsNCj4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDBYWFhY
-IDB4ZTAwMCAweDEwMDA+Ow0KPiAgCQl9Ow0KPiAgDQo+ICAJCXJkbWExOiByZG1hQDE0MDBmMDAw
-IHsNCj4gQEAgLTEwMjEsNiArMTAyOSw3IEBAIHJkbWExOiByZG1hQDE0MDBmMDAwIHsNCj4gIAkJ
-CWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfUkRNQTE+Ow0KPiAgCQkJaW9tbXVzID0gPCZp
-b21tdSBNNFVfUE9SVF9ESVNQX1JETUExPjsNCj4gIAkJCW1lZGlhdGVrLGxhcmIgPSA8JmxhcmI0
-PjsNCj4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDBYWFhY
-IDB4ZjAwMCAweDEwMDA+Ow0KPiAgCQl9Ow0KPiAgDQo+ICAJCXJkbWEyOiByZG1hQDE0MDEwMDAw
-IHsNCj4gQEAgLTEwMzEsNiArMTA0MCw3IEBAIHJkbWEyOiByZG1hQDE0MDEwMDAwIHsNCj4gIAkJ
-CWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01NX0RJU1BfUkRNQTI+Ow0KPiAgCQkJaW9tbXVzID0gPCZp
-b21tdSBNNFVfUE9SVF9ESVNQX1JETUEyPjsNCj4gIAkJCW1lZGlhdGVrLGxhcmIgPSA8JmxhcmI0
-PjsNCj4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VCU1lTXzE0MDFYWFhY
-IDAgMHgxMDAwPjsNCj4gIAkJfTsNCj4gIA0KPiAgCQl3ZG1hMDogd2RtYUAxNDAxMTAwMCB7DQo+
-IEBAIC0xMDQxLDYgKzEwNTEsNyBAQCB3ZG1hMDogd2RtYUAxNDAxMTAwMCB7DQo+ICAJCQljbG9j
-a3MgPSA8Jm1tc3lzIENMS19NTV9ESVNQX1dETUEwPjsNCj4gIAkJCWlvbW11cyA9IDwmaW9tbXUg
-TTRVX1BPUlRfRElTUF9XRE1BMD47DQo+ICAJCQltZWRpYXRlayxsYXJiID0gPCZsYXJiMD47DQo+
-ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAxWFhYWCAweDEw
-MDAgMHgxMDAwPjsNCj4gIAkJfTsNCj4gIA0KPiAgCQl3ZG1hMTogd2RtYUAxNDAxMjAwMCB7DQo+
-IEBAIC0xMDUxLDYgKzEwNjIsNyBAQCB3ZG1hMTogd2RtYUAxNDAxMjAwMCB7DQo+ICAJCQljbG9j
-a3MgPSA8Jm1tc3lzIENMS19NTV9ESVNQX1dETUExPjsNCj4gIAkJCWlvbW11cyA9IDwmaW9tbXUg
-TTRVX1BPUlRfRElTUF9XRE1BMT47DQo+ICAJCQltZWRpYXRlayxsYXJiID0gPCZsYXJiND47DQo+
-ICsJCQltZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAxWFhYWCAweDIw
-MDAgMHgxMDAwPjsNCj4gIAkJfTsNCj4gIA0KPiAgCQljb2xvcjA6IGNvbG9yQDE0MDEzMDAwIHsN
-Cj4gQEAgLTEwNTksNiArMTA3MSw3IEBAIGNvbG9yMDogY29sb3JAMTQwMTMwMDAgew0KPiAgCQkJ
-aW50ZXJydXB0cyA9IDxHSUNfU1BJIDE4NyBJUlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiAgCQkJcG93
-ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE3M19QT1dFUl9ET01BSU5fTU0+Ow0KPiAgCQkJY2xv
-Y2tzID0gPCZtbXN5cyBDTEtfTU1fRElTUF9DT0xPUjA+Ow0KPiArCQkJbWVkaWF0ZWssZ2NlLWNs
-aWVudC1yZWcgPSA8JmdjZSBTVUJTWVNfMTQwMVhYWFggMHgzMDAwIDB4MTAwMD47DQo+ICAJCX07
-DQo+ICANCj4gIAkJY29sb3IxOiBjb2xvckAxNDAxNDAwMCB7DQo+IEBAIC0xMDY3LDYgKzEwODAs
-NyBAQCBjb2xvcjE6IGNvbG9yQDE0MDE0MDAwIHsNCj4gIAkJCWludGVycnVwdHMgPSA8R0lDX1NQ
-SSAxODggSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gIAkJCXBvd2VyLWRvbWFpbnMgPSA8JnNjcHN5
-cyBNVDgxNzNfUE9XRVJfRE9NQUlOX01NPjsNCj4gIAkJCWNsb2NrcyA9IDwmbW1zeXMgQ0xLX01N
-X0RJU1BfQ09MT1IxPjsNCj4gKwkJCW1lZGlhdGVrLGdjZS1jbGllbnQtcmVnID0gPCZnY2UgU1VC
-U1lTXzE0MDFYWFhYIDB4NDAwMCAweDEwMDA+Ow0KPiAgCQl9Ow0KPiAgDQo+ICAJCWFhbEAxNDAx
-NTAwMCB7DQo+IEBAIC0xMDc1LDYgKzEwODksNyBAQCBhYWxAMTQwMTUwMDAgew0KPiAgCQkJaW50
-ZXJydXB0cyA9IDxHSUNfU1BJIDE4OSBJUlFfVFlQRV9MRVZFTF9MT1c+Ow0KPiAgCQkJcG93ZXIt
-ZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE3M19QT1dFUl9ET01BSU5fTU0+Ow0KPiAgCQkJY2xvY2tz
-ID0gPCZtbXN5cyBDTEtfTU1fRElTUF9BQUw+Ow0KPiArCQkJbWVkaWF0ZWssZ2NlLWNsaWVudC1y
-ZWcgPSA8JmdjZSBTVUJTWVNfMTQwMVhYWFggMHg1MDAwIDB4MTAwMD47DQo+ICAJCX07DQo+ICAN
-Cj4gIAkJZ2FtbWFAMTQwMTYwMDAgew0KPiBAQCAtMTA4Myw2ICsxMDk4LDcgQEAgZ2FtbWFAMTQw
-MTYwMDAgew0KPiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDE5MCBJUlFfVFlQRV9MRVZFTF9M
-T1c+Ow0KPiAgCQkJcG93ZXItZG9tYWlucyA9IDwmc2Nwc3lzIE1UODE3M19QT1dFUl9ET01BSU5f
-TU0+Ow0KPiAgCQkJY2xvY2tzID0gPCZtbXN5cyBDTEtfTU1fRElTUF9HQU1NQT47DQo+ICsJCQlt
-ZWRpYXRlayxnY2UtY2xpZW50LXJlZyA9IDwmZ2NlIFNVQlNZU18xNDAxWFhYWCAweDYwMDAgMHgx
-MDAwPjsNCj4gIAkJfTsNCj4gIA0KPiAgCQltZXJnZUAxNDAxNzAwMCB7DQoNCg==
+On 2019-11-20 01:10, Luc Van Oostenryck wrote:
+> xsk_poll() is defined as returning 'unsigned int' but the
+> .poll method is declared as returning '__poll_t', a bitwise type.
+> 
+> Fix this by using the proper return type and using the EPOLL
+> constants instead of the POLL ones, as required for __poll_t.
+>
 
+Thanks for the cleanup!
+
+Acked-by: Björn Töpel <bjorn.topel@intel.com>
+
+Daniel/Alexei: This should go through bpf-next.
+
+
+Björn
+
+
+
+> CC: Björn Töpel <bjorn.topel@intel.com>
+> CC: Magnus Karlsson <magnus.karlsson@intel.com>
+> CC: Jonathan Lemon <jonathan.lemon@gmail.com>
+> CC: netdev@vger.kernel.org
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> ---
+>   net/xdp/xsk.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+> index 9044073fbf22..7b59f36eec0d 100644
+> --- a/net/xdp/xsk.c
+> +++ b/net/xdp/xsk.c
+> @@ -418,10 +418,10 @@ static int xsk_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+>   	return __xsk_sendmsg(sk);
+>   }
+>   
+> -static unsigned int xsk_poll(struct file *file, struct socket *sock,
+> +static __poll_t xsk_poll(struct file *file, struct socket *sock,
+>   			     struct poll_table_struct *wait)
+>   {
+> -	unsigned int mask = datagram_poll(file, sock, wait);
+> +	__poll_t mask = datagram_poll(file, sock, wait);
+>   	struct sock *sk = sock->sk;
+>   	struct xdp_sock *xs = xdp_sk(sk);
+>   	struct net_device *dev;
+> @@ -443,9 +443,9 @@ static unsigned int xsk_poll(struct file *file, struct socket *sock,
+>   	}
+>   
+>   	if (xs->rx && !xskq_empty_desc(xs->rx))
+> -		mask |= POLLIN | POLLRDNORM;
+> +		mask |= EPOLLIN | EPOLLRDNORM;
+>   	if (xs->tx && !xskq_full_desc(xs->tx))
+> -		mask |= POLLOUT | POLLWRNORM;
+> +		mask |= EPOLLOUT | EPOLLWRNORM;
+>   
+>   	return mask;
+>   }
+> 
