@@ -2,92 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFA3103718
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C9910372C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 11:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbfKTJ5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:57:40 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37820 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728567AbfKTJ5k (ORCPT
+        id S1728267AbfKTKBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 05:01:49 -0500
+Received: from hmm.wantstofly.org ([138.201.34.84]:46068 "EHLO
+        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfKTKBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:57:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=el6438nih4sfwVUUpa3K7cGTYMkZUt0pCE/MflmMSiA=; b=bcV3glNLOjIUujMfUEw4s7kT6
-        Z6OGWKZbmD0U635MtVAIlSU1ixudFfoksF22a7LTl1W20n/1fJdNsXuujM3+C1ZTKUoUumNB9aNOs
-        RYd13CFvhF4cDxk/34GB9IhDX+rdOqDeoiGBGD0nrEfxwip7rS0pNaRknuUJkcgFvqxExxT41yxpW
-        8PEtujQ51/SZdZW8JriCE6ikn3f7nsbUxydGpzA2n35/RP5oFpUtcrXMbFBO6AibcBqU+4KuUgB3a
-        35iKgzeq3jZ6/tOsoixKQz1oeB1QCsv6pvCEo3bwd+4bSE4EBX/WpAuLpJTlt+0kXqiV8Vxb8mAU5
-        yKENSjU9w==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:58700)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iXMju-0007YX-7j; Wed, 20 Nov 2019 09:57:34 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iXMjp-0001cr-EL; Wed, 20 Nov 2019 09:57:29 +0000
-Date:   Wed, 20 Nov 2019 09:57:29 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Wed, 20 Nov 2019 05:01:49 -0500
+X-Greylist: delayed 345 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 05:01:48 EST
+Received: by mail.wantstofly.org (Postfix, from userid 1000)
+        id 43FB77F2C7; Wed, 20 Nov 2019 11:56:02 +0200 (EET)
+Date:   Wed, 20 Nov 2019 11:56:02 +0200
+From:   Lennert Buytenhek <kernel@wantstofly.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "m.karthikeyan@mobiveil.co.in" <m.karthikeyan@mobiveil.co.in>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>
-Subject: Re: [PATCHv9 00/12] PCI: Recode Mobiveil driver and add PCIe Gen4
- driver for NXP Layerscape SoCs
-Message-ID: <20191120095729.GJ25745@shell.armlinux.org.uk>
-References: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com>
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH] watchdog: Remove iop_wdt
+Message-ID: <20191120095602.GQ1166@wantstofly.org>
+References: <20191118220432.1611-1-labbott@redhat.com>
+ <29e94219-22ca-c873-7209-64d1c357fe5c@roeck-us.net>
+ <CAK8P3a0=3J3WHTKU7sPvd37VEwg3wOuZ5S2-xXtNYEcSQhWyHw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191120034451.30102-1-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAK8P3a0=3J3WHTKU7sPvd37VEwg3wOuZ5S2-xXtNYEcSQhWyHw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 03:45:17AM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Tue, Nov 19, 2019 at 10:40:04AM +0100, Arnd Bergmann wrote:
+
+> > > Commit 59d3ae9a5bf6 ("ARM: remove Intel iop33x and iop13xx support")
+> > > removed support for some old platforms. Given this driver depends on
+> > > a now removed platform, just remove the driver.
+> > >
+> > > Signed-off-by: Laura Abbott <labbott@redhat.com>
+> > > ---
+> > > Found this while reviewing config options. Not sure if this was kept
+> > > around for other reasons or just missed.
+> > > ---
+> > >   drivers/watchdog/Kconfig   |  16 ---
+> > >   drivers/watchdog/Makefile  |   1 -
+> > >   drivers/watchdog/iop_wdt.c | 249 -------------------------------------
+> > >   3 files changed, 266 deletions(-)
+> > >   delete mode 100644 drivers/watchdog/iop_wdt.c
+> > >
+> > > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> > > index 58e7c100b6ad..fef9078a44b6 100644
+> > > --- a/drivers/watchdog/Kconfig
+> > > +++ b/drivers/watchdog/Kconfig
+> > > @@ -554,22 +554,6 @@ config PNX4008_WATCHDOG
+> > >
+> > >         Say N if you are unsure.
+> > >
+> > > -config IOP_WATCHDOG
+> > > -     tristate "IOP Watchdog"
+> > > -     depends on ARCH_IOP13XX
+> > > -     select WATCHDOG_NOWAYOUT if (ARCH_IOP32X || ARCH_IOP33X)
+> >
+> > This is a bit confusing, but it suggests that the watchdog may also work
+> > with ARCH_IOP32X, which is still supported. I don't know anything about
+> > those architectures, but I hesitate to have the driver removed unless
+> > we have confirmation that it won't work with ARCH_IOP32X.
+> > Maybe the dependency needs to be updated instead ?
 > 
-> This patch set is to recode the Mobiveil driver and add
-> PCIe support for NXP Layerscape series SoCs integrated
-> Mobiveil's PCIe Gen4 controller.
+> See commit ec2e32ca661e ("watchdog: iop_wdt only builds for
+> mach-iop13xx") from 2014: the watdog hardware exists on iop32x
+> but the driver only successfully built on iop13xx, which is now gone.
+> 
+> Adding Russell (who said he still uses iop32x hardware) and Lennert
+> (who is still listed in the MAINTAINERS file, but previously said he
+> does not use it any more) to Cc.
 
-How many PCIe cards have been tested to work/don't work with this?
+I haven't worked on ARM-related things for a long time now.  I'll be
+happy to hand over maintainership to someone else, or to orphan the
+platform(s) entirely.
 
-I need:
 
-PCI: mobiveil: ls_pcie_g4: fix SError when accessing config space
-PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
-PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+> If neither of them see a reason to keep the driver, I'd say we can
+> remove it.
 
-to successfully boot with a Mellanox card plugged in with a previous
-revision of these patches.
+I don't see a reason (to keep it).
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+
+Cheers,
+Lennert
