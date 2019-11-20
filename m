@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA6CE103FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B29103FCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:46:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732428AbfKTPpl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 10:45:41 -0500
-Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:21658 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732397AbfKTPpg (ORCPT
+        id S1728098AbfKTPqd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 10:46:33 -0500
+Received: from mx1.unisoc.com ([222.66.158.135]:21657 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732410AbfKTPph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:45:36 -0500
+        Wed, 20 Nov 2019 10:45:37 -0500
 Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-        by SHSQR01.spreadtrum.com with ESMTPS id xAKFhcS0093125
+        by SHSQR01.spreadtrum.com with ESMTPS id xAKFheDl093128
         (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 20 Nov 2019 23:43:38 +0800 (CST)
+        Wed, 20 Nov 2019 23:43:40 +0800 (CST)
         (envelope-from Orson.Zhai@unisoc.com)
 Received: from localhost (10.0.74.112) by BJMBX02.spreadtrum.com (10.0.64.8)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 20 Nov 2019 23:43:45
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 20 Nov 2019 23:43:47
  +0800
 From:   Orson Zhai <orson.zhai@unisoc.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
@@ -27,59 +27,85 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <kevin.tang@unisoc.com>, <baolin.wang@unisoc.com>,
         <chunyan.zhang@unisoc.com>, Orson Zhai <orson.zhai@unisoc.com>
-Subject: [PATCH V2 0/2] Add syscon name support
-Date:   Wed, 20 Nov 2019 23:41:46 +0800
-Message-ID: <20191120154148.22067-1-orson.zhai@unisoc.com>
+Subject: [PATCH V2 1/2] dt-bindings: syscon: Add syscon-names to refer to syscon easily
+Date:   Wed, 20 Nov 2019 23:41:47 +0800
+Message-ID: <20191120154148.22067-2-orson.zhai@unisoc.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20191120154148.22067-1-orson.zhai@unisoc.com>
+References: <20191120154148.22067-1-orson.zhai@unisoc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Originating-IP: [10.0.74.112]
 X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  BJMBX02.spreadtrum.com (10.0.64.8)
 Content-Transfer-Encoding: 8BIT
-X-MAIL: SHSQR01.spreadtrum.com xAKFhcS0093125
+X-MAIL: SHSQR01.spreadtrum.com xAKFheDl093128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Make life easier when syscon consumer want to access multiple syscon
+nodes with dozens of items.
+Add syscon-names and relative properties to help to manage different
+cases when accessing more than one syscon node even with arguments.
 
-Our SoCs have a lot of glabal registers which is hard to be managed in
-current syscon structure.
+Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+---
+ .../devicetree/bindings/mfd/syscon.txt        | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-Same register's offset is different in different SoCs. We used chip
-config macro to manage them which prevents driver from being compiled
-in all-in-one image.
-
-So I add syscons, syscon-names and an optional #vendor-cells property
-as syscon consumer node's bindings. And implement coresponding helper
-functions.
-
-They have no side effect to current syscon consumer.
-
-Thanks,
-Orson
-
-Changes in V2:
-
-As per suggestion from Arnd:
-
-* Remove #syscon-cells from syscon node.
-* Add "#vendor-cells" into consumer node not affecting referred syscon
-  itself.
-* Change helper funcions parameter accordingly.
-
------
-Orson Zhai (2):
-  dt-bindings: syscon: Add syscon-names to refer to syscon easily
-  mfd: syscon: Find syscon by names with arguments support
-
- .../devicetree/bindings/mfd/syscon.txt        | 43 +++++++++++
- drivers/mfd/syscon.c                          | 75 +++++++++++++++++++
- include/linux/mfd/syscon.h                    | 26 +++++++
- 3 files changed, 144 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.txt b/Documentation/devicetree/bindings/mfd/syscon.txt
+index 25d9e9c2fd53..4c7bdb74bb0a 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.txt
++++ b/Documentation/devicetree/bindings/mfd/syscon.txt
+@@ -30,3 +30,46 @@ hwlock1: hwspinlock@40500000 {
+        reg = <0x40500000 0x1000>;
+        #hwlock-cells = <1>;
+ };
++
++
++
++==Syscon Name==
++
++Syscon name is a helper to be used in consumer nodes who refer to system
++controller node. It provides a way to refer to syscon node by names with
++phandle args in syscon consumer node. It will help people who have a lot
++of syscon references to be managed. It is not a must feature and has no
++effect to syscon node itself at all.
++
++Required properties:
++- syscons: List of phandles and any number of arguments if needed. Arguments
++  is specific to differnet vendors and its usage should be described at each
++  vendor's bindings. For example: In Unisoc SoCs, the 1st arg will be treated
++  as register address offset and the 2nd is bit mask.
++
++- syscon-names:        List of syscon node name strings sorted in the same order as
++  what it represents in property syscons.
++
++Optional property:
++- #.*-cells: Represents the number of arguments in single phandle in syscons
++  list. ".*" is vendor specific. If this property is not set, default value
++  will be 0.
++
++Examples:
++
++apb_regs: syscon@20008000 {
++       compatible = "sprd,apb-glb", "syscon";
++       reg = <0x20008000 0x100>;
++};
++
++aon_regs: syscon@40008000 {
++       compatible = "sprd,aon-glb", "syscon";
++       reg = <0x40008000 0x100>;
++};
++
++display@40500000 {
++       ...
++       #syscon-disp-cells = <2>;
++       syscons = <&ap_apb_regs 0x4 0xf00>, <&aon_regs 0x8 0x7>;
++       syscon-names = "enable", "power";
++};
 --
 2.18.0
 
