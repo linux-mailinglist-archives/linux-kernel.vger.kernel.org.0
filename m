@@ -2,77 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74660103D15
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:15:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5BAB103D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731652AbfKTOPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 09:15:49 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56775 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731161AbfKTOPt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:15:49 -0500
-Received: from [2001:67c:670:100:6a05:caff:fe2d:a9b1]
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1iXQlh-0008Ae-3X; Wed, 20 Nov 2019 15:15:41 +0100
-Subject: Re: [PATCH] pinctrl: Fix Kconfig indentation
-To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-gpio@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>
-References: <20191120134019.14333-1-krzk@kernel.org>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <279930f8-7463-555a-2dce-7c50fec8067e@pengutronix.de>
-Date:   Wed, 20 Nov 2019 15:15:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730840AbfKTOSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 09:18:42 -0500
+Received: from mga04.intel.com ([192.55.52.120]:21117 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729000AbfKTOSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 09:18:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 06:18:42 -0800
+X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
+   d="scan'208";a="196867261"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 06:18:38 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH] drm/rect: remove useless call to clamp_t
+In-Reply-To: <20191119133435.22525-1-benjamin.gaignard@st.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191119133435.22525-1-benjamin.gaignard@st.com>
+Date:   Wed, 20 Nov 2019 16:18:35 +0200
+Message-ID: <871ru2y6kk.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191120134019.14333-1-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:6a05:caff:fe2d:a9b1
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Krzysztof,
+On Tue, 19 Nov 2019, Benjamin Gaignard <benjamin.gaignard@st.com> wrote:
+> Clamping a value between INT_MIN and INT_MAX always return the value itself
+> and generate warnings when compiling with W=1.
 
-On 11/20/19 2:40 PM, Krzysztof Kozlowski wrote:
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
+Does that hold for 32-bit too?
 
->  config PINCTRL_ARTPEC6
-> -        bool "Axis ARTPEC-6 pin controller driver"
-> +	bool "Axis ARTPEC-6 pin controller driver"
+BR,
+Jani.
 
-Here you replace spaces for tabs before the prompt type.
-
->  config PINCTRL_SM8150
->         tristate "Qualcomm Technologies Inc SM8150 pin controller driver"
-
-Here you leave the spaces before intact.
-
-Intentional?
-
-Cheers
-Ahmad
-
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+>  drivers/gpu/drm/drm_rect.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_rect.c b/drivers/gpu/drm/drm_rect.c
+> index b8363aaa9032..681f1fd09357 100644
+> --- a/drivers/gpu/drm/drm_rect.c
+> +++ b/drivers/gpu/drm/drm_rect.c
+> @@ -89,7 +89,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+>  		u32 new_src_w = clip_scaled(drm_rect_width(src),
+>  					    drm_rect_width(dst), diff);
+>  
+> -		src->x1 = clamp_t(int64_t, src->x2 - new_src_w, INT_MIN, INT_MAX);
+> +		src->x1 = src->x2 - new_src_w;
+>  		dst->x1 = clip->x1;
+>  	}
+>  	diff = clip->y1 - dst->y1;
+> @@ -97,7 +97,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+>  		u32 new_src_h = clip_scaled(drm_rect_height(src),
+>  					    drm_rect_height(dst), diff);
+>  
+> -		src->y1 = clamp_t(int64_t, src->y2 - new_src_h, INT_MIN, INT_MAX);
+> +		src->y1 = src->y2 - new_src_h;
+>  		dst->y1 = clip->y1;
+>  	}
+>  	diff = dst->x2 - clip->x2;
+> @@ -105,7 +105,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+>  		u32 new_src_w = clip_scaled(drm_rect_width(src),
+>  					    drm_rect_width(dst), diff);
+>  
+> -		src->x2 = clamp_t(int64_t, src->x1 + new_src_w, INT_MIN, INT_MAX);
+> +		src->x2 = src->x1 + new_src_w;
+>  		dst->x2 = clip->x2;
+>  	}
+>  	diff = dst->y2 - clip->y2;
+> @@ -113,7 +113,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+>  		u32 new_src_h = clip_scaled(drm_rect_height(src),
+>  					    drm_rect_height(dst), diff);
+>  
+> -		src->y2 = clamp_t(int64_t, src->y1 + new_src_h, INT_MIN, INT_MAX);
+> +		src->y2 = src->y1 + new_src_h;
+>  		dst->y2 = clip->y2;
+>  	}
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Jani Nikula, Intel Open Source Graphics Center
