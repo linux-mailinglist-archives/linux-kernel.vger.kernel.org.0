@@ -2,93 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A255C103E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90DD2103E76
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731198AbfKTP2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:28:42 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45355 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728933AbfKTP2k (ORCPT
+        id S1731109AbfKTP2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:28:38 -0500
+Received: from UHIL19PA40.eemsg.mail.mil ([214.24.21.199]:42644 "EHLO
+        UHIL19PA40.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731051AbfKTP2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:28:40 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z10so224442wrs.12;
-        Wed, 20 Nov 2019 07:28:39 -0800 (PST)
+        Wed, 20 Nov 2019 10:28:36 -0500
+X-EEMSG-check-017: 50252330|UHIL19PA40_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.69,222,1571702400"; 
+   d="scan'208";a="50252330"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UHIL19PA40.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 20 Nov 2019 15:28:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mQbJHJ0ZZ045TuFFH0OpDkzJ7tdcb7RCVuOKVisaGsk=;
-        b=QnBKM8lFYAgiDp8LfIkxVzinvXpIuyW56oFqGpbPPZxnkZU6XH+vxyVCg4qx0klXcJ
-         CYSM3C86zWGfP4zpnLTSfEEKpOJq5/aJG9FThkC1/W3Zd4ehndtC/i/Jq567GL1owuFb
-         6vucVz9yPAmXMzHNkZjRm0smO3K0bqeB2Y2ezetgaHphWqV969ZVtaf9L4SvENjkFfDz
-         GLV7NMZSBi9CCjHgp0sz9NVftykvrK176B40j3lMgu22suhpXX1cjyGfVNw3Pb4xwgre
-         UxM3g3jlZw7YWWFIF9AwhQEugdOL8xdWy+no+wLv4X2T6uXx5Nw5L1WUstUN9iBZ5Au+
-         LLgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mQbJHJ0ZZ045TuFFH0OpDkzJ7tdcb7RCVuOKVisaGsk=;
-        b=JnHEPZkVhS0xFKrmxIzYh/KBtVi/v3RtGl/GwG4w19J2+LmY0zpqljVhlr6k13oTYm
-         BuH4+6HUhCnDjY5o9mpo5fwdFhcl/MZq5r0svKX18w5j5cjY9Hu/GhwSvwimoEGXASnv
-         K7BevgNSkFief3OMZxCeo1ObjcUSpGQwx3tlyiOg7gAnDrxS05YYjH9zY0PHQyREzbks
-         zwqmDoIszwVgbh5D0NAJzS2zrT+bhjQvLfUf+JOsUIThTnCg2S+lXC/m4CB5AAJOMF01
-         8ZkJlpSqxPx7Nsmz5+OhV2ovmT5PiQXcli+FMgqQx1VdDHzRtl/BVExxyM/U7m4DLJUr
-         jftQ==
-X-Gm-Message-State: APjAAAU/rx1qAiaBbnmb5e4tSV7I6LcROjeBxwoU37I0xfMcMZoCwh8p
-        sJo9+vzi7cJMeoxebyz3aJY=
-X-Google-Smtp-Source: APXvYqxh3eO87gK5Jlc/kSuzcfY8YgxD33Qo+k4FW0XQA3xxsWgsLM/AlJuIgFsEP2rpMDutlyvygw==
-X-Received: by 2002:a5d:6706:: with SMTP id o6mr4098747wru.54.1574263718682;
-        Wed, 20 Nov 2019 07:28:38 -0800 (PST)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w4sm31797881wrs.1.2019.11.20.07.28.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 07:28:38 -0800 (PST)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
-        wens@csie.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v2 1/3] dt-bindings: crypto: add new compatible for A33 SS
-Date:   Wed, 20 Nov 2019 16:28:31 +0100
-Message-Id: <20191120152833.20443-2-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191120152833.20443-1-clabbe.montjoie@gmail.com>
-References: <20191120152833.20443-1-clabbe.montjoie@gmail.com>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1574263713; x=1605799713;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=SbonHAnJ65ofoJGSPztdBnhiqK+qDwU/5hUGN93Jeiw=;
+  b=P6DRL/oM82D31nXN10/RnZ3dcJRSsuTJnyFKM5QfsVvUcIJkqtSaElep
+   LNdEa/9XSPHMzsAi0J5lgvmOnAW9UKdHmALO7xmCKkXy9imCXpJJ6a8Sv
+   G/Esb+ufPg+mJdayrn86vsHbS0CQTXPdEGpws79hg4LAAlQsS+OfNdCHI
+   3gIBPb8Chl3LHmHQudtdmfMUWTpmoyXKFMJ8XlTanUtGTIdh4UqTNCvsU
+   QqUti9QSNzEuinypc3+qZ7jh9Mxy7sJZIKgS93Nf6mAt5WNUtmjKJUlHq
+   WavCjbL4uZN/xCDebUHm9063g35wopgdLolsssej/tfYdJ9+ey333IMXh
+   A==;
+X-IronPort-AV: E=Sophos;i="5.69,222,1571702400"; 
+   d="scan'208";a="35774017"
+IronPort-PHdr: =?us-ascii?q?9a23=3AqI7KQRVBRCbj8kIN7jKsyLGYakTV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYZRWGvadThVPEFb/W9+hDw7KP9fy5AipZvM7K7ypKWacPfi?=
+ =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
+ =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMLjYZiNqo9xR?=
+ =?us-ascii?q?nErmVVcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
+ =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
+ =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
+ =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhBOfixjpOi3Tr36M1zv?=
+ =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
+ =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
+ =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
+ =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
+ =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
+ =?us-ascii?q?YTrUTCETP2mEXxlqOWcFkr+vO05Oj9Z7Xmp5ucO5d1igH4LKsuhtSyDfk3Pw?=
+ =?us-ascii?q?UBRWSW+fmw2Kf98UD2XrlGlOA6nrHcsJ/AJMQboqC5AxVS0oYm8xu/FCqp0M?=
+ =?us-ascii?q?8DkHkbLFNKZBKHj4/zN1HIO/D3F+2zg1urkDd13/zGJKHuAo3RLnjfl7fsZb?=
+ =?us-ascii?q?h8609YyAo31t1f5IxbCqsHIP3tXk/9rtvYDgU2Mwas2eboFM191p8CWWKIGq?=
+ =?us-ascii?q?KZK73dsVuJ5uIpPumNa5QYuCjyK/c7/f7il3w5lkEHfamvw5QXbGq0HvN8I0?=
+ =?us-ascii?q?WWeXDsmMsOEX8WvgoiS+znkFmCUT9VZ3avUKMw/zI7B5y8DYfFWI+thKeM3D?=
+ =?us-ascii?q?m0HpJIfGBKEFOMHmnyd4WCRfgMbDieIsh7kjwLTbKhUZMu1QmytA/mzLpqNv?=
+ =?us-ascii?q?TU+iwCtZLkz9V05vPclRcz9TxqFcid12CNT2dpnmIHXTM227p/oUNnxlee0q?=
+ =?us-ascii?q?hym+ZYGsBL5/NVTgc6MobRz+h7C9D0RwLAcc6FSFi9Qtq7Hz4xUMw+w9sVbk?=
+ =?us-ascii?q?ZjFNWtkArD0zCpA7ALjbyLAoI78qbG03j2PcZ9xG7M1LM9gFk+XstPKWqmi7?=
+ =?us-ascii?q?Zl9wfPGo7EiFuZl6m0eqQGxiLN93mMzXCIvE5GVA58S6LFXWoQZhiekdOs2U?=
+ =?us-ascii?q?LGS/eCBL0sNQ0JndGDLq9iadDzi1hCAvD5N4KNTXi2njKLGRuQxr6KJLHvcm?=
+ =?us-ascii?q?EZ0TSVXFMIiCgP7H2GMk44HS7nrGXAWm89XWnzal/hpLEt4EiwSVU5mkTTMh?=
+ =?us-ascii?q?xs?=
+X-IPAS-Result: =?us-ascii?q?A2BQAAA1WtVd/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF+gXQsgUABMoRUj1ABAQEBAQEGgREliWaRQwkBAQEBAQEBAQE0A?=
+ =?us-ascii?q?QIBAYRAAoInJDgTAhABAQEEAQEBAQEFAwEBbIVDgjspAYJtAQUjFUEQCxgCA?=
+ =?us-ascii?q?iYCAlcGDQgBAYJfP4JTJbAugTKFToM2gUiBDiiMFhh4gQeBOAyCXz6EL4Mmg?=
+ =?us-ascii?q?l4Ell5GlwqCNYI3kxIGG4I+jCOLMy2qOCKBWCsIAhgIIQ+DKE8RFIdtAQiNN?=
+ =?us-ascii?q?CMDgTUBAYsnKoIWAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 20 Nov 2019 15:28:32 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id xAKFSV1v032640;
+        Wed, 20 Nov 2019 10:28:32 -0500
+Subject: Re: [RFC PATCH 1/2] selinux: Don't call avc_compute_av() from RCU
+ path walk
+To:     Will Deacon <will@kernel.org>
+Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        linuxfs <linux-fsdevel@vger.kernel.org>, rcu@vger.kernel.org
+References: <20191119184057.14961-1-will@kernel.org>
+ <20191119184057.14961-2-will@kernel.org>
+ <5e51f9a5-ba76-a42d-fc2b-9255f8544859@tycho.nsa.gov>
+ <20191120131229.GA21500@willie-the-truck>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <d8dbd290-0ffa-271f-0268-5e9148e7ee9b@tycho.nsa.gov>
+Date:   Wed, 20 Nov 2019 10:28:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191120131229.GA21500@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A33 SS has a difference with all other SS, it give SHA1 digest
-directly in BE.
-This difference need to be handlded by the driver and so need a new
-compatible.
+On 11/20/19 8:12 AM, Will Deacon wrote:
+> Hi Stephen,
+> 
+> Thanks for the quick reply.
+> 
+> On Tue, Nov 19, 2019 at 01:59:40PM -0500, Stephen Smalley wrote:
+>> On 11/19/19 1:40 PM, Will Deacon wrote:
+>>> 'avc_compute_av()' can block, so we carefully exit the RCU read-side
+>>> critical section before calling it in 'avc_has_perm_noaudit()'.
+>>> Unfortunately, if we're calling from the VFS layer on the RCU path walk
+>>> via 'selinux_inode_permission()' then we're still actually in an RCU
+>>> read-side critical section and must not block.
+>>
+>> avc_compute_av() should never block AFAIK. The blocking concern was with
+>> slow_avc_audit(), and even that appears dubious to me. That seems to be more
+>> about misuse of d_find_alias in dump_common_audit_data() than anything.
+> 
+> Apologies, I lost track of GFP_ATOMIC when I reading the code and didn't
+> think it was propagated down to all of the potential allocations and
+> string functions. Having looked at it again, I can't see where it blocks.
+> 
+> Might be worth a comment in avc_compute_av(), because the temporary
+> dropping of rcu_read_lock() looks really dodgy when we could be running
+> on the RCU path walk path anyway.
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- .../devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml  | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml b/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml
-index 80b3e7350a73..5fc88fb3a91b 100644
---- a/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml
-+++ b/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml
-@@ -23,6 +23,8 @@ properties:
-       - items:
-         - const: allwinner,sun7i-a20-crypto
-         - const: allwinner,sun4i-a10-crypto
-+      - items:
-+        - const: allwinner,sun8i-a33-crypto
- 
-   reg:
-     maxItems: 1
--- 
-2.23.0
+I don't think that's a problem but I'll defer to the fsdevel and rcu 
+folks.  The use of RCU within the SELinux AVC long predates the 
+introduction of RCU path walk, and the rcu_read_lock()/unlock() pairs 
+inside the AVC are not related in any way to RCU path walk.  Hopefully 
+they don't break it.  The SELinux security server (i.e. 
+security_compute_av() and the rest of security/selinux/ss/*) internally 
+has its own locking for its data structures, primarily the policy 
+rwlock.  There was also a patch long ago to convert use of that policy 
+rwlock to RCU but it didn't seem justified at the time.  We are 
+interested in revisiting that however.  That would introduce its own set 
+of rcu_read_lock/unlock pairs inside of security_compute_av() as well.
 
