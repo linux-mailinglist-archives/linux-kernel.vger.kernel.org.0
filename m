@@ -2,72 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279911040FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9B6610410A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:42:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732826AbfKTQkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:40:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34547 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbfKTQkV (ORCPT
+        id S1732856AbfKTQmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:42:01 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38050 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732847AbfKTQmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:40:21 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t2so639427wrr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 08:40:19 -0800 (PST)
+        Wed, 20 Nov 2019 11:42:01 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z19so323224wmk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 08:41:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RB5ZmnOBrz94FKCQLZ2un9z7w5NJ9rHKH0gi3NUYCdU=;
-        b=FwQxQt24Jex/90mCOVXSXgGXgkuL9kqqWTITnZct9eutLKM27hcW/dirO3XvCbvgh9
-         CbXUHLTBJj0Ki+t2u6auH58+YDsOk4+S5XLzwNow31+dDru1ONoyrKgVzoCNPQIDtbyW
-         MHFA96nAIk7st9CwiU5tHzG1hSgfWEwY7SKzk=
+        bh=DoBrdkQjnM2M/sNIIdwf16laThZkuQKlh8PPcfsQfYM=;
+        b=GN0/nFYDPFzOUrHsl9BbUvlxMEQgUTa5wU0hEQG8hzQRTEesfxWZBj4Q/qj3QnsV4K
+         AjN2mkwABi+vsodfnJLOTctxxyuhkQ55UuAtU8xswqrCnp7gxOrM8XDS6g1oeux1y2AZ
+         q8O3Fd5bQRf9OxPkeDbthgLX0cnVMUMd6NecI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to:user-agent;
-        bh=RB5ZmnOBrz94FKCQLZ2un9z7w5NJ9rHKH0gi3NUYCdU=;
-        b=ZYmp8IEHKl3YVOgykE3qGuHFR9N3P5511+ErO18leyoSsqntfNA6PMrW7vzig0mrj+
-         W/ImYk4dmO+gHKzE2pAvxBxBKYTZAVjYJwVGh5L93K9LxHMWbQV4yd0jyTNnNHHEf7e+
-         8NWpME8J3nPR06/FEupzYJP5130sSTzHrR94oE4ibygnq2AJ2LgBY2Vd/U/B+MRv0ksY
-         6KmLzxq7F7P5h2d0gBQZjt2UWOtUZy0xlc70IUhcd7JQiQK+MTzB7buaa/zGDEKZk7xF
-         hk8416sUBJZJstYu9a3Q4DR6AZ7QIRharscHtCDy8qXgwASG2IUpQLd55kj+WUwFd42F
-         D6mA==
-X-Gm-Message-State: APjAAAXJVeAa2AaReoeFWDe+DCJUxLXBFXwRrk1vU2yz/K0k5Nucwb0Q
-        bnHa6pmI/lJu92zl48MC7nvuQA==
-X-Google-Smtp-Source: APXvYqzazHWNEpR6TDRVZdLb3zC82BtG8q56aJqXkTBYFpfvyUsFtFrKnrMMtTn/v7y7yNmvYXPxNg==
-X-Received: by 2002:a5d:4142:: with SMTP id c2mr4626118wrq.60.1574268018953;
-        Wed, 20 Nov 2019 08:40:18 -0800 (PST)
+        bh=DoBrdkQjnM2M/sNIIdwf16laThZkuQKlh8PPcfsQfYM=;
+        b=dM5dcET5+3/U7tYEh46VKaBKKGk7an1tHijQwG6dSVHojTUl/YOLKMQZ0A1jTHCGE6
+         26eEhtjNUfm+YJxoq5aN2kpboUN/aHL8jdDeIYZD9cmuxWQrM0kQjAkkl+DzvcouDiFP
+         MJp7stIJU1oqLpwvZtEGSuEh7DsGt2l5UW9aIjzjG5Kr+O1cB7+oPnB5e8HF5eVX/ojl
+         MDwqhMhtAUlAp2U7bBmkH6Vaep3OF6+Pf4P9YAtnw2bMl6VBmZmqETG0C/WSCUY/eSzl
+         DZuh+WbRsrbhlZzOnkj0rtA3XhmfSpUctgyqnJuW/+Z48xetS91AyiSEYOnBqwmZONGF
+         qsOg==
+X-Gm-Message-State: APjAAAXtnUUdwZ4+AiXfex9izGomN8fQppxI0SLbDjdC2nhGAXzuudj/
+        aDklIOEfz8CIW9fjy3XEumVjpw==
+X-Google-Smtp-Source: APXvYqxcp61Ouq7qqx6fMqpJbU5o8VCWsZA5gd0+Tv52/4/6QtREkNjADbOEaEE5seygIX0OYcGmYw==
+X-Received: by 2002:a1c:cc01:: with SMTP id h1mr4269171wmb.172.1574268118420;
+        Wed, 20 Nov 2019 08:41:58 -0800 (PST)
 Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id d7sm32334298wrx.11.2019.11.20.08.40.17
+        by smtp.gmail.com with ESMTPSA id j2sm32071445wrt.61.2019.11.20.08.41.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 08:40:18 -0800 (PST)
-Date:   Wed, 20 Nov 2019 17:40:16 +0100
+        Wed, 20 Nov 2019 08:41:57 -0800 (PST)
+Date:   Wed, 20 Nov 2019 17:41:55 +0100
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/bridge: Fix Kconfig indentation
-Message-ID: <20191120164016.GQ30416@phenom.ffwll.local>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] staging: fbtft: Fix Kconfig indentation
+Message-ID: <20191120164155.GR30416@phenom.ffwll.local>
 Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-References: <20191120133634.11601-1-krzk@kernel.org>
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20191120133911.13539-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191120133634.11601-1-krzk@kernel.org>
+In-Reply-To: <20191120133911.13539-1-krzk@kernel.org>
 X-Operating-System: Linux phenom 5.2.0-3-amd64 
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,42 +67,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 09:36:34PM +0800, Krzysztof Kozlowski wrote:
+On Wed, Nov 20, 2019 at 09:39:11PM +0800, Krzysztof Kozlowski wrote:
 > Adjust indentation from spaces to tab (+optional two spaces) as in
 > coding style with command like:
 > 	$ sed -e 's/^        /\t/' -i */Kconfig
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-lima, mga200g and bridge patches also queued.
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+I expect Greg will pick this up.
 -Daniel
 
 > ---
->  drivers/gpu/drm/bridge/Kconfig | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/staging/fbtft/Kconfig | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index 34362976cd6f..176efa18e32c 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -60,10 +60,10 @@ config DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW
->  	select DRM_KMS_HELPER
->  	select DRM_PANEL
->  	---help---
-> -          This is a driver for the display bridges of
-> -          GE B850v3 that convert dual channel LVDS
-> -          to DP++. This is used with the i.MX6 imx-ldb
-> -          driver. You are likely to say N here.
-> +	  This is a driver for the display bridges of
-> +	  GE B850v3 that convert dual channel LVDS
-> +	  to DP++. This is used with the i.MX6 imx-ldb
-> +	  driver. You are likely to say N here.
+> diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
+> index d994aea84b21..19d9d88e9150 100644
+> --- a/drivers/staging/fbtft/Kconfig
+> +++ b/drivers/staging/fbtft/Kconfig
+> @@ -95,8 +95,8 @@ config FB_TFT_PCD8544
+>  	  Generic Framebuffer support for PCD8544
 >  
->  config DRM_NXP_PTN3460
->  	tristate "NXP PTN3460 DP/LVDS bridge"
+>  config FB_TFT_RA8875
+> -        tristate "FB driver for the RA8875 LCD Controller"
+> -        depends on FB_TFT
+> +	tristate "FB driver for the RA8875 LCD Controller"
+> +	depends on FB_TFT
+>  	help
+>  	  Generic Framebuffer support for RA8875
+>  
+> @@ -132,10 +132,10 @@ config FB_TFT_SSD1289
+>  	  Framebuffer support for SSD1289
+>  
+>  config FB_TFT_SSD1305
+> -        tristate "FB driver for the SSD1305 OLED Controller"
+> -        depends on FB_TFT
+> -        help
+> -          Framebuffer support for SSD1305
+> +	tristate "FB driver for the SSD1305 OLED Controller"
+> +	depends on FB_TFT
+> +	help
+> +	  Framebuffer support for SSD1305
+>  
+>  config FB_TFT_SSD1306
+>  	tristate "FB driver for the SSD1306 OLED Controller"
 > -- 
 > 2.17.1
 > 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
 Daniel Vetter
