@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBE3C103C3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:42:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B132103C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbfKTNmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:42:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49786 "EHLO mail.kernel.org"
+        id S1730180AbfKTNmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:42:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731343AbfKTNmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:42:01 -0500
+        id S1730200AbfKTNmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:42:06 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04BF72252D;
-        Wed, 20 Nov 2019 13:41:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76FC122528;
+        Wed, 20 Nov 2019 13:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257321;
-        bh=mFUdhDkuaiarzva5KnRvrKWe2AuEKsDcucpMmF0l1mM=;
+        s=default; t=1574257325;
+        bh=ImiUar8SpFecCMDnr8VK71R7PTUkzqO+RyLiTn28ha4=;
         h=From:To:Cc:Subject:Date:From;
-        b=PUoZ+BW6RFgt71q1X/DA6Xkz8FHU5iYqH5b69J09/WxxJ3yAaOxHgi5cHZdm+/08A
-         YsgIC49dA//F/ZBpb45M4RNqwsojveREIbW8KPAttWLOdpjvPcy4jIcYFiU4pXmndO
-         nVYrHPE+P9cTBXimxUfS9Zyw8K790M3YPLA+8xwA=
+        b=qtyggUEszVHGCy2JsYZqfZIS9QkZa2YGAnfxWo+R+M1qk/HhWKv3fXeUC10SmcoXv
+         CYBD/VHiT9dcOT3RPlI/ATGGlmBpVtgIl2pZrUph3V9hmfbqXD7ri1mnVd1XtMXCoc
+         Wru/wm1MR5pttRW955JKf1QhH2TWsH9RbC8c5PF4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Subject: [PATCH] hid: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:41:57 +0800
-Message-Id: <20191120134157.15474-1-krzk@kernel.org>
+        Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
+Subject: [PATCH] firmware/efi: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:42:02 +0800
+Message-Id: <20191120134202.15531-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -44,22 +42,38 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/hid/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/Kconfig     | 4 ++--
+ drivers/firmware/efi/Kconfig | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 494a39e74939..7d4f3b949f9b 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -107,7 +107,7 @@ config HID_ACCUTOUCH
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index e40a77bfe821..312c27876b60 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -86,8 +86,8 @@ config EDD
+ 	  BIOS tries boot from.  This information is then exported via sysfs.
  
- 	  The driver works around a problem in the reported device capabilities
- 	  which causes userspace to detect the device as a mouse rather than
--          a touchscreen.
-+	  a touchscreen.
+ 	  This option is experimental and is known to fail to boot on some
+-          obscure configurations. Most disk controller BIOS vendors do
+-          not yet implement this feature.
++	  obscure configurations. Most disk controller BIOS vendors do
++	  not yet implement this feature.
  
- 	  Say Y here if you have a Accutouch 2216 touch controller.
+ config EDD_OFF
+ 	bool "Sets default behavior for EDD detection to off"
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index bcc378c19ebe..47a3231755d7 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -101,7 +101,7 @@ config EFI_PARAMS_FROM_FDT
+ 	help
+ 	  Select this config option from the architecture Kconfig if
+ 	  the EFI runtime support gets system table address, memory
+-          map address, and other parameters from the device tree.
++	  map address, and other parameters from the device tree.
  
+ config EFI_RUNTIME_WRAPPERS
+ 	bool
 -- 
 2.17.1
 
