@@ -2,166 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9195103DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A65103DBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 15:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731874AbfKTOzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 09:55:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731775AbfKTOzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:55:22 -0500
-Received: from linux-8ccs.suse.de (x2f7fef5.dyn.telefonica.de [2.247.254.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A467206EC;
-        Wed, 20 Nov 2019 14:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574261721;
-        bh=K2L2QTaADtfrEnvPFmBvRj5rP4HoJezLv58+2MpX48I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Wn8bN9YERfEwrf6yFkGA6+Y3SU5YpROZ2qGwOjXY/0hFxUYVSsNb382gZuzcvcRFq
-         +BMR2QCLMjkqKUfR1ISCsJb3xKG4k9P+uMvkETqJFadZ8FSLazgiYcc6iuY+lAeKJi
-         gKYayiNDBWVp87XlC/6oLTPpEehn1xi+MX5CKp0Y=
-From:   Jessica Yu <jeyu@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Matthias Maennich <maennich@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH] export.h: reduce __ksymtab_strings string duplication by using "MS" section flags
-Date:   Wed, 20 Nov 2019 15:51:10 +0100
-Message-Id: <20191120145110.8397-1-jeyu@kernel.org>
-X-Mailer: git-send-email 2.16.4
+        id S1731860AbfKTOvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 09:51:19 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:49271 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731836AbfKTOvR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 09:51:17 -0500
+X-Originating-IP: 90.76.211.102
+Received: from aptenodytes (lfbn-1-2154-102.w90-76.abo.wanadoo.fr [90.76.211.102])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id ECDB740005;
+        Wed, 20 Nov 2019 14:51:14 +0000 (UTC)
+Date:   Wed, 20 Nov 2019 15:51:14 +0100
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: display: Document the Xylon LogiCVC
+ display controller
+Message-ID: <20191120145114.GB4331@aptenodytes>
+References: <20190927100738.1863563-1-paul.kocialkowski@bootlin.com>
+ <20190927100738.1863563-2-paul.kocialkowski@bootlin.com>
+ <20190927222038.GA22180@bogus>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
+Content-Disposition: inline
+In-Reply-To: <20190927222038.GA22180@bogus>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c3a6cf19e695 ("export: avoid code duplication in
-include/linux/export.h") refactors export.h quite nicely, but introduces
-a slight increase in memory usage due to using the empty string ""
-instead of NULL to indicate that an exported symbol has no namespace. As
-mentioned in that commit, this meant an increase of 1 byte per exported
-symbol without a namespace. For example, if a kernel configuration has
-about 10k exported symbols, this would mean that the size of
-__ksymtab_strings would increase by roughly 10kB.
 
-We can alleviate this situation by utilizing the SHF_MERGE and
-SHF_STRING section flags. SHF_MERGE|SHF_STRING indicate to the linker
-that the data in the section are null-terminated strings that can be
-merged to eliminate duplication. More specifically, from the binutils
-documentation - "for sections with both M and S, a string which is a
-suffix of a larger string is considered a duplicate. Thus "def" will be
-merged with "abcdef"; A reference to the first "def" will be changed to
-a reference to "abcdef"+3". Thus, all the empty strings would be merged
-as well as any strings that can be merged according to the cited method
-above. For example, "memset" and "__memset" would be merged to just
-"__memset" in __ksymtab_strings.
+--oC1+HKm2/end4ao3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As of v5.4-rc5, the following statistics were gathered with x86
-defconfig with approximately 10.7k exported symbols.
+Hi,
 
-Size of __ksymtab_strings in vmlinux:
--------------------------------------
-v5.4-rc5: 213834 bytes
-v5.4-rc5 with commit c3a6cf19e695: 224455 bytes
-v5.4-rc5 with this patch: 205759 bytes
+On Fri 27 Sep 19, 17:20, Rob Herring wrote:
+> On Fri, Sep 27, 2019 at 12:07:37PM +0200, Paul Kocialkowski wrote:
+> > The Xylon LogiCVC is a display controller implemented as programmable
+> > logic in Xilinx FPGAs.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../display/xylon,logicvc-display.yaml        | 313 ++++++++++++++++++
+> >  1 file changed, 313 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/xylon,log=
+icvc-display.yaml
+>=20
+> Any response to my last mail on v1?
 
-So, we already see memory savings of ~8kB compared to vanilla -rc5 and
-savings of nearly 18.7kB compared to -rc5 with commit c3a6cf19e695 on top.
+Just answered on that thread, sorry for the delay.
 
-Unfortunately, as of this writing, strings will not get deduplicated for
-kernel modules, as ld does not do the deduplication for
-SHF_MERGE|SHF_STRINGS sections for relocatable files (ld -r), which
-kernel modules are. A patch for ld is currently being worked on to
-hopefully allow for string deduplication in relocatable files in the
-future.
+Cheers,
 
-Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
----
- include/asm-generic/export.h | 13 ++++++++++---
- include/linux/export.h       | 28 ++++++++++++++++++++++------
- 2 files changed, 32 insertions(+), 9 deletions(-)
+Paul
 
-diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-index fa577978fbbd..d0704f2602f4 100644
---- a/include/asm-generic/export.h
-+++ b/include/asm-generic/export.h
-@@ -26,9 +26,16 @@
- .endm
- 
- /*
-- * note on .section use: @progbits vs %progbits nastiness doesn't matter,
-- * since we immediately emit into those sections anyway.
-+ * note on .section use: we specify @progbits vs %progbits since usage of
-+ * "M" (SHF_MERGE) section flag requires it.
-  */
-+
-+#ifdef CONFIG_ARM
-+#define ARCH_PROGBITS %progbits
-+#else
-+#define ARCH_PROGBITS @progbits
-+#endif
-+
- .macro ___EXPORT_SYMBOL name,val,sec
- #ifdef CONFIG_MODULES
- 	.globl __ksymtab_\name
-@@ -37,7 +44,7 @@
- __ksymtab_\name:
- 	__put \val, __kstrtab_\name
- 	.previous
--	.section __ksymtab_strings,"a"
-+	.section __ksymtab_strings,"aMS",ARCH_PROGBITS,1
- __kstrtab_\name:
- 	.asciz "\name"
- 	.previous
-diff --git a/include/linux/export.h b/include/linux/export.h
-index 201262793369..ab325a8e6bee 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -81,16 +81,32 @@ struct kernel_symbol {
- 
- #else
- 
-+#ifdef CONFIG_ARM
-+#define ARCH_PROGBITS "%progbits"
-+#else
-+#define ARCH_PROGBITS "@progbits"
-+#endif
-+
-+#define __KSTRTAB_ENTRY(sym)							\
-+	asm("	.section \"__ksymtab_strings\",\"aMS\","ARCH_PROGBITS",1\n"	\
-+	    "__kstrtab_" #sym ":					\n"	\
-+	    "	.asciz 	\"" #sym "\"					\n"	\
-+	    "	.previous						\n")
-+
-+#define __KSTRTAB_NS_ENTRY(sym, ns)						\
-+	asm("	.section \"__ksymtab_strings\",\"aMS\","ARCH_PROGBITS",1\n"	\
-+	    "__kstrtabns_" #sym ":					\n"	\
-+	    "	.asciz 	" #ns "						\n"	\
-+	    "	.previous						\n")
-+
- /* For every exported symbol, place a struct in the __ksymtab section */
- #define ___EXPORT_SYMBOL(sym, sec, ns)					\
- 	extern typeof(sym) sym;						\
-+	extern const char __kstrtab_##sym[];					\
-+	extern const char __kstrtabns_##sym[];				\
- 	__CRC_SYMBOL(sym, sec);						\
--	static const char __kstrtab_##sym[]				\
--	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
--	= #sym;								\
--	static const char __kstrtabns_##sym[]				\
--	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
--	= ns;								\
-+	__KSTRTAB_ENTRY(sym);						\
-+	__KSTRTAB_NS_ENTRY(sym, ns);					\
- 	__KSYMTAB_ENTRY(sym, sec)
- 
- #endif
--- 
-2.16.4
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
+--oC1+HKm2/end4ao3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAl3VUuIACgkQ3cLmz3+f
+v9H6/QgAmZDcI/0gblSW95D8aMF2UP+4tUc1NYzzzlGmCGvAisyVWulup7L5PvSv
+uLxiM+7Kmq6KX9A0AOQ00+/d6noUI/sX9Zi6eY3EgyLQMnTNM87Z0SjSkO7oMkv2
+67GflREHdXIBr/jOI/tQ1Tqd04otcEN0iy7fzziWrK0gf33JTIhYE/v1k/3HKJyw
+jQjAU89SGWCTLrQUnWSXEkW7LyqX1XX/j5uVfeWJOBDdZYrHhpzRLvCRtbYKHqAk
+69VZQSm6NsoPtYGaZmuuTzegqphpJ/wG0BdOa8hIofGmGHsiwI//Ndx28cUELQCi
+rhXxUVq4zMUePbQId7kIskGuQjC3Kg==
+=oRfo
+-----END PGP SIGNATURE-----
+
+--oC1+HKm2/end4ao3--
