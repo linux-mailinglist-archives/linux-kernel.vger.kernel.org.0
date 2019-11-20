@@ -2,107 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 414A5103B06
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC277103B13
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbfKTNV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:21:56 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56837 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730216AbfKTNV3 (ORCPT
+        id S1730412AbfKTNWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:22:13 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41893 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730266AbfKTNWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:29 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPv8-0007H3-Pr; Wed, 20 Nov 2019 14:21:22 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1EDC61C1A23;
-        Wed, 20 Nov 2019 14:21:07 +0100 (CET)
-Date:   Wed, 20 Nov 2019 13:21:07 -0000
-From:   "tip-bot2 for Daode Huang" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip: Remove redundant semicolon after while
-Cc:     Daode Huang <huangdaode@hisilicon.com>,
-        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <1571300729-38822-1-git-send-email-huangdaode@hisilicon.com>
-References: <1571300729-38822-1-git-send-email-huangdaode@hisilicon.com>
+        Wed, 20 Nov 2019 08:22:11 -0500
+Received: by mail-lf1-f65.google.com with SMTP id j14so20160545lfb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 05:22:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u+fEJbvQrRlIm5amKPzgTUOGJYAL/QTXwvIMqIsCMxs=;
+        b=zeVpR9kG6RhnlC8g9BSHP0NoAGUkP0qwAhYse80QhwQEO6r7B8jxxhqmB5Q6bfYZeZ
+         AgpzRHSe9SIixtqeUib5xE/5a1qMnlyt6CMEONaOGWj8qZM7Zs4I02BkAtdmXlSilAN7
+         9q/5a8dArRMysT+xLuyY2qLNGzmedUiUwLxw7ddXPDHzXrloXK3YcFtSznkJXTLK4waV
+         tMiPH1SSNToVlctcX7SsM8Gapk7LtK0eFL8+kj4eJId5ENquQcfkf7wMBCMmbro6v/3n
+         tUSBHQowhVnEsHjj1mGo2zRZ/8DOZ3PpiDjXrJXTxZsu19VoLQ2d/HdAuF8Dj5gxl5Lh
+         RT7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u+fEJbvQrRlIm5amKPzgTUOGJYAL/QTXwvIMqIsCMxs=;
+        b=uoI6F6FizlWqMeMLtsgxZjMAkJe7stAs1dvTv1k5aqLuNXSXQd/FbFOI8RKOSkeXEO
+         jr6yB+bEg4csVOv5bMFQa9DKf53o+mZPmJKCoGyexKKUl11ovH09U5QGQb4u/Dz+z/Ni
+         XfCd5CHPmOuARzeqA2qiEJLJKZaH91cRig2uKCzBwxlveCwGuXttlDjEFHeDq4z7dekZ
+         xI+ooRBzNCHUh+qQU6eZVTAdmTRQI1QSgQuy7Ggnr+ybQFQlC9JEN/9j16ue1gSZ2TGq
+         j+M6aeL57h3PWoh+pQcfQLiB6A//9nS7/1bsyGbfhay9T4Sn1tsfq2+deQP+mA+0TxSd
+         eYxw==
+X-Gm-Message-State: APjAAAUa+a0OWZeVVvNZ3Qs/27XMTaoXG8N9hEKK/tjL3RRypPkX5sM0
+        7+yFQLly6icW0CiEtxUbQ90NUN793ksX5B2KpCU3jg==
+X-Google-Smtp-Source: APXvYqz8CxhCRLYddnfjVTSQgo8beMaB6Nzl5wwRbrHMcgPVWoIqlwpus9VXBCQ5Izt8ZswxCNmORREYFDkHLw62w/s=
+X-Received: by 2002:a19:c144:: with SMTP id r65mr2806460lff.133.1574256128135;
+ Wed, 20 Nov 2019 05:22:08 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157425606706.12247.9462338694860117345.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
+ <1571405198-27570-12-git-send-email-vincent.guittot@linaro.org> <20191120115844.scli3gprgd5vvlt4@e107158-lin.cambridge.arm.com>
+In-Reply-To: <20191120115844.scli3gprgd5vvlt4@e107158-lin.cambridge.arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 20 Nov 2019 14:21:56 +0100
+Message-ID: <CAKfTPtDh7HAv2Krx9cRKcA+Zy=erYkykyZZj4=nkRoTEdY=oFw@mail.gmail.com>
+Subject: Re: [PATCH v4 11/11] sched/fair: rework find_idlest_group
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Qais,
 
-Commit-ID:     2c542426128a4e3d247939f868d19279ad48cb1f
-Gitweb:        https://git.kernel.org/tip/2c542426128a4e3d247939f868d19279ad48cb1f
-Author:        Daode Huang <huangdaode@hisilicon.com>
-AuthorDate:    Thu, 17 Oct 2019 16:25:29 +08:00
-Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sun, 10 Nov 2019 18:47:44 
+On Wed, 20 Nov 2019 at 12:58, Qais Yousef <qais.yousef@arm.com> wrote:
+>
+> Hi Vincent
+>
+> On 10/18/19 15:26, Vincent Guittot wrote:
+> > The slow wake up path computes per sched_group statisics to select the
+> > idlest group, which is quite similar to what load_balance() is doing
+> > for selecting busiest group. Rework find_idlest_group() to classify the
+> > sched_group and select the idlest one following the same steps as
+> > load_balance().
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+>
+> LTP test has caught a regression in perf_event_open02 test on linux-next and I
+> bisected it to this patch.
+>
+> That is checking out next-20191119 tag and reverting this patch on top the test
+> passes. Without the revert the test fails.
+>
+> I think this patch disturbs this part of the test:
+>
+>         https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/perf_event_open/perf_event_open02.c#L209
+>
+> When I revert this patch count_hardware_counters() returns a non zero value.
+> But with it applied it returns 0 which indicates that the condition terminates
+> earlier than what the test expects.
 
-irqchip: Remove redundant semicolon after while
+Thanks for the report and starting analysing it
 
-check drivers/irqchip with "make coccicheck M=drivers/irqchip/",
-it will report unneeded semicolon like below, just remove them.
+>
+> I'm failing to see the connection yet, but since I spent enough time bisecting
+> it I thought I'll throw this out before I continue to bottom it out in hope it
+> rings a bell for you or someone else.
 
-drivers/irqchip/irq-zevio.c:54:2-3: Unneeded semicolon
-drivers/irqchip/irq-gic-v3.c:177:2-3: Unneeded semicolon
-drivers/irqchip/irq-gic-v3.c:234:2-3: Unneeded semicolon
+I will try to reproduce the problem and understand why it's failing
+because i don't have any clue of the relation between both for now
 
-Signed-off-by: Daode Huang <huangdaode@hisilicon.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/1571300729-38822-1-git-send-email-huangdaode@hisilicon.com
----
- drivers/irqchip/irq-gic-v3.c | 4 ++--
- drivers/irqchip/irq-zevio.c  | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 1edc993..9e35155 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -174,7 +174,7 @@ static void gic_do_wait_for_rwp(void __iomem *base)
- 		}
- 		cpu_relax();
- 		udelay(1);
--	};
-+	}
- }
- 
- /* Wait for completion of a distributor change */
-@@ -231,7 +231,7 @@ static void gic_enable_redist(bool enable)
- 			break;
- 		cpu_relax();
- 		udelay(1);
--	};
-+	}
- 	if (!count)
- 		pr_err_ratelimited("redistributor failed to %s...\n",
- 				   enable ? "wakeup" : "sleep");
-diff --git a/drivers/irqchip/irq-zevio.c b/drivers/irqchip/irq-zevio.c
-index 5a7efeb..84163f1 100644
---- a/drivers/irqchip/irq-zevio.c
-+++ b/drivers/irqchip/irq-zevio.c
-@@ -51,7 +51,7 @@ static void __exception_irq_entry zevio_handle_irq(struct pt_regs *regs)
- 	while (readl(zevio_irq_io + IO_STATUS)) {
- 		irqnr = readl(zevio_irq_io + IO_CURRENT);
- 		handle_domain_irq(zevio_irq_domain, irqnr, regs);
--	};
-+	}
- }
- 
- static void __init zevio_init_irq_base(void __iomem *base)
+>
+> The problem was consistently reproducible on Juno-r2.
+>
+> LTP was compiled from 20190930 tag using
+>
+>         ./configure --host=aarch64-linux-gnu --prefix=~/arm64-ltp/
+>         make && make install
+>
+>
+>
+> *** Output of the test when it fails ***
+>
+>         # ./perf_event_open02 -v
+>         at iteration:0 value:254410384 time_enabled:195570320 time_running:156044100
+>         perf_event_open02    0  TINFO  :  overall task clock: 166935520
+>         perf_event_open02    0  TINFO  :  hw sum: 1200812256, task clock sum: 667703360
+>         hw counters: 300202518 300202881 300203246 300203611
+>         task clock counters: 166927400 166926780 166925660 166923520
+>         perf_event_open02    0  TINFO  :  ratio: 3.999768
+>         perf_event_open02    0  TINFO  :  nhw: 0.000100     /* I added this extra line for debug */
+>         perf_event_open02    1  TFAIL  :  perf_event_open02.c:370: test failed (ratio was greater than )
+>
+>
+>
+> *** Output of the test when it passes (this patch reverted) ***
+>
+>         # ./perf_event_open02 -v
+>         at iteration:0 value:300271482 time_enabled:177756080 time_running:177756080
+>         at iteration:1 value:300252655 time_enabled:166939100 time_running:166939100
+>         at iteration:2 value:300252877 time_enabled:166924920 time_running:166924920
+>         at iteration:3 value:300242545 time_enabled:166909620 time_running:166909620
+>         at iteration:4 value:300250779 time_enabled:166918540 time_running:166918540
+>         at iteration:5 value:300250660 time_enabled:166922180 time_running:166922180
+>         at iteration:6 value:258369655 time_enabled:167388920 time_running:143996600
+>         perf_event_open02    0  TINFO  :  overall task clock: 167540640
+>         perf_event_open02    0  TINFO  :  hw sum: 1801473873, task clock sum: 1005046160
+>         hw counters: 177971955 185132938 185488818 185488199 185480943 185477118 179657001 172499668 172137672 172139561
+>         task clock counters: 99299900 103293440 103503840 103502040 103499020 103496160 100224320 96227620 95999400 96000420
+>         perf_event_open02    0  TINFO  :  ratio: 5.998820
+>         perf_event_open02    0  TINFO  :  nhw: 6.000100     /* I added this extra line for debug */
+>         perf_event_open02    1  TPASS  :  test passed
+>
+> Thanks
+>
+> --
+> Qais Yousef
