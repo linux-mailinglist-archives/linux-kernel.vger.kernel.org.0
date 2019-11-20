@@ -2,220 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B121F103C1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA44E103C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:40:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731227AbfKTNkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:40:46 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44028 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728987AbfKTNkp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:40:45 -0500
-Received: by mail-wr1-f65.google.com with SMTP id n1so28167410wra.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 05:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DHnopwWvkmmTnJVl2X6mKxjcUforEZXEgcJgrEmjAB0=;
-        b=f7xLTrPBQvQxEF9vkj2upkWeReLoDBCeQFkkhGeuGdXmxpYd2OtAzoXGDBuEx/8C/k
-         m5bxP2LjKSSkyW6ge8Op8AF7EowaRz+PqyzmjsLdNYj72LGIkn5sQY61kjUC9SODE4Zs
-         es0tYHkUSMdKQY1qviz2GHB3e8BGVqGfBe2fcywh43arhWUlnSohr1Wgc/pwN4Hpw+Sf
-         cV0yTfiQa3TaL6fMJ2NRPUNvtA6pJf7LKFlsxNQQX3xKxpoR2E8oOLTCeZT6T6LefMGH
-         TOrpYycWxDbn9WJuw+SuNsRIDR9y0fhx7hr7vtIDGX2VztQtcz3Dja317H903tX9AvKi
-         TLqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DHnopwWvkmmTnJVl2X6mKxjcUforEZXEgcJgrEmjAB0=;
-        b=YSSgA2ZGFQZEGzWMTTLVzUjN0UezgrGPKHMlNaNhDWOkdm6t7xRwAjcJ0EiAXCoABR
-         x6aJyVIb8Vfae4MEmvR6lNgQeCrScsxiex7wmpgEim1hqcheXAt7sr4HeJ/jfHe5pqh6
-         uPRK4hqWRfnaqWJwHR2R4xjWQNuwvbxXL9J6KI/1StJuk97PWD6GuSXPFeUrY9AZJqQl
-         b0HiiL4BzscaAEPur00nC7yNvKIDAPcgz/c/3yH4tg2/k8+cD86f+0JSDG8LPkVzTIMg
-         7yvxRPZGMxVYPy843JG0IBHRhjcz35DASSm5pIr/DheuzC/18oPKgHA1UnCcHmRyyAZE
-         KgoA==
-X-Gm-Message-State: APjAAAW8dnKKnG1ifUz1Qc8QCFnpB8frmeNi9B+H31J8zA60zNVRWfez
-        2F02+G15e/SyJLt7A6SPho8M3JC7AoJCdPXl
-X-Google-Smtp-Source: APXvYqytR5W4sutvEVJ8ouG28aGrhHuENey/qExiXx4Z8sNpH35Paux596NhGHjc2DyilnsOLpo+Cg==
-X-Received: by 2002:adf:fa4a:: with SMTP id y10mr3506109wrr.177.1574257242554;
-        Wed, 20 Nov 2019 05:40:42 -0800 (PST)
-Received: from rudolphp.9e.network (b2b-78-94-0-50.unitymedia.biz. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id t14sm30473434wrw.87.2019.11.20.05.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 05:40:42 -0800 (PST)
-From:   patrick.rudolph@9elements.com
+        id S1728431AbfKTNj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:39:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728319AbfKTNjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:39:53 -0500
+Received: from localhost.localdomain (unknown [118.189.143.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79CDF2251E;
+        Wed, 20 Nov 2019 13:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574257193;
+        bh=aLgUTHkU8g2g0Eps8OoJNBBcLk286j9K1y9g5cSZy9Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nMGOm+bwXprnSTmLAZFgCuyncc5D317Rde6p0TC4nuSVTsw9P/idKuaHkU6EBVXrt
+         zG7UM5TDuabHKoFcqV8L5RajxGvqPAIzTQQ8qi1zWt7WYFnCz4LK6Gd6Ve4cFckWIM
+         qvNTDy+jez3yskOCjlw+P9P5kAarW4hl8+KXQsm0=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Patrick Rudolph <patrick.rudolph@9elements.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Julius Werner <jwerner@chromium.org>
-Subject: [PATCH 2/2] firmware: google: Expose coreboot tables over sysfs
-Date:   Wed, 20 Nov 2019 14:39:47 +0100
-Message-Id: <20191120133958.13160-3-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191120133958.13160-1-patrick.rudolph@9elements.com>
-References: <20191120133958.13160-1-patrick.rudolph@9elements.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH] regulator: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:39:49 +0800
+Message-Id: <20191120133949.13996-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
 
-Make all coreboot table entries available to userland. This is useful for
-tools that are currently using /dev/mem.
-
-Besides the tag and size also expose the raw table data itself.
-
-Update the ABI documentation to explain the new sysfs interface.
-
-Tools can easily scan for the right coreboot table by reading
-/sys/bus/coreboot/devices/coreboot*/attributes/id
-The binary table data can then be read from
-/sys/bus/coreboot/devices/coreboot*/attributes/data
-
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- -v2:
-	- Add ABI documentation
-	- Add 0x prefix on hex values
-	- Remove wrong ioremap hint as found by CI
----
- Documentation/ABI/stable/sysfs-bus-coreboot | 30 +++++++++++
- drivers/firmware/google/coreboot_table.c    | 60 +++++++++++++++++++++
- 2 files changed, 90 insertions(+)
+ drivers/regulator/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/ABI/stable/sysfs-bus-coreboot b/Documentation/ABI/stable/sysfs-bus-coreboot
-index 1b04b8abc858..0f28601229f3 100644
---- a/Documentation/ABI/stable/sysfs-bus-coreboot
-+++ b/Documentation/ABI/stable/sysfs-bus-coreboot
-@@ -41,3 +41,33 @@ Description:
- 		buffer.
- 		The file holds a read-only binary representation of the CBMEM
- 		buffer.
-+
-+What:		/sys/bus/coreboot/devices/.../attributes/id
-+Date:		Nov 2019
-+KernelVersion:	5.5
-+Contact:	Patrick Rudolph <patrick.rudolph@9elements.com>
-+Description:
-+		coreboot device directory can contain a file named attributes/id.
-+		The file holds an ASCII representation of the coreboot table ID
-+		in hex (e.g. 0x000000ef). On coreboot enabled platforms the ID is
-+		usually called TAG.
-+
-+What:		/sys/bus/coreboot/devices/.../attributes/size
-+Date:		Nov 2019
-+KernelVersion:	5.5
-+Contact:	Patrick Rudolph <patrick.rudolph@9elements.com>
-+Description:
-+		coreboot device directory can contain a file named
-+		attributes/size.
-+		The file holds an ASCII representation as decimal number of the
-+		coreboot table size (e.g. 64).
-+
-+What:		/sys/bus/coreboot/devices/.../attributes/data
-+Date:		Nov 2019
-+KernelVersion:	5.5
-+Contact:	Patrick Rudolph <patrick.rudolph@9elements.com>
-+Description:
-+		coreboot device directory can contain a file named
-+		attributes/data.
-+		The file holds a read-only binary representation of the coreboot
-+		table.
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 8d132e4f008a..d3a6379fb2a6 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -6,6 +6,7 @@
-  *
-  * Copyright 2017 Google Inc.
-  * Copyright 2017 Samuel Holland <samuel@sholland.org>
-+ * Copyright 2019 9elements Agency GmbH
-  */
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 3ee63531f6d5..74eb5af7295f 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -841,10 +841,10 @@ config REGULATOR_SKY81452
+ 	  will be called sky81452-regulator.
  
- #include <linux/acpi.h>
-@@ -84,6 +85,63 @@ void coreboot_driver_unregister(struct coreboot_driver *driver)
- }
- EXPORT_SYMBOL(coreboot_driver_unregister);
- 
-+static ssize_t id_show(struct device *dev,
-+		       struct device_attribute *attr, char *buffer)
-+{
-+	struct coreboot_device *device = CB_DEV(dev);
-+
-+	return sprintf(buffer, "0x%08x\n", device->entry.tag);
-+}
-+
-+static ssize_t size_show(struct device *dev,
-+			 struct device_attribute *attr, char *buffer)
-+{
-+	struct coreboot_device *device = CB_DEV(dev);
-+
-+	return sprintf(buffer, "%u\n", device->entry.size);
-+}
-+
-+static DEVICE_ATTR_RO(id);
-+static DEVICE_ATTR_RO(size);
-+
-+static struct attribute *cb_dev_attrs[] = {
-+	&dev_attr_id.attr,
-+	&dev_attr_size.attr,
-+	NULL
-+};
-+
-+static ssize_t table_data_read(struct file *filp, struct kobject *kobj,
-+			       struct bin_attribute *bin_attr,
-+			       char *buffer, loff_t offset, size_t count)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct coreboot_device *device = CB_DEV(dev);
-+
-+	return memory_read_from_buffer(buffer, count, &offset,
-+				       &device->entry, device->entry.size);
-+}
-+
-+static struct bin_attribute coreboot_attr_data = {
-+	.attr = { .name = "data", .mode = 0444 },
-+	.read = table_data_read,
-+};
-+
-+static struct bin_attribute *cb_dev_bin_attrs[] = {
-+	&coreboot_attr_data,
-+	NULL
-+};
-+
-+static const struct attribute_group cb_dev_attr_group = {
-+	.name = "attributes",
-+	.attrs = cb_dev_attrs,
-+	.bin_attrs = cb_dev_bin_attrs,
-+};
-+
-+static const struct attribute_group *cb_dev_attr_groups[] = {
-+	&cb_dev_attr_group,
-+	NULL
-+};
-+
- static int coreboot_table_populate(struct device *dev, void *ptr)
- {
- 	int i, ret;
-@@ -104,6 +162,8 @@ static int coreboot_table_populate(struct device *dev, void *ptr)
- 		device->dev.parent = dev;
- 		device->dev.bus = &coreboot_bus_type;
- 		device->dev.release = coreboot_device_release;
-+		device->dev.groups = cb_dev_attr_groups;
-+
- 		memcpy(&device->entry, ptr_entry, entry->size);
- 
- 		ret = device_register(&device->dev);
+ config REGULATOR_SLG51000
+-        tristate "Dialog Semiconductor SLG51000 regulators"
+-        depends on I2C
+-        select REGMAP_I2C
+-        help
++	tristate "Dialog Semiconductor SLG51000 regulators"
++	depends on I2C
++	select REGMAP_I2C
++	help
+ 	  Say y here to support for the Dialog Semiconductor SLG51000.
+ 	  The SLG51000 is seven compact and customizable low dropout
+ 	  regulators.
 -- 
-2.21.0
+2.17.1
 
