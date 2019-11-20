@@ -2,124 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEA27103A92
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C08E7103A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:54:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbfKTM7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 07:59:50 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45637 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbfKTM7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:59:49 -0500
-Received: by mail-ua1-f66.google.com with SMTP id w10so5265847uar.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 04:59:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6UQf89xygZl5APXVlJ8BVg5S3Zma4VRojTMP4pFeE48=;
-        b=jCoovsnalMMyh4DFH4VjJ0KELkHUZ6EsPjGPIJZwX2/Mh2nEdpGzEsfpRs0DbJqCE2
-         neHXNcrUGxBuxtxNh3RLIqmNJq1tkldyoQYd5CzYerEgn+y0Lod+X1d3oApyD3f/8R7B
-         DHpf9NsP1n2lq4kSJ8qOShRgOYCyINmlxMm6+ph7TWaBpVLstmBgAhMZYY1UonsbyrYM
-         bBInnY9KCd2xnEh520jKhAYKwVXBUfs11xGVQV6nIuTzTGk4CCvrYlL+573ftnEyesnw
-         82JoOJHQW4MA2LLSnKMJkB432xfIM3IRqtnXFaQny31xs5LDzelR/OBd0IE4S56DGLJ9
-         6UxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6UQf89xygZl5APXVlJ8BVg5S3Zma4VRojTMP4pFeE48=;
-        b=pg3tPUFxheosmim4nS+u/LgW4dfS0oz88a8kOVaF8VXqO0waxd81ap/s9s8aidf97m
-         U8RMD6SUW9k9t3At3wem4CPMIxVerE5lWb52G6i6ikWTHxquFVlK5FsAW+twJfN/JIPG
-         srYZShKdle0xRX8octVx7NhRy7vXgh4mpGGWRP9KhT138N0sg7gjxsYcd4xbj9uibMy6
-         c/sqjFc4K8thB2y2/QDN+kmyMPZoW5QfFFyRpc9uwU96+IjMKiGynZjtZ/M8mQPp5W49
-         ByhO1uhdp8klXDTcJ5CH8zrEF8tZ8NuApRwV4Z27E60Mxq0uocc6gWaCzjxy62oQRGZx
-         if/w==
-X-Gm-Message-State: APjAAAVIDKzBZIUITfoAnWfKvGRIajwhCTXftqhczTSurpcklT+UO/0t
-        7v+Svh69JukMO3r3RTOWvYUqAYnvCqQTKGfMeQtkUw==
-X-Google-Smtp-Source: APXvYqxEyipp0d6e/DBwHVmq3a7VxidQ0hGF9/sAXkVICJv6ReLgBcaUXbQEwIhCLBiNae9zSsMEfT5AcLWi0/Kwg6o=
-X-Received: by 2002:ab0:74cd:: with SMTP id f13mr1520153uaq.104.1574254787837;
- Wed, 20 Nov 2019 04:59:47 -0800 (PST)
+        id S1729935AbfKTMyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 07:54:22 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6256 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727644AbfKTMyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 07:54:21 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9690A185A7C5B051E633;
+        Wed, 20 Nov 2019 20:54:19 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 20 Nov 2019
+ 20:54:10 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <Jammy.Zhou@amd.com>, <tianci.yin@amd.com>, <sam@ravnborg.org>,
+        <luben.tuikov@amd.com>
+CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
+Subject: [PATCH 0/2] fix inappropriate use of declaring variable 'static' in fixed31_32.h
+Date:   Wed, 20 Nov 2019 21:15:31 +0800
+Message-ID: <20191120131533.12720-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-References: <1574232449-13570-1-git-send-email-manish.narani@xilinx.com>
-In-Reply-To: <1574232449-13570-1-git-send-email-manish.narani@xilinx.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 20 Nov 2019 13:59:12 +0100
-Message-ID: <CAPDyKFprcjgrcbT3jpT7pyM+FFWL8RAm5AtFAjVLcPMDiDzUvA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] Arasan SDHCI enhancements and ZynqMP Tap Delays Handling
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>, jolly.shah@xilinx.com,
-        rajan.vaja@xilinx.com, nava.manne@xilinx.com,
-        Moritz Fischer <mdf@kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        git@xilinx.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019 at 07:47, Manish Narani <manish.narani@xilinx.com> wrote:
->
-> This patch series does the following:
->  - Reorganize the Clock Handling in Arasan SD driver
->  - Adds new sampling clock in Arasan SD driver
->  - Adds support to set Clock Delays in SD Arasan Driver
->  - Add SDIO Tap Delay handling in ZynqMP firmware driver
->  - Add support for ZynqMP Tap Delays setting in Arasan SD driver
->
-> Changes in v2:
->         - Replaced the deprecated calls to clock framework APIs
->         - Added support for dev_clk_get() call to work for SD card clock
->         - Separated the clock data struct
->         - Fragmented the patch series in smaller patches to make it more
->           readable
->
-> Changes in v3:
->         - Reverted "Replaced the deprecated calls to clock framework APIs"
->         - Removed devm_clk_get() call which was added in v2
->
-> Changes in v4:
->         - Made the Phase Delay properties Arasan specific
->
-> Changes in v5:
->         - Made Clock Phase Delay properties common
->         - Moved documentation of them to the common mmc documentation.
->
-> Changes in v6:
->         - Clubbed all Clk Phase Delay properties' into a pattern
->           Property
->
-> Manish Narani (8):
->   mmc: sdhci-of-arasan: Separate out clk related data to another
->     structure
->   dt-bindings: mmc: arasan: Update Documentation for the input clock
->   mmc: sdhci-of-arasan: Add sampling clock for a phy to use
->   dt-bindings: mmc: Add optional generic properties for mmc
->   mmc: sdhci-of-arasan: Add support to set clock phase delays for SD
->   firmware: xilinx: Add SDIO Tap Delay nodes
->   dt-bindings: mmc: arasan: Document 'xlnx,zynqmp-8.9a' controller
->   mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
->
->  .../devicetree/bindings/mmc/arasan,sdhci.txt  |  25 +-
->  .../bindings/mmc/mmc-controller.yaml          |  13 +
->  drivers/mmc/host/sdhci-of-arasan.c            | 478 +++++++++++++++++-
->  include/linux/firmware/xlnx-zynqmp.h          |  13 +-
->  4 files changed, 497 insertions(+), 32 deletions(-)
->
-> --
-> 2.17.1
->
+The first patch remove two set but not used variable.
 
-Applied for next, assuming Rob is okay with patch4, otherwise you need
-to send a fix on top, thanks!
+The second patch make the variables in fixed31_32.h 'global'
+instead of 'static'.
 
-Kind regards
-Uffe
+yu kuai (2):
+  drm/amd/display: remove set but not used variable 'dc_fixpt_e' and
+    'dc_fixpt_pi'
+  drm/amd/display: make various variables in fixed31_32.h 'global'
+    instead of 'static'
+
+ drivers/gpu/drm/amd/display/amdgpu_dm/Makefile |  2 +-
+ .../gpu/drm/amd/display/amdgpu_dm/fixed31_32.c | 13 +++++++++++++
+ .../gpu/drm/amd/display/include/fixed31_32.h   | 18 ++++++++----------
+ 3 files changed, 22 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/gpu/drm/amd/display/amdgpu_dm/fixed31_32.c
+
+-- 
+2.17.2
+
