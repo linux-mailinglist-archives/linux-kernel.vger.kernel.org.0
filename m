@@ -2,104 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E24E104476
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:45:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4115A10447D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfKTTpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 14:45:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60970 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726440AbfKTTpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:45:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63673AFCB;
-        Wed, 20 Nov 2019 19:45:15 +0000 (UTC)
-Message-ID: <073219d4e46bab9fb6ba972ebc2ee2f3b55abf55.camel@suse.de>
-Subject: Re: [PATCH v3 4/4] ARM: dts: bcm2711: Enable HWRNG support
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stephen Brennan <stephen@brennan.io>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Scott Branden <sbranden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, Ray Jui <rjui@broadcom.com>,
-        linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-crypto@vger.kernel.org
-Date:   Wed, 20 Nov 2019 20:45:12 +0100
-In-Reply-To: <20191120031622.88949-5-stephen@brennan.io>
-References: <20191120031622.88949-1-stephen@brennan.io>
-         <20191120031622.88949-5-stephen@brennan.io>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-EQFLnI4F4oDM522MqmL9"
-User-Agent: Evolution 3.34.1 
+        id S1727696AbfKTTqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 14:46:21 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46035 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbfKTTqT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 14:46:19 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 203so492846lfa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 11:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E4GCAZq/uEGcflB5X2TUEKapPXWlMYkV/UtTnBsKpco=;
+        b=RxrnU9Zdl4qfrpzjYpyaAwAzY3XG/Ry8sSMBDTALfDbrJKNq6lonVJs86WghdReGSb
+         q45rbMINZQcSQBcg70Nq9j+IAHEwqOnSBqakByyWfvUAPcN9Z19YUXtPjvRykksd/JQX
+         uKQsqv/rx+Vm2XY+DmpAjU7u8YtknBJEgq1hA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E4GCAZq/uEGcflB5X2TUEKapPXWlMYkV/UtTnBsKpco=;
+        b=dhV2wPcxY1X3didyb0P5SgjYaYHVM8cVLkDPHf7TlWo0oN0JETGRTsUZ9Gu+maOHim
+         9PBGax9vu/+n0PfMdN/r4uNwRUUR/xIuE8pyV4J0mPgFBGhh+UAprGGLXdY2eKMAiP+h
+         +6xXryMtM9kw/ioROov8CQ73/wCuzXUDEBHHaPow6/QmaQQ9zIG2Ia8rwLEipuASrkZd
+         iwnd9QqII4wwIEAsnuD5xFJ7YxqeRRDN7H2vRiVFTsEZiJrXeP1490sSrconos7JymT1
+         aZZaNVvWGN4nh1URVFYuuCPsSNuk9oRWxw9cZ1C79dJiMOaLjHKuXwkCmcQQuQDJJ0Lg
+         uF7g==
+X-Gm-Message-State: APjAAAUQoSPFU4f7QdaR1wOKXc7ZuqVtbUP9P3sODe+rj6aRnLcGTMOD
+        SqNpqbX3NGSd4W6WVgeMCj3m5jMET84=
+X-Google-Smtp-Source: APXvYqyV41oziTLd2/JhApZkipoS7Mx/Uzi11QsHJsiZ2nChLAC0xjN5l6LVAVWz3fIXnHLkLL2fwg==
+X-Received: by 2002:a19:f811:: with SMTP id a17mr4334491lff.132.1574279176168;
+        Wed, 20 Nov 2019 11:46:16 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 30sm68551ljw.29.2019.11.20.11.46.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2019 11:46:15 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id y19so509158lfl.9
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 11:46:15 -0800 (PST)
+X-Received: by 2002:a19:4949:: with SMTP id l9mr4313293lfj.52.1574279174744;
+ Wed, 20 Nov 2019 11:46:14 -0800 (PST)
 MIME-Version: 1.0
+References: <CAJKzgVtzD7ULwCDVRSLMCmGJNaMqvx+jVO619t3xuv2oiEsPMQ@mail.gmail.com>
+ <20191119095708.GB21113@dhcp22.suse.cz> <201911201032.67566C6BF@keescook>
+In-Reply-To: <201911201032.67566C6BF@keescook>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 20 Nov 2019 11:45:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjw=fg5WznKfA+NQP78h8qDkF=t3CzH96fACAfULza_hQ@mail.gmail.com>
+Message-ID: <CAHk-=wjw=fg5WznKfA+NQP78h8qDkF=t3CzH96fACAfULza_hQ@mail.gmail.com>
+Subject: Re: Suggested Patch is not working for 22851 Bugzilla issue
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Michal Hocko <mhocko@kernel.org>, Bala S <balas2380@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 20, 2019 at 10:39 AM Kees Cook <keescook@chromium.org> wrote:
+> Yes, as Michal mentions, there were legitimate binaries that expected to
+> overlap mappings
 
---=-EQFLnI4F4oDM522MqmL9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I'm not sure they were really overlapping as much as "the ELF sections
+were in a bad order and we don't do the whole "optimize loading"
+thing.
 
-On Tue, 2019-11-19 at 19:16 -0800, Stephen Brennan wrote:
-> This enables hardware random number generator support for the BCM2711
-> on the Raspberry Pi 4 board.
->=20
-> Signed-off-by: Stephen Brennan <stephen@brennan.io>
-> ---
->  arch/arm/boot/dts/bcm2711.dtsi | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.d=
-tsi
-> index ac83dac2e6ba..ed0877d5a1e9 100644
-> --- a/arch/arm/boot/dts/bcm2711.dtsi
-> +++ b/arch/arm/boot/dts/bcm2711.dtsi
-> @@ -92,10 +92,9 @@ pm: watchdog@7e100000 {
->  		};
-> =20
->  		rng@7e104000 {
-> -			interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-> -
-> -			/* RNG is incompatible with brcm,bcm2835-rng */
-> -			status =3D "disabled";
-> +			compatible =3D "brcm,bcm2711-rng200";
-> +			reg =3D <0x7e104000 0x28>;
-> +			status =3D "okay";
+It's one of those things that *might* be fixed by first creating a
+"simplified/combined map of the ELF sections", and them using mmap()
+on that simplified one. But that code is nasty and hairy.
 
-Small nitpick, the 'okay' status is set by default, so no need for this. Bu=
-t
-it's something we can edit out once we pick the patch.
-
-Regards,
-Nicolas
-
-
---=-EQFLnI4F4oDM522MqmL9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl3Vl8gACgkQlfZmHno8
-x/49PQf/Tah+83leeq/AYVqsmeAlWU9tVFZ6DV4o9XFtXocYffZlQtscjV5mLpXU
-4CfcjTwUdIn/Cfk70ZXXqD7EsQ9XUGN6pfNiP/rPffSSTKAUd7wektykwl9YQaAN
-DcJBMRbPy+TPZDYaLu7DtGMpLe9HYj1p1onNEoKfW8XBqOPRirBQv1KfYTFMQyq4
-ZCXnvMz6F4PxpUf/Ybgv3KB3twfd8c1vF9arPEh06PKfTozUbnUu0gEqjgLvwi6a
-NP+K9oMo/5HMnOARh9znTaRJu/jKSjoiyCM0Jsisd6z6TDEe8PezgkxpdjIm6k79
-p6f8JA13izZl3k2g8I5ZBnG+xuWyBQ==
-=gzPL
------END PGP SIGNATURE-----
-
---=-EQFLnI4F4oDM522MqmL9--
-
+             Linus
