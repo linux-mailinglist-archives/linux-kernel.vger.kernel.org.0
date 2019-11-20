@@ -2,164 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDFBB1037EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 11:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0DD1037F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 11:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728885AbfKTKuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 05:50:54 -0500
-Received: from mga02.intel.com ([134.134.136.20]:12954 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbfKTKux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 05:50:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 02:50:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,221,1571727600"; 
-   d="scan'208";a="215756739"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 20 Nov 2019 02:50:49 -0800
-Received: by lahna (sSMTP sendmail emulation); Wed, 20 Nov 2019 12:50:49 +0200
-Date:   Wed, 20 Nov 2019 12:50:48 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ck@xatom.net>, linux-kernel@vger.kernel.org,
-        Anthony Wong <anthony.wong@canonical.com>
-Subject: Re: USB devices on Dell TB16 dock stop working after resuming
-Message-ID: <20191120105048.GY11621@lahna.fi.intel.com>
-References: <5d2b39bc-5952-c2b6-63b3-bce28122ffd5@molgen.mpg.de>
- <20191104142459.GC2552@lahna.fi.intel.com>
- <20191104144436.GD2552@lahna.fi.intel.com>
- <20191104154446.GH2552@lahna.fi.intel.com>
- <ea829adedf0445c0845e25d6e4b47905@AUSX13MPC105.AMER.DELL.COM>
- <d8cb6bc6-8145-eaed-5ba4-d7291478bdd7@molgen.mpg.de>
- <20191104162103.GI2552@lahna.fi.intel.com>
- <f0257624-920e-eec4-a2ec-7adf8ecbcc9d@molgen.mpg.de>
+        id S1728913AbfKTKwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 05:52:35 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37693 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727514AbfKTKwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 05:52:35 -0500
+Received: by mail-oi1-f194.google.com with SMTP id y194so22109110oie.4;
+        Wed, 20 Nov 2019 02:52:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0XJsWOiRBHmD2kFFkY9kcnlnvFi6tJbcT90YhvqGyXk=;
+        b=qiGWd+XbXurL8W+kG/70kg6t3cxg2w0LjapF3GhgCZNcDcHalKboqxJ0Fvs+eIOAzE
+         fDdibhF/wgWQalEtF5slXGtJmpi3XOJj6WA+bGKn3iDW0MD8UbAhHuG8ypBiPBIFue6m
+         0dHn+APRs+rzhK9R3taZtHFwvEdEPJKqyLc/1QNIUaCweGcwap/rT2X4KxT40b9SGY6x
+         EuLePsBcXK1xTBk3mDdZHvWdUfvinBjdLYy7phPe49hvknb7bqrjSgWz7wCQkcRdDsgo
+         tqoqE53kWeZkrlfZzb+RQ0G2gPjid8yEmlYzrJPawkLbMVnOtEX5mYovjYoRoiP6Vt5U
+         7jLw==
+X-Gm-Message-State: APjAAAU3yshwBNb3skcMSWhhFZ874UEJhrDI6eiXes119Szf9o3VMQf1
+        SnXtsHeENXgJTzm+odM6sJwRb75oM/Y9+GMJy3g=
+X-Google-Smtp-Source: APXvYqwjeK8wGKLpVWDbUsiy3/KlqoGVkGuPGsBhhnC19t6bK2aUnaLaipUiMNwoRc1MrCUzVHSwZIqPrINSdEqrGGc=
+X-Received: by 2002:aca:530c:: with SMTP id h12mr2293868oib.110.1574247153834;
+ Wed, 20 Nov 2019 02:52:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f0257624-920e-eec4-a2ec-7adf8ecbcc9d@molgen.mpg.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191017121901.13699-1-kherbst@redhat.com> <20191119214955.GA223696@google.com>
+ <CACO55tu+8VeyMw1Lb6QvNspaJm9LDgoRbooVhr0s3v9uBt=feg@mail.gmail.com> <20191120101816.GX11621@lahna.fi.intel.com>
+In-Reply-To: <20191120101816.GX11621@lahna.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 20 Nov 2019 11:52:22 +0100
+Message-ID: <CAJZ5v0g4vp1C+zHU5nOVnkGsOjBvLaphK1kK=qAT6b=mK8kpsA@mail.gmail.com>
+Subject: Re: [PATCH v4] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+To:     Mika Westerberg <mika.westerberg@intel.com>
+Cc:     Karol Herbst <kherbst@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Dave Airlie <airlied@gmail.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 05:55:43PM +0100, Paul Menzel wrote:
-> Dear Mika,
-> 
-> 
-> On 2019-11-04 17:21, Mika Westerberg wrote:
-> > On Mon, Nov 04, 2019 at 05:11:10PM +0100, Paul Menzel wrote:
-> 
-> >> On 2019-11-04 16:49, Mario.Limonciello@dell.com wrote:
-> >>
-> >>>> From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> >>>> Sent: Monday, November 4, 2019 9:45 AM
-> >>
-> >>>> On Mon, Nov 04, 2019 at 04:44:40PM +0200, Mika Westerberg wrote:
-> >>>>> On Mon, Nov 04, 2019 at 04:25:03PM +0200, Mika Westerberg wrote:
-> >>
-> >>>>>> On Mon, Nov 04, 2019 at 02:13:13PM +0100, Paul Menzel wrote:
-> >>
-> >>>>>>> On the Dell XPS 13 9380 with Debian Sid/unstable with Linux 5.3.7
-> >>>>>>> suspending the system, and resuming with Dell’s Thunderbolt TB16
-> >>>>>>> dock connected, the USB input devices, keyboard and mouse,
-> >>>>>>> connected to the TB16 stop working. They work for a few seconds
-> >>>>>>> (mouse cursor can be moved), but then stop working. The laptop
-> >>>>>>> keyboard and touchpad still works fine. All firmware is up-to-date
-> >>>>>>> according to `fwupdmgr`.
-> >>>>>>
-> >>>>>> What are the exact steps to reproduce? Just "echo mem >
-> >>>>>> /sys/power/state" and then resume by pressing power button?
-> >>
-> >> GNOME Shell 3.34.1+git20191024-1 is used, and the user just closes the
-> >> display. So more than `echo mem > /sys/power/state` is done. What
-> >> distribution do you use?
-> > 
-> > I have buildroot based "distro" so there is no UI running.
-> 
-> Hmm, this is quite different from the “normal” use-case of the these devices.
-> That way you won’t hit the bugs of the normal users. ;-)
+On Wed, Nov 20, 2019 at 11:18 AM Mika Westerberg
+<mika.westerberg@intel.com> wrote:
+>
+> Hi Karol,
+>
+> On Tue, Nov 19, 2019 at 11:26:45PM +0100, Karol Herbst wrote:
+> > On Tue, Nov 19, 2019 at 10:50 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > >
+> > > [+cc Dave]
+> > >
+> > > On Thu, Oct 17, 2019 at 02:19:01PM +0200, Karol Herbst wrote:
+> > > > Fixes state transitions of Nvidia Pascal GPUs from D3cold into higher device
+> > > > states.
+> > > >
+> > > > v2: convert to pci_dev quirk
+> > > >     put a proper technical explanation of the issue as a in-code comment
+> > > > v3: disable it only for certain combinations of intel and nvidia hardware
+> > > > v4: simplify quirk by setting flag on the GPU itself
+> > >
+> > > I have zero confidence that we understand the real problem, but we do
+> > > need to do something with this.  I'll merge it for v5.5 if we get the
+> > > minor procedural stuff below straightened out.
+> > >
+> >
+> > Thanks, and I agree with your statement, but at this point I think
+> > only Intel can help out digging deeper as I see no way to debug this
+> > further.
+>
+> I don't have anything against this patch, as long as the quirk stays
+> limited to the particular root port leading to the NVIDIA GPU. The
+> reason why I think it should to be limited is that I'm pretty certain
+> the problem is not in the root port itself. I have here a KBL based
+> Thinkpad X1 Carbon 6th gen that can put the TBT controller into D3cold
+> (it is connected to PCH root port) and it wakes up there just fine, so
+> don't want to break that.
+>
+> Now, PCIe devices cannot go into D3cold all by themselves. They always
+> need help from the platform side which is ACPI in this case. This is
+> done by having the device to have _PR3 method that returns one or more
+> power resources that the OS is supposed to turn off when the device is
+> put into D3cold. All of that is implemented as form of ACPI methods that
+> pretty much do the hardware specific things that are outside of PCIe
+> spec to get the device into D3cold. At high level the _OFF() method
+> causes the root port to broadcast PME_Turn_Off message that results the
+> link to enter L2/3 ready, it then asserts PERST, configures WAKE (both
+> can be GPIOs) and finally removes power (if the link goes into L3,
+> otherwise it goes into L2).
+>
+> I think this is where the problem actually lies - the ASL methods that
+> are used to put the device into D3cold and back. We know that in Windows
+> this all works fine so unless Windows quirks the root port the same way
+> there is another reason behind this.
+>
+> In case of Dell XPS 9560 (IIRC that's the machine you have) the
+> corresponding power resource is called \_SB.PCI0.PEG0.PG00 and its
+> _ON/_OFF methods end up calling PGON()/PGOF() accordingly. The methods
+> itself do lots of things and it is hard to follow the dissassembled
+> ASL which does not have any comments but there are couple of things that
+> stand out where we may go into a different path. One of them is this in
+> the PGOF() method:
+>
+>    If (((OSYS <= 0x07D9) || ((OSYS == 0x07DF) && (_REV == 0x05))))
+>
+> The ((OSYS == 0x07DF) && (_REV == 0x05)) checks specifically for Linux
+> (see [1] and 18d78b64fddc ("ACPI / init: Make it possible to override
+> _REV")) so it might be that Dell people tested this at some point in
+> Linux as well. Added Mario in case he has any ideas.
+>
+> Previously I suggested you to try the ACPI method tracing to see what
+> happens inside PGOF(). Did you have time to try it? It may provide more
+> information about that is happening inside those methods and hopefully
+> point us to the root cause.
+>
+> Also if you haven't tried already passing acpi_rev_override in the
+> command line makes the _REV to return 5 so it should go into the "Linux"
+> path in PGOF().
 
-Well, I can install some distro to that thing also :) I suppose Debian
-10.2 does have this issue, no?
+Oh, so does it look like we are trying to work around AML that tried
+to work around some problematic behavior in Linux at one point?
 
-> >>>>> I tried v5.4-rc6 on my 9380 with TB16 dock connected and did a couple of
-> >>>>> suspend/resume cycles (to s2idle) but I don't see any issues.
-> >>>>>
-> >>>>> I may have older/different firmware than you, though.
-> >>>>
-> >>>> Upgraded BIOS to 1.8.0 and TBT NVM to v44 but still can't reproduce this
-> >>>> on my system :/
-> >>
-> >> The user reported the issue with the previous firmwares 1.x and TBT NVM v40.
-> >> Updating to the recent version (I got the logs with) did not fix the issue.
-> > 
-> > I also tried v40 (that was originally on that system) but I was not able
-> > to reproduce it.
-> > 
-> > Do you know if the user changed any BIOS settings?
-> 
-> We had to disable the Thunderbolt security settings as otherwise the USB
-> devices wouldn’t work at cold boot either.
-
-That does not sound right at all. There is the preboot ACL that allows
-you to use TBT dock aready on boot. Bolt takes care of this.
-
-Are you talking about USB devices connected to the TB16 dock?
-
-Also are you connecting the TB16 dock to the Thunderbolt ports (left
-side of the system marked with small lightning logo) or to the normal
-Type-C ports (right side)?
-
-> So, I built Linux 5.4-rc8 (`make bindeb-pkg -j8`), but unfortunately the
-> error is still there. Sometimes, re-plugging the dock helped, and sometimes
-> it did not.
-> 
-> Please find the logs attached. The strange thing is, the Linux kernel detects
-> the devices and I do not see any disconnect events. But, `lsusb` does not list
-> the keyboard and the mouse. Is that expected.
-
-I'm bit confused. Can you describe the exact steps what you do (so I can
-replicate them).
-
-> Additionally, despite `CONFIG_PCI_DEBUG` I do not see more elaborate messages.
-
-I see one strange thing in that log. The Thunderbolt driver does not
-show the device at boot. You should see something like this when you
-boot with the dock connected:
-
-  thunderbolt 0-3: new device found, vendor=0xd4 device=0xb051
-  thunderbolt 0-3: Dell Dell Thunderbolt Cable
-  thunderbolt 0-303: new device found, vendor=0xd4 device=0xb054
-  thunderbolt 0-303: Dell Dell Thunderbolt Dock
-
-I only see those after you did suspend/resume cycle.
-
-> Lastly, could the daemon boltd have anything to do with this?
-
-It is the one that authorizes the PCIe tunneling so definitely has
-something to do but below:
-
-> 
-> ```
-> $ boltctl --version
-> bolt 0.8
-> $ boltctl list
->  ● Dell Thunderbolt Cable
->    ├─ type:          peripheral
->    ├─ name:          Dell Thunderbolt Cable
->    ├─ vendor:        Dell
->    ├─ uuid:          0082b09d-2f5f-d400-ffff-ffffffffffff
->    ├─ status:        authorized
-
-looks what is expected.
+> [1] https://www.kernel.org/doc/html/latest/firmware-guide/acpi/osi.html#do-not-use-rev
