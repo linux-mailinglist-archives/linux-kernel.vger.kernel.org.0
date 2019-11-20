@@ -2,137 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0DDD10445E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:32:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC0C104464
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfKTTcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 14:32:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbfKTTcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:32:32 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03D4820715;
-        Wed, 20 Nov 2019 19:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574278351;
-        bh=b3qJemuygSOHQEtvC3bNqqipcwfplG1GcI0t5RyJZRM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=LxOhsLrBbDLVJAtnner/OZ/2C00+vtavCsvxNCt3t+fAKZVU3uNwWR8L/aaQgzoWx
-         kdFgSoxeDUfJC5Dm8VfwclUN1ziMsoDX+T9BG808CeFORefSJUGgpAbPstk7MFTKzv
-         NgtVq2R7IOmAVcnBd4wh7RsIcGr6xB1malqjBpv0=
-Date:   Wed, 20 Nov 2019 13:32:28 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Dmitry Safonov <0x7f454c46@gmail.com>
-Cc:     James Sewart <jamessewart@arista.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>, linux-pci@vger.kernel.org,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH] Ensure pci transactions coming from PLX NTB are handled
- when IOMMU is turned on
-Message-ID: <20191120193228.GA103670@google.com>
+        id S1727630AbfKTTf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 14:35:27 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:58741 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbfKTTf0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 14:35:26 -0500
+Received: from mail-qv1-f51.google.com ([209.85.219.51]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MnWx3-1i5d7I1UTl-00jW2R for <linux-kernel@vger.kernel.org>; Wed, 20 Nov
+ 2019 20:35:25 +0100
+Received: by mail-qv1-f51.google.com with SMTP id d3so381132qvs.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 11:35:25 -0800 (PST)
+X-Gm-Message-State: APjAAAUU/mdAWK+CL9gIMtlS9tLJs1yEuv0r4MXIfevNECJmuV8VOrQq
+        +4sP7tyzSteSURGB5GKoTseoa4Gjf4RhC1dfQMw=
+X-Google-Smtp-Source: APXvYqwHVWU2Zw8xn9+Bv1356Zmszxab3TK1Pmn6hsvPWLI2rMNceeRYyQBX3HSMLK8D/gT8L6zA69sS3PvhoK8Z6J0=
+X-Received: by 2002:ad4:50a4:: with SMTP id d4mr4074792qvq.211.1574278524246;
+ Wed, 20 Nov 2019 11:35:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c3b56dd-7088-e544-6628-01506f7b84e8@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191108203435.112759-1-arnd@arndb.de> <20191108203435.112759-4-arnd@arndb.de>
+ <fdcb510863c801f1f64448e558ee0f8ed20db418.camel@codethink.co.uk>
+In-Reply-To: <fdcb510863c801f1f64448e558ee0f8ed20db418.camel@codethink.co.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Nov 2019 20:35:07 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3BPhX_NRFj66WyRLQUOCV-FGRjmPCgB7gqxMoK8hfywg@mail.gmail.com>
+Message-ID: <CAK8P3a3BPhX_NRFj66WyRLQUOCV-FGRjmPCgB7gqxMoK8hfywg@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH 3/8] powerpc: fix vdso32 for ppc64le
+To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:30KBopqabv3uotMIxEYqngrzt0Ck4jrEYYgPvK5NG/ZoYx7gIbm
+ 1yRmeMez6nymaFuiyoRXS2/nORduF5p6vPUkjtLa54rxqymNQyxKTZQvss/xKBoTiymK+MA
+ B1b0urpCMKSHqIspfTQ/K8R4Bc3nsgBU437QyJaDgku4kSGbEhEKCicwjNyguFOd1indno+
+ 0HiDzSlHQoqqmD2pnRXhw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9TUk0p3FXR4=:QvFvxbMS9Z+vkxL0gTUH/W
+ eXIYdwwROxb/U7yaq4VdO5b6DHbzIzpcSek8VVi3R0GwD6jo+nwOv0AIABrj/rW2GL7sRHfXx
+ Lkdr4WyhGPq/hG0TLaxS4Qt0xAaY98oEAulpcGuoHhMPLE//ADk+D4CCHlVYFwe9ypi/7KfDB
+ c3XbqXAPIH8x4uIawQb6hENUXxMZO3uX8b00CsULTZykkw3ixfnvB20LYjKUHup4LGmovL/8Q
+ u54nZHXZ1spcCbPrunKcN4rxlPbvtLxLQjnqOTW4thvdo4dcd1cD3YNigBFShAk1KHOv9tuah
+ 1875sT8yTJ/z33uPMd+Vr7agzSPUCaiKsfHi1U9FvXLykOfuxxo2/xYcx9lz6S34UU55Z4ka8
+ BBdfr7Q8L5IkA39vKekyHEnIZUxckZupFvUpdu5BZDYMusPPtuJi74LB+Wch8HormUTABt514
+ S7TKfF2p8Z6SU2+zTTpmtSBlQPR82lRhJveCWpVvUBaRL64/zlVAFU6qPFnNqknnTewxPsCWs
+ owps2tVp+LSAq8dFzdA0kNTsPKgK3CrIuyJpqs8epWuepYsvnvtBaNTW8Njq4Mwglf523A/NP
+ usoYMRZsQ5VJSNziP6BeZp6M38kP62otHppLSLr7Mj8pxjlDD3jX8HvAmRolX758qNpyPch0j
+ MuZ5HZrPdULeCACTzIXmIrSdgaMHfo5tBKbQ3zhb17AbkqxBQqgsmX3UIzv7cAzwx7WzN2oJx
+ jIgsH2PLLwZi62Etsb8uA1mjkzX7WblrzRLqWbD4S5UB4SZhxjIZfmA55lLZfk+9ulrJV+kVY
+ ujts0YrcJInYcvU0gDUSzxAUWgx+L1NQk0uCmmR3fCgHvsGAD/glSWRgqGCmwGX04IFoRO9RM
+ 2KxZ9VBOVB/ZwfWj+koQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Alex]
+On Wed, Nov 20, 2019 at 8:13 PM Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+>
+> On Fri, 2019-11-08 at 21:34 +0100, Arnd Bergmann wrote:
+> > On little-endian 32-bit application running on 64-bit kernels,
+> > the current vdso would read the wrong half of the xtime seconds
+> > field. Change it to return the lower half like it does on
+> > big-endian.
+>
+> ppc64le doesn't have 32-bit compat so this is only theoretical.
 
-Hi James,
+That is probably true. I only looked at the kernel, which today still
+supports compat mode for ppc64le, but I saw the patches to disable
+it, and I don't think anyone has even attempted building user space
+for it.
 
-Thanks for the patch, and thanks, Dmitry for the cc!
-
-"scripts/get_maintainer.pl -f drivers/pci/quirks.c" will give you a
-list of relevant email addresses to post patches.  It was a good idea
-to augment that list with related addresses, e.g., Logan and the iommu
-list.
-
-Follow existing style for subject, e.g.,
-
-  PCI: Add DMA alias quirk for Microsemi Switchtec NTB
-
-for a recent similar patch.
-
-On Wed, Nov 20, 2019 at 05:48:45PM +0000, Dmitry Safonov wrote:
-> On 11/5/19 12:17 PM, James Sewart wrote:
-> >> On 24 Oct 2019, at 13:52, James Sewart <jamessewart@arista.com> wrote:
-> >>
-> >> The PLX PEX NTB forwards DMA transactions using Requester ID's that don't exist as
-> >> PCI devices. The devfn for a transaction is used as an index into a lookup table
-> >> storing the origin of a transaction on the other side of the bridge.
-> >>
-> >> This patch aliases all possible devfn's to the NTB device so that any transaction
-> >> coming in is governed by the mappings for the NTB.
-> >>
-> >> Signed-Off-By: James Sewart <jamessewart@arista.com>
-
-Conventionally capitalized as:
-
-  Signed-off-by: James Sewart <jamessewart@arista.com>
-
-> >> ---
-> >> drivers/pci/quirks.c | 22 ++++++++++++++++++++++
-> >> 1 file changed, 22 insertions(+)
-> >>
-> >> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> >> index 320255e5e8f8..647f546e427f 100644
-> >> --- a/drivers/pci/quirks.c
-> >> +++ b/drivers/pci/quirks.c
-> >> @@ -5315,6 +5315,28 @@ SWITCHTEC_QUIRK(0x8574);  /* PFXI 64XG3 */
-> >> SWITCHTEC_QUIRK(0x8575);  /* PFXI 80XG3 */
-> >> SWITCHTEC_QUIRK(0x8576);  /* PFXI 96XG3 */
-> >>
-> >> +/*
-> >> + * PLX NTB uses devfn proxy IDs to move TLPs between NT endpoints. These IDs
-> >> + * are used to forward responses to the originator on the other side of the
-> >> + * NTB. Alias all possible IDs to the NTB to permit access when the IOMMU is
-> >> + * turned on.
-> >> + */
-> >> +static void quirk_PLX_NTB_dma_alias(struct pci_dev *pdev)
-
-Conventional style is all lower-case (e.g.
-quirk_switchtec_ntb_dma_alias()) for function and variable names, and
-upper-case in English text.
-
-> >> +{
-> >> +	if (!pdev->dma_alias_mask)
-> >> +		pdev->dma_alias_mask = kcalloc(BITS_TO_LONGS(U8_MAX),
-> >> +					      sizeof(long), GFP_KERNEL);
-> >> +	if (!pdev->dma_alias_mask) {
-> >> +		dev_warn(&pdev->dev, "Unable to allocate DMA alias mask\n");
-
-pci_warn()
-
-> >> +		return;
-> >> +	}
-> >> +
-> >> +	// PLX NTB may use all 256 devfns
-> >> +	memset(pdev->dma_alias_mask, U8_MAX, (U8_MAX+1)/BITS_PER_BYTE);
-
-Use C (not C++) comment style, as the rest of the file does.
-
-I was about to suggest using pci_add_dma_alias(), but as currently
-implemented that would generate 256 messages in dmesg, which seems
-like overkill.
-
-But I think it would still be good to allocate the mask the same way
-(using bitmap_zalloc()) and to set the bits using bitmap_set().
-
-It would also be nice to have one line in dmesg about these aliases,
-as a hint when debugging IOMMU faults.
-
-> >> +}
-> >> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_PLX, 0x87b0, quirk_PLX_NTB_dma_alias);
-> >> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_PLX, 0x87b1, quirk_PLX_NTB_dma_alias);
-> >> +
-> >> /*
-> >>  * On Lenovo Thinkpad P50 SKUs with a Nvidia Quadro M1000M, the BIOS does
-> >>  * not always reset the secondary Nvidia GPU between reboots if the system
+       Arnd
