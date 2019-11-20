@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF1791038B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0585D1038B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:29:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbfKTL3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 06:29:31 -0500
-Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:53906 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729157AbfKTL32 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729197AbfKTL32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 20 Nov 2019 06:29:28 -0500
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:53904 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728376AbfKTL31 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 06:29:27 -0500
 Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C4281C2EC6;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E1464C2EDC;
         Wed, 20 Nov 2019 11:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1574249367; bh=xZuiw9xcWz5xaSLQT61O3wtX7ReJt+MIEb7btLMma1A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JpI+SdPewEQsTsLKOKZhfiREdC0oEbtTpa5I6VATJE5tzhnQRul7fUNUfJ/bvOqdo
-         ivJa2vsGMeGJElfD8+Dq0G2NaCp7jV4rGIgfTK6LGfpc8JoFE//qJs46PaagrpCJ1V
-         FnXnrzV942haXg3KRAsDJQu/aGwhdow6YJA0WgLLxlFqF3TW2pD9aD85RFq4/+UGI1
-         3RTxwtFOXI+V+U8RxeUjMKpfjtqYDPoiHyTkmlM1PkB4UeyHlWu4ribFFqQl+mONpZ
-         Q/pD+CoPFgR1xaLz3mVxgJOIcJUuBDyTxzNmV8k5tZZVCIdEOK1FXYB6h6gbRk8son
-         Dp7QggbVyOqnA==
+        t=1574249367; bh=lFwY4rXDWlnRNRI1YBEWXe6HkH2a1VgO8bBpeCWzBjk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VRTVeIQZeJ7N10a+6JLAJq+gKUFNeU7quiJcv0SzR4VvNEsp3cUlfZTytKWZ3hc8w
+         z00WAWzSdjMoCgNWD3cC2ZR5HU/0RYIzvx5rIeNGj5cNMzlFS5+TX0ys7eoyxAONln
+         A889JzWrZIEgxmkRnGDdF/L7Xuhwcddph1rKvRq93AeDCbdEZqOAe26j5uQ48M2C9M
+         wObCbSoz2Qt7UGyiOj8jIiEoU7HkCWfcFy5gWKEtN1S47KRIdFje/8Ar4Oh9BmCo6O
+         f/ct5zEizO8por2ix9QxGEJuvwxJtvQasJeBcDIZeCFr6afjAVUu62lCTNEG+3jMOz
+         qwxxFj9HoHXRw==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.76])
-        by mailhost.synopsys.com (Postfix) with ESMTP id AE626A0057;
-        Wed, 20 Nov 2019 11:29:24 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTP id 4C644A005E;
+        Wed, 20 Nov 2019 11:29:25 +0000 (UTC)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 1/2] ARC: [plat-axs10x]: use pgu pll instead of fixed clock
-Date:   Wed, 20 Nov 2019 14:29:22 +0300
-Message-Id: <20191120112923.431-1-Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 2/2] ARC: [plat-axs10x]: remove hardcoded video mode from bootargs
+Date:   Wed, 20 Nov 2019 14:29:23 +0300
+Message-Id: <20191120112923.431-2-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191120112923.431-1-Eugeniy.Paltsev@synopsys.com>
+References: <20191120112923.431-1-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,59 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PLL driver instead of fixed-clock for PGU pixel clock.
-That allows us to support wider range of graphic modes.
+Now have pixel clock PLL driver and we can change pixel clock rate
+so we don't need to enforce one exact video mode. Moreover enforcing
+video mode is harmful in case of we enforce mode which isn't
+supported by the monitor we are using.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
 Changes v1->v2:
- * add missing input_clk node to AXS101. No changes for AXS103 /
-   AXS103 SMP.
+ * None.
 
- arch/arc/boot/dts/axc001.dtsi    |  6 ++++++
- arch/arc/boot/dts/axs10x_mb.dtsi | 11 ++++++-----
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ arch/arc/boot/dts/axs101.dts     | 2 +-
+ arch/arc/boot/dts/axs103_idu.dts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arc/boot/dts/axc001.dtsi b/arch/arc/boot/dts/axc001.dtsi
-index 6ec1fcdfc0d7..79ec27c043c1 100644
---- a/arch/arc/boot/dts/axc001.dtsi
-+++ b/arch/arc/boot/dts/axc001.dtsi
-@@ -28,6 +28,12 @@
- 			clock-frequency = <750000000>;
- 		};
+diff --git a/arch/arc/boot/dts/axs101.dts b/arch/arc/boot/dts/axs101.dts
+index 305a7f9658e0..c4cfc5f4f427 100644
+--- a/arch/arc/boot/dts/axs101.dts
++++ b/arch/arc/boot/dts/axs101.dts
+@@ -14,6 +14,6 @@
+ 	compatible = "snps,axs101", "snps,arc-sdp";
  
-+		input_clk: input-clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <33333333>;
-+		};
-+
- 		core_intc: arc700-intc@cpu {
- 			compatible = "snps,arc700-intc";
- 			interrupt-controller;
-diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
-index 08bcfed6b80f..f9a5c9ddcae7 100644
---- a/arch/arc/boot/dts/axs10x_mb.dtsi
-+++ b/arch/arc/boot/dts/axs10x_mb.dtsi
-@@ -61,12 +61,13 @@
- 				clock-frequency = <25000000>;
- 				#clock-cells = <0>;
- 			};
-+		};
+ 	chosen {
+-		bootargs = "earlycon=uart8250,mmio32,0xe0022000,115200n8 console=tty0 console=ttyS3,115200n8 consoleblank=0 video=1280x720@60 print-fatal-signals=1";
++		bootargs = "earlycon=uart8250,mmio32,0xe0022000,115200n8 console=tty0 console=ttyS3,115200n8 consoleblank=0 print-fatal-signals=1";
+ 	};
+ };
+diff --git a/arch/arc/boot/dts/axs103_idu.dts b/arch/arc/boot/dts/axs103_idu.dts
+index 46c9136cbf2b..a934b92a8c30 100644
+--- a/arch/arc/boot/dts/axs103_idu.dts
++++ b/arch/arc/boot/dts/axs103_idu.dts
+@@ -17,6 +17,6 @@
+ 	compatible = "snps,axs103", "snps,arc-sdp";
  
--			pguclk: pguclk {
--				#clock-cells = <0>;
--				compatible = "fixed-clock";
--				clock-frequency = <74250000>;
--			};
-+		pguclk: pguclk@10080 {
-+			compatible = "snps,axs10x-pgu-pll-clock";
-+			reg = <0x10080 0x10>, <0x110 0x10>;
-+			#clock-cells = <0>;
-+			clocks = <&input_clk>;
- 		};
- 
- 		gmac: ethernet@18000 {
+ 	chosen {
+-		bootargs = "earlycon=uart8250,mmio32,0xe0022000,115200n8 console=tty0 console=ttyS3,115200n8 print-fatal-signals=1 consoleblank=0 video=1280x720@60";
++		bootargs = "earlycon=uart8250,mmio32,0xe0022000,115200n8 console=tty0 console=ttyS3,115200n8 print-fatal-signals=1 consoleblank=0";
+ 	};
+ };
 -- 
 2.21.0
 
