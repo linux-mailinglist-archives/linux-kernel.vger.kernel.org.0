@@ -2,76 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3DF103BFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5615B103BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:39:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbfKTNj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:39:28 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55078 "EHLO mail.skyhub.de"
+        id S1731121AbfKTNjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:39:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728541AbfKTNjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:39:25 -0500
-Received: from zn.tnic (p200300EC2F0D8C00B1B17C12861BCCA4.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:8c00:b1b1:7c12:861b:cca4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728541AbfKTNjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:39:20 -0500
+Received: from localhost.localdomain (unknown [118.189.143.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C79B21EC0CC2;
-        Wed, 20 Nov 2019 14:39:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1574257159;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=QFI3bxCqn+b0PFcULsjiFv5KvKyUWgIUFkTaCiU0Ovw=;
-        b=HWCY1UyqaOi6dX2884FcCHqa62YZDwgCWCNNyR2vqp5f723r6YuKbqVWQy2htFtpEqw/Nf
-        iCmKHvc23XqOunZjqIdtrsDecwIfTuhA1AOMebnug7AzqEWQgcAEZIJK2oJokk1OeK1Ev5
-        nG2/BQ3b5FK0x94wPRTE/V4WbLap3BM=
-Date:   Wed, 20 Nov 2019 14:39:13 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v3 2/4] x86/traps: Print non-canonical address on #GP
-Message-ID: <20191120133913.GG2634@zn.tnic>
-References: <20191120103613.63563-1-jannh@google.com>
- <20191120103613.63563-2-jannh@google.com>
- <20191120111859.GA115930@gmail.com>
- <CAG48ez0Frp4-+xHZ=UhbHh0hC_h-1VtJfwHw=kDo6NahyMv1ig@mail.gmail.com>
- <20191120123058.GA17296@gmail.com>
- <20191120123926.GE2634@zn.tnic>
- <20191120132830.GB54414@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191120132830.GB54414@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB547224FA;
+        Wed, 20 Nov 2019 13:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574257160;
+        bh=vPa/cGDp8ajSRH9qXDMIZ1zWolJE48+30OeYlmw91PI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AiIyy8tMchHKypt4TqS430UZZ4z974P/RBkg+n9kle5s69qZUyNaO5w4lmWyXSkf0
+         rBiUDW2kChzjbce4MHlRM1gSTfsiQBTzD2uKUOgI1q6KwhpNM8d3mbxxrgskd+b78T
+         2c1xFuv9CUGrRhpi6ASFeFp4uyN++bzZ6IHHQVbY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH] spi: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:39:16 +0800
+Message-Id: <20191120133916.13595-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 02:28:30PM +0100, Ingo Molnar wrote:
-> I'd rather we not trust the decoder and the execution environment so much 
-> that it never produces a 0 linear address in a #GP:
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
 
-I was just scratching my head whether I could trigger a #GP with address
-of 0. But yeah, I agree, let's be really cautious here. I wouldn't want
-to debug a #GP with a wrong address reported.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/spi/Kconfig | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Thx.
-
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 6c0c1f55bd71..870f7797b56b 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -144,7 +144,7 @@ config SPI_BCM63XX
+ 	tristate "Broadcom BCM63xx SPI controller"
+ 	depends on BCM63XX || COMPILE_TEST
+ 	help
+-          Enable support for the SPI controller on the Broadcom BCM63xx SoCs.
++	  Enable support for the SPI controller on the Broadcom BCM63xx SoCs.
+ 
+ config SPI_BCM63XX_HSSPI
+ 	tristate "Broadcom BCM63XX HS SPI controller driver"
+@@ -235,11 +235,11 @@ config SPI_DLN2
+        tristate "Diolan DLN-2 USB SPI adapter"
+        depends on MFD_DLN2
+        help
+-         If you say yes to this option, support will be included for Diolan
+-         DLN2, a USB to SPI interface.
++	 If you say yes to this option, support will be included for Diolan
++	 DLN2, a USB to SPI interface.
+ 
+-         This driver can also be built as a module.  If so, the module
+-         will be called spi-dln2.
++	 This driver can also be built as a module.  If so, the module
++	 will be called spi-dln2.
+ 
+ config SPI_EFM32
+ 	tristate "EFM32 SPI controller"
+@@ -748,10 +748,10 @@ config SPI_SYNQUACER
+ 	  It also supports the new dual-bit and quad-bit SPI protocol.
+ 
+ config SPI_MXIC
+-        tristate "Macronix MX25F0A SPI controller"
+-        depends on SPI_MASTER
+-        help
+-          This selects the Macronix MX25F0A SPI controller driver.
++	tristate "Macronix MX25F0A SPI controller"
++	depends on SPI_MASTER
++	help
++	  This selects the Macronix MX25F0A SPI controller driver.
+ 
+ config SPI_MXS
+ 	tristate "Freescale MXS SPI controller"
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
