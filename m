@@ -2,202 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B322E103EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6CE103FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbfKTPjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:39:49 -0500
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:39565 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728445AbfKTPjs (ORCPT
+        id S1732428AbfKTPpl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 10:45:41 -0500
+Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:21658 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732397AbfKTPpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:39:48 -0500
-IronPort-SDR: oXXf2jN34jToYRwF3cdrryEJJGaIjc53aq+paWt7Rtj/ZX4xVtxRk/upRe2zy3ZDeM8X2tKDNX
- StP/piLSNHqyCCb350f2+ngDuSbfmUTmaD81VqcBezwBmvCF+iyORWXhLfmF/D26+pUJerzO3N
- NetXYsySxjDWQVZl7QM97Dj0xiS7Q4LmvWu5dzrXX71EQYu+OuoM3bgOkgJs+q6bezRuopGgH+
- fJKF+RdDognFKTfERY8CQGfodjc/iZc/GhrrPZT7iGOsojTEzycLuEftO7xcETWnbL6Z1RsWGD
- G8k=
-X-IronPort-AV: E=Sophos;i="5.69,222,1571731200"; 
-   d="scan'208";a="45220642"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa1.mentor.iphmx.com with ESMTP; 20 Nov 2019 07:39:48 -0800
-IronPort-SDR: NTLHtgw50zu5G6nn7et5/NosI5DsjGCJt4yYmrwXEgSLgwUDcIePX9YhYJ22olLVglU4VJZEES
- T9EsUAqlxbztKD4g7nINe5fTvRJHxyH0BTrgwYMobdWzTkh4MhQpxPuZyEB6YlfmcUCm3s9aoC
- QzY4SJGYvG9/MuPuHOhKayDpcPBMMEwZzvYychHTYS67SCgSqzSu8uhARozG7bgOtTVWufLn+W
- C2tr8stOM/CCeX/iE/5XNVJtDTm6L/bs+o2HQnhfOZiEXXYRehc3PsO5fNPJiw7tYCYPZToqjL
- sQs=
-From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
-To:     'Takashi Iwai' <tiwai@suse.de>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Timo Wischer <twischer@de.adit-jv.com>
-References: <20191120115856.4125-1-andrew_gabbasov@mentor.com>  <20191120115856.4125-2-andrew_gabbasov@mentor.com>      <20191120115856.4125-3-andrew_gabbasov@mentor.com>      <20191120115856.4125-4-andrew_gabbasov@mentor.com>      <20191120115856.4125-5-andrew_gabbasov@mentor.com>      <20191120115856.4125-6-andrew_gabbasov@mentor.com>      <20191120115856.4125-7-andrew_gabbasov@mentor.com>      <s5hh82y8vn5.wl-tiwai@suse.de>  <000001d59fb6$4ca36aa0$e5ea3fe0$@mentor.com> <s5h5zje8sxl.wl-tiwai@suse.de>
-In-Reply-To: <s5h5zje8sxl.wl-tiwai@suse.de>
-Subject: RE: [PATCH v4 6/7] ALSA: aloop: Support selection of snd_timer instead of jiffies
-Date:   Wed, 20 Nov 2019 18:39:00 +0300
-Organization: Mentor Graphics Corporation
-Message-ID: <000101d59fb8$a288a280$e799e780$@mentor.com>
+        Wed, 20 Nov 2019 10:45:36 -0500
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTPS id xAKFhcS0093125
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 20 Nov 2019 23:43:38 +0800 (CST)
+        (envelope-from Orson.Zhai@unisoc.com)
+Received: from localhost (10.0.74.112) by BJMBX02.spreadtrum.com (10.0.64.8)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 20 Nov 2019 23:43:45
+ +0800
+From:   Orson Zhai <orson.zhai@unisoc.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kevin.tang@unisoc.com>, <baolin.wang@unisoc.com>,
+        <chunyan.zhang@unisoc.com>, Orson Zhai <orson.zhai@unisoc.com>
+Subject: [PATCH V2 0/2] Add syscon name support
+Date:   Wed, 20 Nov 2019 23:41:46 +0800
+Message-ID: <20191120154148.22067-1-orson.zhai@unisoc.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQHVn7ezhCAU3Kkkmk2hDkJrcybUyqeUMFOA
-Content-Language: en-us
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+Content-Type: text/plain; charset="utf-8"
+X-Originating-IP: [10.0.74.112]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+Content-Transfer-Encoding: 8BIT
+X-MAIL: SHSQR01.spreadtrum.com xAKFhcS0093125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Takashi,
+Hi,
 
-> -----Original Message-----
-> From: Takashi Iwai [mailto:tiwai@suse.de]
-> Sent: Wednesday, November 20, 2019 6:32 PM
-> To: Gabbasov, Andrew
-> Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org; Jaroslav
-> Kysela; Takashi Iwai; Timo Wischer
-> Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of snd_timer
-> instead of jiffies
-> 
-> On Wed, 20 Nov 2019 16:21:36 +0100,
-> Andrew Gabbasov wrote:
-> >
-> > Hello Takashi,
-> >
-> > > -----Original Message-----
-> > > From: Takashi Iwai [mailto:tiwai@suse.de]
-> > > Sent: Wednesday, November 20, 2019 5:34 PM
-> > > To: Gabbasov, Andrew
-> > > Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org;
-Jaroslav
-> > > Kysela; Takashi Iwai; Timo Wischer
-> > > Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of
-snd_timer
-> > > instead of jiffies
-> > >
-> > > On Wed, 20 Nov 2019 12:58:55 +0100,
-> > > Andrew Gabbasov wrote:
-> > > > +/* call in loopback->cable_lock */
-> > > > +static int loopback_snd_timer_open(struct loopback_pcm *dpcm)
-> > > > +{
-> > > > +	int err = 0;
-> > > > +	struct snd_timer_id tid = {
-> > > > +		.dev_class = SNDRV_TIMER_CLASS_PCM,
-> > > > +		.dev_sclass = SNDRV_TIMER_SCLASS_APPLICATION,
-> > > > +	};
-> > > > +	struct snd_timer_instance *timeri;
-> > > > +	struct loopback_cable *cable = dpcm->cable;
-> > > > +
-> > > > +	spin_lock_irq(&cable->lock);
-> > > > +
-> > > > +	/* check if timer was already opened. It is only opened once
-> > > > +	 * per playback and capture subdevice (aka cable).
-> > > > +	 */
-> > > > +	if (cable->snd_timer.instance)
-> > > > +		goto unlock;
-> > > > +
-> > > > +	err = loopback_parse_timer_id(dpcm->loopback->timer_source,
-> &tid);
-> > > > +	if (err < 0) {
-> > > > +		pcm_err(dpcm->substream->pcm,
-> > > > +			"Parsing timer source \'%s\' failed with
-%d",
-> > > > +			dpcm->loopback->timer_source, err);
-> > > > +		goto unlock;
-> > > > +	}
-> > > > +
-> > > > +	cable->snd_timer.stream = dpcm->substream->stream;
-> > > > +	cable->snd_timer.id = tid;
-> > > > +
-> > > > +	timeri = snd_timer_instance_new(dpcm->loopback->card->id);
-> > > > +	if (!timeri) {
-> > > > +		err = -ENOMEM;
-> > > > +		goto unlock;
-> > > > +	}
-> > > > +	/* The callback has to be called from another tasklet. If
-> > > > +	 * SNDRV_TIMER_IFLG_FAST is specified it will be called from
-> the
-> > > > +	 * snd_pcm_period_elapsed() call of the selected sound card.
-> > > > +	 * snd_pcm_period_elapsed() helds
-> snd_pcm_stream_lock_irqsave().
-> > > > +	 * Due to our callback loopback_snd_timer_function() also
-> calls
-> > > > +	 * snd_pcm_period_elapsed() which calls
-> > > snd_pcm_stream_lock_irqsave().
-> > > > +	 * This would end up in a dead lock.
-> > > > +	 */
-> > > > +	timeri->flags |= SNDRV_TIMER_IFLG_AUTO;
-> > > > +	timeri->callback = loopback_snd_timer_function;
-> > > > +	timeri->callback_data = (void *)cable;
-> > > > +	timeri->ccallback = loopback_snd_timer_event;
-> > > > +
-> > > > +	/* snd_timer_close() and snd_timer_open() should not be
-called
-> with
-> > > > +	 * locked spinlock because both functions can block on a
-> mutex. The
-> > > > +	 * mutex loopback->cable_lock is kept locked. Therefore
-> > > snd_timer_open()
-> > > > +	 * cannot be called a second time by the other device of the
-> same
-> > > cable.
-> > > > +	 * Therefore the following issue cannot happen:
-> > > > +	 * [proc1] Call loopback_timer_open() ->
-> > > > +	 *	   Unlock cable->lock for snd_timer_close/open()
-call
-> > > > +	 * [proc2] Call loopback_timer_open() -> snd_timer_open(),
-> > > > +	 *	   snd_timer_start()
-> > > > +	 * [proc1] Call snd_timer_open() and overwrite running timer
-> > > > +	 *	   instance
-> > > > +	 */
-> > > > +	spin_unlock_irq(&cable->lock);
-> > > > +	err = snd_timer_open(timeri, &cable->snd_timer.id, current-
-> >pid);
-> > > > +	if (err < 0) {
-> > > > +		pcm_err(dpcm->substream->pcm,
-> > > > +			"snd_timer_open (%d,%d,%d) failed with %d",
-> > > > +			cable->snd_timer.id.card,
-> > > > +			cable->snd_timer.id.device,
-> > > > +			cable->snd_timer.id.subdevice,
-> > > > +			err);
-> > > > +		snd_timer_instance_free(timeri);
-> > > > +		return err;
-> > > > +	}
-> > > > +	spin_lock_irq(&cable->lock);
-> > > > +
-> > > > +	cable->snd_timer.instance = timeri;
-> > > > +
-> > > > +	/* initialise a tasklet used for draining */
-> > > > +	tasklet_init(&cable->snd_timer.event_tasklet,
-> > > > +		     loopback_snd_timer_tasklet, (unsigned
-> long)timeri);
-> > >
-> > > This has to be set before snd_timer_open().  The callback might be
-> > > called immediately after snd_timer_open().
-> >
-> > This tasklet is used/scheduled only in ccallback (not regular tick
-> > callback),
-> > and only for SNDRV_TIMER_EVENT_MSTOP event. Can this event really happen
-> > immediately after snd_timer_open()?
-> 
-> Why not?  The master timer can be stopped at any time, even between
-> these two lines.
-> 
-> Beware that there are fuzzer programs that can trigger such racy
-> things, and you're adding the code to the target that is actively
-> slapped by them :)
+Our SoCs have a lot of glabal registers which is hard to be managed in
+current syscon structure.
 
-OK, got it.
-I'll move this initialization to before snd_timer_open() in the next
-update together with the fixes for the other issues you will find
-in this version.
+Same register's offset is different in different SoCs. We used chip
+config macro to manage them which prevents driver from being compiled
+in all-in-one image.
 
-Thanks!
+So I add syscons, syscon-names and an optional #vendor-cells property
+as syscon consumer node's bindings. And implement coresponding helper
+functions.
 
-Best regards,
-Andrew
+They have no side effect to current syscon consumer.
 
+Thanks,
+Orson
+
+Changes in V2:
+
+As per suggestion from Arnd:
+
+* Remove #syscon-cells from syscon node.
+* Add "#vendor-cells" into consumer node not affecting referred syscon
+  itself.
+* Change helper funcions parameter accordingly.
+
+-----
+Orson Zhai (2):
+  dt-bindings: syscon: Add syscon-names to refer to syscon easily
+  mfd: syscon: Find syscon by names with arguments support
+
+ .../devicetree/bindings/mfd/syscon.txt        | 43 +++++++++++
+ drivers/mfd/syscon.c                          | 75 +++++++++++++++++++
+ include/linux/mfd/syscon.h                    | 26 +++++++
+ 3 files changed, 144 insertions(+)
+
+--
+2.18.0
+
+________________________________
+ This email (including its attachments) is intended only for the person or entity to which it is addressed and may contain information that is privileged, confidential or otherwise protected from disclosure. Unauthorized use, dissemination, distribution or copying of this email or the information herein or taking any action in reliance on the contents of this email or the information herein, by anyone other than the intended recipient, or an employee or agent responsible for delivering the message to the intended recipient, is strictly prohibited. If you are not the intended recipient, please do not read, copy, use or disclose any part of this e-mail to others. Please notify the sender immediately and permanently delete this e-mail and any attachments if you received it in error. Internet communications cannot be guaranteed to be timely, secure, error-free or virus-free. The sender does not accept liability for any errors or omissions.
+本邮件及其附件具有保密性质，受法律保护不得泄露，仅发送给本邮件所指特定收件人。严禁非经授权使用、宣传、发布或复制本邮件或其内容。若非该特定收件人，请勿阅读、复制、 使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件的方式即刻告知发件人。无法保证互联网通信及时、安全、无误或防毒。发件人对任何错漏均不承担责任。
