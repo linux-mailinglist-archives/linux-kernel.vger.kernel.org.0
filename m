@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26746103C6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC178103C6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbfKTNnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:43:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51532 "EHLO mail.kernel.org"
+        id S1731512AbfKTNnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:43:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730153AbfKTNnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:43:40 -0500
+        id S1730153AbfKTNnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:43:45 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBDE022528;
-        Wed, 20 Nov 2019 13:43:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EC1C22529;
+        Wed, 20 Nov 2019 13:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257420;
-        bh=4E41fm/McBPwCs70C9UWumNq3T3Ql+3Yx15bViejMMw=;
+        s=default; t=1574257424;
+        bh=xeCJqurX4RkNcjf2QeoKUT0jsty4nV+TvM4lmNA6dsQ=;
         h=From:To:Cc:Subject:Date:From;
-        b=nPCH32R06OjeVhp8VrpTuiN2nrT/a9TfU/Ryd7DCBOGDJE67iVtVSJvq/i5PIOdKR
-         R7KsIfcaHzNL/e0/Ysvg3qMfCHW6u7d/6BPc2YelfQ/P17QOrT+vDtV3x+OK1dDmbc
-         PNq3WKM2hI+e4FdIzN+MuHKhUhBjtuPgZsagy47w=
+        b=mON5RSsTAW1ybEu5VPfT6UvYN5a2pBxmYe/mVEYQgKP0x1IokBg0uh8qwF0+nBtBI
+         MGud1QK/F32uNnl6fEjbzxvKD0D2bhRjMFkZOS/tlutQsNONQ/54J5blh2x8AG+vBU
+         BACD/+kuDFWIr1mV9cqv4rBy9umIpSLAZMRzELQA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:43:36 +0800
-Message-Id: <20191120134336.16710-1-krzk@kernel.org>
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        v9fs-developer@lists.sourceforge.net
+Subject: [PATCH] 9p: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:43:40 +0800
+Message-Id: <20191120134340.16770-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -43,41 +45,37 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- fs/Kconfig        | 4 ++--
- fs/Kconfig.binfmt | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ fs/9p/Kconfig | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 7b623e9fc1b0..4436acf5fef7 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -97,8 +97,8 @@ config FILE_LOCKING
- 	default y
- 	help
- 	  This option enables standard file locking support, required
--          for filesystems like NFS and for the flock() system
--          call. Disabling this option saves about 11k.
-+	  for filesystems like NFS and for the flock() system
-+	  call. Disabling this option saves about 11k.
+diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
+index ac2ec4543fe1..09fd4a185fd2 100644
+--- a/fs/9p/Kconfig
++++ b/fs/9p/Kconfig
+@@ -32,13 +32,13 @@ endif
  
- config MANDATORY_FILE_LOCKING
- 	bool "Enable Mandatory file locking"
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index 62dc4f577ba1..8d0d16b90039 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -191,9 +191,9 @@ config BINFMT_MISC
- 	  <file:Documentation/admin-guide/binfmt-misc.rst> to learn how to use this
- 	  feature, <file:Documentation/admin-guide/java.rst> for information about how
- 	  to include Java support. and <file:Documentation/admin-guide/mono.rst> for
--          information about how to include Mono-based .NET support.
-+	  information about how to include Mono-based .NET support.
  
--          To use binfmt_misc, you will need to mount it:
-+	  To use binfmt_misc, you will need to mount it:
- 		mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
- 
- 	  You may say M here for module support and later load the module when
+ config 9P_FS_SECURITY
+-        bool "9P Security Labels"
+-        depends on 9P_FS
+-        help
+-          Security labels support alternative access control models
+-          implemented by security modules like SELinux.  This option
+-          enables an extended attribute handler for file security
+-          labels in the 9P filesystem.
+-
+-          If you are not using a security module that requires using
+-          extended attributes for file security labels, say N.
++	bool "9P Security Labels"
++	depends on 9P_FS
++	help
++	  Security labels support alternative access control models
++	  implemented by security modules like SELinux.  This option
++	  enables an extended attribute handler for file security
++	  labels in the 9P filesystem.
++
++	  If you are not using a security module that requires using
++	  extended attributes for file security labels, say N.
 -- 
 2.17.1
 
