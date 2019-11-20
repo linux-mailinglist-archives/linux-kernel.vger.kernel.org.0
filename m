@@ -2,111 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBE1103858
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:14:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE43E103870
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 12:16:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfKTLOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 06:14:45 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37099 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbfKTLOj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 06:14:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b17so7368783wmj.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 03:14:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cvIKYbv02jfkUFc5yq+y3wt+kyYSZpa4lPRFM3efvsQ=;
-        b=uxjV/l32qVppX/6hMVYuLEHcOzTj2V82Am9eU53lR9/+lCm7uQx0b9YxSnHTPQ2RO2
-         kL/nKisP9MMXL2jYLueogpXsVMaPPbGFTCb/jGhjw4leb0TyI0idM0AlU2tAuOWqhNxM
-         Bqk/fIB8fJYIkxRuSMzWrXXUER86zpAKud6mSMe1uPEW+wBRA3rKKt83LHZv3tJdfkWY
-         TnWsDxjkeZ1Nd32BfTPn0Vqv9FCyLBzt5Vbaunp905EyhrTtIijoXRk7/6RgHOP/7KYx
-         lsmVWz5XokU4Yky4+lN8W8NzSRK6N3Ht8/cHS+kEb5i70Q5qlu6u6CpFJo3P6qvgeycm
-         /sGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cvIKYbv02jfkUFc5yq+y3wt+kyYSZpa4lPRFM3efvsQ=;
-        b=cmjrr+2JQikg5ILQ3dLCZIKHzQAmDH/FKeldkQuiFt6zDvRkr0MLFxPuUdXiMhckfR
-         8p0t67/EQmjaomToCWSwbzRcizqZdVb2dSbUzgRyrgCRNvTexpkh5sp6inEQWV955QPE
-         4NxI2IAlbylzcBSAJpMQfIeI9OGGX+9YW+3F0Id1b/7M85gG9MjJv/K4It/9/oqzT4kp
-         KnXZnzQCC10wmbSHA8baw5tohu1AtZ7NZE9ibJZGY42MK1a2HvIx24+H7ZnRhlxr79RY
-         c8InkKdbLu7e2fefTOvw6KeYYbmPD+fN/GzDeEYoibFFNEcSaiWZLwn+rPKLGXCNN/KT
-         ZZAw==
-X-Gm-Message-State: APjAAAVY7Qosk+jCVYyJlvKnE776POc0qNzIBx2RkdqBgjPoRP8CxI6H
-        RFgf9uyXGkUGe+beEjTNe5fGpw==
-X-Google-Smtp-Source: APXvYqzweKOlyuKQyMd1c/pQf5Z3HB8SFvqepcvQaZ5FjDPXqF7JOhs3aoQy+ZURieFYrTLyR80vzQ==
-X-Received: by 2002:a05:600c:299:: with SMTP id 25mr2616954wmk.50.1574248477850;
-        Wed, 20 Nov 2019 03:14:37 -0800 (PST)
-Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u1sm6061748wmc.3.2019.11.20.03.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 03:14:37 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     mjourdan@baylibre.com
-Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 4/4] arm64: dts: meson-g12-common: add video decoder node
-Date:   Wed, 20 Nov 2019 12:14:30 +0100
-Message-Id: <20191120111430.29552-5-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191120111430.29552-1-narmstrong@baylibre.com>
-References: <20191120111430.29552-1-narmstrong@baylibre.com>
+        id S1729010AbfKTLQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 06:16:36 -0500
+Received: from foss.arm.com ([217.140.110.172]:37582 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728049AbfKTLQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 06:16:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3BB431B;
+        Wed, 20 Nov 2019 03:16:34 -0800 (PST)
+Received: from [10.1.28.170] (e123648.cambridge.arm.com [10.1.28.170])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C2023F6C4;
+        Wed, 20 Nov 2019 03:16:32 -0800 (PST)
+Subject: Re: [PATCH] arm: Fix topology setup in case of CPU hotplug for
+ CONFIG_SCHED_MC
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20191120104212.14791-1-dietmar.eggemann@arm.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <e912ce24-6941-ea3b-f84f-a5cf3881ba98@arm.com>
+Date:   Wed, 20 Nov 2019 11:16:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191120104212.14791-1-dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Jourdan <mjourdan@baylibre.com>
+Hi Dietmar,
 
-Add the video decoder node for the Amlogic G12A and compatible SoC.
+On 11/20/19 10:42 AM, Dietmar Eggemann wrote:
+> Commit ca74b316df96 ("arm: Use common cpu_topology structure and
+> functions.") changed cpu_coregroup_mask() from the ARM32 specific
+> implementation in arch/arm/include/asm/topology.h to the one shared
+> with ARM64 and RISCV in drivers/base/arch_topology.c.
+> 
+> Currently on Arm32 (TC2 w/ CONFIG_SCHED_MC) the task scheduler setup
+> code (w/ CONFIG_SCHED_DEBUG) shows this during CPU hotplug:
+> 
+>    ERROR: groups don't span domain->span
+> 
+> It happens to CPUs of the cluster of the CPU which gets hot-plugged
+> out on scheduler domain MC.
+> 
+> Turns out that the shared cpu_coregroup_mask() requires that the
+> hot-plugged CPU is removed from the core_sibling mask via
+> remove_cpu_topology(). Otherwise the 'is core_sibling subset of
+> cpumask_of_node()' doesn't work. In this case the task scheduler has to
+> deal with cpumask_of_node instead of core_sibling which is wrong on
+> scheduler domain MC.
+> 
+> e.g. CPU3 hot-plugged out on TC2 [cluster0: 0,3-4 cluster1: 1-2]:
+> 
+>    cpu_coregroup_mask(): CPU3 cpumask_of_node=0-2,4 core_sibling=0,3-4
+>                                                                    ^
+> should be:
+> 
+>    cpu_coregroup_mask(): CPU3 cpumask_of_node=0-2,4 core_sibling=0,4
+> 
+> Add remove_cpu_topology() to __cpu_disable() to remove the CPU from the
+> topology masks in case of a CPU hotplug out operation.
+> 
+> At the same time tweak store_cpu_topology() slightly so it will call
+> update_siblings_masks() in case of CPU hotplug in operation via
+> secondary_start_kernel()->smp_store_cpu_info().
+> 
+> This aligns the Arm32 implementation with the Arm64 one.
 
-Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../boot/dts/amlogic/meson-g12-common.dtsi    | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Looks good to me.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-index 3f39e020f74e..6fe7dead5a92 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-@@ -2152,6 +2152,29 @@
- 			};
- 		};
- 
-+		vdec: video-decoder@ff620000 {
-+			compatible = "amlogic,g12a-vdec";
-+			reg = <0x0 0xff620000 0x0 0x10000>,
-+			      <0x0 0xffd0e180 0x0 0xe4>;
-+			reg-names = "dos", "esparser";
-+			interrupts = <GIC_SPI 44 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "vdec", "esparser";
-+
-+			amlogic,ao-sysctrl = <&rti>;
-+			amlogic,canvas = <&canvas>;
-+
-+			clocks = <&clkc CLKID_PARSER>,
-+				 <&clkc CLKID_DOS>,
-+				 <&clkc CLKID_VDEC_1>,
-+				 <&clkc CLKID_VDEC_HEVC>,
-+				 <&clkc CLKID_VDEC_HEVCF>;
-+			clock-names = "dos_parser", "dos", "vdec_1",
-+				      "vdec_hevc", "vdec_hevcf";
-+			resets = <&reset RESET_PARSER>;
-+			reset-names = "esparser";
-+		};
-+
- 		vpu: vpu@ff900000 {
- 			compatible = "amlogic,meson-g12a-vpu";
- 			reg = <0x0 0xff900000 0x0 0x100000>,
--- 
-2.22.0
+Tested-and-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
+> 
+> Fixes: ca74b316df96 ("arm: Use common cpu_topology structure and functions")
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> ---
+>   arch/arm/kernel/smp.c      |  2 ++
+>   arch/arm/kernel/topology.c | 15 +++++++--------
+>   2 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+> index 4b0bab2607e4..139c0d98fa29 100644
+> --- a/arch/arm/kernel/smp.c
+> +++ b/arch/arm/kernel/smp.c
+> @@ -240,6 +240,8 @@ int __cpu_disable(void)
+>   	if (ret)
+>   		return ret;
+>   
+> +	remove_cpu_topology(cpu);
+> +
+>   	/*
+>   	 * Take this CPU offline.  Once we clear this, we can't return,
+>   	 * and we must not schedule until we're ready to give up the cpu.
+> diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+> index 5b9faba03afb..b37b0a340991 100644
+> --- a/arch/arm/kernel/topology.c
+> +++ b/arch/arm/kernel/topology.c
+> @@ -196,9 +196,8 @@ void store_cpu_topology(unsigned int cpuid)
+>   	struct cpu_topology *cpuid_topo = &cpu_topology[cpuid];
+>   	unsigned int mpidr;
+>   
+> -	/* If the cpu topology has been already set, just return */
+> -	if (cpuid_topo->core_id != -1)
+> -		return;
+> +	if (cpuid_topo->package_id != -1)
+> +		goto topology_populated;
+>   
+>   	mpidr = read_cpuid_mpidr();
+>   
+> @@ -231,14 +230,14 @@ void store_cpu_topology(unsigned int cpuid)
+>   		cpuid_topo->package_id = -1;
+>   	}
+>   
+> -	update_siblings_masks(cpuid);
+> -
+>   	update_cpu_capacity(cpuid);
+>   
+>   	pr_info("CPU%u: thread %d, cpu %d, socket %d, mpidr %x\n",
+> -		cpuid, cpu_topology[cpuid].thread_id,
+> -		cpu_topology[cpuid].core_id,
+> -		cpu_topology[cpuid].package_id, mpidr);
+> +		cpuid, cpuid_topo->thread_id, cpuid_topo->core_id,
+> +		cpuid_topo->package_id, mpidr);
+> +
+> +topology_populated:
+> +	update_siblings_masks(cpuid);
+>   }
+>   
+>   static inline int cpu_corepower_flags(void)
+> 
