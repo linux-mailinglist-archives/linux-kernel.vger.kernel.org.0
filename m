@@ -2,129 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E221103A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 13:54:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B599103AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbfKTMyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 07:54:36 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6257 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727644AbfKTMyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:54:36 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 86B80AD63EA186BBCB32;
-        Wed, 20 Nov 2019 20:54:19 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 20 Nov 2019
- 20:54:12 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <Jammy.Zhou@amd.com>, <tianci.yin@amd.com>, <sam@ravnborg.org>,
-        <luben.tuikov@amd.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
-        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH] drm/amd/display: make various variable in fixed31_32.h 'global' instead of 'static'
-Date:   Wed, 20 Nov 2019 21:15:33 +0800
-Message-ID: <20191120131533.12720-3-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191120131533.12720-1-yukuai3@huawei.com>
-References: <20191120131533.12720-1-yukuai3@huawei.com>
+        id S1730076AbfKTNGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:06:30 -0500
+Received: from mga07.intel.com ([134.134.136.100]:42091 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727965AbfKTNG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:06:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 05:06:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,221,1571727600"; 
+   d="scan'208";a="196847595"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
+  by orsmga007.jf.intel.com with ESMTP; 20 Nov 2019 05:06:27 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Wen Yang <wenyang@linux.alibaba.com>
+Cc:     zhiche.yy@alibaba-inc.com, xlpang@linux.alibaba.com,
+        Wen Yang <wenyang@linux.alibaba.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH] intel_th: avoid double free in error flow
+In-Reply-To: <20191119173447.2454-1-wenyang@linux.alibaba.com>
+References: <20191119173447.2454-1-wenyang@linux.alibaba.com>
+Date:   Wed, 20 Nov 2019 15:06:26 +0200
+Message-ID: <87y2wad7e5.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fixed31_32.h declare various variables 'static const', it's very ugly and
-waste of memory.
+Wen Yang <wenyang@linux.alibaba.com> writes:
 
-All files that including the header file will have a copy of those
-variables of their own. And that's the reason why there will be numerous
-gcc '-Wunused-but-set-variable' warnings related to the variables.
+> There is a possible double free issue in intel_th_subdevice_alloc:
+>
+> 651         err = intel_th_device_add_resources(thdev, res, subdev->nres);
+> 652         if (err) {
+> 653                 put_device(&thdev->dev);
+> 654                 goto fail_put_device;     ---> freed
+> 655         }
+> ...
+> 687 fail_put_device:
+> 688         put_device(&thdev->dev);          ---> double freed
+> 689
+>
+> This patch fix it by removing the unnecessary put_device().
 
-Fix it by initializing the variables in a new file "fixed31_32.c", and
-declare them 'extern' in "fixed31_32.h".
+Unnecessary is a too generous term here.
 
-Fixes: eb0e515464e4 ("drm/amd/display: get rid of 32.32 unsigned fixed point")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
+> Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
+> Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-kernel@vger.kernel.org
 
-BTW, this is the best I can think of, there may be better sulotion.
+Cc: stable@ is missing.
 
- drivers/gpu/drm/amd/display/amdgpu_dm/Makefile  |  2 +-
- .../gpu/drm/amd/display/amdgpu_dm/fixed31_32.c  | 17 +++++++++++++++++
- .../gpu/drm/amd/display/include/fixed31_32.h    | 16 ++++++++--------
- 3 files changed, 26 insertions(+), 9 deletions(-)
- create mode 100644 drivers/gpu/drm/amd/display/amdgpu_dm/fixed31_32.c
+> ---
+>  drivers/hwtracing/intel_th/core.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+> index d5c1821..98d195c 100644
+> --- a/drivers/hwtracing/intel_th/core.c
+> +++ b/drivers/hwtracing/intel_th/core.c
+> @@ -649,10 +649,8 @@ static inline void intel_th_request_hub_module_flush(struct intel_th *th)
+>  	}
+>  
+>  	err = intel_th_device_add_resources(thdev, res, subdev->nres);
+> -	if (err) {
+> -		put_device(&thdev->dev);
+> +	if (err)
+>  		goto fail_put_device;
+> -	}
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/Makefile b/drivers/gpu/drm/amd/display/amdgpu_dm/Makefile
-index 9a3b7bf8ab0b..8ce291a0279b 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/Makefile
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/Makefile
-@@ -25,7 +25,7 @@
- 
- 
- 
--AMDGPUDM = amdgpu_dm.o amdgpu_dm_irq.o amdgpu_dm_mst_types.o amdgpu_dm_color.o
-+AMDGPUDM = amdgpu_dm.o amdgpu_dm_irq.o amdgpu_dm_mst_types.o amdgpu_dm_color.o fixed31_32.o
- 
- ifneq ($(CONFIG_DRM_AMD_DC),)
- AMDGPUDM += amdgpu_dm_services.o amdgpu_dm_helpers.o amdgpu_dm_pp_smu.o
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/fixed31_32.c b/drivers/gpu/drm/amd/display/amdgpu_dm/fixed31_32.c
-new file mode 100644
-index 000000000000..1f51587e342b
---- /dev/null
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/fixed31_32.c
-@@ -0,0 +1,17 @@
-+/*
-+ * Author: yu kuai <yukuai3@huawei.com>
-+ */
-+
-+struct fixed31_32 {
-+	long long value;
-+};
-+
-+const struct fixed31_32 dc_fixpt_zero = { 0 };
-+const struct fixed31_32 dc_fixpt_epsilon = { 1LL };
-+const struct fixed31_32 dc_fixpt_half = { 0x80000000LL };
-+const struct fixed31_32 dc_fixpt_one = { 0x100000000LL };
-+
-+const struct fixed31_32 dc_fixpt_two_pi = { 26986075409LL };
-+const struct fixed31_32 dc_fixpt_ln2 = { 2977044471LL };
-+const struct fixed31_32 dc_fixpt_ln2_div_2 = { 1488522236LL };
-+
-diff --git a/drivers/gpu/drm/amd/display/include/fixed31_32.h b/drivers/gpu/drm/amd/display/include/fixed31_32.h
-index 291215362e3f..d8dbe96f9b19 100644
---- a/drivers/gpu/drm/amd/display/include/fixed31_32.h
-+++ b/drivers/gpu/drm/amd/display/include/fixed31_32.h
-@@ -64,14 +64,14 @@ struct fixed31_32 {
-  * Useful constants
-  */
- 
--static const struct fixed31_32 dc_fixpt_zero = { 0 };
--static const struct fixed31_32 dc_fixpt_epsilon = { 1LL };
--static const struct fixed31_32 dc_fixpt_half = { 0x80000000LL };
--static const struct fixed31_32 dc_fixpt_one = { 0x100000000LL };
--
--static const struct fixed31_32 dc_fixpt_two_pi = { 26986075409LL };
--static const struct fixed31_32 dc_fixpt_ln2 = { 2977044471LL };
--static const struct fixed31_32 dc_fixpt_ln2_div_2 = { 1488522236LL };
-+extern const struct fixed31_32 dc_fixpt_zero;
-+extern const struct fixed31_32 dc_fixpt_epsilon;
-+extern const struct fixed31_32 dc_fixpt_half;
-+extern const struct fixed31_32 dc_fixpt_one;
-+
-+extern const struct fixed31_32 dc_fixpt_two_pi;
-+extern const struct fixed31_32 dc_fixpt_ln2;
-+extern const struct fixed31_32 dc_fixpt_ln2_div_2;
- 
- /*
-  * @brief
--- 
-2.17.2
+What about the second instance of the same problem a few lines lower?
 
+Thanks,
+--
+Alex
