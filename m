@@ -2,169 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBCA10400C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FF7104014
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbfKTPxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:53:08 -0500
-Received: from mga17.intel.com ([192.55.52.151]:63174 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728453AbfKTPxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:53:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 07:53:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
-   d="scan'208";a="215842721"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 20 Nov 2019 07:53:02 -0800
-Received: by lahna (sSMTP sendmail emulation); Wed, 20 Nov 2019 17:53:02 +0200
-Date:   Wed, 20 Nov 2019 17:53:01 +0200
-From:   Mika Westerberg <mika.westerberg@intel.com>
-To:     Karol Herbst <kherbst@redhat.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Dave Airlie <airlied@gmail.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>
-Subject: Re: [PATCH v4] pci: prevent putting nvidia GPUs into lower device
- states on certain intel bridges
-Message-ID: <20191120155301.GL11621@lahna.fi.intel.com>
-References: <20191120101816.GX11621@lahna.fi.intel.com>
- <CAJZ5v0g4vp1C+zHU5nOVnkGsOjBvLaphK1kK=qAT6b=mK8kpsA@mail.gmail.com>
- <20191120112212.GA11621@lahna.fi.intel.com>
- <20191120115127.GD11621@lahna.fi.intel.com>
- <CACO55tsfNOdtu5SZ-4HzO4Ji6gQtafvZ7Rm19nkPcJAgwUBFMw@mail.gmail.com>
- <CACO55tscD_96jUVts+MTAUsCt-fZx4O5kyhRKoo4mKoC84io8A@mail.gmail.com>
- <20191120120913.GE11621@lahna.fi.intel.com>
- <CACO55tsHy6yZQZ8PkdW8iPA7+uc5rdcEwRJwYEQ3iqu85F8Sqg@mail.gmail.com>
- <20191120151542.GH11621@lahna.fi.intel.com>
- <CACO55tvo3rbPtYJcioEgXCEQqVXcVAm-iowr9Nim=bgTdMjgLw@mail.gmail.com>
+        id S1731531AbfKTPyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:54:17 -0500
+Received: from mail-eopbgr720089.outbound.protection.outlook.com ([40.107.72.89]:31160
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728412AbfKTPyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 10:54:17 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YqD2cznlrqUV0x49LqzVoMTrx7rh+EkW09iWBuXO3pZXQWunGct5QcNDJfttc0hKPsafhGyJ79OpqUTcOYGQeOopHG90bh8eZUFPIo6AmCC+GB34x04WAIQ6FwXqDQzblcJtjKWNMRFGiLlg6HRn1TyiKAYY/MIuexDY0xSVVFL9mVULmhUYvYz9gz0KYknIZJ7pddFk9BISITZJ7UFlqJSZYipxCss6q++DPi6RUZMvJS/mtYr0108DxZbNVeGw8Lyp96V2N4t+xgHEOkAdb+UgzVagjbRxlUsiGZ9dCr6fpmhRP5/FSF8m4uRmYuzaWD3hcUEudfcMUmjWWzi7wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lf7dPVuDhaZUiJRS47A1XJGZv3DlCLTx6vBVOc6mfYI=;
+ b=NiXVYW1+se3ZScwSfRtYbZtV1uWYGc7UadbigUyl+YVxNr4MRpCik3AfvSBjEGcHnQLZREmmv69ycl3tzEuxUSBNZCwqNyPM31lBog0pfzrzyc6C3Ve5QuEBfZhtRE5Anb6NnaCDkjxDFNAJYTMQkXJiUOIF9e/+hZZoc/l+EEBzV7H+dhslElpwcRwf6LS366tLtchK6/a7P2xcrmxAVut2XQbZ8RJjQfi/tNUUlzycDHhKTGFJBfmlu8aFh0xvSnSs67bffLnVdcbR+7JN3Rm5Bm0dHwbWpiDwSKiItSqG7/HXZ+vtERvFB64lPQAnuy7MXovWrGO+a0eSeZARCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lf7dPVuDhaZUiJRS47A1XJGZv3DlCLTx6vBVOc6mfYI=;
+ b=kSPyrNv1GqIENY7Ksk6PFjvrH+O3+ipmonhfweGdrM5oHeNtSjl5j6z04o/T9vqHcW1ysD7SBIAPdYaxbDO9LDaFupooo58esQ5EEYPTBPmp+KjKlHVLchdEgXWzrsVBpo57TsErxrUveyBQyiqrNIeOZumAxWPnOFjL/D/eDLY=
+Received: from MN2PR02MB6400.namprd02.prod.outlook.com (52.132.173.155) by
+ MN2PR02MB6815.namprd02.prod.outlook.com (52.135.49.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.23; Wed, 20 Nov 2019 15:54:11 +0000
+Received: from MN2PR02MB6400.namprd02.prod.outlook.com
+ ([fe80::c413:7dde:1e89:f355]) by MN2PR02MB6400.namprd02.prod.outlook.com
+ ([fe80::c413:7dde:1e89:f355%7]) with mapi id 15.20.2451.031; Wed, 20 Nov 2019
+ 15:54:11 +0000
+From:   Appana Durga Kedareswara Rao <appanad@xilinx.com>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        Srinivas Neeli <sneeli@xilinx.com>,
+        Michal Simek <michals@xilinx.com>
+CC:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        git <git@xilinx.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>
+Subject: RE: [PATCH 0/2] can: xilinx_can: Bug fixes on can driver
+Thread-Topic: [PATCH 0/2] can: xilinx_can: Bug fixes on can driver
+Thread-Index: AQHVn5uyLMKsi4xLzUa9hf24vHCkTKeUAJ6AgAA1G2A=
+Date:   Wed, 20 Nov 2019 15:54:10 +0000
+Message-ID: <MN2PR02MB64002F223821E7BD940B4E54DC4F0@MN2PR02MB6400.namprd02.prod.outlook.com>
+References: <1574251865-19592-1-git-send-email-srinivas.neeli@xilinx.com>
+ <e985fd5a-9b0c-f273-d28c-14515dc25e5c@pengutronix.de>
+In-Reply-To: <e985fd5a-9b0c-f273-d28c-14515dc25e5c@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=appanad@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8a28c78f-40eb-4754-4f04-08d76dd1e279
+x-ms-traffictypediagnostic: MN2PR02MB6815:|MN2PR02MB6815:
+x-ms-exchange-purlcount: 1
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR02MB6815BD5AE9D6E3E778648EA3DC4F0@MN2PR02MB6815.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 02272225C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(189003)(199004)(498600001)(33656002)(107886003)(66556008)(66446008)(64756008)(66476007)(66946007)(6246003)(4326008)(486006)(3846002)(476003)(81156014)(81166006)(53546011)(6506007)(102836004)(6116002)(7696005)(8676002)(76176011)(8936002)(305945005)(7736002)(5660300002)(26005)(66066001)(52536014)(11346002)(4744005)(446003)(74316002)(110136005)(6636002)(186003)(14454004)(54906003)(966005)(2906002)(25786009)(14444005)(256004)(99286004)(55016002)(229853002)(76116006)(6306002)(71200400001)(71190400001)(9686003)(6436002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6815;H:MN2PR02MB6400.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XWb0sggiKvI4ccbdtWZt8eqFB/1G6+YTU609bOM8zAZ8Et/mGG2DpfqrqmEBNIh2QOhnd3//RuPuMAqWCnCsrY4w5A0EzG79Umrb55Cg4jyZDLBWdyR7s1wV9oXyUctwC7hKU0ZlYbFU+o3i2uUWcoS2Cg7pnL3mAV3xMrjT5r64dJCKQLOnZqi8HIgHmXJZJjzR00BOIqNx1O/zrw8cILgEgUHntw2Znbn7TkOY1ODq45GyD+FnK4VA2yQIelqattUlQ+wQaYZRJs/UU1nXe1LJkPdOXsP6acDrMqByNC50t8zD+SlRD1z32+Sh8kJICc4dhuipmq27WHggkBrYSFDPoemHulsNNo3PIXEKxbrSL6OXahzO60gex9Dml7ZTQKGmnvpqvMvpEB6Q5l6RGYCWWaeGTK8Q7y+OHLwEsWCY0nwNhMHGwnAVmqz4yjzMggW7C4PSTSaF06IOieObvI2cQzt5rvk4jgjrFigUDzI=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACO55tvo3rbPtYJcioEgXCEQqVXcVAm-iowr9Nim=bgTdMjgLw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a28c78f-40eb-4754-4f04-08d76dd1e279
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2019 15:54:10.8979
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cJPzW9nzmi2xxiGsK1rhL4WceVYrEUS0/dR+k+h/WIviAkpArOL2R63eWxbqGDEvdxFWfRjw1mW3246FG7N/Zg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6815
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 04:37:14PM +0100, Karol Herbst wrote:
-> On Wed, Nov 20, 2019 at 4:15 PM Mika Westerberg
-> <mika.westerberg@intel.com> wrote:
-> >
-> > On Wed, Nov 20, 2019 at 01:11:52PM +0100, Karol Herbst wrote:
-> > > On Wed, Nov 20, 2019 at 1:09 PM Mika Westerberg
-> > > <mika.westerberg@intel.com> wrote:
-> > > >
-> > > > On Wed, Nov 20, 2019 at 12:58:00PM +0100, Karol Herbst wrote:
-> > > > > overall, what I really want to know is, _why_ does it work on windows?
-> > > >
-> > > > So do I ;-)
-> > > >
-> > > > > Or what are we doing differently on Linux so that it doesn't work? If
-> > > > > anybody has any idea on how we could dig into this and figure it out
-> > > > > on this level, this would probably allow us to get closer to the root
-> > > > > cause? no?
-> > > >
-> > > > Have you tried to use the acpi_rev_override parameter in your system and
-> > > > does it have any effect?
-> > > >
-> > > > Also did you try to trace the ACPI _ON/_OFF() methods? I think that
-> > > > should hopefully reveal something.
-> > > >
-> > >
-> > > I think I did in the past and it seemed to have worked, there is just
-> > > one big issue with this: it's a Dell specific workaround afaik, and
-> > > this issue plagues not just Dell, but we've seen it on HP and Lenovo
-> > > laptops as well, and I've heard about users having the same issues on
-> > > Asus and MSI laptops as well.
-> >
-> > Maybe it is not a workaround at all but instead it simply determines
-> > whether the system supports RTD3 or something like that (IIRC Windows 8
-> > started supporting it). Maybe Dell added check for Linux because at that
-> > time Linux did not support it.
-> >
-> 
-> the point is, it's not checking it by default, so by default you still
-> run into the windows 8 codepath.
-
-Well you can add the quirk to acpi_rev_dmi_table[] so it goes to that
-path by default. There are a bunch of similar entries for Dell machines.
-
-Of course this does not help the non-Dell users so we would still need
-to figure out the root cause.
-
-> > In case RTD3 is supported it invokes LKDS() which probably does the L2
-> > or L3 entry and this is for some reason does not work the same way in
-> > Linux than it does with Windows 8+.
-> >
-> > I don't remember if this happens only with nouveau or with the
-> > proprietary driver as well but looking at the nouveau runtime PM suspend
-> > hook (assuming I'm looking at the correct code):
-> >
-> > static int
-> > nouveau_pmops_runtime_suspend(struct device *dev)
-> > {
-> >         struct pci_dev *pdev = to_pci_dev(dev);
-> >         struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> >         int ret;
-> >
-> >         if (!nouveau_pmops_runtime()) {
-> >                 pm_runtime_forbid(dev);
-> >                 return -EBUSY;
-> >         }
-> >
-> >         nouveau_switcheroo_optimus_dsm();
-> >         ret = nouveau_do_suspend(drm_dev, true);
-> >         pci_save_state(pdev);
-> >         pci_disable_device(pdev);
-> >         pci_ignore_hotplug(pdev);
-> >         pci_set_power_state(pdev, PCI_D3cold);
-> >         drm_dev->switch_power_state = DRM_SWITCH_POWER_DYNAMIC_OFF;
-> >         return ret;
-> > }
-> >
-> > Normally PCI drivers leave the PCI bus PM things to PCI core but here
-> > the driver does these. So I wonder if it makes any difference if we let
-> > the core handle all that:
-> >
-> > static int
-> > nouveau_pmops_runtime_suspend(struct device *dev)
-> > {
-> >         struct pci_dev *pdev = to_pci_dev(dev);
-> >         struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> >         int ret;
-> >
-> >         if (!nouveau_pmops_runtime()) {
-> >                 pm_runtime_forbid(dev);
-> >                 return -EBUSY;
-> >         }
-> >
-> >         nouveau_switcheroo_optimus_dsm();
-> >         ret = nouveau_do_suspend(drm_dev, true);
-> >         pci_ignore_hotplug(pdev);
-> >         drm_dev->switch_power_state = DRM_SWITCH_POWER_DYNAMIC_OFF;
-> >         return ret;
-> > }
-> >
-> > and similar for the nouveau_pmops_runtime_resume().
-> >
-> 
-> yeah, I tried that at some point and it didn't help either. The reason
-> we call those from inside Nouveau is to support systems pre _PR where
-> nouveau invokes custom _DSM calls on its own. We could potentially
-> check for that though.
-
-OK.
+SGkgTWFyYywNCg0KPiANCj4gT24gMTEvMjAvMTkgMToxMSBQTSwgU3Jpbml2YXMgTmVlbGkgd3Jv
+dGU6DQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgZG9lcyB0aGUgZm9sbG93aW5nOg0KPiA+IC1za2lw
+IHByaW50aW5nIGVycm9yIG1lc3NhZ2Ugb24gZGVmZXJyZWQgcHJvYmUgLUZpeCB1c2FnZSBvZiBz
+a2INCj4gPiBtZW1vcnkNCj4gDQo+IEJUVzogSSdtIGxvb2tpbmcgZm9yIGFuIG9mZmljaWFsIE1h
+aW50YWluZXIgZm9yIHRoZSB4bGlueF9jYW4gZHJpdmVyLg0KPiANCj4gVGhlIE1haW50YWluZXIg
+d2lsbCBnZXQgYW4gZW50cnkgaW4gdGhlIE1BSU5UQUlORVJTIGZpbGUsIHNob3VsZCB0ZXN0IG5l
+dw0KPiBwYXRjaGVzIGFuZCBnaXZlIFJldmlld2VkLWJ5cy4NCj4gDQo+IElzIHRoZXJlIGEgdm9s
+dW50ZWVyPw0KDQpTdXJlIHdpbGwgdm9sdW50ZWVyIHRoZSBtYWludGFpbmVyc2hpcCwgd2lsbCBz
+ZW5kIHRoZSBtYWludGFpbmVyIGZyYWdtZW50IHBhdGNoLi4uIA0KDQpSZWdhcmRzLA0KS2VkYXIu
+DQo+IA0KPiByZWdhcmRzLA0KPiBNYXJjDQo+IA0KPiAtLQ0KPiBQZW5ndXRyb25peCBlLksuICAg
+ICAgICAgICAgICAgICB8IE1hcmMgS2xlaW5lLUJ1ZGRlICAgICAgICAgICB8DQo+IEVtYmVkZGVk
+IExpbnV4ICAgICAgICAgICAgICAgICAgIHwgaHR0cHM6Ly93d3cucGVuZ3V0cm9uaXguZGUgIHwN
+Cj4gVmVydHJldHVuZyBXZXN0L0RvcnRtdW5kICAgICAgICAgfCBQaG9uZTogKzQ5LTIzMS0yODI2
+LTkyNCAgICAgfA0KPiBBbXRzZ2VyaWNodCBIaWxkZXNoZWltLCBIUkEgMjY4NiB8IEZheDogICAr
+NDktNTEyMS0yMDY5MTctNTU1NSB8DQoNCg==
