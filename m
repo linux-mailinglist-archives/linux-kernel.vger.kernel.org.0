@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87AC5103C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB9D103C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731260AbfKTNlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:41:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48916 "EHLO mail.kernel.org"
+        id S1731354AbfKTNlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:41:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729146AbfKTNlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:41:06 -0500
+        id S1729146AbfKTNlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:41:10 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAC93224FC;
-        Wed, 20 Nov 2019 13:41:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EA5C224FC;
+        Wed, 20 Nov 2019 13:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257265;
-        bh=fK6N4bmS3Tzb3Vf/HY/FY3CiI/zKE/77M0yzIbf4RjE=;
+        s=default; t=1574257269;
+        bh=xPj3YzRv9jWa1IqK+64ukpSnBw5wrrabNTKuHooPq1I=;
         h=From:To:Cc:Subject:Date:From;
-        b=Xr8VgbTwDLQjMwVz6aWqjyOwN08YfxLZq5L7XBqL328/QlZPUL3t+D8ruupjCcWka
-         sCQCYI5t36twzlEX4GWevejh59yIQcodY9BF9eLeciJwceoN+6AI7Gx6P1hjDui7gc
-         9nUgAIQ0mKORaJDf8rUXT3Kcn9Jdc53LJWj+CY5A=
+        b=bFnUTI6aLpb4O9BQ34HPPPZVqyGRs3VExNMRKIEmRp7TapJ7/OUZOAUvqRjJGVWPo
+         TfPkNgiQOnQLN2+d6drNE6TsjyBcjpgdKpP3TVTWMI3CW2MDZC7/gE4kjSqBRdRjTj
+         FtdwYKOZ84kw2CoKLxP8vxhpQwUrq0f/trXy7T/s=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH] memstick: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:41:01 +0800
-Message-Id: <20191120134101.14738-1-krzk@kernel.org>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:41:05 +0800
+Message-Id: <20191120134105.14799-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -44,62 +43,41 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memstick/core/Kconfig | 18 +++++++++---------
- drivers/memstick/host/Kconfig |  4 ++--
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/media/Kconfig              | 6 +++---
+ drivers/media/radio/si470x/Kconfig | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/memstick/core/Kconfig b/drivers/memstick/core/Kconfig
-index 516f454fde14..08192fd70eb4 100644
---- a/drivers/memstick/core/Kconfig
-+++ b/drivers/memstick/core/Kconfig
-@@ -6,16 +6,16 @@
- comment "MemoryStick drivers"
+diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+index b36a41332867..9dfea5c4b6ab 100644
+--- a/drivers/media/Kconfig
++++ b/drivers/media/Kconfig
+@@ -208,9 +208,9 @@ config MEDIA_SUBDRV_AUTOSELECT
+ 	  If unsure say Y.
  
- config MEMSTICK_UNSAFE_RESUME
--        bool "Allow unsafe resume (DANGEROUS)"
--        help
--          If you say Y here, the MemoryStick layer will assume that all
--          cards stayed in their respective slots during the suspend. The
--          normal behaviour is to remove them at suspend and
--          redetecting them at resume. Breaking this assumption will
--          in most cases result in data corruption.
-+	bool "Allow unsafe resume (DANGEROUS)"
-+	help
-+	  If you say Y here, the MemoryStick layer will assume that all
-+	  cards stayed in their respective slots during the suspend. The
-+	  normal behaviour is to remove them at suspend and
-+	  redetecting them at resume. Breaking this assumption will
-+	  in most cases result in data corruption.
+ config MEDIA_HIDE_ANCILLARY_SUBDRV
+-        bool
+-        depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
+-        default y
++	bool
++	depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
++	default y
  
--          This option is usually just for embedded systems which use
--          a MemoryStick card for rootfs. Most people should say N here.
-+	  This option is usually just for embedded systems which use
-+	  a MemoryStick card for rootfs. Most people should say N here.
- 
- config MSPRO_BLOCK
- 	tristate "MemoryStick Pro block device driver"
-diff --git a/drivers/memstick/host/Kconfig b/drivers/memstick/host/Kconfig
-index 446c93ecef8f..4113343da056 100644
---- a/drivers/memstick/host/Kconfig
-+++ b/drivers/memstick/host/Kconfig
-@@ -18,7 +18,7 @@ config MEMSTICK_TIFM_MS
- 	  'Misc devices: TI Flash Media PCI74xx/PCI76xx host adapter support
- 	  (TIFM_7XX1)'.
- 
--          To compile this driver as a module, choose M here: the
-+	  To compile this driver as a module, choose M here: the
- 	  module will be called tifm_ms.
- 
- config MEMSTICK_JMICRON_38X
-@@ -29,7 +29,7 @@ config MEMSTICK_JMICRON_38X
- 	  Say Y here if you want to be able to access MemoryStick cards with
- 	  the JMicron(R) JMB38X MemoryStick card reader.
- 
--          To compile this driver as a module, choose M here: the
-+	  To compile this driver as a module, choose M here: the
- 	  module will be called jmb38x_ms.
- 
- config MEMSTICK_R592
+ config MEDIA_ATTACH
+ 	bool
+diff --git a/drivers/media/radio/si470x/Kconfig b/drivers/media/radio/si470x/Kconfig
+index 537f8e1601f3..a1ba8bc54b62 100644
+--- a/drivers/media/radio/si470x/Kconfig
++++ b/drivers/media/radio/si470x/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config RADIO_SI470X
+-        tristate "Silicon Labs Si470x FM Radio Receiver support"
+-        depends on VIDEO_V4L2
++	tristate "Silicon Labs Si470x FM Radio Receiver support"
++	depends on VIDEO_V4L2
+ 	help
+ 	  This is a driver for devices with the Silicon Labs SI470x
+ 	  chip (either via USB or I2C buses).
 -- 
 2.17.1
 
