@@ -2,173 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC727103E6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB160103EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731254AbfKTP2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:28:45 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32834 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731187AbfKTP2n (ORCPT
+        id S1728409AbfKTPai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:30:38 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42445 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729156AbfKTP15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:28:43 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w9so330952wrr.0;
-        Wed, 20 Nov 2019 07:28:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VocVwERuj9CPUxI4LlG88AIMpkiR3wTIlIVCNMEfFWI=;
-        b=XGKqvA+ftxeRIcTzRVR4iuKmoi0AoZftMzZznXbgI5lelIgfWtxFTXOkD40mmkJ0Yf
-         3F22LKumE86iAiZTdZP9sXgCKJowSPQEsszkhBRjtK2jKvfNZs3OcEhztgLYz9fCFYp7
-         FnRHXFhQTryMUWMHjF0jTxnuAMZ2bstdrHVNWQ3W5lOFj9A9vvJaoqPze3uXdJv0ZmY2
-         mVwxXHdA1kLLCy3FUnm+bNMrbOJ1Y8j0zdYzuYaQfcsoEF6V9j30lKqT3qf7x386q9pE
-         uxwFmMwjNZKgba0UBhp6ZUEYCnk6EbEO2y9/cY8a//79YUOfCNXm2QqjQ3wj+jqWzPZt
-         Q58g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VocVwERuj9CPUxI4LlG88AIMpkiR3wTIlIVCNMEfFWI=;
-        b=lVU6/Gh4mAzBdN5p24+cARWJIpUG0mv25m7hwt6z86dKiTDhD7YvRSdQxPZeKn+Hae
-         TSoxf6NI0elbnh/Q/CiyVRyySnidjFGVrooqn8qwRL7b8OdQuYUhgNtjHbZpyjUNugoF
-         +V/5X3j891RlWoRBSydWAUQ8fOjtCJ6Nc7CFJ6DSnYv46EsyIZVNAVh3n3bcetWtJPTJ
-         5QGUpg+id9SHlv0Dglz0vKYpyIansPHqadO6se67dJzJPz0MWcUnoZEr3cqzN6LWm4yZ
-         NTf9Vvmx9H27GCcSHLxGaE8GIadjQldqL6wZRiDbbgV5cO74gVded2uHgbnlQglNoGFD
-         AcEQ==
-X-Gm-Message-State: APjAAAW8yVTTQhs7Fsb7BdFRVquXNtPWlJlkkieC6omI9NfruJfzBIX6
-        hPaHHjOP6Ub18/wpYoGKvnM5FTft
-X-Google-Smtp-Source: APXvYqyySvjdRhchHXN5/IN4KTYqciseN5uBnZ6+Gn1VQiy/uYXcvn0MKoLOS06DLlVVycRu9E0ZYw==
-X-Received: by 2002:a5d:4b82:: with SMTP id b2mr4032387wrt.335.1574263721112;
-        Wed, 20 Nov 2019 07:28:41 -0800 (PST)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w4sm31797881wrs.1.2019.11.20.07.28.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 07:28:40 -0800 (PST)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
-        wens@csie.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v2 3/3] crypto: sun4i-ss: add the A33 variant of SS
-Date:   Wed, 20 Nov 2019 16:28:33 +0100
-Message-Id: <20191120152833.20443-4-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191120152833.20443-1-clabbe.montjoie@gmail.com>
-References: <20191120152833.20443-1-clabbe.montjoie@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 20 Nov 2019 10:27:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574263676;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bimceprUZXtgJwJ3r+uNah68s5oKbHDn9kJlulQ0RL0=;
+        b=Jo/WE6nlzM694NvvdlswpADBOveVI5fxqZyyUkcmmkt0ocH5kimQkbuZr5oBArR6faHkMc
+        595UNuf7SacWev7/8ggsCsF4OeUCTgDN/kowrY99cbmPTJCOWxsexlRbU8AIpw/HWCdd3X
+        y6IDsjSMZM6OBMy2p9D5WDArAh+vhls=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-215-0lhVNJB-Na6Zu_SXt0PRAQ-1; Wed, 20 Nov 2019 10:27:52 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15515DBAA;
+        Wed, 20 Nov 2019 15:27:51 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A4E425E271;
+        Wed, 20 Nov 2019 15:27:50 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 343142093D; Wed, 20 Nov 2019 10:27:50 -0500 (EST)
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 04/27] nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+Date:   Wed, 20 Nov 2019 10:27:27 -0500
+Message-Id: <20191120152750.6880-5-smayhew@redhat.com>
+In-Reply-To: <20191120152750.6880-1-smayhew@redhat.com>
+References: <20191120152750.6880-1-smayhew@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 0lhVNJB-Na6Zu_SXt0PRAQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A33 SS has a difference with all other SS, it give SHA1 digest
-directly in BE.
-So this patch adds variant support in sun4i-ss.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+They are identical now.
+
+Reviewed-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- .../crypto/allwinner/sun4i-ss/sun4i-ss-core.c | 22 ++++++++++++++++++-
- .../crypto/allwinner/sun4i-ss/sun4i-ss-hash.c |  5 ++++-
- drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h  |  9 ++++++++
- 3 files changed, 34 insertions(+), 2 deletions(-)
+ fs/nfs/nfs4super.c | 26 ++++----------------------
+ 1 file changed, 4 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c
-index 814cd12149a9..d35a05843c22 100644
---- a/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c
-+++ b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-core.c
-@@ -13,6 +13,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <crypto/scatterwalk.h>
- #include <linux/scatterlist.h>
-@@ -22,6 +23,14 @@
- 
- #include "sun4i-ss.h"
- 
-+static const struct ss_variant ss_a10_variant = {
-+	.sha1_in_be = false,
-+};
-+
-+static const struct ss_variant ss_a33_variant = {
-+	.sha1_in_be = true,
-+};
-+
- static struct sun4i_ss_alg_template ss_algs[] = {
- {       .type = CRYPTO_ALG_TYPE_AHASH,
- 	.mode = SS_OP_MD5,
-@@ -323,6 +332,12 @@ static int sun4i_ss_probe(struct platform_device *pdev)
- 		return PTR_ERR(ss->base);
- 	}
- 
-+	ss->variant = of_device_get_match_data(&pdev->dev);
-+	if (!ss->variant) {
-+		dev_err(&pdev->dev, "Missing Security System variant\n");
-+		return -EINVAL;
-+	}
-+
- 	ss->ssclk = devm_clk_get(&pdev->dev, "mod");
- 	if (IS_ERR(ss->ssclk)) {
- 		err = PTR_ERR(ss->ssclk);
-@@ -484,7 +499,12 @@ static int sun4i_ss_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id a20ss_crypto_of_match_table[] = {
--	{ .compatible = "allwinner,sun4i-a10-crypto" },
-+	{ .compatible = "allwinner,sun4i-a10-crypto",
-+	  .data = &ss_a10_variant
-+	},
-+	{ .compatible = "allwinner,sun8i-a33-crypto",
-+	  .data = &ss_a33_variant
-+	},
- 	{}
+diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+index 773c347df3ab..d0237d8ffa2b 100644
+--- a/fs/nfs/nfs4super.c
++++ b/fs/nfs/nfs4super.c
+@@ -22,8 +22,6 @@ static struct dentry *nfs4_remote_mount(struct file_syste=
+m_type *fs_type,
+ =09int flags, const char *dev_name, void *raw_data);
+ static struct dentry *nfs4_referral_mount(struct file_system_type *fs_type=
+,
+ =09int flags, const char *dev_name, void *raw_data);
+-static struct dentry *nfs4_remote_referral_mount(struct file_system_type *=
+fs_type,
+-=09int flags, const char *dev_name, void *raw_data);
+=20
+ static struct file_system_type nfs4_remote_fs_type =3D {
+ =09.owner=09=09=3D THIS_MODULE,
+@@ -33,14 +31,6 @@ static struct file_system_type nfs4_remote_fs_type =3D {
+ =09.fs_flags=09=3D FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
  };
- MODULE_DEVICE_TABLE(of, a20ss_crypto_of_match_table);
-diff --git a/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-hash.c b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-hash.c
-index 91cf58db3845..c791d6935c65 100644
---- a/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-hash.c
-+++ b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss-hash.c
-@@ -478,7 +478,10 @@ static int sun4i_hash(struct ahash_request *areq)
- 	/* Get the hash from the device */
- 	if (op->mode == SS_OP_SHA1) {
- 		for (i = 0; i < 5; i++) {
--			v = cpu_to_be32(readl(ss->base + SS_MD0 + i * 4));
-+			if (ss->variant->sha1_in_be)
-+				v = cpu_to_le32(readl(ss->base + SS_MD0 + i * 4));
-+			else
-+				v = cpu_to_be32(readl(ss->base + SS_MD0 + i * 4));
- 			memcpy(areq->result + i * 4, &v, 4);
- 		}
- 	} else {
-diff --git a/drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h
-index 60425ac75d90..2b4c6333eb67 100644
---- a/drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h
-+++ b/drivers/crypto/allwinner/sun4i-ss/sun4i-ss.h
-@@ -131,7 +131,16 @@
- #define SS_SEED_LEN 192
- #define SS_DATA_LEN 160
- 
-+/*
-+ * struct ss_variant - Describe SS hardware variant
-+ * @sha1_in_be:		The SHA1 digest is given by SS in BE, and so need to be inverted.
-+ */
-+struct ss_variant {
-+	bool sha1_in_be;
-+};
-+
- struct sun4i_ss_ctx {
-+	const struct ss_variant *variant;
- 	void __iomem *base;
- 	int irq;
- 	struct clk *busclk;
--- 
-2.23.0
+=20
+-static struct file_system_type nfs4_remote_referral_fs_type =3D {
+-=09.owner=09=09=3D THIS_MODULE,
+-=09.name=09=09=3D "nfs4",
+-=09.mount=09=09=3D nfs4_remote_referral_mount,
+-=09.kill_sb=09=3D nfs_kill_super,
+-=09.fs_flags=09=3D FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
+-};
+-
+ struct file_system_type nfs4_referral_fs_type =3D {
+ =09.owner=09=09=3D THIS_MODULE,
+ =09.name=09=09=3D "nfs4",
+@@ -111,8 +101,7 @@ nfs4_remote_mount(struct file_system_type *fs_type, int=
+ flags,
+ =09return nfs_fs_mount_common(flags, dev_name, info, &nfs_v4);
+ }
+=20
+-static struct vfsmount *nfs_do_root_mount(struct file_system_type *fs_type=
+,
+-=09=09=09=09=09  struct nfs_server *server, int flags,
++static struct vfsmount *nfs_do_root_mount(struct nfs_server *server, int f=
+lags,
+ =09=09=09=09=09  struct nfs_mount_info *info,
+ =09=09=09=09=09  const char *hostname)
+ {
+@@ -135,7 +124,7 @@ static struct vfsmount *nfs_do_root_mount(struct file_s=
+ystem_type *fs_type,
+ =09else
+ =09=09snprintf(root_devname, len, "%s:/", hostname);
+ =09info->server =3D server;
+-=09root_mnt =3D vfs_kern_mount(fs_type, flags, root_devname, info);
++=09root_mnt =3D vfs_kern_mount(&nfs4_remote_fs_type, flags, root_devname, =
+info);
+ =09if (info->server)
+ =09=09nfs_free_server(info->server);
+ =09info->server =3D NULL;
+@@ -245,7 +234,7 @@ struct dentry *nfs4_try_mount(int flags, const char *de=
+v_name,
+=20
+ =09export_path =3D data->nfs_server.export_path;
+ =09data->nfs_server.export_path =3D "/";
+-=09root_mnt =3D nfs_do_root_mount(&nfs4_remote_fs_type,
++=09root_mnt =3D nfs_do_root_mount(
+ =09=09=09nfs4_create_server(mount_info, &nfs_v4),
+ =09=09=09flags, mount_info,
+ =09=09=09data->nfs_server.hostname);
+@@ -259,13 +248,6 @@ struct dentry *nfs4_try_mount(int flags, const char *d=
+ev_name,
+ =09return res;
+ }
+=20
+-static struct dentry *
+-nfs4_remote_referral_mount(struct file_system_type *fs_type, int flags,
+-=09=09=09   const char *dev_name, void *raw_data)
+-{
+-=09return nfs_fs_mount_common(flags, dev_name, raw_data, &nfs_v4);
+-}
+-
+ /*
+  * Create an NFS4 server record on referral traversal
+  */
+@@ -290,7 +272,7 @@ static struct dentry *nfs4_referral_mount(struct file_s=
+ystem_type *fs_type,
+=20
+ =09export_path =3D data->mnt_path;
+ =09data->mnt_path =3D "/";
+-=09root_mnt =3D nfs_do_root_mount(&nfs4_remote_referral_fs_type,
++=09root_mnt =3D nfs_do_root_mount(
+ =09=09=09nfs4_create_referral_server(mount_info.cloned,
+ =09=09=09=09=09=09    mount_info.mntfh),
+ =09=09=09flags, &mount_info, data->hostname);
+--=20
+2.17.2
 
