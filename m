@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F316C1036DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A35C1036C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:38:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbfKTJig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:38:36 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55869 "EHLO
+        id S1728413AbfKTJih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 04:38:37 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55868 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbfKTJie (ORCPT
+        with ESMTP id S1728370AbfKTJie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Nov 2019 04:38:34 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXMRO-0003yU-An; Wed, 20 Nov 2019 10:38:26 +0100
+        id 1iXMRN-0003xj-Sv; Wed, 20 Nov 2019 10:38:26 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 059211C19FF;
-        Wed, 20 Nov 2019 10:38:26 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7873E1C1998;
+        Wed, 20 Nov 2019 10:38:25 +0100 (CET)
 Date:   Wed, 20 Nov 2019 09:38:25 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] futex: Set task::futex_state to DEAD right after
- handling futex exit
+Subject: [tip: locking/core] futex: Provide state handling for exec() as well
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191106224556.439511191@linutronix.de>
-References: <20191106224556.439511191@linutronix.de>
+In-Reply-To: <20191106224556.753355618@linutronix.de>
+References: <20191106224556.753355618@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <157424270596.12247.107254562487267326.tip-bot2@tip-bot2>
+Message-ID: <157424270537.12247.7677943386661355830.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,54 +48,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     f24f22435dcc11389acc87e5586239c1819d217c
-Gitweb:        https://git.kernel.org/tip/f24f22435dcc11389acc87e5586239c1819d217c
+Commit-ID:     af8cbda2cfcaa5515d61ec500498d46e9a8247e2
+Gitweb:        https://git.kernel.org/tip/af8cbda2cfcaa5515d61ec500498d46e9a8247e2
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 06 Nov 2019 22:55:40 +01:00
+AuthorDate:    Wed, 06 Nov 2019 22:55:43 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 20 Nov 2019 09:40:08 +01:00
+CommitterDate: Wed, 20 Nov 2019 09:40:09 +01:00
 
-futex: Set task::futex_state to DEAD right after handling futex exit
+futex: Provide state handling for exec() as well
 
-Setting task::futex_state in do_exit() is rather arbitrarily placed for no
-reason. Move it into the futex code.
+exec() attempts to handle potentially held futexes gracefully by running
+the futex exit handling code like exit() does.
 
-Note, this is only done for the exit cleanup as the exec cleanup cannot set
-the state to FUTEX_STATE_DEAD because the task struct is still in active
-use.
+The current implementation has no protection against concurrent incoming
+waiters. The reason is that the futex state cannot be set to
+FUTEX_STATE_DEAD after the cleanup because the task struct is still active
+and just about to execute the new binary.
+
+While its arguably buggy when a task holds a futex over exec(), for
+consistency sake the state handling can at least cover the actual futex
+exit cleanup section. This provides state consistency protection accross
+the cleanup. As the futex state of the task becomes FUTEX_STATE_OK after the
+cleanup has been finished, this cannot prevent subsequent attempts to
+attach to the task in case that the cleanup was not successfull in mopping
+up all leftovers.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.439511191@linutronix.de
+Link: https://lkml.kernel.org/r/20191106224556.753355618@linutronix.de
 
 
 ---
- kernel/exit.c  | 1 -
- kernel/futex.c | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ kernel/futex.c | 38 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index cd893b5..f3b8fa1 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -837,7 +837,6 @@ void __noreturn do_exit(long code)
- 	 * Make sure we are holding no locks:
- 	 */
- 	debug_check_no_locks_held();
--	futex_exit_done(tsk);
- 
- 	if (tsk->io_context)
- 		exit_io_context(tsk);
 diff --git a/kernel/futex.c b/kernel/futex.c
-index 909e4d3..426dd71 100644
+index f618562..0c9850a 100644
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
-@@ -3682,6 +3682,7 @@ void futex_exec_release(struct task_struct *tsk)
- void futex_exit_release(struct task_struct *tsk)
+@@ -3661,7 +3661,7 @@ static void exit_robust_list(struct task_struct *curr)
+ 	}
+ }
+ 
+-void futex_exec_release(struct task_struct *tsk)
++static void futex_cleanup(struct task_struct *tsk)
  {
- 	futex_exec_release(tsk);
-+	futex_exit_done(tsk);
+ 	if (unlikely(tsk->robust_list)) {
+ 		exit_robust_list(tsk);
+@@ -3701,7 +3701,7 @@ void futex_exit_recursive(struct task_struct *tsk)
+ 	tsk->futex_state = FUTEX_STATE_DEAD;
+ }
+ 
+-void futex_exit_release(struct task_struct *tsk)
++static void futex_cleanup_begin(struct task_struct *tsk)
+ {
+ 	/*
+ 	 * Switch the state to FUTEX_STATE_EXITING under tsk->pi_lock.
+@@ -3717,10 +3717,40 @@ void futex_exit_release(struct task_struct *tsk)
+ 	raw_spin_lock_irq(&tsk->pi_lock);
+ 	tsk->futex_state = FUTEX_STATE_EXITING;
+ 	raw_spin_unlock_irq(&tsk->pi_lock);
++}
+ 
+-	futex_exec_release(tsk);
++static void futex_cleanup_end(struct task_struct *tsk, int state)
++{
++	/*
++	 * Lockless store. The only side effect is that an observer might
++	 * take another loop until it becomes visible.
++	 */
++	tsk->futex_state = state;
++}
+ 
+-	tsk->futex_state = FUTEX_STATE_DEAD;
++void futex_exec_release(struct task_struct *tsk)
++{
++	/*
++	 * The state handling is done for consistency, but in the case of
++	 * exec() there is no way to prevent futher damage as the PID stays
++	 * the same. But for the unlikely and arguably buggy case that a
++	 * futex is held on exec(), this provides at least as much state
++	 * consistency protection which is possible.
++	 */
++	futex_cleanup_begin(tsk);
++	futex_cleanup(tsk);
++	/*
++	 * Reset the state to FUTEX_STATE_OK. The task is alive and about
++	 * exec a new binary.
++	 */
++	futex_cleanup_end(tsk, FUTEX_STATE_OK);
++}
++
++void futex_exit_release(struct task_struct *tsk)
++{
++	futex_cleanup_begin(tsk);
++	futex_cleanup(tsk);
++	futex_cleanup_end(tsk, FUTEX_STATE_DEAD);
  }
  
  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
