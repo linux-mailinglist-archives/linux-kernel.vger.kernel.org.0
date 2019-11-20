@@ -2,341 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 838E210418F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F61410417D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732984AbfKTQzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:55:12 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37242 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732971AbfKTQzH (ORCPT
+        id S1730341AbfKTQyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:54:02 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40562 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbfKTQyB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:55:07 -0500
-Received: by mail-pl1-f193.google.com with SMTP id bb5so39613plb.4;
-        Wed, 20 Nov 2019 08:55:07 -0800 (PST)
+        Wed, 20 Nov 2019 11:54:01 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v24so98724lfi.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 08:53:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nxVu6jtA8AokWDkx0sh9PMR+Vf8gqiLuOYYBOFYUbUI=;
-        b=fCZKzPGmd61kKL/wSab85/Nn6XaL6uSOPOwSvU6w4kfZ0LQAshTZmrfMrBDgwhr7O0
-         VAKdv3cIP6LxBSnSvHd9kxfk0WNmycbKxOUR7qYJnI2kV/Tbf5Z/E/c9BnbYPEn/a3xP
-         vcldxxgOx6lrxTWyoe4Gbc/XhO72PCA6gemKkpbdzPJR5UCdQJ3tNiSmIOPZm9IYZo2q
-         0vZFv8ZAtIipx3sBpsbwNegiIcTDrnGQZZXtLobygekY+kMud+2sm1dq1DBsWuGIH0Sf
-         1mwYkdzwD68NrBrsspnwKcClHvn/BF35NgJ+mLFw/zCitETfo0XMtEEE7cZnIiv6PEHy
-         P9PA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mmxoKRlfz2v80f3frMVCWYM1gyGu+Z2WwvZIYgtVIoI=;
+        b=jplvAx07sUcExIn5oBYjehAW0OYM0OxdG2H6tPWu5Ch6/L4cQH542Q7fe25YpDKe/Q
+         L8rpRClHakoCaqECV5aCukFyZjGv7nNd/pGYBdtHqK4lE0os1jLRIFFRvnII4BT6wKIt
+         q3vCDV7qRrhFC1Rlsl3RmSIcu9Kr3Ile48/7NaCXYynLwrn1l18I2KSzbpJSFOUSvZmJ
+         ZAcxWPpz3sB1GYsBIZztociXFAeZHfmXQ/QvS9s/o0c76EiV71wPCbhIy11NQ+uv/Z2Q
+         R5QUfGs6mtzBqbn5j7mxbMvDIEYqFe+hh3eGmblXEKvmr0i+JI+AsfCtafhURMYclk2U
+         iSIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nxVu6jtA8AokWDkx0sh9PMR+Vf8gqiLuOYYBOFYUbUI=;
-        b=tzcjLNjMC3TA6rJ6vEwJXbdp1MaMH1u94VsQhMcZIZEudUqpxK/SjucEsl1bVDWvCl
-         AbwCBh0XwPGRXig2FAnDZgYrKo5MEoYqmUEmqBX43SDgEGNfaioIXA8MkRLP5JtnIUZe
-         HLtgmL0RKXeNI0kKtkUcM3C/wQ2ZQmg7v70qn1J6OK0c9dxEcTLwNpRUww+wzsX/TXB1
-         6PbYp2IjoxfxfMQXCDBvl1IdXwbJscg+umSrzPmXSCSoJTIZTO/VZ2zkhQefTaChh5bX
-         yTbCbpnRYGq7C4+exSfLrg2qu4u0RWYV5iQuvA83dM1oe3HusxmYnEIrZWY1Q9bcoccb
-         82Xg==
-X-Gm-Message-State: APjAAAWSB72k+nwdUpWPfX73vkDQESu+LCJ3S9JHYjxuECSPyGntyqER
-        UwWMdoiBDG3sfNP1wM7DihVPbIHw
-X-Google-Smtp-Source: APXvYqylynZVpmsEfrkkjNt1CcPYQzfTanA47ljX5XzwAidt5GyzHTYVu+UhWl17sApxnqtWO25b2A==
-X-Received: by 2002:a17:902:6bc3:: with SMTP id m3mr3846866plt.329.1574268906012;
-        Wed, 20 Nov 2019 08:55:06 -0800 (PST)
-Received: from localhost.hsd1.wa.comcast.net ([2601:602:847f:811f:babe:8e8d:b27e:e6d7])
-        by smtp.gmail.com with ESMTPSA id e11sm29841483pff.104.2019.11.20.08.55.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 08:55:04 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] crypto: caam - expose SEC4 DRNG via crypto RNG API
-Date:   Wed, 20 Nov 2019 08:53:41 -0800
-Message-Id: <20191120165341.32669-7-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191120165341.32669-1-andrew.smirnov@gmail.com>
-References: <20191120165341.32669-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mmxoKRlfz2v80f3frMVCWYM1gyGu+Z2WwvZIYgtVIoI=;
+        b=pXFZ4pz9cBrlerDS36/6OiQ6j/PViO4H/6JTrMqTimWZdkLnPnr8OD2c5ardTxpoEV
+         MGGM4xDXMeMeP3/1ScHC1tQiZuRySlktwHDJRQCDMHgdyU1SwnkyZC2DxUC9trGHrFmW
+         zTMmFgBseRpUaF1q8pW88ykM3cBELz8ixQxiHhBeZY15T+7u5ZS1ekGMYUa8EF0V7SB4
+         XCV9CIEvzobMJ+Nbu7JN33PJQkM8cbkZqoeG1Iu0U8yJmd9tNo3khcgMMCXHOLruf7pP
+         sq+Neu32lQfsmAa1dD+e36jvjrxAy8zqJPyqNcK7uYIU+NazI3YXpPomEbExVSxWzD8b
+         n9lw==
+X-Gm-Message-State: APjAAAVId/sj+xVuNhwXYFcgWDXHiQulcQjro7+2/rMHWtKHupRg9IMS
+        KSmlMhWMKxbV9Jhh2E103kQ6ZepkI61Fj9mszL1IwQ==
+X-Google-Smtp-Source: APXvYqwIlFPA5r/XyFwNkRejDEhOIqJuhgMqBbBhCYpiYKa3Ye54qSmDCqWRteFGQJTsZRljLMur26q1Et1oWfmpcnk=
+X-Received: by 2002:a19:c144:: with SMTP id r65mr3711651lff.133.1574268838815;
+ Wed, 20 Nov 2019 08:53:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
+ <1571405198-27570-12-git-send-email-vincent.guittot@linaro.org>
+ <20191120115844.scli3gprgd5vvlt4@e107158-lin.cambridge.arm.com> <CAKfTPtDh7HAv2Krx9cRKcA+Zy=erYkykyZZj4=nkRoTEdY=oFw@mail.gmail.com>
+In-Reply-To: <CAKfTPtDh7HAv2Krx9cRKcA+Zy=erYkykyZZj4=nkRoTEdY=oFw@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 20 Nov 2019 17:53:46 +0100
+Message-ID: <CAKfTPtCFP3_U_YxwR8+Gs+HYJPmqSWJg6B6nBdgccNru8Gh5QA@mail.gmail.com>
+Subject: Re: [PATCH v4 11/11] sched/fair: rework find_idlest_group
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose SEC4 DRNG IP block using crypto RNG API so it could be used
-both by kernel and userspace code.
+On Wed, 20 Nov 2019 at 14:21, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> Hi Qais,
+>
+> On Wed, 20 Nov 2019 at 12:58, Qais Yousef <qais.yousef@arm.com> wrote:
+> >
+> > Hi Vincent
+> >
+> > On 10/18/19 15:26, Vincent Guittot wrote:
+> > > The slow wake up path computes per sched_group statisics to select the
+> > > idlest group, which is quite similar to what load_balance() is doing
+> > > for selecting busiest group. Rework find_idlest_group() to classify the
+> > > sched_group and select the idlest one following the same steps as
+> > > load_balance().
+> > >
+> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > ---
+> >
+> > LTP test has caught a regression in perf_event_open02 test on linux-next and I
+> > bisected it to this patch.
+> >
+> > That is checking out next-20191119 tag and reverting this patch on top the test
+> > passes. Without the revert the test fails.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/Kconfig  |   8 ++
- drivers/crypto/caam/Makefile |   1 +
- drivers/crypto/caam/drng.c   | 175 +++++++++++++++++++++++++++++++++++
- drivers/crypto/caam/intern.h |  13 +++
- drivers/crypto/caam/jr.c     |   1 +
- 5 files changed, 198 insertions(+)
- create mode 100644 drivers/crypto/caam/drng.c
+I haven't tried linux-next yet but LTP test is passed with
+tip/sched/core, which includes this patch, on hikey960 which is arm64
+too.
 
-diff --git a/drivers/crypto/caam/Kconfig b/drivers/crypto/caam/Kconfig
-index 22116a8e2ff3..11a8f9c02448 100644
---- a/drivers/crypto/caam/Kconfig
-+++ b/drivers/crypto/caam/Kconfig
-@@ -146,6 +146,14 @@ config CRYPTO_DEV_FSL_CAAM_PKC_API
-           Supported cryptographic primitives: encryption, decryption,
-           signature and verification.
- 
-+config CRYPTO_DEV_FSL_CAAM_DRNG_API
-+	bool "Register caam device for hwrng API"
-+	default y
-+	select CRYPTO_RNG
-+	help
-+	  Selecting this will register the SEC4 DRNG to
-+	  the crypto RNG API.
-+
- endif # CRYPTO_DEV_FSL_CAAM_JR
- 
- endif # CRYPTO_DEV_FSL_CAAM
-diff --git a/drivers/crypto/caam/Makefile b/drivers/crypto/caam/Makefile
-index 04884fc087f9..02b7ed8823ce 100644
---- a/drivers/crypto/caam/Makefile
-+++ b/drivers/crypto/caam/Makefile
-@@ -20,6 +20,7 @@ caam_jr-y := jr.o key_gen.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API) += caamalg.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI) += caamalg_qi.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_AHASH_API) += caamhash.o
-+caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_DRNG_API) += drng.o
- caam_jr-$(CONFIG_CRYPTO_DEV_FSL_CAAM_PKC_API) += caampkc.o pkc_desc.o
- 
- caam-$(CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI) += qi.o
-diff --git a/drivers/crypto/caam/drng.c b/drivers/crypto/caam/drng.c
-new file mode 100644
-index 000000000000..75dbe4abdaa3
---- /dev/null
-+++ b/drivers/crypto/caam/drng.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver to expose SEC4 DRNG via crypto RNG API
-+ *
-+ * Copyright 2019 Zodiac Inflight Innovations
-+ *
-+ * Based on CAAM SEC4 hw_random driver
-+ *
-+ * Copyright 2011 Freescale Semiconductor, Inc.
-+ * Copyright 2018-2019 NXP
-+ *
-+ * Based on caamalg.c crypto API driver.
-+ *
-+ */
-+
-+#include <linux/completion.h>
-+#include <linux/atomic.h>
-+
-+#include <crypto/internal/rng.h>
-+
-+#include "compat.h"
-+
-+#include "regs.h"
-+#include "intern.h"
-+#include "desc_constr.h"
-+#include "jr.h"
-+#include "error.h"
-+
-+#define CAAM_DRNG_MAX_FIFO_STORE_SIZE	((unsigned int)U16_MAX)
-+
-+/* rng per-device context */
-+struct caam_drng_ctx {
-+	struct device *jrdev;
-+	struct completion done;
-+};
-+
-+static void rng_done(struct device *jrdev, u32 *desc, u32 err, void *context)
-+{
-+	struct caam_drng_ctx *ctx = context;
-+
-+	if (err)
-+		caam_jr_strstatus(jrdev, err);
-+
-+	complete(&ctx->done);
-+}
-+
-+static int caam_drng_generate(struct crypto_rng *tfm,
-+			     const u8 *src, unsigned int slen,
-+			     u8 *dst, unsigned int dlen)
-+{
-+	struct caam_drng_ctx *ctx = crypto_rng_ctx(tfm);
-+	struct device *jrdev = ctx->jrdev;
-+	unsigned int residue = dlen;
-+	dma_addr_t dst_dma, cur_dma;
-+	u32 *desc;
-+	int ret;
-+
-+	desc = kzalloc(5 * CAAM_CMD_SZ + CAAM_PTR_SZ_MAX,
-+		       GFP_KERNEL | GFP_DMA);
-+	if (!desc)
-+		return -ENOMEM;
-+
-+	cur_dma = dst_dma = dma_map_single(jrdev, dst, dlen, DMA_FROM_DEVICE);
-+	if (dma_mapping_error(jrdev, dst_dma)) {
-+		dev_err(jrdev, "unable to map destination memory\n");
-+		ret = -ENOMEM;
-+		goto free_mem;
-+	}
-+
-+	do {
-+		const unsigned int chunk = min(residue,
-+					       CAAM_DRNG_MAX_FIFO_STORE_SIZE);
-+
-+		init_job_desc(desc, 0);	/* 1 word */
-+		/* Generate random bytes */
-+		append_operation(desc, OP_ALG_ALGSEL_RNG | OP_TYPE_CLASS1_ALG |
-+				 OP_ALG_PR_ON); /* 1 word */
-+		/* Store bytes */
-+		append_seq_out_ptr_intlen(desc, cur_dma, chunk, 0);
-+		append_seq_fifo_store(desc, chunk, FIFOST_TYPE_RNGSTORE);
-+
-+		print_hex_dump_debug("rng job desc@: ", DUMP_PREFIX_ADDRESS,
-+				     16, 4, desc, desc_bytes(desc), 1);
-+
-+		init_completion(&ctx->done);
-+		ret = caam_jr_enqueue(jrdev, desc, rng_done, ctx);
-+		if (ret)
-+			break;
-+
-+		wait_for_completion(&ctx->done);
-+
-+		cur_dma += chunk;
-+		residue -= chunk;
-+	} while (residue);
-+
-+	dma_unmap_single(jrdev, dst_dma, dlen, DMA_FROM_DEVICE);
-+free_mem:
-+	kfree(desc);
-+	return ret;
-+}
-+
-+static int caam_drng_init(struct crypto_tfm *tfm)
-+{
-+	struct caam_drng_ctx *ctx = crypto_tfm_ctx(tfm);
-+	int ret;
-+
-+	ctx->jrdev = caam_jr_alloc();
-+	ret = PTR_ERR_OR_ZERO(ctx->jrdev);
-+	if (ret) {
-+		pr_err("Job Ring Device allocation for transform failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void caam_drng_exit(struct crypto_tfm *tfm)
-+{
-+	struct caam_drng_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	caam_jr_free(ctx->jrdev);
-+}
-+
-+static int caam_drng_seed(struct crypto_rng *tfm,
-+			 const u8 *seed, unsigned int slen)
-+{
-+	return 0;
-+}
-+
-+static struct rng_alg caam_drng_alg = {
-+	.generate = caam_drng_generate,
-+	.seed = caam_drng_seed,
-+	.seedsize = 0,
-+	.base = {
-+		.cra_name = "drng-caam",
-+		.cra_driver_name = "drng-caam",
-+		.cra_priority = 300,
-+		.cra_ctxsize = sizeof(struct caam_drng_ctx),
-+		.cra_module = THIS_MODULE,
-+		.cra_init = caam_drng_init,
-+		.cra_exit = caam_drng_exit,
-+	},
-+};
-+
-+static void caam_drng_unregister(void *data)
-+{
-+	crypto_unregister_rng(&caam_drng_alg);
-+}
-+
-+int caam_drng_register(struct device *ctrldev)
-+{
-+	struct caam_drv_private *priv = dev_get_drvdata(ctrldev);
-+
-+	if (caam_has_rng(priv)) {
-+		int ret;
-+
-+		ret = crypto_register_rng(&caam_drng_alg);
-+		if (ret) {
-+			dev_err(ctrldev,
-+				"couldn't register rng crypto alg: %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		ret = devm_add_action_or_reset(ctrldev, caam_drng_unregister,
-+					       NULL);
-+		if (ret)
-+			return ret;
-+
-+		dev_info(ctrldev,
-+			 "registering %s\n", caam_drng_alg.base.cra_name);
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/crypto/caam/intern.h b/drivers/crypto/caam/intern.h
-index 54bb04aa86bd..0c81eefd13a9 100644
---- a/drivers/crypto/caam/intern.h
-+++ b/drivers/crypto/caam/intern.h
-@@ -185,6 +185,19 @@ static inline int caam_trng_register(struct device *dev)
- 
- #endif /* CONFIG_CRYPTO_DEV_FSL_CAAM_RNG_API */
- 
-+#ifdef CONFIG_CRYPTO_DEV_FSL_CAAM_DRNG_API
-+
-+int caam_drng_register(struct device *dev);
-+
-+#else
-+
-+static inline int caam_drng_register(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+#endif /* CONFIG_CRYPTO_DEV_FSL_CAAM_DRNG_API */
-+
- #ifdef CONFIG_CAAM_QI
- 
- int caam_qi_algapi_init(struct device *dev);
-diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
-index c745b7044fe6..e68ba0606e3f 100644
---- a/drivers/crypto/caam/jr.c
-+++ b/drivers/crypto/caam/jr.c
-@@ -38,6 +38,7 @@ static void register_algs(struct device *dev)
- 	caam_algapi_hash_init(dev);
- 	caam_pkc_init(dev);
- 	caam_qi_algapi_init(dev);
-+	caam_drng_register(dev);
- 
- algs_unlock:
- 	mutex_unlock(&algs_lock);
--- 
-2.21.0
+Have you tried tip/sched/core on your juno ? this could help to
+understand if it's only for juno or if this patch interact with
+another branch merged in linux next
 
+Thanks
+Vincent
+
+> >
+> > I think this patch disturbs this part of the test:
+> >
+> >         https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/perf_event_open/perf_event_open02.c#L209
+> >
+> > When I revert this patch count_hardware_counters() returns a non zero value.
+> > But with it applied it returns 0 which indicates that the condition terminates
+> > earlier than what the test expects.
+>
+> Thanks for the report and starting analysing it
+>
+> >
+> > I'm failing to see the connection yet, but since I spent enough time bisecting
+> > it I thought I'll throw this out before I continue to bottom it out in hope it
+> > rings a bell for you or someone else.
+>
+> I will try to reproduce the problem and understand why it's failing
+> because i don't have any clue of the relation between both for now
+>
+> >
+> > The problem was consistently reproducible on Juno-r2.
+> >
+> > LTP was compiled from 20190930 tag using
+> >
+> >         ./configure --host=aarch64-linux-gnu --prefix=~/arm64-ltp/
+> >         make && make install
+> >
+> >
+> >
+> > *** Output of the test when it fails ***
+> >
+> >         # ./perf_event_open02 -v
+> >         at iteration:0 value:254410384 time_enabled:195570320 time_running:156044100
+> >         perf_event_open02    0  TINFO  :  overall task clock: 166935520
+> >         perf_event_open02    0  TINFO  :  hw sum: 1200812256, task clock sum: 667703360
+> >         hw counters: 300202518 300202881 300203246 300203611
+> >         task clock counters: 166927400 166926780 166925660 166923520
+> >         perf_event_open02    0  TINFO  :  ratio: 3.999768
+> >         perf_event_open02    0  TINFO  :  nhw: 0.000100     /* I added this extra line for debug */
+> >         perf_event_open02    1  TFAIL  :  perf_event_open02.c:370: test failed (ratio was greater than )
+> >
+> >
+> >
+> > *** Output of the test when it passes (this patch reverted) ***
+> >
+> >         # ./perf_event_open02 -v
+> >         at iteration:0 value:300271482 time_enabled:177756080 time_running:177756080
+> >         at iteration:1 value:300252655 time_enabled:166939100 time_running:166939100
+> >         at iteration:2 value:300252877 time_enabled:166924920 time_running:166924920
+> >         at iteration:3 value:300242545 time_enabled:166909620 time_running:166909620
+> >         at iteration:4 value:300250779 time_enabled:166918540 time_running:166918540
+> >         at iteration:5 value:300250660 time_enabled:166922180 time_running:166922180
+> >         at iteration:6 value:258369655 time_enabled:167388920 time_running:143996600
+> >         perf_event_open02    0  TINFO  :  overall task clock: 167540640
+> >         perf_event_open02    0  TINFO  :  hw sum: 1801473873, task clock sum: 1005046160
+> >         hw counters: 177971955 185132938 185488818 185488199 185480943 185477118 179657001 172499668 172137672 172139561
+> >         task clock counters: 99299900 103293440 103503840 103502040 103499020 103496160 100224320 96227620 95999400 96000420
+> >         perf_event_open02    0  TINFO  :  ratio: 5.998820
+> >         perf_event_open02    0  TINFO  :  nhw: 6.000100     /* I added this extra line for debug */
+> >         perf_event_open02    1  TPASS  :  test passed
+> >
+> > Thanks
+> >
+> > --
+> > Qais Yousef
