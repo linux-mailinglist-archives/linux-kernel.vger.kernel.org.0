@@ -2,233 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA99E1040A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4792D1040A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:21:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732762AbfKTQVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:21:32 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42256 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727885AbfKTQVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:21:32 -0500
-Received: by mail-io1-f65.google.com with SMTP id k13so28264030ioa.9;
-        Wed, 20 Nov 2019 08:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G/a8KPIH+AXDi1yxdHgT07/LliAS9enq80vIfL27WA4=;
-        b=LBejGigugoMNm8Bg16W2oMRPNSmrXZGpXzIzgxYcuViBXYZQIBlg7Vj01asCexzJk4
-         L8x/nAmdRKmBsMhbJ35Jv2UmjU78PJKlBBAOh8dQS8PepWQxmCVA1QSW/7ox/Ox4+wMm
-         Wks4HXHEDIWzvMLQsbk3GSJW3SBzCWMo0ATZzUFCzT4PdLxOyMUarPICEeiKAHprVAKP
-         j7td40vxoVpICWloLCTa4RlRlchnfNWcjFuRpIioNJptUTciaSOwBXiSsH6hYfYSzGae
-         vzXZ+z9hmEDWwX5CEMdDEQTEbdh5IHI/GNiVMTBvYpUNV+Xt+ouWO0HmrFK9UB7z4MMv
-         j0Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G/a8KPIH+AXDi1yxdHgT07/LliAS9enq80vIfL27WA4=;
-        b=SbmnUphGEiozHZoYqUOj27qJg1AB1TUMhAoxzowxplnTJKU5HktHHAHLfd7K56dQDS
-         yUvtrpZiur7eR3qbl5v1JHOJT+1ZHIi0oVKda1YtMSxNihffwRYVtWbPMg0QfyV7G31R
-         IxHr00F215fkcDk+5C2fy8maBfOy9Q041P5vrH+aKzwheAb/U7rjQbTCYsQ0l1S54lK+
-         6V2yyuMqya1QD3Uyt0aYQs/FzSJmQ5liO/6qF9uhns1scJqQi80K3SuuDRsKoBwvJjrg
-         xMPBQEmbAhZi+DftXo0O59kIJTWX19lRHQaqcOCSj4HJfbLQhlBz4V/gQTMRwSGiBfIy
-         sT+A==
-X-Gm-Message-State: APjAAAX0Xn4nfEC+mNc5RzpXddtxxl9HD51NC97Y2xrNmzC67LJMzqRO
-        QUsguuSaQem7uUv2dBT2wdEjyEsU8fwBNY2iqws6Njp2
-X-Google-Smtp-Source: APXvYqwdl0dqh1yZB3bwi+8z4vWgf/5IfIlpYDRGN3WgEiehlF8vpTZooZGzrx+rsLoNYaaVq8NE8e+Ki+07/o/UbTg=
-X-Received: by 2002:a02:a810:: with SMTP id f16mr3917078jaj.73.1574266890514;
- Wed, 20 Nov 2019 08:21:30 -0800 (PST)
+        id S1732781AbfKTQVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:21:55 -0500
+Received: from mout.gmx.net ([212.227.15.19]:53483 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727885AbfKTQVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:21:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1574266897;
+        bh=xu4ircm6Mkplv/efNNMwLAlVPDoRiD2XqhLUOoHy2/A=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=MngS67pwPM63jyQtp4EXMbU12otqe7fvi924Kf0nZAoy+CvgGUNlS1Ggb82QN6PmD
+         oKEoHJ2y9av+yPClYwKaF+tJTSUUPkzCj/xyzmUtn7sh0vfIfLBPxaABUzqtaH+LlU
+         UfCnUTc9BbR4pjHGEzHEEpAElR7QjtDb6/9yUYso=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.176] ([37.4.249.139]) by mail.gmx.com (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M8hZD-1iSo1w0NiD-004nuI; Wed, 20
+ Nov 2019 17:21:37 +0100
+Subject: Re: [PATCH v3 4/4] ARM: dts: bcm2711: Enable HWRNG support
+To:     Stephen Brennan <stephen@brennan.io>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+References: <20191120031622.88949-1-stephen@brennan.io>
+ <20191120031622.88949-5-stephen@brennan.io>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <e4ad673b-873b-9bef-1f09-3bdeda892780@gmx.net>
+Date:   Wed, 20 Nov 2019 17:21:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <1574147082-22725-1-git-send-email-sheebab@cadence.com> <1574147082-22725-3-git-send-email-sheebab@cadence.com>
-In-Reply-To: <1574147082-22725-3-git-send-email-sheebab@cadence.com>
-From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Wed, 20 Nov 2019 21:50:53 +0530
-Message-ID: <CAGOxZ53Lotp6sBUryHsE2S1dbkQNZhPhWNMXidoi=BOmV074VA@mail.gmail.com>
-Subject: Re: [PATCH RESEND 2/2] scsi: ufs: Update L4 attributes on manual
- hibern8 exit in Cadence UFS.
-To:     sheebab <sheebab@cadence.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        "Bean Huo (beanhuo)" <beanhuo@micron.com>, yuehaibing@huawei.com,
-        linux-scsi@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-block@vger.kernel.org, rafalc@cadence.com, mparab@cadence.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191120031622.88949-5-stephen@brennan.io>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:VzjpvITXKrHb4Xmn1iglZyLcPqx/MkTFcBBCSz7GFHyv2VbGGFg
+ JO87hRDAEPzECYOWEtjxqyp0XX6hovTWp9pF6RODgKLjej6yQ3y2MrEqwTTxqLqFpi8L6Wa
+ j9Rhd+IT2ZgfYYRGXr3eSUZ5Ovh6YTkI0Orh5hAE8ypHqDBuT8e6OJpNfMs1aI2OOA/nvTj
+ 7MeLzBQFAjSmYqgXaL2XA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hSVLPUrApkI=:cN5zB46U6clgcMSpU3dFrQ
+ Xj/szHK7Kf6lkFgKxdlyXpMfbRogwFXsRwTyMhprZmF2XBvJ/PfTko6/wA1UZRPTN2KKvX4qJ
+ rdlxP7WXHFgW0fHVLRYacQDFSFRse3P1wjPHmKseXzI0slW6F0b5/fMslyOzm6kE6Gvy+36F/
+ 2395wk3w/18ftw3/UVkXT1nOvYMtGjnLJUlx0+Go8HC+Vg13dqUkOFKNO9+zUPxXQOu2qYYTq
+ enSENd/plVgrj/V6ZfI2ZUrI719zL2evSQ7FEOPDS2eHyEOGLgrZfWXpvnuQ5r9AAKntjhihK
+ gq/Ht4KtClB8tGWHmTb8kRXzHUiQPZuwqVHKpb6qptAq9j7HYYgpvXyQoPvF2jRXPwNlEa5qk
+ bEPPM6BlAqcRP5fBx9TJZz5TGgaygfgHdXgSWV5IKbR4+SkivVtdlhGS8TLgh7/Kyg0u/oZxw
+ mQCdOCr0aZ0vUB2mJoacFJLJ2XjFNSBriuOqhi/UgxoCuYAiiP7I3Cklul5/wtqZQiwB2yBfs
+ KdmHYYL++b55a6zU6oDeW7dN7V0ygckf78g5UfXu9F4OUbvMoYNr0C6BXHr4WTPYP0N1SQ4Aw
+ RpF+WjM9d1LUfZRQ0OhDovrVYjqM7WBNk2gB1fCjMcLV+N3Kj4zI9VM+KcVteyUKJb6jNQY/E
+ ozUb/nG17mFf97nxk42KZQfYYN7YmOepHB06RLGPkRVePXAARmwLqQ8rdKimAwj7GnzZtVGbn
+ YWdpAQ7f5ks1C4dE2ftaV/tKkS0gUPO+xFWPomP6DzZ88mt68P4LCCAkIy++g7INx7kurefP9
+ +gZ01g6QCGXgumbBJ2pyUBJieBNkqqJMuxniHcpn3Y5BGNMSyF04Y3GJNOlfBq3yHqsohMM4w
+ KctOzMuOfSp5VPDdje1ayhIQIZhTcpJs/8z4G3WFe9pi3d0UORlJx+AYW5mKCkhqPo1V8u+5/
+ n+xq3DkqSzC1iUDspJOEDyXczFyUCVHLzhAbLd+God/mIupt/oZax6Qeln1yTL/cNq1wq9q3u
+ 6LCznRCAygp6IhLLbAyXL7jimCRpbkk2Ay7DRD1UUKj/xa+FU+IN4KqEsPt0X9fYS64NvsPqB
+ U0g4oxcaz8Fxqd1FPE5kvqnjxlSGVfcUoMzFijc1/oFuTje8FLXGC4Hmo48r8NIRwYdM1G7lR
+ FA5sjsqhnwChE4DpzbBxGzo0lPagUMbdhCoPg+Zp7RTj7iKVMIBPg7CbQE470v3tsmo7yOlmF
+ ox83VLw4DLZN4gwZp0lW6wyMtNq8DE/NmODRme0+rIso0iD305nS2aCn8vVc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sheebab
+Am 20.11.19 um 04:16 schrieb Stephen Brennan:
+> This enables hardware random number generator support for the BCM2711
+> on the Raspberry Pi 4 board.
+>
+> Signed-off-by: Stephen Brennan <stephen@brennan.io>
 
-On Tue, Nov 19, 2019 at 12:38 PM sheebab <sheebab@cadence.com> wrote:
->
-> Backup L4 attributes duirng manual hibern8 entry
-> and restore the L4 attributes on manual hibern8 exit as per JESD220C.
->
-Can you point me to the relevant section on the spec?
+Acked-by: Stefan Wahren <wahrenst@gmx.net>
 
-> Signed-off-by: sheebab <sheebab@cadence.com>
-> ---
->  drivers/scsi/ufs/cdns-pltfrm.c | 97 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 95 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
-> index adbbd60..5510567 100644
-> --- a/drivers/scsi/ufs/cdns-pltfrm.c
-> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
-> @@ -19,6 +19,14 @@
->
->  #define CDNS_UFS_REG_HCLKDIV   0xFC
->  #define CDNS_UFS_REG_PHY_XCFGD1        0x113C
-> +#define CDNS_UFS_MAX 12
-> +
-> +struct cdns_ufs_host {
-> +       /**
-> +        * cdns_ufs_dme_attr_val - for storing L4 attributes
-> +        */
-> +       u32 cdns_ufs_dme_attr_val[CDNS_UFS_MAX];
-> +};
->
->  /**
->   * cdns_ufs_enable_intr - enable interrupts
-> @@ -47,6 +55,77 @@ static void cdns_ufs_disable_intr(struct ufs_hba *hba, u32 intrs)
->  }
->
->  /**
-> + * cdns_ufs_get_l4_attr - get L4 attributes on local side
-> + * @hba: per adapter instance
-> + *
-> + */
-> +static void cdns_ufs_get_l4_attr(struct ufs_hba *hba)
-> +{
-> +       struct cdns_ufs_host *host = ufshcd_get_variant(hba);
-> +
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_PEERDEVICEID),
-> +                      &host->cdns_ufs_dme_attr_val[0]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_PEERCPORTID),
-> +                      &host->cdns_ufs_dme_attr_val[1]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_TRAFFICCLASS),
-> +                      &host->cdns_ufs_dme_attr_val[2]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_PROTOCOLID),
-> +                      &host->cdns_ufs_dme_attr_val[3]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_CPORTFLAGS),
-> +                      &host->cdns_ufs_dme_attr_val[4]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_TXTOKENVALUE),
-> +                      &host->cdns_ufs_dme_attr_val[5]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_RXTOKENVALUE),
-> +                      &host->cdns_ufs_dme_attr_val[6]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_LOCALBUFFERSPACE),
-> +                      &host->cdns_ufs_dme_attr_val[7]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_PEERBUFFERSPACE),
-> +                      &host->cdns_ufs_dme_attr_val[8]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_CREDITSTOSEND),
-> +                      &host->cdns_ufs_dme_attr_val[9]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_CPORTMODE),
-> +                      &host->cdns_ufs_dme_attr_val[10]);
-> +       ufshcd_dme_get(hba, UIC_ARG_MIB(T_CONNECTIONSTATE),
-> +                      &host->cdns_ufs_dme_attr_val[11]);
-> +}
-> +
-> +/**
-> + * cdns_ufs_set_l4_attr - set L4 attributes on local side
-> + * @hba: per adapter instance
-> + *
-> + */
-> +static void cdns_ufs_set_l4_attr(struct ufs_hba *hba)
-> +{
-> +       struct cdns_ufs_host *host = ufshcd_get_variant(hba);
-> +
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_CONNECTIONSTATE), 0);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_PEERDEVICEID),
-> +                      host->cdns_ufs_dme_attr_val[0]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_PEERCPORTID),
-> +                      host->cdns_ufs_dme_attr_val[1]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_TRAFFICCLASS),
-> +                      host->cdns_ufs_dme_attr_val[2]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_PROTOCOLID),
-> +                      host->cdns_ufs_dme_attr_val[3]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_CPORTFLAGS),
-> +                      host->cdns_ufs_dme_attr_val[4]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_TXTOKENVALUE),
-> +                      host->cdns_ufs_dme_attr_val[5]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_RXTOKENVALUE),
-> +                      host->cdns_ufs_dme_attr_val[6]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_LOCALBUFFERSPACE),
-> +                      host->cdns_ufs_dme_attr_val[7]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_PEERBUFFERSPACE),
-> +                      host->cdns_ufs_dme_attr_val[8]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_CREDITSTOSEND),
-> +                      host->cdns_ufs_dme_attr_val[9]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_CPORTMODE),
-> +                      host->cdns_ufs_dme_attr_val[10]);
-> +       ufshcd_dme_set(hba, UIC_ARG_MIB(T_CONNECTIONSTATE),
-> +                      host->cdns_ufs_dme_attr_val[11]);
-> +}
-> +
-> +/**
->   * Sets HCLKDIV register value based on the core_clk
->   * @hba: host controller instance
->   *
-> @@ -134,6 +213,7 @@ static void cdns_ufs_hibern8_notify(struct ufs_hba *hba, enum uic_cmd_dme cmd,
->                  * before manual hibernate entry.
->                  */
->                 cdns_ufs_enable_intr(hba, UFSHCD_UIC_HIBERN8_MASK);
-> +               cdns_ufs_get_l4_attr(hba);
->         }
->         if (status == POST_CHANGE && cmd == UIC_CMD_DME_HIBER_EXIT) {
->                 /**
-> @@ -141,6 +221,7 @@ static void cdns_ufs_hibern8_notify(struct ufs_hba *hba, enum uic_cmd_dme cmd,
->                  * after manual hibern8 exit.
->                  */
->                 cdns_ufs_disable_intr(hba, UFSHCD_UIC_HIBERN8_MASK);
-> +               cdns_ufs_set_l4_attr(hba);
->         }
->  }
->
-> @@ -245,15 +326,27 @@ static int cdns_ufs_pltfrm_probe(struct platform_device *pdev)
->         const struct of_device_id *of_id;
->         struct ufs_hba_variant_ops *vops;
->         struct device *dev = &pdev->dev;
-> +       struct cdns_ufs_host *host;
-> +       struct ufs_hba *hba;
->
->         of_id = of_match_node(cdns_ufs_of_match, dev->of_node);
->         vops = (struct ufs_hba_variant_ops *)of_id->data;
->
->         /* Perform generic probe */
->         err = ufshcd_pltfrm_init(pdev, vops);
-> -       if (err)
-> +       if (err) {
->                 dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
-> -
-> +               goto out;
-> +       }
-> +       host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
-> +       if (!host) {
-> +               err = -ENOMEM;
-> +               dev_err(dev, "%s: no memory for cdns host\n", __func__);
-> +               goto out;
-> +       }
-> +       hba =  platform_get_drvdata(pdev);
-> +       ufshcd_set_variant(hba, host);
-> +out:
->         return err;
->  }
->
-> --
-> 2.7.4
->
+Thanks
 
-
--- 
-Regards,
-Alim
