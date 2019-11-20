@@ -2,161 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC67104043
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9392910403C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731862AbfKTQEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:04:41 -0500
-Received: from syrinx.knorrie.org ([82.94.188.77]:35966 "EHLO
-        syrinx.knorrie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728415AbfKTQEk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:04:40 -0500
-X-Greylist: delayed 488 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 11:04:38 EST
-Received: from [IPv6:2a02:a213:2b80:f000::12] (unknown [IPv6:2a02:a213:2b80:f000::12])
+        id S1731987AbfKTQC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:02:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728520AbfKTQC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:02:27 -0500
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by syrinx.knorrie.org (Postfix) with ESMTPSA id 96AAC5C73A78B;
-        Wed, 20 Nov 2019 16:56:28 +0100 (CET)
-Subject: Re: [PATCH 3.16 81/83] btrfs: partially apply b8b93addde
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
-References: <lsq.1574264230.614031573@decadent.org.uk>
-From:   Hans van Kranenburg <hans@knorrie.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hans@knorrie.org; keydata=
- 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
-Message-ID: <d8b529f2-fce3-829a-c157-77d574619daf@knorrie.org>
-Date:   Wed, 20 Nov 2019 16:56:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by mail.kernel.org (Postfix) with ESMTPSA id DFF6F2071B;
+        Wed, 20 Nov 2019 16:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574265747;
+        bh=fkai9iagblxVM80NF9jPjdkCT3Ll2l153n578/rJMQY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TGkW6V5+gVyijrtS+kBTvCY8m31Mmmyb/h1F1O1OAZerHqSS1odhUATaI66Npwnpu
+         ozQGReuIyKVHiuQZrZOCqeYq+OLSoII+NmsYIBQGdWHFDX2HfxauSg1PW0TYKfcKh6
+         QPXBN8gbv8TKF8D+tQ/jS+U+xo6B8t3DQCqUhBKs=
+Received: by mail-qv1-f50.google.com with SMTP id n4so90495qvq.9;
+        Wed, 20 Nov 2019 08:02:26 -0800 (PST)
+X-Gm-Message-State: APjAAAX0LS+xSxuca0l6YIHgjA8d1aHjsKl/o7Qb2CGrz1Ze1V6h3fbc
+        oCpdtn4tZf1TEvl7CTE3riVoUTPvWl7hVgmzMg==
+X-Google-Smtp-Source: APXvYqwq5SAEBgw062GclbqqxIVUufSCPIi/U3DPvAif0XTbyFTcVbv7pvhxYJt8XQ2f7IL43GVlkAL9OgeMg9B2s0M=
+X-Received: by 2002:ad4:42b4:: with SMTP id e20mr3287388qvr.85.1574265745927;
+ Wed, 20 Nov 2019 08:02:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <lsq.1574264230.614031573@decadent.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190910153409.111901-1-paul.kocialkowski@bootlin.com>
+ <20190910153409.111901-2-paul.kocialkowski@bootlin.com> <20190913143510.GA9504@bogus>
+ <20190913155815.GA1554@aptenodytes> <CAL_Jsq+dzT1xrfBy2QQHLx9MUNukWWq5eXyOecVV8h0z5ziC8g@mail.gmail.com>
+ <20190923153311.GE57525@aptenodytes> <CAL_JsqJLfAb0xhmBoX+GUcv5wsuHBOs8wZ=Hkw3x03kfsPgOqg@mail.gmail.com>
+ <20191120144957.GA167553@aptenodytes>
+In-Reply-To: <20191120144957.GA167553@aptenodytes>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 20 Nov 2019 10:02:14 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+n2HYz3BLm3Nad=Uv6qiJNM2=fQmCxzkXJZx-0=VQTFQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+n2HYz3BLm3Nad=Uv6qiJNM2=fQmCxzkXJZx-0=VQTFQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: display: Add xylon logicvc bindings documentation
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/19 4:38 PM, Ben Hutchings wrote:
-> 3.16.78-rc1 review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Hans van Kranenburg <hans@knorrie.org>
+On Wed, Nov 20, 2019 at 8:50 AM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+>
+> Hi,
+>
+> Circling back to this thread now, sorry for the delay.
+>
+> On Tue 24 Sep 19, 09:58, Rob Herring wrote:
+> > On Mon, Sep 23, 2019 at 10:33 AM Paul Kocialkowski
+> > <paul.kocialkowski@bootlin.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Fri 13 Sep 19, 20:16, Rob Herring wrote:
+> > > > On Fri, Sep 13, 2019 at 4:58 PM Paul Kocialkowski
+> > > > <paul.kocialkowski@bootlin.com> wrote:
+> > > > >
+> > > > > Hi Rob and thanks for the review!
+> > > > >
+> > > > > On Fri 13 Sep 19, 15:35, Rob Herring wrote:
+> > > > > > On Tue, Sep 10, 2019 at 05:34:08PM +0200, Paul Kocialkowski wrote:
+> > > > > > > The Xylon LogiCVC is a display controller implemented as programmable
+> > > > > > > logic in Xilinx FPGAs.
+> > > > > > >
+> > > > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > > ---
+> > > > > > >  .../bindings/display/xylon,logicvc.txt        | 188 ++++++++++++++++++
+> > > > > > >  1 file changed, 188 insertions(+)
+> > > > > > >  create mode 100644 Documentation/devicetree/bindings/display/xylon,logicvc.txt
+> > > > > >
+> > > > > > Consider converting this to DT schema format. See
+> > > > > > Documentation/devicetree/writing-schema.rst (.md in 5.3).
+> > > > >
+> > > > > Oh right, that would certainly be much more future-proof!
+> > > > >
+> > > > > > > diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc.txt b/Documentation/devicetree/bindings/display/xylon,logicvc.txt
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..eb4b1553888a
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/Documentation/devicetree/bindings/display/xylon,logicvc.txt
+> > > > > > > @@ -0,0 +1,188 @@
+> > > > > > > +Xylon LogiCVC display controller
+> > > > > > > +
+> > > > > > > +The Xylon LogiCVC is a display controller that supports multiple layers.
+> > > > > > > +It is usually implemented as programmable logic and was optimized for use
+> > > > > > > +with Xilinx Zynq-7000 SoCs and Xilinx FPGAs.
+> > > > > > > +
+> > > > > > > +Because the controller is intended for use in a FPGA, most of the configuration
+> > > > > > > +of the controller takes place at logic configuration bitstream synthesis time.
+> > > > > > > +As a result, many of the device-tree bindings are meant to reflect the
+> > > > > > > +synthesis configuration. These do not allow configuring the controller
+> > > > > > > +differently than synthesis configuration.
+> > > > > > > +
+> > > > > > > +Layers are declared in the "layers" sub-node and have dedicated configuration.
+> > > > > > > +In version 3 of the controller, each layer has fixed memory offset and address
+> > > > > > > +starting from the video memory base address for its framebuffer. With version 4,
+> > > > > > > +framebuffers are configured with a direct memory address instead.
+> > > > > > > +
+> > > > > > > +Matching synthesis parameters are provided when applicable.
+> > > > > > > +
+> > > > > > > +Required properties:
+> > > > > > > +- compatible: Should be one of:
+> > > > > > > +  "xylon,logicvc-3.02.a-display"
+> > > > > > > +  "xylon,logicvc-4.01.a-display"
+> > > > > > > +- reg: Physical base address and size for the controller registers.
+> > > > > > > +- clocks: List of phandle and clock-specifier pairs, one for each entry
+> > > > > > > +  in 'clock-names'
+> > > > > > > +- clock-names: List of clock names that should at least contain:
+> > > > > > > +  - "vclk": The VCLK video clock input.
+> > > > > > > +- interrupts: The interrupt to use for VBLANK signaling.
+> > > > > > > +- xylon,display-interface: Display interface in use, should be one of:
+> > > > > > > +  - "lvds-4bits": 4-bit LVDS interface (C_DISPLAY_INTERFACE == 4).
+> > > > > > > +- xylon,display-colorspace: Display output colorspace in use, should be one of:
+> > > > > > > +  - "rgb": RGB colorspace (C_DISPLAY_COLOR_SPACE == 0).
+> > > > > > > +- xylon,display-depth: Display output depth in use (C_PIXEL_DATA_WIDTH).
+> > > > > > > +- xylon,row-stride: Fixed number of pixels in a framebuffer row (C_ROW_STRIDE).
+> > > > > > > +- xylon,layers-count: The number of available layers (C_NUM_OF_LAYERS).
+> > > > > >
+> > > > > > Presumably some of this is determined by the display attached. Isn't it
+> > > > > > safe to assume the IP was configured correctly for the intended display
+> > > > > > and you can just get this from the panel?
+> > > > >
+> > > > > Layers are what corresponds to DRM planes, which are not actually indicated
+> > > > > by the panel but are a charasteristic of the display controller. In our case,
+> > > > > this is directly selected at bitstream synthesis time for the controller.
+> > > > >
+> > > > > So I'm afraid there is no way we can auto-detect this from the driver.
+> > > >
+> > > > Sorry, I referring to the set of properties above. In particular,
+> > > > xylon,display-interface and xylon,display-colorspace, though I don't
+> > > > know if the latter is talking in memory format or on the wire format.
+> > >
+> > > Both of these are about the wire format, which is also "hardcoded" at synthesis
+> > > time with no way to be detected afterwards, as far as I know. Memory format is
+> > > described in the layer sub-nodes.
+> >
+> > You have to attach the controller to something at the other end of the
+> > wire. A panel is only going to support 1 or a few wire formats, so you
+> > do likely know because the panel knows. In the case that a panel
+> > supports multiple wire formats, we do have some standard properties
+> > there. See the LVDS panel binding.
+>
+> Looking at the LVDS panel binding, I see that the LVDS types that I have
+> described as lvds-4bits and lvds-3bits are called jeida-24 and jeida-18.
+>
+> Either way, the controller cannot be dynamically configured to use one or
+> another: it is configured to support one at synthesis time and this doesn't
+> change.
 
-Thanks for picking this up!
+Understood, but I was assuming you need to know how it was configured
+for some reason?
 
-Can you please use my work email, lowercase
+> I'm not sure exactly what you implied here. Even if we can retreive the
+> wire format from the lvds-panel's data-mapping property, I don't think it shall
+> describe what the display controller was configured to. This information could
+> be used to make sure that both are compatible (in the driver), but that's about
+> it as far as I can see.
 
-  hans.van.kranenburg@mendix.com
+It's not the kernel's job to validate the DT is correct. Someone could
+just as easily define a panel that doesn't match with the configured
+format as they could having lvds-?bits set incorrectly.
 
-for this one and for the Cc: line in the second one from Qu?
+So get the wire format from the panel driver (either implied or by DT
+property) and assume that matches the configuration of the controller.
+Though, I guess if the model is each end of the wire should advertise
+what it supports and the core picks the best format, then that only
+works if you advertise both formats. Or we could allow jeida-{24,18}
+property at both ends of the graph.
 
-Thanks,
-Hans
-
-> 
-> Extracted from commit b8b93addde "btrfs: cleanup 64bit/32bit divs,
-> provably bounded values", to allow commits 793ff2c88c6 "btrfs:
-> volumes: Cleanup stripe size calculation" and baf92114c7 "btrfs:
-> alloc_chunk: fix more DUP stripe size handling" to apply cleanly.
-> 
-> [bwh: Add patch description]
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
->  fs/btrfs/volumes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 4aa1a20fc5d7..b4b98a75ca8b 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -4274,8 +4274,8 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
->  	 */
->  	if (stripe_size * data_stripes > max_chunk_size) {
->  		u64 mask = (1ULL << 24) - 1;
-> -		stripe_size = max_chunk_size;
-> -		do_div(stripe_size, data_stripes);
-> +
-> +		stripe_size = div_u64(max_chunk_size, data_stripes);
->  
->  		/* bump the answer up to a 16MB boundary */
->  		stripe_size = (stripe_size + mask) & ~mask;
-> 
-
+Rob
