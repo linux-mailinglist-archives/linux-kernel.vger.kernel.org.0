@@ -2,81 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A27C103BFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:39:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3DF103BFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731114AbfKTNjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:39:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46834 "EHLO mail.kernel.org"
+        id S1731131AbfKTNj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:39:28 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55078 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728167AbfKTNjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:39:16 -0500
-Received: from localhost.localdomain (unknown [118.189.143.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728541AbfKTNjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:39:25 -0500
+Received: from zn.tnic (p200300EC2F0D8C00B1B17C12861BCCA4.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:8c00:b1b1:7c12:861b:cca4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BEB4224FA;
-        Wed, 20 Nov 2019 13:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257155;
-        bh=Z+eZq7iwaPRpNAmDEUhF3PizbEv3Dh2gfpmI5l4V05M=;
-        h=From:To:Cc:Subject:Date:From;
-        b=uBE6mFT2S2HqG0fxEeNser1ycs5Wah7tXw+553v0tnVu76p1E/2bfxulblhcJm445
-         M2KCMFt1flU9UnhKlPQrdxQoKu4FI3MQG9sY0sd4ylQ5GSG2YhD41hinHq2qiYUNQs
-         jwxrxF4zdDduA9a0oclRRcJewaFRIEPK5flDDcgU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH] staging: fbtft: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:39:11 +0800
-Message-Id: <20191120133911.13539-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C79B21EC0CC2;
+        Wed, 20 Nov 2019 14:39:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1574257159;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=QFI3bxCqn+b0PFcULsjiFv5KvKyUWgIUFkTaCiU0Ovw=;
+        b=HWCY1UyqaOi6dX2884FcCHqa62YZDwgCWCNNyR2vqp5f723r6YuKbqVWQy2htFtpEqw/Nf
+        iCmKHvc23XqOunZjqIdtrsDecwIfTuhA1AOMebnug7AzqEWQgcAEZIJK2oJokk1OeK1Ev5
+        nG2/BQ3b5FK0x94wPRTE/V4WbLap3BM=
+Date:   Wed, 20 Nov 2019 14:39:13 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v3 2/4] x86/traps: Print non-canonical address on #GP
+Message-ID: <20191120133913.GG2634@zn.tnic>
+References: <20191120103613.63563-1-jannh@google.com>
+ <20191120103613.63563-2-jannh@google.com>
+ <20191120111859.GA115930@gmail.com>
+ <CAG48ez0Frp4-+xHZ=UhbHh0hC_h-1VtJfwHw=kDo6NahyMv1ig@mail.gmail.com>
+ <20191120123058.GA17296@gmail.com>
+ <20191120123926.GE2634@zn.tnic>
+ <20191120132830.GB54414@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191120132830.GB54414@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+On Wed, Nov 20, 2019 at 02:28:30PM +0100, Ingo Molnar wrote:
+> I'd rather we not trust the decoder and the execution environment so much 
+> that it never produces a 0 linear address in a #GP:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/staging/fbtft/Kconfig | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I was just scratching my head whether I could trigger a #GP with address
+of 0. But yeah, I agree, let's be really cautious here. I wouldn't want
+to debug a #GP with a wrong address reported.
 
-diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
-index d994aea84b21..19d9d88e9150 100644
---- a/drivers/staging/fbtft/Kconfig
-+++ b/drivers/staging/fbtft/Kconfig
-@@ -95,8 +95,8 @@ config FB_TFT_PCD8544
- 	  Generic Framebuffer support for PCD8544
- 
- config FB_TFT_RA8875
--        tristate "FB driver for the RA8875 LCD Controller"
--        depends on FB_TFT
-+	tristate "FB driver for the RA8875 LCD Controller"
-+	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for RA8875
- 
-@@ -132,10 +132,10 @@ config FB_TFT_SSD1289
- 	  Framebuffer support for SSD1289
- 
- config FB_TFT_SSD1305
--        tristate "FB driver for the SSD1305 OLED Controller"
--        depends on FB_TFT
--        help
--          Framebuffer support for SSD1305
-+	tristate "FB driver for the SSD1305 OLED Controller"
-+	depends on FB_TFT
-+	help
-+	  Framebuffer support for SSD1305
- 
- config FB_TFT_SSD1306
- 	tristate "FB driver for the SSD1306 OLED Controller"
+Thx.
+
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
