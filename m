@@ -2,171 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8084D1036FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 766DB10370E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 10:57:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfKTJv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 04:51:26 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37734 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbfKTJvZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:51:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RkSscRrhSrXw7s5lW3vnoMLwwJ0fDW8Z1I2xrzJ2Ibo=; b=zfTZW9rILa4dMFwpU9F1DTM2l
-        pRhjGmjzl7oT52KUUHJh+3BJp85uLDP8hv2IDiXKmXWknpdKMTEZRlfPkM7z9I/uwdwHdQLS6I+Ag
-        BHukksm01gkdYNwOwoKLGhCz2wf/K+qetDFKi4eGLdITCY7Bt58YwW9rCZWNiFSRuBNZCB7oHmckp
-        qMJ8sMuitG/0rsi6iqNUDHjyPhurcp40Sc0naQ+YgPYyaiV9k2h9OzAOisruufPzCF9FLVrL3GUJP
-        0+fpVXpOq6kAM0e556MnsDGuw2Xyc3jceizOmF5/oRs1vRpROYGcRkuJBqDzxQ/b5ps4ZFU4JEYfS
-        D+/fXx6ag==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42120)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iXMdp-0007Wm-W4; Wed, 20 Nov 2019 09:51:18 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iXMdj-0001cj-TD; Wed, 20 Nov 2019 09:51:11 +0000
-Date:   Wed, 20 Nov 2019 09:51:11 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] ARM: don't export unused return_address()
-Message-ID: <20191120095111.GI25745@shell.armlinux.org.uk>
-References: <20190906154706.2449696-1-arnd@arndb.de>
- <CAMuHMdUMgDBo1gkvQ_Bd8mjMiPjdWWY=9AU6K1S7NcJy5jhvGQ@mail.gmail.com>
- <CAK7LNASNp4jPYHmh3e4QYwenYbVrK69tvB_LLyK_ew1eqBNrEw@mail.gmail.com>
- <20191113114517.GO25745@shell.armlinux.org.uk>
- <CAMuHMdXk9sWBpYWC-X6V3rp2e0+f5ebdRFFXn8Heuy0qkLq0GQ@mail.gmail.com>
- <20191113170058.GP25745@shell.armlinux.org.uk>
- <CAK7LNARiQnc+A0j4ORC-M8ZcbtDYdRF7tU1Zv8Lbst-g8dqmVQ@mail.gmail.com>
- <20191120090744.GH25745@shell.armlinux.org.uk>
- <CAK7LNARMjaCe8spDPMAKdViUN+uUycYL9LSCXumcR8DNDNKaPA@mail.gmail.com>
+        id S1728329AbfKTJ5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 04:57:17 -0500
+Received: from spam01.hygon.cn ([110.188.70.11]:35137 "EHLO spam2.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727716AbfKTJ5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 04:57:17 -0500
+Received: from MK-DB.hygon.cn ([172.23.18.60])
+        by spam2.hygon.cn with ESMTP id xAK9t4Ww044238;
+        Wed, 20 Nov 2019 17:55:04 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-DB.hygon.cn with ESMTP id xAK9swEk053992;
+        Wed, 20 Nov 2019 17:54:58 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from [172.20.21.12] (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 20 Nov
+ 2019 17:55:00 +0800
+Subject: Re: [PATCH] NTB: Fix an error in get link status
+From:   Jiasen Lin <linjiasen@hygon.cn>
+To:     Jon Mason <jdmason@kudzu.us>
+CC:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-ntb <linux-ntb@googlegroups.com>, <linjiasen007@gmail.com>,
+        Jiasen Lin <linjiasen@hygon.cn>
+References: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
+ <CAPoiz9wAJz=Hqb6Os=9AHHv_NGpZ8uCaAuOC=aUTkASKdfs9WQ@mail.gmail.com>
+ <933f74c7-7249-618c-13dc-9e4e47ad75d7@hygon.cn>
+Message-ID: <11b355a8-0fe0-f256-c510-ddf106017703@hygon.cn>
+Date:   Wed, 20 Nov 2019 17:52:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARMjaCe8spDPMAKdViUN+uUycYL9LSCXumcR8DNDNKaPA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <933f74c7-7249-618c-13dc-9e4e47ad75d7@hygon.cn>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn xAK9t4Ww044238
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 06:42:52PM +0900, Masahiro Yamada wrote:
-> Hi Russell,
+
+
+On 2019/11/18 18:17, Jiasen Lin wrote:
 > 
 > 
-> On Wed, Nov 20, 2019 at 6:07 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Wed, Nov 20, 2019 at 06:02:13PM +0900, Masahiro Yamada wrote:
-> > > Hi Arnd,
-> > >
-> > >
-> > >
-> > > On Thu, Nov 14, 2019 at 2:01 AM Russell King - ARM Linux admin
-> > > <linux@armlinux.org.uk> wrote:
-> > > >
-> > > > On Wed, Nov 13, 2019 at 02:15:00PM +0100, Geert Uytterhoeven wrote:
-> > > > > Hi Russell,
-> > > > >
-> > > > > On Wed, Nov 13, 2019 at 12:45 PM Russell King - ARM Linux admin
-> > > > > <linux@armlinux.org.uk> wrote:
-> > > > > > On Wed, Nov 13, 2019 at 08:40:39PM +0900, Masahiro Yamada wrote:
-> > > > > > > On Tue, Oct 1, 2019 at 11:31 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > > > On Fri, Sep 6, 2019 at 5:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > > > > > Without the frame pointer enabled, return_address() is an inline
-> > > > > > > > > function and does not need to be exported, as shown by this warning:
-> > > > > > > > >
-> > > > > > > > > WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
-> > > > > > > > >
-> > > > > > > > > Move the EXPORT_SYMBOL_GPL() into the #ifdef as well.
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > > > >
-> > > > > > > > Thanks for your patch!
-> > > > > > > >
-> > > > > > > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > > > >
-> > > > > > > > > --- a/arch/arm/kernel/return_address.c
-> > > > > > > > > +++ b/arch/arm/kernel/return_address.c
-> > > > > > > > > @@ -53,6 +53,7 @@ void *return_address(unsigned int level)
-> > > > > > > > >                 return NULL;
-> > > > > > > > >  }
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > Checkpatch doesn't like the empty line above:
-> > > > > > > >
-> > > > > > > > WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/variable
-> > > > > > > >
-> > > > > > > > > +EXPORT_SYMBOL_GPL(return_address);
-> > > > > > > > > +
-> > > > > > > > >  #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) */
-> > > > > > > > >
-> > > > > > > > > -EXPORT_SYMBOL_GPL(return_address);
-> > > > >
-> > > > > > > What has happened to this patch?
-> > > > > > >
-> > > > > > > I still see this warning.
-> > > > > >
-> > > > > > Simple - it got merged, it caused build regressions, it got dropped.
-> > > > > > A new version is pending me doing another round of patch merging.
-> > > > >
-> > > > > I believe that was not Arnd's patch, but Ben Dooks' alternative solution[*]?
-> > > >
-> > > > I don't keep track of who did what, sorry.
-> > >
-> > >
-> > > Arnd,
-> > >
-> > > I believe this patch is the correct fix.
-> > > Could you please put it into Russell's patch tracker?
-> > > (patches@arm.linux.org.uk)
-> >
-> > Is there something wrong with:
-> >
-> > fb033c95c94c ARM: 8918/2: only build return_address() if needed
-> >
-> > I haven't seen any build issues with that.
+> On 2019/11/18 7:00, Jon Mason wrote:
+>> On Thu, Nov 7, 2019 at 4:37 AM Jiasen Lin <linjiasen@hygon.cn> wrote:
+>>>
+>>> The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
+>>> but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
+>>> It is offset of Device Capabilities Reg rather than Link Control Reg.
+>>>
+>>> This code trigger an error in get link statsus:
+>>>
+>>>          cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+>>>                  LNK STA -               0x8fa1
+>>>                  Link Status -           Up
+>>>                  Link Speed -            PCI-E Gen 0
+>>>                  Link Width -            x0
+>>>
+>>> This patch use pcie_capability_read_dword to get link status.
+>>> After fix this issue, we can get link status accurately:
+>>>
+>>>          cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+>>>                  LNK STA -               0x11030042
+>>>                  Link Status -           Up
+>>>                  Link Speed -            PCI-E Gen 3
+>>>                  Link Width -            x16
+>>
+>> No response from AMD maintainers, but it looks like you are correct.
+>>
+>> This needs a "Fixes:" line here.  I took the liberty of adding one to
+>> this patch.
+>>
 > 
+> Thank you for your suggestions. Yes, this patch fix the commit id: 
+> a1b3695 ("NTB: Add support for AMD PCI-Express Non-Transparent Bridge").
 > 
-> Sorry, I had not checked Ben's patch because you said
-> "Simple - it got merged, it caused build regressions, it got dropped."
-
-That was 8918/1.  Ben fixed his patch, and submitted an updated
-version.
-
-> Yup, I've checked it right now,
-> and it looks good to me.
+>>> Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
+>>> ---
+>>>   drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
+>>>   drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
+>>>   2 files changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c 
+>>> b/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>> index 156c2a1..ae91105 100644
+>>> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>> @@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
+>>>
+>>>          ndev->cntl_sta = reg;
+>>>
+>>> -       rc = pci_read_config_dword(ndev->ntb.pdev,
+>>> -                                  AMD_LINK_STATUS_OFFSET, &stat);
+>>> +       rc = pcie_capability_read_dword(ndev->ntb.pdev,
+>>> +                                  PCI_EXP_LNKCTL, &stat);
+>>>          if (rc)
+>>>                  return 0;
+>>>          ndev->lnk_sta = stat;
+>>> @@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
+>>>   static const struct pci_device_id amd_ntb_pci_tbl[] = {
+>>>          { PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
+>>>          { PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
+>>> +       { PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
+>>
+>> This should be a separate patch.  I took the liberty of splitting it
+>> off into a unique patch and attributing it to you.  I've pushed them
+>> to the ntb-next branch on
+>> https://github.com/jonmason/ntb
+>>
+> Thank you for your comment. We appreciate the time and effort you have 
+> spent to split it off, I will test it ASAP.
 > 
-> But, I do not see that commit in the latest linux-next
-> (next-20191120).
+>> Please verify everything looks acceptable to you (given the changes I
+>> did above that are attributed to you).  Also, testing of the latest
+>> code is always appreciated.
+>>
+>> Thanks,
+>> Jon
+>>
+
+I have tested these patches that are pushed to ntb-next branch, they 
+work well on HYGON platforms.
+
+Thanks,
+Jiasen Lin
+
+>>
+>>>          { 0, }
+>>>   };
+>>>   MODULE_DEVICE_TABLE(pci, amd_ntb_pci_tbl);
+>>> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h 
+>>> b/drivers/ntb/hw/amd/ntb_hw_amd.h
+>>> index 139a307..39e5d18 100644
+>>> --- a/drivers/ntb/hw/amd/ntb_hw_amd.h
+>>> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
+>>> @@ -53,7 +53,6 @@
+>>>   #include <linux/pci.h>
+>>>
+>>>   #define AMD_LINK_HB_TIMEOUT    msecs_to_jiffies(1000)
+>>> -#define AMD_LINK_STATUS_OFFSET 0x68
+>>>   #define NTB_LIN_STA_ACTIVE_BIT 0x00000002
+>>>   #define NTB_LNK_STA_SPEED_MASK 0x000F0000
+>>>   #define NTB_LNK_STA_WIDTH_MASK 0x03F00000
+>>> -- 
+>>> 2.7.4
+>>>
+>>> -- 
+>>> You received this message because you are subscribed to the Google 
+>>> Groups "linux-ntb" group.
+>>> To unsubscribe from this group and stop receiving emails from it, 
+>>> send an email to linux-ntb+unsubscribe@googlegroups.com.
+>>> To view this discussion on the web visit 
+>>> https://groups.google.com/d/msgid/linux-ntb/1573119336-107732-1-git-send-email-linjiasen%40hygon.cn. 
+>>>
 > 
-> Could you really apply it if you have not.
-
-It was applied last Friday and was pushed out there and then.
-
-$ git ls-remote zeniv | grep for-next
-022eb8ae8b5ee8c5c813923c69b5ebb1e9612c4c        refs/heads/for-next
-$ git lg for-next
-022eb8ae8b5e ARM: 8938/1: kernel: initialize broadcast hrtimer based
-clock event device
-...
-fb033c95c94c ARM: 8918/2: only build return_address() if needed
-
-I've no idea why linux-next doesn't have it.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> Thanks,
+> 
+> Jiasen Lin
