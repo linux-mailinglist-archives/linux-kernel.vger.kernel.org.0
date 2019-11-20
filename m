@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FFCB103AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:21:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C732103B2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbfKTNVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:21:16 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56693 "EHLO
+        id S1730172AbfKTNVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:21:10 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56663 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730151AbfKTNVL (ORCPT
+        with ESMTP id S1727907AbfKTNVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:11 -0500
+        Wed, 20 Nov 2019 08:21:09 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPum-00073T-7O; Wed, 20 Nov 2019 14:21:00 +0100
+        id 1iXPum-00073W-NM; Wed, 20 Nov 2019 14:21:00 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D30531C1998;
-        Wed, 20 Nov 2019 14:20:59 +0100 (CET)
-Date:   Wed, 20 Nov 2019 13:20:59 -0000
-From:   "tip-bot2 for Lina Iyer" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 59B431C1A01;
+        Wed, 20 Nov 2019 14:21:00 +0100 (CET)
+Date:   Wed, 20 Nov 2019 13:21:00 -0000
+From:   "tip-bot2 for Maulik Shah" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] pinctrl/sdm845: Add PDC wakeup interrupt map for GPIOs
-Cc:     Lina Iyer <ilina@codeaurora.org>, Marc Zyngier <maz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Subject: [tip: irq/core] irqchip/qcom-pdc: Add irqchip set/get state calls
+Cc:     Maulik Shah <mkshah@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <1573855915-9841-10-git-send-email-ilina@codeaurora.org>
-References: <1573855915-9841-10-git-send-email-ilina@codeaurora.org>
+In-Reply-To: <1573855915-9841-8-git-send-email-ilina@codeaurora.org>
+References: <1573855915-9841-8-git-send-email-ilina@codeaurora.org>
 MIME-Version: 1.0
-Message-ID: <157425605969.12247.13808010297317474629.tip-bot2@tip-bot2>
+Message-ID: <157425606029.12247.1129726844288422234.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,70 +50,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     585d1183ffeea5cbe2cd24863bbc90196d827257
-Gitweb:        https://git.kernel.org/tip/585d1183ffeea5cbe2cd24863bbc90196d827257
-Author:        Lina Iyer <ilina@codeaurora.org>
-AuthorDate:    Fri, 15 Nov 2019 15:11:52 -07:00
+Commit-ID:     e71374c07564536d38caed3e80a1ff1c4609161d
+Gitweb:        https://git.kernel.org/tip/e71374c07564536d38caed3e80a1ff1c4609161d
+Author:        Maulik Shah <mkshah@codeaurora.org>
+AuthorDate:    Fri, 15 Nov 2019 15:11:50 -07:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sat, 16 Nov 2019 10:23:48 
+CommitterDate: Sat, 16 Nov 2019 10:22:01 
 
-pinctrl/sdm845: Add PDC wakeup interrupt map for GPIOs
+irqchip/qcom-pdc: Add irqchip set/get state calls
 
-Add interrupt parents for wakeup capable GPIOs for Qualcomm SDM845 SoC.
+Add irqchip calls to set/get interrupt state from the parent interrupt
+controller. When GPIOs are renabled as interrupt lines, it is desirable
+to clear the interrupt state at the GIC. This avoids any unwanted
+interrupt as a result of stale pending state recorded when the line was
+used as a GPIO.
 
+Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+[Lina: updated commit text, rearranged code]
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/1573855915-9841-10-git-send-email-ilina@codeaurora.org
+Link: https://lore.kernel.org/r/1573855915-9841-8-git-send-email-ilina@codeaurora.org
 ---
- drivers/pinctrl/qcom/pinctrl-sdm845.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/irqchip/qcom-pdc.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-index ce49597..2834d2c 100644
---- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
-  */
+diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+index 4f2c762..6ae9e1f 100644
+--- a/drivers/irqchip/qcom-pdc.c
++++ b/drivers/irqchip/qcom-pdc.c
+@@ -5,6 +5,7 @@
  
- #include <linux/acpi.h>
-@@ -1282,6 +1282,24 @@ static const int sdm845_acpi_reserved_gpios[] = {
- 	0, 1, 2, 3, 81, 82, 83, 84, -1
- };
+ #include <linux/err.h>
+ #include <linux/init.h>
++#include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
+ #include <linux/irqdomain.h>
+@@ -50,6 +51,26 @@ static u32 pdc_reg_read(int reg, u32 i)
+ 	return readl_relaxed(pdc_base + reg + i * sizeof(u32));
+ }
  
-+static const struct msm_gpio_wakeirq_map sdm845_pdc_map[] = {
-+	{ 1, 30 }, { 3, 31 }, { 5, 32 }, { 10, 33 }, { 11, 34 },
-+	{ 20, 35 }, { 22, 36 }, { 24, 37 }, { 26, 38 }, { 30, 39 },
-+	{ 31, 117 }, { 32, 41 }, { 34, 42 }, { 36, 43 }, { 37, 44 },
-+	{ 38, 45 }, { 39, 46 }, { 40, 47 }, { 41, 115 }, { 43, 49 },
-+	{ 44, 50 }, { 46, 51 }, { 48, 52 }, { 49, 118 }, { 52, 54 },
-+	{ 53, 55 }, { 54, 56 }, { 56, 57 }, { 57, 58 }, { 58, 59 },
-+	{ 59, 60 }, { 60, 61 }, { 61, 62 }, { 62, 63 }, { 63, 64 },
-+	{ 64, 65 }, { 66, 66 }, { 68, 67 }, { 71, 68 }, { 73, 69 },
-+	{ 77, 70 }, { 78, 71 }, { 79, 72 }, { 80, 73 }, { 84, 74 },
-+	{ 85, 75 }, { 86, 76 }, { 88, 77 }, { 89, 116 }, { 91, 79 },
-+	{ 92, 80 }, { 95, 81 }, { 96, 82 }, { 97, 83 }, { 101, 84 },
-+	{ 103, 85 }, { 104, 86 }, { 115, 90 }, { 116, 91 }, { 117, 92 },
-+	{ 118, 93 }, { 119, 94 }, { 120, 95 }, { 121, 96 }, { 122, 97 },
-+	{ 123, 98 }, { 124, 99 }, { 125, 100 }, { 127, 102 }, { 128, 103 },
-+	{ 129, 104 }, { 130, 105 }, { 132, 106 }, { 133, 107 }, { 145, 108 },
-+};
++static int qcom_pdc_gic_get_irqchip_state(struct irq_data *d,
++					  enum irqchip_irq_state which,
++					  bool *state)
++{
++	if (d->hwirq == GPIO_NO_WAKE_IRQ)
++		return 0;
 +
- static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
- 	.pins = sdm845_pins,
- 	.npins = ARRAY_SIZE(sdm845_pins),
-@@ -1290,6 +1308,9 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
- 	.groups = sdm845_groups,
- 	.ngroups = ARRAY_SIZE(sdm845_groups),
- 	.ngpios = 151,
-+	.wakeirq_map = sdm845_pdc_map,
-+	.nwakeirq_map = ARRAY_SIZE(sdm845_pdc_map),
++	return irq_chip_get_parent_state(d, which, state);
++}
 +
- };
- 
- static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
++static int qcom_pdc_gic_set_irqchip_state(struct irq_data *d,
++					  enum irqchip_irq_state which,
++					  bool value)
++{
++	if (d->hwirq == GPIO_NO_WAKE_IRQ)
++		return 0;
++
++	return irq_chip_set_parent_state(d, which, value);
++}
++
+ static void pdc_enable_intr(struct irq_data *d, bool on)
+ {
+ 	int pin_out = d->hwirq;
+@@ -178,6 +199,8 @@ static struct irq_chip qcom_pdc_gic_chip = {
+ 	.irq_unmask		= qcom_pdc_gic_unmask,
+ 	.irq_disable		= qcom_pdc_gic_disable,
+ 	.irq_enable		= qcom_pdc_gic_enable,
++	.irq_get_irqchip_state	= qcom_pdc_gic_get_irqchip_state,
++	.irq_set_irqchip_state	= qcom_pdc_gic_set_irqchip_state,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+ 	.irq_set_type		= qcom_pdc_gic_set_type,
+ 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
