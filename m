@@ -2,117 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 921D5104582
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 22:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0FA310458B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 22:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfKTVIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 16:08:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53765 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725815AbfKTVIv (ORCPT
+        id S1726664AbfKTVOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 16:14:11 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60993 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbfKTVOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 16:08:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574284129;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IJ75uiFKE/vrS49xMrG/E26ErD3qo0pj2vUxc1owOuY=;
-        b=emTOLPZLN5pkA6VyWslcRK/EGULGMYn2MJ1XXEHrZX9+mQKH+28JIwOGCl7KkWvKT95Puh
-        3ksKix7Wsp6kCX6skep/9hYY20ZznAE9VnKRwwImZsO6BDMmxh5W5VbRaJ6Gz5UeZfy1GL
-        Wjefa544xVANgSeR5VEN8Dl+ibCD17Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-172-FfsjWtENNTS3u6KdzdVaig-1; Wed, 20 Nov 2019 16:08:46 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A630BDB22;
-        Wed, 20 Nov 2019 21:08:44 +0000 (UTC)
-Received: from [10.36.116.37] (ovpn-116-37.ams2.redhat.com [10.36.116.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CBA00348A2;
-        Wed, 20 Nov 2019 21:08:41 +0000 (UTC)
-Subject: Re: [PATCH v3 2/8] iommu/vt-d: Match CPU and IOMMU paging mode
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>
-References: <1574186193-30457-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1574186193-30457-3-git-send-email-jacob.jun.pan@linux.intel.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <c77782e3-fafa-6397-94e0-e0be8572acd3@redhat.com>
-Date:   Wed, 20 Nov 2019 22:08:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Nov 2019 16:14:10 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1iXXIU-0001J2-Nq; Wed, 20 Nov 2019 22:13:58 +0100
+Received: from mgr by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1iXXIQ-0001XW-9i; Wed, 20 Nov 2019 22:13:54 +0100
+From:   Michael Grzeschik <m.grzeschik@pengutronix.de>
+To:     shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        kernel@pengutronix.de, festevam@gmail.com
+Cc:     linux-imx@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] ARM: dts: imx25: usbhost port1 improvemts
+Date:   Wed, 20 Nov 2019 22:13:32 +0100
+Message-Id: <20191120211334.5580-1-m.grzeschik@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191120082955.3ovsoziurntmv7by@pengutronix.de>
+References: <20191120082955.3ovsoziurntmv7by@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1574186193-30457-3-git-send-email-jacob.jun.pan@linux.intel.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: FfsjWtENNTS3u6KdzdVaig-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
-On 11/19/19 6:56 PM, Jacob Pan wrote:
-> When setting up first level page tables for sharing with CPU, we need
-> to ensure IOMMU can support no less than the levels supported by the
-> CPU.
->=20
-> It is not adequate, as in the current code, to set up 5-level paging
-> in PASID entry First Level Paging Mode(FLPM) solely based on CPU.
->=20
-> Currently, intel_pasid_setup_first_level() is only used by native SVM
-> code which already checks paging mode matches. However, future use of
-> this helper function may not be limited to native SVM.
-> https://lkml.org/lkml/2019/11/18/1037
->=20
-> Fixes: 437f35e1cd4c8 ("iommu/vt-d: Add first level page table
-> interface")
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Michael Grzeschik (2):
+  ARM: dts: imx25: consolidate properties of usbhost1 in dtsi file
+  ARM: dts: imx25: describe maximum speed of internal usbhost port1 phy
 
-Thanks
+ arch/arm/boot/dts/imx25-eukrea-mbimxsd25-baseboard.dts | 2 --
+ arch/arm/boot/dts/imx25-pdk.dts                        | 2 --
+ arch/arm/boot/dts/imx25.dtsi                           | 3 +++
+ 3 files changed, 3 insertions(+), 4 deletions(-)
 
-Eric
-> ---
->  drivers/iommu/intel-pasid.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index 040a445be300..e7cb0b8a7332 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -499,8 +499,16 @@ int intel_pasid_setup_first_level(struct intel_iommu=
- *iommu,
->  =09}
-> =20
->  #ifdef CONFIG_X86
-> -=09if (cpu_feature_enabled(X86_FEATURE_LA57))
-> -=09=09pasid_set_flpm(pte, 1);
-> +=09/* Both CPU and IOMMU paging mode need to match */
-> +=09if (cpu_feature_enabled(X86_FEATURE_LA57)) {
-> +=09=09if (cap_5lp_support(iommu->cap)) {
-> +=09=09=09pasid_set_flpm(pte, 1);
-> +=09=09} else {
-> +=09=09=09pr_err("VT-d has no 5-level paging support for CPU\n");
-> +=09=09=09pasid_clear_entry(pte);
-> +=09=09=09return -EINVAL;
-> +=09=09}
-> +=09}
->  #endif /* CONFIG_X86 */
-> =20
->  =09pasid_set_domain_id(pte, did);
->=20
+-- 
+2.24.0
 
