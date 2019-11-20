@@ -2,284 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763081043CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 19:58:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2981043C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 19:57:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbfKTS6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 13:58:54 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:55926 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbfKTS6x (ORCPT
+        id S1727571AbfKTS5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 13:57:11 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40865 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbfKTS5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 13:58:53 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAKIs6Y5015731;
-        Wed, 20 Nov 2019 18:58:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=Mh9tB57Nnn4lghxLTxDkHxWWjco2T6GOaUVCFch00nk=;
- b=YuMXm3auSfkO2dwqcc4qon9Ubxx75dOaDdyiKUpbXZJSia0tJz3f28Eh7RPs1M8o5zDG
- vsx69TEh0PC/a5KaP3y+xgpLcp4KawZNTrtA0M5zZp3Azsgcr9ssMNnvJoGLflKX8Yjz
- Z3aKie4n6vKFsBSyK5C1FJqcXAHwVpuA+/cRs47TFWxxf1M7rYAQwHgtZ2zYNz16Dk2o
- JUePqI91Kjc+qe8Ji1tbQsT2CiiPHpWjNxEj9MUvFxBJHkhs2T4rwyHuYcd67eVEG8Zd
- OGhgyeVs+zESedX66feGrWkTHQNlMzUijcYq0YBQjiJrLcXZ+Nb7m7srd48HG6+r1a50 TA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2wa92pyhbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Nov 2019 18:58:38 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAKIs4Tf165866;
-        Wed, 20 Nov 2019 18:56:37 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2wda04knm6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Nov 2019 18:56:37 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAKIuad3014913;
-        Wed, 20 Nov 2019 18:56:36 GMT
-Received: from zissou.us.oracle.com (/10.152.34.58)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Nov 2019 10:56:36 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH 4/4] padata: remove cpumask change notifier
-Date:   Wed, 20 Nov 2019 13:54:12 -0500
-Message-Id: <20191120185412.302-5-daniel.m.jordan@oracle.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191120185412.302-1-daniel.m.jordan@oracle.com>
-References: <20191120185412.302-1-daniel.m.jordan@oracle.com>
+        Wed, 20 Nov 2019 13:57:11 -0500
+Received: by mail-lj1-f196.google.com with SMTP id q2so312560ljg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 10:57:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jOSs8GWh4nvdHvITwvOT+7DGX4JWzvhey5FOjHknUSw=;
+        b=cFv2Z33QNS8FpfuHutXCBQyQhPSIGwX+LfOwGlTR9vLXVSoIDDnfRthMyiahTGOfjw
+         chxSXEuCrJqyhTSt7qt57KAxvGZjWprcx5G5hWWzVEXyEoSM3S7xUECA5GQrbjqImzbS
+         1z/i9s/QZ4KTGxDmOI5d8yt2FH4zlKyIs6KYs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jOSs8GWh4nvdHvITwvOT+7DGX4JWzvhey5FOjHknUSw=;
+        b=cQleTkIpOSJYDHAlkR5T/MbF04PTw6DCMDJouc8VoVOYG/w/1ATR/2ewEzcVfyfJqH
+         xKIGUdQ4ygNoG3a7lSaw99wk55ARmFsnIYQzQBPzQ+uxLqmNpubuQnHiT+jdN2eTfYV8
+         erYwUD4LN5VzouTisGWOloZ8cqA8hEYz8Q4LqlGjoRXkyU0n6oX25fZzz7c5i1ElhEYU
+         +l52CxWMYAhxK6PiUpAavgYiZnrdkNYcLW6WxOP/NeDAdqur42S4Xn+irmoSG1rWHcZd
+         1gHbZyDyZ0X/H1+9/mbtTlbNs7+JoOAe2JeBmHixctY3JaXTklrZJZfhYyHwkCRvpdDT
+         CRiQ==
+X-Gm-Message-State: APjAAAWkmOX8wPVhLjA8h5JgzhEHgEc4kmDoSf1lgn1n2KU4R1gg0UoZ
+        d4U/Tv4DtNNlk3SL+fedh+/hhYcikNM=
+X-Google-Smtp-Source: APXvYqx3HzjaMZ4lnIszSAHd0uWE5mXuG9AyLnIqbPuQEpKFXTmCLkZ087X1hB0bcgg2I+OgOtookA==
+X-Received: by 2002:a2e:7607:: with SMTP id r7mr4229245ljc.37.1574276228108;
+        Wed, 20 Nov 2019 10:57:08 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id 28sm13232182lfy.38.2019.11.20.10.57.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2019 10:57:07 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id b20so421369lfp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 10:57:06 -0800 (PST)
+X-Received: by 2002:ac2:5597:: with SMTP id v23mr1072977lfg.79.1574276226377;
+ Wed, 20 Nov 2019 10:57:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911200156
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911200156
+References: <20191114235008.185111-1-evgreen@chromium.org> <20191114154903.v7.2.I4d476bddbf41a61422ad51502f4361e237d60ad4@changeid>
+ <20191120022518.GU6235@magnolia>
+In-Reply-To: <20191120022518.GU6235@magnolia>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 20 Nov 2019 10:56:30 -0800
+X-Gmail-Original-Message-ID: <CAE=gft4mjKc4QKFKxp2FX9G2rUMuE3_eDuW_3Oq7NqTYBQwEjg@mail.gmail.com>
+Message-ID: <CAE=gft4mjKc4QKFKxp2FX9G2rUMuE3_eDuW_3Oq7NqTYBQwEjg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] loop: Better discard support for block devices
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 63d3578892dc ("crypto: pcrypt - remove padata cpumask
-notifier") this feature is unused and may deliver unexpected data with
-the introduction of struct padata_shell (a notification mask that
-includes -ENOMEM), so get rid of it.
+On Tue, Nov 19, 2019 at 6:25 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> On Thu, Nov 14, 2019 at 03:50:08PM -0800, Evan Green wrote:
+> > If the backing device for a loop device is itself a block device,
+> > then mirror the "write zeroes" capabilities of the underlying
+> > block device into the loop device. Copy this capability into both
+> > max_write_zeroes_sectors and max_discard_sectors of the loop device.
+> >
+> > The reason for this is that REQ_OP_DISCARD on a loop device translates
+> > into blkdev_issue_zeroout(), rather than blkdev_issue_discard(). This
+> > presents a consistent interface for loop devices (that discarded data
+> > is zeroed), regardless of the backing device type of the loop device.
+> > There should be no behavior change for loop devices backed by regular
+> > files.
+> >
+> > This change fixes blktest block/003, and removes an extraneous
+> > error print in block/013 when testing on a loop device backed
+> > by a block device that does not support discard.
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> > Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> > ---
+> >
+> > Changes in v7:
+> > - Rebase on top of Darrick's patch
+> > - Tweak opening line of commit description (Darrick)
+> >
+> > Changes in v6: None
+> > Changes in v5:
+> > - Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
+> >
+> > Changes in v4:
+> > - Mirror blkdev's write_zeroes into loopdev's discard_sectors.
+> >
+> > Changes in v3:
+> > - Updated commit description
+> >
+> > Changes in v2: None
+> >
+> >  drivers/block/loop.c | 40 +++++++++++++++++++++++++++++-----------
+> >  1 file changed, 29 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > index 6a9fe1f9fe84..e8f23e4b78f7 100644
+> > --- a/drivers/block/loop.c
+> > +++ b/drivers/block/loop.c
+> > @@ -427,11 +427,12 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+> >        * information.
+> >        */
+> >       struct file *file = lo->lo_backing_file;
+> > +     struct request_queue *q = lo->lo_queue;
+> >       int ret;
+> >
+> >       mode |= FALLOC_FL_KEEP_SIZE;
+> >
+> > -     if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+> > +     if (!blk_queue_discard(q)) {
+> >               ret = -EOPNOTSUPP;
+> >               goto out;
+> >       }
+> > @@ -862,6 +863,21 @@ static void loop_config_discard(struct loop_device *lo)
+> >       struct file *file = lo->lo_backing_file;
+> >       struct inode *inode = file->f_mapping->host;
+> >       struct request_queue *q = lo->lo_queue;
+> > +     struct request_queue *backingq;
+> > +
+> > +     /*
+> > +      * If the backing device is a block device, mirror its zeroing
+> > +      * capability. REQ_OP_DISCARD translates to a zero-out even when backed
+> > +      * by block devices to keep consistent behavior with file-backed loop
+> > +      * devices.
+> > +      */
+> > +     if (S_ISBLK(inode->i_mode) && !lo->lo_encrypt_key_size) {
+> > +             backingq = bdev_get_queue(inode->i_bdev);
+> > +             blk_queue_max_discard_sectors(q,
+> > +                     backingq->limits.max_write_zeroes_sectors);
+>
+> max_discard_sectors?
 
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- Documentation/padata.txt | 24 ------------------
- crypto/pcrypt.c          |  1 -
- include/linux/padata.h   | 10 --------
- kernel/padata.c          | 53 +++-------------------------------------
- 4 files changed, 3 insertions(+), 85 deletions(-)
+I didn't plumb max_discard_sectors because for my scenario it never
+ends up hitting the block device that way.
 
-diff --git a/Documentation/padata.txt b/Documentation/padata.txt
-index a03afb1588f9..82e42dbaab65 100644
---- a/Documentation/padata.txt
-+++ b/Documentation/padata.txt
-@@ -74,30 +74,6 @@ padata_set_cpumask is used to change just one of the cpumasks. Here cpumask_type
- is one of PADATA_CPU_SERIAL or PADATA_CPU_PARALLEL, and cpumask specifies the
- new cpumask to use.
- 
--If a user is interested in padata cpumask changes, he can register to
--the padata cpumask change notifier::
--
--    int padata_register_cpumask_notifier(struct padata_instance *pinst,
--					 struct notifier_block *nblock);
--
--To unregister from that notifier::
--
--    int padata_unregister_cpumask_notifier(struct padata_instance *pinst,
--					   struct notifier_block *nblock);
--
--The padata cpumask change notifier notifies about changes of the usable
--cpumasks, i.e. the subset of active CPUs in the user supplied cpumask.
--
--Padata calls the notifier chain with::
--
--    blocking_notifier_call_chain(&pinst->cpumask_change_notifier,
--				 notification_mask,
--				 &pd_new->cpumask);
--
--Here cpumask_change_notifier is registered notifier, notification_mask
--is one of PADATA_CPU_SERIAL, PADATA_CPU_PARALLEL and cpumask is a pointer
--to a struct padata_cpumask that contains the new cpumask information.
--
- Actually submitting work to the padata instance requires the creation of a
- padata_priv structure::
- 
-diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
-index 3e026e7a7e75..af60016d25c4 100644
---- a/crypto/pcrypt.c
-+++ b/crypto/pcrypt.c
-@@ -13,7 +13,6 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/slab.h>
--#include <linux/notifier.h>
- #include <linux/kobject.h>
- #include <linux/cpu.h>
- #include <crypto/pcrypt.h>
-diff --git a/include/linux/padata.h b/include/linux/padata.h
-index 9e0be23bd9ff..efdd0b129c53 100644
---- a/include/linux/padata.h
-+++ b/include/linux/padata.h
-@@ -13,7 +13,6 @@
- #include <linux/workqueue.h>
- #include <linux/spinlock.h>
- #include <linux/list.h>
--#include <linux/notifier.h>
- #include <linux/kobject.h>
- 
- #define PADATA_CPU_SERIAL   0x01
-@@ -141,14 +140,10 @@ struct padata_shell {
- /**
-  * struct padata_instance - The overall control structure.
-  *
-- * @cpu_notifier: cpu hotplug notifier.
-  * @parallel_wq: The workqueue used for parallel work.
-  * @serial_wq: The workqueue used for serial work.
-  * @pslist: List of padata_shell objects attached to this instance.
-  * @cpumask: User supplied cpumasks for parallel and serial works.
-- * @cpumask_change_notifier: Notifiers chain for user-defined notify
-- *            callbacks that will be called when either @pcpu or @cbcpu
-- *            or both cpumasks change.
-  * @kobj: padata instance kernel object.
-  * @lock: padata instance lock.
-  * @flags: padata flags.
-@@ -159,7 +154,6 @@ struct padata_instance {
- 	struct workqueue_struct		*serial_wq;
- 	struct list_head		pslist;
- 	struct padata_cpumask		cpumask;
--	struct blocking_notifier_head	 cpumask_change_notifier;
- 	struct kobject                   kobj;
- 	struct mutex			 lock;
- 	u8				 flags;
-@@ -179,8 +173,4 @@ extern int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
- 			      cpumask_var_t cpumask);
- extern int padata_start(struct padata_instance *pinst);
- extern void padata_stop(struct padata_instance *pinst);
--extern int padata_register_cpumask_notifier(struct padata_instance *pinst,
--					    struct notifier_block *nblock);
--extern int padata_unregister_cpumask_notifier(struct padata_instance *pinst,
--					      struct notifier_block *nblock);
- #endif
-diff --git a/kernel/padata.c b/kernel/padata.c
-index cd9ae6822460..7305e81b9bee 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -492,81 +492,35 @@ static void __padata_stop(struct padata_instance *pinst)
- }
- 
- /* Replace the internal control structure with a new one. */
--static int padata_replace_one(struct padata_shell *ps)
-+static void padata_replace_one(struct padata_shell *ps)
- {
- 	struct parallel_data *pd_old = rcu_dereference_protected(ps->pd, 1);
- 	struct parallel_data *pd_new;
--	int notification_mask = 0;
- 
- 	pd_new = padata_alloc_pd(ps);
- 	if (!pd_new)
--		return -ENOMEM;
-+		return;
- 
- 	rcu_assign_pointer(ps->pd, pd_new);
- 
--	if (!cpumask_equal(pd_old->cpumask.pcpu, pd_new->cpumask.pcpu))
--		notification_mask |= PADATA_CPU_PARALLEL;
--	if (!cpumask_equal(pd_old->cpumask.cbcpu, pd_new->cpumask.cbcpu))
--		notification_mask |= PADATA_CPU_SERIAL;
--
- 	if (atomic_dec_and_test(&pd_old->refcnt))
- 		padata_free_pd(pd_old);
--
--	return notification_mask;
- }
- 
- static void padata_replace(struct padata_instance *pinst)
- {
--	int notification_mask = 0;
- 	struct padata_shell *ps;
- 
- 	pinst->flags |= PADATA_RESET;
- 
- 	list_for_each_entry(ps, &pinst->pslist, list)
--		notification_mask |= padata_replace_one(ps);
-+		padata_replace_one(ps);
- 
- 	synchronize_rcu();
- 
--	if (notification_mask)
--		blocking_notifier_call_chain(&pinst->cpumask_change_notifier,
--					     notification_mask,
--					     &pinst->cpumask);
--
- 	pinst->flags &= ~PADATA_RESET;
- }
- 
--/**
-- * padata_register_cpumask_notifier - Registers a notifier that will be called
-- *                             if either pcpu or cbcpu or both cpumasks change.
-- *
-- * @pinst: A poineter to padata instance
-- * @nblock: A pointer to notifier block.
-- */
--int padata_register_cpumask_notifier(struct padata_instance *pinst,
--				     struct notifier_block *nblock)
--{
--	return blocking_notifier_chain_register(&pinst->cpumask_change_notifier,
--						nblock);
--}
--EXPORT_SYMBOL(padata_register_cpumask_notifier);
--
--/**
-- * padata_unregister_cpumask_notifier - Unregisters cpumask notifier
-- *        registered earlier  using padata_register_cpumask_notifier
-- *
-- * @pinst: A pointer to data instance.
-- * @nlock: A pointer to notifier block.
-- */
--int padata_unregister_cpumask_notifier(struct padata_instance *pinst,
--				       struct notifier_block *nblock)
--{
--	return blocking_notifier_chain_unregister(
--		&pinst->cpumask_change_notifier,
--		nblock);
--}
--EXPORT_SYMBOL(padata_unregister_cpumask_notifier);
--
--
- /* If cpumask contains no active cpu, we mark the instance as invalid. */
- static bool padata_validate_cpumask(struct padata_instance *pinst,
- 				    const struct cpumask *cpumask)
-@@ -944,7 +898,6 @@ static struct padata_instance *padata_alloc(const char *name,
- 
- 	pinst->flags = 0;
- 
--	BLOCKING_INIT_NOTIFIER_HEAD(&pinst->cpumask_change_notifier);
- 	kobject_init(&pinst->kobj, &padata_attr_type);
- 	mutex_init(&pinst->lock);
- 
--- 
-2.23.0
+The loop device either uses FL_ZERO_RANGE or FL_PUNCH_HOLE. When
+backed by a block device, that ends up in blkdev_fallocate(), which
+always translates both of those into blkdev_issue_zeroout(), not
+blkdev_issue_discard(). So it's really the zeroing capabilities of the
+block device that matters, even for loop discard operations. It seems
+weird, but I think this is the right thing because it presents a
+consistent interface to loop device users whether backed by a file
+system file, or directly by a block device. That is, a previously
+discarded range will read back as zeroes.
 
+-Evan
