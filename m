@@ -2,116 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C55D91046D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 00:05:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 722171046E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 00:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbfKTXFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 18:05:23 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33516 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfKTXFW (ORCPT
+        id S1726574AbfKTXSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 18:18:40 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:36224 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfKTXSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 18:05:22 -0500
-Received: by mail-pg1-f194.google.com with SMTP id h27so519637pgn.0;
-        Wed, 20 Nov 2019 15:05:21 -0800 (PST)
+        Wed, 20 Nov 2019 18:18:39 -0500
+Received: by mail-pj1-f67.google.com with SMTP id cq11so526875pjb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 15:18:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fEgMaaNTaJm+nq3mUM5KWnkaiG88YnYcMDwaJlNqGkg=;
-        b=azQfCFwwF8GVZ9jpeCJY3J1noNcX3dGd0/oZlG5/VXBUkcoDXl6Du5SbDlLEYrdhKt
-         EIkzPFhkJzWH/2owPB3EhKHz5gGJwfUIQnQ2KjfK8h4+6VEGQu5K/pzgWZT5FfYmV96A
-         oHiWDyV5MqLC7Uxzp51YH75V4psRVwmN7FXz/j5wjlhyV8p8T60MfwjlavUwY0FHPFaS
-         cKbWR8eQ/jBThc/uYlVHRgDOsIKcGgDhafCgg6wkZfsoSe1+wor4ZfRgw6IXbP5KU1Vy
-         AiQh1VIu9ImzSrPM257+VuWBrDbTCHRaAJymuBTd/snulCHyOLGlKmFyDB+GL/jJQSWo
-         2h9g==
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wmtUR/eihp0PUvrLKsh7wVU4zqxo6xGU5zxiqoarIqE=;
+        b=p2G0T3jgz6bXlwZjpvll8ad4xuXJX1PCwdWxV8mTLvBJNPr+A4y10oHp5zDr6t54Gf
+         OfkS1NHrAugnkuzwclxNLuUBWLWtzXNz8Wc3MIeSzZnkIq5iaOtYYyUgbVgQD+FuTE3n
+         vAb8kgLCoKm88R10sL9ltWOieO97SxL3GSvsUulumE7DsE3/qlgX2r42bt/j++O0CMZI
+         bsHmNccOcon35TsSaHwNyZqRaB9sJz0mQ/8GERZLG/AXV0DHuNK629sQI5t9pDTiMolD
+         q+y18tonjpHPNI6wvnGPATDieKBUb9XPD946HsDG+h8w8xcSRjjCoiuNnfKMwS0X1xMk
+         ItCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fEgMaaNTaJm+nq3mUM5KWnkaiG88YnYcMDwaJlNqGkg=;
-        b=hlpSg21BKo1was/ra2+aELQuhzDer2UMcs6mkYjQLcXtutMKWUIgDBATDXS7ieNB9p
-         B53Tn9jJX7ZFa8PWoNWmLD3BzVH9x+DkPqt42dhyXdU8IxrBLr10TaIirmcwu+3h3ipa
-         /VQFzN9g+OKrwo8H4mzl7r8hbPKbn8U/DZjaPYwMcMlhKhNzd4HClB0Qa7jsszcMjavd
-         5DZaKL+9eMD3YXN9HDYXZkck0b7puc3aCe7+YwDrmZgM89y4kISEikqdtynBovjieuya
-         DDa7BXckxlOZUjRoPfokrnWy+SGawHTftgYGfKIUr/LWtCQAZ603Q/t7G9Ak4EvEkjgx
-         dGXA==
-X-Gm-Message-State: APjAAAVYYon65iPSPkyxFT6MiQwX+SV9AjhjRwxbHLFpK4qtZnNfuuIL
-        BDh7JJlexxA/n1nXZkbqdTWVzfjz
-X-Google-Smtp-Source: APXvYqyeatjOE8ZdhjhAL3RTT2QES7GZMa28Dzq4gMY+w98XHvox0r2Nx00d0c3Yn3oC3AM0xnhCTw==
-X-Received: by 2002:a65:67c1:: with SMTP id b1mr5985171pgs.149.1574291121185;
-        Wed, 20 Nov 2019 15:05:21 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f7sm452075pfa.150.2019.11.20.15.05.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Nov 2019 15:05:20 -0800 (PST)
-Date:   Wed, 20 Nov 2019 15:05:18 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Laura Abbott <labbott@redhat.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Lennert Buytenhek <kernel@wantstofly.org>
-Subject: Re: [PATCH] watchdog: Remove iop_wdt
-Message-ID: <20191120230518.GA28840@roeck-us.net>
-References: <20191118220432.1611-1-labbott@redhat.com>
- <29e94219-22ca-c873-7209-64d1c357fe5c@roeck-us.net>
- <CAK8P3a0=3J3WHTKU7sPvd37VEwg3wOuZ5S2-xXtNYEcSQhWyHw@mail.gmail.com>
- <4f283ab6-0f3c-60e9-cfd1-29d10d978986@roeck-us.net>
- <20191120100341.GK25745@shell.armlinux.org.uk>
- <CAK8P3a2N+aDgFz75dFJy3Me9FPdyDSyPaa29FngLjfXX3MzfvA@mail.gmail.com>
- <20191120103054.GM25745@shell.armlinux.org.uk>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wmtUR/eihp0PUvrLKsh7wVU4zqxo6xGU5zxiqoarIqE=;
+        b=HBolzcr7SlkgbM5G7uU/soetyr2lmqfO89LZmp+8/R8NzGDnu/2xLMGctEcuYa6SJv
+         i0X3uDOnYl3m8xygkOaVxUcwXivSbQNuD7MBHbNMKxWi05eva1IM+tIhfGH7YgTZQ+rL
+         5FxEAyH7AR23ahtgIgpnt+jraGRYgpqM3M6SNo0zjhIsRPYRnJt80NYt9LtgD3PLzp2C
+         a+ep4lRceMezHewoVh4svxv66F0eko3cmrjvhSPU9I3JZYPYRSkZOJsTekVO9BFxp0tj
+         QqZX2fqAo0ltmq0MSJk2PZpG80vKlxpOliZMni1PYU8MFeaTaalhiGuNT/31De1Dutiq
+         hnYQ==
+X-Gm-Message-State: APjAAAUnexG8C4Mene9w0dhZ7I3DCc0sP3VEK2T7C6tr2/ujrRKTihPY
+        I1aPyb/jy60CUcuPEFM3kgPU/Q==
+X-Google-Smtp-Source: APXvYqw0TaIkfAiYDhUvl10ZLxlCJpmLGUmkEzRbDKn+3bQbVgvytLloXmk3XGGDCqVdvnqHnR4G1A==
+X-Received: by 2002:a17:90a:9286:: with SMTP id n6mr6979262pjo.84.1574291917274;
+        Wed, 20 Nov 2019 15:18:37 -0800 (PST)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id j21sm485855pfa.58.2019.11.20.15.18.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 15:18:37 -0800 (PST)
+Date:   Wed, 20 Nov 2019 15:18:28 -0800
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     <lantianyu1986@gmail.com>, <cohuck@redhat.com>,
+        "KY Srinivasan" <kys@microsoft.com>,
+        "Haiyang Zhang" <haiyangz@microsoft.com>,
+        "Stephen Hemminger" <sthemmin@microsoft.com>, <sashal@kernel.org>,
+        <mchehab+samsung@kernel.org>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>,
+        <Jonathan.Cameron@huawei.com>, <paulmck@linux.ibm.com>,
+        "Michael Kelley" <mikelley@microsoft.com>,
+        "Tianyu Lan" <Tianyu.Lan@microsoft.com>,
+        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <linux-hyperv@vger.kernel.org>, "vkuznets" <vkuznets@redhat.com>
+Subject: Re: [PATCH] VFIO/VMBUS: Add VFIO VMBUS driver support
+Message-ID: <20191120151828.2d593b81@hermes.lan>
+In-Reply-To: <20191120133147.1d627348@x1.home>
+References: <20191111084507.9286-1-Tianyu.Lan@microsoft.com>
+        <20191119165620.0f42e5ba@x1.home>
+        <20191120103503.5f7bd7c4@hermes.lan>
+        <20191120120715.0cecf5ea@x1.home>
+        <20191120114611.4721a7e9@hermes.lan>
+        <20191120133147.1d627348@x1.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120103054.GM25745@shell.armlinux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 10:30:54AM +0000, Russell King - ARM Linux admin wrote:
-> On Wed, Nov 20, 2019 at 11:15:01AM +0100, Arnd Bergmann wrote:
-> > On Wed, Nov 20, 2019 at 11:03 AM Russell King - ARM Linux admin
-> > <linux@armlinux.org.uk> wrote:
-> > > On Tue, Nov 19, 2019 at 06:29:09AM -0800, Guenter Roeck wrote:
-> > > > On 11/19/19 1:40 AM, Arnd Bergmann wrote:
-> > > > > On Tue, Nov 19, 2019 at 3:08 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > > > On 11/18/19 2:04 PM, Laura Abbott wrote:
-> > > >
-> > > > Good point, especially since apparently no one cared for five years.
-> > >
-> > > Doesn't mean that there aren't interested parties.  I still have
-> > > IOP32x hardware running here in the form of a N2100 (my firewall)
-> > > and it seems that I never noticed this option disappearing until
-> > > now...
+On Wed, 20 Nov 2019 13:31:47 -0700
+Alex Williamson <alex.williamson@redhat.com> wrote:
+
+> On Wed, 20 Nov 2019 11:46:11 -0800
+> Stephen Hemminger <stephen@networkplumber.org> wrote:
+> 
+> > On Wed, 20 Nov 2019 12:07:15 -0700
+> > Alex Williamson <alex.williamson@redhat.com> wrote:
+> >   
+> > > On Wed, 20 Nov 2019 10:35:03 -0800
+> > > Stephen Hemminger <stephen@networkplumber.org> wrote:
+> > >     
+> > > > On Tue, 19 Nov 2019 15:56:20 -0800
+> > > > "Alex Williamson" <alex.williamson@redhat.com> wrote:
+> > > >       
+> > > > > On Mon, 11 Nov 2019 16:45:07 +0800
+> > > > > lantianyu1986@gmail.com wrote:
+> > > > >         
+> > > > > > From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> > > > > > 
+> > > > > > This patch is to add VFIO VMBUS driver support in order to expose
+> > > > > > VMBUS devices to user space drivers(Reference Hyper-V UIO driver).
+> > > > > > DPDK now has netvsc PMD driver support and it may get VMBUS resources
+> > > > > > via VFIO interface with new driver support.
+> > > > > > 
+> > > > > > So far, Hyper-V doesn't provide virtual IOMMU support and so this
+> > > > > > driver needs to be used with VFIO noiommu mode.          
+> > > > > 
+> > > > > Let's be clear here, vfio no-iommu mode taints the kernel and was a
+> > > > > compromise that we can re-use vfio-pci in its entirety, so it had a
+> > > > > high code reuse value for minimal code and maintenance investment.  It
+> > > > > was certainly not intended to provoke new drivers that rely on this mode
+> > > > > of operation.  In fact, no-iommu should be discouraged as it provides
+> > > > > absolutely no isolation.  I'd therefore ask, why should this be in the
+> > > > > kernel versus any other unsupportable out of tree driver?  It appears
+> > > > > almost entirely self contained.  Thanks,
+> > > > > 
+> > > > > Alex        
+> > > > 
+> > > > The current VMBUS access from userspace is from uio_hv_generic
+> > > > there is (and will not be) any out of tree driver for this.      
+> > > 
+> > > I'm talking about the driver proposed here.  It can only be used in a
+> > > mode that taints the kernel that its running on, so why would we sign
+> > > up to support 400 lines of code that has no safe way to use it?
+> > >      
+> > > > The new driver from Tianyu is to make VMBUS behave like PCI.
+> > > > This simplifies the code for DPDK and other usermode device drivers
+> > > > because it can use the same API's for VMBus as is done for PCI.      
+> > > 
+> > > But this doesn't re-use the vfio-pci API at all, it explicitly defines
+> > > a new vfio-vmbus API over the vfio interfaces.  So a user mode driver
+> > > might be able to reuse some vfio support, but I don't see how this has
+> > > anything to do with PCI.
+> > >     
+> > > > Unfortunately, since Hyper-V does not support virtual IOMMU yet,
+> > > > the only usage modle is with no-iommu taint.      
+> > > 
+> > > Which is what makes it unsupportable and prompts the question why it
+> > > should be included in the mainline kernel as it introduces a
+> > > maintenance burden and normalizes a usage model that's unsafe.  Thanks,    
 > > 
-> > It's not that it was ever there for IOP32x: the driver was introduced in 2007
-> > and was available for IOP32x but failed to compile for it until 2014 when
-> > I sent the patch to disable the driver in all configurations that
-> > failed to build.
-> 
-> Well:
-> 
-> systems/n2100/boot/config-3.11.5+:CONFIG_IOP_WATCHDOG=m
-> systems/n2100/boot/config-3.12.6+:CONFIG_IOP_WATCHDOG=m
-> systems/n2100/boot/config-3.9.5+:CONFIG_IOP_WATCHDOG=m
-> 
-> -rw-rw-r-- 1 rmk rmk 5284 Dec 30  2013 systems/n2100/lib/modules/3.12.6+/kernel/drivers/watchdog/iop_wdt.ko
-> -rw-rw-r-- 1 rmk rmk 5276 Dec 20  2013 systems/n2100/lib/modules/3.9.5+/kernel/drivers/watchdog/iop_wdt.ko
-> 
-> It seems I've been carrying a patch to comment out the troublesome code:
-> 
-> -       write_wdtsr(IOP13XX_WDTCR_IB_RESET);
-> +//     write_wdtsr(IOP13XX_WDTCR_IB_RESET);
-> 
-> in my stable tree since 2015.
+> > Many existing userspace drivers are unsafe:
+> >   - out of tree DPDK igb_uio is unsafe.
 
-Do you have plans to update that kernel to mainline ?
-If yes, a patch to make the driver (and I guess everything else that broke
-since 3.12) work would be helpful.
+> Why is it out of tree?
 
-Thanks,
-Guenter
+Agree, it really shouldn't be. The original developers hoped that
+VFIO and VFIO-noiommu would replace it. But since DPDK has to run
+on ancient distro's and other non VFIO hardware it still lives.
+
+Because it is not suitable for merging for many reasons.
+Mostly because it allows MSI and other don't want that.
+ 
+> 
+> 
+> >   - VFIO with noiommu is unsafe.  
+> 
+> Which taints the kernel and requires raw I/O user privs.
+> 
+> >   - hv_uio_generic is unsafe.  
+> 
+> Gosh, it's pretty coy about this, no kernel tainting, no user
+> capability tests, no scary dmesg or Kconfig warnings.  Do users know
+> it's unsafe?
+
+It should taint in same way as VFIO with noiommu.
+Yes it is documented as unsafe (but not in kernel source).
+It really has same unsafeness as uio_pci_generic, and there is not warnings
+around that.
+
+> 
+> > This new driver is not any better or worse. This sounds like a complete
+> > repeat of the discussion that occurred before introducing VFIO noiommu mode.
+> > 
+> > Shouldn't vmbus vfio taint the kernel in the same way as vfio noiommu does?  
+> 
+> Yes, the no-iommu interaction happens at the vfio-core level.  I can't
+> speak for any of the uio interfaces you mention, but I know that
+> uio_pci_generic is explicitly intended for non-DMA use cases and in
+> fact the efforts to enable MSI/X support in that driver and the
+> objections raised for breaking that usage model by the maintainer, is
+> what triggered no-iommu support for vfio.  IIRC, the rationale was
+> largely for code reuse both at the kernel and userspace driver level,
+> while imposing a minimal burden in vfio-core for this dummy iommu
+> driver.  vfio explicitly does not provide a DMA mapping solution for
+> no-iommu use cases because I'm not willing to maintain any more lines
+> of code to support this usage model.  The tainting imposed by this model
+> and incomplete API was intended to be a big warning to discourage its
+> use and as features like vIOMMU become more prevalent and bare metal
+> platforms without physical IOMMUs hopefully become less prevalent,
+> maybe no-iommu could be phased out or removed.
+
+Doing vIOMMU at scale with a non-Linux host, take a a long time.
+Tainting doesn't make it happen any sooner. It just makes users
+live harder. Sorry blaming the user and giving a bad experience doesn't help anyone.
+
+> You might consider this a re-hashing of those previous discussions, but
+> to me it seems like taking advantage of and promoting an interface that
+> should have plenty of warning signs that this is not a safe way to use
+> the device from userspace.  Without some way to take advantage of the
+> code in a safe way, this just seems to be normalizing an unsupportable
+> usage model.  Thanks,
+
+
+The use case for all this stuff has been dedicated infrastructure.
+It would be good if security was more baked in but it isn't.
+Most users cover it over by either being dedicated applicances
+or use LSM to protect UIO.
