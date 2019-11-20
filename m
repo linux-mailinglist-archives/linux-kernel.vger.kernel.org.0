@@ -2,121 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 323B21042AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E099C1042A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 18:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfKTR5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 12:57:37 -0500
-Received: from foss.arm.com ([217.140.110.172]:44010 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbfKTR5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 12:57:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 386251FB;
-        Wed, 20 Nov 2019 09:57:35 -0800 (PST)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DE26D3F6C4;
-        Wed, 20 Nov 2019 09:57:33 -0800 (PST)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@kernel.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, patrick.bellasi@matbug.net,
-        qperret@google.com, qais.yousef@arm.com, morten.rasmussen@arm.com
-Subject: [PATCH 3/3] sched/fair: Consider uclamp for "task fits capacity" checks
-Date:   Wed, 20 Nov 2019 17:55:33 +0000
-Message-Id: <20191120175533.4672-4-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191120175533.4672-1-valentin.schneider@arm.com>
-References: <20191120175533.4672-1-valentin.schneider@arm.com>
+        id S1727854AbfKTR5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 12:57:20 -0500
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:37982 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfKTR5U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 12:57:20 -0500
+IronPort-SDR: 8cj0s1h4R302fAKjpD1OYqkMDvFAyQP8R56v/HlxzJhPuU8HiOPXMocl3sTUOr5N7tRe2WSYhJ
+ Kf1vDflPuU4YXBnhGKzTpdfeiV6ttViRPGp9QIQdw6h0FD5sQlZYJCu2NvwBE37zNT4/9JU2iu
+ Dgv5K1U2IA/2LZKDnOI4GyLVDhpLqQiX1+QWaogXSJmTDcyTsIvbJlCHFAW5azfEQCCjsr1vEz
+ v5rFVpZJXsPi3NXrrbRI84mVwfRXk+78kKTTm4qmAr8Zb9znzCHu13sY8Tm71ZVDhO2XlW1qGh
+ A3Q=
+X-IronPort-AV: E=Sophos;i="5.69,222,1571731200"; 
+   d="scan'208";a="43299666"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa2.mentor.iphmx.com with ESMTP; 20 Nov 2019 09:57:19 -0800
+IronPort-SDR: U4ezTC14YwiNdT+RwZz7ugpGkGTNSs7V9ZU80RveK2zNvt5qQ67NJjXD1KEXK8NW7GDBd33Fxx
+ mgV1RvycdnXc2mtPA8bS/wIGhW7Npn2p3DUaFkstaev0YfX75cjVQuncsTZ+H7Yhju3t9xe/PQ
+ SvH/P3+ln8EDX9aJoFzFnDBdCa3Jr5oEFcVAGP9pr04sGZQmRMpY9MermLkt6ZiIUegX/My5OQ
+ ieXitmKSWQoAEEKPuSGUoZZFO0CztTKDMPGcsEvcKKwN40Jv9yQDVDxEhV3ffsYCE48I+xu56a
+ JFc=
+From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
+To:     'Takashi Iwai' <tiwai@suse.de>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Timo Wischer <twischer@de.adit-jv.com>
+References: <20191120115856.4125-1-andrew_gabbasov@mentor.com>  <20191120115856.4125-2-andrew_gabbasov@mentor.com>      <20191120115856.4125-3-andrew_gabbasov@mentor.com>      <20191120115856.4125-4-andrew_gabbasov@mentor.com>      <20191120115856.4125-5-andrew_gabbasov@mentor.com>      <20191120115856.4125-6-andrew_gabbasov@mentor.com>      <20191120115856.4125-7-andrew_gabbasov@mentor.com>      <s5hh82y8vn5.wl-tiwai@suse.de>  <000001d59fb6$4ca36aa0$e5ea3fe0$@mentor.com>    <s5h5zje8sxl.wl-tiwai@suse.de>  <000101d59fb8$a288a280$e799e780$@mentor.com> <s5h36ei8rph.wl-tiwai@suse.de>
+In-Reply-To: <s5h36ei8rph.wl-tiwai@suse.de>
+Subject: RE: [PATCH v4 6/7] ALSA: aloop: Support selection of snd_timer instead of jiffies
+Date:   Wed, 20 Nov 2019 20:56:31 +0300
+Organization: Mentor Graphics Corporation
+Message-ID: <000201d59fcb$d895a180$89c0e480$@mentor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQHVn7tmhCAU3Kkkmk2hDkJrcybUyqeUV53A
+Content-Language: en-us
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-task_fits_capacity() drives CPU selection at wakeup time, and is also used
-to detect misfit tasks. Right now it does so by comparing task_util_est()
-with a CPU's capacity, but doesn't take into account uclamp restrictions.
+Hello Takashi,
 
-There's a few interesting uses that can come out of doing this. For
-instance, a low uclamp.max value could prevent certain tasks from being
-flagged as misfit tasks, so they could merrily remain on low-capacity CPUs.
-Similarly, a high uclamp.min value would steer tasks towards high capacity
-CPU at wakeup (and, should that fail, later steered via misfit balancing),
-so such "boosted" tasks would favor CPUs of higher capacity.
+> -----Original Message-----
+> From: Takashi Iwai [mailto:tiwai@suse.de]
+> Sent: Wednesday, November 20, 2019 6:59 PM
+> To: Gabbasov, Andrew
+> Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org; Jaroslav
+> Kysela; Takashi Iwai; Timo Wischer
+> Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of snd_timer
+> instead of jiffies
+> 
+> On Wed, 20 Nov 2019 16:39:00 +0100,
+> Andrew Gabbasov wrote:
+> >
+> > Hello Takashi,
+> >
+> > > -----Original Message-----
+> > > From: Takashi Iwai [mailto:tiwai@suse.de]
+> > > Sent: Wednesday, November 20, 2019 6:32 PM
+> > > To: Gabbasov, Andrew
+> > > Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org;
+Jaroslav
+> > > Kysela; Takashi Iwai; Timo Wischer
+> > > Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of
+snd_timer
+> > > instead of jiffies
+> > >
+> > > On Wed, 20 Nov 2019 16:21:36 +0100,
+> > > Andrew Gabbasov wrote:
+> > > >
+> > > > Hello Takashi,
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Takashi Iwai [mailto:tiwai@suse.de]
+> > > > > Sent: Wednesday, November 20, 2019 5:34 PM
+> > > > > To: Gabbasov, Andrew
+> > > > > Cc: alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org;
+> > Jaroslav
+> > > > > Kysela; Takashi Iwai; Timo Wischer
+> > > > > Subject: Re: [PATCH v4 6/7] ALSA: aloop: Support selection of
+> > snd_timer
+> > > > > instead of jiffies
+> > > > >
+> > > > > On Wed, 20 Nov 2019 12:58:55 +0100,
+> > > > > Andrew Gabbasov wrote:
+> > > > > > +/* call in loopback->cable_lock */
+> > > > > > +static int loopback_snd_timer_open(struct loopback_pcm *dpcm)
+> > > > > > +{
+> > > > > > +	int err = 0;
+> > > > > > +	struct snd_timer_id tid = {
+> > > > > > +		.dev_class = SNDRV_TIMER_CLASS_PCM,
+> > > > > > +		.dev_sclass = SNDRV_TIMER_SCLASS_APPLICATION,
+> > > > > > +	};
+> > > > > > +	struct snd_timer_instance *timeri;
+> > > > > > +	struct loopback_cable *cable = dpcm->cable;
+> > > > > > +
+> > > > > > +	spin_lock_irq(&cable->lock);
+> > > > > > +
+> > > > > > +	/* check if timer was already opened. It is only opened once
+> > > > > > +	 * per playback and capture subdevice (aka cable).
+> > > > > > +	 */
+> > > > > > +	if (cable->snd_timer.instance)
+> > > > > > +		goto unlock;
+> > > > > > +
+> > > > > > +	err = loopback_parse_timer_id(dpcm->loopback->timer_source,
+> > > &tid);
+> > > > > > +	if (err < 0) {
+> > > > > > +		pcm_err(dpcm->substream->pcm,
+> > > > > > +			"Parsing timer source \'%s\' failed with
+> > %d",
+> > > > > > +			dpcm->loopback->timer_source, err);
+> > > > > > +		goto unlock;
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	cable->snd_timer.stream = dpcm->substream->stream;
+> > > > > > +	cable->snd_timer.id = tid;
+> > > > > > +
+> > > > > > +	timeri = snd_timer_instance_new(dpcm->loopback->card->id);
+> > > > > > +	if (!timeri) {
+> > > > > > +		err = -ENOMEM;
+> > > > > > +		goto unlock;
+> > > > > > +	}
+> > > > > > +	/* The callback has to be called from another tasklet. If
+> > > > > > +	 * SNDRV_TIMER_IFLG_FAST is specified it will be called from
+> > > the
+> > > > > > +	 * snd_pcm_period_elapsed() call of the selected sound card.
+> > > > > > +	 * snd_pcm_period_elapsed() helds
+> > > snd_pcm_stream_lock_irqsave().
+> > > > > > +	 * Due to our callback loopback_snd_timer_function() also
+> > > calls
+> > > > > > +	 * snd_pcm_period_elapsed() which calls
+> > > > > snd_pcm_stream_lock_irqsave().
+> > > > > > +	 * This would end up in a dead lock.
+> > > > > > +	 */
+> > > > > > +	timeri->flags |= SNDRV_TIMER_IFLG_AUTO;
+> > > > > > +	timeri->callback = loopback_snd_timer_function;
+> > > > > > +	timeri->callback_data = (void *)cable;
+> > > > > > +	timeri->ccallback = loopback_snd_timer_event;
+> > > > > > +
+> > > > > > +	/* snd_timer_close() and snd_timer_open() should not be
+> > called
+> > > with
+> > > > > > +	 * locked spinlock because both functions can block on a
+> > > mutex. The
+> > > > > > +	 * mutex loopback->cable_lock is kept locked. Therefore
+> > > > > snd_timer_open()
+> > > > > > +	 * cannot be called a second time by the other device of the
+> > > same
+> > > > > cable.
+> > > > > > +	 * Therefore the following issue cannot happen:
+> > > > > > +	 * [proc1] Call loopback_timer_open() ->
+> > > > > > +	 *	   Unlock cable->lock for snd_timer_close/open()
+> > call
+> > > > > > +	 * [proc2] Call loopback_timer_open() -> snd_timer_open(),
+> > > > > > +	 *	   snd_timer_start()
+> > > > > > +	 * [proc1] Call snd_timer_open() and overwrite running timer
+> > > > > > +	 *	   instance
+> > > > > > +	 */
+> > > > > > +	spin_unlock_irq(&cable->lock);
+> > > > > > +	err = snd_timer_open(timeri, &cable->snd_timer.id, current-
+> > > >pid);
+> > > > > > +	if (err < 0) {
+> > > > > > +		pcm_err(dpcm->substream->pcm,
+> > > > > > +			"snd_timer_open (%d,%d,%d) failed with %d",
+> > > > > > +			cable->snd_timer.id.card,
+> > > > > > +			cable->snd_timer.id.device,
+> > > > > > +			cable->snd_timer.id.subdevice,
+> > > > > > +			err);
+> > > > > > +		snd_timer_instance_free(timeri);
+> > > > > > +		return err;
+> > > > > > +	}
+> > > > > > +	spin_lock_irq(&cable->lock);
+> > > > > > +
+> > > > > > +	cable->snd_timer.instance = timeri;
+> > > > > > +
+> > > > > > +	/* initialise a tasklet used for draining */
+> > > > > > +	tasklet_init(&cable->snd_timer.event_tasklet,
+> > > > > > +		     loopback_snd_timer_tasklet, (unsigned
+> > > long)timeri);
+> > > > >
+> > > > > This has to be set before snd_timer_open().  The callback might be
+> > > > > called immediately after snd_timer_open().
+> > > >
+> > > > This tasklet is used/scheduled only in ccallback (not regular tick
+> > > > callback),
+> > > > and only for SNDRV_TIMER_EVENT_MSTOP event. Can this event really
+> happen
+> > > > immediately after snd_timer_open()?
+> > >
+> > > Why not?  The master timer can be stopped at any time, even between
+> > > these two lines.
+> > >
+> > > Beware that there are fuzzer programs that can trigger such racy
+> > > things, and you're adding the code to the target that is actively
+> > > slapped by them :)
+> >
+> > OK, got it.
+> > I'll move this initialization to before snd_timer_open() in the next
+> > update together with the fixes for the other issues you will find
+> > in this version.
+> 
+> I have no other issues, so you can just resubmit only that patch,
+> too.
 
-Introduce uclamp_task_util() and make task_fits_capacity() use it. To keep
-things consistent between overutilized wakeup CPU selection (wake_cap())
-and !overutilized wakeup CPU selection (find_energy_efficient_cpu()),
-add a task_fits_capacity() check to find_energy_efficient_cpu().
+I'm not sure how to correctly format resubmitting of a single patch from
+a patch set, so I'm submitting the next version v5 of the whole patch set:
+https://mailman.alsa-project.org/pipermail/alsa-devel/2019-November/158939.h
+tml
 
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c  | 11 ++++++++++-
- kernel/sched/sched.h | 13 +++++++++++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
+Thanks!
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 08a233e97a01..446409252b23 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3822,7 +3822,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- 
- static inline int task_fits_capacity(struct task_struct *p, long capacity)
- {
--	return fits_capacity(task_util_est(p), capacity);
-+	return fits_capacity(uclamp_task_util(p, task_util_est(p)), capacity);
- }
- 
- static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
-@@ -6274,6 +6274,15 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 			if (!fits_capacity(util, cpu_cap))
- 				continue;
- 
-+			/*
-+			 * Skip CPUs that don't satisfy uclamp requests. Note
-+			 * that the above already ensures the CPU has enough
-+			 * spare capacity for the task; this is only really for
-+			 * uclamp restrictions.
-+			 */
-+			if (!task_fits_capacity(p, capacity_orig_of(cpu)))
-+				continue;
-+
- 			/* Always use prev_cpu as a candidate. */
- 			if (cpu == prev_cpu) {
- 				prev_delta = compute_energy(p, prev_cpu, pd);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 900328c4eeef..74bf08ec1a01 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2329,6 +2329,14 @@ static inline unsigned long uclamp_rq_util(struct rq *rq, unsigned long util)
- {
- 	return uclamp_rq_util_with(rq, util, NULL);
- }
-+
-+static inline
-+unsigned long uclamp_task_util(struct task_struct *p, unsigned long util)
-+{
-+	return clamp(util,
-+		     (unsigned long)uclamp_eff_value(p, UCLAMP_MIN),
-+		     (unsigned long)uclamp_eff_value(p, UCLAMP_MAX));
-+}
- #else /* CONFIG_UCLAMP_TASK */
- static inline unsigned long uclamp_rq_util_with(struct rq *rq, unsigned long util,
- 						struct task_struct *p)
-@@ -2339,6 +2347,11 @@ static inline unsigned long uclamp_rq_util(struct rq *rq, unsigned long util)
- {
- 	return util;
- }
-+static inline
-+unsigned long uclamp_task_util(struct task_struct *p, unsigned long util)
-+{
-+	return util;
-+}
- #endif /* CONFIG_UCLAMP_TASK */
- 
- #ifdef arch_scale_freq_capacity
--- 
-2.22.0
+Best regards,
+Andrew
 
