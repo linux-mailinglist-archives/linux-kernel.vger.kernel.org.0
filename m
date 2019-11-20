@@ -2,115 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFBD5103543
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:37:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1534F10354A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 08:38:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfKTHhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 02:37:50 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:61632 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfKTHht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 02:37:49 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-c1-5dd4ed4b11e5
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 8A.E2.08102.B4DE4DD5; Wed, 20 Nov 2019 08:37:47 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Wed, 20 Nov 2019 08:37:43 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "info@metux.net" <info@metux.net>
-CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 0/5] leds: Add DT node finding and parsing to core
-Thread-Topic: [RFC PATCH 0/5] leds: Add DT node finding and parsing to core
-Thread-Index: AQHVjlbfnKGQ2A80TEuw50r1eox3kqeQtb4AgAAVbACAAi0GAIAAxR6A
-Date:   Wed, 20 Nov 2019 07:37:42 +0000
-Message-ID: <e29bb49931542c55c867f52c82f11421454c0f64.camel@fi.rohmeurope.com>
-References: <cover.1572351774.git.matti.vaittinen@fi.rohmeurope.com>
-         <ed000cda-3138-3172-1b4c-586b5bfd8d72@metux.net>
-         <946f091e79242b9e71d5ce8ad12c899feefa22cd.camel@fi.rohmeurope.com>
-         <56d3a81e-f675-fd5e-06a7-8039bf02468e@metux.net>
-In-Reply-To: <56d3a81e-f675-fd5e-06a7-8039bf02468e@metux.net>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F49E42CE7B9CC8489F29364710CCF8AA@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1727929AbfKTHi5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 20 Nov 2019 02:38:57 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:19371 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727317AbfKTHi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 02:38:57 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47HvhF3JJsz9txdb;
+        Wed, 20 Nov 2019 08:38:53 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 2Je4SgxbiTWQ; Wed, 20 Nov 2019 08:38:53 +0100 (CET)
+Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47HvhF1c8fz9txdY;
+        Wed, 20 Nov 2019 08:38:53 +0100 (CET)
+Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
+        id C7CEAC70; Wed, 20 Nov 2019 08:38:55 +0100 (CET)
+Received: from 37-170-47-250.coucou-networks.fr
+ (37-170-47-250.coucou-networks.fr [37.170.47.250]) by messagerie.si.c-s.fr
+ (Horde Framework) with HTTP; Wed, 20 Nov 2019 08:38:55 +0100
+Date:   Wed, 20 Nov 2019 08:38:55 +0100
+Message-ID: <20191120083855.Horde.tWflxXv8u6A3uBxaMJth5g7@messagerie.si.c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, dja@axtens.net, npiggin@gmail.com,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v3 15/15] powerpc/32s: Activate CONFIG_VMAP_STACK
+References: <cover.1568106758.git.christophe.leroy@c-s.fr>
+ <a99bdfb64e287b16b8cd3f7ec1abfdfb50c7cc64.1568106758.git.christophe.leroy@c-s.fr>
+ <875zjgcpyx.fsf@mpe.ellerman.id.au>
+In-Reply-To: <875zjgcpyx.fsf@mpe.ellerman.id.au>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0gUURTGuTOzu6M5dV21ve1W0ERoRZkYNYZKD6gpQYIgSFIbc3Il3bXZ
-        NcpeZvaHWqEZZYtW+AAx3XJ9r5oi9rbER9lSBkspaqVioaahzTil/nUP5zvf+X1wD4mr85Ra
-        MtZg5gUDF0crXYnm4unyTSE/usO3OLM8mfutbxVMxutKBeO4XI8xH6seE0yXPVfJVH23Aqao
-        pwNjcoteEEzvq6dK5mpjq2qnK1t6rxSwdZZeFWsrSVOymaM/lOzzDzUYW/xwQsX+tK0+qApb
-        EhjFmU8fio0x+AYfW6K/njNIJAzozlRkdGHJ4JouHbiQCG5FKdYBPB24kmr4DqDK2+9VkqCG
-        LwDKyo1JBySphIEo3THX9oQRKLliUiHN4zAHR8N37HOCBzyA0npv4PJQCLJPVf+r96LqpjJM
-        qgm4DjVNdgGppmAo+jxixWTwGECFU4NKSXCBQaiwVjYDuAqlJQ/PmXGoQbb+CYWcGqLChnZc
-        rr3Q4JeZf30aNf52ElJoHK5Hj+y+snUncnTKOXG4Bt3KcKrkDO7o5d2vRCZYbllEsCy4LYvc
-        lkVuyyL3A6AoASiei42L4cy832aBT9wsGPXx4nPcGG8D8nf/qgWzLftbAEaCFrCCxGgv6kh3
-        d7h6aZQx+qyeM+kjhcQ43tQCEInTnlRDj6hR0dzZJF4w/pd0JEFrKG9nVrgaSqyTPJ/AC//V
-        lSRJI+rwgGh0F/gY/syJ2DjzgoyRLtJyV62niTdE8wKXaNZHSvcRaRIPRJLcRK7jm8Q1JXDx
-        Yle2vgIbyczBvHycbM0rysfVhMFo4LUaKm2ZOAqlUX2iYR40BDQkoD2ofdIiN/Hm5/cMiQhM
-        RJSXdUoIM7cgaZMB6+icprfVeFdRbwpO++cGdO5p9x+3tadW3fSqZIJKL3XvZp/UB3zyGfO5
-        4pw40HdUXXD4uTblwqn+P03WZ9Pjs9l29zLdVPPIxrCtoTN+X3a0HQpJjQg535Y1mj08qduj
-        2W4s9nv/kC6uyc4P7Dty/FyS79Lgjpy6fd7WtSVTF3dF0YRJz/ltwAUT9xe5uuxPsAMAAA==
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBUdWUsIDIwMTktMTEtMTkgYXQgMjA6NTIgKzAxMDAsIEVucmljbyBXZWlnZWx0LCBtZXR1
-eCBJVCBjb25zdWx0DQp3cm90ZToNCj4gT24gMTguMTEuMTkgMTE6MzgsIFZhaXR0aW5lbiwgTWF0
-dGkgd3JvdGU6DQo+IA0KPiBIaSwNCj4gDQo+ID4gPiBhKSBleGlzdGluZyBEVCdzIChpbiB0aGUg
-ZmllbGQpIGJlY29tZSBpbmNvbXBhdGlibGUgd2l0aCBuZXdlcg0KPiA+ID4gICAga2VybmVsIHZl
-cnNpb25zDQo+ID4gDQo+ID4gVGhpcyB3YXMgbXkgbWFpbiBjb25jZXJuLiBUaGlzIG9mIGNvdXJz
-ZSB3b3VsZCBub3QgbWVhbiB0aGF0IHdlDQo+ID4gY291bGQNCj4gPiBub3QgdGFrZSB0aGlzIGFw
-cHJvYWNoIGZvciBuZXcgTEVEIGNvbnRyb2xsZXIgZHJpdmVycyAtIGJ1dCB0aGF0DQo+ID4gd291
-bGQNCj4gPiAocHJvYmFibHkpIGxlYWQgdG8gZHVhbCBsZWQgcmVnaXN0cmF0aW9uIGludGVyZmFj
-ZSANCj4gDQo+IE1heWJlIGp1c3QgYSBmbGFnIGZvciB0aGF0ID8gUGVyaGFwcyB0aGUgZHJpdmVy
-IGNvdWxkIGFsc28gc3BlY2lmeSBhDQo+IGxpc3Qgb2Ygbm9kZSBuYW1lcyBmb3IgdGhlIExFRHMs
-IHNvIGxlZC1jb3JlIGNhbiBkbyB0aGUgbG9va3VwIGZvcg0KPiB0aGVtLg0KDQpUaGlzIGlzIGFj
-dHVhbGx5IGNsb3NlIHRvIHdoYXQgSSBzdWdnZXN0ZWQgaW4gbXkgb3RoZXIgZW1haWwgdG8gSmFj
-ZWsuDQoNCj4gPiA+IGIpIGV4aXN0aW5nIHVzZXJsYW5kcyB0aGF0IHJlbHkgb24gc3BlaWNpZmlj
-IExFRCBuYW1lcyBiZWNvbWUNCj4gPiA+ICAgIGluY29tYXRpYmxlIHdpdGggbmV3ZXIga2VybmVs
-IHZlcnNpb25zLg0KPiA+IA0KPiA+IEkgZGlkbid0IGV2ZW4gdGhpbmsgdGhpcyBmYXIsIGJ1dCB5
-ZXMsIEkgc2VlLi4uIExFRCBub2RlIG5hbWUgbWlnaHQNCj4gPiBiZQ0KPiA+IHJlZmxlY3RlZCBp
-biB1c2VyLXNwYWNlIExFRCBuYW1lLiBJIHdvbid0IHN0YXJ0IGFyZ3VpbmcgaWYgdGhpcyBpcw0K
-PiA+IHNhbmUNCj4gPiBvciBub3QgLSB0aGlzIGlzIHdoYXQgd2Ugc2VlbSB0byBiZSBsaXZpbmcg
-d2l0aCB0b2RheSA6KQ0KPiANCj4gRXNwZWNpYWxseSBpbiBlbWJlZGRlZCB3b3JsZCwgdGhpcyBj
-YW4gcmVhbGx5IG1ha2Ugc2Vuc2U6DQo+IGFwcGxpY2F0aW9ucw0KPiBqdXN0IHVzZSBhIGRlZmlu
-ZWQgTEVEIG5hbWUsIG5vIG1hdHRlciB3aGljaCBib2FyZCBpdCdzIHJ1bm5pbmcgb24uDQo+IENv
-bnZlbnRpb24gb3ZlciBjb25maWd1cmF0aW9uLg0KDQpEZWZpbml0ZWx5LiBJIGFtIGFsbCBmb3Ig
-Z2VuZXJhdGluZyB0aGUgbmFtZSBiYXNlZCBvbiBMRUQgX2Z1bmN0aW9uXyAtDQpubyBtYXR0ZXIg
-d2hhdCB0aGUgYm9hcmQgaXMuIEkgbGlrZSB0aGUgTEVEIG5hbWUgZ2VuZXJhdGlvbiBiYXNlIG9u
-DQonZnVuY3Rpb24nIERUIHByb3BlcnR5LiBCdXQgbm9kZSBuYW1lcyB0ZW5kIHRvIGJlIHNvbWV3
-aGF0IGdlbmVyaWMgLSBvcg0KYm9hcmQgc3BlY2lmaWMgKHRvIGF2b2lkIGNvbGxpc2lvbnMpLiBT
-byB1c2luZyBub2RlIG5hbWUgZGlyZWN0bHkgaXMNCm5vdCAoYXMgZmFyIGFzIG15IHVuZGVyc3Rh
-bmRpbmcgZ29lcyAtIHdoaWNoIGlzIGxpbWl0ZWQgb24gdGhpcyB0b3BpYykNCm9wdGltYWwgZm9y
-IGd1YXJhbnRlZWluZyBjb2hlcmVudCB2aWV3IChhY3Jvc3MgdGhlIGJvYXJkcykgZm9yIHVzZXIt
-DQpzcGFjZS4gV293LCB3aGF0IGEgbmljZSBzZW50ZW5jZSBmb3Igbm9uIG5hdGl2ZSBFbmdsaXNo
-IHNwZWFrZXIgbGlrZSBtZQ0KeEQNCg0KPiBQZXJzb25hbGx5LCBJIGFsc28gbGlrZSB0byB1c2Ug
-TEVEIHN1YnN5c3RlbSBhcyBmcm9udGVuZCBmb3IgdGhpbmdzDQo+IGxpa2UNCj4gZ3Bpby1kcml2
-ZW4gcmVsYWlzLCBldGMsIGFuZCBhc3NpZ24gc2VtYW50aWNhbGx5IGZpdHRpbmcgbmFtZXMNCj4g
-aW5zdGVhZA0KPiBvZiAidGVjaG5pY2FsIiBvbmVzLA0KDQpUaGlzIGlzIG91dHNpZGUgb2YgbXkg
-ZXhwZXJpZW5jZSBzbyBJIGp1c3QgYmVsaWV2ZSB3aGF0IHlvdSBzYXkgOikNCg0KPiANCj4gPiBJ
-IGRpZG4ndCBpbnZlc3QgdG9vIG11Y2ggb2YgdGltZSBvbiB0aGlzIHlldCAtIGJ1dCBhdCBmaXJz
-dCBnbGltcHNlDQo+ID4gaXQNCj4gPiBzZWVtZWQgdGhhdCBhdCBsZWFzdCBzb21lIG9mIHRoZSBk
-cml2ZXJzIGRpZCB1c2UgcmVnIC0gcHJvcGVydHkNCj4gPiB3aXRoDQo+ID4gZml4ZWQgdmFsdWUg
-dG8gZG8gdGhlIG1hdGNoaW5nLiBUaG9zZSBjb3VsZCBzZXQgdGhlIHByb3BlcnR5IG5hbWUNCj4g
-PiB0bw0KPiA+ICdyZWcnIGFuZCB2YWx1ZSB0byAnWCcgYW5kIGxlYXZlIHRoZSBEVCBub2RlIGxv
-b2t1cCBhbmQgY29tbW9uDQo+ID4gcHJvcGVydHkNCj4gPiBwYXJzaW5nIHRvIHRoZSBMRUQgY29y
-ZS4gSWYgbXkgcGF0Y2ggd29uJ3QgZ2V0IHRvbyBiaWcgb2JqZWN0aW9uDQo+ID4gKGFuZA0KPiA+
-IGlmIG5vIGZhdGFsIGZsYXdzIGFyZSBmb3VuZCBmcm9tIHRoZSBpZGVhKSAtIHRoZW4gSSBtaWdo
-dCB0cnkgYW5kDQo+ID4gZmluZA0KPiA+IHRoZSB0aW1lIHRvIGRvIHNvbWUgZm9sbG93LXVwIHBh
-dGNoZXMgc2ltcGxpZnlpbmcgZXhpc3RpbmcgTEVEDQo+ID4gZHJpdmVycy4uLg0KPiANCj4gU291
-bmRzIGdvb2QgOikNCj4gDQo+IA0KPiAtLW10eA0KPiANCg0K
+Michael Ellerman <mpe@ellerman.id.au> a écrit :
+
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> A few changes to retrieve DAR and DSISR from struct regs
+>> instead of retrieving them directly, as they may have
+>> changed due to a TLB miss.
+>>
+>> Also modifies hash_page() and friends to work with virtual
+>> data addresses instead of physical ones.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>  arch/powerpc/kernel/entry_32.S         |  4 +++
+>>  arch/powerpc/kernel/head_32.S          | 19 +++++++++++---
+>>  arch/powerpc/kernel/head_32.h          |  4 ++-
+>>  arch/powerpc/mm/book3s32/hash_low.S    | 46  
+>> +++++++++++++++++++++-------------
+>>  arch/powerpc/mm/book3s32/mmu.c         |  9 +++++--
+>>  arch/powerpc/platforms/Kconfig.cputype |  2 ++
+>>  6 files changed, 61 insertions(+), 23 deletions(-)
+>
+> This is faulting with qemu mac99 model:
+>
+>   Key type id_resolver registered
+>   Key type id_legacy registered
+>   BUG: Unable to handle kernel data access on read at 0x2f0db684
+>   Faulting instruction address: 0x00004130
+>   Oops: Kernel access of bad area, sig: 11 [#1]
+>   BE PAGE_SIZE=4K MMU=Hash PowerMac
+>   Modules linked in:
+>   CPU: 0 PID: 65 Comm: modprobe Not tainted 5.4.0-rc2-gcc49+ #63
+>   NIP:  00004130 LR: 000008c8 CTR: b7eb86e0
+>   REGS: f106de80 TRAP: 0300   Not tainted  (5.4.0-rc2-gcc49+)
+>   MSR:  00003012 <FP,ME,DR,RI>  CR: 4106df38  XER: 20000000
+>   DAR: 2f0db684 DSISR: 40000000
+>   GPR00: b7ec5d64 f106df38 00000000 bf988a70 00000000 2f0db540  
+> b7ec3620 bf988d38
+>   GPR08: 10000880 0000d032 72656773 f106df38 b7ed10ec 00000000  
+> b7ed3d38 b7ee8900
+>   GPR16: bf988d10 00000001 00000000 bf988d10 b7ec3620 bf988d50  
+> b7ee76ec b7ee7320
+>   GPR24: 10000878 00000000 b7ee8900 00000000 10029f00 10000879  
+> b7ee7ff4 bf988d30
+>   NIP [00004130] 0x4130
+>   LR [000008c8] 0x8c8
+>   Call Trace:
+>   [f106df38] [c0016224] ret_from_syscall+0x0/0x34 (unreliable)
+>   --- interrupt: c01 at 0xb7ed0f50
+>       LR = 0xb7ec5d64
+>   Instruction dump:
+>   db8300e0 XXXXXXXX XXXXXXXX XXXXXXXX fc00048e XXXXXXXX XXXXXXXX XXXXXXXX
+>   60a52000 XXXXXXXX XXXXXXXX XXXXXXXX 80850144 XXXXXXXX XXXXXXXX XXXXXXXX
+>   ---[ end trace 265da51c6d8b86c5 ]---
+>
+>
+> I think I'll have to drop this series for now.
+
+What about taking the series up to patch 13 ?
+
+I think the problem is related to hash handling as it is working well  
+on the 8xx (and on the 83xx which is a nohash book3s). I'll look at  
+book3s hash next week.
+
+Christophe
+
+
+
+
