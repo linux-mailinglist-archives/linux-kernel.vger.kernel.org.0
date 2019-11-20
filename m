@@ -2,256 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79CE41044FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 21:25:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC40104503
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 21:26:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbfKTUZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 15:25:18 -0500
-Received: from mga18.intel.com ([134.134.136.126]:7028 "EHLO mga18.intel.com"
+        id S1726500AbfKTU0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 15:26:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfKTUZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 15:25:18 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 12:25:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,223,1571727600"; 
-   d="scan'208";a="381490714"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga005.jf.intel.com with ESMTP; 20 Nov 2019 12:25:16 -0800
-Date:   Wed, 20 Nov 2019 12:25:16 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v4 2/4] x86/traps: Print non-canonical address on #GP
-Message-ID: <20191120202516.GD32572@linux.intel.com>
-References: <20191120170208.211997-1-jannh@google.com>
- <20191120170208.211997-2-jannh@google.com>
+        id S1725787AbfKTU0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 15:26:37 -0500
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3EAE20895;
+        Wed, 20 Nov 2019 20:26:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574281595;
+        bh=AEVIorR6/VAlI4BJXRw6tPbken7vkQ0aTtyblIbcMdo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YsO2Djb3qDyV5DUI+gOfSBEoyXrLr4bGjbyQsw4ZyMIjgrbsGPYPzv+oYJneg+R/Q
+         lBr2gXtZLDWn8l/hjcPNRxT8TShMH2IIMvdXNP3uImH3y+gg4xiIQvklZTexnD3O2v
+         ZO3RzynVtL7N12dcNqyMglcvuVYYyjb/NP0T1OEA=
+Received: by mail-qt1-f171.google.com with SMTP id o49so983011qta.7;
+        Wed, 20 Nov 2019 12:26:35 -0800 (PST)
+X-Gm-Message-State: APjAAAV/hE7nnTDjwEIFj4q2dYeif7r2NRjpmnzSWCkyFXbXx22Kq66w
+        3E8B32HpluVdELdL0TBEnyngA0qXuaIUCETGsQ==
+X-Google-Smtp-Source: APXvYqx7fnGdtnkeuRvwWhsOVISMRdUYUIw3lX6FCbHTqaZSFv6tvBQHF5T6swA1/jBii4Jde8nmZdXen76KVGu+rkc=
+X-Received: by 2002:ac8:73ce:: with SMTP id v14mr4714242qtp.136.1574281594774;
+ Wed, 20 Nov 2019 12:26:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120170208.211997-2-jannh@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20191118101420.23610-1-arnaud.pouliquen@st.com>
+In-Reply-To: <20191118101420.23610-1-arnaud.pouliquen@st.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 20 Nov 2019 14:26:23 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+42wx1AJO=jXXBhmaKMkBq-RtoF+kxVjS2z9fSwhcaEQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+42wx1AJO=jXXBhmaKMkBq-RtoF+kxVjS2z9fSwhcaEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: mailbox: convert stm32-ipcc to json-schema
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 06:02:06PM +0100, Jann Horn wrote:
-> @@ -509,11 +511,50 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
->  	do_trap(X86_TRAP_BR, SIGSEGV, "bounds", regs, error_code, 0, NULL);
->  }
->  
-> +/*
-> + * On 64-bit, if an uncaught #GP occurs while dereferencing a non-canonical
-> + * address, return that address.
+On Mon, Nov 18, 2019 at 4:15 AM Arnaud Pouliquen
+<arnaud.pouliquen@st.com> wrote:
+>
+> Convert the STM32 IPCC bindings to DT schema format using
+> json-schema
+>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+>  .../bindings/mailbox/st,stm32-ipcc.yaml       | 91 +++++++++++++++++++
+>  .../bindings/mailbox/stm32-ipcc.txt           | 47 ----------
+>  2 files changed, 91 insertions(+), 47 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
 
-Stale comment now that it's decoding canonical addresses too.
+Thanks for helping me find 2 meta-schema errors. :) Please update
+dt-schema and re-run 'make dt_binding_check'.
 
-> + */
-> +static bool get_kernel_gp_address(struct pt_regs *regs, unsigned long *addr,
-> +					   bool *non_canonical)
-
-Alignment of non_canonical is funky.
-
-> +{
-> +#ifdef CONFIG_X86_64
-> +	u8 insn_buf[MAX_INSN_SIZE];
-> +	struct insn insn;
+> diff --git a/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml
+> new file mode 100644
+> index 000000000000..90157d4deac1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/mailbox/st,stm32-ipcc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 > +
-> +	if (probe_kernel_read(insn_buf, (void *)regs->ip, MAX_INSN_SIZE))
-> +		return false;
+> +title: STMicroelectronics STM32 IPC controller bindings
 > +
-> +	kernel_insn_init(&insn, insn_buf, MAX_INSN_SIZE);
-> +	insn_get_modrm(&insn);
-> +	insn_get_sib(&insn);
-> +	*addr = (unsigned long)insn_get_addr_ref(&insn, regs);
+> +description:
+> +  The IPCC block provides a non blocking signaling mechanism to post and
+> +  retrieve messages in an atomic way between two processors.
+> +  It provides the signaling for N bidirectionnal channels. The number of
+> +  channels (N) can be read from a dedicated register.
 > +
-> +	if (*addr == (unsigned long)-1L)
-
-Nit, wouldn't -1UL avoid the need to cast?
-
-> +		return false;
+> +maintainers:
+> +  - Fabien Dessenne <fabien.dessenne@st.com>
+> +  - Arnaud Pouliquen <arnaud.pouliquen@st.com>
 > +
-> +	/*
-> +	 * Check that:
-> +	 *  - the address is not in the kernel half or -1 (which means the
-> +	 *    decoder failed to decode it)
-> +	 *  - the last byte of the address is not in the user canonical half
-> +	 */
-
-This -1 part of the comment should be moved above, or probably dropped
-entirely.
-
-> +	*non_canonical = *addr < ~__VIRTUAL_MASK &&
-> +			 *addr + insn.opnd_bytes - 1 > __VIRTUAL_MASK;
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp1-ipcc
 > +
-> +	return true;
-> +#else
-> +	return false;
-> +#endif
-> +}
+> +  reg:
+> +    maxItems: 1
 > +
-> +#define GPFSTR "general protection fault"
+> +  clocks:
+> +     maxItems: 1
 > +
->  dotraplinkage void
->  do_general_protection(struct pt_regs *regs, long error_code)
->  {
-> -	const char *desc = "general protection fault";
->  	struct task_struct *tsk;
-> +	char desc[sizeof(GPFSTR) + 50 + 2*sizeof(unsigned long) + 1] = GPFSTR;
->  
->  	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
->  	cond_local_irq_enable(regs);
-> @@ -531,6 +572,10 @@ do_general_protection(struct pt_regs *regs, long error_code)
->  
->  	tsk = current;
->  	if (!user_mode(regs)) {
-> +		bool addr_resolved = false;
-> +		unsigned long gp_addr;
-> +		bool non_canonical;
+> +  interrupts:
+> +    items:
+> +      - description: rx channel occupied
+> +      - description: tx channel free
+> +      - description: wakeup source
+> +    minItems: 2
+> +    maxItems: 3
 > +
->  		if (fixup_exception(regs, X86_TRAP_GP, error_code, 0))
->  			return;
->  
-> @@ -547,8 +592,21 @@ do_general_protection(struct pt_regs *regs, long error_code)
->  			return;
->  
->  		if (notify_die(DIE_GPF, desc, regs, error_code,
-> -			       X86_TRAP_GP, SIGSEGV) != NOTIFY_STOP)
-> -			die(desc, regs, error_code);
-> +			       X86_TRAP_GP, SIGSEGV) == NOTIFY_STOP)
-> +			return;
+> +  interrupt-names:
+> +    items:
+> +      enums: [ rx, tx, wakeup ]
+
+'enums' is not a valid keyword. 'enum' is valid, but his should be in
+a defined order (so a list of items).
+
+> +    minItems: 2
+> +    maxItems: 3
 > +
-> +		if (error_code)
-> +			snprintf(desc, sizeof(desc), "segment-related " GPFSTR);
-> +		else
-> +			addr_resolved = get_kernel_gp_address(regs, &gp_addr,
-> +							      &non_canonical);
+> +  wakeup-source:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Enables wake up of host system on wakeup IRQ assertion.
+
+Just 'true' is enough here. Assume we have a common definition.
+
 > +
-> +		if (addr_resolved)
-> +			snprintf(desc, sizeof(desc),
-> +			    GPFSTR " probably for %saddress 0x%lx",
-> +			    non_canonical ? "non-canonical " : "", gp_addr);
+> +  "#mbox-cells":
+> +    const: 1
+> +
+> +  st,proc-id:
+> +    description: Processor id using the mailbox (0 or 1)
+> +    allOf:
+> +      - minimum: 0
+> +      - maximum: 1
 
-I still think not explicitly calling out the straddle case will be
-confusing, e.g.
+'enum: [ 0, 1 ]' is more concise.
 
-  general protection fault probably for non-canonical address 0x7fffffffffff: 0000 [#1] SMP
+Also, needs a $ref to the type.
 
-versus
+> +      - default: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - st,proc-id
+> +  - clocks
+> +  - interrupt-names
+> +  - "#mbox-cells"
+> +
+> +oneOf:
+> +  - required:
+> +      - interrupts
+> +  - required:
+> +      - interrupts-extended
 
-  general protection fault, non-canonical access 0x7fffffffffff - 0x800000000006: 0000 [#1] SMP
+The tooling takes care of this for you. Just list 'interrupts' as required.
 
-
-And for the canonical case, "probably for address" may not be all that
-accurate, e.g. #GP(0) due to a instruction specific requirement is arguably
-just as likely to apply to the instruction itself as it is to its memory
-operand.
-
-Rather than pass around multiple booleans, what about adding an enum and
-handling everything in (a renamed) get_kernel_gp_address?  This works
-especially well if address decoding is done for 32-bit as well as 64-bit,
-which is probably worth doing since we're printing the address in 64-bit
-even if it's canonical.  The ifdeffery is really ugly if its 64-bit only...
-
-
-enum kernel_gp_hint {
-	GP_NO_HINT,
-	GP_SEGMENT,
-	GP_NON_CANONICAL,
-	GP_STRADDLE_CANONICAL,
-	GP_RESOLVED_ADDR,
-};
-static int get_kernel_gp_hint(struct pt_regs *regs, unsigned long error_code,
-			      unsigned long *addr, unsigned char *size)
-{
-	u8 insn_buf[MAX_INSN_SIZE];
-	struct insn insn;
-
-	if (error_code)
-		return GP_SEGMENT;
-
-	if (probe_kernel_read(insn_buf, (void *)regs->ip, MAX_INSN_SIZE))
-		return false;
-
-	kernel_insn_init(&insn, insn_buf, MAX_INSN_SIZE);
-	insn_get_modrm(&insn);
-	insn_get_sib(&insn);
-	*addr = (unsigned long)insn_get_addr_ref(&insn, regs);
-	*size = insn.opnd_bytes;
-
-	if (*addr == -1UL)
-		return GP_NO_HINT;
-
-#ifdef CONFIG_X86_64
-	if (*addr < ~__VIRTUAL_MASK && *addr > __VIRTUAL_MASK)
-		return GP_NON_CANONICAL;
-
-	if (*addr < ~__VIRTUAL_MASK &&
-	    (*addr + *size - 1) > __VIRTUAL_MASK)
-		return GP_STRADDLE_CANONICAL;
-#endif
-	return GP_RESOLVED_ADDR;
-}
-
-Then the snprintf sequence can handle each case indvidually.
-
-		hint = get_kernel_gp_hint(regs, error_code, &addr, &size);
-		if (hint == GP_SEGMENT)
-			snprintf(desc, sizeof(desc),
-				 GPFSTR ", for segment 0x%lx", error_code);
-		else if (hint == GP_NON_CANONICAL)
-			snprintf(desc, sizeof(desc),
-				 GPFSTR ", non-canonical address 0x%lx", addr);
-		else if (hint == GP_STRADDLE_CANONICAL)
-			snprintf(desc, sizeof(desc),
-				 GPFSTR ", non-canonical access 0x%lx - 0x%lx",
-				 addr, addr + size - 1);
-		else if (hint == GP_RESOLVED_ADDR)
-			snprintf(desc, sizeof(desc),
-				 GPFSTR ", possibly for access 0x%lx - 0x%lx",
-				 addr, addr + size - 1);
-
-		flags = oops_begin();
-		sig = SIGSEGV;
-		__die_header(desc, regs, error_code);
-		if (hint == GP_NON_CANONICAL || hint == GP_STRADDLE_CANONICAL)
-			kasan_non_canonical_hook(addr);
-		if (__die_body(desc, regs, error_code))
-			sig = 0;
-		oops_end(flags, regs, sig);
-		die(desc, regs, error_code);
-
-
-I get that adding a print just for the straddle case is probably overkill,
-but it seems silly to add all this and not make it as precise as possible.
-
-  general protection fault, non-canonical address 0xdead000000000000: 0000 [#1] SMP
-  general protection fault, non-canonical access 0x7fffffffffff - 0x800000000006: 0000 [#1] SMP
-  general protection fault, possibly for address 0xffffc9000021bd90: 0000 [#1] SMP
-  general protection fault, possibly for address 0xebcbde5c: 0000 [#1] SMP  // 32-bit kernel
-
-
-Side topic, opnd_bytes isn't correct for instructions with fixed 64-bit
-operands (Mq notation in the opcode map), which is probably an argument
-against the fancy straddle logic...
-
-
-> +		die(desc, regs, error_code);
->  		return;
->  	}
->  
-> -- 
-> 2.24.0.432.g9d3f5f5b63-goog
-> 
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    ipcc: mailbox@4c001000 {
+> +      compatible = "st,stm32mp1-ipcc";
+> +      #mbox-cells = <1>;
+> +      reg = <0x4c001000 0x400>;
+> +      st,proc-id = <0>;
+> +      interrupts-extended = <&intc GIC_SPI 100 IRQ_TYPE_NONE>,
+> +                     <&intc GIC_SPI 101 IRQ_TYPE_NONE>,
+> +                     <&aiec 62 1>;
+> +      interrupt-names = "rx", "tx", "wakeup";
+> +      clocks = <&rcc_clk IPCC>;
+> +      wakeup-source;
+> +    };
+> +
+> +...
