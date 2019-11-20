@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6B8103B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29E07103B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfKTNVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:21:09 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56658 "EHLO
+        id S1730309AbfKTNV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:21:28 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56765 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbfKTNVI (ORCPT
+        with ESMTP id S1730220AbfKTNVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:08 -0500
+        Wed, 20 Nov 2019 08:21:19 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPup-00075u-GN; Wed, 20 Nov 2019 14:21:03 +0100
+        id 1iXPv0-000795-5z; Wed, 20 Nov 2019 14:21:14 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2C7761C1A01;
-        Wed, 20 Nov 2019 14:21:02 +0100 (CET)
-Date:   Wed, 20 Nov 2019 13:21:02 -0000
-From:   "tip-bot2 for Zhou Yanjie" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EF2931C1A12;
+        Wed, 20 Nov 2019 14:21:03 +0100 (CET)
+Date:   Wed, 20 Nov 2019 13:21:03 -0000
+From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip: Ingenic: Add process for more than one irq
- at the same time.
-Cc:     Zhou Yanjie <zhouyanjie@zoho.com>, Marc Zyngier <maz@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
+Subject: [tip: irq/core] irqchip/gic-v3-its: Synchronise INV command
+ targetting a VLPI using VSYNC
+Cc:     Zenghui Yu <yuzenghui@huawei.com>, Marc Zyngier <maz@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <1570015525-27018-6-git-send-email-zhouyanjie@zoho.com>
-References: <1570015525-27018-6-git-send-email-zhouyanjie@zoho.com>
+In-Reply-To: <20191108165805.3071-9-maz@kernel.org>
+References: <20191108165805.3071-9-maz@kernel.org>
 MIME-Version: 1.0
-Message-ID: <157425606206.12247.3466209751027396364.tip-bot2@tip-bot2>
+Message-ID: <157425606389.12247.13811391966540477532.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,77 +48,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     b8b0145f7d0e24d98a58b7e54051dca0c1d77526
-Gitweb:        https://git.kernel.org/tip/b8b0145f7d0e24d98a58b7e54051dca0c1d77526
-Author:        Zhou Yanjie <zhouyanjie@zoho.com>
-AuthorDate:    Wed, 02 Oct 2019 19:25:25 +08:00
+Commit-ID:     286146960a110cdae455a18cef47d5113d9a95c6
+Gitweb:        https://git.kernel.org/tip/286146960a110cdae455a18cef47d5113d9a95c6
+Author:        Marc Zyngier <maz@kernel.org>
+AuthorDate:    Fri, 08 Nov 2019 16:58:02 
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sun, 10 Nov 2019 18:55:31 
+CommitterDate: Sun, 10 Nov 2019 18:47:53 
 
-irqchip: Ingenic: Add process for more than one irq at the same time.
+irqchip/gic-v3-its: Synchronise INV command targetting a VLPI using VSYNC
 
-Add process for the situation that more than one irq is coming to
-a single chip at the same time. The original code will only respond
-to the lowest setted bit in JZ_REG_INTC_PENDING, and then exit the
-interrupt dispatch function. After exiting the interrupt dispatch
-function, since the second interrupt has not yet responded, the
-interrupt dispatch function is again entered to process the second
-interrupt. This creates additional unnecessary overhead, and the
-more interrupts that occur at the same time, the more overhead is
-added. The improved method in this patch is to check whether there
-are still unresponsive interrupts after processing the lowest
-setted bit interrupt. If there are any, the processing will be
-processed according to the bit in JZ_REG_INTC_PENDING, and the
-interrupt dispatch function will be exited until all processing
-is completed.
+We have so far alwways invalidated VLPIs usinc an INV+SYNC
+sequence, but that's pretty wrong for two reasons:
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+- SYNC only synchronises physical LPIs
+- The collection ID that for the associated LPI doesn't match
+  the redistributor the vPE is associated with
+
+Instead, send an INV+VSYNC for forwarded LPIs, ensuring that
+the ITS can properly synchronise the invalidation of VLPIs.
+
+Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
+Reported-by: Zenghui Yu <yuzenghui@huawei.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-Link: https://lore.kernel.org/r/1570015525-27018-6-git-send-email-zhouyanjie@zoho.com
+Link: https://lore.kernel.org/r/20191108165805.3071-9-maz@kernel.org
 ---
- drivers/irqchip/irq-ingenic.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 36 ++++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
-index 06ab3ad..01d18b3 100644
---- a/drivers/irqchip/irq-ingenic.c
-+++ b/drivers/irqchip/irq-ingenic.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-  *  Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
-- *  JZ4740 platform IRQ support
-+ *  Ingenic XBurst platform IRQ support
-  */
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index e8d088c..6a18b01 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -703,6 +703,24 @@ static struct its_vpe *its_build_vmovp_cmd(struct its_node *its,
+ 	return valid_vpe(its, desc->its_vmovp_cmd.vpe);
+ }
  
- #include <linux/errno.h>
-@@ -37,18 +37,23 @@ static irqreturn_t intc_cascade(int irq, void *data)
- 	struct ingenic_intc_data *intc = irq_get_handler_data(irq);
- 	struct irq_domain *domain = intc->domain;
- 	struct irq_chip_generic *gc;
--	uint32_t irq_reg;
-+	uint32_t pending;
- 	unsigned i;
- 
- 	for (i = 0; i < intc->num_chips; i++) {
- 		gc = irq_get_domain_generic_chip(domain, i * 32);
- 
--		irq_reg = irq_reg_readl(gc, JZ_REG_INTC_PENDING);
--		if (!irq_reg)
-+		pending = irq_reg_readl(gc, JZ_REG_INTC_PENDING);
-+		if (!pending)
- 			continue;
- 
--		irq = irq_find_mapping(domain, __fls(irq_reg) + (i * 32));
--		generic_handle_irq(irq);
-+		while (pending) {
-+			int bit = __fls(pending);
++static struct its_vpe *its_build_vinv_cmd(struct its_node *its,
++					  struct its_cmd_block *cmd,
++					  struct its_cmd_desc *desc)
++{
++	struct its_vlpi_map *map;
 +
-+			irq = irq_find_mapping(domain, bit + (i * 32));
-+			generic_handle_irq(irq);
-+			pending &= ~BIT(bit);
-+		}
- 	}
++	map = dev_event_to_vlpi_map(desc->its_inv_cmd.dev,
++				    desc->its_inv_cmd.event_id);
++
++	its_encode_cmd(cmd, GITS_CMD_INV);
++	its_encode_devid(cmd, desc->its_inv_cmd.dev->device_id);
++	its_encode_event_id(cmd, desc->its_inv_cmd.event_id);
++
++	its_fixup_cmd(cmd);
++
++	return valid_vpe(its, map->vpe);
++}
++
+ static u64 its_cmd_ptr_to_offset(struct its_node *its,
+ 				 struct its_cmd_block *ptr)
+ {
+@@ -1069,6 +1087,20 @@ static void its_send_vinvall(struct its_node *its, struct its_vpe *vpe)
+ 	its_send_single_vcommand(its, its_build_vinvall_cmd, &desc);
+ }
  
- 	return IRQ_HANDLED;
++static void its_send_vinv(struct its_device *dev, u32 event_id)
++{
++	struct its_cmd_desc desc;
++
++	/*
++	 * There is no real VINV command. This is just a normal INV,
++	 * with a VSYNC instead of a SYNC.
++	 */
++	desc.its_inv_cmd.dev = dev;
++	desc.its_inv_cmd.event_id = event_id;
++
++	its_send_single_vcommand(dev->its, its_build_vinv_cmd, &desc);
++}
++
+ /*
+  * irqchip functions - assumes MSI, mostly.
+  */
+@@ -1143,8 +1175,10 @@ static void lpi_update_config(struct irq_data *d, u8 clr, u8 set)
+ 	lpi_write_config(d, clr, set);
+ 	if (gic_rdists->has_direct_lpi && !irqd_is_forwarded_to_vcpu(d))
+ 		direct_lpi_inv(d);
+-	else
++	else if (!irqd_is_forwarded_to_vcpu(d))
+ 		its_send_inv(its_dev, its_get_event_id(d));
++	else
++		its_send_vinv(its_dev, its_get_event_id(d));
+ }
+ 
+ static void its_vlpi_set_doorbell(struct irq_data *d, bool enable)
