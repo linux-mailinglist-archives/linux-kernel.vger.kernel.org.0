@@ -2,127 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F94103E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F31103E37
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbfKTPWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:22:39 -0500
-Received: from mga12.intel.com ([192.55.52.136]:64060 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727711AbfKTPWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:22:38 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 07:22:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
-   d="scan'208";a="204848878"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga007.fm.intel.com with SMTP; 20 Nov 2019 07:22:35 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 20 Nov 2019 17:22:34 +0200
-Date:   Wed, 20 Nov 2019 17:22:34 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/rect: remove useless call to clamp_t
-Message-ID: <20191120152234.GG1208@intel.com>
-References: <20191119133435.22525-1-benjamin.gaignard@st.com>
+        id S1728994AbfKTPXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:23:10 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40457 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbfKTPXJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 10:23:09 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q2so27997408ljg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 07:23:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QixIkQoOQSQ7LFqcqXjzuSKbALdm9LSDFACPeBd6EXc=;
+        b=sPuMl6U2vWAMp58080YHiVtXKSPpB2k0OmXi2sz6iOF4t/cdroQZrF51AtOTnbUSYG
+         pYK6hLsSXx+0RFCsG376aH1ZQKf7vFr/XAzd2VvuDrkdjf24hjGgcj1/PRAYsCYniKxm
+         GnO15KtZyhIPLjUAgBj1QeaebzutRyYAPvLOXQz9YYpNaQ/lzYclQRc/pOLBpjQ00uid
+         jfuTNqU/2Q+176VmWMBUwj+pOZxtzTlkjR6bi1saF3ZWl02zo1x9gadO/nUnPAa5UtNu
+         4/XEszWOOOLgYMm6gvicUG+HHxntTEypzokSrsydV0+890/gSuICeWs+abtF8IHeqFL+
+         hwsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QixIkQoOQSQ7LFqcqXjzuSKbALdm9LSDFACPeBd6EXc=;
+        b=PecYpzARCze+TqO20DlrHMHa9qrDEG1RH8kNkN/O5XtAaaEK3ln9ekhCGtsAc2G9Ul
+         DTS+Km9hEZBs/xXssINIKxtc5VxdKyiHdJK7t/dN8eqgohDVDSit34VDZRAnBbxE5Bki
+         OqlQfD3366NHAjmnEvCYE44+TTzVnee6fCgjRWdVSmsksQo7sg15oIgn42UNCVdfitm5
+         AWJ0jmvmAXPS5IX6+uHkjqS3hLX583l9+qBDsTIjkkQ2b+4LfLVeNw+bxc6I0111hOAv
+         fWd3VfQG8OWKRWteSrLUXs4wH++O8QaPxuqAebktrNFsWYmeDo+2UH8rkxjkd4EbdThf
+         U7Ag==
+X-Gm-Message-State: APjAAAUk6WmsWd+/tAE8cXF6bVEmMKEx5eR5AaQlyoTwv5Siby75MOjA
+        s9pS0l0eDDAUVm9uOWl5qjOFYA==
+X-Google-Smtp-Source: APXvYqyGjNXHTonbtNg1dfXimDQe5NKZOl2POKoQN8VAcpEX31hSxy3gtb2+CODvDnzSAD2AFKXjrw==
+X-Received: by 2002:a2e:8188:: with SMTP id e8mr3266242ljg.152.1574263387287;
+        Wed, 20 Nov 2019 07:23:07 -0800 (PST)
+Received: from localhost (c-413e70d5.07-21-73746f28.bbcust.telenor.se. [213.112.62.65])
+        by smtp.gmail.com with ESMTPSA id e11sm5574688lfc.27.2019.11.20.07.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 07:23:06 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
+Cc:     paulmck@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] net: ipmr: fix suspicious RCU warning
+Date:   Wed, 20 Nov 2019 16:22:55 +0100
+Message-Id: <20191120152255.18928-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119133435.22525-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 02:34:35PM +0100, Benjamin Gaignard wrote:
-> Clamping a value between INT_MIN and INT_MAX always return the value itself
-> and generate warnings when compiling with W=1.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  drivers/gpu/drm/drm_rect.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_rect.c b/drivers/gpu/drm/drm_rect.c
-> index b8363aaa9032..681f1fd09357 100644
-> --- a/drivers/gpu/drm/drm_rect.c
-> +++ b/drivers/gpu/drm/drm_rect.c
-> @@ -89,7 +89,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_w = clip_scaled(drm_rect_width(src),
->  					    drm_rect_width(dst), diff);
+When booting an arm64 allmodconfig kernel on linux-next next-20191115
+The following "suspicious RCU usage" warning shows up.  This bug seems
+to have been introduced by commit f0ad0860d01e ("ipv4: ipmr: support
+multiple tables") in 2010, but the warning was added only in this past
+year by commit 28875945ba98 ("rcu: Add support for consolidated-RCU
+reader checking").
 
-Hmm. I think we borked this a bit when introducing clip_scaled().
-'diff' can exceed dst width here so clip_scaled() should be able to
-return a negative value.
+[   32.496021][    T1] =============================
+[   32.497616][    T1] WARNING: suspicious RCU usage
+[   32.499614][    T1] 5.4.0-rc6-next-20191108-00003-gf74bac957b5c-dirty #2 Not tainted
+[   32.502018][    T1] -----------------------------
+[   32.503976][    T1] net/ipv4/ipmr.c:136 RCU-list traversed in non-reader section!!
+[   32.506746][    T1]
+[   32.506746][    T1] other info that might help us debug this:
+[   32.506746][    T1]
+[   32.509794][    T1]
+[   32.509794][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[   32.512661][    T1] 1 lock held by swapper/0/1:
+[   32.514169][    T1]  #0: ffffa000150dd678 (pernet_ops_rwsem){+.+.}, at: register_pernet_subsys+0x24/0x50
+[   32.517621][    T1]
+[   32.517621][    T1] stack backtrace:
+[   32.519930][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc6-next-20191108-00003-gf74bac957b5c-dirty #2
+[   32.523063][    T1] Hardware name: linux,dummy-virt (DT)
+[   32.524787][    T1] Call trace:
+[   32.525946][    T1]  dump_backtrace+0x0/0x2d0
+[   32.527433][    T1]  show_stack+0x20/0x30
+[   32.528811][    T1]  dump_stack+0x204/0x2ac
+[   32.530258][    T1]  lockdep_rcu_suspicious+0xf4/0x108
+[   32.531993][    T1]  ipmr_get_table+0xc8/0x170
+[   32.533496][    T1]  ipmr_new_table+0x48/0xa0
+[   32.535002][    T1]  ipmr_net_init+0xe8/0x258
+[   32.536465][    T1]  ops_init+0x280/0x2d8
+[   32.537876][    T1]  register_pernet_operations+0x210/0x420
+[   32.539707][    T1]  register_pernet_subsys+0x30/0x50
+[   32.541372][    T1]  ip_mr_init+0x54/0x180
+[   32.542785][    T1]  inet_init+0x25c/0x3e8
+[   32.544186][    T1]  do_one_initcall+0x4c0/0xad8
+[   32.545757][    T1]  kernel_init_freeable+0x3e0/0x500
+[   32.547443][    T1]  kernel_init+0x14/0x1f0
+[   32.548875][    T1]  ret_from_fork+0x10/0x18
 
-Probably we should make this more consistent and do something like:
-        diff = clip->x1 - dst->x1;
-        if (diff > 0) {
--               u32 new_src_w = clip_scaled(drm_rect_width(src),
--                                           drm_rect_width(dst), diff);
-+               int dst_w, new_src_w;
+This commit therefore holds RTNL mutex around the problematic code path,
+which is function ipmr_rules_init() in ipmr_net_init().  This commit
+also adds a lockdep_rtnl_is_held() check to the ipmr_for_each_table()
+macro.
+
+Suggested-by: David Miller <davem@davemloft.net>
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ net/ipv4/ipmr.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+index 6e68def66822..53dff9a0e60a 100644
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -110,7 +110,8 @@ static void ipmr_expire_process(struct timer_list *t);
  
--               src->x1 = clamp_t(int64_t, src->x2 - new_src_w, INT_MIN, INT_MAX);
--               dst->x1 = clip->x1;
-+               dst_w = drm_rect_width(dst);
-+               diff = min(diff, dst_w);
-+               new_src_w = clip_scaled(drm_rect_width(src), dst_w, diff);
-+
-+               src->x1 = src->x2 - new_src_w;
-+               dst->x1 += diff;
-        }
-
-etc.
-
->  
-> -		src->x1 = clamp_t(int64_t, src->x2 - new_src_w, INT_MIN, INT_MAX);
-> +		src->x1 = src->x2 - new_src_w;
->  		dst->x1 = clip->x1;
->  	}
->  	diff = clip->y1 - dst->y1;
-> @@ -97,7 +97,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_h = clip_scaled(drm_rect_height(src),
->  					    drm_rect_height(dst), diff);
->  
-> -		src->y1 = clamp_t(int64_t, src->y2 - new_src_h, INT_MIN, INT_MAX);
-> +		src->y1 = src->y2 - new_src_h;
->  		dst->y1 = clip->y1;
->  	}
->  	diff = dst->x2 - clip->x2;
-> @@ -105,7 +105,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_w = clip_scaled(drm_rect_width(src),
->  					    drm_rect_width(dst), diff);
->  
-> -		src->x2 = clamp_t(int64_t, src->x1 + new_src_w, INT_MIN, INT_MAX);
-> +		src->x2 = src->x1 + new_src_w;
->  		dst->x2 = clip->x2;
->  	}
->  	diff = dst->y2 - clip->y2;
-> @@ -113,7 +113,7 @@ bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->  		u32 new_src_h = clip_scaled(drm_rect_height(src),
->  					    drm_rect_height(dst), diff);
->  
-> -		src->y2 = clamp_t(int64_t, src->y1 + new_src_h, INT_MIN, INT_MAX);
-> +		src->y2 = src->y1 + new_src_h;
->  		dst->y2 = clip->y2;
->  	}
->  
-> -- 
-> 2.15.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+ #ifdef CONFIG_IP_MROUTE_MULTIPLE_TABLES
+ #define ipmr_for_each_table(mrt, net) \
+-	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list)
++	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list, \
++				lockdep_rtnl_is_held())
+ 
+ static struct mr_table *ipmr_mr_table_iter(struct net *net,
+ 					   struct mr_table *mrt)
+@@ -3086,7 +3087,9 @@ static int __net_init ipmr_net_init(struct net *net)
+ 	if (err)
+ 		goto ipmr_notifier_fail;
+ 
++	rtnl_lock();
+ 	err = ipmr_rules_init(net);
++	rtnl_unlock();
+ 	if (err < 0)
+ 		goto ipmr_rules_fail;
+ 
 -- 
-Ville Syrjälä
-Intel
+2.20.1
+
