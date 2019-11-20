@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3683103E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEAD103E3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 16:24:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbfKTPYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 10:24:12 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47028 "EHLO
+        id S1729994AbfKTPYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 10:24:15 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47060 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbfKTPYL (ORCPT
+        with ESMTP id S1729718AbfKTPYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:24:11 -0500
+        Wed, 20 Nov 2019 10:24:13 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id B3D7C2910DB
+        with ESMTPSA id C1A382910E9
 Received: by earth.universe (Postfix, from userid 1000)
-        id 1E69D3C0C71; Wed, 20 Nov 2019 16:24:08 +0100 (CET)
+        id 218143C0C77; Wed, 20 Nov 2019 16:24:08 +0100 (CET)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
         Support Opensource <support.opensource@diasemi.com>,
@@ -26,10 +26,12 @@ Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv2 0/6] ASoC: da7213: support for usage with simple-card
-Date:   Wed, 20 Nov 2019 16:24:00 +0100
-Message-Id: <20191120152406.2744-1-sebastian.reichel@collabora.com>
+Subject: [PATCHv2 1/6] ASoC: da7213: Add da7212 DT compatible
+Date:   Wed, 20 Nov 2019 16:24:01 +0100
+Message-Id: <20191120152406.2744-2-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191120152406.2744-1-sebastian.reichel@collabora.com>
+References: <20191120152406.2744-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -37,84 +39,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This adds a compatible for da7212. It's handled exactly the
+same way as DA7213 and follows the ACPI bindings.
 
-This extends the da7213 driver to be used with simple-audio-card in
-combination with a fixed clock. Here is a snippet of the downstream
-board's DT, that is supposed to be supported by this patchset.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ Documentation/devicetree/bindings/sound/da7213.txt | 4 ++--
+ sound/soc/codecs/da7213.c                          | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
----------------------------------------------------------------------
-/ {
-	sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "audio-card";
-		simple-audio-card,format = "i2s";
-		simple-audio-card,bitclock-master = <&dailink_master>;
-		simple-audio-card,frame-master = <&dailink_master>;
-
-		simple-audio-card,widgets = "Speaker", "Ext Spk";
-		simple-audio-card,audio-routing = "Ext Spk", "LINE";
-
-		simple-audio-card,cpu {
-			sound-dai = <&ssi1>;
-		};
-
-		dailink_master: simple-audio-card,codec {
-			sound-dai = <&codec>;
-		};
-	};
-
-
-	clk_ext_audio_codec: clock-codec {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <12288000>;
-	};
-};
-
-&i2c1 {
-	codec: audio-codec@1a {
-		compatible = "dlg,da7212";
-		reg = <0x1a>;
-		#sound-dai-cells = <0>;
-		VDDA-supply = <&reg_2v5_audio>;
-		VDDSP-supply = <&reg_5v0_audio>;
-		VDDMIC-supply = <&reg_3v3_audio>;
-		VDDIO-supply = <&reg_3v3_audio>;
-		clocks = <&clk_ext_audio_codec>;
-		clock-names = "mclk";
-	};
-};
----------------------------------------------------------------------
-
-Changes since PATCHv1:
- * https://lore.kernel.org/alsa-devel/20191108174843.11227-1-sebastian.reichel@collabora.com/
- * add patch adding da7212 compatible to DT bindings
- * update regulator patch, so that VDDA is enabled together with VDDIO
-   while the device is enabled to avoid device reset
- * update clock patch, so that automatic PLL handling is not enabled
-   when PLL is configured manually
- * update clock patch, so that automatic PLL is disabled when the device
-   is suspended
- * update clock patch, so that automatic PLL is configured into bypass
-   mode when possible
-
--- Sebastian
-
-Sebastian Reichel (6):
-  ASoC: da7213: Add da7212 DT compatible
-  ASoC: da7213: Add regulator support
-  ASoC: da7213: Provide selectable option
-  ASoC: da7213: Move set_sysclk to codec level
-  ASoC: da7213: Move set_pll to codec level
-  ASoC: da7213: Add default clock handling
-
- .../devicetree/bindings/sound/da7213.txt      |   8 +-
- sound/soc/codecs/Kconfig                      |   3 +-
- sound/soc/codecs/da7213.c                     | 171 ++++++++++++++++--
- sound/soc/codecs/da7213.h                     |  11 ++
- 4 files changed, 177 insertions(+), 16 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/sound/da7213.txt b/Documentation/devicetree/bindings/sound/da7213.txt
+index 58902802d56c..759bb04e0283 100644
+--- a/Documentation/devicetree/bindings/sound/da7213.txt
++++ b/Documentation/devicetree/bindings/sound/da7213.txt
+@@ -1,9 +1,9 @@
+-Dialog Semiconductor DA7213 Audio Codec bindings
++Dialog Semiconductor DA7212/DA7213 Audio Codec bindings
+ 
+ ======
+ 
+ Required properties:
+-- compatible : Should be "dlg,da7213"
++- compatible : Should be "dlg,da7212" or "dlg,7213"
+ - reg: Specifies the I2C slave address
+ 
+ Optional properties:
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index 925a03996db4..aff306bb58df 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1571,6 +1571,7 @@ static int da7213_set_bias_level(struct snd_soc_component *component,
+ #if defined(CONFIG_OF)
+ /* DT */
+ static const struct of_device_id da7213_of_match[] = {
++	{ .compatible = "dlg,da7212", },
+ 	{ .compatible = "dlg,da7213", },
+ 	{ }
+ };
 -- 
 2.24.0
 
