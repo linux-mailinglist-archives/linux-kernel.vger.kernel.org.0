@@ -2,79 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75605104483
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D99210448B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 20:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfKTTqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 14:46:49 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44101 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbfKTTqs (ORCPT
+        id S1727378AbfKTTsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 14:48:54 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40677 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727179AbfKTTsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:46:48 -0500
-Received: by mail-ed1-f67.google.com with SMTP id a67so523428edf.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 11:46:47 -0800 (PST)
+        Wed, 20 Nov 2019 14:48:53 -0500
+Received: by mail-oi1-f194.google.com with SMTP id d22so903510oic.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 11:48:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oxEM2vdt7/U/FNIfeuvzJ9elmjyMDsJD1vxaJ2fUtOI=;
-        b=WrddtF4R/lFC853GKj7Dd7RzfOT6YpZ1GUF5a9E7wjXuFFN8MKM7RhIB+8Hs5fzeIg
-         PcFZZAIgCLKYAM0nHNUvYyYGxu256OS+sFPtigA6OGKsKMr5JnUQ0TGVU9+fR0XKLGyR
-         mHnkTW7EPOZ4+svqiLOsGNAL4YD33ESdZfLG7Zoi0uVp+z4FZwX8TMrPKP5sIDk3JFd3
-         2SGIgae3CdqOVhDWxCOow+8hwjWUl5Iv6kOjWqWzDPnW3WIWfBE7d3n/ttyKSGN9Yjhs
-         9bbUuW/6/OJp98x5NHd3iNS8ja+u68ErBXiEUwEp7zyjQzP1ODAlP+UwTaiXxZo9lMGe
-         QDiw==
+        bh=dsU7uehqL7wnWMosnxZD743IVZUrswQeWUXFNhR2dAA=;
+        b=ruI8uTSHdjBoqHZ2jFzEh7W0jWZ2DMLFOLqWav6aSkbhdtZkS9s38+PTWD8ACMDMur
+         Qgx3CVYnGVT9JwJTu/yEYBBjfU31F+UDKyGGNaed2Xi1xsxhLGDEA1/fYiemRsxVcZQD
+         DNiz7L9xTOaVQBts8EwUnzYGQAsax0mgBWWF/7fpSEHvow8q5YEzonc4jKyCI7g8XXKX
+         z/S81nXxfadZ6yvKvMSPvRLnk80wTuxP59PKbezy7K4BcZBKD6yY+0CG/EoHzCpqWhFs
+         pIBzMALNOFqt5y42crsVXrLUUJgyBsMUImUxQaucbCs9+FPT5oyYy49hU5Gsn62c+Dec
+         M6rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oxEM2vdt7/U/FNIfeuvzJ9elmjyMDsJD1vxaJ2fUtOI=;
-        b=ubx/EVERS2XjWf8M9tHmeXpQXJreccMf7ONBnHnHxMS6YsWkfdNDX5nKM/UYyZxO1a
-         hE2JXwbpW9D11AWaSkY7iYU1wv/1TjbmovSG5FlZzTjgymxjd/c75et3f63chRTozAjw
-         sAEYOxzwLKcd7jQJTXbqpSqrbMB9eTeLjW+kn2+Z88yB5nf4oSIU4xMEVoBPKdFCH7TM
-         k+8gVoYm63weL70wmP6d6rDDRHZL7Bx3vdbPBhgO6b0HOPUWIxjeH2bVMLHs/tEakrZ4
-         xFZjXcX/neqlSIivbW8n2zznkIBgR+9zG3Dh0IsHgVUdiqt3AniL2Bo7734NZfFD3VZ1
-         B5pA==
-X-Gm-Message-State: APjAAAUDYNrjixfnUvjWwiHWhWGovxM99edgAdKzQjd8zJm+CsfbGQG0
-        +Z/MlW1kyuSQlx5BSTWOz7PkBFxtMU1+M2ADcGNlWA==
-X-Google-Smtp-Source: APXvYqypnvAPJ++PLYZ2U6aQOk5u/YILYozemKYHGTd1uN8FTstQuqto4KVAyP+G64ayeIzD3lKig4KV9XKFgV4HkNM=
-X-Received: by 2002:a17:906:b30c:: with SMTP id n12mr7405055ejz.96.1574279206840;
- Wed, 20 Nov 2019 11:46:46 -0800 (PST)
+        bh=dsU7uehqL7wnWMosnxZD743IVZUrswQeWUXFNhR2dAA=;
+        b=OdoAZEx/CpheVOH/B3XqObwXD/i2agiN5rhUpgxE/4VdGcskLci+lrSlojZIYXuJTI
+         mtKaQBMUI0qK1JJKwzMbrzWIkNN7QT9TgUGVG0xen5sAt5dAJ6oITFgsMml1wXvSAuez
+         apk9g+SglTDkDGd0F72tkloIgP6PifPa+A1G2/VDy773g++ROIeJVHbl3QiOQQY1G53l
+         XbVdEBT7WNYY+X4Xy71h2PlR5Be+jWrheNkRJFPl8ulkcfDyA15BVjhkN16D73eaFxDy
+         9opq1fertqKCsKIvKyPyPfgVAEdWt9k3HwKNiD7nmsdvIsrEp9Ynh/qkcrJNFTjMOjXQ
+         Cynw==
+X-Gm-Message-State: APjAAAUFlIBm/XnrSbb66gOFCRfZncX1oUWP4W/nS+1hQPA386bW2quX
+        T0kvnf00A4e3ZjttxbcrvMeAlMiKpUSc9TNENF36zg==
+X-Google-Smtp-Source: APXvYqx/g4BDi4Ep4xVGg1QmPYKz53hEOqfiaQgYctXmYAiZxgwMeeig4RXOI711HsPMUkELprAS61STvR/YqA628Cc=
+X-Received: by 2002:aca:d80b:: with SMTP id p11mr4437774oig.83.1574279332230;
+ Wed, 20 Nov 2019 11:48:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20191119221006.1021520-1-pasha.tatashin@soleen.com> <20191120191648.GB4799@willie-the-truck>
-In-Reply-To: <20191120191648.GB4799@willie-the-truck>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 20 Nov 2019 14:46:35 -0500
-Message-ID: <CA+CK2bDeXP8iUYF2GC=9PttTug1E66=z0h4PSGBn3Gr5t3NHzw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kernel: memory corruptions due non-disabled PAN
-To:     Will Deacon <will@kernel.org>
-Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        steve.capper@arm.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com
+References: <20191120203434.2a0727b3@canb.auug.org.au> <58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org>
+In-Reply-To: <58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org>
+From:   Marco Elver <elver@google.com>
+Date:   Wed, 20 Nov 2019 20:48:41 +0100
+Message-ID: <CANpmjNOHTyTRCeo3oxEPTY__TCjAQ8nMvcqDSZ6Otfs7vVESSA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Nov 20 (kcsan + objtool)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 20 Nov 2019 at 17:18, Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> Thanks. I've pushed this and your other patch out [1], with some changes
-> to the commit message. I'm annoyed that I didn't spot this during review
-> of the initial PAN patches.
+> On 11/20/19 1:34 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20191119:
+> >
 >
-> Will
+> on x86_64:
+>
+> kernel/kcsan/core.o: warning: objtool: kcsan_found_watchpoint()+0xa: call to kcsan_is_enabled() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_read1()+0x13: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_write1()+0x10: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_read2()+0x13: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_write2()+0x10: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_read4()+0x13: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_write4()+0x10: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_read8()+0x13: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_write8()+0x10: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_read16()+0x13: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_write16()+0x10: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_read_range()+0x13: call to find_watchpoint() with UACCESS enabled
+> kernel/kcsan/core.o: warning: objtool: __tsan_write_range()+0x10: call to find_watchpoint() with UACCESS enabled
+>
+> kernel/trace/trace_branch.o: warning: objtool: ftrace_likely_update()+0x361: call to __stack_chk_fail() with UACCESS enabled
+>
+>
+> Full randconfig file is attached.
 
-Great.
+Thanks.
 
-Thank you,
-Pasha
+This is due to CONFIG_CC_OPTIMIZE_FOR_SIZE=y. It seems the compiler
+decides to not even inline small static inline functions. I tried to
+make this go away by adding __always_inline, but then we're also left
+with atomic64_try_cmpxchg which never gets inlined.
+
+The optimized build simply inlines the small static inline functions.
+We certainly do not want to add more functions to the objtool
+whitelist, especially those that are private to KCSAN.
+
+We could fix it by either:
+
+1. Adding __always_inline to every function used by the KCSAN runtime
+outside user_access_save + also fix atomic64_try_cmpxchg
+(atomic-instrumented.h).
+
+2. Just not compile KCSAN with -Os, i.e. have the Makefile strip -Os
+and replace it with -O2 for kcsan/core.c. #2 is the simpler option,
+and would probably make KCSAN more effective even with -Os. Although
+it might violate the assumption of whoever decided they want both
+CC_OPTIMIZE_FOR_SIZE and KCSAN. It might also mean that future
+compilers that have a new inlining algorithm will have the same
+problem.
+
+What do people think is better?
+
+Thanks,
+-- Marco
+
+> --
+> ~Randy
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
