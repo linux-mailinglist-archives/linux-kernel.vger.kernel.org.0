@@ -2,125 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E25710325D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 04:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F93B103265
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 05:00:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfKTD52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 19 Nov 2019 22:57:28 -0500
-Received: from a27-10.smtp-out.us-west-2.amazonses.com ([54.240.27.10]:39184
-        "EHLO a27-10.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727415AbfKTD51 (ORCPT
+        id S1727618AbfKTEAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 19 Nov 2019 23:00:53 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:46346 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbfKTEAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Nov 2019 22:57:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574222246;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=gDQrkxYdhaQrXtYZ+YfyZ0Ap5iE+tn8emqrpCUVKd/Q=;
-        b=cdWj/x/sU23SZ76rwWqwN7G7m9WyB69HjYKagZ7v/+MpNDsGQtgB0CRTRY2VKVII
-        B1S1YugMDfYL6GtvXJymgSYH2dFFpsVY1jcjZuLjuOfNhkQ6AaKtcS4rblTHBUpZ2AO
-        vkhpGd6hWSQZRGCGapsoeXoabQGRCEchLlCImzgE=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574222246;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=gDQrkxYdhaQrXtYZ+YfyZ0Ap5iE+tn8emqrpCUVKd/Q=;
-        b=WZYmQL+Dvk9wKzOQCv7vD3GMF9ruIGT+uKgbQaCK+Ff59mk2fHeEwFtLLTfo9LY7
-        7VC90ZqfVaoihpdKbVUjpfRrCLmnnLfnjAjssycVmdhg18gcB+vyWO5CAwL8VNmEBpT
-        Eagha8AYh7zBzSOd4oM41zaxwyV4OILHH7GVCZc8=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6A81C447A1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 2/6] dt-bindings: power: Add rpmh power-domain bindings
- for SM8150
-To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org, ulf.hansson@linaro.org
-Cc:     agross@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        mark.rutland@arm.com, swboyd@chromium.org, dianders@chromium.org
-References: <20191118173944.27043-1-sibis@codeaurora.org>
- <0101016e7f99a91d-6632f420-b2f2-4b71-9c97-a3974fcb8fa9-000000@us-west-2.amazonses.com>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <0101016e86f531d4-89c752f8-a9af-43fe-94b3-44121a1e057e-000000@us-west-2.amazonses.com>
-Date:   Wed, 20 Nov 2019 03:57:26 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <0101016e7f99a91d-6632f420-b2f2-4b71-9c97-a3974fcb8fa9-000000@us-west-2.amazonses.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SES-Outgoing: 2019.11.20-54.240.27.10
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Tue, 19 Nov 2019 23:00:52 -0500
+Received: by mail-pg1-f201.google.com with SMTP id l5so17097420pgu.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2019 20:00:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=A9SfB3u5DRzR9VvNYS3sJfx8KGuaRQunQS/2L5xIff8=;
+        b=m7uCB6fKLgvWJlZTvId99mrDEWFo74IPG1IrhJnxsK4JVba7jegBh/VcOKvAfijHhX
+         mmON50cv8d2l0QFvd0vuXuqUcvv0O5HAjsfcEaZvzC4LfnP0XEdFV7qTWEMyOe42Sw7P
+         YommhwaMrRaBQ9ep6QMo4BWw7Nvyjxcez5ImrtHHNx3zWzb/dOm7dClGZo7VpRKYOH2D
+         dZuNlbF4mtw6ZB5xygi89qnQusZnmbMXhRWQqXvs0JlNyOtV9/F3Nq9iy7AhnyRpwd/m
+         XFISw7o+LcDo8unUAKs3qn95wKX+5qQqyJqjQtWJbbIHYqk6esijQHPmWoFoS4SNy/pd
+         q53g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=A9SfB3u5DRzR9VvNYS3sJfx8KGuaRQunQS/2L5xIff8=;
+        b=HE/zAkZKgaFQFbbJ/y4cOezBj4VI3Ib7rR8WySxgFMkOja6gIvdsTvanIEoL45X/fH
+         LBYC/MX07Yr28VKTbIz7rD7+131GLpsFeZfS/si/kzIhUQ7ZZtDblOhbv1iEG2TAWxBO
+         4fbID+L02PB8QiYpo5dq9xw7K9BMWzrI6J2agef1hIpOLpK48Pi8TUw9jFZuaCKTpGQI
+         IiuOuT3KzXb+9pqRzO09jFGbvf2ijqnBa4jZPhespzVNmrU5je0txv/QWkmNwcR2SeAH
+         /ONoNguxxqVGvkKZhjrODKIlz7Y0sAcC4sGIWpoTLylu8fYozvkkQbJmgCdKyFEHV74E
+         N6Qg==
+X-Gm-Message-State: APjAAAWPXh3zI5KW7uElUrZaQ/en+umq0L25R59OV8SIRaYJt3AFz1+p
+        GlhcKFn8z5KUU99iYT5A2NO0Z9WDmh8xajA=
+X-Google-Smtp-Source: APXvYqxsUvVNxqH5VyyRNcQBRC8b8WlZl3yStph+gE6eQAgX+YO3RyQ8wNSeG7sfJOmGM4QFXqYVrcWDbNPdO0A=
+X-Received: by 2002:a65:4506:: with SMTP id n6mr753853pgq.105.1574222449984;
+ Tue, 19 Nov 2019 20:00:49 -0800 (PST)
+Date:   Tue, 19 Nov 2019 20:00:45 -0800
+Message-Id: <20191120040045.81115-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH] of: Reduce log level of of_phandle_iterator_next()
+From:   Saravana Kannan <saravanak@google.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+These error messages are mostly useful for debugging malformed device
+tree data. So change these messages from error to debug messages to
+avoid spamming the end user. Any error messages that might actually be
+useful to the user is probably going to come from the caller of these
+APIs. So leave it to them to decide if they need to print any error
+messages.
 
-On 11/18/2019 11:10 PM, Sibi Sankar wrote:
-> Add RPMH power-domain bindings for the SM8150 family of SoCs.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->   .../devicetree/bindings/power/qcom,rpmpd.txt       |  1 +
->   include/dt-bindings/power/qcom-rpmpd.h             | 14 ++++++++++++++
->   2 files changed, 15 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> index bc75bf49cdaea..f3bbaa4aef297 100644
-> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> @@ -10,6 +10,7 @@ Required Properties:
->   	* qcom,msm8998-rpmpd: RPM Power domain for the msm8998 family of SoC
->   	* qcom,qcs404-rpmpd: RPM Power domain for the qcs404 family of SoC
->   	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
-> +	* qcom,sm8150-rpmhpd: RPMh Power domain for the sm8150 family of SoC
->    - #power-domain-cells: number of cells in Power domain specifier
->   	must be 1.
->    - operating-points-v2: Phandle to the OPP table for the Power domain.
-> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
-> index f05f8b1808ec9..7d43bafc0026b 100644
-> --- a/include/dt-bindings/power/qcom-rpmpd.h
-> +++ b/include/dt-bindings/power/qcom-rpmpd.h
-> @@ -15,12 +15,26 @@
->   #define SDM845_GFX	7
->   #define SDM845_MSS	8
->   
-> +/* SM8150 Power Domain Indexes */
-> +#define SM8150_MSS	0
-> +#define SM8150_EBI	1
-> +#define SM8150_LMX	2
-> +#define SM8150_LCX	3
-> +#define SM8150_GFX	4
-> +#define SM8150_MX	5
-> +#define SM8150_MX_AO	6
-> +#define SM8150_CX	7
-> +#define SM8150_CX_AO	8
-> +#define SM8150_MMCX	9
-> +#define SM8150_MMCX_AO	10
-> +
->   /* SDM845 Power Domain performance levels */
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
+ drivers/of/base.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-You could perhaps remove this comment, or remove the
-SDM845 from it.
-
-Reviewed-by: Rajendra Nayak <rnayak@codeaurora.org>
-
->   #define RPMH_REGULATOR_LEVEL_RETENTION	16
->   #define RPMH_REGULATOR_LEVEL_MIN_SVS	48
->   #define RPMH_REGULATOR_LEVEL_LOW_SVS	64
->   #define RPMH_REGULATOR_LEVEL_SVS	128
->   #define RPMH_REGULATOR_LEVEL_SVS_L1	192
-> +#define RPMH_REGULATOR_LEVEL_SVS_L2	224
->   #define RPMH_REGULATOR_LEVEL_NOM	256
->   #define RPMH_REGULATOR_LEVEL_NOM_L1	320
->   #define RPMH_REGULATOR_LEVEL_NOM_L2	336
-> 
-
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 1d667eb730e1..4762e826f13e 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1335,8 +1335,8 @@ int of_phandle_iterator_next(struct of_phandle_iterator *it)
+ 
+ 		if (it->cells_name) {
+ 			if (!it->node) {
+-				pr_err("%pOF: could not find phandle\n",
+-				       it->parent);
++				pr_debug("%pOF: could not find phandle\n",
++					 it->parent);
+ 				goto err;
+ 			}
+ 
+@@ -1350,10 +1350,10 @@ int of_phandle_iterator_next(struct of_phandle_iterator *it)
+ 				if (it->cell_count >= 0) {
+ 					count = it->cell_count;
+ 				} else {
+-					pr_err("%pOF: could not get %s for %pOF\n",
+-					       it->parent,
+-					       it->cells_name,
+-					       it->node);
++					pr_debug("%pOF: could not get %s for %pOF\n",
++						 it->parent,
++						 it->cells_name,
++						 it->node);
+ 					goto err;
+ 				}
+ 			}
+@@ -1366,9 +1366,9 @@ int of_phandle_iterator_next(struct of_phandle_iterator *it)
+ 		 * property data length
+ 		 */
+ 		if (it->cur + count > it->list_end) {
+-			pr_err("%pOF: %s = %d found %d\n",
+-			       it->parent, it->cells_name,
+-			       count, it->cell_count);
++			pr_debug("%pOF: %s = %d found %d\n",
++				 it->parent, it->cells_name,
++				 count, it->cell_count);
+ 			goto err;
+ 		}
+ 	}
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.24.0.432.g9d3f5f5b63-goog
+
