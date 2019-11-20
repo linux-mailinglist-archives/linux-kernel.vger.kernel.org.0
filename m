@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2686A103B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1838D103B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:22:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbfKTNVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:21:24 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56746 "EHLO
+        id S1730474AbfKTNWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:22:52 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56757 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730207AbfKTNVQ (ORCPT
+        with ESMTP id S1730215AbfKTNVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:21:16 -0500
+        Wed, 20 Nov 2019 08:21:18 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXPuy-0007AH-1E; Wed, 20 Nov 2019 14:21:12 +0100
+        id 1iXPuz-0007Aq-An; Wed, 20 Nov 2019 14:21:13 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 820E11C1A15;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CD5491C1A17;
         Wed, 20 Nov 2019 14:21:04 +0100 (CET)
 Date:   Wed, 20 Nov 2019 13:21:04 -0000
 From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3-its: Kill its->ite_size and use TYPER
- copy instead
+Subject: [tip: irq/core] irqchip/gic-v3-its: Allow LPI invalidation via the
+ DirectLPI interface
 Cc:     Marc Zyngier <maz@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191027144234.8395-6-maz@kernel.org>
-References: <20191027144234.8395-6-maz@kernel.org>
+In-Reply-To: <20191027144234.8395-4-maz@kernel.org>
+References: <20191027144234.8395-4-maz@kernel.org>
 MIME-Version: 1.0
-Message-ID: <157425606440.12247.526387246151472820.tip-bot2@tip-bot2>
+Message-ID: <157425606477.12247.1951688405515949505.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,86 +48,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     ffedbf0cba153c91a0da5d1280a5e639664c5ab3
-Gitweb:        https://git.kernel.org/tip/ffedbf0cba153c91a0da5d1280a5e639664c5ab3
+Commit-ID:     425c09be0f091a3b5940261d9a5d8467d62987e7
+Gitweb:        https://git.kernel.org/tip/425c09be0f091a3b5940261d9a5d8467d62987e7
 Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Fri, 08 Nov 2019 16:57:59 
+AuthorDate:    Fri, 08 Nov 2019 16:57:57 
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Sun, 10 Nov 2019 18:47:52 
+CommitterDate: Sun, 10 Nov 2019 18:47:51 
 
-irqchip/gic-v3-its: Kill its->ite_size and use TYPER copy instead
+irqchip/gic-v3-its: Allow LPI invalidation via the DirectLPI interface
 
-Now that we have a copy of TYPER in the ITS structure, rely on this
-to provide the same service as its->ite_size, which gets axed.
-Errata workarounds are now updating the cached fields instead of
-requiring a separate field in the ITS structure.
+We currently don't make much use of the DirectLPI feature, and it would
+be beneficial to do this more, if only because it becomes a mandatory
+feature for GICv4.1.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Link: https://lore.kernel.org/r/20191027144234.8395-6-maz@kernel.org
-Link: https://lore.kernel.org/r/20191108165805.3071-6-maz@kernel.org
+Link: https://lore.kernel.org/r/20191027144234.8395-4-maz@kernel.org
+Link: https://lore.kernel.org/r/20191108165805.3071-4-maz@kernel.org
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 8 ++++----
- include/linux/irqchip/arm-gic-v3.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 40 ++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 5bb3eac..c3a1e47 100644
+index 78d3e73..6065b09 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/acpi_iort.h>
-+#include <linux/bitfield.h>
- #include <linux/bitmap.h>
- #include <linux/cpu.h>
- #include <linux/crash_dump.h>
-@@ -108,7 +109,6 @@ struct its_node {
- 	struct list_head	its_device_list;
- 	u64			flags;
- 	unsigned long		list_nr;
--	u32			ite_size;
- 	u32			device_ids;
- 	int			numa_node;
- 	unsigned int		msi_domain_flags;
-@@ -2453,7 +2453,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	 * sized as a power of two (and you need at least one bit...).
- 	 */
- 	nr_ites = max(2, nvecs);
--	sz = nr_ites * its->ite_size;
-+	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
- 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
- 	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
- 	if (alloc_lpis) {
-@@ -3268,7 +3268,8 @@ static bool __maybe_unused its_enable_quirk_qdf2400_e0065(void *data)
- 	struct its_node *its = data;
- 
- 	/* On QDF2400, the size of the ITE is 16Bytes */
--	its->ite_size = 16;
-+	its->typer &= ~GITS_TYPER_ITT_ENTRY_SIZE;
-+	its->typer |= FIELD_PREP(GITS_TYPER_ITT_ENTRY_SIZE, 16 - 1);
- 
- 	return true;
+@@ -191,6 +191,12 @@ static u16 get_its_list(struct its_vm *vm)
+ 	return (u16)its_list;
  }
-@@ -3637,7 +3638,6 @@ static int __init its_probe_one(struct resource *res,
- 	its->typer = typer;
- 	its->base = its_base;
- 	its->phys_base = res->start;
--	its->ite_size = GITS_TYPER_ITT_ENTRY_SIZE(typer);
- 	its->device_ids = GITS_TYPER_DEVBITS(typer);
- 	if (is_v4(its)) {
- 		if (!(typer & GITS_TYPER_VMOVP)) {
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 5cc10cf..4bce7a9 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -334,7 +334,7 @@
- #define GITS_TYPER_PLPIS		(1UL << 0)
- #define GITS_TYPER_VLPIS		(1UL << 1)
- #define GITS_TYPER_ITT_ENTRY_SIZE_SHIFT	4
--#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0xf) + 1)
-+#define GITS_TYPER_ITT_ENTRY_SIZE	GENMASK_ULL(7, 4)
- #define GITS_TYPER_IDBITS_SHIFT		8
- #define GITS_TYPER_DEVBITS_SHIFT	13
- #define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
+ 
++static inline u32 its_get_event_id(struct irq_data *d)
++{
++	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
++	return d->hwirq - its_dev->event_map.lpi_base;
++}
++
+ static struct its_collection *dev_event_to_col(struct its_device *its_dev,
+ 					       u32 event)
+ {
+@@ -199,6 +205,13 @@ static struct its_collection *dev_event_to_col(struct its_device *its_dev,
+ 	return its->collections + its_dev->event_map.col_map[event];
+ }
+ 
++static struct its_collection *irq_to_col(struct irq_data *d)
++{
++	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
++
++	return dev_event_to_col(its_dev, its_get_event_id(d));
++}
++
+ static struct its_collection *valid_col(struct its_collection *col)
+ {
+ 	if (WARN_ON_ONCE(col->target_address & GENMASK_ULL(15, 0)))
+@@ -1049,12 +1062,6 @@ static void its_send_vinvall(struct its_node *its, struct its_vpe *vpe)
+  * irqchip functions - assumes MSI, mostly.
+  */
+ 
+-static inline u32 its_get_event_id(struct irq_data *d)
+-{
+-	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+-	return d->hwirq - its_dev->event_map.lpi_base;
+-}
+-
+ static void lpi_write_config(struct irq_data *d, u8 clr, u8 set)
+ {
+ 	irq_hw_number_t hwirq;
+@@ -1099,12 +1106,28 @@ static void wait_for_syncr(void __iomem *rdbase)
+ 		cpu_relax();
+ }
+ 
++static void direct_lpi_inv(struct irq_data *d)
++{
++	struct its_collection *col;
++	void __iomem *rdbase;
++
++	/* Target the redistributor this LPI is currently routed to */
++	col = irq_to_col(d);
++	rdbase = per_cpu_ptr(gic_rdists->rdist, col->col_id)->rd_base;
++	gic_write_lpir(d->hwirq, rdbase + GICR_INVLPIR);
++
++	wait_for_syncr(rdbase);
++}
++
+ static void lpi_update_config(struct irq_data *d, u8 clr, u8 set)
+ {
+ 	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+ 
+ 	lpi_write_config(d, clr, set);
+-	its_send_inv(its_dev, its_get_event_id(d));
++	if (gic_rdists->has_direct_lpi && !irqd_is_forwarded_to_vcpu(d))
++		direct_lpi_inv(d);
++	else
++		its_send_inv(its_dev, its_get_event_id(d));
+ }
+ 
+ static void its_vlpi_set_doorbell(struct irq_data *d, bool enable)
+@@ -2935,8 +2958,9 @@ static void its_vpe_send_inv(struct irq_data *d)
+ 	if (gic_rdists->has_direct_lpi) {
+ 		void __iomem *rdbase;
+ 
++		/* Target the redistributor this VPE is currently known on */
+ 		rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+-		gic_write_lpir(vpe->vpe_db_lpi, rdbase + GICR_INVLPIR);
++		gic_write_lpir(d->parent_data->hwirq, rdbase + GICR_INVLPIR);
+ 		wait_for_syncr(rdbase);
+ 	} else {
+ 		its_vpe_send_cmd(vpe, its_send_inv);
