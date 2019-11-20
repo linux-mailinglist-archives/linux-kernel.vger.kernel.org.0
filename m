@@ -2,77 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B81081040A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:21:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B69D21040AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 17:23:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732770AbfKTQVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 11:21:45 -0500
-Received: from mga03.intel.com ([134.134.136.65]:55136 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727885AbfKTQVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:21:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 08:21:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
-   d="scan'208";a="204775025"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga008.fm.intel.com with ESMTP; 20 Nov 2019 08:21:43 -0800
-Date:   Wed, 20 Nov 2019 08:21:43 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v3 2/4] x86/traps: Print non-canonical address on #GP
-Message-ID: <20191120162143.GB32572@linux.intel.com>
-References: <20191120103613.63563-1-jannh@google.com>
- <20191120103613.63563-2-jannh@google.com>
- <20191120111859.GA115930@gmail.com>
- <CAG48ez0Frp4-+xHZ=UhbHh0hC_h-1VtJfwHw=kDo6NahyMv1ig@mail.gmail.com>
- <20191120123058.GA17296@gmail.com>
- <20191120123926.GE2634@zn.tnic>
- <20191120132830.GB54414@gmail.com>
- <20191120133913.GG2634@zn.tnic>
+        id S1731146AbfKTQXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 11:23:03 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48386 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727885AbfKTQXD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 11:23:03 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 6715128CFC2
+Subject: Re: [PATCH] platform/chrome: cros_usbpd_logger: add missed
+ destroy_workqueue in remove
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Benson Leung <bleung@chromium.org>, linux-kernel@vger.kernel.org
+References: <20191113063821.8896-1-hslester96@gmail.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <0d4c340d-7b4f-6efe-7643-97f848fa1f04@collabora.com>
+Date:   Wed, 20 Nov 2019 17:22:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120133913.GG2634@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191113063821.8896-1-hslester96@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 02:39:13PM +0100, Borislav Petkov wrote:
-> On Wed, Nov 20, 2019 at 02:28:30PM +0100, Ingo Molnar wrote:
-> > I'd rather we not trust the decoder and the execution environment so much 
-> > that it never produces a 0 linear address in a #GP:
+
+
+On 13/11/19 7:38, Chuhong Yuan wrote:
+> The driver forgets to destroy workqueue in remove.
+> Add the missed call to fix it.
 > 
-> I was just scratching my head whether I could trigger a #GP with address
-> of 0. But yeah, I agree, let's be really cautious here. I wouldn't want
-> to debug a #GP with a wrong address reported.
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 
-It's definitely possible, there are a handful of non-SIMD instructions that
-generate #GP(0) it CPL=0 in 64-bit mode *and* have a memory operand.  Some
-of them might even be legitimately encountered in the wild.
+Applied for 5.5
 
-  - CMPXCHG16B if it's not supported by the CPU.
-  - VMXON if CR4 is misconfigured or VMX isn't enabled in FEATURE_CONTROL.
-  - MONITOR if ECX has an invalid hint (although MONITOR hardcodes the
-    address in DS:RAX and so doesn't have a ModR/M byte).
+Thanks,
+ Enric
 
-Undoudbtedly there are other instructions with similar sources of #GP.
+> ---
+>  drivers/platform/chrome/cros_usbpd_logger.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/chrome/cros_usbpd_logger.c b/drivers/platform/chrome/cros_usbpd_logger.c
+> index 2430e8b82810..374cdd1e868a 100644
+> --- a/drivers/platform/chrome/cros_usbpd_logger.c
+> +++ b/drivers/platform/chrome/cros_usbpd_logger.c
+> @@ -224,6 +224,7 @@ static int cros_usbpd_logger_remove(struct platform_device *pd)
+>  	struct logger_data *logger = platform_get_drvdata(pd);
+>  
+>  	cancel_delayed_work_sync(&logger->log_work);
+> +	destroy_workqueue(logger->log_workqueue);
+>  
+>  	return 0;
+>  }
+> 
