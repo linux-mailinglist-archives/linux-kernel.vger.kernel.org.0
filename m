@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A771103C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38CB8103C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2019 14:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfKTNnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 08:43:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51256 "EHLO mail.kernel.org"
+        id S1731312AbfKTNn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 08:43:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730110AbfKTNnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:43:22 -0500
+        id S1730110AbfKTNn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:43:27 -0500
 Received: from localhost.localdomain (unknown [118.189.143.39])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C69D22529;
-        Wed, 20 Nov 2019 13:43:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2401422528;
+        Wed, 20 Nov 2019 13:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257401;
-        bh=yLZmUDRuMDbAygU0kAjP5L+S476KHWlApHpEHCVVFUQ=;
+        s=default; t=1574257406;
+        bh=h3AbCresN75AqgZ8h/I3zFonj444oDdMctTI2cTK53E=;
         h=From:To:Cc:Subject:Date:From;
-        b=NW6UOeL257dh0uwMINgpCBNa0tP8r4bRfbpGGNQkEnm9oBUhZEpJCt91rKlZ/JUfZ
-         /3qJK9fo7dpjWVvXlhTP0ghv/R9tx6qRnblrWmHTVgncW07U8F5b+W/R8WZj6E8Tld
-         zVggq21x+ZfrykohEknzc7ta7w/7Lz0oKUewPNns=
+        b=K9EbXWcYVCVzDVTSky2FfHu5DCewjx7V2nsKxO/MRI29oJp+3uDljZcFydiJsFG1H
+         4tddqe6WkXDPdQWdAr/8LWwAQe0aSZfiRaEcxZJ0lFIx+t5vcWOlYCgM9o3ooy1a9g
+         hQ0vvt9n6wiZLiwTBkFObQu+L9T0iYRI2v2Pjq7E=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] qnx6: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:43:18 +0800
-Message-Id: <20191120134318.16470-1-krzk@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: proc: Fix Kconfig indentation
+Date:   Wed, 20 Nov 2019 21:43:22 +0800
+Message-Id: <20191120134322.16525-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -41,22 +43,42 @@ coding style with command like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- fs/qnx6/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/proc/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/qnx6/Kconfig b/fs/qnx6/Kconfig
-index 6a9d6bce1586..5ef679e51ba1 100644
---- a/fs/qnx6/Kconfig
-+++ b/fs/qnx6/Kconfig
-@@ -7,7 +7,7 @@ config QNX6FS_FS
- 	  QNX 6 (also called QNX RTP).
- 	  Further information is available at <http://www.qnx.com/>.
- 	  Say Y if you intend to mount QNX hard disks or floppies formatted
--          with a mkqnx6fs.
-+	  with a mkqnx6fs.
- 	  However, keep in mind that this currently is a readonly driver!
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index cb5629bd5fff..af2c0af60269 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -42,8 +42,8 @@ config PROC_VMCORE
+ 	bool "/proc/vmcore support"
+ 	depends on PROC_FS && CRASH_DUMP
+ 	default y
+-        help
+-        Exports the dump image of crashed kernel in ELF format.
++	help
++	Exports the dump image of crashed kernel in ELF format.
  
- 	  To compile this file system support as a module, choose M here: the
+ config PROC_VMCORE_DEVICE_DUMP
+ 	bool "Device Hardware/Firmware Log Collection"
+@@ -72,7 +72,7 @@ config PROC_SYSCTL
+ 	  a recompile of the kernel or reboot of the system.  The primary
+ 	  interface is through /proc/sys.  If you say Y here a tree of
+ 	  modifiable sysctl entries will be generated beneath the
+-          /proc/sys directory. They are explained in the files
++	  /proc/sys directory. They are explained in the files
+ 	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
+ 	  option will enlarge the kernel by at least 8 KB.
+ 
+@@ -88,7 +88,7 @@ config PROC_PAGE_MONITOR
+ 	  Various /proc files exist to monitor process memory utilization:
+ 	  /proc/pid/smaps, /proc/pid/clear_refs, /proc/pid/pagemap,
+ 	  /proc/kpagecount, and /proc/kpageflags. Disabling these
+-          interfaces will reduce the size of the kernel by approximately 4kb.
++	  interfaces will reduce the size of the kernel by approximately 4kb.
+ 
+ config PROC_CHILDREN
+ 	bool "Include /proc/<pid>/task/<tid>/children file"
 -- 
 2.17.1
 
