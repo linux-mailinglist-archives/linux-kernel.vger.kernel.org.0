@@ -2,286 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B290810532A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:34:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A8510531C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfKUNeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:34:07 -0500
-Received: from spam01.hygon.cn ([110.188.70.11]:1863 "EHLO spam1.hygon.cn"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727014AbfKUNeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:34:07 -0500
-Received: from MK-FE.hygon.cn ([172.23.18.61])
-        by spam1.hygon.cn with ESMTP id xALDWutZ014213;
-        Thu, 21 Nov 2019 21:32:56 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from cncheex01.Hygon.cn ([172.23.18.10])
-        by MK-FE.hygon.cn with ESMTP id xALDWkiW088366;
-        Thu, 21 Nov 2019 21:32:46 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from [172.20.21.12] (172.23.18.44) by cncheex01.Hygon.cn
- (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 21 Nov
- 2019 21:32:55 +0800
-Subject: Re: Fwd: [PATCH] NTB: Fix an error in get link status
-To:     Sanjay R Mehta <sanmehta@amd.com>
-CC:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-ntb <linux-ntb@googlegroups.com>, <linjiasen007@gmail.com>
-References: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
- <CAPoiz9wAJz=Hqb6Os=9AHHv_NGpZ8uCaAuOC=aUTkASKdfs9WQ@mail.gmail.com>
- <933f74c7-7249-618c-13dc-9e4e47ad75d7@hygon.cn>
- <11b355a8-0fe0-f256-c510-ddf106017703@hygon.cn>
- <CAADLhr7bpb-F0eF1UFXy7AcN=z061mno_QsqGE8z-mvWKvUyCQ@mail.gmail.com>
- <04b4d1ed-ea47-819e-a7e4-b729fa463506@amd.com>
-From:   Jiasen Lin <linjiasen@hygon.cn>
-Message-ID: <5c3155b5-6eed-d955-b18b-59b0cb1c513b@hygon.cn>
-Date:   Thu, 21 Nov 2019 21:30:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726792AbfKUNau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:30:50 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51829 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfKUNau (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 08:30:50 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g206so3457956wme.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 05:30:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Jo+ES8Xc5JRhOigJYOHMRS0C9xfeoUlcZgoW8bE/klw=;
+        b=WOqsXLW22kr4axDfqEH5dPhsTbkK5xKkbZfYrn+lbxNAo3grp4lJI62h4bBNN6zfqN
+         h0Ezl+mfeIlN4g/wUslgGqCDuY4OzJsQk4qA41onqSgrwJv1c15So7vTaANZiV7xTFel
+         UkFldHazH0+pYJwf9XZpxPpBvII5ZuZUGU08ovJIOY5spfr0DlUwgXDx1buJbVU+D8XZ
+         nAgL359OjUCojdYI+zxZZEUy3ponYMJZxpDPBvppuVzB4aLgpG6voOHT1+z813EeQdES
+         G4QPrletLL3WzD/ncqxZrlNM69ATLY/tEacFoJIIBxuMon8uJRU3U6rz+ftoioaDOCVg
+         wHiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Jo+ES8Xc5JRhOigJYOHMRS0C9xfeoUlcZgoW8bE/klw=;
+        b=SN0CP/y6IXHnEz964gMLc81X+ps+FP+xmnQitXAZbxRX8ubdDb4tyeTl6m8Y+RN3CG
+         eyYyyQUEXt+vQXCzyYZCx7KFvIankEmCkBH4iUaNTxcCAk0H2zhpV3UaxPfsNHKnhufN
+         CtgI0DJDKk8jH/kE8pIPUsaCBIr/KoEQY5NQKqSESwF4GO0hPrfmm7E6myf/zztPRVxV
+         hmmLgNHkoqgCjfZEg7Inb3pRNq4gOrLpba4me/yqsU7zo4Myj1WZdk6HrWcP/2gUzoCw
+         PVMCZM0kM3i8WKreM5DxOH/hJVatLFOA1k7nBVjeR8fiQrnWgte4Kbq7YtUo1I6be591
+         /hyw==
+X-Gm-Message-State: APjAAAW9le/G7iZ0+aVGUI/C13zSyQc3DUiIuAE3wa82LjOhuatCrff6
+        /usqhRzK6Uqenc47b65kCJNWDw==
+X-Google-Smtp-Source: APXvYqwfKqvBfhToGbmgTDkb4afoB9HGvbkBU0UqNXIj/iBpVqvczE4D3AVjR+XgW01I+HY3OmXE9Q==
+X-Received: by 2002:a7b:c747:: with SMTP id w7mr10380769wmk.62.1574343047861;
+        Thu, 21 Nov 2019 05:30:47 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
+        by smtp.gmail.com with ESMTPSA id f67sm2994421wme.16.2019.11.21.05.30.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 05:30:47 -0800 (PST)
+Date:   Thu, 21 Nov 2019 13:30:43 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@kernel.org, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, patrick.bellasi@matbug.net,
+        qais.yousef@arm.com, morten.rasmussen@arm.com
+Subject: Re: [PATCH 3/3] sched/fair: Consider uclamp for "task fits capacity"
+ checks
+Message-ID: <20191121133043.GA46904@google.com>
+References: <20191120175533.4672-1-valentin.schneider@arm.com>
+ <20191120175533.4672-4-valentin.schneider@arm.com>
+ <20191121115602.GA213296@google.com>
+ <f7e5dabb-a7e6-d110-abca-de7d4533bcc5@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <04b4d1ed-ea47-819e-a7e4-b729fa463506@amd.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.23.18.44]
-X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
- (172.23.18.10)
-X-MAIL: spam1.hygon.cn xALDWutZ014213
-X-DNSRBL: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7e5dabb-a7e6-d110-abca-de7d4533bcc5@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019/11/20 22:13, Sanjay R Mehta wrote:
-> From: *Jiasen Lin* <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>>
->> Date: Wed, Nov 20, 2019 at 3:25 PM
->> Subject: Re: [PATCH] NTB: Fix an error in get link status
->> To: Jon Mason <jdmason@kudzu.us <mailto:jdmason@kudzu.us>>
->> Cc: S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com <mailto:Shyam-sundar.S-k@amd.com>>, Dave Jiang <dave.jiang@intel.com <mailto:dave.jiang@intel.com>>, Allen Hubbe <allenbh@gmail.com
->> <mailto:allenbh@gmail.com>>, linux-kernel <linux-kernel@vger.kernel.org <mailto:linux-kernel@vger.kernel.org>>, linux-ntb <linux-ntb@googlegroups.com <mailto:linux-ntb@googlegroups.com>>,
->> <linjiasen007@gmail.com <mailto:linjiasen007@gmail.com>>, Jiasen Lin <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>>
->>
->>
->>
->>
->> On 2019/11/18 18:17, Jiasen Lin wrote:
->>>
->>>
->>> On 2019/11/18 7:00, Jon Mason wrote:
->>>> On Thu, Nov 7, 2019 at 4:37 AM Jiasen Lin <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>> wrote:
->>>>>
->>>>> The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
->>>>> but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
->>>>> It is offset of Device Capabilities Reg rather than Link Control Reg.
->>>>>
->>>>> This code trigger an error in get link statsus:
->>>>>
->>>>>           cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
->>>>>                   LNK STA -               0x8fa1
->>>>>                   Link Status -           Up
->>>>>                   Link Speed -            PCI-E Gen 0
->>>>>                   Link Width -            x0
->>>>>
->>>>> This patch use pcie_capability_read_dword to get link status.
->>>>> After fix this issue, we can get link status accurately:
->>>>>
->>>>>           cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
->>>>>                   LNK STA -               0x11030042
->>>>>                   Link Status -           Up
->>>>>                   Link Speed -            PCI-E Gen 3
->>>>>                   Link Width -            x16
->>>>
->>>> No response from AMD maintainers, but it looks like you are correct.
->>>>
->>>> This needs a "Fixes:" line here.  I took the liberty of adding one to
->>>> this patch.
->>>>
->>>
->>> Thank you for your suggestions. Yes, this patch fix the commit id:
->>> a1b3695 ("NTB: Add support for AMD PCI-Express Non-Transparent Bridge").
->>>
->>>>> Signed-off-by: Jiasen Lin <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>>
->>>>> ---
->>>>>    drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
->>>>>    drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
->>>>>    2 files changed, 3 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c
->>>>> b/drivers/ntb/hw/amd/ntb_hw_amd.c
->>>>> index 156c2a1..ae91105 100644
->>>>> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
->>>>> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
->>>>> @@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
->>>>>
->>>>>           ndev->cntl_sta = reg;
->>>>>
->>>>> -       rc = pci_read_config_dword(ndev->ntb.pdev,
->>>>> -                                  AMD_LINK_STATUS_OFFSET, &stat);
->>>>> +       rc = pcie_capability_read_dword(ndev->ntb.pdev,
->>>>> +                                  PCI_EXP_LNKCTL, &stat);
->>>>>           if (rc)
->>>>>                   return 0;
->>>>>           ndev->lnk_sta = stat;
->>>>> @@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
->>>>>    static const struct pci_device_id amd_ntb_pci_tbl[] = {
->>>>>           { PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
->>>>>           { PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
->>>>> +       { PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
->>>>
->>>> This should be a separate patch.  I took the liberty of splitting it
->>>> off into a unique patch and attributing it to you.  I've pushed them
->>>> to the ntb-next branch on
->>>> https://github.com/jonmason/ntb
->>>>
->>> Thank you for your comment. We appreciate the time and effort you have
->>> spent to split it off, I will test it ASAP.
->>>
->>>> Please verify everything looks acceptable to you (given the changes I
->>>> did above that are attributed to you).  Also, testing of the latest
->>>> code is always appreciated.
->>>>
->>>> Thanks,
->>>> Jon
->>>>
->>
->> I have tested these patches that are pushed to ntb-next branch, they
->> work well on HYGON platforms.
->>
->> Thanks,
->> Jiasen Lin
+On Thursday 21 Nov 2019 at 12:56:39 (+0000), Valentin Schneider wrote:
+> > @@ -6274,6 +6274,15 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+> >  			if (!fits_capacity(util, cpu_cap))
+> >  				continue;
+> >  
+> > +			/*
+> > +			 * Skip CPUs that don't satisfy uclamp requests. Note
+> > +			 * that the above already ensures the CPU has enough
+> > +			 * spare capacity for the task; this is only really for
+> > +			 * uclamp restrictions.
+> > +			 */
+> > +			if (!task_fits_capacity(p, capacity_orig_of(cpu)))
+> > +				continue;
 > 
-> Hi Jiasen Lin,
+> This is partly redundant with the above, I think. What we really want here
+> is just
 > 
-> Apologies for my delayed response. I was on vacation.
+> fits_capacity(uclamp_eff_value(p, UCLAMP_MIN), capacity_orig_of(cpu))
 > 
-> Your patch is a correct fix, but that would work only for primary system.
-> 
-> The design of AMD NTB implementation is such that NTB primary acts as an endpoint device and NTB secondary is a PCIe Root Port (RP). Considering that,
-> the link status and control register needs to be accessed differently based on the NTB topology.
-> 
-> So in the case of NTB secondary, we read the link status and control register of the PCIe RP capabilities structure and in the case of NTB primary, we read the
-> link status and control register from NTB device capabilities structure.
-> 
-> The code below is the proper fix for AMD platform. I will be sending incremental change above your patch.
-> 
-> would appreciate if you could test my patch and let me know whether that works for you.
-> 
+> but this would require some inline #ifdeffery.
 
-Dhyana CPU dones not support data transfer while both sides of PCIe link 
-are configured as NTB, in other word, Dhyana only support NTB that is 
-connected to RP rather than NT to NT.
+This suggested change lacks the UCLAMP_MAX part, which is a shame
+because this is precisely in the EAS path that we should try and
+down-migrate tasks if they have an appropriate max_clamp. So, your first
+proposal made sense, IMO.
 
-As illustrated in the following topology, NTB consists of two PCIe 
-endpoints, a Primary NTB, and a Secondary NTB. Primary CPU can find 
-Priamry NTB, while Secondary NTB, Secondary internal SW.ds and Secondary 
-internal SW.ds are enumerated by secondary CPU.
+Another option to avoid the redundancy would be to do something along
+the lines of the totally untested diff below.
 
-In this topology, to remove any ambiguity, your suggestion is more 
-accurate method to get link status of NTB.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 69a81a5709ff..38cb5fe7ba65 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6372,9 +6372,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+                        if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+                                continue;
+ 
+-                       /* Skip CPUs that will be overutilized. */
+                        util = cpu_util_next(cpu, p, cpu);
+                        cpu_cap = capacity_of(cpu);
++                       spare_cap = cpu_cap - util;
++                       util = uclamp_util_with(cpu_rq(cpu), util, p);
++
++                       /* Skip CPUs that will be overutilized. */
+                        if (!fits_capacity(util, cpu_cap))
+                                continue;
+ 
+@@ -6389,7 +6392,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+                         * Find the CPU with the maximum spare capacity in
+                         * the performance domain
+                         */
+-                       spare_cap = cpu_cap - util;
+                        if (spare_cap > max_spare_cap) {
+                                max_spare_cap = spare_cap;
+                                max_spare_cap_cpu = cpu;
 
-In primary PCI domain:
-Primary RP--Primary NTB----------------------------------------
-40:04.1-------41:00.1(Pri NTB)                                | 
-
-                                                               | 
-In secondary PCI domain:                                      |
-Secondary RP--Secondary SW.us--Secondary SW.ds--Secondary NTB--
-40:03.1---------41:00.0---------42:00.0---------43:00.1(Sec NTB)
-
-I have modified the code according to your suggestion and tested it
-on Dhyana platform, it works well, expect to receice your patch.
-
-Before modify the code, read the Link Status and control register of the 
-secondary NTB device to get link status.
-
-cat /sys/kernel/debug/ntb_hw_amd/0000\:43\:00.1/info
-NTB Device Information:
-Connection Topology -   NTB_TOPO_SEC
-LNK STA -               0x11030042
-Link Status -           Up
-Link Speed -            PCI-E Gen 3
-Link Width -            x16
-
-After modify the code, read the Link Status and control register of the 
-secondary RP to get link status.
-
-cat /sys/kernel/debug/ntb_hw_amd/0000\:43\:00.1/info
-NTB Device Information:
-Connection Topology -   NTB_TOPO_SEC
-LNK STA -               0x70830042
-Link Status -           Up
-Link Speed -            PCI-E Gen 3
-Link Width -            x8
+Thoughts ?
 
 Thanks,
-Jiasen Lin
-
-> ---
->   drivers/ntb/hw/amd/ntb_hw_amd.c | 27 +++++++++++++++++++++++----
->   drivers/ntb/hw/amd/ntb_hw_amd.h |  1 -
->   2 files changed, 23 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
-> index 14ad69c..91e1966 100644
-> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
-> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
-> @@ -842,6 +842,8 @@ static inline void ndev_init_struct(struct amd_ntb_dev *ndev,
->   static int amd_poll_link(struct amd_ntb_dev *ndev)
->   {
->       void __iomem *mmio = ndev->peer_mmio;
-> +    struct pci_dev *pci_rp = NULL;
-> +    struct pci_dev *pdev = NULL;
->       u32 reg, stat;
->       int rc;
->   
-> @@ -855,10 +857,27 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
->   
->       ndev->cntl_sta = reg;
->   
-> -    rc = pci_read_config_dword(ndev->ntb.pdev,
-> -                   AMD_LINK_STATUS_OFFSET, &stat);
-> -    if (rc)
-> -        return 0;
-> +    if (ndev->ntb.topo == NTB_TOPO_SEC) {
-> +        /* Locate the pointer to PCIe Root Port for this device */
-> +        pci_rp = pci_find_pcie_root_port(ndev->ntb.pdev);
-> +        /* Read the PCIe Link Control and Status register */
-> +        if (pci_rp) {
-> +            rc = pcie_capability_read_dword(pci_rp, PCI_EXP_LNKCTL,
-> +                            &stat);
-> +            if (rc)
-> +                return 0;
-> +        }
-> +    } else if (ndev->ntb.topo == NTB_TOPO_PRI) {
-> +        /*
-> +         * For NTB primary, we simply read the Link Status and control
-> +         * register of the NTB device itself.
-> +         */
-> +        pdev = ndev->ntb.pdev;
-> +        rc = pcie_capability_read_dword(pdev, PCI_EXP_LNKCTL, &stat);
-> +        if (rc)
-> +            return 0;
-> +    }
-> +
->       ndev->lnk_sta = stat;
->   
->       return 1;
-> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_amd.h
-> index 139a307..39e5d18 100644
-> --- a/drivers/ntb/hw/amd/ntb_hw_amd.h
-> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
-> @@ -53,7 +53,6 @@
->   #include <linux/pci.h>
->   
->   #define AMD_LINK_HB_TIMEOUT    msecs_to_jiffies(1000)
-> -#define AMD_LINK_STATUS_OFFSET    0x68
->   #define NTB_LIN_STA_ACTIVE_BIT    0x00000002
->   #define NTB_LNK_STA_SPEED_MASK    0x000F0000
->   #define NTB_LNK_STA_WIDTH_MASK    0x03F00000
-> 
+Quentin
