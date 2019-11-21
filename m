@@ -2,80 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8C36105AE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:14:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F6B105AFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfKUUOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 15:14:30 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33396 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfKUUOa (ORCPT
+        id S1727116AbfKUURS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 15:17:18 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60694 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUURR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 15:14:30 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXsqQ-0004gW-HB; Thu, 21 Nov 2019 21:14:26 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2F8611C1A4C;
-        Thu, 21 Nov 2019 21:14:26 +0100 (CET)
-Date:   Thu, 21 Nov 2019 20:14:26 -0000
-From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/doublefault/32: Fix stack canaries in the
- double fault handler
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        Thu, 21 Nov 2019 15:17:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALKEbjE061861;
+        Thu, 21 Nov 2019 20:14:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=VXCOimzgvVy9KqhSDIxCVNWugmykimsVTHYCDeSsKHs=;
+ b=eekO0u0SQlqpWrXPvS+FY2HW0Apsk31ygvow3cpbRhqS5OLGVb33b/6stY7qURXz6CSA
+ 9ytPFwZ3KemwlteFWMkND0HjRwxWjE0UwZP2pmDxyRS7I93sw5g1GG+0ncNwKIzrZsC+
+ fQgz8hpy74Y4IkXN6Nv/9R2tQod0nIaadLfJcV2UtyxvGODhyeb1+oiYapwXn5b4bvPV
+ biezNGpmIhScJQT+ve8fk8barYDiOXjrazE7ooDmKKuSXkr0+MP9gxmRKrktPfEzIW0T
+ v3Ey7e3NiJilfX9NeoBbMOZ3KVQUK0BrSaBZ4w5ArCkm8msZPWR+UojdYwD7+jgEX+TJ mg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2wa9rqxmyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 20:14:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALKDHXn046274;
+        Thu, 21 Nov 2019 20:14:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2wd46yybg1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 20:14:53 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xALKEicM028952;
+        Thu, 21 Nov 2019 20:14:46 GMT
+Received: from kadam (/41.210.146.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 12:14:43 -0800
+Date:   Thu, 21 Nov 2019 23:14:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     syzbot <syzbot+3967c1caf256f4d5aefe@syzkaller.appspotmail.com>
+Cc:     alsa-devel@alsa-project.org, davem@davemloft.net,
+        dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
+        tiwai@suse.de, Eric Dumazet <edumazet@google.com>
+Subject: Re: KASAN: use-after-free Read in ccid_hc_tx_delete
+Message-ID: <20191121201433.GD617@kadam>
+References: <000000000000de3c7705746dcbb7@google.com>
+ <0000000000002c243a0597dc8d9d@google.com>
 MIME-Version: 1.0
-Message-ID: <157436726610.21853.16819575541395688892.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000002c243a0597dc8d9d@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911210168
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911210168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, Nov 21, 2019 at 07:00:00AM -0800, syzbot wrote:
+> syzbot has bisected this bug to:
+> 
+> commit f04684b4d85d6371126f476d3268ebf6a0bd57cf
+> Author: Dan Carpenter <dan.carpenter@oracle.com>
+> Date:   Thu Jun 21 08:07:21 2018 +0000
+> 
+>     ALSA: lx6464es: Missing error code in snd_lx6464es_create()
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10dd11cae00000
+> start commit:   eb6cf9f8 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+> git tree:       upstream
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=12dd11cae00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14dd11cae00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3967c1caf256f4d5aefe
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11022ccd400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124581db400000
+> 
+> Reported-by: syzbot+3967c1caf256f4d5aefe@syzkaller.appspotmail.com
+> Fixes: f04684b4d85d ("ALSA: lx6464es: Missing error code in
+> snd_lx6464es_create()")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Commit-ID:     3580d0b29cab08483f84a16ce6a1151a1013695f
-Gitweb:        https://git.kernel.org/tip/3580d0b29cab08483f84a16ce6a1151a1013695f
-Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Thu, 21 Nov 2019 11:50:12 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 21 Nov 2019 19:37:42 +01:00
+This crash isn't related to my commit, it's seems something specific to
+DCCP.
 
-x86/doublefault/32: Fix stack canaries in the double fault handler
+My guess is that the fix is probably something like this.  The old sk
+and the new sk re-use the same newdp->dccps_hc_rx/tx_ccid pointers.
+The first sk destructor frees it and that causes a use after free when
+the second destructor tries to free it.
 
-The double fault TSS was missing GS setup, which is needed for stack
-canaries to work.
+But I don't know DCCP code at all so I might be totally off and I
+haven't tested this at all...  It was just easier to write a patch than
+to try to explain in words.  Maybe we should clone the ccid instead of
+setting it to NULL.  Or I might be completely wrong.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@kernel.org
 ---
- arch/x86/kernel/doublefault.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/dccp/minisocks.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/doublefault.c b/arch/x86/kernel/doublefault.c
-index 0b8cedb..d5c9b13 100644
---- a/arch/x86/kernel/doublefault.c
-+++ b/arch/x86/kernel/doublefault.c
-@@ -65,6 +65,9 @@ struct x86_hw_tss doublefault_tss __cacheline_aligned = {
- 	.ss		= __KERNEL_DS,
- 	.ds		= __USER_DS,
- 	.fs		= __KERNEL_PERCPU,
-+#ifndef CONFIG_X86_32_LAZY_GS
-+	.gs		= __KERNEL_STACK_CANARY,
-+#endif
+diff --git a/net/dccp/minisocks.c b/net/dccp/minisocks.c
+index 25187528c308..4cbfcccbbbbb 100644
+--- a/net/dccp/minisocks.c
++++ b/net/dccp/minisocks.c
+@@ -98,6 +98,8 @@ struct sock *dccp_create_openreq_child(const struct sock *sk,
+ 		newdp->dccps_timestamp_echo = dreq->dreq_timestamp_echo;
+ 		newdp->dccps_timestamp_time = dreq->dreq_timestamp_time;
+ 		newicsk->icsk_rto	    = DCCP_TIMEOUT_INIT;
++		newdp->dccps_hc_rx_ccid     = NULL;
++		newdp->dccps_hc_tx_ccid     = NULL;
  
- 	.__cr3		= __pa_nodebug(swapper_pg_dir),
- };
+ 		INIT_LIST_HEAD(&newdp->dccps_featneg);
+ 		/*
+-- 
+2.11.0
+
+
+
+
