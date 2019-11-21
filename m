@@ -2,200 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5B6105BBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CFA105BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfKUVQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:16:42 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34085 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfKUVQh (ORCPT
+        id S1726686AbfKUVTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:19:35 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43152 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUVTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:16:37 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iXtoU-0008AG-T6; Thu, 21 Nov 2019 22:16:30 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iXtoU-0005qn-5O; Thu, 21 Nov 2019 22:16:30 +0100
-Date:   Thu, 21 Nov 2019 22:16:30 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Jernej Skrabec <jernej.skrabec@siol.net>, kernel@pengutronix.de
-Subject: Re: [PATCH v8 5/6] pwm: sun4i: Add support to output source clock
- directly
-Message-ID: <20191121211630.slgayfbuykwvlvdt@pengutronix.de>
-References: <20191121195902.6906-1-peron.clem@gmail.com>
- <20191121195902.6906-6-peron.clem@gmail.com>
+        Thu, 21 Nov 2019 16:19:35 -0500
+Received: by mail-lj1-f196.google.com with SMTP id y23so4842020ljh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 13:19:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L59pxlP2h08giolehrbEu//J/zWHVNPRb2f26ecJqHM=;
+        b=cHI403mFP70A3RgVqDv2UyS2js6BF1mI1YRiR/P7BDbQyTnZFaOYsC3SIL4X1UVXt9
+         jXdZ/NK2In5G19otIuHbirY05Xi5rSZE+FPhBdyzIgjqlMQXogxnYynlfCsG3zMU+pZR
+         lAIMOqlTk8L0KfipBKDFixcUBmcWuT/u49X2Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L59pxlP2h08giolehrbEu//J/zWHVNPRb2f26ecJqHM=;
+        b=mpZwNwhZVkvL8SdYFxz2qL6cAe9elmgci4V0vSpqDofGx+J20DCIDVK95cmfXl6mL5
+         Gs6nlamefcanAO5q3CpTCu0jB9/HHIjg2L4IoFxy2IsQlNXhELOd5zli/6udn2z8RobW
+         09J92VKAaKghCCTn1fmiz2oF65DsuLw011OByA7wJuM3pA6nVm4D1zwEtnzZgguHrF25
+         MhkQIvgUB1zzhojAn3ome6WanwkHMXUjYwZSpNZ7mpaeWkMdiVhC7rTzfAyGK6O2QB19
+         0H9Me2JRkXb/bOmJcBvR2L54a7S4nUXG98WikFHxkUHegZnw9ADcvYzSw2LhArJ3zh9Z
+         rWYA==
+X-Gm-Message-State: APjAAAUc+R+ZO5jioY4JN0XeuOzAkYVRlc5Pvq3NKfSltXbrXLWijUIb
+        d2nLIcwI+evZdmzyu68DT1KhOecthak=
+X-Google-Smtp-Source: APXvYqyCh2V7+3Kt5pc63WZ5AyFSi509/lB31HqLG73cU2sU+6OZVpeOY1SWmRi4hJ7/xJlERLTLJA==
+X-Received: by 2002:a2e:9a95:: with SMTP id p21mr9222297lji.175.1574371171016;
+        Thu, 21 Nov 2019 13:19:31 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id m12sm2002295lfb.60.2019.11.21.13.19.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 13:19:29 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id m4so4852708ljj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 13:19:28 -0800 (PST)
+X-Received: by 2002:a2e:9208:: with SMTP id k8mr9619555ljg.14.1574371167841;
+ Thu, 21 Nov 2019 13:19:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191121195902.6906-6-peron.clem@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20191114235008.185111-1-evgreen@chromium.org> <20191114154903.v7.2.I4d476bddbf41a61422ad51502f4361e237d60ad4@changeid>
+ <20191120022518.GU6235@magnolia> <CAE=gft4mjKc4QKFKxp2FX9G2rUMuE3_eDuW_3Oq7NqTYBQwEjg@mail.gmail.com>
+ <20191120191302.GV6235@magnolia> <CAE=gft6x1TmkkNTj+gktYMkHcysYyuYL50cavYusQ7hd9zChvA@mail.gmail.com>
+ <20191120194507.GW6235@magnolia>
+In-Reply-To: <20191120194507.GW6235@magnolia>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 21 Nov 2019 13:18:51 -0800
+X-Gmail-Original-Message-ID: <CAE=gft4OcxPP7srBe_2bj8K_0jHGD8Ae_PbV1Rq-Nz4F8GtkQA@mail.gmail.com>
+Message-ID: <CAE=gft4OcxPP7srBe_2bj8K_0jHGD8Ae_PbV1Rq-Nz4F8GtkQA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] loop: Better discard support for block devices
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 08:59:01PM +0100, Clément Péron wrote:
-> From: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> PWM core has an option to bypass whole logic and output unchanged source
-> clock as PWM output. This is achieved by enabling bypass bit.
-> 
-> Note that when bypass is enabled, no other setting has any meaning, not
-> even enable bit.
-> 
-> This mode of operation is needed to achieve high enough frequency to
-> serve as clock source for AC200 chip which is integrated into same
-> package as H6 SoC.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> ---
->  drivers/pwm/pwm-sun4i.c | 48 +++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 46 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-> index 1fa2057419fb..0fe9c680d6d0 100644
-> --- a/drivers/pwm/pwm-sun4i.c
-> +++ b/drivers/pwm/pwm-sun4i.c
-> @@ -3,6 +3,10 @@
->   * Driver for Allwinner sun4i Pulse Width Modulation Controller
->   *
->   * Copyright (C) 2014 Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> + *
-> + * Limitations:
-> + * - When outputing the source clock directly, the PWM logic will be bypassed
-> + *   and the currently running period is not guaranteed to be completed
->   */
->  
->  #include <linux/bitops.h>
-> @@ -73,6 +77,7 @@ static const u32 prescaler_table[] = {
->  
->  struct sun4i_pwm_data {
->  	bool has_prescaler_bypass;
-> +	bool has_direct_mod_clk_output;
->  	unsigned int npwm;
->  };
->  
-> @@ -118,6 +123,20 @@ static void sun4i_pwm_get_state(struct pwm_chip *chip,
->  
->  	val = sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
->  
-> +	/*
-> +	 * PWM chapter in H6 manual has a diagram which explains that if bypass
-> +	 * bit is set, no other setting has any meaning. Even more, experiment
-> +	 * proved that also enable bit is ignored in this case.
-> +	 */
-> +	if ((val & BIT_CH(PWM_BYPASS, pwm->hwpwm)) &&
-> +	    sun4i_pwm->data->has_direct_mod_clk_output) {
-> +		state->period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, clk_rate);
-> +		state->duty_cycle = DIV_ROUND_UP_ULL(state->period, 2);
-> +		state->polarity = PWM_POLARITY_NORMAL;
-> +		state->enabled = true;
-> +		return;
-> +	}
-> +
->  	if ((PWM_REG_PRESCAL(val, pwm->hwpwm) == PWM_PRESCAL_MASK) &&
->  	    sun4i_pwm->data->has_prescaler_bypass)
->  		prescaler = 1;
-> @@ -149,13 +168,24 @@ static void sun4i_pwm_get_state(struct pwm_chip *chip,
->  
->  static int sun4i_pwm_calculate(struct sun4i_pwm_chip *sun4i_pwm,
->  			       const struct pwm_state *state,
-> -			       u32 *dty, u32 *prd, unsigned int *prsclr)
-> +			       u32 *dty, u32 *prd, unsigned int *prsclr,
-> +			       bool *bypass)
->  {
->  	u64 clk_rate, div = 0;
->  	unsigned int pval, prescaler = 0;
->  
->  	clk_rate = clk_get_rate(sun4i_pwm->clk);
->  
-> +	*bypass = sun4i_pwm->data->has_direct_mod_clk_output &&
-> +		  state->enabled &&
-> +		  (state->period * clk_rate >= NSEC_PER_SEC) &&
-> +		  (state->period * clk_rate < 2 * NSEC_PER_SEC) &&
-> +		  (state->duty_cycle * clk_rate * 2 >= NSEC_PER_SEC);
-> +
-> +	/* Skip calculation of other parameters if we bypass them */
-> +	if (*bypass)
-> +		return 0;
-> +
->  	if (sun4i_pwm->data->has_prescaler_bypass) {
->  		/* First, test without any prescaler when available */
->  		prescaler = PWM_PRESCAL_MASK;
-> @@ -206,6 +236,7 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  	int ret;
->  	unsigned int delay_us, prescaler;
->  	unsigned long now;
-> +	bool bypass;
->  
->  	pwm_get_state(pwm, &cstate);
->  
-> @@ -220,7 +251,8 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  	spin_lock(&sun4i_pwm->ctrl_lock);
->  	ctrl = sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
->  
-> -	ret = sun4i_pwm_calculate(sun4i_pwm, state, &duty, &period, &prescaler);
-> +	ret = sun4i_pwm_calculate(sun4i_pwm, state, &duty, &period, &prescaler,
-> +				  &bypass);
->  	if (ret) {
->  		dev_err(chip->dev, "period exceeds the maximum value\n");
->  		spin_unlock(&sun4i_pwm->ctrl_lock);
-> @@ -229,6 +261,18 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  		return ret;
->  	}
->  
-> +	if (sun4i_pwm->data->has_direct_mod_clk_output) {
-> +		if (bypass) {
-> +			ctrl |= BIT_CH(PWM_BYPASS, pwm->hwpwm);
-> +			/* We can skip other parameter */
-> +			sun4i_pwm_writel(sun4i_pwm, ctrl, PWM_CTRL_REG);
-> +			spin_unlock(&sun4i_pwm->ctrl_lock);
-> +			return 0;
-> +		} else {
-> +			ctrl &= ~BIT_CH(PWM_BYPASS, pwm->hwpwm);
-> +		}
-> +	}
+On Wed, Nov 20, 2019 at 11:45 AM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+>
+> On Wed, Nov 20, 2019 at 11:25:48AM -0800, Evan Green wrote:
+> > On Wed, Nov 20, 2019 at 11:13 AM Darrick J. Wong
+> > <darrick.wong@oracle.com> wrote:
+> > >
+> > > On Wed, Nov 20, 2019 at 10:56:30AM -0800, Evan Green wrote:
+> > > > On Tue, Nov 19, 2019 at 6:25 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > > >
+> > > > > On Thu, Nov 14, 2019 at 03:50:08PM -0800, Evan Green wrote:
+> > > > > > If the backing device for a loop device is itself a block device,
+> > > > > > then mirror the "write zeroes" capabilities of the underlying
+> > > > > > block device into the loop device. Copy this capability into both
+> > > > > > max_write_zeroes_sectors and max_discard_sectors of the loop device.
+> > > > > >
+> > > > > > The reason for this is that REQ_OP_DISCARD on a loop device translates
+> > > > > > into blkdev_issue_zeroout(), rather than blkdev_issue_discard(). This
+> > > > > > presents a consistent interface for loop devices (that discarded data
+> > > > > > is zeroed), regardless of the backing device type of the loop device.
+> > > > > > There should be no behavior change for loop devices backed by regular
+> > > > > > files.
+> >
+> > (marking this spot for below)
+> >
+> > > > > >
+> > > > > > This change fixes blktest block/003, and removes an extraneous
+> > > > > > error print in block/013 when testing on a loop device backed
+> > > > > > by a block device that does not support discard.
+> > > > > >
+> > > > > > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > > > > > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> > > > > > Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> > > > > > ---
+> > > > > >
+> > > > > > Changes in v7:
+> > > > > > - Rebase on top of Darrick's patch
+> > > > > > - Tweak opening line of commit description (Darrick)
+> > > > > >
+> > > > > > Changes in v6: None
+> > > > > > Changes in v5:
+> > > > > > - Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
+> > > > > >
+> > > > > > Changes in v4:
+> > > > > > - Mirror blkdev's write_zeroes into loopdev's discard_sectors.
+> > > > > >
+> > > > > > Changes in v3:
+> > > > > > - Updated commit description
+> > > > > >
+> > > > > > Changes in v2: None
+> > > > > >
+> > > > > >  drivers/block/loop.c | 40 +++++++++++++++++++++++++++++-----------
+> > > > > >  1 file changed, 29 insertions(+), 11 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > > > > > index 6a9fe1f9fe84..e8f23e4b78f7 100644
+> > > > > > --- a/drivers/block/loop.c
+> > > > > > +++ b/drivers/block/loop.c
+> > > > > > @@ -427,11 +427,12 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+> > > > > >        * information.
+> > > > > >        */
+> > > > > >       struct file *file = lo->lo_backing_file;
+> > > > > > +     struct request_queue *q = lo->lo_queue;
+> > > > > >       int ret;
+> > > > > >
+> > > > > >       mode |= FALLOC_FL_KEEP_SIZE;
+> > > > > >
+> > > > > > -     if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+> > > > > > +     if (!blk_queue_discard(q)) {
+> > > > > >               ret = -EOPNOTSUPP;
+> > > > > >               goto out;
+> > > > > >       }
+> > > > > > @@ -862,6 +863,21 @@ static void loop_config_discard(struct loop_device *lo)
+> > > > > >       struct file *file = lo->lo_backing_file;
+> > > > > >       struct inode *inode = file->f_mapping->host;
+> > > > > >       struct request_queue *q = lo->lo_queue;
+> > > > > > +     struct request_queue *backingq;
+> > > > > > +
+> > > > > > +     /*
+> > > > > > +      * If the backing device is a block device, mirror its zeroing
+> > > > > > +      * capability. REQ_OP_DISCARD translates to a zero-out even when backed
+> > > > > > +      * by block devices to keep consistent behavior with file-backed loop
+> > > > > > +      * devices.
+> > > > > > +      */
 
-This could be simplified to:
+Wait, I went to make this change and realized there's already a comment here.
 
-	if (bypass) {
-		ctrl |= BIT_CH(PWM_BYPASS, pwm->hwpwm);
-		/*
-		 * Other parameters are not relevant in this mode and so
-		 * writing them can be skipped
-		 */
-		sun4i_pwm_writel(sun4i_pwm, ctrl, PWM_CTRL_REG);
-		spin_unlock(&sun4i_pwm->ctrl_lock);
-		return 0;
-	} else {
-		ctrl &= ~BIT_CH(PWM_BYPASS, pwm->hwpwm);
-	}
+I can tweak the language a bit, but this is pretty much what you wanted, right?
 
-which has the advantage(?) that the bypass bit is also (more obviously)
-cleared for SoCs that don't support it and it reduces the indention
-level.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+> > > > > > +     if (S_ISBLK(inode->i_mode) && !lo->lo_encrypt_key_size) {
+> > > > > > +             backingq = bdev_get_queue(inode->i_bdev);
+> > > > > > +             blk_queue_max_discard_sectors(q,
+> > > > > > +                     backingq->limits.max_write_zeroes_sectors);
+> > > > >
+> > > > > max_discard_sectors?
+> > > >
+> > > > I didn't plumb max_discard_sectors because for my scenario it never
+> > > > ends up hitting the block device that way.
+> > > >
+> > > > The loop device either uses FL_ZERO_RANGE or FL_PUNCH_HOLE. When
+> > > > backed by a block device, that ends up in blkdev_fallocate(), which
+> > > > always translates both of those into blkdev_issue_zeroout(), not
+> > > > blkdev_issue_discard(). So it's really the zeroing capabilities of the
+> > > > block device that matters, even for loop discard operations. It seems
+> > > > weird, but I think this is the right thing because it presents a
+> > > > consistent interface to loop device users whether backed by a file
+> > > > system file, or directly by a block device. That is, a previously
+> > > > discarded range will read back as zeroes.
+> > >
+> > > Ah, right.  Could you add this paragraph as a comment explaining why
+> > > we're setting max_discard_sectors from max_write_zeroes_sectors?
+> >
+> > Sure. I put an explanation in the commit description (see spot I
+> > marked above), but I agree a comment is probably also worthwhile.
+>
+> <nod> Sorry about the churn here.
+>
+> I have a strong preference towards documenting decisions like these
+> directly in the code because (a) I suck at reading patch prologues, (b)
+> someone reading the code after this gets committed will see it
+> immediately and right next to the relevant code, and (c) spelunking
+> through the git history of a file for commit messages is kind of clunky.
+>
+> Dunno if that's just my age showing (mmm, pre-bk linux) or what. :/
+>
+> --D
+>
+> > >
+> > > --D
+> > >
+> > > > -Evan
