@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF491048AE
+	by mail.lfdr.de (Postfix) with ESMTP id CB5DD1048AF
 	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKUCov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 21:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54384 "EHLO mail.kernel.org"
+        id S1726962AbfKUCoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 21:44:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfKUCot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 21:44:49 -0500
+        id S1726912AbfKUCov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 21:44:51 -0500
 Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93E09208A3;
-        Thu, 21 Nov 2019 02:44:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 835A02075A;
+        Thu, 21 Nov 2019 02:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574304288;
-        bh=dFaoUL/kjZQEWQ6Iam/kl52aRoyIpykAOKG/LDr/kZ0=;
+        s=default; t=1574304291;
+        bh=i4obWope5dspr37u0BwSnAO/HPhDR9eR2CY62eRdxsE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oFjAcHXiE4gPg9y6z3F+zaBAHpmR2cqOUAzK6GlyTf2M0/RtNu3KstyT+0fT3zq1A
-         /DpdBnFr0tR+xtECXtRzkEln3oVPGagFYXiarq8xVWKGTGP0rGQCHmhtR0shWkONae
-         x5AbZuvW0KCnzrYU9F3HwVehqltUKF+HB+XYOmSo=
+        b=A3mtw2Ha+hqhuGCHMaKN2TebyLd8AMrHnItvBl4dgBCj5ZTfOLahVf0/VptX9nIr/
+         3Di4nir4K2vzOplc6FLLAwBXvR/bkE+JczST0j4YA45tZTYymesQj4geaPFpjduFKb
+         fk6BL56/RC/7EasPoK1KIs76w4T+CPjOKJk1Ps3s=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>
@@ -37,9 +37,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH 4/6] cpufreq: Use vtime aware kcpustat accessors for user time
-Date:   Thu, 21 Nov 2019 03:44:28 +0100
-Message-Id: <20191121024430.19938-5-frederic@kernel.org>
+Subject: [PATCH 5/6] leds: Use all-in-one vtime aware kcpustat accessor
+Date:   Thu, 21 Nov 2019 03:44:29 +0100
+Message-Id: <20191121024430.19938-6-frederic@kernel.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191121024430.19938-1-frederic@kernel.org>
 References: <20191121024430.19938-1-frederic@kernel.org>
@@ -50,87 +50,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can now safely read user and guest kcpustat fields on nohz_full CPUs.
-Use the appropriate accessors.
+We can now safely read user kcpustat fields on nohz_full CPUs.
+Use the appropriate accessor.
 
 Reported-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Rik van Riel <riel@surriel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wanpeng Li <wanpengli@tencent.com>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
 ---
- drivers/cpufreq/cpufreq.c          | 17 ++++++++++-------
- drivers/cpufreq/cpufreq_governor.c |  6 +++---
- 2 files changed, 13 insertions(+), 10 deletions(-)
+ drivers/leds/trigger/ledtrig-activity.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 527fd068dc12..ee23eaf20f35 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -113,18 +113,21 @@ EXPORT_SYMBOL_GPL(get_governor_parent_kobj);
+diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+index ddfc5edd07c8..6901e3631c22 100644
+--- a/drivers/leds/trigger/ledtrig-activity.c
++++ b/drivers/leds/trigger/ledtrig-activity.c
+@@ -57,11 +57,15 @@ static void led_activity_function(struct timer_list *t)
+ 	curr_used = 0;
  
- static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
- {
--	u64 idle_time;
-+	struct kernel_cpustat kcpustat;
- 	u64 cur_wall_time;
-+	u64 idle_time;
- 	u64 busy_time;
- 
- 	cur_wall_time = jiffies64_to_nsecs(get_jiffies_64());
- 
--	busy_time = kcpustat_cpu(cpu).cpustat[CPUTIME_USER];
--	busy_time += kcpustat_field(&kcpustat_cpu(cpu), CPUTIME_SYSTEM, cpu);
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_IRQ];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SOFTIRQ];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_STEAL];
--	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
-+	kcpustat_cpu_fetch(&kcpustat, cpu);
+ 	for_each_possible_cpu(i) {
+-		curr_used += kcpustat_cpu(i).cpustat[CPUTIME_USER]
+-			  +  kcpustat_cpu(i).cpustat[CPUTIME_NICE]
+-			  +  kcpustat_field(&kcpustat_cpu(i), CPUTIME_SYSTEM, i)
+-			  +  kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]
+-			  +  kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
++		struct kernel_cpustat kcpustat;
 +
-+	busy_time = kcpustat.cpustat[CPUTIME_USER];
-+	busy_time += kcpustat.cpustat[CPUTIME_SYSTEM];
-+	busy_time += kcpustat.cpustat[CPUTIME_IRQ];
-+	busy_time += kcpustat.cpustat[CPUTIME_SOFTIRQ];
-+	busy_time += kcpustat.cpustat[CPUTIME_STEAL];
-+	busy_time += kcpustat.cpustat[CPUTIME_NICE];
- 
- 	idle_time = cur_wall_time - busy_time;
- 	if (wall)
-diff --git a/drivers/cpufreq/cpufreq_governor.c b/drivers/cpufreq/cpufreq_governor.c
-index 4bb054d0cb43..f99ae45efaea 100644
---- a/drivers/cpufreq/cpufreq_governor.c
-+++ b/drivers/cpufreq/cpufreq_governor.c
-@@ -105,7 +105,7 @@ void gov_update_cpu_data(struct dbs_data *dbs_data)
- 			j_cdbs->prev_cpu_idle = get_cpu_idle_time(j, &j_cdbs->prev_update_time,
- 								  dbs_data->io_is_busy);
- 			if (dbs_data->ignore_nice_load)
--				j_cdbs->prev_cpu_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
-+				j_cdbs->prev_cpu_nice = kcpustat_field(&kcpustat_cpu(j), CPUTIME_NICE, j);
- 		}
- 	}
- }
-@@ -149,7 +149,7 @@ unsigned int dbs_update(struct cpufreq_policy *policy)
- 		j_cdbs->prev_cpu_idle = cur_idle_time;
- 
- 		if (ignore_nice) {
--			u64 cur_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
-+			u64 cur_nice = kcpustat_field(&kcpustat_cpu(j), CPUTIME_NICE, j);
- 
- 			idle_time += div_u64(cur_nice - j_cdbs->prev_cpu_nice, NSEC_PER_USEC);
- 			j_cdbs->prev_cpu_nice = cur_nice;
-@@ -530,7 +530,7 @@ int cpufreq_dbs_governor_start(struct cpufreq_policy *policy)
- 		j_cdbs->prev_load = 0;
- 
- 		if (ignore_nice)
--			j_cdbs->prev_cpu_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
-+			j_cdbs->prev_cpu_nice = kcpustat_field(&kcpustat_cpu(j), CPUTIME_NICE, j);
++		kcpustat_fetch_cpu(&kcpustat, i);
++
++		curr_used += kcpustat.cpustat[CPUTIME_USER]
++			  +  kcpustat.cpustat[CPUTIME_NICE]
++			  +  kcpustat.cpustat[CPUTIME_SYSTEM]
++			  +  kcpustat.cpustat[CPUTIME_SOFTIRQ]
++			  +  kcpustat.cpustat[CPUTIME_IRQ];
+ 		cpus++;
  	}
  
- 	gov->start(policy);
 -- 
 2.23.0
 
