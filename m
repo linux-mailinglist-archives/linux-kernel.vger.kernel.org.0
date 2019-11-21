@@ -2,94 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2A9E105C9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 23:24:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2A6105CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 23:29:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfKUWYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 17:24:25 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:44258 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfKUWYZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 17:24:25 -0500
-Received: by mail-pj1-f66.google.com with SMTP id w8so2135766pjh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 14:24:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=nuY8UNpMRJXSxqxTXzTq8RcrjbUCVRts4xYxAh2Zw8M=;
-        b=y+Cx4cCNn5xgO0nDXLC0BI4Of9z8MkQpUSru1gRF5QsGlWCznI2XRsSZUDHP6b3RWY
-         4Ry1i2kE7J9ARo4w0HcYOZGlCj9ZbzYAoUgMyVO+d9RaiW7GfHe5WdNZpiZi2MWs072N
-         j5Pl/NrtgmPWvSAA1nbmcLMyOMMvorF1VuGFWY3p2fdyWndyDBPX7jkq3FxcbNzV9V77
-         EdAUTLtm+Bm4HTCii3QsypMNNFyuIk0Pt72M4CXBI1vQLuJWLgmUscWdfUgsdkaH4sac
-         AMPTL9uRtmHZCGOt8VJOw2HQb28q3lmotM9TsbQoTXnZlPWO2251HSfoveoEYtSAU7ju
-         P3pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=nuY8UNpMRJXSxqxTXzTq8RcrjbUCVRts4xYxAh2Zw8M=;
-        b=X6pn8tMOx3LXcJVsWoGgtsqtVYz4lb5rURKnGl/o9Qo85kxfZI8ppqYYJgFmyWdnlx
-         OMvh9u+sjLH+Z+/3LWS5jGSLUu5ohhKvIcRRD9ODNdowWLF30VIxZ7XKiLGu97tVzwIq
-         CT99Sb7mCW0cFy11+ix3EcK2D/Hpc470xf4uVAwp4Qk4KPqIoht8BmfXYXE3SqF/NNsW
-         UceA1cfVCq2kJQ1CHq02HA7YwXJX7H9XdHPVZzVsjShnmPitx1Lr3XNfIg3pHeV7/ARe
-         2BSPyfzsBzHUBfvybjeuslRcgzPJS+EscypSS/RIDrIttYHzDbsqYSq8s7fWd4q0guow
-         ATkA==
-X-Gm-Message-State: APjAAAXUCirqXfsjU8pckbD9hz2OTPo+Uk2VfF3s3LaQiwXpjmWTDc9O
-        Ukcil/H3vayxgo/urS7BAl6vMg==
-X-Google-Smtp-Source: APXvYqy2Hs5OjH6w1+8YypLA88ewT6R7RiKsDsJdWInAwkbXpI0p+kpgFFuv3caPYxkia4Gs2IarKA==
-X-Received: by 2002:a17:90a:23c4:: with SMTP id g62mr14626631pje.121.1574375064089;
-        Thu, 21 Nov 2019 14:24:24 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:1ef2:e8cb:8497:2a8d:1ec8? ([2601:646:c200:1ef2:e8cb:8497:2a8d:1ec8])
-        by smtp.gmail.com with ESMTPSA id 83sm3506601pfv.157.2019.11.21.14.24.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2019 14:24:22 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by kernel parameter
-Date:   Thu, 21 Nov 2019 14:24:21 -0800
-Message-Id: <159DB397-87E2-435D-9F33-067FF9296ADC@amacapital.net>
-References: <20191121215126.GA9075@agluck-desk2.amr.corp.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
+        id S1726574AbfKUW3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 17:29:44 -0500
+Received: from mga07.intel.com ([134.134.136.100]:49227 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfKUW3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 17:29:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 14:29:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
+   d="scan'208";a="259515670"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Nov 2019 14:29:42 -0800
+Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 21 Nov 2019 14:29:42 -0800
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.121]) by
+ ORSMSX155.amr.corp.intel.com ([169.254.7.211]) with mapi id 14.03.0439.000;
+ Thu, 21 Nov 2019 14:29:41 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+CC:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-In-Reply-To: <20191121215126.GA9075@agluck-desk2.amr.corp.intel.com>
-To:     "Luck, Tony" <tony.luck@intel.com>
-X-Mailer: iPhone Mail (17A878)
+Subject: RE: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Thread-Topic: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Thread-Index: AQHVoA1uR0NpEjA1wUmtm7eAgTQzs6eVqSUAgAB0jYCAAAPEAIAAChQAgACPToD//3rs4A==
+Date:   Thu, 21 Nov 2019 22:29:41 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F4DC167@ORSMSX115.amr.corp.intel.com>
+References: <20191121215126.GA9075@agluck-desk2.amr.corp.intel.com>
+ <159DB397-87E2-435D-9F33-067FF9296ADC@amacapital.net>
+In-Reply-To: <159DB397-87E2-435D-9F33-067FF9296ADC@amacapital.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYmFjNTRmZjgtNDBmYS00MDI5LWJkMzgtMmQ0ZGEzNDNhOTkwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiS1paY29aMjdmWlwvb1hoRUhtRFY0XC9qTEFSbmxwbGFqdVVKaU1xZVBxd1dDNFYxNzZkOTdWSTVxME40VEdVN0pyIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> On Nov 21, 2019, at 1:51 PM, Luck, Tony <tony.luck@intel.com> wrote:
->=20
-> =EF=BB=BFOn Thu, Nov 21, 2019 at 02:15:22PM +0100, Peter Zijlstra wrote:
->> Also, just to remind everyone why we really want this. Split lock is a
->> potent, unprivileged, DoS vector.
->=20
-> So how much do we "really want this"?
->=20
-> It's been 543 days since the first version of this patch was
-> posted. We've made exactly zero progress.
->=20
-> Current cut down patch series is the foundation to move one
-> small step towards getting this done.
->=20
-> Almost all of what's in this set will be required in whatever
-> final solution we want to end up with. Out of this:
-
-Why don=E2=80=99t we beat it into shape and apply it, hidden behind BROKEN. T=
-hen we can work on the rest of the patches and have a way to test them.
-
-It would be really, really nice if we could pass this feature through to a V=
-M. Can we?=
+PiBJdCB3b3VsZCBiZSByZWFsbHksIHJlYWxseSBuaWNlIGlmIHdlIGNvdWxkIHBhc3MgdGhpcyBm
+ZWF0dXJlIHRocm91Z2ggdG8gYSBWTS4gQ2FuIHdlPw0KDQpJdCdzIGhhcmQgYmVjYXVzZSB0aGUg
+TVNSIGlzIGNvcmUgc2NvcGVkIHJhdGhlciB0aGFuIHRocmVhZCBzY29wZWQuICBTbyBvbiBhbiBI
+VA0KZW5hYmxlZCBzeXN0ZW0gYSBwYWlyIG9mIGxvZ2ljYWwgcHJvY2Vzc29ycyBnZXRzIGVuYWJs
+ZWQvZGlzYWJsZWQgdG9nZXRoZXIuDQoNCi1Ub255DQo=
