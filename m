@@ -2,81 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF73105A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA66105A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfKUTjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 14:39:32 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36171 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUTjc (ORCPT
+        id S1726822AbfKUTlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 14:41:14 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45610 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUTlN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 14:39:32 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j7so4330038oib.3;
-        Thu, 21 Nov 2019 11:39:31 -0800 (PST)
+        Thu, 21 Nov 2019 14:41:13 -0500
+Received: by mail-io1-f66.google.com with SMTP id v17so4835104iol.12;
+        Thu, 21 Nov 2019 11:41:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rTdqumcx4hyAoyV5+43F9AC3ezcwjCUap0sK21MadY8=;
+        b=AZpkqB7xJCxl8Cf2MphTC6AjnJoPvgotZF7k80BNtY6UYxPYqXr76qZQgQFoOX/hGa
+         Wkhu9gdcdNVBPD9oHvhSCjPvxyMN8CuQccMYPqKmim1ojnijYE1so5jnWkyc7aDOrKc+
+         SMrL2SVBrbpnBd3LT/7+6hqzF8wE3/WOt5yoGM19wh/DcQWrOxd8XkWDnm4KwCQ2aktj
+         AJtsqq7n62HjoFYEEzmK7iVj7iqebjg2Eqr6okD1roWdXsB2zg4HO/05VYzBoslcywkt
+         R2r80GLQDT6FyJJE10tAgdNZienguWytyj29vhmZQ3MyKA8wdToEI1jyWZkk+OAuh1wR
+         d+3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c4KjpD+ns0ACXFE5v6l81aoQVHuHJsxlS4JefMC5EMY=;
-        b=CE49zIfQ1Fq8wUnUj/AAwpB/UTdeb++Z1Ad1f8tWJGWazHg1369dTQ4I8ZXg3Jt4sd
-         bA4VUgkIQfyr01XMzjZxEpTYJ/khoRB6e0iiltPTf3YViG+m1oikNJSEGtubLG5Gq4Mx
-         ErI6ipMjg+KlEK9paGek6hdgB9eVwuIYO6RbLvCZrCHRcEs4qozuLhyGAwXzuF33TrTC
-         ga18j6Y8UmqO9uFjTRnU2pSSYNhCtrGSgs24vn2e+aKWs1NcoQhiVmY+nQZc1OLwxWCQ
-         4GaGvsgJaiogMNm7rPHq/xnoEMeT0lU1zcM0Y3qy+1dne0XIFL3P2HWT3YjldRxcCpgM
-         plAg==
-X-Gm-Message-State: APjAAAUboo/L8iiR5l0lMbXT8XIis5bFLm8pH4QidIXQqjAe4LJjEWjC
-        Eh4hkLXUCIm86JUeklYA6w==
-X-Google-Smtp-Source: APXvYqw+O/5gVYMGrcCumNOlMYDrrdD4XmwLhJA1mxJFW4xVlHhGW1dwTOU1ghWvK2UUGvx0UeKwSA==
-X-Received: by 2002:aca:1715:: with SMTP id j21mr8631035oii.6.1574365171174;
-        Thu, 21 Nov 2019 11:39:31 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u204sm1229289oig.35.2019.11.21.11.39.29
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rTdqumcx4hyAoyV5+43F9AC3ezcwjCUap0sK21MadY8=;
+        b=fEGRz8/TO6q8mlbav7NmXpiI5uqZrBeDSXTVnEF3TmjhLB9GkRVKmh7P37ojXxq1Kn
+         W61DIjf/RDWrVFhOPa2yDGaXXck5kPsFfsx1vAgqClnOKY1gaYgI0CLbAyd6pxAvN0jx
+         0HFXF4kuNwDocXKSQDxw2KjXFHtcDPDC4JLDL/sLAOB/SQmLRXCZPD91WBXaG4xwbdKA
+         d+dqnNRrzSOkiYwtHn9zWPXkvGW/KD8AtSCu8Z3xSTgDdlJdJL0xSDR4MvT9NrsCp6+z
+         WdKdWnF4R4ehS3w87pBvl+rYCBWYVOArWWnBTXVGtOvv9++hfzfdC+QcY3GWFPBKCiDW
+         atow==
+X-Gm-Message-State: APjAAAXfEDtJSNwyN2kJR2oPrXg4kSN6/g16n4Dh5jRlB6c2u/iw8Bdx
+        eyztWoCmBt0PTClkKzsYqWM=
+X-Google-Smtp-Source: APXvYqy/vP9BhqNyhJvf4gRGdP5QPQNsW3eF1kA8NfMV6/o0HVljPXwdY6Ce4mFIo1Ph2HV9Fnr02g==
+X-Received: by 2002:a6b:b88a:: with SMTP id i132mr9670189iof.1.1574365272450;
+        Thu, 21 Nov 2019 11:41:12 -0800 (PST)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id e5sm1588104ilq.77.2019.11.21.11.41.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 11:39:30 -0800 (PST)
-Date:   Thu, 21 Nov 2019 13:39:29 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alain Volmat <alain.volmat@st.com>
-Cc:     wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        pierre-yves.mordret@st.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        fabrice.gasnier@st.com
-Subject: Re: [PATCH v2] dt-bindings: i2c: stm32: Migrate i2c-stm32
- documentation to yaml
-Message-ID: <20191121193929.GA6676@bogus>
-References: <1574342866-8348-1-git-send-email-alain.volmat@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574342866-8348-1-git-send-email-alain.volmat@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 21 Nov 2019 11:41:11 -0800 (PST)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     emamd001@umn.edu, Navid Emamdoost <navid.emamdoost@gmail.com>
+Subject: [PATCH] EDAC: Fix memory leak in i5100_init_one
+Date:   Thu, 21 Nov 2019 13:40:41 -0600
+Message-Id: <20191121194043.22378-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Nov 2019 14:27:46 +0100, Alain Volmat wrote:
-> The document was migrated to Yaml format and renamed st,stm32-i2c.yaml
-> 
-> Signed-off-by: Alain Volmat <alain.volmat@st.com>
-> ---
-> v2: remove i2c-scl.*time description, ref (moved into i2c-controller.yaml
->     push the st,syscfg-fmt into the if compatible st,stm32f7 part
->     fix the st,syscfg-fmt ref syntax and set minItems/maxItems to 3
->     make the clock-frequency part common and only keep enum in the st,stm32f4 case
->     remove unnecesary minItems/maxItems
->     remove address-cells/size-cells from required fields
-> ---
->  .../devicetree/bindings/i2c/i2c-stm32.txt          |  65 ----------
->  .../devicetree/bindings/i2c/st,stm32-i2c.yaml      | 141 +++++++++++++++++++++
->  2 files changed, 141 insertions(+), 65 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-stm32.txt
->  create mode 100644 Documentation/devicetree/bindings/i2c/st,stm32-i2c.yaml
-> 
+In the implementation of i5100_init_one(), the allocated mci is not
+correctly released in cases of failure. The release via edac_mc_free()
+should be reached by label bail_einj and subsequents.
 
-Applied, thanks.
+Fixes: 52608ba20546 ("i5100_edac: probe for device 19 function 0")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/edac/i5100_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
+index 251f2b692785..710fabd5fba1 100644
+--- a/drivers/edac/i5100_edac.c
++++ b/drivers/edac/i5100_edac.c
+@@ -1149,12 +1149,12 @@ static int i5100_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ bail_scrub:
+ 	priv->scrub_enable = 0;
+ 	cancel_delayed_work_sync(&(priv->i5100_scrubbing));
+-	edac_mc_free(mci);
+ 
+ bail_disable_einj:
+ 	pci_disable_device(einj);
+ 
+ bail_einj:
++	edac_mc_free(mci);
+ 	pci_dev_put(einj);
+ 
+ bail_disable_ch1:
+-- 
+2.17.1
+
