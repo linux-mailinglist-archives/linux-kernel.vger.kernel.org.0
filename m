@@ -2,105 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474201059B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF5621059FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfKUSkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:40:53 -0500
-Received: from mga06.intel.com ([134.134.136.31]:4638 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbfKUSkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:40:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 10:40:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
-   d="scan'208";a="216191810"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2019 10:40:52 -0800
-Date:   Thu, 21 Nov 2019 10:53:03 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Message-ID: <20191121185303.GB199273@romley-ivt3.sc.intel.com>
-References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
- <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
- <20191121060444.GA55272@gmail.com>
- <20191121130153.GS4097@hirez.programming.kicks-ass.net>
- <20191121171214.GD12042@gmail.com>
- <3481175cbe14457a947f934343946d52@AcuMS.aculab.com>
- <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
+        id S1726762AbfKUSxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:53:23 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37176 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUSxW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 13:53:22 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b10so2067233pgd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=zVJJ43+LVeOcEOi4EKyonFDdXiCAF/3n0Lx87I78pBc=;
+        b=kHm2EwF0IVj9TsDgchy1m2gbT7WbyVlCZ8KSeFvK+X8eH8xN6reOLyWJOpAtdYNhhW
+         IbGM95/F/jPpWbYwZRetuP+YAqkDGMz7G4cp6vtaBMUzyvU2+wTcf/p1LjBqCQD06rdN
+         kx3m7nbnhizOVfYV+FnUzCnB/2kxJKyJHa08U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=zVJJ43+LVeOcEOi4EKyonFDdXiCAF/3n0Lx87I78pBc=;
+        b=kIDyvkIEBNio8zt8C/zX/ezUjSg2dxEHOG/0+NiE1Q1UynL5HuVLBGwV9xmVAHmEhP
+         QR/vCjCi5mw38cKuqYM1d/7K7RBUZcfTXm9gp+EVP5DjsEyAOpUbIziw0LUgjmzq8/tr
+         ur96xi2pmA1Gr9c1gJxLN/l+6nJsWA8bAjhxU+J5kuaZeiqFPTAsBO0SOI9l+ygANfLQ
+         rvwQntQPby3hPN5s/YSKzpVdB5bmauQW2iBgjyJVDW1HPvmAW5VnJ+bRlf0j6NrayaUq
+         5AhO44UQwgcKmbxzud013UB0nlF1zU+y6ggEZG46Ir99B/SinbKsFw2vh5prDkYuLD63
+         jmzw==
+X-Gm-Message-State: APjAAAX6h/DiC7UFOJVhlHtJ/cLyQObevdGNOHWSWxYL8RfwUTuVQ11q
+        DjRTaNOh1Y32Ch7h0Ynix2x3ug==
+X-Google-Smtp-Source: APXvYqxlVxs5vp7h+sN1bjmy5mjuEHtYDkWvwu3os6PX75tgFr/nee7TrFdF/nA2QIdKL5dXecSngQ==
+X-Received: by 2002:a63:e216:: with SMTP id q22mr11135492pgh.362.1574362402194;
+        Thu, 21 Nov 2019 10:53:22 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w5sm4548218pfd.31.2019.11.21.10.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 10:53:21 -0800 (PST)
+Date:   Thu, 21 Nov 2019 10:53:20 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Matthieu Baerts <matthieu.baerts@tessares.net>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: Load settings from subdirs
+Message-ID: <201911211052.90C65FD667@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 09:51:03AM -0800, Andy Lutomirski wrote:
-> On Thu, Nov 21, 2019 at 9:43 AM David Laight <David.Laight@aculab.com> wrote:
-> >
-> > From: Ingo Molnar
-> > > Sent: 21 November 2019 17:12
-> > > * Peter Zijlstra <peterz@infradead.org> wrote:
-> > ...
-> > > > This feature MUST be default enabled, otherwise everything will
-> > > > be/remain broken and we'll end up in the situation where you can't use
-> > > > it even if you wanted to.
-> > >
-> > > Agreed.
-> >
-> > Before it can be enabled by default someone needs to go through the
-> > kernel and fix all the code that abuses the 'bit' functions by using them
-> > on int[] instead of long[].
-> >
-> > I've only seen one fix go through for one use case of one piece of code
-> > that repeatedly uses potentially misaligned int[] arrays for bitmasks.
-> >
-> 
-> Can we really not just change the lock asm to use 32-bit accesses for
-> set_bit(), etc?  Sure, it will fail if the bit index is greater than
-> 2^32, but that seems nuts.
-> 
-> (Why the *hell* do the bitops use long anyway?  They're *bit masks*
-> for crying out loud.  As in, users generally want to operate on fixed
-> numbers of bits.)
+If settings files are present in upper directories of a test directory,
+load those first before the local settings. This allows a top-level
+directory to define settings for subdirectories while still allowing the
+subdirectories to override them on a per-directory basis.
 
-We are working on a separate patch set to fix all split lock issues
-in atomic bitops. Per Peter Anvin and Tony Luck suggestions:
-1. Still keep the byte optimization if nr is constant. No split lock.
-2. If type of *addr is unsigned long, do quadword atomic instruction
-   on addr. No split lock.
-3. If type of *addr is unsigned int, do word atomic instruction
-   on addr. No split lock.
-4. Otherwise, re-calculate addr to point the 32-bit address which contains
-   the bit and operate on the bit. No split lock.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Note that this depends on Matt's patch:
+https://lore.kernel.org/lkml/20191022171223.27934-1-matthieu.baerts@tessares.net
+---
+ tools/testing/selftests/kselftest/runner.sh | 30 +++++++++++++++------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
 
-Only small percentage of atomic bitops calls are in case 4 (e.g. 3%
-for set_bit()) which need a few extra instructions to re-calculate
-address but can avoid big split lock overhead.
+diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
+index 84de7bc74f2c..666cfeaa8046 100644
+--- a/tools/testing/selftests/kselftest/runner.sh
++++ b/tools/testing/selftests/kselftest/runner.sh
+@@ -39,6 +39,27 @@ tap_timeout()
+ 	fi
+ }
+ 
++load_settings()
++{
++	local fullpath="$1"
++	local upperpath=${fullpath%/*}
++
++	# Load upper path settings first.
++	if [ "$fullpath" != "$upperpath" ] ; then
++		load_settings "$upperpath"
++	fi
++
++	# Load per-test-directory kselftest "settings" file.
++	local settings="$BASE_DIR/$fullpath/settings"
++	if [ -r "$settings" ] ; then
++		while read line ; do
++			local field=$(echo "$line" | cut -d= -f1)
++			local value=$(echo "$line" | cut -d= -f2-)
++			eval "kselftest_$field"="$value"
++		done < "$settings"
++	fi
++}
++
+ run_one()
+ {
+ 	DIR="$1"
+@@ -50,14 +71,7 @@ run_one()
+ 	# Reset any "settings"-file variables.
+ 	export kselftest_timeout="$kselftest_default_timeout"
+ 	# Load per-test-directory kselftest "settings" file.
+-	settings="$BASE_DIR/$DIR/settings"
+-	if [ -r "$settings" ] ; then
+-		while read line ; do
+-			field=$(echo "$line" | cut -d= -f1)
+-			value=$(echo "$line" | cut -d= -f2-)
+-			eval "kselftest_$field"="$value"
+-		done < "$settings"
+-	fi
++	load_settings "$DIR"
+ 
+ 	TEST_HDR_MSG="selftests: $DIR: $BASENAME_TEST"
+ 	echo "# $TEST_HDR_MSG"
+-- 
+2.17.1
 
-To get real type of *addr instead of type cast type "unsigned long",
-the atomic bitops APIs are changed to macros from functions. This change
-need to touch all architectures.
 
-Thanks.
-
--Fenghua
+-- 
+Kees Cook
