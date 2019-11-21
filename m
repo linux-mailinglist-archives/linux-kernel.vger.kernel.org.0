@@ -2,284 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8492D104D5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0FD104D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfKUIJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:09:42 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38838 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfKUIJm (ORCPT
+        id S1727121AbfKUIKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:10:00 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57718 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfKUIKA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:09:42 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q28so1840845lfa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DDWVROnFaljaNNmaAzQ4x+4ZlkNQ9P7Z6d8u+o+nQYA=;
-        b=O9HgI3duRnemM/1cV0Nj6vrF+1krOVReUyREI0TCc2cQu6RazSEandX1dX1Ba9Uj+V
-         T7l1ojhh/vTDQqJ3MG4NDjWMmbuckpXHyCUnE70nX81Syriw6ZACxsyqCNgh4Kt3065h
-         dhp0vlU5+MHXSilH8qjSC2MnIQ1Ew4SF7xURo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DDWVROnFaljaNNmaAzQ4x+4ZlkNQ9P7Z6d8u+o+nQYA=;
-        b=iRDAeFZvw15lKt9ScfXYpQM+m8JLt9veywsnNaKyv3VtiLlpFdm1adC32XW+OZPazU
-         wuE/TYaLJsK0zGxyapxBxgiMRyOEWRrx6Hvc3zaxJdDAgbsGkHqmgAvnibE/zuf1bWMk
-         WQtGe+4hDJp9gJ3jMLbaoAmtDpnkUnjNe+Io92xY416k++kei7MP87DYh0p0/VCn5lyV
-         YyFJjz9Lbn8wSZDYNTo9BQtWttqNryXMzB9tZibu2fjqEnl81dXHOpvTT81JLnUn3Z+x
-         67YRUH/MSH16g8Nc/IQuqtJj0SNI9FkTdKNG2njuPQ5/qtjlSFmfaDTOdvaP2ErFSptB
-         anTQ==
-X-Gm-Message-State: APjAAAUxqG+0YaRxiyxn94VmCL4xo4TRSEpG/P1uUm+YFbdk+9mLV28P
-        7D3SHHYVmtTLuKNa64+2RMYK+r2qLEVfNZi1
-X-Google-Smtp-Source: APXvYqyvA62tGtBvAbCwcgoxlezdFk4vMhQIexTneWo+e4emQMejyXTuXgINTgk5VKIQJtsEaYQ/bw==
-X-Received: by 2002:a19:c384:: with SMTP id t126mr6435537lff.100.1574323779259;
-        Thu, 21 Nov 2019 00:09:39 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 206sm897443lfb.20.2019.11.21.00.09.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 00:09:38 -0800 (PST)
-Subject: Re: [PATCH 3/3] docs, parallelism: Rearrange how jobserver
- reservations are made
-To:     Kees Cook <keescook@chromium.org>, Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191121000304.48829-1-keescook@chromium.org>
- <20191121000304.48829-4-keescook@chromium.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <656afebc-fc60-7502-40a3-52d2662c1d27@rasmusvillemoes.dk>
-Date:   Thu, 21 Nov 2019 09:09:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 21 Nov 2019 03:10:00 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAL89wKX097906;
+        Thu, 21 Nov 2019 02:09:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574323798;
+        bh=dK4eXj5EEvgO3cvsnxwNSK/prItfj2cpptJ431X4p6w=;
+        h=From:To:CC:Subject:Date;
+        b=WyrA3cO5ub0tzCAqcHvcs6l8MWNvjwcMWjWiOWXyDvp52csnf5YGZA2qimMgxomjK
+         Q3vYgo5GHu24KaDtJagBpMlbsHNOB86ZsaB1bWr6I6dnquQenOYhKE944/tXy7z33+
+         vKtIkbDu51/fP9UubUwx/ZBOQv+5Y+4QzBEMTVTs=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAL89wgt034493
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Nov 2019 02:09:58 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 21
+ Nov 2019 02:09:56 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 21 Nov 2019 02:09:56 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAL89sYk028502;
+        Thu, 21 Nov 2019 02:09:55 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <broonie@kernel.org>
+CC:     <vkoul@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] spi: pic32: Retire dma_request_slave_channel_compat()
+Date:   Thu, 21 Nov 2019 10:09:54 +0200
+Message-ID: <20191121080954.14915-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191121000304.48829-4-keescook@chromium.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/11/2019 01.03, Kees Cook wrote:
-> Rasmus correctly observed that the existing jobserver reservation only
-> worked if no other build targets were specified. The correct approach
-> is to hold the jobserver slots until sphinx has finished. To fix this,
-> the following changes are made:
-> 
-> - refactor (and rename) scripts/jobserver-exec to set an environment
->   variable for the maximally reserved jobserver slots and exec a
->   child, to release the slots on exit.
-> 
-> - create Documentation/scripts/parallel-wrapper.sh which examines both
->   $PARALLELISM and the detected "-jauto" logic from Documentation/Makefile
->   to decide sphinx's final -j argument.
-> 
-> - chain these together in Documentation/Makefile
-> 
-> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Link: https://lore.kernel.org/lkml/eb25959a-9ec4-3530-2031-d9d716b40b20@rasmusvillemoes.dk
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  Documentation/Makefile                      |  5 +-
->  Documentation/sphinx/parallel-wrapper.sh    | 25 +++++++
->  scripts/{jobserver-count => jobserver-exec} | 73 ++++++++++++---------
->  3 files changed, 68 insertions(+), 35 deletions(-)
->  create mode 100644 Documentation/sphinx/parallel-wrapper.sh
->  rename scripts/{jobserver-count => jobserver-exec} (50%)
->  mode change 100755 => 100644
-> 
-> diff --git a/Documentation/Makefile b/Documentation/Makefile
-> index ce8eb63b523a..30554a2fbdd7 100644
-> --- a/Documentation/Makefile
-> +++ b/Documentation/Makefile
-> @@ -33,8 +33,6 @@ ifeq ($(HAVE_SPHINX),0)
->  
->  else # HAVE_SPHINX
->  
-> -export SPHINX_PARALLEL = $(shell perl -e 'open IN,"sphinx-build --version 2>&1 |"; while (<IN>) { if (m/([\d\.]+)/) { print "auto" if ($$1 >= "1.7") } ;} close IN')
-> -
->  # User-friendly check for pdflatex and latexmk
->  HAVE_PDFLATEX := $(shell if which $(PDFLATEX) >/dev/null 2>&1; then echo 1; else echo 0; fi)
->  HAVE_LATEXMK := $(shell if which latexmk >/dev/null 2>&1; then echo 1; else echo 0; fi)
-> @@ -67,8 +65,9 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
->        cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/media $2 && \
->  	PYTHONDONTWRITEBYTECODE=1 \
->  	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(srctree)/$(src)/$5/$(SPHINX_CONF)) \
-> +	$(PYTHON) $(srctree)/scripts/jobserver-exec \
-> +	$(SHELL) $(srctree)/Documentation/sphinx/parallel-wrapper.sh \
->  	$(SPHINXBUILD) \
-> -	-j $(shell python $(srctree)/scripts/jobserver-count $(SPHINX_PARALLEL)) \
->  	-b $2 \
->  	-c $(abspath $(srctree)/$(src)) \
->  	-d $(abspath $(BUILDDIR)/.doctrees/$3) \
-> diff --git a/Documentation/sphinx/parallel-wrapper.sh b/Documentation/sphinx/parallel-wrapper.sh
-> new file mode 100644
-> index 000000000000..a416dbfd2025
-> --- /dev/null
-> +++ b/Documentation/sphinx/parallel-wrapper.sh
-> @@ -0,0 +1,25 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0+
-> +#
-> +# Figure out if we should follow a specific parallelism from the make
-> +# environment (as exported by scripts/jobserver-exec), or fall back to
-> +# the "auto" parallelism when "-jN" is not specified at the top-level
-> +# "make" invocation.
-> +
-> +sphinx="$1"
-> +shift || true
-> +
-> +parallel="${PARALLELISM:-1}"
-> +if [ ${parallel} -eq 1 ] ; then
-> +	auto=$(perl -e 'open IN,"'"$sphinx"' --version 2>&1 |";
-> +			while (<IN>) {
-> +				if (m/([\d\.]+)/) {
-> +					print "auto" if ($1 >= "1.7")
-> +				}
-> +			}
-> +			close IN')
-> +	if [ -n "$auto" ] ; then
-> +		parallel="$auto"
-> +	fi
-> +fi
-> +exec "$sphinx" "-j$parallel" "$@"
+There is no reason to use the dma_request_slave_channel_compat() as no
+filter function and parameter is provided.
 
-I don't understand this logic. If the parent failed to claim any tokens
-(likely because the top make and its descendants are already running 16
-gcc processes), just let sphinx run #cpus jobs in parallel? That doesn't
-make sense - it gets us back to the "we've now effectively injected K
-tokens to the jobserver that weren't there originally".
+Switch the driver to use dma_request_chan() instead.
 
-From the comment above, what you want is to use "auto" if the top
-invocation was simply "make docs". Well, I kind of disagree with falling
-back to auto in that case; the user can say "make -j8 docs" and the
-wrapper is guaranteed to claim them all. But if you really want, the
-jobserver-count script needs to detect and export the "no parallelism
-requested at top level" in some way distinct from "PARALLELISM=1",
-because that's ambiguous.
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi,
 
-> diff --git a/scripts/jobserver-count b/scripts/jobserver-exec
-> old mode 100755
-> new mode 100644
-> similarity index 50%
-> rename from scripts/jobserver-count
-> rename to scripts/jobserver-exec
-> index a68a04ad304f..4593b2a1e36d
-> --- a/scripts/jobserver-count
-> +++ b/scripts/jobserver-exec
-> @@ -2,17 +2,16 @@
->  # SPDX-License-Identifier: GPL-2.0+
->  #
->  # This determines how many parallel tasks "make" is expecting, as it is
-> -# not exposed via an special variables.
-> +# not exposed via an special variables, reserves them all, runs a subprocess
-> +# with PARALLELISM environment variable set, and releases the jobs back again.
-> +#
->  # https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html#POSIX-Jobserver
->  from __future__ import print_function
->  import os, sys, fcntl, errno
-> -
-> -# Default parallelism is "1" unless overridden on the command-line.
-> -default="1"
-> -if len(sys.argv) > 1:
-> -	default=sys.argv[1]
-> +import subprocess
->  
->  # Extract and prepare jobserver file descriptors from envirnoment.
-> +jobs = b""
->  try:
->  	# Fetch the make environment options.
->  	flags = os.environ['MAKEFLAGS']
-> @@ -30,31 +29,41 @@ try:
->  	reader = os.open("/proc/self/fd/%d" % (reader), os.O_RDONLY)
->  	flags = fcntl.fcntl(reader, fcntl.F_GETFL)
->  	fcntl.fcntl(reader, fcntl.F_SETFL, flags | os.O_NONBLOCK)
-> -except (KeyError, IndexError, ValueError, IOError, OSError) as e:
-> -	print(e, file=sys.stderr)
-> +
-> +	# Read out as many jobserver slots as possible.
-> +	while True:
-> +		try:
-> +			slot = os.read(reader, 1)
-> +			jobs += slot
+Trying to crack down on the dma_request_slave_channel_compat() in the tree...
 
-I'd just try to slurp in 8 or 16 tokens at a time, there's no reason to
-limit to 1 in each loop.
+Only compile tested!
 
-> +		except (OSError, IOError) as e:
-> +			if e.errno == errno.EWOULDBLOCK:
-> +				# Stop at the end of the jobserver queue.
-> +				break
-> +			# If something went wrong, give back the jobs.
-> +			if len(jobs):
-> +				os.write(writer, jobs)
-> +			raise e
-> +except (KeyError, IndexError, ValueError, OSError, IOError) as e:
->  	# Any missing environment strings or bad fds should result in just
-> -	# using the default specified parallelism.
-> -	print(default)
-> -	sys.exit(0)
-> +	# not being parallel.
-> +	pass
->  
-> -# Read out as many jobserver slots as possible.
-> -jobs = b""
-> -while True:
-> -	try:
-> -		slot = os.read(reader, 1)
-> -		jobs += slot
-> -	except (OSError, IOError) as e:
-> -		if e.errno == errno.EWOULDBLOCK:
-> -			# Stop when reach the end of the jobserver queue.
-> -			break
-> -		raise e
-> -# Return all the reserved slots.
-> -os.write(writer, jobs)
-> -
-> -# If the jobserver was (impossibly) full or communication failed, use default.
-> -if len(jobs) < 1:
-> -	print(default)
-> -	sys.exit(0)
-> -
-> -# Report available slots (with a bump for our caller's reserveration).
-> -print(len(jobs) + 1)
-> +claim = len(jobs)
-> +if claim < 1:
-> +	# If the jobserver was (impossibly) full or communication failed
-> +	# in some way do not use parallelism.
-> +	claim = 0
+Regards,
+Peter
 
-Eh, "claim < 1" is the same as "claim == 0", right? So this doesn't seem
-to do much. But what seems to be missing is that after you write back
-the tokens in the error case above (os.write(writer, jobs)), jobs is not
-set back to the empty string. That needs to be done either there or in
-the outer exception handler (where you just have a "pass" currently).
+ drivers/spi/spi-pic32.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-> +# Launch command with a bump for our caller's reserveration,
-> +# since we're just going to sit here blocked on our child.
-> +claim += 1
-> +
-> +os.unsetenv('MAKEFLAGS')
-> +os.environ['PARALLELISM'] = '%d' % (claim)
-> +rc = subprocess.call(sys.argv[1:])
-> +
-> +# Return all the actually reserved slots.
-> +if len(jobs):
-> +	os.write(writer, jobs)
-> +
-> +sys.exit(rc)
+diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
+index 69f517ec59c6..2f90ca5118af 100644
+--- a/drivers/spi/spi-pic32.c
++++ b/drivers/spi/spi-pic32.c
+@@ -609,22 +609,18 @@ static void pic32_spi_cleanup(struct spi_device *spi)
+ static void pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+ {
+ 	struct spi_master *master = pic32s->master;
+-	dma_cap_mask_t mask;
+ 
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
+-
+-	master->dma_rx = dma_request_slave_channel_compat(mask, NULL, NULL,
+-							  dev, "spi-rx");
+-	if (!master->dma_rx) {
++	master->dma_rx = dma_request_chan(dev, "spi-rx");
++	if (IS_ERR(master->dma_rx)) {
+ 		dev_warn(dev, "RX channel not found.\n");
++		master->dma_rx = NULL;
+ 		goto out_err;
+ 	}
+ 
+-	master->dma_tx = dma_request_slave_channel_compat(mask, NULL, NULL,
+-							  dev, "spi-tx");
+-	if (!master->dma_tx) {
++	master->dma_tx = dma_request_chan(dev, "spi-tx");
++	if (IS_ERR(master->dma_tx)) {
+ 		dev_warn(dev, "TX channel not found.\n");
++		master->dma_tx = NULL;
+ 		goto out_err;
+ 	}
+ 
+@@ -637,11 +633,15 @@ static void pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+ 	return;
+ 
+ out_err:
+-	if (master->dma_rx)
++	if (master->dma_rx) {
+ 		dma_release_channel(master->dma_rx);
++		master->dma_rx = NULL;
++	}
+ 
+-	if (master->dma_tx)
++	if (master->dma_tx) {
+ 		dma_release_channel(master->dma_tx);
++		master->dma_tx = NULL;
++	}
+ }
+ 
+ static void pic32_spi_dma_unprep(struct pic32_spi *pic32s)
+-- 
+Peter
 
-What happens if the child dies from a signal? Will this correctly
-forward that information?
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
-Similarly (and the harder problem), what happens when our parent wants
-to send its child a signal to say "stop what you're doing, return the
-tokens, brush your teeth and go to bed". We should forward that signal
-to the real job instead of just dying, losing track of both the tokens
-we've claimed as well as orphaning the child.
-
-Rasmus
