@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41232104830
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DA6104833
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:46:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfKUBpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 20:45:54 -0500
-Received: from mga05.intel.com ([192.55.52.43]:49098 "EHLO mga05.intel.com"
+        id S1726939AbfKUBqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 20:46:03 -0500
+Received: from mga05.intel.com ([192.55.52.43]:49101 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbfKUBpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 20:45:51 -0500
+        id S1726695AbfKUBpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 20:45:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 17:45:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="407025911"
+   d="scan'208";a="407025914"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2019 17:45:50 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -30,9 +30,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v10 5/6] x86/split_lock: Handle #AC exception for split lock
-Date:   Wed, 20 Nov 2019 16:53:22 -0800
-Message-Id: <1574297603-198156-6-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by kernel parameter
+Date:   Wed, 20 Nov 2019 16:53:23 -0800
+Message-Id: <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
 References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
@@ -41,82 +41,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently Linux does not expect to see an alignment check exception in
-kernel mode (since it does not set CR4.AC). The existing #AC handlers
-will just return from exception to the faulting instruction which will
-trigger another exception.
+Split lock detection is disabled by default. Enable the feature by
+kernel parameter "split_lock_detect".
 
-Add a new handler for #AC exceptions that will force a panic on split
-lock for kernel mode.
+Usually it is enabled in real time when expensive split lock issues
+cannot be tolerated so should be fatal errors, or for debugging and
+fixing the split lock issues to improve performance.
+
+Please note: enabling this feature will cause kernel panic or SIGBUS
+to user application when a split lock issue is detected.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/include/asm/traps.h |  3 +++
- arch/x86/kernel/cpu/intel.c  |  2 ++
- arch/x86/kernel/traps.c      | 22 +++++++++++++++++++++-
- 3 files changed, 26 insertions(+), 1 deletion(-)
+ .../admin-guide/kernel-parameters.txt         | 10 ++++++
+ arch/x86/kernel/cpu/intel.c                   | 34 +++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index b25e633033c3..0fa4eef83057 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -172,4 +172,7 @@ enum x86_pf_error_code {
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
- };
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 8dee8f68fe15..1ed313891f44 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3166,6 +3166,16 @@
+ 
+ 	nosoftlockup	[KNL] Disable the soft-lockup detector.
+ 
++	split_lock_detect
++			[X86] Enable split lock detection
++			This is a real time or debugging feature. When enabled
++			(and if hardware support is present), atomic
++			instructions that access data across cache line
++			boundaries will result in an alignment check exception.
++			When triggered in applications the kernel will send
++			SIGBUS. The kernel will panic for a split lock in
++			OS code.
 +
-+extern bool split_lock_detect_enabled;
-+
- #endif /* _ASM_X86_TRAPS_H */
+ 	nosync		[HW,M68K] Disables sync negotiation for all devices.
+ 
+ 	nowatchdog	[KNL] Disable both lockup detectors, i.e.
 diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 2614616fb6d3..bc0c2f288509 100644
+index bc0c2f288509..9bf6daf185b9 100644
 --- a/arch/x86/kernel/cpu/intel.c
 +++ b/arch/x86/kernel/cpu/intel.c
-@@ -32,6 +32,8 @@
- #include <asm/apic.h>
- #endif
+@@ -20,6 +20,7 @@
+ #include <asm/hwcap2.h>
+ #include <asm/elf.h>
+ #include <asm/cpu_device_id.h>
++#include <asm/cmdline.h>
  
-+bool split_lock_detect_enabled;
-+
- /*
-  * Just in case our CPU detection goes bad, or you have a weird system,
-  * allow a way to override the automatic disabling of MPX.
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 4bb0f8447112..044033ff4326 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -293,9 +293,29 @@ DO_ERROR(X86_TRAP_OLD_MF, SIGFPE,           0, NULL, "coprocessor segment overru
- DO_ERROR(X86_TRAP_TS,     SIGSEGV,          0, NULL, "invalid TSS",         invalid_TSS)
- DO_ERROR(X86_TRAP_NP,     SIGBUS,           0, NULL, "segment not present", segment_not_present)
- DO_ERROR(X86_TRAP_SS,     SIGBUS,           0, NULL, "stack segment",       stack_segment)
--DO_ERROR(X86_TRAP_AC,     SIGBUS,  BUS_ADRALN, NULL, "alignment check",     alignment_check)
- #undef IP
+ #ifdef CONFIG_X86_64
+ #include <linux/topology.h>
+@@ -655,6 +656,26 @@ static void init_intel_misc_features(struct cpuinfo_x86 *c)
+ 	wrmsrl(MSR_MISC_FEATURES_ENABLES, msr);
+ }
  
-+dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code)
++static void split_lock_init(void)
 +{
-+	unsigned int trapnr = X86_TRAP_AC;
-+	char str[] = "alignment check";
-+	int signr = SIGBUS;
++	if (split_lock_detect_enabled) {
++		u64 test_ctrl_val;
 +
-+	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
-+
-+	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, signr) == NOTIFY_STOP)
-+		return;
-+
-+	if (!user_mode(regs) && split_lock_detect_enabled)
-+		panic("Split lock detected\n");
-+
-+	cond_local_irq_enable(regs);
-+
-+	/* Handle #AC generated in any other cases. */
-+	do_trap(X86_TRAP_AC, SIGBUS, "alignment check", regs,
-+		error_code, BUS_ADRALN, NULL);
++		/*
++		 * The TEST_CTRL MSR is per core. So multiple threads can
++		 * read/write the MSR in parallel. But it's possible to
++		 * simplify the read/write without locking and without
++		 * worry about overwriting the MSR because only bit 29
++		 * is implemented in the MSR and the bit is set as 1 by all
++		 * threads. Locking may be needed in the future if situation
++		 * is changed e.g. other bits are implemented.
++		 */
++		rdmsrl(MSR_TEST_CTRL, test_ctrl_val);
++		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
++		wrmsrl(MSR_TEST_CTRL, test_ctrl_val);
++	}
 +}
 +
- #ifdef CONFIG_VMAP_STACK
- __visible void __noreturn handle_stack_overflow(const char *message,
- 						struct pt_regs *regs,
+ static void init_intel(struct cpuinfo_x86 *c)
+ {
+ 	early_init_intel(c);
+@@ -770,6 +791,8 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		tsx_enable();
+ 	if (tsx_ctrl_state == TSX_CTRL_DISABLE)
+ 		tsx_disable();
++
++	split_lock_init();
+ }
+ 
+ #ifdef CONFIG_X86_32
+@@ -1032,9 +1055,20 @@ static const struct cpu_dev intel_cpu_dev = {
+ 
+ cpu_dev_register(intel_cpu_dev);
+ 
++#undef pr_fmt
++#define pr_fmt(fmt) "x86/split lock detection: " fmt
++
+ static void __init split_lock_setup(void)
+ {
+ 	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
++
++	if (cmdline_find_option_bool(boot_command_line,
++				     "split_lock_detect")) {
++		split_lock_detect_enabled = true;
++		pr_info("enabled\n");
++	} else {
++		pr_info("disabled\n");
++	}
+ }
+ 
+ #define SPLIT_LOCK_CPU(model) {X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY}
 -- 
 2.19.1
 
