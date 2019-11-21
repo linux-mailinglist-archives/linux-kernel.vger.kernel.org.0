@@ -2,61 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 111BE104728
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 00:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BEC0104731
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfKTX6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 18:58:08 -0500
-Received: from mail-lj1-f174.google.com ([209.85.208.174]:46834 "EHLO
-        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfKTX6I (ORCPT
+        id S1726721AbfKUADM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:03:12 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46824 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfKUADM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 18:58:08 -0500
-Received: by mail-lj1-f174.google.com with SMTP id e9so1053717ljp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 15:58:06 -0800 (PST)
+        Wed, 20 Nov 2019 19:03:12 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 193so614989pfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 16:03:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mikemestnik-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=uf3bBP1zTG40dRn3CaFvDBdOr8iUrpSEhnbpICpCTrI=;
-        b=jz7FdW3BQwMjpxllSiid1nNUzpiNdYM55fHleeccu1EIV/lXYVQ3ERFKUr6K0OD6EN
-         okgbAgNks4YdZFjC2264apc5qTMn/qAAPZQR9TOz2XLB96C5IKf7UB067DWFspNr47yM
-         skDXCedd77S41KCos5sf5efxnt3koq4QJAkU5Xvv3A9mAkd3pj9O7Av1vCC10qE/W1E7
-         qg5T4FHMlN7EI2L4atrPHLnSZBvaMoC9Cd/ifzyPEw9e8KwUIea8Bylm4yMDOqNlxkTC
-         /Au+8kaKb+j5zSahW9BgnUyZdAUYW2ZzvnV4VPbmzHFCsWKwv5cQdegI6ELxbqPb3bvT
-         7RgA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=kE4zc5h6g2FxYn8FExOX8denzzfy5tUjIQSu5KP5KmM=;
+        b=JsQWdJHB+oNkBu7ELea7xobOL8sPLan0tvqfIXBGQb8cKhX2p5HOSu59C39cXn21E5
+         /EEkVA+Px+gj1I2cR5vhwhVwJTxp6aYfMFvtRQxDIkHEDh/t7ThaOHgxiqtcu26y+tQB
+         yK527WA4x8pmDhcJPggr5jOivZihBSKaHiFac=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=uf3bBP1zTG40dRn3CaFvDBdOr8iUrpSEhnbpICpCTrI=;
-        b=izMFJEOL4PFFwcIkYsnydOweC3QmlUwKtCYoHNRqigu9DO1UOxfgGLYDrUT+2HFHR8
-         6GfOxgqoWb+mKTaGNZjYo9JUDXyUYDPaFcyMbY7UBoD5UyQtggdn/rNY8XLyuH9ozf4p
-         KNgSdge5iufuqPWE/MFzxdbIZV8ZjUuzyoFWbmMAEOSLi2SLtdIfG19HenM+oXUmMtQ4
-         t/Istol57ean6OXv23+CR0cbMz4ENnEqTZ1ubSxV7Ow90sw3hs+plLY9oDnxzA1xM3z4
-         oXfTPF4Wi71JG0NjbTWvQOapg4qj1P6PQef7f3r7dHA7VPOI9hagAdtqBh0mkWYU60V5
-         sMtQ==
-X-Gm-Message-State: APjAAAXSjY+TwyPR1z7m2j8uMToWo3Nr5eLRTaOgYM8hxIAnse3BQwqA
-        BfgIfPW0PBwdZ5GxGb3rbXtQd+L81eikHkTnRELXLsMZ4lI=
-X-Google-Smtp-Source: APXvYqwUaEjkaZiKkkh3P/R/d22CzADms8GUjVzTNGA9gZIwE/F7121oUTRYMmGEIN2+LJ0YcAz0c+4A/1QVJgEsKMw=
-X-Received: by 2002:a2e:7607:: with SMTP id r7mr4968197ljc.37.1574294285469;
- Wed, 20 Nov 2019 15:58:05 -0800 (PST)
-MIME-Version: 1.0
-From:   Mike Mestnik <cheako@mikemestnik.net>
-Date:   Wed, 20 Nov 2019 17:57:54 -0600
-Message-ID: <CAF8px57gwjwLzt1cRvogEzOUV3LyXaD7_xjuZU28D47oWs3cKg@mail.gmail.com>
-Subject: Lenovo E585: Device RTL Bluetooth, O2 sdcard, and rtw88. Broken or issues.
-To:     "debian-kernel@lists.debian.org" <debian-kernel@lists.debian.org>
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kE4zc5h6g2FxYn8FExOX8denzzfy5tUjIQSu5KP5KmM=;
+        b=L0wmj1Pt+uRstoOpz32CmUwb7wl66A57QiE6DgxvCW8bRRYBRhyYNYSfNlWnx9hjzD
+         D41fIx6tPbrW4gjujpecs9wxdEOkFXePdpHbVZP74Mdv84bZ3gjn+8rOZo3XP1dzX0mZ
+         nmk1hqSU+a/07TQTHrdOj6/shxtWF6mh2Ad1fsx0NVbhl8Lr5eNcTlqvK5JzV8a5lvUs
+         BXoEqWaHvWBlSaqLHI9lXkrip9bSE/J+dJbxfJsu98F45dVgo1jIaBALRZf7hEIsOtQl
+         8dnkSWfgIKI1tw74UVZFeTM4WHjzBrDpLGUO4UuARwwTEq50QHkPQcOUIyMX6Invl07P
+         ERoA==
+X-Gm-Message-State: APjAAAVsPDMawry48wCdNs2JbR/OP9NORBg5mY8xSx3lA26G6/uPScW+
+        AsxQQJhiYlcXUfq+UL5HlOCqtQ==
+X-Google-Smtp-Source: APXvYqy350K6RxOhGawpWh8zemjxoDaCUC89yo91oTtqYpdp242hU/Mj6Kh82KEizm35UJmtm2Igow==
+X-Received: by 2002:a63:ce0b:: with SMTP id y11mr6074021pgf.338.1574294590899;
+        Wed, 20 Nov 2019 16:03:10 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 7sm358842pgk.25.2019.11.20.16.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 16:03:09 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] docs, parallelism: Rearrange how jobserver reservations are made
+Date:   Wed, 20 Nov 2019 16:03:01 -0800
+Message-Id: <20191121000304.48829-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-https://www.mail-archive.com/debian-kernel@lists.debian.org/msg116401.html
+Hi,
 
-Today I learned that BlueTooth doesn't work either.  I looked at the
-FAQ a bit and I realise this is the worst way to initiate discussions
-regarding broken drivers, but I believe these issues together
-demonstrate a systemic problem that should be addressed.
+As Rasmus noted[1], there were some deficiencies in how the Make jobserver
+vs sphinx parallelism logic was handled. This series attempts to address
+all those problems by building a set of wrappers and fixing some of the
+internal logic.
 
-I've identified 3 drivers that are completely inoperable on this device!
+Thank you Rasmus for the suggestions (and the "jobhog" example)! :)
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/eb25959a-9ec4-3530-2031-d9d716b40b20@rasmusvillemoes.dk
+
+Kees Cook (3):
+  docs, parallelism: Fix failure path and add comment
+  docs, parallelism: Do not leak blocking mode to writer
+  docs, parallelism: Rearrange how jobserver reservations are made
+
+ Documentation/Makefile                   |  5 +-
+ Documentation/sphinx/parallel-wrapper.sh | 25 +++++++++
+ scripts/jobserver-count                  | 58 --------------------
+ scripts/jobserver-exec                   | 69 ++++++++++++++++++++++++
+ 4 files changed, 96 insertions(+), 61 deletions(-)
+ create mode 100644 Documentation/sphinx/parallel-wrapper.sh
+ delete mode 100755 scripts/jobserver-count
+ create mode 100644 scripts/jobserver-exec
+
+-- 
+2.17.1
+
