@@ -2,152 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DA6104833
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:46:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC123104816
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKUBqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 20:46:03 -0500
-Received: from mga05.intel.com ([192.55.52.43]:49101 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbfKUBpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 20:45:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 17:45:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="407025914"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2019 17:45:50 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "H Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by kernel parameter
-Date:   Wed, 20 Nov 2019 16:53:23 -0800
-Message-Id: <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
-References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
+        id S1726620AbfKUBcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 20:32:07 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36142 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfKUBcH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 20:32:07 -0500
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B20AD20B7185;
+        Wed, 20 Nov 2019 17:32:06 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B20AD20B7185
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1574299926;
+        bh=aeBFIDmsoWny0EYr1/a2SoKWD35gPHAfNwnYfOwZy7Y=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VSgxdqIy4KDeltAbZ9SUt6xRmyYcz3BkhjsQtC5Ai/DXDZ6w50YFDseA96Olnm/UX
+         dn2GPLUE1DKos9EyIOZANzpP5kpa8t1WPU9wxySlRHqbYfu1tf1oPy5w0AZLP5bLaN
+         x7Wdx4RK8aO2jvomC2xBu0tHWMYb7MVjx5U1zhlg=
+Subject: Re: [PATCH v8 2/5] IMA: Define an IMA hook to measure keys
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+References: <20191118223818.3353-1-nramas@linux.microsoft.com>
+ <20191118223818.3353-3-nramas@linux.microsoft.com>
+ <ED63593E-BE9B-40B7-B7FD-9DE772DC2EB1@oracle.com>
+ <98eeec95-cc19-2900-b96e-eadaac1b4a68@linux.microsoft.com>
+ <1574299330.4793.158.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <21c08fdf-43d7-67e0-1cb5-66bdbce1b6ad@linux.microsoft.com>
+Date:   Wed, 20 Nov 2019 17:32:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <1574299330.4793.158.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split lock detection is disabled by default. Enable the feature by
-kernel parameter "split_lock_detect".
+On 11/20/19 5:22 PM, Mimi Zohar wrote:
 
-Usually it is enabled in real time when expensive split lock issues
-cannot be tolerated so should be fatal errors, or for debugging and
-fixing the split lock issues to improve performance.
+>> I had the following check in process_buffer_measurement() as part of my
+>> patch, but removed it since it is being upstreamed separately (by Mimi)
+>>
+>>    if (!ima_policy_flag)
+>>    	return;
+> 
+> Did you post it as a separate patch?  I can't seem to find it.
+> 
+> Mimi
 
-Please note: enabling this feature will cause kernel panic or SIGBUS
-to user application when a split lock issue is detected.
+No - I removed the above change from my patch since you mentioned it's 
+being upstreamed separately.
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
----
- .../admin-guide/kernel-parameters.txt         | 10 ++++++
- arch/x86/kernel/cpu/intel.c                   | 34 +++++++++++++++++++
- 2 files changed, 44 insertions(+)
+I didn't realize you wanted me to include the above change alone in a 
+separate patch (in my patch set). Sorry - I guess I misunderstood.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 8dee8f68fe15..1ed313891f44 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3166,6 +3166,16 @@
- 
- 	nosoftlockup	[KNL] Disable the soft-lockup detector.
- 
-+	split_lock_detect
-+			[X86] Enable split lock detection
-+			This is a real time or debugging feature. When enabled
-+			(and if hardware support is present), atomic
-+			instructions that access data across cache line
-+			boundaries will result in an alignment check exception.
-+			When triggered in applications the kernel will send
-+			SIGBUS. The kernel will panic for a split lock in
-+			OS code.
-+
- 	nosync		[HW,M68K] Disables sync negotiation for all devices.
- 
- 	nowatchdog	[KNL] Disable both lockup detectors, i.e.
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index bc0c2f288509..9bf6daf185b9 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -20,6 +20,7 @@
- #include <asm/hwcap2.h>
- #include <asm/elf.h>
- #include <asm/cpu_device_id.h>
-+#include <asm/cmdline.h>
- 
- #ifdef CONFIG_X86_64
- #include <linux/topology.h>
-@@ -655,6 +656,26 @@ static void init_intel_misc_features(struct cpuinfo_x86 *c)
- 	wrmsrl(MSR_MISC_FEATURES_ENABLES, msr);
- }
- 
-+static void split_lock_init(void)
-+{
-+	if (split_lock_detect_enabled) {
-+		u64 test_ctrl_val;
-+
-+		/*
-+		 * The TEST_CTRL MSR is per core. So multiple threads can
-+		 * read/write the MSR in parallel. But it's possible to
-+		 * simplify the read/write without locking and without
-+		 * worry about overwriting the MSR because only bit 29
-+		 * is implemented in the MSR and the bit is set as 1 by all
-+		 * threads. Locking may be needed in the future if situation
-+		 * is changed e.g. other bits are implemented.
-+		 */
-+		rdmsrl(MSR_TEST_CTRL, test_ctrl_val);
-+		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+		wrmsrl(MSR_TEST_CTRL, test_ctrl_val);
-+	}
-+}
-+
- static void init_intel(struct cpuinfo_x86 *c)
- {
- 	early_init_intel(c);
-@@ -770,6 +791,8 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		tsx_enable();
- 	if (tsx_ctrl_state == TSX_CTRL_DISABLE)
- 		tsx_disable();
-+
-+	split_lock_init();
- }
- 
- #ifdef CONFIG_X86_32
-@@ -1032,9 +1055,20 @@ static const struct cpu_dev intel_cpu_dev = {
- 
- cpu_dev_register(intel_cpu_dev);
- 
-+#undef pr_fmt
-+#define pr_fmt(fmt) "x86/split lock detection: " fmt
-+
- static void __init split_lock_setup(void)
- {
- 	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
-+
-+	if (cmdline_find_option_bool(boot_command_line,
-+				     "split_lock_detect")) {
-+		split_lock_detect_enabled = true;
-+		pr_info("enabled\n");
-+	} else {
-+		pr_info("disabled\n");
-+	}
- }
- 
- #define SPLIT_LOCK_CPU(model) {X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY}
--- 
-2.19.1
+I can do that when I send an update - I expect to by the end of this week.
 
+thanks,
+  -lakshmi
