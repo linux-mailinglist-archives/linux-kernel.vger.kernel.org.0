@@ -2,142 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10621059A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4631059B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfKUShW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:37:22 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:43830 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727047AbfKUShV (ORCPT
+        id S1727187AbfKUSha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:37:30 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:40360 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbfKUSh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:37:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574361440;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wEMwsmsZ/juHdne/TJ39MbTp+BFkJkSc6k7UlQcJDDQ=;
-        b=fvS01kmZa/5IrNq3MqELHPjOPqr3eBTTEOC2De4Vs2Kidb5BBR6/OwwsOxlizqcPNTsnQY
-        8RHua7Haa9PJGMEXN0gu7qA1046kNQvsD4eGhRnhC2mTo9mxjAmn01y35LpxUHffbITWMe
-        rjPLoVOLvauG9RNNtVVP4yceTeHD10M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-S48D8N2TO6KW0k3f1yc76Q-1; Thu, 21 Nov 2019 13:37:17 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F8E6107ACC5;
-        Thu, 21 Nov 2019 18:37:15 +0000 (UTC)
-Received: from treble (ovpn-124-31.rdu2.redhat.com [10.10.124.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8041F6106F;
-        Thu, 21 Nov 2019 18:37:13 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 12:37:11 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Marco Elver <elver@google.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: Tree for Nov 20 (kcsan + objtool)
-Message-ID: <20191121183711.w2qnysscwnbxocc4@treble>
-References: <20191120203434.2a0727b3@canb.auug.org.au>
- <58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org>
- <CANpmjNOHTyTRCeo3oxEPTY__TCjAQ8nMvcqDSZ6Otfs7vVESSA@mail.gmail.com>
+        Thu, 21 Nov 2019 13:37:29 -0500
+Received: by mail-il1-f193.google.com with SMTP id v17so412843ilg.7
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:37:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=faq1HCiwAUKpn9KibrFveIIN8Gq95mpKVvXAdv0gtDk=;
+        b=EJjPbSz0Y6tDOEGVI+1jJ8atWnfgVSawkkT8eN6V6cCPix2Oo1Ul5auUyUzMkYlDoK
+         3qNVcfI7jBdMccdBn/qZtJ6b635qSK6GyU075QBm/DiZL+E8zm9p4ZUKRL1MoOZVUo9N
+         hoLYwkn2XLv87sQlikDmsBXss5UhTiaeuDHLmSWYC9JxUub0lmUUW2xZVXJnpyOXNaGw
+         y82WJV8Pyc4iflpx/NYF12hA4nSerOKHfUJ23hnfkFrUUUVENyO4lqlRhEgEEDYvonHB
+         7Ro2z4dGPGwjzFmYorVFleDJuov531ZDGun6BqLfvQZGB8jgtd1IecdJaPKyCHOmApK5
+         PRKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=faq1HCiwAUKpn9KibrFveIIN8Gq95mpKVvXAdv0gtDk=;
+        b=Xk0eWVXJdvF160xXbqGcgB19NjlAcQ3vXAc7mKI4tCdtGRnBbQIJGw5UxP/SW1IE4b
+         G2wT/bC3EIj/dGBN3kW7fvJtRnyz/H2ceANbK0O7Mcco8R471nVzRDmEfZFpfNcVwSis
+         aGdOje0OQ/uuAGgAAH62lX4jld1fB3bJsaFUN2j46spOBHiyCo1iWSV/ZIa5IeniIvgw
+         VJZsjvjdR3gAanbP7zeVLKZv9JoGnEA9M3Fxr3SO0joydK/GR4CDvkPh33hGbT0wBAgC
+         7cVrdkZ2Tn+PGpZwg6/oGGeEUllmS+WLsb/u+lmucZrcPO0H3dEQ4VHJgwA4yPalr2t4
+         gX6A==
+X-Gm-Message-State: APjAAAVin7cRjCgaIQF6DB22LrK3XvVvx7u1DFW4tbL11+ZAJFfFOJg3
+        nBUQgnGkepOQodpFnMY7/6jPb0X1M5y2ng==
+X-Google-Smtp-Source: APXvYqwleGilbYtjejG0htBS2Id79yaqhJ2aVAJKwRv51I6HzmumqzuaenMu1RY8209HZRrCTLCAsA==
+X-Received: by 2002:a92:b686:: with SMTP id m6mr11013166ill.35.1574361446126;
+        Thu, 21 Nov 2019 10:37:26 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id s11sm1518746ilh.54.2019.11.21.10.37.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2019 10:37:25 -0800 (PST)
+Subject: Re: [PATCH] nbd: prevent memory leak
+To:     Josef Bacik <josef@toxicpanda.com>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org
+References: <20190923200959.29643-1-navid.emamdoost@gmail.com>
+ <20191121183017.h3qkpib5re27ty3b@MacBook-Pro-91.local>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ae75694c-02a5-6f7f-c812-1350512490da@kernel.dk>
+Date:   Thu, 21 Nov 2019 11:37:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CANpmjNOHTyTRCeo3oxEPTY__TCjAQ8nMvcqDSZ6Otfs7vVESSA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: S48D8N2TO6KW0k3f1yc76Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <20191121183017.h3qkpib5re27ty3b@MacBook-Pro-91.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 08:48:41PM +0100, Marco Elver wrote:
-> On Wed, 20 Nov 2019 at 17:18, Randy Dunlap <rdunlap@infradead.org> wrote:
-> >
-> > On 11/20/19 1:34 AM, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > Changes since 20191119:
-> > >
-> >
-> > on x86_64:
-> >
-> > kernel/kcsan/core.o: warning: objtool: kcsan_found_watchpoint()+0xa: ca=
-ll to kcsan_is_enabled() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_read1()+0x13: call to fin=
-d_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_write1()+0x10: call to fi=
-nd_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_read2()+0x13: call to fin=
-d_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_write2()+0x10: call to fi=
-nd_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_read4()+0x13: call to fin=
-d_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_write4()+0x10: call to fi=
-nd_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_read8()+0x13: call to fin=
-d_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_write8()+0x10: call to fi=
-nd_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_read16()+0x13: call to fi=
-nd_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_write16()+0x10: call to f=
-ind_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_read_range()+0x13: call t=
-o find_watchpoint() with UACCESS enabled
-> > kernel/kcsan/core.o: warning: objtool: __tsan_write_range()+0x10: call =
-to find_watchpoint() with UACCESS enabled
-> >
-> > kernel/trace/trace_branch.o: warning: objtool: ftrace_likely_update()+0=
-x361: call to __stack_chk_fail() with UACCESS enabled
-> >
-> >
-> > Full randconfig file is attached.
->=20
-> Thanks.
->=20
-> This is due to CONFIG_CC_OPTIMIZE_FOR_SIZE=3Dy. It seems the compiler
-> decides to not even inline small static inline functions. I tried to
-> make this go away by adding __always_inline, but then we're also left
-> with atomic64_try_cmpxchg which never gets inlined.
->=20
-> The optimized build simply inlines the small static inline functions.
-> We certainly do not want to add more functions to the objtool
-> whitelist, especially those that are private to KCSAN.
->=20
-> We could fix it by either:
->=20
-> 1. Adding __always_inline to every function used by the KCSAN runtime
-> outside user_access_save + also fix atomic64_try_cmpxchg
-> (atomic-instrumented.h).
->=20
-> 2. Just not compile KCSAN with -Os, i.e. have the Makefile strip -Os
-> and replace it with -O2 for kcsan/core.c. #2 is the simpler option,
-> and would probably make KCSAN more effective even with -Os. Although
-> it might violate the assumption of whoever decided they want both
-> CC_OPTIMIZE_FOR_SIZE and KCSAN. It might also mean that future
-> compilers that have a new inlining algorithm will have the same
-> problem.
->=20
-> What do people think is better?
+On 11/21/19 11:30 AM, Josef Bacik wrote:
+> On Mon, Sep 23, 2019 at 03:09:58PM -0500, Navid Emamdoost wrote:
+>> In nbd_add_socket when krealloc succeeds, if nsock's allocation fail the
+>> reallocted memory is leak. The correct behaviour should be assigning the
+>> reallocted memory to config->socks right after success.
+>>
+>> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+>> ---
+> 
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-I haven't had a chance to look at this yet, and probably won't be able
-to do so until at least Monday...
+Now applied, thanks.
 
-Adding PeterZ who's the objtool uaccess expert.
-
---=20
-Josh
+-- 
+Jens Axboe
 
