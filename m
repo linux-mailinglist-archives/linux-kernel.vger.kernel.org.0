@@ -2,60 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECEDB1055AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0DB1055B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfKUPcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 10:32:48 -0500
-Received: from mga06.intel.com ([134.134.136.31]:54754 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbfKUPcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:32:47 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 07:32:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
-   d="scan'208";a="205102412"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Nov 2019 07:32:45 -0800
-Date:   Thu, 21 Nov 2019 23:34:42 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmattson@google.com,
-        sean.j.christopherson@intel.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [PATCH v7 2/9] vmx: spp: Add control flags for Sub-Page
- Protection(SPP)
-Message-ID: <20191121153442.GH17169@local-michael-cet-test>
-References: <20191119084949.15471-1-weijiang.yang@intel.com>
- <20191119084949.15471-3-weijiang.yang@intel.com>
- <d6e71e7b-b708-211c-24b7-8ffe03a52842@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6e71e7b-b708-211c-24b7-8ffe03a52842@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726784AbfKUPgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 10:36:00 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:33425 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfKUPgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 10:36:00 -0500
+Received: from orion.localdomain ([95.115.120.75]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MJmX3-1iIkaN1UBl-00K6ei; Thu, 21 Nov 2019 16:35:58 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org
+Subject: [PATCH] i2c: i2c-core-base: tiny indention cleanup
+Date:   Thu, 21 Nov 2019 16:35:41 +0100
+Message-Id: <20191121153541.26402-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:L6EOFn0STmgsIK79q6tHtVhD0cjobzcbBwLr/SzPFpeQYjM9ZPH
+ 59kFgTeDOjgMu0BJwpi0Po+upOXAx5352VOKzodWRd/ICCM6bs1hWDv4+3aS1oYHfsh/JsO
+ 1TXW1V5s4qjNlaiLMZumITx3xohQXbnA0XCf5dRpX2huSDBVKeqNmzkAAWKoenpuc40/BpO
+ K1/ILPOhUPgEUbd2+bC7g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:F5VK7nogLpA=:itMk1bZoeMJBvG8RKb5XiB
+ j9m9mNAX3NcSPoBLEKZq4WzRAPpdZrpXIrnG2mUzBcN6OJ0eSpIQpE6/4a/x6/OxrluaQq2R5
+ K9FsgyuFWQTzfUF7gQCp+Jj/T6EB2BsYdGQdBPA4+pzOxtqPAmxy1ta0fg80jP1tQCtqtnMxE
+ rr/UJXFaIB9CPkSRUVoo9wZkg8yV8Benw7MJDU4cIsDJulaeUcfbcoMBb4CwKrAosSETXw6n1
+ jnRP27seoP1hym6tbNkLIz+4/af9FNO3gDXBgNl/xgNFK4WQNAAoV0lCv7UtyY9uHhisCCd+d
+ gL7600g0lGfY9gnmFaNKWbq885IEhd5aSKDeu2ael07hN9FrzSmM5ciXSUw1P1ChSokYA25yV
+ ruog1oPU3Vn1nUQFlORzqnUIlw62ut3p6iEmCp/W3L15xDXrNpsZl2OtI3w+/95vG2d/aHAxZ
+ R8A9BEw7iM/JakRMWq/OTpOcd0eM7TnwAa1+ldqPHJ9lGcg97Wyx1S8gI5ADCH9BXsX/dsyIL
+ HLNvBBYROx21318ys79g8ocFKVJSou6lb693nM0Rr16MEhGedlMG+H80QTxsVHlOIc4n9EyxV
+ NcYJJgolGZHrDLXYOkiQs+orwFB2vUuW87L9dQWMcFYVx3RKmZuDnVfKsGgHVRMoyNY6/gvsP
+ id0JwGzIotOqaFGWBlvgdjznaDudIt7ZgrJGP3GEOIFnGyqcItUVB8Cr7D9iLN1o4m7fW77V5
+ EcwWqvB4OOBu6gjSJwR5eZShq2io6REFqlvBhrye0jyAjS+HQICS4vftOMlBYbKQ97r9t8851
+ EPusDa/XoWqIs21tFBVlsZ8uRSX5Qx3FP2/S5TbvA6mkWx04q7oAm7S//tRaXzvc3ErZs+qeS
+ LD7M948AEpB5fZlDA2Jg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:04:51AM +0100, Paolo Bonzini wrote:
-> On 19/11/19 09:49, Yang Weijiang wrote:
-> > @@ -228,6 +228,7 @@
-> >  #define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
-> >  #define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
-> >  #define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-> > +#define X86_FEATURE_SPP			( 8*32+ 5) /* Intel EPT-based Sub-Page Write Protection */
-> 
-> Please do not include X86_FEATURE_SPP.  In general I don't like the VMX
-> features word, but apart from that SPP is not a feature that affects all
-> VMs in the same way as EPT or FlexPriority.
->
-So what's a friendly way to let a user check if SPP feature is there?
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/i2c/i2c-core-base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Paolo
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 5f6a4985f2bc..68be4e89d16a 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -2326,7 +2326,7 @@ struct i2c_adapter *i2c_get_adapter(int nr)
+ 	else
+ 		adapter = NULL;
+ 
+- exit:
++exit:
+ 	mutex_unlock(&core_lock);
+ 	return adapter;
+ }
+-- 
+2.11.0
+
