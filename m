@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DEDF1051C6
+	by mail.lfdr.de (Postfix) with ESMTP id 29C391051C5
 	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:50:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbfKULtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727239AbfKULtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 21 Nov 2019 06:49:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39450 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:39530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727149AbfKULtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 06:49:52 -0500
+        id S1727212AbfKULty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 06:49:54 -0500
 Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46BCC208D4;
-        Thu, 21 Nov 2019 11:49:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFD7F20898;
+        Thu, 21 Nov 2019 11:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574336991;
-        bh=qgVq3iULPLf+++Sd5yvjfZUHIX2r2j9MWG12MbuZ/Wo=;
+        s=default; t=1574336994;
+        bh=q6tCgJoVbKmaajtoiAg/CIo4lf0H365YVrdYrstJpuQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y6OSNWnyx8YGNhh9beVm1ztO44vtT3s0rmkIx87QFcYLcFnKlIqdRUorXUSANn/lI
-         36coRd4w38f4NCfKljGzCGLReTiOnIvO8N1dgoDiHH71BhZyhJehU0gaom3MIsWYMu
-         /3phKep+h4ioKLI1GlAN93SRfcqHnS5YzeX2g2Oc=
+        b=o9Y4UO/r2NR6iwRb9Azm4PC85Ih9QWiwkNxGvYWdIss6jtI70+lzdzfGpk6rL0yN2
+         J3acA21ZqGP0tqrisMTUq9JlcYLYd51ZMR88dKE5irO9jScZP+fcHhaMJD5tz+Dvmb
+         Q55trwhox83Pddc3vcs9fAeRmB5PTeC83TZcNpW4=
 From:   Will Deacon <will@kernel.org>
 To:     iommu@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     Will Deacon <will@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Joerg Roedel <joro@8bytes.org>
-Subject: [PATCH v3 10/14] iommu/arm-smmu-v3: Unregister IOMMU and bus ops on device removal
-Date:   Thu, 21 Nov 2019 11:49:14 +0000
-Message-Id: <20191121114918.2293-11-will@kernel.org>
+Subject: [PATCH v3 11/14] iommu/arm-smmu-v3: Allow building as a module
+Date:   Thu, 21 Nov 2019 11:49:15 +0000
+Message-Id: <20191121114918.2293-12-will@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191121114918.2293-1-will@kernel.org>
 References: <20191121114918.2293-1-will@kernel.org>
@@ -49,103 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When removing the SMMUv3 driver, we need to clear any state that we
-registered during probe. This includes our bus ops, sysfs entries and
-the IOMMU device registered for early firmware probing of masters.
+By removing the redundant call to 'pci_request_acs()' we can allow the
+ARM SMMUv3 driver to be built as a module.
 
 Signed-off-by: Will Deacon <will@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 64 +++++++++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 21 deletions(-)
+ drivers/iommu/Kconfig       | 2 +-
+ drivers/iommu/arm-smmu-v3.c | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index e3842eabcfdd..7583d47fc4d5 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -388,7 +388,7 @@ config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
+ 	  config.
+ 
+ config ARM_SMMU_V3
+-	bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
++	tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+ 	depends on ARM64
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
 diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 3fd75abce3bb..0e7a135efdfe 100644
+index 0e7a135efdfe..f79b14f75107 100644
 --- a/drivers/iommu/arm-smmu-v3.c
 +++ b/drivers/iommu/arm-smmu-v3.c
-@@ -3565,6 +3565,45 @@ static unsigned long arm_smmu_resource_size(struct arm_smmu_device *smmu)
- 		return SZ_128K;
- }
+@@ -2733,6 +2733,7 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.get_resv_regions	= arm_smmu_get_resv_regions,
+ 	.put_resv_regions	= arm_smmu_put_resv_regions,
+ 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
++	.owner			= THIS_MODULE,
+ };
  
-+static int arm_smmu_set_bus_ops(struct iommu_ops *ops)
-+{
-+	int err;
-+
-+#ifdef CONFIG_PCI
-+	if (pci_bus_type.iommu_ops != ops) {
-+		if (ops)
-+			pci_request_acs();
-+		err = bus_set_iommu(&pci_bus_type, ops);
-+		if (err)
-+			return err;
-+	}
-+#endif
-+#ifdef CONFIG_ARM_AMBA
-+	if (amba_bustype.iommu_ops != ops) {
-+		err = bus_set_iommu(&amba_bustype, ops);
-+		if (err)
-+			goto err_reset_pci_ops;
-+	}
-+#endif
-+	if (platform_bus_type.iommu_ops != ops) {
-+		err = bus_set_iommu(&platform_bus_type, ops);
-+		if (err)
-+			goto err_reset_amba_ops;
-+	}
-+
-+	return 0;
-+
-+err_reset_amba_ops:
-+#ifdef CONFIG_ARM_AMBA
-+	bus_set_iommu(&amba_bustype, NULL);
-+#endif
-+err_reset_pci_ops: __maybe_unused;
-+#ifdef CONFIG_PCI
-+	bus_set_iommu(&pci_bus_type, NULL);
-+#endif
-+	return err;
-+}
-+
- static int arm_smmu_device_probe(struct platform_device *pdev)
- {
- 	int irq, ret;
-@@ -3655,33 +3694,16 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+ /* Probing and initialisation functions */
+@@ -3571,8 +3572,6 @@ static int arm_smmu_set_bus_ops(struct iommu_ops *ops)
  
--#ifdef CONFIG_PCI
--	if (pci_bus_type.iommu_ops != &arm_smmu_ops) {
--		pci_request_acs();
--		ret = bus_set_iommu(&pci_bus_type, &arm_smmu_ops);
--		if (ret)
--			return ret;
--	}
--#endif
--#ifdef CONFIG_ARM_AMBA
--	if (amba_bustype.iommu_ops != &arm_smmu_ops) {
--		ret = bus_set_iommu(&amba_bustype, &arm_smmu_ops);
--		if (ret)
--			return ret;
--	}
--#endif
--	if (platform_bus_type.iommu_ops != &arm_smmu_ops) {
--		ret = bus_set_iommu(&platform_bus_type, &arm_smmu_ops);
--		if (ret)
--			return ret;
--	}
--	return 0;
-+	return arm_smmu_set_bus_ops(&arm_smmu_ops);
- }
- 
- static int arm_smmu_device_remove(struct platform_device *pdev)
- {
- 	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
- 
-+	arm_smmu_set_bus_ops(NULL);
-+	iommu_device_unregister(&smmu->iommu);
-+	iommu_device_sysfs_remove(&smmu->iommu);
- 	arm_smmu_device_disable(smmu);
- 
- 	return 0;
+ #ifdef CONFIG_PCI
+ 	if (pci_bus_type.iommu_ops != ops) {
+-		if (ops)
+-			pci_request_acs();
+ 		err = bus_set_iommu(&pci_bus_type, ops);
+ 		if (err)
+ 			return err;
 -- 
 2.24.0.432.g9d3f5f5b63-goog
 
