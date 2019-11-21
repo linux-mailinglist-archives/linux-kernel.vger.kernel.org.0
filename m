@@ -2,101 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D43A105A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:01:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B92EB105A25
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:02:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfKUTB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 14:01:29 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38152 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbfKUTB3 (ORCPT
+        id S1727104AbfKUTCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 14:02:00 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43530 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfKUTCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 14:01:29 -0500
-Received: by mail-ed1-f66.google.com with SMTP id s10so3754379edi.5;
-        Thu, 21 Nov 2019 11:01:28 -0800 (PST)
+        Thu, 21 Nov 2019 14:02:00 -0500
+Received: by mail-io1-f68.google.com with SMTP id r2so4706424iot.10;
+        Thu, 21 Nov 2019 11:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WGlv9N7emzPPMkGFW2suWUAOKKS+im2D/mbhQrUjPOw=;
-        b=hw0tGGpydIclVWzvfKyqExS+ky3mFe5zVFYzo8L/vE9QIsquY7DLXT3bxgRHCc913E
-         QPYswTjKLbcK2rh16yudPur9Safmg77tW/A/pa8QnF37XhIQ5u2H6l5XQnrqZ0aSXohF
-         y6vPt6lysOVpBO2kR2FnrJoNlGusPUTt7c8MvEYo4Ow7Xs5zpbwdCctguSfnT+blVgEB
-         Q4i301/C0VgEKQcp8OXyj0B4DEMiIH+KW8S+llH6hOmRla4aO4RRVQjT1xyHulgZf1VE
-         +VPAp76Wx4D/VNMQcC/VxE3KHRvxo2QJLj9rf50nPHnZVipfoaeoJSPhd6ml6WK1/f/3
-         nZ8Q==
+        h=from:to:cc:subject:date:message-id;
+        bh=8rpCD9rYYwa0faJPn9zZeednYRLE+tWPhyK/GFBhRbo=;
+        b=HGAi9mOl1G/6fKsA6XGAYgUInx2JHYMfr3B8kIRuTIRgKNbq2q5a4TK/7FGW/EYEm3
+         TjfnXuTAmMPA8pc+diXLtyDHaZA4rOPzcxC449cv7yZjU9NPHPrtYsDG9O5c6CF7PXNL
+         6C/hd5DZLpzACcFoQzOz5py5+wYzBZYHr2HB/bKU/P+HKSAidwvAlwQb9vZyV9xCJgql
+         +oPZ5ym81mBNl+sY7tGJS0BN6tDE4pna7lOfLhPBML82rzQHVZfJBRTrpT+bWZaZl1Cl
+         GZ07cVMkoiQ7It2EvT93xGG1NegvZXRhmdje+0Fb3Dbkgw5UT/4vr8ByJMQwuKvHvG7A
+         hkUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WGlv9N7emzPPMkGFW2suWUAOKKS+im2D/mbhQrUjPOw=;
-        b=geFjy27muvt1MM06Qe8Pm0+7EIjbkjcgAY3n8YcKQkKrVV67OdF5EeHB1JhrgigUjU
-         7L+9duCpy1YYkV8Iy+5AvUi+1KhF+LHR4j3KpDnkgNYPIMRfwFrdpmhksBmOGMLtrudw
-         24yfbuZ/KCIfbEmYZvs5EUQo4GPmUQJlcrRqiuk3ka+UHu57EDUYSEeNQwjHoVuzRRwc
-         /+/MFI6RbHZ+VSHeJfGfj/8r+27iPpo1SbVkrHIIJ2G1xj91mqt/9f9ZlUq+Qm8HRJtr
-         s87sQneT52NZy40ecmTs0DkEl8ZWc2q9GLOaKEHYYLtQN0tH+/Gh977LGxHJrQWp/1XQ
-         8ACQ==
-X-Gm-Message-State: APjAAAWwTnSo7PqxS1SMTMD8DMlYFf41ToHJ9ICqf8ElvKSk0OPmEubn
-        nd2qvgr5wU/tAGgOByZCZeY+7B+lx38dcjzr+7fkAoFI
-X-Google-Smtp-Source: APXvYqw7XM4/ilKVdiKymLyfmxi48lasfzIxyiJ681Tf/Q+giqd2n8es7XgsJNBR5MISNx52NIpdSQew5FnTSv5teuU=
-X-Received: by 2002:a17:906:11cf:: with SMTP id o15mr16093149eja.208.1574362887584;
- Thu, 21 Nov 2019 11:01:27 -0800 (PST)
-MIME-Version: 1.0
-References: <1574232449-13570-1-git-send-email-manish.narani@xilinx.com> <1574232449-13570-5-git-send-email-manish.narani@xilinx.com>
-In-Reply-To: <1574232449-13570-5-git-send-email-manish.narani@xilinx.com>
-From:   Rob Herring <rob.e.herring@gmail.com>
-Date:   Thu, 21 Nov 2019 13:01:16 -0600
-Message-ID: <CAC=3edbHWA7gv-mTFVXXcMzN6hyzO4LPqkbcRZ-zDp5BAm8_Vw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/8] dt-bindings: mmc: Add optional generic properties
- for mmc
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, adrian.hunter@intel.com,
-        michal.simek@xilinx.com, jolly.shah@xilinx.com,
-        rajan.vaja@xilinx.com, nava.manne@xilinx.com, mdf@kernel.org,
-        linux-mmc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        git@xilinx.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8rpCD9rYYwa0faJPn9zZeednYRLE+tWPhyK/GFBhRbo=;
+        b=tyzADLS6eagkLN+Oc7HgpJtkOwxwohHWYvcjANPwYRDXJn/30/YrUji2t5cqL3Kg73
+         ur12JsAw1EcQtfIX8mnZefvV2Dgepg5an9xCYDJnDF2bYqpgr/DiFc8MyZOzHr/MrN/e
+         biO1XUZL+KFJoI+sX4NgRLL8bbw8y5ljrYxI8VpNOx518YCHSPKDgi7NpaWwBNo4jGo8
+         dicRlDzrSDugaeBEEYNsHiDNuQ5V9kc+K1OrLGbOxEnyq4TbdLEY990sKwpyy/xbF9jW
+         OwfgdBh4Th3A8wBRA3BUW/gZTEVIRCpwpk5mA3/101Vxj7kKve55D8KRIHHMNVJQkl6V
+         emWA==
+X-Gm-Message-State: APjAAAWzLefK1Pxb5GFBIdyAfy9dUk80TecOj0gj1da9TguWs0/TC/Rb
+        wGMaYHIE5okyzKhGiYxkyb+pTR2l
+X-Google-Smtp-Source: APXvYqyojkqHmYVutVHekAu4uYyt23an4xkkRX4nZvAeLppKlJoIfSHmuxMj0Co+s9oC4mZAJdorlQ==
+X-Received: by 2002:a6b:6f09:: with SMTP id k9mr8725846ioc.91.1574362918844;
+        Thu, 21 Nov 2019 11:01:58 -0800 (PST)
+Received: from localhost.localdomain (c-68-55-68-202.hsd1.mi.comcast.net. [68.55.68.202])
+        by smtp.gmail.com with ESMTPSA id x1sm1204053ioh.59.2019.11.21.11.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 11:01:57 -0800 (PST)
+From:   Jason Kridner <jkridner@gmail.com>
+X-Google-Original-From: Jason Kridner <jdk@ti.com>
+To:     devicetree@vger.kernel.org
+Cc:     Jason Kridner <jkridner@gmail.com>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jason Kridner <jdk@ti.com>, Jyri Sarha <jsarha@ti.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: Add vendor prefix for BeagleBoard.org
+Date:   Thu, 21 Nov 2019 14:01:24 -0500
+Message-Id: <20191121190124.1936-1-jdk@ti.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 12:49 AM Manish Narani <manish.narani@xilinx.com> wrote:
->
-> Add optional properties for mmc hosts which are used to set clk delays
-> for different speed modes in the controller.
->
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  .../devicetree/bindings/mmc/mmc-controller.yaml     | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> index 080754e0ef35..305b2016bc17 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> @@ -333,6 +333,18 @@ patternProperties:
->      required:
->        - reg
->
-> +  "^clk-phase-(legacy|sd-hs|mmc-(hs|hs[24]00|ddr52)|uhs-(sdr(12|25|50|104)|ddr50))$":
-> +    minItems: 2
-> +    maxItems: 2
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - minimum: 0
-> +        maximum: 359
+Add vendor prefix for BeagleBoard.org Foundation
 
-This is wrong. It can't be both minItems of 2 and a single uint32.
-What's needed is:
+Signed-off-by: Jason Kridner <jdk@ti.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-allOf:
-  - $ref: /schemas/types.yaml#/definitions/uint32-array
-minItems: 2
-maxItems: 2
-items:
-  minimum: 0
-  maximum: 359
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 967e78c5ec0a..3e3d8e3c28d3 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -139,6 +139,8 @@ patternProperties:
+     description: Shenzhen AZW Technology Co., Ltd.
+   "^bananapi,.*":
+     description: BIPAI KEJI LIMITED
++  "^beagleboard.org,.*":
++    description: BeagleBoard.org Foundation
+   "^bhf,.*":
+     description: Beckhoff Automation GmbH & Co. KG
+   "^bitmain,.*":
+-- 
+2.17.1
+
