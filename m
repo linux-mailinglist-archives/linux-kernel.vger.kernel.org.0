@@ -2,141 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F860105CA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 23:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7554B105C9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 23:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfKUWZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 17:25:15 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14864 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfKUWZO (ORCPT
+        id S1726765AbfKUWXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 17:23:37 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35101 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfKUWXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 17:25:14 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd70ecc0001>; Thu, 21 Nov 2019 14:25:17 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 21 Nov 2019 14:25:13 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 21 Nov 2019 14:25:13 -0800
-Received: from [10.2.168.213] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
- 2019 22:25:13 +0000
-Subject: Re: [PATCH v7 05/24] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-6-jhubbard@nvidia.com> <20191121080555.GC24784@lst.de>
- <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
- <CAPcyv4jzDfxFAnAYc6g8Zz=3DweQFEBLBQyA_tSDP2Wy-RoA4A@mail.gmail.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <461d6611-0cfb-dd13-f827-0db1ff8a9f2d@nvidia.com>
-Date:   Thu, 21 Nov 2019 14:22:24 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 21 Nov 2019 17:23:37 -0500
+Received: by mail-oi1-f193.google.com with SMTP id n16so4758793oig.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 14:23:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=anholt-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1WUkXmE+MiLBrVjy4B14Wseiqa2/J/dX9t8VmDSDp64=;
+        b=ThYJ/gBKeV4u3BKOxqKxK7Qmbr/lAmHU6LgncvysJBs2mc0IB2NNwYuC6kETlaTKyb
+         ItheWDSajbgyt1JGeuVU461aI/dwTGkWcnLNuLVuMjG4Pnc84uFV3qNY+lhlaI9AfgO6
+         wzhSt4WEF+DYi5Qs+uT0L8ZWNufyFukONUquBRXtG1ocU1yPx0wu7ye/zRKKoaziNM2M
+         J2Z8/YVUYktSxtUu+CaZ9vmURSnpbLx7m9Q8VsK3L06Ylwgb48rHZ6hYhseS3Uc4sdra
+         J83flzAdw9kImotFlrjOUXeujhsok7u8+ZlWvVrjwh+f+txo1B1XDfnG06ClI48rwppv
+         0MMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1WUkXmE+MiLBrVjy4B14Wseiqa2/J/dX9t8VmDSDp64=;
+        b=G3Y6Z6em7jYv0HyclPB8ZBEkBq1b5DF32vBWW84MzOyxg5aGcEvczYYpxrlPMR4wAW
+         Uj8ySriAd4a9xs20nDLkhkh7H8K78jX1hPZiIbP75WUlerUxXFA0pRN0cVrQxdQ9VwQ5
+         m2BHBfIridxG/UzZFVszTWrVfGGewvzK+jqn0ufDdC8VEZCJGr6U5M5bvX9c+bUq8U0+
+         6j9bD1j2f2cy3HwQyglSjlRXlpreBKzotjtrI1ZEbjv9aIhhdoiSNpRTzvq92Z+5uP3n
+         gzVbh0Uuh28beH/8GmSCQTKCX4HNqHZDKKqbu0YAUrNiKyX3Me4V7lCaEwJYpJftnYCf
+         r7lg==
+X-Gm-Message-State: APjAAAWcm46wygzQTGeJxqvBhy+8tR5lCrOEbK8qjEFS7S9aZ1XjJeJy
+        7HiSwsYAe1QLsdxiqvfv3X64Ey7oE6ehfMKx3AjU0g==
+X-Google-Smtp-Source: APXvYqw/ylCEFHwpFrhQRnB79Mk0ianRWLG+gfZEBptW/+u/ePkZJSw8APMwDIgnWSDOxbYEX3RbCNe/XkyICFYhZZk=
+X-Received: by 2002:aca:cdc2:: with SMTP id d185mr9848394oig.35.1574375016076;
+ Thu, 21 Nov 2019 14:23:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jzDfxFAnAYc6g8Zz=3DweQFEBLBQyA_tSDP2Wy-RoA4A@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574375117; bh=D/eKIo+FJi5bpXqwJfXr6PJt8uCFLnCZclyeodxgmoA=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=QiiyQjBd99PA4tfLyLMiUlQLWaGQU2+co6FamS71fAjNe7NqeNYDH8w7d2wRbOpAp
-         FO2FB4fRVvM6b8p6VFBEfZcwYG6pgVEpA9JmE6+ROgRRGxXCqZY/+YxPczpJznwImd
-         p6u80IPFPE4x/PJetPMB9IpPtmHNp690Ig3KD/FI3Pg1Spw0uK9yY10oBbvhOlh90u
-         VDHu/ArBa3unFu4nkBBDe7Ce1Uz+1D/XrvQ7tfArBFBClI1tdcdtAK+LKBrbmv90AQ
-         ydolBZYKkzfeBhYUC0ZjSrXWwqBfaUR0ElhSrvf057yQhGgjhUwUU8jj5KSdyTH5QE
-         YNZVYalLmeVQg==
+References: <68580738-4ecf-3bb7-5720-6e5b6dafcfeb@gmx.net> <e225fdf0-1044-cc3e-89f8-a569596e8bce@gmail.com>
+ <52c0e259-9130-fa56-a036-dec95d4bd7d4@i2se.com> <51d2c5e6-7cd5-02a1-77c9-c96b27a04242@gmail.com>
+ <902d2270-8081-b21d-e572-627f470beda7@gmx.net> <6487c38c-505e-99df-2451-c3da4cb02c94@gmail.com>
+In-Reply-To: <6487c38c-505e-99df-2451-c3da4cb02c94@gmail.com>
+From:   Eric Anholt <eric@anholt.net>
+Date:   Thu, 21 Nov 2019 14:23:43 -0800
+Message-ID: <CADaigPUZQV8VrnXJJxLESQd_6T9+kib015fSTQow9kZmx6szKw@mail.gmail.com>
+Subject: Re: BCM2835 maintainership
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Stefan Wahren <wahrenst@gmx.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-kernel@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/19 8:59 AM, Dan Williams wrote:
-> On Thu, Nov 21, 2019 at 12:57 AM John Hubbard <jhubbard@nvidia.com> wrote:
->>
->> On 11/21/19 12:05 AM, Christoph Hellwig wrote:
->>> So while this looks correct and I still really don't see the major
->>> benefit of the new code organization, especially as it bloats all
->>> put_page callers.
->>>
->>> I'd love to see code size change stats for an allyesconfig on this
->>> commit.
->>>
->>
->> Right, I'm running that now, will post the results. (btw, if there is
->> a script and/or standard format I should use, I'm all ears. I'll dig
->> through lwn...)
->>
-> 
-> Just run:
-> 
->      size vmlinux
-> 
+On Thu, Nov 21, 2019 at 10:03 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> On 11/21/19 9:51 AM, Stefan Wahren wrote:
+> > Hi Florian,
+> >
+> > Am 21.11.19 um 18:42 schrieb Florian Fainelli:
+> >> On 11/21/19 1:56 AM, Stefan Wahren wrote:
+> >>> Am 20.11.19 um 22:54 schrieb Florian Fainelli:
+> >>>> On 11/20/19 3:38 AM, Stefan Wahren wrote:
+> >>>>> Hello,
+> >>>>>
+> >>>>> i need to announce that i step back as BCM2835 maintainer with the end
+> >>>>> of this year. Maintainership was a fun ride, but at the end i noticed
+> >>>>> that it needed more time for doing it properly than my available spare time.
+> >>>>>
+> >>>>> Nicolas Saenz Julienne is pleased be my successor and i wish him all the
+> >>>>> best on his way.
+> >>>>>
+> >>>>> Finally i want to thank all the countless contributors and maintainers
+> >>>>> for helping to integrate the Raspberry Pi into the mainline Kernel.
+> >>>> Thanks Stefan, it has been great working with you on BCM2835
+> >>>> maintenance. Do you mind making this statement official with a
+> >>>> MAINTAINERS file update?
+> >>> Sure, but first we should define the future BCM2835 git repo. I like to
+> >>> hear Eric's opinion about that, since he didn't step back.
+> >> How about we move out of github.com/Broadcom/stblinux as well as Eric's
+> >> tree and get a group maintained repository on kernel.org, something like
+> >> kernel/git/broadcom/linux.git?
+> >>
+> >> Then we can continue the existing processe whereby BCM2835 gets pulled
+> >> into other Broadcom SoC pull requests.
+> >>
+> >> How does that sound?
+> > this sounds like a good idea. In case the others agree too, can you take
+> > care of it?
+>
+> Certainly, let me work through the process and I will let you know if
+> that could work.
 
-Beautiful. I thought it would involve a lot more. Here's results:
-
-linux.git (Linux 5.4-rc8+):
-==============================================
-   text	   data	    bss	    dec	    hex	filename
-227578032	213267935	76877984	517723951	1edbd72f	vmlinux
-
-
-With patches 4 and 5 applied to linux.git:
-==========================================
-   text	   data	    bss	    dec	    hex	filename
-229698560	213288379	76853408	519840347	1efc225b	vmlinux
-
-
-Analysis:
-=========
-
-This increased the size of text by 0.93%. Which is a measurable bloat, so
-the inlining really is undesirable here, yes. I'll do it differently.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+This all sounds fine to me, though since I'm not active any more we
+should probably drop me out of MAINTAINERS while we're doing this
+shuffle, too.
