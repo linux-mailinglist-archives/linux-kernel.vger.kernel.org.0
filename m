@@ -2,76 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F29105A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8E0105A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKUThq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 14:37:46 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38863 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUThq (ORCPT
+        id S1727007AbfKUTjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 14:39:07 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:47070 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbfKUTjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 14:37:46 -0500
-Received: by mail-oi1-f195.google.com with SMTP id a14so4310698oid.5;
-        Thu, 21 Nov 2019 11:37:45 -0800 (PST)
+        Thu, 21 Nov 2019 14:39:07 -0500
+Received: by mail-pj1-f66.google.com with SMTP id a16so1935810pjs.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 11:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=COatpzDuZgl9WMg8hp9kMY5ElrlJCYz6DmuSXPX+4MI=;
+        b=XMfzQIYtZ59LpXSVL0ZsuREdO/zTlCEpjB3yrDBDcaEUp07a/rl9MG1vi8zsNQniFI
+         EY26nphwA7xJfu/RQBhzFdqIgC5vy6jR7lMWx1+YO0LZvM3Rq7kJqBjSHxvvD+7SiwDF
+         YoEbTBxvincX2cA/1K7Y11EdYqH2RY+fv7Uks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tMER4MOHixp2wY9ZjS4RrN2RrDNX7H+o1z/zXkM48ZU=;
-        b=Q6RCCcByjVSTwLs6zjTOIOogAiyLZ88aGbigw4CCXGdpEBXhshluevOsoZdVvdXezw
-         Nv4UHxtPTXHRBFmncvxRUMQiBqJaMzJFIwONlIt3uDBU2phtHHkXOjjV628nZegsXhYg
-         9DZNV+Jnj1n9DYALod4ddSmyypviR5CR+qlQnAvBSQumgu+rc6lJYeMJ0iG0BlMMGypL
-         WiV2EvM3HILbJT3D4CHtCvE/dk+pNQTOdBisWsxZDabDF0u6m20Wwzf/NWxs4t+sTRCy
-         +NG585cjEx70sHR5KmyebZVPVyNn4L+UIsRlDPbwx4onIsM8z2Qq3BOC9hwCfHNbNU7+
-         lKtg==
-X-Gm-Message-State: APjAAAVZNWmFdo625UEW9ywLD+jrw1S3R8qudJNSB3/3j1tEIzR17ztp
-        cK9Ro9yXOGSXJcG/yefSgw==
-X-Google-Smtp-Source: APXvYqxz3r1XfhG46Xqzohy//cfJAs84lDW7vsquvPUXB2FPHrRH/1ETgZRryOu7acvqdws+X02tgA==
-X-Received: by 2002:aca:4ac5:: with SMTP id x188mr8823046oia.148.1574365065094;
-        Thu, 21 Nov 2019 11:37:45 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e88sm1305777ote.39.2019.11.21.11.37.44
+         :mime-version:content-disposition:in-reply-to;
+        bh=COatpzDuZgl9WMg8hp9kMY5ElrlJCYz6DmuSXPX+4MI=;
+        b=GKlEqT+4HcmmWqD8DOQZr5obRtH8wxkdcOTxNh3q3cD8TUnK069T/8wBNAXoQoLMz+
+         +7WzBQ+1gbXDsyQhv2b//9Za997WRzApQUeAomU1xbHW7wnEgqjLSL5ZnUeltI5azO0c
+         h/9ivgRyq2vL3YwGyZw8mxrzacZxve1clmU/YyXwCg1IZBj4VfuMzYKJ6WKECiYyU2LY
+         MSs/HEToixFJ7OyEmuCzU6LaGGAUa4lKDLK1ytBZOJsUIJGklcsd4RKY45QTbLR0uSdR
+         ajPrD0/6+C+7sE1KZ3ZqzKhwAjMfzUlgJG1pspIZJBY3zcwGEWnpDM6AVfIU4N9gM6ME
+         FZhw==
+X-Gm-Message-State: APjAAAVIcizrTox0EjRpEY5rLYwe5RT4aE1QLQXtrY8ZFduIpR4i4YGa
+        6Ym8oQEwaP3Z5y91ZfmC8FGvLg==
+X-Google-Smtp-Source: APXvYqz/jtL9tVfuwcoRhIixv519GB1afp4iPElbqeuxfM7fkUi9Gv03HiJSgOyNJ38Uc33MLBVSFQ==
+X-Received: by 2002:a17:90a:23e2:: with SMTP id g89mr13232298pje.127.1574365145234;
+        Thu, 21 Nov 2019 11:39:05 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k13sm3978316pgl.69.2019.11.21.11.39.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 11:37:44 -0800 (PST)
-Date:   Thu, 21 Nov 2019 13:37:43 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        alexandre.torgue@st.com, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Christophe Kerello <christophe.kerello@st.com>
-Subject: Re: [PATCH] dt-bindings: mtd: Convert stm32 fmc2-nand bindings to
- json-schema
-Message-ID: <20191121193743.GA3627@bogus>
-References: <20191121130615.13007-1-benjamin.gaignard@st.com>
+        Thu, 21 Nov 2019 11:39:04 -0800 (PST)
+Date:   Thu, 21 Nov 2019 11:39:03 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] docs, parallelism: Rearrange how jobserver
+ reservations are made
+Message-ID: <201911211122.02F3646@keescook>
+References: <20191121000304.48829-1-keescook@chromium.org>
+ <20191121000304.48829-4-keescook@chromium.org>
+ <656afebc-fc60-7502-40a3-52d2662c1d27@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121130615.13007-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <656afebc-fc60-7502-40a3-52d2662c1d27@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Nov 2019 14:06:15 +0100, Benjamin Gaignard wrote:
-> Convert the STM32 fmc2-nand binding to DT schema format using json-schema
+On Thu, Nov 21, 2019 at 09:09:37AM +0100, Rasmus Villemoes wrote:
+> On 21/11/2019 01.03, Kees Cook wrote:
+> > diff --git a/Documentation/sphinx/parallel-wrapper.sh b/Documentation/sphinx/parallel-wrapper.sh
+> > new file mode 100644
+> > index 000000000000..a416dbfd2025
+> > --- /dev/null
+> > +++ b/Documentation/sphinx/parallel-wrapper.sh
+> > @@ -0,0 +1,25 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0+
+> > +#
+> > +# Figure out if we should follow a specific parallelism from the make
+> > +# environment (as exported by scripts/jobserver-exec), or fall back to
+> > +# the "auto" parallelism when "-jN" is not specified at the top-level
+> > +# "make" invocation.
+> > +
+> > +sphinx="$1"
+> > +shift || true
+> > +
+> > +parallel="${PARALLELISM:-1}"
+> > +if [ ${parallel} -eq 1 ] ; then
+> > +	auto=$(perl -e 'open IN,"'"$sphinx"' --version 2>&1 |";
+> > +			while (<IN>) {
+> > +				if (m/([\d\.]+)/) {
+> > +					print "auto" if ($1 >= "1.7")
+> > +				}
+> > +			}
+> > +			close IN')
+> > +	if [ -n "$auto" ] ; then
+> > +		parallel="$auto"
+> > +	fi
+> > +fi
+> > +exec "$sphinx" "-j$parallel" "$@"
 > 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> CC: Christophe Kerello <christophe.kerello@st.com>
-> ---
->  .../bindings/mtd/st,stm32-fmc2-nand.yaml           | 98 ++++++++++++++++++++++
->  .../devicetree/bindings/mtd/stm32-fmc2-nand.txt    | 61 --------------
->  2 files changed, 98 insertions(+), 61 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mtd/st,stm32-fmc2-nand.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt
+> I don't understand this logic. If the parent failed to claim any tokens
+> (likely because the top make and its descendants are already running 16
+> gcc processes), just let sphinx run #cpus jobs in parallel? That doesn't
+> make sense - it gets us back to the "we've now effectively injected K
+> tokens to the jobserver that weren't there originally".
+
+I was going to say "but jobserver-exec can't be running unless there are
+available slots", but I see the case is "if there are 16 slots and
+jobserver-exec gets _1_, it should not fall back to 'auto'".
+
+> From the comment above, what you want is to use "auto" if the top
+> invocation was simply "make docs". Well, I kind of disagree with falling
+> back to auto in that case; the user can say "make -j8 docs" and the
+> wrapper is guaranteed to claim them all. But if you really want, the
+> jobserver-count script needs to detect and export the "no parallelism
+> requested at top level" in some way distinct from "PARALLELISM=1",
+> because that's ambiguous.
+
+Right -- failure needs to be be distinct from "only 1 available".
+
+> > +	# Read out as many jobserver slots as possible.
+> > +	while True:
+> > +		try:
+> > +			slot = os.read(reader, 1)
+> > +			jobs += slot
 > 
+> I'd just try to slurp in 8 or 16 tokens at a time, there's no reason to
+> limit to 1 in each loop.
 
-Applied, thanks.
+Good point. I will change that.
 
-Rob
+> > +rc = subprocess.call(sys.argv[1:])
+> > +
+> > +# Return all the actually reserved slots.
+> > +if len(jobs):
+> > +	os.write(writer, jobs)
+> > +
+> > +sys.exit(rc)
+> 
+> What happens if the child dies from a signal? Will this correctly
+> forward that information?
+
+As far as I understand, yes, signal codes are passed through via the exit
+code (i.e. see WIFSIGNALED, etc).
+
+> Similarly (and the harder problem), what happens when our parent wants
+> to send its child a signal to say "stop what you're doing, return the
+> tokens, brush your teeth and go to bed". We should forward that signal
+> to the real job instead of just dying, losing track of both the tokens
+> we've claimed as well as orphaning the child.
+
+Hm, hm. I guess I could pass INT and TERM to the child. That seems like
+the most sensible best-effort here. It seems "make" isn't only looking
+at the slots to determine process management.
+
+-- 
+Kees Cook
