@@ -2,68 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1FC81047E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C22A1047F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:22:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfKUBOz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 20:14:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfKUBOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 20:14:54 -0500
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F36CE20898
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 01:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574298894;
-        bh=0YhXESY5Img+bDLyS0DkVrNjXOfbzeStiFQlNIzzGZ4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=k99Px07GTebnY/clhcdtK17Zbz+hNnISxxCkaD6jDrti+6IBgP55V0GRWpqg0YAB7
-         F171w1KIxZ0jicpzxrheN42/RizH/RNZmdhTIjHg30WL2fe/SMmZ3wWVXSoAHyv6xB
-         kbguBgjgLrKbLIvHCviuRLp9yCf3Y0z1+hraHonI=
-Received: by mail-lf1-f50.google.com with SMTP id f16so1154687lfm.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 17:14:53 -0800 (PST)
-X-Gm-Message-State: APjAAAVUiKsH2tEaSn+cF6kfUQT5bYt/pzZI7viHPt85QGimsCUR3d7E
-        B7PJaqV5MlNoaCPJA/r9+QTOF8CeP+36YV6dM98=
-X-Google-Smtp-Source: APXvYqwxOI7j8UNtoDwJ2RlML55Fi33YOEKFeEzv23JmFFyiMCSjUpIN4ZQ4V6gEDr4+LM9PWjmNk7O/L7gtOhnP5Kk=
-X-Received: by 2002:ac2:5228:: with SMTP id i8mr5106648lfl.69.1574298892107;
- Wed, 20 Nov 2019 17:14:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20191120134340.16770-1-krzk@kernel.org> <20191120140146.GA21065@nautica>
-In-Reply-To: <20191120140146.GA21065@nautica>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 21 Nov 2019 09:14:40 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPeGm=2_p8SWwgUbf-hTDyi91PhtvPzTL_ZxkM9ADg1dNA@mail.gmail.com>
-Message-ID: <CAJKOXPeGm=2_p8SWwgUbf-hTDyi91PhtvPzTL_ZxkM9ADg1dNA@mail.gmail.com>
-Subject: Re: [PATCH] 9p: Fix Kconfig indentation
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+        id S1726975AbfKUBWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 20:22:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42568 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726774AbfKUBWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 20:22:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9B37EB26F;
+        Thu, 21 Nov 2019 01:22:23 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     mingo@kernel.org, tglx@linutronix.de, bp@alien8.de
+Cc:     peterz@infradead.org, x86@kernel.org, dave@stgolabs.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH -tip v3 0/4] x86,mm/pat: Move towards using generic interval tree
+Date:   Wed, 20 Nov 2019 17:15:57 -0800
+Message-Id: <20191121011601.20611-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019 at 22:08, Dominique Martinet <asmadeus@codewreck.org> wrote:
->
-> Krzysztof Kozlowski wrote on Wed, Nov 20, 2019:
-> > Adjust indentation from spaces to tab (+optional two spaces) as in
-> > coding style with command like:
-> >       $ sed -e 's/^        /\t/' -i */Kconfig
->
-> I take it janitors weren't interested in these?
->
-> Since it's just 9p I can take it, but if this is the only patch I get it
-> might take a couple of months to get in.
-> Will do depending on your answer.
+Changes from v2:
+ - Removed unnecessary goto error path in patch 1, per tglx.
+ - Added the corresponding Makefile change for patch 4, per mingo.
+ - Added tglx's review tags.
 
-Neither trivial nor kernel-janitors picked up previous version so
-let's feel free to take, even if it sits in your tree for some time.
+Changes from v1[0]:
+ - Got rid of more code in patch 1 by using the end - 1 for closed
+   intervals, instead of keeping the overlap-check.
+   
+ - added an additional cleanup patch.
 
-Best regards,
-Krzysztof
+Hi,
+
+I'm sending this series again in this format as the interval tree
+node conversion will, at a minimum, take longer than hoped for
+(ie: Jason still removing interval tree users for the mmu_notifier
+rework[1]). There is also a chance this will never see be done.
+
+As such, I'm resending this series (where patch 1 is the only
+interesting one and which Ingo acked previously, with the exception
+that the nodes remain fully closed). In the future, it would be
+trivial to port pat tree to semi open nodes, but for now think that
+it makes sense to just get the pat changes in.
+
+Please consider for v5.5. Thanks!
+
+[0] https://lore.kernel.org/lkml/20190813224620.31005-1-dave@stgolabs.net/
+[1] https://marc.info/?l=linux-mm&m=157116340411211
+
+Davidlohr Bueso (4):
+  x86/mm, pat: Convert pat tree to generic interval tree
+  x86/mm, pat: Cleanup some of the local memtype_rb_* calls
+  x86/mm, pat: Drop rbt prefix from external memtype calls
+  x86/mm, pat: Rename pat_rbtree.c to pat_interval.c
+
+ arch/x86/mm/Makefile       |   2 +-
+ arch/x86/mm/pat.c          |   8 +-
+ arch/x86/mm/pat_internal.h |  20 ++--
+ arch/x86/mm/pat_interval.c | 185 +++++++++++++++++++++++++++++++
+ arch/x86/mm/pat_rbtree.c   | 268 ---------------------------------------------
+ 5 files changed, 200 insertions(+), 283 deletions(-)
+ create mode 100644 arch/x86/mm/pat_interval.c
+ delete mode 100644 arch/x86/mm/pat_rbtree.c
+
+-- 
+2.16.4
+
