@@ -2,114 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1E8104882
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C138B104891
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:34:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfKUC3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 21:29:34 -0500
-Received: from mga06.intel.com ([134.134.136.31]:29715 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbfKUC3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 21:29:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 18:29:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="290164598"
-Received: from xsang-optiplex-9020.sh.intel.com (HELO xsang-OptiPlex-9020) ([10.239.159.135])
-  by orsmga001.jf.intel.com with ESMTP; 20 Nov 2019 18:29:31 -0800
-Date:   Thu, 21 Nov 2019 10:36:43 +0800
-From:   Oliver Sang <oliver.sang@intel.com>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@lists.01.org
-Subject: Re: [LKP] Re: [irq_work] feb4a51323: BUG:soft_lockup-CPU##stuck_for#s
-Message-ID: <20191121023643.GA8428@xsang-OptiPlex-9020>
-References: <20191112090357.GB30590@shao2-debian>
- <20191112144954.GD27917@lenoir>
+        id S1726343AbfKUCez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 21:34:55 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43627 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfKUCez (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 21:34:55 -0500
+Received: by mail-ot1-f67.google.com with SMTP id l14so1547485oti.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 18:34:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=9lXb0lgrwir7GzZ2DVr2yG1gexTZJRmikORCYz7MiqE=;
+        b=QfYyUnqWKZDJnV+3ikWt7AxOhbMzCYdbfVeDlTauTwNA4NJX2PxdH2vBn7FKTmTQBt
+         K1/p3XI2MuoU/TB2sbB+XuxhunNiGWAs+Dutl0Y5qMur8ysAFl+JlQIuXIu6NeGlovj7
+         RwFWQlwZxQzxrL6ymX0CcB2V/8QK0NknRAzCioZEMrdSSKVkQE4v4nGMZZzNekm3koWR
+         pMiQhC/qJ8rvCcl2H+ijWPGpneXaxcMcKQ5Tx/A5OkXwDtQ/oR3C1qVG03q77dvTC8nk
+         SZVsbwlfP13b5MLfMv+J3qJPg3TBpFWtJLIT0VHoJG9nvR1mupGG8HEQ9fmqvbauvOJY
+         jopg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=9lXb0lgrwir7GzZ2DVr2yG1gexTZJRmikORCYz7MiqE=;
+        b=PchtCd2WbL9Hi+LVwHghxgAY81r0tv4rYboETYywnHVNQzQl1/6bs+lpbin5eVV6k/
+         I4/zXXgnm2ka2nub110RMuG2PJemtmzbuneCFHz6zx1FRXvIBtj8Kl0cTjaSytAoi6Nj
+         R61mYGgEBaxxcLwiQIQpsiRC2lOoZ94BB8oi1YaT5Iv897lH+2rCMnCg+fGZAQaJmrP8
+         tsYt7BmSAniWwM+oeXxtib1j63FX++S0JttoM5ay1+73EOzEyV8kJm/NAk747oLpJnuF
+         2pQSCXEvoAhpold5me6axFM/716pbU+p01/lUY6iLLbzlN3dAlHp7/pSBubwyTW6l0wL
+         89kQ==
+X-Gm-Message-State: APjAAAUI2VO60wbwy6I/qiyVIlf6n5TsVrZsIFaMCf1nwltlZoRJj6Lz
+        1Q9RBQZKwLzgqX6EN0Dvs26gdPJb/YLBRr+scGC3O10G
+X-Google-Smtp-Source: APXvYqxA9+hGufbrimNxPZwBcmaYaqqHfdbbmEkz9wIlPKO1/+FSaXZy2M7061JiydAfUtgaumrvbwsPXgEUouuCy80=
+X-Received: by 2002:a05:6830:1f4d:: with SMTP id u13mr4728128oth.77.1574302437984;
+ Wed, 20 Nov 2019 18:13:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112144954.GD27917@lenoir>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a4a:cb07:0:0:0:0:0 with HTTP; Wed, 20 Nov 2019 18:13:57
+ -0800 (PST)
+From:   Amanda TARA <setasheriff198@gmail.com>
+Date:   Thu, 21 Nov 2019 03:13:57 +0100
+Message-ID: <CAFHd4DztTd9QkkCB2qFEHnOh1LfR6P6w=7tqfMkuF=5U6By1Tg@mail.gmail.com>
+Subject: FW: Conference Invitation....7th International Global Conference 2019..
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 03:49:55PM +0100, Frederic Weisbecker wrote:
-> On Tue, Nov 12, 2019 at 05:03:57PM +0800, kernel test robot wrote:
-> > FYI, we noticed the following commit (built with gcc-7):
-> > 
-> > commit: feb4a51323babe13315c3b783ea7f1cf25368918 ("irq_work: Slightly simplify IRQ_WORK_PENDING clearing")
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > 
-> > in testcase: blktests
-> > with following parameters:
-> > 
-> > 	disk: 1SSD
-> > 	test: block-group1
-> > 
-> > 
-> > 
-> > on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
-> > 
-> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> > 
-> > 
-> > +------------------------------------------------+------------+------------+
-> > |                                                | 25269871db | feb4a51323 |
-> > +------------------------------------------------+------------+------------+
-> > | boot_successes                                 | 5          | 0          |
-> > | boot_failures                                  | 0          | 10         |
-> > | BUG:soft_lockup-CPU##stuck_for#s               | 0          | 10         |
-> > | RIP:irq_work_sync                              | 0          | 10         |
-> > | Kernel_panic-not_syncing:softlockup:hung_tasks | 0          | 10         |
-> > +------------------------------------------------+------------+------------+
-> > 
-> > 
-> > If you fix the issue, kindly add following tag
-> > Reported-by: kernel test robot <rong.a.chen@intel.com>
-> > 
-> > 
-> > [   81.049506] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [blktrace:4948]
-> 
-> Duh! Of course we are dealing with the value of flags before we cleared IRQ_WORK_PENDING
-> so later clearing IRQ_WORK_BUZY can't work.
-> 
+You are invited to the 7th International Global conference on Women &
+Children Abuse , Human Trafficking and Neglect organize by the Boston
+Association for Women & Children Rights - (BAWAR). From the 11th -
+15th of December 2019 in Boston, Massachusetts the United States of
+America and from the 18th- 22nd of December 2019 in Saint
+Louis,Senegal.
 
-Hi Frederic Weisbecker, has this patch submited or merged to some branches? Ask this because feb4a51323
-has already been merged to linux-next
+For Details on Registration Contact the Registration Desk via E-mail :
+bawarconference@usa.com
 
-> That would be the fix (cooking one with proper changelog):
-> 
-> diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-> index 49c53f80a13a..8ee907eb4d83 100644
-> --- a/kernel/irq_work.c
-> +++ b/kernel/irq_work.c
-> @@ -158,6 +158,7 @@ static void irq_work_run_list(struct llist_head *list)
->  		 * Clear the BUSY bit and return to the free state if
->  		 * no-one else claimed it meanwhile.
->  		 */
-> +		flags ~= IRQ_WORK_PENDING;
->  		(void)atomic_cmpxchg(&work->flags, flags, flags & ~IRQ_WORK_BUSY);
->  	}
->  }
-> 
-> 
-> > [   81.055602] Modules linked in: scsi_debug loop intel_rapl_msr intel_rapl_common sr_mod cdrom crct10dif_pclmul crc32_pclmul bochs_drm crc32c_intel sd_mod sg ghash_clmulni_intel drm_vram_helper ata_generic pata_acpi ttm ppdev drm_kms_helper snd_pcm syscopyarea sysfillrect snd_timer aesni_intel snd sysimgblt fb_sys_fops ata_piix crypto_simd drm cryptd glue_helper libata soundcore pcspkr joydev serio_raw virtio_scsi i2c_piix4 parport_pc floppy parport ip_tables [last unloaded: scsi_debug]
-> > [   81.071683] CPU: 0 PID: 4948 Comm: blktrace Not tainted 5.4.0-rc7-00003-gfeb4a51323bab #1
-> > [   81.075435] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> > [   81.079031] RIP: 0010:irq_work_sync+0x4/0x10
-> _______________________________________________
-> LKP mailing list -- lkp@lists.01.org
-> To unsubscribe send an email to lkp-leave@lists.01.org
+Yours
+
+Maryann Woods
+BAWAR|2019|CONFERENCE
