@@ -2,113 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B19104C62
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3A3A104C66
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfKUHYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 02:24:12 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:32981 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725842AbfKUHYL (ORCPT
+        id S1726563AbfKUH0P convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 21 Nov 2019 02:26:15 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:63720 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725842AbfKUH0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 02:24:11 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A2C58640E;
-        Thu, 21 Nov 2019 02:24:10 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 21 Nov 2019 02:24:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=dcB24XFxUA/iOC9697pOKl03qd+
-        53/LvU+J/gD6p5OY=; b=FwVr7C57Kjm3aMwlRIYzy4K1/tpGNKzj5qf+bZ5tKGV
-        lVY9I7uiv9l4zATehBAXzEgLNPZFiv4GVIjlSYuKpqVYNHRRcIwxyhBWpSyf2KS6
-        VfU67jAsX4/sQTJjWQ6cqXERnXq5hStGD9GtEVeJaXXjKnTTeX9uFWOOs3v8/V2A
-        wESqNTDNUjlnO6QdWvv5kSjB6mOoWpTDp4cRes1an8MpSMERMaWrTV2l0dskurQq
-        aNN+sLTWNOGERUQggHuNf+BA0dHjuJROBWt9gCRV0MMmoovFSxhKUKdcCHQFbvKl
-        LYn4DFYr8OFumdnfIOcvSeLHkcHfSQuD5PdoHtnFuLA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=dcB24X
-        FxUA/iOC9697pOKl03qd+53/LvU+J/gD6p5OY=; b=saoAdWVJ4y9DYJD7kEOtJH
-        eodbEv2meQPC62TXeDvhQvx2ksypxzjTrSeOxA346AxyTveBn18bjvPD6lHiFDRg
-        IdR3F1fG1cFsIsVeRMHMRgQEAgRQnztSPHcaoFgVVIncXqZk1q6avzlwOwLMyHYM
-        Tp77nLctOs+iXo1pbaCcLuWmd/74n0afinrio9OIvQfwqlymsgdMzHzcYgWWsfeN
-        rmt0JkAkpCZBvGIC3jGVq0yE0R2O6xaw9rZA0AmnvHX/HcrzHep4XgyQ4tlVP6DF
-        FYA0DNxgwBa7KHdk3ONSAQvQLGVwHfwhgtea7E/nYEeRD52Qp91JUg1pSsUBgMzw
-        ==
-X-ME-Sender: <xms:mjvWXSgTPFVq6NKV-KcJEBYMfswHVBPryLUalwhm93JYlxLMUtHlQA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehuddguddtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehgtderredtredunecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppe
-    eltddrkeelrdeikedrjeeinecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvges
-    tggvrhhnohdrthgvtghhnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:mjvWXSkCZYG7rudfHBNHnqg6JvOlXzaMYPGsQH-4aly4II5eZA9zVA>
-    <xmx:mjvWXTdFCuCWaked9eYgvIhpgUancv9t73p75_OQ4i0SuNkAd80L5Q>
-    <xmx:mjvWXUFKqEuTuvBneGAI_lV2JbOSxXZt1npllQzKX4u4GwxLZ9-VmQ>
-    <xmx:mjvWXWJPttQshbGz5eceanv_mDEc5XVVpTjimHa1s1yrZ690_iLsNg>
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0E76C3060057;
-        Thu, 21 Nov 2019 02:24:09 -0500 (EST)
-Date:   Thu, 21 Nov 2019 08:24:08 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v7 0/8] Add support for H6 PWM
-Message-ID: <20191121072408.GE4345@gilmour.lan>
-References: <20191119175319.16561-1-peron.clem@gmail.com>
+        Thu, 21 Nov 2019 02:26:14 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 19280906-1500050 
+        for multiple; Thu, 21 Nov 2019 07:26:09 +0000
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cnZewGtz8xdCmwBG"
-Content-Disposition: inline
-In-Reply-To: <20191119175319.16561-1-peron.clem@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8BIT
+To:     kernel test robot <lkp@intel.com>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <5dd63a8f.BFdOlqs/XZAJHDfR%lkp@intel.com>
+Cc:     LKP <lkp@lists.01.org>, linaro-mm-sig@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, philip.li@intel.com
+References: <5dd63a8f.BFdOlqs/XZAJHDfR%lkp@intel.com>
+Message-ID: <157432116576.24852.2065478066028556019@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: 2989f64510 ("dma-buf: Add selftests for dma-fence"): WARNING: CPU: 0
+ PID: 1 at lib/debugobjects.c:524 __debug_object_init
+Date:   Thu, 21 Nov 2019 07:26:05 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting kernel test robot (2019-11-21 07:19:43)
+> Greetings,
+> 
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> 
+> commit 2989f6451084aed3f8cc9992477f7a9bf57a3716
+> Author:     Chris Wilson <chris@chris-wilson.co.uk>
+> AuthorDate: Mon Aug 19 10:59:27 2019 +0100
+> Commit:     Chris Wilson <chris@chris-wilson.co.uk>
+> CommitDate: Mon Aug 19 18:09:46 2019 +0100
 
---cnZewGtz8xdCmwBG
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's a belated report, fixed by
 
-On Tue, Nov 19, 2019 at 06:53:11PM +0100, Cl=E9ment P=E9ron wrote:
-> Hi,
->
-> This is a rework of Jernej's previous work[1] taking account all the
-> previous remarks.
->
-> Bindings is still strict but probe in the driver are now optionnals.
->
-> If someone could confirm that the PWM is not broken, as my board
-> doesn't output it.
->
-> I didn't add the acked-tags as there are big changes.
+commit 6ac3a0ebfcc2f0c75ca0ca6974389ce421aa5cbd
+Author: Chris Wilson <chris@chris-wilson.co.uk>
+Date:   Tue Aug 20 13:21:18 2019 +0100
 
-Applied 1 and 7 for 5.6, thanks!
-Maxime
+	dmabuf: Mark up onstack timer for selftests
 
---cnZewGtz8xdCmwBG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXdY7mAAKCRDj7w1vZxhR
-xTFOAQDiMAy9dHGZ7PpP701iv2RrsZe3P6MNSle9BJ2doLno4AEAtUYireLcQZ83
-bb4k15ybFyplkNifvIeEgxnolldKeAE=
-=atTd
------END PGP SIGNATURE-----
-
---cnZewGtz8xdCmwBG--
+No?
+-Chris
