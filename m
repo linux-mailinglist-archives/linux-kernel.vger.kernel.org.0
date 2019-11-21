@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63699104DA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:15:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52373104DA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:15:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfKUIPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:15:22 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36198 "EHLO
+        id S1727085AbfKUIPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:15:11 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41186 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbfKUIPH (ORCPT
+        with ESMTP id S1726536AbfKUIPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:15:07 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so3206592wru.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:15:05 -0800 (PST)
+        Thu, 21 Nov 2019 03:15:08 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b18so3172199wrj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:15:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8LjJcUv5JRc8/4Vw05C03H9zEwwInU8us44q9tvp9r0=;
-        b=lDQLQkLFnXHou+oCKFJriVm046psHa6PF4fvQ88rVy8xkKbVud6HDaf5BbBKWorYaG
-         9JqhW4wsHV9WyzfjpMwcieA03kIJrYrmsTs2TKpgRF/0ze1l+yFLtdaMn6lM/x0/ZMcZ
-         gN8VuphDjfs3yZHIQwGImS367kLOMoEvagMJ3vCF1mTPU29ATxQQQFaVSpUjQyfM49/w
-         JWLGU+VUMdyGfRPnSWuMRWG/JiXnCIV5MpgvVOC5m7yzqS1zN7+PxiWfcCju2TKbwpT/
-         d/F0AewpDtoCFSsHP1OuXvyMybR3YNTJVEpu/eUr3JCiknF3mZmcCWfs0gzNucjdCHqz
-         DVYg==
+        bh=PWu78UINgvkRWlyy7C2l33u4Ab0VHrEoRAcLucw18qk=;
+        b=XqOdQRqr10yWN+dWU90C3TOiiM7U+afUg5RoCUD9mrhxJ1chH1NB1cHYSxBuOAECJW
+         FNsZkI594sRUM9YOwxkKlrZSOZ1DWPa4TJH/8c/8UhKxOIqlY94ZnZ0bv2P08b2SEgtt
+         4uROj1VyG+qDB4rfkZKxIqfSHMUS1PaT82DZj0PNxKvmOU7n8NUyMSmLO6hw6IZa6p8a
+         t0MzYI/aEdjlZriIJFmuVu2xI/k2B+xqPkOoNey2HytPq+CDNOM/rghrPKhC+rbEJeIo
+         KXnYygs0HWRYuJFqMX32jbpkOjrkDhlf1Dg0YebmPya8KmjBXPshBqZMwJbng6uzcAZu
+         ukqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8LjJcUv5JRc8/4Vw05C03H9zEwwInU8us44q9tvp9r0=;
-        b=BqzXzzPAzwnYwuOvdg6GT9u/OwPiV4oqPnc8454YXhm99eJq/4DqHODMpe67vTA399
-         37JdQe4vc9v0J23TqSbqjY3lAYT6LTT4eMLk9vACwSmilETI65QWjrHkRByovDytlor5
-         FcFP2SN3T19RoBK6GQLzRZetLZf+wwt0VnIQ2JcGrPm3k6C9L5OB8gFp6T4fOMhJ+N2y
-         ucT3afEzXDY/1EJj3CNn1vzaGy+/uOoe70DQMdTU0yh3K85IA1fdeAuLpdy4b2rWNGFv
-         wgKtJ7d5NdhK4aZuRM73jjAeZZlnsvB+iUOVjintZrqJg/Mz85GgQNaSk/H5U6QXL7Qf
-         OpdQ==
-X-Gm-Message-State: APjAAAU1Tzz8yZhVE7LPVKEqp4K+hO/uQPDMkK24xoPokgnO+QDXAlrn
-        lWA2l4F/ZWUVDk3uZ3pFrdZ5FQ==
-X-Google-Smtp-Source: APXvYqxuvxQ3VmGAQNQNFsb26ptbHyJKZeZzcG5Kiwzno83aX29giQBgYYZkraYJUUx7vIR0vINsIA==
-X-Received: by 2002:a5d:53c1:: with SMTP id a1mr489050wrw.373.1574324105155;
-        Thu, 21 Nov 2019 00:15:05 -0800 (PST)
+        bh=PWu78UINgvkRWlyy7C2l33u4Ab0VHrEoRAcLucw18qk=;
+        b=Nxf2dPxOGHgzIYekR0mQMfDaee7Me8fGjLRss7lI8cdlPZiIwBxL+/0E6isehsSo9f
+         xmWUQ5saTyfQJWrJywLbvIJyPXIyvRS5dFbp7AFxT18k7FZ4DWvpjIJguZoddYJ6MOVf
+         gxYCcE/TVSAGW7E0mkUTmbIAtLPo1EpeMYj5mti9YUAax11oAoryd5vI52sg+CsJN1sH
+         Lehy1bHum0NRsK0JkfpmApTcohR6ZeOtn/VVnTUvxud1EgI6RBCvlNXmKHPlnz452NvT
+         F7Z6E08SFZl7JhCsmoYPCpMLCM+8kKNfZdtPDK7Q1h2A1yhiPU1ZBgziK4GVlLRVyjUR
+         6yTQ==
+X-Gm-Message-State: APjAAAVwxPElOkYdOpXAMAohz/Dy75FqqzxbeCG5GQGmNnBAjuQntAAQ
+        nC0sVWaZ8ddu8gRujI68cwtpXw==
+X-Google-Smtp-Source: APXvYqxdYs0ZCbj2Oo3SWAIgbzvdDddpJsbWDdSZQ+EtdgnmJT1X2EeAckZD4HKkVNYhYfEZuzV4sg==
+X-Received: by 2002:adf:f150:: with SMTP id y16mr561679wro.192.1574324106029;
+        Thu, 21 Nov 2019 00:15:06 -0800 (PST)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id w13sm2315075wrm.8.2019.11.21.00.15.04
+        by smtp.googlemail.com with ESMTPSA id w13sm2315075wrm.8.2019.11.21.00.15.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 21 Nov 2019 00:15:04 -0800 (PST)
+        Thu, 21 Nov 2019 00:15:05 -0800 (PST)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     airlied@redhat.com, airlied@linux.ie, arnd@arndb.de,
         fenghua.yu@intel.com, gregkh@linuxfoundation.org,
         tony.luck@intel.com
 Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
         Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2 2/5] agp: move AGPGART_MINOR to include/linux/miscdevice.h
-Date:   Thu, 21 Nov 2019 08:14:42 +0000
-Message-Id: <1574324085-4338-3-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH v2 3/5] agp: remove unused variable num_segments
+Date:   Thu, 21 Nov 2019 08:14:43 +0000
+Message-Id: <1574324085-4338-4-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1574324085-4338-1-git-send-email-clabbe@baylibre.com>
 References: <1574324085-4338-1-git-send-email-clabbe@baylibre.com>
@@ -61,40 +61,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch move the define for AGPGART_MINOR to include/linux/miscdevice.h.
-It is better that all minor number definitions are in the same place.
+This patch fix the following build warning:
+warning: variable 'num_segments' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- include/linux/agpgart.h    | 2 --
- include/linux/miscdevice.h | 1 +
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/char/agp/frontend.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/agpgart.h b/include/linux/agpgart.h
-index c6b61ca97053..21b34a96cfd8 100644
---- a/include/linux/agpgart.h
-+++ b/include/linux/agpgart.h
-@@ -30,8 +30,6 @@
- #include <linux/agp_backend.h>
- #include <uapi/linux/agpgart.h>
+diff --git a/drivers/char/agp/frontend.c b/drivers/char/agp/frontend.c
+index f6955888e676..47098648502d 100644
+--- a/drivers/char/agp/frontend.c
++++ b/drivers/char/agp/frontend.c
+@@ -102,14 +102,13 @@ agp_segment_priv *agp_find_seg_in_client(const struct agp_client *client,
+ 					    int size, pgprot_t page_prot)
+ {
+ 	struct agp_segment_priv *seg;
+-	int num_segments, i;
++	int i;
+ 	off_t pg_start;
+ 	size_t pg_count;
  
--#define AGPGART_MINOR 175
--
- struct agp_info {
- 	struct agp_version version;	/* version of the driver        */
- 	u32 bridge_id;		/* bridge vendor/device         */
-diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
-index b06b75776a32..becde6981a95 100644
---- a/include/linux/miscdevice.h
-+++ b/include/linux/miscdevice.h
-@@ -33,6 +33,7 @@
- #define SGI_MMTIMER		153
- #define STORE_QUEUE_MINOR	155	/* unused */
- #define I2O_MINOR		166
-+#define AGPGART_MINOR		175
- #define HWRNG_MINOR		183
- #define MICROCODE_MINOR		184
- #define IRNET_MINOR		187
+ 	pg_start = offset / 4096;
+ 	pg_count = size / 4096;
+ 	seg = *(client->segments);
+-	num_segments = client->num_segments;
+ 
+ 	for (i = 0; i < client->num_segments; i++) {
+ 		if ((seg[i].pg_start == pg_start) &&
 -- 
 2.23.0
 
