@@ -2,145 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29757104DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB209104DE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:28:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfKUI02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:26:28 -0500
-Received: from mail-eopbgr790074.outbound.protection.outlook.com ([40.107.79.74]:10435
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726170AbfKUI02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:26:28 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CML7GUZk99wddAzTZgJK0AaDnNwvapOsIHhdhQFxSLOZ8yxALndivk+YIXO4pnhV3CbIzXcDCB9XFcNEX8CDIia+9Pxh/G3fwFCdG1KatuhpSsf3cbjgNRqtNU8Nc+EgrQ6plPIm0g5HACmsN9GnXEL60i+fxjhKqyS7bls71G5i5NhmW2aEVhsxf4mDtxaWNi+K/+cp4JhpqoPmOOeKY2gavalM2yjJwWwbWz4Vrbl9Ny0W9WlYrRTVVQzNqGuJ+nyYDrUBNOMWYKuC8jtOUeWp4iMSMtbA9qVTHB/ISr1ZJprG4jF0ht1M+puTCYWbqolzVAXpiZQsB6k72MplNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lU9cWMIPiYHwVyQUUrfkQYj1anBgZAlTDlv6URNbx+U=;
- b=Lk4+5eVZ9ITSwnsoj/dG+twZWL11pxc0gzdXtnyu5p4RfRQzmOcnxIGZrwO23jPBuWcq8IaRR1Qq3KdqBazdvLYNvIOV7lWGukOV3cMsu0ayen3EY1XYsClUcRQkzhy7Z9abUscVmgPjRmIEnvWiNOihBb//wQ0BNbEret9FZv+Xz8UShvH9NCS7+cCXguDS11SZlLfRjYCVLlT7HEl63UkVdP6JUXzIpjKSy6+E90MWJo+6iiJDNkQo+ryczIvPZ40Da7wgi+57syVGQY83bB9L4M4R+t9ec7nro6pllv5zeN9W5iCnTcdl5hDvUw6qNi274r69aTAkx+q9zkYTZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sifive.com; dmarc=pass action=none header.from=sifive.com;
- dkim=pass header.d=sifive.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sifive.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lU9cWMIPiYHwVyQUUrfkQYj1anBgZAlTDlv6URNbx+U=;
- b=tK7wnDUNLL4B2fVPf0VYXdRyqZh9wAYb7E9FAoOyNxjIgv7AinVc6g708Xlmm+5GBECGHEDlrdSXFpzCRYLwi4jCQiqG3lhjkLKr4AqEzsdB4PSqdx1IrBq91lVERT3bFYjJtxoyDndYEnn4VWILnNvwE95NQcACqLgOH8u0mVs=
-Received: from CH2PR13MB3368.namprd13.prod.outlook.com (52.132.246.90) by
- CH2PR13MB3622.namprd13.prod.outlook.com (20.180.4.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.7; Thu, 21 Nov 2019 08:26:24 +0000
-Received: from CH2PR13MB3368.namprd13.prod.outlook.com
- ([fe80::853e:1256:311e:d29]) by CH2PR13MB3368.namprd13.prod.outlook.com
- ([fe80::853e:1256:311e:d29%7]) with mapi id 15.20.2474.018; Thu, 21 Nov 2019
- 08:26:24 +0000
-From:   Yash Shah <yash.shah@sifive.com>
-To:     Andreas Schwab <schwab@suse.de>
-CC:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "atish.patra@wdc.com" <atish.patra@wdc.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bmeng.cn@gmail.com" <bmeng.cn@gmail.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
-Subject: RE: [PATCH v2 5/5] riscv: dts: Add DT support for SiFive FU540 GPIO
- driver
-Thread-Topic: [PATCH v2 5/5] riscv: dts: Add DT support for SiFive FU540 GPIO
- driver
-Thread-Index: AQHVn3AcQeUBZ0Ytu0eVtL/jFebGtqeTxthcgAGEqlA=
-Date:   Thu, 21 Nov 2019 08:26:23 +0000
-Message-ID: <CH2PR13MB3368B53AE4978141B463A1418C4E0@CH2PR13MB3368.namprd13.prod.outlook.com>
-References: <1574233128-28114-1-git-send-email-yash.shah@sifive.com>
-        <1574233128-28114-6-git-send-email-yash.shah@sifive.com>
- <mvmlfsaoqp3.fsf@suse.de>
-In-Reply-To: <mvmlfsaoqp3.fsf@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yash.shah@sifive.com; 
-x-originating-ip: [114.143.65.226]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1cd3682b-b9cc-4e31-b7e6-08d76e5c7ee0
-x-ms-traffictypediagnostic: CH2PR13MB3622:
-x-ld-processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR13MB3622C5A58B9702FFDD43C1EA8C4E0@CH2PR13MB3622.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3631;
-x-forefront-prvs: 0228DDDDD7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(39850400004)(346002)(376002)(366004)(396003)(136003)(13464003)(199004)(189003)(446003)(102836004)(6436002)(478600001)(53546011)(6506007)(14454004)(11346002)(66446008)(66476007)(64756008)(66946007)(9686003)(66066001)(55016002)(26005)(4326008)(66556008)(44832011)(186003)(107886003)(3846002)(6246003)(229853002)(6116002)(8676002)(7736002)(8936002)(6916009)(33656002)(99286004)(2906002)(81156014)(81166006)(7416002)(305945005)(54906003)(256004)(316002)(25786009)(76176011)(5660300002)(71190400001)(71200400001)(7696005)(76116006)(52536014)(74316002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR13MB3622;H:CH2PR13MB3368.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: sifive.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: w3GIV36VhljK/osjGAy0eLVPUX4q63abjzJSkhTor5azxJ7q5t/uriAXIScmKoZtSJry/fJgjvzcvjznSm1+KYuEanPCdVzVqXEv+oUVlmHRhGFH8asrBVM5y+lL/W+G6WP/VQtEN1K0lri1pbKEFXV7geQthOYUujefzBKrRK4VuesZyPh4xAluEyB/1WoK63RTKNdPye2sPrDHJGpDwTCWQtvzLrtGAjjawcQsVM0+7vyQRVkOYkX4in71sW31+9VxaOAxnidTgJEYZxu1ed5pXSwUCYOHRAnuNAQvTbA3RDh2SgE6f5k3BhTj+tZs5OtENwd0GDrr566MQp6e8fI0AEFm6445uagQmcCRY3acc08d9nJ+eA3cJttkVFBZZUZMlIy9THPQQl9FKDZaA+T3Q5ODcDKbjS0rHhbGLFip7Xfbpmo+7R4fIVdUopzt
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726792AbfKUI2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:28:54 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:4366 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726265AbfKUI2y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 03:28:54 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAL8RF1c015814;
+        Thu, 21 Nov 2019 09:28:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=wjsLtY6RF/TmfFrW+HyWDf5AOePlorIoRKUEr506fms=;
+ b=clWIItNxXIRk0L3RQG7fN5uXpQNEZSo+eUh9Y88ARISs68bC9vxe1dNDYSxZKcvswvxv
+ N5o43R0W5TyWB7Trw6eI62f4GSv5Oo/zJusRRIcBGRZlTYb4E9St9RYZ9NC4p1JwajQg
+ vHdNrSlEQjQvUpyM5RL5tetO1bBL0jhVMwz4C7w/4CCySJfWEo8/qLIm6ORbhV8z6Ba9
+ 0F3HWVUzSZC7KCugYZZazd6rg14lhadFlHq5DNfGR9YI/QnkbamXAEUzS0g+KXc5FwSt
+ ECnPIvWQcAvtKcm0EFkh4H8tLn0L6Xlu1EUUWMlu1dw2O8ffjgWw9Vsn3fCCaOiO5IR9 Rg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2wa9upafmg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Nov 2019 09:28:24 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 035CC10003A;
+        Thu, 21 Nov 2019 09:28:24 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E56302AEF15;
+        Thu, 21 Nov 2019 09:28:23 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov 2019 09:28:23
+ +0100
+From:   Christophe Roullier <christophe.roullier@st.com>
+To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
+CC:     <linux-watchdog@vger.kernel.org>, <christophe.roullier@st.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH  0/1] stm32_iwdg: set WDOG_HW_RUNNING at probe
+Date:   Thu, 21 Nov 2019 09:28:12 +0100
+Message-ID: <20191121082813.29267-1-christophe.roullier@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-OriginatorOrg: sifive.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cd3682b-b9cc-4e31-b7e6-08d76e5c7ee0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 08:26:23.9288
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: arigcGFqJ2BvWXXIZxmyo/FsleuY2vE+DqFKZXvynEAi3SNrSoLGikLaQOMtbnneeBCsBjaG2yeQCC/gBSyDZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3622
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-20_08:2019-11-20,2019-11-20 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the watchdog hardware is already enabled during the boot process,
+when the Linux watchdog driver loads, it should reset the watchdog and
+tell the watchdog framework. As a result, ping can be generated from
+the watchdog framework (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set),
+until the userspace watchdog daemon takes over control
 
+Verified :
+Watchdog enable in Uboot + HANDLE_BOOT_ENABLE is not set + daemon watchdog in userland ON ==> No reset IWDG2
+Watchdog enable in Uboot + HANDLE_BOOT_ENABLE is not set ==> Reset IWDG2
+Watchdog enable in Uboot + HANDLE_BOOT_ENABLE=y ==> No reset IWDG2
+Watchdog enable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON puis OFF ==> Reset IWDG2
+Watchdog disable in Uboot + HANDLE_BOOT_ENABLE is not set ==> No reset IWDG2
+Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y ==> No reset IWDG2
+Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON ==> No reset IWDG2
+Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON puis OFF ==> Reset IWDG2
 
-> -----Original Message-----
-> From: Andreas Schwab <schwab@suse.de>
-> Sent: 20 November 2019 14:44
-> To: Yash Shah <yash.shah@sifive.com>
-> Cc: linus.walleij@linaro.org; bgolaszewski@baylibre.com;
-> robh+dt@kernel.org; mark.rutland@arm.com; palmer@dabbelt.com; Paul
-> Walmsley ( Sifive) <paul.walmsley@sifive.com>;
-> devicetree@vger.kernel.org; aou@eecs.berkeley.edu;
-> jason@lakedaemon.net; linux-gpio@vger.kernel.org; maz@kernel.org; linux-
-> kernel@vger.kernel.org; atish.patra@wdc.com; Sagar Kadam
-> <sagar.kadam@sifive.com>; tglx@linutronix.de; bmeng.cn@gmail.com;
-> linux-riscv@lists.infradead.org; Sachin Ghadi <sachin.ghadi@sifive.com>
-> Subject: Re: [PATCH v2 5/5] riscv: dts: Add DT support for SiFive FU540 G=
-PIO
-> driver
->=20
-> On Nov 20 2019, Yash Shah wrote:
->=20
-> > diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> > b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> > index 88cfcb9..609198c 100644
-> > --- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> > +++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> > @@ -94,3 +94,7 @@
-> >  &pwm1 {
-> >  	status =3D "okay";
-> >  };
-> > +
-> > +&gpio {
-> > +	status =3D "okay";
-> > +};
->=20
-> How about adding a gpio-restart?
+Christophe Roullier (1):
+  drivers: watchdog: stm32_iwdg: set WDOG_HW_RUNNING at probe
 
-I am planning to add it in a separate patch.
+ drivers/watchdog/stm32_iwdg.c | 57 ++++++++++++++++++++++++-----------
+ 1 file changed, 40 insertions(+), 17 deletions(-)
 
-- Yash
+-- 
+2.17.1
 
