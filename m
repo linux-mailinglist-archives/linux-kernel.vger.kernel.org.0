@@ -2,58 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F3F1054E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 365D21054E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:55:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKUOxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:53:11 -0500
-Received: from mga03.intel.com ([134.134.136.65]:14815 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726623AbfKUOxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:53:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 06:53:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
-   d="scan'208";a="205169559"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Nov 2019 06:53:08 -0800
-Date:   Thu, 21 Nov 2019 22:55:05 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmattson@google.com,
-        sean.j.christopherson@intel.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [PATCH v7 3/9] mmu: spp: Add SPP Table setup functions
-Message-ID: <20191121145505.GC17169@local-michael-cet-test>
-References: <20191119084949.15471-1-weijiang.yang@intel.com>
- <20191119084949.15471-4-weijiang.yang@intel.com>
- <5b0da087-8ce0-2b01-5a1a-4d8c5f319d33@redhat.com>
+        id S1726716AbfKUOzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:55:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36678 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726541AbfKUOzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:55:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BC7BEAD07;
+        Thu, 21 Nov 2019 14:55:33 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id E56F6DAAD7; Thu, 21 Nov 2019 15:55:33 +0100 (CET)
+Date:   Thu, 21 Nov 2019 15:55:33 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hanjun Guo <guohanjun@huawei.com>
+Subject: Re: [RESEND PATCH v4 03/10] lib/refcount: Remove unused
+ refcount_*_checked() variants
+Message-ID: <20191121145533.GZ3001@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hanjun Guo <guohanjun@huawei.com>
+References: <20191121115902.2551-1-will@kernel.org>
+ <20191121115902.2551-4-will@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5b0da087-8ce0-2b01-5a1a-4d8c5f319d33@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191121115902.2551-4-will@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:38:18AM +0100, Paolo Bonzini wrote:
-> On 19/11/19 09:49, Yang Weijiang wrote:
-> > +static int is_spp_shadow_present(u64 pte)
-> > +{
-> > +	return pte & PT_PRESENT_MASK;
-> > +}
-> > +
+On Thu, Nov 21, 2019 at 11:58:55AM +0000, Will Deacon wrote:
+> The full-fat refcount implementation is exposed via a set of functions
+> suffixed with "_checked()", the idea being that code can choose to use
+> the more expensive, yet more secure implementation on a case-by-case
+> basis.
 > 
-> This should not be needed, is_shadow_present_pte works well for SPP PTEs
-> as well (and in fact you're already using it here and there, so it's
-> confusing to have both).
->
-OK, will remove it.
-> Paolo
+> In reality, this hasn't happened, so with a grand total of zero users,
+> let's remove the checked variants for now by simply dropping the suffix
+> and predicating the out-of-line functions on CONFIG_REFCOUNT_FULL=y.
+
+I am still interested in the _checked versions and have a WIP patch that
+adds that to btrfs (that was my original plan) but haven't had enough
+time to finalize it. The patch itself is simple, the missing part is to
+understand and document what the saturated counters would do with the
+structures.
+
+If the _checked helpers are really bothering for you, then well remove
+it, but I think it's a good API extension that makes the full-refcount
+semantics independent of the config.
