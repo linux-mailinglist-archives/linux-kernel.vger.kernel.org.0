@@ -2,176 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D57104757
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:15:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18391104768
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:16:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfKUAPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 19:15:09 -0500
-Received: from winds.org ([68.75.195.9]:37910 "EHLO winds.org"
+        id S1727317AbfKUAQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:16:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:36701 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfKUAPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 19:15:09 -0500
-Received: by winds.org (Postfix, from userid 100)
-        id 58DC210D2363; Wed, 20 Nov 2019 19:15:07 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by winds.org (Postfix) with ESMTP id 53BBF10636C3;
-        Wed, 20 Nov 2019 19:15:07 -0500 (EST)
-Date:   Wed, 20 Nov 2019 19:15:07 -0500 (EST)
-From:   Byron Stanoszek <gandalf@winds.org>
-To:     Florian Westphal <fw@strlen.de>
-cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: Kernel 5.4 regression - memory leak in network layer
-In-Reply-To: <20191120202822.GF20235@breakpoint.cc>
-Message-ID: <alpine.LNX.2.21.1.1911201706510.2521@winds.org>
-References: <alpine.LNX.2.21.1.1911191047410.30058@winds.org> <20191119162222.GA20235@breakpoint.cc> <20191120202822.GF20235@breakpoint.cc>
-User-Agent: Alpine 2.21.1 (LNX 202 2017-01-01)
+        id S1726343AbfKUAPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 19:15:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 16:15:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,223,1571727600"; 
+   d="scan'208";a="357620027"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by orsmga004.jf.intel.com with ESMTP; 20 Nov 2019 16:15:34 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 7CE65300B64; Wed, 20 Nov 2019 16:15:34 -0800 (PST)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org
+Subject: Optimize perf stat for large number of events/cpus
+Date:   Wed, 20 Nov 2019 16:15:10 -0800
+Message-Id: <20191121001522.180827-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019, Florian Westphal wrote:
+[v8: Address review feedback. Only changes one patch.]
 
-> Florian Westphal <fw@strlen.de> wrote:
->> Byron Stanoszek <gandalf@winds.org> wrote:
->>> unreferenced object 0xffff88821a48a180 (size 64):
->>>   comm "softirq", pid 0, jiffies 4294709480 (age 192.558s)
->>>   hex dump (first 32 bytes):
->>>     01 00 00 00 01 06 ff ff 00 00 00 00 00 00 00 00  ................
->>>     00 20 72 3d 82 88 ff ff 00 00 00 00 00 00 00 00  . r=............
->>>   backtrace:
->>>     [<00000000edf73c5e>] skb_ext_add+0xc0/0xf0
->>>     [<00000000ca960770>] br_nf_pre_routing+0x171/0x489
->>>     [<0000000063a55d83>] br_handle_frame+0x171/0x300
->>
->> Brnf related, I will have a look.
->
-> Not reproducible.
->
-> I'm on
->
-> c74386d50fbaf4a54fd3fe560f1abc709c0cff4b ("afs: Fix missing timeout reset").
+This patch kit optimizes perf stat for a large number of events 
+on systems with many CPUs and PMUs.
 
-I confirm I still see the issue on that commit.
+Some profiling shows that the most overhead is doing IPIs to
+all the target CPUs. We can optimize this by using sched_setaffinity
+to set the affinity to a target CPU once and then doing
+the perf operation for all events on that CPU. This requires
+some restructuring, but cuts the set up time quite a bit.
 
-> Does your setup use any other settings (ethtool, sysctl, qdiscs, tunnels
-> and the like)?
+In theory we could go further by parallelizing these setups
+too, but that would be much more complicated and for now just batching it
+per CPU seems to be sufficient. At some point with many more cores 
+parallelization or a better bulk perf setup API might be needed though.
 
-Yeah, I'm using macvlan. Here are my settings:
+In addition perf does a lot of redundant /sys accesses with
+many PMUs, which can be also expensve. This is also optimized.
 
-$ ethtool -i eth0
-driver: e1000e
-version: 3.2.6-k
-firmware-version: 0.13-4
-expansion-rom-version:
-bus-info: 0000:00:1f.6
-supports-statistics: yes
-supports-test: yes
-supports-eeprom-access: yes
-supports-register-dump: yes
-supports-priv-flags: no
+On a large test case (>700 events with many weak groups) on a 94 CPU
+system I go from
 
-$ ethtool -i eth1
-driver: igb
-version: 5.6.0-k
-firmware-version: 3.25, 0x800005cf
-expansion-rom-version:
-bus-info: 0000:01:00.0
-supports-statistics: yes
-supports-test: yes
-supports-eeprom-access: yes
-supports-register-dump: yes
-supports-priv-flags: yes
+real	0m8.607s
+user	0m0.550s
+sys	0m8.041s
 
-Commands to set up network:
+to 
 
-ethtool -K eth0 tx off rx off
-ethtool -K eth1 tx off rx off
-ifconfig lo 127.0.0.1
-ifconfig eth0 up
-brctl addbr br0
-brctl addif br0 eth0
-brctl setfd br0 0
-ifconfig eth1 up
-brctl addbr br1
-brctl addif br1 eth1
-brctl setfd br1 0
-ifconfig br0 172.17.2.10 netmask 255.255.0.0
-ifconfig br1 192.168.0.1 netmask 255.255.255.0
-ip l add link br1 mac1 address BE:77:00:00:00:70 type macvlan mode bridge
-ip l set mac1 up
-ip a add 192.168.0.70/24 broadcast + dev mac1
+real	0m3.269s
+user	0m0.760s
+sys	0m1.694s
 
-$ iptables-save -c
-# Generated by iptables-save v1.8.3 on Wed Nov 20 17:26:29 2019
-*raw
-:PREROUTING ACCEPT [3701999:2657924997]
-:OUTPUT ACCEPT [1122825:291796686]
-COMMIT
-# Completed on Wed Nov 20 17:26:29 2019
-# Generated by iptables-save v1.8.3 on Wed Nov 20 17:26:29 2019
-*nat
-:PREROUTING ACCEPT [612068:41087443]
-:INPUT ACCEPT [17:2254]
-:OUTPUT ACCEPT [55:3780]
-:POSTROUTING ACCEPT [36:2340]
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 102 -j DNAT --to-destination 192.168.0.2
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 2222 -j DNAT --to-destination 192.168.0.2
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 5900 -j DNAT --to-destination 192.168.0.4
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 44818 -j DNAT --to-destination 192.168.0.2
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 51234 -j DNAT --to-destination 192.168.0.9
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 51235 -j DNAT --to-destination 192.168.0.9
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 51236 -j DNAT --to-destination 192.168.0.9
-[0:0] -A PREROUTING -d 172.17.2.10/32 -i br0 -p tcp -m tcp --dport 44444 -j DNAT --to-destination 192.168.0.9
-[2:120] -A POSTROUTING -o br0 -j MASQUERADE
-[17:1320] -A POSTROUTING -o br1 -j MASQUERADE
-[0:0] -A POSTROUTING -o eth2 -j MASQUERADE
-COMMIT
-# Completed on Wed Nov 20 17:26:29 2019
-# Generated by iptables-save v1.8.3 on Wed Nov 20 17:26:29 2019
-*filter
-:INPUT ACCEPT [3093143:2617432037]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [1122803:291795238]
-COMMIT
-# Completed on Wed Nov 20 17:26:29 2019
+so shaving ~6 seconds of system time, at slightly more cost
+in perf stat itself. On a 4 socket system the savings
+are more dramatic:
 
-Setting up another box as IP 172.17.2.11 and 192.168.0.99 and running this
-command from the original box reliably adds about 2MB of memory marked used
-according to "free":
+real	0m15.641s
+user	0m0.873s
+sys	0m14.729s
 
-netperf -H 172.17.2.11 -t UDP_RR
+to 
 
-or
+real	0m4.493s
+user	0m1.578s
+sys	0m2.444s
 
-netperf -H 192.168.0.99 -t UDP_RR
+so 11s difference in the user visible set up time.
 
-Local /Remote
-Socket Size   Request  Resp.   Elapsed  Trans.
-Send   Recv   Size     Size    Time     Rate
-bytes  Bytes  bytes    bytes   secs.    per sec
+Also available in 
 
-212992 212992 1        1       10.00    4000.98
-212992 212992
+git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/stat-scale-11
 
-Nothing else at the moment is attached to the bridges:
+v1: Initial post.
+v2: Rebase. Fix some minor issues.
+v3: Rebase. Address review feedback. Fix one minor issue
+v4: Modified based on review feedback. Now it maintains
+all_cpus per evlist. There is still a need for cpu_index iteration
+to get the correct index for indexing the file descriptors.
+Fix bug with unsorted cpu maps, now they are always sorted.
+Some cleanups and refactoring.
+v5: Split patches. Redo loop iteration again. Fix cpu map
+merging for uncore. Remove duplicates from cpumaps. Add unit
+tests.
+v6: Address review feedback. Fix some bugs. Add more comments.
+Merge one invalid patch split.
+v7: Address review feedback. Fix python scripting (thanks 0day)
+Minor updates.
+v8: Address review feedback.
 
-$ brctl show
-bridge name     bridge id               STP enabled     interfaces
-br0             8000.2046a101b1fb       no              eth0
-br1             8000.2046a101b1fc       no              eth1
-
-As for network-related sysctls, I've got:
-
-# Enable IP Forwarding
-net.ipv4.ip_forward = 1
-
-# Increase the number of in-flight AF_UNIX datagrams per socket
-net.unix.max_dgram_qlen = 1000
-
-Regards,
-  -Byron
+-Andi
 
