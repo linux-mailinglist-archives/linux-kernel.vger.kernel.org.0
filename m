@@ -2,106 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 517A910583D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 18:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E3A0105856
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 18:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfKUROI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 12:14:08 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36644 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbfKUROG (ORCPT
+        id S1727423AbfKUROl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 12:14:41 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34374 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfKUROk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 12:14:06 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so5401522wru.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 09:14:04 -0800 (PST)
+        Thu, 21 Nov 2019 12:14:40 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l28so3287250lfj.1;
+        Thu, 21 Nov 2019 09:14:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i3dXbaeM8/fgEzXWHf4j73/qD2/JvKlKOG24q2kDLhU=;
-        b=GcLaoiocTB43exyz2Sw7c1bE8QYr4ZxVv8UNC56FfbxP3Gkhhfz5i0jLfiYUPQCMoa
-         AUGVKhWAFxYXZdN3aWMfWxjEZQOZ+8ggRIzXKkCUzea0eV45bxX5v+DssT28edUaD12Z
-         ls5k4OgXVu/SKelNO5qo4NtGYWuTVY+CDVaN192Wx6SoGGJh1M7uWrQHTMZ6xM2lY9Le
-         TD7KveNHoXLh5htI3rXzHQL5xCcrG9uSqeXNA/qgfqBCgssLx3zUQ5qRE39PwtS2f0qw
-         OtPwq2v51cjIdhQJcex+IkJBSUZwEomo3oqSSjcKQp/m6LqYcKXAQgB9vzQnfk3F1RvE
-         zrUQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cAzhUxhbi0ipJJRlq7LEPrGywJG5HkdxE06SxVESVKU=;
+        b=PXTQz/+Hd1s0CfRFTJDfyk4lkxAwzEQmZwcZZUy9l91K9JI/XZfGPbFhBdnt5WVooS
+         df2ySPhZBMZoQsNlxicqFixYOg9eiDRQcpBqB0rDmPCDWwflyXiLf3kOJs37sGuoADnl
+         SxAF5+GVCBpludbWA/oTghn5Z0/D5IT+q5rEIraqu3CY7AIcUqkZFRkYHO096ViBly50
+         Ru4c/1mhi5dsBboNqrLLr5LyBMkY3ZT8pK1B90JtQCOr+kgNrtxENg+n3RWLUMmIRfGr
+         vFY9PwdyXdEqQ9agz0Rj7R0mQBfIGQ4wxznDrQKmvdqpSgLh+hT0FZKl/X5VfHHLdWZS
+         WXzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i3dXbaeM8/fgEzXWHf4j73/qD2/JvKlKOG24q2kDLhU=;
-        b=DV2Qt4gOt2kBjfo+XkbxfSJbEIkaDIKiL81r0yvDi6FeGLP5R/C4TjVsnhk4xesCEs
-         6S6RYfNHk17WYMa751aYLD+iTYoqWN0pN0pngBHNIXhzEfNGsdoFC6B5hoIQ+iHwGSlk
-         yJQrIxM9iaNI5KNJRwzEJw6j4euEVMYKm2a84NIkbe85zCl+ha9xyNAG0ES/raXoK/aq
-         9ZuXSxqkZHAAvZDtjRdaMiQWiBqYipXyHUNpdEcM6rCU+lIFnuMbWNBgb27CWJyhCWwm
-         YRNB0dRM9rk9PoIdKrA5v8m8vb3XuOx5Q123Etzzt5UDcBjdkZj4wD147Gi3RnT/04kl
-         1ZzA==
-X-Gm-Message-State: APjAAAV8MClJ4QAVW8pRV39wfYGb4zVySr9t6fpm07n74Q1fTc8JYc/s
-        1e3jBIQWipWMpNJLgVrA8uk=
-X-Google-Smtp-Source: APXvYqxEpvzKJM8+RiUL39rs/NOLQBXQix4AlKzUu9X1je8OxVPAWunSU7INi5WBD4jktiReGQop1A==
-X-Received: by 2002:adf:eecc:: with SMTP id a12mr1519815wrp.363.1574356444030;
-        Thu, 21 Nov 2019 09:14:04 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id v184sm297255wme.31.2019.11.21.09.14.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 09:14:03 -0800 (PST)
-Date:   Thu, 21 Nov 2019 18:14:01 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Message-ID: <20191121171401.GE12042@gmail.com>
-References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
- <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
- <20191121060444.GA55272@gmail.com>
- <20191121130153.GS4097@hirez.programming.kicks-ass.net>
- <20191121161410.GA199273@romley-ivt3.sc.intel.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cAzhUxhbi0ipJJRlq7LEPrGywJG5HkdxE06SxVESVKU=;
+        b=Tck4EqklIx6OYyMO8Iv+00FhxZMM2BCUdJAdfLw0iJbHZ15p+P1dBdJxz2YZOtivfi
+         ThAfN7GqeDAh/Ebhe4KiFW3D3DR0X7nPQQGz5zoy1GkpdfS9i9oA9nMKo/dgE+8YdnAo
+         OGdZI74wvKtJa0t9YTQKJzdZvG7VKwaJUi1bRuH0A4b6qFmXPLArb6A0QD6i5DzdmiyR
+         ACiknQeM/uyH8eeQ3KYTPZBgt7mOzgXZUh92NlmRwSzQOSOP06cow0s8KP+tqRQwA8T5
+         fJSCaKjgR98doO7eCQvgfOXbiwhSJlTkfCaDHf889rILz4qSH9auxllzTrpTwLBEj94a
+         aC0A==
+X-Gm-Message-State: APjAAAU8COqpFSrcBIg8zTAoBV6PPsCYN2UVhOZsj346GDvtT0g1uJNe
+        OgrpHRNNgi7jJGMEaquZpoCxQ6W6
+X-Google-Smtp-Source: APXvYqwWYb4yZPpewD8z8jU6llJI5iWJWK6txjiQJN0ChqrVUrDu6k8kR6SO8R5t194m7diWfvyJjg==
+X-Received: by 2002:ac2:4c3b:: with SMTP id u27mr8918560lfq.131.1574356477219;
+        Thu, 21 Nov 2019 09:14:37 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id z19sm1583151ljk.66.2019.11.21.09.14.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 09:14:36 -0800 (PST)
+Subject: Re: [PATCH v1 08/29] dt-bindings: interconnect: tegra: Add initial
+ IDs
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20191118200247.3567-1-digetx@gmail.com>
+ <20191118200247.3567-9-digetx@gmail.com> <20191119062535.GC2462695@ulmo>
+ <8cff3af3-42c7-3312-5f98-cd5eb98b7b7a@gmail.com>
+Message-ID: <f0f36176-8070-08a6-a61f-77221d916f04@gmail.com>
+Date:   Thu, 21 Nov 2019 20:14:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121161410.GA199273@romley-ivt3.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8cff3af3-42c7-3312-5f98-cd5eb98b7b7a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Fenghua Yu <fenghua.yu@intel.com> wrote:
-
-> > This feature MUST be default enabled, otherwise everything will 
-> > be/remain broken and we'll end up in the situation where you can't 
-> > use it even if you wanted to.
+19.11.2019 19:56, Dmitry Osipenko пишет:
+> 19.11.2019 09:25, Thierry Reding пишет:
+>> On Mon, Nov 18, 2019 at 11:02:26PM +0300, Dmitry Osipenko wrote:
+>>> Define interconnect IDs for memory controller (MC), external memory
+>>> controller (EMC), external memory (EMEM) and memory clients of display
+>>> controllers (DC).
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  include/dt-bindings/interconnect/tegra-icc.h | 11 +++++++++++
+>>>  1 file changed, 11 insertions(+)
+>>>  create mode 100644 include/dt-bindings/interconnect/tegra-icc.h
 > 
-> The usage scope of this patch set is largely reduced to only real time. 
-> The long split lock processing time (>1000 cycles) cannot be tolerated 
-> by real time.
 > 
-> Real time customers do want to use this feature to detect the fatal 
-> split lock error. They don't want any split lock issue from BIOS/EFI/ 
-> firmware/kerne/drivers/user apps.
+> Hello Thierry,
 > 
-> Real time can enable the feature (set bit 29 in TEST_CTRL MSR) in BIOS 
-> and don't need OS to enable it. But, #AC handler cannot handle split 
-> lock in the kernel and will return to the faulting instruction and 
-> re-enter #AC. So current #AC handler doesn't provide useful information 
-> for the customers. That's why we add the new #AC handler in this patch 
-> set.
+>> There was a bit of discussion regarding this for a recent patch that I
+>> was working on, see:
+>>
+>> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=140318
+> 
+> Thank you very much for the link.
+> 
+>> I'd rather not use an additional set of definitions for this. The memory
+>> controller already has a set of native IDs for memory clients that I
+>> think we can reuse for this.
+> 
+> I missed that it's fine to have multiple ICC connections defined
+> per-path, at quick glance looks like indeed it should be fine to re-use
+> MC IDs.
 
-Immaterial - for this feature to be useful it must be default-enabled, 
-with reasonable quirk knobs offered to people who happen to be bitten by 
-such bugs and cannot fix the software.
+Well, it is not quite correct to have multiple connections per-path.
 
-But default-enabled is a must-have, as Peter said.
+Please take look at interconnect's binding and core.c:
 
-Thanks,
+  1. there should be one src->dst connection per-path
+  2. each connection should comprise of one source and one destination nodes
 
-	Ingo
+>> I've only added these client IDs for Tegra194 because that's where we
+>> need it to actually describe a specific hardware quirk, but I can come
+>> up with the equivalent for older chips as well.
+> 
+> Older Tegra SoCs have hardware units connected to MC through AHB bus,
+> like USB for example. These units do not have MC client IDs and there is
+> no MC ID defined for the AHB bus either, but probably it won't be a
+> problem to define IDs for them if will be necessary.
+> 
+
+Since interconnect binding requires to define both source and
+destination nodes for the path, then MC IDs are not enough in order to
+define interconnect path because these IDs represent only the source
+nodes. Destination node should be either EMC or EMEM.
