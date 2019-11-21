@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B1A105AF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:15:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36BE9105AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfKUUOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 15:14:49 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33405 "EHLO
+        id S1727121AbfKUUOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 15:14:34 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33395 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbfKUUOc (ORCPT
+        with ESMTP id S1726563AbfKUUOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 15:14:32 -0500
+        Thu, 21 Nov 2019 15:14:31 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXsqP-0004fP-Mn; Thu, 21 Nov 2019 21:14:25 +0100
+        id 1iXsqP-0004fO-Ko; Thu, 21 Nov 2019 21:14:25 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 56A7F1C1A4D;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 318A31C1A4C;
         Thu, 21 Nov 2019 21:14:25 +0100 (CET)
 Date:   Thu, 21 Nov 2019 20:14:25 -0000
 From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/entry/32: Move FIXUP_FRAME after pushing %fs in
- SAVE_ALL
+Subject: [tip: x86/urgent] x86/entry/32: Unwind the ESPFIX stack earlier on
+ exception entry
 Cc:     Andy Lutomirski <luto@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157436726527.21853.15902234304768528253.tip-bot2@tip-bot2>
+Message-ID: <157436726513.21853.1350949697904778536.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,125 +46,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     82cb8a0b1d8d07817b5d59f7fa1438e1fceafab2
-Gitweb:        https://git.kernel.org/tip/82cb8a0b1d8d07817b5d59f7fa1438e1fceafab2
+Commit-ID:     a1a338e5b6fe9e0a39c57c232dc96c198bb53e47
+Gitweb:        https://git.kernel.org/tip/a1a338e5b6fe9e0a39c57c232dc96c198bb53e47
 Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Wed, 20 Nov 2019 09:56:36 +01:00
+AuthorDate:    Wed, 20 Nov 2019 10:10:49 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 21 Nov 2019 19:37:43 +01:00
+CommitterDate: Thu, 21 Nov 2019 19:37:44 +01:00
 
-x86/entry/32: Move FIXUP_FRAME after pushing %fs in SAVE_ALL
+x86/entry/32: Unwind the ESPFIX stack earlier on exception entry
 
-This will allow us to get percpu access working before FIXUP_FRAME,
-which will allow us to unwind ESPFIX earlier.
+Right now, we do some fancy parts of the exception entry path while SS
+might have a nonzero base: we fill in regs->ss and regs->sp, and we
+consider switching to the kernel stack. This results in regs->ss and
+regs->sp referring to a non-flat stack and it may result in
+overflowing the entry stack. The former issue means that we can try to
+call iret_exc on a non-flat stack, which doesn't work.
 
+Tested with selftests/x86/sigreturn_32.
+
+Fixes: 45d7b255747c ("x86/entry/32: Enter the kernel via trampoline stack")
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: stable@kernel.org
 ---
- arch/x86/entry/entry_32.S | 66 ++++++++++++++++++++------------------
- 1 file changed, 35 insertions(+), 31 deletions(-)
+ arch/x86/entry/entry_32.S | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 341597e..d9f4019 100644
+index d9f4019..647e2a2 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -213,54 +213,58 @@
- 	 *
- 	 * Be careful: we may have nonzero SS base due to ESPFIX.
- 	 */
--	andl	$0x0000ffff, 3*4(%esp)
-+	andl	$0x0000ffff, 4*4(%esp)
- 
- #ifdef CONFIG_VM86
--	testl	$X86_EFLAGS_VM, 4*4(%esp)
-+	testl	$X86_EFLAGS_VM, 5*4(%esp)
- 	jnz	.Lfrom_usermode_no_fixup_\@
- #endif
--	testl	$USER_SEGMENT_RPL_MASK, 3*4(%esp)
-+	testl	$USER_SEGMENT_RPL_MASK, 4*4(%esp)
- 	jnz	.Lfrom_usermode_no_fixup_\@
- 
--	orl	$CS_FROM_KERNEL, 3*4(%esp)
-+	orl	$CS_FROM_KERNEL, 4*4(%esp)
- 
+@@ -210,8 +210,6 @@
  	/*
- 	 * When we're here from kernel mode; the (exception) stack looks like:
- 	 *
--	 *  5*4(%esp) - <previous context>
--	 *  4*4(%esp) - flags
--	 *  3*4(%esp) - cs
--	 *  2*4(%esp) - ip
--	 *  1*4(%esp) - orig_eax
--	 *  0*4(%esp) - gs / function
-+	 *  6*4(%esp) - <previous context>
-+	 *  5*4(%esp) - flags
-+	 *  4*4(%esp) - cs
-+	 *  3*4(%esp) - ip
-+	 *  2*4(%esp) - orig_eax
-+	 *  1*4(%esp) - gs / function
-+	 *  0*4(%esp) - fs
- 	 *
- 	 * Lets build a 5 entry IRET frame after that, such that struct pt_regs
- 	 * is complete and in particular regs->sp is correct. This gives us
--	 * the original 5 enties as gap:
-+	 * the original 6 enties as gap:
- 	 *
--	 * 12*4(%esp) - <previous context>
--	 * 11*4(%esp) - gap / flags
--	 * 10*4(%esp) - gap / cs
--	 *  9*4(%esp) - gap / ip
--	 *  8*4(%esp) - gap / orig_eax
--	 *  7*4(%esp) - gap / gs / function
--	 *  6*4(%esp) - ss
--	 *  5*4(%esp) - sp
--	 *  4*4(%esp) - flags
--	 *  3*4(%esp) - cs
--	 *  2*4(%esp) - ip
--	 *  1*4(%esp) - orig_eax
--	 *  0*4(%esp) - gs / function
-+	 * 14*4(%esp) - <previous context>
-+	 * 13*4(%esp) - gap / flags
-+	 * 12*4(%esp) - gap / cs
-+	 * 11*4(%esp) - gap / ip
-+	 * 10*4(%esp) - gap / orig_eax
-+	 *  9*4(%esp) - gap / gs / function
-+	 *  8*4(%esp) - gap / fs
-+	 *  7*4(%esp) - ss
-+	 *  6*4(%esp) - sp
-+	 *  5*4(%esp) - flags
-+	 *  4*4(%esp) - cs
-+	 *  3*4(%esp) - ip
-+	 *  2*4(%esp) - orig_eax
-+	 *  1*4(%esp) - gs / function
-+	 *  0*4(%esp) - fs
+ 	 * The high bits of the CS dword (__csh) are used for CS_FROM_*.
+ 	 * Clear them in case hardware didn't do this for us.
+-	 *
+-	 * Be careful: we may have nonzero SS base due to ESPFIX.
  	 */
+ 	andl	$0x0000ffff, 4*4(%esp)
  
- 	pushl	%ss		# ss
- 	pushl	%esp		# sp (points at ss)
--	addl	$6*4, (%esp)	# point sp back at the previous context
--	pushl	6*4(%esp)	# flags
--	pushl	6*4(%esp)	# cs
--	pushl	6*4(%esp)	# ip
--	pushl	6*4(%esp)	# orig_eax
--	pushl	6*4(%esp)	# gs / function
-+	addl	$7*4, (%esp)	# point sp back at the previous context
-+	pushl	7*4(%esp)	# flags
-+	pushl	7*4(%esp)	# cs
-+	pushl	7*4(%esp)	# ip
-+	pushl	7*4(%esp)	# orig_eax
-+	pushl	7*4(%esp)	# gs / function
-+	pushl	7*4(%esp)	# fs
- .Lfrom_usermode_no_fixup_\@:
+@@ -307,12 +305,21 @@
+ .Lfinished_frame_\@:
  .endm
  
-@@ -308,8 +312,8 @@
+-.macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0 skip_gs=0
++.macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0 skip_gs=0 unwind_espfix=0
+ 	cld
  .if \skip_gs == 0
  	PUSH_GS
  .endif
--	FIXUP_FRAME
  	pushl	%fs
-+	FIXUP_FRAME
++
++	pushl	%eax
++	movl	$(__KERNEL_PERCPU), %eax
++	movl	%eax, %fs
++.if \unwind_espfix > 0
++	UNWIND_ESPFIX_STACK
++.endif
++	popl	%eax
++
+ 	FIXUP_FRAME
  	pushl	%es
  	pushl	%ds
- 	pushl	\pt_regs_ax
+@@ -326,8 +333,6 @@
+ 	movl	$(__USER_DS), %edx
+ 	movl	%edx, %ds
+ 	movl	%edx, %es
+-	movl	$(__KERNEL_PERCPU), %edx
+-	movl	%edx, %fs
+ .if \skip_gs == 0
+ 	SET_KERNEL_GS %edx
+ .endif
+@@ -1153,18 +1158,17 @@ ENDPROC(entry_INT80_32)
+ 	lss	(%esp), %esp			/* switch to the normal stack segment */
+ #endif
+ .endm
++
+ .macro UNWIND_ESPFIX_STACK
++	/* It's safe to clobber %eax, all other regs need to be preserved */
+ #ifdef CONFIG_X86_ESPFIX32
+ 	movl	%ss, %eax
+ 	/* see if on espfix stack */
+ 	cmpw	$__ESPFIX_SS, %ax
+-	jne	27f
+-	movl	$__KERNEL_DS, %eax
+-	movl	%eax, %ds
+-	movl	%eax, %es
++	jne	.Lno_fixup_\@
+ 	/* switch to normal stack */
+ 	FIXUP_ESPFIX_STACK
+-27:
++.Lno_fixup_\@:
+ #endif
+ .endm
+ 
+@@ -1458,10 +1462,9 @@ END(page_fault)
+ 
+ common_exception_read_cr2:
+ 	/* the function address is in %gs's slot on the stack */
+-	SAVE_ALL switch_stacks=1 skip_gs=1
++	SAVE_ALL switch_stacks=1 skip_gs=1 unwind_espfix=1
+ 
+ 	ENCODE_FRAME_POINTER
+-	UNWIND_ESPFIX_STACK
+ 
+ 	/* fixup %gs */
+ 	GS_TO_REG %ecx
+@@ -1483,9 +1486,8 @@ END(common_exception_read_cr2)
+ 
+ common_exception:
+ 	/* the function address is in %gs's slot on the stack */
+-	SAVE_ALL switch_stacks=1 skip_gs=1
++	SAVE_ALL switch_stacks=1 skip_gs=1 unwind_espfix=1
+ 	ENCODE_FRAME_POINTER
+-	UNWIND_ESPFIX_STACK
+ 
+ 	/* fixup %gs */
+ 	GS_TO_REG %ecx
