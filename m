@@ -2,81 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB00104E6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B74E9104E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfKUIwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:52:23 -0500
-Received: from mga02.intel.com ([134.134.136.20]:29461 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbfKUIwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:52:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 00:52:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="259310679"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Nov 2019 00:52:20 -0800
-Received: from [10.226.38.254] (unknown [10.226.38.254])
-        by linux.intel.com (Postfix) with ESMTP id C5D1D5802C4;
-        Thu, 21 Nov 2019 00:52:17 -0800 (PST)
-Subject: Re: [PATCH v8 2/3] dwc: PCI: intel: PCIe RC controller driver
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, helgaas@kernel.org, jingoohan1@gmail.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-References: <cover.1574158309.git.eswara.kota@linux.intel.com>
- <71262d29ca564060331e7e2c1ceb41158109cb92.1574158309.git.eswara.kota@linux.intel.com>
- <20191120130826.GM32742@smile.fi.intel.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <8545714b-9393-3272-9d58-35a91d1681cf@linux.intel.com>
-Date:   Thu, 21 Nov 2019 16:52:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726664AbfKUIyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:54:20 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34631 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfKUIyT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 03:54:19 -0500
+Received: by mail-oi1-f196.google.com with SMTP id l202so2528290oig.1;
+        Thu, 21 Nov 2019 00:54:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Bz/aVHhrSp8CJz37MAck0aUQWH98Jp3Ah7Te9LIS/w=;
+        b=D8fU+rZ0XM97dU4r/q4YuuSYzGXJiKpuqvAvzFlEjFn8fd5h01zHF/9IRi/elnHPaW
+         I/viH1ZrOYJhQkO8VqqUhHMtowvmSfcQnk1Tw4OOO30YIufDWGb3Bf+W5OyjFhC9PIv5
+         9dYb+yrM+6QwfhVu99Ygd47pZAPSp3l7DNWCZznRO+QvCqE3EjaZW9OTgRko/2FcC0mi
+         z1brto+siocmZV6Ov8uTBlNUInWOgqXs1yxg3JORsvwJvaFHGqVLusa153R8kvtl+74A
+         R557RMU4mOFggGKwZOErIrDdZjk13+Dlsy1MUG4E9W7/rLp019a+4HgxTnAbishjIHjH
+         Po9Q==
+X-Gm-Message-State: APjAAAWL2sYtmTM0MmeeSW8U68dFnAgdDnMYKayvpW7pTJvK0JT6gDNB
+        +h09rGxo4pk20Z5xaF7SeCoB6taHDT2WeHS0tHU=
+X-Google-Smtp-Source: APXvYqy63gFddvDFxSz98+Mi9qFRnc5TV/efryWReTeB7bid0RErw87Z4cN/QpUnbeDKqKnOiDSKhC/TIBzC7AfkiVw=
+X-Received: by 2002:aca:3a86:: with SMTP id h128mr6376241oia.131.1574326457337;
+ Thu, 21 Nov 2019 00:54:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191120130826.GM32742@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20191121080954.14915-1-peter.ujfalusi@ti.com> <CAMuHMdVWCM_LQ5Fx+3NMhyd21LSpYQWCX2pmtkU2tHvtzDzUzw@mail.gmail.com>
+ <c14dd693-74e6-7e48-9697-849f44b8e0d9@ti.com>
+In-Reply-To: <c14dd693-74e6-7e48-9697-849f44b8e0d9@ti.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Nov 2019 09:54:06 +0100
+Message-ID: <CAMuHMdWXffsC4rYDHggS6CDRnnR_kh1Td=98a0TRPeSUtSKhDw@mail.gmail.com>
+Subject: Re: [PATCH] spi: pic32: Retire dma_request_slave_channel_compat()
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Mark Brown <broonie@kernel.org>, Vinod <vkoul@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
 
-On 11/20/2019 9:08 PM, Andy Shevchenko wrote:
-> On Wed, Nov 20, 2019 at 03:43:01PM +0800, Dilip Kota wrote:
->> Add support to PCIe RC controller on Intel Gateway SoCs.
->> PCIe controller is based of Synopsys DesignWare PCIe core.
->>
->> Intel PCIe driver requires Upconfigure support, Fast Training
->> Sequence and link speed configurations. So adding the respective
->> helper functions in the PCIe DesignWare framework.
->> It also programs hardware autonomous speed during speed
->> configuration so defining it in pci_regs.h.
->> +static void pcie_app_wr_mask(struct intel_pcie_port *lpp,
->> +			     u32 ofs, u32 mask, u32 val)
-> It seems your editor is misconfigured. First line should be
+On Thu, Nov 21, 2019 at 9:40 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> On 21/11/2019 10.30, Geert Uytterhoeven wrote:
+> > On Thu, Nov 21, 2019 at 9:11 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> >> There is no reason to use the dma_request_slave_channel_compat() as no
+> >> filter function and parameter is provided.
+> >>
+> >> Switch the driver to use dma_request_chan() instead.
+> >>
+> >> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> >
+> >> --- a/drivers/spi/spi-pic32.c
+> >> +++ b/drivers/spi/spi-pic32.c
+> >> @@ -609,22 +609,18 @@ static void pic32_spi_cleanup(struct spi_device *spi)
+> >>  static void pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+> >>  {
+> >>         struct spi_master *master = pic32s->master;
+> >> -       dma_cap_mask_t mask;
+> >>
+> >> -       dma_cap_zero(mask);
+> >> -       dma_cap_set(DMA_SLAVE, mask);
+> >> -
+> >> -       master->dma_rx = dma_request_slave_channel_compat(mask, NULL, NULL,
+> >> -                                                         dev, "spi-rx");
+> >> -       if (!master->dma_rx) {
+> >> +       master->dma_rx = dma_request_chan(dev, "spi-rx");
+> >
+> > Why not dma_request_slave_channel()?
 >
-> static void pcie_app_wr_mask(struct intel_pcie_port *lpp, u32 ofs,
+> The longer term plan is to retire dma_request_slave_channel() as well.
+> With dma_request_chan() deferred probing against DMA drivers is possible
+> and it also supports legacy boot with dma_slave_map.
 >
-> in case you would like to split it logically.
->
->> +static void pcie_rc_cfg_wr_mask(struct intel_pcie_port *lpp,
->> +				u32 ofs, u32 mask, u32 val)
-> Ditto.
->
->> +	pcie_app_wr(lpp,  PCIE_APP_IRNCR, PCIE_APP_IRN_INT);
-> Extra white space.
-My bad, typo error. Will fix them all in the next patch version.
+> At the end we should be left with only dma_request_chan() for slave
+> channels in the kernel.
 
-Regards,
-Dilip
+Thank you, deferred probing is a valid argument.
+You may want to add that to the patch description.
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> > That way you...
+> >
+> >> +       if (IS_ERR(master->dma_rx)) {
+> >
+> > ... don't have to change the NULL check here, and...
+> >
+> >>                 dev_warn(dev, "RX channel not found.\n");
+> >> +               master->dma_rx = NULL;
+> >
+> > ...  don't have to override by NULL here.
 >
+> It is a small sacrifice, true, but if anyone cares the driver can
+> support deferred probing with dma_request_chan().
+
+Deferred probing in case of missing DMA controllers is always a bit
+tricky, as there are multiple options:
+  1. Defer probing of the slave driver,
+  2a. Continue probing of the slave driver, fall back to PIO (which is
+      what this driver does)
+  2b. and Retry DMA setup later.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
