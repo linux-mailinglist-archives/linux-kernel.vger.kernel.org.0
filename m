@@ -2,177 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 792EB1059BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 762661059DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbfKUSly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:41:54 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61632 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfKUSly (ORCPT
+        id S1727173AbfKUSo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:44:26 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51118 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfKUSo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:41:54 -0500
-Received: from 79.184.253.244.ipv4.supernova.orange.pl (79.184.253.244) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 1158072d821797ee; Thu, 21 Nov 2019 19:41:51 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Len Brown <lenb@kernel.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
-Subject: [PATCH 1/2] cpuidle: Drop disabled field from struct cpuidle_state
-Date:   Thu, 21 Nov 2019 19:41:51 +0100
-Message-ID: <3690440.Wzkxfdnirm@kreacher>
-In-Reply-To: <5961586.ml7s97geqL@kreacher>
-References: <5961586.ml7s97geqL@kreacher>
+        Thu, 21 Nov 2019 13:44:26 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALIi4YF182586;
+        Thu, 21 Nov 2019 18:44:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=SPXQVD6RC8shnzp+HzAckjYrp8WJ7qrn12ygq+Dj2x4=;
+ b=D/RQeb0sTwBPWYBaTUMv3yvq69Uhe7SwXyXwwabhjmZMxzacFCyxXpay+aNGSn5+boDr
+ p1wIeQRZSliQcdjcsTH7ixvMMvzrEbX5aMJ/UUSO9AGbwcb+ysCv/UL4uVeFR+h57zf6
+ EfJqtmxc9JjnuoSMDDC2yVgEvbDNpxsgCsae6Fzb2rE0nIzzJrouVET+MhzPZ2DNAQzZ
+ si73LwLP4SOk4zrHDgkJC1g9E5fpa76F4Ry3ycZYtzVVqW4Dqx5NqEX2apY3XNX3TShV
+ stacW229rSdwxzqWCuobYEzkKC9KuLuKJQBOL4QpyThcOMi6sD5memsaBjrAiqwfDJcl MA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2wa9rqx63p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 18:44:21 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALIcKup113349;
+        Thu, 21 Nov 2019 18:42:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wda06gfb7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 18:42:20 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xALIgJ94000846;
+        Thu, 21 Nov 2019 18:42:19 GMT
+Received: from [10.159.158.222] (/10.159.158.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 10:42:19 -0800
+Subject: Re: [PATCH] KVM: nVMX: expose "load IA32_PERF_GLOBAL_CTRL" controls
+To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Oliver Upton <oupton@google.com>
+References: <1574346557-18344-1-git-send-email-pbonzini@redhat.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <7fea1f06-9abb-cdd1-9cb9-8655fe207e96@oracle.com>
+Date:   Thu, 21 Nov 2019 10:42:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1574346557-18344-1-git-send-email-pbonzini@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911210157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911210158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-After recent cpuidle updates the "disabled" field in struct
-cpuidle_state is only used by two drivers (intel_idle and shmobile
-cpuidle) for marking unusable idle states, but that may as well be
-achieved with the help of a state flag, so define an "unusable" idle
-state flag, CPUIDLE_FLAG_UNUSABLE, make the drivers in question use
-it instead of the "disabled" field and make the core set
-CPUIDLE_STATE_DISABLED_BY_DRIVER for the idle states with that flag
-set.
-
-After the above changes, the "disabled" field in struct cpuidle_state
-is not used any more, so drop it.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-Changes from RFC:
-
- - Do not add extra braces (unrelated to the rest of the patch).
-
----
- arch/sh/kernel/cpu/shmobile/cpuidle.c |    8 ++++----
- drivers/cpuidle/cpuidle.c             |    2 +-
- drivers/cpuidle/poll_state.c          |    1 -
- drivers/idle/intel_idle.c             |    6 +++---
- include/linux/cpuidle.h               |    2 +-
- 5 files changed, 9 insertions(+), 10 deletions(-)
-
-Index: linux-pm/drivers/idle/intel_idle.c
-===================================================================
---- linux-pm.orig/drivers/idle/intel_idle.c
-+++ linux-pm/drivers/idle/intel_idle.c
-@@ -1291,8 +1291,8 @@ static void sklh_idle_state_table_update
- 			return;
- 	}
- 
--	skl_cstates[5].disabled = 1;	/* C8-SKL */
--	skl_cstates[6].disabled = 1;	/* C9-SKL */
-+	skl_cstates[5].flags |= CPUIDLE_FLAG_UNUSABLE;	/* C8-SKL */
-+	skl_cstates[6].flags |= CPUIDLE_FLAG_UNUSABLE;	/* C9-SKL */
- }
- /*
-  * intel_idle_state_table_update()
-@@ -1355,7 +1355,7 @@ static void __init intel_idle_cpuidle_dr
- 			continue;
- 
- 		/* if state marked as disabled, skip it */
--		if (cpuidle_state_table[cstate].disabled != 0) {
-+		if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
- 			pr_debug("state %s is disabled\n",
- 				 cpuidle_state_table[cstate].name);
- 			continue;
-Index: linux-pm/include/linux/cpuidle.h
-===================================================================
---- linux-pm.orig/include/linux/cpuidle.h
-+++ linux-pm/include/linux/cpuidle.h
-@@ -54,7 +54,6 @@ struct cpuidle_state {
- 	unsigned int	exit_latency; /* in US */
- 	int		power_usage; /* in mW */
- 	unsigned int	target_residency; /* in US */
--	bool		disabled; /* disabled on all CPUs */
- 
- 	int (*enter)	(struct cpuidle_device *dev,
- 			struct cpuidle_driver *drv,
-@@ -77,6 +76,7 @@ struct cpuidle_state {
- #define CPUIDLE_FLAG_POLLING	BIT(0) /* polling state */
- #define CPUIDLE_FLAG_COUPLED	BIT(1) /* state applies to multiple cpus */
- #define CPUIDLE_FLAG_TIMER_STOP BIT(2) /* timer is stopped on this state */
-+#define CPUIDLE_FLAG_UNUSABLE	BIT(3) /* avoid using this state */
- 
- struct cpuidle_device_kobj;
- struct cpuidle_state_kobj;
-Index: linux-pm/arch/sh/kernel/cpu/shmobile/cpuidle.c
-===================================================================
---- linux-pm.orig/arch/sh/kernel/cpu/shmobile/cpuidle.c
-+++ linux-pm/arch/sh/kernel/cpu/shmobile/cpuidle.c
-@@ -67,7 +67,7 @@ static struct cpuidle_driver cpuidle_dri
- 			.enter = cpuidle_sleep_enter,
- 			.name = "C2",
- 			.desc = "SuperH Sleep Mode [SF]",
--			.disabled = true,
-+			.flags = CPUIDLE_FLAG_UNUSABLE,
- 		},
- 		{
- 			.exit_latency = 2300,
-@@ -76,7 +76,7 @@ static struct cpuidle_driver cpuidle_dri
- 			.enter = cpuidle_sleep_enter,
- 			.name = "C3",
- 			.desc = "SuperH Mobile Standby Mode [SF]",
--			.disabled = true,
-+			.flags = CPUIDLE_FLAG_UNUSABLE,
- 		},
- 	},
- 	.safe_state_index = 0,
-@@ -86,10 +86,10 @@ static struct cpuidle_driver cpuidle_dri
- int __init sh_mobile_setup_cpuidle(void)
- {
- 	if (sh_mobile_sleep_supported & SUSP_SH_SF)
--		cpuidle_driver.states[1].disabled = false;
-+		cpuidle_driver.states[1].flags = CPUIDLE_FLAG_NONE;
- 
- 	if (sh_mobile_sleep_supported & SUSP_SH_STANDBY)
--		cpuidle_driver.states[2].disabled = false;
-+		cpuidle_driver.states[2].flags = CPUIDLE_FLAG_NONE;
- 
- 	return cpuidle_register(&cpuidle_driver, NULL);
- }
-Index: linux-pm/drivers/cpuidle/cpuidle.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/cpuidle.c
-+++ linux-pm/drivers/cpuidle/cpuidle.c
-@@ -570,7 +570,7 @@ static int __cpuidle_register_device(str
- 		return -EINVAL;
- 
- 	for (i = 0; i < drv->state_count; i++)
--		if (drv->states[i].disabled)
-+		if (drv->states[i].flags & CPUIDLE_FLAG_UNUSABLE)
- 			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_DRIVER;
- 
- 	per_cpu(cpuidle_devices, dev->cpu) = dev;
-Index: linux-pm/drivers/cpuidle/poll_state.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/poll_state.c
-+++ linux-pm/drivers/cpuidle/poll_state.c
-@@ -53,7 +53,6 @@ void cpuidle_poll_state_init(struct cpui
- 	state->target_residency_ns = 0;
- 	state->power_usage = -1;
- 	state->enter = poll_idle;
--	state->disabled = false;
- 	state->flags = CPUIDLE_FLAG_POLLING;
- }
- EXPORT_SYMBOL_GPL(cpuidle_poll_state_init);
-
-
-
+On 11/21/19 6:29 AM, Paolo Bonzini wrote:
+> These controls were added by the recent commit 03a8871add95 ("KVM:
+> nVMX: Expose load IA32_PERF_GLOBAL_CTRL VM-{Entry,Exit} control",
+> 2019-11-13), so we should advertise them to userspace from
+> KVM_GET_MSR_FEATURE_INDEX_LIST, as well.
+>
+> Cc: Oliver Upton <oupton@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>   arch/x86/kvm/vmx/nested.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 4aea7d304beb..4b4ce6a804ff 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -5982,6 +5982,7 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
+>   #ifdef CONFIG_X86_64
+>   		VM_EXIT_HOST_ADDR_SPACE_SIZE |
+>   #endif
+> +		VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL |
+>   		VM_EXIT_LOAD_IA32_PAT | VM_EXIT_SAVE_IA32_PAT;
+>   	msrs->exit_ctls_high |=
+>   		VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR |
+> @@ -6001,6 +6002,7 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
+>   #ifdef CONFIG_X86_64
+>   		VM_ENTRY_IA32E_MODE |
+>   #endif
+> +		VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL |
+>   		VM_ENTRY_LOAD_IA32_PAT;
+>   	msrs->entry_ctls_high |=
+>   		(VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR | VM_ENTRY_LOAD_IA32_EFER);
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
