@@ -2,76 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3CB9105D36
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:41:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC8D0105D3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfKUXlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 18:41:17 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42020 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfKUXlQ (ORCPT
+        id S1726747AbfKUXl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 18:41:56 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42403 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfKUXl4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 18:41:16 -0500
-Received: by mail-io1-f65.google.com with SMTP id k13so5646227ioa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 15:41:14 -0800 (PST)
+        Thu, 21 Nov 2019 18:41:56 -0500
+Received: by mail-wr1-f67.google.com with SMTP id a15so6493979wrf.9;
+        Thu, 21 Nov 2019 15:41:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=uACTtkuIJfMaBrmrOMjqpsbLeXCbKKhLGPjsdUGUn50=;
-        b=ATla5Mm3z+aOSJ66NK85YT1q/SnFkBStQC85FhCDpIB9Top6rOmlTlPOyJIUuzjr8o
-         6K53jRv0jQY8JJhsE0zzzA3Yh+g1U0ynGzpnNk1J27pNFx2cTJQHqhQ6DinQWKVvs//i
-         TT3JD5gxhoEf2clL7ZIpum5r2Xn6IsRfa655X3Ck7rrsV7EoAQPCPLOfT9yxDHi7aKIJ
-         cYk3nZtXTb/oqDHDTvx3xNCdHMeLaDHiv9QyqUZksP55YyxUgywibz2EbJg3yFvmS00f
-         /I8+3l8qmalkpGCA5v+iJU9PPKR8BbRV3aApbaSwxSTHOjmrPeQIE/FDuE87o6HA9Yzj
-         xKtg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=pxac2gjvB3glHAzQ3VWzQMcHTiYDtnpxlq6kTZbB4+g=;
+        b=bVMsuoTYT3l3u4dKC1kQUfMuGPSu9V59pYf0Z6THKJutOO+T4ARAj45rzh23i/LFPo
+         CGzxJSNogHO1iN+GENwSGrX8FBMh1HlbB+qWeu+uxAPUr9XrPFaOmUYi9azpuxLk4OQA
+         RWBWkC2/DpbviaYHU/x44e/KVjJ2ZDVpZu6rGxKAjNMg417HXBOIQYRr4O+rRzb6shxm
+         BR+6QeQHjlAkdP4l+nbq0nV7C3Mx59wZkoke59ua4S3+/+pa3XdF++d1rHnTzISUjXTJ
+         Dubcbczs4mr83Q6JZ+zhczytUDlbRZNQelv4s1Aw/GSKbQUh2WJcDZXqY/+qUN2XlSUI
+         Navw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=uACTtkuIJfMaBrmrOMjqpsbLeXCbKKhLGPjsdUGUn50=;
-        b=U9boSdcROsvEn5Zbz2byEiZwmrPoAf09yLV54egU/klL3GRNMji2KAlPIz+Q8A3I4w
-         mMvrLWIEU5lwX1BOmdFL79aoPWdCVTChzWvuff+wngFSelujwqUlhAy0oo/CSq0Lff/0
-         Gbl3fjXFJkbt+3iJVeQLvIhT6bv9ctiaIJ22HO2gYmw2FtQynAMvdmFNzdvDDTMna2AR
-         Usjj6OBwf/a6Csju7mXf5aCsxPXL/1LkRTTQqsMLW7yoKKLkT0yhOd0turutR2A3Y/dS
-         HwqdodxsHtwZVvNQD2Tmf7ioJyhmnWKDx5ITfPzxsnEdvF6GDcyBYY5VG0CENgKufwwC
-         Ao/Q==
-X-Gm-Message-State: APjAAAXTkL4NkXVcOOXqTMYSCWFyreBtfviTU/daQq9D7wD9GIy6btrR
-        fqrgo92gNq2LY1ZNoeRNPo33Rw==
-X-Google-Smtp-Source: APXvYqxM0XCrMtbJZmjbWGBiasGzyQbYZ89bcym0RaLoJmTu15rbGtwOEw3ToJQeqvDJifnXmvORMg==
-X-Received: by 2002:a6b:e518:: with SMTP id y24mr9835193ioc.244.1574379674403;
-        Thu, 21 Nov 2019 15:41:14 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id j23sm4544131pfe.95.2019.11.21.15.41.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pxac2gjvB3glHAzQ3VWzQMcHTiYDtnpxlq6kTZbB4+g=;
+        b=YE/Yc3OVOKF6aml/zHZlQ54YLI1HUXwK/ctjrRsmRpeQrw6KbhWmn+AFCrrZBju6wu
+         5h3fLiVRa5p1PAcQfQsGGYy+sljXTO6gOvCShm9vpLLKsX2amUPTY6uzgUMravdCPhvB
+         o3O/ILnriLpJrdkn24dznUVYRBPhB+gACR6JCtaRQ/EokjDLxGSDa/qqD6L0z03n1nnu
+         xHPHhIuIwoTMt8MLmCxegg6a1FaRc1fZW30UOExiRfNzt0fbdFG8L6FpuhfeSFnmImuM
+         6Kjpy8NSEQ3YkGUSw3ZlBDmjFQxTOv7gKl0bDEp6mX5JTxvmW3UU0OrGcMdAoX4cKKmL
+         p1fw==
+X-Gm-Message-State: APjAAAVBLMmhFjWc7HujmkKlkgTrYRPTOamLhvwX8vAOybNxHgNHbXI3
+        adkDGBGk0mVg+qPQ5kB5/mk=
+X-Google-Smtp-Source: APXvYqwmcH4X8ObVPyILzqCvBJI6hE2KtSvN2G51p6D7c8GRteZ1IRdTt2gKhdNGNds9qQ2ZF2fckQ==
+X-Received: by 2002:adf:ed48:: with SMTP id u8mr13719315wro.28.1574379712150;
+        Thu, 21 Nov 2019 15:41:52 -0800 (PST)
+Received: from localhost.localdomain ([2a02:2450:10d2:194d:5015:4c4c:42e9:e517])
+        by smtp.gmail.com with ESMTPSA id l10sm5894420wrg.90.2019.11.21.15.41.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Nov 2019 15:41:13 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] power: avs: Fix Kconfig indentation
-In-Reply-To: <20191120134004.14167-1-krzk@kernel.org>
-References: <20191120134004.14167-1-krzk@kernel.org>
-Date:   Thu, 21 Nov 2019 15:41:13 -0800
-Message-ID: <7ho8x4n6g6.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 21 Nov 2019 15:41:51 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     corbet@lwn.net, will@kernel.org, paulmck@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        SeongJae Park <sj38.park@gmail.com>
+Subject: [PATCH 0/7] docs: Update ko_KR translations
+Date:   Fri, 22 Nov 2019 00:41:18 +0100
+Message-Id: <20191121234125.28032-1-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+This patchset contains updates of Korean translation documents and a fix
+of original document.
 
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+First 4 patches update the Korean translation of memory-barriers.txt.
+Fifth patch fixes a broken section reference in the original
+memory-barriers.txt.
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Sixth and seventh patches update the Korean translation of howto.rst.
 
-Rafael, feel free to apply directly.
+*** BLURB HERE ***
 
-Kevin
+SeongJae Park (7):
+  docs/memory-barriers.txt/kokr: Rewrite "KERNEL I/O BARRIER EFFECTS"
+    section
+  Documentation/kokr: Kill all references to mmiowb()
+  docs/memory-barriers.txt/kokr: Fix style, spacing and grammar in I/O
+    section
+  docs/memory-barriers.txt/kokr: Update I/O section to be clearer about
+    CPU vs thread
+  docs/memory-barriers.txt: Remove remaining references to mmiowb()
+  Documentation/translation: Use Korean for Korean translation title
+  Documentation/process/howto/kokr: Update for 4.x -> 5.x versioning
+
+ Documentation/memory-barriers.txt             |  11 +-
+ Documentation/translations/ko_KR/howto.rst    |  56 +++--
+ Documentation/translations/ko_KR/index.rst    |   4 +-
+ .../translations/ko_KR/memory-barriers.txt    | 227 +++++++-----------
+ 4 files changed, 119 insertions(+), 179 deletions(-)
+
+-- 
+2.17.2
+
