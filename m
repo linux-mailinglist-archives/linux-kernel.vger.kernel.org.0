@@ -2,81 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6EDD105D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B361D105D6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfKUXlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 18:41:21 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39193 "EHLO mga01.intel.com"
+        id S1726634AbfKUXxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 18:53:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfKUXlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 18:41:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 15:41:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
-   d="scan'208";a="216242622"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2019 15:41:18 -0800
-Date:   Thu, 21 Nov 2019 15:53:29 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Message-ID: <20191121235329.GE199273@romley-ivt3.sc.intel.com>
-References: <3908561D78D1C84285E8C5FCA982C28F7F4DC167@ORSMSX115.amr.corp.intel.com>
- <B2612A75-BEC8-4FF7-9FDA-A7B55C2E0B4A@amacapital.net>
+        id S1725956AbfKUXxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 18:53:41 -0500
+Received: from oasis.local.home (unknown [66.170.99.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7CE3206C2;
+        Thu, 21 Nov 2019 23:53:40 +0000 (UTC)
+Date:   Thu, 21 Nov 2019 18:53:39 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kusanagi Kouichi <slash@ac.auone-net.jp>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: Fix !DEBUG_FS debugfs_create_automount
+Message-ID: <20191121185339.4ef626df@oasis.local.home>
+In-Reply-To: <20191121102021787.MLMY.25002.ppp.dion.ne.jp@dmta0003.auone-net.jp>
+References: <20191121102021787.MLMY.25002.ppp.dion.ne.jp@dmta0003.auone-net.jp>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <B2612A75-BEC8-4FF7-9FDA-A7B55C2E0B4A@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 03:18:46PM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Nov 21, 2019, at 2:29 PM, Luck, Tony <tony.luck@intel.com> wrote:
-> > 
-> > ﻿
-> >> 
-> >> It would be really, really nice if we could pass this feature through to a VM. Can we?
-> > 
-> > It's hard because the MSR is core scoped rather than thread scoped.  So on an HT
-> > enabled system a pair of logical processors gets enabled/disabled together.
-> > 
-> > 
-> 
-> Well that sucks.
-> 
-> Could we pass it through if the host has no HT?  Debugging is *so* much easier in a VM.  And HT is a bit dubious these days anyway.
+On Thu, 21 Nov 2019 19:20:21 +0900
+Kusanagi Kouichi <slash@ac.auone-net.jp> wrote:
 
-I think it's doable to pass it through to KVM. The difficulty is to disable
-split lock detection in KVM because that will disable split lock on
-the whole core including threads for the host. Without disabling split lock
-in KVM, it's doable to debug split lock in KVM.
+> If DEBUG_FS=n, compile fails with the following error:
+> 
+> kernel/trace/trace.c: In function 'tracing_init_dentry':
+> kernel/trace/trace.c:8658:9: error: passing argument 3 of 'debugfs_create_automount' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>  8658 |         trace_automount, NULL);
+>       |         ^~~~~~~~~~~~~~~
+>       |         |
+>       |         struct vfsmount * (*)(struct dentry *, void *)
+> In file included from kernel/trace/trace.c:24:
+> ./include/linux/debugfs.h:206:25: note: expected 'struct vfsmount * (*)(void *)' but argument is of type 'struct vfsmount * (*)(struct dentry *, void *)'
+>   206 |      struct vfsmount *(*f)(void *),
+>       |      ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+> 
 
-Sean and Xiaoyao are working on split lock for KVM (in separate patch set).
-They may have insight on how to do this.
+Please add the tag:
 
-Thanks.
+ Reported-by: kbuild test robot <lkp@intel.com>
 
--Fenghua
+You can also add:
+
+ Link: https://lore.kernel.org/lkml/201911211354.zYtbB4MD%25lkp@intel.com/
+
+-- Steve
+
+> Signed-off-by: Kusanagi Kouichi <slash@ac.auone-net.jp>
+> ---
+>  include/linux/debugfs.h | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
+> index 58424eb3b329..798f0b9b43ae 100644
+> --- a/include/linux/debugfs.h
+> +++ b/include/linux/debugfs.h
+> @@ -54,6 +54,8 @@ static const struct file_operations __fops = {				\
+>  	.llseek  = no_llseek,						\
+>  }
+>  
+> +typedef struct vfsmount *(*debugfs_automount_t)(struct dentry *, void *);
+> +
+>  #if defined(CONFIG_DEBUG_FS)
+>  
+>  struct dentry *debugfs_lookup(const char *name, struct dentry *parent);
+> @@ -75,7 +77,6 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent);
+>  struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+>  				      const char *dest);
+>  
+> -typedef struct vfsmount *(*debugfs_automount_t)(struct dentry *, void *);
+>  struct dentry *debugfs_create_automount(const char *name,
+>  					struct dentry *parent,
+>  					debugfs_automount_t f,
+> @@ -203,7 +204,7 @@ static inline struct dentry *debugfs_create_symlink(const char *name,
+>  
+>  static inline struct dentry *debugfs_create_automount(const char *name,
+>  					struct dentry *parent,
+> -					struct vfsmount *(*f)(void *),
+> +					debugfs_automount_t f,
+>  					void *data)
+>  {
+>  	return ERR_PTR(-ENODEV);
+
