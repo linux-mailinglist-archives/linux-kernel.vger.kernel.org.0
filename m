@@ -2,100 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A6B8104DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E07104DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfKUIVg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 21 Nov 2019 03:21:36 -0500
-Received: from cnshjsmin05.nokia-sbell.com ([116.246.26.45]:14507 "EHLO
-        cnshjsmin05.nokia-sbell.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726165AbfKUIVf (ORCPT
+        id S1726716AbfKUI2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:28:02 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8421 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfKUI2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:21:35 -0500
-X-AuditID: ac18929d-483ff700000014de-16-5dd6490b9a27
-Received: from CNSHPPEXCH1604.nsn-intra.net (Unknown_Domain [135.251.51.104])
-        (using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        by cnshjsmin05.nokia-sbell.com (Symantec Messaging Gateway) with SMTP id E9.B5.05342.B0946DD5; Thu, 21 Nov 2019 16:21:31 +0800 (HKT)
-Received: from CNSHPPEXCH1601.nsn-intra.net (135.251.51.101) by
- CNSHPPEXCH1604.nsn-intra.net (135.251.51.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 21 Nov 2019 16:21:30 +0800
-Received: from CNSHPPEXCH1601.nsn-intra.net ([135.251.51.101]) by
- CNSHPPEXCH1601.nsn-intra.net ([135.251.51.101]) with mapi id 15.01.1713.007;
- Thu, 21 Nov 2019 16:21:30 +0800
-From:   "Wang, Peng 1. (NSB - CN/Hangzhou)" <peng.1.wang@nokia-sbell.com>
-To:     Guenter Roeck <groeck7@gmail.com>
-CC:     "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] watchdog: make DesignWare watchdog allow users to set bigger
- timeout value
-Thread-Topic: [PATCH] watchdog: make DesignWare watchdog allow users to set
- bigger timeout value
-Thread-Index: AdWgRKybru2HRl6jT8acRiZ9mycWxQ==
-Date:   Thu, 21 Nov 2019 08:21:30 +0000
-Message-ID: <4468f40ed5f5413ab27825bbcc611d65@nokia-sbell.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [135.251.51.115]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 21 Nov 2019 03:28:01 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd64a8d0000>; Thu, 21 Nov 2019 00:27:58 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Nov 2019 00:27:56 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 21 Nov 2019 00:27:56 -0800
+Received: from [10.2.169.101] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
+ 2019 08:27:56 +0000
+Subject: Re: [PATCH v7 01/24] mm/gup: pass flags arg to __gup_device_*
+ functions
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20191121071354.456618-1-jhubbard@nvidia.com>
+ <20191121071354.456618-2-jhubbard@nvidia.com>
+ <20191121080644.GA30991@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <72299562-df12-cbe6-b9c8-05d08625d923@nvidia.com>
+Date:   Thu, 21 Nov 2019 00:25:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42Jp/22cocvteS3W4Mwsdot9ndeZLC7vmsNm
-        cWPdPnaLxy//MTuweOycdZfdY+WaNawenzfJBTBHcdmkpOZklqUW6dslcGXcXv6JueACV8XW
-        12+ZGxjfcHQxcnJICJhIbP28k62LkYtDSOAQk8StnStYIZy/jBLdTzuZIZxNjBJLb3cwg7Sw
-        CbhLNG1axwZiiwioSuzbsRKsiFlgN6PE3MY3LCAJYYFYia97vzBDFCVJ3Hj4nwXC1pP4vXwy
-        I4jNAtR84fJesBpeATuJGW0vWEFsRgFZiWmP7jOB2MwC4hK3nsxngrhVQGLJnvPMELaoxMvH
-        /4DqOYBsJYm+DVDlOhILdn9ig7C1JZYtfA01XlDi5MwnLBMYRWYhmToLScssJC2zkLQsYGRZ
-        xSidnFeckVWcm5lnYKqXl5+dmahbnJSak6OXnJ+7iREYO2skJs3dwdjZGX+IUYCDUYmHN0Pj
-        aqwQa2JZcWXuIUYJDmYlEd4916/ECvGmJFZWpRblxxeV5qQWH2KU5mBREudtmbwwVkggPbEk
-        NTs1tSC1CCbLxMEp1cDoF5x13jrv8ENrPbWM+KmflnDeyzLrd60U3WV98r/nX+tTs9iXJF76
-        YzEl6Nv7s5Mma94LePRuzjqnFMnrTSt/5CvtPLtzvsyLtFP3G1VzM4OCTu8+dWjmM1cjTt9G
-        hXevVB721eeZKJ4uL1y17rVnqUTFXCUW+Qqm0KPst6JCXbLllYp1MzqUWIozEg21mIuKEwG1
-        HR5YmQIAAA==
+In-Reply-To: <20191121080644.GA30991@infradead.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574324878; bh=fBEs8zvhTdiK+GxG6jBbxLF9y/0PajclAlx5MVf68dY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=qd3vyt4F6HTwKKFCyZDRI1qul9fTK80VD0HOAtpUJsLmp+uOnJP/0/mfORMpRDIWh
+         msa/9tW2R6G3NEV2vxUdIVUrSBPbm+dg7h5ks0ydjI1ZXAilO+KUn3onxdYvYd5yLN
+         th/eVTL36YxBubARAfxgWsMF5jHbNrsWfvpc1zmtToQtEJyTHI9jhj2Fav/Qg69ylO
+         Vy7wGuKCXhdmLuU5+JPthKW1n/P1IS7DJEMqLH2TUUbpLDARMfwqNpDJNlkgiwpB9C
+         7ZnSeTY/le1R03Z0KIA9sli+2LeQchnYq98ah5HhIRhjwHluG7JOQqaaQVMgGA+5Gr
+         gsPwOYerki+jg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From d21d084122d08816454a1e338f0946a9da1f81e3 Mon Sep 17 00:00:00 2001
-From: Peng Wang <peng.1.wang@nokia-sbell.com>
-Date: Wed, 20 Nov 2019 15:12:59 +0800
-Subject: [PATCH] watchdog: make DesignWare watchdog allow users to set bigger
- timeout value
+On 11/21/19 12:06 AM, Christoph Hellwig wrote:
+> On Wed, Nov 20, 2019 at 11:13:31PM -0800, John Hubbard wrote:
+>> A subsequent patch requires access to gup flags, so
+>> pass the flags argument through to the __gup_device_*
+>> functions.
+> 
+> Looks fine, but why not fold this into the patch using the flags.
 
-watchdog_dev.c provides means to allow users to set bigger timeout value
-than HW can support, make DesignWare watchdog align with this.
+Yes, I'll do that.
 
-Signed-off-by: Peng Wang <peng.1.wang@nokia-sbell.com>
----
- drivers/watchdog/dw_wdt.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> Also you can use up your full 73 chars per line in the commit log.
+> 
 
-diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
-index fef7c61..f1a431c 100644
---- a/drivers/watchdog/dw_wdt.c
-+++ b/drivers/watchdog/dw_wdt.c
-@@ -114,7 +114,15 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
- 	writel(top_val | top_val << WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT,
- 	       dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
- 
--	wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
-+	/*
-+	 * In case users set bigger timeout value than HW can support,
-+	 * kernel(watchdog_dev.c) helps to feed watchdog before 
-+	 * wdd->timeout
-+	 */
-+	if ( top_s * 1000 <= wdd->max_hw_heartbeat_ms )
-+		wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
-+	else
-+		wdd->timeout = top_s;
- 
- 	return 0;
- }
+OK.
+
+thanks,
 -- 
-1.8.3.1
-
+John Hubbard
+NVIDIA
