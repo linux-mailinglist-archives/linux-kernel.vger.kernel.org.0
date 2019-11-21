@@ -2,97 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E159C10553D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:20:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E99610555A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfKUPUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 10:20:19 -0500
-Received: from mga04.intel.com ([192.55.52.120]:35756 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfKUPUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:20:18 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 07:20:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
-   d="scan'208";a="201151528"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga008.jf.intel.com with ESMTP; 21 Nov 2019 07:20:15 -0800
-Date:   Thu, 21 Nov 2019 23:22:12 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmattson@google.com,
-        sean.j.christopherson@intel.com, yu.c.zhang@linux.intel.com,
-        alazar@bitdefender.com, edwin.zhai@intel.com
-Subject: Re: [PATCH v7 6/9] vmx: spp: Set up SPP paging table at
- vmentry/vmexit
-Message-ID: <20191121152212.GG17169@local-michael-cet-test>
-References: <20191119084949.15471-1-weijiang.yang@intel.com>
- <20191119084949.15471-7-weijiang.yang@intel.com>
- <a7ce232b-0a54-0039-7009-8e92e8078791@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7ce232b-0a54-0039-7009-8e92e8078791@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1727399AbfKUPWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 10:22:45 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35579 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfKUPWo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 10:22:44 -0500
+Received: by mail-wr1-f65.google.com with SMTP id s5so4925970wrw.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 07:22:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tnDnOIJOp4bhxxEhpnCrk56KiIolEGhM1lXxvWF1Yfs=;
+        b=Njf17dlIDKfV2byH3e0GQHvmzzKHj+qlEpG3eIgTifgr6S4ZsFLfFupXiUXVPh1zyS
+         E0o9ivFpxJjuM5Hk1Jx420Yjm28LamJIhINnAEzMshQ4SzIJ1ZUQrBejnKTaT5j/SZTu
+         rNmEXj/MQdOmXJPzAtqJMks8xKx4pt7KKLRni5M/GmKgMK4SinL6RqSV8al9WrYWOY0Q
+         lDIauTS3GuPNN2PFbjKK8JKf04sFi//oS5iiV/Io1QN8HYsvvWS7QZT6EoxujNfYj2GN
+         eO9XBYTUcN5i/DtYutkZTg0yWTLXMM1u9MbvXQWRzk2Rvq8cRY0/pa2TYX3ovgijk+Ra
+         yyIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tnDnOIJOp4bhxxEhpnCrk56KiIolEGhM1lXxvWF1Yfs=;
+        b=tQ4Os35xjHsdC9LrFDx3TnwsE8JXEaZ3Yyr4XlKaPejYvtGlFzgbl86P42sW+1RzwM
+         bOhwYo0DIRd13X1y0912G/1e4+O4O+5pvtN20N2RzkJtGybtEu6kYIrhac5f1NPs6dh4
+         0H7my8ZEss1NnYoXn7VbxeKOEQ2y8xmnx04aijdU4wahHhR5SjCurcp2q7hrV5gXDsu0
+         V/6XF5q/REPGhbMAVcYczNay0SbbhNzjXgP1OQmcLpktuCWXFlt82NgeWoSHwIgG6L5k
+         SiBNIVUz+XVWa57JHL9du5Hni4sgMwjxEfOuk7DREDm9hKm7sp6cpzMbMV8W/oP7cdFp
+         +yAQ==
+X-Gm-Message-State: APjAAAWQX0GFE9Oo6avmSbi/uVqHZX6g94YjiMOTgEACqqVSeuONCM0R
+        SJWNt73mqrC3GY3sLbs5FJk=
+X-Google-Smtp-Source: APXvYqzTo55aX2fPFJ06M9s3fHezWv/B3I/lL8U9evGwdhv/3kquhVQVgxpkMdCJv7glOhRRg0syag==
+X-Received: by 2002:adf:edd0:: with SMTP id v16mr9766454wro.310.1574349762062;
+        Thu, 21 Nov 2019 07:22:42 -0800 (PST)
+Received: from debian.office.codethink.co.uk ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id t12sm3499467wrx.93.2019.11.21.07.22.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2019 07:22:40 -0800 (PST)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH v2 1/2] tty: add retry capability to tty_init_dev()
+Date:   Thu, 21 Nov 2019 15:22:38 +0000
+Message-Id: <20191121152239.28405-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:18:48AM +0100, Paolo Bonzini wrote:
-> On 19/11/19 09:49, Yang Weijiang wrote:
-> > +			if (spte & PT_SPP_MASK) {
-> > +				fault_handled = true;
-> > +				vcpu->run->exit_reason = KVM_EXIT_SPP;
-> > +				vcpu->run->spp.addr = gva;
-> > +				kvm_skip_emulated_instruction(vcpu);
-> 
-> Do you really want to skip the current instruction?  Who will do the write?
->
-If the destination memory is SPP protected, the target memory is
-expected unchanged on a "write op" in guest, so would like to skip current 
-instruction.
+Add a new function tty_init_dev_retry() which will have the capability
+to return if 'tty->port' is not yet set and if we want to retry. There
+is no change in behaviour if we do not want to retry and call
+tty_init_dev().
 
-> > +		pr_info("SPP - SPPT entry missing! gfn = 0x%llx\n", gfn);
-> 
-> Please replace pr_info with a tracepoint.
-> 
-OK.
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
 
-> > +		slot = gfn_to_memslot(vcpu->kvm, gfn);
-> > +		if (!slot)
-> > +			return -EFAULT;
-> 
-> You want either a goto to the misconfig case, so that there is a warn
->
-OK.
-> > +		spp_info.base_gfn = gfn;
-> > +		spp_info.npages = 1;
-> > +
-> > +		spin_lock(&vcpu->kvm->mmu_lock);
-> > +		ret = kvm_spp_get_permission(vcpu->kvm, &spp_info);
-> > +		if (ret == 1) {
-> 
-> Can you clarify when ret will not be 1?  In this case you already have a
-> slot, so it seems to me that you do not need to go through
-> kvm_spp_get_permission and you can just test "if
-> (kvm->arch.spp_active)".  But then, spp_active should be 1 if you get
-> here, I think?
-> 
-Hmm, getting permission bits from gfn directly should work here. 
-Thank you!
+v1 was a combined patch of this and the next 2/2 patch. Made them
+separately now.
 
-> > +	pr_alert("SPP - SPPT Misconfiguration!\n");
-> > +	return 0;
-> 
-> 
-> pr_alert not needed since you've just warned.
->
-OK, will remove it.
+ drivers/tty/tty_io.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-> Paolo
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index e3076ea01222..95d7abeca254 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1291,9 +1291,10 @@ static int tty_reopen(struct tty_struct *tty)
+ }
+ 
+ /**
+- *	tty_init_dev		-	initialise a tty device
++ *	tty_init_dev_retry	-	initialise a tty device
+  *	@driver: tty driver we are opening a device on
+  *	@idx: device index
++ *	@retry: retry count if driver has not set tty->port yet
+  *	@ret_tty: returned tty structure
+  *
+  *	Prepare a tty device. This may not be a "new" clean device but
+@@ -1314,7 +1315,8 @@ static int tty_reopen(struct tty_struct *tty)
+  * relaxed for the (most common) case of reopening a tty.
+  */
+ 
+-struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
++static struct tty_struct *tty_init_dev_retry(struct tty_driver *driver,
++					     int idx, int retry)
+ {
+ 	struct tty_struct *tty;
+ 	int retval;
+@@ -1343,6 +1345,10 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ 
+ 	if (!tty->port)
+ 		tty->port = driver->ports[idx];
++	if (!tty->port && retry) {
++		retval = -EAGAIN;
++		goto err_release_driver;
++	}
+ 
+ 	WARN_RATELIMIT(!tty->port,
+ 			"%s: %s driver does not set tty->port. This will crash the kernel later. Fix the driver!\n",
+@@ -1365,6 +1371,8 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ 	/* Return the tty locked so that it cannot vanish under the caller */
+ 	return tty;
+ 
++err_release_driver:
++	tty_driver_remove_tty(driver, tty);
+ err_free_tty:
+ 	tty_unlock(tty);
+ 	free_tty_struct(tty);
+@@ -1384,6 +1392,19 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ }
+ 
+ /**
++ *	tty_init_dev		-	initialise a tty device
++ *	@driver: tty driver we are opening a device on
++ *	@idx: device index
++ *	@ret_tty: returned tty structure
++ *
++ *	Calls tty_init_dev_retry() with retry count of 0.
++ */
++struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
++{
++	return tty_init_dev_retry(driver, idx, 0);
++}
++
++/**
+  * tty_save_termios() - save tty termios data in driver table
+  * @tty: tty whose termios data to save
+  *
+-- 
+2.11.0
+
