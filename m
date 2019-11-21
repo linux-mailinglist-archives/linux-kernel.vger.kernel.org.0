@@ -2,94 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A74C107542
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:55:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF351075AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKVPzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 10:55:50 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49089 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726613AbfKVPzu (ORCPT
+        id S1727487AbfKVQVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 11:21:25 -0500
+Received: from nl101-2.vfemail.net ([149.210.219.31]:60817 "EHLO
+        freequeue.vfemail.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726638AbfKVQVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 10:55:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574438149;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=po6yZvLzvGuf/JKHed4MQOE6rYLICxK0ouM8np6WEEM=;
-        b=ibzca+oxN2uGOvkrmhwnjQlaF8LACBdfoOZvLoTYh881/s8gQPVxBXoTuHelaNQ3XuZX2B
-        OTggXJza10o9LlZBUfquwDvF46WVHuYvwQUYZ7Y6n44+t6qbf3MHWYa805urZXmqB+cjwE
-        Eu/14iilfIXVvrLWPg0X3Unjb5buUy0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-206-nj-aXOQeMfmQGGl3xMgaiQ-1; Fri, 22 Nov 2019 10:55:45 -0500
-Received: by mail-wm1-f70.google.com with SMTP id i23so3250333wmb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 07:55:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=po6yZvLzvGuf/JKHed4MQOE6rYLICxK0ouM8np6WEEM=;
-        b=IDDtj7fY4vA66aGfqhqYOX7HAnCvZB7yFA6lKEky63pPBdhlUD7dM/ZxxFzg9yCAbT
-         YL5AEpDwXidZWRQu4jn5Ho3I1JjQQhtzR6yzWm5Ws4L99P2uBVVbv1xotkZdDLHazd7F
-         zwRVxx++MaGzGq1/HkXqyB7VBzMWnfHv469dU/xCuE9pxLKumfrubRp6Xv+ISfphq4RO
-         fVUUElofKpCfomDheqd1rFd1qwWgVCV7qbtvpsDkgTArO/B6/zV1bjZtaqWewCUZ+Fff
-         enp7hSyOg7qsMp4MUlSM7vGnXxcxK6rlnHVVA96BLEJiGP9akEXO79gGNq4mnz64zK6S
-         0BAg==
-X-Gm-Message-State: APjAAAUawquTNfeDV0wEkFWs4FrF1clc+QBnXHpcdhZJOJ21ccKggrPp
-        VgymoxBCjZdyw+23enrskG0mmZ93JpGwt45+4uepmPys+FRFdmmt4e6Glm2kTpRFG+yZ0Yxq7Et
-        at0n6KcuvGFk2MCDuyMoYbVB7
-X-Received: by 2002:adf:f303:: with SMTP id i3mr17763765wro.157.1574438144393;
-        Fri, 22 Nov 2019 07:55:44 -0800 (PST)
-X-Google-Smtp-Source: APXvYqx3Ym/QJzF0VsZ+bxyGSaEG8bsBdY02wNjVW2H429sAlCSh7TBbG2/cUOsZz1Hvz6mpRG647w==
-X-Received: by 2002:adf:f303:: with SMTP id i3mr17763734wro.157.1574438144138;
-        Fri, 22 Nov 2019 07:55:44 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:804c:6f01:8c0d:ce14? ([2001:b07:6468:f312:804c:6f01:8c0d:ce14])
-        by smtp.gmail.com with ESMTPSA id i25sm3682356wmd.25.2019.11.22.07.55.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2019 07:55:43 -0800 (PST)
-Subject: Re: [PATCH v7 2/9] vmx: spp: Add control flags for Sub-Page
- Protection(SPP)
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmattson@google.com, sean.j.christopherson@intel.com,
-        yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com
-References: <20191119084949.15471-1-weijiang.yang@intel.com>
- <20191119084949.15471-3-weijiang.yang@intel.com>
- <d6e71e7b-b708-211c-24b7-8ffe03a52842@redhat.com>
- <20191121153442.GH17169@local-michael-cet-test>
- <58b4b445-bd47-d357-9fdd-118043624215@redhat.com>
- <20191122152331.GA9822@local-michael-cet-test>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <8e43dab5-e07e-03a3-fa0d-dd9457fb17b9@redhat.com>
-Date:   Fri, 22 Nov 2019 16:55:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 22 Nov 2019 11:21:25 -0500
+Received: (qmail 26028 invoked from network); 22 Nov 2019 16:19:55 -0000
+Received: from nl101-2.vfemail.net (bmE=@149.210.219.31)
+  by freequeue.vfemail.net with (DHE-RSA-AES256-SHA encrypted) SMTP; 22 Nov 2019 16:19:55 -0000
+Received: (qmail 48931 invoked from network); 21 Nov 2019 01:50:23 -0000
+Received: by simscan 1.4.0 ppid: 48800, pid: 48884, t: 0.3604s
+         scanners:none
+Received: from unknown (HELO Phenom-II-x6.niklas.com) (SGdudGt3aXNAdmZlbWFpbC5uZXQ=@192.168.1.192)
+  by nl101.vfemail.net with ESMTPA; 21 Nov 2019 01:50:22 -0000
+X-Assp-Version: 2.6.3(19169) on ASSP.nospam
+X-Assp-ID: ASSP.nospam m1-01105-10555
+X-Assp-Session: 7F93C5ACC9E8 (mail 1)
+X-Assp-Envelope-From: Hgntkwis@vfemail.net
+X-Assp-Intended-For: pozega.tomislav@gmail.com
+X-Assp-Intended-For: linux-kernel@vger.kernel.org
+X-Assp-Client-TLS: yes
+Received: from 71-208-83-203.ftmy.qwest.net ([71.208.83.203]
+         helo=Phenom-II-x6.niklas.com) by ASSP.nospam with SMTPSA(TLSv1_2
+         ECDHE-RSA-AES256-GCM-SHA384) (2.6.3); 21 Nov 2019 01:51:42 +0000
+Date:   Wed, 20 Nov 2019 20:51:19 -0500
+From:   David Niklas <Hgntkwis@vfemail.net>
+To:     Tom Psyborg <pozega.tomislav@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] why do sensors break CPU scaling
+Message-ID: <20191120205119.41cd5989@Phenom-II-x6.niklas.com>
+In-Reply-To: <CAKR_QVLJZPDfjbQ4CBDv62ok0qG4jq_M_Baq6eaot6GzrKMMwA@mail.gmail.com>
+References: <CAKR_QVLJZPDfjbQ4CBDv62ok0qG4jq_M_Baq6eaot6GzrKMMwA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20191122152331.GA9822@local-michael-cet-test>
-Content-Language: en-US
-X-MC-Unique: nj-aXOQeMfmQGGl3xMgaiQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/11/19 16:23, Yang Weijiang wrote:
->> QEMU for example ships with a program called vmxcap (though it requires
->> root).  We also could write a program to analyze the KVM capabilities
->> and print them, and put it in tools/kvm.
->>
-> OK, will update vmxcap to add SPP feature bit, thanks!
+On Wed, 20 Nov 2019 21:42:12 +0100
+Tom Psyborg <pozega.tomislav@gmail.com> wrote:
+> Hi
+> 
+> Recently I've needed to set lowest CPU scaling profile, running ubuntu
+> 16.04.06 I used standard approach - echoing powersave to
+> /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor.
+> This did not work as the
+> /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq kept returning
+> max scaling freq.
+> 
+> During testing of ubuntu 19.10 I've found that the above approach
+> actually does work, but as long as there are no xsensors (or just
+> sensors from cli) being run.
+> cpuinfo_cur_freq in this case was returning variable values +- 1% of
+> around 1.4GHz.
+> As soon as I issue sensors command cpuinfo_cur_freq jumps to 3.5GHz
+> for a fraction of second and returns back to 1.4GHz afterwards. If
+> running xsensors it keeps bouncing between 1.4 and 3.5GHz all the
+> time.
+> 
+> Rebooted back to 16.04.6 and was able to set lowest CPU scaling freq
+> as well, but issuing sensors command here once just breaks CPU scaling
+> that now remains at about 3.5GHz.
+> It can be set to lowest scaling freq again without rebooting but it
+> needs to change scaling_governor for all cores to something else and
+> then back to powersave.
+> 
+> Why is this happening, shouldn't sensors command just read temp/fan
+> values without writing to any of the CPU control registers?
 
-It's already there. :)
+I don't know if the maintainers will notice your email, but I did. I
+don't guarantee that they'll notice or help you, but this should assist
+you in writing a proper question.
+You need to include the output of uname -a on both ubuntu boxes. The
+output of:
+dpkg -l xsensors
+dpkg -l lm-sensors
 
-Paolo
+The information on which processor you own and the motherboard and
+it's BIOS version just in case.
 
+This is just my understanding and it might be wrong, but the CPU is
+probably accessed to do the request to the fan values and so it ramps up
+expecting to have to deal with a more intense workload (which is exactly
+what Ryzen and several newer Intel processors are supposed to do), and so
+you're seeing expected behavior.
+I've no idea how you'd change this.
+Alternatively, and this is just a theory, you could have some program on
+the system changing the behavior of the CPU just after you change it to
+what you want it to be. As in, inotify is involved.
+
+You're welcome,
+David
+
+-------------------------------------------------
+This free account was provided by VFEmail.net - report spam to abuse@vfemail.net
+ 
+ONLY AT VFEmail! - Use our Metadata Mitigator to keep your email out of the NSA's hands!
+$24.95 ONETIME Lifetime accounts with Privacy Features!  
+15GB disk! No bandwidth quotas!
+Commercial and Bulk Mail Options!  
