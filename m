@@ -2,51 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5118510529A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:04:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB381052AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfKUNEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:04:55 -0500
-Received: from mga02.intel.com ([134.134.136.20]:45188 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfKUNEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:04:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 05:04:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="238169809"
-Received: from unknown (HELO [10.237.72.70]) ([10.237.72.70])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Nov 2019 05:04:53 -0800
-Subject: Re: [PATCH 00/15] perf tools: Add support for AUX area sampling
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-References: <20191115124225.5247-1-adrian.hunter@intel.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <c661b392-ae22-3303-daa3-46ab15bf5b74@intel.com>
-Date:   Thu, 21 Nov 2019 15:03:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726994AbfKUNHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:07:22 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:34844 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfKUNHV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 08:07:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574341639;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=lkH2kJJroo23f8ysnr6W6slIIL5c54hIxdLApd4rKcc=;
+        b=LF9XC0Q1hlupOno6vPeKRb4fO7/GvKCi+JwuWcqX6ngoKX+9tjHUKtHP+LKUSO2hGH
+        5m5r+RONviIfQBO8X9MXEO/IB2BU2tNkhziTmUMpcyMhfTU73xXuXdqpTUvuM41AKT7I
+        MfyPq8dObJTawEn0VqJZL+hZVEYD+DPd3fOhdKm5U/UzXtvBSs5GoCvcdEuSRwrsCn+f
+        gtQzO4MDUDs2e0uHmAGc4YhXhYP9qplJntR0oWWdvnoUr46d2a+aJSPMxRKiZTrib3/v
+        3e8aePAjq+8qno8Zwy5kV7GcZLP7NBZUHANoNEVm79HPdM1QwnCdu9OkBEPQYOfsKcQg
+        TFWQ==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXPSIvSWlTs="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
+        with ESMTPSA id N09a57vALD63rSB
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 21 Nov 2019 14:06:03 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>
+Subject: Re: [PATCH v25 10/12] LRNG - add TRNG support
+Date:   Thu, 21 Nov 2019 14:06:03 +0100
+Message-ID: <5032854.qLNvD48x4y@positron.chronox.de>
+In-Reply-To: <20191120203232.GB3109949@kroah.com>
+References: <5390778.VeFRgus4bQ@positron.chronox.de> <1695782.oZ5Vf4nH9s@positron.chronox.de> <20191120203232.GB3109949@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20191115124225.5247-1-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/19 2:42 PM, Adrian Hunter wrote:
-> Hi
-> 
-> The kernel changes for AUX area sampling are now in tip, so here are the
-> tools' patches.
+Am Mittwoch, 20. November 2019, 21:32:32 CET schrieb Greg Kroah-Hartman:
 
-Here is a branch containing the patches:
+Hi Greg,
 
-	git://git.infradead.org/users/ahunter/linux-perf.git pt-sampling
+> No, do not abuse sysfs or procfs for something like this.  Use a real
+> syscall please if you really need it.
+
+You are right.
+
+Ok, let us get back to the drawing board. What are our requirements? We need 
+to have an interface for the TRNG that should ensure other users of entropy 
+are not starved by unprivileged users.
+
+What about the following: we use the getrandom(2) system call and add 
+GRND_TRUERANDOM as already indicated. However, there is one more caveat we 
+would add:
+
+- if the caller of GRND_TRUERANDOM is !CAP_SYS_ADMIN the entropy pool can only 
+be depleted to the point where at least one or two full seeding operations 
+worth of entropy is left.
+
+- if the caller of GRND_TRUERANDOM is CAP_SYS_ADMIN, the entropy can be 
+depleted completely
+
+At runtime, the LRNG would then behave like the following:
+
+- calling getrandom(..., 0), /dev/random or /dev/urandom would deplete the 
+entropy pool during reseeding operations but leaving an emergency level of 512 
+bits of entropy in the pool. If equal or less are in the pool, reseeding would 
+be skipped.
+
+- calling getrandom(..., GRND_TRUERANDOM) with CAP_SYS_ADMIN allows the 
+entropy pool to be fully depleted.
+
+- calling getrandom(..., GRND_TRUERANDOM) without CAP_SYS_ADMIN allows the 
+entropy pool to be depleted down to 1024 bits of entropy. If the pool has 
+equal or less, the caller is blocked. This allows the DRNG feeding /dev/
+random, /dev/urandom or getrandom(..., 0) with 512 bits of entropy (i.e. two 
+reseed operations are possible). Only if the entropy pool has more than 1024 
+bits of entropy, the getrandom call would unblock and provide data.
+
+With that approach, I think we can honor the request from Greg to not add any 
+new interface and yet honor the note from Alexander to not allow unprivileged 
+user space to deplete the entropy pool to the extent that other users of 
+entropy are too much affected.
+
+If GRND_TRUERANDOM is not implemented, EOPNOTSUPP is returned.
+
+Thank you.
+
+Ciao
+Stephan
+
+
