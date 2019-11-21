@@ -2,132 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 102EF105A23
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:01:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D298E105A2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:07:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfKUTBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 14:01:43 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36733 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbfKUTBn (ORCPT
+        id S1726658AbfKUTHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 14:07:36 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:45984 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbfKUTHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 14:01:43 -0500
-Received: by mail-pg1-f196.google.com with SMTP id k13so2086029pgh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 11:01:42 -0800 (PST)
+        Thu, 21 Nov 2019 14:07:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1574363256; x=1605899256;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=dR4swahfibxUo9etnfokYP1A7shRi89ll8+RdnKt0Vg=;
+  b=iwjW4IPoJtHyylM+bezonytKw/Liu9G/MXDN6N4O+2tS255lo84DlSvH
+   0XTQjIK6hyyiizIcyMtuoGUq7Q3Wxe3wv9bDi4eUrS6u/G2uNO3PDCX0L
+   BrbhJOVE/EXs6Tw6lIwWjaCt7JSBDSq8biJJhMXhuY+XnvLHXbOE1r2P3
+   j7MlqZqxDP8/OMd8ffStc/OXHoCFV4ZrEIYHvR0BVI14bgXfn3Hf5vPPi
+   7+jaKSj5doIkZmEgusBcyJAKG0Mj6cVwMlr4FQzQ8F5j4i9kUlgXsXnLy
+   JQfoGGHHTubps0VGYt2X6gS3z6VOmeDQa9ZhK8XHmB0bvSkfwtqGjh8bQ
+   w==;
+IronPort-SDR: iPlrynLqIJoNNbKRnQO5OoRogt2IVeIsH62xjhTLEgQ+haI2QneUm5P4+OZ+NV4J3qjzrl7G4O
+ 91X1h9JD8hjNXskrm57OLPxwuJ295nEnqNmBeRTuOVx193kkk5sH6rg2KypMRHZirjj2V8AfA7
+ TkVePc48lxe17IxijWczBryaMU0N7RGrPE/0GMZirpB4yc+d4GHDg61wL7tPrKvyIoPufIdlUW
+ 7Yv5osIxR4nxnCfK9ENlvq3ulzwXyA6IZ0F7GmS/4YPHPWui4PMMYm/CUW9XfxOSxshKFQlZfS
+ 0YQ=
+X-IronPort-AV: E=Sophos;i="5.69,226,1571673600"; 
+   d="scan'208";a="123668466"
+Received: from mail-co1nam05lp2058.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.58])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Nov 2019 03:07:21 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bGJMF3Xx4UmtppEhUFRDY5rK9GRL0HWNfGf/o9H9LgzjgRiMcdZPkUZq/mGYeCfG9JtsCkLgjXQQsZvjw8yZAPAsqju6DF+WC8HkipjGU4swYAtOObDsiNzpB4aYBZHMD05wtV65LmZE0ajJNDg+xIATXv+6hJ6g3y9EnWPI+ny4RO3/vt+LskwVbPlF3ERSpFIL98lGze9jKUgSPH+Ohhl4RopvUVQtqJfKi8d4GZrz4FoDBLYAn/mC5bd2qj8flfAkKr5ReqbHA7MnVEx0ZLBxC2E9RDlPQaZl/HBRIRs2qvnUAjw9c98cIBs7RiHXKbtm3bX6JCOoOPf65oTpxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dR4swahfibxUo9etnfokYP1A7shRi89ll8+RdnKt0Vg=;
+ b=XtDaQ6PNxwSFmeTfJdcWT5DeBQezO3oz1ElNFbhiFRrIm7Vjax9lMEqGsACjR9/LVj2P0Rankr/kmJ518P2RIFrIVKkbK9myz2DC0OkmQVw8uJjV88luIOD1Lsa8PDggQ7S2CB6utLYLaY3ZWQTn3LzXeX24Vdvh8ZYEb0vehH3qYCEXokgZtSgnbtLTQ0P8nWGMLACK+4GkV0NZ4D4qQp/OHHrn8Xtcy82Pk+5GuCRKPneHhZNZFl5CX3Fy4D6sHszR2rGcNK5wt1JSdqWlCvLoqESoZyVlqFpVKcxAnQnbe7XAwkej/nXICVtZqWFKfAwFLRYWBuVVIM912dxfPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=HsAyezn4NTj/SPx6Qh9c2H7K5cVNh7JQA3rXW5kOjAA=;
-        b=Y0KBxnvkWdleqS0LtZsX/EmN5e7j9KkMvoFQXqsMzJa/0LhJKMvH6++eHDuadnPeWc
-         MZM5qAooDhvPIPyZcNwnLw1e4cANCbzxypeT/kPvugL2/cf9bMcMOhShauyz4kjDXDGj
-         7dTkp5BX7xKmErkLiQUcteL+MI2fuplzoEOeo+Q8Bs6l9PX1sCpP1PQ/7lbCz6ckPvvs
-         bXEK4oX5Upztj9S1F46C3obetEA1fNS7TZH8Kc82Ojj623vOgqQ4HOevtZIhZePMFeFY
-         V7eQm8xq5vtTYrYYW1he4sQ6E7AKVl3Cy630l3IJaKG0zcTg3WbACBfeVRGBbg2MMjC5
-         qUkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=HsAyezn4NTj/SPx6Qh9c2H7K5cVNh7JQA3rXW5kOjAA=;
-        b=d2+fHlq8p8qsHmevFC2LGSh5idMndV1Bvk83GuMJb1A1mVJedUvph3zUeIAx0qn1md
-         kqf8RoTySO/m/3w7pRUpgkNgRZyXkplJBBXErFeJr993gTry5mbGG3HjaK2jRgA7oyRi
-         9Q0bD9BrJO8sXsWQP6TxuR8wzjJ0x0r0zJ6zYd93bigSWWdyFmX1Qk1R7TlWVejobccH
-         g8x0e17oLHa4V9wnQpKxGtAD6Pi7ilt47vEMbyNQ/y43nhi7+368EW5S0I6Gq/t4sypa
-         bqJIeHEUt6HI7NwCfGm7Tye0y5XH4KbaCoR8oGKYe2hvzP2rTId34WxSwcu9dsW5gncb
-         4QLQ==
-X-Gm-Message-State: APjAAAV80gTNT0imyIcaI1ApSXtOp8lBqUBQ91khhRelqulTTmK0eXdD
-        4t1oAQcZSK5O16TJUM9Nn6NLPw==
-X-Google-Smtp-Source: APXvYqzlxmolRqPIZZkpOYTVMkE+fkIpqak56g/krWqKWT754wqM5ae95dJAgQBaL3iPl/VOdw0ZlA==
-X-Received: by 2002:a63:ba1c:: with SMTP id k28mr11026315pgf.244.1574362901886;
-        Thu, 21 Nov 2019 11:01:41 -0800 (PST)
-Received: from ?IPv6:2600:1010:b062:827f:f4a7:a1e:b790:5671? ([2600:1010:b062:827f:f4a7:a1e:b790:5671])
-        by smtp.gmail.com with ESMTPSA id 1sm3927505pgp.88.2019.11.21.11.01.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2019 11:01:41 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by kernel parameter
-Date:   Thu, 21 Nov 2019 11:01:39 -0800
-Message-Id: <4BB1CB74-887B-4F40-B3B2-F0147B264C34@amacapital.net>
-References: <20191121185303.GB199273@romley-ivt3.sc.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-In-Reply-To: <20191121185303.GB199273@romley-ivt3.sc.intel.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-X-Mailer: iPhone Mail (17A878)
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dR4swahfibxUo9etnfokYP1A7shRi89ll8+RdnKt0Vg=;
+ b=iqSthETm38IG2ZrWtcSW0Kdu2Th67n0yeQa5UqWO7jwEsh7uY02dWs91nIAMIpqAsWkilSk0AaYZ0rJeNLwSbpuJJs5G5epI84E1ZDYtVQm0qY/W/+jKf/FPEb8sJw37BvVQt1GlG5bzoPggqOiJ+VhI1e9laXyebpl1nDP1UcE=
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
+ BYAPR04MB4023.namprd04.prod.outlook.com (52.135.215.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2474.16; Thu, 21 Nov 2019 19:07:20 +0000
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::1d22:29b6:df03:86f7]) by BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::1d22:29b6:df03:86f7%3]) with mapi id 15.20.2451.031; Thu, 21 Nov 2019
+ 19:07:20 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "hch@lst.de" <hch@lst.de>, "han_mao@c-sky.com" <han_mao@c-sky.com>,
+        "gary@garyguo.net" <gary@garyguo.net>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "behrensj@mit.edu" <behrensj@mit.edu>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH v3 0/4] Add support for SBI v0.2
+Thread-Topic: [PATCH v3 0/4] Add support for SBI v0.2
+Thread-Index: AQHVnmOBiprL/mb7AEaxYBu8wWT9EqeTsfsAgAJPCIA=
+Date:   Thu, 21 Nov 2019 19:07:20 +0000
+Message-ID: <ede95b25bb1e27ccfd1380896b5b8ec055184f2c.camel@wdc.com>
+References: <20191118224539.2171-1-atish.patra@wdc.com>
+         <alpine.DEB.2.21.9999.1911192344560.12489@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1911192344560.12489@viisi.sifive.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 58576670-8bac-4175-41b2-08d76eb608d5
+x-ms-traffictypediagnostic: BYAPR04MB4023:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <BYAPR04MB4023D2E375A8F6AB5D3281BEFA4E0@BYAPR04MB4023.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0228DDDDD7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(346002)(396003)(39860400002)(366004)(376002)(199004)(189003)(55674003)(71190400001)(2906002)(6506007)(102836004)(14454004)(229853002)(6436002)(316002)(6486002)(25786009)(6246003)(8676002)(6306002)(6512007)(256004)(8936002)(66066001)(6916009)(81166006)(478600001)(3846002)(81156014)(6116002)(54906003)(36756003)(305945005)(118296001)(5660300002)(5640700003)(966005)(7736002)(2351001)(7416002)(99286004)(26005)(2501003)(76176011)(66446008)(64756008)(86362001)(66556008)(76116006)(66476007)(66946007)(11346002)(446003)(71200400001)(4001150100001)(186003)(4326008)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4023;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PyUkOUMp1m7T7PxSK6jyPdrwFBVURTsNqR8hWoc84PIKpUYGRorscgskkkuCqJ3xA5/StI87BHjiRr5yy99tbjLWnKY7SmIl5M5yh3WR6VOHdJ5HsmK0PzobiSZeFxFTmtREMT+xly6eh8gQ+NpGNJhitxo8Q42jh/lv0/5auq9d1aGzDJ/x0AUwmDdZ5znh9d1tneRDFxP//CaAluMfen8PCWI4JCA9T/wPvUnArZgC2YFUC9VCV3i3rKBM9pfbF9HpylWm/duLGfKu8iveU9l9GcXchWqeiEZOiG63HbK26aew7bP/KSCA3s4dSAQPUG05+18UoC+45Ei0GzYbPJWke8v2XOy2fnAtMt6JtSB/LAsQZtZw50ADSfx2rFrwxLqg2OyMCbFm7wFI2SJjivsxDOzzvyiL0UpVbn/ArMNoDfyWcGR5Fu3EpBmzR0lsZjOhnWzmK89sM3fFbXPVeDon6v+6m+n4au+GIJdaUdE=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4742D8E3FCBEC64590BF849E83009054@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58576670-8bac-4175-41b2-08d76eb608d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 19:07:20.6721
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DEyitYKhCqi6jgQ6LbnBdkGfaOBZSrnMupZFyv8bSGE7G8stYu9bn4rOr45ILnineHoph+8XRtNVl7kFuxxqJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4023
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> On Nov 21, 2019, at 10:40 AM, Fenghua Yu <fenghua.yu@intel.com> wrote:
->=20
-> =EF=BB=BFOn Thu, Nov 21, 2019 at 09:51:03AM -0800, Andy Lutomirski wrote:
->>> On Thu, Nov 21, 2019 at 9:43 AM David Laight <David.Laight@aculab.com> w=
-rote:
->>>=20
->>> From: Ingo Molnar
->>>> Sent: 21 November 2019 17:12
->>>> * Peter Zijlstra <peterz@infradead.org> wrote:
->>> ...
->>>>> This feature MUST be default enabled, otherwise everything will
->>>>> be/remain broken and we'll end up in the situation where you can't use=
-
->>>>> it even if you wanted to.
->>>>=20
->>>> Agreed.
->>>=20
->>> Before it can be enabled by default someone needs to go through the
->>> kernel and fix all the code that abuses the 'bit' functions by using the=
-m
->>> on int[] instead of long[].
->>>=20
->>> I've only seen one fix go through for one use case of one piece of code
->>> that repeatedly uses potentially misaligned int[] arrays for bitmasks.
->>>=20
->>=20
->> Can we really not just change the lock asm to use 32-bit accesses for
->> set_bit(), etc?  Sure, it will fail if the bit index is greater than
->> 2^32, but that seems nuts.
->>=20
->> (Why the *hell* do the bitops use long anyway?  They're *bit masks*
->> for crying out loud.  As in, users generally want to operate on fixed
->> numbers of bits.)
->=20
-> We are working on a separate patch set to fix all split lock issues
-> in atomic bitops. Per Peter Anvin and Tony Luck suggestions:
-> 1. Still keep the byte optimization if nr is constant. No split lock.
-> 2. If type of *addr is unsigned long, do quadword atomic instruction
->   on addr. No split lock.
-> 3. If type of *addr is unsigned int, do word atomic instruction
->   on addr. No split lock.
-> 4. Otherwise, re-calculate addr to point the 32-bit address which contains=
-
->   the bit and operate on the bit. No split lock.
->=20
-> Only small percentage of atomic bitops calls are in case 4 (e.g. 3%
-> for set_bit()) which need a few extra instructions to re-calculate
-> address but can avoid big split lock overhead.
->=20
-> To get real type of *addr instead of type cast type "unsigned long",
-> the atomic bitops APIs are changed to macros from functions. This change
-> need to touch all architectures.
->=20
-
-Isn=E2=80=99t the kernel full of casts to long* to match the signature?  Doi=
-ng this based on type seems silly to me. I think it=E2=80=99s better to just=
- to a 32-bit operation unconditionally and to try to optimize it using b*l w=
-hen safe.=
+T24gVHVlLCAyMDE5LTExLTE5IGF0IDIzOjUxIC0wODAwLCBQYXVsIFdhbG1zbGV5IHdyb3RlOg0K
+PiBIaSBBdGlzaCwNCj4gDQo+IE9uIE1vbiwgMTggTm92IDIwMTksIEF0aXNoIFBhdHJhIHdyb3Rl
+Og0KPiANCj4gPiBUaGUgU3VwZXJ2aXNvciBCaW5hcnkgSW50ZXJmYWNlKFNCSSkgc3BlY2lmaWNh
+dGlvblsxXSBub3cgZGVmaW5lcyBhDQo+ID4gYmFzZSBleHRlbnNpb24gdGhhdCBwcm92aWRlcyBl
+eHRlbmRhYmlsaXR5IHRvIGFkZCBmdXR1cmUgZXh0ZW5zaW9ucw0KPiA+IHdoaWxlIG1haW50YWlu
+aW5nIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgd2l0aCBwcmV2aW91cyB2ZXJzaW9ucy4NCj4gPiBU
+aGUgbmV3IHZlcnNpb24gaXMgZGVmaW5lZCBhcyAwLjIgYW5kIG9sZGVyIHZlcnNpb24gaXMgbWFy
+a2VkIGFzDQo+ID4gMC4xLg0KPiA+IA0KPiA+IFRoaXMgc2VyaWVzIGFkZHMgc3VwcG9ydCB2MC4y
+IGFuZCBhIHVuaWZpZWQgY2FsbGluZyBjb252ZW50aW9uDQo+ID4gaW1wbGVtZW50YXRpb24gYmV0
+d2VlbiAwLjEgYW5kIDAuMi4gSXQgYWxzbyBhZGRzIG1pbmltYWwgU0JJDQo+ID4gZnVuY3Rpb25z
+DQo+ID4gZnJvbSAwLjIgYXMgd2VsbCB0byBrZWVwIHRoZSBzZXJpZXMgbGVhbi4gDQo+ID4gDQo+
+ID4gWzFdIA0KPiA+IGh0dHBzOi8vZ2l0aHViLmNvbS9yaXNjdi9yaXNjdi1zYmktZG9jL2Jsb2Iv
+bWFzdGVyL3Jpc2N2LXNiaS5hZG9jDQo+ID4gDQo+ID4gVGhlIGJhc2Ugc3VwcG9ydCBmb3IgU0JJ
+IHYwLjIgaXMgYWxyZWFkeSBhdmFpbGFibGUgaW4gT3BlblNCSSB2MC41Lg0KPiA+IFRoaXMgc2Vy
+aWVzIG5lZWRzIGZvbGxvd2luZyBhZGRpdGlvbmFsIHBhdGNoZXMgaW4gT3BlblNCSS4gDQo+ID4g
+DQo+ID4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJtYWlsL29wZW5zYmkvMjAxOS1O
+b3ZlbWJlci8wMDA3MDQuaHRtbA0KPiA+IA0KPiA+IFRlc3RlZCBvbiBib3RoIEJCTCwgT3BlblNC
+SSB3aXRoL3dpdGhvdXQgdGhlIGFib3ZlIHBhdGNoIHNlcmllcy4gDQo+IA0KPiBKdXN0IGJhc2Vk
+IG9uIGEgcXVpY2sgbG9vazoNCj4gDQo+IEFsbCBvZiB0aGUgcGF0Y2hlcyBpbiB0aGlzIHNlcmll
+cyBhZGQgd2FybmluZ3MgcmVwb3J0ZWQgYnkgDQo+ICdzY3JpcHRzL2NoZWNrcGF0Y2gucGwgLS1z
+dHJpY3QnLiAgQ291bGQgeW91IHBsZWFzZSBmaXggYW5kIHJlcG9zdD8NCj4gDQoNClllYWggc3Vy
+ZS4gSSB3aWxsIGRvIHRoYXQuDQoNCj4gQWxzbzogY291bGQgeW91IHJlYmFzZSB0aGVzZSBwYXRj
+aGVzIG9uIHRvcCBvZiB0aGUgY3VycmVudCBSSVNDLVYNCj4gZm9yLW5leHQgDQo+IGJyYW5jaD8g
+IFRoZXJlIGFyZSBzb21lIHNpZ25pZmljYW50IGNvbmZsaWN0cyBhZnRlciBDaHJpc3RvcGgncw0K
+PiBub21tdSANCj4gd29yay4NCj4gDQoNCm9rLiBJIHdpbGwgcmViYXNlIG9uIHRvcCBvZiBmb3It
+bmV4dC4NCg0KPiBXZSdsbCB3YWl0IHRvIHNlbmQgdGhlc2UgdXBzdHJlYW0gdW50aWwgdGhlIFNC
+SSB2MC4yIHNwZWMgaXMgZnJvemVuLA0KPiBidXQgDQo+IGluIHRoZSBtZWFudGltZSwgaXQnbGwg
+YmUgZ29vZCB0byBnZXQgdGhlc2UgaW50byB0aGUgZXhwZXJpbWVudGFsDQo+IGJyYW5jaC4NCj4g
+DQo+IHRoYW5rcywNCj4gDQo+IC0gUGF1bA0KDQotLSANClJlZ2FyZHMsDQpBdGlzaA0K
