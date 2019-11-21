@@ -2,89 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42238105C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F5E2105C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 23:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfKUVv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:51:27 -0500
-Received: from mga05.intel.com ([192.55.52.43]:33229 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfKUVv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:51:27 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 13:51:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
-   d="scan'208";a="210049893"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2019 13:51:26 -0800
-Date:   Thu, 21 Nov 2019 13:51:26 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
+        id S1726948AbfKUWGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 17:06:17 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44601 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbfKUWGR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 17:06:17 -0500
+Received: by mail-qt1-f196.google.com with SMTP id o11so5458162qtr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 14:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Bf3zXVc8JgyndN70CrFb4zsWDVt1DI2cOBZZ54QutII=;
+        b=crXpS16brbj5wcwSGg8ZUNW+WnFbky+6ndEsBKBBwqewLUyZC2KtPR06bmxf6kVV0x
+         +XADaSG7XVEs8kl8hGMFWn6z4G/S2iNrNg+CMACl4gcVvkcOBydeqNL2Ns+YzhGMxGgS
+         PoyNNpLZLqeT5y44r7ouxVEZyHJ+9xp1ZwgERCu3+/9v7foYL77J2/4FdM7VxPoiZyJa
+         MQOkloOGTfuv5odbW2dAfcsnjD9UseKW3xuJTuBllUg9O4YX5BV24NY2VWje8XU4rsVe
+         mSOlipeQetbcpiGdNL2OdQpEQoycht9RyfCrvg+Blyffk8wGm/bGCfNnrb2BBpuB75nf
+         +Ufg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Bf3zXVc8JgyndN70CrFb4zsWDVt1DI2cOBZZ54QutII=;
+        b=DB0sH3SPNO6BB7Ay4pwLl0OE30PqxXDC4MxNQzKcoqZxrWp99DuuLL/Br/AVrmM1o+
+         RwdtE5oY2qZsaWVViL+OtAl2QT07YizO8vAnQwfR3rck2whhukaDburJQxSQQ0sVDyU6
+         eHDQpTYq699aOwcUQkVjCmXOovuJuKMwEqdh+4uUdVc07lfRZvJoGdRo4oLyemnkaCnN
+         BGKKi/kA1VB9TgTPsQmq62Ug1wsVx9niEHIUETqktKnY722h0v4vODnte+crGeQXMJ6A
+         lrJuN/XhjF/XJfmr2HUnjArnbsX6qZ+BCBvHW0xV4hTxdnp0vxtDFfUPY/lE2hagU51b
+         D+uQ==
+X-Gm-Message-State: APjAAAXm4/Ylb322tt2s9npKJDTIGwx2QZlok1bKbY1uMFj46/ic8SNx
+        oxV2YJb9zVQse5PEdoDabzJP+g==
+X-Google-Smtp-Source: APXvYqxMpQc7gkZFWT+4X1cGXGSebkY7gn/oAh6KeV78J6HsT1HgUuAZ7/0lsXcViU0bjQOBOqSvYQ==
+X-Received: by 2002:ac8:c4e:: with SMTP id l14mr1732376qti.87.1574373975657;
+        Thu, 21 Nov 2019 14:06:15 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:dbed])
+        by smtp.gmail.com with ESMTPSA id j89sm2282706qte.72.2019.11.21.14.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 14:06:14 -0800 (PST)
+Date:   Thu, 21 Nov 2019 17:06:13 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Message-ID: <20191121215126.GA9075@agluck-desk2.amr.corp.intel.com>
-References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
- <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
- <20191121060444.GA55272@gmail.com>
- <20191121130153.GS4097@hirez.programming.kicks-ass.net>
- <20191121131522.GX5671@hirez.programming.kicks-ass.net>
+        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH v4 3/9] mm/lru: replace pgdat lru_lock with lruvec lock
+Message-ID: <20191121220613.GB487872@cmpxchg.org>
+References: <1574166203-151975-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1574166203-151975-4-git-send-email-alex.shi@linux.alibaba.com>
+ <20191119160456.GD382712@cmpxchg.org>
+ <bcf6a952-5b92-50ad-cfc1-f4d9f8f63172@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191121131522.GX5671@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bcf6a952-5b92-50ad-cfc1-f4d9f8f63172@linux.alibaba.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 02:15:22PM +0100, Peter Zijlstra wrote:
-> Also, just to remind everyone why we really want this. Split lock is a
-> potent, unprivileged, DoS vector.
+On Wed, Nov 20, 2019 at 07:41:44PM +0800, Alex Shi wrote:
+> 在 2019/11/20 上午12:04, Johannes Weiner 写道:
+> >> @@ -1246,6 +1245,46 @@ struct lruvec *mem_cgroup_page_lruvec(struct page *page, struct pglist_data *pgd
+> >>  	return lruvec;
+> >>  }
+> >>  
+> >> +struct lruvec *lock_page_lruvec_irq(struct page *page,
+> >> +					struct pglist_data *pgdat)
+> >> +{
+> >> +	struct lruvec *lruvec;
+> >> +
+> >> +again:
+> >> +	rcu_read_lock();
+> >> +	lruvec = mem_cgroup_page_lruvec(page, pgdat);
+> >> +	spin_lock_irq(&lruvec->lru_lock);
+> >> +	rcu_read_unlock();
+> > The spinlock doesn't prevent the lruvec from being freed
+> > 
+> > You deleted the rules from the mem_cgroup_page_lruvec() documentation,
+> > but they still apply: if the page is already !PageLRU() by the time
+> > you get here, it could get reclaimed or migrated to another cgroup,
+> > and that can free the memcg/lruvec. Merely having the lru_lock held
+> > does not prevent this.
+> 
+> 
+> Forgive my idiot, I still don't know the details of unsafe lruvec here.
+> From my shortsight, the spin_lock_irq(embedded a preempt_disable) could block all rcu syncing thus, keep all memcg alive until the preempt_enabled in unspinlock, is this right?
+> If so even the page->mem_cgroup is migrated to others cgroups, the new and old cgroup should still be alive here.
 
-So how much do we "really want this"?
+You are right about the freeing part, I missed this. And I should have
+read this email here before sending out my "fix" to the current code;
+thankfully Hugh re-iterated my mistake on that thread. My apologies.
 
-It's been 543 days since the first version of this patch was
-posted. We've made exactly zero progress.
+But I still don't understand how the moving part is safe. You look up
+the lruvec optimistically, lock it, then verify the lookup. What keeps
+page->mem_cgroup from changing after you verified it?
 
-Current cut down patch series is the foundation to move one
-small step towards getting this done.
+lock_page_lruvec():				mem_cgroup_move_account():
+again:
+rcu_read_lock()
+lruvec = page->mem_cgroup->lruvec
+						isolate_lru_page()
+spin_lock_irq(&lruvec->lru_lock)
+rcu_read_unlock()
+if page->mem_cgroup->lruvec != lruvec:
+  spin_unlock_irq(&lruvec->lru_lock)
+  goto again;
+						page->mem_cgroup = new cgroup
+						putback_lru_page() // new lruvec
+						  SetPageLRU()
+return lruvec; // old lruvec
 
-Almost all of what's in this set will be required in whatever
-final solution we want to end up with. Out of this:
+The caller assumes page belongs to the returned lruvec and will then
+change the page's lru state with a mismatched page and lruvec.
 
- Documentation/admin-guide/kernel-parameters.txt |   10 +++
- arch/x86/include/asm/cpu.h                      |    5 +
- arch/x86/include/asm/cpufeatures.h              |    2 
- arch/x86/include/asm/msr-index.h                |    8 ++
- arch/x86/include/asm/traps.h                    |    3 +
- arch/x86/kernel/cpu/common.c                    |    2 
- arch/x86/kernel/cpu/intel.c                     |   72 ++++++++++++++++++++++++
- arch/x86/kernel/traps.c                         |   22 +++++++
- 8 files changed, 123 insertions(+), 1 deletion(-)
+If we could restrict lock_page_lruvec() to working only on PageLRU
+pages, we could fix the problem with memory barriers. But this won't
+work for split_huge_page(), which is AFAICT the only user that needs
+to freeze the lru state of a page that could be isolated elsewhere.
 
-the only substantive thing that will *change* is to make the default
-be "on" rather than "off".
-
-Everything else we want to do is *additions* to this base. We could
-wait until we have those done and maybe see if we can stall out this
-series to an even thousand days. Or, we can take the imperfect base
-and build incrementally on it.
-
-You've expressed concern about firmware ... with a simple kernel command
-line switch to flip, LUV (https://01.org/linux-uefi-validation) could begin
-testing to make sure that firmware is ready for the big day when we throw
-the switch from "off" to "on".
-
--Tony
+So AFAICS the only option is to lock out mem_cgroup_move_account()
+entirely when the lru_lock is held. Which I guess should be fine.
