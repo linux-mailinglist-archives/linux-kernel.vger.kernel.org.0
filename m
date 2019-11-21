@@ -2,131 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8439B104E90
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE39104EAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfKUI5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:57:41 -0500
-Received: from mout.web.de ([212.227.15.14]:45053 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfKUI5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:57:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574326562;
-        bh=649bNPQUd2HELGXn+AIHga+NRhYE3k2ynq96C6itO7Y=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=bqI9VoDCEA2KgibwK7yHMB1vHAyybuk8sF7fbYuR7tmuiJsQ05JZPWQSGLvicuc3w
-         AXW2MXLO4p8gO0h1v1rzmcgSDdNi9F5cUkGOjAaIiZ9qpPXjxkME8t5yW0XYVu08Fk
-         kZwcqMr9Q03fkhxPz+V7UuYWZWWJLo90wJvN49ZI=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MQ8vL-1iT1Qg3mUd-005KM3; Thu, 21
- Nov 2019 09:56:02 +0100
-Subject: Re: [PATCH v4 00/13] add the latest exfat driver
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <CGME20191121052913epcas1p1b28d2727dca5df42a6f2b8eb6b6dbcbb@epcas1p1.samsung.com>
- <20191121052618.31117-1-namjae.jeon@samsung.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <dcbf6d35-b550-53bc-0c8a-2e54497173e2@web.de>
-Date:   Thu, 21 Nov 2019 09:55:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191121052618.31117-1-namjae.jeon@samsung.com>
-Content-Type: text/plain; charset=utf-8
+        id S1726500AbfKUJEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 04:04:42 -0500
+Received: from mail-eopbgr740048.outbound.protection.outlook.com ([40.107.74.48]:50176
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726132AbfKUJEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 04:04:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Gn+vP5DZDlJo2PuwMyJ6W5ED0OQoWv2L5f0W1Dvf9FI4/mLSrdKBvdwVKeLUyTEy5LPmFVTDx/6NrgRnY0Ue7kAWbgDfoLnyQqSC4UJa3yuQQXsg57BJ9QCayRfkGbif1Hbf9Cbce4XfGUetN/x2zqwnoCXu3a9PTu64ocCMTWEtldPl9kggPynngR9Trok2VQMdwceFWUd21r00LFjNRxyhdH8txX9yH92vFL+4weng0J3T2mHF5s01ynjy1Qj+7GE/GzvXiaxIdCJylgKyma/1ZrDzRYRxAs25RL/gyYSBM0OgYu0aF0H/h/oTzIGpOL+vTgBHJAt5+pSGNIM2QQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x3DulbXL9J15u61yWz56lXH9lvQFGc7NOxYb6mRJxfw=;
+ b=U8VetMlbyENyeYcoYkgty5G2HPcp/7IXlir0U1Rum6eCT/+kLbAyN+XTarCl+hVAOuK3BlO3AgkF82hI+mKsOlXgipzZOCGa9lGELT/+9FwOMiKR3fNhXRtsNGQVavuLJ4+ZQoPTTbPxs+EPiG+TT99NWcjhnGloAe5jyXRVm7d0BcA4So18iw7QW4LaRb/cBYMLsdJEe9ueQXXhIHt5mU1kNcvKY1Z3rCf8ADSC9M/kiYYeYJvNmkGOYM3g1J6KZhvVIHpygr4oH/531NBsWMR4SZSPK6d9jGKtuwFS57MyKQlpnkfLiks+/QGlygyHUEXbdS0oeANUsSVm619rGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x3DulbXL9J15u61yWz56lXH9lvQFGc7NOxYb6mRJxfw=;
+ b=mXq1aH2gh16jFvrQuzqdwJ851ZzKPFEG9rZdb5T20kdXlvvE1DZWR+f6H7b2RPzAksim0Jli0HeN6m/y5sotve7RwEahjiFv1A7reLau9/0RxIhn2uRh4lQedd8JfttFftmeejDxmlVsLjRHv0depAxZI5w34QF9g71WoCc6rxw=
+Received: from MN2PR02MB6094.namprd02.prod.outlook.com (52.132.172.151) by
+ MN2PR02MB6398.namprd02.prod.outlook.com (52.132.172.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.29; Thu, 21 Nov 2019 09:04:39 +0000
+Received: from MN2PR02MB6094.namprd02.prod.outlook.com
+ ([fe80::319d:d506:2faf:a4a2]) by MN2PR02MB6094.namprd02.prod.outlook.com
+ ([fe80::319d:d506:2faf:a4a2%7]) with mapi id 15.20.2474.018; Thu, 21 Nov 2019
+ 09:04:39 +0000
+From:   Shubhrajyoti Datta <shubhraj@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Michal Simek <michals@xilinx.com>
+Subject: RE: [RFC PATCHv2 1/3] dt-bindings: misc: Add dt bindings for flex noc
+ Performance Monitor
+Thread-Topic: [RFC PATCHv2 1/3] dt-bindings: misc: Add dt bindings for flex
+ noc Performance Monitor
+Thread-Index: AQHVdCmZoFI17g0Ymkq7XWhFdff3yqdUgJwAgEEqGnA=
+Date:   Thu, 21 Nov 2019 09:04:38 +0000
+Message-ID: <MN2PR02MB60943664B80D3028F8422175AA4E0@MN2PR02MB6094.namprd02.prod.outlook.com>
+References: <2de75a74ef4086090c532d3b80b7d6dcd115e45e.1569474867.git.shubhrajyoti.datta@xilinx.com>
+ <20191010214835.GA4523@bogus>
+In-Reply-To: <20191010214835.GA4523@bogus>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shubhraj@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: cf6c2898-cba2-45d2-3edc-08d76e61d6d7
+x-ms-traffictypediagnostic: MN2PR02MB6398:|MN2PR02MB6398:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR02MB6398D596ED3BB0D86F80E012AA4E0@MN2PR02MB6398.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0228DDDDD7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(136003)(39860400002)(396003)(346002)(189003)(199004)(13464003)(64756008)(229853002)(7696005)(86362001)(74316002)(305945005)(76176011)(55016002)(7736002)(52536014)(256004)(54906003)(71200400001)(71190400001)(316002)(6916009)(76116006)(4326008)(14454004)(99286004)(25786009)(5660300002)(6116002)(11346002)(3846002)(6436002)(446003)(81166006)(478600001)(6246003)(107886003)(33656002)(102836004)(9686003)(26005)(6506007)(66066001)(186003)(66556008)(66946007)(66476007)(8676002)(81156014)(8936002)(53546011)(2906002)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6398;H:MN2PR02MB6094.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: te+sYE2MSaP+XjmP9swNAe7X7erTE0Fa2krWTNUxbvOVE3lMWVuFCDAi828WqXbqS0cKi2QdKsb1jxmaNWTZ6GUV0UfxFJzNOm9I6kAabdmp8PLUj5Yc4x6TnkKXZs3VXc86xD/pzThcLXKqQhmWo6ppkH3wF920E3cetgA4O2nl8vWpA89DpfNWMhWibMvciu75zoisnaU9VMrt6Ooa0Am4BdwhmxzWdtH0ZhlRFCZTtzd2r8B0Dakefq2ScGe0e7wuzR8ZaKRYwnUK5KElQtpaWb1AimoLihZWeQyF0kjguzLtUTrdUHnD/kl2SCwty2RwrO7dDO+v6rppcPPltDAQ5k7nsAdmSk3FlEv1KkkAmWKUoTLSM2/o/RV3cbxf7dtS0unSU06ck3+7D0QNdWQipp1RsJq7J811Bo8P+IILqJyfA6zJHtiITHyZr8n9
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3BjI0+iOq89U5n3SkmqNOAaf86FUTrjXBtfV9lgSFLkDymAZ4vo
- xaSJGg8nVnPaAnD4tGnoeopYMeb/7LgEYj8s9/15zP1Xx2P7K5lmqKbHMLERfNe+FWeKpZi
- Kc+N4SUN/2TwGQGnV2LWnjX1/FMQp63x8to9wpB7/e4QyEejw3D4NXuwEWlEQz2LJWR1dno
- eQJ120vharO21VMAglrDA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mWPHXbAlWhQ=:2Jswr3DWk1C7Wd1iO2wwSr
- 05YVSYaLXf6kExXzJEPo7JtAUaJb5kSIZ2yGbYA0aCd7+Cooel8SW43oX+OXDJ/cacp1ZN4Lw
- PZ3mrRhqAPh3V/f5kP5PKAMHs/Rdbyrqz6sSLP/ZzdZOORsFpfvs0bkMfXz/1EFbsXPAVX2En
- TVJun44FieaQVsJVhew4OP3NGUT6hyO8z2t5A3CgoHORd1uLo6xq7hXP7r8W+Q6Lrwf1f0XNu
- R0sLW3ASNjdnt5xkbyBzjaJaProaOVNqJburgNuNY9QllDrofqa7md5nDE3CYB/x8/UYswq5V
- IlGb8Uu8F8K91fCyhAFAvPOHW3cyIWFdz8hWoKX3UTnDsUPfYje1lKttxOSqQzhzct144gqGF
- AmtKBY45QlGaqCEMLCM7tAl7ZBE6L5Lp/4/d03Aakbf8VYMSO5xZQ5MMMPDSdXb66/rPNCrR+
- ppKBSEzAGxCp4UArfhYGBFSq+iHZeRIlRVBN41yAHPMUk/zHkQUbrBkoZsN4LhlXtIzlsrpbs
- WnLHcDOvZH31K4jUym1lmGRo6UML2pLrx8kjgsEgKr6So0VCmaL8dIZfP2HENzm5Ap2RNOQ+y
- bJSIaVrWoSAm+SoBPwNXYoRqn75vhT16H/S94rSCJMY8igAzS8ZnUxMdIn2wCAqrAaiyySqCG
- iizIKqfmE/NJ0U0qgn+T4O1ElIlZbSHPM5BueYBKLI9g1NjSlPktPzkecgAYl0tj2ag72Eiqn
- Fgro04v87/1s9Cw2lohA8FjB4ax7hO+NRR+JsjlGZQR8LKziI+lOO2CeZKz7q4h9PPwBf5um8
- 441zrRMu5YRClICAIgNWRfv9G13M3PwF4zA9zbsOjmohk3ff+eAPh81/pvrXX3aKHNxbW4LMU
- 3ZRLIrjqHWQEwViYjpaVf/eWKCibrDUaT7o6w57+UD9u50rrfIpGXzaAiDwZ49431O5oixVdQ
- qBCCBHf/mXQt3UV78Qwa57nYAolMEvAipQypHJF2b6FXyPxMOzYxHt/0/1ln/Jcm3EusRwUdr
- a5Sn41oankdKP6baG2g2q20I7Wm9WurxXaIUFWq7HkqUXAtGyEeuYcNcS+MglZYubRW53vUel
- bC/yuvAuc7xxeCwIbVeel7NSNHlREmovRGUcdzGr8znHBZSXvKQU7ULjoz47KY03NswkzJf9P
- LC3vFI5eYYRh8FVXe5VeKrPDpOQSG3RDEeJ7HjUoKRXpF/WVYV5ZF2F7UO4WeZMnuj0isUNyQ
- zx8dVLzmSecUE9mpze0jPX48z1hpi17e3QQU4+oc3SCIJA2vuTvkqC/QQ4IM=
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf6c2898-cba2-45d2-3edc-08d76e61d6d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 09:04:38.9659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YbfSKlMGQOOHoSw5IT7XlljKal00oJN53jV+MZSpFMW9+Q0GnBap+uoaxJktR10Q6GvW79ISx1r1ihUiyufcOQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6398
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E2=80=A6
-> v2:
-=E2=80=A6
->  - Rename proper goto labels in several places.
 
-I find an other wording more appropriate.
-A renaming would have not been needed if these identifiers were =E2=80=9Cp=
-roper=E2=80=9D before.
+Hi,
 
-Were any update candidates left over according to this change pattern?
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Friday, October 11, 2019 3:19 AM
+> To: Shubhrajyoti Datta <shubhraj@xilinx.com>
+> Cc: linux-kernel@vger.kernel.org; devicetree@vger.kernel.org;
+> arnd@arndb.de; gregkh@linuxfoundation.org; Michal Simek
+> <michals@xilinx.com>
+> Subject: Re: [RFC PATCHv2 1/3] dt-bindings: misc: Add dt bindings for fle=
+x noc
+> Performance Monitor
+>=20
+> On Thu, Sep 26, 2019 at 10:46:24AM +0530, Shubhrajyoti Datta wrote:
+> > Add dt bindings for flexnoc Performance Monitor.
+> > The flexnoc counters for read and write response and requests are
+> > supported.
+> >
+> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > ---
+> >  .../devicetree/bindings/misc/xlnx,flexnoc.txt      | 24
+> ++++++++++++++++++++++
+>=20
+> bindings/perf/
+>=20
+> Please convert this to a schema. See
+> Documentation/devicetree/writing-schema.rst.
+Ok=20
+>=20
+> >  1 file changed, 24 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
+> > b/Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
+> > new file mode 100644
+> > index 0000000..6b533bc
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
+> > @@ -0,0 +1,24 @@
+> > +* Xilinx Flexnoc Performance Monitor driver
+>=20
+> Bindings are for h/w blocks, not drivers.
+Wil change
+>=20
+> > +
+> > +The FlexNoc Performance Monitor has counters for monitoring the read
+> > +and the write transaction counter.
+> > +
+> > +Required properties:
+> > +- compatible: "xlnx,flexnoc-pm-2.7"
+> > +- reg : Address and length of register sets for each device in
+> > +       "reg-names"
+> > +- reg-names : The names of the register addresses corresponding to the
+> > +               registers filled in "reg"
+> > +               - funnel: base address of the funnel registers
+> > +               - baselpd: base address of the LPD PM registers
+> > +               - basefpd: base address FPD PM registers
+>=20
+> Is this really all one h/w block.
+>=20
+> FlexNoC is an interconnect, right? Is there more to it than just perfmon?
+Yes , however the driver only uses the monitoring  part.
 
-Regards,
-Markus
+>=20
+> > +
