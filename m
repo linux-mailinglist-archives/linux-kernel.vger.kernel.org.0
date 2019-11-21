@@ -2,105 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC70104739
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E1C6104732
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfKUAD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 19:03:26 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36049 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbfKUADM (ORCPT
+        id S1726762AbfKUADN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:03:13 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:35099 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfKUADM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Nov 2019 19:03:12 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so2124136wru.3
+Received: by mail-pj1-f68.google.com with SMTP id s8so581428pji.2
         for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 16:03:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iILqDiivRi8BjwupWA1etZi9HVAj+9a2PtQFD00PqHE=;
-        b=MbK1bl7YJkp3/vdJhrEg3CI8GOjQmhwVc2X423eHVIUCovz8pqRBXuFIRniAvdK0ZP
-         l0HQKajC9oTXwaP56P+6bdjbqyxTEVIhvK4v21SAU3v1nudd+89rzss8bIcVFrmKbNsD
-         rtQwpe6mI5135UJhd6gYLC64cgQa4KF3b5rRdO/F6UJ4ZMK7XbEX8RL3GxAHpULMXoMG
-         MH4OwxiNbOszQXwEFSEtwPz6x3spiiiLLrmvhVIqAVMc/COuMdrtb/xkYmUzOwCUVhG1
-         Ij/aMz3kBkq0+o6Rdk/HpUk5jVuzDa59EjlzCb0HakzaW5HhAgJdz+57VYXTB9VQbmC/
-         6VEQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=xi3KRlSdFLMcd3fOocBKXtSC+7KVxz8BH0njDxz/f8Q=;
+        b=m9XUuPcCYx/m0d7JrFXRJrUqj8L/gJ4SWov2KoHVTan86El4s7b3jX8TSU8MVepl+r
+         n7VwRQVX/KTuJZUdMZPr4mWEBFjr4kVjy0CQ2d20AGtlpvdDoJRV0dGxoA5nRbEW4g9b
+         kH7R52zMn6svW+97e9kWbTez5yBYyjC4vIvBg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iILqDiivRi8BjwupWA1etZi9HVAj+9a2PtQFD00PqHE=;
-        b=NBpECdhr1DLoahfo28/H1oS7wNGsu7XUXT1f2UFOwa+DOWt6E5bBUpyqyL/fmnLqJP
-         KEFRHgBnh3+eFWp4BjZAAdZ0i4EBI/Nefznou+UgJYhUzGNvepESQ7FOTYRWiUBtyBOI
-         RwZx+L+NqNOXqKvZj/YS9hg0UJ9AhjLi0zVMl0MKSSBgt5JoiCugwYWa8r3fucI3SBvN
-         5Ol1iqR1N/lb/nzyZNo4rLuOnV2KyuXn43pqYM48bjvO6Fo2JxkVaycEFZ5Xh4jiBaWa
-         aX2tT54RCWGYQWNoGjA055aY4E+EOJ5yWrngAprGAKSyt9CqjaKnElE8V45YG5jxbg+H
-         r1Xg==
-X-Gm-Message-State: APjAAAX/S9F+NSrzeqEmLchVDQ8K95WVob0+DcIjzQUrElnF5denaojQ
-        atuo5FCmEsxALDhmReVEm4ymazhP6dg=
-X-Google-Smtp-Source: APXvYqyutfd/TDTPhcdy9nLeIRZoQyJ/7YXhGyry4x9pmPK1r39zEU9x1yFFqtERynEbCqt6WuM8MQ==
-X-Received: by 2002:adf:ee92:: with SMTP id b18mr7224710wro.346.1574294590222;
-        Wed, 20 Nov 2019 16:03:10 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id 17sm949900wmg.19.2019.11.20.16.03.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=xi3KRlSdFLMcd3fOocBKXtSC+7KVxz8BH0njDxz/f8Q=;
+        b=oVREREAMmkZUo1+SFopEt0L80ZDPpEKmFeQJ7o3yYfAW/8sGcS2CV370GIhLg/FvjR
+         1fHhshx4BrJSLHHOi0C5+Mmpq0i5dgZhK5zdnidGnjTbNw0aqOY4op/3aLpcY/TBWXA0
+         RN1MvA4Ogx+fEttk5LYFyr4uMLbcEQqTeqE97pefBIt819MCa+Hr4BJ9U9mWNEiMZL1F
+         ILz1H+qvvcM9ShwYkHx3rS47X6EC+F/IXa0YKsE4m3SdO9C13SFDYRo3Puu31WVirG5D
+         kcV2miOmiEVvKp9OWoEug/bMt1itFuftrMgb6JQf+xKcJfU/LPinF/SXv5LX4VwbXYFN
+         36Dg==
+X-Gm-Message-State: APjAAAWwr+Y7/qBljoAka6LJrVLSjiUtpCexGmxviWVk5aZzLW9jq7AE
+        /xwRt6bgDDhrxTQ5uW25l1euaw==
+X-Google-Smtp-Source: APXvYqzXage3fd0hSjL8ZKImr7HsDh14K4z1PkgezlYcLvIxzXeADl1KAtX5FExxhsXry7NmKBDaRw==
+X-Received: by 2002:a17:90a:1089:: with SMTP id c9mr7603758pja.8.1574294591370;
+        Wed, 20 Nov 2019 16:03:11 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id a23sm371220pjv.26.2019.11.20.16.03.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 20 Nov 2019 16:03:09 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, y2038@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH] time: Zerofy padding in __kernel_timespec on 32-bit
-Date:   Thu, 21 Nov 2019 00:03:03 +0000
-Message-Id: <20191121000303.126523-1-dima@arista.com>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] docs, parallelism: Do not leak blocking mode to writer
+Date:   Wed, 20 Nov 2019 16:03:03 -0800
+Message-Id: <20191121000304.48829-3-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191121000304.48829-1-keescook@chromium.org>
+References: <20191121000304.48829-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On compat interfaces, the high order bits of nanoseconds should
-be zeroed out. This is because the application code or the libc
-do not guarantee zeroing of these. If used without zeroing,
-kernel might be at risk of using timespec values incorrectly.
+Setting non-blocking via a local copy of the jobserver file descriptor
+is safer than just assuming the writer on the original fd is prepared
+for it to be non-blocking.
 
-Originally it was handled correctly, but lost during is_compat_syscall()
-cleanup. Revert the condition back to check CONFIG_64BIT.
-
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Fixes: 98f76206b335 ("compat: Cleanup in_compat_syscall() callers")
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: y2038@lists.linaro.org
-Cc: stable@vger.kernel.org # v4.20+
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Link: https://lore.kernel.org/lkml/44c01043-ab24-b4de-6544-e8efd153e27a@rasmusvillemoes.dk
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- kernel/time/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/jobserver-count | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 5c54ca632d08..1cb045c5c97e 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -881,7 +881,7 @@ int get_timespec64(struct timespec64 *ts,
- 	ts->tv_sec = kts.tv_sec;
+diff --git a/scripts/jobserver-count b/scripts/jobserver-count
+index 6e15b38df3d0..a68a04ad304f 100755
+--- a/scripts/jobserver-count
++++ b/scripts/jobserver-count
+@@ -12,12 +12,6 @@ default="1"
+ if len(sys.argv) > 1:
+ 	default=sys.argv[1]
  
- 	/* Zero out the padding for 32 bit systems or in compat mode */
--	if (IS_ENABLED(CONFIG_64BIT_TIME) && in_compat_syscall())
-+	if (IS_ENABLED(CONFIG_64BIT_TIME) && (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall()))
- 		kts.tv_nsec &= 0xFFFFFFFFUL;
- 
- 	ts->tv_nsec = kts.tv_nsec;
+-# Set non-blocking for a given file descriptor.
+-def nonblock(fd):
+-	flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+-	fcntl.fcntl(fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+-	return fd
+-
+ # Extract and prepare jobserver file descriptors from envirnoment.
+ try:
+ 	# Fetch the make environment options.
+@@ -31,8 +25,13 @@ try:
+ 	# Parse out R,W file descriptor numbers and set them nonblocking.
+ 	fds = opts[0].split("=", 1)[1]
+ 	reader, writer = [int(x) for x in fds.split(",", 1)]
+-	reader = nonblock(reader)
+-except (KeyError, IndexError, ValueError, IOError):
++	# Open a private copy of reader to avoid setting nonblocking
++	# on an unexpecting writer.
++	reader = os.open("/proc/self/fd/%d" % (reader), os.O_RDONLY)
++	flags = fcntl.fcntl(reader, fcntl.F_GETFL)
++	fcntl.fcntl(reader, fcntl.F_SETFL, flags | os.O_NONBLOCK)
++except (KeyError, IndexError, ValueError, IOError, OSError) as e:
++	print(e, file=sys.stderr)
+ 	# Any missing environment strings or bad fds should result in just
+ 	# using the default specified parallelism.
+ 	print(default)
 -- 
-2.24.0
+2.17.1
 
