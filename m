@@ -2,95 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4730E105166
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DECB0105170
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKUL22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 06:28:28 -0500
-Received: from mga07.intel.com ([134.134.136.100]:4228 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfKUL21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 06:28:27 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 03:28:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="216116196"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 21 Nov 2019 03:28:22 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 21 Nov 2019 13:28:21 +0200
-Date:   Thu, 21 Nov 2019 13:28:21 +0200
-From:   Mika Westerberg <mika.westerberg@intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Karol Herbst <kherbst@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Dave Airlie <airlied@gmail.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>
-Subject: Re: [PATCH v4] pci: prevent putting nvidia GPUs into lower device
- states on certain intel bridges
-Message-ID: <20191121112821.GU11621@lahna.fi.intel.com>
-References: <CACO55tsfNOdtu5SZ-4HzO4Ji6gQtafvZ7Rm19nkPcJAgwUBFMw@mail.gmail.com>
- <CACO55tscD_96jUVts+MTAUsCt-fZx4O5kyhRKoo4mKoC84io8A@mail.gmail.com>
- <20191120120913.GE11621@lahna.fi.intel.com>
- <CACO55tsHy6yZQZ8PkdW8iPA7+uc5rdcEwRJwYEQ3iqu85F8Sqg@mail.gmail.com>
- <20191120151542.GH11621@lahna.fi.intel.com>
- <CACO55tvo3rbPtYJcioEgXCEQqVXcVAm-iowr9Nim=bgTdMjgLw@mail.gmail.com>
- <20191120155301.GL11621@lahna.fi.intel.com>
- <CAJZ5v0hkT-fHFOQKzp2qYPyR+NUa4c-G-uGLPZuQxqsG454PiQ@mail.gmail.com>
- <CACO55ttTPi2XpRRM_NYJU5c5=OvG0=-YngFy1BiR8WpHkavwXw@mail.gmail.com>
- <CAJZ5v0h=7zu3A+ojgUSmwTH0KeXmYP5OKDL__rwkkWaWqcJcWQ@mail.gmail.com>
+        id S1726735AbfKULao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 06:30:44 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37987 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfKULam (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 06:30:42 -0500
+Received: by mail-vs1-f68.google.com with SMTP id u18so2008672vsg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 03:30:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TzOo2JV6kkqnrwHkbUSJuC+75l0A5IKM+uRyHywuXgo=;
+        b=lg4JgcZK7t2R0U9FLgUevhlhy7bVd0uQOQbZ4FU/lBtzXd/Oe0ED7vvfm1wvlaHer3
+         swUXak8Mp79XDGOXu3i/EslwDffIo0voi3c3icVXgsFPaSVRwrKOttt42XJba2hionhC
+         1Hk3DX9a3lazZ6iu4L60+jNWjOusc+WkPQBo+Le3GPYbUEMKz9yEKSh4RB7iTBvA/3Sy
+         s9USQXzn4lNKgwvl7WR0/+JlRPv4ytRumvQ9cbf8UDEYbNrsNoDfC/A/GToOD7ELC/Z7
+         A1pzL3o9mIogCGh2Vz4fbrJCXjZ+fnCMFyqKczspqNnwVhwbX/cdn7qQzxwqnJoL6YBn
+         O40A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TzOo2JV6kkqnrwHkbUSJuC+75l0A5IKM+uRyHywuXgo=;
+        b=rM22V04oDvRWQECp7t1P3a1br2hRzcqbzJp8Xwcc24Pf2UCNRzRepU8lhE58VWpCQ+
+         eEr5Dz00v+M79WJSMZx3ALKdetPoq9zj7ld0f2SyZykx23OVspOHRvnYxGaf2XUoS1zw
+         P9Z9Kj67IJ2PmBRs2BJQoRhbN/WlpVDZq/n4xUsbeLBQ6TvzawY1qU9BRQ1C1F5XuAUf
+         +XZs0ihuw4gp5g0x/5667nBa8DAdqpn2Mr0McEpwjhfBzl94J+lXjDFpKqCRwZ426C1v
+         +0kg9UIsl9iy5QhJmYmu+Ap+uvDVydmVk7mVg5g98lfBe/GlXaJsJSXNnY7C7IslHUD8
+         Nhkw==
+X-Gm-Message-State: APjAAAVAEQTu2DCEDHwFu1u30eM+cMGHhIFHTX6apuoTyZRcq5Ob+GRq
+        SpCNJNiKbaa/chxN1jWTWIReyu58c9Hhyl/mfsOeGg==
+X-Google-Smtp-Source: APXvYqyi/CNSLQC7kcZJtahFRlILYFYUIVR4PapSxddBUrS44erqpLciYYxGapgJhka0MHjM+RpzfqX/W4c1YbQcBh8=
+X-Received: by 2002:a67:ef4e:: with SMTP id k14mr5559804vsr.165.1574335841550;
+ Thu, 21 Nov 2019 03:30:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h=7zu3A+ojgUSmwTH0KeXmYP5OKDL__rwkkWaWqcJcWQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191120134101.14738-1-krzk@kernel.org>
+In-Reply-To: <20191120134101.14738-1-krzk@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 21 Nov 2019 12:30:05 +0100
+Message-ID: <CAPDyKFohHYuqu=a4PJMqPq6ydNGcVjVMotyiSniF=mhZQ-qa4Q@mail.gmail.com>
+Subject: Re: [PATCH] memstick: Fix Kconfig indentation
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 11:29:33PM +0100, Rafael J. Wysocki wrote:
-> > last week or so I found systems where the GPU was under the "PCI
-> > Express Root Port" (name from lspci) and on those systems all of that
-> > seems to work. So I am wondering if it's indeed just the 0x1901 one,
-> > which also explains Mikas case that Thunderbolt stuff works as devices
-> > never get populated under this particular bridge controller, but under
-> > those "Root Port"s
-> 
-> It always is a PCIe port, but its location within the SoC may matter.
+On Wed, 20 Nov 2019 at 14:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+>         $ sed -e 's/^        /\t/' -i */Kconfig
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Exactly. Intel hardware has PCIe ports on CPU side (these are called
-PEG, PCI Express Graphics, ports), and the PCH side. I think the IP is
-still the same.
+Applied for next, thanks!
 
-> Also some custom AML-based power management is involved and that may
-> be making specific assumptions on the configuration of the SoC and the
-> GPU at the time of its invocation which unfortunately are not known to
-> us.
-> 
-> However, it looks like the AML invoked to power down the GPU from
-> acpi_pci_set_power_state() gets confused if it is not in PCI D0 at
-> that point, so it looks like that AML tries to access device memory on
-> the GPU (beyond the PCI config space) or similar which is not
-> accessible in PCI power states below D0.
+Kind regards
+Uffe
 
-Or the PCI config space of the GPU when the parent root port is in D3hot
-(as it is the case here). Also then the GPU config space is not
-accessible.
-
-I took a look at the HP Omen ACPI tables which has similar problem and
-there is also check for Windows 7 (but not Linux) so I think one
-alternative workaround would be to add these devices into
-acpi_osi_dmi_table[] where .callback is set to dmi_disable_osi_win8 (or
-pass 'acpi_osi="!Windows 2012"' in the kernel command line).
+> ---
+>  drivers/memstick/core/Kconfig | 18 +++++++++---------
+>  drivers/memstick/host/Kconfig |  4 ++--
+>  2 files changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/memstick/core/Kconfig b/drivers/memstick/core/Kconfig
+> index 516f454fde14..08192fd70eb4 100644
+> --- a/drivers/memstick/core/Kconfig
+> +++ b/drivers/memstick/core/Kconfig
+> @@ -6,16 +6,16 @@
+>  comment "MemoryStick drivers"
+>
+>  config MEMSTICK_UNSAFE_RESUME
+> -        bool "Allow unsafe resume (DANGEROUS)"
+> -        help
+> -          If you say Y here, the MemoryStick layer will assume that all
+> -          cards stayed in their respective slots during the suspend. The
+> -          normal behaviour is to remove them at suspend and
+> -          redetecting them at resume. Breaking this assumption will
+> -          in most cases result in data corruption.
+> +       bool "Allow unsafe resume (DANGEROUS)"
+> +       help
+> +         If you say Y here, the MemoryStick layer will assume that all
+> +         cards stayed in their respective slots during the suspend. The
+> +         normal behaviour is to remove them at suspend and
+> +         redetecting them at resume. Breaking this assumption will
+> +         in most cases result in data corruption.
+>
+> -          This option is usually just for embedded systems which use
+> -          a MemoryStick card for rootfs. Most people should say N here.
+> +         This option is usually just for embedded systems which use
+> +         a MemoryStick card for rootfs. Most people should say N here.
+>
+>  config MSPRO_BLOCK
+>         tristate "MemoryStick Pro block device driver"
+> diff --git a/drivers/memstick/host/Kconfig b/drivers/memstick/host/Kconfig
+> index 446c93ecef8f..4113343da056 100644
+> --- a/drivers/memstick/host/Kconfig
+> +++ b/drivers/memstick/host/Kconfig
+> @@ -18,7 +18,7 @@ config MEMSTICK_TIFM_MS
+>           'Misc devices: TI Flash Media PCI74xx/PCI76xx host adapter support
+>           (TIFM_7XX1)'.
+>
+> -          To compile this driver as a module, choose M here: the
+> +         To compile this driver as a module, choose M here: the
+>           module will be called tifm_ms.
+>
+>  config MEMSTICK_JMICRON_38X
+> @@ -29,7 +29,7 @@ config MEMSTICK_JMICRON_38X
+>           Say Y here if you want to be able to access MemoryStick cards with
+>           the JMicron(R) JMB38X MemoryStick card reader.
+>
+> -          To compile this driver as a module, choose M here: the
+> +         To compile this driver as a module, choose M here: the
+>           module will be called jmb38x_ms.
+>
+>  config MEMSTICK_R592
+> --
+> 2.17.1
+>
