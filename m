@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E28105AEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4431F105AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:14:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfKUUOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 15:14:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33407 "EHLO
+        id S1727096AbfKUUOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 15:14:31 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33393 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfKUUOd (ORCPT
+        with ESMTP id S1726541AbfKUUOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 15:14:33 -0500
+        Thu, 21 Nov 2019 15:14:30 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXsqQ-0004fa-9L; Thu, 21 Nov 2019 21:14:26 +0100
+        id 1iXsqQ-0004fZ-8H; Thu, 21 Nov 2019 21:14:26 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id AF5DC1C1A4F;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CC9DB1C1A50;
         Thu, 21 Nov 2019 21:14:25 +0100 (CET)
 Date:   Thu, 21 Nov 2019 20:14:25 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/entry/32: Fix IRET exception
-Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, stable@kernel.org,
+Subject: [tip: x86/urgent] x86/cpu_entry_area: Add guard page for entry stack on 32bit
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157436726565.21853.619431994754383289.tip-bot2@tip-bot2>
+Message-ID: <157436726577.21853.4056267798286577890.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,48 +45,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     40ad2199580e248dce2a2ebb722854180c334b9e
-Gitweb:        https://git.kernel.org/tip/40ad2199580e248dce2a2ebb722854180c334b9e
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 20 Nov 2019 13:05:06 +01:00
+Commit-ID:     880a98c339961eaa074393e3a2117cbe9125b8bb
+Gitweb:        https://git.kernel.org/tip/880a98c339961eaa074393e3a2117cbe9125b8bb
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Thu, 21 Nov 2019 00:40:24 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Thu, 21 Nov 2019 19:37:43 +01:00
 
-x86/entry/32: Fix IRET exception
+x86/cpu_entry_area: Add guard page for entry stack on 32bit
 
-As reported by Lai, the commit 3c88c692c287 ("x86/stackframe/32:
-Provide consistent pt_regs") wrecked the IRET EXTABLE entry by making
-.Lirq_return not point at IRET.
+The entry stack in the cpu entry area is protected against overflow by the
+readonly GDT on 64-bit, but on 32-bit the GDT needs to be writeable and
+therefore does not trigger a fault on stack overflow.
 
-Fix this by placing IRET_FRAME in RESTORE_REGS, to mirror how
-FIXUP_FRAME is part of SAVE_ALL.
+Add a guard page.
 
-Fixes: 3c88c692c287 ("x86/stackframe/32: Provide consistent pt_regs")
-Reported-by: Lai Jiangshan <laijs@linux.alibaba.com>
+Fixes: c482feefe1ae ("x86/entry/64: Make cpu_entry_area.tss read-only")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Andy Lutomirski <luto@kernel.org>
 Cc: stable@kernel.org
 ---
- arch/x86/entry/entry_32.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/cpu_entry_area.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 019dbac..f4335ac 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -357,6 +357,7 @@
- 2:	popl	%es
- 3:	popl	%fs
- 	POP_GS \pop
-+	IRET_FRAME
- .pushsection .fixup, "ax"
- 4:	movl	$0, (%esp)
- 	jmp	1b
-@@ -1075,7 +1076,6 @@ restore_all:
- 	/* Restore user state */
- 	RESTORE_REGS pop=4			# skip orig_eax/error_code
- .Lirq_return:
--	IRET_FRAME
+diff --git a/arch/x86/include/asm/cpu_entry_area.h b/arch/x86/include/asm/cpu_entry_area.h
+index 8348f7d..905d89c 100644
+--- a/arch/x86/include/asm/cpu_entry_area.h
++++ b/arch/x86/include/asm/cpu_entry_area.h
+@@ -78,8 +78,12 @@ struct cpu_entry_area {
+ 
  	/*
- 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
- 	 * when returning from IPI handler and when returning from
+ 	 * The GDT is just below entry_stack and thus serves (on x86_64) as
+-	 * a a read-only guard page.
++	 * a read-only guard page. On 32-bit the GDT must be writeable, so
++	 * it needs an extra guard page.
+ 	 */
++#ifdef CONFIG_X86_32
++	char guard_entry_stack[PAGE_SIZE];
++#endif
+ 	struct entry_stack_page entry_stack_page;
+ 
+ 	/*
