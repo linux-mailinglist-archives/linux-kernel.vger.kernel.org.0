@@ -2,245 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9821F105BCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C73105BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:22:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfKUVVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:21:42 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50863 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUVVm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:21:42 -0500
-Received: by mail-wm1-f67.google.com with SMTP id l17so5336847wmh.0;
-        Thu, 21 Nov 2019 13:21:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fO4pVQEm2tFvrKejphNId6GyRDtMLOe3dOR2m5M+DPY=;
-        b=s905Hwyo2yzylx0oL6H5bsMpUU1msMF4sTnrz0kdukk+xXjNVZI2KGslsDI5yvUfhm
-         wYwuGluIV86LmSwVjU36FhBTiiPilX8BTbwXBwSQ+LeRzbabzs0WYBzQqGLm0B1+n8J4
-         hzKm8vmVsch25/auxKlWT2f1hNVjBgzZVHCqI3+tFuocIpLksD3FlaN7dpPVTIYdArhb
-         7avvjNw4SNyyOAGvk4gPiz/QVDeOfwC08rvrKRWgiItm22pcSvo5tPSGrkvHetqUBhq9
-         r6WXm1/kSY+BGB0DaBiBdBTb5xodgvxYV91TcjYXxOcRFpO2NAr7IJGNBujxLTUHyU/C
-         YdaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fO4pVQEm2tFvrKejphNId6GyRDtMLOe3dOR2m5M+DPY=;
-        b=UVGaKV+l3E/MUVeB74cfzyftutJ+tDUqnhx7qn0sYWLU8cNR+oxfavD0asTKdt7fbp
-         rsaHGlDxfgvQ4F3RWQpap/B+/2BlO/JypZWFDxJ00xLfOJuCntAnX2Dm5Cqt6AymxF42
-         rf1kHceRTvufdNjCiqLg8OAe1oQwwoMmAHkpUjTm6WImaCbNMCnRdZ7ZJA1te+8ecPzP
-         NFGLpimhZZD/oKTTriVRANVPyZV7x4vivp+KUFlt2x/q5aiihZFwqfl1f6yiN6r7lJxu
-         l+9pCyzVxWi82wC6Ih5GI9VVBm2sR/FSXsDSoUoFmP8yQLFczuHttmSjEdqAazlHrhve
-         n5Pw==
-X-Gm-Message-State: APjAAAVuOFIdl03LYw1ZqCo1MCTOuVlJyD5EQ48LaosIA7Hj8Ok0moDH
-        hzGW7E/PX2/myrp4401tirwToX1Fa4oZDcZilEU=
-X-Google-Smtp-Source: APXvYqwMTEdhPuDLN8L/FnO3vbnOU6J7rg37EdlTNR4d3NVrgVGZGdTNRl41HTisKn1Zts7OlZ1KOF2ztqmQ7dMbYCA=
-X-Received: by 2002:a1c:6405:: with SMTP id y5mr13357858wmb.175.1574371298600;
- Thu, 21 Nov 2019 13:21:38 -0800 (PST)
+        id S1727133AbfKUVW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:22:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfKUVW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 16:22:27 -0500
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E73F2071B
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 21:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574371346;
+        bh=bniu8l82DVZK7Xcjyvbp1Kp51VrBQmOfOA8fDc6KI6s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1W83i/7eltRlSF7Z+DyLIIlHItx8a80Y6f5tU9FdKwcsb2iJufoFbaPfCr76zhjEB
+         su3UsLAlY70TDmOycXobjCKUa5stZ0po+I01HnyIj+z1c8jzc4U91BMasKPjRJf0JH
+         yZ8B83UABywnlwRrW3HoiepIoC7pWmXjp8KMcVRE=
+Received: by mail-wm1-f50.google.com with SMTP id x26so5034306wmk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 13:22:26 -0800 (PST)
+X-Gm-Message-State: APjAAAUTK4uLV7PijIBFriP/TRC0RBk8PYDY7fWDZMrA38CP1aBXtxNm
+        Tw57JTyBrVd9RoJIXqITzlU4eN8rXTDLVb+dqZCCkg==
+X-Google-Smtp-Source: APXvYqzNJW/i57/phfnZvYSWRoPwe87prKP6rWecrzMX1DMcuSiTogtFsHYHxhmWXYGQ+SQXUSJc/vJ9aEWgwSo2nZE=
+X-Received: by 2002:a7b:c1ca:: with SMTP id a10mr13469841wmj.161.1574371344540;
+ Thu, 21 Nov 2019 13:22:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20191121195902.6906-1-peron.clem@gmail.com> <20191121195902.6906-6-peron.clem@gmail.com>
- <20191121211630.slgayfbuykwvlvdt@pengutronix.de>
-In-Reply-To: <20191121211630.slgayfbuykwvlvdt@pengutronix.de>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Thu, 21 Nov 2019 22:21:27 +0100
-Message-ID: <CAJiuCcdhH9zbRMMYsZbBYL-H8YWn2kimvJEjZ8Z8kF7Uh9MCpg@mail.gmail.com>
-Subject: Re: [PATCH v8 5/6] pwm: sun4i: Add support to output source clock directly
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
+ <1574297603-198156-7-git-send-email-fenghua.yu@intel.com> <20191121060444.GA55272@gmail.com>
+ <20191121130153.GS4097@hirez.programming.kicks-ass.net> <20191121171214.GD12042@gmail.com>
+ <3481175cbe14457a947f934343946d52@AcuMS.aculab.com> <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
+ <20191121185303.GB199273@romley-ivt3.sc.intel.com> <20191121202508.GZ4097@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191121202508.GZ4097@hirez.programming.kicks-ass.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 21 Nov 2019 13:22:13 -0800
+X-Gmail-Original-Message-ID: <CALCETrXbe_q07kL1AyaNaAqgUHsdN6rEDzzZ0CEtv-k9VvQL0A@mail.gmail.com>
+Message-ID: <CALCETrXbe_q07kL1AyaNaAqgUHsdN6rEDzzZ0CEtv-k9VvQL0A@mail.gmail.com>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
+On Thu, Nov 21, 2019 at 12:25 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Nov 21, 2019 at 10:53:03AM -0800, Fenghua Yu wrote:
+>
+> > 4. Otherwise, re-calculate addr to point the 32-bit address which contains
+> >    the bit and operate on the bit. No split lock.
+>
+> That sounds confused, Even BT{,CRS} have a RmW size. There is no
+> 'operate on the bit'.
+>
+> Specifically I hard rely on BTSL to be a 32bit RmW, see commit:
+>
+>   7aa54be29765 ("locking/qspinlock, x86: Provide liveness guarantee")
+>
 
-On Thu, 21 Nov 2019 at 22:16, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> On Thu, Nov 21, 2019 at 08:59:01PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
-> > From: Jernej Skrabec <jernej.skrabec@siol.net>
-> >
-> > PWM core has an option to bypass whole logic and output unchanged sourc=
-e
-> > clock as PWM output. This is achieved by enabling bypass bit.
-> >
-> > Note that when bypass is enabled, no other setting has any meaning, not
-> > even enable bit.
-> >
-> > This mode of operation is needed to achieve high enough frequency to
-> > serve as clock source for AC200 chip which is integrated into same
-> > package as H6 SoC.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> > ---
-> >  drivers/pwm/pwm-sun4i.c | 48 +++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 46 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-> > index 1fa2057419fb..0fe9c680d6d0 100644
-> > --- a/drivers/pwm/pwm-sun4i.c
-> > +++ b/drivers/pwm/pwm-sun4i.c
-> > @@ -3,6 +3,10 @@
-> >   * Driver for Allwinner sun4i Pulse Width Modulation Controller
-> >   *
-> >   * Copyright (C) 2014 Alexandre Belloni <alexandre.belloni@free-electr=
-ons.com>
-> > + *
-> > + * Limitations:
-> > + * - When outputing the source clock directly, the PWM logic will be b=
-ypassed
-> > + *   and the currently running period is not guaranteed to be complete=
-d
-> >   */
-> >
-> >  #include <linux/bitops.h>
-> > @@ -73,6 +77,7 @@ static const u32 prescaler_table[] =3D {
-> >
-> >  struct sun4i_pwm_data {
-> >       bool has_prescaler_bypass;
-> > +     bool has_direct_mod_clk_output;
-> >       unsigned int npwm;
-> >  };
-> >
-> > @@ -118,6 +123,20 @@ static void sun4i_pwm_get_state(struct pwm_chip *c=
-hip,
-> >
-> >       val =3D sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
-> >
-> > +     /*
-> > +      * PWM chapter in H6 manual has a diagram which explains that if =
-bypass
-> > +      * bit is set, no other setting has any meaning. Even more, exper=
-iment
-> > +      * proved that also enable bit is ignored in this case.
-> > +      */
-> > +     if ((val & BIT_CH(PWM_BYPASS, pwm->hwpwm)) &&
-> > +         sun4i_pwm->data->has_direct_mod_clk_output) {
-> > +             state->period =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, clk_rate=
-);
-> > +             state->duty_cycle =3D DIV_ROUND_UP_ULL(state->period, 2);
-> > +             state->polarity =3D PWM_POLARITY_NORMAL;
-> > +             state->enabled =3D true;
-> > +             return;
-> > +     }
-> > +
-> >       if ((PWM_REG_PRESCAL(val, pwm->hwpwm) =3D=3D PWM_PRESCAL_MASK) &&
-> >           sun4i_pwm->data->has_prescaler_bypass)
-> >               prescaler =3D 1;
-> > @@ -149,13 +168,24 @@ static void sun4i_pwm_get_state(struct pwm_chip *=
-chip,
-> >
-> >  static int sun4i_pwm_calculate(struct sun4i_pwm_chip *sun4i_pwm,
-> >                              const struct pwm_state *state,
-> > -                            u32 *dty, u32 *prd, unsigned int *prsclr)
-> > +                            u32 *dty, u32 *prd, unsigned int *prsclr,
-> > +                            bool *bypass)
-> >  {
-> >       u64 clk_rate, div =3D 0;
-> >       unsigned int pval, prescaler =3D 0;
-> >
-> >       clk_rate =3D clk_get_rate(sun4i_pwm->clk);
-> >
-> > +     *bypass =3D sun4i_pwm->data->has_direct_mod_clk_output &&
-> > +               state->enabled &&
-> > +               (state->period * clk_rate >=3D NSEC_PER_SEC) &&
-> > +               (state->period * clk_rate < 2 * NSEC_PER_SEC) &&
-> > +               (state->duty_cycle * clk_rate * 2 >=3D NSEC_PER_SEC);
-> > +
-> > +     /* Skip calculation of other parameters if we bypass them */
-> > +     if (*bypass)
-> > +             return 0;
-> > +
-> >       if (sun4i_pwm->data->has_prescaler_bypass) {
-> >               /* First, test without any prescaler when available */
-> >               prescaler =3D PWM_PRESCAL_MASK;
-> > @@ -206,6 +236,7 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, s=
-truct pwm_device *pwm,
-> >       int ret;
-> >       unsigned int delay_us, prescaler;
-> >       unsigned long now;
-> > +     bool bypass;
-> >
-> >       pwm_get_state(pwm, &cstate);
-> >
-> > @@ -220,7 +251,8 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, s=
-truct pwm_device *pwm,
-> >       spin_lock(&sun4i_pwm->ctrl_lock);
-> >       ctrl =3D sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
-> >
-> > -     ret =3D sun4i_pwm_calculate(sun4i_pwm, state, &duty, &period, &pr=
-escaler);
-> > +     ret =3D sun4i_pwm_calculate(sun4i_pwm, state, &duty, &period, &pr=
-escaler,
-> > +                               &bypass);
-> >       if (ret) {
-> >               dev_err(chip->dev, "period exceeds the maximum value\n");
-> >               spin_unlock(&sun4i_pwm->ctrl_lock);
-> > @@ -229,6 +261,18 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, =
-struct pwm_device *pwm,
-> >               return ret;
-> >       }
-> >
-> > +     if (sun4i_pwm->data->has_direct_mod_clk_output) {
-> > +             if (bypass) {
-> > +                     ctrl |=3D BIT_CH(PWM_BYPASS, pwm->hwpwm);
-> > +                     /* We can skip other parameter */
-> > +                     sun4i_pwm_writel(sun4i_pwm, ctrl, PWM_CTRL_REG);
-> > +                     spin_unlock(&sun4i_pwm->ctrl_lock);
-> > +                     return 0;
-> > +             } else {
-> > +                     ctrl &=3D ~BIT_CH(PWM_BYPASS, pwm->hwpwm);
-> > +             }
-> > +     }
->
-> This could be simplified to:
->
->         if (bypass) {
->                 ctrl |=3D BIT_CH(PWM_BYPASS, pwm->hwpwm);
->                 /*
->                  * Other parameters are not relevant in this mode and so
->                  * writing them can be skipped
->                  */
->                 sun4i_pwm_writel(sun4i_pwm, ctrl, PWM_CTRL_REG);
->                 spin_unlock(&sun4i_pwm->ctrl_lock);
->                 return 0;
->         } else {
->                 ctrl &=3D ~BIT_CH(PWM_BYPASS, pwm->hwpwm);
->         }
->
-> which has the advantage(?) that the bypass bit is also (more obviously)
-> cleared for SoCs that don't support it and it reduces the indention
-> level.
+Okay, spent a bit of time trying to grok this.  Are you saying that
+LOCK BTSL suffices in a case where LOCK BTSB or LOCK XCHG8 would not?
+On x86, all the LOCK operations are full barriers, so they should
+order with adjacent normal accesses even to unrelated addresses,
+right?
 
-This bit is not guaranteed to be reserved for all the SoC variants.
+I certainly understand that a *non-locked* RMW to a bit might need to
+have a certain width to get the right ordering guarantees, but those
+aren't affected by split-lock detection regardless.
 
-I don't think it's a good idea to set to 0 a bit which is undefined.
-
-Regards,
-Clement
-
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
-|
+--Andy
