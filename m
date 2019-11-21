@@ -2,194 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D95104E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8439B104E90
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfKUIzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:55:37 -0500
-Received: from mail-eopbgr770080.outbound.protection.outlook.com ([40.107.77.80]:36110
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726638AbfKUIzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:55:36 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ONPlZDWDRhq0jh9O7B/IVDkWUptaLDFHhdwls20ehNj+XgV/85+zRhuXBxnqrgFKOiY3yo8DJXW5qYL2VMU0/HXtUPAi5FHMWK+pxMrv9gnUVnIuaxuPHQEJwD7TA3jvot1pGdVw4JaWSkQwJSAn7x28l+bG12HfrdL1Xdzet8njNONM5cnNyn1Ov6dYZtFPzG7Wcy7JxYprSeKDcN7ATdnyg1H/wtI+Jjf/ebuXjJH3QHjFz8yTg44OHZy8i6tpfm82Re1vLiSuAoBrACvYZdIzp5I5yUQT29HKpcrdzb7wTTRiZ4i7vkQDUfXWWn2UOnBsYg0JH319LRdxRt9zeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAVKa0zjBWZxFHFMZKBdKN8C/5ulBPIDPIObfCgrHJw=;
- b=MvfmGDz83+LEoLA4YwTtSEonCfY4Ds753fmVFviJ37d2jzf/Abqsey9zExFmA9pjEwLZpShjiSK+38nKLO/MmIvHh3puh+BDGBDa2P8+5wkHVkeOZEPYRL54/cdcsYo++o0WVWTBRi9gEgb6TAOU4gt5qQm8C+0CGMAqyZfquO+S4q8tmcdn+bDTvglglIEomylgYkg6b5s+44WD75NxyW1ELvdLt7u+3K5aUO4pYviLmAmbvAijiA4BYCGExFJAVnupMLcb6+in0bRRO8nNOgbmSWcyvNw3SphfjgdM4L28h5VX1ZYzx3NuekWLCkpgBbODH85uXetXYMYkQASzfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sifive.com; dmarc=pass action=none header.from=sifive.com;
- dkim=pass header.d=sifive.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sifive.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAVKa0zjBWZxFHFMZKBdKN8C/5ulBPIDPIObfCgrHJw=;
- b=OL5zYrCNffk0NVbFCU+TpRWsvcV4f/o2X07zxFeVNQrcDlIW+ULtTtuOs8iQRggWt8tmrJCE7i8piPpzIeSL3Y5xIJdsm9uUrR2FUer9wVWdsLSEZGsHxY1ytsvuU27Cxg9QEeaDNCwxQqkMINkesmmkLlscGEyEa/IsadqkW3U=
-Received: from CH2PR13MB3368.namprd13.prod.outlook.com (52.132.246.90) by
- CH2PR13MB3605.namprd13.prod.outlook.com (52.132.246.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.10; Thu, 21 Nov 2019 08:55:32 +0000
-Received: from CH2PR13MB3368.namprd13.prod.outlook.com
- ([fe80::853e:1256:311e:d29]) by CH2PR13MB3368.namprd13.prod.outlook.com
- ([fe80::853e:1256:311e:d29%7]) with mapi id 15.20.2474.018; Thu, 21 Nov 2019
- 08:55:32 +0000
-From:   Yash Shah <yash.shah@sifive.com>
-To:     Yash Shah <yash.shah@sifive.com>, Marc Zyngier <maz@kernel.org>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "atish.patra@wdc.com" <atish.patra@wdc.com>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bmeng.cn@gmail.com" <bmeng.cn@gmail.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: RE: [PATCH v2 1/5] genirq: introduce irq_domain_translate_onecell
-Thread-Topic: [PATCH v2 1/5] genirq: introduce irq_domain_translate_onecell
-Thread-Index: AQHVn3AJHBiRD+wuIUSzxWzN0+e/fqeT3o6AgAFvDhCAAAVZ4A==
-Date:   Thu, 21 Nov 2019 08:55:32 +0000
-Message-ID: <CH2PR13MB336857C8AAC4CD3EB48942BF8C4E0@CH2PR13MB3368.namprd13.prod.outlook.com>
-References: <1574233128-28114-1-git-send-email-yash.shah@sifive.com>
- <1574233128-28114-2-git-send-email-yash.shah@sifive.com>
- <5ec51559d8b4cd3b8e80943788b52926@www.loen.fr>
- <CH2PR13MB33682B1E7B40DC5C2FD1094C8C4E0@CH2PR13MB3368.namprd13.prod.outlook.com>
-In-Reply-To: <CH2PR13MB33682B1E7B40DC5C2FD1094C8C4E0@CH2PR13MB3368.namprd13.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yash.shah@sifive.com; 
-x-originating-ip: [114.143.65.226]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8fff0939-69d7-4606-77a8-08d76e609130
-x-ms-traffictypediagnostic: CH2PR13MB3605:
-x-ld-processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR13MB3605BEC9D615CA06DFA5AD5F8C4E0@CH2PR13MB3605.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0228DDDDD7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39830400003)(136003)(346002)(376002)(396003)(189003)(199004)(13464003)(11346002)(478600001)(316002)(64756008)(4326008)(52536014)(186003)(7736002)(44832011)(53546011)(6506007)(54906003)(8936002)(66066001)(6116002)(76176011)(3846002)(71200400001)(71190400001)(7696005)(7416002)(229853002)(9686003)(6436002)(256004)(55016002)(2940100002)(14444005)(81166006)(446003)(33656002)(74316002)(66556008)(66446008)(26005)(305945005)(102836004)(86362001)(2906002)(66476007)(66946007)(14454004)(76116006)(81156014)(4001150100001)(5660300002)(25786009)(8676002)(110136005)(6246003)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR13MB3605;H:CH2PR13MB3368.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: sifive.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PAdOZeeWIvWK8uJV+YBj0Z23NUBYQKkc7KJXQy1FNYwHRlNZlnbufB+RUTpCDW0n919OE9H2frwJtSLmSwWFc5ES1jH4YlByUGyCgH6Kl5UB9DBDKg/PrkNNvjWslz/iXZTC9RUVKIuwwRmFwM4KVj+ZubSnhImEPYGSJoDeBAE5nZiQTWfoZ+6BnzrGqqPFPFQXuaV5WDNJLVoVTNp+iV/YiWxEPNnTgEbXQIYfkW6ByauKkv+PNSgEg51jLHfawa5NfLNfRTRjKr6FcPw9sW4f9TRABfDOwl0TlqczlWY4HjPEyI3YC65IGzmzEX9HSk3UEqb/jRBc3qXmXXYaNLqSnK8zvCpx4CzUeeFmh4tR8sEqGEP87ao3BbE3YGSpCGIagvjPCFt1gw1IhFrcNV3Uvej8xn21nxy5GvlaO/qEzb2vQYcs/52cgwr1rpcz
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726840AbfKUI5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:57:41 -0500
+Received: from mout.web.de ([212.227.15.14]:45053 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726170AbfKUI5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 03:57:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574326562;
+        bh=649bNPQUd2HELGXn+AIHga+NRhYE3k2ynq96C6itO7Y=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=bqI9VoDCEA2KgibwK7yHMB1vHAyybuk8sF7fbYuR7tmuiJsQ05JZPWQSGLvicuc3w
+         AXW2MXLO4p8gO0h1v1rzmcgSDdNi9F5cUkGOjAaIiZ9qpPXjxkME8t5yW0XYVu08Fk
+         kZwcqMr9Q03fkhxPz+V7UuYWZWWJLo90wJvN49ZI=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MQ8vL-1iT1Qg3mUd-005KM3; Thu, 21
+ Nov 2019 09:56:02 +0100
+Subject: Re: [PATCH v4 00/13] add the latest exfat driver
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <CGME20191121052913epcas1p1b28d2727dca5df42a6f2b8eb6b6dbcbb@epcas1p1.samsung.com>
+ <20191121052618.31117-1-namjae.jeon@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <dcbf6d35-b550-53bc-0c8a-2e54497173e2@web.de>
+Date:   Thu, 21 Nov 2019 09:55:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-OriginatorOrg: sifive.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fff0939-69d7-4606-77a8-08d76e609130
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 08:55:32.5824
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9zJ+5owdRPhXLZWVHaEyJVjB9jpijVI6gJQCMSir0hZLqzdSIdY+h2oOT+JFTIjoU4qH0DV84m9Xg+Uz94kCyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3605
+In-Reply-To: <20191121052618.31117-1-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3BjI0+iOq89U5n3SkmqNOAaf86FUTrjXBtfV9lgSFLkDymAZ4vo
+ xaSJGg8nVnPaAnD4tGnoeopYMeb/7LgEYj8s9/15zP1Xx2P7K5lmqKbHMLERfNe+FWeKpZi
+ Kc+N4SUN/2TwGQGnV2LWnjX1/FMQp63x8to9wpB7/e4QyEejw3D4NXuwEWlEQz2LJWR1dno
+ eQJ120vharO21VMAglrDA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mWPHXbAlWhQ=:2Jswr3DWk1C7Wd1iO2wwSr
+ 05YVSYaLXf6kExXzJEPo7JtAUaJb5kSIZ2yGbYA0aCd7+Cooel8SW43oX+OXDJ/cacp1ZN4Lw
+ PZ3mrRhqAPh3V/f5kP5PKAMHs/Rdbyrqz6sSLP/ZzdZOORsFpfvs0bkMfXz/1EFbsXPAVX2En
+ TVJun44FieaQVsJVhew4OP3NGUT6hyO8z2t5A3CgoHORd1uLo6xq7hXP7r8W+Q6Lrwf1f0XNu
+ R0sLW3ASNjdnt5xkbyBzjaJaProaOVNqJburgNuNY9QllDrofqa7md5nDE3CYB/x8/UYswq5V
+ IlGb8Uu8F8K91fCyhAFAvPOHW3cyIWFdz8hWoKX3UTnDsUPfYje1lKttxOSqQzhzct144gqGF
+ AmtKBY45QlGaqCEMLCM7tAl7ZBE6L5Lp/4/d03Aakbf8VYMSO5xZQ5MMMPDSdXb66/rPNCrR+
+ ppKBSEzAGxCp4UArfhYGBFSq+iHZeRIlRVBN41yAHPMUk/zHkQUbrBkoZsN4LhlXtIzlsrpbs
+ WnLHcDOvZH31K4jUym1lmGRo6UML2pLrx8kjgsEgKr6So0VCmaL8dIZfP2HENzm5Ap2RNOQ+y
+ bJSIaVrWoSAm+SoBPwNXYoRqn75vhT16H/S94rSCJMY8igAzS8ZnUxMdIn2wCAqrAaiyySqCG
+ iizIKqfmE/NJ0U0qgn+T4O1ElIlZbSHPM5BueYBKLI9g1NjSlPktPzkecgAYl0tj2ag72Eiqn
+ Fgro04v87/1s9Cw2lohA8FjB4ax7hO+NRR+JsjlGZQR8LKziI+lOO2CeZKz7q4h9PPwBf5um8
+ 441zrRMu5YRClICAIgNWRfv9G13M3PwF4zA9zbsOjmohk3ff+eAPh81/pvrXX3aKHNxbW4LMU
+ 3ZRLIrjqHWQEwViYjpaVf/eWKCibrDUaT7o6w57+UD9u50rrfIpGXzaAiDwZ49431O5oixVdQ
+ qBCCBHf/mXQt3UV78Qwa57nYAolMEvAipQypHJF2b6FXyPxMOzYxHt/0/1ln/Jcm3EusRwUdr
+ a5Sn41oankdKP6baG2g2q20I7Wm9WurxXaIUFWq7HkqUXAtGyEeuYcNcS+MglZYubRW53vUel
+ bC/yuvAuc7xxeCwIbVeel7NSNHlREmovRGUcdzGr8znHBZSXvKQU7ULjoz47KY03NswkzJf9P
+ LC3vFI5eYYRh8FVXe5VeKrPDpOQSG3RDEeJ7HjUoKRXpF/WVYV5ZF2F7UO4WeZMnuj0isUNyQ
+ zx8dVLzmSecUE9mpze0jPX48z1hpi17e3QQU4+oc3SCIJA2vuTvkqC/QQ4IM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+=E2=80=A6
+> v2:
+=E2=80=A6
+>  - Rename proper goto labels in several places.
 
+I find an other wording more appropriate.
+A renaming would have not been needed if these identifiers were =E2=80=9Cp=
+roper=E2=80=9D before.
 
-> -----Original Message-----
-> From: linux-riscv <linux-riscv-bounces@lists.infradead.org> On Behalf Of
-> Yash Shah
-> Sent: 21 November 2019 14:06
-> To: Marc Zyngier <maz@kernel.org>
-> Cc: mark.rutland@arm.com; devicetree@vger.kernel.org;
-> aou@eecs.berkeley.edu; jason@lakedaemon.net; atish.patra@wdc.com;
-> Sachin Ghadi <sachin.ghadi@sifive.com>; linus.walleij@linaro.org; linux-
-> kernel@vger.kernel.org; bgolaszewski@baylibre.com; robh+dt@kernel.org;
-> palmer@dabbelt.com; Sagar Kadam <sagar.kadam@sifive.com>; linux-
-> gpio@vger.kernel.org; Paul Walmsley ( Sifive) <paul.walmsley@sifive.com>;
-> tglx@linutronix.de; bmeng.cn@gmail.com; linux-riscv@lists.infradead.org
-> Subject: RE: [PATCH v2 1/5] genirq: introduce irq_domain_translate_onecel=
-l
->=20
-> > -----Original Message-----
-> > From: Marc Zyngier <maz@kernel.org>
-> > Sent: 20 November 2019 16:09
-> > To: Yash Shah <yash.shah@sifive.com>
-> > Cc: linus.walleij@linaro.org; bgolaszewski@baylibre.com;
-> > robh+dt@kernel.org; mark.rutland@arm.com; palmer@dabbelt.com; Paul
-> > Walmsley ( Sifive) <paul.walmsley@sifive.com>; aou@eecs.berkeley.edu;
-> > tglx@linutronix.de; jason@lakedaemon.net; bmeng.cn@gmail.com;
-> > atish.patra@wdc.com; Sagar Kadam <sagar.kadam@sifive.com>; linux-
-> > gpio@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> > riscv@lists.infradead.org; linux-kernel@vger.kernel.org; Sachin Ghadi
-> > <sachin.ghadi@sifive.com>
-> > Subject: Re: [PATCH v2 1/5] genirq: introduce
-> > irq_domain_translate_onecell
-> >
-> > On 2019-11-20 06:59, Yash Shah wrote:
-> > > Add a new function irq_domain_translate_onecell() that is to be used
-> > > as the translate function in struct irq_domain_ops for the v2 IRQ API=
-.
-> > >
-> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> [...]
-> > >
-> > >  /**
-> > > + * irq_domain_translate_onecell() - Generic translate for direct
-> > > + one
-> > > cell
-> > > + * bindings
-> > > + *
-> > > + * Device Tree IRQ specifier translation function which works with
-> > > one cell
-> >
-> > nit: the whole point of the 'new' translate function is that they are
-> > firmware-agnostic. Just drop the DT reference here.
->=20
-> Ok sure.
->=20
-> >
-> > > + * bindings where the cell values map directly to the hwirq number.
-> > > + */
-> > > +int irq_domain_translate_onecell(struct irq_domain *d,
-> > > +				 struct irq_fwspec *fwspec,
-> > > +				 unsigned long *out_hwirq,
-> > > +				 unsigned int *out_type)
-> > > +{
-> > > +	if (WARN_ON(fwspec->param_count < 1))
-> > > +		return -EINVAL;
-> > > +	*out_hwirq =3D fwspec->param[0];
-> > > +	*out_type =3D IRQ_TYPE_NONE;
-> > > +	return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(irq_domain_translate_onecell);
-> > > +
-> > > +/**
-> > >   * irq_domain_translate_twocell() - Generic translate for direct
-> > > two cell
-> > >   * bindings
-> > >   *
-> >
-> > Can you please also update (potentially in a separate patch) the
-> > potential users of this? I mentioned the nvic driver last time...
-> >
->=20
-> Ok, I will separate out this patch from the patchset and send it individu=
-ally
-> along with potential users of it.
-> Thanks for your comments
+Were any update candidates left over according to this change pattern?
 
-I am sorry, I think I misunderstood you.
-You want me to send a new separate patch in which the potential users will =
-be updated to this new function.
-Hope I got it right?
-
-- Yash=20
+Regards,
+Markus
