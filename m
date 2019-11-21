@@ -2,100 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5653E104ECD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:13:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D7C104EC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfKUJNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 04:13:35 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:45026 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726574AbfKUJNc (ORCPT
+        id S1726532AbfKUJNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 04:13:19 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46317 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfKUJNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:13:32 -0500
-X-UUID: 3861f1e60fd14421a968ebbfe705f6a8-20191121
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=VqkAt8rgN3zVcjynrIl0FW+8LhE3QB8tyJbsUpCHPIA=;
-        b=d6zeW8uAFApCk2+xL8nkvsnceaDu84aXDWu62+MEvq/mVNkBqJBl1fIEWt51d8vvf75x0EmiwKCaQ7fIRLaSvvFXnWgINgXd43tXWZynfiglT9kxY3rJGPFyTlS6p/AfJNyJ7Qit+lyYLWsgcUv1P8UcxgyH15+xqNijnEhbXms=;
-X-UUID: 3861f1e60fd14421a968ebbfe705f6a8-20191121
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <dennis-yc.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 2037561247; Thu, 21 Nov 2019 17:13:27 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 21 Nov 2019 17:13:19 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 21 Nov 2019 17:13:30 +0800
-From:   Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Dennis YC Hsieh" <dennis-yc.hsieh@mediatek.com>
-Subject: [PATCH v1 12/12] soc: mediatek: cmdq: add set event function
-Date:   Thu, 21 Nov 2019 17:12:32 +0800
-Message-ID: <1574327552-11806-13-git-send-email-dennis-yc.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1574327552-11806-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1574327552-11806-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+        Thu, 21 Nov 2019 04:13:19 -0500
+Received: by mail-qt1-f194.google.com with SMTP id r20so2841894qtp.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 01:13:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NcdjicditjmfyWi+GeSCelrI2pCMNcp5zsDjzvV7ISo=;
+        b=kVdCJlvtQj7GEYvaRxCTynENkGAuOqE0fgXhqXjZX3Ok9dJeAYEsszWqOcQNVZgIpl
+         N5Hf96j30qCEl3XYc3fO0h/Uzi7lwD/a57z9IH71QLqgfRAvOMcDGUXGPOYBDrXMzdgT
+         t/DuA2IXS4mtk+lTC7g7cK7hSSVR8FvoIV4j1IJ0y5UeO++jva9S8C3kNszCT4Ee7KKz
+         vK+9dr3H5rrrT8hxO3tHZREMV60csIWaZXrIM4uGPknZpZ8ZmKjtdL90vVOo85Ewr3qJ
+         sVg4HR3Bh/1qYoXy1fDXjCDRbb4kn5uYxnhervg7WqLWMNNhJqiA8giNG/7velhOxHrN
+         2h1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NcdjicditjmfyWi+GeSCelrI2pCMNcp5zsDjzvV7ISo=;
+        b=AdmtU0BO0L+CLUbP37uW+T3M2Y45wxAaNPSDwbhj5swP/TitAUq9GBl51Zeo8ZFrdj
+         H7mqMz7vNIKXlzHQGAuEB+xrTydiCyk6CCKM5s6WXYG5kmm7ix6PHRZ5+DwvUFIHS2Me
+         Ocx9lvlKVNIdL0n3dkvQWk5YnN2cWJSmYAznNOLlYd2U9SNweinqNbeho7GLMvLzRSbU
+         07pKPu6+BTANno6QkvHJTvQJ0875v9m2KH/Q/vwekYDRsABIdJPKZT343PnFXf0PnDFa
+         hntltDvy36WXVMVTOnAIJ+twH4V3mPQ38qUaL4jrnMrICChkrEuzIOTjBVehrnSYfhwK
+         TYXg==
+X-Gm-Message-State: APjAAAWWgNdmPaDPlRAPFhosNg6Nes/q09dE9Ut3Bc6bLwDFrofuy4oT
+        ciyOiXcqZ8nxKTlwbLA0Z3KGqph+2SajkxN4EEM=
+X-Google-Smtp-Source: APXvYqzIwWcNFEIKnXcu2rncMeN3JIjiyBPOOkvS158/LQiIz5dhvPbbID+0OWweTSJ7l1CvFqytGhBAyPEXOceXt1A=
+X-Received: by 2002:ac8:1084:: with SMTP id a4mr7441268qtj.114.1574327597933;
+ Thu, 21 Nov 2019 01:13:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20190904235216.18510-1-kw@linux.com>
+In-Reply-To: <20190904235216.18510-1-kw@linux.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Thu, 21 Nov 2019 17:12:41 +0800
+Message-ID: <CAEbi=3fpNQC+2qnDuX51gij4ooNbHNNnrQQQPXKzafVbcYoV+A@mail.gmail.com>
+Subject: Re: [PATCH] nds32: Move static keyword to the front of declaration
+To:     Krzysztof Wilczynski <kw@linux.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIHNldCBldmVudCBmdW5jdGlvbiBpbiBjbWRxIGhlbHBlciBmdW5jdGlvbnMgdG8gc2V0IHNw
-ZWNpZmljIGV2ZW50Lg0KDQpTaWduZWQtb2ZmLWJ5OiBEZW5uaXMgWUMgSHNpZWggPGRlbm5pcy15
-Yy5oc2llaEBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21k
-cS1oZWxwZXIuYyAgIHwgICAxNSArKysrKysrKysrKysrKysNCiBpbmNsdWRlL2xpbnV4L21haWxi
-b3gvbXRrLWNtZHEtbWFpbGJveC5oIHwgICAgMSArDQogaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0
-ZWsvbXRrLWNtZHEuaCAgICB8ICAgIDkgKysrKysrKysrDQogMyBmaWxlcyBjaGFuZ2VkLCAyNSBp
-bnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21k
-cS1oZWxwZXIuYyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQppbmRl
-eCA3ZjFlMzMyLi5kZDI5OTY4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRr
-LWNtZHEtaGVscGVyLmMNCisrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBl
-ci5jDQpAQCAtMzUzLDYgKzM1MywyMSBAQCBpbnQgY21kcV9wa3RfY2xlYXJfZXZlbnQoc3RydWN0
-IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCkNCiB9DQogRVhQT1JUX1NZTUJPTChjbWRxX3BrdF9j
-bGVhcl9ldmVudCk7DQogDQoraW50IGNtZHFfcGt0X3NldF9ldmVudChzdHJ1Y3QgY21kcV9wa3Qg
-KnBrdCwgdTE2IGV2ZW50KQ0KK3sNCisJc3RydWN0IGNtZHFfaW5zdHJ1Y3Rpb24gaW5zdCA9IHsg
-ezB9IH07DQorDQorCWlmIChldmVudCA+PSBDTURRX01BWF9FVkVOVCkNCisJCXJldHVybiAtRUlO
-VkFMOw0KKw0KKwlpbnN0Lm9wID0gQ01EUV9DT0RFX1dGRTsNCisJaW5zdC52YWx1ZSA9IENNRFFf
-V0ZFX1VQREFURSB8IENNRFFfV0ZFX1VQREFURV9WQUxVRTsNCisJaW5zdC5ldmVudCA9IGV2ZW50
-Ow0KKw0KKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQocGt0LCBpbnN0KTsNCit9DQor
-RVhQT1JUX1NZTUJPTChjbWRxX3BrdF9zZXRfZXZlbnQpOw0KKw0KIGludCBjbWRxX3BrdF9wb2xs
-KHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1OCBzdWJzeXMsDQogCQkgIHUxNiBvZmZzZXQsIHUzMiB2
-YWx1ZSkNCiB7DQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9tYWlsYm94L210ay1jbWRxLW1h
-aWxib3guaCBiL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmgNCmluZGV4
-IDNmNmJjMGQuLmRiZWRkYTYgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRr
-LWNtZHEtbWFpbGJveC5oDQorKysgYi9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNtZHEtbWFp
-bGJveC5oDQpAQCAtMTcsNiArMTcsNyBAQA0KICNkZWZpbmUgQ01EUV9KVU1QX1BBU1MJCQlDTURR
-X0lOU1RfU0laRQ0KIA0KICNkZWZpbmUgQ01EUV9XRkVfVVBEQVRFCQkJQklUKDMxKQ0KKyNkZWZp
-bmUgQ01EUV9XRkVfVVBEQVRFX1ZBTFVFCQlCSVQoMTYpDQogI2RlZmluZSBDTURRX1dGRV9XQUlU
-CQkJQklUKDE1KQ0KICNkZWZpbmUgQ01EUV9XRkVfV0FJVF9WQUxVRQkJMHgxDQogDQpkaWZmIC0t
-Z2l0IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaCBiL2luY2x1ZGUvbGlu
-dXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgNCmluZGV4IDUyMTE4MjcuLjg0ZGJmMGUgMTAwNjQ0
-DQotLS0gYS9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQorKysgYi9pbmNs
-dWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQpAQCAtMTY3LDYgKzE2NywxNSBAQCBp
-bnQgY21kcV9wa3RfbWVtX21vdmUoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHBoeXNfYWRkcl90IHNy
-Y19hZGRyLA0KIGludCBjbWRxX3BrdF9jbGVhcl9ldmVudChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwg
-dTE2IGV2ZW50KTsNCiANCiAvKioNCisgKiBjbWRxX3BrdF9zZXRfZXZlbnQoKSAtIGFwcGVuZCBz
-ZXQgZXZlbnQgY29tbWFuZCB0byB0aGUgQ01EUSBwYWNrZXQNCisgKiBAcGt0Ogl0aGUgQ01EUSBw
-YWNrZXQNCisgKiBAZXZlbnQ6CXRoZSBkZXNpcmVkIGV2ZW50IHRvIGJlIHNldA0KKyAqDQorICog
-UmV0dXJuOiAwIGZvciBzdWNjZXNzOyBlbHNlIHRoZSBlcnJvciBjb2RlIGlzIHJldHVybmVkDQor
-ICovDQoraW50IGNtZHFfcGt0X3NldF9ldmVudChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2
-ZW50KTsNCisNCisvKioNCiAgKiBjbWRxX3BrdF9wb2xsKCkgLSBBcHBlbmQgcG9sbGluZyBjb21t
-YW5kIHRvIHRoZSBDTURRIHBhY2tldCwgYXNrIEdDRSB0bw0KICAqCQkgICAgIGV4ZWN1dGUgYW4g
-aW5zdHJ1Y3Rpb24gdGhhdCB3YWl0IGZvciBhIHNwZWNpZmllZA0KICAqCQkgICAgIGhhcmR3YXJl
-IHJlZ2lzdGVyIHRvIGNoZWNrIGZvciB0aGUgdmFsdWUgdy9vIG1hc2suDQotLSANCjEuNy45LjUN
-Cg==
+Krzysztof Wilczynski <kw@linux.com> =E6=96=BC 2019=E5=B9=B49=E6=9C=885=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=887:52=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Move the static keyword to the front of declaration of
+> cpu_pmu_of_device_ids, and resolve the following compiler
+> warning that can be seen when building with warnings
+> enabled (W=3D1):
+>
+> arch/nds32/kernel/perf_event_cpu.c:1122:1: warning:
+>   =E2=80=98static=E2=80=99 is not at beginning of declaration [-Wold-styl=
+e-declaration]
+>
+> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+> ---
+> Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
+>
+>  arch/nds32/kernel/perf_event_cpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/nds32/kernel/perf_event_cpu.c b/arch/nds32/kernel/perf_=
+event_cpu.c
+> index 334c2a6cec23..0ce6f9f307e6 100644
+> --- a/arch/nds32/kernel/perf_event_cpu.c
+> +++ b/arch/nds32/kernel/perf_event_cpu.c
+> @@ -1119,7 +1119,7 @@ static void cpu_pmu_init(struct nds32_pmu *cpu_pmu)
+>                 on_each_cpu(cpu_pmu->reset, cpu_pmu, 1);
+>  }
+>
+> -const static struct of_device_id cpu_pmu_of_device_ids[] =3D {
+> +static const struct of_device_id cpu_pmu_of_device_ids[] =3D {
+>         {.compatible =3D "andestech,nds32v3-pmu",
+>          .data =3D device_pmu_init},
+>         {},
 
+Thanks, Krzysztof.
+Acked-by: Greentime Hu <green.hu@gmail.com>
+
+I will queue it in nds32 next tree.
