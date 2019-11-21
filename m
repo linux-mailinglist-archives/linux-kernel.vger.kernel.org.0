@@ -2,121 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CE71054BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:43:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D19071054C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:44:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfKUOnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:43:10 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43987 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfKUOnJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:43:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id q8so1265568qtr.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 06:43:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8V2qnILlFtYyfjoegvk07S2xRy9xrnxSif3rglNQkjM=;
-        b=elz/lVLVUtWW/NJ6SWJVcwhd/xwX9uoiIRSrHkNbGjxOqRqm/1uOfiaMAba79mSx9v
-         jHAQ7nCOBiOH872gAieSBanhI0WBJ0e6/Vk0D9rWHZQmFBb0Al+QQ90/9bb6yCHVlVRl
-         1C0TiPcozPVi8Eg4iFM/MaCAViXZz2rpce+skOMSY1AVFyb+l31NIiR5cioAmIBbLHkt
-         lX8aeQrWhkuh8Hdp8n5PAD6yfgM3cCRTrVBclu2TyWQXCxkQ54djh9IYChhwSEXALzrq
-         fTNnFmlFVo3SdO/YpjVhOBmaM4wggDgGf+rDWs+3infk2zc7k5Y1Vo+9IiuG9XukRoYK
-         T07A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8V2qnILlFtYyfjoegvk07S2xRy9xrnxSif3rglNQkjM=;
-        b=U61UxqTSHJJnJvYngdX2o95i4jNazNjTMV/5AgdIGuxeHFint2Xpl6jYNryzb6pWAZ
-         OBBl5rCc7wvGMYBChJFZk0KHPjMwUE6soA01yfDlnUD5BSqmu/sB4QtDPYke7OKCvR72
-         ZtQJb5GZG3Wu0XR51l7tvSNdi+TZaQ7IzhLpApHP+kxzPNrjGFqV7dNqeUNobvHo/DEf
-         nUEIq9gZJEBzcy579FfXm2aYFDbDRTQQOTTIJLVRBe7rR9OGeitaCs7hiX4QlUCGmg6v
-         TyYDFkRpu4/LaoadV9dMUNkVZ2h6hpe7BoWap415HRd/Mc1dT6lcaUZ6JeKMeBifC7Y+
-         Ccgw==
-X-Gm-Message-State: APjAAAWnKCyaZn42aDds1MroN9Zfc3oR3mfsqbkAMEbXeGCYPkxPFupP
-        r9NAbiVGXHP/zYu3XRB1K5E=
-X-Google-Smtp-Source: APXvYqzDLVA1uhhLWu74gy4ZyNtrmBahyXA8olhshtcJ2qQE6Zqe5LbQvlBEO2KPLdnVEz83WlmDjg==
-X-Received: by 2002:ac8:3787:: with SMTP id d7mr8776537qtc.160.1574347388844;
-        Thu, 21 Nov 2019 06:43:08 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id p33sm1612937qtf.80.2019.11.21.06.43.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 06:43:08 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 1C4A640D3E; Thu, 21 Nov 2019 11:43:06 -0300 (-03)
-Date:   Thu, 21 Nov 2019 11:43:06 -0300
-To:     Hewenliang <hewenliang4@huawei.com>
-Cc:     rostedt@goodmis.org, acme@redhat.com, tstoyanov@vmware.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tools lib traceevent: Fix memory leakage in
- copy_filter_type
-Message-ID: <20191121144306.GG5078@kernel.org>
-References: <20191113154044.5b591bf8@gandalf.local.home>
- <20191119014415.57210-1-hewenliang4@huawei.com>
+        id S1727097AbfKUOoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:44:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfKUOoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:44:13 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AA80206B6;
+        Thu, 21 Nov 2019 14:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574347453;
+        bh=1Qk5HeJMxRAqIMfETtKX9MkDQlQjopSGtDl5zCocUT8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PfWCmFp5fy5zWJFIF3HdDpyRz/FwjHFC2Bm6yqOOrhcVXjiZXGslTVG5IppnOemXD
+         2hWwaxLgFjuvf3FXd2tgl35gUoZF4cgqAyw3eS1JD8qEk7EczZ4hE0Cu1+Xsk8PwE2
+         svwg3VP2o+HeZBc0dyWaRZy3m0pt7Hk7IaD1cVZI=
+Date:   Thu, 21 Nov 2019 14:44:08 +0000
+From:   Will Deacon <will@kernel.org>
+To:     torvalds@linux-foundation.org
+Cc:     catalin.marinas@arm.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Kernel Mailing List 
+        <linux-arm-kernel@lists.infradead.org>, gregkh@linuxfoundation.org
+Subject: [GIT PULL] arm64: Another fix for 5.4
+Message-ID: <20191121144408.GA3751@willie-the-truck>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191119014415.57210-1-hewenliang4@huawei.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Nov 18, 2019 at 08:44:15PM -0500, Hewenliang escreveu:
-> It is necessary to free the memory that we have allocated when error occurs.
-> 
-> Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filter_type()")
-> Signed-off-by: Hewenliang <hewenliang4@huawei.com>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Hi Linus,
 
-Thanks, applied.
+After I thought we were done for 5.4, we had a report this week of a nasty
+issue that has been shown to leak data between different user address spaces
+thanks to corruption of entries in the TLB. In hindsight, we should have
+spotted this in review when the PAN code was merged back in v4.3, but
+hindsight is 20/20 and I'm trying not to beat myself up too much about it
+despite being fairly miserable.
 
-- Arnaldo
+Anyway, the fix is "obvious" but the actual failure is more more subtle,
+and is described in the commit message. I've included a fairly mechanical
+follow-up patch here as well, which moves this checking out into the C
+wrappers which is what we do for {get,put}_user() already and allows us
+to remove these bloody assembly macros entirely. The patches have passed
+kernelci [1] [2] [3] and CKI [4] tests over night, as well as some
+targetted testing [5] for this particular issue.
 
-> ---
->  tools/lib/traceevent/parse-filter.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-> index 552592d153fb..f3cbf86e51ac 100644
-> --- a/tools/lib/traceevent/parse-filter.c
-> +++ b/tools/lib/traceevent/parse-filter.c
-> @@ -1473,8 +1473,10 @@ static int copy_filter_type(struct tep_event_filter *filter,
->  	if (strcmp(str, "TRUE") == 0 || strcmp(str, "FALSE") == 0) {
->  		/* Add trivial event */
->  		arg = allocate_arg();
-> -		if (arg == NULL)
-> +		if (arg == NULL) {
-> +			free(str);
->  			return -1;
-> +		}
->  
->  		arg->type = TEP_FILTER_ARG_BOOLEAN;
->  		if (strcmp(str, "TRUE") == 0)
-> @@ -1483,8 +1485,11 @@ static int copy_filter_type(struct tep_event_filter *filter,
->  			arg->boolean.value = 0;
->  
->  		filter_type = add_filter_type(filter, event->id);
-> -		if (filter_type == NULL)
-> +		if (filter_type == NULL) {
-> +			free(str);
-> +			free_arg(arg);
->  			return -1;
-> +		}
->  
->  		filter_type->filter = arg;
->  
-> -- 
-> 2.19.1
+The first patch is tagged for stable and should be applied to 4.14, 4.19
+and 5.3. I have separate backports for 4.4 and 4.9, which I'll send out
+once this has landed in your tree (although the original patch applies
+cleanly, it won't build for those two trees).
 
--- 
+Thanks to Pavel Tatashin for reporting this and Mark Rutland for helping
+to diagnose the issue and review/test the solution. Please pull.
 
-- Arnaldo
+Will
+
+[1] https://lore.kernel.org/lkml/5dd5f064.1c69fb81.5e209.59cf@mx.google.com
+[2] https://lore.kernel.org/lkml/5dd5faae.1c69fb81.9bfcb.6f62@mx.google.com
+[3] https://lore.kernel.org/lkml/5dd5fab1.1c69fb81.22bb5.755e@mx.google.com
+[4] https://lore.kernel.org/lkml/cki.1CBC43ABCD.523Q7TUX64@redhat.com
+[5] https://lore.kernel.org/lkml/CA+CK2bCX+QGMPzhjj-UmVNb1jG8Z6WNW=L0GiVsTpGrhyqb9tA@mail.gmail.com
+
+--->8
+
+The following changes since commit 65e1f38d9a2f07d4b81f369864c105880e47bd5a:
+
+  scripts/tools-support-relr.sh: un-quote variables (2019-11-13 10:52:05 +0000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to e50be648aaa3da196d4f4ed49d1c5d4ec105fa4a:
+
+  arm64: uaccess: Remove uaccess_*_not_uao asm macros (2019-11-20 18:51:54 +0000)
+
+----------------------------------------------------------------
+arm64 fix for 5.4
+
+- Ensure PAN is re-enabled following user fault in uaccess routines
+
+----------------------------------------------------------------
+Pavel Tatashin (2):
+      arm64: uaccess: Ensure PAN is re-enabled after unhandled uaccess fault
+      arm64: uaccess: Remove uaccess_*_not_uao asm macros
+
+ arch/arm64/include/asm/asm-uaccess.h | 17 -----------------
+ arch/arm64/include/asm/uaccess.h     | 27 ++++++++++++++++++++++-----
+ arch/arm64/lib/clear_user.S          |  2 --
+ arch/arm64/lib/copy_from_user.S      |  2 --
+ arch/arm64/lib/copy_in_user.S        |  2 --
+ arch/arm64/lib/copy_to_user.S        |  2 --
+ arch/arm64/lib/uaccess_flushcache.c  |  6 +++++-
+ 7 files changed, 27 insertions(+), 31 deletions(-)
