@@ -2,70 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD1D104C70
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:27:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D6D104C76
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:27:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfKUH1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 02:27:04 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41841 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfKUH1D (ORCPT
+        id S1727092AbfKUH1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 02:27:46 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50808 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfKUH1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 02:27:03 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iXgrW-0007YF-7y; Thu, 21 Nov 2019 08:26:46 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iXgrU-000219-Ff; Thu, 21 Nov 2019 08:26:44 +0100
-Date:   Thu, 21 Nov 2019 08:26:44 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v7 3/8] pwm: sun4i: Prefer "mod" clock to unnamed
-Message-ID: <20191121072644.vzemxd6gtjpluqbw@pengutronix.de>
-References: <20191119175319.16561-1-peron.clem@gmail.com>
- <20191119175319.16561-4-peron.clem@gmail.com>
+        Thu, 21 Nov 2019 02:27:42 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAL7RQ5b081613;
+        Thu, 21 Nov 2019 01:27:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574321246;
+        bh=0mklLlGbDBmknLDikiMI3ZT2ftD03wZnmdNF6PCexZ4=;
+        h=From:To:CC:Subject:Date;
+        b=rTjPLx0cPnSYUVgxGX1jeHWiWy3ix9ZFW2Yg84wTDI/07eRSAmuUoPeJrJ5z7ZQZT
+         m97PsLJg8YuAryCltWAc5+pMGC57Rr6gIOUM9tGQ/bhff2oi3uHscj3jqIFOM3p4Hf
+         7fs1qEhEyaxdq1VYYRWjAX/OWfcWeh8YjhwnOxJU=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAL7RQ1A013789
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Nov 2019 01:27:26 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 21
+ Nov 2019 01:27:26 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 21 Nov 2019 01:27:26 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAL7RNTq079857;
+        Thu, 21 Nov 2019 01:27:24 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <vkoul@kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] crypto: atmel - Retire dma_request_slave_channel_compat()
+Date:   Thu, 21 Nov 2019 09:27:20 +0200
+Message-ID: <20191121072723.28479-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119175319.16561-4-peron.clem@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 06:53:14PM +0100, Clément Péron wrote:
-> New device tree bindings called the source clock of the module
-> "mod" when several clocks are defined.
-> 
-> Try to get a clock called "mod" if nothing is found try to get
-> an unnamed clock.
-> 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+Hi,
 
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+I'm going through the kernel to crack down on dma_request_slave_channel_compat()
+users.
 
-Thanks
-Uwe
+These drivers no longer needs it as they are only probed via DT and even if they
+would probe in legacy mode, the dma_request_chan() + dma_slave_map must be used
+for supporting non DT boots.
+
+I have only compile tested the drivers!
+
+Regards,
+Peter
+---
+Peter Ujfalusi (3):
+  crypto: atmel-aes - Retire dma_request_slave_channel_compat()
+  crypto: atmel-sha - Retire dma_request_slave_channel_compat()
+  crypto: atmel-tdes - Retire dma_request_slave_channel_compat()
+
+ drivers/crypto/atmel-aes.c  | 50 ++++++++-----------------------------
+ drivers/crypto/atmel-sha.c  | 39 ++++++-----------------------
+ drivers/crypto/atmel-tdes.c | 47 ++++++++++------------------------
+ 3 files changed, 30 insertions(+), 106 deletions(-)
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
