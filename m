@@ -2,51 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B951A105A5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:27:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9567D105A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 20:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfKUT1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 14:27:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfKUT1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 14:27:39 -0500
-Received: from oasis.local.home (unknown [66.170.99.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C61B22068F;
-        Thu, 21 Nov 2019 19:27:38 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 14:27:37 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Torsten Duwe <duwe@suse.de>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Subject: Re: KASAN_INLINE && patchable-function-entry
-Message-ID: <20191121142737.69978ef9@oasis.local.home>
-In-Reply-To: <20191121183630.GA3668@lakrids.cambridge.arm.com>
-References: <20191121183630.GA3668@lakrids.cambridge.arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726962AbfKUT2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 14:28:18 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33827 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUT2S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 14:28:18 -0500
+Received: by mail-ot1-f68.google.com with SMTP id w11so4035220ote.1;
+        Thu, 21 Nov 2019 11:28:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CHTfKDAdZLhL1Zm6CO6s2kP8nxK/JV3N7UW7tF4nQP4=;
+        b=WrwjpA9U7OiemGH4eYKo8N7n3uHifrrmMCswleR0zyUb1hO93Y35no4bTkFuGFXa39
+         7uvEl/kSbAxzv/L9ak9m4uWfXyxPxDxpw7H+iDcZlX1+jQhJlCoF22la9gFOev373W9n
+         TyljE5D1gfQbw9smY0ahOs81RUG/t4w5AbRCNMNGsN8oLszhIHy/KKuaE8Y6nIV+JNZp
+         Cemzhngv7BLmRY1bGMZzutENOUYD5NZK71tvlBV3OhUms7sv8sHwowDKDzeCFgh7MjoE
+         KSEIp/U8cNOqqzoKOL+TfLVGzcToTNut2vP7FlPswLtJjEuQiC5Vq/KreuFs98T9KqA0
+         rUhA==
+X-Gm-Message-State: APjAAAVqq50mRGKpKYAVrd+89LrYIADWAnHMm/2nTwZWeMLQHsG7yVD5
+        W+bZ7V6nHkKEv43rzUH5kQ==
+X-Google-Smtp-Source: APXvYqwSY+m1VVKP1lJWWFMDzjmXAD1VirqNMJL368kLdu7zD5Tqa73Qd9dLlvlXyGQDu+Uma4tvig==
+X-Received: by 2002:a9d:365:: with SMTP id 92mr8439326otv.9.1574364497464;
+        Thu, 21 Nov 2019 11:28:17 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u204sm1219085oig.35.2019.11.21.11.28.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 11:28:16 -0800 (PST)
+Date:   Thu, 21 Nov 2019 13:28:16 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        jianxin.pan@amlogic.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        lnykww@gmail.com, yinxin_1989@aliyun.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: Document the Amlogic Meson SDHC
+ MMC host controller
+Message-ID: <20191121192816.GA7377@bogus>
+References: <20191117142716.154764-1-martin.blumenstingl@googlemail.com>
+ <20191117142716.154764-2-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191117142716.154764-2-martin.blumenstingl@googlemail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Nov 2019 18:36:32 +0000
-Mark Rutland <mark.rutland@arm.com> wrote:
+On Sun, Nov 17, 2019 at 03:27:15PM +0100, Martin Blumenstingl wrote:
+> This documents the devicetree bindings for the SDHC MMC host controller
+> found in Meson6, Meson8, Meson8b and Meson8m2 SoCs. It can use a
+> bus-width of 1/4/8-bit and it supports eMMC spec 4.4x/4.5x including
+> HS200 mode (up to 100MHz clock).
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../bindings/mmc/amlogic,meson-mx-sdhc.yaml   | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdhc.yaml
 
-> As a heads-up to the ftrace folk, I think it's possible to work around
-> this specific issue in the kernel by allowing the arch code to filter
-> out call sites at init time (probably in ftrace_init_nop()), but I
-> haven't put that together yet.
-
-If you need to make some code invisible to ftrace at init time, it can
-be possible by setting the dyn_ftrace rec flag to DISABLED, but this
-can be cleared, which we would need a way to keep it from being
-cleared, which shouldn't be too hard.
-
-Is that what you would be looking for?
-
--- Steve
+Reviewed-by: Rob Herring <robh@kernel.org>
