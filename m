@@ -2,90 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A2510546A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C78105475
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:31:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfKUO3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:29:22 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33540 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfKUO3W (ORCPT
+        id S1726905AbfKUObo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:31:44 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53189 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbfKUObn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:29:22 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w9so4714810wrr.0;
-        Thu, 21 Nov 2019 06:29:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=Uhe0Kiej1ea14TSjH1b0KQtAZR+V5aq929XhPTnEBZY=;
-        b=XmX+M2GobM70kadqAmo9GOL17ztsH0GKJ5KTHDFedGV61V2IUJdyokp+KxbRsg2GeU
-         DJ1fVP8goSFoZw2bUx+jeFX9Vfmgt/G7SEsUb5pBsifz9ugl77e6an8znqwXjOaDtlO6
-         +r6iiWlNslbq//tbT/Htm2a8l7+bU+drRu156E2BrQWVDgSQ5ceHwA89BnwyQuNC+kSH
-         r+gse+qnBhvQp5AaWbNhxILJdaQoumTGqyEZrcK0OKC0m8IgUJTE9DTTWFwhOLbAYPXD
-         /FAoBMVBKseLxwg6tS897YWkyq2KAUoNEg3kyJwct+pCjlG/s4SDanqeHYIomgG7APHN
-         qrIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=Uhe0Kiej1ea14TSjH1b0KQtAZR+V5aq929XhPTnEBZY=;
-        b=Aap2lZtw5OGLMVKFzmRhS5Whc9i8rkfszs84/4Vd3hyJH1/wNpLq0YiO7FVB8iRixW
-         m8jGpkEgdShLi/3v3MbsagMfwvKLQq1ilSS9/uuBueL7wtZ696B3MmyRR337bNpP0Qjg
-         qZIN03yU3USzENAA2TSwc05hLCB6PTMwqxA9YXH8Z4Ul2hXlkCANgzq5jl9Jz7HzNEaA
-         BHeMaKo9KXHwVg65G6Uidp3ImAc/jjo5NT1OMg8/ZIJJnJ5G9aAjbciJzbVHBwui0ElV
-         N3KoWyMQRPfxR1fdnA1wn5JDgKUY0i9GeKf1kSN0pqDRh2vtsDCZhaNav3IniryXsVYE
-         3lbQ==
-X-Gm-Message-State: APjAAAX6JzkZ7AKBflnSPO99pPcArO01pT56Li/YgayAEGjb1NE0jsWQ
-        czVycE+SWEoJoCVfTKGPM9CjfPdw
-X-Google-Smtp-Source: APXvYqzE1Zl12m5/a5jql/gn02/XLRwp+3vetVbJpXY7FMZ8c6BKw9yg6j3FfBzLYAWx9MvZqqnyBg==
-X-Received: by 2002:a5d:5224:: with SMTP id i4mr11101374wra.303.1574346559451;
-        Thu, 21 Nov 2019 06:29:19 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id b15sm3408693wrx.77.2019.11.21.06.29.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 06:29:18 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Oliver Upton <oupton@google.com>
-Subject: [PATCH] KVM: nVMX: expose "load IA32_PERF_GLOBAL_CTRL" controls
-Date:   Thu, 21 Nov 2019 15:29:17 +0100
-Message-Id: <1574346557-18344-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 21 Nov 2019 09:31:43 -0500
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1iXnUL-0002mS-FN; Thu, 21 Nov 2019 15:31:17 +0100
+Date:   Thu, 21 Nov 2019 15:31:15 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Rajan Vaja <rajan.vaja@xilinx.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, michal.simek@xilinx.com,
+        jolly.shah@xilinx.com, dan.carpenter@oracle.com,
+        gustavo@embeddedor.com, nava.manne@xilinx.com,
+        ravi.patel@xilinx.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+        m.tretter@pengutronix.de
+Subject: Re: [PATCH 3/7] clk: zynqmp: Warn user if clock user are more than
+ allowed
+Message-ID: <20191121153115.50340e47@litschi.hi.pengutronix.de>
+In-Reply-To: <1573564580-9006-4-git-send-email-rajan.vaja@xilinx.com>
+References: <1573564580-9006-1-git-send-email-rajan.vaja@xilinx.com>
+        <1573564580-9006-4-git-send-email-rajan.vaja@xilinx.com>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These controls were added by the recent commit 03a8871add95 ("KVM:
-nVMX: Expose load IA32_PERF_GLOBAL_CTRL VM-{Entry,Exit} control",
-2019-11-13), so we should advertise them to userspace from
-KVM_GET_MSR_FEATURE_INDEX_LIST, as well.
+On Tue, 12 Nov 2019 05:16:16 -0800, Rajan Vaja wrote:
+> Warn user if clock is used by more than allowed devices.
+> This check is done by firmware and returns respective
+> error code. Upon receiving error code for excessive user,
+> warn user for the same.
+> 
+> This change is done to restrict VPLL use count. It is
+> assumed that VPLL is used by one user only.
+> 
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> ---
+>  drivers/clk/zynqmp/pll.c             | 9 ++++++---
+>  drivers/firmware/xilinx/zynqmp.c     | 2 ++
+>  include/linux/firmware/xlnx-zynqmp.h | 1 +
+>  3 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+> index a541397..2f4ccaa 100644
+> --- a/drivers/clk/zynqmp/pll.c
+> +++ b/drivers/clk/zynqmp/pll.c
+> @@ -188,9 +188,12 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  		frac = (parent_rate * f) / FRAC_DIV;
+>  
+>  		ret = eemi_ops->clock_setdivider(clk_id, m);
+> -		if (ret)
+> -			pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+> -				     __func__, clk_name, ret);
+> +		if (ret) {
+> +			if (ret == -EUSERS)
+> +				WARN(1, "More than allowed devices are using the %s, which is forbidden\n", clk_name);
+> +			pr_err("%s() set divider failed for %s, ret = %d\n",
+> +			       __func__, clk_name, ret);
+> +		}
 
-Cc: Oliver Upton <oupton@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/nested.c | 2 ++
- 1 file changed, 2 insertions(+)
+In case of -EUSERS this prints the warning and the error. This seems a
+bit excessive to me. Isn't it enough to leave the existing
+pr_warn_once() for the new error code? If not, then add a new warning
+for the -EUSERS error, but leave the existing warning as it is.
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 4aea7d304beb..4b4ce6a804ff 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5982,6 +5982,7 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
- #ifdef CONFIG_X86_64
- 		VM_EXIT_HOST_ADDR_SPACE_SIZE |
- #endif
-+		VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL |
- 		VM_EXIT_LOAD_IA32_PAT | VM_EXIT_SAVE_IA32_PAT;
- 	msrs->exit_ctls_high |=
- 		VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR |
-@@ -6001,6 +6002,7 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
- #ifdef CONFIG_X86_64
- 		VM_ENTRY_IA32E_MODE |
- #endif
-+		VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL |
- 		VM_ENTRY_LOAD_IA32_PAT;
- 	msrs->entry_ctls_high |=
- 		(VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR | VM_ENTRY_LOAD_IA32_EFER);
--- 
-1.8.3.1
+Michael
 
+>  
+>  		eemi_ops->ioctl(0, IOCTL_SET_PLL_FRAC_DATA, clk_id, f, NULL);
+>  
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index 0137bf3..ecc339d 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -53,6 +53,8 @@ static int zynqmp_pm_ret_code(u32 ret_status)
+>  		return -EACCES;
+>  	case XST_PM_ABORT_SUSPEND:
+>  		return -ECANCELED;
+> +	case XST_PM_MULT_USER:
+> +		return -EUSERS;
+>  	case XST_PM_INTERNAL:
+>  	case XST_PM_CONFLICT:
+>  	case XST_PM_INVALID_NODE:
+> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+> index 25bedd2..f019d1c 100644
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@ -96,6 +96,7 @@ enum pm_ret_status {
+>  	XST_PM_INVALID_NODE,
+>  	XST_PM_DOUBLE_REQ,
+>  	XST_PM_ABORT_SUSPEND,
+> +	XST_PM_MULT_USER = 2008,
+>  };
+>  
+>  enum pm_ioctl_id {
