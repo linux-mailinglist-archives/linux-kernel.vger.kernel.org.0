@@ -2,180 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19BD3104829
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B03E310483D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbfKUBmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 20:42:20 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:56798 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfKUBmT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 20:42:19 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191121014216epoutp03ea7b0fbe578ca6a838b8a17b0aadc68b~ZCf8yhJay2816328163epoutp03h
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 01:42:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191121014216epoutp03ea7b0fbe578ca6a838b8a17b0aadc68b~ZCf8yhJay2816328163epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574300536;
-        bh=XDt3NEv3tS3F+MHLl2VQ/5MdacFRFlCQcvRW128QAoU=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=he6m7ZXFInl0CVdquKN+tnmracBN5vJbgpoiX8SP+bEYZaUdhE8Zt4t6sNaRVApJj
-         zICEREoPuGnS1anktDrPRpIGBhyx6kwa+dk/Pqyd7cqyNrNDFDIQ83/A2LNen0aKM4
-         JV/+l19iiv8JNe1jWfX11dkqrGu2re+YmOPAJZpo=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191121014215epcas1p4e6dba93392b89a02dc92dd4b87ed12af~ZCf8ST2gb0187501875epcas1p46;
-        Thu, 21 Nov 2019 01:42:15 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.166]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47JMkH1PnmzMqYkn; Thu, 21 Nov
-        2019 01:42:15 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        48.EE.04406.67BE5DD5; Thu, 21 Nov 2019 10:42:14 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191121014214epcas1p4aa0e7148bd6e5b7a412a2294205cf900~ZCf6mOOhk0777007770epcas1p4e;
-        Thu, 21 Nov 2019 01:42:14 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191121014214epsmtrp2a1afccb106310128863152fd2e536bd6~ZCf6lfamH2549525495epsmtrp2o;
-        Thu, 21 Nov 2019 01:42:14 +0000 (GMT)
-X-AuditID: b6c32a38-947ff70000001136-d1-5dd5eb76f859
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D1.F4.03654.57BE5DD5; Thu, 21 Nov 2019 10:42:13 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191121014213epsmtip17570d3b9b427482e46f4a2c9853036fe~ZCf6Zo3K_2005320053epsmtip1P;
-        Thu, 21 Nov 2019 01:42:13 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Nikolay Borisov'" <nborisov@suse.com>
-Cc:     <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
-        <hch@lst.de>, <linkinjeon@gmail.com>, <Markus.Elfring@web.de>,
-        <sj1557.seo@samsung.com>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <398eeca9-e59f-385b-791d-561e56567026@suse.com>
-Subject: RE: [PATCH v2 05/13] exfat: add file operations
-Date:   Thu, 21 Nov 2019 10:42:13 +0900
-Message-ID: <00d201d5a00c$e6273ac0$b275b040$@samsung.com>
+        id S1726265AbfKUBxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 20:53:53 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:26598 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfKUBxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 20:53:53 -0500
+Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.100]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd5ee2f0000>; Thu, 21 Nov 2019 09:53:51 +0800
+Received: from HKMAIL103.nvidia.com ([10.18.16.12])
+  by hkpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 20 Nov 2019 17:53:49 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate102.nvidia.com on Wed, 20 Nov 2019 17:53:49 -0800
+Received: from HKMAIL103.nvidia.com (10.18.16.12) by HKMAIL103.nvidia.com
+ (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
+ 2019 01:53:48 +0000
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (104.47.48.56) by
+ HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Thu, 21 Nov 2019 01:53:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bvgObiOIu/9r3CDoxCjQKGDe+5ySVMzDDsKT5xoZJj2fpvyNluhtV/qBg1vA42kuKN9WnDvMHYXLtbVDYapToq9NsUvaPQRQSyZhmdZxnrTX8h7SZdaUAqf0a5QMuKSEqoS8jTtf/lQdocAUsyf1RrpSkCFkErrwlY51mlJ9Y+9AYhHDvUTjbU6tvGN0240qFNWiSOKDpJztJsaL2DMlMNdBvTiEqgCIpXQncpAbOPF155F7iolpx7zhlT1z5JErXde0PyFv8uJi6wEr16SsU4F7hZLCScHyaIlqRasL/AiDwdZGAALrLiZ6vfVpXpYVQJ2fGANwTLEiy9De7Q+wrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=as+OtNCW2+16zGX976SmPal+sVVgxX+4F/Ac+dE8XCM=;
+ b=np0sjRzu2K0BDUfEqS6cMXlDvNAVdmn1QqcQ54ikYQtkm+b2i7diICYj8bLO2xcPOqcoIHBrZVjhULgCK8H5DiWM6RtTwy48hCLqs9O0x7Jh3/83hQrw9zzQP2T8asKkHCG9IoMudXvrCmAEETfDTLL4kc6a87YJX+UZWX1XSFfeUyAfZr+XmLKyixmsSxJn2pp5vCWdDV+n74jQImWGJ1ZyGXPdYuKrDw33PsyOcYa3b+2v3r5DKoFDfGhs/yemhxl+GtX4NPy7cup8MPI+B11LMFVZRiNgNlVBHK0JqTMXoPCvEXs24dwPxJPabgPX4qDGvlPoJYn4MG/82KdiNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+Received: from MN2PR12MB3389.namprd12.prod.outlook.com (20.178.242.161) by
+ MN2PR12MB3136.namprd12.prod.outlook.com (20.178.244.89) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.26; Thu, 21 Nov 2019 01:53:43 +0000
+Received: from MN2PR12MB3389.namprd12.prod.outlook.com
+ ([fe80::457a:dc11:397f:d4ce]) by MN2PR12MB3389.namprd12.prod.outlook.com
+ ([fe80::457a:dc11:397f:d4ce%7]) with mapi id 15.20.2451.032; Thu, 21 Nov 2019
+ 01:53:43 +0000
+From:   Henry Lin <henryl@nvidia.com>
+To:     Jack Pham <jackp@codeaurora.org>
+CC:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] usb: xhci: only set D3hot for pci device
+Thread-Topic: [PATCH v3] usb: xhci: only set D3hot for pci device
+Thread-Index: AQHVnrHTQOCmI7fogkC/eeXWnSpur6eUcLKAgABuKww=
+Date:   Thu, 21 Nov 2019 01:53:42 +0000
+Message-ID: <MN2PR12MB33896F7985965196603FE7FCAC4E0@MN2PR12MB3389.namprd12.prod.outlook.com>
+References: <20191113014927.11915-1-henryl@nvidia.com>
+ <20191119081656.8746-1-henryl@nvidia.com>,<0101016e8a3ed405-a70f7e87-8c4b-4759-910f-9b9753a9dabb-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016e8a3ed405-a70f7e87-8c4b-4759-910f-9b9753a9dabb-000000@us-west-2.amazonses.com>
+Accept-Language: en-US, zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=henryl@nvidia.com; 
+x-originating-ip: [59.124.78.18]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6bdb6837-589a-4d1c-df15-08d76e25a375
+x-ms-traffictypediagnostic: MN2PR12MB3136:
+x-microsoft-antispam-prvs: <MN2PR12MB313675B1AC8F1D51E2234C6FAC4E0@MN2PR12MB3136.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0228DDDDD7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(9686003)(74316002)(33656002)(66476007)(6436002)(54906003)(26005)(14454004)(52536014)(66446008)(66556008)(66946007)(316002)(446003)(8676002)(7736002)(11346002)(476003)(486006)(6246003)(81166006)(6916009)(229853002)(25786009)(2906002)(102836004)(478600001)(4326008)(186003)(81156014)(55016002)(8936002)(4744005)(305945005)(3846002)(6116002)(66066001)(86362001)(6506007)(76116006)(91956017)(71200400001)(71190400001)(76176011)(256004)(5660300002)(99286004)(64756008)(7696005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3136;H:MN2PR12MB3389.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ViUEaG1GUTGJq+SlQ83Xf3ADpWWkDpZipOE3J7Cj5crWzqnlXSquQpuNKAsfdbOi5Dmqlj7l40KuNNdCiOX8NgUSOFaK7Z+ETNBX1PWL6Jykvx5I4Lqtl+pPlecuEsOcX2Qc2TowIvsI39WZ7Bse7zi8Cjhjf457hXSXMZYyv0BEX/Gl6tLBpWaJegwD+EOkR2LS+xL9jhg33xtvIRxg9afYqj/cJT0OTIPLJ8kj6Hr26/e7jdNBc9nS9dI8zC7sGjP/4xT+3O604LHxOchmNJSuh0FGz68jVMLnu2qNwBR9Gn7M+F49guhksPmNYO6LXiO+bS1RDw2qTO81W1hl4qIvZIxONqFpqammkJn/SpLjgboBFXfsqMdqvY7mgV+YoOlLApWlB9rGjDtllYRZlhw3VAPXTwl/rCEKMnWlTfXr3s85Fnbs0bTXXReWXJC4
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Content-Language: ko
-Thread-Index: AQEo1XJlLzywHhHshRBLsQkFEP9+bwE2rzOUAX+3+6QCnhKN6qjDyqqg
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0hTYRjm2zk7O4qr07R8M6h1wrSLtjlnp9KKrqcyNAqCQuwwD07aztbO
-        NLUg6TJLyrKicGlZUpJdrCVppgxmGhLdTFMLIaK7ly5iNzPbOov893zP+zzf+7zfhcRUt4kw
-        MkOw8zaBM9FEIH6zcUZ0VFZPe4qmYjiU2VNeRTAXLzXJmI7uZxhT39CCM0/qSghmxPlWzoz0
-        7sWZ6t935Ezrx0/44gD2lrNbwbpLLyvY2115BFtYXYnYqup2nB1wTWY9Nb0E+/zNTTyZ3GSK
-        N/JcGm9T84LBkpYhpCfQa9anLk3Vx2m0Udp5zFxaLXBmPoFelpgctSLD5M1Hq7M4U6aXSuZE
-        kZ6zMN5mybTzaqNFtCfQvDXNZNVqrNEiZxYzhfRog8U8X6vRxOi9yi0m48jJC4T1DJX9ZOQI
-        ykN1QQUogAQqFpqH9sgKUCCpomoRHB08h/sKKuoLgvf7VkqFrwhqfhxD/xytN174HQ0ITgw/
-        QNLiAwLnz3KZT0VQUfD7l5vw4RBqFpQffPSXx6guBI8/Gnw4gIqHTleR10ySwRQDTfnTfTRO
-        hcOBtrcKH1ZS82D4hEsu4XHQUvwKl7aZAjV9JZgUSA2193uQxIfAqQMOTGq7Aq64e/2aYwpo
-        OzRWwsug7WWhTMLB8OFutULCYTDQ30D44gC1Az67/db9CN59S5CwDrqqrsl9EoyaAVV1cyR6
-        KtwaKvUnGAP9gwfl0i5K2O9QSZJwKGxt9DedBAX5nxRHEO0cNZdz1FzOUbM4/zcrQ3glmsBb
-        RXM6L2qtsaNv2oX+PtyZTC2qf5DoQRSJ6CClMbI9RSXnssQcswcBidEhyvqOthSVMo3LyeVt
-        llRbpokXPUjvPfYiLGy8weL9BoI9VauP0el0TGzc3Di9jg5Vkt8fp6iodM7Ob+V5K2/755OR
-        AWF5qGjd7n7BPBx52XovqeJMX0Og21lmZDr3dl9X5hY7lg/VxU7c/Zq+hDUvUOwa3N5zpbAn
-        /3iuvvtptGbB2o0PM0pn447Gwxv6B05rDJ9Lk3p3nozom57N5niWbnOJQmXEluBrcTnaq02r
-        fhYnnV3EnSvzxGRPO7+kVXVct2jVQsfqzTQuGjntTMwmcn8AnxZtys4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSnG7p66uxBs93W1k0L17PZrFy9VEm
-        i+t3bzFb7Nl7ksXi8q45bBb/Zz1ntfj/poXFYsu/I6wWl95/YHHg9Ng56y67x/65a9g9dt9s
-        YPPo27KK0WP9lqssHp83yXkc2v6GzeP2s20sARxRXDYpqTmZZalF+nYJXBn/py9jK5gvUHH5
-        /wTGBsZdPF2MnBwSAiYSlzY/YOpi5OIQEtjNKLF9bgMLREJa4tiJM8xdjBxAtrDE4cPFEDUv
-        GCWu73nEDlLDJqAr8e/PfjYQW0RAW2JxzwUmEJtZ4DGjxL69thANbxklzv/byAqS4BSwkbix
-        aSIjyFBhAQuJo+1qIGEWAVWJzivPwWbyClhK/J22iRXCFpQ4OfMJC8RMbYneh62MELa8xPa3
-        c5gh7lSQ2HH2NVRcRGJ2ZxszxD1uEmv3v2GewCg8C8moWUhGzUIyahaS9gWMLKsYJVMLinPT
-        c4sNCwzzUsv1ihNzi0vz0vWS83M3MYLjT0tzB+PlJfGHGAU4GJV4eDM0rsYKsSaWFVfmHmKU
-        4GBWEuHdc/1KrBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHep3nHIoUE0hNLUrNTUwtSi2CyTByc
-        Ug2MHRfvP2KT7uGW+Od8UDKOLfQ5o8X8Rpua7n0xuvOmMtaw81vOOdu78L6MURR7VdYCxnlN
-        j0PZfZ4eYn2/p0Jo+pXu5UaJ1b/fM6++0bSJr9a0u/GL7rQv9+Z7Xzu68r7BTkNv8XJ/CQkn
-        XouGR8o3GdgeXos6bfD26TTv/LIzmdsEZfU0OqWVWIozEg21mIuKEwHZkmFGuwIAAA==
-X-CMS-MailID: 20191121014214epcas1p4aa0e7148bd6e5b7a412a2294205cf900
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119071404epcas1p4f8df45690c07c4dd032af9cbfb5efcc6
-References: <20191119071107.1947-1-namjae.jeon@samsung.com>
-        <CGME20191119071404epcas1p4f8df45690c07c4dd032af9cbfb5efcc6@epcas1p4.samsung.com>
-        <20191119071107.1947-6-namjae.jeon@samsung.com>
-        <398eeca9-e59f-385b-791d-561e56567026@suse.com>
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bdb6837-589a-4d1c-df15-08d76e25a375
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 01:53:43.0151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EjJx8wNbSi+zNVkxaSmO6ZNtoDW5KL5E2QPAFXG3eaUiikV6CLHXcd3sfJQTyGfomjfT+WNcG+zspi2GEliOXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3136
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574301231; bh=as+OtNCW2+16zGX976SmPal+sVVgxX+4F/Ac+dE8XCM=;
+        h=X-PGP-Universal:ARC-Seal:ARC-Message-Signature:
+         ARC-Authentication-Results:From:To:CC:Subject:Thread-Topic:
+         Thread-Index:Date:Message-ID:References:In-Reply-To:
+         Accept-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
+         authentication-results:x-originating-ip:x-ms-publictraffictype:
+         x-ms-office365-filtering-correlation-id:x-ms-traffictypediagnostic:
+         x-microsoft-antispam-prvs:x-ms-oob-tlc-oobclassifiers:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam:
+         x-microsoft-antispam-message-info:x-ms-exchange-transport-forked:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-CrossTenant-userprincipalname:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=GLDmQ/zqldOZ/0r6ScD/9fL6tM14HDx/N47iQXhi7pI1yCSlPUSjM/ekaDFvmhuGZ
+         WDe+aN2h+yMXYbuhK/BlsXEmS1qOf8VMb5J2bCSj0bQ8ZP50DPkm0newGDgAttPTgf
+         Vrjn5ZwQkBjtJEpmFXckYICIQAWPVFRzKq8FR0g8o3PtTbU1Sk1KOinlzweNSgpeqE
+         OXEjAMvmm/qhzjGfX/Crc/FPfeEAWhPKMKpoWkeezX5A1giOHbBcEKTwyh5eQbtRuf
+         t0J7QZrueB/OST6yey/EnJtBlfwrzVQWyLSgPC3OeBdU1RS8vXNkhTGhmRKbhd5DOv
+         Fyi9wYXXd1kzA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> > +static int exfat_allow_set_time(struct exfat_sb_info *sbi, struct inode
-> *inode)
-> > +{
-> > +	mode_t allow_utime = sbi->options.allow_utime;
-> > +
-> > +	if (!uid_eq(current_fsuid(), inode->i_uid)) {
-> > +		if (in_group_p(inode->i_gid))
-> > +			allow_utime >>= 3;
-> > +		if (allow_utime & MAY_WRITE)
-> > +			return 1;
-> > +	}
-> > +
-> > +	/* use a default check */
-> > +	return 0;
-> 
-> this function can be made to return bool.
-Okay.
-> 
-> > +}
-> > +
-> 
-> <snip>
-> 
-> > +/* resize the file length */
-> > +int __exfat_truncate(struct inode *inode, loff_t new_size)
-> > +{
-> > +	unsigned int num_clusters_new, num_clusters_phys;
-> > +	unsigned int last_clu = FREE_CLUSTER;
-> > +	struct exfat_chain clu;
-> > +	struct exfat_timestamp tm;
-> > +	struct exfat_dentry *ep, *ep2;
-> > +	struct super_block *sb = inode->i_sb;
-> > +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> > +	struct exfat_inode_info *ei = EXFAT_I(inode);
-> > +	struct exfat_entry_set_cache *es = NULL;
-> > +	int evict = (ei->dir.dir == DIR_DELETED) ? 1 : 0;
-> > +
-> > +	/* check if the given file ID is opened */
-> > +	if (ei->type != TYPE_FILE && ei->type != TYPE_DIR)
-> > +		return -EPERM;
-> > +
-> > +	exfat_set_vol_flags(sb, VOL_DIRTY);
-> > +
-> > +	num_clusters_new = EXFAT_B_TO_CLU_ROUND_UP(i_size_read(inode), sbi);
-> > +	num_clusters_phys =
-> > +		EXFAT_B_TO_CLU_ROUND_UP(EXFAT_I(inode)->i_size_ondisk, sbi);
-> > +
-> > +	exfat_chain_set(&clu, ei->start_clu, num_clusters_phys, ei->flags);
-> > +
-> > +	if (new_size > 0) {
-> > +		/*
-> > +		 * Truncate FAT chain num_clusters after the first cluster
-> > +		 * num_clusters = min(new, phys);
-> > +		 */
-> > +		unsigned int num_clusters =
-> > +			min(num_clusters_new, num_clusters_phys);
-> > +
-> > +		/*
-> > +		 * Follow FAT chain
-> > +		 * (defensive coding - works fine even with corrupted FAT table
-> > +		 */
-> > +		if (clu.flags == 0x03) {
-> 
-> That 0x03 is magic constant, better define actual flags and check
-> clu.flag == (FLAG1|FLAG2)
-Okay, Will fix it on v4.
-
-Thanks for your review!
-
+>> @@ -770,7 +770,7 @@ static void xhci_stop(struct usb_hcd *hcd)=0A=
+>>   *=0A=
+>>   * This will only ever be called with the main usb_hcd (the USB3 roothu=
+b).=0A=
+>>   */=0A=
+>> -static void xhci_shutdown(struct usb_hcd *hcd)=0A=
+>> +void xhci_shutdown(struct usb_hcd *hcd)=0A=
+>>  {=0A=
+>>       struct xhci_hcd *xhci =3D hcd_to_xhci(hcd);=0A=
+>>=0A=
+>> @@ -789,10 +789,6 @@ static void xhci_shutdown(struct usb_hcd *hcd)=0A=
+>>       xhci_dbg_trace(xhci, trace_xhci_dbg_init,=0A=
+>>                       "xhci_shutdown completed - status =3D %x",=0A=
+>>                       readl(&xhci->op_regs->status));=0A=
+>> -=0A=
+>> -     /* Yet another workaround for spurious wakeups at shutdown with HS=
+W */=0A=
+>> -     if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)=0A=
+>> -             pci_set_power_state(to_pci_dev(hcd->self.sysdev), PCI_D3ho=
+t);=0A=
+>>  }=0A=
+=0A=
+>Shouldn't this function also now need to be EXPORTed?=0A=
+Yes. I will add EXPORT_SYMBOL_GPL() for it.=
