@@ -2,90 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89F9104FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1E0104FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:56:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfKUJyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 04:54:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42156 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726132AbfKUJyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:54:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1B5FCAC46;
-        Thu, 21 Nov 2019 09:54:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5A11F1E47FC; Thu, 21 Nov 2019 10:54:11 +0100 (CET)
-Date:   Thu, 21 Nov 2019 10:54:11 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH v7 02/24] mm/gup: factor out duplicate code from four
- routines
-Message-ID: <20191121095411.GC18190@quack2.suse.cz>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-3-jhubbard@nvidia.com>
- <20191121080356.GA24784@lst.de>
- <852f6c27-8b65-547b-89e0-e8f32a4d17b9@nvidia.com>
+        id S1726714AbfKUJ4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 04:56:03 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38950 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfKUJ4D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 04:56:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b126so1327687pga.6;
+        Thu, 21 Nov 2019 01:56:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FzoSL4YP+wGhKXl+dqpfFhOcKj1KTUkz/Dcb+UIksRo=;
+        b=gkLUSRZ57R42ncaj1Bx/kvu7relx6lzvV5Xn0I6r0sBxURtE1G5TWry9NP/BMT8BNF
+         3S+kDKmnBj/WuPhqh4ANh59+4wGbZvZfPCDdxdkO2mA4AyMc11Od74bt54Q0vHa20hAb
+         zG2o/zMVd3//A5wOPM5jlulk4BK2f/GZ7TqIQGxuug6XxqqlHWfQ5pY81l55QICfHn84
+         EU+fOSNb+9V2NoPd8j3VsqHCJJJmbukdakcn6WNjQeh+05V10vd/ek9g0ao/+K9XZI4I
+         8eLZrAhFe91mPLk6ze4v3kLC7ZPeaLSKrpVnAsWOEszlazVf4AV5l4FRqhozEpHn3QsP
+         0W8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FzoSL4YP+wGhKXl+dqpfFhOcKj1KTUkz/Dcb+UIksRo=;
+        b=e7GlTYIvfdO1AdeSpAfI2B1t4Pmmju8aI34nqNqYpFVb8EGRVLmypCbS2Cshh4xy5/
+         derJijXIGR4gAEpzH05mVe7k2UskTIynBfrfeLmufrtcQZv1cMa7Xf2G+93WQHCl7Ike
+         JcKJGewueSZtG+cIGRJbPTFw6QG1arLPVaDTXZ1m/wMDAs+JU3Ig/XjraLC+aznOAusO
+         hNVeHIrf5k7VKnGGV+ezSjWkFafIvXYzhufwRu8YGplAkiO4isoz/kUu5VOSp+BGGJPU
+         3beNE+CJjwRIbQU/8ysohcNts1ScpBDTdOfOHxDOF2yEJEe49FHWwfzuHHMHGLuuwdUP
+         atXQ==
+X-Gm-Message-State: APjAAAVzii1EuhpqAb5tgwVr7DOgpiCjvoTEdrNbzdJbYmafpecqOxGV
+        H6egTqdcAu0W4DfSU8XxQPAwVq62
+X-Google-Smtp-Source: APXvYqyb4umAwUrsdD0WCRtfuTBglwOyAN46dhme08ZiqWXDp3YaUcs4wdsgRn0piCBPqPDoEcCseA==
+X-Received: by 2002:aa7:9a96:: with SMTP id w22mr10066954pfi.162.1574330161967;
+        Thu, 21 Nov 2019 01:56:01 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id c2sm2614445pfn.55.2019.11.21.01.56.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2019 01:56:01 -0800 (PST)
+Subject: Re: [PATCH] watchdog: make DesignWare watchdog allow users to set
+ bigger timeout value
+To:     "Wang, Peng 1. (NSB - CN/Hangzhou)" <peng.1.wang@nokia-sbell.com>,
+        Guenter Roeck <groeck7@gmail.com>
+Cc:     "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <4468f40ed5f5413ab27825bbcc611d65@nokia-sbell.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <d31883d3-7f5b-545c-cc64-beb3848dbe7d@roeck-us.net>
+Date:   Thu, 21 Nov 2019 01:56:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <852f6c27-8b65-547b-89e0-e8f32a4d17b9@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4468f40ed5f5413ab27825bbcc611d65@nokia-sbell.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 21-11-19 00:29:59, John Hubbard wrote:
-> > 
-> > Otherwise this looks fine and might be a worthwhile cleanup to feed
-> > Andrew for 5.5 independent of the gut of the changes.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
+On 11/21/19 12:21 AM, Wang, Peng 1. (NSB - CN/Hangzhou) wrote:
+>>From d21d084122d08816454a1e338f0946a9da1f81e3 Mon Sep 17 00:00:00 2001
+> From: Peng Wang <peng.1.wang@nokia-sbell.com>
+> Date: Wed, 20 Nov 2019 15:12:59 +0800
+> Subject: [PATCH] watchdog: make DesignWare watchdog allow users to set bigger
+>   timeout value
 > 
-> Thanks for the reviews! Say, it sounds like your view here is that this
-> series should be targeted at 5.6 (not 5.5), is that what you have in mind?
-> And get the preparatory patches (1-9, and maybe even 10-16) into 5.5?
+> watchdog_dev.c provides means to allow users to set bigger timeout value
+> than HW can support, make DesignWare watchdog align with this.
+> 
+> Signed-off-by: Peng Wang <peng.1.wang@nokia-sbell.com>
+> ---
 
-One more note :) If you are going to push pin_user_pages() interfaces
-(which I'm fine with), it would probably make sense to push also the
-put_user_pages() -> unpin_user_pages() renaming so that that inconsistency
-in naming does not exist in the released upstream kernel.
+Please version your patches, and add a change log here.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>   drivers/watchdog/dw_wdt.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+> index fef7c61..f1a431c 100644
+> --- a/drivers/watchdog/dw_wdt.c
+> +++ b/drivers/watchdog/dw_wdt.c
+> @@ -114,7 +114,15 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
+>   	writel(top_val | top_val << WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT,
+>   	       dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
+>   
+> -	wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
+> +	/*
+> +	 * In case users set bigger timeout value than HW can support,
+> +	 * kernel(watchdog_dev.c) helps to feed watchdog before
+> +	 * wdd->timeout
+
+No, before wdd->max_hw_heartbeat_ms.
+
+> +	 */
+> +	if ( top_s * 1000 <= wdd->max_hw_heartbeat_ms )
+> +		wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
+> +	else
+> +		wdd->timeout = top_s;
+>   
+>   	return 0;
+>   }
+> 
+
