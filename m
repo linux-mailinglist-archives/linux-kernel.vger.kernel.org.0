@@ -2,130 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA795105B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D617105B9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfKUVHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:07:23 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33955 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfKUVHW (ORCPT
+        id S1726762AbfKUVJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:09:43 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:36547 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbfKUVJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:07:22 -0500
-Received: by mail-qk1-f195.google.com with SMTP id b188so4424596qkg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 13:07:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=NENUynk4I14cLJ1gzY7kbHVItSkGHRUyltKk2t7G71k=;
-        b=g5iDPAGusrJ5T04T0la9VutqkiP2FlaTpfWeszcdEhnqyy+Wf4O7trjWSqztvlc2Y/
-         eOq0JX+qxqp862BdbChJYLpfkyRSkxU1OgZBos12SGOrDTklEIy9Oho3glmf4U8ZDkh3
-         Y8wIV8XPhXqjnI28AakLPiO29iU6jwSTorgYdDO+I7QVznE7zId5aO9qy/AHiwMtAOMR
-         4FCd24PhP/eEvqyVfd6pECXj+cBkfho5b3MlVxhnlBrWP3avZ1yQjn8pgZJxbtbga3Pz
-         dGIP4nXO7tvKkElauREkFPC6GmkN6DVS1bbFzlyD4wBiQy7vTIEVMP31Zt+6MrQ0Tbep
-         iCpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=NENUynk4I14cLJ1gzY7kbHVItSkGHRUyltKk2t7G71k=;
-        b=fm0e/X3fwZw69XYXA+PfiiUcPzhhydmYPjFzyQB9/55idSrm+Xt7j/W1sSu9D3tF8M
-         10i6h/GI9N4xwI29Wro6zAGpYkbJVsrrUFbEg3EGhQOQug9G/G/Spln93fGKydR0TRGY
-         fh0weAbFt+eKKqbAPnd/T41znF+t98973AnnL0oxXl9+hVSwSBwlXpwCryBGNyut8P8m
-         RChtxx43tlcBI4MBXr1NmcbIpRhv67OfSd3IUgv8S3n3JvwTszu1sr9yyXuxzYG6VoDx
-         g5h/OY8gD0IvhBaC/fpwdW+k7nRUD41LfGDxOuuwtwruKUDDaRKfHGEalOAG5VGm5L5e
-         DlVQ==
-X-Gm-Message-State: APjAAAWv5UwTleJZ6JBvgtJD88OY3DFqghL+YgqWYtEYrL5QnS5uVPjJ
-        Y1f8KMKftt+WBCGgtvuQKjW28w==
-X-Google-Smtp-Source: APXvYqwlynOQgNTLE0weHTUVWiNQd0hgkoM+NrDMGZXLhgwxuK7tEo4Ra/hAtmxs4ObbQbOXtAGAWA==
-X-Received: by 2002:a37:9b4a:: with SMTP id d71mr9974147qke.0.1574370441784;
-        Thu, 21 Nov 2019 13:07:21 -0800 (PST)
-Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id d139sm1983435qkb.36.2019.11.21.13.07.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 13:07:20 -0800 (PST)
-Subject: Re: [PATCH] drivers: thermal: step_wise: add support for hysteresis
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-References: <8e812065f4a76325097c5f9c17f3386736d8c1d4.1574315190.git.amit.kucheria@linaro.org>
- <5DD69AB7.3060307@linaro.org>
- <CAP245DVwEij-fs-LK=i3+Ps6BrsHt4DfxKG=C-tFM3CVKadtXA@mail.gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "J, KEERTHY" <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Ram Chandrasekar <rkumbako@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5DD6FC87.6040403@linaro.org>
-Date:   Thu, 21 Nov 2019 16:07:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Thu, 21 Nov 2019 16:09:42 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 9A0B71835;
+        Thu, 21 Nov 2019 16:09:41 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 21 Nov 2019 16:09:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm2; bh=27hbmoeIqxabDlUJntEU4zb9PL
+        bVfwu+9iKmFJEM9FA=; b=Sb4Rx4QInA4iamfK6ROAyVi2hOx5lE9DTzJiBQye0o
+        FB+07rmWCb1OR5kNUFha8oXty/dgoYsOJ7VH02hXeKTwSaF/+Olp1byAOmmThLs6
+        tRENCbxQkWzyDZHlaUpYk+vbNyQ/j/FFhdrOxYFNS8Hk4N+uDoLzCPvABR/foB8C
+        ed1zPDWYaFOvIQMbx2Xm8be9IgBDFeF0oTzCIQY/G5GFwE42RdVJ60qgZPYSZ4/h
+        Hboy31tUMjPhi2j2zbLdcNjoU8N4TUQOFfmLWjX/fJyqbQyN+UEmfqzslIcKX/uJ
+        olyy8D4tjKWo1WEy74zt92ePPjsAmIa/nkXk/hJtmnzQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=27hbmoeIqxabDlUJn
+        tEU4zb9PLbVfwu+9iKmFJEM9FA=; b=IilgPL0AawnpMBPE3SEa02TXcETb75AxH
+        qGok+0p58FKL8CdG5SqvkzH+w/D2GnVncTDhuVCnnbLolcKuOPZN/W0iRorjrmXK
+        GOfK54/uAnWjMhMCcb7OdFcVbX6t6kWsUKZlrK9RqNFFHBjVFMcC3Fu2lo/sGBWB
+        EXC8EHJsIgh2Vp6cRgqzr34JNT6bTwCuwg5G+nJHVKOvmtKcOvTgWnz85J1ShOrA
+        c8WYoxuQwE8FYhA3zb3qpglSj4MbB7Xn58KznWLWE4rreJJpgxSP5redH8oGju11
+        bH/EwjMF06QuLGG0J/wTBEE92NUibpru/9ZhoAzBErtqaw1Sj7f6Q==
+X-ME-Sender: <xms:E_3WXVctaq-l-8ybDYRjQ2xC_8KK1vrfYWhrF7nesdItbLsZHmudqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehvddgudegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdejtddmnecujfgurhephf
+    fvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceougig
+    uhesugiguhhuuhdrgiihiieqnecukfhppeduieefrdduudegrddufedtrdduvdeknecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiinecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:E_3WXdcq5V8A95Y0moLHK3M_gTpG-1nHNDXRjOEIQldW0rcXHIBY8g>
+    <xmx:E_3WXT8DbUbtTSmrCxc9dZiDQKY2OsYyyqMA2hbIJ3XClRQaGY_24g>
+    <xmx:E_3WXVMbCNj07A_CqDSShq-s_mk_PopJi3j3tZtcbat2wqke9kmIXQ>
+    <xmx:Ff3WXZIWvhbvRPjKWDqjESlYe_76uqaj6fY-WUl6gPo8bKl_O5mGBQ>
+Received: from dlxu-fedora-R90QNFJV.thefacebook.com (unknown [163.114.130.128])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 85F7880060;
+        Thu, 21 Nov 2019 16:09:38 -0500 (EST)
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     adobriyan@gmail.com, christian@brauner.io,
+        akpm@linux-foundation.org, tglx@linutronix.de, mhocko@suse.com,
+        keescook@chromium.org, shakeelb@google.com, casey@schaufler-ca.com,
+        khlebnikov@yandex-team.ru, kent.overstreet@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Daniel Xu <dxu@dxuuu.xyz>, dschatzberg@fb.com, htejun@fb.com,
+        dennis@kernel.org, kernel-team@fb.com
+Subject: [PATCH] proc: Make /proc/<pid>/io world readable
+Date:   Thu, 21 Nov 2019 13:09:09 -0800
+Message-Id: <20191121210909.15086-1-dxu@dxuuu.xyz>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <CAP245DVwEij-fs-LK=i3+Ps6BrsHt4DfxKG=C-tFM3CVKadtXA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/2019 09:38 AM, Amit Kucheria wrote:
-> On Thu, Nov 21, 2019 at 7:40 PM Thara Gopinath
-> <thara.gopinath@linaro.org> wrote:
->>
->> On 11/21/2019 12:50 AM, Amit Kucheria wrote:
->>> From: Ram Chandrasekar <rkumbako@codeaurora.org>
->>>
->>> Currently, step wise governor increases the mitigation when the
->>> temperature goes above a threshold and decreases the mitigation when the
->>> temperature goes below the threshold. If there is a case where the
->>> temperature is wavering around the threshold, the mitigation will be
->>> applied and removed every iteration, which is not very efficient.
->>>
->>> The use of hysteresis temperature could avoid this ping-pong of
->>> mitigation by relaxing the mitigation to happen only when the
->>> temperature goes below this lower hysteresis value.
->> Hi Amit,
->>
->> Can this not lead to ping-pong around the hysteresis temperature?
-> 
-> That isn't how hysteresis is supposed to work if there is a sufficient
-> delta between your trip point and your hysteresis value.
-> 
-> e.g. if you have a trip at 80C and a hysteresis of 10C, it means that
-> you will start throttling at 80C, but you won't STOP throttling until
-> you cool down to 70C. At that point, you will wait again to get to 80C
-> before throttling again.
-> IOW, on the downward slope (80 -> 70) you still have throttling active
-> and on the upward slope (70 -> 80), you have no[1] throttling, so
-> different behaviour is the same temperature range depending on
-> direction.
-> 
-> If your hysteresis value was very low .e.g. 1C, it would certainly be useless.
+/proc/<pid>/io is currently only owner readable. This forces monitoring
+programs (such as atop) to run with elevated permissions to collect disk
+stats. Changing this file to world readable can add a measure of safety to
+userspace.
 
-Thanks for the explanation. I think averaging can still give a smoother
-experience/transition. But then it has to be implemented and tested
-against this solution. Other reason for this solution is hysteresis can
-be a higher value if needed where as averaging might not give that
-flexibility. I have some other comments on the patch which I have posted
-separately.
-> 
->> If the idea is to minimize ping-pong isn't average a better method?
-> 
-> We shouldn't ping-pong with the asymmetric behaviour described above.
-> 
-> Regards,
-> Amit
-> [1] This is a simple example with a single trip point.
-> 
+Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+---
+ fs/proc/base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..1d1c1d680e16 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3076,7 +3076,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	REG("coredump_filter", S_IRUGO|S_IWUSR, proc_coredump_filter_operations),
+ #endif
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+-	ONE("io",	S_IRUSR, proc_tgid_io_accounting),
++	ONE("io",	S_IRUGO, proc_tgid_io_accounting),
+ #endif
+ #ifdef CONFIG_USER_NS
+ 	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
+@@ -3473,7 +3473,7 @@ static const struct pid_entry tid_base_stuff[] = {
+ 	REG("fail-nth", 0644, proc_fail_nth_operations),
+ #endif
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+-	ONE("io",	S_IRUSR, proc_tid_io_accounting),
++	ONE("io",	S_IRUGO, proc_tid_io_accounting),
+ #endif
+ #ifdef CONFIG_USER_NS
+ 	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
 -- 
-Warm Regards
-Thara
+2.21.0
+
