@@ -2,161 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E04105BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DEA8105BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfKUV3J convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 21 Nov 2019 16:29:09 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:39276 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbfKUV3J (ORCPT
+        id S1726880AbfKUV31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:29:27 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34884 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbfKUV30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:29:09 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iXu09-00071w-Ic; Thu, 21 Nov 2019 14:28:33 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iXtzu-00068w-Nz; Thu, 21 Nov 2019 14:28:19 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        tglx@linutronix.de, peterz@infradead.org, serge@hallyn.com
-References: <1574096478-11520-1-git-send-email-prakash.sangappa@oracle.com>
-        <1574096478-11520-2-git-send-email-prakash.sangappa@oracle.com>
-Date:   Thu, 21 Nov 2019 15:27:49 -0600
-In-Reply-To: <1574096478-11520-2-git-send-email-prakash.sangappa@oracle.com>
-        (Prakash Sangappa's message of "Mon, 18 Nov 2019 09:01:18 -0800")
-Message-ID: <87wobszzqi.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 21 Nov 2019 16:29:26 -0500
+Received: by mail-oi1-f196.google.com with SMTP id n16so4629170oig.2;
+        Thu, 21 Nov 2019 13:29:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eGbzdNGOz3Yt/u7Eg4Uy04gh1oqlzxGRM1Q5IoNwLyo=;
+        b=oq+KBdWNqg48CN7mCNZVLmMylCyaroBTDIEad25MjBX1Nsfxk6oI9UOgM+OK0lMx0p
+         WX6qldlPHvNMCsK4LJ7JoxVdD8P13Lh6Ib/PyNl11JAGqQTPQjtTYgn8Yc9bNusfeUj0
+         nOJHT4lyww1SA8KTP8fFXiPGj8XwecCEXa6dHR3lO5S3gGTktPIEEFDo09simKLYLpHE
+         ST1agA4yZ+kZC/ldtN0ySbFF1HWU8U0IPCZBpFr6N9SJCnWrTVmEsmb4AFYQ0kE19kfv
+         PtRE7ICNjDHHHZT+NlUKEoD7zeov93v10T//Ist0nD8hNmAvB358hTUL/Lc4fAd6+sda
+         znDA==
+X-Gm-Message-State: APjAAAW9hIvuWaOOql1cVmLXAMfM0LBUVgzhSLo0Z/AiwWsAG4b+fRSC
+        PsjQbEal8nNGs6AYvmjzJg==
+X-Google-Smtp-Source: APXvYqzotq60JyOQtDHz/zQ7q1sK4SuGVHd+xXyqMSXmeZsC7zXDHbM2laGjpVcYF8WIemWHY5+y9Q==
+X-Received: by 2002:aca:57d7:: with SMTP id l206mr9713923oib.32.1574371764980;
+        Thu, 21 Nov 2019 13:29:24 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m20sm1408047otr.47.2019.11.21.13.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 13:29:24 -0800 (PST)
+Date:   Thu, 21 Nov 2019 15:29:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, dianders@chromium.org,
+        devicetree@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v6 3/4] dt-bindings: net: broadcom-bluetooth: Add pcm
+ config
+Message-ID: <20191121212923.GA24437@bogus>
+References: <20191118192123.82430-1-abhishekpandit@chromium.org>
+ <20191118110335.v6.3.I18b06235e381accea1c73aa2f9db358645d9f201@changeid>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1iXtzu-00068w-Nz;;;mid=<87wobszzqi.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX182a0yGpvBu2lFxE1HKcEnWojHyg7qEIgI=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=8.0 tests=ALL_TRUSTED,BAYES_05,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_XMDrugObfuBody_14,XMNoVowels,XMSubLong,XM_B_Unicode
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -0.5 BAYES_05 BODY: Bayes spam probability is 1 to 5%
-        *      [score: 0.0115]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 T_XMDrugObfuBody_14 obfuscated drug references
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Prakash Sangappa <prakash.sangappa@oracle.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 429 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.5 (0.6%), b_tie_ro: 1.85 (0.4%), parse: 0.82
-        (0.2%), extract_message_metadata: 3.5 (0.8%), get_uri_detail_list:
-        1.52 (0.4%), tests_pri_-1000: 3.1 (0.7%), tests_pri_-950: 1.11 (0.3%),
-        tests_pri_-900: 0.84 (0.2%), tests_pri_-90: 23 (5.3%), check_bayes: 22
-        (5.0%), b_tokenize: 7 (1.5%), b_tok_get_all: 8 (1.7%), b_comp_prob:
-        2.4 (0.6%), b_tok_touch_all: 3.5 (0.8%), b_finish: 0.58 (0.1%),
-        tests_pri_0: 380 (88.6%), check_dkim_signature: 0.49 (0.1%),
-        check_dkim_adsp: 2.2 (0.5%), poll_dns_idle: 0.79 (0.2%), tests_pri_10:
-        1.82 (0.4%), tests_pri_500: 6 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RESEND RFC PATCH 1/1] Selectively allow CAP_SYS_NICE capability inside user namespaces
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191118110335.v6.3.I18b06235e381accea1c73aa2f9db358645d9f201@changeid>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prakash Sangappa <prakash.sangappa@oracle.com> writes:
-
-> Allow CAP_SYS_NICE to take effect for processes having effective uid of a
-> root user from init namespace.
->
-> Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
+On Mon, Nov 18, 2019 at 11:21:22AM -0800, Abhishek Pandit-Subedi wrote:
+> Add documentation for pcm parameters.
+> 
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 > ---
->  kernel/sched/core.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7880f4f..628bd46 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4548,6 +4548,8 @@ int can_nice(const struct task_struct *p, const int nice)
->  	int nice_rlim = nice_to_rlimit(nice);
->  
->  	return (nice_rlim <= task_rlimit(p, RLIMIT_NICE) ||
-> +		(ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE) &&
-> +		uid_eq(current_euid(), GLOBAL_ROOT_UID)) ||
->  		capable(CAP_SYS_NICE));
->  }
->  
-> @@ -4784,7 +4786,9 @@ static int __sched_setscheduler(struct task_struct *p,
->  	/*
->  	 * Allow unprivileged RT tasks to decrease priority:
->  	 */
-> -	if (user && !capable(CAP_SYS_NICE)) {
-> +	if (user && !(ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE) &&
-> +		uid_eq(current_euid(), GLOBAL_ROOT_UID)) &&
-> +		!capable(CAP_SYS_NICE)) {
->  		if (fair_policy(policy)) {
->  			if (attr->sched_nice < task_nice(p) &&
->  			    !can_nice(p, attr->sched_nice))
+> 
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
 
+Really? I'm staring at v2 that looks a bit different.
 
-I remember looking at this before.  I don't remember if I commented.
+>  .../bindings/net/broadcom-bluetooth.txt       | 16 ++++++++++
+>  include/dt-bindings/bluetooth/brcm.h          | 32 +++++++++++++++++++
+>  2 files changed, 48 insertions(+)
+>  create mode 100644 include/dt-bindings/bluetooth/brcm.h
+> 
+> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> index c749dc297624..8561e4684378 100644
+> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> @@ -29,10 +29,20 @@ Optional properties:
+>     - "lpo": external low power 32.768 kHz clock
+>   - vbat-supply: phandle to regulator supply for VBAT
+>   - vddio-supply: phandle to regulator supply for VDDIO
+> + - brcm,bt-sco-routing: PCM, Transport, Codec, I2S
+> + - brcm,bt-pcm-interface-rate: 128KBps, 256KBps, 512KBps, 1024KBps, 2048KBps
+> + - brcm,bt-pcm-frame-type: short, long
+> + - brcm,bt-pcm-sync-mode: slave, master
+> + - brcm,bt-pcm-clock-mode: slave, master
 
-1) Having GLOBAL_ROOT_UID in a user namespace is A Bad Idea™.
-   Definitely not something we should make special case for.
-   That configuration is almost certainly a privilege escalation waiting
-   to happen.
+Little of this seems unique to Broadcom. We already have some standard 
+audio related properties for audio interfaces such as 'format', 
+'frame-master' and 'bitclock-master'. Ultimately, this would be tied 
+into the audio complex of SoCs and need to work with the audio 
+bindings. We also have HDMI audio bindings. 
 
-2) If I read the other thread correctly there was talk about setting the
-   nice levels of processes in other containers.  Ouch!
+Maybe sco-routing is unique to BT and still needed in some form though 
+if you describe the connection to the SoC audio complex, then maybe 
+not? I'd assume every BT chip has some audio routing configuration.
 
-   The only thing I can think that makes any sense at all is to allow
-   setting the nice levels of the processes in your own container.
-
-   I can totally see having a test to see if a processes credentials are
-   in the caller's user namespace or a child of caller's user namespace
-   and allowing admin level access if the caller has the appropriate
-   caps in their user namespace.
-
-   But in this case I don't see anything preventing the admin in a
-   container from using the ordinary nice levels on a task.  You are
-   unlocking the nice levels reserved for the system administrator
-   for special occassions.   I don't see how that makes any sense
-   to do from inside a container.
-
-The design goal of user namespaces (assuming a non-buggy kernel) is to
-ensure user namespaces give a user no more privileges than the user had
-before creating a user namespace.  In this case you are granting a user
-who creates a user namespace the ability to change nice levels on all
-process in the system (limited to users whose uid happens to be
-GLOBAL_ROOT_UID).  But still this is effectively a way to get
-CAP_SYS_NICE back if it was dropped.
-
-As a violation of security policy this change simply can not be allowed.
-The entire idiom:  "ns_capable(__task_cred(p)->user_ns, ...)" is a check
-that provides no security.
-
-Eric
-
-
-
-
-
-   
-   
-
+Rob
