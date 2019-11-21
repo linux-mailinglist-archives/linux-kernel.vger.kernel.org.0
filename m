@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871401049CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCECF1049CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:02:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKUFCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 00:02:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36480 "EHLO mx1.suse.de"
+        id S1726887AbfKUFCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 00:02:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36490 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725956AbfKUFCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726502AbfKUFCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Nov 2019 00:02:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5B27CB15E;
+        by mx1.suse.de (Postfix) with ESMTP id C0F52B183;
         Thu, 21 Nov 2019 05:02:21 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH v5 8/9] irqchip: rtd1195-mux: Add RTD1395 definitions
-Date:   Thu, 21 Nov 2019 06:02:07 +0100
-Message-Id: <20191121050208.11324-9-afaerber@suse.de>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v5 9/9] arm64: dts: realtek: rtd139x: Add irq muxes and UART interrupts
+Date:   Thu, 21 Nov 2019 06:02:08 +0100
+Message-Id: <20191121050208.11324-10-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191121050208.11324-1-afaerber@suse.de>
 References: <20191121050208.11324-1-afaerber@suse.de>
@@ -36,160 +35,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compatible strings and bit mappings for Realtek RTD1395 SoC.
+Add iso and misc IRQ mux DT nodes for Realtek RTD1395 SoC.
 
-Based on BPI-M4-bsp linux-rtk/drivers/irqchip/irq-rtd139x.h.
+Update the UART DT nodes with interrupts from these muxes,
+so that UART0 can be used without earlycon.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- @Realtek: Does RTD1395 still have the WDOG_NMI misc interrupt at bit 2?
- 
- v4 -> v5:
- * Renamed misc bits from MISC_ to MIS_ for consistency
- * Filled in irq_chip names
+ v4 -> v5: Unchanged
  
  v4: New
  
- drivers/irqchip/irq-rtd1195-mux.c | 85 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 84 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/realtek/rtd139x.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/irqchip/irq-rtd1195-mux.c b/drivers/irqchip/irq-rtd1195-mux.c
-index e3e2e42d9df2..e0264759c0a8 100644
---- a/drivers/irqchip/irq-rtd1195-mux.c
-+++ b/drivers/irqchip/irq-rtd1195-mux.c
-@@ -1,7 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * Realtek RTD1195/RTD1295 IRQ mux
-+ * Realtek RTD1195/RTD1295/RTD1395 IRQ mux
-  *
-+ * Copyright (C) 2017 Realtek Semiconductor Corporation
-  * Copyright (c) 2017-2019 Andreas Färber
-  */
+diff --git a/arch/arm64/boot/dts/realtek/rtd139x.dtsi b/arch/arm64/boot/dts/realtek/rtd139x.dtsi
+index 706da12f9ea3..f53cb8a5083b 100644
+--- a/arch/arm64/boot/dts/realtek/rtd139x.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd139x.dtsi
+@@ -84,6 +84,14 @@
+ 				#reset-cells = <1>;
+ 			};
  
-@@ -314,6 +315,62 @@ static const u32 rtd1295_misc_isr_to_scpu_int_en_mask[32] = {
- 	[RTD1295_MIS_ISR_WDOG_NMI_SHIFT]	= SCPU_INT_EN_NMI_MASK,
- };
++			iso_irq_mux: interrupt-controller@7000 {
++				compatible = "realtek,rtd1395-iso-irq-mux";
++				reg = <0x7000 0x100>;
++				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++				#interrupt-cells = <1>;
++			};
++
+ 			iso_reset: reset-controller@7088 {
+ 				compatible = "snps,dw-low-reset";
+ 				reg = <0x7088 0x4>;
+@@ -103,6 +111,8 @@
+ 				reg-io-width = <4>;
+ 				clock-frequency = <27000000>;
+ 				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
++				interrupt-parent = <&iso_irq_mux>;
++				interrupts = <2>;
+ 				status = "disabled";
+ 			};
  
-+enum rtd1395_iso_isr_bits {
-+	RTD1395_ISO_ISR_UR0_SHIFT		= 2,
-+	RTD1395_ISO_ISR_IRDA_SHIFT		= 5,
-+	RTD1395_ISO_ISR_I2C0_SHIFT		= 8,
-+	RTD1395_ISO_ISR_I2C1_SHIFT		= 11,
-+	RTD1395_ISO_ISR_RTC_HSEC_SHIFT		= 12,
-+	RTD1395_ISO_ISR_RTC_ALARM_SHIFT		= 13,
-+	RTD1395_ISO_ISR_LSADC0_SHIFT		= 16,
-+	RTD1395_ISO_ISR_LSADC1_SHIFT		= 17,
-+	RTD1395_ISO_ISR_GPIOA_SHIFT		= 19,
-+	RTD1395_ISO_ISR_GPIODA_SHIFT		= 20,
-+	RTD1395_ISO_ISR_GPHY_HV_SHIFT		= 28,
-+	RTD1395_ISO_ISR_GPHY_DV_SHIFT		= 29,
-+	RTD1395_ISO_ISR_GPHY_AV_SHIFT		= 30,
-+	RTD1395_ISO_ISR_I2C1_REQ_SHIFT		= 31,
-+};
-+
-+static const u32 rtd1395_iso_isr_to_scpu_int_en_mask[32] = {
-+	[RTD1395_ISO_ISR_UR0_SHIFT]		= BIT(2),
-+	[RTD1395_ISO_ISR_IRDA_SHIFT]		= BIT(5),
-+	[RTD1395_ISO_ISR_I2C0_SHIFT]		= BIT(8),
-+	[RTD1395_ISO_ISR_I2C1_SHIFT]		= BIT(11),
-+	[RTD1395_ISO_ISR_RTC_HSEC_SHIFT]	= BIT(12),
-+	[RTD1395_ISO_ISR_RTC_ALARM_SHIFT]	= BIT(13),
-+	[RTD1395_ISO_ISR_LSADC0_SHIFT]		= BIT(16),
-+	[RTD1395_ISO_ISR_LSADC1_SHIFT]		= BIT(17),
-+	[RTD1395_ISO_ISR_GPIOA_SHIFT]		= BIT(19),
-+	[RTD1395_ISO_ISR_GPIODA_SHIFT]		= BIT(20),
-+	[RTD1395_ISO_ISR_GPHY_HV_SHIFT]		= BIT(28),
-+	[RTD1395_ISO_ISR_GPHY_DV_SHIFT]		= BIT(29),
-+	[RTD1395_ISO_ISR_GPHY_AV_SHIFT]		= BIT(30),
-+	[RTD1395_ISO_ISR_I2C1_REQ_SHIFT]	= BIT(31),
-+};
-+
-+enum rtd1395_misc_isr_bits {
-+	RTD1395_MIS_ISR_UR1_SHIFT		= 3,
-+	RTD1395_MIS_ISR_UR1_TO_SHIFT		= 5,
-+	RTD1395_MIS_ISR_UR2_SHIFT		= 8,
-+	RTD1395_MIS_ISR_UR2_TO_SHIFT		= 13,
-+	RTD1395_MIS_ISR_I2C5_SHIFT		= 14,
-+	RTD1395_MIS_ISR_SC0_SHIFT		= 24,
-+	RTD1395_MIS_ISR_SPI_SHIFT		= 27,
-+	RTD1395_MIS_ISR_FAN_SHIFT		= 29,
-+};
-+
-+static const u32 rtd1395_misc_isr_to_scpu_int_en_mask[32] = {
-+	[RTD1395_MIS_ISR_UR1_SHIFT]		= BIT(3),
-+	[RTD1395_MIS_ISR_UR1_TO_SHIFT]		= BIT(5),
-+	[RTD1395_MIS_ISR_UR2_TO_SHIFT]		= BIT(6),
-+	[RTD1395_MIS_ISR_UR2_SHIFT]		= BIT(7),
-+	[RTD1395_MIS_ISR_I2C5_SHIFT]		= BIT(14),
-+	[RTD1395_MIS_ISR_SC0_SHIFT]		= BIT(24),
-+	[RTD1395_MIS_ISR_SPI_SHIFT]		= BIT(27),
-+	[RTD1395_MIS_ISR_FAN_SHIFT]		= BIT(29),
-+};
-+
- static const struct rtd1195_irq_mux_info rtd1195_iso_irq_mux_info = {
- 	.name			= "iso",
- 	.isr_offset		= 0x0,
-@@ -330,6 +387,14 @@ static const struct rtd1195_irq_mux_info rtd1295_iso_irq_mux_info = {
- 	.isr_to_int_en_mask	= rtd1295_iso_isr_to_scpu_int_en_mask,
- };
+@@ -111,6 +121,14 @@
+ 				reg = <0x1a200 0x8>;
+ 			};
  
-+static const struct rtd1195_irq_mux_info rtd1395_iso_irq_mux_info = {
-+	.name			= "iso",
-+	.isr_offset		= 0x0,
-+	.umsk_isr_offset	= 0x4,
-+	.scpu_int_en_offset	= 0x40,
-+	.isr_to_int_en_mask	= rtd1395_iso_isr_to_scpu_int_en_mask,
-+};
++			misc_irq_mux: interrupt-controller@1b000 {
++				compatible = "realtek,rtd1395-misc-irq-mux";
++				reg = <0x1b000 0x100>;
++				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++				#interrupt-cells = <1>;
++			};
 +
- static const struct rtd1195_irq_mux_info rtd1195_misc_irq_mux_info = {
- 	.name			= "misc",
- 	.umsk_isr_offset	= 0x8,
-@@ -346,6 +411,14 @@ static const struct rtd1195_irq_mux_info rtd1295_misc_irq_mux_info = {
- 	.isr_to_int_en_mask	= rtd1295_misc_isr_to_scpu_int_en_mask,
- };
+ 			uart1: serial@1b200 {
+ 				compatible = "snps,dw-apb-uart";
+ 				reg = <0x1b200 0x100>;
+@@ -118,6 +136,8 @@
+ 				reg-io-width = <4>;
+ 				clock-frequency = <432000000>;
+ 				resets = <&reset2 RTD1295_RSTN_UR1>;
++				interrupt-parent = <&misc_irq_mux>;
++				interrupts = <3>;
+ 				status = "disabled";
+ 			};
  
-+static const struct rtd1195_irq_mux_info rtd1395_misc_irq_mux_info = {
-+	.name			= "misc",
-+	.umsk_isr_offset	= 0x8,
-+	.isr_offset		= 0xc,
-+	.scpu_int_en_offset	= 0x80,
-+	.isr_to_int_en_mask	= rtd1395_misc_isr_to_scpu_int_en_mask,
-+};
-+
- static const struct of_device_id rtd1295_irq_mux_dt_matches[] = {
- 	{
- 		.compatible = "realtek,rtd1195-iso-irq-mux",
-@@ -355,6 +428,10 @@ static const struct of_device_id rtd1295_irq_mux_dt_matches[] = {
- 		.compatible = "realtek,rtd1295-iso-irq-mux",
- 		.data = &rtd1295_iso_irq_mux_info,
- 	},
-+	{
-+		.compatible = "realtek,rtd1395-iso-irq-mux",
-+		.data = &rtd1395_iso_irq_mux_info,
-+	},
- 	{
- 		.compatible = "realtek,rtd1195-misc-irq-mux",
- 		.data = &rtd1195_misc_irq_mux_info,
-@@ -363,6 +440,10 @@ static const struct of_device_id rtd1295_irq_mux_dt_matches[] = {
- 		.compatible = "realtek,rtd1295-misc-irq-mux",
- 		.data = &rtd1295_misc_irq_mux_info,
- 	},
-+	{
-+		.compatible = "realtek,rtd1395-misc-irq-mux",
-+		.data = &rtd1395_misc_irq_mux_info,
-+	},
- 	{
- 	}
- };
-@@ -425,5 +506,7 @@ static int __init rtd1195_irq_mux_init(struct device_node *node,
- }
- IRQCHIP_DECLARE(rtd1195_iso_mux, "realtek,rtd1195-iso-irq-mux", rtd1195_irq_mux_init);
- IRQCHIP_DECLARE(rtd1295_iso_mux, "realtek,rtd1295-iso-irq-mux", rtd1195_irq_mux_init);
-+IRQCHIP_DECLARE(rtd1395_iso_mux, "realtek,rtd1395-iso-irq-mux", rtd1195_irq_mux_init);
- IRQCHIP_DECLARE(rtd1195_misc_mux, "realtek,rtd1195-misc-irq-mux", rtd1195_irq_mux_init);
- IRQCHIP_DECLARE(rtd1295_misc_mux, "realtek,rtd1295-misc-irq-mux", rtd1195_irq_mux_init);
-+IRQCHIP_DECLARE(rtd1395_misc_mux, "realtek,rtd1395-misc-irq-mux", rtd1195_irq_mux_init);
+@@ -128,6 +148,8 @@
+ 				reg-io-width = <4>;
+ 				clock-frequency = <432000000>;
+ 				resets = <&reset2 RTD1295_RSTN_UR2>;
++				interrupt-parent = <&misc_irq_mux>;
++				interrupts = <8>;
+ 				status = "disabled";
+ 			};
+ 		};
 -- 
 2.16.4
 
