@@ -2,182 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B64F510715A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4ACF107192
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:42:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfKVL32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:29:28 -0500
-Received: from mga11.intel.com ([192.55.52.93]:30924 "EHLO mga11.intel.com"
+        id S1727680AbfKVLmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:42:07 -0500
+Received: from mga01.intel.com ([192.55.52.88]:15269 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbfKVL31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:29:27 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726548AbfKVLmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:42:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 03:29:27 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 03:42:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
-   d="scan'208";a="216346463"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 22 Nov 2019 03:29:22 -0800
-Received: by lahna (sSMTP sendmail emulation); Fri, 22 Nov 2019 13:29:21 +0200
-Date:   Fri, 22 Nov 2019 13:29:21 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ck@xatom.net>, linux-kernel@vger.kernel.org,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: USB devices on Dell TB16 dock stop working after resuming
-Message-ID: <20191122112921.GF11621@lahna.fi.intel.com>
-References: <20191104142459.GC2552@lahna.fi.intel.com>
- <20191104144436.GD2552@lahna.fi.intel.com>
- <20191104154446.GH2552@lahna.fi.intel.com>
- <ea829adedf0445c0845e25d6e4b47905@AUSX13MPC105.AMER.DELL.COM>
- <d8cb6bc6-8145-eaed-5ba4-d7291478bdd7@molgen.mpg.de>
- <20191104162103.GI2552@lahna.fi.intel.com>
- <f0257624-920e-eec4-a2ec-7adf8ecbcc9d@molgen.mpg.de>
- <20191120105048.GY11621@lahna.fi.intel.com>
- <20191122105012.GD11621@lahna.fi.intel.com>
- <edfe1e3c-779b-61e4-8551-f2e13d46d733@molgen.mpg.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <edfe1e3c-779b-61e4-8551-f2e13d46d733@molgen.mpg.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+   d="scan'208";a="358110467"
+Received: from yiliu-dev.bj.intel.com ([10.238.156.139])
+  by orsmga004.jf.intel.com with ESMTP; 22 Nov 2019 03:42:02 -0800
+From:   Liu Yi L <yi.l.liu@intel.com>
+To:     alex.williamson@redhat.com, kwankhede@nvidia.com
+Cc:     kevin.tian@intel.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
+        yi.y.sun@intel.com, joro@8bytes.org, jean-philippe.brucker@arm.com,
+        peterx@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH v3 00/10] vfio_pci: wrap pci device as a mediated device
+Date:   Thu, 21 Nov 2019 19:23:37 +0800
+Message-Id: <1574335427-3763-1-git-send-email-yi.l.liu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 12:05:13PM +0100, Paul Menzel wrote:
-> Dear Mika,
-> 
-> 
-> Thank you so much for looking into this issue.
-> 
-> 
-> On 2019-11-22 11:50, Mika Westerberg wrote:
-> > On Wed, Nov 20, 2019 at 12:50:53PM +0200, Mika Westerberg wrote:
-> >> On Tue, Nov 19, 2019 at 05:55:43PM +0100, Paul Menzel wrote:
-> 
-> >>> On 2019-11-04 17:21, Mika Westerberg wrote:
-> >>>> On Mon, Nov 04, 2019 at 05:11:10PM +0100, Paul Menzel wrote:
-> >>>
-> >>>>> On 2019-11-04 16:49, Mario.Limonciello@dell.com wrote:
-> >>>>>
-> >>>>>>> From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> >>>>>>> Sent: Monday, November 4, 2019 9:45 AM
-> >>>>>
-> >>>>>>> On Mon, Nov 04, 2019 at 04:44:40PM +0200, Mika Westerberg wrote:
-> >>>>>>>> On Mon, Nov 04, 2019 at 04:25:03PM +0200, Mika Westerberg wrote:
-> >>>>>
-> >>>>>>>>> On Mon, Nov 04, 2019 at 02:13:13PM +0100, Paul Menzel wrote:
-> >>>>>
-> >>>>>>>>>> On the Dell XPS 13 9380 with Debian Sid/unstable with Linux 5.3.7
-> >>>>>>>>>> suspending the system, and resuming with Dell’s Thunderbolt TB16
-> >>>>>>>>>> dock connected, the USB input devices, keyboard and mouse,
-> >>>>>>>>>> connected to the TB16 stop working. They work for a few seconds
-> >>>>>>>>>> (mouse cursor can be moved), but then stop working. The laptop
-> >>>>>>>>>> keyboard and touchpad still works fine. All firmware is up-to-date
-> >>>>>>>>>> according to `fwupdmgr`.
-> >>>>>>>>>
-> >>>>>>>>> What are the exact steps to reproduce? Just "echo mem >
-> >>>>>>>>> /sys/power/state" and then resume by pressing power button?
-> >>>>>
-> >>>>> GNOME Shell 3.34.1+git20191024-1 is used, and the user just closes the
-> >>>>> display. So more than `echo mem > /sys/power/state` is done. What
-> >>>>> distribution do you use?
-> >>>>
-> >>>> I have buildroot based "distro" so there is no UI running.
-> >>>
-> >>> Hmm, this is quite different from the “normal” use-case of the these devices.
-> >>> That way you won’t hit the bugs of the normal users. ;-)
-> >>
-> >> Well, I can install some distro to that thing also :) I suppose Debian
-> >> 10.2 does have this issue, no?
-> >>
-> >>>>>>>> I tried v5.4-rc6 on my 9380 with TB16 dock connected and did a couple of
-> >>>>>>>> suspend/resume cycles (to s2idle) but I don't see any issues.
-> >>>>>>>>
-> >>>>>>>> I may have older/different firmware than you, though.
-> >>>>>>>
-> >>>>>>> Upgraded BIOS to 1.8.0 and TBT NVM to v44 but still can't reproduce this
-> >>>>>>> on my system :/
-> >>>>>
-> >>>>> The user reported the issue with the previous firmwares 1.x and TBT NVM v40.
-> >>>>> Updating to the recent version (I got the logs with) did not fix the issue.
-> >>>>
-> >>>> I also tried v40 (that was originally on that system) but I was not able
-> >>>> to reproduce it.
-> >>>>
-> >>>> Do you know if the user changed any BIOS settings?
-> >>>
-> >>> We had to disable the Thunderbolt security settings as otherwise the USB
-> >>> devices wouldn’t work at cold boot either.
-> >>
-> >> That does not sound right at all. There is the preboot ACL that allows
-> >> you to use TBT dock aready on boot. Bolt takes care of this.
-> >>
-> >> Are you talking about USB devices connected to the TB16 dock?
-> >>
-> >> Also are you connecting the TB16 dock to the Thunderbolt ports (left
-> >> side of the system marked with small lightning logo) or to the normal
-> >> Type-C ports (right side)?
-> >>
-> >>> So, I built Linux 5.4-rc8 (`make bindeb-pkg -j8`), but unfortunately the
-> >>> error is still there. Sometimes, re-plugging the dock helped, and sometimes
-> >>> it did not.
-> >>>
-> >>> Please find the logs attached. The strange thing is, the Linux kernel detects
-> >>> the devices and I do not see any disconnect events. But, `lsusb` does not list
-> >>> the keyboard and the mouse. Is that expected.
-> >>
-> >> I'm bit confused. Can you describe the exact steps what you do (so I can
-> >> replicate them).
-> > 
-> > I managed to reproduce following scenario.
-> > 
-> > 1. Boot the system up to UI
-> > 2. Connect TB16 dock (and see that it gets authorized by bolt)
-> > 3. Connect keyboard and mouse to the TB16 dock
-> > 4. Both mouse and keyboard are functional
-> > 5. Enter s2idle by closing laptop lid
-> > 6. Exit s2idle by opening the laptop lid
-> > 7. After ~10 seconds or so the mouse or keyboard or both do not work
-> >    anymore. They do not respond but they are still "present".
-> > 
-> > The above does not happen always but from time to time.
-> > 
-> > Is this the scenario you see as well?
-> 
-> Yes, it is. Though I’d say it’s only five seconds or so.
-> 
-> > This is on Ubuntu 19.10 with the 5.3 stock kernel.
-> 
-> “stock” in upstream’s or Ubuntu’s?
+This patchset aims to add a vfio-pci-like meta driver as a demo
+user of the vfio changes introduced in "vfio/mdev: IOMMU aware
+mediated device" patchset from Baolu Lu. Besides the test purpose,
+per Alex's comments, it could also be a good base driver for
+experimenting with device specific mdev migration.
 
-It is Ubuntu's.
+Specific interface tested in this proposal:
+ *) int mdev_set_iommu_device(struct device *dev,
+ 				struct device *iommu_device)
+    introduced in the patch as below:
+    "[PATCH v5 6/8] vfio/mdev: Add iommu related member in mdev_device"
 
-> > I can get them work again by unplugging them and plugging back (leaving
-> > the TBT16 dock connected). Also if you run lspci when the problem
-> > occurs it still shows the dock so PCIe link stays up.
-> 
-> Re-connecting the USB devices does not help here, but I still suspect it’s
-> the same issue.
+Patch Overview:
+ *) patch 1 ~ 7: code refactor for existing vfio-pci module
+                 move the common codes from vfio_pci.c to
+                 vfio_pci_common.c
+ *) patch 8: add protection to perm_bits alloc/free
+ *) patch 9: add vfio-mdev-pci sample driver
+ *) patch 10: refine the sample driver
 
-Yeah, sounds like so. Did you try to connect the device (mouse,
-keyboard) to anoter USB port?
+Links:
+ *) Link of "vfio/mdev: IOMMU aware mediated device"
+         https://lwn.net/Articles/780522/
+ *) Previous versions:
+         Patch v2: https://lkml.org/lkml/2019/9/6/115
+         Patch v1: https://www.spinics.net/lists/kvm/msg188952.html
+         RFC v3: https://lkml.org/lkml/2019/4/24/495
+         RFC v2: https://lkml.org/lkml/2019/3/13/113
+         RFC v1: https://lkml.org/lkml/2019/3/4/529
+ *) may try it with the codes in below repo
+    https://github.com/luxis1999/vfio-mdev-pci-sample-driver.git : v5.4-rc7-pci-mdev
 
-> Yesterday, I had my hand on a Dell XPS 13 7390 (10th Intel generation) and
-> tried it with the shipped Ubuntu 18.04 LTS. There, the problem was not
-> always reproducible, but it still happened. Sometimes, only one of the USB
-> device (either keyboard or mouse) stopped working.
+Please feel free give your comments.
 
-I suppose this is also with the TB16 dock connected, correct?
+Thanks,
+Yi Liu
+
+Change log:
+  patch v2 -> patch v3:
+  - refresh the disable_idle_d3, disable_vga and nointxmask config
+    according to user config in device open.
+  - add a semaphore around the vfio-pci cap/ecap perm bits allocation/free
+  - drop the non-singleton iommu group support to keep it simple as it's
+    a sample driver for now.
+
+  patch v1 -> patch v2:
+  - the sample driver implementation refined
+  - the sample driver can work on non-singleton iommu groups
+  - the sample driver can work with vfio-pci, devices from a non-singleton
+    group can either be bound to vfio-mdev-pci or vfio-pci, and the
+    assignment of this group still follows current vfio assignment rule.
+
+  RFC v3 -> patch v1:
+  - split the patchset from 3 patches to 9 patches to better demonstrate
+    the changes step by step
+
+  rfc v2->v3:
+  - use vfio-mdev-pci instead of vfio-pci-mdev
+  - place the new driver under drivers/vfio/pci while define
+    Kconfig in samples/Kconfig to clarify it is a sample driver
+
+  rfc v1->v2:
+  - instead of adding kernel option to existing vfio-pci
+    module in v1, v2 follows Alex's suggestion to add a
+    separate vfio-pci-mdev module.
+  - new patchset subject: "vfio/pci: wrap pci device as a mediated device"
+
+
+Alex Williamson (1):
+  samples: refine vfio-mdev-pci driver
+
+Liu Yi L (9):
+  vfio_pci: move vfio_pci_is_vga/vfio_vga_disabled to header
+  vfio_pci: refine user config reference in vfio-pci module
+  vfio_pci: refine vfio_pci_driver reference in vfio_pci.c
+  vfio_pci: make common functions be extern
+  vfio_pci: duplicate vfio_pci.c
+  vfio_pci: shrink vfio_pci_common.c
+  vfio_pci: shrink vfio_pci.c
+  vfio/pci: protect cap/ecap_perm bits alloc/free
+  samples: add vfio-mdev-pci driver
+
+ drivers/vfio/pci/Makefile           |    9 +-
+ drivers/vfio/pci/vfio_mdev_pci.c    |  430 ++++++++++
+ drivers/vfio/pci/vfio_pci.c         | 1460 +---------------------------------
+ drivers/vfio/pci/vfio_pci_common.c  | 1471 +++++++++++++++++++++++++++++++++++
+ drivers/vfio/pci/vfio_pci_config.c  |   33 +-
+ drivers/vfio/pci/vfio_pci_private.h |   39 +
+ samples/Kconfig                     |   11 +
+ 7 files changed, 2000 insertions(+), 1453 deletions(-)
+ create mode 100644 drivers/vfio/pci/vfio_mdev_pci.c
+ create mode 100644 drivers/vfio/pci/vfio_pci_common.c
+
+-- 
+2.7.4
+
