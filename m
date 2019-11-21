@@ -2,118 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACE9105317
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B290810532A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:34:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfKUN3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:29:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59802 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbfKUN3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:29:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jfdDcg8Rb9EyvSu2eIxHgWj5A4eCWm0Rpkl8ERU2Ehs=; b=sk5rWxxKId6Hjdan020hfjeX1
-        UNhZmhPKm6rVbvQaCrkk7BX2MmOYRpT8hAw1F9TJbLpuDUTjba0XqdFrlBqdGCigUbwAbvlQrY8np
-        OeYOFQmlp9OGquvo9OeJYV0YGRYEp0guO+rfcpB70MV5g8UQvIU9C5xpwth0HGIjSxR2xTf5y1+rG
-        4Tm4IjBYErkjeQjv3Za/e0HLyi2xBxZ1voeNZs1lfY+/lVHyvj+chZSnDtr9pBJdAk2cQ2AOPnF3H
-        obukZ3/rB5w6h8glw8SNfm/zklTSpzamhSUJJddjG0v44lLG2Kfscj1T7F6cDC3JD5YZeX0OZA61D
-        CmVk4S5Og==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iXmWh-0008QU-Dz; Thu, 21 Nov 2019 13:29:39 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CECCA3056C8;
-        Thu, 21 Nov 2019 14:28:26 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B1981201DD6AF; Thu, 21 Nov 2019 14:29:37 +0100 (CET)
-Date:   Thu, 21 Nov 2019 14:29:37 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Phil Auld <pauld@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191121132937.GW4114@hirez.programming.kicks-ass.net>
-References: <20191114113153.GB4213@ming.t460p>
- <20191114235415.GL4614@dread.disaster.area>
- <20191115010824.GC4847@ming.t460p>
- <20191115045634.GN4614@dread.disaster.area>
- <20191115070843.GA24246@ming.t460p>
- <20191115234005.GO4614@dread.disaster.area>
- <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area>
- <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb>
+        id S1727046AbfKUNeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:34:07 -0500
+Received: from spam01.hygon.cn ([110.188.70.11]:1863 "EHLO spam1.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727014AbfKUNeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 08:34:07 -0500
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam1.hygon.cn with ESMTP id xALDWutZ014213;
+        Thu, 21 Nov 2019 21:32:56 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id xALDWkiW088366;
+        Thu, 21 Nov 2019 21:32:46 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from [172.20.21.12] (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 21 Nov
+ 2019 21:32:55 +0800
+Subject: Re: Fwd: [PATCH] NTB: Fix an error in get link status
+To:     Sanjay R Mehta <sanmehta@amd.com>
+CC:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-ntb <linux-ntb@googlegroups.com>, <linjiasen007@gmail.com>
+References: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
+ <CAPoiz9wAJz=Hqb6Os=9AHHv_NGpZ8uCaAuOC=aUTkASKdfs9WQ@mail.gmail.com>
+ <933f74c7-7249-618c-13dc-9e4e47ad75d7@hygon.cn>
+ <11b355a8-0fe0-f256-c510-ddf106017703@hygon.cn>
+ <CAADLhr7bpb-F0eF1UFXy7AcN=z061mno_QsqGE8z-mvWKvUyCQ@mail.gmail.com>
+ <04b4d1ed-ea47-819e-a7e4-b729fa463506@amd.com>
+From:   Jiasen Lin <linjiasen@hygon.cn>
+Message-ID: <5c3155b5-6eed-d955-b18b-59b0cb1c513b@hygon.cn>
+Date:   Thu, 21 Nov 2019 21:30:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120220313.GC18056@pauld.bos.csb>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <04b4d1ed-ea47-819e-a7e4-b729fa463506@amd.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam1.hygon.cn xALDWutZ014213
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 05:03:13PM -0500, Phil Auld wrote:
-> On Wed, Nov 20, 2019 at 08:16:36PM +0100 Peter Zijlstra wrote:
-> > On Tue, Nov 19, 2019 at 07:40:54AM +1100, Dave Chinner wrote:
 
-> > > Yes, that's precisely the problem - work is queued, by default, on a
-> > > specific CPU and it will wait for a kworker that is pinned to that
-> > 
-> > I'm thinking the problem is that it doesn't wait. If it went and waited
-> > for it, active balance wouldn't be needed, that only works on active
-> > tasks.
+
+On 2019/11/20 22:13, Sanjay R Mehta wrote:
+> From: *Jiasen Lin* <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>>
+>> Date: Wed, Nov 20, 2019 at 3:25 PM
+>> Subject: Re: [PATCH] NTB: Fix an error in get link status
+>> To: Jon Mason <jdmason@kudzu.us <mailto:jdmason@kudzu.us>>
+>> Cc: S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com <mailto:Shyam-sundar.S-k@amd.com>>, Dave Jiang <dave.jiang@intel.com <mailto:dave.jiang@intel.com>>, Allen Hubbe <allenbh@gmail.com
+>> <mailto:allenbh@gmail.com>>, linux-kernel <linux-kernel@vger.kernel.org <mailto:linux-kernel@vger.kernel.org>>, linux-ntb <linux-ntb@googlegroups.com <mailto:linux-ntb@googlegroups.com>>,
+>> <linjiasen007@gmail.com <mailto:linjiasen007@gmail.com>>, Jiasen Lin <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>>
+>>
+>>
+>>
+>>
+>> On 2019/11/18 18:17, Jiasen Lin wrote:
+>>>
+>>>
+>>> On 2019/11/18 7:00, Jon Mason wrote:
+>>>> On Thu, Nov 7, 2019 at 4:37 AM Jiasen Lin <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>> wrote:
+>>>>>
+>>>>> The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
+>>>>> but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
+>>>>> It is offset of Device Capabilities Reg rather than Link Control Reg.
+>>>>>
+>>>>> This code trigger an error in get link statsus:
+>>>>>
+>>>>>           cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+>>>>>                   LNK STA -               0x8fa1
+>>>>>                   Link Status -           Up
+>>>>>                   Link Speed -            PCI-E Gen 0
+>>>>>                   Link Width -            x0
+>>>>>
+>>>>> This patch use pcie_capability_read_dword to get link status.
+>>>>> After fix this issue, we can get link status accurately:
+>>>>>
+>>>>>           cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+>>>>>                   LNK STA -               0x11030042
+>>>>>                   Link Status -           Up
+>>>>>                   Link Speed -            PCI-E Gen 3
+>>>>>                   Link Width -            x16
+>>>>
+>>>> No response from AMD maintainers, but it looks like you are correct.
+>>>>
+>>>> This needs a "Fixes:" line here.  I took the liberty of adding one to
+>>>> this patch.
+>>>>
+>>>
+>>> Thank you for your suggestions. Yes, this patch fix the commit id:
+>>> a1b3695 ("NTB: Add support for AMD PCI-Express Non-Transparent Bridge").
+>>>
+>>>>> Signed-off-by: Jiasen Lin <linjiasen@hygon.cn <mailto:linjiasen@hygon.cn>>
+>>>>> ---
+>>>>>    drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
+>>>>>    drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
+>>>>>    2 files changed, 3 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>>>> b/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>>>> index 156c2a1..ae91105 100644
+>>>>> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>>>> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+>>>>> @@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
+>>>>>
+>>>>>           ndev->cntl_sta = reg;
+>>>>>
+>>>>> -       rc = pci_read_config_dword(ndev->ntb.pdev,
+>>>>> -                                  AMD_LINK_STATUS_OFFSET, &stat);
+>>>>> +       rc = pcie_capability_read_dword(ndev->ntb.pdev,
+>>>>> +                                  PCI_EXP_LNKCTL, &stat);
+>>>>>           if (rc)
+>>>>>                   return 0;
+>>>>>           ndev->lnk_sta = stat;
+>>>>> @@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
+>>>>>    static const struct pci_device_id amd_ntb_pci_tbl[] = {
+>>>>>           { PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
+>>>>>           { PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
+>>>>> +       { PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
+>>>>
+>>>> This should be a separate patch.  I took the liberty of splitting it
+>>>> off into a unique patch and attributing it to you.  I've pushed them
+>>>> to the ntb-next branch on
+>>>> https://github.com/jonmason/ntb
+>>>>
+>>> Thank you for your comment. We appreciate the time and effort you have
+>>> spent to split it off, I will test it ASAP.
+>>>
+>>>> Please verify everything looks acceptable to you (given the changes I
+>>>> did above that are attributed to you).  Also, testing of the latest
+>>>> code is always appreciated.
+>>>>
+>>>> Thanks,
+>>>> Jon
+>>>>
+>>
+>> I have tested these patches that are pushed to ntb-next branch, they
+>> work well on HYGON platforms.
+>>
+>> Thanks,
+>> Jiasen Lin
 > 
-> Since this is AIO I wonder if it should queue_work on a nearby cpu by 
-> default instead of unbound.  
-
-The thing seems to be that 'unbound' is in fact 'bound'. Maybe we should
-fix that. If the load-balancer were allowed to move the kworker around
-when it didn't get time to run, that would probably be a better
-solution.
-
-Picking another 'bound' cpu by random might create the same sort of
-problems in more complicated scenarios.
-
-TJ, ISTR there used to be actually unbound kworkers, what happened to
-those? or am I misremembering things.
-
-> > Lastly,
-> > one other thing to try is -next. Vincent reworked the load-balancer
-> > quite a bit.
-> > 
+> Hi Jiasen Lin,
 > 
-> I've tried it with the lb patch series. I get basically the same results.
-> With the high granularity settings I get 3700 migrations for the 30 
-> second run at 4k. Of those about 3200 are active balance on stock 5.4-rc7.
-> With the lb patches it's 3500 and 3000, a slight drop. 
+> Apologies for my delayed response. I was on vacation.
+> 
+> Your patch is a correct fix, but that would work only for primary system.
+> 
+> The design of AMD NTB implementation is such that NTB primary acts as an endpoint device and NTB secondary is a PCIe Root Port (RP). Considering that,
+> the link status and control register needs to be accessed differently based on the NTB topology.
+> 
+> So in the case of NTB secondary, we read the link status and control register of the PCIe RP capabilities structure and in the case of NTB primary, we read the
+> link status and control register from NTB device capabilities structure.
+> 
+> The code below is the proper fix for AMD platform. I will be sending incremental change above your patch.
+> 
+> would appreciate if you could test my patch and let me know whether that works for you.
+> 
 
-Thanks for testing that. I didn't expect miracles, but it is good to
-verify.
+Dhyana CPU dones not support data transfer while both sides of PCIe link 
+are configured as NTB, in other word, Dhyana only support NTB that is 
+connected to RP rather than NT to NT.
 
-> Using the default granularity settings 50 and 22 for stock and 250 and 25.
-> So a few more total migrations with the lb patches but about the same active.
+As illustrated in the following topology, NTB consists of two PCIe 
+endpoints, a Primary NTB, and a Secondary NTB. Primary CPU can find 
+Priamry NTB, while Secondary NTB, Secondary internal SW.ds and Secondary 
+internal SW.ds are enumerated by secondary CPU.
 
-Right, so the granularity thing interacts with the load-balance period.
-By pushing it up, as some people appear to do, makes it so that what
-might be a temporal imablance is perceived as a persitent imbalance.
+In this topology, to remove any ambiguity, your suggestion is more 
+accurate method to get link status of NTB.
 
-Tying the load-balance period to the gramularity is something we could
-consider, but then I'm sure, we'll get other people complaining the
-doesn't balance quick enough anymore.
+In primary PCI domain:
+Primary RP--Primary NTB----------------------------------------
+40:04.1-------41:00.1(Pri NTB)                                | 
 
+                                                               | 
+In secondary PCI domain:                                      |
+Secondary RP--Secondary SW.us--Secondary SW.ds--Secondary NTB--
+40:03.1---------41:00.0---------42:00.0---------43:00.1(Sec NTB)
+
+I have modified the code according to your suggestion and tested it
+on Dhyana platform, it works well, expect to receice your patch.
+
+Before modify the code, read the Link Status and control register of the 
+secondary NTB device to get link status.
+
+cat /sys/kernel/debug/ntb_hw_amd/0000\:43\:00.1/info
+NTB Device Information:
+Connection Topology -   NTB_TOPO_SEC
+LNK STA -               0x11030042
+Link Status -           Up
+Link Speed -            PCI-E Gen 3
+Link Width -            x16
+
+After modify the code, read the Link Status and control register of the 
+secondary RP to get link status.
+
+cat /sys/kernel/debug/ntb_hw_amd/0000\:43\:00.1/info
+NTB Device Information:
+Connection Topology -   NTB_TOPO_SEC
+LNK STA -               0x70830042
+Link Status -           Up
+Link Speed -            PCI-E Gen 3
+Link Width -            x8
+
+Thanks,
+Jiasen Lin
+
+> ---
+>   drivers/ntb/hw/amd/ntb_hw_amd.c | 27 +++++++++++++++++++++++----
+>   drivers/ntb/hw/amd/ntb_hw_amd.h |  1 -
+>   2 files changed, 23 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
+> index 14ad69c..91e1966 100644
+> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
+> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+> @@ -842,6 +842,8 @@ static inline void ndev_init_struct(struct amd_ntb_dev *ndev,
+>   static int amd_poll_link(struct amd_ntb_dev *ndev)
+>   {
+>       void __iomem *mmio = ndev->peer_mmio;
+> +    struct pci_dev *pci_rp = NULL;
+> +    struct pci_dev *pdev = NULL;
+>       u32 reg, stat;
+>       int rc;
+>   
+> @@ -855,10 +857,27 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
+>   
+>       ndev->cntl_sta = reg;
+>   
+> -    rc = pci_read_config_dword(ndev->ntb.pdev,
+> -                   AMD_LINK_STATUS_OFFSET, &stat);
+> -    if (rc)
+> -        return 0;
+> +    if (ndev->ntb.topo == NTB_TOPO_SEC) {
+> +        /* Locate the pointer to PCIe Root Port for this device */
+> +        pci_rp = pci_find_pcie_root_port(ndev->ntb.pdev);
+> +        /* Read the PCIe Link Control and Status register */
+> +        if (pci_rp) {
+> +            rc = pcie_capability_read_dword(pci_rp, PCI_EXP_LNKCTL,
+> +                            &stat);
+> +            if (rc)
+> +                return 0;
+> +        }
+> +    } else if (ndev->ntb.topo == NTB_TOPO_PRI) {
+> +        /*
+> +         * For NTB primary, we simply read the Link Status and control
+> +         * register of the NTB device itself.
+> +         */
+> +        pdev = ndev->ntb.pdev;
+> +        rc = pcie_capability_read_dword(pdev, PCI_EXP_LNKCTL, &stat);
+> +        if (rc)
+> +            return 0;
+> +    }
+> +
+>       ndev->lnk_sta = stat;
+>   
+>       return 1;
+> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_amd.h
+> index 139a307..39e5d18 100644
+> --- a/drivers/ntb/hw/amd/ntb_hw_amd.h
+> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
+> @@ -53,7 +53,6 @@
+>   #include <linux/pci.h>
+>   
+>   #define AMD_LINK_HB_TIMEOUT    msecs_to_jiffies(1000)
+> -#define AMD_LINK_STATUS_OFFSET    0x68
+>   #define NTB_LIN_STA_ACTIVE_BIT    0x00000002
+>   #define NTB_LNK_STA_SPEED_MASK    0x000F0000
+>   #define NTB_LNK_STA_WIDTH_MASK    0x03F00000
+> 
