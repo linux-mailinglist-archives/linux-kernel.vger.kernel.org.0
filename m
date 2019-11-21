@@ -2,95 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C896104EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:13:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B84104EF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:15:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfKUJNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 04:13:30 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34031 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726014AbfKUJNa (ORCPT
+        id S1727250AbfKUJOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 04:14:21 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:33056 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727209AbfKUJON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:13:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574327609;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=3M6485oZ3h2+O4ro7A8gi/zi3MfoBr4gqzDpttvkg3w=;
-        b=hwTNm9U8d7LF4/Ltpp3OYtxfdDJmT224eQGgnbkGBNoNLoOXs4HohsiYsqSPIdzrR51BXz
-        bxLzeO1wlisghQCl80ZzqwnCuRjDz0S4ORvaJS5fEE5iThKyYbQ2lfVseA/PayR2l6JZkf
-        A3Ly9AxYg2ohsX12aw6JZo/T9WhcqVY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-318-mOY-q8esMcat8U_H6oA_2g-1; Thu, 21 Nov 2019 04:13:26 -0500
-Received: by mail-wr1-f70.google.com with SMTP id m17so1684653wrb.20
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 01:13:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MnY5vul8wqjyLuAl8HVVCWFLRgO+5Onvt2EnbAjuSA4=;
-        b=Oc9PrZRh2d1R3nBixr92UFfKM6W76MErx6EPB68RAabpHymcbh3soz0ueMWGxLZZw5
-         kDAxmfo+dexUq5OGYeQb5XsGs7P2zvtPbmBkrAWoCetgLF+vmM0arz5fkUmNe3uhPU4l
-         g9nlIwDCvKorXsIx8sEYFwWuUPUxA8oKdJPgUZkw0XMN9g5hT0l+ESUYzfFvOg36h1pw
-         PHLxcv/zysbmZkcv6yu/pQicW8BiC2Vglwqalw8PpNbgc3xacht+0tesNlIqyNXhxkgi
-         l1y5VyOEFXu3yEIwt3EeE1fAu3BuXsEYxZMmiu0u6+Z87PB3FCPZ6u6+t8CWHbMmIJ0Q
-         aNgw==
-X-Gm-Message-State: APjAAAW9/CQ7HOcum1ew0mSYfGGS2iiN+kkoqFDEpfbGYJ7PS1DhBLo9
-        hOCSLMTJF9CfKKfG55OG3hMlwMzCLc1K+uvOUAAqOlRlWDa+rz8+ugQVLC3nB08YfGa+gPyj5y8
-        UR3ZRYiBPEnaQgI5MiAw/9EWv
-X-Received: by 2002:adf:dd0a:: with SMTP id a10mr8457529wrm.299.1574327605108;
-        Thu, 21 Nov 2019 01:13:25 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy3ZNKHYrKi1bUru69IXv71nFYLjTNHMigtS0mfIn48c69BczlnVWv1kLAz4F0q7IesX+op8w==
-X-Received: by 2002:adf:dd0a:: with SMTP id a10mr8457488wrm.299.1574327604841;
-        Thu, 21 Nov 2019 01:13:24 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:71a5:6e:f854:d744? ([2001:b07:6468:f312:71a5:6e:f854:d744])
-        by smtp.gmail.com with ESMTPSA id s11sm2484895wrr.43.2019.11.21.01.13.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2019 01:13:23 -0800 (PST)
-Subject: Re: [PATCH -next] KVM: x86: remove set but not used variable 'called'
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Mao Wenan <maowenan@huawei.com>, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, wanpengli@tencent.com,
-        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20191119030640.25097-1-maowenan@huawei.com>
- <87o8x8gjr5.fsf@vitty.brq.redhat.com> <20191119121423.GB5604@kadam>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <61f534ca-7575-6716-10ec-ac5c92258452@redhat.com>
-Date:   Thu, 21 Nov 2019 10:13:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 21 Nov 2019 04:14:13 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAL9E8Fj067352;
+        Thu, 21 Nov 2019 03:14:08 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574327648;
+        bh=en0heqKb0nOkMJLKH6q7rH9NpM2Pnkgk1n4ELJZjGIw=;
+        h=From:To:CC:Subject:Date;
+        b=LzGg8AeSVSzxlXpMRFhB6FTpBzaHTSQyEMm74ye9hfaFr/38qOX1AEnQMACh+e8hy
+         k2nxr9f7iebWWvCUXFUBDLcx8mCl/sC9Oh8xakWDUXKx7q7/ycZho/OkY1QISlFJg7
+         AZf6aMOuvw0bVBuw8Q3Ebj23yCQ5ZJXNJspFzRiY=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAL9E7D1094700;
+        Thu, 21 Nov 2019 03:14:08 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 21
+ Nov 2019 03:14:08 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 21 Nov 2019 03:14:08 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAL9E6Os044635;
+        Thu, 21 Nov 2019 03:14:06 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <broonie@kernel.org>, <geert@linux-m68k.org>
+CC:     <vkoul@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] spi: pic32: Retire dma_request_slave_channel_compat()
+Date:   Thu, 21 Nov 2019 11:14:05 +0200
+Message-ID: <20191121091405.28384-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191119121423.GB5604@kadam>
-Content-Language: en-US
-X-MC-Unique: mOY-q8esMcat8U_H6oA_2g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/11/19 13:14, Dan Carpenter wrote:
->> Better expressed as=20
->>
->> Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to targe=
-t vCPUs")
->
-> There is sort of a debate about this whether the Fixes tag should be
-> used if it's only a cleanup.
+There is no reason to use the dma_request_slave_channel_compat() as no
+filter function and parameter is provided.
 
-The other debate is whether this is a cleanup, since the build is broken
-with -Werror.  I agree that code cleanups generally don't deserve Fixes
-tags, but this patch IMHO does.
+Switch the driver to use dma_request_chan() instead and add support for
+deferred probing against DMA channel.
 
-Paolo
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi,
+
+Changes since v1:
+- Handle deferred probing against DMA channel request.
+
+Trying to crack down on the use of dma_request_slave_channel_compat() in the
+tree...
+
+Only compile tested!
+
+Regards,
+Peter
+
+ drivers/spi/spi-pic32.c | 46 +++++++++++++++++++++++++++--------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
+index 69f517ec59c6..bb6a6643bcd3 100644
+--- a/drivers/spi/spi-pic32.c
++++ b/drivers/spi/spi-pic32.c
+@@ -606,25 +606,30 @@ static void pic32_spi_cleanup(struct spi_device *spi)
+ 	gpio_direction_output(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
+ }
+ 
+-static void pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
++static int pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+ {
+ 	struct spi_master *master = pic32s->master;
+-	dma_cap_mask_t mask;
++	int ret = 0;
+ 
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
++	master->dma_rx = dma_request_chan(dev, "spi-rx");
++	if (IS_ERR(master->dma_rx)) {
++		if (PTR_ERR(master->dma_rx) == -EPROBE_DEFER)
++			ret = -EPROBE_DEFER;
++		else
++			dev_warn(dev, "RX channel not found.\n");
+ 
+-	master->dma_rx = dma_request_slave_channel_compat(mask, NULL, NULL,
+-							  dev, "spi-rx");
+-	if (!master->dma_rx) {
+-		dev_warn(dev, "RX channel not found.\n");
++		master->dma_rx = NULL;
+ 		goto out_err;
+ 	}
+ 
+-	master->dma_tx = dma_request_slave_channel_compat(mask, NULL, NULL,
+-							  dev, "spi-tx");
+-	if (!master->dma_tx) {
+-		dev_warn(dev, "TX channel not found.\n");
++	master->dma_tx = dma_request_chan(dev, "spi-tx");
++	if (IS_ERR(master->dma_tx)) {
++		if (PTR_ERR(master->dma_tx) == -EPROBE_DEFER)
++			ret = -EPROBE_DEFER;
++		else
++			dev_warn(dev, "RX channel not found.\n");
++
++		master->dma_tx = NULL;
+ 		goto out_err;
+ 	}
+ 
+@@ -634,14 +639,20 @@ static void pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+ 	/* DMA chnls allocated and prepared */
+ 	set_bit(PIC32F_DMA_PREP, &pic32s->flags);
+ 
+-	return;
++	return 0;
+ 
+ out_err:
+-	if (master->dma_rx)
++	if (master->dma_rx) {
+ 		dma_release_channel(master->dma_rx);
++		master->dma_rx = NULL;
++	}
+ 
+-	if (master->dma_tx)
++	if (master->dma_tx) {
+ 		dma_release_channel(master->dma_tx);
++		master->dma_tx = NULL;
++	}
++
++	return ret;
+ }
+ 
+ static void pic32_spi_dma_unprep(struct pic32_spi *pic32s)
+@@ -776,7 +787,10 @@ static int pic32_spi_probe(struct platform_device *pdev)
+ 	master->unprepare_transfer_hardware	= pic32_spi_unprepare_hardware;
+ 
+ 	/* optional DMA support */
+-	pic32_spi_dma_prep(pic32s, &pdev->dev);
++	ret = pic32_spi_dma_prep(pic32s, &pdev->dev);
++	if (ret)
++		goto err_bailout;
++
+ 	if (test_bit(PIC32F_DMA_PREP, &pic32s->flags))
+ 		master->can_dma	= pic32_spi_can_dma;
+ 
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
