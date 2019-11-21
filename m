@@ -2,84 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AA04105CEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 23:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 834A2105CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfKUW6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 17:58:35 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40147 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfKUW6f (ORCPT
+        id S1726664AbfKUXEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 18:04:05 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:55036 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfKUXEE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 17:58:35 -0500
-Received: by mail-io1-f67.google.com with SMTP id b26so3620076ion.7;
-        Thu, 21 Nov 2019 14:58:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uN4hyE3BsXplYJBM6a2D+eSFwcm1JgVbWlkvWiQItuM=;
-        b=GNXYPv+MoZ6ufzCOmzmZ3FbAGuNxZFHtzj2f+mLFc4MuUsi8YJcOkyliGl2bInzAI/
-         e4Zy5nUd8r4M/WJuXHH69WsI5BOApmhlhe4xbO1CkywTpGBJvqAzk5kzq+IGGuq+HbPF
-         CVGiIgsEzJNLWPQbB7z904ZoBU9uwh3kvmd0TjuMX3Gx1s+8e7Nps9W2iWA0lNaS/c88
-         5B7REKcrpUQLMjkze2sYAD9dL0OHLNGUlcd34h7NHg9gVsCVES3P+6tciTQCSy8DuC23
-         oKWi/dTAt+M5cVXwpI8DInfw8Iznpdpz5JLa23QtpB8QGgoHb+XzGfrmyOtXJyITE9tE
-         /dwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uN4hyE3BsXplYJBM6a2D+eSFwcm1JgVbWlkvWiQItuM=;
-        b=tflF5XoMxZOPv6EiYQWSla8GvLGizFjnICYeY3ZBL32FbzRocSnPG828X4l1JQyd4R
-         qb7nXMJTyqU5cAL/xtrexo0mLXS5b8PzeFqm+6HfuuUf8gTGSyp4Z8zldySb8qewWvHY
-         Ee0K6zb+VLHLgg5te9MhYXKo2HqSMRbD+3KJak5YHqi1kuAVsBO7PFGv5RZJuJWQbACf
-         LeHxKESNJ41XPp2kcBS+hZi3036lZmDWR4KOplQVjYQr+Q05sTCkt/XVinXzze+TKMiH
-         zSBsB5QaF5dZwNa1sLGWk1J/R5VMGniswiq+K4dis3rhEON3CWf2Ewn8ybG84dNpTKZR
-         7UCQ==
-X-Gm-Message-State: APjAAAUTB3xtsAypHmO1xZrLfxTZmIY0krPLT1jcYSxFbsWBO8+b3y7k
-        ROdnqThtHrPWlaJ6J7KF4nLuoJcXkh4/96O8FyY=
-X-Google-Smtp-Source: APXvYqxt2fyeSeuT7Rks7RsLI5P5xJkkHZ7JT6gT1o753wrBhnsAWRGn8abdnAlt9IuIed0B6IO1Ba87ARUD4oQ+9Z8=
-X-Received: by 2002:a02:6a02:: with SMTP id l2mr2823388jac.89.1574377112589;
- Thu, 21 Nov 2019 14:58:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20191120054728.0979695C0FE4@us180.sjc.aristanetworks.com>
-In-Reply-To: <20191120054728.0979695C0FE4@us180.sjc.aristanetworks.com>
-From:   Dmitry Safonov <0x7f454c46@gmail.com>
-Date:   Thu, 21 Nov 2019 22:58:21 +0000
-Message-ID: <CAJwJo6bu0Hkmneg=DuwN=v_G4pkm1JQnUWKEVcudJD5L0pjLiw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: only free map once in osl.c
-To:     Francesco Ruggeri <fruggeri@arista.com>
-Cc:     lenb@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 21 Nov 2019 18:04:04 -0500
+Received: from localhost (c-73-35-209-67.hsd1.wa.comcast.net [73.35.209.67])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3722C150ABF39;
+        Thu, 21 Nov 2019 15:04:04 -0800 (PST)
+Date:   Thu, 21 Nov 2019 15:04:03 -0800 (PST)
+Message-Id: <20191121.150403.2184487688856616276.davem@davemloft.net>
+To:     fw@strlen.de
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pabeni@redhat.com, gandalf@winds.org
+Subject: Re: [PATCH net] udp: drop skb extensions before marking skb
+ stateless
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191121055623.20952-1-fw@strlen.de>
+References: <20191121053031.GI20235@breakpoint.cc>
+        <20191121055623.20952-1-fw@strlen.de>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 21 Nov 2019 15:04:04 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019 at 05:50, Francesco Ruggeri <fruggeri@arista.com> wrote:
->
-> acpi_os_map_cleanup checks map->refcount outside of acpi_ioremap_lock
-> before freeing the map. This creates a race condition the can result
-> in the map being freed more than once.
-> A panic can be caused by running
->
-> for ((i=0; i<10; i++))
-> do
->         for ((j=0; j<100000; j++))
->         do
->                 cat /sys/firmware/acpi/tables/data/BERT >/dev/null
->         done &
-> done
->
-> This patch makes sure that only the process that drops the reference
-> to 0 does the freeing.
->
-> Fixes: b7c1fadd6c2e ("ACPI: Do not use krefs under a mutex in osl.c")
-> Signed-off-by: Francesco Ruggeri <fruggeri@arista.com>
+From: Florian Westphal <fw@strlen.de>
+Date: Thu, 21 Nov 2019 06:56:23 +0100
 
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
+> Once udp stack has set the UDP_SKB_IS_STATELESS flag, later skb free
+> assumes all skb head state has been dropped already.
+> 
+> This will leak the extension memory in case the skb has extensions other
+> than the ipsec secpath, e.g. bridge nf data.
+> 
+> To fix this, set the UDP_SKB_IS_STATELESS flag only if we don't have
+> extensions or if the extension space can be free'd.
+> 
+> Fixes: 895b5c9f206eb7d25dc1360a ("netfilter: drop bridge nf reset from nf_reset")
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Reported-by: Byron Stanoszek <gandalf@winds.org>
+> Signed-off-by: Florian Westphal <fw@strlen.de>
 
-Thanks,
-             Dmitry
+Applied, thanks Florian.
