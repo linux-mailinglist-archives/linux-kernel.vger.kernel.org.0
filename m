@@ -2,134 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45707104759
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3787A104764
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:16:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfKUAPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 19:15:37 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58451 "EHLO mga06.intel.com"
+        id S1727200AbfKUAPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:15:54 -0500
+Received: from mga03.intel.com ([134.134.136.65]:22602 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbfKUAPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727016AbfKUAPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Nov 2019 19:15:36 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 16:15:34 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 16:15:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,223,1571727600"; 
-   d="scan'208";a="381553882"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by orsmga005.jf.intel.com with ESMTP; 20 Nov 2019 16:15:34 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id C22B8300D85; Wed, 20 Nov 2019 16:15:34 -0800 (PST)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org
-Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 12/12] perf stat: Use affinity for enabling/disabling events
-Date:   Wed, 20 Nov 2019 16:15:22 -0800
-Message-Id: <20191121001522.180827-13-andi@firstfloor.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191121001522.180827-1-andi@firstfloor.org>
-References: <20191121001522.180827-1-andi@firstfloor.org>
+   d="scan'208";a="408325252"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Nov 2019 16:15:35 -0800
+Received: from orsmsx122.amr.corp.intel.com (10.22.225.227) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 20 Nov 2019 16:15:35 -0800
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.121]) by
+ ORSMSX122.amr.corp.intel.com ([169.254.11.73]) with mapi id 14.03.0439.000;
+ Wed, 20 Nov 2019 16:15:34 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     "Jiang, Dave" <dave.jiang@intel.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Lin, Jing" <jing.lin@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Dey, Megha" <megha.dey@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: RE: [PATCH RFC 01/14] x86/asm: add iosubmit_cmds512() based on
+ movdir64b CPU instruction
+Thread-Topic: [PATCH RFC 01/14] x86/asm: add iosubmit_cmds512() based on
+ movdir64b CPU instruction
+Thread-Index: AQHVn+jQu1FBipL/xUihZzlSbMgW16eVIDmA//+R2QCAAIgqgP//htoQ
+Date:   Thu, 21 Nov 2019 00:15:33 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F4DA734@ORSMSX115.amr.corp.intel.com>
+References: <157428480574.36836.14057238306923901253.stgit@djiang5-desk3.ch.intel.com>
+ <157428502934.36836.8119026517510193201.stgit@djiang5-desk3.ch.intel.com>
+ <20191120215338.GN2634@zn.tnic>
+ <20191120231923.GA32680@agluck-desk2.amr.corp.intel.com>
+ <20191120232645.GO2634@zn.tnic>
+In-Reply-To: <20191120232645.GO2634@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjdkNzkzMzItOWQ2NC00NmUxLTg5ZTAtYjBmZjVhZDUzNjNkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQndmUm1XVkM3QjVDWVlOMTJvcnJXaW5OZlA2TFdxTXBTYmxVWnN5dTVqaTVKeCtVdU5VYlgrMlMrWXh5NEJvZyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
-
-Restructure event enabling/disabling to use affinity, which
-minimizes the number of IPIs needed.
-
-Before on a large test case with 94 CPUs:
-
-% time     seconds  usecs/call     calls    errors syscall
------- ----------- ----------- --------- --------- ----------------
- 54.65    1.899986          22     84812       660 ioctl
-
-after:
-
- 39.21    0.930451          10     84796       644 ioctl
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-
----
-
-v2: Use new iterator macros
-v3: Use new iterator macros
-v4: Update iterators again
----
- tools/perf/util/evlist.c | 40 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 37 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 17960e4d3a45..682a1f37d244 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -378,11 +378,28 @@ bool evsel__cpu_iter_skip(struct evsel *ev, int cpu)
- void evlist__disable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-+	struct affinity affinity;
-+	int cpu, i;
-+
-+	if (affinity__setup(&affinity) < 0)
-+		return;
-+
-+	evlist__for_each_cpu (evlist, i, cpu) {
-+		affinity__set(&affinity, cpu);
- 
-+		evlist__for_each_entry(evlist, pos) {
-+			if (evsel__cpu_iter_skip(pos, cpu))
-+				continue;
-+			if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+				continue;
-+			evsel__disable_cpu(pos, pos->cpu_iter - 1);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
- 	evlist__for_each_entry(evlist, pos) {
--		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
- 			continue;
--		evsel__disable(pos);
-+		pos->disabled = true;
- 	}
- 
- 	evlist->enabled = false;
-@@ -391,11 +408,28 @@ void evlist__disable(struct evlist *evlist)
- void evlist__enable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-+	struct affinity affinity;
-+	int cpu, i;
- 
-+	if (affinity__setup(&affinity) < 0)
-+		return;
-+
-+	evlist__for_each_cpu (evlist, i, cpu) {
-+		affinity__set(&affinity, cpu);
-+
-+		evlist__for_each_entry(evlist, pos) {
-+			if (evsel__cpu_iter_skip(pos, cpu))
-+				continue;
-+			if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
-+				continue;
-+			evsel__enable_cpu(pos, pos->cpu_iter - 1);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
- 	evlist__for_each_entry(evlist, pos) {
- 		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
- 			continue;
--		evsel__enable(pos);
-+		pos->disabled = false;
- 	}
- 
- 	evlist->enabled = true;
--- 
-2.23.0
-
+Pj4gV2hlbiB1c2luZyBkZWRpY2F0ZWQgcXVldWVzIHRoZSBjYWxsZXIgbXVzdCBrZWVwIGNvdW50
+IG9mIGhvdyBtYW55DQo+PiBvcGVyYXRpb25zIGFyZSBpbiBmbGlnaHQgYW5kIG5vdCBzZW5kIG1v
+cmUgdGhhbiB0aGUgZGVwdGggb2YgdGhlDQo+PiBxdWV1ZS4NCj4NCj4gVGhpcyB3YXk/DQoNClRo
+YXQncyB0aGUgb25seSBwcmFjdGljYWwgd2F5LiBUaGUgZGV2aWNlIGRvZXMga2VlcCBhIGNvdW50
+IG9mIGRyb3BwZWQNCmF0dGVtcHRzIC4uLiBzbyBpbiB0aGVvcnkgeW91IGNvdWxkIGdvIHJlYWQg
+dGhhdCAuLi4gYnV0IHRoYXQgd291bGQgZ2l2ZSB1cA0KbXVjaCBvZiB0aGUgdmFsdWUgcHJvcG9z
+aXRpb24gb2YgbG93IGNvc3QgdG8gc3VibWl0IHdvcmsgaWYgeW91IGhhZCB0byBkbw0KYW4gTU1J
+TyByZWFkIGFmdGVyIGV2ZXJ5IHN1Ym1pc3Npb24uDQoNCi1Ub255DQo=
