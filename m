@@ -2,65 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0636E1051D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED5F91051D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfKULvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 06:51:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfKULvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 06:51:43 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C172620872;
-        Thu, 21 Nov 2019 11:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574337103;
-        bh=l6zL6Gy4RcSUr2FRLgzwZG7nNL1nY+sRlIxH1Xba0YE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=x8fBeXkKMJjXkXlxU9qI2rNTNyon+xmHKCvIk72FP0zK4qkcN+aki0zqgy4OUhCld
-         1A/ac/mPVzxi+MllSk4kwRPXrsYfZkwZpRp3k4qWZa4rxLEvBhgcSjizfK6WR5GZD8
-         PixI4hW5dsLhIXdRXkVbs6uOYgbsCeF1gqp/o99U=
-Date:   Thu, 21 Nov 2019 12:51:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Subject: Re: [PATCH v4 03/13] exfat: add inode operations
-Message-ID: <20191121115140.GB427938@kroah.com>
-References: <20191121052618.31117-1-namjae.jeon@samsung.com>
- <CGME20191121052916epcas1p3f00c8e510eb53f53f4e082848bd325d0@epcas1p3.samsung.com>
- <20191121052618.31117-4-namjae.jeon@samsung.com>
- <38716ae8-a056-4ee3-285a-a3c1ac8307a5@web.de>
+        id S1727004AbfKULwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 06:52:47 -0500
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:34689 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfKULwq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 06:52:46 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id D24673F59D;
+        Thu, 21 Nov 2019 12:52:43 +0100 (CET)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=U5WWZU7y;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NZRwLHAXHBD9; Thu, 21 Nov 2019 12:52:42 +0100 (CET)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 744D83F59F;
+        Thu, 21 Nov 2019 12:52:41 +0100 (CET)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id C2466360051;
+        Thu, 21 Nov 2019 12:52:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1574337160; bh=rADTjlZLWos97SHytV5j8Qmd2jVz1bQ6E4e0jEU56Fo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=U5WWZU7yZFP/JrCuk/AtbxMN6B9ivocYHZ/udxnZhFc7X1XSmxuGehtLeC2/cvi3X
+         0c9AgQQeUD4Tltxt/Uk1RLjgIsjtHdjRFB9KrF+rs74iru9ftV3Yfs49QmQiGs8VPp
+         9K6ehIXqq70mcvEKDgwOkc69Hj93V8qtStmebvhA=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pv-drivers@vmware.com
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Vishal Bhakta <vbhakta@vmware.com>, Jim Gill <jgill@vmware.com>
+Subject: [PATCH 1/2] scsi: vmw_pvscsi: Fix swiotlb operation
+Date:   Thu, 21 Nov 2019 12:52:03 +0100
+Message-Id: <20191121115204.53060-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38716ae8-a056-4ee3-285a-a3c1ac8307a5@web.de>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:40:28AM +0100, Markus Elfring wrote:
-> > +	if (err) {
-> > +		if (err != -ENOSPC)
-> > +			return -EIO;
-> > +		return err;
-> > +	}
-> 
-> Can such source code become more succinct?
-> 
-> +	if (err)
-> +		return err != -ENOSPC ? -EIO : err;
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-No, the original is best here.  Never use ? : if you can ever help it.
+With swiotlb, the first byte of the sense buffer may in some cases be
+uninitialized since we use DMA_FROM_DEVICE, and the device incorrectly
+doesn't clear it. In those cases, clear it after DMA unmapping.
+
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Suggested-by: Vishal Bhakta <vbhakta@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Acked-by: Jim Gill <jgill@vmware.com>
+
+ Please enter the commit message for your changes. Lines starting
+---
+ drivers/scsi/vmw_pvscsi.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
+index 70008816c91f..8a09d184a320 100644
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -402,6 +402,17 @@ static int pvscsi_map_buffers(struct pvscsi_adapter *adapter,
+ 	return 0;
+ }
+ 
++/*
++ * The device incorrectly doesn't clear the first byte of the sense
++ * buffer in some cases. We have to do it ourselves.
++ * Otherwise we run into trouble when SWIOTLB is forced.
++ */
++static void pvscsi_patch_sense(struct scsi_cmnd *cmd)
++{
++	if (cmd->sense_buffer)
++		cmd->sense_buffer[0] = 0;
++}
++
+ static void pvscsi_unmap_buffers(const struct pvscsi_adapter *adapter,
+ 				 struct pvscsi_ctx *ctx)
+ {
+@@ -544,6 +555,8 @@ static void pvscsi_complete_request(struct pvscsi_adapter *adapter,
+ 	cmd = ctx->cmd;
+ 	abort_cmp = ctx->abort_cmp;
+ 	pvscsi_unmap_buffers(adapter, ctx);
++	if (sdstat != SAM_STAT_CHECK_CONDITION)
++		pvscsi_patch_sense(cmd);
+ 	pvscsi_release_context(adapter, ctx);
+ 	if (abort_cmp) {
+ 		/*
+@@ -873,6 +886,7 @@ static void pvscsi_reset_all(struct pvscsi_adapter *adapter)
+ 			scmd_printk(KERN_ERR, cmd,
+ 				    "Forced reset on cmd %p\n", cmd);
+ 			pvscsi_unmap_buffers(adapter, ctx);
++			pvscsi_patch_sense(cmd);
+ 			pvscsi_release_context(adapter, ctx);
+ 			cmd->result = (DID_RESET << 16);
+ 			cmd->scsi_done(cmd);
+-- 
+2.21.0
 
