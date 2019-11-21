@@ -2,135 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA6A810502F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:15:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E428F105024
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:15:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKUKOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:14:54 -0500
-Received: from mout.gmx.net ([212.227.15.18]:49805 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbfKUKOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:14:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1574331269;
-        bh=ZWabn5cPEZdM/dU9k7wTedMC47TS5i2tDFXWn60+DOs=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=CWKQRgVhuOIUhCNpJUY3dP41+GKdPHtHldjxJ1DvtdOEyZjH1/Mi+/G76Hfrijjb7
-         zoHRD4yikNARTFY+9FAqGXjCYHcw8zbzQxPKcZSH/0GcZ+it0ZmyH4MDrutWuTu4kB
-         zye1MDAFNaLL11W8qpIY35e8yhEkSMw3Pt+c9eb8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.1.176] ([37.4.249.139]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N5VDE-1hn2lC4AWo-016tzL; Thu, 21
- Nov 2019 11:14:29 +0100
-Subject: Re: [PATCH v3 0/4] Raspberry Pi 4 HWRNG Support
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Stephen Brennan <stephen@brennan.io>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Scott Branden <sbranden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Eric Anholt <eric@anholt.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-crypto@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org
-References: <20191120031622.88949-1-stephen@brennan.io>
- <99554159-6abb-6ea5-aebb-57a148a59b78@gmx.net>
- <6aaa37d2cbe91c177b7be2d7f8aa3846efe3dc34.camel@suse.de>
-From:   Stefan Wahren <wahrenst@gmx.net>
-Message-ID: <79995d88-ad9c-e2cc-3f79-0fc9cf8352d2@gmx.net>
-Date:   Thu, 21 Nov 2019 11:14:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726701AbfKUKOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:14:34 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54881 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfKUKOd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:14:33 -0500
+Received: by mail-wm1-f68.google.com with SMTP id x26so2755528wmk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 02:14:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n7DzjzsuSLvj9pdWFStqaFJF8gdHM1T9f/YXYyoJOjk=;
+        b=CzFSpjV143IUsg5swiQ/xd6HekWPa8WT+SHymkLFYW8WZccwKp/V8QjnOfEjuNP5t8
+         w1z9rdRXOZ+T7qZDUi3vPMh3P9JWM+j4gZ7XTw0wFUO1vLMosw9OCFMGHaa13EE/zh/v
+         pc3Y+j7ILOj0i+k14bnEZTcqxcxkpAo1TwUCm8geSaM9PF24vQ771JN0p19hpN84c4JP
+         EgQ3njdMGF/c0Ra+WHZDIEOONMVnKYqIQ4QldDIeGamQNwG7x4mZWuDD1929IZk4gj1y
+         omx3QqMOxGBNqbSdF+oD4fm6Gb5fknsFczRcokiQ4ZUgZ1tN1xyTizuJfONw9k4j0V/Q
+         1/bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n7DzjzsuSLvj9pdWFStqaFJF8gdHM1T9f/YXYyoJOjk=;
+        b=SHp5WDYzYqfazLPvry+iAh+P+HCQPR/N16oknhyfIY57Dtx2qZ5PImxx7L5CSiY8HF
+         JawZB1csYJ/cpQJe8ycd3pJXnr9IfWZ+LjRpmlIv5Zkz1KJe1KurtIJiOuZJYqZB3oGw
+         X03lxPa9LEJojtYNdvFJNrFgr4jLGAM2SMv0XlBqAQSpQRezRPaDfzQzN9yvs713Oy2O
+         GYjRN6LZkiuE1I8NIDyKwirPhSiyJ7ysWSV0BDVkDCps0aE/KwWqQIj4J2975HJWo7X+
+         ILDnLrEHWunrZ6fkJBvXya6TTZ32jelNlTXTAApAbuD2IPJXxmQ+UTv5Dt28X3S6tZ7L
+         ezdw==
+X-Gm-Message-State: APjAAAUNknGjEGggw1TEEIF73lrTxLZJj+FAXtJZXU/nojHguTcPwwya
+        VDiWEXebIYxk3CaKdfek3Z/iKA==
+X-Google-Smtp-Source: APXvYqxPADgVv5/yD9ctzuTcZNw5cUFWHwvJhUI0DOZzRCGful8vLGq7ZwkZBc87z0uvxwTFov8oDQ==
+X-Received: by 2002:a7b:ca4d:: with SMTP id m13mr8689497wml.21.1574331271418;
+        Thu, 21 Nov 2019 02:14:31 -0800 (PST)
+Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id o21sm1289932wmc.17.2019.11.21.02.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 02:14:30 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     mjourdan@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] media: meson: vdec: add sm1 platform
+Date:   Thu, 21 Nov 2019 11:14:26 +0100
+Message-Id: <20191121101429.23831-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <6aaa37d2cbe91c177b7be2d7f8aa3846efe3dc34.camel@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:oeIJr8IJyuJ/vS51pMEcSu7Yj39vWst+y+r9CPsXWP7HunwteIc
- egP5Y8cxeEiRXU4LvKDlX/9esGv2STZa/M/Q7404ZUthVaybzTLQLFi4tnQ2/AMGHQinzFa
- A/kE0mGrtwiBGKZE+/3ZxYjKn2NR/+cwIWadtynSh2CnxuCjSn8cAqQNx2HX4OVjiTZL34z
- OcWQPE/GGnLpp3QxQzdgQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vn0z0Y9b/OQ=:KFcXAJndPuH1F9vw1xhnWE
- ogT6+YtFfNMMJex53vqOrvjeTkqxvqEDCOmjmXuA7x9HdvyH+R3dkVxeA/h6cGVSgb+YESv0U
- Jh+ZgANrfvCs4asrWXujNysoqmXEwi1cFg+o/q5G0ZKJ7DeaBL3qSHnrBFzXeiDHcTT7UKfu/
- uoubAdDAWJ4M9YT2qQh1su1VBSa/HziBvFvRRVtTdeyNh3m5zKm3pZLbTkHXIJ1mow6vadeuV
- 4zz2v5XZTav0n28BJqwW6lM7rLQFr/9bkTPEPhIsjF8rmlxRNk4UEZ7FbPMlJpz9+WSI6cn+9
- jbScYxCFRoYRJ/GEbpd+f5rP1T+nuXIR5CpMg7lMqRoampgdzjBbzK7/ub897h3XIsSlc/VBZ
- lm99I/aIlsNsnCE/XnrKoo4VIhYousiwvT5G/ZrVefLRvgouaDr98O+pBMJGYRN5Zmzlvicfd
- co7/1M5WXwKqE4GU0A9P7GuPuDTKFPeSRjQdOkRBFGltfm4B0yG1qsoYjBR/V+kumCKAkTwi2
- GH8D+EaxdiF5ubLN+WR+Njn1C7Z+xIAeglgfq6BuONF3HxSuOaY/lHGkpJNLLx41w3WfCA59T
- qdEsLMONJ4qxFHXWH+xABpNqgu725FfOlAdm9Ovu4b5IkduS5ahvYRcY34ouhsYSe8N99ndYx
- hJmNFpGhIYvLRz+k5r6smWWGht8TIRaCD3Tl1WbImosaYdj6jAQjhuCIc/Nv4uKWRb1O48D+C
- oYQSj0fTUTRy9692QDfxV8qbbHpRqdovHkWax5mGZ6tSIymGVSdemAZQJLeweMg0yaKR9fyo1
- dBOcMFzVnzEYy36vyqJsXTyhsaa91Jn8pNf8X055SXruU8eANLqzTMW2DFPrc2IEcgUmoqsFg
- mEvo/1IU0lP98GfQ5grsqEHoVXuFVAgOTExTCd40jTsUfn0x8WTPJjCq7nvYodn01xOonsauY
- LpQ2v0+1oCu5AhgxHn2SjTyc+9w3siFlsV373D3BKgeJ32hD6HnXdy2BjfLvbG2P8sb8CXbTC
- Q57gqNwV6a8cMX3NrdcppqCZ1PE+qXvd8Qladi6rKLM0rGrFnToukkd3qOPoqhsWMBhlu/wom
- gRwajYI98pxl019XccgxkJ7xPk+uYMgrIc4cMFkHq5k49w6eph1jepbNOd8IYmCL1i4SHgb3R
- WMEORmGvMXxlEkf0whZ7EdHCa4zrZeLQ+FixyOH7g6uw1eud0quCTufLmPLpmk/63AbrKxuXc
- VqqDW2HlvkjOw/jLJcYYiGGMCnPBiP2NcQp+B6C9/cdOzZVcCggaokriGAKw=
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patchset adds support for the current Amlogic Video Decoder
+driver for the Amlogic SM1 & compatible SoCs.
 
-Am 20.11.19 um 20:50 schrieb Nicolas Saenz Julienne:
-> On Wed, 2019-11-20 at 17:16 +0100, Stefan Wahren wrote:
->> Hi Stephen,
->>
->> Am 20.11.19 um 04:16 schrieb Stephen Brennan:
->>> This patch series enables support for the HWRNG included on the Raspberry
->>> Pi 4.  It is simply a rebase of Stefan's branch [1]. I went ahead and
->>> tested this out on a Pi 4.  Prior to this patch series, attempting to use
->>> the hwrng gives:
->>>
->>>     $ head -c 2 /dev/hwrng
->>>     head: /dev/hwrng: Input/output error
->>>
->>> After this series, the same command gives two random bytes.
->> just a note: a more expressive test would be running rngtest (package
->> rng-tools) on this device.
-> Just had a go at it,
->
-> root@rpi4:~# rngtest -c 1000 < /dev/hwrng
-> rngtest 2-unofficial-mt.14
-> Copyright (c) 2004 by Henrique de Moraes Holschuh
-> This is free software; see the source for copying conditions.  There is NO
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
->
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 998
-> rngtest: FIPS 140-2 failures: 2
-> rngtest: FIPS 140-2(2001-10-10) Monobit: 0
-> rngtest: FIPS 140-2(2001-10-10) Poker: 1
-> rngtest: FIPS 140-2(2001-10-10) Runs: 0
-> rngtest: FIPS 140-2(2001-10-10) Long run: 1
-> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-> rngtest: input channel speed: (min=1.284; avg=113.786; max=126.213)Kibits/s
-> rngtest: FIPS tests speed: (min=17.122; avg=28.268; max=28.812)Mibits/s
-> rngtest: Program run time: 172323761 microseconds
->
-> AFAIR (Arch wiki) some small failures are acceptable.
->
-> Regards,
-> Nicolas
->
-thanks for the results. AFAIR the downstream implementation [1] has a
-significant higher input speed. So there is possibly some room for
-optimizations later.
+Then support is added for the currently supported MPEG1 & MPEG2 decoders
+like for G12A support.
 
-Regards
-Stefan
+This patchset depends on G12A support patchset at [1].
 
-[1] -
-https://github.com/raspberrypi/linux/commit/5e74aadfd1e0e6c00994521863ba044ce25b40de
+M2M Decoder compliance is handled in a separate patchset at [2].
+
+# v4l2-compliance 
+v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+
+Compliance test for meson-vdec device /dev/video0:
+
+Driver Info:
+	Driver name      : meson-vdec
+	Card type        : Amlogic Video Decoder
+	Bus info         : platform:meson-vdec
+	Driver version   : 5.4.0
+	Capabilities     : 0x84204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+	Detected Stateful Decoder
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 2 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Total for meson-vdec device /dev/video0: 44, Succeeded: 44, Failed: 0, Warnings: 0
+
+[1] https://lore.kernel.org/linux-media/20191120111430.29552-1-narmstrong@baylibre.com
+[2] https://lore.kernel.org/linux-media/20191007145909.29979-1-mjourdan@baylibre.com
+
+Neil Armstrong (3):
+  dt-bindings: media: amlogic,gx-vdec: add bindings for SM1 family
+  media: meson: vdec: add sm1 platform
+  arm64: dts: meson-sm1: add video decoder compatible
+
+ .../bindings/media/amlogic,gx-vdec.yaml       |  2 ++
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  4 +++
+ drivers/staging/media/meson/vdec/vdec.c       |  5 +++-
+ drivers/staging/media/meson/vdec/vdec_1.c     | 29 ++++++++++++++----
+ .../staging/media/meson/vdec/vdec_platform.c  | 30 +++++++++++++++++++
+ .../staging/media/meson/vdec/vdec_platform.h  |  2 ++
+ 6 files changed, 65 insertions(+), 7 deletions(-)
+
+-- 
+2.22.0
 
