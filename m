@@ -2,107 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B385104E95
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08E3F104E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfKUI5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:57:48 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10315 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfKUI5r (ORCPT
+        id S1726620AbfKUIzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:55:33 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38538 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfKUIzc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:57:47 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd651870000>; Thu, 21 Nov 2019 00:57:43 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Nov 2019 00:57:42 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Nov 2019 00:57:42 -0800
-Received: from [10.2.169.101] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
- 2019 08:57:41 +0000
-Subject: Re: [PATCH v7 05/24] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-6-jhubbard@nvidia.com> <20191121080555.GC24784@lst.de>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
-Date:   Thu, 21 Nov 2019 00:54:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 21 Nov 2019 03:55:32 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t3so810877pgl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:55:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JDh4J7txYc3naAMlVPRKqlgsc0Gi2de9J0u9I07SRgE=;
+        b=SXf6MqbSDeg/fVx0sGott9QiNL08dk+gq2qyuQhjIDe6mEC8Eew7jE/+g6gizVdTBy
+         UrRWnukkMQShx2l1Vg65R5P8ZeXHRnugHpon0heqD1m7M+rEGCgvzxkq/E1ElFSq91/7
+         Bclf2FqGosWV0kCmy6IGf8niCABAl0CR9Em1GviJnK2XDoUOwv4OmqhE6K8x8d7fwU+l
+         zfjVpbPyMGGKc8KrWTpSD8FLayEZW8DsCgsfU+w8x4yb19kYyHuCetCISCRuBdEKLL4J
+         5R54IypEaOOh3JkG4xqLS4R6VzjOFUZFSAP255kEaFcSFTiQS2dBpp3QLyYL9+DRP7rF
+         5TBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JDh4J7txYc3naAMlVPRKqlgsc0Gi2de9J0u9I07SRgE=;
+        b=QjO6uB8srMyG9tY952ometcFt3CwcbmP4skmY+9Xc3Folefd/8Muk4zthBHlkIRqEs
+         dPiPwPUWUOHS1Gs4G7ap0rhN+GMOEmAKBV12J3CLYeiP8Rvkrm791d8BwsrJbT5lMfcO
+         hCIC43DqMfcQs1qZPfFNRQjLGSSYEICFWOAR9D/T1Jh0qepoDwmZyOh6mutB/T3sCscz
+         XrldJxlNdeoznJ8kHdxCG6iGYOzxxWExY+MoZQF3hUaEVQ+yk9CO0ED9ryWe274ZhkBq
+         /e79/ReGYtyFfurNjV14N52pg59HUZel/nl4gRafpwnKpVQhoMa0YMNNgo8jdc0gvq7+
+         dIyA==
+X-Gm-Message-State: APjAAAWCIgEzi9tdlxwEU7eVm6A0JhZzOfkSGIoChWGqEN87V3Rfwlw2
+        QGg5357EabtIzqE2ZVKibmOBJQ==
+X-Google-Smtp-Source: APXvYqwImatb0/SQFGgTcvIX7x0xGvkXF5uKVkbBIQ3LaNfl9s6ckC4vLLVKjdh/XkqeXoOliNxiVw==
+X-Received: by 2002:a63:6b82:: with SMTP id g124mr8313475pgc.178.1574326531905;
+        Thu, 21 Nov 2019 00:55:31 -0800 (PST)
+Received: from localhost ([223.226.74.76])
+        by smtp.gmail.com with ESMTPSA id s2sm2044089pgv.48.2019.11.21.00.55.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2019 00:55:31 -0800 (PST)
+Date:   Thu, 21 Nov 2019 14:25:29 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com,
+        guillaume.tucker@collabora.com,
+        Niklas Cassel <niklas.cassel@linaro.org>, broonie@kernel.org,
+        khilman@baylibre.com, mgalka@collabora.com,
+        enric.balletbo@collabora.com, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Viresh Kumar <vireshk@kernel.org>
+Subject: Re: stable/linux-4.14.y bisection: boot on odroid-x2
+Message-ID: <20191121085529.qjmj7pwew4wjmggu@vireshk-i7>
+References: <5dd5fbf5.1c69fb81.0938.8061@mx.google.com>
+ <20191121060811.mvzzh4zlfzlubzlv@vireshk-i7>
+ <20191121065821.GA344102@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20191121080555.GC24784@lst.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574326663; bh=YGQbxCYiHGws7JmssYZZfu4b/BH3QCdRJ1MPzdi8DdI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=FbrZ4378j2iyBO9hvWSMloyNdNsTUz/psuT/NCUARgzB35AW0Wq9ueJvfblZCosk7
-         /+/rxtO6ichr/aFPIlD7xLBQtc9hq7EFIF6lCnNn9hnclEWNCKgA7YoyhRbt/m4Vsk
-         wRmCgWdXHHISljd4LjYmGbzccrPj5+Fa1JlqaI75caluLphJJldJZkgCWUPC0xholt
-         6X13AINTENnATeVUOSXXiPHblxU1cCkaaO1aE9kIv76y0chkTgEt3S0BIhZzBbKb9q
-         pD1vYn6vGejSUU1Vf+Wlw9+f+WagzvL/JI66W61oW1V6Mdo52NCQD9IyiBTxjX+ttQ
-         VAYphrAfRS+XQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121065821.GA344102@kroah.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/19 12:05 AM, Christoph Hellwig wrote:
-> So while this looks correct and I still really don't see the major
-> benefit of the new code organization, especially as it bloats all
-> put_page callers.
+On 21-11-19, 07:58, Greg Kroah-Hartman wrote:
+> On Thu, Nov 21, 2019 at 11:38:11AM +0530, Viresh Kumar wrote:
+> > On 20-11-19, 18:52, kernelci.org bot wrote:
+> > > commit 714ab224a8db6e8255c61a42613de9349ceb0bba
+> > > Author: Viresh Kumar <viresh.kumar@linaro.org>
+> > > Date:   Fri Aug 3 07:05:21 2018 +0530
+> > > 
+> > >     OPP: Protect dev_list with opp_table lock
+> > >     
+> > >     [ Upstream commit 3d2556992a878a2210d3be498416aee39e0c32aa ]
+> > >     
+> > >     The dev_list needs to be protected with a lock, else we may have
+> > >     simultaneous access (addition/removal) to it and that would be racy.
+> > >     Extend scope of the opp_table lock to protect dev_list as well.
+> > >     
+> > >     Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > >     Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > >     Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > 
+> > @Sasha: Please drop this patch for now.
 > 
-> I'd love to see code size change stats for an allyesconfig on this
-> commit.
-> 
+> Drop it from 4.14 and 4.19?
 
-Right, I'm running that now, will post the results. (btw, if there is
-a script and/or standard format I should use, I'm all ears. I'll dig
-through lwn...)
+Yes.
 
-
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+viresh
