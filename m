@@ -2,119 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E13A4104820
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:34:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DAE10482B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 02:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfKUBeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 20:34:44 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33833 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfKUBen (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 20:34:43 -0500
-Received: by mail-oi1-f196.google.com with SMTP id l202so1738533oig.1;
-        Wed, 20 Nov 2019 17:34:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lpEa+/BRm24XesFPsnNk5cI0mT1TDDR8Zk/jTKgI6uM=;
-        b=hCQOu+RtXc+YXfM1Aja28NLxoCRtfmCn2qZbMjZj5luctKt9TvpQsZJerrqPznbs1n
-         K3zr4y7z2dA/M6CkglXs6aS7AVLpRj+13QF0doj3sxcoOFQh7uc2Xx+ZLc7+bYvrHkRz
-         yStcTqVPDo0yD6y94m9A7mG+48ywg401un2aDv8C+VEyfNA1eRFgF3PAPc2w0m/K5HlA
-         Tx4ryfdHVA65brhhxqvEwtu5vGwhB7H/1CILjybawf+/N98lrvo8TdI4GCWms8H01oKP
-         g51T6XE+PtDo8agk1mKeP5FfxSj/CxM4+KOgLR4rYj1IyCToj20LOLNn9VhXGfgVvW9k
-         iG+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lpEa+/BRm24XesFPsnNk5cI0mT1TDDR8Zk/jTKgI6uM=;
-        b=IGitO5EUApfom5R3MAXyNda+NUwDasz4Ak8+ZSzIKfCH1t5I2P4nf0bGHU4tLg0sVK
-         HahU4W9+ZL2e53ZUM5c+u/eWF5fteoL58vkfLRKRKvlznjTczMh5VA+cR2u+94r05QXR
-         PSt0HoWl0jsxLhL7gBiq6wTU+h3UqrfyGShvNDSix17oyNA01C3Acx4RWhLOQJ5FdckU
-         t0t3nfmDD2JoXJZy2+ARVz55obEFCsTZ5sXlnx1o/Ciyu8UysV/Snc7t9J02IMzL1er4
-         RIRrWMp5nmf7Vfn9mLBmNx59MwAVbL/3vx+9S1oVYRvlEzdWfwOn6IKzD34+vMo7MxLZ
-         dodQ==
-X-Gm-Message-State: APjAAAU3YsjgfZJ3VPZCKYeIIDeVdP3Vu0nGmV8Ef0EnIFU4tx2AohoJ
-        pmqqNooQAFElKRNs8lfRWXbtfxH6zwULeXhXkzI=
-X-Google-Smtp-Source: APXvYqwSSP+8HVivUWXCp6o5UY+Z2Yt0nRWPRkJz7YfyieQdmUfv+3R4fBsTIDUJxwAyEFviUq3P6xI7T2McJgjJLV0=
-X-Received: by 2002:aca:c50f:: with SMTP id v15mr5658442oif.5.1574300082776;
- Wed, 20 Nov 2019 17:34:42 -0800 (PST)
-MIME-Version: 1.0
-References: <1574145389-12149-1-git-send-email-wanpengli@tencent.com>
- <09CD3BD3-1F5E-48DA-82ED-58E3196DBD83@oracle.com> <CANRm+CxZ5Opj44Aj+LL18nVSuU63hXpt9U9E3jJEQP67Hx6WMg@mail.gmail.com>
- <20191120170228.GC32572@linux.intel.com>
-In-Reply-To: <20191120170228.GC32572@linux.intel.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 21 Nov 2019 09:34:34 +0800
-Message-ID: <CANRm+CyTeKkAyi5Dswi1JpBjCiMc9c4B4jj5+JKoY_aFhb-AwA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] KVM: VMX: FIXED+PHYSICAL mode single target IPI fastpath
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Liran Alon <liran.alon@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726620AbfKUBmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 20:42:21 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:47540 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725936AbfKUBmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 20:42:20 -0500
+Received: from localhost (unknown [124.64.18.131])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dx7xVm69VdVT0BAA--.303S2;
+        Thu, 21 Nov 2019 09:41:59 +0800 (CST)
+From:   Lichao Liu <liulichao@loongson.cn>
+To:     Huacai Chen <chenhc@lemote.com>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        David Howells <dhowells@redhat.com>,
+        Lichao Liu <liulichao@loongson.cn>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Use the macro CONFIG_I8259 to control whether to include the asm/i8259.h header file.
+Date:   Thu, 21 Nov 2019 09:41:56 +0800
+Message-Id: <20191121014156.25618-1-liulichao@loongson.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: AQAAf9Dx7xVm69VdVT0BAA--.303S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr17ZryDJF1rWF4UXryxKrg_yoWxZrbEka
+        y2yw18G3yfAr48try7Zry3WrW2934UW3W3CFn5ArnIq3Z0qanIgaykAr4kJr13Crn0vr4f
+        XrW8KryrCr47CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+        Gr1UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVWk
+        MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
+        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
+        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
+        W8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+        IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbLiSPUUUU
+        U==
+X-CM-SenderInfo: xolxzxpfkd0qxorr0wxvrqhubq/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Nov 2019 at 01:02, Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Wed, Nov 20, 2019 at 11:49:36AM +0800, Wanpeng Li wrote:
-> > On Tue, 19 Nov 2019 at 20:11, Liran Alon <liran.alon@oracle.com> wrote:
-> > > > +
-> > > > +static void vmx_handle_exit_irqoff(struct kvm_vcpu *vcpu, u32 *exit_reason)
-> > > > {
-> > > >       struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > > >
-> > > > @@ -6231,6 +6263,8 @@ static void vmx_handle_exit_irqoff(struct kvm_vcpu *vcpu)
-> > > >               handle_external_interrupt_irqoff(vcpu);
-> > > >       else if (vmx->exit_reason == EXIT_REASON_EXCEPTION_NMI)
-> > > >               handle_exception_nmi_irqoff(vmx);
-> > > > +     else if (vmx->exit_reason == EXIT_REASON_MSR_WRITE)
-> > > > +             *exit_reason = handle_ipi_fastpath(vcpu);
-> > >
-> > > 1) This case requires a comment as the only reason it is called here is an
-> > > optimisation.  In contrast to the other cases which must be called before
-> > > interrupts are enabled on the host.
-> > >
-> > > 2) I would rename handler to handle_accel_set_msr_irqoff().  To signal this
-> > > handler runs with host interrupts disabled and to make it a general place
-> > > for accelerating WRMSRs in case we would require more in the future.
-> >
-> > Yes, TSCDEADLINE/VMX PREEMPTION TIMER is in my todo list after this merged
-> > upstream, handle all the comments in v3, thanks for making this nicer
-> > further. :)
->
-> Handling those is very different than what is being proposed here though.
-> For this case, only the side effect of the WRMSR is being expedited, KVM
-> still goes through the heavy VM-Exit handler path to handle emulating the
-> WRMSR itself.
->
-> To truly expedite things like TSCDEADLINE, the entire emulation of WRMSR
-> would need be handled without going through the standard VM-Exit handler,
-> which is a much more fundamental change to vcpu_enter_guest() and has
-> different requirements.  For example, keeping IRQs disabled is pointless
-> for generic WRMSR emulation since the interrupt will fire as soon as KVM
-> resumes the guest, whereas keeping IRQs disabled for processing ICR writes
-> is a valid optimization since recognition of the IPI on the dest vCPU
-> isn't dependent on KVM resuming the current vCPU.
->
-> Rather than optimizing full emulation flows one at a time, i.e. exempting
-> the ICR case, I wonder if we're better off figuring out a way to improve
-> the performance of VM-Exit handling at a larger scale, e.g. avoid locking
-> kvm->srcu unnecessarily, Andrea's retpolin changes, etc...
+Not all platform config CONFIG_I8259, So Use the macro CONFIG_I8259
+to control whether to include the asm/i8259.h header file.
 
-I use the latest kvm/queue, so Andrea's patch is there. As you know,
-improve the performance of vmexit is a long term effort. But, let's
-make v4 upstream firstly. :)
+Signed-off-by: Lichao Liu <liulichao@loongson.cn>
+---
+ arch/mips/loongson64/common/pm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-    Wanpeng
+diff --git a/arch/mips/loongson64/common/pm.c b/arch/mips/loongson64/common/pm.c
+index b8aed878d..bc619e4d0 100644
+--- a/arch/mips/loongson64/common/pm.c
++++ b/arch/mips/loongson64/common/pm.c
+@@ -9,7 +9,9 @@
+ #include <linux/interrupt.h>
+ #include <linux/pm.h>
+ 
++#ifdef CONFIG_I8259
+ #include <asm/i8259.h>
++#endif
+ #include <asm/mipsregs.h>
+ 
+ #include <loongson.h>
+-- 
+2.17.1
+
