@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2288104A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D95D7104A4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfKUFbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 00:31:06 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37230 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfKUFbG (ORCPT
+        id S1726909AbfKUFcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 00:32:14 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37342 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbfKUFcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 00:31:06 -0500
-Received: by mail-pl1-f195.google.com with SMTP id bb5so1032106plb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 21:31:06 -0800 (PST)
+        Thu, 21 Nov 2019 00:32:14 -0500
+Received: by mail-pf1-f195.google.com with SMTP id p24so1072216pfn.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 21:32:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=rL8hsxXOm58YLNC8couVxmo6ukGppsdnsrBhdoTeJ8M=;
-        b=yP4VtZZT65ZG+FSZS2cZ1NXoYGAhUkgAXQaO+2Mr2QD6iuf87JmzlP1Qwj4FXQIz+6
-         83xrB3b8ZCtusD6snYqdiNWtJGPsZ6nuhPp4IA5EYHgFh3aZcnyFbi4ad0sxXyee2QmZ
-         uQ3n2etgi+zEB4uyxcnLLsaSICP2zFasJIVBowNjxyBwIOS325lWkKGVzFwWHMDBdgOm
-         qBZbazJ2kRj3uAjoA0yL4UfEzxEufZG08iOhRvq9Fd++6NPexCTPaE/YYszrwcevM4W9
-         wT/v01VIosSCzE1dy4I+mzhH5nZDEq5uP+LgMmiiOJdD9gvxdfXTFpWeTMCGaPm4TPHy
-         41UA==
+        bh=yE3H52ST3bCRAdHmUDzhL/7UmgqQkrfup+4Ir818ZIQ=;
+        b=M7BBqQwbeIa8JPve1L1VxPnrWig2i9WY0ZyJQqNtb4XAMmkDMSCMWoXgsK/BUgwDUG
+         +d9RoKdI2qyNSdaD+nSIAoT7F4oQIUqrWJd/nlez1kwBmCmhxwHQwABfxrJ5IP+wo2Np
+         tAso4ANpMBRdhCbXYBWd9wpXO9r11KzHWL9BoyF9oNUi9p7j3jazmA2qZctVscY3YyDJ
+         GWW/g07xgm2+CEP4ffmAH+DyewVtNhP/yJaOVzOJK5pztvZNrR1n9PqUzwRYF8FWjpFf
+         +nQ0SA77fRXYfHhgPIg2TTZCDsMmEdFh0XpHNs3hB8UFqQTbHJ0EM/l3gY7KwLMyAD30
+         cNtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rL8hsxXOm58YLNC8couVxmo6ukGppsdnsrBhdoTeJ8M=;
-        b=OfcE/sWExuzDhCPeUjfOSTbHLLqTUQpiYK1uV5VF7eJvdjWDAGq5y8BXbKJYYas60G
-         pGFwRAZlKYN7AV4ioxDvWITP2Rn9JOb5jZZFByBigyYA7LW/CAeEXLWNKFuu+G7DsR53
-         tKgq6KwNa3bt8Qr4oyeHQqgGZ09hXnGw6Ror7stxBnqpnTM0Mu8qxiwZWPGentQ+DEVW
-         ti+MSzUAKqg+q3UFo4d1CfZAFRHoFgAGgBqVRNrUQs4EvKotkSKMeYRXYWgEm1yImGYh
-         2ixDdhfdIJmvT6DxTJVU+V+W/Ify9FKxX+v8XjwAuurlFWicjTgeZJHhdDvznXoNr0/x
-         RLcA==
-X-Gm-Message-State: APjAAAXL/cUJVlg7OJfApj6po5k7IQ/5nqmjtFLajTF8e7KA0XWJ7yQf
-        1scl5KW85KYKVWF67SHLrGXuRQ==
-X-Google-Smtp-Source: APXvYqwa/abldXMYEl8LBuu0njPcVapw0WdE692UrwL6RedCl8fLaMrSsPHgHvqqPHrTXvLk2slBew==
-X-Received: by 2002:a17:90a:989:: with SMTP id 9mr9079835pjo.35.1574314265591;
-        Wed, 20 Nov 2019 21:31:05 -0800 (PST)
+        bh=yE3H52ST3bCRAdHmUDzhL/7UmgqQkrfup+4Ir818ZIQ=;
+        b=Rr3UNaCMI73CjWAbUfZ5UbP+kALyn8Wty/yDQ7WvM/zoAO5lqrsoYmNj7VWr9ldrwm
+         MTm0oUjfHQPm121J0UJQ4fbftDGhSfqeI6z15y78Zzg/vB25mog85XEUklJ8rlHAhyWs
+         O0S2RHs+uv4iFVgbg6VlASwZ0Ur0giUoBHLYR95pZxqy+zDRHnkNqRmfP3wu3MwNz3U4
+         TR18eUfbeAnifmUiIUpgLhRIqQdORSpee5PxTWk/egHvHSUK4iXkPRixGYLMtH5FxPIh
+         r0OYXuOjOYPLCPkyN7M8dUjiSjchs+c4FX9lwEuebUOvwYtXbhmokxF22T1oklOSjwvY
+         7YUQ==
+X-Gm-Message-State: APjAAAX+9hfwGk5BBslmfEGswNQUkMzYRISnGyExKb1AYiSBN+jOOq39
+        C9w6bv6dQsM2vWmWG1haeHPDvg==
+X-Google-Smtp-Source: APXvYqwNM9dZdansKs8pKoOeaen5b9vqImpjSGgtw89kbCl3/6894oiyg46ElaulgywEwwJJ0Y0fIQ==
+X-Received: by 2002:aa7:8421:: with SMTP id q1mr8754271pfn.174.1574314333119;
+        Wed, 20 Nov 2019 21:32:13 -0800 (PST)
 Received: from localhost ([223.226.74.76])
-        by smtp.gmail.com with ESMTPSA id a29sm857837pgd.12.2019.11.20.21.31.04
+        by smtp.gmail.com with ESMTPSA id p16sm1083971pjp.31.2019.11.20.21.32.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Nov 2019 21:31:04 -0800 (PST)
-Date:   Thu, 21 Nov 2019 11:01:00 +0530
+        Wed, 20 Nov 2019 21:32:12 -0800 (PST)
+Date:   Thu, 21 Nov 2019 11:02:07 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Amit Kucheria <amit.kucheria@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
@@ -63,16 +63,17 @@ Cc:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 04/11] thermal: devfreq_cooling: Appease the
- kernel-doc deity
-Message-ID: <20191121053100.n3vfo564gs2sn72v@vireshk-i7>
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 08/11] thermal: samsung: Appease the kernel-doc deity
+Message-ID: <20191121053207.gyulu3vb3caaituv@vireshk-i7>
 References: <cover.1574242756.git.amit.kucheria@linaro.org>
- <7059d82472fe12139fc7a3379c5b9716a23cce5c.1574242756.git.amit.kucheria@linaro.org>
+ <1ded1697c6e5eff11b034b3302b9c79e88fa9c42.1574242756.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7059d82472fe12139fc7a3379c5b9716a23cce5c.1574242756.git.amit.kucheria@linaro.org>
+In-Reply-To: <1ded1697c6e5eff11b034b3302b9c79e88fa9c42.1574242756.git.amit.kucheria@linaro.org>
 User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -80,20 +81,23 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 20-11-19, 21:15, Amit Kucheria wrote:
-> Fix up the following warnings with make W=1:
+> Fix up the following warning when compiled with make W=1:
 > 
-> linux.git/drivers/thermal/devfreq_cooling.c:68: warning: Function
-> parameter or member 'capped_state' not described in
-> 'devfreq_cooling_device'
-> linux.git/drivers/thermal/devfreq_cooling.c:593: warning: Function
-> parameter or member 'cdev' not described in 'devfreq_cooling_unregister'
-> linux.git/drivers/thermal/devfreq_cooling.c:593: warning: Excess
-> function parameter 'dfc' description in 'devfreq_cooling_unregister'
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:141: warning: bad
+> line:         driver
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
+> parameter or member 'tzd' not described in 'exynos_tmu_data'
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
+> parameter or member 'tmu_set_trip_temp' not described in
+> 'exynos_tmu_data'
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
+> parameter or member 'tmu_set_trip_hyst' not described in
+> 'exynos_tmu_data'
 > 
 > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > ---
->  drivers/thermal/devfreq_cooling.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/thermal/samsung/exynos_tmu.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
