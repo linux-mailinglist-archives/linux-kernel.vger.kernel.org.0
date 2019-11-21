@@ -2,150 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B474105C3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42238105C4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfKUVuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:50:21 -0500
-Received: from mga01.intel.com ([192.55.52.88]:31428 "EHLO mga01.intel.com"
+        id S1726920AbfKUVv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:51:27 -0500
+Received: from mga05.intel.com ([192.55.52.43]:33229 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfKUVuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:50:21 -0500
+        id S1726329AbfKUVv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 16:51:27 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 13:50:18 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 13:51:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
-   d="scan'208";a="205283769"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Nov 2019 13:50:17 -0800
-Date:   Thu, 21 Nov 2019 13:50:17 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH v3 12/19] x86/vmx: Introduce VMX_FEATURES_*
-Message-ID: <20191121215017.GC16617@linux.intel.com>
-References: <20191119031240.7779-1-sean.j.christopherson@intel.com>
- <20191119031240.7779-13-sean.j.christopherson@intel.com>
- <20191121165250.GK6540@zn.tnic>
+   d="scan'208";a="210049893"
+Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
+  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2019 13:51:26 -0800
+Date:   Thu, 21 Nov 2019 13:51:26 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191121215126.GA9075@agluck-desk2.amr.corp.intel.com>
+References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
+ <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
+ <20191121060444.GA55272@gmail.com>
+ <20191121130153.GS4097@hirez.programming.kicks-ass.net>
+ <20191121131522.GX5671@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121165250.GK6540@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191121131522.GX5671@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 05:52:58PM +0100, Borislav Petkov wrote:
-> On Mon, Nov 18, 2019 at 07:12:33PM -0800, Sean Christopherson wrote:
-> > Define separate VMX_FEATURE flags to set the stage for enumerating VMX
-> > capabilities outside of the cpu_has() framework, and for adding
-> > functional usage of VMX_FEATURE_* to help ensure the features reported
-> > via /proc/cpuinfo is up to date with respect to kernel recognition of
-> > VMX capabilities.
-> 
-> That's all fine and good but who's going to use those feature bits?
-> Or are we reporting them just for the sake of it? Because if only
-> that, then it is not worth the effort. Sure, I don't mind extending
-> the framework so that you can use cpu_has() for VMX features but the
-> /proc/cpuinfo angle is not clear to me.
+On Thu, Nov 21, 2019 at 02:15:22PM +0100, Peter Zijlstra wrote:
+> Also, just to remind everyone why we really want this. Split lock is a
+> potent, unprivileged, DoS vector.
 
-I actually don't want to use cpu_has() for the VMX features, which is
-why I put these in a separate array (one of the future patches).
- 
-The motivation is purely for /proc/cpuinfo.  Currently there is no sane
-way for a user to query the capabilities of their platform.  The issue
-comes up on a fairly regular basis, e.g. when trying to find a platform
-to test a new feature or to debug an issue that has a hardware dependency.
+So how much do we "really want this"?
 
-Lack of reporting is especially annoying when the end user isn't familiar
-with VMX, e.g. the format of the MSRs is non-standard, existence of some
-MSRs is reported by bits in other MSRs, several features from KVM's point
-of view are actually enumerated as 3+ separate features by hardware, etc...
+It's been 543 days since the first version of this patch was
+posted. We've made exactly zero progress.
 
-Punting to a userspace utility isn't a viable option because all of the
-capabilities are reported via MSRs.
+Current cut down patch series is the foundation to move one
+small step towards getting this done.
 
-As for why I want to keep these out of cpu_has()... VMX has a concept of
-features being fixed "on", e.g. early CPUs don't allow disabling off CR3
-interception.  A cpu_has() approach doesn't work well since it loses the
-information regarding which bits are fixed-1.  KVM also has several module
-params that can be used to disable use of features, i.e. we don't want
-cpu_has() for VMX features because the KVM-specific variables need to be
-the canonical reference.
+Almost all of what's in this set will be required in whatever
+final solution we want to end up with. Out of this:
 
-> Especially since you're hiding most of them with the "" prepended in the
-> define comment.
-> 
-> > +/* Pin-Based VM-Execution Controls, EPT/VPID, APIC and VM-Functions, word 0 */
-> > +#define VMX_FEATURE_INTR_EXITING	( 0*32+  0) /* "" VM-Exit on vectored interrupts */
-> > +#define VMX_FEATURE_NMI_EXITING		( 0*32+  3) /* "" VM-Exit on NMIs */
-> > +#define VMX_FEATURE_VIRTUAL_NMIS	( 0*32+  5) /* "vnmi" NMI virtualization */
-> > +#define VMX_FEATURE_PREEMPTION_TIMER	( 0*32+  6) /* VMX Preemption Timer */
-> 
-> You really wanna have "preemption_timer" in /proc/cpuinfo? That should
-> at least say vmx-something, if it should be visible there at all.
+ Documentation/admin-guide/kernel-parameters.txt |   10 +++
+ arch/x86/include/asm/cpu.h                      |    5 +
+ arch/x86/include/asm/cpufeatures.h              |    2 
+ arch/x86/include/asm/msr-index.h                |    8 ++
+ arch/x86/include/asm/traps.h                    |    3 +
+ arch/x86/kernel/cpu/common.c                    |    2 
+ arch/x86/kernel/cpu/intel.c                     |   72 ++++++++++++++++++++++++
+ arch/x86/kernel/traps.c                         |   22 +++++++
+ 8 files changed, 123 insertions(+), 1 deletion(-)
 
-Originally I wanted these to go in a completely separate line in
-/proc/cpuinfo, e.g. "vmx flags".  That's what I submitted in v1, but then
-found out it'd break the ABI due to handful of VMX features being
-enumerated in "flags" via synthetic cpufeature bits.
+the only substantive thing that will *change* is to make the default
+be "on" rather than "off".
 
-Paolo suggested dropping the "vmx flags" approach as an easy solution, and
-I obviously didn't update the names to prepend vmx_.  Preprending vmx_
-would be somewhat annoying because changing the names of the synthetic
-flags would also break the ABI...
+Everything else we want to do is *additions* to this base. We could
+wait until we have those done and maybe see if we can stall out this
+series to an even thousand days. Or, we can take the imperfect base
+and build incrementally on it.
 
-Alternatively, what about adding "vmx flags" but keeping the existing
-synthetic flags?  That'd mean having duplicates for tpr_shadow, vnmi, ept,
-flexpriority, vpi and ept_ad.  On the plus side, we'd cap the pollution of
-"flags" at those six features.
- 
-> > +#define VMX_FEATURE_POSTED_INTR		( 0*32+  7) /* Posted Interrupts */
-> 
-> Same here.
-> 
-> In general, the questions stand for all those feature bits which will be
-> visible in /proc/cpuinfo.
-> 
-> 1. Which to show and why?
-> 
-> 2. Who's going to use them?
-> 
-> 3. If show and dumping them together with the other feature flags, have
-> their name be proper (vmx-prefixed etc).
-> 
-> > +/* EPT/VPID features, scattered to bits 16-23 */
-> > +#define VMX_FEATURE_INVVPID	        ( 0*32+ 16) /* INVVPID is supported */
-> > +#define VMX_FEATURE_EPT_EXECUTE_ONLY	( 0*32+ 17) /* "ept_x_only" EPT entries can be execute only */
-> > +#define VMX_FEATURE_EPT_AD      	( 0*32+ 18) /* EPT Accessed/Dirty bits */
-> > +#define VMX_FEATURE_EPT_1GB      	( 0*32+ 19) /* 1GB EPT pages */
-> 			      ^^^^^^^^^^^^
-> 
-> There are some spaces that need to be converted to tabs here.
+You've expressed concern about firmware ... with a simple kernel command
+line switch to flip, LUV (https://01.org/linux-uefi-validation) could begin
+testing to make sure that firmware is ready for the big day when we throw
+the switch from "off" to "on".
 
-Doh.
+-Tony
