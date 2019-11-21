@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 112DA10574A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC32105748
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:42:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfKUQm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 11:42:56 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:32859 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfKUQm4 (ORCPT
+        id S1726920AbfKUQmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 11:42:44 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33849 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726279AbfKUQmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:42:56 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iXpXR-0000LU-Uh; Thu, 21 Nov 2019 17:42:38 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 908D31C1A38;
-        Thu, 21 Nov 2019 17:42:37 +0100 (CET)
-Date:   Thu, 21 Nov 2019 16:42:37 -0000
-From:   "tip-bot2 for Davidlohr Bueso" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm/pat: Do not pass 'rb_root' down the memtype tree
- helper functions
-Cc:     Davidlohr Bueso <dbueso@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>, bp@alien8.de,
-        dave@stgolabs.net, Ingo Molnar <mingo@kernel.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191121011601.20611-3-dave@stgolabs.net>
-References: <20191121011601.20611-3-dave@stgolabs.net>
+        Thu, 21 Nov 2019 11:42:43 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 89500224AC;
+        Thu, 21 Nov 2019 11:42:42 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 21 Nov 2019 11:42:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=zrVwxdFX3/ZNrNFnru4HMvi21Hw
+        FhrUN+tgF4NYvm+I=; b=ldVoOTRcvpZzw2MzugDxCmWgfxhQrIEKhcHdjBJAHVr
+        fn1dn+RtMopJVqiQcNW5Ruv8pOLILuT8D9Gbq5Y04W7NzDj48NKBgqBR4ym6uJJV
+        MyeUGqVvbVfb4xZ7pM1SujEO94Hav9k39QCncAk6Wf7qs7fnpcslYCCTdfbODSdh
+        iTKdCsRy96ApepngZkaJn9P+N0zj1oHMhOx7+pqc1coGgpbtxVT25nvFvWITEtn4
+        MUjsScsenn64irKMg57kYHxdQopNS5qJ2VC1CCFUtLr5rklRSSCclJmX6Wq89Ddp
+        8rhXAV16BDeNjAWgml49KtRJg8XKoIYy3zKUe0c+vDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=zrVwxd
+        FX3/ZNrNFnru4HMvi21HwFhrUN+tgF4NYvm+I=; b=j8LAQXufgvyDNkV59H5Uoz
+        q3tuRqZQ4h0HO/uafOsah0WmyV2k0vRa5s10nJ2hbpsbpDa6pK+wHzGxo1SuZUMf
+        OV30pgh6YkaQNGQK4rFCXfzwS6JahE7rvtXWZORG+y1KGCJhJQ6HyrxSxJcRPKrX
+        E2eqCEabQi/DWJoxQduO//iCqAlQVTQmaHZmEX5ZNT3kJy5UQ2CH4KtP1YBbZVSb
+        qp3zdZZCv6Q/5/2DXptbNNc49vN1u5o3Go+/B9QAqVD2pRq0AmI3G+2uMjlSoQlQ
+        3GHCMBoFiJNQbiM51bMPDtsqAEAB7r+SQDXhRV4FLyycQc3XfMtplYVSUzLeGWUg
+        ==
+X-ME-Sender: <xms:gr7WXeI_2O5T-5FtKbDmbv4BxNztZ9v0_aiM6NzHeRf-aieLKAK9rg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehvddgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
+    ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
+    qeenucfkphepvddujedrieekrdegledrjedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:gr7WXasK0vP2vyLRO2meXYCFhWm1pYZ9stvYQYOxt6tyDjWfZ9CSoA>
+    <xmx:gr7WXUKwWMUeWsqHbyziYUyQNfp5kFHSYXSDKtlHmDk66Fxz5GNFKw>
+    <xmx:gr7WXWDA5NAb--dfHtk33gCKyLFaRhwizGlmLcM_Z53OoP5TFUC-wA>
+    <xmx:gr7WXZqIqRk5givgOqJL-BC3juABe6Tma1eJ4cLh4pCVRUh3iuWH-g>
+Received: from localhost (unknown [217.68.49.72])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A55DE8005B;
+        Thu, 21 Nov 2019 11:42:41 -0500 (EST)
+Date:   Thu, 21 Nov 2019 17:42:39 +0100
+From:   Greg KH <greg@kroah.com>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     linux-kernel@vger.kernel.org, balbi@kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] drivers: usb: Kconfig: cleanup indentions
+Message-ID: <20191121164239.GE651886@kroah.com>
+References: <20191121151408.22401-1-info@metux.net>
 MIME-Version: 1.0
-Message-ID: <157435455750.21853.439571085343311739.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121151408.22401-1-info@metux.net>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/mm branch of tip:
+On Thu, Nov 21, 2019 at 04:14:08PM +0100, Enrico Weigelt, metux IT consult wrote:
+> Make the code look a little bit nicer.
 
-Commit-ID:     a2cb4c9af3150189b0e31039333d6fa0c54776e8
-Gitweb:        https://git.kernel.org/tip/a2cb4c9af3150189b0e31039333d6fa0c54776e8
-Author:        Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate:    Wed, 20 Nov 2019 17:15:59 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 21 Nov 2019 17:37:31 +01:00
+That is really vague.
 
-x86/mm/pat: Do not pass 'rb_root' down the memtype tree helper functions
+What exactly are you doing here, and why?
 
-Get rid of the passing the rb_root down the helper calls; there
-is only one: &memtype_rbroot.
+> 
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> ---
+>  drivers/usb/dwc3/Kconfig | 30 +++++++++++++++---------------
+>  drivers/usb/misc/Kconfig | 24 ++++++++++++------------
+>  2 files changed, 27 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+> index 556a876c7896..7695841a108f 100644
+> --- a/drivers/usb/dwc3/Kconfig
+> +++ b/drivers/usb/dwc3/Kconfig
+> @@ -97,24 +97,24 @@ config USB_DWC3_KEYSTONE
+>  	  Say 'Y' or 'M' here if you have one such device
+>  
+>  config USB_DWC3_MESON_G12A
+> -       tristate "Amlogic Meson G12A Platforms"
+> -       depends on OF && COMMON_CLK
+> -       depends on ARCH_MESON || COMPILE_TEST
+> -       default USB_DWC3
+> -       select USB_ROLE_SWITCH
+> +	tristate "Amlogic Meson G12A Platforms"
+> +	depends on OF && COMMON_CLK
+> +	depends on ARCH_MESON || COMPILE_TEST
+> +	default USB_DWC3
+> +	select USB_ROLE_SWITCH
+>  	select REGMAP_MMIO
 
-No change in functionality.
+I think this change is already in my tree, right?  Please don't
+duplicate work that others already did.
 
-[ mingo: Fixed the changelog which described a different version of the patch. ]
+thanks,
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Cc: bp@alien8.de
-Cc: dave@stgolabs.net
-Link: https://lkml.kernel.org/r/20191121011601.20611-3-dave@stgolabs.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/pat_rbtree.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/mm/pat_rbtree.c b/arch/x86/mm/pat_rbtree.c
-index c3d119c..d31ca77 100644
---- a/arch/x86/mm/pat_rbtree.c
-+++ b/arch/x86/mm/pat_rbtree.c
-@@ -52,12 +52,11 @@ enum {
- 	MEMTYPE_END_MATCH	= 1
- };
- 
--static struct memtype *memtype_match(struct rb_root_cached *root,
--				     u64 start, u64 end, int match_type)
-+static struct memtype *memtype_match(u64 start, u64 end, int match_type)
- {
- 	struct memtype *match;
- 
--	match = memtype_interval_iter_first(root, start, end);
-+	match = memtype_interval_iter_first(&memtype_rbroot, start, end);
- 	while (match != NULL && match->start < end) {
- 		if ((match_type == MEMTYPE_EXACT_MATCH) &&
- 		    (match->start == start) && (match->end == end))
-@@ -73,10 +72,9 @@ static struct memtype *memtype_match(struct rb_root_cached *root,
- 	return NULL; /* Returns NULL if there is no match */
- }
- 
--static int memtype_rb_check_conflict(struct rb_root_cached *root,
--				u64 start, u64 end,
--				enum page_cache_mode reqtype,
--				enum page_cache_mode *newtype)
-+static int memtype_check_conflict(u64 start, u64 end,
-+				  enum page_cache_mode reqtype,
-+				  enum page_cache_mode *newtype)
- {
- 	struct memtype *match;
- 	enum page_cache_mode found_type = reqtype;
-@@ -116,8 +114,7 @@ int rbt_memtype_check_insert(struct memtype *new,
- {
- 	int err = 0;
- 
--	err = memtype_rb_check_conflict(&memtype_rbroot, new->start, new->end,
--					new->type, ret_type);
-+	err = memtype_check_conflict(new->start, new->end, new->type, ret_type);
- 	if (err)
- 		return err;
- 
-@@ -139,11 +136,9 @@ struct memtype *rbt_memtype_erase(u64 start, u64 end)
- 	 * it then checks with END_MATCH, i.e. shrink the size of a node
- 	 * from the end for the mremap case.
- 	 */
--	data = memtype_match(&memtype_rbroot, start, end,
--			     MEMTYPE_EXACT_MATCH);
-+	data = memtype_match(start, end, MEMTYPE_EXACT_MATCH);
- 	if (!data) {
--		data = memtype_match(&memtype_rbroot, start, end,
--				     MEMTYPE_END_MATCH);
-+		data = memtype_match(start, end, MEMTYPE_END_MATCH);
- 		if (!data)
- 			return ERR_PTR(-EINVAL);
- 	}
+greg k-h
