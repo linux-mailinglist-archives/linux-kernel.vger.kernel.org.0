@@ -2,148 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAFEF1054D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A1F1054D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:48:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfKUOru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:47:50 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42418 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfKUOrt (ORCPT
+        id S1726920AbfKUOst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:48:49 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46601 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726379AbfKUOss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:47:49 -0500
-Received: by mail-qk1-f193.google.com with SMTP id i3so3221645qkk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 06:47:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9vdcmn1+3xWMnRDagEegM970Sjr+dGziiJdK5fsuiiM=;
-        b=mjvLZw7a0yL6AlXcd6Zxt6dr83OQeu+0WNTEixGYwfmow+04mNk6KAmpgC0S7My6JD
-         f9f5wVMCTb4MIZSDYn03rwP+r3wJPMA+oEoG2BwVPrIDbpF+SUOT5//KtGW2L7hMdUfJ
-         d7ZtZW5vYO854MT8xfN3gwbZcHZePNCUSfb1hQNksod98RaYFRfZ8K8eX7TX6EE3FFf6
-         JAlY2g9SnHygGABIYHUl7WRMy1G5XCw2FYuZGa4Iad/XbxiZiInvPj2UIHi9hbieiZXJ
-         s/OraAsj12QVNyqlxqO7G1F3Z5FNWD9iovATkSHS7A3pdcuV3zaQwF9FBHLE6tkjWWfK
-         8C7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9vdcmn1+3xWMnRDagEegM970Sjr+dGziiJdK5fsuiiM=;
-        b=UHum64GtXtBR+Mi/4BNX7g7HQT0QTwuRYwdtYXmPGKFkZmq+CxT7Vloj0nQK9q1H7D
-         p0DGpFx2TzVBgAX8btkLQWhJAnw1hqDQ5/DpdDp7BW91HdU/ARk4F2e7r08bj3AsmaUf
-         QpUC05gnADoE9tZEJzfHmoXCnq3GNkbmm4Q1x9t9rCrMZjID2LcDouHm4QQaDF7qxjlW
-         /IaMVjeLCg4FxLAPzuYuQZvbF7vFRNqqIPo0Yx/1ujsYPLFqy6BRLebmepFDssnaT9Ug
-         fYjOSs/3YyYDQvQzX7rUcbU5o2CKoNVln5ZveAuMJF5+Vx3NvbPSSiWx44Zg4esyILcJ
-         RqRQ==
-X-Gm-Message-State: APjAAAXXE2rGktLcS5TBjsZdQyXUzc6aEGekFmKfLRrzUFEHGrWsD1cT
-        rFii916hlrdbrOUJ1zf1PeY=
-X-Google-Smtp-Source: APXvYqy8O0Z1bmM6bi5OawpJm2ccCS3stk00YQDa/rHqatx0z0pmMJ8k1ko+8QekQ49rGm3eYy6+hA==
-X-Received: by 2002:a37:f915:: with SMTP id l21mr716881qkj.209.1574347667475;
-        Thu, 21 Nov 2019 06:47:47 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id z6sm1012802qkz.101.2019.11.21.06.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 06:47:46 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6937840D3E; Thu, 21 Nov 2019 11:47:44 -0300 (-03)
-Date:   Thu, 21 Nov 2019 11:47:44 -0300
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf tools: fix potential memory leak
-Message-ID: <20191121144744.GI5078@kernel.org>
-References: <20191120180925.21787-1-irogers@google.com>
+        Thu, 21 Nov 2019 09:48:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574347727;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vBwingZgYTW82TS3d0tJl0goOomstXZnkfoRxFBHZCI=;
+        b=WdAFI0ORqDnlMqkMvA2jZd58zx/zDb7fhnRddLjQ2naQajGXv8UCSo+YE2bkHZkxMFDucD
+        +/MsvDsJJXuC93b0K/+/6QQTXZDaN9ciaKV0DPvBC3783/9U4OBzFHpyWb2Bpio2Jez9Yi
+        E4arRkUSST8wDJYV6sZH9lBvvMb49dU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-183-eeECgZNrMhGjSDmNcxSs8g-1; Thu, 21 Nov 2019 09:48:46 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C6B111883524;
+        Thu, 21 Nov 2019 14:48:43 +0000 (UTC)
+Received: from suzdal.zaitcev.lan (ovpn-117-3.phx2.redhat.com [10.3.117.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B32B60BDA;
+        Thu, 21 Nov 2019 14:48:42 +0000 (UTC)
+Date:   Thu, 21 Nov 2019 08:48:42 -0600
+From:   Pete Zaitcev <zaitcev@redhat.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     syzbot <syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com>,
+        <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <jrdr.linux@gmail.com>, <keescook@chromium.org>,
+        <kstewart@linuxfoundation.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>, <tglx@linutronix.de>,
+        <viro@zeniv.linux.org.uk>, zaitcev@redhat.com
+Subject: Re: possible deadlock in mon_bin_vma_fault
+Message-ID: <20191121084842.095edf87@suzdal.zaitcev.lan>
+In-Reply-To: <Pine.LNX.4.44L0.1911201343580.1498-100000@iolanthe.rowland.org>
+References: <20191120111235.7d306f23@suzdal.zaitcev.lan>
+        <Pine.LNX.4.44L0.1911201343580.1498-100000@iolanthe.rowland.org>
+Organization: Red Hat, Inc.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120180925.21787-1-irogers@google.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: eeECgZNrMhGjSDmNcxSs8g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Nov 20, 2019 at 10:09:25AM -0800, Ian Rogers escreveu:
-> An error may be in place when tracepoint_error is called, use
-> parse_events__handle_error to avoid a memory leak and to capture the
-> first and last error. Error detected by LLVM's libFuzzer using the
-> following event:
-> 
-> $ perf stat -e 'msr/event/,f:e'
-> event syntax error: 'msr/event/,f:e'
->                      \___ can't access trace events
-> 
-> Error:  No permissions to read /sys/kernel/debug/tracing/events/f/e
-> Hint:   Try 'sudo mount -o remount,mode=755 /sys/kernel/debug/tracing/'
-> 
-> Initial error:
-> event syntax error: 'msr/event/,f:e'
->                                 \___ no value assigned for term
-> Run 'perf list' for a list of valid events
-> 
->  Usage: perf stat [<options>] [<command>]
-> 
->     -e, --event <event>   event selector. use 'perf list' to list available events
+On Wed, 20 Nov 2019 13:47:00 -0500 (EST)
+Alan Stern <stern@rowland.harvard.edu> wrote:
 
-Thanks, applied.
+> > +               if (rp->mmap_active)
+> > +                       return -EBUSY;
 
-- Arnaldo
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/parse-events.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index 6bae9d6edc12..ecef5b8037b4 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -511,6 +511,7 @@ int parse_events_add_cache(struct list_head *list, int *idx,
->  static void tracepoint_error(struct parse_events_error *e, int err,
->  			     const char *sys, const char *name)
->  {
-> +	const char *str;
->  	char help[BUFSIZ];
->  
->  	if (!e)
-> @@ -524,18 +525,18 @@ static void tracepoint_error(struct parse_events_error *e, int err,
->  
->  	switch (err) {
->  	case EACCES:
-> -		e->str = strdup("can't access trace events");
-> +		str = "can't access trace events";
->  		break;
->  	case ENOENT:
-> -		e->str = strdup("unknown tracepoint");
-> +		str = "unknown tracepoint";
->  		break;
->  	default:
-> -		e->str = strdup("failed to add tracepoint");
-> +		str = "failed to add tracepoint";
->  		break;
->  	}
->  
->  	tracing_path__strerror_open_tp(err, help, sizeof(help), sys, name);
-> -	e->help = strdup(help);
-> +	parse_events__handle_error(e, 0, strdup(str), strdup(help));
->  }
->  
->  static int add_tracepoint(struct list_head *list, int *idx,
-> -- 
-> 2.24.0.432.g9d3f5f5b63-goog
+> Like that, yes, but the test has to be made while fetch_lock is held. =20
 
--- 
+Certainly, thanks. I was rushing just to add a postscriptum.
 
-- Arnaldo
+> Incidentally, the comment for fetch_lock says that it protects b_read=20
+> and b_out, but mon_bin_vma_fault doesn't use either of those fields.
+
+I probably should change that comment to "protect the integrity of the
+circular buffer, such as b_out".
+
+Anyway... If you are looking at it too, what do you think about not using
+any locks in mon_bin_vma_fault() at all? Isn't it valid? I think I tried
+to be "safe", but it only uses things that are constants unless we're
+opening and closing; a process cannot make page faults unless it has
+some thing mapped; and that is only possible if device is open and stays
+open. Can you find a hole in this reasoning?
+
+-- Pete
+
