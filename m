@@ -2,99 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CED7D10549D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B19A81054A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:38:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfKUOhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:37:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:32456 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727073AbfKUOhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:37:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 06:37:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
-   d="scan'208";a="209922613"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.50])
-  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2019 06:37:52 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, acme@redhat.com, mingo@kernel.org,
-        eranian@google.com, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org
-Cc:     jolsa@kernel.org, namhyung@kernel.org, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V5 2/2] perf/x86/intel: Output LBR TOS information
-Date:   Thu, 21 Nov 2019 06:36:46 -0800
-Message-Id: <20191121143646.8687-3-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191121143646.8687-1-kan.liang@linux.intel.com>
-References: <20191121143646.8687-1-kan.liang@linux.intel.com>
+        id S1727073AbfKUOig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:38:36 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39823 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfKUOif (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:38:35 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o17so3218124qko.6
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 06:38:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6uBnaV53sfik9uxAcuVDwoQxz4HOkeWfiqm0sSdBIt8=;
+        b=qHqYx5I4KcHedAmjd1d5VA7Cra9+uql2Yg67DF2JfSdPqsJ9EBrZsdLeui/10SaKzH
+         lrrFFHp0N+fIKs1O5Kq/ZoBYYg9bm60jFhTHSBSqZ/pz0a4O0hlJpEaSpXZT/a4rCBba
+         r+b7qbul7RWhqR5/gvoKpK10Z9wOYvo2Znmq1eO73y/pTQ3Jw4cmkXMi7fwGTAqv0w+Q
+         dwBt78bp5McJFh6GlndtSeqBFnLD4teFPcw8DJUGYUHzCbeVj4wq/9zaKDYbajO3NSKz
+         G1rS+kNrXqfzQnLlMxpsau6iJW7BUFPZ2L4DWv80kqaGYmPNiPllMKTBqmyIrbNU0aHE
+         WE7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6uBnaV53sfik9uxAcuVDwoQxz4HOkeWfiqm0sSdBIt8=;
+        b=KeZuZYBclSJBwdxJIJfePVsvnLfGetBvTYHJCAs7nkvHUdCj2JysnxcKplx+xK71hv
+         A0HglkhmuCslUifZt2dt7VBsqGFUtDBkn1PRDKzyNb7UqI9l+WIuze/FkNmXspMZE68y
+         LfQl20wDy+wBD8ish3CdNuHAT0ypkYK6qXMrUwfFrBNVHXnM+N+zChQYqcxaaA7rEEE8
+         JKWSP9cCNV93e5T+Lfu/leiUoGfXT/xeZ0XVhDpFdcKzoi9hCXFNm+M09BEXXQP4Dih1
+         tMpGn3qo4pPuXUPaqvWK4yupvym/rrWh5INXmnEy8d9bBbtXPVbjtAfTes0p1GJFr2ao
+         r1Yw==
+X-Gm-Message-State: APjAAAWQ0iy2WlC584rw6dyQzDpaL6LznLXxCbJrehJIrS3H8bXxje2z
+        hcuczo1fli0vD3+PacmNsbmriKZoNEPOCFimkaioSuxoReI=
+X-Google-Smtp-Source: APXvYqxtKxAUh/ZMebivKk+zZk45NjEKinlCwFUHSVbBLFIM++OG8OJ5sUmC4KwJfvFX69uhnJx9VWkHLUjlF+d0+LQ=
+X-Received: by 2002:a05:620a:12f3:: with SMTP id f19mr7967709qkl.106.1574347111146;
+ Thu, 21 Nov 2019 06:38:31 -0800 (PST)
+MIME-Version: 1.0
+References: <8e812065f4a76325097c5f9c17f3386736d8c1d4.1574315190.git.amit.kucheria@linaro.org>
+ <5DD69AB7.3060307@linaro.org>
+In-Reply-To: <5DD69AB7.3060307@linaro.org>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 21 Nov 2019 20:08:20 +0530
+Message-ID: <CAP245DVwEij-fs-LK=i3+Ps6BrsHt4DfxKG=C-tFM3CVKadtXA@mail.gmail.com>
+Subject: Re: [PATCH] drivers: thermal: step_wise: add support for hysteresis
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "J, KEERTHY" <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Ram Chandrasekar <rkumbako@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Nov 21, 2019 at 7:40 PM Thara Gopinath
+<thara.gopinath@linaro.org> wrote:
+>
+> On 11/21/2019 12:50 AM, Amit Kucheria wrote:
+> > From: Ram Chandrasekar <rkumbako@codeaurora.org>
+> >
+> > Currently, step wise governor increases the mitigation when the
+> > temperature goes above a threshold and decreases the mitigation when the
+> > temperature goes below the threshold. If there is a case where the
+> > temperature is wavering around the threshold, the mitigation will be
+> > applied and removed every iteration, which is not very efficient.
+> >
+> > The use of hysteresis temperature could avoid this ping-pong of
+> > mitigation by relaxing the mitigation to happen only when the
+> > temperature goes below this lower hysteresis value.
+> Hi Amit,
+>
+> Can this not lead to ping-pong around the hysteresis temperature?
 
-For Intel LBR, the LBR Top-of-Stack (TOS) information is the HW index of
-raw branch record for the most recent branch.
+That isn't how hysteresis is supposed to work if there is a sufficient
+delta between your trip point and your hysteresis value.
 
-For non-adaptive PEBS and non-PEBS, the TOS information can be directly
-retrieved from TOS MSR read in intel_pmu_lbr_read().
+e.g. if you have a trip at 80C and a hysteresis of 10C, it means that
+you will start throttling at 80C, but you won't STOP throttling until
+you cool down to 70C. At that point, you will wait again to get to 80C
+before throttling again.
+IOW, on the downward slope (80 -> 70) you still have throttling active
+and on the upward slope (70 -> 80), you have no[1] throttling, so
+different behaviour is the same temperature range depending on
+direction.
 
-For adaptive PEBS, the LBR information stored in PEBS record doesn't
-include the TOS information. For single PEBS, TOS can be directly read
-from MSR, because the PMI is triggered immediately after PEBS is
-written. TOS MSR is still unchanged.
-For large PEBS, TOS MSR has stale value. Set -1ULL to indicate that the
-TOS information is not available.
+If your hysteresis value was very low .e.g. 1C, it would certainly be useless.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/lbr.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+> If the idea is to minimize ping-pong isn't average a better method?
 
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index 7639e2097101..65113b16804a 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -585,7 +585,7 @@ static void intel_pmu_lbr_read_32(struct cpu_hw_events *cpuc)
- 		cpuc->lbr_entries[i].reserved	= 0;
- 	}
- 	cpuc->lbr_stack.nr = i;
--	cpuc->lbr_stack.hw_idx = -1ULL;
-+	cpuc->lbr_stack.hw_idx = tos;
- }
- 
- /*
-@@ -681,7 +681,7 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
- 		out++;
- 	}
- 	cpuc->lbr_stack.nr = out;
--	cpuc->lbr_stack.hw_idx = -1ULL;
-+	cpuc->lbr_stack.hw_idx = tos;
- }
- 
- void intel_pmu_lbr_read(void)
-@@ -1122,7 +1122,13 @@ void intel_pmu_store_pebs_lbrs(struct pebs_lbr *lbr)
- 	int i;
- 
- 	cpuc->lbr_stack.nr = x86_pmu.lbr_nr;
--	cpuc->lbr_stack.hw_idx = -1ULL;
-+
-+	/* Cannot get TOS for large PEBS */
-+	if (cpuc->n_pebs == cpuc->n_large_pebs)
-+		cpuc->lbr_stack.hw_idx = -1ULL;
-+	else
-+		cpuc->lbr_stack.hw_idx = intel_pmu_lbr_tos();
-+
- 	for (i = 0; i < x86_pmu.lbr_nr; i++) {
- 		u64 info = lbr->lbr[i].info;
- 		struct perf_branch_entry *e = &cpuc->lbr_entries[i];
--- 
-2.17.1
+We shouldn't ping-pong with the asymmetric behaviour described above.
 
+Regards,
+Amit
+[1] This is a simple example with a single trip point.
