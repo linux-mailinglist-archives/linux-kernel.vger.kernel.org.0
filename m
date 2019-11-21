@@ -2,74 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77781054A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:38:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F5F1054AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfKUOi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:38:58 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44790 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfKUOi5 (ORCPT
+        id S1727139AbfKUOjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:39:54 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:52556 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726762AbfKUOjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:38:57 -0500
-Received: by mail-ot1-f67.google.com with SMTP id c19so3066435otr.11;
-        Thu, 21 Nov 2019 06:38:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0blBAL3wZkz50HycghqiK2pciwvxeqAeMTt/kJRNm5g=;
-        b=qbz3JTU/Fm0TUnxowGxCiuSAU+NDoYoSMxXGSD1+YybXUE1vLhZ0EMZY+Fe0UXUuvw
-         UWj8Z/lBY20URlXdRcXUXC2C0GYxDsGOf8EPpVKBXtl8ZSefVC9uq3PuKLjvgyL88SEe
-         0Q1LZea0QZ+67AjozVVQf++mpE9AUmtyz4IL5IdAoWmFjl08BsZY90kGVOgQvgUxLUw5
-         +1HdfoeKCJ0Rv3PwTg2AVtNrXCkJrPuU8NRS9exfjscZrGv+VA6RISiso52A0c6L3Bcj
-         x3tuQ2t4S8i6Pa4Bj33RGmQSQuyuZ3WOFaT5L60pSw3lkywBaXwJKOK4OzKQGYHlt8fd
-         bt3A==
-X-Gm-Message-State: APjAAAUrKxCNHgnIthpSGJM4OUuJJtKsVhxvJnYuwovplVkxY/J9qWNL
-        qx5WkW0qIphwVg5Ya7eF6JgxO/0=
-X-Google-Smtp-Source: APXvYqwnaGGSvHw3eVxDSnMv1fQxO7SKEamfp9zxy8HwVAD1LSiD/kDoELucP/RnyFz5AWlq8jVXBQ==
-X-Received: by 2002:a9d:7a93:: with SMTP id l19mr6448599otn.314.1574347136596;
-        Thu, 21 Nov 2019 06:38:56 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h39sm1055423oth.9.2019.11.21.06.38.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 06:38:56 -0800 (PST)
-Date:   Thu, 21 Nov 2019 08:38:55 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        alexandre.torgue@st.com, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v2] dt-bindings: spi: Convert stm32 QSPI bindings to
- json-schema
-Message-ID: <20191121143855.GA23685@bogus>
-References: <20191120194444.10540-1-benjamin.gaignard@st.com>
+        Thu, 21 Nov 2019 09:39:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574347192;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lJDYWSgP00g7qIjqTZLTHnhWuHMmstvkVgAhwaYoRHs=;
+        b=OsfjO340y8YCVflKGYo2v2hZeH0TjPZpY0xKcDkKVKMnjHwvT0y2V/VjlKTGkQUwK5h9qQ
+        HnpdKjtjre9FP+TFJGJzaDzQHFpFmZS+sAaWQ3aIOD/XcAd0afvOL0bHtRpm/wdI67Rt/X
+        zdE+Q1bVhAokLR8q+OUBYHJGJkhh4d8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-280-OUxjw_4_OD6Gq5Bg9m8Kzw-1; Thu, 21 Nov 2019 09:39:48 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A32FB18B9FC1;
+        Thu, 21 Nov 2019 14:39:47 +0000 (UTC)
+Received: from ovpn-117-89.ams2.redhat.com (ovpn-117-89.ams2.redhat.com [10.36.117.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E0C46E70C;
+        Thu, 21 Nov 2019 14:39:46 +0000 (UTC)
+Message-ID: <65c66f8c860b7fc0c01f65feecae08aebb5cb0c9.camel@redhat.com>
+Subject: Re: [PATCH net] udp: drop skb extensions before marking skb
+ stateless
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Byron Stanoszek <gandalf@winds.org>
+Date:   Thu, 21 Nov 2019 15:39:45 +0100
+In-Reply-To: <20191121055623.20952-1-fw@strlen.de>
+References: <20191121053031.GI20235@breakpoint.cc>
+         <20191121055623.20952-1-fw@strlen.de>
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120194444.10540-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: OUxjw_4_OD6Gq5Bg9m8Kzw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Nov 2019 20:44:44 +0100, Benjamin Gaignard wrote:
-> Convert the STM32 QSPI binding to DT schema format using json-schema
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+On Thu, 2019-11-21 at 06:56 +0100, Florian Westphal wrote:
+> Once udp stack has set the UDP_SKB_IS_STATELESS flag, later skb free
+> assumes all skb head state has been dropped already.
+>=20
+> This will leak the extension memory in case the skb has extensions other
+> than the ipsec secpath, e.g. bridge nf data.
+>=20
+> To fix this, set the UDP_SKB_IS_STATELESS flag only if we don't have
+> extensions or if the extension space can be free'd.
+>=20
+> Fixes: 895b5c9f206eb7d25dc1360a ("netfilter: drop bridge nf reset from nf=
+_reset")
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Reported-by: Byron Stanoszek <gandalf@winds.org>
+> Signed-off-by: Florian Westphal <fw@strlen.de>
 > ---
-> changes in version 2:
-> - fix subject
-> - remove useless minItems and maxItems
->  .../devicetree/bindings/spi/spi-stm32-qspi.txt     | 47 ------------
->  .../devicetree/bindings/spi/st,stm32-qspi.yaml     | 83 ++++++++++++++++++++++
->  2 files changed, 83 insertions(+), 47 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/spi/spi-stm32-qspi.txt
->  create mode 100644 Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
-> 
+>  include/linux/skbuff.h |  6 ++++++
+>  net/ipv4/udp.c         | 27 ++++++++++++++++++++++-----
+>  2 files changed, 28 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+> index 64a395c7f689..8688f7adfda7 100644
+> --- a/include/linux/skbuff.h
+> +++ b/include/linux/skbuff.h
+> @@ -4169,12 +4169,18 @@ static inline void skb_ext_reset(struct sk_buff *=
+skb)
+>  =09=09skb->active_extensions =3D 0;
+>  =09}
+>  }
+> +
+> +static inline bool skb_has_extensions(struct sk_buff *skb)
+> +{
+> +=09return unlikely(skb->active_extensions);
+> +}
+>  #else
+>  static inline void skb_ext_put(struct sk_buff *skb) {}
+>  static inline void skb_ext_reset(struct sk_buff *skb) {}
+>  static inline void skb_ext_del(struct sk_buff *skb, int unused) {}
+>  static inline void __skb_ext_copy(struct sk_buff *d, const struct sk_buf=
+f *s) {}
+>  static inline void skb_ext_copy(struct sk_buff *dst, const struct sk_buf=
+f *s) {}
+> +static inline bool skb_has_extensions(struct sk_buff *skb) { return fals=
+e; }
+>  #endif /* CONFIG_SKB_EXTENSIONS */
+> =20
+>  static inline void nf_reset_ct(struct sk_buff *skb)
+> diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+> index 1d58ce829dca..447defbfccdd 100644
+> --- a/net/ipv4/udp.c
+> +++ b/net/ipv4/udp.c
+> @@ -1297,6 +1297,27 @@ int udp_sendpage(struct sock *sk, struct page *pag=
+e, int offset,
+> =20
+>  #define UDP_SKB_IS_STATELESS 0x80000000
+> =20
+> +/* all head states (dst, sk, nf conntrack) except skb extensions are
+> + * cleared by udp_rcv().
+> + *
+> + * We need to preserve secpath, if present, to eventually process
+> + * IP_CMSG_PASSSEC at recvmsg() time.
+> + *
+> + * Other extensions can be cleared.
+> + */
+> +static bool udp_try_make_stateless(struct sk_buff *skb)
+> +{
+> +=09if (!skb_has_extensions(skb))
+> +=09=09return true;
+> +
+> +=09if (!secpath_exists(skb)) {
+> +=09=09skb_ext_reset(skb);
+> +=09=09return true;
+> +=09}
+> +
+> +=09return false;
+> +}
+> +
+>  static void udp_set_dev_scratch(struct sk_buff *skb)
+>  {
+>  =09struct udp_dev_scratch *scratch =3D udp_skb_scratch(skb);
+> @@ -1308,11 +1329,7 @@ static void udp_set_dev_scratch(struct sk_buff *sk=
+b)
+>  =09scratch->csum_unnecessary =3D !!skb_csum_unnecessary(skb);
+>  =09scratch->is_linear =3D !skb_is_nonlinear(skb);
+>  #endif
+> -=09/* all head states execept sp (dst, sk, nf) are always cleared by
+> -=09 * udp_rcv() and we need to preserve secpath, if present, to eventual=
+ly
+> -=09 * process IP_CMSG_PASSSEC at recvmsg() time
+> -=09 */
+> -=09if (likely(!skb_sec_path(skb)))
+> +=09if (udp_try_make_stateless(skb))
+>  =09=09scratch->_tsize_state |=3D UDP_SKB_IS_STATELESS;
+>  }
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Paolo Abeni <pabeni@redhat.com>
+
