@@ -2,91 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C499F105B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5641D105ADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKUUZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 15:25:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53294 "EHLO mail.kernel.org"
+        id S1726961AbfKUUNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 15:13:25 -0500
+Received: from mga01.intel.com ([192.55.52.88]:24544 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfKUUZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 15:25:18 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBADE20643;
-        Thu, 21 Nov 2019 20:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574367917;
-        bh=G/nGSTL1B57XIuGO5ynEHLcReSss6lj0KfyUv9aNKdA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Cp0Bp0sUjt8CPblEyVlxHBFiSLOGYda3VM29BL0sfOcMua/LG0WacwAL/nAgTb3k4
-         zr2liKzh3jH42zJweTi0oxtb0H61H6LHBSbRuL29FxchkMPwWolpl7+2l53MvRNVwd
-         KpvT0gUi5p4Q5tEoRUsVaOm5AW7IrhPhed8pL/tc=
-Date:   Thu, 21 Nov 2019 21:25:14 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 233/422] netfilter: nf_tables: avoid BUG_ON usage
-Message-ID: <20191121202514.GA812833@kroah.com>
-References: <20191119051400.261610025@linuxfoundation.org>
- <20191119051414.205983228@linuxfoundation.org>
- <20191121201618.GB15106@duo.ucw.cz>
+        id S1726541AbfKUUNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 15:13:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 12:13:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
+   d="scan'208";a="216209902"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2019 12:13:24 -0800
+Date:   Thu, 21 Nov 2019 12:25:35 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191121202535.GC199273@romley-ivt3.sc.intel.com>
+References: <20191121185303.GB199273@romley-ivt3.sc.intel.com>
+ <4BB1CB74-887B-4F40-B3B2-F0147B264C34@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191121201618.GB15106@duo.ucw.cz>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4BB1CB74-887B-4F40-B3B2-F0147B264C34@amacapital.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 09:16:18PM +0100, Pavel Machek wrote:
-> Hi!
+On Thu, Nov 21, 2019 at 11:01:39AM -0800, Andy Lutomirski wrote:
 > 
-> > From: Florian Westphal <fw@strlen.de>
+> > On Nov 21, 2019, at 10:40 AM, Fenghua Yu <fenghua.yu@intel.com> wrote:
 > > 
-> > [ Upstream commit fa5950e498e7face21a1761f327e6c1152f778c3 ]
+> > ﻿On Thu, Nov 21, 2019 at 09:51:03AM -0800, Andy Lutomirski wrote:
+> >>> On Thu, Nov 21, 2019 at 9:43 AM David Laight <David.Laight@aculab.com> wrote:
+> >>> 
+> >>> From: Ingo Molnar
+> >>>> Sent: 21 November 2019 17:12
+> >>>> * Peter Zijlstra <peterz@infradead.org> wrote:
+> >>> ...
+> >>>>> This feature MUST be default enabled, otherwise everything will
+> >>>>> be/remain broken and we'll end up in the situation where you can't use
+> >>>>> it even if you wanted to.
+> >>>> 
+> >>>> Agreed.
+> >>> 
+> >>> Before it can be enabled by default someone needs to go through the
+> >>> kernel and fix all the code that abuses the 'bit' functions by using them
+> >>> on int[] instead of long[].
+> >>> 
+> >>> I've only seen one fix go through for one use case of one piece of code
+> >>> that repeatedly uses potentially misaligned int[] arrays for bitmasks.
+> >>> 
+> >> 
+> >> Can we really not just change the lock asm to use 32-bit accesses for
+> >> set_bit(), etc?  Sure, it will fail if the bit index is greater than
+> >> 2^32, but that seems nuts.
+> >> 
+> >> (Why the *hell* do the bitops use long anyway?  They're *bit masks*
+> >> for crying out loud.  As in, users generally want to operate on fixed
+> >> numbers of bits.)
 > > 
-> > None of these spots really needs to crash the kernel.
-> > In one two cases we can jsut report error to userspace, in the other
-> > cases we can just use WARN_ON (and leak memory instead).
+> > We are working on a separate patch set to fix all split lock issues
+> > in atomic bitops. Per Peter Anvin and Tony Luck suggestions:
+> > 1. Still keep the byte optimization if nr is constant. No split lock.
+> > 2. If type of *addr is unsigned long, do quadword atomic instruction
+> >   on addr. No split lock.
+> > 3. If type of *addr is unsigned int, do word atomic instruction
+> >   on addr. No split lock.
+> > 4. Otherwise, re-calculate addr to point the 32-bit address which contains
+> >   the bit and operate on the bit. No split lock.
+> > 
+> > Only small percentage of atomic bitops calls are in case 4 (e.g. 3%
+> > for set_bit()) which need a few extra instructions to re-calculate
+> > address but can avoid big split lock overhead.
+> > 
+> > To get real type of *addr instead of type cast type "unsigned long",
+> > the atomic bitops APIs are changed to macros from functions. This change
+> > need to touch all architectures.
+> > 
 > 
-> Do these conditions trigger for someone, to warrant -stable patch?
-> 
-> > +++ b/net/netfilter/nft_cmp.c
-> > @@ -79,7 +79,8 @@ static int nft_cmp_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
-> >  
-> >  	err = nft_data_init(NULL, &priv->data, sizeof(priv->data), &desc,
-> >  			    tb[NFTA_CMP_DATA]);
-> > -	BUG_ON(err < 0);
-> > +	if (err < 0)
-> > +		return err;
-> >  
-> >  	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
-> >  	err = nft_validate_register_load(priv->sreg, desc.len);
-> > @@ -129,7 +130,8 @@ static int nft_cmp_fast_init(const struct nft_ctx *ctx,
-> >  
-> >  	err = nft_data_init(NULL, &data, sizeof(data), &desc,
-> >  			    tb[NFTA_CMP_DATA]);
-> > -	BUG_ON(err < 0);
-> > +	if (err < 0)
-> > +		return err;
-> >  
-> >  	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
-> >  	err = nft_validate_register_load(priv->sreg, desc.len);
-> 
-> This goes from "kill kernel with backtrace" to "silently return
-> failure". Should WARN_ON() be preserved here?
+> Isn’t the kernel full of casts to long* to match the signature?  Doing this based on type seems silly to me. I think it’s better to just to a 32-bit operation unconditionally and to try to optimize it
+>using b*l when safe.
 
-if this can be triggered, then the people running with panic-on-warn
-would reboot.  It's best to handle it properly here.  And it isn't
-"silent", the error is returned.
+Actually we only find 8 places calling atomic bitops using type casting
+"unsigned long *". After above changes, other 8 patches remove the type
+castings and then split lock free in atomic bitops in the current kernel.
 
-thanks,
+To check type casting in new patches, we add checkpatch.pl to warn on
+any type casting on atomic bitops in new patches because the APIs are
+marocs and gcc doesn't warn/issue error on type casting.
 
-greg k-h
+Using b*l will change the 8 places as well plus a lot of other places
+where *addr is defined as "unsigned long *", right?
+
+Thanks.
+
+-Fenghua
+
