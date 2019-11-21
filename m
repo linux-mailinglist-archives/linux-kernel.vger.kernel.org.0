@@ -2,177 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2369D10559F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BBF1055B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfKUPai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 10:30:38 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56193 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfKUPai (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:30:38 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so4176385wmb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 07:30:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fwUMKfMJE5zmhfeOZVzrKhaAfjtqUIOOXfyEnwGW3wU=;
-        b=PvPm0N/j1KirLROnANazbtECjIY2qt9Tmhg3vNHz25x+U4Z0MyTr0EQeUxt2vnEe4E
-         8uzFls12r/9gOBEhgW/7x10kOIWY7q2lmXbuiEA5ooqUDmq7LF852Vg6omho1SUv7UjQ
-         0d3hMZKj25dMcTFD3CsH5t/QFKNxywnAVeUTEIK+zxLk57f4GR9UNx8xjXJ0VnqrwwDR
-         2Imc+H/6m0jUnXciJpX+AL4SQTxo0VVQOlV2KUjpvysfqvxRQCCkjqXczk2v4URkKQ3y
-         d4bYu0bDAHYsQ4j0HM1G8Youxkpe3wFmDHaDS9ugmaIxc8lR6s76FW3Smah51TfZciti
-         iuVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fwUMKfMJE5zmhfeOZVzrKhaAfjtqUIOOXfyEnwGW3wU=;
-        b=QRBkprk7okGgT1DywiBQUA/kFjvZXEdCPPlRZPLa7kl12QDCmb5GNOv0JoVSXlq750
-         Nj6HaKBBQAeiPtOdvY2KTV791VIA0LgawWynO2xYmY9kYtPv+N0TPOrMj1Dub2gyYNPK
-         iG/Ebqga/eqBgdA8eDqGl7Hu6pbOvcwzRldTAfxZPqSgAN5JhB+TlRWbsxFvoTeovoCc
-         NTaQISaZvfv2K8qvH7DymaQJ7LcyVO1q4bvJcZvl6/2cYJhYjwSF/yjVZW3AymOrBJn2
-         su0dn6D2shsmR70b3JXfIHl1hYP77tmMIIjGtJBQ0aev4986WKhbzP89O75yVZm3qo6k
-         VIxw==
-X-Gm-Message-State: APjAAAXjIKQWk6HbrqH7G8qdqp94oOCRWi9ioIzzfyagi1AKpadXqTZd
-        FngtmIl54dUDiGaMaXofuuEyFg==
-X-Google-Smtp-Source: APXvYqxZosL6fF2YBCeoGPIUdrdxtjHo46UiCr1XponLO3gwtklqPpXNxfsI8bwt1nBRwpqaLWCO5w==
-X-Received: by 2002:a1c:750f:: with SMTP id o15mr9686762wmc.161.1574350234738;
-        Thu, 21 Nov 2019 07:30:34 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id w7sm3678802wru.62.2019.11.21.07.30.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 07:30:33 -0800 (PST)
-Date:   Thu, 21 Nov 2019 15:30:29 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, patrick.bellasi@matbug.net,
-        qais.yousef@arm.com, morten.rasmussen@arm.com
-Subject: Re: [PATCH 3/3] sched/fair: Consider uclamp for "task fits capacity"
- checks
-Message-ID: <20191121153029.GA105938@google.com>
-References: <20191120175533.4672-1-valentin.schneider@arm.com>
- <20191120175533.4672-4-valentin.schneider@arm.com>
- <20191121115602.GA213296@google.com>
- <f7e5dabb-a7e6-d110-abca-de7d4533bcc5@arm.com>
- <20191121133043.GA46904@google.com>
- <09e234a2-ea65-4d09-5215-9b0fe4ec09fe@arm.com>
+        id S1726719AbfKUPek convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 21 Nov 2019 10:34:40 -0500
+Received: from mga06.intel.com ([134.134.136.31]:54896 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbfKUPej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 10:34:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 07:34:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
+   d="scan'208";a="216158521"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2019 07:34:39 -0800
+Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 21 Nov 2019 07:34:38 -0800
+Received: from fmsmsx117.amr.corp.intel.com ([169.254.3.27]) by
+ fmsmsx121.amr.corp.intel.com ([169.254.6.42]) with mapi id 14.03.0439.000;
+ Thu, 21 Nov 2019 07:34:38 -0800
+From:   "Williams, Mitch A" <mitch.a.williams@intel.com>
+To:     Pavel Machek <pavel@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "Bowers, AndrewX" <andrewx.bowers@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: RE: [PATCH 4.19 079/422] i40e: use correct length for strncpy
+Thread-Topic: [PATCH 4.19 079/422] i40e: use correct length for strncpy
+Thread-Index: AQHVnpnuJAXG2g2RHUipXk6/Nek15KeV95QA///NAFA=
+Date:   Thu, 21 Nov 2019 15:34:38 +0000
+Message-ID: <AAEA33E297BCAC4B9BB20A7C2DF0AB8DEB1FA884@fmsmsx117.amr.corp.intel.com>
+References: <20191119051400.261610025@linuxfoundation.org>
+ <20191119051404.622986351@linuxfoundation.org> <20191121103504.GC26882@amd>
+In-Reply-To: <20191121103504.GC26882@amd>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2NjZTMxNTYtMzJjZi00YTY5LWIzNWYtM2NkNWQwNGFmYTlmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiU0tYM0NFNm9xaXk2dWJFR2JoMmFsY3JNZWdHaFYxQWpTTlRNQVAxMm4wMHVvUnFnNk96TEZRbzlrSGpWK1RxXC8ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.107]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09e234a2-ea65-4d09-5215-9b0fe4ec09fe@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 21 Nov 2019 at 14:51:06 (+0000), Valentin Schneider wrote:
-> On 21/11/2019 13:30, Quentin Perret wrote:
-> > On Thursday 21 Nov 2019 at 12:56:39 (+0000), Valentin Schneider wrote:
-> >>> @@ -6274,6 +6274,15 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
-> >>>  			if (!fits_capacity(util, cpu_cap))
-> >>>  				continue;
-> >>>  
-> >>> +			/*
-> >>> +			 * Skip CPUs that don't satisfy uclamp requests. Note
-> >>> +			 * that the above already ensures the CPU has enough
-> >>> +			 * spare capacity for the task; this is only really for
-> >>> +			 * uclamp restrictions.
-> >>> +			 */
-> >>> +			if (!task_fits_capacity(p, capacity_orig_of(cpu)))
-> >>> +				continue;
-> >>
-> >> This is partly redundant with the above, I think. What we really want here
-> >> is just
-> >>
-> >> fits_capacity(uclamp_eff_value(p, UCLAMP_MIN), capacity_orig_of(cpu))
-> >>
-> >> but this would require some inline #ifdeffery.
-> > 
-> > This suggested change lacks the UCLAMP_MAX part, which is a shame
-> > because this is precisely in the EAS path that we should try and
-> > down-migrate tasks if they have an appropriate max_clamp. So, your first
-> > proposal made sense, IMO.
-> > 
->  
-> Hm right, had to let that spin in my head for a while but I think I got it.
+
+
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: Thursday, November 21, 2019 2:35 AM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Williams, Mitch A
+> <mitch.a.williams@intel.com>; Bowers, AndrewX <andrewx.bowers@intel.com>;
+> Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Sasha Levin
+> <sashal@kernel.org>
+> Subject: Re: [PATCH 4.19 079/422] i40e: use correct length for strncpy
 > 
-> I was only really thinking of:
+> Hi!
 > 
->   (h960: LITTLE = 462 cap, big = 1024)
->   p.uclamp.min = 512 -> skip LITTLEs regardless of the actual util_est
+> > From: Mitch Williams <mitch.a.williams@intel.com>
+> >
+> > [ Upstream commit 7eb74ff891b4e94b8bac48f648a21e4b94ddee64 ]
+> >
+> > Caught by GCC 8. When we provide a length for strncpy, we should not
+> > include the terminating null. So we must tell it one less than the size
+> > of the destination buffer.
 > 
-> but your point is we also want stuff like:
+> > +++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
+> > @@ -694,7 +694,8 @@ static long i40e_ptp_create_clock(struct i40e_pf *pf)
+> >  	if (!IS_ERR_OR_NULL(pf->ptp_clock))
+> >  		return 0;
+> >
+> > -	strncpy(pf->ptp_caps.name, i40e_driver_name, sizeof(pf->ptp_caps.name));
+> > +	strncpy(pf->ptp_caps.name, i40e_driver_name,
+> > +		sizeof(pf->ptp_caps.name) - 1);
+> >  	pf->ptp_caps.owner = THIS_MODULE;
+> >  	pf->ptp_caps.max_adj = 999999999;
+> >  	pf->ptp_caps.n_ext_ts = 0;
 > 
->   p.uclamp.max = 300 -> accept LITTLEs regardless of the actual util_est
-
-Right, sorry if my message wasn't clear.
-
-> I'll keep the feec() change as-is and add something like the above in the
-> changelog for v2.
+> So... pf is allocated with kzalloc, which will provide the null
+> termination... so the code is okay.
 > 
-> > Another option to avoid the redundancy would be to do something along
-> > the lines of the totally untested diff below.
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 69a81a5709ff..38cb5fe7ba65 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -6372,9 +6372,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
-> >                         if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-> >                                 continue;
-> >  
-> > -                       /* Skip CPUs that will be overutilized. */
-> >                         util = cpu_util_next(cpu, p, cpu);
-> >                         cpu_cap = capacity_of(cpu);
-> > +                       spare_cap = cpu_cap - util;
-> > +                       util = uclamp_util_with(cpu_rq(cpu), util, p);
-> > +
-> > +                       /* Skip CPUs that will be overutilized. */
-> >                         if (!fits_capacity(util, cpu_cap))
-> >                                 continue;
-> >  
-> > @@ -6389,7 +6392,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
-> >                          * Find the CPU with the maximum spare capacity in
-> >                          * the performance domain
-> >                          */
-> > -                       spare_cap = cpu_cap - util;
-> >                         if (spare_cap > max_spare_cap) {
-> >                                 max_spare_cap = spare_cap;
-> >                                 max_spare_cap_cpu = cpu;
-> > 
-> > Thoughts ?
-> > 
+> On the other hand, the = 0 below is unneeded by the same logic, so
+> this is a bit confusing.
 > 
-> uclamp_util_with() (or uclamp_rq_util_with() ;)) picks the max between the
-> rq-aggregated clamps and the task clamps, which isn't what we want. If the
-> task has a low-ish uclamp.max (e.g. the 300 example from above) but the
-> rq-wide max-aggregated uclamp.max is ~800, we'd clamp using that 800. It
-> makes sense for frequency selection, but not for task placement IMO.
+> Best regards,
+> 								Pavel
 
-Right, but you could argue that this is in fact a correct behaviour.
-What we want to know is 'is this CPU big enough to meet the capacity
-request if I enqueue p there ?'. And the 'capacity request' is the
-aggregated rq-wide clamped util, IMO.
+Thanks for catching this, Pavel. Aleksandr Loktionov owns this driver now. He can get this taken care of.
+-Mitch
 
-If enqueuing 'p' on a given CPU will cause the rq-wide clamped util to
-go above the CPU capacity, we want to skip that CPU.
 
-The obvious case is if p's min_clamp is larger than the CPU capacity.
-
-But similarly, if p's max_clamp is going to be ignored because of
-another task with a larger max_clamp on the same rq, this is relevant
-information too --  the resulting capacity request might be above the
-CPU capacity if p's util_avg is large, so we should probably skip the
-CPU too no ?
-
-Are we gaining anything if we decide to not align the EAS path and the
-sugov path ?
-
-Thanks,
-Quentin
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures)
+> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
