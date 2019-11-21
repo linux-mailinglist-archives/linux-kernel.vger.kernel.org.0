@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB2641049C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D32F31049C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfKUFCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 00:02:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36406 "EHLO mx1.suse.de"
+        id S1726719AbfKUFCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 00:02:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36428 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725956AbfKUFCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 00:02:20 -0500
+        id S1726165AbfKUFCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 00:02:21 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3B77BB00A;
+        by mx1.suse.de (Postfix) with ESMTP id A2994B016;
         Thu, 21 Nov 2019 05:02:19 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH v5 3/9] irqchip: rtd1195-mux: Implement irq_get_irqchip_state
-Date:   Thu, 21 Nov 2019 06:02:02 +0100
-Message-Id: <20191121050208.11324-4-afaerber@suse.de>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v5 4/9] arm64: dts: realtek: rtd129x: Add irq muxes and UART interrupts
+Date:   Thu, 21 Nov 2019 06:02:03 +0100
+Message-Id: <20191121050208.11324-5-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191121050208.11324-1-afaerber@suse.de>
 References: <20191121050208.11324-1-afaerber@suse.de>
@@ -36,74 +35,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the .irq_get_irqchip_state callback to retrieve pending,
-active and masked interrupt status.
+Add iso and misc IRQ mux DT nodes to RTD129x SoC family.
+
+Update the UART DT nodes with interrupts from these muxes,
+so that UART0 can be used without earlycon.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- v5: New
+ v4 -> v5: Unchanged
  
- drivers/irqchip/irq-rtd1195-mux.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ v3 -> v4:
+ * Rebased onto chip-info and r-bus
+ * Dropped schema-violating second interrupts for UART1 and UART2
+ 
+ v2 -> v3:
+ * Added nodes to rtd129x.dtsi instead of rtd1295.dtsi
+ * Adopted misc compatible string
+ * Renamed node label from irq_mux to misc_irq_mux for clarity
+ 
+ v1 -> v2:
+ * Rebased
+ 
+ arch/arm64/boot/dts/realtek/rtd129x.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/irqchip/irq-rtd1195-mux.c b/drivers/irqchip/irq-rtd1195-mux.c
-index 0e86973aafca..2f1bcfd9d5d6 100644
---- a/drivers/irqchip/irq-rtd1195-mux.c
-+++ b/drivers/irqchip/irq-rtd1195-mux.c
-@@ -7,6 +7,7 @@
+diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
+index 7d56c9f5d48a..188b4f256917 100644
+--- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
+@@ -86,6 +86,14 @@
+ 				#reset-cells = <1>;
+ 			};
  
- #include <linux/bitops.h>
- #include <linux/io.h>
-+#include <linux/interrupt.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
-@@ -96,10 +97,45 @@ static void rtd1195_mux_unmask_irq(struct irq_data *data)
- 	raw_spin_unlock_irqrestore(&mux->lock, flags);
- }
++			iso_irq_mux: interrupt-controller@7000 {
++				compatible = "realtek,rtd1295-iso-irq-mux";
++				reg = <0x7000 0x100>;
++				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++				#interrupt-cells = <1>;
++			};
++
+ 			iso_reset: reset-controller@7088 {
+ 				compatible = "snps,dw-low-reset";
+ 				reg = <0x7088 0x4>;
+@@ -105,6 +113,8 @@
+ 				reg-io-width = <4>;
+ 				clock-frequency = <27000000>;
+ 				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
++				interrupt-parent = <&iso_irq_mux>;
++				interrupts = <2>;
+ 				status = "disabled";
+ 			};
  
-+static int rtd1195_mux_get_irqchip_state(struct irq_data *data,
-+	enum irqchip_irq_state which, bool *state)
-+{
-+	struct rtd1195_irq_mux_data *mux = irq_data_get_irq_chip_data(data);
-+	u32 val;
-+
-+	switch (which) {
-+	case IRQCHIP_STATE_PENDING:
-+		/*
-+		 * UMSK_ISR provides the unmasked pending interrupts,
-+		 * except UART and I2C.
-+		 */
-+		val = readl_relaxed(mux->reg_umsk_isr);
-+		*state = !!(val & BIT(data->hwirq));
-+		break;
-+	case IRQCHIP_STATE_ACTIVE:
-+		/*
-+		 * ISR provides the masked pending interrupts,
-+		 * including UART and I2C.
-+		 */
-+		val = readl_relaxed(mux->reg_isr);
-+		*state = !!(val & BIT(data->hwirq));
-+		break;
-+	case IRQCHIP_STATE_MASKED:
-+		val = mux->info->isr_to_int_en_mask[data->hwirq];
-+		*state = !(mux->scpu_int_en & val);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct irq_chip rtd1195_mux_irq_chip = {
- 	.irq_ack		= rtd1195_mux_ack_irq,
- 	.irq_mask		= rtd1195_mux_mask_irq,
- 	.irq_unmask		= rtd1195_mux_unmask_irq,
-+	.irq_get_irqchip_state	= rtd1195_mux_get_irqchip_state,
- };
+@@ -115,6 +125,14 @@
+ 				      <0x171d8 0x4>;
+ 			};
  
- static int rtd1195_mux_irq_domain_map(struct irq_domain *d,
++			misc_irq_mux: interrupt-controller@1b000 {
++				compatible = "realtek,rtd1295-misc-irq-mux";
++				reg = <0x1b000 0x100>;
++				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++				#interrupt-cells = <1>;
++			};
++
+ 			uart1: serial@1b200 {
+ 				compatible = "snps,dw-apb-uart";
+ 				reg = <0x1b200 0x100>;
+@@ -122,6 +140,8 @@
+ 				reg-io-width = <4>;
+ 				clock-frequency = <432000000>;
+ 				resets = <&reset2 RTD1295_RSTN_UR1>;
++				interrupt-parent = <&misc_irq_mux>;
++				interrupts = <3>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -132,6 +152,8 @@
+ 				reg-io-width = <4>;
+ 				clock-frequency = <432000000>;
+ 				resets = <&reset2 RTD1295_RSTN_UR2>;
++				interrupt-parent = <&misc_irq_mux>;
++				interrupts = <8>;
+ 				status = "disabled";
+ 			};
+ 		};
 -- 
 2.16.4
 
