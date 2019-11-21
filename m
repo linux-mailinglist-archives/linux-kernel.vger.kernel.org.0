@@ -2,148 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0DF105C50
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 460CC105C3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfKUVwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:52:32 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12745 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbfKUVwb (ORCPT
+        id S1726563AbfKUVuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:50:08 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36850 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfKUVuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:52:31 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd707210000>; Thu, 21 Nov 2019 13:52:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Nov 2019 13:52:30 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Nov 2019 13:52:30 -0800
-Received: from [10.2.168.213] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
- 2019 21:52:28 +0000
-Subject: Re: [PATCH v7 09/24] vfio, mm: fix get_user_pages_remote() and
- FOLL_LONGTERM
-To:     Alex Williamson <alex.williamson@redhat.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-10-jhubbard@nvidia.com>
- <20191121143525.50deb72f@x1.home>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <b5ae788a-58a9-de93-f65e-e4d9c0632dc9@nvidia.com>
-Date:   Thu, 21 Nov 2019 13:49:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 21 Nov 2019 16:50:08 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f7so4191084edq.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 13:50:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=441CDEY7r+jAiyFqGWKYoN/In8wLFWAjU8LoG44hNKs=;
+        b=ewatgbtJd/GVsBazwuLbhDVy3ondBBL6YXn7+xys4ddOWJgSkvQyUhlZBIt3D9xmGY
+         fvdvmkQS0NxDmjkrips5s3HdM7Jb0R/3Ge4SW9aEdseDuGeFkoxsMgIp8pBLWPw2uC/E
+         n6lyziC2b0Cntk9mU4KbVq1dLXGcgZJfUOhXA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=441CDEY7r+jAiyFqGWKYoN/In8wLFWAjU8LoG44hNKs=;
+        b=EBPlQ5wid3PcGqLks1wgUrzHUougQnmB+dop+Y6NPys9vjCQPBD1m/XP00ApCok681
+         fm+ypnR0CLWIsu/LmAkq157qyedEetW4m1XQ/9Hr3TfhCl5f3U+yBouwg/ut5WecXJnT
+         M+X9CtwKj8Fn+Fe+JL/RFrb8YTXF5VTPZjP3RuGEcmtUZnolAh8hmExiGQ6uzKD+gGXE
+         +U6zCFLshidhakwr59W7CF5+EiT8nMGpR/p67oWA4QPwVAzDyuLvLOd+cpZWqWGyh9T9
+         2Fibjc6mXBm3Zb3JcVXv5JFSls1jlK4xCB1uvUKCRsO+VFTxaNh3PjIo29DFoqf8i3Os
+         yXBA==
+X-Gm-Message-State: APjAAAU/a/Te9rZQzwgfwHPpAdn3Mmanjh6uUAKrRhg74Ggn0MLf+/4Y
+        sGpnE5Ux51G/c+VWvCPsPZvjMT4oP8k=
+X-Google-Smtp-Source: APXvYqz3zldE47wNoETz4Xb4cR44daq2BMce/hait+KRvmJ9aQ8tfnVa4rTVaNmdEzmaKdo1m6BlGg==
+X-Received: by 2002:a17:906:1d02:: with SMTP id n2mr16484794ejh.219.1574373004406;
+        Thu, 21 Nov 2019 13:50:04 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id y2sm170518edd.2.2019.11.21.13.50.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 13:50:03 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id i12so6216233wrn.11
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 13:50:03 -0800 (PST)
+X-Received: by 2002:adf:db8e:: with SMTP id u14mr4763385wri.274.1574373002609;
+ Thu, 21 Nov 2019 13:50:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191121143525.50deb72f@x1.home>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574373153; bh=oGhbv3cXo8o4GZ8PnxP5Ux4y8AE3jGJR4EeVDVjoVEc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=KYGZRjKvtxip9P6ifb3Te8PpgvFSTRruWhwxOgXb0S114oVSZskeO+iOWdCneQvB4
-         NA5CKwViDqqMCzmcEtuXOzx5kWlGm/CdhdbD7x7k9Kx6Vh5kQFWAggEn8hm5nSetjo
-         GsuEs2bguAasb3kn7+569g/s+OYwxg2N/laFgRqUcYIkUaXO+dKZ1vX7QBvKE7iuhN
-         xdX8E7mSGSvk8taZzTl3l1tHACe5K5QgYBxfNvJAXLPet5p3Tx/OKYiHGukBzXFPA8
-         pg/kE+aDZRuWuc8KSGeIQ8zVRFi/6q/Cd2RICjjhHLzCf4ZbZMZG9XJoZELTlTOned
-         7+K+fSUD3HTWw==
+References: <20191121211053.48861-1-rrangel@chromium.org> <20191121140830.4.Iddc7dd74f893297cb932e9825d413e7890633b3d@changeid>
+ <CABXOdTeotUnO_7k9UycJ0vJEKV8pdZOjRrepDv5WVo5RmOLnEA@mail.gmail.com>
+In-Reply-To: <CABXOdTeotUnO_7k9UycJ0vJEKV8pdZOjRrepDv5WVo5RmOLnEA@mail.gmail.com>
+From:   Raul Rangel <rrangel@chromium.org>
+Date:   Thu, 21 Nov 2019 14:49:51 -0700
+X-Gmail-Original-Message-ID: <CAHQZ30CYQd1-ZHJeVnKi9CMeZGiRJmvfYN5PRrpN26gcEJZXOA@mail.gmail.com>
+Message-ID: <CAHQZ30CYQd1-ZHJeVnKi9CMeZGiRJmvfYN5PRrpN26gcEJZXOA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] platform/chrome: i2c: i2c-cros-ec-tunnel: Convert i2c
+ tunnel to MFD Cell
+To:     Guenter Roeck <groeck@google.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Akshu Agrawal <Akshu.Agrawal@amd.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/19 1:35 PM, Alex Williamson wrote:
-> On Wed, 20 Nov 2019 23:13:39 -0800
-> John Hubbard <jhubbard@nvidia.com> wrote:
-> 
->> As it says in the updated comment in gup.c: current FOLL_LONGTERM
->> behavior is incompatible with FAULT_FLAG_ALLOW_RETRY because of the
->> FS DAX check requirement on vmas.
->>
->> However, the corresponding restriction in get_user_pages_remote() was
->> slightly stricter than is actually required: it forbade all
->> FOLL_LONGTERM callers, but we can actually allow FOLL_LONGTERM callers
->> that do not set the "locked" arg.
->>
->> Update the code and comments accordingly, and update the VFIO caller
->> to take advantage of this, fixing a bug as a result: the VFIO caller
->> is logically a FOLL_LONGTERM user.
->>
->> Also, remove an unnessary pair of calls that were releasing and
->> reacquiring the mmap_sem. There is no need to avoid holding mmap_sem
->> just in order to call page_to_pfn().
->>
->> Also, move the DAX check ("if a VMA is DAX, don't allow long term
->> pinning") from the VFIO call site, all the way into the internals
->> of get_user_pages_remote() and __gup_longterm_locked(). That is:
->> get_user_pages_remote() calls __gup_longterm_locked(), which in turn
->> calls check_dax_vmas(). It's lightly explained in the comments as well.
->>
->> Thanks to Jason Gunthorpe for pointing out a clean way to fix this,
->> and to Dan Williams for helping clarify the DAX refactoring.
->>
->> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
->> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
->> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Jerome Glisse <jglisse@redhat.com>
->> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->> ---
->>   drivers/vfio/vfio_iommu_type1.c | 30 +++++-------------------------
->>   mm/gup.c                        | 27 ++++++++++++++++++++++-----
->>   2 files changed, 27 insertions(+), 30 deletions(-)
-> 
-> Tested with device assignment and Intel mdev vGPU assignment with QEMU
-> userspace:
-> 
-> Tested-by: Alex Williamson <alex.williamson@redhat.com>
-> Acked-by: Alex Williamson <alex.williamson@redhat.com>
-> 
-> Feel free to include for 19/24 as well.  Thanks,
-> 
-> Alex
+On Thu, Nov 21, 2019 at 2:40 PM Guenter Roeck <groeck@google.com> wrote:
+>
+> On Thu, Nov 21, 2019 at 1:11 PM Raul E Rangel <rrangel@chromium.org> wrote:
+> >
+> > If the i2c-cros-ec-tunnel driver is compiled into the kernel, it is
+> > possible that i2c-cros-ec-tunnel could be probed before cros_ec_XXX
+> > has finished initializing and setting the drvdata. This would cause a
+> > NULL pointer panic.
+> >
+> > Converting this driver over to an MFD solves the problem and aligns with
+> > where the cros_ec is going.
+> >
+>
+> I thought the mfd maintainer objects to the use of the mfd API outside
+> drivers/mfd. Did that change recently ?
 
+The MFD apis are only used in drivers/mfd/cros_ec_dev.c.
+drivers/i2c/busses/i2c-cros-ec-tunnel.c just registers as a simple
+driver.
 
-Great! Thanks for the testing and ack on those. I'm about to repackage
-(and split up as CH requested) for 5.5, and will keep you on CC, of course.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Raul
