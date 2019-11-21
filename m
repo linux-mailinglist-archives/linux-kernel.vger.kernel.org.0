@@ -2,71 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AF47105621
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA72105625
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:56:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfKUPz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 10:55:58 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28243 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726593AbfKUPz5 (ORCPT
+        id S1727124AbfKUP4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 10:56:10 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33140 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbfKUP4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:55:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574351756;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lWsgKVybaH+JezO0Xvxir4xXLVYM64AtUYc2fCA9+9I=;
-        b=XH5DWmJE6muJQ5rdIP0NpL3HOfUBS2BJJit3Lawff3/5GHjUH2f3sSoIujyNx8Dzvo4J03
-        6t4I+/xAmdj2pCC/Q0LCifIENWOdLVRS/9G8vkg4F+wUPY6M6vgHg2docw8zM23TnthXd1
-        IctN5ZmRF2BU5R+lgi4hfigM5wruY/E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-181-XW1zfSQvObO2k-13Np5W9Q-1; Thu, 21 Nov 2019 10:55:53 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 09526593A1;
-        Thu, 21 Nov 2019 15:55:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5ABF60F8B;
-        Thu, 21 Nov 2019 15:55:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <157435064653.9583.16369826233033888377.stgit@warthog.procyon.org.uk>
-References: <157435064653.9583.16369826233033888377.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Fix large file support
+        Thu, 21 Nov 2019 10:56:08 -0500
+Received: by mail-pg1-f196.google.com with SMTP id h27so1817034pgn.0;
+        Thu, 21 Nov 2019 07:56:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5auEHawVnFdIZOUx2eKKQZZ0ecTFrj9LceutMYE+Ee4=;
+        b=gixz7D+y5ciDRIuJcnOfgRe/FOnAKCfBgEdXbUKC5oIWt9YHHoIJ7KaBHCrT0N0WI0
+         vBONigW03BBPnlJouUxnF7NkwMH7TJEyAoPt5xZZ1lyb6JKts3x7LV8DK9CpgWuRQrWx
+         u/APw6/FyKhTvOEBoAyBc6qtV20ZRykh+qYDNdwbC5Rx9u9XeT6+F5WWwspIHMuOWxwK
+         fIBetX2e2gNyzfRZHvLnsCVGHkfF/WYlhTOLu0jOrjEXB+/Dr3DE0BvpsqQk/8Bx/kAz
+         GW8KqYnVQQxxjVkkwnGGmlQ019hzcczhWH+URm8jKYC2yZ9MI4mTBe0JNyek+ANKRR7H
+         mGMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5auEHawVnFdIZOUx2eKKQZZ0ecTFrj9LceutMYE+Ee4=;
+        b=L8hpwBq24MO/imKRPJfb1Pc2pAm7AAcDeD84Bv/UPmXxaMJFDbqgRR790aGEMoYDm3
+         XGHn91RZNB6/jzOxOV3QAaEp5eduG1DtRLv7XZeSlhLGNVdmDFYpZELa74nsp1UY8Zh2
+         essW4XlILmKcIBnwvRbRtJdhO4cr3l/3L17Tp3p4sDtc1GzaM90Wq8pcQKB3VX1vbeWB
+         6DafyyOWyYt99nwPu0VBfyBGPfzufsBtd/FVp2psBUiWMS8rHyS3WJ7nBY2M3z6fs0NP
+         M3TGMvjHTCeisO4hrwXNdN9O3gI0QR54+U54KoNgPuAU+kiSZ6997Rd3pm0CU9dRkQsC
+         GiBA==
+X-Gm-Message-State: APjAAAXG8WFFmacyt+brwI80UsgP3HHGwjYVSN3QNhFQUpPliHE9KujF
+        5qSfKWpnyS52cI+s1c7vcuZPxaOF
+X-Google-Smtp-Source: APXvYqw4AiUUqb4bxQ2x+DW5tSA795OAJAzRK/oTivBTw4osND5lfZcO7zslvDZSUdgkDwwNLbrM7Q==
+X-Received: by 2002:a63:5f48:: with SMTP id t69mr9230161pgb.379.1574351766956;
+        Thu, 21 Nov 2019 07:56:06 -0800 (PST)
+Received: from localhost.hsd1.wa.comcast.net ([2601:602:847f:811f:babe:8e8d:b27e:e6d7])
+        by smtp.gmail.com with ESMTPSA id e8sm3709212pga.17.2019.11.21.07.56.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 07:56:05 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: [PATCH v4 1/6] crypto: caam - RNG4 TRNG errata
+Date:   Thu, 21 Nov 2019 07:55:49 -0800
+Message-Id: <20191121155554.1227-2-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191121155554.1227-1-andrew.smirnov@gmail.com>
+References: <20191121155554.1227-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-ID: <11835.1574351749.1@warthog.procyon.org.uk>
-Date:   Thu, 21 Nov 2019 15:55:49 +0000
-Message-ID: <11836.1574351749@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: XW1zfSQvObO2k-13Np5W9Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The TRNG as used in RNG4, used in CAAM has a documentation issue. The
+effect is that it is possible that the entropy used to instantiate the
+DRBG may be old entropy, rather than newly generated entropy. There is
+proper programming guidance, but it is not in the documentation.
 
-> By default s_maxbytes is set to MAX_NON_LFS, which limits the usable
-> file size to 2GB, enforced by the vfs.
+Signed-off-by: Aymen Sghaier <aymen.sghaier@nxp.com>
+Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
+[andrew.smirnov@gmail.com ported to upstream kernel]
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Horia Geantă <horia.geanta@nxp.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-imx@nxp.com
+---
+ drivers/crypto/caam/ctrl.c | 11 ++++++++---
+ drivers/crypto/caam/regs.h |  3 ++-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-Note that this isn't fixing a critical failure, so you might want to punt i=
-t
-to the next cycle.
-
-David
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index d7c3c3805693..df4db10e9fca 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -338,8 +338,12 @@ static void kick_trng(struct platform_device *pdev, int ent_delay)
+ 	ctrl = (struct caam_ctrl __iomem *)ctrlpriv->ctrl;
+ 	r4tst = &ctrl->r4tst[0];
+ 
+-	/* put RNG4 into program mode */
+-	clrsetbits_32(&r4tst->rtmctl, 0, RTMCTL_PRGM);
++	/*
++	 * Setting both RTMCTL:PRGM and RTMCTL:TRNG_ACC causes TRNG to
++	 * properly invalidate the entropy in the entropy register and
++	 * force re-generation.
++	 */
++	clrsetbits_32(&r4tst->rtmctl, 0, RTMCTL_PRGM | RTMCTL_ACC);
+ 
+ 	/*
+ 	 * Performance-wise, it does not make sense to
+@@ -369,7 +373,8 @@ static void kick_trng(struct platform_device *pdev, int ent_delay)
+ 	 * select raw sampling in both entropy shifter
+ 	 * and statistical checker; ; put RNG4 into run mode
+ 	 */
+-	clrsetbits_32(&r4tst->rtmctl, RTMCTL_PRGM, RTMCTL_SAMP_MODE_RAW_ES_SC);
++	clrsetbits_32(&r4tst->rtmctl, RTMCTL_PRGM | RTMCTL_ACC,
++		      RTMCTL_SAMP_MODE_RAW_ES_SC);
+ }
+ 
+ static int caam_get_era_from_hw(struct caam_ctrl __iomem *ctrl)
+diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
+index 05127b70527d..c191e8fd0fa7 100644
+--- a/drivers/crypto/caam/regs.h
++++ b/drivers/crypto/caam/regs.h
+@@ -487,7 +487,8 @@ struct rngtst {
+ 
+ /* RNG4 TRNG test registers */
+ struct rng4tst {
+-#define RTMCTL_PRGM	0x00010000	/* 1 -> program mode, 0 -> run mode */
++#define RTMCTL_ACC  BIT(5)  /* TRNG access mode */
++#define RTMCTL_PRGM BIT(16) /* 1 -> program mode, 0 -> run mode */
+ #define RTMCTL_SAMP_MODE_VON_NEUMANN_ES_SC	0 /* use von Neumann data in
+ 						     both entropy shifter and
+ 						     statistical checker */
+-- 
+2.21.0
 
