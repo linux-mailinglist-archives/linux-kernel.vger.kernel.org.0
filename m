@@ -2,114 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCECF1049CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 574541049E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 06:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfKUFCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 00:02:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36490 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726502AbfKUFCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 00:02:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C0F52B183;
-        Thu, 21 Nov 2019 05:02:21 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-realtek-soc@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v5 9/9] arm64: dts: realtek: rtd139x: Add irq muxes and UART interrupts
-Date:   Thu, 21 Nov 2019 06:02:08 +0100
-Message-Id: <20191121050208.11324-10-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191121050208.11324-1-afaerber@suse.de>
-References: <20191121050208.11324-1-afaerber@suse.de>
+        id S1726379AbfKUFKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 00:10:46 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41117 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfKUFKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 00:10:45 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 207so965197pge.8
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 21:10:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=msCu0QpwL+TYH2H0S7A59z3R+0BjpgNq8syAjSNxH5A=;
+        b=L/OQosoCwe6MxD5gy1A0NnLJOkaGqqtWsSD3IhTXsXHBvOFV0eT/u4HEoDnvJmMAJn
+         YGM2wbDk98aSrs1dW2Px/8o6lCMHN97PlNFo1yKoFWgF5BRG/CWgVPgafPfqqXKOfw61
+         qWYZW4aQ5Zkj6KYGcwlV/6dc9qH0PaNin8UaA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=msCu0QpwL+TYH2H0S7A59z3R+0BjpgNq8syAjSNxH5A=;
+        b=K+9uFd7X9UgZebtTgvPiyuIy3CoWXYRG4/CbkxggdE8MGuTf3n8BTNLIQSAaLa7Sta
+         xIV1lKTUH9lcRS3CZ+JRG1jPJCJV0rsWpyrO94h+GCTIO52h6Fqj4G0H7TrO0kgOAQ+c
+         SzQHKfL6+GkVWRaqraL8AFTWX26x+kLDE2+b7OLrcXerKbfa0uM/AeY6R6mFFKzLf2Dx
+         ySP7cJGgP1ZVSXxB5DH3MKmeglPPbU/6wEELODPQCgbKco9FcbYr/v3gm1TDQaJh7pj5
+         u6yehTeik665rIFg0aoIV1Ge3jOvHCkABh12Lj2OVXoO92dywC8nkTj+xZJRKbzq9wz3
+         33/g==
+X-Gm-Message-State: APjAAAWxyrhM8c8xCoa+TkwReW22tL0AmOgMWK82gHU6UZX9cXARFSx5
+        3utdkIUHE0sIj8jA2rvFxGs05w==
+X-Google-Smtp-Source: APXvYqzxE1UUlMo4o5lL/9FGxnbsO+/yKZx/OP3POMctvwZK6KLKxRCCVHn6zJamnA++y2PEy02TYg==
+X-Received: by 2002:a62:6385:: with SMTP id x127mr8745328pfb.244.1574313043585;
+        Wed, 20 Nov 2019 21:10:43 -0800 (PST)
+Received: from ikjn-p920.tpe.corp.google.com ([2401:fa00:1:10:254e:2b40:ef8:ee17])
+        by smtp.gmail.com with ESMTPSA id x2sm1329257pfj.90.2019.11.20.21.10.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 21:10:42 -0800 (PST)
+From:   Ikjoon Jang <ikjn@chromium.org>
+To:     linux-usb@vger.kernel.org
+Cc:     GregKroah-Hartman <gregkh@linuxfoundation.org>,
+        RobHerring <robh+dt@kernel.org>,
+        MarkRutland <mark.rutland@arm.com>,
+        AlanStern <stern@rowland.harvard.edu>,
+        SuwanKim <suwan.kim027@gmail.com>,
+        "GustavoA . R . Silva" <gustavo@embeddedor.com>,
+        IkjoonJang <ikjn@chromium.org>, JohanHovold <johan@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        drinkcat@chromium.org
+Subject: [PATCH v2 0/2] usb: override hub device bInterval with device
+Date:   Thu, 21 Nov 2019 13:06:34 +0800
+Message-Id: <20191121050634.108727-1-ikjn@chromium.org>
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add iso and misc IRQ mux DT nodes for Realtek RTD1395 SoC.
+This patchset enables hard wired hub device to use different bInterval
+from its descriptor when the hub has a combined device node.
 
-Update the UART DT nodes with interrupts from these muxes,
-so that UART0 can be used without earlycon.
+When we know reducing autosuspend delay for built-in HIDs is better for
+power saving, we can reduce it to the optimal value. But if a parent hub
+has a long bInterval, mouse lags a lot from more frequent autosuspend.
+So this enables overriding bInterval for a hard wired hub device only
+when we know that reduces the power consumption.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- v4 -> v5: Unchanged
- 
- v4: New
- 
- arch/arm64/boot/dts/realtek/rtd139x.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Ikjoon Jang (2):
+  dt-bindings: usb: add "hub,interval" property
+  usb: overridable hub bInterval by device node
 
-diff --git a/arch/arm64/boot/dts/realtek/rtd139x.dtsi b/arch/arm64/boot/dts/realtek/rtd139x.dtsi
-index 706da12f9ea3..f53cb8a5083b 100644
---- a/arch/arm64/boot/dts/realtek/rtd139x.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd139x.dtsi
-@@ -84,6 +84,14 @@
- 				#reset-cells = <1>;
- 			};
- 
-+			iso_irq_mux: interrupt-controller@7000 {
-+				compatible = "realtek,rtd1395-iso-irq-mux";
-+				reg = <0x7000 0x100>;
-+				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+
- 			iso_reset: reset-controller@7088 {
- 				compatible = "snps,dw-low-reset";
- 				reg = <0x7088 0x4>;
-@@ -103,6 +111,8 @@
- 				reg-io-width = <4>;
- 				clock-frequency = <27000000>;
- 				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
-+				interrupt-parent = <&iso_irq_mux>;
-+				interrupts = <2>;
- 				status = "disabled";
- 			};
- 
-@@ -111,6 +121,14 @@
- 				reg = <0x1a200 0x8>;
- 			};
- 
-+			misc_irq_mux: interrupt-controller@1b000 {
-+				compatible = "realtek,rtd1395-misc-irq-mux";
-+				reg = <0x1b000 0x100>;
-+				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+
- 			uart1: serial@1b200 {
- 				compatible = "snps,dw-apb-uart";
- 				reg = <0x1b200 0x100>;
-@@ -118,6 +136,8 @@
- 				reg-io-width = <4>;
- 				clock-frequency = <432000000>;
- 				resets = <&reset2 RTD1295_RSTN_UR1>;
-+				interrupt-parent = <&misc_irq_mux>;
-+				interrupts = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -128,6 +148,8 @@
- 				reg-io-width = <4>;
- 				clock-frequency = <432000000>;
- 				resets = <&reset2 RTD1295_RSTN_UR2>;
-+				interrupt-parent = <&misc_irq_mux>;
-+				interrupts = <8>;
- 				status = "disabled";
- 			};
- 		};
+ Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
+ drivers/usb/core/config.c                            | 6 ++++++
+ 2 files changed, 10 insertions(+)
+
 -- 
-2.16.4
+2.24.0.432.g9d3f5f5b63-goog
 
