@@ -2,152 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F72104C72
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:27:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20620104AF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfKUH1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 02:27:40 -0500
-Received: from mga04.intel.com ([192.55.52.120]:2742 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfKUH1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 02:27:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 23:27:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
-   d="scan'208";a="238065022"
-Received: from hu.sh.intel.com ([10.239.158.51])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2019 23:27:38 -0800
-From:   "Chen, Hu" <hu1.chen@intel.com>
-Cc:     avagin@openvz.org, hu1.chen@intel.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
-Date:   Thu, 21 Nov 2019 15:06:12 +0800
-Message-Id: <20191121070613.4286-1-hu1.chen@intel.com>
-X-Mailer: git-send-email 2.22.0
+        id S1726408AbfKUHII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 02:08:08 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:50070 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfKUHII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 02:08:08 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 0C9B9200AA9;
+        Thu, 21 Nov 2019 07:08:06 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id A7639200A0; Thu, 21 Nov 2019 08:07:32 +0100 (CET)
+Date:   Thu, 21 Nov 2019 08:07:32 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
+        viro@zeniv.linux.org.uk,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] char: pcmcia: a possible concurrency double-free bug in
+ rx_alloc_buffers()
+Message-ID: <20191121070732.GA126007@light.dominikbrodowski.net>
+References: <76309f04-b1e1-11d3-b77f-962bf50c5be2@gmail.com>
+ <20190107085724.GC26384@kroah.com>
+ <1a20e64b-7e2f-9ea1-657d-b0b997092738@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a20e64b-7e2f-9ea1-657d-b0b997092738@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For Android application process, we found that the mnt_id read from
-/proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
-to dump such process and it complains
+On Mon, Jan 07, 2019 at 05:33:43PM +0800, Jia-Ju Bai wrote:
+> 
+> 
+> On 2019/1/7 16:57, Greg KH wrote:
+> > On Mon, Jan 07, 2019 at 04:12:22PM +0800, Jia-Ju Bai wrote:
+> > > In drivers/char/pcmcia/synclink_cs.c, the functions mgslpc_open() and hdlcdev_open() can be concurrently executed.
+> > > 
+> > > hdlcdev_open
+> > >    startup
+> > >      claim_resources
+> > >        rx_alloc_buffers
+> > >          line 2641: kfree(info->rx_buf)
+> > > 
+> > > mgslpc_open
+> > >    startup
+> > >      claim_resources
+> > >        rx_alloc_buffers
+> > >          line 2641: kfree(info->rx_buf)
+> > > 
+> > > Thus, a possible concurrency double-free bug may occur.
+> > Wait, are you sure those really are the same structure, and that those
+> > two functions can be called at the same time?  That is a tty and a
+> > network device, are they both created at the same time or does opening
+> > one create the other?
+> 
+> hdlcdev_open() is assigned to "hdlcdev_ops.ndo_open".
+> mgslpc_open() is assigned to "mgslpc_ops.open".
+> They are indeed assigned to the fields in different data structures.
+> 
+> **** For hdlcdev_open() ****
+> In hdlcdev_init():
+>     dev->netdev_ops = &hdlcdev_ops;
+>     rc = register_hdlc_device(dev);
+> Thus, hdlcdev_open() can be called after "register_hdlc_device(dev)".
+> 
+> hdlcdev_init() is called by mgslpc_add_device(), which is called by
+> mgslpc_probe().
+> mgslpc_probe() is assigned to "mgslpc_driver.probe".
+> 
+> In synclink_cs_init():
+>     rc = pcmcia_register_driver(&mgslpc_driver);
+> Thus, mgslpc_probe() can be called after
+> "pcmcia_register_driver(&mgslpc_driver)".
+> 
+> As a result, hdlcdev_open() can be executed in synclink_cs_init().
+> 
+> **** For mgslpc_open() ****
+> In synclink_cs_init():
+>     tty_set_operations(serial_driver, &mgslpc_ops);
+>     rc = tty_register_driver(serial_driver);
+> Thus, mgslpc_open() can be called after
+> "tty_register_driver(serial_driver)".
+> 
+> As a result, mgslpc_open() can be executed in synclink_cs_init().
+> 
+> **** For hdlcdev_open() and mgslpc_open() ****
+> Because mgslpc_open() and hdlcdev_open() can be both executed in
+> synclink_cs_init(), I think they can be concurrently executed.
+> 
+> 
+> > 
+> > It's not obvious in looking at the code if this really is the same
+> > structure or not, how did your tool figure it out?
+> 
+> My tool uses the data structure field "info->rx_buf" in the code, so it
+> cannot very accurately figure it out.
+> 
+> According to my code review, hdlcdev_open() and mgslpc_open() both call
+> "startup(info, tty)", and rx_alloc_buffers() calls kfree(info->rx_buf).
+> Thus, an important thing is that whether the variable "info" in
+> hdlcdev_open() and mgslpc_open() can be the same?
+> I find this code in hdlcdev_open():
+>     /* arbitrate between network and tty opens */
+>     spin_lock_irqsave(&info->netlock, flags);
+> 
+> Thus, the variable "info" in hdlcdev_open() and mgslpc_open() can be the
+> same, and "info->rx_buf" in the two calls to kfree() can be the same.
+> 
+> To fix this bug, I think we can reuse the spinlock "info->netlock" to
+> protect the function startup() in hdlcdev_open() and mgslpc_open().
+> But in rx_alloc_buffers(), there are kmalloc(GFP_KERNEL) and
+> kzalloc(GFP_KERNEL).
+> If we reuse the spinlock, we also need to change GFP_KERNEL to GFP_ATOMIC.
+> What is your opinion?
 
-"(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
-fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
+AFAICS, this is a non-issue: If hdlcdev_open() is called, it sets
+info->netcount=1. If info->netcount!=0, mgslpc_open() will abort before
+calling startup(). And if mgslpc_open() is called, it sets info->count=1,
+causing hdlcdev_open() to fail before calling startup(). So no risk of
+concurrency here.
 
-This is due to how Android application is launched. In Android, there is
-a special process called Zygote which handles the forking of each new
-application process:
-0. Zygote opens and maps some files, for example
-   "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
-   mount namespace, say "old mnt ns".
-1. Zygote waits for the request to fork a new application.
-2. Zygote gets a request, it forks and run the new process in a new
-   mount namespace, say "new mnt ns".
-
-The file opened in step 0 ties to the mount point in "old mnt ns". The
-mnt_id of that mount is listed in /proc/pid/fdinfo. However,
-/proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
-
-Althgouh this issue is exposed in Android, we believe it's generic.
-Prcoess may open files and enter new mnt ns.
-
-To address it, this patch searches the mirror mount in current ns with
-MAJOR and MINOR and shows the mirror's mnt_id.
-
-Signed-off-by: Chen, Hu <hu1.chen@intel.com>
-
-diff --git a/fs/mount.h b/fs/mount.h
-index 711a4093e475..6bbfc2b3b8ba 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -153,3 +153,5 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
- {
- 	return ns->seq == 0;
- }
-+
-+extern struct mount *lookup_mirror_mnt(const struct mount *mnt);
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 2adfe7b166a3..4ea9b4464cd0 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -683,6 +683,36 @@ bool __is_local_mountpoint(struct dentry *dentry)
- 	return is_covered;
- }
- 
-+/*
-+ * lookup_mirror_mnt - Return @mnt's mirror mount in the current/local mount
-+ * namespace. If mirror isn't found, just return NULL.
-+ */
-+struct mount *lookup_mirror_mnt(const struct mount *mnt)
-+{
-+	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
-+	struct mount *mnt_local;
-+	bool is_matched = false;
-+
-+	/* mnt belongs to current namesapce */
-+	if (mnt->mnt_ns == ns)
-+		return mnt;
-+
-+	down_read(&namespace_sem);
-+	list_for_each_entry(mnt_local, &ns->list, mnt_list) {
-+		struct super_block *sb = mnt->mnt.mnt_sb;
-+		struct super_block *sb_local = mnt_local->mnt.mnt_sb;
-+
-+		if (MAJOR(sb->s_dev) == MAJOR(sb_local->s_dev) &&
-+		    MINOR(sb->s_dev) == MINOR(sb_local->s_dev)) {
-+			is_matched = true;
-+			break;
-+		}
-+	}
-+	up_read(&namespace_sem);
-+
-+	return is_matched ? mnt_local : NULL;
-+}
-+
- static struct mountpoint *lookup_mountpoint(struct dentry *dentry)
- {
- 	struct hlist_head *chain = mp_hash(dentry);
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 81882a13212d..cbf2571b0620 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -23,6 +23,7 @@ static int seq_show(struct seq_file *m, void *v)
- 	int f_flags = 0, ret = -ENOENT;
- 	struct file *file = NULL;
- 	struct task_struct *task;
-+	struct mount *mount = NULL;
- 
- 	task = get_proc_task(m->private);
- 	if (!task)
-@@ -53,9 +54,16 @@ static int seq_show(struct seq_file *m, void *v)
- 	if (ret)
- 		return ret;
- 
-+	/* After unshare -m, real_mount(file->f_path.mnt) is not meaningful in
-+	 * current mount namesapce. We want to know the mnt_id in current mount
-+	 * namespace
-+	 */
-+	mount = lookup_mirror_mnt(real_mount(file->f_path.mnt));
-+	if (!mount)
-+		mount = real_mount(file->f_path.mnt);
-+
- 	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
--		   (long long)file->f_pos, f_flags,
--		   real_mount(file->f_path.mnt)->mnt_id);
-+		   (long long)file->f_pos, f_flags, mount->mnt_id);
- 
- 	show_fd_locks(m, file, files);
- 	if (seq_has_overflowed(m))
--- 
-2.22.0
-
+Best,
+	Dominik
