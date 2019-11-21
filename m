@@ -2,172 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D45104E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0567104E61
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726502AbfKUInx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:43:53 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46634 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726165AbfKUInx (ORCPT
+        id S1726840AbfKUIvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:51:02 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4340 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfKUIvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:43:53 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAL8ggaE025989;
-        Thu, 21 Nov 2019 09:43:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=GwWBHQ9N4yig6Dd7KbgCOG6gB1C+OQALGmmDk+pmewM=;
- b=BuQcLUSpXyNlazcUbw/2qq1STEtvc9EVxz3578cIOrRiF7FaZNl22wur2C0JSlbMs++k
- rUacF6+CS6E+wgGwiE4IMuUj4dWlGh5oWbNlf2XZ0AjPW7N/g8IPE7kUuH7wL7kE2hv9
- c1s6MsW+gL3BZ5nmp9wspcig3wx1n31U8GjTw+fv/G/+qTt51Z23tndGIwrgBsboyh88
- hJXutr759jifbXnE1kw0jDYwBOI+GGaZcY7UJhFREHwzj9NSBrVvU2UWFTAfIfwRhPD9
- 1/UYGw47HZJOZg42z+1H7KJQzwjCVP8c4V6hZ4pmxFi4LtSOI6QWqn5RlnQqKB7/5USp 0A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2wa9uvjg7g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 21 Nov 2019 09:43:22 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DCD8B100038;
-        Thu, 21 Nov 2019 09:43:20 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C2A4F2B05DD;
-        Thu, 21 Nov 2019 09:43:20 +0100 (CET)
-Received: from localhost (10.75.127.49) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 21 Nov 2019 09:43:20
- +0100
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>
-CC:     <linux-watchdog@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v2] dt-bindings: watchdog: Convert stm32 watchdog bindings to json-schema
-Date:   Thu, 21 Nov 2019 09:43:16 +0100
-Message-ID: <20191121084316.13839-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Thu, 21 Nov 2019 03:51:01 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd64ff00000>; Thu, 21 Nov 2019 00:50:56 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Nov 2019 00:51:00 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 21 Nov 2019 00:51:00 -0800
+Received: from [10.2.169.101] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
+ 2019 08:50:57 +0000
+Subject: Re: [PATCH v7 09/24] vfio, mm: fix get_user_pages_remote() and
+ FOLL_LONGTERM
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+References: <20191121071354.456618-1-jhubbard@nvidia.com>
+ <20191121071354.456618-10-jhubbard@nvidia.com>
+ <20191121081019.GF30991@infradead.org>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <daa90e74-ce6c-726f-c16c-b973390e96f7@nvidia.com>
+Date:   Thu, 21 Nov 2019 00:48:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-21_01:2019-11-20,2019-11-21 signatures=0
+In-Reply-To: <20191121081019.GF30991@infradead.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574326256; bh=UHmS3HaBGjmYSzQqUGVl3ICvWTX3pmd5BL/EguYi/Wc=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Z+x3gLJVvvSsNmbJxfvKoMQ17fDDVhYzRi55HX3hITWwCeb/BaThjwuDfHWXQ2K53
+         HFWjGPFJfyLqqMrztMFqHTp5+odo6bntDk66mQpkwmHgD01l6MePY7oBu7dI5amAm6
+         mWFXkb+WtDqpHKuOwqy4u+Q0ATobQoK3TAaBcowjz8gxjeZ/26gNn7iyrr8lBXskIU
+         BLJxtARBqO9pllqLJ3t6UR+2fLAc7BGxsr6AdGvtx7Jig1eMZiQdgTKDRL70xPfI7p
+         LawM9A5bl0tFutwK8JCa4Nii1wdq73PZcJlgKxDsflTxNmTDOzy8kVbjCi6X76PtZx
+         SiFb+OtUTa48Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the STM32 watchdog binding to DT schema format using json-schema
+On 11/21/19 12:10 AM, Christoph Hellwig wrote:
+> Should this be two patches, one for th core infrastructure and one for
+> the user?  These changes also look like another candidate to pre-load.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
-changes in version 2:
-- remove trailer space
-- add Christophe in the maintainers list
-  
- .../devicetree/bindings/watchdog/st,stm32-iwdg.txt | 26 ----------
- .../bindings/watchdog/st,stm32-iwdg.yaml           | 55 ++++++++++++++++++++++
- 2 files changed, 55 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
+OK, I'll split them up.
 
-diff --git a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
-deleted file mode 100644
-index d8f4430b0a13..000000000000
---- a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--STM32 Independent WatchDoG (IWDG)
-----------------------------------
--
--Required properties:
--- compatible: Should be either:
--  - "st,stm32-iwdg"
--  - "st,stm32mp1-iwdg"
--- reg: Physical base address and length of the registers set for the device
--- clocks: Reference to the clock entry lsi. Additional pclk clock entry
--  is required only for st,stm32mp1-iwdg.
--- clock-names: Name of the clocks used.
--  "lsi" for st,stm32-iwdg
--  "lsi", "pclk" for st,stm32mp1-iwdg
--
--Optional Properties:
--- timeout-sec: Watchdog timeout value in seconds.
--
--Example:
--
--iwdg: watchdog@40003000 {
--	compatible = "st,stm32-iwdg";
--	reg = <0x40003000 0x400>;
--	clocks = <&clk_lsi>;
--	clock-names = "lsi";
--	timeout-sec = <32>;
--};
-diff --git a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
-new file mode 100644
-index 000000000000..975b697930a4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/st,stm32-iwdg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32 Independent WatchDoG (IWDG) bindings
-+
-+maintainers:
-+  - Yannick Fertre <yannick.fertre@st.com>
-+  - Christophe Roullier <christophe.roullier@st.com>
-+
-+allOf:
-+  - $ref: "watchdog.yaml#"
-+
-+properties:
-+  compatible:
-+    enum:
-+      - st,stm32-iwdg
-+      - st,stm32mp1-iwdg
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Low speed clock
-+      - description: Optional peripheral clock
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      enums: [ lsi, pclk ]
-+    minItems: 1
-+    maxItems: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    watchdog@5a002000 {
-+      compatible = "st,stm32mp1-iwdg";
-+      reg = <0x5a002000 0x400>;
-+      clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
-+      clock-names = "pclk", "lsi";
-+      timeout-sec = <32>;
-+    };
-+
-+...
+
+thanks,
 -- 
-2.15.0
-
+John Hubbard
+NVIDIA
+  
