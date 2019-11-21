@@ -2,124 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 511A510551F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB31105524
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:14:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfKUPOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 10:14:04 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43006 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726735AbfKUPOE (ORCPT
+        id S1727014AbfKUPOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 10:14:31 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:60673 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726634AbfKUPOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:14:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574349242;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S/ndUKKJCxI76HoRVTG7jNdszQTcPJXiUk69ASnD9hc=;
-        b=BFZPun6Wui8mst5ik4v+igZbbNO52U03jnmSpDZ1ATsGYUxUJFr+Ti3ykcD52EkazKpp+B
-        ko2SioijMq46xlosEU/tY9Nt7mHwLezU+K1xLd3BvLSJRmSAi5PvMABX2yMrB2PxStfrsf
-        GYB6ESIY9PDnA2Y+Db56AsDis/pFM7w=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-248-MyCj3NooMKShAbR2Zq1UDA-1; Thu, 21 Nov 2019 10:13:59 -0500
-Received: by mail-wm1-f71.google.com with SMTP id 199so1990770wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 07:13:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iHsCY/CMXwIcgnSHclUoHJ8eh4Q1rh48lgjW6W5ihDs=;
-        b=pOvwYTJlxgxQoHJjrjFaSt3IXW6PoXCuncxVXosdSO2814k8Dj9tiBJjipLEkOKEM1
-         mFVxRVGtXd8PCbiTRoAB8lwh4kV8+F3O2W0P3HwmVQfkSZ4Dqq9daRRpcJB/GdejccNZ
-         SMmfzN6uXSCy2vS2hX1JYU809d63+vSNUkGSVY+fM4MMtmw+egnVI1KgagN5K52o4nWQ
-         3lShO4k86tbveznLz2l8GTy7Y54P8sp/2QN3IkCuz6CVFB3n/PrN7c8V0UQGS/rMoigG
-         BDhXkvskK6BESNtQfi4enna8zuDLBQYa8PWAazvJaC5Tl5xYjv/xTzfNxyr5X7vt6gSL
-         r9VQ==
-X-Gm-Message-State: APjAAAW6N/fVFrxjPdLBVnwWiQa95iRBGMeP4LqBflvFo4xrtO3QXikw
-        epg4XZdOaOw1QNURAZ6UFbCAt1QlrdqcCb2HivxS4dbaVOMRpFK94BAELunJNAFx4Abi32QyA7o
-        nLnI/caiVLnfcNWoahFo9V4m7
-X-Received: by 2002:adf:fd4a:: with SMTP id h10mr10771265wrs.90.1574349237927;
-        Thu, 21 Nov 2019 07:13:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwffrnaWrX2CTnz1mrGFjyWf4QxuPdCHsb+nu0fFKK6LVRRphnlRgzFqP4BBbEKQFy/2FMiLQ==
-X-Received: by 2002:adf:fd4a:: with SMTP id h10mr10771237wrs.90.1574349237686;
-        Thu, 21 Nov 2019 07:13:57 -0800 (PST)
-Received: from steredhat (a-nu5-32.tin.it. [212.216.181.31])
-        by smtp.gmail.com with ESMTPSA id z7sm1978953wma.46.2019.11.21.07.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 07:13:57 -0800 (PST)
-Date:   Thu, 21 Nov 2019 16:13:55 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jorgen Hansen <jhansen@vmware.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH net-next 0/6] vsock: add local transport support
-Message-ID: <20191121151355.grgfbte6xniqe6xo@steredhat>
-References: <20191119110121.14480-1-sgarzare@redhat.com>
- <MWHPR05MB3376B8241546664BBCA6FC37DA4E0@MWHPR05MB3376.namprd05.prod.outlook.com>
-MIME-Version: 1.0
-In-Reply-To: <MWHPR05MB3376B8241546664BBCA6FC37DA4E0@MWHPR05MB3376.namprd05.prod.outlook.com>
-X-MC-Unique: MyCj3NooMKShAbR2Zq1UDA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        Thu, 21 Nov 2019 10:14:30 -0500
+Received: from orion.localdomain ([95.115.120.75]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MG9To-1idHoc0tI4-00GbeK; Thu, 21 Nov 2019 16:14:26 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     balbi@kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH] drivers: usb: Kconfig: cleanup indentions
+Date:   Thu, 21 Nov 2019 16:14:08 +0100
+Message-Id: <20191121151408.22401-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:e0kRH53v0W+OvWbKhNygQRuPlIl1lH04eIKBgnWV2/bRi3zzsK+
+ Ud+VkMN4dX7d3S5YIynTl17SJr26oj8OyG0VPBtiAeNsE4OOBm0KPHHjE8S0M9aah2bbDyY
+ WCGciBf0nNcnxCqxIs5kuXlyYP5g4guPAGqZxSf3KeEKpFMWxAdUOvqdO3jlJt/fTQUP3cj
+ yk477NdmjY1B6WuDVR0LQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LzmVPn3/Sqw=:3J8CsX7sgEx47rB8SXR1V5
+ 0ArIgnCtEFl5sq+PoKy67VGNoAAE7GIr98/RBz2Sq0K9DFm8S1WPpZwaO9jFlUZAw63qfuBVY
+ WU5Idh4KPRIjc2yfK3beGpZ90TRXKyEaTNawrwHXtz5RssnwGXUPeEL2XIcVpETNo0V+Nx38o
+ O6Rdhl1CsAfdMOltFel1ClI6So8fSkWzHopc3k6FcYSvQJQfYH81NQzalTko0Vm5Rvdi0Kbo1
+ z/DHh3qx0phtca/YZO8BIpSrPRrTIxP7j6VxGS/RQq9YUVGjV1/agWzMxkCW3y83OXUl6mPFF
+ MaP7TADxH2gsZ5ppa4fTDT3x4ANDeCQHx8MgvR2JgurEDDts2lsyXCw+0udDtiO+2IHv6ajnL
+ LfZeOkKc2vmZQmCnDzR0U67nATDmBEFlkk/Z6w4xE2fsi9Ol5lgPV+ggTsfsa7wmFPsCHJH/M
+ /vaklRW1cjN89qOJNvn7YOBgqLFZYvvJdcWXde27wWXx2CaObqaArFJbIjA9AT831rDQP9sHl
+ 1bALVfMAvT5cKYbCkveJoxU1xhRRbLTzrjr2xH2McilO84jX3PZ7jyB37fgqpfYUUHx6Sdmhp
+ WvDZXz3pv/E3fjq5cPzmEvfCHSmzu7bC4OelP0rRMtJy1ngCxuN/3tZAXRndb/JArRLZ8RSHv
+ DLbqxeymoBjS+Jei/cZNOHxEp2C0W0rouXwyqI67DrcnG611AQGBkIeZZRcsQ09jMepz0lTod
+ 1Ndhih2Pm7beiDrH5ADyOWaT5yfUYnf2U3GqMb0arhRuf5TwWGNT/5YOUH53N8kuiQED//Uqe
+ L2s3pxpanZYHK6ORJZftemJTHj+jJLA5b2SfTiBQ7rIJ40gun2SR9W4eJI4Z2GKZyM3Mc1+GF
+ juzvFM+2jlbR9zb09TgA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 02:45:32PM +0000, Jorgen Hansen wrote:
-> > From: Stefano Garzarella [mailto:sgarzare@redhat.com]
-> > Sent: Tuesday, November 19, 2019 12:01 PM
-> > This series introduces a new transport (vsock_loopback) to handle
-> > local communication.
-> > This could be useful to test vsock core itself and to allow developers
-> > to test their applications without launching a VM.
-> >=20
-> > Before this series, vmci and virtio transports allowed this behavior,
-> > but only in the guest.
-> > We are moving the loopback handling in a new transport, because it
-> > might be useful to provide this feature also in the host or when
-> > no H2G/G2H transports (hyperv, virtio, vmci) are loaded.
-> >=20
-> > The user can use the loopback with the new VMADDR_CID_LOCAL (that
-> > replaces VMADDR_CID_RESERVED) in any condition.
-> > Otherwise, if the G2H transport is loaded, it can also use the guest
-> > local CID as previously supported by vmci and virtio transports.
-> > If G2H transport is not loaded, the user can also use VMADDR_CID_HOST
-> > for local communication.
-> >=20
-> > Patch 1 is a cleanup to build virtio_transport_common without virtio
-> > Patch 2 adds the new VMADDR_CID_LOCAL, replacing
-> > VMADDR_CID_RESERVED
-> > Patch 3 adds a new feature flag to register a loopback transport
-> > Patch 4 adds the new vsock_loopback transport based on the loopback
-> >         implementation of virtio_transport
-> > Patch 5 implements the logic to use the local transport for loopback
-> >         communication
-> > Patch 6 removes the loopback from virtio_transport
-> >=20
-> > @Jorgen: Do you think it might be a problem to replace
-> > VMADDR_CID_RESERVED with VMADDR_CID_LOCAL?
->=20
-> No, that should be fine. It has never allowed for use with stream sockets=
- in
-> AF_VSOCK. The only potential use would be for datagram sockets, but that
-> side appears to be unaffected by your changes, since loopback is only
-> introduced for SOCK_STREAM.
->=20
+Make the code look a little bit nicer.
 
-Yes, datagram sockets are not affected.
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/usb/dwc3/Kconfig | 30 +++++++++++++++---------------
+ drivers/usb/misc/Kconfig | 24 ++++++++++++------------
+ 2 files changed, 27 insertions(+), 27 deletions(-)
 
-Thanks for the clarification,
-Stefano
+diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+index 556a876c7896..7695841a108f 100644
+--- a/drivers/usb/dwc3/Kconfig
++++ b/drivers/usb/dwc3/Kconfig
+@@ -97,24 +97,24 @@ config USB_DWC3_KEYSTONE
+ 	  Say 'Y' or 'M' here if you have one such device
+ 
+ config USB_DWC3_MESON_G12A
+-       tristate "Amlogic Meson G12A Platforms"
+-       depends on OF && COMMON_CLK
+-       depends on ARCH_MESON || COMPILE_TEST
+-       default USB_DWC3
+-       select USB_ROLE_SWITCH
++	tristate "Amlogic Meson G12A Platforms"
++	depends on OF && COMMON_CLK
++	depends on ARCH_MESON || COMPILE_TEST
++	default USB_DWC3
++	select USB_ROLE_SWITCH
+ 	select REGMAP_MMIO
+-       help
+-         Support USB2/3 functionality in Amlogic G12A platforms.
+-	 Say 'Y' or 'M' if you have one such device.
++	help
++	  Support USB2/3 functionality in Amlogic G12A platforms.
++	  Say 'Y' or 'M' if you have one such device.
+ 
+ config USB_DWC3_OF_SIMPLE
+-       tristate "Generic OF Simple Glue Layer"
+-       depends on OF && COMMON_CLK
+-       default USB_DWC3
+-       help
+-         Support USB2/3 functionality in simple SoC integrations.
+-	 Currently supports Xilinx and Qualcomm DWC USB3 IP.
+-	 Say 'Y' or 'M' if you have one such device.
++	tristate "Generic OF Simple Glue Layer"
++	depends on OF && COMMON_CLK
++	default USB_DWC3
++	help
++	  Support USB2/3 functionality in simple SoC integrations.
++	   Currently supports Xilinx and Qualcomm DWC USB3 IP.
++	   Say 'Y' or 'M' if you have one such device.
+ 
+ config USB_DWC3_ST
+ 	tristate "STMicroelectronics Platforms"
+diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+index 9bce583aada3..4df29c6f7856 100644
+--- a/drivers/usb/misc/Kconfig
++++ b/drivers/usb/misc/Kconfig
+@@ -162,7 +162,7 @@ config USB_IOWARRIOR
+ 	help
+ 	  Say Y here if you want to support the IO Warrior devices from Code
+ 	  Mercenaries.  This includes support for the following devices:
+-	  	IO Warrior 40
++		IO Warrior 40
+ 		IO Warrior 24
+ 		IO Warrior 56
+ 		IO Warrior 24 Power Vampire
+@@ -181,8 +181,8 @@ config USB_TEST
+ 	  including sample test device firmware and "how to use it".
+ 
+ config USB_EHSET_TEST_FIXTURE
+-        tristate "USB EHSET Test Fixture driver"
+-        help
++	tristate "USB EHSET Test Fixture driver"
++	help
+ 	  Say Y here if you want to support the special test fixture device
+ 	  used for the USB-IF Embedded Host High-Speed Electrical Test procedure.
+ 
+@@ -233,17 +233,17 @@ config USB_HUB_USB251XB
+ 	  Say Y or M here if you need to configure such a device via SMBus.
+ 
+ config USB_HSIC_USB3503
+-       tristate "USB3503 HSIC to USB20 Driver"
+-       depends on I2C
+-       select REGMAP_I2C
+-       help
+-         This option enables support for SMSC USB3503 HSIC to USB 2.0 Driver.
++	tristate "USB3503 HSIC to USB20 Driver"
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  This option enables support for SMSC USB3503 HSIC to USB 2.0 Driver.
+ 
+ config USB_HSIC_USB4604
+-       tristate "USB4604 HSIC to USB20 Driver"
+-       depends on I2C
+-       help
+-         This option enables support for SMSC USB4604 HSIC to USB 2.0 Driver.
++	tristate "USB4604 HSIC to USB20 Driver"
++	depends on I2C
++	help
++	  This option enables support for SMSC USB4604 HSIC to USB 2.0 Driver.
+ 
+ config USB_LINK_LAYER_TEST
+ 	tristate "USB Link Layer Test driver"
+-- 
+2.11.0
 
