@@ -2,159 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C9B1054CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:45:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3084A1054D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:47:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbfKUOpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:45:36 -0500
-Received: from mail-eopbgr730060.outbound.protection.outlook.com ([40.107.73.60]:7616
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726293AbfKUOpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:45:35 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U7jGzBDywQYgTsWBNRktbjob0AQxPYiROVeQbVo/qT095lXVpc9LdBqG/TYTsIv/7YNblqvnuHnwqZpchKqI89/uL809Ep2c5iVOm3IIQSv7uz/in/0YEDe6PjlQX4iUgDmjqP1nPOpTD/h04hufHfNosXQLRcFF/51nc8ylWYtLZsq1kcA+gxS2SNmsX6H3cUw0QHiDch80bYttoAayyl6vR/sTv3x4ojJcbXg8/xCeJ0TjNHq0XgivAFT47KowPRhq5poUd0pjUF0QWVrZTYxWPoFKm2CUmWF8esqxT8DZILgdtKOCAdKZXZG9VAnYMNR3pjnlDuVvfhWoJMvRhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HHZQ7mFRNDH24ZO/Apdnkglm+mP0xhv+1pZFgZu0yQU=;
- b=MTNv27Nk3uyghaoB2gGcLhEzjMNGcS+xZPEMLLa7nyjsZPi5OK7GyRKxQzZFJ6OkYnBoC1m4YqO0e0eQj6ru319ItRiIwxSs5OhVF78cxnm0ql+9ldgWfen3iWV8rJdu4TdQ3HopAr7gVHBgZMKvE434HCRwA78wOn6Reer5EQgi/PmeEyg1wZR6r2MZMpKdUcdTvyGJEp707/bYr9ZugyIZ3gedfRna9eU8u/4dpgGvL0wwGEAJS6RczjbRPQ2j9O9xk02RKRsqK+Qojsx6jrPC/bJpGHiZrZb0kIDdI/66hcyF9X1NEvrE62Yvnp+25iM5hwknvTIcqEnZKkCwag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HHZQ7mFRNDH24ZO/Apdnkglm+mP0xhv+1pZFgZu0yQU=;
- b=pVhvccO5yn02oltx9xLCZFVqgvZNQPO5wZqLwKgSIsVxPeu8U2pKrZTKSSv3dUFpemtxKvzyLxB5SpXufbSd4a2xHd6M7tlMvz4OO5VjNbM4ILtedRhdSQ9mHfD2y4S8//Bfs8f/HwivjBVwAaJv6Lqy/JJEEL6dKB4EaIk3cEU=
-Received: from MWHPR05MB3376.namprd05.prod.outlook.com (10.174.175.149) by
- MWHPR05MB2990.namprd05.prod.outlook.com (10.168.246.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.12; Thu, 21 Nov 2019 14:45:32 +0000
-Received: from MWHPR05MB3376.namprd05.prod.outlook.com
- ([fe80::4098:2c39:d8d3:a209]) by MWHPR05MB3376.namprd05.prod.outlook.com
- ([fe80::4098:2c39:d8d3:a209%7]) with mapi id 15.20.2474.015; Thu, 21 Nov 2019
- 14:45:32 +0000
-From:   Jorgen Hansen <jhansen@vmware.com>
-To:     'Stefano Garzarella' <sgarzare@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: RE: [PATCH net-next 0/6] vsock: add local transport support
-Thread-Topic: [PATCH net-next 0/6] vsock: add local transport support
-Thread-Index: AQHVnsi4kz4RAPX5S02yxj8Sa/r70aeVsxKg
-Date:   Thu, 21 Nov 2019 14:45:32 +0000
-Message-ID: <MWHPR05MB3376B8241546664BBCA6FC37DA4E0@MWHPR05MB3376.namprd05.prod.outlook.com>
-References: <20191119110121.14480-1-sgarzare@redhat.com>
-In-Reply-To: <20191119110121.14480-1-sgarzare@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jhansen@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c0d55e97-e0d6-4485-0e18-08d76e917616
-x-ms-traffictypediagnostic: MWHPR05MB2990:
-x-microsoft-antispam-prvs: <MWHPR05MB2990F74A0DD06BB9A3BF6C8DDA4E0@MWHPR05MB2990.namprd05.prod.outlook.com>
-x-vmwhitelist: True
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0228DDDDD7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(396003)(136003)(376002)(189003)(199004)(305945005)(99286004)(14454004)(81166006)(81156014)(8676002)(8936002)(71200400001)(71190400001)(7736002)(86362001)(74316002)(6436002)(33656002)(4326008)(478600001)(66476007)(66556008)(64756008)(52536014)(76116006)(66946007)(110136005)(54906003)(11346002)(446003)(25786009)(5660300002)(66446008)(7696005)(6506007)(102836004)(9686003)(76176011)(55016002)(186003)(26005)(316002)(229853002)(66066001)(6246003)(256004)(2906002)(2501003)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR05MB2990;H:MWHPR05MB3376.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pEgvhpcD7UgxVgIdd+loqntBwxfIKRCZIlf0ARPMDXzUf4xMo9BxP6Wz9vi/fojiMmcJUobrbJCjLIb7gLv+DJ/0X/3Qduv4hbUJ9hzX4HA0SB0t8lBqb3SVB/fsjZym85YyLlKmk+C0C3UP6xgyMWeQGuCBJuDq1H0zSafou7iRT/hhvU1YQSonSnEW6nIUqGyRn7gbtmYhGR50BVl0lL/zHu6LpHDxiBDxyJumgE2yvTCf38nMGjHYMjpIYc9/Lqr4QYls4wwMIFBJN0rRkumidqxA7Z/TC/m8HGglPdJquDEpbGXsAdu4C8oIoQ2yL0fAqXEDxqfXzMwH9wgXUxMgUWSRIfiqILB72zKiTd0mO2Kb+H2AwfKynRLjb+tjycvhsl+5cCRtJPEyrOhGdYhnygRYcYZKxxGIMtulFS8dp0UvgHIwqU+Vn9yefdIj
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726880AbfKUOrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:47:52 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38905 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUOru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:47:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v8so3533530ljh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 06:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rgd4jF91R+rgjedOLF1KEM/oHEun6CYyuuh6iHBRru8=;
+        b=Lq4exT5tohXgfK/4YHkl0FNJSGyjWly+xHi6fLfjSEDdHDFYVV7wPP7QjNbspQ20Ni
+         ewK7EEczCCniTPdDikrwuo5CVV/GZzYpUv5N2oucKbqXzCx5OaRtb8CkVQV2FSsDFOG7
+         DZ8NmRJVYzDOsgQLmlwfmO45e8J4YNzAU4zzaeTOFeWSYHpDANNzaTWoQyYKqu0nSWwT
+         MVxQZ+oYh1+YqdC+YEQrA3uAc1DI73/QNazp8XO88qH8sgm0N86HY67DR1hqPdQ1/qJS
+         oP7qehJSLgOD9R5AFA5s0KLONMwsizqKAlopQCHfrrj2Dd+pVWzi8pR2fJOGL+ZjMkQj
+         Q6zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rgd4jF91R+rgjedOLF1KEM/oHEun6CYyuuh6iHBRru8=;
+        b=GclI2uHtxdUdJ808Cd2wG2TaNKZVLfxmO2gtTzB2gMAuY35ufunxxBujgYsTUnJ/PF
+         uqG2W1bq8KvpGpWy3sw8fqbh944BLd1ua/V8E2fIwc8SZEHWZ/o4MU1bMK1gnL8U9Tk1
+         FU6V9HBWgJYL1C9dP8DnbnH6+DnFLKM7VzWNhOhvjOeKDgVvOtuhRF0ku2+KFyjm+QCT
+         PTtk2gn0sZ3fkwsjEtnd5icXgZVM/qjr9oMeZeKimK2xGNftu12pK1WAewa6uoBtLiUi
+         8T41XxGa9Qq9DumShfiI/6tKXVR8fnCdNDUPVAYHwnS7KZZztCf96g+T5eIDiK+pohGQ
+         SXmg==
+X-Gm-Message-State: APjAAAX2FNFDRvyHk6soXVH/9iG9yv7u0VexsLMpL7oIZcTQABAQOVjp
+        q15AmJhIu7livpQGVK0KnwbJ7073XhVUeHC3SguwSQ==
+X-Google-Smtp-Source: APXvYqwpA3cRH0JOe5hzsZglOV9vYtuQrxuIKdB45IJNsXbC/8UauccMkXlbzwCghqjPAdpiHnaoAA4DEnjrSk1Ukdo=
+X-Received: by 2002:a2e:5c46:: with SMTP id q67mr7655231ljb.42.1574347668239;
+ Thu, 21 Nov 2019 06:47:48 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0d55e97-e0d6-4485-0e18-08d76e917616
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 14:45:32.3986
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6tkywh7tOiRgz+zwDunUrtVuWFTm9QB9jK1Vd4qOPtZEAlp8hUI/dgtec0hl9pcsew/k9xGUwYgB9n+ibbrs8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR05MB2990
+References: <20191030114530.872-1-peter.ujfalusi@ti.com> <CACRpkdbw9MVrQMSgVMenSqAOiti1pAy4d2LvWY-ssx9dhzWEcw@mail.gmail.com>
+ <8bd0f286-dc54-72a6-0aaf-2dc7b9972883@ti.com> <CACRpkdZ-qf3OKAxsoj+36V_N6Y_gFte1LHM+66OqekXBAWxsVA@mail.gmail.com>
+ <56916577-8d39-f98f-9fd6-2fdc6e1e0023@ti.com>
+In-Reply-To: <56916577-8d39-f98f-9fd6-2fdc6e1e0023@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Nov 2019 15:47:36 +0100
+Message-ID: <CACRpkdYLn2p+smpcqLj=mD1=NRNAXHbqL25Y6OB93+ZCWk6PAw@mail.gmail.com>
+Subject: Re: [RFC 0/2] gpio: Support for shared GPIO lines on boards
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Stefano Garzarella [mailto:sgarzare@redhat.com]
-> Sent: Tuesday, November 19, 2019 12:01 PM
-> This series introduces a new transport (vsock_loopback) to handle
-> local communication.
-> This could be useful to test vsock core itself and to allow developers
-> to test their applications without launching a VM.
->=20
-> Before this series, vmci and virtio transports allowed this behavior,
-> but only in the guest.
-> We are moving the loopback handling in a new transport, because it
-> might be useful to provide this feature also in the host or when
-> no H2G/G2H transports (hyperv, virtio, vmci) are loaded.
->=20
-> The user can use the loopback with the new VMADDR_CID_LOCAL (that
-> replaces VMADDR_CID_RESERVED) in any condition.
-> Otherwise, if the G2H transport is loaded, it can also use the guest
-> local CID as previously supported by vmci and virtio transports.
-> If G2H transport is not loaded, the user can also use VMADDR_CID_HOST
-> for local communication.
->=20
-> Patch 1 is a cleanup to build virtio_transport_common without virtio
-> Patch 2 adds the new VMADDR_CID_LOCAL, replacing
-> VMADDR_CID_RESERVED
-> Patch 3 adds a new feature flag to register a loopback transport
-> Patch 4 adds the new vsock_loopback transport based on the loopback
->         implementation of virtio_transport
-> Patch 5 implements the logic to use the local transport for loopback
->         communication
-> Patch 6 removes the loopback from virtio_transport
->=20
-> @Jorgen: Do you think it might be a problem to replace
-> VMADDR_CID_RESERVED with VMADDR_CID_LOCAL?
+On Tue, Nov 19, 2019 at 9:33 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> On 13/11/2019 19.06, Linus Walleij wrote:
+> > On Fri, Nov 8, 2019 at 12:20 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
 
-No, that should be fine. It has never allowed for use with stream sockets i=
-n
-AF_VSOCK. The only potential use would be for datagram sockets, but that
-side appears to be unaffected by your changes, since loopback is only
-introduced for SOCK_STREAM.
+> >> gpiod_deassert() would be equivalent to Philipp's
+> >> gpiod_politely_suggest_value()
+> >
+> > I don't intuitively understand the semantics of these calls.
+> > Consider Rusty Russells API design manifesto:
+> > http://sweng.the-davies.net/Home/rustys-api-design-manifesto
+>
+> imho the gpiod is API level -7 in the Rusty scale.
 
->=20
-> Thanks,
-> Stefano
->=20
-> Stefano Garzarella (6):
->   vsock/virtio_transport_common: remove unused virtio header includes
->   vsock: add VMADDR_CID_LOCAL definition
->   vsock: add local transport support in the vsock core
->   vsock: add vsock_loopback transport
->   vsock: use local transport when it is loaded
->   vsock/virtio: remove loopback handling
->=20
->  MAINTAINERS                             |   1 +
->  include/net/af_vsock.h                  |   2 +
->  include/uapi/linux/vm_sockets.h         |   8 +-
->  net/vmw_vsock/Kconfig                   |  12 ++
->  net/vmw_vsock/Makefile                  |   1 +
->  net/vmw_vsock/af_vsock.c                |  49 +++++-
->  net/vmw_vsock/virtio_transport.c        |  61 +------
->  net/vmw_vsock/virtio_transport_common.c |   3 -
->  net/vmw_vsock/vmci_transport.c          |   2 +-
->  net/vmw_vsock/vsock_loopback.c          | 217
-> ++++++++++++++++++++++++
->  10 files changed, 283 insertions(+), 73 deletions(-)
->  create mode 100644 net/vmw_vsock/vsock_loopback.c
->=20
-> --
-> 2.21.0
+I would agree that the double-inversion of DT or machine flags
+for active low/high and then gpiod_set_value() to high makes it
+low and vice versa mutatis mutandis is pretty -7
 
+But my comment was not about that, but about the ambiguity
+of some *_politely_suggest_* API.
+
+I mean adding a new confusing API to the mess is hardly
+going to make things better, two wrongs doesn't make one
+right.
+
+> > It seems like a totally different and entirely syntactic problem
+> > separate from the reset business you're trying to solve?
+> >
+> > We had this discussion before this week and yeah, if we
+> > historically named the logical levels on the line "asserted"
+> > and "deasserted" everywhere it would be great.
+>
+> Yeah, it is extremely awkward currently:
+> rst-gpois = <&gpio0 1 GPIO_ACTIVE_LOW>;
+>
+> devm_gpiod_get_optional(dev, "rst",  GPIOD_OUT_LOW |
+>                                      GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+>
+> Would set the initial output level to _high_
+
+Yeah I understand what the problem is.... :/
+
+> > These APIs really need names that can be understood right off
+> > and they should be compile-time optional (a Kconfig option) so
+> > that drivers that really need them can select to have them
+> > explicitly.
+>
+> At the end the goal is to have only assert/deassert API for GPIO, or do
+> you want to keep set_value()?
+
+The problem can me split in two, non-conflated things:
+
+1. Rename gpiod_set_value() to e.g. gpiod_set_state(bool asserted)
+    this is a purely syntactic change with no semantic effect.
+    This makes it clear what happens and fixes the issue with
+    the hard to understand name of the function, but does not
+    change the semantic allowing you to say assert a GPIO line
+    several times after another, as that would wreak havoc in the
+    kernel. And after all there is nothing about that name that
+    suggest it would be reference counting anything.
+
+2. Add a new reference-counted stateful API that does not allow you to
+   handle your usecase.
+
+I would recommend not conflating the two things.
+
+> Imho the gpiod_direction_output_raw() should not be allowed to be used
+> by drivers.
+
+So how do you suggest that drivers/w1/masters/w1-gpio.c
+handle the usecase of overriding a nominally open drain-flagged
+line to pump some voltage in the line at some regular intervals,
+notwithstanding the logical level of the line?
+
+This use of GPIO isn't dealing with something boolean logical,
+but something directly electromagnetic.
+
+It would be nice if GPIO was only about logical levels,
+but it is not, and that is why gpiod_set_raw() exists.
+
+There are other users in the kernel that are just cheating
+or thinking wrong, it'd be nice if those could be fixed.
+It doesn't mean the API has no valid usecases.
+
+> CONFIG_GPIOLIB_ASSER_API as selectable config option?
+
+CONFIG_GPIOLIB_REFCOUNTING_API is more to the
+point I think, because that is what you want to achieve.
+
+Then the function calls can very well be named something
+with *assert* in them.
+
+> But it is one thing to change gpiod users as we have heavy use of the
+> legacy gpio API:
+> git grep gpio_request | wc -l
+> 1868
+
+That can be done with a sed script if someone takes on the
+task.
+
+> That does not really matter in this case.
+
+Nope.
+
+> > So begin with creating a way to pull the shared handling of
+> > regulators into gpiolib with these clearly cut semantics
+> > delete the NONEXCLUSIVE thing and then when you are
+> > done with that exploit the same
+> > infrastructure for GPIO reset.
+>
+> The logic is relatively simple, 229 lines in gpio-shared, but moving
+> that into core will explode things a bit and going to add more
+> complexity to all gpio lines.
+
+I would just add a flag such as in drivers/gpio/gpiolib.h:
+
+#define FLAG_REFERENCE_COUNTED  15      /* GPIO uses the reference
+counting API */
+
+If anyone grabs a GPIO with this flag it needs to be accessed
+using the refcounting API and all other uses with the
+regular API denied.
+
+The same the other direction, if FLAG_REQUESTED is already
+set, the refcounting API should bail out.
+
+Do not try to support a use case such as allowing the gpiod
+to be grabbed unrefcounted and later turned into a refcounted
+gpiod. Only grab it through the refcount-specific API.
+
+This way it's almost as cleanly separated as the code is
+separated into regulator right now, just that it lives in
+a place where it can be reused by others needing
+reference counting.
+
+Then surround code with:
+
+if (IS_ENABLED(CONFIG_GPIOLIB_REFCOUNTING_API)
+     /* test flag */
+
+Then the code size impact should be zero if the refcounting API
+is not selected.
+
+Then just create an add-on that only affects the lines that explicitly
+want refcounting. Wrap a gpiod in another struct or something
+struct gpio_refcount_desc?
+
+> For one, we must maintain a list of clients requesting the line to be
+> able to do proper refcounting and this needs to be done for all pins as
+> we don't know beforehand that the given line is going to be shared.
+
+If you want to deny the same client to ask for the same line
+twice then you need a list like that indeed. (It's a good strict semantic
+check anyways.)
+
+> Or add gpio-shared block similar to gpio-hog to prepare a given line for
+> sharing? I think this might be a better thing to do and some of the code
+> from gpio-shared.c can be reused.
+
+I would just add a flag and try to keep this API entirely on the
+side for now.
+
+Yours,
+Linus Walleij
