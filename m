@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 482E3104921
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 04:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AB0104925
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 04:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfKUDUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 22:20:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34438 "EHLO mail.kernel.org"
+        id S1727588AbfKUDUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 22:20:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbfKUDUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 22:20:41 -0500
+        id S1727560AbfKUDUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 22:20:44 -0500
 Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 950CB208A3;
-        Thu, 21 Nov 2019 03:20:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 442E720B7C;
+        Thu, 21 Nov 2019 03:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574306440;
-        bh=Ws+h2XCB+4cYjoU6hb4miQHTjGVkwBMyL5AK0BvvSPI=;
+        s=default; t=1574306444;
+        bh=3MWW/Bpxanm/z/AU2uq9QV8D77+obZXHDNXLGUOq6xg=;
         h=From:To:Cc:Subject:Date:From;
-        b=UgfmOavldxRPfdtooKkb9hrGUODSqqsfRixWGeqX+MrhWNlHQ2rpO4cxRWL/rJzMd
-         g1h9XZuPr7J7ztsJZtbxq1G58GmJlHje1SKifay5OW9UZSS302sVntrj+iDvmrenAN
-         iLraQptPIwhwM0oXK9S21hZoLQ1L8WFab843hwwA=
+        b=O/sFcqlo4H7igNIeccqFVsL7azE5pHyRIbMYIa1f9kYXzvf0d6ut4gaJP+Un20iH4
+         L8pUPv2C2eAoCTSwxpLyep68QV13Ypw3V35e6zW+watBRJ/0oY0hzF0lzAUQLxuaix
+         IF8UkXiqirWC02gjUeyVzoBzBsoPZdQRgdnIYZqE=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: [PATCH v2] mm: Fix Kconfig indentation
-Date:   Thu, 21 Nov 2019 04:20:37 +0100
-Message-Id: <1574306437-28837-1-git-send-email-krzk@kernel.org>
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v2] auxdisplay: Fix Kconfig indentation
+Date:   Thu, 21 Nov 2019 04:20:41 +0100
+Message-Id: <1574306441-29723-1-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -41,101 +41,88 @@ coding style with command like:
 	$ sed -e 's/^        /\t/' -i */Kconfig
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: David Hildenbrand <david@redhat.com>
 
 ---
 
 Changes since v1:
 1. Fix also 7-space and tab+1 space indentation issues.
 ---
- mm/Kconfig | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ drivers/auxdisplay/Kconfig | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index e38ff1d5968d..5a6cd8038b6d 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -122,9 +122,9 @@ config SPARSEMEM_VMEMMAP
- 	depends on SPARSEMEM && SPARSEMEM_VMEMMAP_ENABLE
- 	default y
- 	help
--	 SPARSEMEM_VMEMMAP uses a virtually mapped memmap to optimise
--	 pfn_to_page and page_to_pfn operations.  This is the most
--	 efficient option when sufficient kernel resources are available.
-+	  SPARSEMEM_VMEMMAP uses a virtually mapped memmap to optimise
-+	  pfn_to_page and page_to_pfn operations.  This is the most
-+	  efficient option when sufficient kernel resources are available.
+diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+index b8313a04422d..48efa7a047f3 100644
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -111,7 +111,7 @@ config CFAG12864B
+ 	  If unsure, say N.
  
- config HAVE_MEMBLOCK_NODE_MAP
- 	bool
-@@ -160,9 +160,9 @@ config MEMORY_HOTPLUG_SPARSE
- 	depends on SPARSEMEM && MEMORY_HOTPLUG
+ config CFAG12864B_RATE
+-       int "Refresh rate (hertz)"
++	int "Refresh rate (hertz)"
+ 	depends on CFAG12864B
+ 	default "20"
+ 	---help---
+@@ -329,7 +329,7 @@ config PANEL_LCD_PROTO
  
- config MEMORY_HOTPLUG_DEFAULT_ONLINE
--        bool "Online the newly added memory blocks by default"
--        depends on MEMORY_HOTPLUG
--        help
-+	bool "Online the newly added memory blocks by default"
-+	depends on MEMORY_HOTPLUG
-+	help
- 	  This option sets the default policy setting for memory hotplug
- 	  onlining policy (/sys/devices/system/memory/auto_online_blocks) which
- 	  determines what happens to newly added memory regions. Policy setting
-@@ -227,14 +227,14 @@ config COMPACTION
- 	select MIGRATION
- 	depends on MMU
- 	help
--          Compaction is the only memory management component to form
--          high order (larger physically contiguous) memory blocks
--          reliably. The page allocator relies on compaction heavily and
--          the lack of the feature can lead to unexpected OOM killer
--          invocations for high order memory requests. You shouldn't
--          disable this option unless there really is a strong reason for
--          it and then we would be really interested to hear about that at
--          linux-mm@kvack.org.
-+	  Compaction is the only memory management component to form
-+	  high order (larger physically contiguous) memory blocks
-+	  reliably. The page allocator relies on compaction heavily and
-+	  the lack of the feature can lead to unexpected OOM killer
-+	  invocations for high order memory requests. You shouldn't
-+	  disable this option unless there really is a strong reason for
-+	  it and then we would be really interested to hear about that at
-+	  linux-mm@kvack.org.
+ config PANEL_LCD_PIN_E
+ 	depends on PANEL_PROFILE="0" && PANEL_LCD="1" && PANEL_LCD_PROTO="0"
+-        int "Parallel port pin number & polarity connected to the LCD E signal (-17...17) "
++	int "Parallel port pin number & polarity connected to the LCD E signal (-17...17) "
+ 	range -17 17
+ 	default 14
+ 	---help---
+@@ -344,7 +344,7 @@ config PANEL_LCD_PIN_E
  
- #
- # support for page migration
-@@ -258,7 +258,7 @@ config ARCH_ENABLE_THP_MIGRATION
- 	bool
+ config PANEL_LCD_PIN_RS
+ 	depends on PANEL_PROFILE="0" && PANEL_LCD="1" && PANEL_LCD_PROTO="0"
+-        int "Parallel port pin number & polarity connected to the LCD RS signal (-17...17) "
++	int "Parallel port pin number & polarity connected to the LCD RS signal (-17...17) "
+ 	range -17 17
+ 	default 17
+ 	---help---
+@@ -359,7 +359,7 @@ config PANEL_LCD_PIN_RS
  
- config CONTIG_ALLOC
--       def_bool (MEMORY_ISOLATION && COMPACTION) || CMA
-+	def_bool (MEMORY_ISOLATION && COMPACTION) || CMA
+ config PANEL_LCD_PIN_RW
+ 	depends on PANEL_PROFILE="0" && PANEL_LCD="1" && PANEL_LCD_PROTO="0"
+-        int "Parallel port pin number & polarity connected to the LCD RW signal (-17...17) "
++	int "Parallel port pin number & polarity connected to the LCD RW signal (-17...17) "
+ 	range -17 17
+ 	default 16
+ 	---help---
+@@ -374,7 +374,7 @@ config PANEL_LCD_PIN_RW
  
- config PHYS_ADDR_T_64BIT
- 	def_bool 64BIT
-@@ -302,10 +302,10 @@ config KSM
- 	  root has set /sys/kernel/mm/ksm/run to 1 (if CONFIG_SYSFS is set).
+ config PANEL_LCD_PIN_SCL
+ 	depends on PANEL_PROFILE="0" && PANEL_LCD="1" && PANEL_LCD_PROTO!="0"
+-        int "Parallel port pin number & polarity connected to the LCD SCL signal (-17...17) "
++	int "Parallel port pin number & polarity connected to the LCD SCL signal (-17...17) "
+ 	range -17 17
+ 	default 1
+ 	---help---
+@@ -389,7 +389,7 @@ config PANEL_LCD_PIN_SCL
  
- config DEFAULT_MMAP_MIN_ADDR
--        int "Low address space to protect from user allocation"
-+	int "Low address space to protect from user allocation"
- 	depends on MMU
--        default 4096
--        help
-+	default 4096
-+	help
- 	  This is the portion of low virtual memory which should be protected
- 	  from userspace allocation.  Keeping a user from writing to low pages
- 	  can help reduce the impact of kernel NULL pointer bugs.
-@@ -408,7 +408,7 @@ choice
- endchoice
+ config PANEL_LCD_PIN_SDA
+ 	depends on PANEL_PROFILE="0" && PANEL_LCD="1" && PANEL_LCD_PROTO!="0"
+-        int "Parallel port pin number & polarity connected to the LCD SDA signal (-17...17) "
++	int "Parallel port pin number & polarity connected to the LCD SDA signal (-17...17) "
+ 	range -17 17
+ 	default 2
+ 	---help---
+@@ -404,12 +404,12 @@ config PANEL_LCD_PIN_SDA
  
- config ARCH_WANTS_THP_SWAP
--       def_bool n
-+	def_bool n
+ config PANEL_LCD_PIN_BL
+ 	depends on PANEL_PROFILE="0" && PANEL_LCD="1"
+-        int "Parallel port pin number & polarity connected to the LCD backlight signal (-17...17) "
++	int "Parallel port pin number & polarity connected to the LCD backlight signal (-17...17) "
+ 	range -17 17
+ 	default 0
+ 	---help---
+ 	  This describes the number of the parallel port pin to which the LCD 'BL' signal
+-          has been connected. It can be :
++	  has been connected. It can be :
  
- config THP_SWAP
- 	def_bool y
+ 	          0 : no connection (eg: connected to ground)
+ 	      1..17 : directly connected to any of these pins on the DB25 plug
 -- 
 2.7.4
 
