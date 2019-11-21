@@ -2,71 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE0710503A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB03105044
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:17:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfKUKPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:15:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55124 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726994AbfKUKPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:15:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2CEEEB1EC;
-        Thu, 21 Nov 2019 10:15:34 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 11:15:32 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-scsi@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 6/8] bdev: add open_finish.
-Message-ID: <20191121101532.GI11661@kitsune.suse.cz>
-References: <cover.1571834862.git.msuchanek@suse.de>
- <ea2652294651cbc8549736728c650d16d2fe1808.1571834862.git.msuchanek@suse.de>
- <20191024022232.GB11485@infradead.org>
- <20191024085514.GI938@kitsune.suse.cz>
- <20191024131254.GE2963@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+        id S1727139AbfKUKQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:16:27 -0500
+Received: from gate.crashing.org ([63.228.1.57]:34826 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727106AbfKUKQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:16:24 -0500
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xALAFrfK013183;
+        Thu, 21 Nov 2019 04:15:53 -0600
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id xALAFq0D013181;
+        Thu, 21 Nov 2019 04:15:52 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 21 Nov 2019 04:15:52 -0600
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 2/2] powerpc/irq: inline call_do_irq() and call_do_softirq()
+Message-ID: <20191121101552.GR16031@gate.crashing.org>
+References: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr> <5ca6639b7c1c21ee4b4138b7cfb31d6245c4195c.1570684298.git.christophe.leroy@c-s.fr> <877e3tbvsa.fsf@mpe.ellerman.id.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191024131254.GE2963@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <877e3tbvsa.fsf@mpe.ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 06:12:54AM -0700, Matthew Wilcox wrote:
-> On Thu, Oct 24, 2019 at 10:55:14AM +0200, Michal Suchánek wrote:
-> > On Wed, Oct 23, 2019 at 07:22:32PM -0700, Christoph Hellwig wrote:
-> > > On Wed, Oct 23, 2019 at 02:52:45PM +0200, Michal Suchanek wrote:
-> > > > Opening a block device may require a long operation such as waiting for
-> > > > the cdrom tray to close. Performing this operation with locks held locks
-> > > > out other attempts to open the device. These processes waiting to open
-> > > > the device are not killable.
+On Thu, Nov 21, 2019 at 05:14:45PM +1100, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> That breaks 64-bit with GCC9:
 > 
-> You can use mutex_lock_killable() to fix that.
+>   arch/powerpc/kernel/irq.c: In function 'do_IRQ':
+>   arch/powerpc/kernel/irq.c:650:2: error: PIC register clobbered by 'r2' in 'asm'
+>     650 |  asm volatile(
+>         |  ^~~
+>   arch/powerpc/kernel/irq.c: In function 'do_softirq_own_stack':
+>   arch/powerpc/kernel/irq.c:711:2: error: PIC register clobbered by 'r2' in 'asm'
+>     711 |  asm volatile(
+>         |  ^~~
 > 
-That fixes only half of the problem.
+> 
+> > diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+> > index 04204be49577..d62fe18405a0 100644
+> > --- a/arch/powerpc/kernel/irq.c
+> > +++ b/arch/powerpc/kernel/irq.c
+> > @@ -642,6 +642,22 @@ void __do_irq(struct pt_regs *regs)
+> >  	irq_exit();
+> >  }
+> >  
+> > +static inline void call_do_irq(struct pt_regs *regs, void *sp)
+> > +{
+> > +	register unsigned long r3 asm("r3") = (unsigned long)regs;
+> > +
+> > +	/* Temporarily switch r1 to sp, call __do_irq() then restore r1 */
+> > +	asm volatile(
+> > +		"	"PPC_STLU"	1, %2(%1);\n"
+> > +		"	mr		1, %1;\n"
+> > +		"	bl		%3;\n"
+> > +		"	"PPC_LL"	1, 0(1);\n" :
+> > +		"+r"(r3) :
+> > +		"b"(sp), "i"(THREAD_SIZE - STACK_FRAME_OVERHEAD), "i"(__do_irq) :
+> > +		"lr", "xer", "ctr", "memory", "cr0", "cr1", "cr5", "cr6", "cr7",
+> > +		"r0", "r2", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12");
+> > +}
+> 
+> If we add a nop after the bl, so the linker could insert a TOC restore,
+> then I don't think there's any circumstance under which we expect this
+> to actually clobber r2, is there?
 
-Other processes still cannot access the device while you wait on
-mutex_lock_killable
+That is mostly correct.
 
-Thanks
+If call_do_irq was a no-inline function, there would not be problems.
 
-Michal
+What TOC does __do_irq require in r2 on entry, and what will be there
+when it returns?
+
+
+Segher
