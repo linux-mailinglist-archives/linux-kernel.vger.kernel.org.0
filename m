@@ -2,174 +2,284 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE6E104D8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8492D104D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:09:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbfKUIK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:10:56 -0500
-Received: from mout.web.de ([212.227.15.4]:33967 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbfKUIKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:10:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574323754;
-        bh=CnfvxTO/B0eFqClFnccevYsRuKuGN2Qa3bTydjoAqn4=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=jDgoPgk7k2jEmgc12yULZvrJJfljF2fy5I694s0o+jWro6Iicw8HkoDUysa7DRg+c
-         HCkLU1BccLR9UMyZDYZGyZ6Kdg4R/H/u8fluakD03/7j2JGj00dmK731wYXIkXE2sJ
-         VLRBXpDmNUW7p/e6cK4GopBgFsSnwZITA6Ou5+5w=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MGAB5-1ialvJ0MOF-00FA8y; Thu, 21
- Nov 2019 09:09:14 +0100
-Subject: Re: [PATCH v4 10/13] exfat: add nls operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191121052618.31117-1-namjae.jeon@samsung.com>
- <CGME20191121052920epcas1p3e5b6c0251e869e265d19798dbeebab4e@epcas1p3.samsung.com>
- <20191121052618.31117-11-namjae.jeon@samsung.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <df089831-038c-3b39-6ec7-684d1f698756@web.de>
-Date:   Thu, 21 Nov 2019 09:09:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727047AbfKUIJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:09:42 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38838 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfKUIJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 03:09:42 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q28so1840845lfa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:09:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DDWVROnFaljaNNmaAzQ4x+4ZlkNQ9P7Z6d8u+o+nQYA=;
+        b=O9HgI3duRnemM/1cV0Nj6vrF+1krOVReUyREI0TCc2cQu6RazSEandX1dX1Ba9Uj+V
+         T7l1ojhh/vTDQqJ3MG4NDjWMmbuckpXHyCUnE70nX81Syriw6ZACxsyqCNgh4Kt3065h
+         dhp0vlU5+MHXSilH8qjSC2MnIQ1Ew4SF7xURo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DDWVROnFaljaNNmaAzQ4x+4ZlkNQ9P7Z6d8u+o+nQYA=;
+        b=iRDAeFZvw15lKt9ScfXYpQM+m8JLt9veywsnNaKyv3VtiLlpFdm1adC32XW+OZPazU
+         wuE/TYaLJsK0zGxyapxBxgiMRyOEWRrx6Hvc3zaxJdDAgbsGkHqmgAvnibE/zuf1bWMk
+         WQtGe+4hDJp9gJ3jMLbaoAmtDpnkUnjNe+Io92xY416k++kei7MP87DYh0p0/VCn5lyV
+         YyFJjz9Lbn8wSZDYNTo9BQtWttqNryXMzB9tZibu2fjqEnl81dXHOpvTT81JLnUn3Z+x
+         67YRUH/MSH16g8Nc/IQuqtJj0SNI9FkTdKNG2njuPQ5/qtjlSFmfaDTOdvaP2ErFSptB
+         anTQ==
+X-Gm-Message-State: APjAAAUxqG+0YaRxiyxn94VmCL4xo4TRSEpG/P1uUm+YFbdk+9mLV28P
+        7D3SHHYVmtTLuKNa64+2RMYK+r2qLEVfNZi1
+X-Google-Smtp-Source: APXvYqyvA62tGtBvAbCwcgoxlezdFk4vMhQIexTneWo+e4emQMejyXTuXgINTgk5VKIQJtsEaYQ/bw==
+X-Received: by 2002:a19:c384:: with SMTP id t126mr6435537lff.100.1574323779259;
+        Thu, 21 Nov 2019 00:09:39 -0800 (PST)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 206sm897443lfb.20.2019.11.21.00.09.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2019 00:09:38 -0800 (PST)
+Subject: Re: [PATCH 3/3] docs, parallelism: Rearrange how jobserver
+ reservations are made
+To:     Kees Cook <keescook@chromium.org>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191121000304.48829-1-keescook@chromium.org>
+ <20191121000304.48829-4-keescook@chromium.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <656afebc-fc60-7502-40a3-52d2662c1d27@rasmusvillemoes.dk>
+Date:   Thu, 21 Nov 2019 09:09:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191121052618.31117-11-namjae.jeon@samsung.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191121000304.48829-4-keescook@chromium.org>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wEqKUINu6N3Avxz+4LY7uQsH6NGHgbgzJXWDufoPUWER1LyXV4q
- 9WSvJ63EI+XpcNNHKlrR4/D2qpvaZiSAVbZfCa20LnMIW5iFkR6cl/KO5k31XUwAfRcW1S5
- qeQXXLiR+NvdJjtFfbiX+MurdOuicMa4SqjBsso+TGCryubHS4Ns85SGmiAmhu/MRtHV+p8
- 6lAKy9QWgzcUcsKdBsJ4g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FA6ykY/Nj/o=:wDAa5FCLyuRlwIDzb8OAGk
- +LBZyGBEb4wapYMOTUipILVMovjmvFrSJ/nC7lrBfsbODek3fe/wBOXZ5MdxFU0FFA1WXuEyQ
- 2k/BPjB/v2yaqUrBd7+CYSG3vm0aRVC0LSBO//gnHTjlsrobnH8tzChUT05QQnh8hdSn8Q8oV
- TZMtxCkJ2DdQomovfjWLh7bGQLznUJhr0rYDkWq6h62Ni0qexAB1idR1M74QL16evcs9wlMsN
- brK4luerH0GoVJPefwkLnidcP9c9Rh5a2jUmY3f9YhccuWaE9gBuYYs66lzhlyC1u3qlZQEA4
- RK7o/vtxmi1SJAKQ4HFWy8aaCU3MVMqqPj/hvJJZIugvn0E/MmrhMOm6ug3DIdDzi5YeJqLmG
- KG95WVk9h3w0bDjA7eFHx2MMsXdPCKhcMIurZVI4yysWlf5zyLdwaVO9+DnQJ6eqIJ5DXjb1o
- u+MToCjWHBicYQvMwHZWNUhPv+vk5VnwIrjyEVB3CsCB08BCWhPmdm9NZ/LuVXJgXyIFhlr4A
- psLXsDT7C9uRnDZZS7MsdJDnwvXECoST5T3OS8MWFEB7kQlmtlDIR2Y1jd7sCSr+WEz3HAmmM
- wtpWZK6CHmJ25nej47sJTwfNpfwHlLwO1HmK2ZLtbAgCvW/cXkbFDva6SHQvlVOpmuUAhpPdw
- np+Dldrp2QQTH6oh5tPmsOnwr+DR+g2kEULhUoiXtmerpgWMx/mOVvagjWlQtSoOE8j+j/BK/
- QRj5e8/zssepxXf0Kc2DaLmsQ+Rq52uD1DxGj1Wd9yP4rJD9NB5nTNqg5ZLaYZ3IX95fSBapm
- uy9M2dX3WBRRbS9eavw+ijnSRSX4Ft/s41rIeBa81WxUDDQmIvFFpAZ3sGvs/ealg4qJAyY/J
- bKUMFePM15U0ofI2WZkioEVymVSKDqmicB7kuf1YlrPY//rfEnuMhc2mb6Bt4rEl7/7GPkA1T
- 22XoWOoYkmfjmLzDG5NzF3Sa/wcnj6SQNKlCuCKKZBHQskKzgudpBWTO9eck2+ztTHoILCjc6
- x71W0r4mDqlXQCitTw0FF8n7TSf++M1Wbs1rVdOUCHjN8aBCutY9PE0lTS8o/ZDomcmkqPnaB
- +vEY4k5/UVu1sQErDRisir6Z/MyrL8J2FYtRuXWxxd1WND8I7A23UL6l1iJ3A3Lz6gK2vac51
- fo+4MgCNR5RdDTEkjMcKhkIlp2AqErAA8VgJa4wpNwHWP0AAUB8K+UpCj9SMgCWxgvIecYo+V
- kJoS6lEypSTx0QIaYLqfaz91lwkRdM5EkzlPt0eZz42BIpQQI8wOiNn/N+2c=
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E2=80=A6
-> +++ b/fs/exfat/nls.c
-=E2=80=A6
-> +static int exfat_load_upcase_table(struct super_block *sb,
-> +		sector_t sector, unsigned long long num_sectors,
-> +		unsigned int utbl_checksum)
-> +{
-=E2=80=A6
-> +	int ret =3D -EIO;
-=E2=80=A6
-> +	while (sector < num_sectors) {
-> +		bh =3D sb_bread(sb, sector);
-> +		if (!bh) {
-> +			exfat_msg(sb, KERN_ERR,
-> +				"failed to read sector(0x%llx)\n", sector);
-> +			goto release_bh;
-> +		}
-=E2=80=A6
-> +	}
+On 21/11/2019 01.03, Kees Cook wrote:
+> Rasmus correctly observed that the existing jobserver reservation only
+> worked if no other build targets were specified. The correct approach
+> is to hold the jobserver slots until sphinx has finished. To fix this,
+> the following changes are made:
+> 
+> - refactor (and rename) scripts/jobserver-exec to set an environment
+>   variable for the maximally reserved jobserver slots and exec a
+>   child, to release the slots on exit.
+> 
+> - create Documentation/scripts/parallel-wrapper.sh which examines both
+>   $PARALLELISM and the detected "-jauto" logic from Documentation/Makefile
+>   to decide sphinx's final -j argument.
+> 
+> - chain these together in Documentation/Makefile
+> 
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Link: https://lore.kernel.org/lkml/eb25959a-9ec4-3530-2031-d9d716b40b20@rasmusvillemoes.dk
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  Documentation/Makefile                      |  5 +-
+>  Documentation/sphinx/parallel-wrapper.sh    | 25 +++++++
+>  scripts/{jobserver-count => jobserver-exec} | 73 ++++++++++++---------
+>  3 files changed, 68 insertions(+), 35 deletions(-)
+>  create mode 100644 Documentation/sphinx/parallel-wrapper.sh
+>  rename scripts/{jobserver-count => jobserver-exec} (50%)
+>  mode change 100755 => 100644
+> 
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index ce8eb63b523a..30554a2fbdd7 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -33,8 +33,6 @@ ifeq ($(HAVE_SPHINX),0)
+>  
+>  else # HAVE_SPHINX
+>  
+> -export SPHINX_PARALLEL = $(shell perl -e 'open IN,"sphinx-build --version 2>&1 |"; while (<IN>) { if (m/([\d\.]+)/) { print "auto" if ($$1 >= "1.7") } ;} close IN')
+> -
+>  # User-friendly check for pdflatex and latexmk
+>  HAVE_PDFLATEX := $(shell if which $(PDFLATEX) >/dev/null 2>&1; then echo 1; else echo 0; fi)
+>  HAVE_LATEXMK := $(shell if which latexmk >/dev/null 2>&1; then echo 1; else echo 0; fi)
+> @@ -67,8 +65,9 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
+>        cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/media $2 && \
+>  	PYTHONDONTWRITEBYTECODE=1 \
+>  	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(srctree)/$(src)/$5/$(SPHINX_CONF)) \
+> +	$(PYTHON) $(srctree)/scripts/jobserver-exec \
+> +	$(SHELL) $(srctree)/Documentation/sphinx/parallel-wrapper.sh \
+>  	$(SPHINXBUILD) \
+> -	-j $(shell python $(srctree)/scripts/jobserver-count $(SPHINX_PARALLEL)) \
+>  	-b $2 \
+>  	-c $(abspath $(srctree)/$(src)) \
+>  	-d $(abspath $(BUILDDIR)/.doctrees/$3) \
+> diff --git a/Documentation/sphinx/parallel-wrapper.sh b/Documentation/sphinx/parallel-wrapper.sh
+> new file mode 100644
+> index 000000000000..a416dbfd2025
+> --- /dev/null
+> +++ b/Documentation/sphinx/parallel-wrapper.sh
+> @@ -0,0 +1,25 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0+
+> +#
+> +# Figure out if we should follow a specific parallelism from the make
+> +# environment (as exported by scripts/jobserver-exec), or fall back to
+> +# the "auto" parallelism when "-jN" is not specified at the top-level
+> +# "make" invocation.
 > +
-> +	if (index >=3D 0xFFFF && utbl_checksum =3D=3D checksum) {
-> +		brelse(bh);
-> +		return 0;
-> +	}
+> +sphinx="$1"
+> +shift || true
 > +
-> +	exfat_msg(sb, KERN_ERR,
-> +			"failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_ch=
-ksum : 0x%08x)\n",
-> +			index, checksum, utbl_checksum);
+> +parallel="${PARALLELISM:-1}"
+> +if [ ${parallel} -eq 1 ] ; then
+> +	auto=$(perl -e 'open IN,"'"$sphinx"' --version 2>&1 |";
+> +			while (<IN>) {
+> +				if (m/([\d\.]+)/) {
+> +					print "auto" if ($1 >= "1.7")
+> +				}
+> +			}
+> +			close IN')
+> +	if [ -n "$auto" ] ; then
+> +		parallel="$auto"
+> +	fi
+> +fi
+> +exec "$sphinx" "-j$parallel" "$@"
+
+I don't understand this logic. If the parent failed to claim any tokens
+(likely because the top make and its descendants are already running 16
+gcc processes), just let sphinx run #cpus jobs in parallel? That doesn't
+make sense - it gets us back to the "we've now effectively injected K
+tokens to the jobserver that weren't there originally".
+
+From the comment above, what you want is to use "auto" if the top
+invocation was simply "make docs". Well, I kind of disagree with falling
+back to auto in that case; the user can say "make -j8 docs" and the
+wrapper is guaranteed to claim them all. But if you really want, the
+jobserver-count script needs to detect and export the "no parallelism
+requested at top level" in some way distinct from "PARALLELISM=1",
+because that's ambiguous.
+
+> diff --git a/scripts/jobserver-count b/scripts/jobserver-exec
+> old mode 100755
+> new mode 100644
+> similarity index 50%
+> rename from scripts/jobserver-count
+> rename to scripts/jobserver-exec
+> index a68a04ad304f..4593b2a1e36d
+> --- a/scripts/jobserver-count
+> +++ b/scripts/jobserver-exec
+> @@ -2,17 +2,16 @@
+>  # SPDX-License-Identifier: GPL-2.0+
+>  #
+>  # This determines how many parallel tasks "make" is expecting, as it is
+> -# not exposed via an special variables.
+> +# not exposed via an special variables, reserves them all, runs a subprocess
+> +# with PARALLELISM environment variable set, and releases the jobs back again.
+> +#
+>  # https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html#POSIX-Jobserver
+>  from __future__ import print_function
+>  import os, sys, fcntl, errno
+> -
+> -# Default parallelism is "1" unless overridden on the command-line.
+> -default="1"
+> -if len(sys.argv) > 1:
+> -	default=sys.argv[1]
+> +import subprocess
+>  
+>  # Extract and prepare jobserver file descriptors from envirnoment.
+> +jobs = b""
+>  try:
+>  	# Fetch the make environment options.
+>  	flags = os.environ['MAKEFLAGS']
+> @@ -30,31 +29,41 @@ try:
+>  	reader = os.open("/proc/self/fd/%d" % (reader), os.O_RDONLY)
+>  	flags = fcntl.fcntl(reader, fcntl.F_GETFL)
+>  	fcntl.fcntl(reader, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+> -except (KeyError, IndexError, ValueError, IOError, OSError) as e:
+> -	print(e, file=sys.stderr)
 > +
-> +	ret =3D -EINVAL;
+> +	# Read out as many jobserver slots as possible.
+> +	while True:
+> +		try:
+> +			slot = os.read(reader, 1)
+> +			jobs += slot
 
-Can a blank line be omitted between the message and the error code?
+I'd just try to slurp in 8 or 16 tokens at a time, there's no reason to
+limit to 1 in each loop.
 
+> +		except (OSError, IOError) as e:
+> +			if e.errno == errno.EWOULDBLOCK:
+> +				# Stop at the end of the jobserver queue.
+> +				break
+> +			# If something went wrong, give back the jobs.
+> +			if len(jobs):
+> +				os.write(writer, jobs)
+> +			raise e
+> +except (KeyError, IndexError, ValueError, OSError, IOError) as e:
+>  	# Any missing environment strings or bad fds should result in just
+> -	# using the default specified parallelism.
+> -	print(default)
+> -	sys.exit(0)
+> +	# not being parallel.
+> +	pass
+>  
+> -# Read out as many jobserver slots as possible.
+> -jobs = b""
+> -while True:
+> -	try:
+> -		slot = os.read(reader, 1)
+> -		jobs += slot
+> -	except (OSError, IOError) as e:
+> -		if e.errno == errno.EWOULDBLOCK:
+> -			# Stop when reach the end of the jobserver queue.
+> -			break
+> -		raise e
+> -# Return all the reserved slots.
+> -os.write(writer, jobs)
+> -
+> -# If the jobserver was (impossibly) full or communication failed, use default.
+> -if len(jobs) < 1:
+> -	print(default)
+> -	sys.exit(0)
+> -
+> -# Report available slots (with a bump for our caller's reserveration).
+> -print(len(jobs) + 1)
+> +claim = len(jobs)
+> +if claim < 1:
+> +	# If the jobserver was (impossibly) full or communication failed
+> +	# in some way do not use parallelism.
+> +	claim = 0
 
-> +release_bh:
-> +	brelse(bh);
-> +	exfat_free_upcase_table(sb);
-> +	return ret;
-> +}
+Eh, "claim < 1" is the same as "claim == 0", right? So this doesn't seem
+to do much. But what seems to be missing is that after you write back
+the tokens in the error case above (os.write(writer, jobs)), jobs is not
+set back to the empty string. That needs to be done either there or in
+the outer exception handler (where you just have a "pass" currently).
 
-I got the impression that the resource management is still questionable
-for this function implementation.
+> +# Launch command with a bump for our caller's reserveration,
+> +# since we're just going to sit here blocked on our child.
+> +claim += 1
+> +
+> +os.unsetenv('MAKEFLAGS')
+> +os.environ['PARALLELISM'] = '%d' % (claim)
+> +rc = subprocess.call(sys.argv[1:])
+> +
+> +# Return all the actually reserved slots.
+> +if len(jobs):
+> +	os.write(writer, jobs)
+> +
+> +sys.exit(rc)
 
-1. Now I suggest to move the call of the function =E2=80=9Cbrelse=E2=80=9D=
- to the end
-   of the while loop. The label =E2=80=9Crelease_bh=E2=80=9D would be rena=
-med to =E2=80=9Cfree_table=E2=80=9D then.
+What happens if the child dies from a signal? Will this correctly
+forward that information?
 
-2. Can a variable initialisation be converted to the assignment =E2=80=9Cr=
-et =3D -EIO;=E2=80=9D
-   in an if branch?
+Similarly (and the harder problem), what happens when our parent wants
+to send its child a signal to say "stop what you're doing, return the
+tokens, brush your teeth and go to bed". We should forward that signal
+to the real job instead of just dying, losing track of both the tokens
+we've claimed as well as orphaning the child.
 
-Regards,
-Markus
+Rasmus
