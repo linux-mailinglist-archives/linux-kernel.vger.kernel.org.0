@@ -2,68 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE098105483
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CF510548D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfKUOeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:34:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfKUOeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:34:16 -0500
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FBB6206CB;
-        Thu, 21 Nov 2019 14:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574346855;
-        bh=5CMaaOO4eBpqQf/mskysv4t+TyWb8N0Oi/MlxYQTaUk=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=KmhNfsre7QrBN12iGR5H11VP5Zg35Pv2lwKFHbF6msmHXrr/nqxbkFDuYp2UaaQBN
-         zCf3JBOAiP38ktfRjyCBY4UtKTrWbuSRACYC7MG00iaYDSMjUNTZ3HWyCXYCOAZXAb
-         R34feB0f7wQWdeQAfpZcdYFWHTN6aJEW4UP7Iyig=
-Date:   Thu, 21 Nov 2019 15:34:10 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org, benjamin.tissoires@redhat.com,
-        linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikelley@microsoft.com,
-        Alexander.Levin@microsoft.com
-Subject: Re: [PATCH v2] HID: hyperv: Add the support of hibernation
-In-Reply-To: <1574234096-48767-1-git-send-email-decui@microsoft.com>
-Message-ID: <nycvar.YFH.7.76.1911211533430.1799@cbobk.fhfr.pm>
-References: <1574234096-48767-1-git-send-email-decui@microsoft.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726947AbfKUOgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:36:21 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:35586 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfKUOgV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:36:21 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALEXxbg176360;
+        Thu, 21 Nov 2019 14:36:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=M2ZTh/ffoJTAXhTWkUwqBgK4JVTx0Aie1A5Hh2zrp78=;
+ b=Nw5dU8mLhMqxRSNdgBbulrptxP5HHvrlO+8tlOEr9Oho9bPZ17gTaLcYlnXYWNM0sd9S
+ TmlbtL0vz3o3aNAtf3H4cEG8Jw9cgWNNOrYpWkNy2W5oZWlwERgy5GxSpgybzSiieVQ2
+ vyyxDcd9dpnIWWycfLY2Wotq9FL4vpwMduvlqtF/LiXKNRAyQhQmXjc00kK6ewKZgsuE
+ sdpKYPr/mofMLC55Q4wnU+d8K5ikPNNkO3Eqdvpba49j57TBFc6YOJlSIpCXCHC9FPJM
+ 8huAbbZjxJjUj281dU+dSfc5brdbgPBkaNC0kAZiAfSM/jX+UlQ4WKJDELccXfEOEjtl 9w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2wa8hu4qjd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 14:36:10 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALEYZH6166676;
+        Thu, 21 Nov 2019 14:36:09 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wda0643ft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 14:36:09 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xALEa7Gm016867;
+        Thu, 21 Nov 2019 14:36:07 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 06:36:06 -0800
+Date:   Thu, 21 Nov 2019 09:36:13 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/4] padata: update documentation
+Message-ID: <20191121143613.xofz7dkpy7e5wtqe@ca-dmjordan1.us.oracle.com>
+References: <20191120185412.302-1-daniel.m.jordan@oracle.com>
+ <20191120185412.302-2-daniel.m.jordan@oracle.com>
+ <20191120121634.6d989088@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191120121634.6d989088@lwn.net>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911210133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911210133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Nov 2019, Dexuan Cui wrote:
-
-> During the suspend process and resume process, if there is any mouse
-> event, there is a small chance the suspend and the resume process can be
-> aborted because of mousevsc_on_receive() -> pm_wakeup_hard_event().
+On Wed, Nov 20, 2019 at 12:16:34PM -0700, Jonathan Corbet wrote:
+> This all seems fine - it's better than not doing it - but can I put in a
+> request or two?
 > 
-> This behavior can be avoided by disabling the Hyper-V mouse device as
-> a wakeup source:
+>  - This document is already formatted as RST, and your changes continue
+>    that.  Can we please move it to Documentation/core-api/padata.rst and
+>    add it to the TOC tree there?  Then it can become part of our formatted
+>    docs.
 > 
-> echo disabled > /sys/bus/vmbus/drivers/hid_hyperv/XXX/power/wakeup
-> (XXX is the device's GUID).
-> 
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> Acked-by: Jiri Kosina <jkosina@suse.cz>
+>  - The padata code seems to be nicely equipped with kerneldoc comments; it
+>    would be awfully nice to pull them into the document directly rather
+>    than replicating the API there.  (Why does the document do that now?
+>    Blame the bozo who originally wrote it :)  That would make the document
+>    more complete and easier to maintain going forward.
 
-My Ack still holds for v2. Sasha, this is going to be merged through your 
-tree, right?
+Ok.  It would be nice to preserve the how-to aspect of the original doc as
+well, in other words, the order the interfaces should be called in.  Will do
+both.
 
-Thanks,
+> For added goodness we could stick in an SPDX tag while we're at it.
 
--- 
-Jiri Kosina
-SUSE Labs
-
+I'll use the license from padata.c/h.
