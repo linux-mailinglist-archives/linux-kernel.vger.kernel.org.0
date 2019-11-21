@@ -2,90 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB03105044
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:17:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A35810503F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfKUKQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:16:27 -0500
-Received: from gate.crashing.org ([63.228.1.57]:34826 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbfKUKQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:16:24 -0500
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xALAFrfK013183;
-        Thu, 21 Nov 2019 04:15:53 -0600
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id xALAFq0D013181;
-        Thu, 21 Nov 2019 04:15:52 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Thu, 21 Nov 2019 04:15:52 -0600
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 2/2] powerpc/irq: inline call_do_irq() and call_do_softirq()
-Message-ID: <20191121101552.GR16031@gate.crashing.org>
-References: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr> <5ca6639b7c1c21ee4b4138b7cfb31d6245c4195c.1570684298.git.christophe.leroy@c-s.fr> <877e3tbvsa.fsf@mpe.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877e3tbvsa.fsf@mpe.ellerman.id.au>
-User-Agent: Mutt/1.4.2.3i
+        id S1727072AbfKUKQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:16:19 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41306 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfKUKQT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:16:19 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xALAG6r2052188;
+        Thu, 21 Nov 2019 04:16:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574331366;
+        bh=xuzXrhK8wsNkydl2luiWvTQcw+C29Mf+uDMeILvZ2r4=;
+        h=From:To:CC:Subject:Date;
+        b=pumQOLzEBmCvNsoLm6JsnPthRXHGFpy8/cHb12eiUvsMtvXxa7FXUmgNp4zvFWtW7
+         UFqMOxRN1BWQfnhLzxr8jwbEOMsiLk20200nHnfbgcG2FbDSOuYi+O4geYWniYpvsH
+         FZRL/fbkyA18zsaRIshRT2KUUnqkkUADuawH4oh4=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xALAG6dg100499
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Nov 2019 04:16:06 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 21
+ Nov 2019 04:16:06 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 21 Nov 2019 04:16:05 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xALAG3b4105173;
+        Thu, 21 Nov 2019 04:16:03 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <vkoul@kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] crypto: atmel - Retire dma_request_slave_channel_compat()
+Date:   Thu, 21 Nov 2019 12:15:59 +0200
+Message-ID: <20191121101602.21941-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 05:14:45PM +1100, Michael Ellerman wrote:
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> That breaks 64-bit with GCC9:
-> 
->   arch/powerpc/kernel/irq.c: In function 'do_IRQ':
->   arch/powerpc/kernel/irq.c:650:2: error: PIC register clobbered by 'r2' in 'asm'
->     650 |  asm volatile(
->         |  ^~~
->   arch/powerpc/kernel/irq.c: In function 'do_softirq_own_stack':
->   arch/powerpc/kernel/irq.c:711:2: error: PIC register clobbered by 'r2' in 'asm'
->     711 |  asm volatile(
->         |  ^~~
-> 
-> 
-> > diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-> > index 04204be49577..d62fe18405a0 100644
-> > --- a/arch/powerpc/kernel/irq.c
-> > +++ b/arch/powerpc/kernel/irq.c
-> > @@ -642,6 +642,22 @@ void __do_irq(struct pt_regs *regs)
-> >  	irq_exit();
-> >  }
-> >  
-> > +static inline void call_do_irq(struct pt_regs *regs, void *sp)
-> > +{
-> > +	register unsigned long r3 asm("r3") = (unsigned long)regs;
-> > +
-> > +	/* Temporarily switch r1 to sp, call __do_irq() then restore r1 */
-> > +	asm volatile(
-> > +		"	"PPC_STLU"	1, %2(%1);\n"
-> > +		"	mr		1, %1;\n"
-> > +		"	bl		%3;\n"
-> > +		"	"PPC_LL"	1, 0(1);\n" :
-> > +		"+r"(r3) :
-> > +		"b"(sp), "i"(THREAD_SIZE - STACK_FRAME_OVERHEAD), "i"(__do_irq) :
-> > +		"lr", "xer", "ctr", "memory", "cr0", "cr1", "cr5", "cr6", "cr7",
-> > +		"r0", "r2", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12");
-> > +}
-> 
-> If we add a nop after the bl, so the linker could insert a TOC restore,
-> then I don't think there's any circumstance under which we expect this
-> to actually clobber r2, is there?
+Hi,
 
-That is mostly correct.
+Changes since v1:
+- Rebased on next-20191121 to avoid conflict for atmel-aes
 
-If call_do_irq was a no-inline function, there would not be problems.
+I'm going through the kernel to crack down on dma_request_slave_channel_compat()
+users.
 
-What TOC does __do_irq require in r2 on entry, and what will be there
-when it returns?
+These drivers no longer needs it as they are only probed via DT and even if they
+would probe in legacy mode, the dma_request_chan() + dma_slave_map must be used
+for supporting non DT boots.
 
+I have only compile tested the drivers!
 
-Segher
+Regards,
+Peter
+---
+Peter Ujfalusi (3):
+  crypto: atmel-aes - Retire dma_request_slave_channel_compat()
+  crypto: atmel-sha - Retire dma_request_slave_channel_compat()
+  crypto: atmel-tdes - Retire dma_request_slave_channel_compat()
+
+ drivers/crypto/atmel-aes.c  | 50 ++++++++-----------------------------
+ drivers/crypto/atmel-sha.c  | 39 ++++++-----------------------
+ drivers/crypto/atmel-tdes.c | 47 ++++++++++------------------------
+ 3 files changed, 30 insertions(+), 106 deletions(-)
+
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
