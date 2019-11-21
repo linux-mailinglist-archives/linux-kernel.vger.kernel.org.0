@@ -2,69 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F6AF105653
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:02:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39CA110565E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKUQCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 11:02:24 -0500
-Received: from verein.lst.de ([213.95.11.211]:46911 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfKUQCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:02:23 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D87F268BFE; Thu, 21 Nov 2019 17:02:17 +0100 (CET)
-Date:   Thu, 21 Nov 2019 17:02:17 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2] dma-mapping: treat dev->bus_dma_mask as a DMA limit
-Message-ID: <20191121160217.GA1583@lst.de>
-References: <20191121092646.8449-1-nsaenzjulienne@suse.de> <20191121152457.GA525@lst.de> <20191121152650.GA651@lst.de> <70359d2a-10c6-09c7-a857-805085affb0a@arm.com>
+        id S1727092AbfKUQCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 11:02:49 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40413 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726840AbfKUQCs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 11:02:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574352167;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=rcqdeTgChHnCDo5l36uHf88TY7b96FHBlN+sSTw6btQ=;
+        b=BmVtjoxIr5/kEVcZAGQEG9/n33t+2C5KAAe3WQ1Moe8EfYTCkq3Ub9NVIDH3X8gQlxJQac
+        egxxbRY8mkJ8Xy8lHJWl3S2dsAHraHWq/iBzaYLsPieamtDQJcH52QP6FOqMP6kQDQ0S6X
+        l0CNvcmuW3wPynZrxYChEVQsejv7Gbo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-316-OL8DMrZQOAKklK-1YLdTlg-1; Thu, 21 Nov 2019 11:02:45 -0500
+Received: by mail-wm1-f71.google.com with SMTP id y14so2034914wmi.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 08:02:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qM2tyh78ojNvdG7Z8M8T/3nGHyd1QQztV+4YABQwg58=;
+        b=KXl77w9Ju2fsX7nSkQbZKc/24L2YO5EvKjf+InEG5HJHyhgZj2etTRnH2MNQOPE4j5
+         DKYcws8ACuCIOno9wDj3zu7fMRL4/4wUhJs1zcopr+tu1rzLAZi0ow7V9G3lPyhkUnaJ
+         aLqgvQTYlY7WsHlnMlDhE9PNczGsk3kmBk2K/HMgRVJKlJsjUbnZbVPFBCAXnzny38Df
+         SNgXX+akrDaqWbKpqyA8W5wvTYZyVTEVNO7d1/WWAMsxXVcG/6q6UhljohlJw9cTMwSO
+         jjdTqodl6HI/dgmBLAF8iuSLiw2YAJ5WEvce3ZpzG9orVcstA0WOHnVPR0M0QIqQXaH/
+         Ccow==
+X-Gm-Message-State: APjAAAXlmzhgSQ6RJaFcd86l6VuYhVNdhmme3hZT08q19EH8QZ7vaI/a
+        UQWwVkk4APfe49ZNXNxFDYwh4MCyOuhgPCwnGWBFTn8TUFiv+BlfHYw86tkxtQE422MqQp+Rsgn
+        YtDUtAfC5oxBAwxOKdJUir67Z
+X-Received: by 2002:a1c:6641:: with SMTP id a62mr10623029wmc.54.1574352164372;
+        Thu, 21 Nov 2019 08:02:44 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz/tD9hcxHhcQWoHQpZcdfK2t0X0v9XjAW7cHY4kYJ0mn+rkqwZ9CmqXq9Xn2xNMJAol/s4ww==
+X-Received: by 2002:a1c:6641:: with SMTP id a62mr10623001wmc.54.1574352164065;
+        Thu, 21 Nov 2019 08:02:44 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:71a5:6e:f854:d744? ([2001:b07:6468:f312:71a5:6e:f854:d744])
+        by smtp.gmail.com with ESMTPSA id x5sm94545wmj.7.2019.11.21.08.02.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 08:02:43 -0800 (PST)
+Subject: Re: [PATCH v7 2/9] vmx: spp: Add control flags for Sub-Page
+ Protection(SPP)
+To:     Yang Weijiang <weijiang.yang@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmattson@google.com, sean.j.christopherson@intel.com,
+        yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com
+References: <20191119084949.15471-1-weijiang.yang@intel.com>
+ <20191119084949.15471-3-weijiang.yang@intel.com>
+ <d6e71e7b-b708-211c-24b7-8ffe03a52842@redhat.com>
+ <20191121153442.GH17169@local-michael-cet-test>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <58b4b445-bd47-d357-9fdd-118043624215@redhat.com>
+Date:   Thu, 21 Nov 2019 17:02:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70359d2a-10c6-09c7-a857-805085affb0a@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20191121153442.GH17169@local-michael-cet-test>
+Content-Language: en-US
+X-MC-Unique: OL8DMrZQOAKklK-1YLdTlg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 03:55:39PM +0000, Robin Murphy wrote:
-> Hmm, there's no functional dependency though, is there? AFAICS it's 
-> essentially just a context conflict. Is it worth simply dropping (or 
-> postponing) the local renaming in __dma_direct_optimal_gfp_mask(), or 
-> perhaps even cross-merging arm64/for-next/zone-dma into dma/for-next?
+On 21/11/19 16:34, Yang Weijiang wrote:
+> On Thu, Nov 21, 2019 at 11:04:51AM +0100, Paolo Bonzini wrote:
+>> On 19/11/19 09:49, Yang Weijiang wrote:
+>>> @@ -228,6 +228,7 @@
+>>>  #define X86_FEATURE_FLEXPRIORITY=09( 8*32+ 2) /* Intel FlexPriority */
+>>>  #define X86_FEATURE_EPT=09=09=09( 8*32+ 3) /* Intel Extended Page Tabl=
+e */
+>>>  #define X86_FEATURE_VPID=09=09( 8*32+ 4) /* Intel Virtual Processor ID=
+ */
+>>> +#define X86_FEATURE_SPP=09=09=09( 8*32+ 5) /* Intel EPT-based Sub-Page=
+ Write Protection */
+>>
+>> Please do not include X86_FEATURE_SPP.  In general I don't like the VMX
+>> features word, but apart from that SPP is not a feature that affects all
+>> VMs in the same way as EPT or FlexPriority.
+>>
+> So what's a friendly way to let a user check if SPP feature is there?
 
-I would have no problem with pulling it in.  I'd kinda hate creating
-the conflict, though.  So if the arm64 maintainers are fine with it
-I'll pull it in, especially if I get an ACK from Robin.
+QEMU for example ships with a program called vmxcap (though it requires
+root).  We also could write a program to analyze the KVM capabilities
+and print them, and put it in tools/kvm.
+
+Thanks,
+
+Paolo
+
