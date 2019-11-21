@@ -2,72 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6944B104C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA983104C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfKUH2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 02:28:37 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58635 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUH2h (ORCPT
+        id S1727016AbfKUH3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 02:29:19 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:8629 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725842AbfKUH3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 02:28:37 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iXgtC-0007ve-4V; Thu, 21 Nov 2019 08:28:30 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iXgtB-000224-Md; Thu, 21 Nov 2019 08:28:29 +0100
-Date:   Thu, 21 Nov 2019 08:28:29 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [PATCH v7 4/8] pwm: sun4i: Add an optional probe for bus clock
-Message-ID: <20191121072829.vitly7altcvlt4sj@pengutronix.de>
-References: <20191119175319.16561-1-peron.clem@gmail.com>
- <20191119175319.16561-5-peron.clem@gmail.com>
+        Thu, 21 Nov 2019 02:29:18 -0500
+X-UUID: 50003c530eab45729dc643b5b631aaf2-20191121
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=DdOBazdkEY8z3b9oLQBOBsUR+PwkBxvsgtd16bL2wP8=;
+        b=dF7WIzR/p2XrAtxWVR+Uau04hx1SguyHDCvtAL0bumQpo8ZGhIzB07H26eHEYfdMkn2/o/0CgR9ItlVNh8Tz6g35yZIUMZs4km/tPhXQSPOFehPH3nUmb72k9cxTI3ZY5Io2WtdLG+tBJ8+lHghSvJ+oEnk/4FWL1CZdQVzL55o=;
+X-UUID: 50003c530eab45729dc643b5b631aaf2-20191121
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2015701134; Thu, 21 Nov 2019 15:29:12 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 21 Nov 2019 15:29:05 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 21 Nov 2019 15:29:07 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH] soc: mediatek: cmdq: avoid racing condition with mutex
+Date:   Thu, 21 Nov 2019 15:29:10 +0800
+Message-ID: <20191121072910.31665-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119175319.16561-5-peron.clem@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Clément,
+SWYgY21kcSBjbGllbnQgaXMgbXVsdGkgdGhyZWFkIHVzZXIsIHJhY2luZyB3aWxsIG9jY3VyIHdp
+dGhvdXQgbXV0ZXgNCnByb3RlY3Rpb24uIEl0IHdpbGwgbWFrZSB0aGUgQyBtZXNzYWdlIHF1ZXVl
+ZCBpbiBtYWlsYm94J3MgcXVldWUNCmFsd2F5cyBuZWVkIEQgbWVzc2FnZSdzIHRyaWdnZXJpbmcu
+DQoNClRocmVhZCBBCQlUaHJlYWQgQgkJICBUaHJlYWQgQwkJVGhyZWFkIEQuLi4NCi0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tDQptYm94X3NlbmRfbWVzc2FnZSgpDQoJc2VuZF9kYXRhKCkNCgkJ
+CW1ib3hfc2VuZF9tZXNzYWdlKCkNCgkJCQkqZXhpdA0KCQkJCQkJbWJveF9zZW5kX21lc3NhZ2Uo
+KQ0KCQkJCQkJCSpleGl0DQptYm94X2NsaWVudF90eGRvbmUoKQ0KCXR4X3RpY2soKQ0KCQkJbWJv
+eF9jbGllbnRfdHhkb25lKCkNCgkJCQl0eF90aWNrKCkNCgkJCQkJCW1ib3hfY2xpZW50X3R4ZG9u
+ZSgpDQoJCQkJCQkJdHhfdGljaygpDQptc2dfc3VibWl0KCkNCglzZW5kX2RhdGEoKQ0KCQkJbXNn
+X3N1Ym1pdCgpDQoJCQkJKmV4aXQNCgkJCQkJCW1zZ19zdWJtaXQoKQ0KCQkJCQkJCSpleGl0DQot
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpTaWduZWQtb2ZmLWJ5OiBCaWJieSBIc2llaCA8
+YmliYnkuaHNpZWhAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRr
+LWNtZHEtaGVscGVyLmMgfCAzICsrKw0KIGluY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1j
+bWRxLmggIHwgMSArDQogMiBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCg0KZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIvZHJpdmVycy9z
+b2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCmluZGV4IDlhZGQwZmQ1ZmE2Yy4uOWUzNWUw
+YmVmZmFhIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVy
+LmMNCisrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQpAQCAtODEs
+NiArODEsNyBAQCBzdHJ1Y3QgY21kcV9jbGllbnQgKmNtZHFfbWJveF9jcmVhdGUoc3RydWN0IGRl
+dmljZSAqZGV2LCBpbnQgaW5kZXgsIHUzMiB0aW1lb3V0KQ0KIAljbGllbnQtPmNsaWVudC5kZXYg
+PSBkZXY7DQogCWNsaWVudC0+Y2xpZW50LnR4X2Jsb2NrID0gZmFsc2U7DQogCWNsaWVudC0+Y2hh
+biA9IG1ib3hfcmVxdWVzdF9jaGFubmVsKCZjbGllbnQtPmNsaWVudCwgaW5kZXgpOw0KKwltdXRl
+eF9pbml0KCZjbGllbnQtPm11dGV4KTsNCiANCiAJaWYgKElTX0VSUihjbGllbnQtPmNoYW4pKSB7
+DQogCQlsb25nIGVycjsNCkBAIC0zNTIsOSArMzUzLDExIEBAIGludCBjbWRxX3BrdF9mbHVzaF9h
+c3luYyhzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgY21kcV9hc3luY19mbHVzaF9jYiBjYiwNCiAJCXNw
+aW5fdW5sb2NrX2lycXJlc3RvcmUoJmNsaWVudC0+bG9jaywgZmxhZ3MpOw0KIAl9DQogDQorCW11
+dGV4X2xvY2soJmNsaWVudC0+bXV0ZXgpOw0KIAltYm94X3NlbmRfbWVzc2FnZShjbGllbnQtPmNo
+YW4sIHBrdCk7DQogCS8qIFdlIGNhbiBzZW5kIG5leHQgcGFja2V0IGltbWVkaWF0ZWx5LCBzbyBq
+dXN0IGNhbGwgdHhkb25lLiAqLw0KIAltYm94X2NsaWVudF90eGRvbmUoY2xpZW50LT5jaGFuLCAw
+KTsNCisJbXV0ZXhfdW5sb2NrKCZjbGllbnQtPm11dGV4KTsNCiANCiAJcmV0dXJuIDA7DQogfQ0K
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmggYi9pbmNs
+dWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQppbmRleCBhNzRjMWQ1YWNkZjMuLjBm
+OTA3MWNkMWJjNyAxMDA2NDQNCi0tLSBhL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1j
+bWRxLmgNCisrKyBiL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgNCkBAIC0y
+OCw2ICsyOCw3IEBAIHN0cnVjdCBjbWRxX2NsaWVudCB7DQogCXN0cnVjdCBtYm94X2NoYW4gKmNo
+YW47DQogCXN0cnVjdCB0aW1lcl9saXN0IHRpbWVyOw0KIAl1MzIgdGltZW91dF9tczsgLyogaW4g
+dW5pdCBvZiBtaWNyb3NlY29uZCAqLw0KKwlzdHJ1Y3QgbXV0ZXggbXV0ZXg7DQogfTsNCiANCiAv
+KioNCi0tIA0KMi4xOC4wDQo=
 
-On Tue, Nov 19, 2019 at 06:53:15PM +0100, Clément Péron wrote:
-> +	/*
-> +	 * We're keeping the bus clock on for the sake of simplicity.
-> +	 * Actually it only needs to be on for hardware register accesses.
-> +	 */
-> +	ret = clk_prepare_enable(pwm->bus_clk);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Cannot prepare and enable bus_clk\n");
-
-Maybe add the error code to the message?
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
