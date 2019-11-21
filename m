@@ -2,69 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C2E105529
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF0B105536
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 16:19:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfKUPQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 10:16:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfKUPQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:16:39 -0500
-Received: from localhost (unknown [217.68.49.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42D4A2070A;
-        Thu, 21 Nov 2019 15:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574349399;
-        bh=1mwCmyP+2+wZJqa8YEmau3a8t7+7q47dmFQ/arnqZSo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N/0Rkz1aWHKHvPGaeJOOASGfR7YaOeMGAV7yabyzdztGPSi4qL+Sm/42+g4zht1Ge
-         Uef7/eR2LC2iqj9KPKiwXNq48rndqysu42DWg6z+pWw5riJHVw0S3369rw3IJ5lKRM
-         7TtNsyJ32jSNUFkTwmfFKA3Jb/b5yxYcHekg/DWg=
-Date:   Thu, 21 Nov 2019 16:16:34 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, pzb@amzn.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Documentation/process: Add Amazon contact for embargoed hardware
- issues
-Message-ID: <20191121151634.GA651285@kroah.com>
-References: <da6467d2649339b42339124fd19a8a2f91cc00dd.camel@infradead.org>
+        id S1726861AbfKUPTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 10:19:39 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:41523 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbfKUPTj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 10:19:39 -0500
+X-Originating-IP: 153.3.140.100
+Received: from localhost.localdomain.localdomain (unknown [153.3.140.100])
+        (Authenticated sender: fly@kernel.page)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6C8521C0004;
+        Thu, 21 Nov 2019 15:19:26 +0000 (UTC)
+From:   Pengfei Li <fly@kernel.page>
+To:     akpm@linux-foundation.org
+Cc:     mgorman@techsingularity.net, mhocko@kernel.org, vbabka@suse.cz,
+        cl@linux.com, iamjoonsoo.kim@lge.com, guro@fb.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Pengfei Li <fly@kernel.page>
+Subject: [RFC v1 00/19] Modify zonelist to nodelist v1
+Date:   Thu, 21 Nov 2019 23:17:52 +0800
+Message-Id: <20191121151811.49742-1-fly@kernel.page>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da6467d2649339b42339124fd19a8a2f91cc00dd.camel@infradead.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 02:53:11PM +0000, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->  Documentation/process/embargoed-hardware-issues.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-> index a3c3349046c4..e768aa8c7c12 100644
-> --- a/Documentation/process/embargoed-hardware-issues.rst
-> +++ b/Documentation/process/embargoed-hardware-issues.rst
-> @@ -255,7 +255,7 @@ an involved disclosed party. The current ambassadors list:
->    Red Hat	Josh Poimboeuf <jpoimboe@redhat.com>
->    SUSE		Jiri Kosina <jkosina@suse.cz>
->  
-> -  Amazon
-> +  Amazon	Peter Bowen <pzb@amzn.com>
+Motivation
+----------
+Currently if we want to iterate through all the nodes we have to
+traverse all the zones from the zonelist.
 
-I too like to sign up random people to do things :)
+So in order to reduce the number of loops required to traverse node,
+this series of patches modified the zonelist to nodelist.
 
-Can we get a ack/sob from Peter as well?
+Two new macros have been introduced:
+1) for_each_node_nlist
+2) for_each_node_nlist_nodemask
 
-thanks,
 
-greg k-h
+Benefit
+-------
+1. For a NUMA system with N nodes, each node has M zones, the number
+   of loops is reduced from N*M times to N times when traversing node.
+
+2. The size of pg_data_t is much reduced.
+
+
+Test Result
+-----------
+Currently I have only performed a simple page allocation benchmark
+test on my laptop, and the results show that the performance of a
+system with only one node is almost unaffected.
+
+
+Others
+------
+Next I will do more performance testing and add it to the Test Result.
+
+Since I don't currently have multiple node NUMA systems, I would be
+grateful if anyone would like to test this series of patches.
+
+I am still not sure this series of patches is on the right way so I
+am sending this as an RFC. 
+
+Any comments are highly appreciated.
+
+Pengfei Li (19):
+  mm, mmzone: modify zonelist to nodelist
+  mm, hugetlb: use for_each_node in dequeue_huge_page_nodemask()
+  mm, oom_kill: use for_each_node in constrained_alloc()
+  mm, slub: use for_each_node in get_any_partial()
+  mm, slab: use for_each_node in fallback_alloc()
+  mm, vmscan: use for_each_node in do_try_to_free_pages()
+  mm, vmscan: use first_node in throttle_direct_reclaim()
+  mm, vmscan: pass pgdat to wakeup_kswapd()
+  mm, vmscan: use for_each_node in shrink_zones()
+  mm, page_alloc: use for_each_node in wake_all_kswapds()
+  mm, mempolicy: use first_node in mempolicy_slab_node()
+  mm, mempolicy: use first_node in mpol_misplaced()
+  mm, page_alloc: use first_node in local_memory_node()
+  mm, compaction: rename compaction_zonelist_suitable
+  mm, mm_init: rename mminit_verify_zonelist
+  mm, page_alloc: cleanup build_zonelists
+  mm, memory_hotplug: cleanup online_pages()
+  kernel, sysctl: cleanup numa_zonelist_order
+  mm, mmzone: cleanup zonelist in comments
+
+ arch/hexagon/mm/init.c           |   2 +-
+ arch/ia64/include/asm/topology.h |   2 +-
+ arch/x86/mm/numa.c               |   2 +-
+ drivers/tty/sysrq.c              |   2 +-
+ include/linux/compaction.h       |   2 +-
+ include/linux/gfp.h              |  18 +-
+ include/linux/mmzone.h           | 249 +++++++++++++------------
+ include/linux/oom.h              |   4 +-
+ include/linux/swap.h             |   2 +-
+ include/trace/events/oom.h       |   9 +-
+ init/main.c                      |   2 +-
+ kernel/cgroup/cpuset.c           |   4 +-
+ kernel/sysctl.c                  |   8 +-
+ mm/compaction.c                  |  20 +-
+ mm/hugetlb.c                     |  21 +--
+ mm/internal.h                    |  13 +-
+ mm/memcontrol.c                  |   2 +-
+ mm/memory_hotplug.c              |  24 +--
+ mm/mempolicy.c                   |  26 ++-
+ mm/mm_init.c                     |  74 +++++---
+ mm/mmzone.c                      |  30 ++-
+ mm/oom_kill.c                    |  16 +-
+ mm/page_alloc.c                  | 301 ++++++++++++++++---------------
+ mm/slab.c                        |  13 +-
+ mm/slub.c                        |  14 +-
+ mm/vmscan.c                      | 149 ++++++++-------
+ 26 files changed, 518 insertions(+), 491 deletions(-)
+
+-- 
+2.23.0
+
