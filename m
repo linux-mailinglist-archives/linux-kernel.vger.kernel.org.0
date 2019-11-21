@@ -2,61 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626AF104E50
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79358104E52
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbfKUItV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:49:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55310 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726132AbfKUItU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:49:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 429FEAFAF;
-        Thu, 21 Nov 2019 08:49:19 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 09:49:18 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] intel_th: pci: Jasper Lake is not a PCH
-Message-ID: <20191121094918.6812d54f@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1726664AbfKUItk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:49:40 -0500
+Received: from www62.your-server.de ([213.133.104.62]:34272 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfKUItk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 03:49:40 -0500
+Received: from [2a02:1205:507e:bf80:bef8:7f66:49c8:72e5] (helo=localhost)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1iXi9f-0002It-P2; Thu, 21 Nov 2019 09:49:35 +0100
+Date:   Thu, 21 Nov 2019 09:49:35 +0100
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>
+Cc:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH] xsk: fix xsk_poll()'s return type
+Message-ID: <20191121084935.GB31576@pc-11.home>
+References: <20191120001042.30830-1-luc.vanoostenryck@gmail.com>
+ <103f550e-4a78-e540-4a57-bdecc2f066cf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <103f550e-4a78-e540-4a57-bdecc2f066cf@intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25639/Wed Nov 20 11:02:53 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to Intel engineering, the Jasper Lake is a SOC not a PCH.
+On Wed, Nov 20, 2019 at 07:15:42AM +0100, Björn Töpel wrote:
+> On 2019-11-20 01:10, Luc Van Oostenryck wrote:
+> > xsk_poll() is defined as returning 'unsigned int' but the
+> > .poll method is declared as returning '__poll_t', a bitwise type.
+> > 
+> > Fix this by using the proper return type and using the EPOLL
+> > constants instead of the POLL ones, as required for __poll_t.
+> 
+> Thanks for the cleanup!
+> 
+> Acked-by: Björn Töpel <bjorn.topel@intel.com>
+> 
+> Daniel/Alexei: This should go through bpf-next.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 9d55499d8da4 ("intel_th: pci: Add Jasper Lake PCH support")
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
----
- drivers/hwtracing/intel_th/pci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-5.4-rc7.orig/drivers/hwtracing/intel_th/pci.c	2019-11-15 12:08:16.487157641 +0100
-+++ linux-5.4-rc7/drivers/hwtracing/intel_th/pci.c	2019-11-21 09:40:36.189296044 +0100
-@@ -215,7 +215,7 @@ static const struct pci_device_id intel_
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
- 	},
- 	{
--		/* Jasper Lake PCH */
-+		/* Jasper Lake */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x4da6),
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
- 	},
-
-
--- 
-Jean Delvare
-SUSE L3 Support
+Done, applied, thanks!
