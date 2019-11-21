@@ -2,92 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA6E105103
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5727E10510B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 12:06:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfKULFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 06:05:12 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38862 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfKULFM (ORCPT
+        id S1726976AbfKULGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 06:06:06 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:18266 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726165AbfKULGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 06:05:12 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xALB54W1042887;
-        Thu, 21 Nov 2019 05:05:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574334304;
-        bh=2jhTB3ZCG+VXa9OTzwERZTfnUMAKUnfWeesl2loHDWQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=XYmeF2orc4R5/8+V8cz7ZJlnd1Eq9nhCpog0qXdVXg4+1scUTdfB05kjMTgeYUoxc
-         M52qvuXul80YgYSszHxo85kxg2FhHFHpVPd1mG0CtKjGEUbv0JeW5Jj2bubV6evzbx
-         7diC877KbzDteZnWWmW5+P+li6/WHS2vJe9kEVok=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xALB52Lb093070
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 21 Nov 2019 05:05:03 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 21
- Nov 2019 05:05:03 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 21 Nov 2019 05:05:03 -0600
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xALB4wso079763;
-        Thu, 21 Nov 2019 05:04:59 -0600
-Subject: Re: [PATCH 0/1] ARM: dts: am5729: beaglebone-ai: enable board
-To:     Caleb Robey <c-robey@ti.com>, <linux-omap@vger.kernel.org>
-CC:     Jason Kridner <jkridner@gmail.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>, Jason Kridner <jdk@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        "Andrew F . Davis" <afd@ti.com>, Tom Rini <trini@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191119202850.18149-1-c-robey@ti.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <e831422f-66b7-32e1-5b44-f7ca287abc4b@ti.com>
-Date:   Thu, 21 Nov 2019 13:05:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 21 Nov 2019 06:06:06 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xALAvIQV026272;
+        Thu, 21 Nov 2019 12:05:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=OhtREXLEPovh2INiG1vnuC84uK8FvPx6VEk4u0CcrrM=;
+ b=ZHUKQT94E35jxMTuPiidNnBVxL/JQIz201SOvqDXW+5gHxaLHD7wpsLYRz++NhPZNO5t
+ hkIzAOc3Xq8LPuW2Ep1pZkmZYhtlyArGlAJaOlWXUpRN38jvaCu2lepcqcVkCWw/9awu
+ sqHDlDPVBgTohnFIhqjZOWM68FX7Q8iKFxilmtpBrlgz0OcaHdWtzebYiKiKoc+ShRae
+ wqBrca3fvSwJv5ucqLzG8cKYibvqAeR2NCH4IYAbqGXdi9t8+sjC0a786wEQQD1RNxqv
+ s1JHnrb003BWfXJrqkrjiuiQALlOGSrHVkOny9nl7WNv+A7uNpE9CEOd6RCrTcgZldIE SA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2wa9upbaaj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Nov 2019 12:05:40 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 31E7710002A;
+        Thu, 21 Nov 2019 12:05:40 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 197332BA32B;
+        Thu, 21 Nov 2019 12:05:40 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov 2019 12:05:39
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@st.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] iio: trigger: stm32-timer: remove unnecessary update event
+Date:   Thu, 21 Nov 2019 12:05:17 +0100
+Message-ID: <1574334317-30014-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20191119202850.18149-1-c-robey@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-21_02:2019-11-21,2019-11-21 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is no need to explicitly generate update event to update
+timer master mode.
 
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/iio/trigger/stm32-timer-trigger.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-On 19/11/2019 22:28, Caleb Robey wrote:
-> The following patch adds the device tree file for BeagleBone AI
-
-
-Please, add version info in subjects and
-provide change log in cover.
-
-
->   
-> Caleb Robey (1):
->    ARM: dts: am5729: beaglebone-ai: adding device tree
-> 
->   arch/arm/boot/dts/Makefile                |   1 +
->   arch/arm/boot/dts/am5729-beagleboneai.dts | 782 ++++++++++++++++++++++
->   2 files changed, 783 insertions(+)
->   create mode 100644 arch/arm/boot/dts/am5729-beagleboneai.dts
-> 
-
+diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/trigger/stm32-timer-trigger.c
+index a5dfe65..2e0d32a 100644
+--- a/drivers/iio/trigger/stm32-timer-trigger.c
++++ b/drivers/iio/trigger/stm32-timer-trigger.c
+@@ -297,9 +297,6 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 			     strlen(master_mode_table[i]))) {
+ 			regmap_update_bits(priv->regmap, TIM_CR2, mask,
+ 					   i << shift);
+-			/* Make sure that registers are updated */
+-			regmap_update_bits(priv->regmap, TIM_EGR,
+-					   TIM_EGR_UG, TIM_EGR_UG);
+ 			return len;
+ 		}
+ 	}
 -- 
-Best regards,
-grygorii
+2.7.4
+
