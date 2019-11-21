@@ -2,157 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2352F105330
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:35:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AD510534A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfKUNft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:35:49 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:59331 "EHLO
+        id S1727059AbfKUNjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:39:03 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:55747 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfKUNfs (ORCPT
+        with ESMTP id S1726358AbfKUNjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:35:48 -0500
+        Thu, 21 Nov 2019 08:39:03 -0500
 Received: from orion.localdomain ([95.115.120.75]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M2wbS-1iYtcV1qLk-003OCr; Thu, 21 Nov 2019 14:35:47 +0100
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Mi2eP-1huJ2m16AL-00e4qC; Thu, 21 Nov 2019 14:38:33 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
-Cc:     info@metux.net
-Subject: [PATCH] scripts: helper for mailing patches from git to the maintainers
-Date:   Thu, 21 Nov 2019 14:35:30 +0100
-Message-Id: <20191121133530.14534-1-info@metux.net>
+Cc:     rostedt@goodmis.org, mingo@redhat.com
+Subject: [PATCH] include: linux: ftrace.h: use BIT() macro
+Date:   Thu, 21 Nov 2019 14:38:15 +0100
+Message-Id: <20191121133815.15040-1-info@metux.net>
 X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:EovKbd9C5qnt3jveiYswu6hvjcPpeZqFssM86sVmNum3/T4khqQ
- jllKIxc1TzgHBTWEfKPl5vgAdyn3NHLfHNvvMgkXpcdaPJxIu20Fl8PyAo1j1x+J9eLw1Yj
- 09IFUF60V6CHATPIco4ZfD0m8gpESpwPchXe5YPYI53kyFvAetqvk4A/WMr+HE2ZcpzFxWc
- fL611uKoRYZrqiTrinmAQ==
+X-Provags-ID: V03:K1:YWHX0B4zLw+p3zuqSV0NxLxGMZb+yVVumbHyPnTn/6hA6A/FLRX
+ eehc12fB/IB5/dYFi41Zg2cCCByANCXBJZTY7U7uTRmW8XkDJFLZpnhuO/3nAQz4A6vOIh2
+ M0HpE54E+w3BjdNfO9bA1Pt2fNwvUx5JlPfL7LO/XCT/freC/jacfmtAk7mLUSGZk0q76kJ
+ V7vXUX1VqbwqeqtPvVtog==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1mDJSTJSYFg=:d8BL5ZwGjojbGioBvZdmyi
- RYU9UyOFeBj2c2SmfDzOMek2Rp+zl08X7bA8eHldX1+NTc2WcKjTS57z4AUk9+goeneF57kRh
- BVSY2e/6Ers4Nof/j8llWII6XdstN/YhtzygaAGdVqRWrE3QKlSFSFNWn1KM1azC8VLhhyUB6
- DzS0Q+TpcNydGHZv2/aiFAVuarJoak9McR+erKNYBhflW91JG8tlDVliN7IIBK+/ErQi4eafB
- PCEI2AaKP5TE/8eEXW21IdCIePJlAv68TGd8L18o0mEdMAr1leicfvzRs0jkXQ9Q4RQK+hygA
- LmXp8FZDGRDZznkhuTZexmNT0T7h517Nm1dEEU5TmkdxPCPjYhP1rk2gAelbv+bthJohkmJDS
- A0dongG86FricHRXxPnM4+Lb1BxkH/KZLZxbXN76mrJTdzcZ4N9L+QARsIYsWVc8tGo9kf6Mo
- jwa8w6V1yaLY76lpt/1d3l5Xvk0YZlgqxUKCEmJ89tgcqnPuDkNXSf133N6YL3lgeAVg3b7bX
- OQcwJhfjqU01e39Ne347WOOifEVp1PUyONucdEN7vues8E6zrby1vpnk5Xt3EXFlqJqstCb2B
- c7vtiqgO5mNNeZKaBqaJ9uXzv9rO/VQlq95OJMMX/nESck76VDdl+h+CvH8me97nYqCZLcENa
- wDwUxX8AopjTz8qzV8yu1OxqlqDpxhnUsEyoMAWQTeNE00B7xor0FZtreLW8FWyFXSHnEJB/X
- qtebs1cEzq/s3jO/zle19zbFOQIt9R2PRys8iH4VKgHdn39LKviZtPyjQOwA+XbCafIvED8Q1
- JBVM2K6FgWuHFoMF/+avklPFRgKUoACSE4wKCBSthE8xMKR11Oiyd+yUXLh0DbsKfpZ5hXNoW
- Rx8bucyaevImOA2dvWqw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6Xqp1jn7lO4=:9VwcofcNtvlKNqv5J9JT2a
+ zZ+VrmzfJyS91NXRBktEXyNP3x9Vzwkf1HezBx3Pt6hz910IOmbYxxDjCMknF7JNk/yF033tK
+ LTFV5qDlGKXR3C9Zcl4axod8TN2g+gNU7W3dvJE9Jqo2T6HFebfDBl1rRtWL0fFas9zyY+KJN
+ fXFhDWVJcckvskAeg5r5hXdEF1nEN1zrjntxk/hKpccEnzmLY6WPCEt1Cbrcf2xDx+ZoVH1Hf
+ vbZLNrnRfNDR+AL9U1THjk/7akUQuAgU94ixtGJMKfx/19gJNDPwexNceLVz1C8kbbw5XwlfW
+ eDeN4pKJQIXeddtKvumlFZSNK95ViJBwJCpQniPJTxSnlFrAoe9gFqndAETIJA1rFlqp5yrWj
+ ztqDREW31OJFym7fg5Zo3yOVYkhRmK5TpEL8dQb/OxEs2jxxn+9jfYwjBJE9eqvAbD/RoXm51
+ mOKD2f6j5bhDETL0I/icTmchRV1PMVRsqLALR8O8WgP80G0svWdcC41okhrgKD8ZhDXB5Tb4Q
+ GG5BfyTX4qCaX8fquHewTW+K6SyIw0dobLz8yfJzWQMKi9WkAE33rT6yNHlLzAnaVSB8I/pJF
+ idsvneW9YptEYxF1PXOla3HkRcz2NyWEwi7xTZnUld71oSJirhxKp8gYT9c3Y9bQWrtjAZckt
+ x5TDCxCicxopmRtpEuryjjpnO/AeCyvqbeoNLLNI5BE2YbMIdY2m2vaNVqqv/3oIq2un2JLGe
+ JW3ChlCK5MkkQHP1QW6qqreFurUQmqoUAGy5d4KLtPvy+94Ser46Is8pG3LTnreZLbFNEqoWQ
+ +Inoq9lwr1pmUn/xbncm1pHJ/FtGnU++7AP0TjdH2txmgpdFRdQw3NNm3GzchWEGULf5NCcD9
+ nwBhEeC72ykxoA2JJvqQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a little helper script for mailing patches out of a git
-branch to the corresponding maintainers.
-
-Essentially, it scans the touched files, asks get_maintainer.pl
-for their maintainers and calls git-send-email for mailing out
-the patches.
-
-Syntax:
-
-  ./scripts/git-send-patch <ref> [<optional git-send-email args>]
-
-Examples:
-
-  ./scripts/git-send-patch HEAD^
-  ./scripts/git-send-patch linus/master --dry-run
+It's cleaner to use the BIT() macro instead of raw shift operation.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- MAINTAINERS            |  5 ++++
- scripts/git-send-patch | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
- create mode 100755 scripts/git-send-patch
+ include/linux/ftrace.h | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4f170d8bc29..b47973c922d0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6929,6 +6929,11 @@ F:	Documentation/filesystems/gfs2*.txt
- F:	fs/gfs2/
- F:	include/uapi/linux/gfs2_ondisk.h
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 8a8cb3c401b2..0a84b4ca3e7c 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -144,22 +144,22 @@ ftrace_func_t ftrace_ops_get_func(struct ftrace_ops *ops);
+  * TRACE_ARRAY - The ops->private points to a trace_array descriptor.
+  */
+ enum {
+-	FTRACE_OPS_FL_ENABLED			= 1 << 0,
+-	FTRACE_OPS_FL_DYNAMIC			= 1 << 1,
+-	FTRACE_OPS_FL_SAVE_REGS			= 1 << 2,
+-	FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED	= 1 << 3,
+-	FTRACE_OPS_FL_RECURSION_SAFE		= 1 << 4,
+-	FTRACE_OPS_FL_STUB			= 1 << 5,
+-	FTRACE_OPS_FL_INITIALIZED		= 1 << 6,
+-	FTRACE_OPS_FL_DELETED			= 1 << 7,
+-	FTRACE_OPS_FL_ADDING			= 1 << 8,
+-	FTRACE_OPS_FL_REMOVING			= 1 << 9,
+-	FTRACE_OPS_FL_MODIFYING			= 1 << 10,
+-	FTRACE_OPS_FL_ALLOC_TRAMP		= 1 << 11,
+-	FTRACE_OPS_FL_IPMODIFY			= 1 << 12,
+-	FTRACE_OPS_FL_PID			= 1 << 13,
+-	FTRACE_OPS_FL_RCU			= 1 << 14,
+-	FTRACE_OPS_FL_TRACE_ARRAY		= 1 << 15,
++	FTRACE_OPS_FL_ENABLED			= BIT(0),
++	FTRACE_OPS_FL_DYNAMIC			= BIT(1),
++	FTRACE_OPS_FL_SAVE_REGS			= BIT(2),
++	FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED	= BIT(3),
++	FTRACE_OPS_FL_RECURSION_SAFE		= BIT(4),
++	FTRACE_OPS_FL_STUB			= BIT(5),
++	FTRACE_OPS_FL_INITIALIZED		= BIT(6),
++	FTRACE_OPS_FL_DELETED			= BIT(7),
++	FTRACE_OPS_FL_ADDING			= BIT(8),
++	FTRACE_OPS_FL_REMOVING			= BIT(9),
++	FTRACE_OPS_FL_MODIFYING			= BIT(10),
++	FTRACE_OPS_FL_ALLOC_TRAMP		= BIT(11),
++	FTRACE_OPS_FL_IPMODIFY			= BIT(12),
++	FTRACE_OPS_FL_PID			= BIT(13),
++	FTRACE_OPS_FL_RCU			= BIT(14),
++	FTRACE_OPS_FL_TRACE_ARRAY		= BIT(15),
+ };
  
-+GIT_SEND_PATCH SCRIPT
-+M:	Enrico Weigelt, metux IT consult <info@metux.net>
-+F:	scripts/git-send-patch
-+S:	Maintained
-+
- GNSS SUBSYSTEM
- M:	Johan Hovold <johan@kernel.org>
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/johan/gnss.git
-diff --git a/scripts/git-send-patch b/scripts/git-send-patch
-new file mode 100755
-index 000000000000..b54790fd1cc1
---- /dev/null
-+++ b/scripts/git-send-patch
-@@ -0,0 +1,62 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+[ -x "$GIT" ]       || export GIT=git
-+[ -d "$KERNELSRC" ] || export KERNELSRC=.
-+
-+LKML="linux-kernel@vger.kernel.org"
-+
-+check_ksrc() {
-+    if [ -d $KERNELSRC/arch ] && \
-+       [ -d $KERNELSRC/block ] && \
-+       [ -d $KERNELSRC/init ] && \
-+       [ -d $KERNELSRC/kernel ] && \
-+       [ -d $KERNELSRC/sound ] && \
-+       [ -d $KERNELSRC/drivers ] && \
-+       [ -d $KERNELSRC/net ] && \
-+       [ -d $KERNELSRC/include ] && \
-+       [ -f $KERNELSRC/COPYING ] && \
-+       [ -f $KERNELSRC/MAINTAINERS ] && \
-+       [ -f $KERNELSRC/CREDITS ] && \
-+       [ -f $KERNELSRC/Kconfig ] && \
-+       [ -f $KERNELSRC/Makefile ]; then
-+        return 0
-+    else
-+        echo "$0: cant find the kernel source tree. please call me from the topdir" >&2
-+        exit 1
-+    fi
-+}
-+
-+check_ksrc
-+
-+get_files() {
-+    $GIT diff --name-only "$REF"
-+}
-+
-+get_maintainers() {
-+    $KERNELSRC/scripts/get_maintainer.pl --m --l --remove-duplicates `get_files` |
-+        grep -v "$LKML" | \
-+        grep -E "(maintainer|reviewer|open list)" | \
-+        grep -o '[[:alnum:]+\.\_\-]*@[[:alnum:]+\.\_\-]*'
-+}
-+
-+construct_params() {
-+    echo -n "--to=$LKML "
-+    for a in `get_maintainers`; do
-+        echo -n "--cc=$a "
-+    done
-+}
-+
-+if [ ! "$1" ]; then
-+    echo "$0: missing git revision to send out" >&2
-+    echo "" >&2
-+    echo "for example: 'HEAD^' for sending just the last patch" >&2
-+    echo >&2
-+    echo "$0 <git-ref> [<extra params for git-send-mail>]"
-+    exit 1
-+fi
-+
-+REF="$1"
-+shift
-+
-+$GIT send-email `construct_params` "$REF" "$@"
+ #ifdef CONFIG_DYNAMIC_FTRACE
 -- 
 2.11.0
 
