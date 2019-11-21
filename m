@@ -2,96 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 340171050B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FEC1050B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfKUKiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:38:19 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:33638 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfKUKiS (ORCPT
+        id S1726977AbfKUKiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:38:25 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40315 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726875AbfKUKiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:38:18 -0500
+        Thu, 21 Nov 2019 05:38:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574332697;
+        s=mimecast20190719; t=1574332703;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VhfsdgfnBGFdqQ+uLrLd0ryQWfyJPaQk6Np/gMUhFtg=;
-        b=AlMs0mLPG3tgVK6amhXEELwBkEVJRzamQFS8kAiR9RdmD4oE9UkfgOyTq4zInCe0yOz31d
-        cUy92csFt9/iN0NE4u16VUMqetwzMey/mzFzVmn4jLg3wHddBLNj/Lv8p/mhEdvguuMjmn
-        X5KOZSt0TpBHjFPysqyl+guuNdoCGSc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-21-PqYQGKb9MKe9HMCdYqCfBA-1; Thu, 21 Nov 2019 05:38:14 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A2BE1107BA9E;
-        Thu, 21 Nov 2019 10:38:12 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 79FD1106F972;
-        Thu, 21 Nov 2019 10:38:08 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id C868DA1E0; Thu, 21 Nov 2019 11:38:07 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     intel-gfx@lists.freedesktop.org, Gerd Hoffmann <kraxel@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] drm: share address space for dma bufs
-Date:   Thu, 21 Nov 2019 11:38:07 +0100
-Message-Id: <20191121103807.18424-3-kraxel@redhat.com>
-In-Reply-To: <20191121103807.18424-1-kraxel@redhat.com>
-References: <20191121103807.18424-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: PqYQGKb9MKe9HMCdYqCfBA-1
+        bh=gcx4NotMnfWI8ryROCazs48WfO2wapfkiUCvjD+j/TI=;
+        b=e1o3LIc0pR4xQmVVnocnwRcPsw0qb9XhSrHgPuW7RzFZGZM2qCKUo8+mHALhiX2JESl719
+        +I7zEEW1UEK8DqHtTZBAJR28qm774CT1snd7UwEibf8Eah6Q/3LvR9NTsDs3TOrMTNdgG/
+        bBAaPNduYmYmNRCZ2vmXs14RGyD5w/0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-372-jE8OmELBP8q1rx54WYz0wQ-1; Thu, 21 Nov 2019 05:38:21 -0500
+Received: by mail-wr1-f70.google.com with SMTP id c6so1810673wrm.18
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 02:38:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zCRBPyvdRSagG9bu6g7JLItNtcbbQJccmo18+XWsj1g=;
+        b=KqIoSCgRZ7NCiL26IJV9P99sSqqzdQ75izKMNEy83YIRI/hDDt/88Gne/yheg2H+6v
+         vuYXl5mRPmol+TFxC+z37wkx6AMHH2jgzj2thTvqUOFuXynjVYZN9YoIROrp339/8YMB
+         Yd811tW4C/4eCWWufZcWKRYRWL5X/piAZdQ8pb9+SgXGNfLfzoDxXMXIRUaE88IY/gju
+         u/f5rab7RVTHCBqCDR3B1T+ofRlFAps3y3rp1Di8TYYF92fMQYfCQdtF1oSNPYZ/fltv
+         2BJlCezMdZI+b7H4kMgp7n8xD2H9d5mL+MMA8X5kY3EqQ8mM1Myzcxdb18Ci8qQDr7uF
+         Jzkg==
+X-Gm-Message-State: APjAAAUmNjoCXMGpce+eckGvh+QsOT3r/HEcF3dzhqRkL2pB2PhMHkzK
+        Vl0X8CsBuYgdYx2vN0xpTEWaLphUYJEwTwlK9hnQaZEOww3xX3eR3NjnjnlDCDh3f8YIIRPe7gO
+        Hrv7OrPS0AcjmECpB7ASPOMtH
+X-Received: by 2002:adf:e803:: with SMTP id o3mr9693026wrm.326.1574332700003;
+        Thu, 21 Nov 2019 02:38:20 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyrXPnT74IzyupD1iCDtakTuMWQXc9sqwsiS9lodrPz+fHzBQXzWngw7Q9U6oB/kr7PmVmzpg==
+X-Received: by 2002:adf:e803:: with SMTP id o3mr9692996wrm.326.1574332699760;
+        Thu, 21 Nov 2019 02:38:19 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:71a5:6e:f854:d744? ([2001:b07:6468:f312:71a5:6e:f854:d744])
+        by smtp.gmail.com with ESMTPSA id w17sm2896352wrt.45.2019.11.21.02.38.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 02:38:19 -0800 (PST)
+Subject: Re: [PATCH v7 3/9] mmu: spp: Add SPP Table setup functions
+To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmattson@google.com,
+        sean.j.christopherson@intel.com
+Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com
+References: <20191119084949.15471-1-weijiang.yang@intel.com>
+ <20191119084949.15471-4-weijiang.yang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5b0da087-8ce0-2b01-5a1a-4d8c5f319d33@redhat.com>
+Date:   Thu, 21 Nov 2019 11:38:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191119084949.15471-4-weijiang.yang@intel.com>
+Content-Language: en-US
+X-MC-Unique: jE8OmELBP8q1rx54WYz0wQ-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the shared address space of the drm device (see drm_open() in
-drm_file.c) for dma-bufs too.  That removes a difference betweem drm
-device mmap vmas and dma-buf mmap vmas and fixes corner cases like
-unmaps not working properly.
+On 19/11/19 09:49, Yang Weijiang wrote:
+> +static int is_spp_shadow_present(u64 pte)
+> +{
+> +=09return pte & PT_PRESENT_MASK;
+> +}
+> +
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/drm_prime.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This should not be needed, is_shadow_present_pte works well for SPP PTEs
+as well (and in fact you're already using it here and there, so it's
+confusing to have both).
 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index a9633bd241bb..c3fc341453c0 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -240,6 +240,7 @@ void drm_prime_destroy_file_private(struct drm_prime_fi=
-le_private *prime_fpriv)
- struct dma_buf *drm_gem_dmabuf_export(struct drm_device *dev,
- =09=09=09=09      struct dma_buf_export_info *exp_info)
- {
-+=09struct drm_gem_object *obj =3D exp_info->priv;
- =09struct dma_buf *dma_buf;
-=20
- =09dma_buf =3D dma_buf_export(exp_info);
-@@ -247,7 +248,8 @@ struct dma_buf *drm_gem_dmabuf_export(struct drm_device=
- *dev,
- =09=09return dma_buf;
-=20
- =09drm_dev_get(dev);
--=09drm_gem_object_get(exp_info->priv);
-+=09drm_gem_object_get(obj);
-+=09dma_buf->file->f_mapping =3D obj->dev->anon_inode->i_mapping;
-=20
- =09return dma_buf;
- }
---=20
-2.18.1
+Paolo
 
