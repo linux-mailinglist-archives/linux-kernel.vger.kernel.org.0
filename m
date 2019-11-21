@@ -2,107 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E6E104927
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 04:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C61310493C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 04:21:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbfKUDUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 22:20:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727590AbfKUDUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 22:20:48 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727698AbfKUDVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 22:21:12 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59402 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727050AbfKUDVH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 22:21:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574306466;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bWE830W7XPGCNo1jp1GJ01OlXQKp72T4TdINlVBXIEk=;
+        b=ESn/raW6aJmPcrTokzgdf+RFYHAU0ABeg25rS5w40RXN3kd+J+p8klROoCawb1+5Mz6cEX
+        +TAdxtI81isUiJPo/QqcbrUvqxaEnHC8h66FcRqD8oEpL18D2CKdU6qdsmWQA/IHsl7VOw
+        JJPMhg9KUqRBDX8QlUdAhAe2rwqR2mk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-398-B1bmXBaGNl65qKvByAPhSQ-1; Wed, 20 Nov 2019 22:21:04 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD5B8208A3;
-        Thu, 21 Nov 2019 03:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574306447;
-        bh=NjVI8odmttsECwSZARjFEDrBXK5my+3emM678PTtG94=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WQZK6cMtaWkIJOSMao3ywIh41eaZr/u5Q+zJRP2Ygdiih7Vut5cuyF2oorTeQxGlh
-         8UhcwkSQ7REj+BI1zv0UYiC6enciol0rMqllbx5yAPsRoQCYcITn7fO/0tfEWxY6z2
-         pnake7TWOhdy79laqUJpRXpKzt7Hkz/srqWieYx8=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
-Subject: [PATCH v2] ata: Fix Kconfig indentation
-Date:   Thu, 21 Nov 2019 04:20:44 +0100
-Message-Id: <1574306444-30831-1-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8979E477;
+        Thu, 21 Nov 2019 03:21:01 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-115.pek2.redhat.com [10.72.12.115])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1C79066D46;
+        Thu, 21 Nov 2019 03:20:51 +0000 (UTC)
+Date:   Thu, 21 Nov 2019 11:20:47 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-doc@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Boris Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>, bhupesh.linux@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steve Capper <steve.capper@arm.com>, kexec@lists.infradead.org,
+        James Morse <james.morse@arm.com>,
+        Dave Anderson <anderson@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 0/3] Append new variables to vmcoreinfo (TCR_EL1.T1SZ
+ for arm64 and MAX_PHYSMEM_BITS for all archs)
+Message-ID: <20191121032047.GB23368@dhcp-128-65.nay.redhat.com>
+References: <1573459282-26989-1-git-send-email-bhsharma@redhat.com>
+MIME-Version: 1.0
+In-Reply-To: <1573459282-26989-1-git-send-email-bhsharma@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: B1bmXBaGNl65qKvByAPhSQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+On 11/11/19 at 01:31pm, Bhupesh Sharma wrote:
+> Changes since v3:
+> ----------------
+> - v3 can be seen here:
+>   http://lists.infradead.org/pipermail/kexec/2019-March/022590.html
+> - Addressed comments from James and exported TCR_EL1.T1SZ in vmcoreinfo
+>   instead of PTRS_PER_PGD.
+> - Added a new patch (via [PATCH 3/3]), which fixes a simple typo in
+>   'Documentation/arm64/memory.rst'
+>=20
+> Changes since v2:
+> ----------------
+> - v2 can be seen here:
+>   http://lists.infradead.org/pipermail/kexec/2019-March/022531.html
+> - Protected 'MAX_PHYSMEM_BITS' vmcoreinfo variable under CONFIG_SPARSEMEM
+>   ifdef sections, as suggested by Kazu.
+> - Updated vmcoreinfo documentation to add description about
+>   'MAX_PHYSMEM_BITS' variable (via [PATCH 3/3]).
+>=20
+> Changes since v1:
+> ----------------
+> - v1 was sent out as a single patch which can be seen here:
+>   http://lists.infradead.org/pipermail/kexec/2019-February/022411.html
+>=20
+> - v2 breaks the single patch into two independent patches:
+>   [PATCH 1/2] appends 'PTRS_PER_PGD' to vmcoreinfo for arm64 arch, wherea=
+s
+>   [PATCH 2/2] appends 'MAX_PHYSMEM_BITS' to vmcoreinfo in core kernel cod=
+e (all archs)
+>=20
+> This patchset primarily fixes the regression reported in user-space
+> utilities like 'makedumpfile' and 'crash-utility' on arm64 architecture
+> with the availability of 52-bit address space feature in underlying
+> kernel. These regressions have been reported both on CPUs which don't
+> support ARMv8.2 extensions (i.e. LVA, LPA) and are running newer kernels
+> and also on prototype platforms (like ARMv8 FVP simulator model) which
+> support ARMv8.2 extensions and are running newer kernels.
+>=20
+> The reason for these regressions is that right now user-space tools
+> have no direct access to these values (since these are not exported
+> from the kernel) and hence need to rely on a best-guess method of
+> determining value of 'vabits_actual' and 'MAX_PHYSMEM_BITS' supported
+> by underlying kernel.
+>=20
+> Exporting these values via vmcoreinfo will help user-land in such cases.
+> In addition, as per suggestion from makedumpfile maintainer (Kazu),
+> it makes more sense to append 'MAX_PHYSMEM_BITS' to
+> vmcoreinfo in the core code itself rather than in arm64 arch-specific
+> code, so that the user-space code for other archs can also benefit from
+> this addition to the vmcoreinfo and use it as a standard way of
+> determining 'SECTIONS_SHIFT' value in user-land.
+>=20
+> Cc: Boris Petkov <bp@alien8.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Steve Capper <steve.capper@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Dave Anderson <anderson@redhat.com>
+> Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+> Cc: x86@kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: kexec@lists.infradead.org
+>=20
+> Bhupesh Sharma (3):
+>   crash_core, vmcoreinfo: Append 'MAX_PHYSMEM_BITS' to vmcoreinfo
+>   arm64/crash_core: Export TCR_EL1.T1SZ in vmcoreinfo
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Soft reminder:  the new introduced vmcoreinfo needs documentation
 
----
+Please check Documentation/admin-guide/kdump/vmcoreinfo.rst
 
-Changes since v1:
-1. Fix also 7-space and tab+1 space indentation issues.
----
- drivers/ata/Kconfig | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index a6beb2c5a692..c9132177faee 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -32,7 +32,7 @@ menuconfig ATA
- if ATA
- 
- config ATA_NONSTANDARD
--       bool
-+	bool
- 
- config ATA_VERBOSE_ERROR
- 	bool "Verbose ATA error reporting"
-@@ -695,7 +695,7 @@ config PATA_IMX
- 	depends on ARCH_MXC
- 	help
- 	  This option enables support for the PATA host available on Freescale
--          iMX SoCs.
-+	  iMX SoCs.
- 
- 	  If unsure, say N.
- 
-@@ -704,7 +704,7 @@ config PATA_IT8213
- 	depends on PCI
- 	help
- 	  This option enables support for the ITE 821 PATA
--          controllers via the new ATA layer.
-+	  controllers via the new ATA layer.
- 
- 	  If unsure, say N.
- 
-@@ -732,9 +732,9 @@ config PATA_MACIO
- 	depends on PPC_PMAC
- 	help
- 	  Most IDE capable PowerMacs have IDE busses driven by a variant
--          of this controller which is part of the Apple chipset used on
--          most PowerMac models. Some models have multiple busses using
--          different chipsets, though generally, MacIO is one of them.
-+	  of this controller which is part of the Apple chipset used on
-+	  most PowerMac models. Some models have multiple busses using
-+	  different chipsets, though generally, MacIO is one of them.
- 
- config PATA_MARVELL
- 	tristate "Marvell PATA support via legacy mode"
-@@ -915,7 +915,7 @@ config PATA_PXA
- 	  This option enables support for harddrive attached to PXA CPU's bus.
- 
- 	  NOTE: This driver utilizes PXA DMA controller, in case your hardware
--	        is not capable of doing MWDMA, use pata_platform instead.
-+	  is not capable of doing MWDMA, use pata_platform instead.
- 
- 	  If unsure, say N.
- 
--- 
-2.7.4
+Thanks
+Dave
 
