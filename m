@@ -2,176 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 024A9104F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9DB104F8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfKUJpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 04:45:13 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46563 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfKUJpN (ORCPT
+        id S1726852AbfKUJqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 04:46:44 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36109 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfKUJqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:45:13 -0500
-Received: by mail-pl1-f196.google.com with SMTP id l4so1301422plt.13;
-        Thu, 21 Nov 2019 01:45:12 -0800 (PST)
+        Thu, 21 Nov 2019 04:46:44 -0500
+Received: by mail-qt1-f195.google.com with SMTP id y10so3005390qto.3;
+        Thu, 21 Nov 2019 01:46:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6ASxIbDgZPzjpEeQAS60aSTYiSJ47wEPcbtoAyJxV1I=;
-        b=bEbUF9lMdvlVPkRLX3v5XpRyzMUUn4lP7if0rzHhSFjhwTinaGQxOK9/69n/VhuLKY
-         /SzI5l+Y7om7EUR7OlEg8Eqipiep8zQdCr4XSNPdVMpasCwdsIFAVp1giqgiz/khmNVv
-         fl5iRQJSl99NJjFoMmCVoNAQR22F5iynNI6mnyhXCDzSTOcjb8TVnpozcuiv3ac9EgQM
-         Ux451YOdfd9zDUFD/dKNikmlO61Bv6D2BxEQcJY7kU0AejFGgKBUzjm3b5Z1y+nHtm9/
-         SJdIS1dfPT8Vv7T7LiMZwZZJ04kVWd3mhURMeXoIAyt8iQ/k89ASbZmd004/DxlBXag7
-         gGkA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FRfqoR3D1Sv4wDhO7DSIhI3w3vZXZBxgc60xTbqdsxY=;
+        b=X3t2CYkkZUaeaOQCVKiD90VrNN+uF1V3yWfQ0ph4KLKp+fv7PuXqs2CIpnOVpTnR7M
+         9t0u76IQmgQUsdfauacp5DnN01TgCZnf+UetNVnsCUcMSoB4+8hCWyx0Xmcq9r4Exgra
+         /r4k/Le0pbZlc3xyap/+otfwyUZjZ8iZ+ORruZLSbf5Yfif/OiK4HSR4elY8QZ6lYbzd
+         Wjw9m6gSKsqupC4ICx7z9lpLuGUhjpiD86JjJ1C3d+a60Xn5X8FH0kHqNGjdikNIY8dk
+         5PvhbPbcZTGZk9MaCFK0UNRT4+p7P+rPHENs4OqtnCJFDFwO1yKn1WJwRtBVWlvFklVh
+         9vYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6ASxIbDgZPzjpEeQAS60aSTYiSJ47wEPcbtoAyJxV1I=;
-        b=FGrst/8y6kKOE0hs/N31rfoo/d5YJmjj8aACJ3bjAzCKPQIqZE1BuCHQNexWWDr8nN
-         UoGt2MmuoidtbKNZah66KlFhtwreYJlsR2WsfIVie+d3lkWRl96MZ22Os4zHzRfS39Ol
-         QWID9Eg+POPk8e+65Le8a3mmt67RMp1YKxc+rOLNI9xRWoCJYGs1Jk/W0uLY5Idmw0SW
-         iMAQLgKjxtA+79TbJs88rZKZP5oKwTzetzoLYhlfUugSw0NdDjwMN7c6JaWP4YI8LY43
-         QMvFiID7PHojzJ0mxC1P5NufbU5mc2K/fbLqg1xf0pSklPeRSiTdCzsVKZ/q1P+2zaz+
-         2A3Q==
-X-Gm-Message-State: APjAAAUe9QZqMOpKM5FKP15yUiCNbpjn7gwT/6fCdLp5p3KikEFECkxT
-        UJGMn4ehSOr4lkAIllWPCmUzXpBw
-X-Google-Smtp-Source: APXvYqz2pCtYH4yADufGtyDF3nMKzWAlEbR9Vq7cut3R0CBn8yhtcpgMNMollgpDpo8dyXBDHtiovg==
-X-Received: by 2002:a17:902:9344:: with SMTP id g4mr8062166plp.16.1574329511726;
-        Thu, 21 Nov 2019 01:45:11 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o16sm2292208pjp.23.2019.11.21.01.45.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 01:45:10 -0800 (PST)
-Subject: Re: [PATCH] watchdog: make DesignWare watchdog allow users to set
- bigger timeout value
-To:     "Wang, Peng 1. (NSB - CN/Hangzhou)" <peng.1.wang@nokia-sbell.com>
-Cc:     "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <13477f08400047c1b32030b2680a4241@nokia-sbell.com>
- <20191120171512.GA28255@roeck-us.net>
- <9128f42a3e4347f2adfccb8aa2833e2e@nokia-sbell.com>
- <b0fcaae6-c9da-f551-5af4-ff112b08e851@roeck-us.net>
- <2ba1cd4773c84ce28512aacde17034ed@nokia-sbell.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <685f5142-06a9-062d-b6d9-1d522c3923f8@roeck-us.net>
-Date:   Thu, 21 Nov 2019 01:45:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FRfqoR3D1Sv4wDhO7DSIhI3w3vZXZBxgc60xTbqdsxY=;
+        b=j6sbpPdB49JHyPdfe2shaNY2I9XRvjUHWy28SlUyuJjCPFZcxgyiXTsVOMFnDJTjyE
+         02/AHlSWFdOKIim9G9S5tVJNP7wcIfpEjmRCiEh1sA8Ifu3pWaMXbCoOzeXuKdxfzZfm
+         6/g2qSp921JKG4ekMC/ttfn/AcCOzxxtZSdvtgMhQOc2KUmjDgTa/O5UfZKJI5b9e+Qw
+         k8g4M86CwqHM8GAGklJ58qrDr/LGtPbvsuBPPEWqhJeswp+UacQrhJjiwIryjmKrldYC
+         KtZDnIX16B6AbCdI9UFnz6Xa8QySwhtdwEdg6hDogys6to+n7cFcyIGgNHjuXg2f2vz7
+         BkjQ==
+X-Gm-Message-State: APjAAAXh5MbijeRnN70Qpy39RRrkTxpNIz1zWXdflqajLQHyaakFSjAe
+        /VZdF8xEl00SkZpVXeFLilxMqQL4C6rxFuxKWJ8=
+X-Google-Smtp-Source: APXvYqwHDM7gnSQ1Zkv2iezgoGH8WwNvDlYZq1yaIeipIdjlmbZThfLF8JhLPHiRc+6qC9dQV3lAccNpQmyuYhH+I+s=
+X-Received: by 2002:ac8:6d31:: with SMTP id r17mr7447476qtu.28.1574329601933;
+ Thu, 21 Nov 2019 01:46:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2ba1cd4773c84ce28512aacde17034ed@nokia-sbell.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190808173028.1930-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190808173028.1930-1-yamada.masahiro@socionext.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Thu, 21 Nov 2019 17:46:05 +0800
+Message-ID: <CAEbi=3cZ29rmO55DcZSi8PmELay08HByabPETu_UOgXKZPk0cw@mail.gmail.com>
+Subject: Re: [PATCH] nds32: remove unneeded clean-files for DTB
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nickhu <nickhu@andestech.com>
+Cc:     Vincent Chen <deanbo422@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/19 12:07 AM, Wang, Peng 1. (NSB - CN/Hangzhou) wrote:
-> Actually, this function is used by watchdog_dev.c, the timeout value in wdd is already modified there.
-> but yes, you are right, decide the actual timeout value here is more reasonable. :)
-> 
+Masahiro Yamada <yamada.masahiro@socionext.com> =E6=96=BC 2019=E5=B9=B48=E6=
+=9C=889=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=881:31=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+>
+> These patterns are cleaned-up by the top-level Makefile
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  arch/nds32/boot/dts/Makefile | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/arch/nds32/boot/dts/Makefile b/arch/nds32/boot/dts/Makefile
+> index fff8ade7a84f..f84bd529b6fd 100644
+> --- a/arch/nds32/boot/dts/Makefile
+> +++ b/arch/nds32/boot/dts/Makefile
+> @@ -5,5 +5,3 @@ else
+>  BUILTIN_DTB :=3D
+>  endif
+>  obj-$(CONFIG_OF) +=3D $(BUILTIN_DTB)
+> -
+> -clean-files :=3D *.dtb *.dtb.S
 
-Please avoid top-posting.
-
-watchdog_dev.c only sets wdd->timeout if there is no driver function
-to set it.
-
-Guenter
-
-> thanks,
-> Peng Wang
-> -----Original Message-----
-> From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter Roeck
-> Sent: Thursday, November 21, 2019 11:41 AM
-> To: Wang, Peng 1. (NSB - CN/Hangzhou) <peng.1.wang@nokia-sbell.com>
-> Cc: wim@linux-watchdog.org; linux-watchdog@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] watchdog: make DesignWare watchdog allow users to set bigger timeout value
-> 
-> On 11/20/19 5:29 PM, Wang, Peng 1. (NSB - CN/Hangzhou) wrote:
->> Hi Guenter,
->>
->> Thank you for your time.
->> - I will remove the unnecessary {}
->> - wdd->max_hw_heartbeat_ms is the max timeout value which HW can support, this value is limited according to the input clock, say. It only supports 20 seconds, if users requires to set timeout to be say. 60 seconds, the watchdog device driver 'watchdog_dev.c' checks if wdd->timeout is bigger than wdd->max_hw_heartbeat_ms, if yes, watchdog_dev.c feeds the watchdog by a worker queue itself to help to feed the watchdog before 60 seconds elapse. Here the issue of dw_wdt.c is that, the original codes update wdd->timeout to the value which HW can support, which means if users requires 60 seconds to be the timeout, then dw_wdt.c updates the timeout value to 20 seconds, this makes the "feeding helper" mechanism in watchdog_dev.c not take effect. That's why I add this check.
->>
-> 
-> Yes, I understand you need a check. What I am saying is that the check is wrong.
-> 
-> You need something like
-> 
-> 	if (top_s > DW_WDT_MAX_TOP)
-> 		wdt->timeout = top_s;
-> 	else
-> 		wdt->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
-> 
-> Guenter
-> 
->> Thanks,
->> Peng Wang
->>
->> -----Original Message-----
->> From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter
->> Roeck
->> Sent: Thursday, November 21, 2019 1:15 AM
->> To: Wang, Peng 1. (NSB - CN/Hangzhou) <peng.1.wang@nokia-sbell.com>
->> Cc: wim@linux-watchdog.org; linux-watchdog@vger.kernel.org;
->> linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH] watchdog: make DesignWare watchdog allow users to
->> set bigger timeout value
->>
->> On Wed, Nov 20, 2019 at 10:07:57AM +0000, Wang, Peng 1. (NSB - CN/Hangzhou) wrote:
->>>   From 1d051b7c081083751dc0bab97d3ab9efbba0f4a7 Mon Sep 17 00:00:00
->>> 2001
->>> From: Peng Wang <peng.1.wang@nokia-sbell.com>
->>> Date: Wed, 20 Nov 2019 15:12:59 +0800
->>> Subject: [PATCH] watchdog: make DesignWare watchdog allow users to
->>> set bigger  timeout value
->>>
->>> watchdog_dev.c provides means to allow users to set bigger timeout
->>> value than HW can support, make DesignWare watchdog align with this.
->>>
->>> Signed-off-by: Peng Wang <peng.1.wang@nokia-sbell.com>
->>> ---
->>>    drivers/watchdog/dw_wdt.c | 11 +++++++++--
->>>    1 file changed, 9 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
->>> index fef7c61..8911e5e 100644
->>> --- a/drivers/watchdog/dw_wdt.c
->>> +++ b/drivers/watchdog/dw_wdt.c
->>> @@ -113,8 +113,15 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
->>>    	 */
->>>    	writel(top_val | top_val << WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT,
->>>    	       dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
->>> -
->>> -	wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
->>> +
->>> +    /*
->>> +     * In case users set bigger timeout value than HW can support,
->>> +     * kernel(watchdog_dev.c) helps to feed watchdog before
->>> +     * wdd->timeout
->>> +     */
->>> +    if ( wdd->timeout * 1000 <= wdd->max_hw_heartbeat_ms ) {
->>> +	    wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
->>> +    }
->>
->> { } is unnecessary here. Also, the above code compares the _old_ timeout againt the maximum supported timeout, which doesn't look correct.
->>
->> Thanks,
->> Guenter
->>
->>>    
->>>    	return 0;
->>>    }
->>> --
->>> 1.8.3.1
->>>
->>
-> 
-
+Thanks, Masahiro.
+Acked-by: Greentime Hu <green.hu@gmail.com>
