@@ -2,73 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0048D104C74
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:27:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6944B104C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 08:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfKUH1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 02:27:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfKUH1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 02:27:41 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49BD02089D;
-        Thu, 21 Nov 2019 07:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574321260;
-        bh=gPWdK3ZQs3w3pA48qJ20NHH19/TD+hbiKK+54x6ca3E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pTdxGys+fI/YWmhs8ajHyqe9MpZFOMqsSpbZM4ITK0fB17xJiuhgJvs1fxMLYpCvf
-         82lTIevOKs+X04tx7NsT34LTKYCScq8DKhMoySraei9v6CsowPflU/BOZu2x2R4Hh7
-         1jj4m0+06Cvw+2SmBRdkw30QwC1TqHDSmWmZ5vfs=
-Date:   Thu, 21 Nov 2019 08:27:38 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] tty: Fix Kconfig indentation
-Message-ID: <20191121072738.GA368332@kroah.com>
-References: <1574306408-20021-1-git-send-email-krzk@kernel.org>
- <20191121072124.GA356838@kroah.com>
- <CAJKOXPeW_ffza48Bbxm7Od-Xo_Vt-Qfy+8OY5w8AzZOPkxriXg@mail.gmail.com>
+        id S1727227AbfKUH2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 02:28:37 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58635 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUH2h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 02:28:37 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iXgtC-0007ve-4V; Thu, 21 Nov 2019 08:28:30 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iXgtB-000224-Md; Thu, 21 Nov 2019 08:28:29 +0100
+Date:   Thu, 21 Nov 2019 08:28:29 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [PATCH v7 4/8] pwm: sun4i: Add an optional probe for bus clock
+Message-ID: <20191121072829.vitly7altcvlt4sj@pengutronix.de>
+References: <20191119175319.16561-1-peron.clem@gmail.com>
+ <20191119175319.16561-5-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPeW_ffza48Bbxm7Od-Xo_Vt-Qfy+8OY5w8AzZOPkxriXg@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191119175319.16561-5-peron.clem@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 03:22:27PM +0800, Krzysztof Kozlowski wrote:
-> On Thu, 21 Nov 2019 at 15:21, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Nov 21, 2019 at 04:20:08AM +0100, Krzysztof Kozlowski wrote:
-> > > Adjust indentation from spaces to tab (+optional two spaces) as in
-> > > coding style with command like:
-> > >       $ sed -e 's/^        /\t/' -i */Kconfig
-> > >
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > >
-> > > ---
-> > >
-> > > Changes since v1:
-> > > 1. Fix also 7-space and tab+1 space indentation issues.
-> >
-> > Same here, I already applied v1, so this one does not apply :(
-> 
-> Hi Greg,
-> 
-> I missed your notification that the patch was applied and then I
-> worked on a updated version fixing few more whitespace errors (pointed
-> during review on other patches). This supersedes v1 but if you do not
-> want to rebase, I can send it later as a separate patch.
+Hello Clément,
 
-My public trees do not rebase, so I need a separate patch, thanks.
+On Tue, Nov 19, 2019 at 06:53:15PM +0100, Clément Péron wrote:
+> +	/*
+> +	 * We're keeping the bus clock on for the sake of simplicity.
+> +	 * Actually it only needs to be on for hardware register accesses.
+> +	 */
+> +	ret = clk_prepare_enable(pwm->bus_clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Cannot prepare and enable bus_clk\n");
 
-greg k-h
+Maybe add the error code to the message?
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
