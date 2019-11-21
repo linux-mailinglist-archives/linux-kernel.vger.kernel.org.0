@@ -2,113 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E88B105BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C5F8105BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 22:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfKUV0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 16:26:10 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34501 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726574AbfKUV0K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 16:26:10 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id B159E7617;
-        Thu, 21 Nov 2019 16:26:09 -0500 (EST)
-Received: from imap35 ([10.202.2.85])
-  by compute4.internal (MEProxy); Thu, 21 Nov 2019 16:26:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm2; bh=6/69v5kzwwhDyJSHFmNIaawk46DHGEA
-        8mUJzy7pevwA=; b=QktELoY7y29yHYgufYfRRJ0evbuulBc4+Ztfhe5sFtlrtaN
-        fiUcWzuljK0s/yn4BZW6ZRCTY0fh1MYZZ8SWbtEMAx7u68m3UJvAvgkWxcrpQQgw
-        IWtkapFjpEBAL2kmXVHumh+B908uMwuDgWg31UrwgaKhRL6K1d3H9C1hu34DPhVs
-        X02rR7dpJSAdhiRJ4WmzKb1qJpfu0QdU2EuVzpSZN50RYfBtsSSoeMkZjgdj5MGf
-        qjdpBn27DcThQQxj3sl4ZPRNzmfAr7ulI/GkVNyf4iVqzFtZ55q+X06Zbe8RwLGy
-        LFkeAd8tc8LpXcokmI1qmNAB0zw5A7KnN+gqMGQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=6/69v5
-        kzwwhDyJSHFmNIaawk46DHGEA8mUJzy7pevwA=; b=CaOyb4NPQPw/wd+ZUHi79G
-        k/bwSqR8fQb1HVRanhjW7HkrhV1UCqw9wozQSfcCaohlb6D2hcLun1qEvN77Z6ae
-        4xe54YV+Pm7gM6OVHEtQQgDLKg0Me4cuQ5/cC4W34vuT8PCh5YnFGnfVy3QQusZp
-        ApoEK7JQnl1YqzOIp0Abp/00sijiPqJDkbxaSqKh3wmuOqUB3mDAlLknwbdot0dT
-        Nx7IaJNqgSb60GOBAE5M8WDdE7m8BflnWEOebbBpKDTzGNGz800EOx2aYYTQGqNu
-        ngXiTU8PzlAJGrIc80MmMEmaKm/Y+0ncxvNiJc34yjO+mJVNxqiMFCfGrppfSYQg
-        ==
-X-ME-Sender: <xms:7wDXXVT5BtzkYJ9B1uyt0yrE_G3VjfJDdVdskd99VkB54iIOOKkHvA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehvddgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enfghrlhcuvffnffculdefhedmnecujfgurhepofgfggfkjghffffhvffutgesthdtredt
-    reertdenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugihusegugihuuhhurdighi
-    iiqeenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiienucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:7wDXXaQrMedGbyHoCXoxVwXBcD72Hwq_9ZyAWy6TD5d5QiDscSak8g>
-    <xmx:7wDXXf47d3MvI_zHuuxDP0V15qWzawZmr1qf8QEqzsDzwqsCn9J3pg>
-    <xmx:7wDXXb-LZF3BVMZblKj2YgzGdERGcVq8xSXISm84bsQ_QkpxQ2gaIQ>
-    <xmx:8QDXXYdQFc8cyYYCqzaVDSU34WUScG-c_ZscYNbpvY8dytUJEF60cw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id A19EF14C0073; Thu, 21 Nov 2019 16:26:07 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-578-g826f590-fmstable-20191119v1
-Mime-Version: 1.0
-Message-Id: <0e878d0f-0e2b-495d-bc9a-f9663f18d3fa@www.fastmail.com>
-In-Reply-To: <20191121210909.15086-1-dxu@dxuuu.xyz>
-References: <20191121210909.15086-1-dxu@dxuuu.xyz>
-Date:   Thu, 21 Nov 2019 13:25:47 -0800
-From:   "Daniel Xu" <dxu@dxuuu.xyz>
-To:     adobriyan@gmail.com, christian@brauner.io,
-        akpm@linux-foundation.org, tglx@linutronix.de, mhocko@suse.com,
-        keescook@chromium.org, shakeelb@google.com, casey@schaufler-ca.com,
-        khlebnikov@yandex-team.ru, kent.overstreet@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     dschatzberg@fb.com, htejun@fb.com, dennis@kernel.org,
-        "Kernel Team" <kernel-team@fb.com>
-Subject: Re: [PATCH] proc: Make /proc/<pid>/io world readable
-Content-Type: text/plain
+        id S1726836AbfKUVVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 16:21:55 -0500
+Received: from mga17.intel.com ([192.55.52.151]:65050 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfKUVVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 16:21:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 13:21:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
+   d="scan'208";a="210224362"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga006.jf.intel.com with ESMTP; 21 Nov 2019 13:21:53 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 0/8] VT-d Native Shared virtual memory cleanup and fixes
+Date:   Thu, 21 Nov 2019 13:26:20 -0800
+Message-Id: <1574371588-65634-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019, at 1:09 PM, Daniel Xu wrote:
-> /proc/<pid>/io is currently only owner readable. This forces monitoring
-> programs (such as atop) to run with elevated permissions to collect disk
-> stats. Changing this file to world readable can add a measure of safety to
-> userspace.
-> 
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ---
->  fs/proc/base.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index ebea9501afb8..1d1c1d680e16 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3076,7 +3076,7 @@ static const struct pid_entry tgid_base_stuff[] = {
->  	REG("coredump_filter", S_IRUGO|S_IWUSR, proc_coredump_filter_operations),
->  #endif
->  #ifdef CONFIG_TASK_IO_ACCOUNTING
-> -	ONE("io",	S_IRUSR, proc_tgid_io_accounting),
-> +	ONE("io",	S_IRUGO, proc_tgid_io_accounting),
->  #endif
->  #ifdef CONFIG_USER_NS
->  	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
-> @@ -3473,7 +3473,7 @@ static const struct pid_entry tid_base_stuff[] = {
->  	REG("fail-nth", 0644, proc_fail_nth_operations),
->  #endif
->  #ifdef CONFIG_TASK_IO_ACCOUNTING
-> -	ONE("io",	S_IRUSR, proc_tid_io_accounting),
-> +	ONE("io",	S_IRUGO, proc_tid_io_accounting),
->  #endif
->  #ifdef CONFIG_USER_NS
->  	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
-> -- 
-> 2.21.0
-> 
->
+Mostly extracted from nested SVA/SVM series based on review comments of v7.
+https://lkml.org/lkml/2019/10/24/852
 
-Nevermind, abandoning. Just found 1d1221f375c94ef961b ("proc: restrict access to /proc/PID/io").
+This series also adds a few important fixes for native use of SVA. Nested
+SVA new code will be submitted separately as a smaller set. Based on the
+core branch of IOMMU tree staged for v5.5, where common APIs for vSVA were
+applied.
+git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git core
+
+Changelog:
+v4	- Commit message fix
+
+V3
+	- Squashed 1/10 & 2/10
+	- Deleted "8/10 Fix PASID cache flush" from this series
+	- Addressed reviews from Eric Auger and Baolu
+V2
+	- Coding style fixes based on Baolu's input, no functional change
+	- Added Acked-by tags.
+
+Thanks,
+
+Jacob
+
+
+Jacob Pan (8):
+  iommu/vt-d: Fix CPU and IOMMU SVM feature matching checks
+  iommu/vt-d: Match CPU and IOMMU paging mode
+  iommu/vt-d: Reject SVM bind for failed capability check
+  iommu/vt-d: Avoid duplicated code for PASID setup
+  iommu/vt-d: Fix off-by-one in PASID allocation
+  iommu/vt-d: Replace Intel specific PASID allocator with IOASID
+  iommu/vt-d: Avoid sending invalid page response
+  iommu/vt-d: Misc macro clean up for SVM
+
+ drivers/iommu/Kconfig       |   1 +
+ drivers/iommu/intel-iommu.c |  23 +++----
+ drivers/iommu/intel-pasid.c |  96 ++++++++------------------
+ drivers/iommu/intel-svm.c   | 162 +++++++++++++++++++++++++-------------------
+ include/linux/intel-iommu.h |   5 +-
+ 5 files changed, 134 insertions(+), 153 deletions(-)
+
+-- 
+2.7.4
+
