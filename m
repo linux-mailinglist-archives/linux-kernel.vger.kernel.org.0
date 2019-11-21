@@ -2,109 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A0210488D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:30:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E49104890
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:32:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbfKUCaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 21:30:55 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6260 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725819AbfKUCaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 21:30:55 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 516E85B082EA019336F2;
-        Thu, 21 Nov 2019 10:14:08 +0800 (CST)
-Received: from [127.0.0.1] (10.67.103.228) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 21 Nov 2019
- 10:14:02 +0800
-Subject: Re: [PATCH] serial: serial_core: Perform NULL checks for break_ctl
- ops
-To:     Greg KH <gregkh@linuxfoundation.org>
-References: <1574263133-28259-1-git-send-email-xiaojiangfeng@huawei.com>
- <20191120154235.GA3004157@kroah.com>
-CC:     <jslaby@suse.com>, <linux-serial@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <leeyou.li@huawei.com>,
-        <nixiaoming@huawei.com>, <zhangwen8@huawei.com>
-From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Message-ID: <35ac1c40-d2f4-f6dc-5e2f-f168a0a17c8b@huawei.com>
-Date:   Thu, 21 Nov 2019 10:14:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1726346AbfKUCcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 21:32:33 -0500
+Received: from spam01.hygon.cn ([110.188.70.11]:8218 "EHLO spam2.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725842AbfKUCcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 21:32:33 -0500
+Received: from MK-DB.hygon.cn ([172.23.18.60])
+        by spam2.hygon.cn with ESMTP id xAL2SwVD032826;
+        Thu, 21 Nov 2019 10:28:58 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-DB.hygon.cn with ESMTP id xAL2SroJ088303;
+        Thu, 21 Nov 2019 10:28:53 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from ubuntu.localdomain (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 21 Nov
+ 2019 10:28:56 +0800
+From:   Jiasen Lin <linjiasen@hygon.cn>
+To:     <linux-kernel@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <jdmason@kudzu.us>
+CC:     <allenbh@gmail.com>, <dave.jiang@intel.com>, <logang@deltatee.com>,
+        <linjiasen@hygon.cn>
+Subject: [PATCH v3] NTB: ntb_perf: Fix address err in perf_copy_chunk
+Date:   Wed, 20 Nov 2019 18:28:44 -0800
+Message-ID: <1574303324-4763-1-git-send-email-linjiasen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20191120154235.GA3004157@kroah.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.103.228]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn xAL2SwVD032826
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/11/20 23:42, Greg KH wrote:
-> On Wed, Nov 20, 2019 at 11:18:53PM +0800, Jiangfeng Xiao wrote:
->> Doing fuzz test on sbsa uart device, causes a kernel crash
->> due to NULL pointer dereference:
->>
->> ------------[ cut here ]------------
->> Unable to handle kernel paging request at virtual address fffffffffffffffc
->> CPU: 2 PID: 2385 Comm: tty_fuzz_test Tainted: G           O    4.4.193 #1
->> task: ffffffe32b23f110 task.stack: ffffffe32bda4000
->> PC is at uart_break_ctl+0x44/0x84
->> LR is at uart_break_ctl+0x34/0x84
->> pc : [<ffffff8393196098>] lr : [<ffffff8393196088>] pstate: 80000005
->> sp : ffffffe32bda7cc0
->> [<ffffff8393196098>] uart_break_ctl+0x44/0x84
->> [<ffffff8393177718>] send_break+0xa0/0x114
->> [<ffffff8393179a1c>] tty_ioctl+0xc50/0xe84
->> [<ffffff8392fa5a40>] do_vfs_ioctl+0xc4/0x6e8
->> [<ffffff8392fa60cc>] SyS_ioctl+0x68/0x9c
->> [<ffffff8392e02e78>] __sys_trace_return+0x0/0x4
->> Code: b9410ea0 34000160 f9408aa0 f9402814 (b85fc280)
->> ---[ end trace 8606094f1960c5e0 ]---
->> Kernel panic - not syncing: Fatal exception
->>
->> Fix this problem by adding NULL checks prior to calling break_ctl ops.
->>
->> Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
->> ---
->>  drivers/tty/serial/serial_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
->> index c4a414a..b0a6eb1 100644
->> --- a/drivers/tty/serial/serial_core.c
->> +++ b/drivers/tty/serial/serial_core.c
->> @@ -1111,7 +1111,7 @@ static int uart_break_ctl(struct tty_struct *tty, int break_state)
->>  	if (!uport)
->>  		goto out;
->>  
->> -	if (uport->type != PORT_UNKNOWN)
->> +	if (uport->type != PORT_UNKNOWN && uport->ops->break_ctl)
-> 
-> What serial driver does not define break_ctl?
+peer->outbuf is a virtual address which is get by ioremap, it can not
+be converted to a physical address by virt_to_page and page_to_phys.
+This conversion will result in DMA error, because the destination address
+which is converted by page_to_phys is invalid.
 
-I'm using arm_sbsa_uart_platform_driver, and sbsa_uart_pops does not define break_ctl.
-I did a troubleshooting on the latest mainline 5.4-rc8 kernel.
-There are 7 uart_ops without defining break_ctl:
-./drivers/tty/serial/men_z135_uart.c:774:static const struct uart_ops men_z135_ops = {
-./drivers/tty/serial/amba-pl011.c:2173:static const struct uart_ops sbsa_uart_pops = {
-./drivers/tty/serial/owl-uart.c:464:static const struct uart_ops owl_uart_ops = {
-./drivers/tty/serial/meson_uart.c:430:static const struct uart_ops meson_uart_ops = {
-./drivers/tty/serial/qcom_geni_serial.c:1212:static const struct uart_ops qcom_geni_console_pops = {
-./drivers/tty/serial/qcom_geni_serial.c:1232:static const struct uart_ops qcom_geni_uart_pops = {
-./drivers/tty/serial/rda-uart.c:559:static const struct uart_ops rda_uart_ops = {
+This patch save the MMIO address of NTB BARx in perf_setup_peer_mw,
+and map the BAR space to DMA address after we assign the DMA channel.
+Then fill the destination address of DMA descriptor with this DMA address
+to guarantee that the address of memory write requests fall into
+memory window of NBT BARx with IOMMU enabled and disabled.
 
-> You are running with a bunch of "out-of-tree" drivers, perhaps one of
-> those needs to be fixed here instead?
+Changes on v3:
+  * Remove the redundant check for bnd_dma_addr.
+  * Reduce an input argument for perf_copy_chunk, calculate the
+    destination address by the offset and dma base address.
+  * Add Reviewed-by: Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Changes on v2:
+  * Map NTB BARx MMIO address to DMA address after assign the DMA channel,
+    to ensure the destination address in valid. (per suggestion from Logan)
 
-I carefully confirmed it again, the kernel crash was caused by arm_sbsa_uart_platform_driver which is "in-tree".
+Fixes: 5648e56d03fa ("NTB: ntb_perf: Add full multi-port NTB API support")
+Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ drivers/ntb/test/ntb_perf.c | 57 +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 47 insertions(+), 10 deletions(-)
 
-There are two ways to fix this problem, one is to add a null pointer check,
-and the other is to define break_ctl for each uart_ops.
-I am a newbie on serial_core, so I don't know which way is more reasonable.
-
-Based on the principle of minimal change, I chose to add a null pointer check.
-
-Thank you for your review.
+diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+index e9b7c2d..972f6d9 100644
+--- a/drivers/ntb/test/ntb_perf.c
++++ b/drivers/ntb/test/ntb_perf.c
+@@ -149,7 +149,8 @@ struct perf_peer {
+ 	u64 outbuf_xlat;
+ 	resource_size_t outbuf_size;
+ 	void __iomem *outbuf;
+-
++	phys_addr_t out_phys_addr;
++	dma_addr_t dma_dst_addr;
+ 	/* Inbound MW params */
+ 	dma_addr_t inbuf_xlat;
+ 	resource_size_t inbuf_size;
+@@ -782,6 +783,10 @@ static int perf_copy_chunk(struct perf_thread *pthr,
+ 	struct dmaengine_unmap_data *unmap;
+ 	struct device *dma_dev;
+ 	int try = 0, ret = 0;
++	struct perf_peer *peer = pthr->perf->test_peer;
++	void __iomem *vbase;
++	void __iomem *dst_vaddr;
++	dma_addr_t dst_dma_addr;
+ 
+ 	if (!use_dma) {
+ 		memcpy_toio(dst, src, len);
+@@ -794,6 +799,10 @@ static int perf_copy_chunk(struct perf_thread *pthr,
+ 				 offset_in_page(dst), len))
+ 		return -EIO;
+ 
++	vbase = peer->outbuf;
++	dst_vaddr = dst;
++	dst_dma_addr = peer->dma_dst_addr + (dst_vaddr - vbase);
++
+ 	unmap = dmaengine_get_unmap_data(dma_dev, 2, GFP_NOWAIT);
+ 	if (!unmap)
+ 		return -ENOMEM;
+@@ -807,8 +816,7 @@ static int perf_copy_chunk(struct perf_thread *pthr,
+ 	}
+ 	unmap->to_cnt = 1;
+ 
+-	unmap->addr[1] = dma_map_page(dma_dev, virt_to_page(dst),
+-		offset_in_page(dst), len, DMA_FROM_DEVICE);
++	unmap->addr[1] = dst_dma_addr;
+ 	if (dma_mapping_error(dma_dev, unmap->addr[1])) {
+ 		ret = -EIO;
+ 		goto err_free_resource;
+@@ -865,6 +873,7 @@ static int perf_init_test(struct perf_thread *pthr)
+ {
+ 	struct perf_ctx *perf = pthr->perf;
+ 	dma_cap_mask_t dma_mask;
++	struct perf_peer *peer = pthr->perf->test_peer;
+ 
+ 	pthr->src = kmalloc_node(perf->test_peer->outbuf_size, GFP_KERNEL,
+ 				 dev_to_node(&perf->ntb->dev));
+@@ -882,15 +891,33 @@ static int perf_init_test(struct perf_thread *pthr)
+ 	if (!pthr->dma_chan) {
+ 		dev_err(&perf->ntb->dev, "%d: Failed to get DMA channel\n",
+ 			pthr->tidx);
+-		atomic_dec(&perf->tsync);
+-		wake_up(&perf->twait);
+-		kfree(pthr->src);
+-		return -ENODEV;
++		goto err_free;
+ 	}
++	peer->dma_dst_addr =
++		dma_map_resource(pthr->dma_chan->device->dev,
++				 peer->out_phys_addr, peer->outbuf_size,
++				 DMA_FROM_DEVICE, 0);
++	if (dma_mapping_error(pthr->dma_chan->device->dev,
++			      peer->dma_dst_addr)) {
++		dev_err(pthr->dma_chan->device->dev, "%d: Failed to map DMA addr\n",
++			pthr->tidx);
++		peer->dma_dst_addr = 0;
++		dma_release_channel(pthr->dma_chan);
++		goto err_free;
++	}
++	dev_dbg(pthr->dma_chan->device->dev, "%d: Map MMIO %pa to DMA addr %pad\n",
++			pthr->tidx,
++			&peer->out_phys_addr,
++			&peer->dma_dst_addr);
+ 
+ 	atomic_set(&pthr->dma_sync, 0);
+-
+ 	return 0;
++
++err_free:
++	atomic_dec(&perf->tsync);
++	wake_up(&perf->twait);
++	kfree(pthr->src);
++	return -ENODEV;
+ }
+ 
+ static int perf_run_test(struct perf_thread *pthr)
+@@ -978,8 +1005,13 @@ static void perf_clear_test(struct perf_thread *pthr)
+ 	 * We call it anyway just to be sure of the transfers completion.
+ 	 */
+ 	(void)dmaengine_terminate_sync(pthr->dma_chan);
+-
+-	dma_release_channel(pthr->dma_chan);
++	if (pthr->perf->test_peer->dma_dst_addr)
++		dma_unmap_resource(pthr->dma_chan->device->dev,
++				   pthr->perf->test_peer->dma_dst_addr,
++				   pthr->perf->test_peer->outbuf_size,
++				   DMA_FROM_DEVICE, 0);
++	if (pthr->dma_chan)
++		dma_release_channel(pthr->dma_chan);
+ 
+ no_dma_notify:
+ 	atomic_dec(&perf->tsync);
+@@ -1195,6 +1227,9 @@ static ssize_t perf_dbgfs_read_info(struct file *filep, char __user *ubuf,
+ 			"\tOut buffer addr 0x%pK\n", peer->outbuf);
+ 
+ 		pos += scnprintf(buf + pos, buf_size - pos,
++			"\tOut buff phys addr %pa[p]\n", &peer->out_phys_addr);
++
++		pos += scnprintf(buf + pos, buf_size - pos,
+ 			"\tOut buffer size %pa\n", &peer->outbuf_size);
+ 
+ 		pos += scnprintf(buf + pos, buf_size - pos,
+@@ -1388,6 +1423,8 @@ static int perf_setup_peer_mw(struct perf_peer *peer)
+ 	if (!peer->outbuf)
+ 		return -ENOMEM;
+ 
++	peer->out_phys_addr = phys_addr;
++
+ 	if (max_mw_size && peer->outbuf_size > max_mw_size) {
+ 		peer->outbuf_size = max_mw_size;
+ 		dev_warn(&peer->perf->ntb->dev,
+-- 
+2.7.4
 
