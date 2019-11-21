@@ -2,140 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF2A0105D6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6EDD105D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 00:41:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfKUXwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 18:52:20 -0500
-Received: from mga04.intel.com ([192.55.52.120]:11589 "EHLO mga04.intel.com"
+        id S1726690AbfKUXlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 18:41:21 -0500
+Received: from mga01.intel.com ([192.55.52.88]:39193 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfKUXwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 18:52:20 -0500
+        id S1725956AbfKUXlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 18:41:19 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 15:52:19 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 15:41:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
-   d="asc'?scan'208";a="197434268"
-Received: from lmhaganx-mobl.amr.corp.intel.com ([10.251.138.123])
-  by orsmga007.jf.intel.com with ESMTP; 21 Nov 2019 15:52:18 -0800
-Message-ID: <e5273fa943335bbc1300360d7944c66d57ea5e27.camel@intel.com>
-Subject: Re: [PATCH 4.19 063/422] ice: Prevent control queue operations
- during reset
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-To:     Pavel Machek <pavel@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Tony Brelinski <tonyx.brelinski@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Date:   Thu, 21 Nov 2019 15:52:18 -0800
-In-Reply-To: <20191120214848.GA13271@duo.ucw.cz>
-References: <20191119051400.261610025@linuxfoundation.org>
-         <20191119051403.783565468@linuxfoundation.org>
-         <20191120214848.GA13271@duo.ucw.cz>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-2ZlOwiajNpxv6Imgsesg"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+   d="scan'208";a="216242622"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2019 15:41:18 -0800
+Date:   Thu, 21 Nov 2019 15:53:29 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191121235329.GE199273@romley-ivt3.sc.intel.com>
+References: <3908561D78D1C84285E8C5FCA982C28F7F4DC167@ORSMSX115.amr.corp.intel.com>
+ <B2612A75-BEC8-4FF7-9FDA-A7B55C2E0B4A@amacapital.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <B2612A75-BEC8-4FF7-9FDA-A7B55C2E0B4A@amacapital.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 21, 2019 at 03:18:46PM -0800, Andy Lutomirski wrote:
+> 
+> 
+> > On Nov 21, 2019, at 2:29 PM, Luck, Tony <tony.luck@intel.com> wrote:
+> > 
+> > ﻿
+> >> 
+> >> It would be really, really nice if we could pass this feature through to a VM. Can we?
+> > 
+> > It's hard because the MSR is core scoped rather than thread scoped.  So on an HT
+> > enabled system a pair of logical processors gets enabled/disabled together.
+> > 
+> > 
+> 
+> Well that sucks.
+> 
+> Could we pass it through if the host has no HT?  Debugging is *so* much easier in a VM.  And HT is a bit dubious these days anyway.
 
---=-2ZlOwiajNpxv6Imgsesg
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I think it's doable to pass it through to KVM. The difficulty is to disable
+split lock detection in KVM because that will disable split lock on
+the whole core including threads for the host. Without disabling split lock
+in KVM, it's doable to debug split lock in KVM.
 
-On Wed, 2019-11-20 at 22:48 +0100, Pavel Machek wrote:
-> Hi!
-> > [ Upstream commit fd2a981777d911b2e94cdec50779c85c58a0dec9 ]
-> >=20
-> > Once reset is issued, the driver loses all control queue interfaces.
-> > Exercising control queue operations during reset is incorrect and
-> > may result in long timeouts.
-> >=20
-> > This patch introduces a new field 'reset_ongoing' in the hw structure.
-> > This is set to 1 by the core driver when it receives a reset interrupt.
-> > ice_sq_send_cmd checks reset_ongoing before actually issuing the
-> > control
-> > queue operation. If a reset is in progress, it returns a soft error
-> > code
-> > (ICE_ERR_RESET_PENDING) to the caller. The caller may or may not have
-> > to
-> > take any action based on this return. Once the driver knows that the
-> > reset is done, it has to set reset_ongoing back to 0. This will allow
-> > control queue operations to be posted to the hardware again.
-> >=20
-> > This "bail out" logic was specifically added to ice_sq_send_cmd (which
-> > is pretty low level function) so that we have one solution in one place
-> > that applies to all types of control queues.
->=20
-> I don't think this is suitable for stable. Would driver maintainers
-> comment?
+Sean and Xiaoyao are working on split lock for KVM (in separate patch set).
+They may have insight on how to do this.
 
-Actually this change is fine for stable.
+Thanks.
 
->=20
-> > +			 *
-> > +			 * As this is the start of the reset/rebuild cycle,
-> > set
-> > +			 * both to indicate that.
-> > +			 */
-> > +			hw->reset_ongoing =3D true;
-> >  		}
-> >  	}
->=20
-> This should be =3D 1, since variable is u8...
-
-This variable is treated as a bool, and since bools vary depending on
-architecture, Linus has stated that using a u8 would be more consistent
-across the vary architectures.  So we have used u8's for variables treated
-as bools.
-
-In addition, there has been no issue assigning "true" or "false" to a u8.
-
->=20
-> Best regards,
-> 									Pav
-> el     	      =20
->=20
-> > +++ b/drivers/net/ethernet/intel/ice/ice_type.h
-> > @@ -293,6 +293,7 @@ struct ice_hw {
-> >  	u8 sw_entry_point_layer;
-> > =20
-> >  	u8 evb_veb;		/* true for VEB, false for VEPA */
-> > +	u8 reset_ongoing;	/* true if hw is in reset, false otherwise */
-> >  	struct ice_bus_info bus;
-> >  	struct ice_nvm_info nvm;
-> >  	struct ice_hw_dev_caps dev_caps;	/* device capabilities */
-> > --=20
-
-
---=-2ZlOwiajNpxv6Imgsesg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAl3XIzIACgkQ5W/vlVpL
-7c6pMA/+LBAQ7x99yucQ9+nNxAkaE2uLli0g0MRBmLb9G3Jphymle2pRNfQ1lL+o
-iQMo9BnFm7K5cOVBp3/sNG6BuyKv7Oa0TR5mQKHDo9pyRH5wFaKE8JsxErBYaRgr
-9qIrrh33V1CqEwNB9hA/gWRUhFcVymdkozojvyjvtYICLahMIEMw94mbJqkhXYps
-BEERDn+w+E94bKTcTdkxs9o3zv0bPCYEwDcwnm9sYRRqcxQeOqmDTRLxqk3IzztH
-inFFKkTrcpTf/4dhv3gZytjooFPD5zyBRdrtZv57dWVzqNcOhXl3xOABLZl/Xskx
-2v3kfcvudSio52RZzSNzrTQEngRz37kyDFVsiSLHibvt4vLnlMeBiluBB6gJQOeb
-yjH+laB/W5d/2VCT/w5ps8vFw0TZs20IUGvdG4R5Se88IqyMF9JF4rX81hNS3+mz
-Mv1JadysPakfMVKQ5tipFRRykuGiUfJKjKraMDHoLPD37QhOkG0RHdb5CtzycZE9
-w1bABOiBh2PEZnDUvJQ1RCNSjU5hptc3NYsmMMeX/PnFNmZegBUkp+vGxMglM4Dn
-mk+w7Htj2YdOTsGizcZE4vXIEwTwwdxcS0Cc04ygc+NBu528RUQLC3H00KeR0FsB
-KiZPh5DgHI/CmwLmFSGeaavvK8urPyw7d+No4r+LMhYpeL1ie8g=
-=qE4m
------END PGP SIGNATURE-----
-
---=-2ZlOwiajNpxv6Imgsesg--
-
+-Fenghua
