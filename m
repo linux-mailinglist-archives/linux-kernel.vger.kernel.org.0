@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C08104766
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA76F10475B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:15:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbfKUAQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 19:16:03 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58450 "EHLO mga06.intel.com"
+        id S1727105AbfKUAPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:15:36 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58451 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726979AbfKUAPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 19:15:35 -0500
+        id S1727031AbfKUAPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 19:15:36 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 16:15:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,223,1571727600"; 
-   d="scan'208";a="381553875"
+   d="scan'208";a="381553876"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
   by orsmga005.jf.intel.com with ESMTP; 20 Nov 2019 16:15:34 -0800
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 9EA74300D85; Wed, 20 Nov 2019 16:15:34 -0800 (PST)
+        id A42E8300D85; Wed, 20 Nov 2019 16:15:34 -0800 (PST)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 06/12] perf evsel: Add functions to close evsel on a CPU
-Date:   Wed, 20 Nov 2019 16:15:16 -0800
-Message-Id: <20191121001522.180827-7-andi@firstfloor.org>
+Subject: [PATCH 07/12] perf stat: Use affinity for closing file descriptors
+Date:   Wed, 20 Nov 2019 16:15:17 -0800
+Message-Id: <20191121001522.180827-8-andi@firstfloor.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191121001522.180827-1-andi@firstfloor.org>
 References: <20191121001522.180827-1-andi@firstfloor.org>
@@ -41,78 +41,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Refactor the existing all CPU function to use the per CPU
-close internally.
+Closing a perf fd can also trigger an IPI to the target CPU.
+Use the same affinity technique as we use for reading/enabling events
+to closing to optimize the CPU transitions.
 
-Export APIs to close per CPU.
+Before on a large test case with 94 CPUs:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 32.56    3.085463          50     61483           close
+
+After:
+
+ 10.54    0.735704          11     61485           close
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/lib/evsel.c              | 27 +++++++++++++++++++++------
- tools/perf/lib/include/perf/evsel.h |  1 +
- 2 files changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index 5a89857b0381..ea775dacbd2d 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -114,16 +114,23 @@ int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
- 	return err;
- }
- 
-+static void perf_evsel__close_fd_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	int thread;
-+
-+	for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
-+		if (FD(evsel, cpu, thread) >= 0)
-+			close(FD(evsel, cpu, thread));
-+		FD(evsel, cpu, thread) = -1;
-+	}
-+}
-+
- void perf_evsel__close_fd(struct perf_evsel *evsel)
+---
+
+v2: Use new iterator macros
+v3: Use new iterator macros
+Add missing affinity__cleanup
+v4:
+Update iterators again
+v5:
+Add comments
+---
+ tools/perf/util/evlist.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index dae6e846b2f8..7db49a0a0350 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -18,6 +18,7 @@
+ #include "debug.h"
+ #include "units.h"
+ #include <internal/lib.h> // page_size
++#include "affinity.h"
+ #include "../perf.h"
+ #include "asm/bug.h"
+ #include "bpf-event.h"
+@@ -1169,9 +1170,35 @@ void perf_evlist__set_selected(struct evlist *evlist,
+ void evlist__close(struct evlist *evlist)
  {
--	int cpu, thread;
-+	int cpu;
+ 	struct evsel *evsel;
++	struct affinity affinity;
++	int cpu, i;
  
- 	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++)
--		for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
--			if (FD(evsel, cpu, thread) >= 0)
--				close(FD(evsel, cpu, thread));
--			FD(evsel, cpu, thread) = -1;
--		}
-+		perf_evsel__close_fd_cpu(evsel, cpu);
- }
- 
- void perf_evsel__free_fd(struct perf_evsel *evsel)
-@@ -141,6 +148,14 @@ void perf_evsel__close(struct perf_evsel *evsel)
- 	perf_evsel__free_fd(evsel);
- }
- 
-+void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	if (evsel->fd == NULL)
+-	evlist__for_each_entry_reverse(evlist, evsel)
+-		evsel__close(evsel);
++	/*
++	 * With perf record core.cpus is usually NULL.
++	 * Use the old method to handle this for now.
++	 */
++	if (!evlist->core.cpus) {
++		evlist__for_each_entry_reverse(evlist, evsel)
++			evsel__close(evsel);
 +		return;
++	}
 +
-+	perf_evsel__close_fd_cpu(evsel, cpu);
-+}
++	if (affinity__setup(&affinity) < 0)
++		return;
++	evlist__for_each_cpu (evlist, i, cpu) {
++		affinity__set(&affinity, cpu);
 +
- int perf_evsel__read_size(struct perf_evsel *evsel)
- {
- 	u64 read_format = evsel->attr.read_format;
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index 557f5815a9c9..e7add554f861 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -26,6 +26,7 @@ LIBPERF_API void perf_evsel__delete(struct perf_evsel *evsel);
- LIBPERF_API int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
- 				 struct perf_thread_map *threads);
- LIBPERF_API void perf_evsel__close(struct perf_evsel *evsel);
-+LIBPERF_API void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- 				 struct perf_counts_values *count);
- LIBPERF_API int perf_evsel__enable(struct perf_evsel *evsel);
++		evlist__for_each_entry_reverse(evlist, evsel) {
++			if (evsel__cpu_iter_skip(evsel, cpu))
++			    continue;
++			perf_evsel__close_cpu(&evsel->core, evsel->cpu_iter - 1);
++		}
++	}
++	affinity__cleanup(&affinity);
++	evlist__for_each_entry_reverse(evlist, evsel) {
++		perf_evsel__free_fd(&evsel->core);
++		perf_evsel__free_id(&evsel->core);
++	}
+ }
+ 
+ static int perf_evlist__create_syswide_maps(struct evlist *evlist)
 -- 
 2.23.0
 
