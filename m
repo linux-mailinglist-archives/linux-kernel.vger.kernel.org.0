@@ -2,68 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C138B104891
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A0210488D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 03:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbfKUCez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 21:34:55 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43627 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfKUCez (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 21:34:55 -0500
-Received: by mail-ot1-f67.google.com with SMTP id l14so1547485oti.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 18:34:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=9lXb0lgrwir7GzZ2DVr2yG1gexTZJRmikORCYz7MiqE=;
-        b=QfYyUnqWKZDJnV+3ikWt7AxOhbMzCYdbfVeDlTauTwNA4NJX2PxdH2vBn7FKTmTQBt
-         K1/p3XI2MuoU/TB2sbB+XuxhunNiGWAs+Dutl0Y5qMur8ysAFl+JlQIuXIu6NeGlovj7
-         RwFWQlwZxQzxrL6ymX0CcB2V/8QK0NknRAzCioZEMrdSSKVkQE4v4nGMZZzNekm3koWR
-         pMiQhC/qJ8rvCcl2H+ijWPGpneXaxcMcKQ5Tx/A5OkXwDtQ/oR3C1qVG03q77dvTC8nk
-         SZVsbwlfP13b5MLfMv+J3qJPg3TBpFWtJLIT0VHoJG9nvR1mupGG8HEQ9fmqvbauvOJY
-         jopg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=9lXb0lgrwir7GzZ2DVr2yG1gexTZJRmikORCYz7MiqE=;
-        b=PchtCd2WbL9Hi+LVwHghxgAY81r0tv4rYboETYywnHVNQzQl1/6bs+lpbin5eVV6k/
-         I4/zXXgnm2ka2nub110RMuG2PJemtmzbuneCFHz6zx1FRXvIBtj8Kl0cTjaSytAoi6Nj
-         R61mYGgEBaxxcLwiQIQpsiRC2lOoZ94BB8oi1YaT5Iv897lH+2rCMnCg+fGZAQaJmrP8
-         tsYt7BmSAniWwM+oeXxtib1j63FX++S0JttoM5ay1+73EOzEyV8kJm/NAk747oLpJnuF
-         2pQSCXEvoAhpold5me6axFM/716pbU+p01/lUY6iLLbzlN3dAlHp7/pSBubwyTW6l0wL
-         89kQ==
-X-Gm-Message-State: APjAAAUI2VO60wbwy6I/qiyVIlf6n5TsVrZsIFaMCf1nwltlZoRJj6Lz
-        1Q9RBQZKwLzgqX6EN0Dvs26gdPJb/YLBRr+scGC3O10G
-X-Google-Smtp-Source: APXvYqxA9+hGufbrimNxPZwBcmaYaqqHfdbbmEkz9wIlPKO1/+FSaXZy2M7061JiydAfUtgaumrvbwsPXgEUouuCy80=
-X-Received: by 2002:a05:6830:1f4d:: with SMTP id u13mr4728128oth.77.1574302437984;
- Wed, 20 Nov 2019 18:13:57 -0800 (PST)
+        id S1726760AbfKUCaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 21:30:55 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6260 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725819AbfKUCaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 21:30:55 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 516E85B082EA019336F2;
+        Thu, 21 Nov 2019 10:14:08 +0800 (CST)
+Received: from [127.0.0.1] (10.67.103.228) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 21 Nov 2019
+ 10:14:02 +0800
+Subject: Re: [PATCH] serial: serial_core: Perform NULL checks for break_ctl
+ ops
+To:     Greg KH <gregkh@linuxfoundation.org>
+References: <1574263133-28259-1-git-send-email-xiaojiangfeng@huawei.com>
+ <20191120154235.GA3004157@kroah.com>
+CC:     <jslaby@suse.com>, <linux-serial@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <leeyou.li@huawei.com>,
+        <nixiaoming@huawei.com>, <zhangwen8@huawei.com>
+From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Message-ID: <35ac1c40-d2f4-f6dc-5e2f-f168a0a17c8b@huawei.com>
+Date:   Thu, 21 Nov 2019 10:14:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Received: by 2002:a4a:cb07:0:0:0:0:0 with HTTP; Wed, 20 Nov 2019 18:13:57
- -0800 (PST)
-From:   Amanda TARA <setasheriff198@gmail.com>
-Date:   Thu, 21 Nov 2019 03:13:57 +0100
-Message-ID: <CAFHd4DztTd9QkkCB2qFEHnOh1LfR6P6w=7tqfMkuF=5U6By1Tg@mail.gmail.com>
-Subject: FW: Conference Invitation....7th International Global Conference 2019..
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191120154235.GA3004157@kroah.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.103.228]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You are invited to the 7th International Global conference on Women &
-Children Abuse , Human Trafficking and Neglect organize by the Boston
-Association for Women & Children Rights - (BAWAR). From the 11th -
-15th of December 2019 in Boston, Massachusetts the United States of
-America and from the 18th- 22nd of December 2019 in Saint
-Louis,Senegal.
+On 2019/11/20 23:42, Greg KH wrote:
+> On Wed, Nov 20, 2019 at 11:18:53PM +0800, Jiangfeng Xiao wrote:
+>> Doing fuzz test on sbsa uart device, causes a kernel crash
+>> due to NULL pointer dereference:
+>>
+>> ------------[ cut here ]------------
+>> Unable to handle kernel paging request at virtual address fffffffffffffffc
+>> CPU: 2 PID: 2385 Comm: tty_fuzz_test Tainted: G           O    4.4.193 #1
+>> task: ffffffe32b23f110 task.stack: ffffffe32bda4000
+>> PC is at uart_break_ctl+0x44/0x84
+>> LR is at uart_break_ctl+0x34/0x84
+>> pc : [<ffffff8393196098>] lr : [<ffffff8393196088>] pstate: 80000005
+>> sp : ffffffe32bda7cc0
+>> [<ffffff8393196098>] uart_break_ctl+0x44/0x84
+>> [<ffffff8393177718>] send_break+0xa0/0x114
+>> [<ffffff8393179a1c>] tty_ioctl+0xc50/0xe84
+>> [<ffffff8392fa5a40>] do_vfs_ioctl+0xc4/0x6e8
+>> [<ffffff8392fa60cc>] SyS_ioctl+0x68/0x9c
+>> [<ffffff8392e02e78>] __sys_trace_return+0x0/0x4
+>> Code: b9410ea0 34000160 f9408aa0 f9402814 (b85fc280)
+>> ---[ end trace 8606094f1960c5e0 ]---
+>> Kernel panic - not syncing: Fatal exception
+>>
+>> Fix this problem by adding NULL checks prior to calling break_ctl ops.
+>>
+>> Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+>> ---
+>>  drivers/tty/serial/serial_core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+>> index c4a414a..b0a6eb1 100644
+>> --- a/drivers/tty/serial/serial_core.c
+>> +++ b/drivers/tty/serial/serial_core.c
+>> @@ -1111,7 +1111,7 @@ static int uart_break_ctl(struct tty_struct *tty, int break_state)
+>>  	if (!uport)
+>>  		goto out;
+>>  
+>> -	if (uport->type != PORT_UNKNOWN)
+>> +	if (uport->type != PORT_UNKNOWN && uport->ops->break_ctl)
+> 
+> What serial driver does not define break_ctl?
 
-For Details on Registration Contact the Registration Desk via E-mail :
-bawarconference@usa.com
+I'm using arm_sbsa_uart_platform_driver, and sbsa_uart_pops does not define break_ctl.
+I did a troubleshooting on the latest mainline 5.4-rc8 kernel.
+There are 7 uart_ops without defining break_ctl:
+./drivers/tty/serial/men_z135_uart.c:774:static const struct uart_ops men_z135_ops = {
+./drivers/tty/serial/amba-pl011.c:2173:static const struct uart_ops sbsa_uart_pops = {
+./drivers/tty/serial/owl-uart.c:464:static const struct uart_ops owl_uart_ops = {
+./drivers/tty/serial/meson_uart.c:430:static const struct uart_ops meson_uart_ops = {
+./drivers/tty/serial/qcom_geni_serial.c:1212:static const struct uart_ops qcom_geni_console_pops = {
+./drivers/tty/serial/qcom_geni_serial.c:1232:static const struct uart_ops qcom_geni_uart_pops = {
+./drivers/tty/serial/rda-uart.c:559:static const struct uart_ops rda_uart_ops = {
 
-Yours
+> You are running with a bunch of "out-of-tree" drivers, perhaps one of
+> those needs to be fixed here instead?
 
-Maryann Woods
-BAWAR|2019|CONFERENCE
+I carefully confirmed it again, the kernel crash was caused by arm_sbsa_uart_platform_driver which is "in-tree".
+
+There are two ways to fix this problem, one is to add a null pointer check,
+and the other is to define break_ctl for each uart_ops.
+I am a newbie on serial_core, so I don't know which way is more reasonable.
+
+Based on the principle of minimal change, I chose to add a null pointer check.
+
+Thank you for your review.
+
