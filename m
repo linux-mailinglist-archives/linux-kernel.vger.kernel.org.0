@@ -2,135 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD34B104952
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 04:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1DB910495D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 04:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfKUDZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 22:25:10 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:32899 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfKUDZJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 22:25:09 -0500
-Received: by mail-io1-f70.google.com with SMTP id p19so1219881iog.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 19:25:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=tTMBJza7I+CNlM4ltV11PewawOOCN3wvlJFFx+joNqM=;
-        b=T0NkvNpETlB5JPGbnNTmK419uYQzyAn9567ciXRY9kilJcaLxdvtZYf8z8AUwMEbrd
-         QWWoF/Govu891F7uZC1auZl7Yi8ysP24jt2WmeNWPIY6kXvh2s88e4pVgLD5cA3SFJe6
-         84SL+67b7hEH6Ds+pf8lu1ZD9vUEm2NzTCib0HaV8wRr808ll5ZC9dizMeMvkBVou0w1
-         GuRt4rvjJeMpi9p6o/mZQvUTi+9gwxjG211jkOOjSMrjv6b6zjqMqReNirXS3n1F6Ql/
-         w+Oaz8DTj/C/RWJLqaAcDkPe7qVmwYrsyy0RMk7n57MPN5xvRf1K5WsjiTLr0gFnnAXd
-         Wbhw==
-X-Gm-Message-State: APjAAAV+nxMY4aOtIjFOiEW81aZQs3m4hG0JXSnujG35uyrXltXRR+tp
-        AA4olHrkjsGF9bueusu6rB1UTgrKOep+bswHMRfYf0ZAEAiB
-X-Google-Smtp-Source: APXvYqwD2pIardansrgjP3LnHaQttGRCTOnZldnYzP3s94Fh1+Un8226PhVEKKjwmoGDMMNOiKFEH1JWUfNLlRdS1MyLXbWYqpyd
+        id S1726293AbfKUD2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 22:28:38 -0500
+Received: from ozlabs.org ([203.11.71.1]:55439 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfKUD2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 22:28:38 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47JQ4x62H0z9sNx;
+        Thu, 21 Nov 2019 14:28:33 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574306915;
+        bh=Mvq90HaeaI0x9DRfRjhhop6y3CYj6tXKi2H4KwQK4jQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HgFJWqMuaMVmRcsjKRSyNDBekV/0M7aoKlC15Vx4Gq5rcW8pMsHO9Xe+w/MQUcZgQ
+         YdM8UhalBEJ903R9BKeaFJ5AyeOqCX0k8uXw3ttrt9OlBmIb5MY86txhwGFWa4TTqr
+         6eP09ff50DaYCUGJI+TfpSJ9ShNhi5HQomDiRrcRc/8Wxd9X+jM/DgHhZYiqGlJ4TX
+         hVLo7tm3zaCq2oQOzgBWL+B4q3nG9Gp7QyJDvCfPycwXej+qV4orBGfCpWuy5lWDDD
+         k8p4As6Ae0VSB2D7BNVCc71JNlx0J9a4RdtUvq0UjtB50sLQ2rkkRSrs3PrpSp1qmQ
+         ttz22/ySJdegg==
+Date:   Thu, 21 Nov 2019 14:28:33 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>
+Subject: linux-next: manual merge of the tip tree with the nfsd tree
+Message-ID: <20191121142833.2c9ffd62@canb.auug.org.au>
 MIME-Version: 1.0
-X-Received: by 2002:a02:878b:: with SMTP id t11mr6699673jai.20.1574306709039;
- Wed, 20 Nov 2019 19:25:09 -0800 (PST)
-Date:   Wed, 20 Nov 2019 19:25:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000028f3c20597d2d8ee@google.com>
-Subject: WARNING in j1939_sk_queue_activate_next
-From:   syzbot <syzbot+49595536c57ef38095ed@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kernel@pengutronix.de,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@rempel-privat.de, mkl@pengutronix.de, netdev@vger.kernel.org,
-        robin@protonic.nl, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; boundary="Sig_/244Syx9z7RddCIKTXoxFf7G";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--Sig_/244Syx9z7RddCIKTXoxFf7G
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot found the following crash on:
+Hi all,
 
-HEAD commit:    1f12177b Merge branch 'cpsw-switchdev'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16cd57f6e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce691bc139ec9632
-dashboard link: https://syzkaller.appspot.com/bug?extid=49595536c57ef38095ed
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14685836e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f8b2f2e00000
+Today's linux-next merge of the tip tree got a conflict in:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+49595536c57ef38095ed@syzkaller.appspotmail.com
+  include/trace/events/rpcrdma.h
 
-vcan0: j1939_tp_rxtimer: 0x00000000bc4b6db0: rx timeout, send abort
-vcan0: j1939_xtp_rx_abort_one: 0x00000000bc4b6db0: 0x00000: (3) A timeout  
-occurred and this is the connection abort to close the session.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 9 at net/can/j1939/socket.c:180  
-j1939_sk_queue_activate_next_locked net/can/j1939/socket.c:180 [inline]
-WARNING: CPU: 0 PID: 9 at net/can/j1939/socket.c:180  
-j1939_sk_queue_activate_next+0x359/0x460 net/can/j1939/socket.c:204
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 5.4.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x35 kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:j1939_sk_queue_activate_next_locked net/can/j1939/socket.c:180  
-[inline]
-RIP: 0010:j1939_sk_queue_activate_next+0x359/0x460  
-net/can/j1939/socket.c:204
-Code: e8 1c 83 c0 0a 89 45 cc eb 9f 48 c7 c7 b4 1a c7 89 e8 cb b1 2d fb e9  
-6a fd ff ff e8 c1 b1 2d fb e9 19 fe ff ff e8 17 f9 f1 fa <0f> 0b 48 8b 45  
-c0 48 8d b8 b0 00 00 00 48 89 f8 48 c1 e8 03 42 0f
-RSP: 0018:ffff8880a98af918 EFLAGS: 00010206
-RAX: ffff8880a98a2240 RBX: ffff888099561000 RCX: ffffffff86816668
-RDX: 0000000000000100 RSI: ffffffff86816709 RDI: 0000000000000005
-RBP: ffff8880a98af970 R08: ffff8880a98a2240 R09: fffffbfff14f0f4c
-R10: fffffbfff14f0f4b R11: ffffffff8a787a5f R12: ffff888099561510
-R13: ffff88809175cc00 R14: ffff888099561548 R15: dffffc0000000000
-  j1939_session_deactivate_activate_next+0x3d/0x50  
-net/can/j1939/transport.c:1046
-  j1939_xtp_rx_abort_one.cold+0x21a/0x35e net/can/j1939/transport.c:1275
-  j1939_xtp_rx_abort net/can/j1939/transport.c:1286 [inline]
-  j1939_tp_cmd_recv net/can/j1939/transport.c:1972 [inline]
-  j1939_tp_recv+0x783/0x9b0 net/can/j1939/transport.c:2005
-  j1939_can_recv+0x502/0x610 net/can/j1939/main.c:101
-  deliver net/can/af_can.c:569 [inline]
-  can_rcv_filter+0x292/0x8e0 net/can/af_can.c:603
-  can_receive+0x2e7/0x530 net/can/af_can.c:660
-  can_rcv+0x133/0x1b0 net/can/af_can.c:686
-  __netif_receive_skb_one_core+0x113/0x1a0 net/core/dev.c:5150
-  __netif_receive_skb+0x2c/0x1d0 net/core/dev.c:5264
-  process_backlog+0x206/0x750 net/core/dev.c:6095
-  napi_poll net/core/dev.c:6532 [inline]
-  net_rx_action+0x508/0x1120 net/core/dev.c:6600
-  __do_softirq+0x262/0x98c kernel/softirq.c:292
-  run_ksoftirqd kernel/softirq.c:603 [inline]
-  run_ksoftirqd+0x8e/0x110 kernel/softirq.c:595
-  smpboot_thread_fn+0x6a3/0xa40 kernel/smpboot.c:165
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+between commit:
 
+  832b2cb95543 ("svcrdma: Improve DMA mapping trace points")
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+from the nfsd tree and commit:
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+  60fdad00827c ("ftrace: Rework event_create_dir()")
+
+from the tip tree.
+
+I fixed it up (I just used the former) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/244Syx9z7RddCIKTXoxFf7G
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3WBGEACgkQAVBC80lX
+0Gxg/gf9FuUbl7pHHEJhCN5peXYPr5XMRqlu34WmdrYdS0nbtwX+wxz/TVs8rq4I
+mqXPv7UNNSLhhQszinnd8ul8RJ884t3u7MNnE6oLbrHMdi89vNEchZuvo4sCsJpM
+1oqz/5bsYyd0C/gE1d7c7jXWptJ1Gfu+MWwT4+Hr34XlFLZ+wJFILz4td+mmsNz+
+tWFbPnthyV5AknC8X4o5o3/CDwmrPT57MYgT6osg5TaRvaUS8GyQ9XxmYmj408Ic
+xENtwavJvWmjGbcVyWnSmTzgX4xdP3u+k0xMmqlQ2t8ZGWBkPP9DdpG7YpU0RTQV
+4xxOkynbotQldvSx9QvGqmX9dMyv9Q==
+=JM1c
+-----END PGP SIGNATURE-----
+
+--Sig_/244Syx9z7RddCIKTXoxFf7G--
