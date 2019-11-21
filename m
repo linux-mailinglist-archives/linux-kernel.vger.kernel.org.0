@@ -2,89 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F84710599C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B31831059D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKUSe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:34:26 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:57175 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUSe0 (ORCPT
+        id S1727135AbfKUSoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:44:15 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53007 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfKUSoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:34:26 -0500
-Received: from [192.168.1.155] ([95.115.120.75]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MkYHO-1i7u7k0WPW-00m14R; Thu, 21 Nov 2019 19:33:42 +0100
-Subject: Re: [RESEND RFC PATCH 0/1] CAP_SYS_NICE inside user namespace
-To:     Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>
-References: <1574096478-11520-1-git-send-email-prakash.sangappa@oracle.com>
- <CAG48ez3HfUx2aRvqR_bWnGoTshrHnUzxUNt7K6Sv7cqtPDWaWw@mail.gmail.com>
- <9a63f7ae-562e-67a6-8f40-050c58c08933@oracle.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <c7949242-385f-3256-b290-87640acd0577@metux.net>
-Date:   Thu, 21 Nov 2019 19:33:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 21 Nov 2019 13:44:14 -0500
+Received: from 79.184.253.244.ipv4.supernova.orange.pl (79.184.253.244) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 0f0c262c8173fe24; Thu, 21 Nov 2019 19:44:13 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Len Brown <lenb@kernel.org>, Rafael Wysocki <rafael@kernel.org>
+Subject: [PATCH 0/2] cpuidle: Allow CPU idle states to be disabled by default
+Date:   Thu, 21 Nov 2019 19:35:42 +0100
+Message-ID: <5961586.ml7s97geqL@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <9a63f7ae-562e-67a6-8f40-050c58c08933@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:f4V3p2RzdrPwVJnKu5LMb5jYm/ztyDQ1aQI1zNG7i6cs0PgvB2J
- blQvMHxD9q3exo5iHY4pJSv1MgcdOpQfhYHa8NAK7/kv9U2kPfTsakqxtVNp+nkO+LXLlK8
- UP3tP7HSpwzkFQ2luhsPMUk3tYF3ofYIXAbkGxUB0cMjHgnaXWeUoA+xr66yuCSYKUIFj3H
- yM3kDPRBZs4x+FMIWxhdQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0FgFYkZ95Cg=:OVngFMmR2my6a8VSs7HgP1
- Ut33/G7o/ulNAUVsrK3DfCxuyoDaepkifM3CJxF+AwHD8tgAQVKyAt/WwhLwuAurd36Ocg8n6
- 3mS53t/eESTlgbt7orNPYKuT3gNtkc9/c0rEjOtEwFmhrM5fxjRxkCpSQCId8Bt3QyTPfGPKO
- +TGlnAWOV9YKwjHoAwJqXXM3wqgvMztolr8W2jmir/taiTT5kzFU0H9ldLRVpeOBGBV9M5ga9
- BaQLBBmiCSLUpf6uH1f6DkcKcjb1hsKJRiyUZON+HATvtX1Kn4gWkAnUExR3joEfA7x+1G2kf
- oNWYTDln3lfduojWuCLltrQvl7GUdSlprZijBpxMbxpLZ1W8VBBeGDX9VGrmCnEsQRFc1QRfk
- +wEL7y0EZi72jzeMbIdeiEaJ6qPIU/XwAJOCrDKU0C3FWDxxOsmbb7yuUJCvVsVcelWvWjDWE
- mfNrMnV/hvwH3YE4FcWZ8A7fXFPj567vuN9inuACwVAITERbla2LfXx54ELCF0SkoZ4KMofXd
- AyFKAqRQ4MRZj4uJ0IuE2T2gA3aBNeYvHnWKzlKXMckeokEayHK+IoKakD4re9/GbM8Atb+cS
- Ha4r+id8d6d/dREvNlZqgGI92/7VrOTur9tOuKZjDqpMzmfuo9zdQ6U7A6KpVd/lWmaTr+bli
- 4blMs4o7eS+qn0y3Vhg5nmtfRg8bBjfZzPGl7ufBdHkl5b2M5VxpBWgSSoLJ9mydk0XmSuMd5
- ZeWDYVNvKgywxfs5qdXHjZq7aX7uoDzuGqii3QVnoSzOXln+6IEPPoFPa4+GH5eMnI/UMNKWh
- LhnF6FvTNrABZCKS2eurJCMe2n1hrImiCDWv85XRkhRr15DgOoBn8torLbtaKs30QGQySg/Qo
- J7vl4VcBmKe09SLiRcCQ==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.11.19 21:34, Prakash Sangappa wrote:
+Hi All,
 
-> It is more the latter. Admin should be able to explicitly decide that
-> container A
-> workload is to be given priority over other containers.
+This is a follow-up to
 
-I guess, you're talking about the host's admin, correct ?
+https://lore.kernel.org/linux-pm/1688511.GgkECGP1XA@kreacher/T/#u
 
-Shouldn't this already be possibly by tweaking the container's cgroups ?
+Patch [1/2] is a cleanup on top of the changes waiting for the 5.5 merge
+window in linux-next.
+
+Patch [2/2] is for the future, to be considered along with the first user of
+CPUIDLE_FLAG_OFF.
+
+Thanks,
+Rafael
 
 
---mtx
 
--- 
-Dringender Hinweis: aufgrund existenzieller Bedrohung durch "Emotet"
-sollten Sie *niemals* MS-Office-Dokumente via E-Mail annehmen/öffenen,
-selbst wenn diese von vermeintlich vertrauenswürdigen Absendern zu
-stammen scheinen. Andernfalls droht Totalschaden.
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
