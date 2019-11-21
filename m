@@ -2,78 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C06A104D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:11:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1A8104D93
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfKUIK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:10:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43306 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbfKUIKx (ORCPT
+        id S1726689AbfKUIMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:12:54 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35421 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726362AbfKUIMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:10:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DZddNdyW5FRrAXgTdc6w5huJMr/L+GTDCsXkrpDZQWE=; b=Mafq4UPzuRzO9+6g0idvgtn8y
-        WcDSiCT7hQFVoaJkaXestyiwMGnqfYjgbEOz0r27XeQ+Y5KvjD4Nuhy0YaDkgeX1N2nHrE2fymh9/
-        Kl6qsPzn8bgO9GwKGkSXLJ6yif29++yxYwWthonAbKTOkkQzaykODs/kBCpIPvEL9IlVjXYjhMRJE
-        HObsxeSD97VjwE1Ac50vXPpo12MNChRAcbknrDS9loF08kQwig/wzQVsPl/cwUiTKkHvJYvfDWnFU
-        FO6tlhkm1YjoPatb8/UhLvWJuQFmCn5wpi+24IGZ7mIRAGQpgH/fHbaZ8f9hs4dGNlP7WUQjseLo0
-        O4T8RJ40Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iXhXf-0001ki-FW; Thu, 21 Nov 2019 08:10:19 +0000
-Date:   Thu, 21 Nov 2019 00:10:19 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: [PATCH v7 09/24] vfio, mm: fix get_user_pages_remote() and
- FOLL_LONGTERM
-Message-ID: <20191121081019.GF30991@infradead.org>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-10-jhubbard@nvidia.com>
+        Thu, 21 Nov 2019 03:12:53 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAL82b02008129;
+        Thu, 21 Nov 2019 09:11:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=GWwWrFi5wSZs1dSwlxyGvTTXgdVuoIjTIkdP2E8ouLA=;
+ b=KJV6yzI0CwZ7sL2Q3YyrvfL+B+ApSj9nDdroDdxbJIjrP1hzjbTrpmut5RGbIAQqD8cK
+ hvt1vO3+ZRAZF6ND3q0fZujZOfkUdUGh07thnlRQxCy5+hivn9/nUlnF1rUJFjuqXhtv
+ v1DkC9/40R2XrKD5R/UZe6Nw7naR/zviL6bzQYSnyI2HOFpd0oito5hOUV0I6UdHKbXq
+ gUFOGYr5N5/8UbwkZ2gnljMnFibSZ1Bgr7wMpV2JSXD5Fn62GjyHZ6nlOunCjLHHFmk7
+ zENKBurM2kq+363p1t3O2fGN03ka35egyJ0fdEfUi2gwqQCxewfelRa+mgJOzcauUufG Nw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wa9usj02n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Nov 2019 09:11:18 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4185B100034;
+        Thu, 21 Nov 2019 09:11:18 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2FB992AE93B;
+        Thu, 21 Nov 2019 09:11:18 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov 2019 09:11:17
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <jslaby@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <erwan.leray@st.com>,
+        <linux-serial@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] serial: stm32: fix clearing interrupt error flags
+Date:   Thu, 21 Nov 2019 09:10:49 +0100
+Message-ID: <1574323849-1909-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121071354.456618-10-jhubbard@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-20_08:2019-11-20,2019-11-20 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Should this be two patches, one for th core infrastructure and one for
-the user?  These changes also look like another candidate to pre-load.
+The interrupt clear flag register is a "write 1 to clear" register.
+So, only writing ones allows to clear flags:
+- Replace buggy stm32_clr_bits() by a simple write to clear error flags
+- Replace useless read/modify/write stm32_set_bits() routine by a
+  simple write to clear TC (transfer complete) flag.
+
+Fixes: 4f01d833fdcd ("serial: stm32: fix rx error handling")
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/tty/serial/stm32-usart.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index df90747..2f72514 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -240,8 +240,8 @@ static void stm32_receive_chars(struct uart_port *port, bool threaded)
+ 		 * cleared by the sequence [read SR - read DR].
+ 		 */
+ 		if ((sr & USART_SR_ERR_MASK) && ofs->icr != UNDEF_REG)
+-			stm32_clr_bits(port, ofs->icr, USART_ICR_ORECF |
+-				       USART_ICR_PECF | USART_ICR_FECF);
++			writel_relaxed(sr & USART_SR_ERR_MASK,
++				       port->membase + ofs->icr);
+ 
+ 		c = stm32_get_char(port, &sr, &stm32_port->last_res);
+ 		port->icount.rx++;
+@@ -435,7 +435,7 @@ static void stm32_transmit_chars(struct uart_port *port)
+ 	if (ofs->icr == UNDEF_REG)
+ 		stm32_clr_bits(port, ofs->isr, USART_SR_TC);
+ 	else
+-		stm32_set_bits(port, ofs->icr, USART_ICR_TCCF);
++		writel_relaxed(USART_ICR_TCCF, port->membase + ofs->icr);
+ 
+ 	if (stm32_port->tx_ch)
+ 		stm32_transmit_chars_dma(port);
+-- 
+2.7.4
+
