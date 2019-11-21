@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08E3F104E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3FF104E7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 09:56:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfKUIzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 03:55:33 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38538 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfKUIzc (ORCPT
+        id S1726858AbfKUIzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 03:55:38 -0500
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:43035 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbfKUIzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:55:32 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t3so810877pgl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:55:32 -0800 (PST)
+        Thu, 21 Nov 2019 03:55:36 -0500
+Received: by mail-lj1-f182.google.com with SMTP id y23so2266013ljh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 00:55:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JDh4J7txYc3naAMlVPRKqlgsc0Gi2de9J0u9I07SRgE=;
-        b=SXf6MqbSDeg/fVx0sGott9QiNL08dk+gq2qyuQhjIDe6mEC8Eew7jE/+g6gizVdTBy
-         UrRWnukkMQShx2l1Vg65R5P8ZeXHRnugHpon0heqD1m7M+rEGCgvzxkq/E1ElFSq91/7
-         Bclf2FqGosWV0kCmy6IGf8niCABAl0CR9Em1GviJnK2XDoUOwv4OmqhE6K8x8d7fwU+l
-         zfjVpbPyMGGKc8KrWTpSD8FLayEZW8DsCgsfU+w8x4yb19kYyHuCetCISCRuBdEKLL4J
-         5R54IypEaOOh3JkG4xqLS4R6VzjOFUZFSAP255kEaFcSFTiQS2dBpp3QLyYL9+DRP7rF
-         5TBQ==
+        d=rasmusvillemoes.dk; s=google;
+        h=to:from:subject:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=nm9MbxbOhLJVk4VBorEHBe3daFrDVX/QgQpwK6J6Mg0=;
+        b=IegVour0g97ytTjltHsxC7xw2eebqHL9gqSUJuXgdLDmBo+puXw4ReLGc/IiOy/SB8
+         t9U9u3dXNavaFgDzfooZ6APWd/aWrwoW2z+s6yUyqody54/rTggSnS/wgDsSoz69gVYo
+         sjyVeMUxNlq9rpjIf3b/Gr9+9JEEWvYCm5Bf0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JDh4J7txYc3naAMlVPRKqlgsc0Gi2de9J0u9I07SRgE=;
-        b=QjO6uB8srMyG9tY952ometcFt3CwcbmP4skmY+9Xc3Folefd/8Muk4zthBHlkIRqEs
-         dPiPwPUWUOHS1Gs4G7ap0rhN+GMOEmAKBV12J3CLYeiP8Rvkrm791d8BwsrJbT5lMfcO
-         hCIC43DqMfcQs1qZPfFNRQjLGSSYEICFWOAR9D/T1Jh0qepoDwmZyOh6mutB/T3sCscz
-         XrldJxlNdeoznJ8kHdxCG6iGYOzxxWExY+MoZQF3hUaEVQ+yk9CO0ED9ryWe274ZhkBq
-         /e79/ReGYtyFfurNjV14N52pg59HUZel/nl4gRafpwnKpVQhoMa0YMNNgo8jdc0gvq7+
-         dIyA==
-X-Gm-Message-State: APjAAAWCIgEzi9tdlxwEU7eVm6A0JhZzOfkSGIoChWGqEN87V3Rfwlw2
-        QGg5357EabtIzqE2ZVKibmOBJQ==
-X-Google-Smtp-Source: APXvYqwImatb0/SQFGgTcvIX7x0xGvkXF5uKVkbBIQ3LaNfl9s6ckC4vLLVKjdh/XkqeXoOliNxiVw==
-X-Received: by 2002:a63:6b82:: with SMTP id g124mr8313475pgc.178.1574326531905;
-        Thu, 21 Nov 2019 00:55:31 -0800 (PST)
-Received: from localhost ([223.226.74.76])
-        by smtp.gmail.com with ESMTPSA id s2sm2044089pgv.48.2019.11.21.00.55.30
+        h=x-gm-message-state:to:from:subject:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=nm9MbxbOhLJVk4VBorEHBe3daFrDVX/QgQpwK6J6Mg0=;
+        b=UMWUedIyZIUc4I0pC/bCfIvjGxJpkLGL/VtpcSZSk6+GH9g7Nh2hisq0HNlmrYmH5I
+         E9vU6jBWfZPARb51stHP+4MJP1QOv46H4aaI2VS4IGN1e/EUJHTgRlK7aQDjarjVNwTz
+         gGscdirZn9WFId6sDAKXpDcd4izuEDfy9cEbdzT2AlOMuyvPoXGjSEI1+XoZWMI4aT3U
+         66OG2Pqm/s83UWYPcW8q7mVVH7QdzyjSfed7PCuzE7fwvzKh29uddLzRHbbtmAJqZrOR
+         s7e0aBBTUAH29mQNv8NiAQQPcGzJw8f/tAGayKtPQebbDBIWv9lOXR7EIxknJYJ4EGaq
+         gAbw==
+X-Gm-Message-State: APjAAAW/3qb8/gzAR011NEaWff3u76r5PBZA9R6w9ejCrYzyZWCgfROd
+        LQ+/TuOpj6PktfXCHOFYwNGkO/+6HAEghzbI
+X-Google-Smtp-Source: APXvYqzclwlL5ssR6U9q3KRL0QWW1xjKH78BaWR9CxvWH8FCIHGsCrLoMq2kDQUm6wIsUAZRc3IlOQ==
+X-Received: by 2002:a05:651c:1196:: with SMTP id w22mr6484508ljo.217.1574326533379;
+        Thu, 21 Nov 2019 00:55:33 -0800 (PST)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id a18sm977459lfg.2.2019.11.21.00.55.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 00:55:31 -0800 (PST)
-Date:   Thu, 21 Nov 2019 14:25:29 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com,
-        guillaume.tucker@collabora.com,
-        Niklas Cassel <niklas.cassel@linaro.org>, broonie@kernel.org,
-        khilman@baylibre.com, mgalka@collabora.com,
-        enric.balletbo@collabora.com, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Viresh Kumar <vireshk@kernel.org>
-Subject: Re: stable/linux-4.14.y bisection: boot on odroid-x2
-Message-ID: <20191121085529.qjmj7pwew4wjmggu@vireshk-i7>
-References: <5dd5fbf5.1c69fb81.0938.8061@mx.google.com>
- <20191121060811.mvzzh4zlfzlubzlv@vireshk-i7>
- <20191121065821.GA344102@kroah.com>
+        Thu, 21 Nov 2019 00:55:32 -0800 (PST)
+To:     LKML <linux-kernel@vger.kernel.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: can we get rid of the cpumask_t typedef?
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Message-ID: <d6a7ca69-2f65-5bf4-edbd-2644a1f3f124@rasmusvillemoes.dk>
+Date:   Thu, 21 Nov 2019 09:55:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121065821.GA344102@kroah.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-11-19, 07:58, Greg Kroah-Hartman wrote:
-> On Thu, Nov 21, 2019 at 11:38:11AM +0530, Viresh Kumar wrote:
-> > On 20-11-19, 18:52, kernelci.org bot wrote:
-> > > commit 714ab224a8db6e8255c61a42613de9349ceb0bba
-> > > Author: Viresh Kumar <viresh.kumar@linaro.org>
-> > > Date:   Fri Aug 3 07:05:21 2018 +0530
-> > > 
-> > >     OPP: Protect dev_list with opp_table lock
-> > >     
-> > >     [ Upstream commit 3d2556992a878a2210d3be498416aee39e0c32aa ]
-> > >     
-> > >     The dev_list needs to be protected with a lock, else we may have
-> > >     simultaneous access (addition/removal) to it and that would be racy.
-> > >     Extend scope of the opp_table lock to protect dev_list as well.
-> > >     
-> > >     Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-> > >     Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > >     Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > 
-> > @Sasha: Please drop this patch for now.
-> 
-> Drop it from 4.14 and 4.19?
+The cpumask_t alias for "struct cpumask" doesn't seem to qualify for the
+kernel's requirement for when a typedef is warranted. It's also somewhat
+easily confused with cpumask_var_t which has very good reasons for being
+a typedef. "struct cpumask" outnumbers "cpumask_t" about 5:2.
 
-Yes.
+The motivation for this is that kbuild informed me about some driver
+that I just enabled for ARM happens to include asm/irq.h, and for magic
+reasons no other previous header happens to pull in cpumask.h. So the
+build fails
 
--- 
-viresh
+>> arch/arm/include/asm/irq.h:34:50: error: unknown type name 'cpumask_t'
+    extern void arch_trigger_cpumask_backtrace(const cpumask_t *mask,
+
+So I could just add a include linux/cpumask.h (and the reason I hadn't
+noticed is that the -rt tree which I build upon carries just that) and
+be done with it. But I'd rather not contribute to the "every header
+pulls in every other header" madness. So I'd rather just change the
+function to take a "struct cpumask *" and precede it with a forward
+declaration of that.
+
+As it happens, arch_trigger_cpumask_backtrace is a good example of the
+sillyness the cpumask_t typedef leads to. ARM and Powerpc are
+consistent, using cpumask_t in both declaration and definition. MIPS,
+Sparc and x86 use "struct cpumask" in the declaration and cpumask_t in
+the definition.
+
+Rasmus
