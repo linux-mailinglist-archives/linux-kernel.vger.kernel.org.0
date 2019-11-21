@@ -2,110 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC32105748
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96776105752
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:44:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfKUQmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 11:42:44 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33849 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726279AbfKUQmn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:42:43 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 89500224AC;
-        Thu, 21 Nov 2019 11:42:42 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 21 Nov 2019 11:42:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=zrVwxdFX3/ZNrNFnru4HMvi21Hw
-        FhrUN+tgF4NYvm+I=; b=ldVoOTRcvpZzw2MzugDxCmWgfxhQrIEKhcHdjBJAHVr
-        fn1dn+RtMopJVqiQcNW5Ruv8pOLILuT8D9Gbq5Y04W7NzDj48NKBgqBR4ym6uJJV
-        MyeUGqVvbVfb4xZ7pM1SujEO94Hav9k39QCncAk6Wf7qs7fnpcslYCCTdfbODSdh
-        iTKdCsRy96ApepngZkaJn9P+N0zj1oHMhOx7+pqc1coGgpbtxVT25nvFvWITEtn4
-        MUjsScsenn64irKMg57kYHxdQopNS5qJ2VC1CCFUtLr5rklRSSCclJmX6Wq89Ddp
-        8rhXAV16BDeNjAWgml49KtRJg8XKoIYy3zKUe0c+vDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=zrVwxd
-        FX3/ZNrNFnru4HMvi21HwFhrUN+tgF4NYvm+I=; b=j8LAQXufgvyDNkV59H5Uoz
-        q3tuRqZQ4h0HO/uafOsah0WmyV2k0vRa5s10nJ2hbpsbpDa6pK+wHzGxo1SuZUMf
-        OV30pgh6YkaQNGQK4rFCXfzwS6JahE7rvtXWZORG+y1KGCJhJQ6HyrxSxJcRPKrX
-        E2eqCEabQi/DWJoxQduO//iCqAlQVTQmaHZmEX5ZNT3kJy5UQ2CH4KtP1YBbZVSb
-        qp3zdZZCv6Q/5/2DXptbNNc49vN1u5o3Go+/B9QAqVD2pRq0AmI3G+2uMjlSoQlQ
-        3GHCMBoFiJNQbiM51bMPDtsqAEAB7r+SQDXhRV4FLyycQc3XfMtplYVSUzLeGWUg
-        ==
-X-ME-Sender: <xms:gr7WXeI_2O5T-5FtKbDmbv4BxNztZ9v0_aiM6NzHeRf-aieLKAK9rg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehvddgleegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
-    ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
-    qeenucfkphepvddujedrieekrdegledrjedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:gr7WXasK0vP2vyLRO2meXYCFhWm1pYZ9stvYQYOxt6tyDjWfZ9CSoA>
-    <xmx:gr7WXUKwWMUeWsqHbyziYUyQNfp5kFHSYXSDKtlHmDk66Fxz5GNFKw>
-    <xmx:gr7WXWDA5NAb--dfHtk33gCKyLFaRhwizGlmLcM_Z53OoP5TFUC-wA>
-    <xmx:gr7WXZqIqRk5givgOqJL-BC3juABe6Tma1eJ4cLh4pCVRUh3iuWH-g>
-Received: from localhost (unknown [217.68.49.72])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A55DE8005B;
-        Thu, 21 Nov 2019 11:42:41 -0500 (EST)
-Date:   Thu, 21 Nov 2019 17:42:39 +0100
-From:   Greg KH <greg@kroah.com>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, balbi@kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] drivers: usb: Kconfig: cleanup indentions
-Message-ID: <20191121164239.GE651886@kroah.com>
-References: <20191121151408.22401-1-info@metux.net>
+        id S1726968AbfKUQoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 11:44:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:59154 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbfKUQoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 11:44:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4E21328;
+        Thu, 21 Nov 2019 08:44:23 -0800 (PST)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D1ED3F52E;
+        Thu, 21 Nov 2019 08:44:22 -0800 (PST)
+Subject: Re: generic DMA bypass flag
+To:     Christoph Hellwig <hch@lst.de>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20191113133731.20870-1-hch@lst.de>
+ <d27b7b29-df78-4904-8002-b697da5cb013@arm.com>
+ <20191114074105.GC26546@lst.de>
+ <9c8f4d7b-43e0-a336-5d93-88aef8aae716@arm.com> <20191116062258.GA8913@lst.de>
+ <f2335431-8cd4-e1ab-013d-573d163f4067@arm.com>
+ <20191121073450.GC24024@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <fb438be4-edae-8ca3-2eee-ec452f762cd9@arm.com>
+Date:   Thu, 21 Nov 2019 16:44:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121151408.22401-1-info@metux.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191121073450.GC24024@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 04:14:08PM +0100, Enrico Weigelt, metux IT consult wrote:
-> Make the code look a little bit nicer.
+On 21/11/2019 7:34 am, Christoph Hellwig wrote:
+> Robin, does this mean you ACK this series for the powerpc use case?
 
-That is really vague.
+Yeah, I think we've nailed down sufficient justification now for having 
+a generalised flag, so at that point it makes every bit of sense to 
+convert PPC's private equivalent.
 
-What exactly are you doing here, and why?
+Robin.
 
+> Alexey and other ppc folks: can you take a look?
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
 > 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> ---
->  drivers/usb/dwc3/Kconfig | 30 +++++++++++++++---------------
->  drivers/usb/misc/Kconfig | 24 ++++++++++++------------
->  2 files changed, 27 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> index 556a876c7896..7695841a108f 100644
-> --- a/drivers/usb/dwc3/Kconfig
-> +++ b/drivers/usb/dwc3/Kconfig
-> @@ -97,24 +97,24 @@ config USB_DWC3_KEYSTONE
->  	  Say 'Y' or 'M' here if you have one such device
->  
->  config USB_DWC3_MESON_G12A
-> -       tristate "Amlogic Meson G12A Platforms"
-> -       depends on OF && COMMON_CLK
-> -       depends on ARCH_MESON || COMPILE_TEST
-> -       default USB_DWC3
-> -       select USB_ROLE_SWITCH
-> +	tristate "Amlogic Meson G12A Platforms"
-> +	depends on OF && COMMON_CLK
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	default USB_DWC3
-> +	select USB_ROLE_SWITCH
->  	select REGMAP_MMIO
-
-I think this change is already in my tree, right?  Please don't
-duplicate work that others already did.
-
-thanks,
-
-greg k-h
