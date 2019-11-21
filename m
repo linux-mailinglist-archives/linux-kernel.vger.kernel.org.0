@@ -2,66 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0CA6105763
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:47:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DD33105770
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 17:48:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfKUQru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 11:47:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbfKUQrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:47:49 -0500
-Received: from localhost (unknown [217.68.49.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F8EF20672;
-        Thu, 21 Nov 2019 16:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574354869;
-        bh=Rhz53Nthy9abK6KiEjsCvKG+KEUuxWCEJqroR7XTPC0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dOg27dHu45rQGktSVBJnfOB142+0v88mpq5X3S4n3cFa1ycoXQUNzYNkC+HSXVuok
-         o+NqmWg1iSBXfIM+p2vxqpg9wZgVqzvpd3rsQVwljW7zQ22VxePR7kNjetPrHNVbTs
-         jjJIca0IUOiAEBQk5pVVKdJbSU2jNJ7HeszVB1zA=
-Date:   Thu, 21 Nov 2019 17:47:44 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [git pull] habanalabs pull request for kernel 5.5
-Message-ID: <20191121164744.GG651886@kroah.com>
-References: <20191121144223.GA14312@ogabbay-VM>
+        id S1727261AbfKUQsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 11:48:36 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:32929 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbfKUQsf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 11:48:35 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iXpcl-0000Ys-N9; Thu, 21 Nov 2019 17:48:07 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 474531C1A3B;
+        Thu, 21 Nov 2019 17:48:07 +0100 (CET)
+Date:   Thu, 21 Nov 2019 16:48:07 -0000
+From:   "tip-bot2 for Alexander Shishkin" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/core: Make the mlock accounting simple again
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191120170640.54123-1-alexander.shishkin@linux.intel.com>
+References: <20191120170640.54123-1-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121144223.GA14312@ogabbay-VM>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Message-ID: <157435488706.21853.9491431504510528730.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 04:42:23PM +0200, Oded Gabbay wrote:
-> Hello Greg,
-> 
-> This is the pull request for habanalabs driver for kernel 5.5.
-> 
-> It mainly contains improvements to MMU and reset code, and exposes more
-> information through our INFO IOCTL.
-> 
-> Please see the tag message for more details on what this pull request
-> contains.
-> 
-> Thanks,
-> Oded
-> 
-> The following changes since commit ab64ec1db25e0cceab0bad15b03fd57e2b461b15:
-> 
->   misc: Fix Kconfig indentation (2019-11-20 15:09:49 +0100)
-> 
-> are available in the Git repository at:
-> 
->   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-11-21
+The following commit has been merged into the perf/urgent branch of tip:
 
-Pulled and pushed out, thanks.
+Commit-ID:     c4b75479741c9c3a4f0abff5baa5013d27640ac1
+Gitweb:        https://git.kernel.org/tip/c4b75479741c9c3a4f0abff5baa5013d27640ac1
+Author:        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+AuthorDate:    Wed, 20 Nov 2019 19:06:40 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 21 Nov 2019 07:37:50 +01:00
 
-greg k-h
+perf/core: Make the mlock accounting simple again
+
+Commit:
+
+  d44248a41337 ("perf/core: Rework memory accounting in perf_mmap()")
+
+does a lot of things to the mlock accounting arithmetics, while the only
+thing that actually needed to happen is subtracting the part that is
+charged to the mm from the part that is charged to the user, so that the
+former isn't charged twice.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+Cc: songliubraving@fb.com
+Link: https://lkml.kernel.org/r/20191120170640.54123-1-alexander.shishkin@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/events/core.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8f66a48..7e8980d 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5825,13 +5825,7 @@ accounting:
+ 
+ 	user_locked = atomic_long_read(&user->locked_vm) + user_extra;
+ 
+-	if (user_locked <= user_lock_limit) {
+-		/* charge all to locked_vm */
+-	} else if (atomic_long_read(&user->locked_vm) >= user_lock_limit) {
+-		/* charge all to pinned_vm */
+-		extra = user_extra;
+-		user_extra = 0;
+-	} else {
++	if (user_locked > user_lock_limit) {
+ 		/*
+ 		 * charge locked_vm until it hits user_lock_limit;
+ 		 * charge the rest from pinned_vm
