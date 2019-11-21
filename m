@@ -2,89 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F7610502C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE0710503A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfKUKOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:14:40 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38453 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfKUKOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:14:36 -0500
-Received: by mail-wr1-f65.google.com with SMTP id i12so3649863wro.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 02:14:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0wg42Ie2oicewNtAQ2/KQD6s/n4R5PzVImaC+y7L2/I=;
-        b=lFzeH9x56IU0xzBmSWRZ6DcwLxw1LdGEIJ5MlxSDkIZqsb0vFRQ5uS/KuSKEhv4Rpe
-         zXtQOFjQ5v/kTiNdmSeeMdIpd/tLUgDYdIlHZJY++DJQqDyXRl+O2emaVMMdfEMYpbXS
-         lPPASwiAaZXdpBiEx8xmrla3280an3xZAkQlbeDlAHyRTMheWJ1BWs1RBZaPlkYk5ZyR
-         zGBc4uGluDTwDdqqFLevoP1HfKsU1jK4h2lDg+opAN/Rlpuf7/yfRyLVCalk44pvBFjL
-         Q3Uo0kH1qvOW1GrBmhdrITJLvv8OKVb0Z4+4oPyHHtRSxHaUFITEv1aOgLAmvTvJhIBF
-         5OEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0wg42Ie2oicewNtAQ2/KQD6s/n4R5PzVImaC+y7L2/I=;
-        b=qpNCSOu6bCZbaAXghAMzINpWL8gzSn2OZqi+rSQRoMwQ0Mc58sEn1YtDPG/F0noWFl
-         mZzOKxhhOW13VOHOUpI+nNwVpgTeAvAQRsS3kLIU5I8CqsO640X277M70AIRSVIzN/tC
-         vxb8H9RhUFreZKSWg5vY+e8KJc81ic7oa9DZ5A/UCAvmeyH5oMV8fOx+Z5n4AJiiHxjg
-         U2bL7sDDkb5Dg097yy24cVQQnuKcV3z46RaBZ08t02lkc6QtH6hxEbAgu9BqpEUpPj7z
-         VdxC58eQDBZ+4uxX0F6Tval4iJa1nbF8oQ6LYKIR7y/tvJMrKfmkLik5yPn7X1xMQ6tU
-         iOIg==
-X-Gm-Message-State: APjAAAXPACY/zfMEwcORPhw7UwFOKE+XHy3lOsrwBbleNOeNj1sfte3X
-        xk7jD3dqlFdV9T5yOS3ndxXPLA==
-X-Google-Smtp-Source: APXvYqxaDVnzGeg++beFGsQYq3Z9at9EOfwRlpJHiF3RSAfp90GcgPYTGGemHS3Jb/bwbNGcDgkpQA==
-X-Received: by 2002:a5d:4608:: with SMTP id t8mr9739630wrq.91.1574331273780;
-        Thu, 21 Nov 2019 02:14:33 -0800 (PST)
-Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o21sm1289932wmc.17.2019.11.21.02.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 02:14:33 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     mjourdan@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: meson-sm1: add video decoder compatible
-Date:   Thu, 21 Nov 2019 11:14:29 +0100
-Message-Id: <20191121101429.23831-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191121101429.23831-1-narmstrong@baylibre.com>
-References: <20191121101429.23831-1-narmstrong@baylibre.com>
+        id S1727046AbfKUKPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:15:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55124 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726994AbfKUKPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:15:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2CEEEB1EC;
+        Thu, 21 Nov 2019 10:15:34 +0000 (UTC)
+Date:   Thu, 21 Nov 2019 11:15:32 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-scsi@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] bdev: add open_finish.
+Message-ID: <20191121101532.GI11661@kitsune.suse.cz>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <ea2652294651cbc8549736728c650d16d2fe1808.1571834862.git.msuchanek@suse.de>
+ <20191024022232.GB11485@infradead.org>
+ <20191024085514.GI938@kitsune.suse.cz>
+ <20191024131254.GE2963@bombadil.infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191024131254.GE2963@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the video decoder specific compatible for Amlogic SM1 SoC.
+On Thu, Oct 24, 2019 at 06:12:54AM -0700, Matthew Wilcox wrote:
+> On Thu, Oct 24, 2019 at 10:55:14AM +0200, Michal Suchánek wrote:
+> > On Wed, Oct 23, 2019 at 07:22:32PM -0700, Christoph Hellwig wrote:
+> > > On Wed, Oct 23, 2019 at 02:52:45PM +0200, Michal Suchanek wrote:
+> > > > Opening a block device may require a long operation such as waiting for
+> > > > the cdrom tray to close. Performing this operation with locks held locks
+> > > > out other attempts to open the device. These processes waiting to open
+> > > > the device are not killable.
+> 
+> You can use mutex_lock_killable() to fix that.
+> 
+That fixes only half of the problem.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+Other processes still cannot access the device while you wait on
+mutex_lock_killable
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-index 521573f3a5ba..b94a4eae973f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-@@ -138,6 +138,10 @@
- 	compatible = "amlogic,meson-sm1-pwrc";
- };
- 
-+&vdec {
-+	compatible = "amlogic,sm1-vdec";
-+};
-+
- &vpu {
- 	power-domains = <&pwrc PWRC_SM1_VPU_ID>;
- };
--- 
-2.22.0
+Thanks
 
+Michal
