@@ -2,268 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 395EE1059E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86A251059F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:49:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfKUSsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:48:15 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46953 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfKUSsN (ORCPT
+        id S1727047AbfKUStz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:49:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29422 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726541AbfKUSty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:48:13 -0500
-Received: by mail-qt1-f195.google.com with SMTP id r20so4780881qtp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:48:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=axPPUV0SB+vUmPVZgPMEMsCF47yjKoLE+O1nnwx+cnE=;
-        b=VnTNhd+EatzRBtm1XcR533FrbwGf6aLw7QhpytJvJy4EhUmmV/2yP3xUqt7lFpIi/t
-         i00tZ43HaUGN66rML32ooET+jxlZHfUjfezLLaqjb7KDsRbZ7lg/mO/o8wZieqN8iJUT
-         +QoonEXW0BfZhSTjghR2etYtEmgTJR3swErv6QzioOTvVMnXj1TSHJA4iDWgQiLXhhjH
-         9LVv9m7VPOB1+Fmoo+7VAGCOJFyx6j4MokamjH8mcuP9caILW96vLHR71+Lg0ILl+jFT
-         j2/ggw1yYD1pJ6Q7PnBcZPDVgy5c5TxvQGBJeoep+U8Q8XLVu0QurJEAGj5Be6Zayhiq
-         V3fw==
+        Thu, 21 Nov 2019 13:49:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574362194;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TzJ/SsHtd7bfy/oDgO2Y3q0F7ElX8gGJByg/j13Qj6o=;
+        b=KXhefWumSo0m12Y62bBYnMPubcXLTksjcHOiYaLiYagHzqOQQlTTvFvQl44ZqksA59N/os
+        oFPqJGGoVvnffL15BiOQB2nExis8GtB1tE0xnoKejOcaSMkXhSmXMrAqO01DUUvXi/DXz9
+        ryZQWBKi7yAPODk6wPjs2yL0hx6Ghb4=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-209-U4MaoaxfMVaktQ5ms-DD2w-1; Thu, 21 Nov 2019 13:49:52 -0500
+Received: by mail-pf1-f198.google.com with SMTP id 2so2628271pfv.21
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:49:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=axPPUV0SB+vUmPVZgPMEMsCF47yjKoLE+O1nnwx+cnE=;
-        b=QyNtB7a7gF5dRcameOclhzffZzayntUY17373jumUcdGKP+5G/AFj6Kqf62UAzrF8d
-         MtFkoTPt9fIwR52Ui2jlHfDxvjds9zDTApa3VGQmfZ5X/w/aEa/xKC+V/Bqw0KWXkS5T
-         bQUaK6LDb5VsBP17Y1Ip35kztnE4bZFlZDAdkqu4l5Ixj36SZdSQvFttFhXW788rkTt7
-         l8KrKLlRc5vA14rLbo+YY64PwY1J+nhpCG1KumbwlTWIk9gpeub+7PEt/HHMukBW+KVq
-         BdVCRouEqeEP59k1iE+j0ZTaLmr427gzi9Qi8HL5k7uKf1mKogtB73n4bsNRoCUd2VVl
-         FITQ==
-X-Gm-Message-State: APjAAAW2IRGohhzBMxV/rmg2rr/id6JxaoRsRAy3kB6y7lE8J7htVl01
-        rEQjOIeekMAmiUF3RxlTa+io0Q==
-X-Google-Smtp-Source: APXvYqysL5MlYKABTCqCZbfEZQ5tWNC+olDXlMCWgPK4umyOQbgkypKnzsUF0Z83ZrFlAdJbpxiFTw==
-X-Received: by 2002:ac8:2d2d:: with SMTP id n42mr10008350qta.119.1574362092735;
-        Thu, 21 Nov 2019 10:48:12 -0800 (PST)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id t2sm1811634qkt.95.2019.11.21.10.48.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=YJjTnRWdM797ItW0zSRoz6NPhQjSBtbCZP9Ez1Vbe0I=;
+        b=rkMuPdr02KuSomuVstH6LYvW9LQmkG2Q+MaDLBkujVT1mhm0iT+grs4N9F2PahNDKI
+         cpeqzvof89C+Ujob49ue9F7NHgWp8ntxc94jDWYPbYSL7Z2Cons/Pp0drzpD+ZHYQeoc
+         C0OgW9x7ho68C0MlkNPAeR3+Z8ywXizJYqV9AzIjOBmaOw1oLT/8KMJ7wQ6olCKXcNQ1
+         4kvPegyBM2BZlKU6q3VQb8yEyXyhxnoNfzX2oad5pquq5zbY6FAL5Jfp1MlbCb5tNc6Z
+         2eBbRPXgBgIezzpav0ASQSwiA+462yco6uRO5q1Jttd93O6tu/keLTzW8fqOHl/YNo3t
+         /3Fw==
+X-Gm-Message-State: APjAAAVC4msMZdwyaSw5DOvT4wtLz+hA5gGmZdClyG7gJuJHMeULh8av
+        Tr0cFUpT8+NGxrEEkngewL5//vDYnRXsPcbwSI/Uu5IBFoqn0vGeHJpnyc4cdrYq3yW/LICnwjs
+        uJLlfQKD2oyJsAs2yQrja2OcJ
+X-Received: by 2002:a17:90a:cc18:: with SMTP id b24mr12761779pju.141.1574362191690;
+        Thu, 21 Nov 2019 10:49:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxWAeBHfju8V5AcESOH4Gfa3Chb2r15GgQNTf03+xntRYELUlaqlYma+S+2k2og5XTP8gvB1Q==
+X-Received: by 2002:a17:90a:cc18:: with SMTP id b24mr12761762pju.141.1574362191492;
+        Thu, 21 Nov 2019 10:49:51 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id p123sm4422462pfg.30.2019.11.21.10.49.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 10:48:12 -0800 (PST)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, steve.capper@arm.com,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org,
-        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
-        sstabellini@kernel.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, stefan@agner.ch, yamada.masahiro@socionext.com,
-        xen-devel@lists.xenproject.org, linux@armlinux.org.uk
-Subject: [PATCH 3/3] arm64: remove the rest of asm-uaccess.h
-Date:   Thu, 21 Nov 2019 13:48:05 -0500
-Message-Id: <20191121184805.414758-4-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191121184805.414758-1-pasha.tatashin@soleen.com>
-References: <20191121184805.414758-1-pasha.tatashin@soleen.com>
+        Thu, 21 Nov 2019 10:49:50 -0800 (PST)
+Date:   Thu, 21 Nov 2019 11:49:49 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
+ tpm_tis_probe_irq_single
+Message-ID: <20191121184949.yvw2gwzlkhjzko64@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Stefan Berger <stefanb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
+ <20191114164151.GB9528@linux.intel.com>
+ <20191114164426.GC9528@linux.intel.com>
+ <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+X-MC-Unique: U4MaoaxfMVaktQ5ms-DD2w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __uaccess_ttbr0_disable and __uaccess_ttbr0_enable,
-are the last two macros defined in asm-uaccess.h.
+On Sat Nov 16 19, Stefan Berger wrote:
+>On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
+>>On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
+>>>On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
+>>>>From: Stefan Berger <stefanb@linux.ibm.com>
+>>>>
+>>>>Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
+>>>>tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
+>>>>This move handles error conditions better that may arise if anything
+>>>>before fails in tpm_tis_probe_irq_single.
+>>>>
+>>>>Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>>>Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>>>What about just changing the condition?
+>>Also cannot take this since it is not a bug (no fixes tag).
+>
+>I'll repost but will wait until Jerry has tested it on that machine.
+>
+>=A0=A0 Stefan
+>
+>
+>>
+>>/Jarkko
+>
+>
 
-Replace them with C wrappers and call C functions from
-kernel_entry and kernel_exit.
-
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
----
- arch/arm64/include/asm/asm-uaccess.h | 38 ----------------------------
- arch/arm64/kernel/entry.S            |  6 ++---
- arch/arm64/lib/clear_user.S          |  2 +-
- arch/arm64/lib/copy_from_user.S      |  2 +-
- arch/arm64/lib/copy_in_user.S        |  2 +-
- arch/arm64/lib/copy_to_user.S        |  2 +-
- arch/arm64/mm/cache.S                |  1 -
- arch/arm64/mm/context.c              | 12 +++++++++
- arch/xtensa/kernel/coprocessor.S     |  1 -
- 9 files changed, 19 insertions(+), 47 deletions(-)
- delete mode 100644 arch/arm64/include/asm/asm-uaccess.h
-
-diff --git a/arch/arm64/include/asm/asm-uaccess.h b/arch/arm64/include/asm/asm-uaccess.h
-deleted file mode 100644
-index 8f763e5b41b1..000000000000
---- a/arch/arm64/include/asm/asm-uaccess.h
-+++ /dev/null
-@@ -1,38 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_ASM_UACCESS_H
--#define __ASM_ASM_UACCESS_H
--
--#include <asm/alternative.h>
--#include <asm/kernel-pgtable.h>
--#include <asm/mmu.h>
--#include <asm/sysreg.h>
--#include <asm/assembler.h>
--
--/*
-- * User access enabling/disabling macros.
-- */
--#ifdef CONFIG_ARM64_SW_TTBR0_PAN
--	.macro	__uaccess_ttbr0_disable, tmp1
--	mrs	\tmp1, ttbr1_el1			// swapper_pg_dir
--	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
--	sub	\tmp1, \tmp1, #RESERVED_TTBR0_SIZE	// reserved_ttbr0 just before swapper_pg_dir
--	msr	ttbr0_el1, \tmp1			// set reserved TTBR0_EL1
--	isb
--	add	\tmp1, \tmp1, #RESERVED_TTBR0_SIZE
--	msr	ttbr1_el1, \tmp1		// set reserved ASID
--	isb
--	.endm
--
--	.macro	__uaccess_ttbr0_enable, tmp1, tmp2
--	get_current_task \tmp1
--	ldr	\tmp1, [\tmp1, #TSK_TI_TTBR0]	// load saved TTBR0_EL1
--	mrs	\tmp2, ttbr1_el1
--	extr    \tmp2, \tmp2, \tmp1, #48
--	ror     \tmp2, \tmp2, #16
--	msr	ttbr1_el1, \tmp2		// set the active ASID
--	isb
--	msr	ttbr0_el1, \tmp1		// set the non-PAN TTBR0_EL1
--	isb
--	.endm
--#endif
--#endif
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 583f71abbe98..c7b571e6d0f2 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -22,8 +22,8 @@
- #include <asm/mmu.h>
- #include <asm/processor.h>
- #include <asm/ptrace.h>
-+#include <asm/kernel-pgtable.h>
- #include <asm/thread_info.h>
--#include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
- 
- /*
-@@ -219,7 +219,7 @@ alternative_else_nop_endif
- 	and	x23, x23, #~PSR_PAN_BIT		// Clear the emulated PAN in the saved SPSR
- 	.endif
- 
--	__uaccess_ttbr0_disable x21
-+	bl __uaccess_ttbr0_disable_c
- 1:
- #endif
- 
-@@ -293,7 +293,7 @@ alternative_else_nop_endif
- 	tbnz	x22, #22, 1f			// Skip re-enabling TTBR0 access if the PSR_PAN_BIT is set
- 	.endif
- 
--	__uaccess_ttbr0_enable x0, x1
-+	bl	__uaccess_ttbr0_enable_c
- 
- 	.if	\el == 0
- 	/*
-diff --git a/arch/arm64/lib/clear_user.S b/arch/arm64/lib/clear_user.S
-index aeafc03e961a..b0b4a86a09e2 100644
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -6,7 +6,7 @@
-  */
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- 
- 	.text
-diff --git a/arch/arm64/lib/copy_from_user.S b/arch/arm64/lib/copy_from_user.S
-index ebb3c06cbb5d..142bc7505518 100644
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -5,7 +5,7 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- #include <asm/cache.h>
- 
-diff --git a/arch/arm64/lib/copy_in_user.S b/arch/arm64/lib/copy_in_user.S
-index 3d8153a1ebce..04dc48ca26f7 100644
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -7,7 +7,7 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- #include <asm/cache.h>
- 
-diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
-index 357eae2c18eb..8f3218ae88ab 100644
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -5,7 +5,7 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- #include <asm/cache.h>
- 
-diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
-index 408d317a47d2..7940d6ef5da5 100644
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -12,7 +12,6 @@
- #include <asm/assembler.h>
- #include <asm/cpufeature.h>
- #include <asm/alternative.h>
--#include <asm/asm-uaccess.h>
- 
- /*
-  *	__arch_flush_icache_range(start,end)
-diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
-index b5e329fde2dd..4fc32c504dea 100644
---- a/arch/arm64/mm/context.c
-+++ b/arch/arm64/mm/context.c
-@@ -237,6 +237,18 @@ void check_and_switch_context(struct mm_struct *mm, unsigned int cpu)
- 		cpu_switch_mm(mm->pgd, mm);
- }
- 
-+#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-+asmlinkage void __uaccess_ttbr0_enable_c(void)
-+{
-+	__uaccess_ttbr0_enable();
-+}
-+
-+asmlinkage void __uaccess_ttbr0_disable_c(void)
-+{
-+	__uaccess_ttbr0_disable();
-+}
-+#endif
-+
- /* Errata workaround post TTBRx_EL1 update. */
- asmlinkage void post_ttbr_update_workaround(void)
- {
-diff --git a/arch/xtensa/kernel/coprocessor.S b/arch/xtensa/kernel/coprocessor.S
-index 80828b95a51f..6329d17e2aa0 100644
---- a/arch/xtensa/kernel/coprocessor.S
-+++ b/arch/xtensa/kernel/coprocessor.S
-@@ -18,7 +18,6 @@
- #include <asm/processor.h>
- #include <asm/coprocessor.h>
- #include <asm/thread_info.h>
--#include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
- #include <asm/ptrace.h>
- #include <asm/current.h>
--- 
-2.24.0
+It appears they still have the problem. I'm still waiting on logistics
+to send me a system to debug.
 
