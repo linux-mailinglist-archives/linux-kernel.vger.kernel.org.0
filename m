@@ -2,93 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D722104734
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC70104739
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfKUADP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 19:03:15 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46456 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfKUADN (ORCPT
+        id S1726905AbfKUAD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:03:26 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36049 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfKUADM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 19:03:13 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r18so557111pgu.13
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 16:03:12 -0800 (PST)
+        Wed, 20 Nov 2019 19:03:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z3so2124136wru.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2019 16:03:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=x//g3D21vWGwG/RhBLblP0rKHJ6VZUOUfN3oNVWDiSE=;
-        b=NJqzhMhLJICCf5qJMl+TNG+sSEH4R/DlE9aDYaGlbweivfvOOJQa6VQxDYNhcw/U9t
-         YZBnJUjG+3AcvvO3yIKNSW4lCAPdVCpA5BPmA1YWjjpzaOAduVif+C5xVk+E/ryM7vd1
-         uuTBP5iylemd6FFCSBjIPF1u5PAS9YbOLn9xE=
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iILqDiivRi8BjwupWA1etZi9HVAj+9a2PtQFD00PqHE=;
+        b=MbK1bl7YJkp3/vdJhrEg3CI8GOjQmhwVc2X423eHVIUCovz8pqRBXuFIRniAvdK0ZP
+         l0HQKajC9oTXwaP56P+6bdjbqyxTEVIhvK4v21SAU3v1nudd+89rzss8bIcVFrmKbNsD
+         rtQwpe6mI5135UJhd6gYLC64cgQa4KF3b5rRdO/F6UJ4ZMK7XbEX8RL3GxAHpULMXoMG
+         MH4OwxiNbOszQXwEFSEtwPz6x3spiiiLLrmvhVIqAVMc/COuMdrtb/xkYmUzOwCUVhG1
+         Ij/aMz3kBkq0+o6Rdk/HpUk5jVuzDa59EjlzCb0HakzaW5HhAgJdz+57VYXTB9VQbmC/
+         6VEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=x//g3D21vWGwG/RhBLblP0rKHJ6VZUOUfN3oNVWDiSE=;
-        b=cHcI1uy9BcyhLJ/jEmZdB0125LY7VVRBs+o7Wl9qW8Knt1WMXvslI8fDr/JmphtdDW
-         /WiC+jO91yfjH3N5vSPeGHcK2AzlGEesPZZzu0Mmnh+A5JYK0eSY7oT//ci4/TwZ7eHJ
-         l3A1P0sndAnOBizeT6ja0FwiIFIQWQ9DvlKBrigOERCdg1TnTgwMLfhoOZHshJAPNzVF
-         V5mwx/u1iInN9VreuZieyooMYPQFye+pFAqFoeMhCcKOU/fg7t9pLHHqHG2BogzrCSIE
-         31qgEeswepCxbX+RuUSc/etYkc1IABrpEkqr85gawMZJ/ArDoXd61gr7iBXsg55L/tMb
-         N66Q==
-X-Gm-Message-State: APjAAAUUemVmuIdVXgeXECu+FSYsHH0joM/fn5oULXqnxObwiVJhixWS
-        +mdXWU4VccqALf0V9sCQqTIbvQ==
-X-Google-Smtp-Source: APXvYqwStyJTrur6Um6X5gdnLSs05KUM0vEvX7S95Lr4MJfOROwA8QgHHWEsLmoYwK5zC4lSNlbP5Q==
-X-Received: by 2002:a63:101:: with SMTP id 1mr6069915pgb.336.1574294592164;
-        Wed, 20 Nov 2019 16:03:12 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r28sm555496pfl.37.2019.11.20.16.03.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iILqDiivRi8BjwupWA1etZi9HVAj+9a2PtQFD00PqHE=;
+        b=NBpECdhr1DLoahfo28/H1oS7wNGsu7XUXT1f2UFOwa+DOWt6E5bBUpyqyL/fmnLqJP
+         KEFRHgBnh3+eFWp4BjZAAdZ0i4EBI/Nefznou+UgJYhUzGNvepESQ7FOTYRWiUBtyBOI
+         RwZx+L+NqNOXqKvZj/YS9hg0UJ9AhjLi0zVMl0MKSSBgt5JoiCugwYWa8r3fucI3SBvN
+         5Ol1iqR1N/lb/nzyZNo4rLuOnV2KyuXn43pqYM48bjvO6Fo2JxkVaycEFZ5Xh4jiBaWa
+         aX2tT54RCWGYQWNoGjA055aY4E+EOJ5yWrngAprGAKSyt9CqjaKnElE8V45YG5jxbg+H
+         r1Xg==
+X-Gm-Message-State: APjAAAX/S9F+NSrzeqEmLchVDQ8K95WVob0+DcIjzQUrElnF5denaojQ
+        atuo5FCmEsxALDhmReVEm4ymazhP6dg=
+X-Google-Smtp-Source: APXvYqyutfd/TDTPhcdy9nLeIRZoQyJ/7YXhGyry4x9pmPK1r39zEU9x1yFFqtERynEbCqt6WuM8MQ==
+X-Received: by 2002:adf:ee92:: with SMTP id b18mr7224710wro.346.1574294590222;
+        Wed, 20 Nov 2019 16:03:10 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id 17sm949900wmg.19.2019.11.20.16.03.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 20 Nov 2019 16:03:09 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] docs, parallelism: Fix failure path and add comment
-Date:   Wed, 20 Nov 2019 16:03:02 -0800
-Message-Id: <20191121000304.48829-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191121000304.48829-1-keescook@chromium.org>
-References: <20191121000304.48829-1-keescook@chromium.org>
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, y2038@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH] time: Zerofy padding in __kernel_timespec on 32-bit
+Date:   Thu, 21 Nov 2019 00:03:03 +0000
+Message-Id: <20191121000303.126523-1-dima@arista.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rasmus noted that the failure path didn't correctly exit. Fix this and
-add another comment about GNU Make's job server environment variable
-names over time.
+On compat interfaces, the high order bits of nanoseconds should
+be zeroed out. This is because the application code or the libc
+do not guarantee zeroing of these. If used without zeroing,
+kernel might be at risk of using timespec values incorrectly.
 
-Reported-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Link: https://lore.kernel.org/lkml/eb25959a-9ec4-3530-2031-d9d716b40b20@rasmusvillemoes.dk
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Originally it was handled correctly, but lost during is_compat_syscall()
+cleanup. Revert the condition back to check CONFIG_64BIT.
+
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fixes: 98f76206b335 ("compat: Cleanup in_compat_syscall() callers")
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: y2038@lists.linaro.org
+Cc: stable@vger.kernel.org # v4.20+
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- scripts/jobserver-count | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/time/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/jobserver-count b/scripts/jobserver-count
-index 0b482d6884d2..6e15b38df3d0 100755
---- a/scripts/jobserver-count
-+++ b/scripts/jobserver-count
-@@ -24,6 +24,8 @@ try:
- 	flags = os.environ['MAKEFLAGS']
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 5c54ca632d08..1cb045c5c97e 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -881,7 +881,7 @@ int get_timespec64(struct timespec64 *ts,
+ 	ts->tv_sec = kts.tv_sec;
  
- 	# Look for "--jobserver=R,W"
-+	# Note that GNU Make has used --jobserver-fds and --jobserver-auth
-+	# so this handles all of them.
- 	opts = [x for x in flags.split(" ") if x.startswith("--jobserver")]
+ 	/* Zero out the padding for 32 bit systems or in compat mode */
+-	if (IS_ENABLED(CONFIG_64BIT_TIME) && in_compat_syscall())
++	if (IS_ENABLED(CONFIG_64BIT_TIME) && (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall()))
+ 		kts.tv_nsec &= 0xFFFFFFFFUL;
  
- 	# Parse out R,W file descriptor numbers and set them nonblocking.
-@@ -53,6 +55,7 @@ os.write(writer, jobs)
- # If the jobserver was (impossibly) full or communication failed, use default.
- if len(jobs) < 1:
- 	print(default)
-+	sys.exit(0)
- 
- # Report available slots (with a bump for our caller's reserveration).
- print(len(jobs) + 1)
+ 	ts->tv_nsec = kts.tv_nsec;
 -- 
-2.17.1
+2.24.0
 
