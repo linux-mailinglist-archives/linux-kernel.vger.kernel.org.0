@@ -2,159 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A31021054CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4A51054C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 15:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfKUOpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 09:45:13 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:54970 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbfKUOpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 09:45:12 -0500
-Received: by mail-il1-f199.google.com with SMTP id t67so3074838ill.21
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 06:45:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gKVEHAypeETPe8BrGsTwrpNX1ECF4WGPfjBww5LbXIE=;
-        b=rebcDtJOHkYHJBTXBLzf9OhAZoLUJkgtQwRzsFoluaSnajRmS3r3u89jVbjqcI+iK4
-         y4YxjJoVPigXVDjMeh6UGTg2STqmjw0uEp/nmo3FEIoEYRyPHr4nG038OWv3gwFC8dRT
-         EIJgsSVOd5ekvE0E0Vg5GFnwm9LqbHkAlUnl7813ne2iLeSqS8RNj/rlXMhjVL16h7qK
-         XjfTNiP8t/gBhqVCc3nYhd4xM+V2leeT78dGRfKyQlx8Q54d0a/OVFWP7b9hlBS2OG1L
-         xvhkS3rr3hLvm4aYhkHEtReMbU39K7KqzJWsGUcLomhxQRybv5rhsC/xNIsd3zKmfTfl
-         8syA==
-X-Gm-Message-State: APjAAAVvo7LRj+VCZJyqZbA7obbOqiaz2WqQ1LbnwKU+cfOSkPIWlqGR
-        NfNUbEs+XTMULc4D/CY+k1yAqZKoJqU6Q9f+uYVwCheIodib
-X-Google-Smtp-Source: APXvYqxZ3Qw0R6eFPKZCR7qRh2nPXw7qOlHgzU6f4Hf5Qk1q8lnrgvdMAX6Pp1H4q86+9fHJuXYS3a+iyTb3/yjV/hgXlTBd9LeB
+        id S1727016AbfKUOne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 09:43:34 -0500
+Received: from mga05.intel.com ([192.55.52.43]:62558 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfKUOne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:43:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 06:43:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
+   d="scan'208";a="209923902"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2019 06:43:31 -0800
+Date:   Thu, 21 Nov 2019 22:45:28 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmattson@google.com,
+        sean.j.christopherson@intel.com, yu.c.zhang@linux.intel.com,
+        alazar@bitdefender.com, edwin.zhai@intel.com
+Subject: Re: [PATCH v7 4/9] mmu: spp: Add functions to create/destroy SPP
+ bitmap block
+Message-ID: <20191121144528.GB17169@local-michael-cet-test>
+References: <20191119084949.15471-1-weijiang.yang@intel.com>
+ <20191119084949.15471-5-weijiang.yang@intel.com>
+ <8ad27209-cc28-0503-da0e-bead63b28a83@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8e47:: with SMTP id q68mr4633416iod.274.1574347509632;
- Thu, 21 Nov 2019 06:45:09 -0800 (PST)
-Date:   Thu, 21 Nov 2019 06:45:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000109c040597dc5843@google.com>
-Subject: INFO: rcu detected stall in hub_event
-From:   syzbot <syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ad27209-cc28-0503-da0e-bead63b28a83@redhat.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Nov 21, 2019 at 11:43:10AM +0100, Paolo Bonzini wrote:
+> On 19/11/19 09:49, Yang Weijiang wrote:
+> >  
+> > +/*
+> > + * all vcpus share the same SPPT, vcpu->arch.mmu->sppt_root points to same
+> > + * SPPT root page, so any vcpu will do.
+> > + */
+> > +static struct kvm_vcpu *kvm_spp_get_vcpu(struct kvm *kvm)
+> > +{
+> > +	struct kvm_vcpu *vcpu = NULL;
+> > +	int idx;
+> 
+> Is this true?  Perhaps you need one with
+> VALID_PAGE(vcpu->arch.mmu->sppt_root) for kvm_spp_set_permission?
+>
+Yes, I'd like to keep single sppt_root, thank you!
 
-syzbot found the following crash on:
+> Also, since vcpu->arch.mmu->sppt_root is the same for all vCPUs, perhaps
+> it should be kvm->arch.sppt_root instead?
+>
+Sure, make sense, will change it.
 
-HEAD commit:    46178223 usb: gadget: add raw-gadget interface
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a05836e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99c88c44660624e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec5f884c4a135aa0dbb9
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1061395ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13653d1ce00000
+> If you can get rid of this function, it would be much better (but if you
+> cannot, kvm_get_vcpu(kvm, 0) should give the same result).
+>
+Great, I was not sure if such usage is correct. Thanks.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com
+> > 
+> > +	if (npages > SUBPAGE_MAX_BITMAP)
+> > +		return -EFAULT;
+> 
+> This is not needed here, the restriction only applies to the ioctl.
+>
+OK.
+> Paolo
 
-rcu: INFO: rcu_sched self-detected stall on CPU
-rcu: 	0-....: (10499 ticks this GP) idle=8ea/1/0x4000000000000002  
-softirq=1810/1810 fqs=5108
-	(t=10500 jiffies g=1553 q=595)
-NMI backtrace for cpu 0
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.4.0-rc6+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x55/0x96 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1b0/0x1c7 lib/nmi_backtrace.c:62
-  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
-  rcu_dump_cpu_stacks+0x169/0x1b3 kernel/rcu/tree_stall.h:254
-  print_cpu_stall kernel/rcu/tree_stall.h:455 [inline]
-  check_cpu_stall kernel/rcu/tree_stall.h:529 [inline]
-  rcu_pending kernel/rcu/tree.c:2795 [inline]
-  rcu_sched_clock_irq.cold+0x4da/0x936 kernel/rcu/tree.c:2244
-  update_process_times+0x25/0x60 kernel/time/timer.c:1726
-  tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:167
-  tick_sched_timer+0x42/0x130 kernel/time/tick-sched.c:1299
-  __run_hrtimer kernel/time/hrtimer.c:1514 [inline]
-  __hrtimer_run_queues+0x303/0xc60 kernel/time/hrtimer.c:1576
-  hrtimer_interrupt+0x2e8/0x730 kernel/time/hrtimer.c:1638
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1110 [inline]
-  smp_apic_timer_interrupt+0xf5/0x500 arch/x86/kernel/apic/apic.c:1135
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-  </IRQ>
-RIP: 0010:hid_apply_multiplier drivers/hid/hid-core.c:1058 [inline]
-RIP: 0010:hid_setup_resolution_multiplier+0x33b/0x990  
-drivers/hid/hid-core.c:1114
-Code: e8 2a 96 ed fc 48 8d 7d 04 48 89 f8 48 c1 e8 03 42 0f b6 14 38 48 89  
-f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 0c 05 00 00 <44> 8b 6d 04 bf  
-02 00 00 00 44 89 ee e8 64 97 ed fc 41 83 fd 02 74
-RSP: 0018:ffff8881da226cd8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: 0000000000000000 RCX: ffffffff8450902c
-RDX: 0000000000000000 RSI: ffffffff84509036 RDI: ffff8881d4df1204
-RBP: ffff8881d4df1200 R08: ffff8881da211800 R09: ffffc900004770cc
-R10: fffff5200009241b R11: ffffc900004920db R12: ffff8881c6640000
-R13: 0000000000000000 R14: ffff8881d4df1200 R15: dffffc0000000000
-  hid_open_report+0x438/0x640 drivers/hid/hid-core.c:1225
-  hid_parse include/linux/hid.h:1017 [inline]
-  ms_probe+0x12d/0x4d0 drivers/hid/hid-microsoft.c:388
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2212
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2202
-  hid_add_device drivers/hid/hid-core.c:2368 [inline]
-  hid_add_device+0x33c/0x9a0 drivers/hid/hid-core.c:2317
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2202
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2202
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2537
-  hub_port_connect drivers/usb/core/hub.c:5184 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
-  port_event drivers/usb/core/hub.c:5470 [inline]
-  hub_event+0x1df8/0x3800 drivers/usb/core/hub.c:5552
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
