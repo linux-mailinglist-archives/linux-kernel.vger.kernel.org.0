@@ -2,91 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1DE410530F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B37910530C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:29:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfKUN3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:29:34 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39672 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbfKUN3c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:29:32 -0500
-Received: by mail-lj1-f195.google.com with SMTP id p18so3220155ljc.6
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 05:29:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YN2w1QdeDBIuN3qrvGe7lcTmletib6z+wgOMFKHY7Jc=;
-        b=z0D/vAdjjQSyzAWXFCGlx0mQhnZHTcZlfWaq5Qz5iceeXxCA4g/kzxHhHFEFlTe1+N
-         nhZogCkSWdq55opMhIVeMgHKii93UZkSEwOzzefX64wRD+5244EDJLmgZh4vS4GHvxGX
-         iY/4KLPuCtQ+5vUYXQnVsXirlpHZfrSD8NqYLTskvhXDRRzExKj9C7ABEeBDZPUR8Sh9
-         IivRc7UELfFmAbKWQBW8pdUMVq7ujo9lH4i1hhdCX+AfD+tuapyWaOxjdn1akEC32+mN
-         2411hXmyZbtqijqvGxZkiA3KvTGiFb8CNvvOdYI7li575zqxOY8YzlQyNpGU+lhM9U6J
-         V1xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YN2w1QdeDBIuN3qrvGe7lcTmletib6z+wgOMFKHY7Jc=;
-        b=B3O+1E71AGvE3/f7VWi4x+xLY+LxEmMIVujaLK65qFJwVeg7EVFkM5OMI2TpsDFNSO
-         b/MfNf3wnAy4sVIIWwMp8/a645dRI/Ji+sCxzc/586KjR86AaPredUoCkbzyqK0M956Y
-         TEu3p0v8LT2Zj9ngYF+gatwPrhHVOERFOP6zmIFi3t8oY5Emc78U/NFlWNZj4IXU8DYZ
-         U2ZBEoFeWZIPz7QOYa7NW4gYmTQxeQBhZqfisAoyRvMzyowWNnhRpH4bdpqdFFhYqsUs
-         V2kJXmRYR2tAy4pPQLCW6/vevGjEqAWjwfEP6E0ERMEMrFrY1b+qQx1DGAhEIyC8L5+E
-         fR7w==
-X-Gm-Message-State: APjAAAWTIIZf+8oct2b/65eM6jL9BwDKgNeQ5PxgM8EMsm7F7+oNP+kv
-        QwnW9na1eYJaFDYADyCkO8yRvhxks9/zG9B6EHlUJ5TUu4/bmg==
-X-Google-Smtp-Source: APXvYqzJjUSGVSxtMk/wGwbd/ToHrDSThJ5abTzaibpX5Atj5Wt8bITkUmmAvXD2mRbW1lHFa+1ERqvKcZOi8m3HrVU=
-X-Received: by 2002:a2e:5c46:: with SMTP id q67mr7269836ljb.42.1574342970066;
- Thu, 21 Nov 2019 05:29:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20191115125551.31061-1-olteanv@gmail.com>
-In-Reply-To: <20191115125551.31061-1-olteanv@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 21 Nov 2019 14:29:18 +0100
-Message-ID: <CACRpkdZ5eWHEV-oN77QxH9X4DZRUB3zM=gP=+rM=ZLAX6Wxw9w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mpc8xxx: Don't overwrite default irq_set_type callback
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727263AbfKUN3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:29:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726634AbfKUN3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 08:29:23 -0500
+Received: from localhost.localdomain (unknown [118.189.143.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88C822070B;
+        Thu, 21 Nov 2019 13:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574342963;
+        bh=dIc++Icth9GruF6aBBYRNcCyQoKImA4/t49XcatR4Ig=;
+        h=From:To:Cc:Subject:Date:From;
+        b=neYUUfstg+Bc8trip8Y8omRdynVEAse6l+mu4mDVSzhSdq1Gj+GwQcdA/W4BenhJ1
+         gKt7iCJho+qJV5ONRq86CDAw4lfrr0PjwmtLSFcFgcBpHFpDOyoiLK7MuduwyZLKRS
+         lt0Az+ZzQWwbwDlagCCrfDYM+SXFP9++Wdr0BwQ4=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/vc4: Fix Kconfig indentation
+Date:   Thu, 21 Nov 2019 21:29:19 +0800
+Message-Id: <20191121132919.29430-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 1:56 PM Vladimir Oltean <olteanv@gmail.com> wrote:
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
 
-> From: Vladimir Oltean <vladimir.oltean@nxp.com>
->
-> The per-SoC devtype structures can contain their own callbacks that
-> overwrite mpc8xxx_gpio_devtype_default.
->
-> The clear intention is that mpc8xxx_irq_set_type is used in case the SoC
-> does not specify a more specific callback. But what happens is that if
-> the SoC doesn't specify one, its .irq_set_type is de-facto NULL, and
-> this overwrites mpc8xxx_irq_set_type to a no-op. This means that the
-> following SoCs are affected:
->
-> - fsl,mpc8572-gpio
-> - fsl,ls1028a-gpio
-> - fsl,ls1088a-gpio
->
-> On these boards, the irq_set_type does exactly nothing, and the GPIO
-> controller keeps its GPICR register in the hardware-default state. On
-> the LS1028A, that is ACTIVE_BOTH, which means 2 interrupts are raised
-> even if the IRQ client requests LEVEL_HIGH. Another implication is that
-> the IRQs are not checked (e.g. level-triggered interrupts are not
-> rejected, although they are not supported).
->
-> Fixes: 82e39b0d8566 ("gpio: mpc8xxx: handle differences between incarnations at a single place")
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/gpu/drm/vc4/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Patch applied with Michael's Tested tag.
+diff --git a/drivers/gpu/drm/vc4/Kconfig b/drivers/gpu/drm/vc4/Kconfig
+index 7c2317efd5b7..118e8a426b1a 100644
+--- a/drivers/gpu/drm/vc4/Kconfig
++++ b/drivers/gpu/drm/vc4/Kconfig
+@@ -22,9 +22,9 @@ config DRM_VC4
+ 	  our display setup.
+ 
+ config DRM_VC4_HDMI_CEC
+-       bool "Broadcom VC4 HDMI CEC Support"
+-       depends on DRM_VC4
+-       select CEC_CORE
+-       help
++	bool "Broadcom VC4 HDMI CEC Support"
++	depends on DRM_VC4
++	select CEC_CORE
++	help
+ 	  Choose this option if you have a Broadcom VC4 GPU
+ 	  and want to use CEC.
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
