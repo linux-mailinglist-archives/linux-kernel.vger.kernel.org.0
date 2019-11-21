@@ -2,151 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCC71059F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 474201059B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKUSwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:52:12 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46356 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfKUSwL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:52:11 -0500
-Received: by mail-pl1-f195.google.com with SMTP id l4so1958619plt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NUALPva1YZVx3/2BQ9xkXxgM4On7BMfGtAqUM5uBBGM=;
-        b=QkkdDs9DdEZpBZNUwVByWOjPfaCLv5Fazv+T6W/jsGE/QJ22fsNVmNCKvxFOWGUM+5
-         Ub+65sE7+UddobbPy8Eo7/AE2rO56F/2Vo6vrTZXTzmY42lHLf6Gnq1WSTD9qr3kp5Bn
-         fSW0qljDPVCBYTHAaHbnZZJdXBigRahCRKtbA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NUALPva1YZVx3/2BQ9xkXxgM4On7BMfGtAqUM5uBBGM=;
-        b=WDplaoIMO5B8dxKD/gbXx+PGgVGu9bRNblwJT/EKT8covciiCO5kOJY/C29rQMF41r
-         sKhFOhuog8u15xHmgLLkI9rBK0MncLO2rc4YqtwkYnI1n7PGw5ZKo27sq7f0RYNDFZOD
-         5OpKfva/NpaPtgOm+bHCIjNxoM2juDPOArNS8yJyjmiMrrXeSU2jxpNPhNTw+l5GzCzm
-         yWXOcIr4goXP3qInHCf8VcfGGt9wKi38bruBobaQ1uiBxZw46JjpePf6UnDD4iC1rrmj
-         6wSvZeNl+kw4jd4KwiPy/AatPT4q7MrgOrl/U68Rcm8epIZQZhG2+HV3ULt/g12MhylX
-         tcmA==
-X-Gm-Message-State: APjAAAU7wg5d4/tcQcTKb+rKiKGhrxuRAlO0vNtfJYH/z3/0PZpDeBX+
-        mcGjDY7rI9CrhP8sSOtmABqQI0CCsKY=
-X-Google-Smtp-Source: APXvYqyK7CVdwbuMQqybLkpohnb4M7+sMWlod2tDFQzPuY7KWaq3YXComqcwID39J5WBbAezdPL/1Q==
-X-Received: by 2002:a17:90a:24ac:: with SMTP id i41mr13768023pje.11.1574362331026;
-        Thu, 21 Nov 2019 10:52:11 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t15sm4085805pgb.0.2019.11.21.10.52.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 10:52:09 -0800 (PST)
-Date:   Thu, 21 Nov 2019 10:52:08 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Matthieu Baerts <matthieu.baerts@tessares.net>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: settings: tests can be in subsubdirs
-Message-ID: <201911211018.D6CD68AC5@keescook>
-References: <20191022171223.27934-1-matthieu.baerts@tessares.net>
- <c9ce5016-9e83-67c0-ae22-2d3c46427b25@tessares.net>
+        id S1726722AbfKUSkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:40:53 -0500
+Received: from mga06.intel.com ([134.134.136.31]:4638 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbfKUSkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 13:40:53 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 10:40:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
+   d="scan'208";a="216191810"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2019 10:40:52 -0800
+Date:   Thu, 21 Nov 2019 10:53:03 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191121185303.GB199273@romley-ivt3.sc.intel.com>
+References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
+ <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
+ <20191121060444.GA55272@gmail.com>
+ <20191121130153.GS4097@hirez.programming.kicks-ass.net>
+ <20191121171214.GD12042@gmail.com>
+ <3481175cbe14457a947f934343946d52@AcuMS.aculab.com>
+ <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c9ce5016-9e83-67c0-ae22-2d3c46427b25@tessares.net>
+In-Reply-To: <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 05:32:42PM +0100, Matthieu Baerts wrote:
-> Hi Shuah,
+On Thu, Nov 21, 2019 at 09:51:03AM -0800, Andy Lutomirski wrote:
+> On Thu, Nov 21, 2019 at 9:43 AM David Laight <David.Laight@aculab.com> wrote:
+> >
+> > From: Ingo Molnar
+> > > Sent: 21 November 2019 17:12
+> > > * Peter Zijlstra <peterz@infradead.org> wrote:
+> > ...
+> > > > This feature MUST be default enabled, otherwise everything will
+> > > > be/remain broken and we'll end up in the situation where you can't use
+> > > > it even if you wanted to.
+> > >
+> > > Agreed.
+> >
+> > Before it can be enabled by default someone needs to go through the
+> > kernel and fix all the code that abuses the 'bit' functions by using them
+> > on int[] instead of long[].
+> >
+> > I've only seen one fix go through for one use case of one piece of code
+> > that repeatedly uses potentially misaligned int[] arrays for bitmasks.
+> >
 > 
-> First, thank you for maintaining the Kernel Selftest framework!
+> Can we really not just change the lock asm to use 32-bit accesses for
+> set_bit(), etc?  Sure, it will fail if the bit index is greater than
+> 2^32, but that seems nuts.
 > 
-> On 22/10/2019 19:12, Matthieu Baerts wrote:
-> > Commit 852c8cbf34d3 (selftests/kselftest/runner.sh: Add 45 second
-> > timeout per test) adds support for a new per-test-directory "settings"
-> > file. But this only works for tests not in a sub-subdirectories, e.g.
-> > 
-> >   - tools/testing/selftests/rtc (rtc) is OK,
-> >   - tools/testing/selftests/net/mptcp (net/mptcp) is not.
-> > 
-> > We have to increase the timeout for net/mptcp tests which are not
-> > upstreamed yet but this fix is valid for other tests if they need to add
-> > a "settings" file, see the full list with:
-> > 
-> >    tools/testing/selftests/*/*/**/Makefile
-> > 
-> > Note that this patch changes the text header message printed at the end
-> > of the execution but this text is modified only for the tests that are
-> > in sub-subdirectories, e.g.
-> > 
-> >    ok 1 selftests: net/mptcp: mptcp_connect.sh
-> > 
-> > Before we had:
-> > 
-> >    ok 1 selftests: mptcp: mptcp_connect.sh
-> > 
-> > But showing the full target name is probably better, just in case a
-> > subsubdir has the same name as another one in another subdirectory.
-> > 
-> > Fixes: 852c8cbf34d3 (selftests/kselftest/runner.sh: Add 45 second timeout per test)
-> > Signed-off-by: Matthieu Baerts <matthieu.baerts@tessares.net>
-> Sorry to bother you again with this but by chance, did you have a look at
-> the patch below? :)
-> 
-> It doesn't only fix an issue with MPTCP, not in the kernel yet. But it also
-> fixes the issue of taking the right "settings" file (if available) for any
-> other tests in a sub-directory, e.g.:
-> 
->   drivers/dma-buf
->   filesystems/binderfs
->   net/forwarding
->   networking/timestamping
-> 
-> But I guess all tests in powerpc/* dirs and others.
+> (Why the *hell* do the bitops use long anyway?  They're *bit masks*
+> for crying out loud.  As in, users generally want to operate on fixed
+> numbers of bits.)
 
-Thanks for the ping! I missed this patch when you originally sent it.
-Yes, this make sense to me:
+We are working on a separate patch set to fix all split lock issues
+in atomic bitops. Per Peter Anvin and Tony Luck suggestions:
+1. Still keep the byte optimization if nr is constant. No split lock.
+2. If type of *addr is unsigned long, do quadword atomic instruction
+   on addr. No split lock.
+3. If type of *addr is unsigned int, do word atomic instruction
+   on addr. No split lock.
+4. Otherwise, re-calculate addr to point the 32-bit address which contains
+   the bit and operate on the bit. No split lock.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Only small percentage of atomic bitops calls are in case 4 (e.g. 3%
+for set_bit()) which need a few extra instructions to re-calculate
+address but can avoid big split lock overhead.
 
-As an improvement on this, I wonder if we need to walk all directories
-between $BASEDIR and $DIR? Actually, let me write this and send it...
+To get real type of *addr instead of type cast type "unsigned long",
+the atomic bitops APIs are changed to macros from functions. This change
+need to touch all architectures.
 
--Kees
+Thanks.
 
-> 
-> Cheers,
-> Matt
-> 
-> > ---
-> >   tools/testing/selftests/kselftest/runner.sh | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
-> > index 84de7bc74f2c..0d7a89901ef7 100644
-> > --- a/tools/testing/selftests/kselftest/runner.sh
-> > +++ b/tools/testing/selftests/kselftest/runner.sh
-> > @@ -90,7 +90,7 @@ run_one()
-> >   run_many()
-> >   {
-> >   	echo "TAP version 13"
-> > -	DIR=$(basename "$PWD")
-> > +	DIR="${PWD#${BASE_DIR}/}"
-> >   	test_num=0
-> >   	total=$(echo "$@" | wc -w)
-> >   	echo "1..$total"
-> > 
-> 
-> -- 
-> Matthieu Baerts | R&D Engineer
-> matthieu.baerts@tessares.net
-> Tessares SA | Hybrid Access Solutions
-> www.tessares.net
-> 1 Avenue Jean Monnet, 1348 Louvain-la-Neuve, Belgium
-
--- 
-Kees Cook
+-Fenghua
