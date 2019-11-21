@@ -2,180 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6441105070
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0720910507F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbfKUKYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:24:20 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2110 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726014AbfKUKYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:24:20 -0500
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 0FD5A7597279BC2F94E6;
-        Thu, 21 Nov 2019 10:24:18 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 21 Nov 2019 10:24:17 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 21 Nov
- 2019 10:24:17 +0000
-Subject: Re: [PATCH RFC V2 3/5] blk-mq: Facilitate a shared sbitmap per tagset
-To:     Ming Lei <ming.lei@redhat.com>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "hare@suse.com" <hare@suse.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "chenxiang (M)" <chenxiang66@hisilicon.com>
-References: <1574173658-76818-1-git-send-email-john.garry@huawei.com>
- <1574173658-76818-4-git-send-email-john.garry@huawei.com>
- <20191121085531.GC4755@ming.t460p>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <db93e0ba-118a-a4f6-41a8-064353568ef7@huawei.com>
-Date:   Thu, 21 Nov 2019 10:24:16 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726554AbfKUK3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:29:25 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23973 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726014AbfKUK3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:29:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574332163;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=t9X1E0mPwcgFWQfrAV192xVl6AHfJK9mk2N8XSWyhdc=;
+        b=aCBDXCcjzxm+LLFz7Z2qRaZzlXw4Gt/pPwYFHurooOvqoViCgb+ofarvlTnpb/sEUhvuci
+        QOOyFZhlU3ySdm2L4PE7HS7FOQirwjYGIGfDAgK27S0iCAbSdhepWAhiZzqn/Chul+AEKf
+        8tVUpSy3rvA7ZNspXb7eJN9GsgNUnfY=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-35-dDULx1lxMfKaKUKBRx0yjQ-1; Thu, 21 Nov 2019 05:29:20 -0500
+Received: by mail-lj1-f198.google.com with SMTP id 70so464567ljf.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 02:29:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=ucqBuN/GyC2pdnb4QcrvifWl2PtH/4rDjAh47h8mEbo=;
+        b=Gjt4u0x8UyH5BwGiH61pz4pnvPoq2rru0opMczckxTFv9LyO8/XzPD43O81BCeJALv
+         iC3Tz1naU1mKzwtsGpEK0mJcFk1ePZE32q7XvwqcV50CD17h1Zwhe5Mj+eBQ8Snr387s
+         bPGFPiBEwPROzADsZ0pLTTHWOv8P+UDYkh5u0KxCfLbLNvzcdbiGqQqTSNh+NPMbA/Kf
+         Tn+WOCxZtydopOGHcpebBoS1EnWuUlkG4mrOxO8cOfZf5As/4EDkzn+uE/0iXRmoiSdc
+         JOcbYcVxwMPcxZF4Zus9dv3yy85eulO0VaeDPzzlQp0hY9cONTctBsLH3UOmTFRmlXq/
+         umgw==
+X-Gm-Message-State: APjAAAUHSkFLRApJOre/ElyjpfHQOhsqmMStI53XvDPVT9Q8V+0ilDgi
+        TJ3HLHe6ujkOu+1nORo0aC6uiLoZKUrmVpoMEVXpd3wTv9MsQ+cxjmgyzA0V7nlal1KXnU8eiuX
+        fdxWq/sLZd64eRiBhGRlN+3I0
+X-Received: by 2002:a05:651c:390:: with SMTP id e16mr6751316ljp.196.1574332158697;
+        Thu, 21 Nov 2019 02:29:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwad1vM01fCMQKOMxvi3SDsPF4W318bJWsoMeOqcAfg1It54CDiNRVixFQOF/1CZYdfjRHvyw==
+X-Received: by 2002:a05:651c:390:: with SMTP id e16mr6751297ljp.196.1574332158521;
+        Thu, 21 Nov 2019 02:29:18 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a00:7660:6da:443::2])
+        by smtp.gmail.com with ESMTPSA id 141sm1013079ljj.37.2019.11.21.02.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 02:29:17 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id CE1A11818B9; Thu, 21 Nov 2019 11:29:16 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <thoiland@redhat.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        David Miller <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH RFC net-next] net: WireGuard secure network tunnel
+In-Reply-To: <20191120203538.199367-1-Jason@zx2c4.com>
+References: <20191120203538.199367-1-Jason@zx2c4.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Thu, 21 Nov 2019 11:29:16 +0100
+Message-ID: <877e3t8qv7.fsf@toke.dk>
 MIME-Version: 1.0
-In-Reply-To: <20191121085531.GC4755@ming.t460p>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml720-chm.china.huawei.com (10.201.108.71) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+X-MC-Unique: dDULx1lxMfKaKUKBRx0yjQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>   
->>   int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e)
->>   {
->> +	struct blk_mq_tag_set *tag_set = q->tag_set;
->>   	struct blk_mq_hw_ctx *hctx;
->>   	struct elevator_queue *eq;
->>   	unsigned int i;
->> @@ -537,6 +538,19 @@ int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e)
->>   		blk_mq_debugfs_register_sched_hctx(q, hctx);
->>   	}
->>   
->> +	if (blk_mq_is_sbitmap_shared(tag_set)) {
->> +		if (!blk_mq_init_sched_shared_sbitmap(tag_set, q->nr_requests)) {
->> +			ret = -ENOMEM;
->> +			goto err;
->> +		}
->> +		queue_for_each_hw_ctx(q, hctx, i) {
->> +			struct blk_mq_tags *tags = hctx->sched_tags;
->> +
->> +			tags->pbitmap_tags = &tag_set->sched_shared_bitmap_tags;
->> +			tags->pbreserved_tags = &tag_set->sched_shared_breserved_tags;
-> 
-> This kind of sharing is wrong, sched tags should be request queue wide
-> instead of tagset wide, and each request queue has its own & independent
-> scheduler queue.
+"Jason A. Donenfeld" <Jason@zx2c4.com> writes:
 
-Right, so if we get get a scheduler tag we still need to get a driver 
-tag, and this would be the "shared" tag.
+> RFC Note:
+>   This is a RFC for folks who want to play with this early, because
+>   Herbert's cryptodev-2.6 tree hasn't yet made it into net-next. I'll
+>   repost this as a v1 (possibly with feedback incorporated) once the
+>   various trees are in the right place. This compiles on top of the
+>   Frankenzinc patchset from Ard, though it hasn't yet received suitable
+>   testing there for me to call it v1 just yet. Preliminary testing with
+>   the usual netns.sh test suite on x86 indicates it's at least mostly
+>   functional, but I'll be giving things further scrutiny in the days to
+>   come.
 
-That makes things simpler then.
+Hi Jason
 
-> 
->> +		}
->> +	}
->> +
->>   	return 0;
->>   
->>   err:
->> diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
->> index 42792942b428..6625bebb46c3 100644
->> --- a/block/blk-mq-tag.c
->> +++ b/block/blk-mq-tag.c
->> @@ -35,9 +35,9 @@ bool __blk_mq_tag_busy(struct blk_mq_hw_ctx *hctx)
->>    */
->>   void blk_mq_tag_wakeup_all(struct blk_mq_tags *tags, bool include_reserve)
->>   {
->> -	sbitmap_queue_wake_all(&tags->bitmap_tags);
->> +	sbitmap_queue_wake_all(tags->pbitmap_tags);
->>   	if (include_reserve)
->> -		sbitmap_queue_wake_all(&tags->breserved_tags);
->> +		sbitmap_queue_wake_all(tags->pbreserved_tags);
->>   }
->>   
+Great to see this! Just a few small comments for now:
 
-[...]
+> +/*
+> + * Copyright (C) 2015-2019 Jason A. Donenfeld <Jason@zx2c4.com>. All Rig=
+hts Reserved.
+> + */
 
+Could you please get rid of the "All Rights Reserved" (here, and
+everywhere else)? All rights are *not* reserved: this is licensed under
+the GPL. Besides, that phrase is in general dubious at best:
+https://en.wikipedia.org/wiki/All_rights_reserved
 
->>   	mutex_init(&set->tag_list_lock);
->>   	INIT_LIST_HEAD(&set->tag_list);
->>   
->> @@ -3137,6 +3151,7 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
->>   {
->>   	struct blk_mq_tag_set *set = q->tag_set;
->>   	struct blk_mq_hw_ctx *hctx;
->> +	bool sched_tags = false;
->>   	int i, ret;
->>   
->>   	if (!set)
->> @@ -3160,6 +3175,7 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
->>   			ret = blk_mq_tag_update_depth(hctx, &hctx->tags, nr,
->>   							false);
->>   		} else {
->> +			sched_tags = true;
->>   			ret = blk_mq_tag_update_depth(hctx, &hctx->sched_tags,
->>   							nr, true);
->>   		}
->> @@ -3169,8 +3185,41 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
->>   			q->elevator->type->ops.depth_updated(hctx);
->>   	}
->>   
->> -	if (!ret)
->> +	/*
->> +	 * if ret is 0, all queues should have been updated to the same depth
->> +	 * if not, then maybe some have been updated - yuk, need to handle this for shared sbitmap...
->> +	 * if some are updated, we should probably roll back the change altogether. FIXME
->> +	 */
->> +	if (!ret) {
->> +		if (blk_mq_is_sbitmap_shared(set)) {
->> +			if (sched_tags) {
->> +				sbitmap_queue_free(&set->sched_shared_bitmap_tags);
->> +				sbitmap_queue_free(&set->sched_shared_breserved_tags);
->> +				if (!blk_mq_init_sched_shared_sbitmap(set, nr))
->> +					return -ENOMEM; /* fixup error handling */
->> +
->> +				queue_for_each_hw_ctx(q, hctx, i) {
->> +					hctx->sched_tags->pbitmap_tags = &set->sched_shared_bitmap_tags;
->> +					hctx->sched_tags->pbreserved_tags = &set->sched_shared_breserved_tags;
->> +				}
->> +			} else {
->> +				sbitmap_queue_free(&set->shared_bitmap_tags);
->> +				sbitmap_queue_free(&set->shared_breserved_tags);
->> +				if (!blk_mq_init_shared_sbitmap(set))
->> +					return -ENOMEM; /* fixup error handling */
-> 
-> No, we can't re-allocate driver tags here which are shared by all LUNs. > And you should see that 'can_grow' is set as false for driver tags
-> in blk_mq_update_nr_requests(), which can only touch per-request-queue
-> data, not tagset wide data.
+> +=09MAX_QUEUED_INCOMING_HANDSHAKES =3D 4096, /* TODO: replace this with D=
+QL */
+> +=09MAX_STAGED_PACKETS =3D 128,
+> +=09MAX_QUEUED_PACKETS =3D 1024 /* TODO: replace this with DQL */
 
-Yeah, I see that. We should just resize for driver tags bitmap.
+Yes, please (on the TODO) :)
 
-Personally I think the mainline code is a little loose here, as if we 
-could grow driver tags, then blk_mq_tagset.tags would be out-of-sync 
-with the hctx->tags. Maybe that should be made more explicit in the code.
+FWIW, since you're using pointer rings I think the way to do this is
+probably to just keep the limits in place as a maximum size, and then
+use DQL (or CoDel) to throttle enqueue to those pointer rings instead of
+just letting them fill.
 
-BTW, do you have anything to say about this (modified slightly) comment:
+Happy to work with you on this (as I believe I've already promised), but
+we might as well do that after the initial version is merged...
 
-/*
-  * if ret != 0, q->nr_requests would not be updated, yet the depth
-  * for some hctx sched tags may have changed - is that the right thing
-  * to do?
-  */
-
-Thanks,
-John
+-Toke
 
