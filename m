@@ -2,81 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 872F5104F7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F1C104F7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 10:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfKUJmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 04:42:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfKUJmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:42:19 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24ED920715;
-        Thu, 21 Nov 2019 09:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574329338;
-        bh=Fjo7LOSQOXDhexKCsF2boszIdLMNlYvIHWsD4fqz6xs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xZ3a6eT0PvdMaUPOnmVxID6Rj/TcDc76xJm0ufU3r3g6gamwfpukjqIFS0Vdip8Gq
-         1lqa7oTCXKylryC0NDt92SHyIR9g6RbG/P8gREvk7sIf/AGfl+H1X5d6KXVET4fZRu
-         VEHU999+5ASFS1DzbTEju09dDnwqedzeCdP9wtYQ=
-Date:   Thu, 21 Nov 2019 10:42:15 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Angelo Dureghello <angelo.dureghello@timesys.com>
-Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] w1: new driver. DS2430 chip
-Message-ID: <20191121094215.GA421330@kroah.com>
-References: <20191019204015.61474-1-angelo.dureghello@timesys.com>
- <49814061574280989@sas2-7fadb031fd9b.qloud-c.yandex.net>
- <20191120205952.GA3113184@kroah.com>
- <CALJHbkDTNbjbCaVcwF8eSWpmpDptbkktZuvb-cxTOtGhB4iupw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALJHbkDTNbjbCaVcwF8eSWpmpDptbkktZuvb-cxTOtGhB4iupw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1726927AbfKUJm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 04:42:27 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:35158 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfKUJm1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 04:42:27 -0500
+Received: by mail-pj1-f67.google.com with SMTP id s8so1221462pji.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 01:42:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jlEFsPSyQfklMXQiO7TZHJePMQppbvYfAggjx8UnLsA=;
+        b=Efp7Y13ER5e4QmUg+juqCnZvYUMTXk79HRofQq2tOrAu+hBwf8Je8dhdPzV+Jusvlo
+         xYHHRdVBtgEzzUPTcsszBGHByAtkzx2ovroo5IdpgOqJPTrTWBPM3RVo43+px3BuPx/f
+         o7eJe9assWPAVaC7dCdeXVQIGLD0CSPnpWJoyjnqEiNI4ac6gOZ3vLGgplY933GB6KcB
+         nInBdywVDlHs4LCRZHD2zsAahh6/UwbyQa8kLT00fjcBfvntwCPdRrOc0QpqTR70WsW/
+         Ye4Y5DYyNVz51O5jRH2OjR8xJXTb1f3irB9BZ3upWa7P5HZ12YoDwAi6TDwjtF4vbfYA
+         eTwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jlEFsPSyQfklMXQiO7TZHJePMQppbvYfAggjx8UnLsA=;
+        b=dTMFeg1IhKBQK4tZc49PIXP0kmt2d93lO4xIEnKwjLscdhITjQnTSbuHIyNeBo1H30
+         34IV1TE6ut5UU2Q3s38ceVjb5mFpSwlJH3xeRh7EwsQNvgCWIwKWhknOkW2yLWRWjTFo
+         CI4x2y6haQSbY2tns71wm35YAYR3XrGoThYV7j6skeOUljjvYTZ2361mozObocXggjvV
+         vv8QMbxt0QsPBHwRZ5bAWQ7ypD3z2faqdXk4RvvmXku4/UluiwmO2Iey2PrL++CrHGWp
+         fPvph+XAiKfE3LQt9MntgFMItsq4613TzIh7zM3p8nwZd/hpvapzPOQmWVCYCMYcj7ok
+         5hzw==
+X-Gm-Message-State: APjAAAWI03CEwpg5DoNgXLhnKLlRto8O57Q74QGc0WwbRLCcQHfaLrlo
+        FzK8Zgf1B4eqyoIg97bPupsIAJuCWFU=
+X-Google-Smtp-Source: APXvYqw3LI8P4btGJVE6BONou86XZ3BBTganShVFEckMPDCoMhjNDN3vIGO8hI4CiijAfmUQupMTgQ==
+X-Received: by 2002:a17:90a:353:: with SMTP id 19mr10763183pjf.128.1574329345665;
+        Thu, 21 Nov 2019 01:42:25 -0800 (PST)
+Received: from localhost.localdomain (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
+        by smtp.gmail.com with ESMTPSA id t15sm2457105pgb.0.2019.11.21.01.42.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 01:42:25 -0800 (PST)
+From:   green.hu@gmail.com
+To:     green.hu@gmail.com, linux-kernel@vger.kernel.org,
+        nickhu@andestech.com, arnd@arndb.de
+Cc:     Greentime Hu <greentime.hu@sifive.com>
+Subject: [PATCH] MAINTAINERS: add nds32 maintainer
+Date:   Thu, 21 Nov 2019 17:42:20 +0800
+Message-Id: <20191121094220.1127-1-green.hu@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 10:35:26AM +0100, Angelo Dureghello wrote:
-> Hi Greg (and Evgeniy),
-> 
-> On Wed, Nov 20, 2019 at 9:59 PM gregkh@linuxfoundation.org
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Nov 20, 2019 at 11:16:29PM +0300, Evgeniy Polyakov wrote:
-> > > Hi Angelo, Greg
-> > >
-> > > 19.10.2019, 23:38, "Angelo Dureghello" <angelo.dureghello@timesys.com>:
-> > > > add support for ds2430, 1 page, 256bit (32bytes) eeprom
-> > > > (family 0x14).
-> > > >
-> > > > Signed-off-by: Angelo Dureghello <angelo.dureghello@timesys.com>
-> > >
-> > > Looks good to me.
-> > > Greg, please pull it into your tree.
-> > >
-> > > Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-> >
-> > I don't have a copy of this anywhere :(
-> >
-> > Angelo, can you resend it and cc: me and add evgeniy's ack?
-> >
-> 
-> this is he patch you applied to your char-misc-next branch, some days ago.
-> 
-> I added Evgeniy acked-by.
-> 
-> So you should revert/remove
-> commit c6bf3842a34abe3ec2f5bc81754883689aea6c0d (patch)
+From: Greentime Hu <greentime.hu@sifive.com>
 
-Ah, no, I'm not going to revert it just for an ack, I'll just leave it
-as-is, thanks.
+Nick implements many features of nds32 such as perf, power management and
+unaligned access handler. Let's add him as a maintainer.
 
-greg k-h
+Signed-off-by: Greentime Hu <green.hu@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e4f170d8bc29..e439bcce21bc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1040,6 +1040,7 @@ F:	drivers/clk/analogbits/*
+ F:	include/linux/clk/analogbits*
+ 
+ ANDES ARCHITECTURE
++M:	Nick Hu <nickhu@andestech.com>
+ M:	Greentime Hu <green.hu@gmail.com>
+ M:	Vincent Chen <deanbo422@gmail.com>
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
+-- 
+2.17.1
+
