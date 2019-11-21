@@ -2,112 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB9E9105346
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD2110534C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:39:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfKUNiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:38:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45360 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726532AbfKUNiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:38:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DB831B19F;
-        Thu, 21 Nov 2019 13:38:18 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 22A6EE03A4; Thu, 21 Nov 2019 14:38:17 +0100 (CET)
-Date:   Thu, 21 Nov 2019 14:38:17 +0100
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        Joe Perches <joe@perches.com>,
-        zhanglin <zhang.lin16@zte.com.cn>, davem@davemloft.net,
-        cocci <cocci@systeme.lip6.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        jakub.kicinski@netronome.com, ast@kernel.org,
-        jiang.xuexin@zte.com.cn, f.fainelli@gmail.com,
-        daniel@iogearbox.net, john.fastabend@gmail.com,
-        lirongqing@baidu.com, maxime.chevallier@bootlin.com,
-        vivien.didelot@gmail.com, wang.yi59@zte.com.cn, hawk@kernel.org,
-        arnd@arndb.de, jiri@mellanox.com, xue.zhihong@zte.com.cn,
-        natechancellor@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linyunsheng@huawei.com,
-        pablo@netfilter.org, bpf@vger.kernel.org
-Subject: Re: [Cocci] [PATCH] net: Zeroing the structure ethtool_wolinfo in
- ethtool_get_wol()
-Message-ID: <20191121133817.GF29650@unicorn.suse.cz>
-References: <1572076456-12463-1-git-send-email-zhang.lin16@zte.com.cn>
- <c790578751dd69fb1080b355f5847c9ea5fb0e15.camel@perches.com>
- <bc150c6a-6d3e-ff01-e40e-840e8a385bda@metux.net>
- <20191121111917.GE29650@unicorn.suse.cz>
- <20191121120733.GF5604@kadam>
+        id S1727080AbfKUNjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:39:21 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:59426 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbfKUNjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 08:39:21 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 78F5E1C1B7B; Thu, 21 Nov 2019 14:39:19 +0100 (CET)
+Date:   Thu, 21 Nov 2019 14:39:19 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 166/422] f2fs: fix memory leak of percpu counter in
+ fill_super()
+Message-ID: <20191121133918.GA15106@duo.ucw.cz>
+References: <20191119051400.261610025@linuxfoundation.org>
+ <20191119051409.193853097@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
 Content-Disposition: inline
-In-Reply-To: <20191121120733.GF5604@kadam>
+In-Reply-To: <20191119051409.193853097@linuxfoundation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 03:07:33PM +0300, Dan Carpenter wrote:
-> On Thu, Nov 21, 2019 at 12:19:17PM +0100, Michal Kubecek wrote:
-> > On Thu, Nov 21, 2019 at 11:23:34AM +0100, Enrico Weigelt, metux IT consult wrote:
-> > > On 26.10.19 21:40, Joe Perches wrote:
-> > > > On Sat, 2019-10-26 at 15:54 +0800, zhanglin wrote:
-> > > >> memset() the structure ethtool_wolinfo that has padded bytes
-> > > >> but the padded bytes have not been zeroed out.
-> > > > []
-> > > >> diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-> > > > []
-> > > >> @@ -1471,11 +1471,13 @@ static int ethtool_reset(struct net_device *dev, char __user *useraddr)
-> > > >>  
-> > > >>  static int ethtool_get_wol(struct net_device *dev, char __user *useraddr)
-> > > >>  {
-> > > >> -	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-> > > >> +	struct ethtool_wolinfo wol;
-> > > >>  
-> > > >>  	if (!dev->ethtool_ops->get_wol)
-> > > >>  		return -EOPNOTSUPP;
-> > > >>  
-> > > >> +	memset(&wol, 0, sizeof(struct ethtool_wolinfo));
-> > > >> +	wol.cmd = ETHTOOL_GWOL;
-> > > >>  	dev->ethtool_ops->get_wol(dev, &wol);
-> > > >>  
-> > > >>  	if (copy_to_user(useraddr, &wol, sizeof(wol)))
-> > > > 
-> > > > It seems likely there are more of these.
-> > > > 
-> > > > Is there any way for coccinelle to find them?
-> > > 
-> > > Just curios: is static struct initialization (on stack) something that
-> > > should be avoided ? I've been under the impression that static
-> > > initialization allows thinner code and gives the compiler better chance
-> > > for optimizations.
-> > 
-> > Not in general. The (potential) problem here is that the structure has
-> > padding and it is as a whole (i.e. including the padding) copied to
-> > userspace. While I'm not aware of a compiler that wouldn't actually
-> > initialize the whole data block including the padding in this case, the
-> > C standard provides no guarantee about that so that to be sure we cannot
-> > leak leftover kernel data to userspace, we need to explicitly initialize
-> > the whole block.
-> 
-> GCC will not always initialize the struct holes.  This patch fixes a
-> real bug that GCC on my system (v7.4)
 
-Just checked (again) to be sure. No matter if the function is inlined or
-not, gcc 7.4.1 initializes the structure by one movl (of 0x5) and two
-movq (of 0x0), i.e. initializes all sizeof(struct ethtool_wolinfo) = 20
-bytes including the padding.
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-One could certainly construct examples where a real life compiler would
-only initialize the fields. That's why I said "in this case".
+Hi!
 
-Michal Kubecek
+> From: Chao Yu <yuchao0@huawei.com>
+>=20
+> [ Upstream commit 4a70e255449c9a13eed7a6eeecc85a1ea63cef76 ]
+>=20
+> In fill_super -> init_percpu_info, we should destroy percpu counter
+> in error path, otherwise memory allcoated for percpu counter will
+> leak.
 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 58931d55dc1d2..c5d28e92d146e 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2516,8 +2516,12 @@ static int init_percpu_info(struct f2fs_sb_info *s=
+bi)
+>  	if (err)
+>  		return err;
+> =20
+> -	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
+> +	err =3D percpu_counter_init(&sbi->total_valid_inode_count, 0,
+>  								GFP_KERNEL);
+> +	if (err)
+> +		percpu_counter_destroy(&sbi->alloc_valid_block_count);
+> +
+> +	return err;
+>  }
 
+Are you sure this is good idea? Normally when _init() fails, the thing
+is not allocated, and there is nothing to destroy...
+
+If you are right, there's same bug in fs/xfs/xfs_buf.c .
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXdaThgAKCRAw5/Bqldv6
+8tH8AJ0Ruqu80UgKnnneJwc+YmADySjjqgCfQmZgg+xyO9X/oIf4LYnYdhp+5Mg=
+=dWS4
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
