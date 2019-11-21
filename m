@@ -2,40 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C863B10472C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BB98104749
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 01:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbfKUACn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 20 Nov 2019 19:02:43 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:60960 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfKUACn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Nov 2019 19:02:43 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3CFAA20B7185;
-        Wed, 20 Nov 2019 16:02:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3CFAA20B7185
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1574294562;
-        bh=Nx7FpAeREdfQqZZz2uLZtOiIJYjK6fek5qV+toHpBaI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=sYQwijFj6MBhFH/urC2eZ2vc15KxWA4yf3qIPx8OQIrpGoSj2oRh/VJuzflpff9sx
-         Ai2tcsobEKccZSRUJRVLLpf0HdjVsJ1SmgWT8kpytCUcogKsVZKKskzOzwK4PSkzT6
-         F0iLGnTJgiMGLT2QRjPFeoAVyKUEeJmK1Y2TdfCw=
-Subject: Re: [PATCH v8 4/5] IMA: Add support to limit measuring keys
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191118223818.3353-1-nramas@linux.microsoft.com>
- <20191118223818.3353-5-nramas@linux.microsoft.com>
- <1574291957.4793.144.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <fef8fc67-643d-e579-9628-6516fd02b4db@linux.microsoft.com>
-Date:   Wed, 20 Nov 2019 16:03:05 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726614AbfKUAKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 20 Nov 2019 19:10:44 -0500
+Received: from mga12.intel.com ([192.55.52.136]:38966 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfKUAKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Nov 2019 19:10:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 16:10:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,223,1571727600"; 
+   d="scan'208";a="204986105"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Nov 2019 16:10:42 -0800
+Subject: Re: [PATCH RFC 01/14] x86/asm: add iosubmit_cmds512() based on
+ movdir64b CPU instruction
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Lin, Jing" <jing.lin@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Dey, Megha" <megha.dey@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>
+References: <157428480574.36836.14057238306923901253.stgit@djiang5-desk3.ch.intel.com>
+ <157428502934.36836.8119026517510193201.stgit@djiang5-desk3.ch.intel.com>
+ <20191120215338.GN2634@zn.tnic>
+From:   Dave Jiang <dave.jiang@intel.com>
+Message-ID: <247008b5-6d33-a51b-0caa-7f1991a94dbd@intel.com>
+Date:   Wed, 20 Nov 2019 17:10:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <1574291957.4793.144.camel@linux.ibm.com>
+In-Reply-To: <20191120215338.GN2634@zn.tnic>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -44,31 +58,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2019 3:19 PM, Mimi Zohar wrote:
 
-Hi Mimi,
 
->> The above can be used to correlate the key measurement IMA entry,
->> ima-sig and ima-modsig entries using the same key.
+On 11/20/19 2:53 PM, Borislav Petkov wrote:
+> On Wed, Nov 20, 2019 at 02:23:49PM -0700, Dave Jiang wrote:
+>> +/**
+>> + * iosubmit_cmds512 - copy data to single MMIO location, in 512-bit units
 > 
-> True, but associating the public key measurement with the file
-> signature requires information from the certificate (e.g. issuer,
-> serial number, and/or subject, subject keyid).
+> Where is the alignment check on that data before doing the copying?
+
+I'll add the check on the destination address. The call is modeled after 
+__iowrite64_copy() / __iowrite32_copy() in lib/iomap_copy.c. Looks like 
+those functions do not check for the alignment requirements either.
+
 > 
-> For a regression test, it would be nice if the key measurement,
-> itself, contained everything needed in order to validate the file
-> signatures in the measurement list.
+>> + * @dst: destination, in MMIO space (must be 512-bit aligned)
+>> + * @src: source
+>> + * @count: number of 512 bits quantities to submit
+> 
+> Where's that check on the data?
 
-I am just trying to understand your asks - Please clarify:
+I don't follow?
 
-1, My change includes only the public key and not the entire certificate 
-information in the measured buffer.
+> 
+>> + *
+>> + * Submit data from kernel space to MMIO space, in units of 512 bits at a
+>> + * time.  Order of access is not guaranteed, nor is a memory barrier
+>> + * performed afterwards.
+>> + */
+>> +static inline void iosubmit_cmds512(void __iomem *dst, const void *src,
+>> +				    size_t count)
+> 
+> An iosubmit function which returns void and doesn't tell its callers
+> whether it succeeded or not? That looks non-optimal to say the least.
+> 
+> Why isn't there a fallback function which to call when the CPU doesn't
+> support movdir64b?
+> 
+> Because then you can use alternative_call() and have the thing work
+> regardless of hardware support for MOVDIR*.
 
-Should I update this current patch set to measure the entire cert. Or, 
-can that be done as a separate patch set?
+Looks like Tony answered this part.
 
-2, Should a regression test be part of this patch set for the key 
-measurement changes to be accepted?
+> 
+>> +{
+>> +	const u8 *from = src;
+>> +	const u8 *end = from + count * 64;
+>> +
+>> +	if (!cpu_has_write512())
+> 
+> If anything, that thing needs to go and you should use
+> 
+>    static_cpu_has(X86_FEATURE_MOVDIR64B)
+> 
+> as it looks to me like you would care about speed on this fast path?
+> Yes, no?
+> 
 
-thanks,
-  -lakshmi
+Yes thank you!
