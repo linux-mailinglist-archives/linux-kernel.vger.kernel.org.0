@@ -2,241 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B53F10598A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9CC710598F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfKUS3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:29:30 -0500
-Received: from mga17.intel.com ([192.55.52.151]:51962 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbfKUS33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:29:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 10:29:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,226,1571727600"; 
-   d="scan'208";a="381823410"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga005.jf.intel.com with ESMTP; 21 Nov 2019 10:29:27 -0800
-From:   thor.thayer@linux.intel.com
-To:     bp@alien8.de, mchehab@kernel.org, tony.luck@intel.com,
-        james.morse@arm.com, rrichter@marvell.com
-Cc:     Meng.Li@windriver.com, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv2 3/3] EDAC/altera: Use the Altera System Manager driver
-Date:   Thu, 21 Nov 2019 12:30:48 -0600
-Message-Id: <1574361048-17572-4-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574361048-17572-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1574361048-17572-1-git-send-email-thor.thayer@linux.intel.com>
+        id S1727135AbfKUSaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:30:30 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:11752 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726279AbfKUSaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 13:30:30 -0500
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xALIFQeh007135;
+        Thu, 21 Nov 2019 10:30:12 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=m4QiLfx40epBvo/jkKhx1Y8a6t+YvWIHlLoivQrZgxM=;
+ b=BfY/b7eAQUdYnHQJQkiE6tTaE7kEdFr7r3ZIEYwLwbZ7qzNphPTmpiMGewNzBF92QXRL
+ xo2NXS3oOdd/DBbW6UuCFT/V+EsQbFWqLaAJjqrMytqExYV1c+x7ftcpUxfiOSdphN46
+ EQggnqQb9JL9B1p7DEsOzVT9Hp2R9kvks2Q= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2wd91htem7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 21 Nov 2019 10:30:12 -0800
+Received: from prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 21 Nov 2019 10:30:11 -0800
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 21 Nov 2019 10:30:11 -0800
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 21 Nov 2019 10:30:11 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wa9QRG1hBlmd9su6AHFKLhUc58FLxPApnC+c0WenuXwsbyAgxdo2kWHVhn89nUY3KC2DYtn8dQEjaWRtprUmnDIYeyTC4fd/hBqO3/399SMoB5b7oLlO/qjiSKrl0PjDoeHU04UFctRxMUb634ZB2/u17TuJh9ybXdndfo7whHJPmUadf/n5ZwlRfe2I1A0aBCaY8qxryM0zHAyEdMmwGIU96KDHgxllVLHuhB1E/Ioqm3HPIL5hTSn4RTKdA3GFTPbfXCovTEgJ8ShcIBeme35sy9Bs9lBvwhtqEz41taqIYchrAwHEiVdC4OcZnERWwgXkr1qZeVgLthyLh0k0AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m4QiLfx40epBvo/jkKhx1Y8a6t+YvWIHlLoivQrZgxM=;
+ b=afVQ3bEetB3YQ7AB54hvX/lt/HOIJoirhl7rfZNvVaZHhaKkgjCjk/Nl2n736WrDqyevA3GFvJEtulFgxaIm9QUCWU0exqKn4BQskajje0R4qIWKh0R6Bnn5q56Nt67UiN9z/n6neKzTR7awQ5l0v7YBZlUmEs+orN4H6/wEnwuXVfOXcWfTIK3UJ5NtKk7TZxysWuI5UtJRkFqVGs8DR3+upoOnXOZSkurSLK2SQ6KKFCiv6tRJUawcIYuq0LcAVzXP8/b6ScErPxRXZfEjBk1W2UJKs7bVHQsnUs5JtMyVfyNX09C6VAKydz2RNlJmkIWfVMILQoA/6H2gLNDWYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m4QiLfx40epBvo/jkKhx1Y8a6t+YvWIHlLoivQrZgxM=;
+ b=VE+rH3K5dAJ53aL40jIT4fsDwraSFTJPDAKK0+vad5MQ5yoenzCbmY6NenYYESlmhVSqA0JW/Bz3IkW3uxXk14zGfF96OMAoXBuwwdXS9e2tXQgg0CU/3hVacrSVU9cdwr7hsGgPzXBKJvFWU9zoP8VpZxs35C26ZT2YspGNz3o=
+Received: from BYAPR15MB3384.namprd15.prod.outlook.com (20.179.60.27) by
+ BYAPR15MB2837.namprd15.prod.outlook.com (20.178.237.216) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2474.16; Thu, 21 Nov 2019 18:30:10 +0000
+Received: from BYAPR15MB3384.namprd15.prod.outlook.com
+ ([fe80::a9f8:a9c0:854c:d680]) by BYAPR15MB3384.namprd15.prod.outlook.com
+ ([fe80::a9f8:a9c0:854c:d680%4]) with mapi id 15.20.2474.019; Thu, 21 Nov 2019
+ 18:30:10 +0000
+From:   Yonghong Song <yhs@fb.com>
+To:     Brian Vazquez <brianvv@google.com>,
+        Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>
+CC:     Stanislav Fomichev <sdf@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 7/9] libbpf: add libbpf support to batch ops
+Thread-Topic: [PATCH v2 bpf-next 7/9] libbpf: add libbpf support to batch ops
+Thread-Index: AQHVnw/00b+a1L6Vt0u6+x6SeXV3ZaeV9UWA
+Date:   Thu, 21 Nov 2019 18:30:09 +0000
+Message-ID: <434eb25b-5d1a-4b33-232e-6735fc00e531@fb.com>
+References: <20191119193036.92831-1-brianvv@google.com>
+ <20191119193036.92831-8-brianvv@google.com>
+In-Reply-To: <20191119193036.92831-8-brianvv@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR10CA0065.namprd10.prod.outlook.com
+ (2603:10b6:300:2c::27) To BYAPR15MB3384.namprd15.prod.outlook.com
+ (2603:10b6:a03:112::27)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::1:b385]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d599a916-5134-4ce1-7d7f-08d76eb0d70f
+x-ms-traffictypediagnostic: BYAPR15MB2837:
+x-microsoft-antispam-prvs: <BYAPR15MB28371D09D5BE04AF9FF23377D34E0@BYAPR15MB2837.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:227;
+x-forefront-prvs: 0228DDDDD7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(189003)(199004)(2906002)(102836004)(81166006)(256004)(81156014)(14444005)(25786009)(86362001)(31696002)(446003)(5024004)(2616005)(66556008)(186003)(64756008)(66446008)(14454004)(99286004)(8936002)(8676002)(66476007)(66946007)(7416002)(305945005)(7736002)(6512007)(498600001)(76176011)(229853002)(52116002)(5660300002)(36756003)(110136005)(54906003)(71190400001)(71200400001)(6116002)(11346002)(6486002)(4326008)(46003)(6246003)(386003)(6436002)(31686004)(6506007)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2837;H:BYAPR15MB3384.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wtODOubgVHBdFb/v6D0G9O9CLbZw7VVmCInf70fxl1ZDtEqqKdrfq6wcdU8was+q4SxncOJecJoINdsqWfiHrQ9R53wdIyiUgjNfyS1TrYvb263wIoPEhvXLn/oxr5HVmWJD6mtpSxbK6QSTg4lFPj9m/Me+TNJOV2CS8cUS9K3EMqcdAg2alsQMRLWz4KtyWrRzAafOtumSj8RGZWSmLoTsm1COkOp0/47xUL5CQqgvgTDohxC1TmXZPs42Bdzpbml8iSunfCEx4tyw48G2V0lHEBC4/RQ3i7mf+ZfSoW8hdfF77BfcMR+UA/7YtY7HNGMFxQCj/BP/wLgzvg8AxSWfiPf2wO7D0oDvw9BazK+R/4+1ZkjOUnYuGXyAyn2JQEQsQ4+itD3rn1f4PMrFbBMokNr8VNuIvj4VxpEKd72xeeO/Ct9qyUpJDBQT+Lib
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A435BD64616A7243AD9EA37FFAA62FE1@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: d599a916-5134-4ce1-7d7f-08d76eb0d70f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 18:30:09.9229
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zMzKtgpPFUEHeghQzs0omqTLO1eYYlXsLKLSn5yU8j1rxjDUwCoBbWf464410d1W
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2837
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-21_05:2019-11-21,2019-11-21 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 phishscore=0 spamscore=0
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911210155
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
-
-Simplify the EDAC file by using the Altera System Manager driver that
-abstracts the differences between ARM32 and ARM64. Also allows the
-removal of the Arria10 test function since this is handled by the System
-Manager driver.
-
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-V2 Rebase on top of fast IO fix.
----
- drivers/edac/altera_edac.c | 132 +++------------------------------------------
- 1 file changed, 8 insertions(+), 124 deletions(-)
-
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 3e86cf327ad0..e91cf1147a4e 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -14,6 +14,7 @@
- #include <linux/interrupt.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/altera-sysmgr.h>
- #include <linux/mfd/syscon.h>
- #include <linux/notifier.h>
- #include <linux/of_address.h>
-@@ -275,7 +276,6 @@ static int a10_unmask_irq(struct platform_device *pdev, u32 mask)
- 	return ret;
- }
- 
--static int socfpga_is_a10(void);
- static int altr_sdram_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *id;
-@@ -399,7 +399,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
- 		goto err;
- 
- 	/* Only the Arria10 has separate IRQs */
--	if (socfpga_is_a10()) {
-+	if (of_machine_is_compatible("altr,socfpga-arria10")) {
- 		/* Arria10 specific initialization */
- 		res = a10_init(mc_vbase);
- 		if (res < 0)
-@@ -502,69 +502,6 @@ module_platform_driver(altr_sdram_edac_driver);
- 
- #endif	/* CONFIG_EDAC_ALTERA_SDRAM */
- 
--/**************** Stratix 10 EDAC Memory Controller Functions ************/
--
--/**
-- * s10_protected_reg_write
-- * Write to a protected SMC register.
-- * @context: Not used.
-- * @reg: Address of register
-- * @value: Value to write
-- * Return: INTEL_SIP_SMC_STATUS_OK (0) on success
-- *	   INTEL_SIP_SMC_REG_ERROR on error
-- *	   INTEL_SIP_SMC_RETURN_UNKNOWN_FUNCTION if not supported
-- */
--static int s10_protected_reg_write(void *context, unsigned int reg,
--				   unsigned int val)
--{
--	struct arm_smccc_res result;
--	unsigned long offset = (unsigned long)context;
--
--	arm_smccc_smc(INTEL_SIP_SMC_REG_WRITE, offset + reg, val, 0, 0,
--		      0, 0, 0, &result);
--
--	return (int)result.a0;
--}
--
--/**
-- * s10_protected_reg_read
-- * Read the status of a protected SMC register
-- * @context: Not used.
-- * @reg: Address of register
-- * @value: Value read.
-- * Return: INTEL_SIP_SMC_STATUS_OK (0) on success
-- *	   INTEL_SIP_SMC_REG_ERROR on error
-- *	   INTEL_SIP_SMC_RETURN_UNKNOWN_FUNCTION if not supported
-- */
--static int s10_protected_reg_read(void *context, unsigned int reg,
--				  unsigned int *val)
--{
--	struct arm_smccc_res result;
--	unsigned long offset = (unsigned long)context;
--
--	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, offset + reg, 0, 0, 0,
--		      0, 0, 0, &result);
--
--	*val = (unsigned int)result.a1;
--
--	return (int)result.a0;
--}
--
--static const struct regmap_config s10_sdram_regmap_cfg = {
--	.name = "s10_ddr",
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.max_register = 0xffd12228,
--	.reg_read = s10_protected_reg_read,
--	.reg_write = s10_protected_reg_write,
--	.use_single_read = true,
--	.use_single_write = true,
--	.fast_io = true,
--};
--
--/************** </Stratix10 EDAC Memory Controller Functions> ***********/
--
- /************************* EDAC Parent Probe *************************/
- 
- static const struct of_device_id altr_edac_device_of_match[];
-@@ -1009,11 +946,6 @@ static int __maybe_unused altr_init_memory_port(void __iomem *ioaddr, int port)
- 	return ret;
- }
- 
--static int socfpga_is_a10(void)
--{
--	return of_machine_is_compatible("altr,socfpga-arria10");
--}
--
- static __init int __maybe_unused
- altr_init_a10_ecc_block(struct device_node *np, u32 irq_mask,
- 			u32 ecc_ctrl_en_mask, bool dual_port)
-@@ -1029,34 +961,10 @@ altr_init_a10_ecc_block(struct device_node *np, u32 irq_mask,
- 	/* Get the ECC Manager - parent of the device EDACs */
- 	np_eccmgr = of_get_parent(np);
- 
--	if (socfpga_is_a10()) {
--		ecc_mgr_map = syscon_regmap_lookup_by_phandle(np_eccmgr,
--							      "altr,sysmgr-syscon");
--	} else {
--		struct device_node *sysmgr_np;
--		struct resource res;
--		uintptr_t base;
--
--		sysmgr_np = of_parse_phandle(np_eccmgr,
--					     "altr,sysmgr-syscon", 0);
--		if (!sysmgr_np) {
--			edac_printk(KERN_ERR, EDAC_DEVICE,
--				    "Unable to find altr,sysmgr-syscon\n");
--			return -ENODEV;
--		}
-+	ecc_mgr_map =
-+		altr_sysmgr_regmap_lookup_by_phandle(np_eccmgr,
-+						     "altr,sysmgr-syscon");
- 
--		if (of_address_to_resource(sysmgr_np, 0, &res)) {
--			of_node_put(sysmgr_np);
--			return -ENOMEM;
--		}
--
--		/* Need physical address for SMCC call */
--		base = res.start;
--
--		ecc_mgr_map = regmap_init(NULL, NULL, (void *)base,
--					  &s10_sdram_regmap_cfg);
--		of_node_put(sysmgr_np);
--	}
- 	of_node_put(np_eccmgr);
- 	if (IS_ERR(ecc_mgr_map)) {
- 		edac_printk(KERN_ERR, EDAC_DEVICE,
-@@ -2171,33 +2079,9 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, edac);
- 	INIT_LIST_HEAD(&edac->a10_ecc_devices);
- 
--	if (socfpga_is_a10()) {
--		edac->ecc_mgr_map =
--			syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
--							"altr,sysmgr-syscon");
--	} else {
--		struct device_node *sysmgr_np;
--		struct resource res;
--		uintptr_t base;
--
--		sysmgr_np = of_parse_phandle(pdev->dev.of_node,
--					     "altr,sysmgr-syscon", 0);
--		if (!sysmgr_np) {
--			edac_printk(KERN_ERR, EDAC_DEVICE,
--				    "Unable to find altr,sysmgr-syscon\n");
--			return -ENODEV;
--		}
--
--		if (of_address_to_resource(sysmgr_np, 0, &res))
--			return -ENOMEM;
--
--		/* Need physical address for SMCC call */
--		base = res.start;
--
--		edac->ecc_mgr_map = devm_regmap_init(&pdev->dev, NULL,
--						     (void *)base,
--						     &s10_sdram_regmap_cfg);
--	}
-+	edac->ecc_mgr_map =
-+		altr_sysmgr_regmap_lookup_by_phandle(pdev->dev.of_node,
-+						     "altr,sysmgr-syscon");
- 
- 	if (IS_ERR(edac->ecc_mgr_map)) {
- 		edac_printk(KERN_ERR, EDAC_DEVICE,
--- 
-2.7.4
-
+DQoNCk9uIDExLzE5LzE5IDExOjMwIEFNLCBCcmlhbiBWYXpxdWV6IHdyb3RlOg0KPiBGcm9tOiBZ
+b25naG9uZyBTb25nIDx5aHNAZmIuY29tPg0KPiANCj4gQWRkZWQgZm91ciBsaWJicGYgQVBJIGZ1
+bmN0aW9ucyB0byBzdXBwb3J0IG1hcCBiYXRjaCBvcGVyYXRpb25zOg0KPiAgICAuIGludCBicGZf
+bWFwX2RlbGV0ZV9iYXRjaCggLi4uICkNCj4gICAgLiBpbnQgYnBmX21hcF9sb29rdXBfYmF0Y2go
+IC4uLiApDQo+ICAgIC4gaW50IGJwZl9tYXBfbG9va3VwX2FuZF9kZWxldGVfYmF0Y2goIC4uLiAp
+DQo+ICAgIC4gaW50IGJwZl9tYXBfdXBkYXRlX2JhdGNoKCAuLi4gKQ0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogWW9uZ2hvbmcgU29uZyA8eWhzQGZiLmNvbT4NCj4gLS0tDQo+ICAgdG9vbHMvbGliL2Jw
+Zi9icGYuYyAgICAgIHwgNjEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Kw0KPiAgIHRvb2xzL2xpYi9icGYvYnBmLmggICAgICB8IDE0ICsrKysrKysrKw0KPiAgIHRvb2xz
+L2xpYi9icGYvbGliYnBmLm1hcCB8ICA0ICsrKw0KPiAgIDMgZmlsZXMgY2hhbmdlZCwgNzkgaW5z
+ZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL3Rvb2xzL2xpYi9icGYvYnBmLmMgYi90b29s
+cy9saWIvYnBmL2JwZi5jDQo+IGluZGV4IDk4NTk2ZTE1MzkwZmIuLjlhY2Q5MzA5YjQ3YjMgMTAw
+NjQ0DQo+IC0tLSBhL3Rvb2xzL2xpYi9icGYvYnBmLmMNCj4gKysrIGIvdG9vbHMvbGliL2JwZi9i
+cGYuYw0KPiBAQCAtNDQzLDYgKzQ0Myw2NyBAQCBpbnQgYnBmX21hcF9mcmVlemUoaW50IGZkKQ0K
+PiAgIAlyZXR1cm4gc3lzX2JwZihCUEZfTUFQX0ZSRUVaRSwgJmF0dHIsIHNpemVvZihhdHRyKSk7
+DQo+ICAgfQ0KPiAgIA0KWy4uLl0+ICAgTElCQlBGX0FQSSBpbnQgYnBmX29ial9waW4oaW50IGZk
+LCBjb25zdCBjaGFyICpwYXRobmFtZSk7DQo+ICAgTElCQlBGX0FQSSBpbnQgYnBmX29ial9nZXQo
+Y29uc3QgY2hhciAqcGF0aG5hbWUpOw0KPiAgIExJQkJQRl9BUEkgaW50IGJwZl9wcm9nX2F0dGFj
+aChpbnQgcHJvZ19mZCwgaW50IGF0dGFjaGFibGVfZmQsDQo+IGRpZmYgLS1naXQgYS90b29scy9s
+aWIvYnBmL2xpYmJwZi5tYXAgYi90b29scy9saWIvYnBmL2xpYmJwZi5tYXANCj4gaW5kZXggOGRk
+YzJjNDBlNDgyZC4uNTY0NjJmZWE2NmY3NCAxMDA2NDQNCj4gLS0tIGEvdG9vbHMvbGliL2JwZi9s
+aWJicGYubWFwDQo+ICsrKyBiL3Rvb2xzL2xpYi9icGYvbGliYnBmLm1hcA0KPiBAQCAtMjA3LDQg
+KzIwNyw4IEBAIExJQkJQRl8wLjAuNiB7DQo+ICAgCQlicGZfcHJvZ3JhbV9fc2l6ZTsNCj4gICAJ
+CWJ0Zl9fZmluZF9ieV9uYW1lX2tpbmQ7DQo+ICAgCQlsaWJicGZfZmluZF92bWxpbnV4X2J0Zl9p
+ZDsNCj4gKwkJYnBmX21hcF9kZWxldGVfYmF0Y2g7DQo+ICsJCWJwZl9tYXBfbG9va3VwX2FuZF9k
+ZWxldGVfYmF0Y2g7DQo+ICsJCWJwZl9tYXBfbG9va3VwX2JhdGNoOw0KPiArCQlicGZfbWFwX3Vw
+ZGF0ZV9iYXRjaDsNCg0KUGxlYXNlIGluc2VydCBuZXcgQVBJIGZ1bmN0aW9ucyBmb2xsb3dpbmcg
+YWxwaGFiZXQgb3JkZXJpbmcuDQoNCj4gICB9IExJQkJQRl8wLjAuNTsNCj4gDQo=
