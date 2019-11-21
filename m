@@ -2,101 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 010B9105AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC488105AFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 21:19:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfKUUQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 15:16:36 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:45956 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUUQg (ORCPT
+        id S1726765AbfKUUTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 15:19:02 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:52866 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUUTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 15:16:36 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 3697C1C1BCE; Thu, 21 Nov 2019 21:16:34 +0100 (CET)
-Date:   Thu, 21 Nov 2019 21:16:18 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 233/422] netfilter: nf_tables: avoid BUG_ON usage
-Message-ID: <20191121201618.GB15106@duo.ucw.cz>
-References: <20191119051400.261610025@linuxfoundation.org>
- <20191119051414.205983228@linuxfoundation.org>
+        Thu, 21 Nov 2019 15:19:02 -0500
+Received: by mail-il1-f198.google.com with SMTP id t23so3948031ila.19
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 12:19:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Y1SOgO1vbqsOUPBquz7MWoLGB9Vn/Lm+PXrguH65k6c=;
+        b=ZJmM0uzoFVJzsx4JvxluJD+qHSB8Flgp2oAoxAnp7c4tJTZq90i5hn8M5bcV+Px1UH
+         c0iwqQNibgTsuAYnw7kn/J5LmprN/cSlXtI6zwAFeYtaBvehlvzQLHncgS/KHdc1KOMp
+         fhv5BCWxORletdOg3ck3rtF9OQiwPk5q2XMlIgpo7T6/gUXtAKO8aiq7gIOKJLsOd/ax
+         vQGP0bfACWFy2jfWE1ulGhDojAx3AEzwQqJVmee4djZ4gpJtYd1Ai91Ko5tIysDi3mEw
+         aEDO0hSiuUpUvv0mu3VH19JB2WobfZWa3JZ7EWMvyFUCE051Ozm019MLAhOOPe5tu99D
+         wlWA==
+X-Gm-Message-State: APjAAAU6FIzaJ64klml1fbPTC8Z4eyDdEwIZoiTbo/GlB9TyCZMuVbjI
+        gr5J5ykVSh+pJ30SdOfO3sc0RMslHCyxcmSiUO2G4GGH36FH
+X-Google-Smtp-Source: APXvYqwaEMl0Hp+7ruHPeLd8tBXlYivqUgbaT2MhzmNKW7nTuJ4raKuMZPqcGTl21/zLVSq9bhVj0KrakFYEQwXk0EWcQfBgJHfB
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
-Content-Disposition: inline
-In-Reply-To: <20191119051414.205983228@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a92:c6d0:: with SMTP id v16mr12024641ilm.274.1574367541228;
+ Thu, 21 Nov 2019 12:19:01 -0800 (PST)
+Date:   Thu, 21 Nov 2019 12:19:01 -0800
+In-Reply-To: <201911210931.DB5346C8@keescook>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000a7dfc0597e10206@google.com>
+Subject: Re: general protection fault in tss_update_io_bitmap
+From:   syzbot <syzbot+81e6ff9d4cdb05fd4f5e@syzkaller.appspotmail.com>
+To:     adobriyan@gmail.com, ak@linux.intel.com, bigeasy@linutronix.de,
+        bp@alien8.de, fenghua.yu@intel.com, frederic@kernel.org,
+        hpa@zytor.com, keescook@chromium.org, kernelfans@gmail.com,
+        len.brown@intel.com, linux-kernel@vger.kernel.org,
+        longman@redhat.com, luto@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rafael.j.wysocki@intel.com, riel@surriel.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        tim.c.chen@linux.intel.com, tonywwang-oc@zhaoxin.com,
+        wang.yi59@zte.com.cn, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---cvVnyQ+4j833TQvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-Hi!
+Reported-and-tested-by:  
+syzbot+81e6ff9d4cdb05fd4f5e@syzkaller.appspotmail.com
 
-> From: Florian Westphal <fw@strlen.de>
->=20
-> [ Upstream commit fa5950e498e7face21a1761f327e6c1152f778c3 ]
->=20
-> None of these spots really needs to crash the kernel.
-> In one two cases we can jsut report error to userspace, in the other
-> cases we can just use WARN_ON (and leak memory instead).
+Tested on:
 
-Do these conditions trigger for someone, to warrant -stable patch?
+commit:         e3cb0c71 x86/ioperm: Fix use of deprecated config option
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1fc51b2845bfe6fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=81e6ff9d4cdb05fd4f5e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-> +++ b/net/netfilter/nft_cmp.c
-> @@ -79,7 +79,8 @@ static int nft_cmp_init(const struct nft_ctx *ctx, cons=
-t struct nft_expr *expr,
-> =20
->  	err =3D nft_data_init(NULL, &priv->data, sizeof(priv->data), &desc,
->  			    tb[NFTA_CMP_DATA]);
-> -	BUG_ON(err < 0);
-> +	if (err < 0)
-> +		return err;
-> =20
->  	priv->sreg =3D nft_parse_register(tb[NFTA_CMP_SREG]);
->  	err =3D nft_validate_register_load(priv->sreg, desc.len);
-> @@ -129,7 +130,8 @@ static int nft_cmp_fast_init(const struct nft_ctx *ct=
-x,
-> =20
->  	err =3D nft_data_init(NULL, &data, sizeof(data), &desc,
->  			    tb[NFTA_CMP_DATA]);
-> -	BUG_ON(err < 0);
-> +	if (err < 0)
-> +		return err;
-> =20
->  	priv->sreg =3D nft_parse_register(tb[NFTA_CMP_SREG]);
->  	err =3D nft_validate_register_load(priv->sreg, desc.len);
-
-This goes from "kill kernel with backtrace" to "silently return
-failure". Should WARN_ON() be preserved here?
-
-Best regards,
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---cvVnyQ+4j833TQvp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXdbwkgAKCRAw5/Bqldv6
-8l5qAKC9n9Z+1mVzS9IM9LaSttCq2lqVeACgp6Ckp2puBkyXe9dWOAY6omkyMYQ=
-=edJ9
------END PGP SIGNATURE-----
-
---cvVnyQ+4j833TQvp--
+Note: testing is done by a robot and is best-effort only.
