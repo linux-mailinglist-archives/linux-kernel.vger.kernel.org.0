@@ -2,78 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 727C110598D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:30:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C5F105993
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 19:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfKUSaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 13:30:23 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42026 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfKUSaW (ORCPT
+        id S1727158AbfKUSb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 13:31:29 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45224 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfKUSb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:30:22 -0500
-Received: by mail-qk1-f193.google.com with SMTP id i3so3926451qkk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:30:21 -0800 (PST)
+        Thu, 21 Nov 2019 13:31:29 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 14so4067976oir.12
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 10:31:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KIV6C8dEDRsWYAQ2tTt3LiUnyRDtIsvpcdrWmt9koPk=;
-        b=GKNVzz82IHSesvkhRwLOrdR1guhy1ks2Zlv5Ig9t4AOGgFyjYCJJLijnX+MsFowaXV
-         RsyaqXjmaAhEKGmtYxEH+iPKkLHXHFpTuRz1wKvwFc70VrQxaOGVXyBOhjWMJ0JMhJfB
-         8v+EDESV8ao55NbiACdWSRh4IaD2WVhHfWfoBmYoqyjjdN56d6gqKA7Cu41Pm+WwmeDB
-         tyO7+rhHbotOPjRQIwIj/EKC9fMRPXOZ6XbEU38Q4t5aqxY1CA+7/LlSoWUbFjfiiLLT
-         reR0lZBlCbK1tCyqtsYZVzBMydx8fC7iTyCWACTRNYORaRYTgseS+RgEGgiaHgUtbuc8
-         240g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zes9nx3wWOfwgkI+Dul1p5z28VLkMHp34WWYw/4B4xM=;
+        b=Wkp25PFcZ403A1Ab9dtH00UDW+ztY9yfO5ob/GgE/2yV3cRKXm7YMtYFtLdE+Dsva3
+         9Rp7LdEU0QVZIsPXy980hXnC4LQ9KYwFcnhhwyD0vo4Ok6W3S6MZRT5jISG4FvLREXtz
+         AWAp8TsSWkWK8zlCxWzKcEZ/j6zwmvwRFNOG78fD68Z8CxTbK06XUuEF+1q0XUT1Ovhs
+         C0xgW4AGzSMcuLFkJ64mQbF2vtg/0a2TRJhlwNHdWkkfTCAr3cgi3cBxR9GKcC1Gkppu
+         YTEvvuuBpO9jyZpYHtYh0xn7CGIvTzBvTNIjpSvir4A692IKFEazzfbK47bCNvU0KlKx
+         qS1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KIV6C8dEDRsWYAQ2tTt3LiUnyRDtIsvpcdrWmt9koPk=;
-        b=mhCiNX8pqzyYwxANgSvURFfAHGW5P8SB82HumrmN8/UxYCO9pe8NDfb5+yzCMYc6a7
-         c0HiWmjLHBzUANWTgYrLtt5bbdjtzVT14E15L3TEUMBCXI2n8dsOikBRwJi783LIajUd
-         t+wQ1Yi0fvRIKd//XKpYdGc9HIyLW4pIMgyr1ltdjTZQ4Jj+LrYm2gJA80hpYWyLxHq8
-         isrOHwmU/kZQgemkshIYl8sDvR0k/uS9WH05j0Yn6MkZ5sQuQs9iEKmLsFiIsejqH0xV
-         LFQIjNC0ZGf0P0HWhnGvbTgw/w7ItMvomcj67aOxTeUXwVxK2ApFjqb52kZy3yDD3Y6k
-         CZTw==
-X-Gm-Message-State: APjAAAUn2FlrVo7kLSmjuvLbGvw77lQyp88+NUcJQ2S5XLKnzlWUeedw
-        e9zvd+0meOX/vwvkRnOBGUkMWg==
-X-Google-Smtp-Source: APXvYqyaGMwQheyrHGh2wyVCXUzgK0AD9nF7B5VCw+XZF6QwzxAqrPIjnl8qwfQqMknP9QjM9fRjDA==
-X-Received: by 2002:a37:78f:: with SMTP id 137mr8854398qkh.321.1574361020373;
-        Thu, 21 Nov 2019 10:30:20 -0800 (PST)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id g17sm2036642qte.89.2019.11.21.10.30.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 10:30:19 -0800 (PST)
-Date:   Thu, 21 Nov 2019 13:30:17 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nbd: prevent memory leak
-Message-ID: <20191121183017.h3qkpib5re27ty3b@MacBook-Pro-91.local>
-References: <20190923200959.29643-1-navid.emamdoost@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zes9nx3wWOfwgkI+Dul1p5z28VLkMHp34WWYw/4B4xM=;
+        b=ip9C865k/878yljdalDJ6T2kJo9FpADAkkeNt0cz98cQK3bWM4tyk3ZH5vViEPK8LG
+         zJt2P5GUr9K1R0rmoUy9tSDzEJTvP6sNWtGVKJpZkQmpVZX/+en8vj2mrLfNV8TIOyGQ
+         EwUoMmmdI8eg1iCgwKVA1YXWhhLWmbvfUuoa5Pp2zbX/s9aSZ26vueHFrDJtj7dfD8jm
+         xeHGjtqcntBTI/NTgq3+deRNJVwj8armrZBk2hx9ZhpXzX5+4prhrUtrroGRYF/ZlUhf
+         qoKY9KrYBl1vlj3RJXHNdVg8is6gV2DvTKcmTfDlsuhwVSbHDT0nI+pDGeGbg83WUqDC
+         06sw==
+X-Gm-Message-State: APjAAAUbeUpWr7iIXVqNOqOB8OLLNLLSGRQLtSChwl9xMBACqxaIAcym
+        XE8EL3XpKPDCicW6bpocBSn26GMsLp1nq9jSIPw=
+X-Google-Smtp-Source: APXvYqyen3cn+EY2RAzHvEa5NUjEhWs2OO/9/OSlmmI0VmHx00JqrZodxXdJRT5Kl/NB0JdTu71ixm3Ce1mmHgz5IXQ=
+X-Received: by 2002:aca:c50f:: with SMTP id v15mr9263185oif.5.1574361088233;
+ Thu, 21 Nov 2019 10:31:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923200959.29643-1-navid.emamdoost@gmail.com>
+References: <20191004190938.15353-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004190938.15353-1-navid.emamdoost@gmail.com>
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Date:   Thu, 21 Nov 2019 12:31:17 -0600
+Message-ID: <CAEkB2EQGCcwBO4iZBiHthUAJUeprw2Q09932GATd6XVyXqukzw@mail.gmail.com>
+Subject: Re: [PATCH] drm/imx: fix memory leak in imx_pd_bind
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     Navid Emamdoost <emamd001@umn.edu>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 03:09:58PM -0500, Navid Emamdoost wrote:
-> In nbd_add_socket when krealloc succeeds, if nsock's allocation fail the
-> reallocted memory is leak. The correct behaviour should be assigning the
-> reallocted memory to config->socks right after success.
-> 
+On Fri, Oct 4, 2019 at 2:09 PM Navid Emamdoost
+<navid.emamdoost@gmail.com> wrote:
+>
+> In imx_pd_bind, the duplicated memory for imxpd->edid via kmemdup should
+> be released in drm_of_find_panel_or_bridge or imx_pd_register fail.
+>
+> Fixes: ebc944613567 ("drm: convert drivers to use drm_of_find_panel_or_bridge")
+> Fixes: 19022aaae677 ("staging: drm/imx: Add parallel display support")
 > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 > ---
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Would you please review this patch?
 
 Thanks,
 
-Josef
+>  drivers/gpu/drm/imx/parallel-display.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
+> index e7ce17503ae1..9522d2cb0ad5 100644
+> --- a/drivers/gpu/drm/imx/parallel-display.c
+> +++ b/drivers/gpu/drm/imx/parallel-display.c
+> @@ -227,14 +227,18 @@ static int imx_pd_bind(struct device *dev, struct device *master, void *data)
+>
+>         /* port@1 is the output port */
+>         ret = drm_of_find_panel_or_bridge(np, 1, 0, &imxpd->panel, &imxpd->bridge);
+> -       if (ret && ret != -ENODEV)
+> +       if (ret && ret != -ENODEV) {
+> +               kfree(imxpd->edid);
+>                 return ret;
+> +       }
+>
+>         imxpd->dev = dev;
+>
+>         ret = imx_pd_register(drm, imxpd);
+> -       if (ret)
+> +       if (ret) {
+> +               kfree(imxpd->edid);
+>                 return ret;
+> +       }
+>
+>         dev_set_drvdata(dev, imxpd);
+>
+> --
+> 2.17.1
+>
+
+
+-- 
+Navid.
