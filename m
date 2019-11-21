@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69760104FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF5F104FF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 11:04:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfKUKDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 05:03:34 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37635 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbfKUKDa (ORCPT
+        id S1727123AbfKUKD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 05:03:58 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20234 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726822AbfKUKD5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:03:30 -0500
-Received: by mail-io1-f67.google.com with SMTP id 1so2722829iou.4
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 02:03:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=azm6258Y/h1Yi1v25/cgX4nZQFn/wXyDk4OUzPAogIw=;
-        b=VIxmx3lBXUc/OsjeFNHkalvySAflAWkvsgeR9sJSmDV3UMExPqRNneJibNAVZx0ORP
-         TNOoZyXyQ0AHvM5PmbjOyt50zoipblJXoCN9Cp925i1ScOTrpzzHGB9QnW8rvvZR9eVN
-         ogW18j8FBdeFL19T3L64w40J70OFSxaWsJUuc=
+        Thu, 21 Nov 2019 05:03:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574330636;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CYOAB7bV5ap3IHHQiJdevHwX5dASFlE1sJd2aJRoNcU=;
+        b=Yf5rHw02VfW8MY5N8GTB1pb9Ol1byJAK8PEqopwn+a+rnU6GrGVUDgsxFoC4iMu7nKd4tz
+        LdD4QhEa9ZYF5NWh4cpH9R4GjEoejIpuaxmOML41ovYmTP0x2TbbQp0UmANXnbLKFb3kjj
+        ANh9iuT2tT3gt4TfXBzGtil6DcwBGJo=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-340-pbhyvHzEOEefiC3MN2laOQ-1; Thu, 21 Nov 2019 05:03:54 -0500
+Received: by mail-wr1-f69.google.com with SMTP id u14so1765790wrq.19
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 02:03:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=azm6258Y/h1Yi1v25/cgX4nZQFn/wXyDk4OUzPAogIw=;
-        b=I2hyJQ9soGvvpn27in4gtFDpubCtVk3P66MdA3xvvkymBKduBD6YFnL+eVkJqxa/eJ
-         pODhK/wtJ1vkrmTUuUorYjdySFz2msVMlK1lGuMlyFTlBLlKbslKni8E21F49158hGel
-         enzSasCLKb2DIITboIqE5Xjp6DGBZGlTZOqPrB9oMNy5HcbzQEWkuEsuf+xxPbrRtxaf
-         PMWz3fI2Y50T4bd3yAh5Ny0HZ9varZSppifdWkiuU50TfF5sLmhbW5Q0JW8AyKFuUXOk
-         XcRAw4fPUkWNotWqi6kzqrnGdLr29Nyr3P3H/dvGCW7VL4YCag01GYOLjLTS9cp/K93H
-         W6bQ==
-X-Gm-Message-State: APjAAAXtVTO8Ot5CoLZJove4sjIJuA9lzz8uAmWd4DI/KX1tPsxqmvyu
-        mJL5wxO4GNA5nozXcgWt6DTdOCPEWvqSJU6HOqDaZw==
-X-Google-Smtp-Source: APXvYqws6nCsGqtiQ5vj9FfGy8eiccfE7OIokaC4SxeEjLC2HogWwLfVUDZczbVj8ubWEH2ncp7v39SVWv6PXJFH4UY=
-X-Received: by 2002:a02:c05a:: with SMTP id u26mr8022037jam.58.1574330609772;
- Thu, 21 Nov 2019 02:03:29 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gUJQbhj/e5tGevDSbtGQG/RunMX4COKzOc4f2GEZTdM=;
+        b=WSdo9hTkZKndFX/nrUMMZWkFc9quPuAbwPqrpTWFqtRyAVIlFGHd9Wx5iuGbRz23x6
+         g+OkLClUeaaNfg4cTpQPh1CXd5CxFlcEKDff0id1cyEGGHjY110M3a/1C/l+Ahm/f6EU
+         tBQ9zm6xgdTTU22aWWsraHsBh4//8f4xJyyBVN+MjihWHineWx2SM+f7tP+zLDtCdaUV
+         btCfrQy2HsGfFFTFUQtiFbBwskmgBcsTLrXXuhESF46rXAeLstzAgVgpr4PxGASK8Lja
+         0Su2uVKjgFBPRkx93L5PAYg95/2wyPOW0gDb5Zlo7ppMQ7xNhpRjbnMGmJSSTVdujV5Y
+         9yEw==
+X-Gm-Message-State: APjAAAWlZIybYL5GvMRCPbMcGskUwjYH3KPD1oGxo7MCvdAP186HZ5fz
+        x+w3dOUFD46bHFZsA91PRbZAyY8RuV7h+yTCwZNONpYHcEBsKaXmYiXh7nzybCG00rpOwZecc9F
+        m5DA9Tj7FMA21wz32OqjJfPZ8
+X-Received: by 2002:a1c:6854:: with SMTP id d81mr9192490wmc.75.1574330633488;
+        Thu, 21 Nov 2019 02:03:53 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxQZVVYwUMQnwyyspkBy0Yv+aj/pMZsjBnKogboxTJ33w5oRqIEJS2hl8TAWVFzYZQl+7zUJw==
+X-Received: by 2002:a1c:6854:: with SMTP id d81mr9192459wmc.75.1574330633198;
+        Thu, 21 Nov 2019 02:03:53 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:71a5:6e:f854:d744? ([2001:b07:6468:f312:71a5:6e:f854:d744])
+        by smtp.gmail.com with ESMTPSA id b15sm2587300wrx.77.2019.11.21.02.03.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 02:03:52 -0800 (PST)
+Subject: Re: [PATCH v7 5/9] x86: spp: Introduce user-space SPP IOCTLs
+To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmattson@google.com,
+        sean.j.christopherson@intel.com
+Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com
+References: <20191119084949.15471-1-weijiang.yang@intel.com>
+ <20191119084949.15471-6-weijiang.yang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <f8cd7d7c-7ffd-3ee4-bf5f-203f9a030fef@redhat.com>
+Date:   Thu, 21 Nov 2019 11:03:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191121070613.4286-1-hu1.chen@intel.com>
-In-Reply-To: <20191121070613.4286-1-hu1.chen@intel.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 21 Nov 2019 11:03:18 +0100
-Message-ID: <CAJfpegtK_S3K0j_qP6x3+qKBPdLag+ayCWHAakJvMtVXMdmXtw@mail.gmail.com>
-Subject: Re: [PATCH] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
-To:     "Chen, Hu" <hu1.chen@intel.com>
-Cc:     Andrey Vagin <avagin@openvz.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191119084949.15471-6-weijiang.yang@intel.com>
+Content-Language: en-US
+X-MC-Unique: pbhyvHzEOEefiC3MN2laOQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 8:28 AM Chen, Hu <hu1.chen@intel.com> wrote:
->
-> For Android application process, we found that the mnt_id read from
-> /proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
-> to dump such process and it complains
->
-> "(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
-> fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
->
-> This is due to how Android application is launched. In Android, there is
-> a special process called Zygote which handles the forking of each new
-> application process:
-> 0. Zygote opens and maps some files, for example
->    "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
->    mount namespace, say "old mnt ns".
-> 1. Zygote waits for the request to fork a new application.
-> 2. Zygote gets a request, it forks and run the new process in a new
->    mount namespace, say "new mnt ns".
->
-> The file opened in step 0 ties to the mount point in "old mnt ns". The
-> mnt_id of that mount is listed in /proc/pid/fdinfo. However,
-> /proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
->
-> Althgouh this issue is exposed in Android, we believe it's generic.
-> Prcoess may open files and enter new mnt ns.
->
-> To address it, this patch searches the mirror mount in current ns with
-> MAJOR and MINOR and shows the mirror's mnt_id.
+On 19/11/19 09:49, Yang Weijiang wrote:
+> +=09case KVM_INIT_SPP: {
+> +=09=09r =3D kvm_vm_ioctl_init_spp(kvm);
+> +=09=09break;
+> +=09}
+>  =09default:
+>  =09=09r =3D -ENOTTY;
+>  =09}
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 9460830de536..700f0825336d 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -1257,6 +1257,9 @@ struct kvm_vfio_spapr_tce {
+>  =09=09=09=09=09struct kvm_userspace_memory_region)
+>  #define KVM_SET_TSS_ADDR          _IO(KVMIO,   0x47)
+>  #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
+> +#define KVM_SUBPAGES_GET_ACCESS   _IOR(KVMIO,  0x49, __u64)
+> +#define KVM_SUBPAGES_SET_ACCESS   _IOW(KVMIO,  0x4a, __u64)
+> +#define KVM_INIT_SPP              _IOW(KVMIO,  0x4b, __u64)
 
-This is a hack.   I suggest instead to add a new line to fdinfo with
-the MAJOR:MINOR number of the device.
+You also need to define a capability and return a value for it in
+kvm_vm_ioctl_check_extension.  We could return SUBPAGE_MAX_BITMAP (now
+KVM_SUBPAGE_MAX_PAGES).  And instead of introducing KVM_INIT_SPP, you
+can then use KVM_ENABLE_CAP on the new capability.
 
-Thanks,
-Miklos
+Paolo
+
