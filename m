@@ -2,103 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7B531052B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:09:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE2521052C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2019 14:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfKUNJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 08:09:21 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58363 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726358AbfKUNJV (ORCPT
+        id S1726634AbfKUNPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 08:15:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55452 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUNPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:09:21 -0500
-X-UUID: 68b52b8743034574967e8b319804cedc-20191121
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=GKRpbk2ZaobBcrGmB5jVBprxNIO5Hbu7SfyTwGSrIKk=;
-        b=K8JOzSEHkHL3MO8oyOwdXAKMIDqQpcxBEwEqlODopZEl7MFXIVymzFGDLqKxfOdWdz+LHf5P3vSb6Ev8xRUjc3ht/ru5qp7u3wwEn62wMugngeCHGIBNxYKJrFS3DSsAjRBqZ9xW9UcDmEt38gUd8ubGNI3FuTjP7915/GxBVws=;
-X-UUID: 68b52b8743034574967e8b319804cedc-20191121
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1392207874; Thu, 21 Nov 2019 21:09:14 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 21 Nov 2019 21:09:07 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 21 Nov 2019 21:09:08 +0800
-Message-ID: <1574341753.8338.7.camel@mtksdccf07>
-Subject: Re: [PATCH v4 1/2] kasan: detect negative size in memory operation
- function
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-CC:     Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Thu, 21 Nov 2019 21:09:13 +0800
-In-Reply-To: <217bd537-e6b7-3acc-b6bb-ac9c5d94da89@virtuozzo.com>
-References: <20191112065302.7015-1-walter-zh.wu@mediatek.com>
-         <040479c3-6f96-91c6-1b1a-9f3e947dac06@virtuozzo.com>
-         <1574341376.8338.4.camel@mtksdccf07>
-         <217bd537-e6b7-3acc-b6bb-ac9c5d94da89@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Thu, 21 Nov 2019 08:15:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zcxVE09ZpFK6OJ0n+EKFXEht3YuLUol+uDR/H2/qeEg=; b=wAzZ/0DmM3amgNmGVbMmwDJW2
+        0wGpPezuqWHmrVECAGZG2FfvvmsJAsPkUPSqIGGq/zCSbtfAF8lEzi8AgM8a5DGBFLV/V0tz2ZpYS
+        IL44hBEWw8zjnxVZk1fn6nyhXSBPzEC75nKm4FtqToGW1FCHNTUohdCrjmAfg1qoayj/krh5p14BC
+        VwULomSnIfg4oavNIeTehYFgKnM3hBImy8Fvt9fvdFYpR5cYjtmeFg7GlU4vhbhkG1R/MmMi+MbKw
+        11pa6nuBPCa85UyyfGTrkG8ucFD7umgQVhE2iM2IEqz9B5jOv9EcEoPhjpEzuswyxjrvOnvC3vVnt
+        e/5WtVJJQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iXmIu-0002UN-Rd; Thu, 21 Nov 2019 13:15:30 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5E8C730068E;
+        Thu, 21 Nov 2019 14:14:11 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3C902201DD6AF; Thu, 21 Nov 2019 14:15:22 +0100 (CET)
+Date:   Thu, 21 Nov 2019 14:15:22 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191121131522.GX5671@hirez.programming.kicks-ass.net>
+References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
+ <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
+ <20191121060444.GA55272@gmail.com>
+ <20191121130153.GS4097@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121130153.GS4097@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTExLTIxIGF0IDE2OjAzICswMzAwLCBBbmRyZXkgUnlhYmluaW4gd3JvdGU6
-DQo+IA0KPiBPbiAxMS8yMS8xOSA0OjAyIFBNLCBXYWx0ZXIgV3Ugd3JvdGU6DQo+ID4gT24gVGh1
-LCAyMDE5LTExLTIxIGF0IDE1OjI2ICswMzAwLCBBbmRyZXkgUnlhYmluaW4gd3JvdGU6DQo+ID4+
-DQo+ID4+IE9uIDExLzEyLzE5IDk6NTMgQU0sIFdhbHRlciBXdSB3cm90ZToNCj4gPj4NCj4gPj4+
-IGRpZmYgLS1naXQgYS9tbS9rYXNhbi9jb21tb24uYyBiL21tL2thc2FuL2NvbW1vbi5jDQo+ID4+
-PiBpbmRleCA2ODE0ZDZkNmEwMjMuLjRiZmNlMGFmODgxZiAxMDA2NDQNCj4gPj4+IC0tLSBhL21t
-L2thc2FuL2NvbW1vbi5jDQo+ID4+PiArKysgYi9tbS9rYXNhbi9jb21tb24uYw0KPiA+Pj4gQEAg
-LTEwMiw3ICsxMDIsOCBAQCBFWFBPUlRfU1lNQk9MKF9fa2FzYW5fY2hlY2tfd3JpdGUpOw0KPiA+
-Pj4gICN1bmRlZiBtZW1zZXQNCj4gPj4+ICB2b2lkICptZW1zZXQodm9pZCAqYWRkciwgaW50IGMs
-IHNpemVfdCBsZW4pDQo+ID4+PiAgew0KPiA+Pj4gLQljaGVja19tZW1vcnlfcmVnaW9uKCh1bnNp
-Z25lZCBsb25nKWFkZHIsIGxlbiwgdHJ1ZSwgX1JFVF9JUF8pOw0KPiA+Pj4gKwlpZiAoIWNoZWNr
-X21lbW9yeV9yZWdpb24oKHVuc2lnbmVkIGxvbmcpYWRkciwgbGVuLCB0cnVlLCBfUkVUX0lQXykp
-DQo+ID4+PiArCQlyZXR1cm4gTlVMTDsNCj4gPj4+ICANCj4gPj4+ICAJcmV0dXJuIF9fbWVtc2V0
-KGFkZHIsIGMsIGxlbik7DQo+ID4+PiAgfQ0KPiA+Pj4gQEAgLTExMCw4ICsxMTEsOSBAQCB2b2lk
-ICptZW1zZXQodm9pZCAqYWRkciwgaW50IGMsIHNpemVfdCBsZW4pDQo+ID4+PiAgI3VuZGVmIG1l
-bW1vdmUNCj4gPj4+ICB2b2lkICptZW1tb3ZlKHZvaWQgKmRlc3QsIGNvbnN0IHZvaWQgKnNyYywg
-c2l6ZV90IGxlbikNCj4gPj4+ICB7DQo+ID4+PiAtCWNoZWNrX21lbW9yeV9yZWdpb24oKHVuc2ln
-bmVkIGxvbmcpc3JjLCBsZW4sIGZhbHNlLCBfUkVUX0lQXyk7DQo+ID4+PiAtCWNoZWNrX21lbW9y
-eV9yZWdpb24oKHVuc2lnbmVkIGxvbmcpZGVzdCwgbGVuLCB0cnVlLCBfUkVUX0lQXyk7DQo+ID4+
-PiArCWlmICghY2hlY2tfbWVtb3J5X3JlZ2lvbigodW5zaWduZWQgbG9uZylzcmMsIGxlbiwgZmFs
-c2UsIF9SRVRfSVBfKSB8fA0KPiA+Pj4gKwkgICAgIWNoZWNrX21lbW9yeV9yZWdpb24oKHVuc2ln
-bmVkIGxvbmcpZGVzdCwgbGVuLCB0cnVlLCBfUkVUX0lQXykpDQo+ID4+PiArCQlyZXR1cm4gTlVM
-TDsNCj4gPj4+ICANCj4gPj4+ICAJcmV0dXJuIF9fbWVtbW92ZShkZXN0LCBzcmMsIGxlbik7DQo+
-ID4+PiAgfQ0KPiA+Pj4gQEAgLTExOSw4ICsxMjEsOSBAQCB2b2lkICptZW1tb3ZlKHZvaWQgKmRl
-c3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IGxlbikNCj4gPj4+ICAjdW5kZWYgbWVtY3B5DQo+
-ID4+PiAgdm9pZCAqbWVtY3B5KHZvaWQgKmRlc3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IGxl
-bikNCj4gPj4+ICB7DQo+ID4+PiAtCWNoZWNrX21lbW9yeV9yZWdpb24oKHVuc2lnbmVkIGxvbmcp
-c3JjLCBsZW4sIGZhbHNlLCBfUkVUX0lQXyk7DQo+ID4+PiAtCWNoZWNrX21lbW9yeV9yZWdpb24o
-KHVuc2lnbmVkIGxvbmcpZGVzdCwgbGVuLCB0cnVlLCBfUkVUX0lQXyk7DQo+ID4+PiArCWlmICgh
-Y2hlY2tfbWVtb3J5X3JlZ2lvbigodW5zaWduZWQgbG9uZylzcmMsIGxlbiwgZmFsc2UsIF9SRVRf
-SVBfKSB8fA0KPiA+Pj4gKwkgICAgIWNoZWNrX21lbW9yeV9yZWdpb24oKHVuc2lnbmVkIGxvbmcp
-ZGVzdCwgbGVuLCB0cnVlLCBfUkVUX0lQXykpDQo+ID4+PiArCQlyZXR1cm4gTlVMTDsNCj4gPj4+
-ICANCj4gPj4NCj4gPj4gSSByZWFsaXplZCB0aGF0IHdlIGFyZSBnb2luZyBhIHdyb25nIGRpcmVj
-dGlvbiBoZXJlLiBFbnRpcmVseSBza2lwcGluZyBtZW0qKCkgb3BlcmF0aW9uIG9uIGFueQ0KPiA+
-PiBwb2lzb25lZCBzaGFkb3cgdmFsdWUgbWlnaHQgb25seSBtYWtlIHRoaW5ncyB3b3JzZS4gU29t
-ZSBidWdzIGp1c3QgZG9uJ3QgaGF2ZSBhbnkgc2VyaW91cyBjb25zZXF1ZW5jZXMsDQo+ID4+IGJ1
-dCBza2lwcGluZyB0aGUgbWVtKigpIG9wcyBlbnRpcmVseSBtaWdodCBpbnRyb2R1Y2Ugc3VjaCBj
-b25zZXF1ZW5jZXMsIHdoaWNoIHdvdWxkbid0IGhhcHBlbiBvdGhlcndpc2UuDQo+ID4+DQo+ID4+
-IFNvIGxldCdzIGtlZXAgdGhpcyBjb2RlIGFzIHRoaXMsIG5vIG5lZWQgdG8gY2hlY2sgdGhlIHJl
-c3VsdCBvZiBjaGVja19tZW1vcnlfcmVnaW9uKCkuDQo+ID4+DQo+ID4+DQo+ID4gT2ssIHdlIGp1
-c3QgbmVlZCB0byBkZXRlcm1pbmUgd2hldGhlciBzaXplIGlzIG5lZ2F0aXZlIG51bWJlci4gSWYg
-eWVzDQo+ID4gdGhlbiBLQVNBTiBwcm9kdWNlIHJlcG9ydCBhbmQgY29udGludWUgdG8gZXhlY3V0
-ZSBtZW0qKCkuIHJpZ2h0Pw0KPiA+IA0KPiANCj4gWWVzLg0KDQpUaGFua3MgZm9yIHlvdXIgc3Vn
-Z2VzdGlvbi4NCkkgd2lsbCBzZW5kIGEgbmV3IHY1IHBhdGNoIHRvbW9ycm93Lg0KDQpXYWx0ZXIN
-Cg0K
+On Thu, Nov 21, 2019 at 02:01:53PM +0100, Peter Zijlstra wrote:
+> On Thu, Nov 21, 2019 at 07:04:44AM +0100, Ingo Molnar wrote:
+> > * Fenghua Yu <fenghua.yu@intel.com> wrote:
+> 
+> > > +	split_lock_detect
+> > > +			[X86] Enable split lock detection
+> > > +			This is a real time or debugging feature. When enabled
+> > > +			(and if hardware support is present), atomic
+> > > +			instructions that access data across cache line
+> > > +			boundaries will result in an alignment check exception.
+> > > +			When triggered in applications the kernel will send
+> > > +			SIGBUS. The kernel will panic for a split lock in
+> > > +			OS code.
+> > 
+> > It would be really nice to be able to enable/disable this runtime as 
+> > well, has this been raised before, and what was the conclusion?
+> 
+> It has, previous versions had that. Somehow a lot of things went missing
+> and we're back to a broken neutered useless mess.
+> 
+> The problem appears to be that due to hardware design the feature cannot
+> be virtualized, and instead of then disabling it when a VM runs/exists
+> they just threw in the towel and went back to useless mode.. :-(
+> 
+> This feature MUST be default enabled, otherwise everything will
+> be/remain broken and we'll end up in the situation where you can't use
+> it even if you wanted to.
+> 
+> Imagine the BIOS/EFI/firmware containing an #AC exception. At that point
+> the feature becomes useless, because you cannot enable it without your
+> machine dying.
+> 
+> Now, from long and painful experience we all know that if a BIOS can be
+> wrong, it will be. Therefore this feature will be/is useless as
+> presented.
+> 
+> And I can't be arsed to look it up, but we've been making this very same
+> argument since very early (possible the very first) version.
+> 
+> So this version goes straight into the bit bucket. Please try again.
 
+Also, just to remind everyone why we really want this. Split lock is a
+potent, unprivileged, DoS vector.
+
+It works nicely across guests and everything. Furthermore no sane
+software should have #AC, because RISC machines have been throwing
+alignment checks on stupid crap like that forever.
+
+And even on x86, where it 'works' it has been a performance nightmare
+for pretty much ever since we lost the Front Side Bus or something like
+that.
