@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A1C106F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD40107157
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfKVK5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:57:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46230 "EHLO mail.kernel.org"
+        id S1727233AbfKVKbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:31:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730068AbfKVK5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:23 -0500
+        id S1726546AbfKVKbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:31:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E30DE2071C;
-        Fri, 22 Nov 2019 10:57:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA3AB20714;
+        Fri, 22 Nov 2019 10:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420242;
-        bh=MHLTiLMo6OoNuIgCw9aGwbaQZgICcAPVVuPD8MIH+yM=;
+        s=default; t=1574418677;
+        bh=ib4vu3ssWv+BcS446FDJwbNCxuG0zk6e/VuXGHHpq9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r1ssk3W7EKQZOmyJ9rHCEd3qVuX0ozDgWu5oV1cvLwZrxRmCb3RUz401gr+kEOsKQ
-         meC4mXxM3sjbymPVWJSEp22uUzRSraucD5YqGEwU5jqlof9/BOcYq9SKwlu7y0ErEf
-         +7yPHvM1+GtYqLpSu+TrJJP/R51VvHtYGJdtV/rM=
+        b=muei4eGIJeupfwF/RUubW7HqryKomCoDkUSO8IhFfiZdYYwjGyvWMm8eA5GtqarQT
+         d5RCFcjVeUidhM6zOIx9kt+mCJ/DpZGVra0UttmPcRmbmb4nRhIlchVCOYPnyzN+yn
+         sQKt+ambYHo+X5C729Nugku/b1w+tf6JqwI7Dd18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/220] PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.
+Subject: [PATCH 4.4 015/159] ALSA: seq: Do error checks at creating system ports
 Date:   Fri, 22 Nov 2019 11:26:46 +0100
-Message-Id: <20191122100915.244786602@linuxfoundation.org>
+Message-Id: <20191122100719.708083696@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,128 +43,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 23c7b54ca1cd1797ef39169ab85e6d46f1c2d061 ]
+[ Upstream commit b8e131542b47b81236ecf6768c923128e1f5db6e ]
 
-When the devfreq driver and the governor driver are built as modules,
-the call to devfreq_add_device() or governor_store() fails because the
-governor driver is not loaded at the time the devfreq driver loads. The
-devfreq driver has a build dependency on the governor but also should
-have a runtime dependency. We need to make sure that the governor driver
-is loaded before the devfreq driver.
+snd_seq_system_client_init() doesn't check the errors returned from
+its port creations.  Let's do it properly and handle the error paths.
 
-This patch fixes this bug by adding a try_then_request_governor()
-function. First tries to find the governor, and then, if it is not found,
-it requests the module and tries again.
-
-Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 4 deletions(-)
+ sound/core/seq/seq_system.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 4c49bb1330b52..62ead442a8721 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -11,6 +11,7 @@
-  */
+diff --git a/sound/core/seq/seq_system.c b/sound/core/seq/seq_system.c
+index 8ce1d0b40dce1..ce1f1e4727ab1 100644
+--- a/sound/core/seq/seq_system.c
++++ b/sound/core/seq/seq_system.c
+@@ -123,6 +123,7 @@ int __init snd_seq_system_client_init(void)
+ {
+ 	struct snd_seq_port_callback pcallbacks;
+ 	struct snd_seq_port_info *port;
++	int err;
  
- #include <linux/kernel.h>
-+#include <linux/kmod.h>
- #include <linux/sched.h>
- #include <linux/errno.h>
- #include <linux/err.h>
-@@ -221,6 +222,49 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
- 	return ERR_PTR(-ENODEV);
+ 	port = kzalloc(sizeof(*port), GFP_KERNEL);
+ 	if (!port)
+@@ -144,7 +145,10 @@ int __init snd_seq_system_client_init(void)
+ 	port->flags = SNDRV_SEQ_PORT_FLG_GIVEN_PORT;
+ 	port->addr.client = sysclient;
+ 	port->addr.port = SNDRV_SEQ_PORT_SYSTEM_TIMER;
+-	snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT, port);
++	err = snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT,
++					port);
++	if (err < 0)
++		goto error_port;
+ 
+ 	/* register announcement port */
+ 	strcpy(port->name, "Announce");
+@@ -154,16 +158,24 @@ int __init snd_seq_system_client_init(void)
+ 	port->flags = SNDRV_SEQ_PORT_FLG_GIVEN_PORT;
+ 	port->addr.client = sysclient;
+ 	port->addr.port = SNDRV_SEQ_PORT_SYSTEM_ANNOUNCE;
+-	snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT, port);
++	err = snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT,
++					port);
++	if (err < 0)
++		goto error_port;
+ 	announce_port = port->addr.port;
+ 
+ 	kfree(port);
+ 	return 0;
++
++ error_port:
++	snd_seq_system_client_done();
++	kfree(port);
++	return err;
  }
  
-+/**
-+ * try_then_request_governor() - Try to find the governor and request the
-+ *                               module if is not found.
-+ * @name:	name of the governor
-+ *
-+ * Search the list of devfreq governors and request the module and try again
-+ * if is not found. This can happen when both drivers (the governor driver
-+ * and the driver that call devfreq_add_device) are built as modules.
-+ * devfreq_list_lock should be held by the caller. Returns the matched
-+ * governor's pointer.
-+ */
-+static struct devfreq_governor *try_then_request_governor(const char *name)
-+{
-+	struct devfreq_governor *governor;
-+	int err = 0;
-+
-+	if (IS_ERR_OR_NULL(name)) {
-+		pr_err("DEVFREQ: %s: Invalid parameters\n", __func__);
-+		return ERR_PTR(-EINVAL);
-+	}
-+	WARN(!mutex_is_locked(&devfreq_list_lock),
-+	     "devfreq_list_lock must be locked.");
-+
-+	governor = find_devfreq_governor(name);
-+	if (IS_ERR(governor)) {
-+		mutex_unlock(&devfreq_list_lock);
-+
-+		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
-+			     DEVFREQ_NAME_LEN))
-+			err = request_module("governor_%s", "simpleondemand");
-+		else
-+			err = request_module("governor_%s", name);
-+		/* Restore previous state before return */
-+		mutex_lock(&devfreq_list_lock);
-+		if (err)
-+			return NULL;
-+
-+		governor = find_devfreq_governor(name);
-+	}
-+
-+	return governor;
-+}
-+
- static int devfreq_notify_transition(struct devfreq *devfreq,
- 		struct devfreq_freqs *freqs, unsigned int state)
+ 
+ /* unregister our internal client */
+-void __exit snd_seq_system_client_done(void)
++void snd_seq_system_client_done(void)
  {
-@@ -646,9 +690,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	mutex_unlock(&devfreq->lock);
+ 	int oldsysclient = sysclient;
  
- 	mutex_lock(&devfreq_list_lock);
--	list_add(&devfreq->node, &devfreq_list);
- 
--	governor = find_devfreq_governor(devfreq->governor_name);
-+	governor = try_then_request_governor(devfreq->governor_name);
- 	if (IS_ERR(governor)) {
- 		dev_err(dev, "%s: Unable to find governor for the device\n",
- 			__func__);
-@@ -664,12 +707,14 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 			__func__);
- 		goto err_init;
- 	}
-+
-+	list_add(&devfreq->node, &devfreq_list);
-+
- 	mutex_unlock(&devfreq_list_lock);
- 
- 	return devfreq;
- 
- err_init:
--	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
- 	device_unregister(&devfreq->dev);
-@@ -991,7 +1036,7 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 		return -EINVAL;
- 
- 	mutex_lock(&devfreq_list_lock);
--	governor = find_devfreq_governor(str_governor);
-+	governor = try_then_request_governor(str_governor);
- 	if (IS_ERR(governor)) {
- 		ret = PTR_ERR(governor);
- 		goto out;
 -- 
 2.20.1
 
