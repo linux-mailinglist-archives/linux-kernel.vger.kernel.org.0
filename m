@@ -2,217 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A103106EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65914106EEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbfKVLLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:11:31 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60592 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbfKVLL2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:11:28 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id BA4F1291F79
-Subject: Re: [PATCH v5 00/18] cros_ec: Add sensorhub driver and FIFO
- processing
-To:     Gwendal Grignou <gwendal@chromium.org>, dmitry.torokhov@gmail.com,
-        groeck@chromium.org, briannorris@chromium.org, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        lee.jones@linaro.org, bleung@chromium.org, dianders@chromium.org,
-        fabien.lahoudere@collabora.com
-Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org
-References: <20191115093412.144922-1-gwendal@chromium.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <9301fea1-9aa2-5030-9ac3-339bfb5193da@collabora.com>
-Date:   Fri, 22 Nov 2019 12:11:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1730782AbfKVLMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:12:32 -0500
+Received: from mga09.intel.com ([134.134.136.24]:24547 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728618AbfKVLMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:12:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 03:12:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
+   d="scan'208";a="210220363"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 22 Nov 2019 03:12:20 -0800
+Received: from andy by smile with local (Exim 4.93-RC1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iY6rL-0000bl-Jr; Fri, 22 Nov 2019 13:12:19 +0200
+Date:   Fri, 22 Nov 2019 13:12:19 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v3 1/2] gpio: sch: Add edge event support
+Message-ID: <20191122111219.GW32742@smile.fi.intel.com>
+References: <cover.1574277614.git.jan.kiszka@siemens.com>
+ <42ae6149a14f81fd86c5acb5bd33e987123b6bed.1574277614.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
-In-Reply-To: <20191115093412.144922-1-gwendal@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42ae6149a14f81fd86c5acb5bd33e987123b6bed.1574277614.git.jan.kiszka@siemens.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Nov 20, 2019 at 08:20:13PM +0100, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> Add the required infrastructure consisting of an irq_chip_generic with
+> its irq_chip_type callbacks to enable and report edge events of the pins
+> to the gpio core. The actual hook-up of the event interrupt will happen
+> separately.
 
-On 15/11/19 10:33, Gwendal Grignou wrote:
-> This patchset adds a sensorhub driver for spreading sensor
-> events coming from the Embedded controller sensor FIFO:
-> 
->        +---------------+ +--------------+ +----
->        | cros_ec_accel | | cros_ec_gyro | | ...
->        +---------------+ +--------------+ +----
->            id:0       \        id:1 |       / id:..
->                  +------------------------------+
->                  |       cros_ec_sensorhub      |
->                  +------------------------------+
->                  |           cros_ec_dev        |
->                  +------------------------------+
->                  | cros_ec_i2c, cros_ec_lpc, .. |
->                  +------------------------------+
->                                  |
->                                  EC
-> 
-> When new sensors events are present, the EC raises and interrupt,
-> sensorhub reads the FIFO and uses the 'id' field to spread the event to
-> the proper IIO sensors. This stack is similar to the HID sensor input
-> stack.
-> 
-> The first patch move cros_ec_proto functions documentations into the
-> code to prevent rot.
-> 
-> The inext 3 patches add a primitive cros_ec_sensorhub. MFD just have to
-> register this driver if at least one sensor is presented by the EC.
-> cros_ec_sensorhub retrieves more information from the EC to find out
-> which sensors are actually present:
->   mfd: cros_ec: Add sensor_count and make check_features public
->   platform: cros_ec: Add cros_ec_sensor_hub driver
->   platform/mfd:iio: cros_ec: Register sensor through sensorhub
-> 
-> The next 3 patches prepare for FIFO support:
->   platform: chrome: cros-ec: record event timestamp in the hard irq
->   platform: chrome: cros_ec: Do not attempt to register a non-positive
->   platform: chrome: cros_ec: handle MKBP more events flag
-> 
-> That last patch fixes a regression that changes event processing.
-> Revert the patches that fixed that regression.
-> 
-> The next 3 patches add FIFO support. An interface is added to connect
-> the IIO sensors with cros_ec_sensorhub, and filters are needed to spread
-> the timestamp when the EC send batches of events and deal with variation
-> in interrupt delay.
->   platform: chrome: sensorhub: Add FIFO support
->   platform: chrome: sensorhub: Add code to spread timestmap
->   platform: chrome: sensorhub: Add median filter
-> 
-> The remaining patches update IIO cros_ec drivers:
-> The first patch moves cros_ec_sensor_core functions documentation into
-> the .c file.
-> The second one exports iio_device_set_clock, so that the timestamp
-> generated by the FIFO matches the default timestamp exposed by the IIO
-> devices.
-> Then we can use the FIFO function exposed by cros_ec_sensorhub:
->   iio: cros_ec: Use triggered buffer only when EC does not support FIFO
-> 
-> The power management functions are not necessary anymore, since we
-> shutoff the FIFO from cros_ec_sensorhub:
->   iio: cros_ec: Register to cros_ec_sensorhub when EC supports FIFO
-> 
-> Finally, the last 3 patches present sensor information following the IIO
-> ABI:
-> -  Configurable EC timeout to allow batch mode in buffer/hwfifo_timeout,
->   in seconds.
-> -  Hard coded EC FIFO size in buffer/hwfifo_watermark_max
-> -  Sensor sampling frequency in hertz at sampling_frequency:
->   iio: cros_ec: Expose hwfifo_timeout
->   iio: cros_ec: Report hwfifo_watermark_max
->   iio: cros_ec: Use Hertz as unit for sampling frequency
-> 
-> For testing, libiio test tools can be used:
-> A iio device link looks like:
-> iio:device1 ->
-> ...09:00/GOOG0004:00/cros-ec-dev.6.auto/cros-ec-sensorhub.7.auto/
->                      cros-ec-accel.15.auto/iio:device1
-> 
-> When FIFO is available, no trigger are presented. Once
-> sampling_freqeuncy and hwfifo_timeout are set, sensor events flow
-> when listening to /dev/iio:device1:
-> echo 12 > sampling_frequency   # Set ODR to at least 12Hz
-> echo .100 > buffer/hwfifo_timeout  # do not wait more than 100ms to
->                                    # to send samples
-> iio_readdev -b 2 -T 1000 -s 2 iio:device1 2>/dev/null| od -x
-> 0000000 ffd0 2e20 d990 0000 8630 b56c 07ea 0000
-> 0000020 ffc0 2e10 d970 0000 877e b56c 07ea 0000
-> 0000040`
-> 
-> When FIFO is not supported by the EC, a trigger is present in the
-> directory. After registering a trigger, setting sampling_frequency,
-> the latest data collected by the sensor will be retrieved by the host
-> when the trigger expires.
-> 
-> When cros_ec_accel_legacy driver is used, no FIFO is supported and the
-> sampling frequency for the accelerometers is hard coded at 10Hz.
-> 
-> This set is built upon the master branch of
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> 
-> Enrico Granata (2):
->   platform: chrome: cros_ec: Do not attempt to register a non-positive
->     IRQ number
->   platform: chrome: cros_ec: handle MKBP more events flag
-> 
-> Gwendal Grignou (16):
->   mfd: cros_ec: Add sensor_count and make check_features public
->   platform: cros_ec: Add cros_ec_sensor_hub driver
->   platform/mfd:iio: cros_ec: Register sensor through sensorhub
->   platform: chrome: cros-ec: record event timestamp in the hard irq
->   Revert "Input: cros_ec_keyb - add back missing mask for event_type"
->   Revert "Input: cros_ec_keyb: mask out extra flags in event_type"
->   platform: chrome: sensorhub: Add FIFO support
->   platform: chrome: sensorhub: Add code to spread timestmap
->   platform: chrome: sensorhub: Add median filter
->   iio: cros_ec: Move function description to .c file
->   iio: expose iio_device_set_clock
->   iio: cros_ec: Register to cros_ec_sensorhub when EC supports FIFO
->   iio: cros_ec: Remove pm function
->   iio: cros_ec: Expose hwfifo_timeout
->   iio: cros_ec: Report hwfifo_watermark_max
->   iio: cros_ec: Use Hertz as unit for sampling frequency
-> 
->  drivers/iio/accel/cros_ec_accel_legacy.c      |  14 +-
->  drivers/iio/common/cros_ec_sensors/Kconfig    |   2 +-
->  .../cros_ec_sensors/cros_ec_lid_angle.c       |   3 +-
->  .../common/cros_ec_sensors/cros_ec_sensors.c  |  19 +-
->  .../cros_ec_sensors/cros_ec_sensors_core.c    | 359 +++++--
->  drivers/iio/industrialio-core.c               |   8 +-
->  drivers/iio/light/cros_ec_light_prox.c        |  21 +-
->  drivers/iio/pressure/cros_ec_baro.c           |  14 +-
->  drivers/input/keyboard/cros_ec_keyb.c         |   6 +-
->  drivers/mfd/cros_ec_dev.c                     | 235 +----
->  drivers/platform/chrome/Kconfig               |  12 +
->  drivers/platform/chrome/Makefile              |   2 +
->  drivers/platform/chrome/cros_ec.c             |  51 +-
->  drivers/platform/chrome/cros_ec_ishtp.c       |  25 +-
->  drivers/platform/chrome/cros_ec_lpc.c         |  17 +-
->  drivers/platform/chrome/cros_ec_proto.c       | 197 +++-
->  drivers/platform/chrome/cros_ec_rpmsg.c       |  19 +-
->  drivers/platform/chrome/cros_ec_sensorhub.c   | 249 +++++
->  .../platform/chrome/cros_ec_sensorhub_ring.c  | 987 ++++++++++++++++++
->  .../linux/iio/common/cros_ec_sensors_core.h   | 104 +-
->  include/linux/iio/iio.h                       |   2 +
->  include/linux/platform_data/cros_ec_proto.h   |  41 +-
->  .../linux/platform_data/cros_ec_sensorhub.h   | 196 ++++
->  23 files changed, 2054 insertions(+), 529 deletions(-)
->  create mode 100644 drivers/platform/chrome/cros_ec_sensorhub.c
->  create mode 100644 drivers/platform/chrome/cros_ec_sensorhub_ring.c
->  create mode 100644 include/linux/platform_data/cros_ec_sensorhub.h
-> 
+> +static int sch_irq_type(struct irq_data *d, unsigned int type)
+> +{
+> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct sch_gpio *sch = gc->private;
+> +	unsigned int gpio_num = d->irq - sch->irq_base;
+> +	unsigned long flags;
+> +	int rising = 0;
+> +	int falling = 0;
+> +
+> +	switch (type & IRQ_TYPE_SENSE_MASK) {
+> +	case IRQ_TYPE_EDGE_RISING:
+> +		rising = 1;
+> +		break;
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +		falling = 1;
+> +		break;
+> +	case IRQ_TYPE_EDGE_BOTH:
+> +		rising = 1;
+> +		falling = 1;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	spin_lock_irqsave(&sch->lock, flags);
+> +	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
+> +	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
+> +	spin_unlock_irqrestore(&sch->lock, flags);
 
-After having patches 1 to 8 on linux-next for one week I queued those for 5.5.
-For 9/10/11 I have still comments to do, so will go probably for 5.6.
+Won't we need to set up IRQ handler here and use handle_bad_irq() during
+initialization phase?
 
-Lee, Jonathan and Dmitry, I created an immutable branch for those
+> +
+> +	return 0;
+> +}
 
-*
-https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git/tag/?h=tag-ib-chrome-mfd-iio-input-5.5
+> +	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
+> +					NUMA_NO_NODE);
+> +	if (irq_base < 0)
+> +		return irq_base;
+> +	sch->irq_base = irq_base;
+> +
+> +	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
+> +					 NULL, handle_simple_irq);
+> +	if (!gc)
+> +		return -ENOMEM;
+> +
+> +	gc->private = sch;
+> +	ct = gc->chip_types;
+> +
+> +	ct->chip.irq_mask = sch_irq_mask;
+> +	ct->chip.irq_unmask = sch_irq_unmask;
+> +	ct->chip.irq_set_type = sch_irq_type;
+> +
+> +	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
+> +					  IRQ_MSK(sch->chip.ngpio),
+> +					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+> +	if (ret)
+> +		return ret;
 
-But you probably can skip to merge that branch if you don't plan to queue more
-patches for 5.5. I tested with your next branches and merges cleanly. It is also
-on my plans wait at least one week more to do the chrome-platform PR to Linus so
-the patches are one week more in linux-next.
+Shan't we do this in the (similar) way how it's done in pinctrl-cherryview.c
+driver? (Keep in mind later patches which are going to be v5.5)
 
-Thanks,
- Enric
-
-
-
-
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
