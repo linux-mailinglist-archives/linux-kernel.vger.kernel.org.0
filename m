@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43103107123
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1D4106FA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfKVKdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:33:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57320 "EHLO mail.kernel.org"
+        id S1729508AbfKVLQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:16:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbfKVKdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:33:51 -0500
+        id S1728071AbfKVKun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:50:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8119520637;
-        Fri, 22 Nov 2019 10:33:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 887D22072D;
+        Fri, 22 Nov 2019 10:50:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418830;
-        bh=0N8DX0y8dCSe0kBStWkG33SzAOU4gcchl4Dn0oGxglE=;
+        s=default; t=1574419842;
+        bh=cXAOcHjLd1/RQ7fJxPeGZ3pBpX0jJa7FqH4WtnMadCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0BqCnTV6mRlM314yhmAFw0/ToUPC778erMfCovVL9ZfRenizbToTotqUqjZ0siyZj
-         BmOkH1QmY3L+K+CxfA29wf6h6iQmrdK3umZ1p/FN1EU84zSKWPc48QjaGPVikAnWDp
-         q4lHUt+52bYNbWBYqOV0R2CJiqR4eeqU7nTjT5+k=
+        b=AP0X2FvkovPI2Vsimb7xBv9AN/7FG1T7XyFsAB9o6LkEE4QLlI3Dk4VvX0eVKnogB
+         zU6+cnI0vKZ7u8nbCLGHhNvLQgUqZ+bZyePTS5zK3Fs1NpNRikb23slK1kiNzJoBkF
+         XJ2hxqdOq/DfbAieAdgRMc7TpYwZsG+4wQohiMqY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 065/159] net: toshiba: fix return type of ndo_start_xmit function
+Subject: [PATCH 4.14 003/122] Revert "OPP: Protect dev_list with opp_table lock"
 Date:   Fri, 22 Nov 2019 11:27:36 +0100
-Message-Id: <20191122100755.045287457@linuxfoundation.org>
+Message-Id: <20191122100723.867534497@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,98 +45,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit bacade822524e02f662d88f784d2ae821a5546fb ]
+This reverts commit 714ab224a8db6e8255c61a42613de9349ceb0bba which is
+commit 3d2556992a878a2210d3be498416aee39e0c32aa upstream.
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+Turns out to break the build on the odroid machines, so it needs to be
+reverted.
 
-Found by coccinelle.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reported-by: "kernelci.org bot" <bot@kernelci.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/toshiba/ps3_gelic_net.c | 4 ++--
- drivers/net/ethernet/toshiba/ps3_gelic_net.h | 2 +-
- drivers/net/ethernet/toshiba/spider_net.c    | 4 ++--
- drivers/net/ethernet/toshiba/tc35815.c       | 6 ++++--
- 4 files changed, 9 insertions(+), 7 deletions(-)
+ drivers/base/power/opp/core.c |   21 ++-------------------
+ drivers/base/power/opp/cpu.c  |    2 --
+ drivers/base/power/opp/opp.h  |    2 +-
+ 3 files changed, 3 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-index 79f0ec4e51ace..964df98b54ea1 100644
---- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-+++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-@@ -845,9 +845,9 @@ static int gelic_card_kick_txdma(struct gelic_card *card,
-  * @skb: packet to send out
-  * @netdev: interface device structure
-  *
-- * returns 0 on success, <0 on failure
-+ * returns NETDEV_TX_OK on success, NETDEV_TX_BUSY on failure
-  */
--int gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
-+netdev_tx_t gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
+--- a/drivers/base/power/opp/core.c
++++ b/drivers/base/power/opp/core.c
+@@ -49,14 +49,9 @@ static struct opp_device *_find_opp_dev(
+ static struct opp_table *_find_opp_table_unlocked(struct device *dev)
  {
- 	struct gelic_card *card = netdev_card(netdev);
- 	struct gelic_descr *descr;
-diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.h b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-index 8505196be9f52..d123644bd720b 100644
---- a/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-+++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-@@ -370,7 +370,7 @@ void gelic_card_up(struct gelic_card *card);
- void gelic_card_down(struct gelic_card *card);
- int gelic_net_open(struct net_device *netdev);
- int gelic_net_stop(struct net_device *netdev);
--int gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev);
-+netdev_tx_t gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev);
- void gelic_net_set_multi(struct net_device *netdev);
- void gelic_net_tx_timeout(struct net_device *netdev);
- int gelic_net_change_mtu(struct net_device *netdev, int new_mtu);
-diff --git a/drivers/net/ethernet/toshiba/spider_net.c b/drivers/net/ethernet/toshiba/spider_net.c
-index 3c54a2cae5dfd..8e53211aedd82 100644
---- a/drivers/net/ethernet/toshiba/spider_net.c
-+++ b/drivers/net/ethernet/toshiba/spider_net.c
-@@ -881,9 +881,9 @@ out:
-  * @skb: packet to send out
-  * @netdev: interface device structure
-  *
-- * returns 0 on success, !0 on failure
-+ * returns NETDEV_TX_OK on success, NETDEV_TX_BUSY on failure
-  */
--static int
-+static netdev_tx_t
- spider_net_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	int cnt;
-diff --git a/drivers/net/ethernet/toshiba/tc35815.c b/drivers/net/ethernet/toshiba/tc35815.c
-index 868fb6306df02..3e33c165a4278 100644
---- a/drivers/net/ethernet/toshiba/tc35815.c
-+++ b/drivers/net/ethernet/toshiba/tc35815.c
-@@ -475,7 +475,8 @@ static void free_rxbuf_skb(struct pci_dev *hwdev, struct sk_buff *skb, dma_addr_
- /* Index to functions, as function prototypes. */
+ 	struct opp_table *opp_table;
+-	bool found;
  
- static int	tc35815_open(struct net_device *dev);
--static int	tc35815_send_packet(struct sk_buff *skb, struct net_device *dev);
-+static netdev_tx_t	tc35815_send_packet(struct sk_buff *skb,
-+					    struct net_device *dev);
- static irqreturn_t	tc35815_interrupt(int irq, void *dev_id);
- static int	tc35815_rx(struct net_device *dev, int limit);
- static int	tc35815_poll(struct napi_struct *napi, int budget);
-@@ -1279,7 +1280,8 @@ tc35815_open(struct net_device *dev)
-  * invariant will hold if you make sure that the netif_*_queue()
-  * calls are done at the proper times.
-  */
--static int tc35815_send_packet(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+tc35815_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 	list_for_each_entry(opp_table, &opp_tables, node) {
+-		mutex_lock(&opp_table->lock);
+-		found = !!_find_opp_dev(dev, opp_table);
+-		mutex_unlock(&opp_table->lock);
+-
+-		if (found) {
++		if (_find_opp_dev(dev, opp_table)) {
+ 			_get_opp_table_kref(opp_table);
+ 
+ 			return opp_table;
+@@ -716,8 +711,6 @@ struct opp_device *_add_opp_dev(const st
+ 
+ 	/* Initialize opp-dev */
+ 	opp_dev->dev = dev;
+-
+-	mutex_lock(&opp_table->lock);
+ 	list_add(&opp_dev->node, &opp_table->dev_list);
+ 
+ 	/* Create debugfs entries for the opp_table */
+@@ -725,7 +718,6 @@ struct opp_device *_add_opp_dev(const st
+ 	if (ret)
+ 		dev_err(dev, "%s: Failed to register opp debugfs (%d)\n",
+ 			__func__, ret);
+-	mutex_unlock(&opp_table->lock);
+ 
+ 	return opp_dev;
+ }
+@@ -744,7 +736,6 @@ static struct opp_table *_allocate_opp_t
+ 	if (!opp_table)
+ 		return NULL;
+ 
+-	mutex_init(&opp_table->lock);
+ 	INIT_LIST_HEAD(&opp_table->dev_list);
+ 
+ 	opp_dev = _add_opp_dev(dev, opp_table);
+@@ -766,6 +757,7 @@ static struct opp_table *_allocate_opp_t
+ 
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&opp_table->head);
+ 	INIT_LIST_HEAD(&opp_table->opp_list);
++	mutex_init(&opp_table->lock);
+ 	kref_init(&opp_table->kref);
+ 
+ 	/* Secure the device table modification */
+@@ -807,10 +799,6 @@ static void _opp_table_kref_release(stru
+ 	if (!IS_ERR(opp_table->clk))
+ 		clk_put(opp_table->clk);
+ 
+-	/*
+-	 * No need to take opp_table->lock here as we are guaranteed that no
+-	 * references to the OPP table are taken at this point.
+-	 */
+ 	opp_dev = list_first_entry(&opp_table->dev_list, struct opp_device,
+ 				   node);
+ 
+@@ -1714,9 +1702,6 @@ void _dev_pm_opp_remove_table(struct opp
  {
- 	struct tc35815_local *lp = netdev_priv(dev);
- 	struct TxFD *txfd;
--- 
-2.20.1
-
+ 	struct dev_pm_opp *opp, *tmp;
+ 
+-	/* Protect dev_list */
+-	mutex_lock(&opp_table->lock);
+-
+ 	/* Find if opp_table manages a single device */
+ 	if (list_is_singular(&opp_table->dev_list)) {
+ 		/* Free static OPPs */
+@@ -1727,8 +1712,6 @@ void _dev_pm_opp_remove_table(struct opp
+ 	} else {
+ 		_remove_opp_dev(_find_opp_dev(dev, opp_table), opp_table);
+ 	}
+-
+-	mutex_unlock(&opp_table->lock);
+ }
+ 
+ void _dev_pm_opp_find_and_remove_table(struct device *dev, bool remove_all)
+--- a/drivers/base/power/opp/cpu.c
++++ b/drivers/base/power/opp/cpu.c
+@@ -222,10 +222,8 @@ int dev_pm_opp_get_sharing_cpus(struct d
+ 	cpumask_clear(cpumask);
+ 
+ 	if (opp_table->shared_opp == OPP_TABLE_ACCESS_SHARED) {
+-		mutex_lock(&opp_table->lock);
+ 		list_for_each_entry(opp_dev, &opp_table->dev_list, node)
+ 			cpumask_set_cpu(opp_dev->dev->id, cpumask);
+-		mutex_unlock(&opp_table->lock);
+ 	} else {
+ 		cpumask_set_cpu(cpu_dev->id, cpumask);
+ 	}
+--- a/drivers/base/power/opp/opp.h
++++ b/drivers/base/power/opp/opp.h
+@@ -124,7 +124,7 @@ enum opp_table_access {
+  * @dev_list:	list of devices that share these OPPs
+  * @opp_list:	table of opps
+  * @kref:	for reference count of the table.
+- * @lock:	mutex protecting the opp_list and dev_list.
++ * @lock:	mutex protecting the opp_list.
+  * @np:		struct device_node pointer for opp's DT node.
+  * @clock_latency_ns_max: Max clock latency in nanoseconds.
+  * @shared_opp: OPP is shared between multiple devices.
 
 
