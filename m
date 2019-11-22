@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5155107126
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92235106FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbfKVL0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
+        id S1729442AbfKVKuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:50:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727200AbfKVKds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:33:48 -0500
+        id S1728936AbfKVKuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:50:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0ECE20714;
-        Fri, 22 Nov 2019 10:33:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA95A205C9;
+        Fri, 22 Nov 2019 10:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418827;
-        bh=CaV5LegZwnaBQuppS0tYmH+zIr4VngiSBqdszVVVcOg=;
+        s=default; t=1574419818;
+        bh=EwcCLYTtVLFYl3tObqYaHli5xUtoaPL2vOgqZBpPnhI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXFJHb8CqSjwx12yAtk4MK74hQI0N3WSVKL/sBADXSLEDVDHCjBm3kbgYjFf+PLxG
-         +rIPsswXAa3vuI7SAQbo6j6LDv3lmnQWc+reNkHE/OcdNeT8JY8jVl5cLzT9mubGzs
-         H65kmd+DQ9Vz9KD7WC7uzl3Wmn1HEJQ6zFZ9Gkcc=
+        b=tNLpZc7lThu2FVHEpiWydsii8cCOE3DQZbohhCkS6H2mw68TCAUEONTskQ9A/BZvM
+         mx0MxVLgkXhnBlcwGT63mdCxeIWYhSgwQc1ObH9UScVfAysvUEv94+SJ3NIzfnuhkk
+         0ikKzWN9/fogc5k3f/ujo7w65gZblBKk2vFZChZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 064/159] power: supply: twl4030_charger: disable eoc interrupt on linear charge
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 4.14 002/122] tee: optee: add missing of_node_put after of_device_is_available
 Date:   Fri, 22 Nov 2019 11:27:35 +0100
-Message-Id: <20191122100754.419956366@linuxfoundation.org>
+Message-Id: <20191122100723.737980643@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,75 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 079cdff3d0a09c5da10ae1be35def7a116776328 ]
+commit c7c0d8df0b94a67377555a550b8d66ee2ad2f4ed upstream.
 
-This avoids getting woken up from suspend after power interruptions
-when the bci wrongly thinks the battery is full just because
-of input current going low because of low input power
+Add an of_node_put when a tested device node is not available.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
+
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: db878f76b9ff ("tee: optee: take DT status property into account")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/power/twl4030_charger.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ drivers/tee/optee/core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/power/twl4030_charger.c b/drivers/power/twl4030_charger.c
-index 14fed11e8f6e3..5b1f147b11cb0 100644
---- a/drivers/power/twl4030_charger.c
-+++ b/drivers/power/twl4030_charger.c
-@@ -469,6 +469,7 @@ static void twl4030_current_worker(struct work_struct *data)
- static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
- {
- 	int ret;
-+	u32 reg;
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -590,8 +590,10 @@ static int __init optee_driver_init(void
+ 		return -ENODEV;
  
- 	if (bci->usb_mode == CHARGE_OFF)
- 		enable = false;
-@@ -482,14 +483,38 @@ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
- 			bci->usb_enabled = 1;
- 		}
+ 	np = of_find_matching_node(fw_np, optee_match);
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
  
--		if (bci->usb_mode == CHARGE_AUTO)
-+		if (bci->usb_mode == CHARGE_AUTO) {
-+			/* Enable interrupts now. */
-+			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_ICHGEOC |
-+					TWL4030_TBATOR2 | TWL4030_TBATOR1 |
-+					TWL4030_BATSTS);
-+			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
-+				       TWL4030_INTERRUPTS_BCIIMR1A);
-+			if (ret < 0) {
-+				dev_err(bci->dev,
-+					"failed to unmask interrupts: %d\n",
-+					ret);
-+				return ret;
-+			}
- 			/* forcing the field BCIAUTOUSB (BOOT_BCI[1]) to 1 */
- 			ret = twl4030_clear_set_boot_bci(0, TWL4030_BCIAUTOUSB);
-+		}
- 
- 		/* forcing USBFASTMCHG(BCIMFSTS4[2]) to 1 */
- 		ret = twl4030_clear_set(TWL_MODULE_MAIN_CHARGE, 0,
- 			TWL4030_USBFASTMCHG, TWL4030_BCIMFSTS4);
- 		if (bci->usb_mode == CHARGE_LINEAR) {
-+			/* Enable interrupts now. */
-+			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_TBATOR2 |
-+					TWL4030_TBATOR1 | TWL4030_BATSTS);
-+			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
-+				       TWL4030_INTERRUPTS_BCIIMR1A);
-+			if (ret < 0) {
-+				dev_err(bci->dev,
-+					"failed to unmask interrupts: %d\n",
-+					ret);
-+				return ret;
-+			}
- 			twl4030_clear_set_boot_bci(TWL4030_BCIAUTOAC|TWL4030_CVENAC, 0);
- 			/* Watch dog key: WOVF acknowledge */
- 			ret = twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0x33,
--- 
-2.20.1
-
+ 	optee = optee_probe(np);
+ 	of_node_put(np);
 
 
