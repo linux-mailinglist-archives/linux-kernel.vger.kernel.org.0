@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7529D106BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA59106C59
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfKVKqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52940 "EHLO mail.kernel.org"
+        id S1729924AbfKVKvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729545AbfKVKqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:02 -0500
+        id S1729197AbfKVKvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3060020748;
-        Fri, 22 Nov 2019 10:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 699592072E;
+        Fri, 22 Nov 2019 10:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419561;
-        bh=DLqtyD3FkQpL4d6hSuqWxbmsfSbHPKfvIDSHACFVQUw=;
+        s=default; t=1574419879;
+        bh=HSeu81ZhvvwV6IqE4gBPPXBakWr3J/9nmvn+yNdGt48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CMikqmNJ69Z2h5ffuKYtmu61LgraIdDEvszalaFTG8fAUww1L9nK4R48IZa9lUXB6
-         Ow+hJoO6TGHrer6EAx5Nfn6XU/9t9fokvC+MOLw6fAmQ0yQacWCoDOlYqwZrrO2EqG
-         UoRDjWBtFdMS0lpl5xh4krjjHTJsAwMctCJSWjNQ=
+        b=Wc1PFpCGAWrRK/gGtSEyd8y7kcVPN8ebGAgUmbws/8b7k+NDsQTl64J/dlUdMqveS
+         V+JvyueMHH8fb+lOBBDC3LSCrOPuutvLHLmYBq/un4/fLRNDp0xMjAml1izx9EPzHH
+         d9ISpVzN/dPXOk7iKRPkm1sutMak1vS82cpM1Ykw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@fb.com>
-Subject: [PATCH 4.9 153/222] block: introduce blk_rq_is_passthrough
-Date:   Fri, 22 Nov 2019 11:28:13 +0100
-Message-Id: <20191122100913.777795515@linuxfoundation.org>
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 041/122] powerpc/xive: Move a dereference below a NULL test
+Date:   Fri, 22 Nov 2019 11:28:14 +0100
+Message-Id: <20191122100754.420452462@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: zhong jiang <zhongjiang@huawei.com>
 
-commit 57292b58ddb58689e8c3b4c6eadbef10d9ca44dd upstream.
+[ Upstream commit cd5ff94577e004e0a4457e70d0ef3a030f4010b8 ]
 
-This can be used to check for fs vs non-fs requests and basically
-removes all knowledge of BLOCK_PC specific from the block layer,
-as well as preparing for removing the cmd_type field in struct request.
+Move the dereference of xc below the NULL test.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@fb.com>
-[only take the blkdev.h changes as we only want the function for backported
-patches - gregkh]
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/blkdev.h |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/powerpc/sysdev/xive/common.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -212,6 +212,11 @@ struct request {
- 	(req)->cmd_flags |= flags;		\
- } while (0)
+diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
+index 818fc5351591c..110d8bb16ebbb 100644
+--- a/arch/powerpc/sysdev/xive/common.c
++++ b/arch/powerpc/sysdev/xive/common.c
+@@ -1008,12 +1008,13 @@ static void xive_ipi_eoi(struct irq_data *d)
+ {
+ 	struct xive_cpu *xc = __this_cpu_read(xive_cpu);
  
-+static inline bool blk_rq_is_passthrough(struct request *rq)
-+{
-+	return rq->cmd_type != REQ_TYPE_FS;
-+}
+-	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
+-		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
+-
+ 	/* Handle possible race with unplug and drop stale IPIs */
+ 	if (!xc)
+ 		return;
 +
- static inline unsigned short req_get_ioprio(struct request *req)
- {
- 	return req->ioprio;
-@@ -663,7 +668,7 @@ static inline void blk_clear_rl_full(str
- 
- static inline bool rq_mergeable(struct request *rq)
- {
--	if (rq->cmd_type != REQ_TYPE_FS)
-+	if (blk_rq_is_passthrough(rq))
- 		return false;
- 
- 	if (req_op(rq) == REQ_OP_FLUSH)
-@@ -910,7 +915,7 @@ static inline unsigned int blk_rq_get_ma
- {
- 	struct request_queue *q = rq->q;
- 
--	if (unlikely(rq->cmd_type != REQ_TYPE_FS))
-+	if (blk_rq_is_passthrough(rq))
- 		return q->limits.max_hw_sectors;
- 
- 	if (!q->limits.chunk_sectors ||
++	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
++		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
++
+ 	xive_do_source_eoi(xc->hw_ipi, &xc->ipi_data);
+ 	xive_do_queue_eoi(xc);
+ }
+-- 
+2.20.1
+
 
 
