@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE59106B1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DD38106A1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfKVKlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:41:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45760 "EHLO mail.kernel.org"
+        id S1727545AbfKVKcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:32:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728990AbfKVKlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:41:18 -0500
+        id S1726563AbfKVKcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:32:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE1C92073B;
-        Fri, 22 Nov 2019 10:41:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0484820715;
+        Fri, 22 Nov 2019 10:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419277;
-        bh=YWaFJwHRcxWDbhkR+hZxM1T/r643o/UQYp0ATZ5LpZY=;
+        s=default; t=1574418719;
+        bh=n0hSoyCt+a7Qwm0d+IWQ9s8PCzkBt2QJMIFcCIC1V2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZW02fS9omoaffFLeySYKAfl3VQv7hA5EbVGCXFX1vrJvwiR3vTitIs/oVBXtgvfc3
-         cwRS7JB4r2X+KzxRcz8qOPhlBdSv7lyyYYFwhbHI8iNz2eslOcjSztHWnHZYT3FgeX
-         mhsYGlCllEptgc9JZcIe/yU5aYbXwFnv2SI1gxVM=
+        b=EondXoHLyf943iKGsndX4/pwBN7fDTg2Bj3qPts08NxB2LoF8keLF7PztO/SPH6YS
+         iaOJ6ognajkG9AA5VyPJlwYP6RN6lgoWFmjSG3jyLcBowbbasMrExXXacpLStlnjsP
+         2eXAmaIipM1UzaAQ7rFd1Z4WmTBFGZsVGkt/qkNM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <matthew.wilcox@oracle.com>,
-        George Kennedy <george.kennedy@oracle.com>,
-        Mark Kanda <mark.kanda@oracle.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/222] scsi: sym53c8xx: fix NULL pointer dereference panic in sym_int_sir()
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        syzbot+b6c55daa701fc389e286@syzkaller.appspotmail.com
+Subject: [PATCH 4.4 005/159] Input: ff-memless - kill timer in destroy()
 Date:   Fri, 22 Nov 2019 11:26:36 +0100
-Message-Id: <20191122100856.772482212@linuxfoundation.org>
+Message-Id: <20191122100709.380164428@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: George Kennedy <george.kennedy@oracle.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 288315e95264b6355e26609e9dec5dc4563d4ab0 ]
+commit fa3a5a1880c91bb92594ad42dfe9eedad7996b86 upstream.
 
-sym_int_sir() in sym_hipd.c does not check the command pointer for NULL before
-using it in debug message prints.
+No timer must be left running when the device goes away.
 
-Suggested-by: Matthew Wilcox <matthew.wilcox@oracle.com>
-Signed-off-by: George Kennedy <george.kennedy@oracle.com>
-Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
-Acked-by: Matthew Wilcox <matthew.wilcox@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-and-tested-by: syzbot+b6c55daa701fc389e286@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/1573726121.17351.3.camel@suse.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/sym53c8xx_2/sym_hipd.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/input/ff-memless.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/scsi/sym53c8xx_2/sym_hipd.c b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-index c6425e3df5a04..f1c7714377524 100644
---- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-@@ -4371,6 +4371,13 @@ static void sym_nego_rejected(struct sym_hcb *np, struct sym_tcb *tp, struct sym
- 	OUTB(np, HS_PRT, HS_BUSY);
+--- a/drivers/input/ff-memless.c
++++ b/drivers/input/ff-memless.c
+@@ -501,6 +501,15 @@ static void ml_ff_destroy(struct ff_devi
+ {
+ 	struct ml_device *ml = ff->private;
+ 
++	/*
++	 * Even though we stop all playing effects when tearing down
++	 * an input device (via input_device_flush() that calls into
++	 * input_ff_flush() that stops and erases all effects), we
++	 * do not actually stop the timer, and therefore we should
++	 * do it here.
++	 */
++	del_timer_sync(&ml->timer);
++
+ 	kfree(ml->private);
  }
  
-+#define sym_printk(lvl, tp, cp, fmt, v...) do { \
-+	if (cp)							\
-+		scmd_printk(lvl, cp->cmd, fmt, ##v);		\
-+	else							\
-+		starget_printk(lvl, tp->starget, fmt, ##v);	\
-+} while (0)
-+
- /*
-  *  chip exception handler for programmed interrupts.
-  */
-@@ -4416,7 +4423,7 @@ static void sym_int_sir(struct sym_hcb *np)
- 	 *  been selected with ATN.  We do not want to handle that.
- 	 */
- 	case SIR_SEL_ATN_NO_MSG_OUT:
--		scmd_printk(KERN_WARNING, cp->cmd,
-+		sym_printk(KERN_WARNING, tp, cp,
- 				"No MSG OUT phase after selection with ATN\n");
- 		goto out_stuck;
- 	/*
-@@ -4424,7 +4431,7 @@ static void sym_int_sir(struct sym_hcb *np)
- 	 *  having reselected the initiator.
- 	 */
- 	case SIR_RESEL_NO_MSG_IN:
--		scmd_printk(KERN_WARNING, cp->cmd,
-+		sym_printk(KERN_WARNING, tp, cp,
- 				"No MSG IN phase after reselection\n");
- 		goto out_stuck;
- 	/*
-@@ -4432,7 +4439,7 @@ static void sym_int_sir(struct sym_hcb *np)
- 	 *  an IDENTIFY.
- 	 */
- 	case SIR_RESEL_NO_IDENTIFY:
--		scmd_printk(KERN_WARNING, cp->cmd,
-+		sym_printk(KERN_WARNING, tp, cp,
- 				"No IDENTIFY after reselection\n");
- 		goto out_stuck;
- 	/*
-@@ -4461,7 +4468,7 @@ static void sym_int_sir(struct sym_hcb *np)
- 	case SIR_RESEL_ABORTED:
- 		np->lastmsg = np->msgout[0];
- 		np->msgout[0] = M_NOOP;
--		scmd_printk(KERN_WARNING, cp->cmd,
-+		sym_printk(KERN_WARNING, tp, cp,
- 			"message %x sent on bad reselection\n", np->lastmsg);
- 		goto out;
- 	/*
--- 
-2.20.1
-
 
 
