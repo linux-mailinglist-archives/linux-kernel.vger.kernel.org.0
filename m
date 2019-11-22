@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3DAE106B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A34B106A49
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:33:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbfKVKoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:44:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49686 "EHLO mail.kernel.org"
+        id S1727176AbfKVKde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:33:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728886AbfKVKn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:57 -0500
+        id S1727952AbfKVKda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:33:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F246205C9;
-        Fri, 22 Nov 2019 10:43:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56A0120714;
+        Fri, 22 Nov 2019 10:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419436;
-        bh=eGfE6SgmCLBEH7KuVge+NgvgK1bshcL4bLGOD+896oU=;
+        s=default; t=1574418809;
+        bh=J1TfCkGGjmKJvfH1ogXdHfv9dUz/lNqn2N2wwhcvuC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ljZrgbpp5+g6rPDS0Rdjp3A6a6VBly1n4UdLoTi8bGIS60rTa8qIRhxn/UO63ikzM
-         1sGCUR4XuS9a67Fo4M3nPpPGahQGaadGXNEnHYKlIiTlw+RYglcDBrdsz5Ev0ntgKn
-         5cDLf+IGq9egKERVVFGwls5SdMaa+ab8Fkmbc28w=
+        b=XfHrH0A9QO6l7NyOgLM4TIztEvmJsp/MDgOVTFrfyK1QfMvpabQJjmSJly36jPQOW
+         umdTC46rytKCVohpA/ujZyp0XgXpqriHoPlw+IQ5bTaJ0f59jnd+pLIq9JdzmQMF1d
+         i6kYuNYjRWsMZCB571k49HOwN3z+2SNlemnHjkDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 109/222] media: pci: ivtv: Fix a sleep-in-atomic-context bug in ivtv_yuv_init()
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 058/159] serial: mxs-auart: Fix potential infinite loop
 Date:   Fri, 22 Nov 2019 11:27:29 +0100
-Message-Id: <20191122100911.152356349@linuxfoundation.org>
+Message-Id: <20191122100749.514848381@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 8d11eb847de7d89c2754988c944d51a4f63e219b ]
+[ Upstream commit 5963e8a3122471cadfe0eba41c4ceaeaa5c8bb4d ]
 
-The driver may sleep in a interrupt handler.
+On the error path of mxs_auart_request_gpio_irq() is performed
+backward iterating with index i of enum type. Underline enum type
+may be unsigned char. In this case check (--i >= 0) will be always
+true and error handling goes into infinite loop.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+The patch changes the check so that it is valid for signed and unsigned
+types.
 
-[FUNC] kzalloc(GFP_KERNEL)
-drivers/media/pci/ivtv/ivtv-yuv.c, 938:
-	kzalloc in ivtv_yuv_init
-drivers/media/pci/ivtv/ivtv-yuv.c, 960:
-	ivtv_yuv_init in ivtv_yuv_next_free
-drivers/media/pci/ivtv/ivtv-yuv.c, 1126:
-	ivtv_yuv_next_free in ivtv_yuv_setup_stream_frame
-drivers/media/pci/ivtv/ivtv-irq.c, 827:
-	ivtv_yuv_setup_stream_frame in ivtv_irq_dec_data_req
-drivers/media/pci/ivtv/ivtv-irq.c, 1013:
-	ivtv_irq_dec_data_req in ivtv_irq_handler
+Found by Linux Driver Verification project (linuxtesting.org).
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/ivtv/ivtv-yuv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/mxs-auart.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/ivtv/ivtv-yuv.c b/drivers/media/pci/ivtv/ivtv-yuv.c
-index f7299d3d82449..bcb51e87c72f0 100644
---- a/drivers/media/pci/ivtv/ivtv-yuv.c
-+++ b/drivers/media/pci/ivtv/ivtv-yuv.c
-@@ -935,7 +935,7 @@ static void ivtv_yuv_init(struct ivtv *itv)
- 	}
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index daa4a65ef6ffc..fe870170db74a 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1248,8 +1248,9 @@ static int mxs_auart_request_gpio_irq(struct mxs_auart_port *s)
  
- 	/* We need a buffer for blanking when Y plane is offset - non-fatal if we can't get one */
--	yi->blanking_ptr = kzalloc(720 * 16, GFP_KERNEL|__GFP_NOWARN);
-+	yi->blanking_ptr = kzalloc(720 * 16, GFP_ATOMIC|__GFP_NOWARN);
- 	if (yi->blanking_ptr) {
- 		yi->blanking_dmaptr = pci_map_single(itv->pdev, yi->blanking_ptr, 720*16, PCI_DMA_TODEVICE);
- 	} else {
+ 	/*
+ 	 * If something went wrong, rollback.
++	 * Be careful: i may be unsigned.
+ 	 */
+-	while (err && (--i >= 0))
++	while (err && (i-- > 0))
+ 		if (irq[i] >= 0)
+ 			free_irq(irq[i], s);
+ 
 -- 
 2.20.1
 
