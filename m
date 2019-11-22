@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89B2106DB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:02:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EE7106F77
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:15:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbfKVLCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:02:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55294 "EHLO mail.kernel.org"
+        id S1729781AbfKVLPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:15:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731253AbfKVLCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:02:00 -0500
+        id S1729377AbfKVKvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 765782075B;
-        Fri, 22 Nov 2019 11:01:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D1CD2070E;
+        Fri, 22 Nov 2019 10:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420520;
-        bh=7kkQdKM17MDDKEtGn+Zxkx5RKER3gUy2kCYhpw782+w=;
+        s=default; t=1574419900;
+        bh=QWSRruHkNzMwdE+fRAukk16JA8IKf2GjVzAyMYnhh0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nUBKjVJDGI9eYSB8p9sAkHL/RQDA+RR1FvXPJe09uHcHfPIG/GBqIHqteqGJnRDii
-         BERShfQ785cF+FGdqzxrqwxDLdFozM0UDsnl7qDHnfscUbUOd8gNYvS5k9+wGoYqhb
-         /SgI3v/opLEBR4mhvVB9IekpwBBqRHE3OPg+pMeU=
+        b=CcEYmk1KPBX9a1IPkSvX9v/DOGZpKuP1ONJwig/cZXGhBnDSimUZOOjez8xeU3oRB
+         lKxnWwdaufi3LL5sWQr1X7LFgqgMgLYpE1XhED9NjefjHpsPEWraRQ6TQQ86PntCmF
+         FeuIZYcPwI22tbibp/4OuFnzeyCYVPwleWO+KKw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Bates <lucasb@mojatatu.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 135/220] tc-testing: fix build of eBPF programs
+Subject: [PATCH 4.14 047/122] clocksource/drivers/sh_cmt: Fixup for 64-bit machines
 Date:   Fri, 22 Nov 2019 11:28:20 +0100
-Message-Id: <20191122100922.526045628@linuxfoundation.org>
+Message-Id: <20191122100756.157308380@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,168 +46,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit cf5eafbfa586d030f9321cee516b91d089e38280 ]
+[ Upstream commit 22627c6f3ed3d9d0df13eec3c831b08f8186c38e ]
 
-rely on uAPI headers in the current kernel tree, rather than requiring the
-correct version installed on the test system. While at it, group all
-sections in a single binary and test the 'section' parameter.
+When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed
+that 'max_delta_ns' for the broadcast timer (CMT) was shown as 1000 in
+/proc/timer_list. It turned out that when calculating it, the driver did
+1 << 32 (causing what I think was undefined behavior) resulting in a zero
+delta, later clamped to 1000 by cev_delta2ns(). The root cause turned out
+to be that the driver abused *unsigned long* for the CMT register values
+(which are 16/32-bit), so that the calculation of 'ch->max_match_value'
+in sh_cmt_setup_channel() used the wrong branch. Using more proper 'u32'
+instead fixed 'max_delta_ns' and even fixed the switching an active
+clocksource to CMT (which caused the system to turn non-interactive
+before).
 
-Reported-by: Lucas Bates <lucasb@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../testing/selftests/tc-testing/bpf/Makefile | 29 +++++++++++++++++++
- .../testing/selftests/tc-testing/bpf/action.c | 23 +++++++++++++++
- .../tc-testing/tc-tests/actions/bpf.json      | 16 +++++-----
- .../selftests/tc-testing/tdc_config.py        |  4 ++-
- 4 files changed, 63 insertions(+), 9 deletions(-)
- create mode 100644 tools/testing/selftests/tc-testing/bpf/Makefile
- create mode 100644 tools/testing/selftests/tc-testing/bpf/action.c
+ drivers/clocksource/sh_cmt.c | 72 +++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 39 deletions(-)
 
-diff --git a/tools/testing/selftests/tc-testing/bpf/Makefile b/tools/testing/selftests/tc-testing/bpf/Makefile
-new file mode 100644
-index 0000000000000..dc92eb271d9a1
---- /dev/null
-+++ b/tools/testing/selftests/tc-testing/bpf/Makefile
-@@ -0,0 +1,29 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+APIDIR := ../../../../include/uapi
-+TEST_GEN_FILES = action.o
-+
-+top_srcdir = ../../../../..
-+include ../../lib.mk
-+
-+CLANG ?= clang
-+LLC   ?= llc
-+PROBE := $(shell $(LLC) -march=bpf -mcpu=probe -filetype=null /dev/null 2>&1)
-+
-+ifeq ($(PROBE),)
-+  CPU ?= probe
-+else
-+  CPU ?= generic
-+endif
-+
-+CLANG_SYS_INCLUDES := $(shell $(CLANG) -v -E - </dev/null 2>&1 \
-+	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }')
-+
-+CLANG_FLAGS = -I. -I$(APIDIR) \
-+	      $(CLANG_SYS_INCLUDES) \
-+	      -Wno-compare-distinct-pointer-types
-+
-+$(OUTPUT)/%.o: %.c
-+	$(CLANG) $(CLANG_FLAGS) \
-+		 -O2 -target bpf -emit-llvm -c $< -o - |      \
-+	$(LLC) -march=bpf -mcpu=$(CPU) $(LLC_FLAGS) -filetype=obj -o $@
-diff --git a/tools/testing/selftests/tc-testing/bpf/action.c b/tools/testing/selftests/tc-testing/bpf/action.c
-new file mode 100644
-index 0000000000000..c32b99b80e19e
---- /dev/null
-+++ b/tools/testing/selftests/tc-testing/bpf/action.c
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ * Copyright (c) 2018 Davide Caratti, Red Hat inc.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of version 2 of the GNU General Public
-+ * License as published by the Free Software Foundation.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <linux/pkt_cls.h>
-+
-+__attribute__((section("action-ok"),used)) int action_ok(struct __sk_buff *s)
-+{
-+	return TC_ACT_OK;
-+}
-+
-+__attribute__((section("action-ko"),used)) int action_ko(struct __sk_buff *s)
-+{
-+	s->data = 0x0;
-+	return TC_ACT_OK;
-+}
-+
-+char _license[] __attribute__((section("license"),used)) = "GPL";
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json b/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json
-index 6f289a49e5ecf..1a9b282dd0be2 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json
-@@ -55,7 +55,7 @@
-             "bpf"
-         ],
-         "setup": [
--            "printf '#include <linux/bpf.h>\nchar l[] __attribute__((section(\"license\"),used))=\"GPL\"; __attribute__((section(\"action\"),used)) int m(struct __sk_buff *s) { return 2; }' | clang -O2 -x c -c - -target bpf -o _b.o",
-+            "make -C bpf",
-             [
-                 "$TC action flush action bpf",
-                 0,
-@@ -63,14 +63,14 @@
-                 255
-             ]
-         ],
--        "cmdUnderTest": "$TC action add action bpf object-file _b.o index 667",
-+        "cmdUnderTest": "$TC action add action bpf object-file $EBPFDIR/action.o section action-ok index 667",
-         "expExitCode": "0",
-         "verifyCmd": "$TC action get action bpf index 667",
--        "matchPattern": "action order [0-9]*: bpf _b.o:\\[action\\] id [0-9]* tag 3b185187f1855c4c( jited)? default-action pipe.*index 667 ref",
-+        "matchPattern": "action order [0-9]*: bpf action.o:\\[action-ok\\] id [0-9]* tag [0-9a-f]{16}( jited)? default-action pipe.*index 667 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC action flush action bpf",
--            "rm -f _b.o"
-+            "make -C bpf clean"
-         ]
-     },
-     {
-@@ -81,7 +81,7 @@
-             "bpf"
-         ],
-         "setup": [
--            "printf '#include <linux/bpf.h>\nchar l[] __attribute__((section(\"license\"),used))=\"GPL\"; __attribute__((section(\"action\"),used)) int m(struct __sk_buff *s) { s->data = 0x0; return 2; }' | clang -O2 -x c -c - -target bpf -o _c.o",
-+            "make -C bpf",
-             [
-                 "$TC action flush action bpf",
-                 0,
-@@ -89,10 +89,10 @@
-                 255
-             ]
-         ],
--        "cmdUnderTest": "$TC action add action bpf object-file _c.o index 667",
-+        "cmdUnderTest": "$TC action add action bpf object-file $EBPFDIR/action.o section action-ko index 667",
-         "expExitCode": "255",
-         "verifyCmd": "$TC action get action bpf index 667",
--        "matchPattern": "action order [0-9]*: bpf _c.o:\\[action\\] id [0-9].*index 667 ref",
-+        "matchPattern": "action order [0-9]*: bpf action.o:\\[action-ko\\] id [0-9].*index 667 ref",
-         "matchCount": "0",
-         "teardown": [
-             [
-@@ -101,7 +101,7 @@
-                 1,
-                 255
-             ],
--            "rm -f _c.o"
-+            "make -C bpf clean"
-         ]
-     },
-     {
-diff --git a/tools/testing/selftests/tc-testing/tdc_config.py b/tools/testing/selftests/tc-testing/tdc_config.py
-index a023d0d62b25c..d651bc1501bdb 100644
---- a/tools/testing/selftests/tc-testing/tdc_config.py
-+++ b/tools/testing/selftests/tc-testing/tdc_config.py
-@@ -16,7 +16,9 @@ NAMES = {
-           'DEV2': '',
-           'BATCH_FILE': './batch.txt',
-           # Name of the namespace to use
--          'NS': 'tcut'
-+          'NS': 'tcut',
-+          # Directory containing eBPF test programs
-+          'EBPFDIR': './bpf'
-         }
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index e09e8bf0bb9bf..560541f53c8d9 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -75,18 +75,17 @@ struct sh_cmt_info {
+ 	enum sh_cmt_model model;
  
+ 	unsigned long width; /* 16 or 32 bit version of hardware block */
+-	unsigned long overflow_bit;
+-	unsigned long clear_bits;
++	u32 overflow_bit;
++	u32 clear_bits;
  
+ 	/* callbacks for CMSTR and CMCSR access */
+-	unsigned long (*read_control)(void __iomem *base, unsigned long offs);
++	u32 (*read_control)(void __iomem *base, unsigned long offs);
+ 	void (*write_control)(void __iomem *base, unsigned long offs,
+-			      unsigned long value);
++			      u32 value);
+ 
+ 	/* callbacks for CMCNT and CMCOR access */
+-	unsigned long (*read_count)(void __iomem *base, unsigned long offs);
+-	void (*write_count)(void __iomem *base, unsigned long offs,
+-			    unsigned long value);
++	u32 (*read_count)(void __iomem *base, unsigned long offs);
++	void (*write_count)(void __iomem *base, unsigned long offs, u32 value);
+ };
+ 
+ struct sh_cmt_channel {
+@@ -100,9 +99,9 @@ struct sh_cmt_channel {
+ 
+ 	unsigned int timer_bit;
+ 	unsigned long flags;
+-	unsigned long match_value;
+-	unsigned long next_match_value;
+-	unsigned long max_match_value;
++	u32 match_value;
++	u32 next_match_value;
++	u32 max_match_value;
+ 	raw_spinlock_t lock;
+ 	struct clock_event_device ced;
+ 	struct clocksource cs;
+@@ -157,24 +156,22 @@ struct sh_cmt_device {
+ #define SH_CMT32_CMCSR_CKS_RCLK1	(7 << 0)
+ #define SH_CMT32_CMCSR_CKS_MASK		(7 << 0)
+ 
+-static unsigned long sh_cmt_read16(void __iomem *base, unsigned long offs)
++static u32 sh_cmt_read16(void __iomem *base, unsigned long offs)
+ {
+ 	return ioread16(base + (offs << 1));
+ }
+ 
+-static unsigned long sh_cmt_read32(void __iomem *base, unsigned long offs)
++static u32 sh_cmt_read32(void __iomem *base, unsigned long offs)
+ {
+ 	return ioread32(base + (offs << 2));
+ }
+ 
+-static void sh_cmt_write16(void __iomem *base, unsigned long offs,
+-			   unsigned long value)
++static void sh_cmt_write16(void __iomem *base, unsigned long offs, u32 value)
+ {
+ 	iowrite16(value, base + (offs << 1));
+ }
+ 
+-static void sh_cmt_write32(void __iomem *base, unsigned long offs,
+-			   unsigned long value)
++static void sh_cmt_write32(void __iomem *base, unsigned long offs, u32 value)
+ {
+ 	iowrite32(value, base + (offs << 2));
+ }
+@@ -236,7 +233,7 @@ static const struct sh_cmt_info sh_cmt_info[] = {
+ #define CMCNT 1 /* channel register */
+ #define CMCOR 2 /* channel register */
+ 
+-static inline unsigned long sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
++static inline u32 sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
+ {
+ 	if (ch->iostart)
+ 		return ch->cmt->info->read_control(ch->iostart, 0);
+@@ -244,8 +241,7 @@ static inline unsigned long sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
+ 		return ch->cmt->info->read_control(ch->cmt->mapbase, 0);
+ }
+ 
+-static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	if (ch->iostart)
+ 		ch->cmt->info->write_control(ch->iostart, 0, value);
+@@ -253,39 +249,35 @@ static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch,
+ 		ch->cmt->info->write_control(ch->cmt->mapbase, 0, value);
+ }
+ 
+-static inline unsigned long sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
++static inline u32 sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
+ {
+ 	return ch->cmt->info->read_control(ch->ioctrl, CMCSR);
+ }
+ 
+-static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	ch->cmt->info->write_control(ch->ioctrl, CMCSR, value);
+ }
+ 
+-static inline unsigned long sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
++static inline u32 sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
+ {
+ 	return ch->cmt->info->read_count(ch->ioctrl, CMCNT);
+ }
+ 
+-static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	ch->cmt->info->write_count(ch->ioctrl, CMCNT, value);
+ }
+ 
+-static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	ch->cmt->info->write_count(ch->ioctrl, CMCOR, value);
+ }
+ 
+-static unsigned long sh_cmt_get_counter(struct sh_cmt_channel *ch,
+-					int *has_wrapped)
++static u32 sh_cmt_get_counter(struct sh_cmt_channel *ch, u32 *has_wrapped)
+ {
+-	unsigned long v1, v2, v3;
+-	int o1, o2;
++	u32 v1, v2, v3;
++	u32 o1, o2;
+ 
+ 	o1 = sh_cmt_read_cmcsr(ch) & ch->cmt->info->overflow_bit;
+ 
+@@ -305,7 +297,8 @@ static unsigned long sh_cmt_get_counter(struct sh_cmt_channel *ch,
+ 
+ static void sh_cmt_start_stop_ch(struct sh_cmt_channel *ch, int start)
+ {
+-	unsigned long flags, value;
++	unsigned long flags;
++	u32 value;
+ 
+ 	/* start stop register shared by multiple timer channels */
+ 	raw_spin_lock_irqsave(&ch->cmt->lock, flags);
+@@ -412,11 +405,11 @@ static void sh_cmt_disable(struct sh_cmt_channel *ch)
+ static void sh_cmt_clock_event_program_verify(struct sh_cmt_channel *ch,
+ 					      int absolute)
+ {
+-	unsigned long new_match;
+-	unsigned long value = ch->next_match_value;
+-	unsigned long delay = 0;
+-	unsigned long now = 0;
+-	int has_wrapped;
++	u32 value = ch->next_match_value;
++	u32 new_match;
++	u32 delay = 0;
++	u32 now = 0;
++	u32 has_wrapped;
+ 
+ 	now = sh_cmt_get_counter(ch, &has_wrapped);
+ 	ch->flags |= FLAG_REPROGRAM; /* force reprogram */
+@@ -613,9 +606,10 @@ static struct sh_cmt_channel *cs_to_sh_cmt(struct clocksource *cs)
+ static u64 sh_cmt_clocksource_read(struct clocksource *cs)
+ {
+ 	struct sh_cmt_channel *ch = cs_to_sh_cmt(cs);
+-	unsigned long flags, raw;
++	unsigned long flags;
+ 	unsigned long value;
+-	int has_wrapped;
++	u32 has_wrapped;
++	u32 raw;
+ 
+ 	raw_spin_lock_irqsave(&ch->lock, flags);
+ 	value = ch->total_cycles;
 -- 
 2.20.1
 
