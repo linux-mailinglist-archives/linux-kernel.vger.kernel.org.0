@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C473106C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:49:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BF9106A98
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:36:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbfKVKtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:49:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58260 "EHLO mail.kernel.org"
+        id S1728371AbfKVKgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:36:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729995AbfKVKtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:49:06 -0500
+        id S1727981AbfKVKgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:36:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A51520715;
-        Fri, 22 Nov 2019 10:49:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CDBB2071C;
+        Fri, 22 Nov 2019 10:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419744;
-        bh=JZdrSf66McTwmVPyGVXRXf/zpqf72r7V9/3MkaYOAbA=;
+        s=default; t=1574418973;
+        bh=wDWDDJS2rf7yjYyHmrkVoMrlXKdLWNQWajkwfNRD3zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hszOb+BKfTOLAcdM9CKoSpzqOVQmVCC2XgZOfnT0w/ktvV4YZEJaY59SXQN11OZ2M
-         wazEiElggdPRhkhi8i648RUBeG6kW0pDxNdBvPlNbx+6FCeBXgn2m09IzbfaZngaru
-         7kUVDHF50cY1VwgFhk8n3Ys0woJ+Apl+Iqfw4Usk=
+        b=CxVeNMv6yQC11c0KaVQntHx8UsDwtY+pAG1YDVDoMxD336gtxAkb57/zmyqExNKNV
+         Gy+TqqaG2NCZo9xILbew4k9RapfT5OB5OS92/GKiQTy/EIujsI+RWun4E43QY8B8tk
+         dhXu57X1gbE1Rk/QKgUAdoo/wpVqDd35zxwrQwd0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 163/222] ata: ahci_brcm: Allow using driver or DSL SoCs
-Date:   Fri, 22 Nov 2019 11:28:23 +0100
-Message-Id: <20191122100914.392555480@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 113/159] f2fs: return correct errno in f2fs_gc
+Date:   Fri, 22 Nov 2019 11:28:24 +0100
+Message-Id: <20191122100828.715602719@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 7fb44929cb0e5cdcde143e1ca3ca57b5b8247db0 ]
+[ Upstream commit 61f7725aa148ee870436a29d3a24d5c00ab7e9af ]
 
-The Broadcom STB AHCI controller is the same as the one found on DSL
-SoCs, so we will utilize the same driver on these systems as well.
+This fixes overriding error number in f2fs_gc.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/gc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 5d16fc4fa46c7..a8d4f4b5a77eb 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -100,7 +100,8 @@ config SATA_AHCI_PLATFORM
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 928b9e046d8a8..de32dfaaa492d 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -880,7 +880,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync)
  
- config AHCI_BRCM
- 	tristate "Broadcom AHCI SATA support"
--	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP
-+	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP || \
-+		   ARCH_BCM_63XX
- 	help
- 	  This option enables support for the AHCI SATA3 controller found on
- 	  Broadcom SoC's.
+ 	put_gc_inode(&gc_list);
+ 
+-	if (sync)
++	if (sync && !ret)
+ 		ret = sec_freed ? 0 : -EAGAIN;
+ 	return ret;
+ }
 -- 
 2.20.1
 
