@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD08E10618D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4136310618E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729482AbfKVF5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:57:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35758 "EHLO mail.kernel.org"
+        id S1729503AbfKVF5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:57:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729435AbfKVF50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:57:26 -0500
+        id S1728497AbfKVF5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:57:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76E542070A;
-        Fri, 22 Nov 2019 05:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E49D620717;
+        Fri, 22 Nov 2019 05:57:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574402246;
-        bh=CcGoJg+UihYBaV8Tf12lR+9gsdgjxSjD2C2kvFXqYcg=;
+        s=default; t=1574402250;
+        bh=JB48OivgvDkEPWzY0v698UMzPguwajsoOOPQ3FdxZNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GYPjoCmrfY0mpOMwmS8Btj+SlQtVk2zbDR7MgOvSOxHyczhGkGSIKlfYGIjK5agIV
-         26xyicKy3VLpLYOZCeCBpPDtlcb66I9ZyPLiWV4LXLm6ebWq1b50n0wJpIOvPsXVpD
-         pKjSal1gDr8jNkfwYNsUu9ubpHZrOTgkBLHfjnTQ=
+        b=rXQEe669wf4WjKrKRsl5RydpGoCNQV9nPDdpkVS5SnEmoZGCVot1NZGg2iNIKGka5
+         gxJ82RGRRaABzmbkVfS9NoWbQp+ki3U5V4VgxXMEJXFC634nDrePnQ5UlYvqjr0AEE
+         H+ESg9nj1nIhjjg/bblG5ghhD/LJLlfyHtF/Jp/g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>, Peng Hao <peng.hao2@zte.com.cn>,
-        Zhao Qiang <qiang.zhao@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 090/127] net/wan/fsl_ucc_hdlc: Avoid double free in ucc_hdlc_probe()
-Date:   Fri, 22 Nov 2019 00:55:08 -0500
-Message-Id: <20191122055544.3299-89-sashal@kernel.org>
+Cc:     Alexey Skidanov <alexey.skidanov@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 093/127] lib/genalloc.c: fix allocation of aligned buffer from non-aligned chunk
+Date:   Fri, 22 Nov 2019 00:55:11 -0500
+Message-Id: <20191122055544.3299-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122055544.3299-1-sashal@kernel.org>
 References: <20191122055544.3299-1-sashal@kernel.org>
@@ -44,37 +48,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Alexey Skidanov <alexey.skidanov@intel.com>
 
-[ Upstream commit 40752b3eae29f8ca2378e978a02bd6dbeeb06d16 ]
+[ Upstream commit 52fbf1134d479234d7e64ba9dcbaea23405f229e ]
 
-This patch fixes potential double frees if register_hdlc_device() fails.
+gen_pool_alloc_algo() uses different allocation functions implementing
+different allocation algorithms.  With gen_pool_first_fit_align()
+allocation function, the returned address should be aligned on the
+requested boundary.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
-CC: Zhao Qiang <qiang.zhao@nxp.com>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-CC: linuxppc-dev@lists.ozlabs.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+If chunk start address isn't aligned on the requested boundary, the
+returned address isn't aligned too.  The only way to get properly
+aligned address is to initialize the pool with chunks aligned on the
+requested boundary.  If want to have an ability to allocate buffers
+aligned on different boundaries (for example, 4K, 1MB, ...), the chunk
+start address should be aligned on the max possible alignment.
+
+This happens because gen_pool_first_fit_align() looks for properly
+aligned memory block without taking into account the chunk start address
+alignment.
+
+To fix this, we provide chunk start address to
+gen_pool_first_fit_align() and change its implementation such that it
+starts looking for properly aligned block with appropriate offset
+(exactly as is done in CMA).
+
+Link: https://lkml.kernel.org/lkml/a170cf65-6884-3592-1de9-4c235888cc8a@intel.com
+Link: http://lkml.kernel.org/r/1541690953-4623-1-git-send-email-alexey.skidanov@intel.com
+Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Daniel Mentz <danielmentz@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/genalloc.h | 13 +++++++------
+ lib/genalloc.c           | 20 ++++++++++++--------
+ 2 files changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index 18b648648adb2..289dff262948d 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -1114,7 +1114,6 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
- 	if (register_hdlc_device(dev)) {
- 		ret = -ENOBUFS;
- 		pr_err("ucc_hdlc: unable to register hdlc device\n");
--		free_netdev(dev);
- 		goto free_dev;
- 	}
+diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
+index 872f930f1b06d..dd0a452373e71 100644
+--- a/include/linux/genalloc.h
++++ b/include/linux/genalloc.h
+@@ -51,7 +51,8 @@ typedef unsigned long (*genpool_algo_t)(unsigned long *map,
+ 			unsigned long size,
+ 			unsigned long start,
+ 			unsigned int nr,
+-			void *data, struct gen_pool *pool);
++			void *data, struct gen_pool *pool,
++			unsigned long start_addr);
  
+ /*
+  *  General purpose special memory pool descriptor.
+@@ -131,24 +132,24 @@ extern void gen_pool_set_algo(struct gen_pool *pool, genpool_algo_t algo,
+ 
+ extern unsigned long gen_pool_first_fit(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+-		struct gen_pool *pool);
++		struct gen_pool *pool, unsigned long start_addr);
+ 
+ extern unsigned long gen_pool_fixed_alloc(unsigned long *map,
+ 		unsigned long size, unsigned long start, unsigned int nr,
+-		void *data, struct gen_pool *pool);
++		void *data, struct gen_pool *pool, unsigned long start_addr);
+ 
+ extern unsigned long gen_pool_first_fit_align(unsigned long *map,
+ 		unsigned long size, unsigned long start, unsigned int nr,
+-		void *data, struct gen_pool *pool);
++		void *data, struct gen_pool *pool, unsigned long start_addr);
+ 
+ 
+ extern unsigned long gen_pool_first_fit_order_align(unsigned long *map,
+ 		unsigned long size, unsigned long start, unsigned int nr,
+-		void *data, struct gen_pool *pool);
++		void *data, struct gen_pool *pool, unsigned long start_addr);
+ 
+ extern unsigned long gen_pool_best_fit(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+-		struct gen_pool *pool);
++		struct gen_pool *pool, unsigned long start_addr);
+ 
+ 
+ extern struct gen_pool *devm_gen_pool_create(struct device *dev,
+diff --git a/lib/genalloc.c b/lib/genalloc.c
+index ca06adc4f4451..5deb25c40a5a1 100644
+--- a/lib/genalloc.c
++++ b/lib/genalloc.c
+@@ -311,7 +311,7 @@ unsigned long gen_pool_alloc_algo(struct gen_pool *pool, size_t size,
+ 		end_bit = chunk_size(chunk) >> order;
+ retry:
+ 		start_bit = algo(chunk->bits, end_bit, start_bit,
+-				 nbits, data, pool);
++				 nbits, data, pool, chunk->start_addr);
+ 		if (start_bit >= end_bit)
+ 			continue;
+ 		remain = bitmap_set_ll(chunk->bits, start_bit, nbits);
+@@ -525,7 +525,7 @@ EXPORT_SYMBOL(gen_pool_set_algo);
+  */
+ unsigned long gen_pool_first_fit(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+-		struct gen_pool *pool)
++		struct gen_pool *pool, unsigned long start_addr)
+ {
+ 	return bitmap_find_next_zero_area(map, size, start, nr, 0);
+ }
+@@ -543,16 +543,19 @@ EXPORT_SYMBOL(gen_pool_first_fit);
+  */
+ unsigned long gen_pool_first_fit_align(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+-		struct gen_pool *pool)
++		struct gen_pool *pool, unsigned long start_addr)
+ {
+ 	struct genpool_data_align *alignment;
+-	unsigned long align_mask;
++	unsigned long align_mask, align_off;
+ 	int order;
+ 
+ 	alignment = data;
+ 	order = pool->min_alloc_order;
+ 	align_mask = ((alignment->align + (1UL << order) - 1) >> order) - 1;
+-	return bitmap_find_next_zero_area(map, size, start, nr, align_mask);
++	align_off = (start_addr & (alignment->align - 1)) >> order;
++
++	return bitmap_find_next_zero_area_off(map, size, start, nr,
++					      align_mask, align_off);
+ }
+ EXPORT_SYMBOL(gen_pool_first_fit_align);
+ 
+@@ -567,7 +570,7 @@ EXPORT_SYMBOL(gen_pool_first_fit_align);
+  */
+ unsigned long gen_pool_fixed_alloc(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+-		struct gen_pool *pool)
++		struct gen_pool *pool, unsigned long start_addr)
+ {
+ 	struct genpool_data_fixed *fixed_data;
+ 	int order;
+@@ -601,7 +604,8 @@ EXPORT_SYMBOL(gen_pool_fixed_alloc);
+  */
+ unsigned long gen_pool_first_fit_order_align(unsigned long *map,
+ 		unsigned long size, unsigned long start,
+-		unsigned int nr, void *data, struct gen_pool *pool)
++		unsigned int nr, void *data, struct gen_pool *pool,
++		unsigned long start_addr)
+ {
+ 	unsigned long align_mask = roundup_pow_of_two(nr) - 1;
+ 
+@@ -624,7 +628,7 @@ EXPORT_SYMBOL(gen_pool_first_fit_order_align);
+  */
+ unsigned long gen_pool_best_fit(unsigned long *map, unsigned long size,
+ 		unsigned long start, unsigned int nr, void *data,
+-		struct gen_pool *pool)
++		struct gen_pool *pool, unsigned long start_addr)
+ {
+ 	unsigned long start_bit = size;
+ 	unsigned long len = size + 1;
 -- 
 2.20.1
 
