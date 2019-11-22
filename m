@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A242D106A39
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24524106B37
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfKVKcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:32:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54680 "EHLO mail.kernel.org"
+        id S1728689AbfKVKmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:42:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727796AbfKVKcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:32:48 -0500
+        id S1729098AbfKVKmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:42:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 962422071C;
-        Fri, 22 Nov 2019 10:32:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 826EA20637;
+        Fri, 22 Nov 2019 10:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418768;
-        bh=tOHwYIJ+ZNa6Ys/BfqqTmWqfcuoUDV1G9q0KLw6kepc=;
+        s=default; t=1574419341;
+        bh=XO4jExzsjGqVGycvgNA7RUSP7N/Lq6fZtpDKT8aTcWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1KyK+yMBXaetiAb6GfOA5iBGKw56dc25MHB6HmEaUgihKqFmisQTQAccgd18BmZj
-         6cu+QG1XIraJe/045BC+dKMBdPL0w+0maoQuJZZ4AShLgM9nnmsnMHt4Xba6Th0Fwl
-         JLN/LCBZ7MK/J+adFM3tapS79qxfnfocwc+H/BlA=
+        b=KWfGdcwJ51kZqX156Wsj7Cl2qiLRDxcKu91+bM0cyhpvXb2AV/j5RkNawDvk7saQL
+         saukZm+PxAoxo++HOXLs43spIWe2IeRu4Qr2HpsR3vypnl+qwdbLX+AvvQmjkbU5ox
+         ADqhImxtbk2zluqMZn931O/M2XIxWaMST/6Pu1EE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erik Stromdahl <erik.stromdahl@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 028/159] ath10k: wmi: disable softirqs while calling ieee80211_rx
-Date:   Fri, 22 Nov 2019 11:26:59 +0100
-Message-Id: <20191122100725.950086268@linuxfoundation.org>
+Subject: [PATCH 4.9 080/222] s390/qeth: invoke softirqs after napi_schedule()
+Date:   Fri, 22 Nov 2019 11:27:00 +0100
+Message-Id: <20191122100909.177901944@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erik Stromdahl <erik.stromdahl@gmail.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 37f62c0d5822f631b786b29a1b1069ab714d1a28 ]
+[ Upstream commit 4d19db777a2f32c9b76f6fd517ed8960576cb43e ]
 
-This is done in order not to trig the below warning in
-ieee80211_rx_napi:
+Calling napi_schedule() from process context does not ensure that the
+NET_RX softirq is run in a timely fashion. So trigger it manually.
 
-WARN_ON_ONCE(softirq_count() == 0);
+This is no big issue with current code. A call to ndo_open() is usually
+followed by a ndo_set_rx_mode() call, and for qeth this contains a
+spin_unlock_bh(). Except for OSN, where qeth_l2_set_rx_mode() bails out
+early.
+Nevertheless it's best to not depend on this behaviour, and just fix
+the issue at its source like all other drivers do. For instance see
+commit 83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule").
 
-ieee80211_rx_napi requires that softirq's are disabled during
-execution.
-
-The High latency bus drivers (SDIO and USB) sometimes call the wmi
-ep_rx_complete callback from non softirq context, resulting in a trigger
-of the above warning.
-
-Calling ieee80211_rx_ni with softirq's already disabled (e.g., from
-softirq context) should be safe as the local_bh_disable and
-local_bh_enable functions (called from ieee80211_rx_ni) are fully
-reentrant.
-
-Signed-off-by: Erik Stromdahl <erik.stromdahl@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: a1c3ed4c9ca0 ("qeth: NAPI support for l2 and l3 discipline")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/net/qeth_l2_main.c | 3 +++
+ drivers/s390/net/qeth_l3_main.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index b867875aa6e66..f7ce99f67b5c5 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -2294,7 +2294,8 @@ int ath10k_wmi_event_mgmt_rx(struct ath10k *ar, struct sk_buff *skb)
- 		   status->freq, status->band, status->signal,
- 		   status->rate_idx);
+diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
+index 6ba4e921d2fd3..51152681aba6e 100644
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -991,7 +991,10 @@ static int __qeth_l2_open(struct net_device *dev)
  
--	ieee80211_rx(ar->hw, skb);
-+	ieee80211_rx_ni(ar->hw, skb);
-+
- 	return 0;
- }
+ 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
+ 		napi_enable(&card->napi);
++		local_bh_disable();
+ 		napi_schedule(&card->napi);
++		/* kick-start the NAPI softirq: */
++		local_bh_enable();
+ 	} else
+ 		rc = -EIO;
+ 	return rc;
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index 6e6ba1baf9c48..b40a61d9ad9ec 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -3005,7 +3005,10 @@ static int __qeth_l3_open(struct net_device *dev)
  
+ 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
+ 		napi_enable(&card->napi);
++		local_bh_disable();
+ 		napi_schedule(&card->napi);
++		/* kick-start the NAPI softirq: */
++		local_bh_enable();
+ 	} else
+ 		rc = -EIO;
+ 	return rc;
 -- 
 2.20.1
 
