@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6AF3106D2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 453EF106A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfKVK6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47462 "EHLO mail.kernel.org"
+        id S1727645AbfKVKcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:32:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730502AbfKVK6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:58:00 -0500
+        id S1726880AbfKVKcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:32:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8341F20721;
-        Fri, 22 Nov 2019 10:57:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FB1220731;
+        Fri, 22 Nov 2019 10:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420280;
-        bh=yW1ZY926CRyEvYL8nf0PNItB9Msvnl5KBJPysHlwXVc=;
+        s=default; t=1574418736;
+        bh=gMqcaMz6j2FWdYm0XIoeIVYKUfS15ZJ0xT91Kpz2NNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xAHzKmrLXwAX8HfWj8eYN6ogp/frZfYLAgikXiQIP/9DjXQu2IEhsHiizhkIf9H1V
-         gAv+XQDfnV10eb67z7pPymG5d10BFvU31vgQH7tRY6Zqwr+W2zFDo68zQyCs/BmkBt
-         3ynTdartDY3ngnwlP0LNxaOsupG7pytgGHxCI2eg=
+        b=AHYHGiorIGQCrqrLOF+hcl589Qa2J0pVlAd9n/VyWXKF4jt0KFcGJvmZSfBOewG6q
+         a4UTAF/dc7pjHL/LHqnDTUUAxHKI5GA/1u1PpBQMS6OPuDkrQEv5/8rO1sq6fc+Ffb
+         BA9FOKyDp2RVHkymHqQBpHo2HEXmyd4ujMmLHXAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/220] watchdog: w83627hf_wdt: Support NCT6796D, NCT6797D, NCT6798D
+Subject: [PATCH 4.4 027/159] ARM: dts: exynos: Disable pull control for S5M8767 PMIC
 Date:   Fri, 22 Nov 2019 11:26:58 +0100
-Message-Id: <20191122100915.975229254@linuxfoundation.org>
+Message-Id: <20191122100724.918456999@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 57cbf0e3a0fd48e5ad8f3884562e8dde4827c1c8 ]
+[ Upstream commit ef2ecab9af5feae97c47b7f61cdd96f7f49b2c23 ]
 
-The watchdog controller on NCT6796D, NCT6797D, and NCT6798D is compatible
-with the wtachdog controller on other Nuvoton chips.
+S5M8767 PMIC interrupt line on Exynos5250-based Arndale board has
+external pull-up resistors, so disable any pull control for it in
+in controller node. This fixes support for S5M8767 interrupts and
+enables operation of wakeup from S5M8767 RTC alarm.
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Wim Van Sebroeck <wim@linux-watchdog.org>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/w83627hf_wdt.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5250-arndale.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/watchdog/w83627hf_wdt.c b/drivers/watchdog/w83627hf_wdt.c
-index 7817836bff554..4b9365d4de7a9 100644
---- a/drivers/watchdog/w83627hf_wdt.c
-+++ b/drivers/watchdog/w83627hf_wdt.c
-@@ -50,7 +50,7 @@ static int cr_wdt_csr;		/* WDT control & status register */
- enum chips { w83627hf, w83627s, w83697hf, w83697ug, w83637hf, w83627thf,
- 	     w83687thf, w83627ehf, w83627dhg, w83627uhg, w83667hg, w83627dhg_p,
- 	     w83667hg_b, nct6775, nct6776, nct6779, nct6791, nct6792, nct6793,
--	     nct6795, nct6102 };
-+	     nct6795, nct6796, nct6102 };
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index c000532c14446..b425b77f8fb65 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -170,6 +170,8 @@
+ 		reg = <0x66>;
+ 		interrupt-parent = <&gpx3>;
+ 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&s5m8767_irq>;
  
- static int timeout;			/* in seconds */
- module_param(timeout, int, 0);
-@@ -100,6 +100,7 @@ MODULE_PARM_DESC(early_disable, "Disable watchdog at boot time (default=0)");
- #define NCT6792_ID		0xc9
- #define NCT6793_ID		0xd1
- #define NCT6795_ID		0xd3
-+#define NCT6796_ID		0xd4	/* also NCT9697D, NCT9698D */
+ 		vinb1-supply = <&main_dc_reg>;
+ 		vinb2-supply = <&main_dc_reg>;
+@@ -552,6 +554,13 @@
+ 	cap-sd-highspeed;
+ };
  
- #define W83627HF_WDT_TIMEOUT	0xf6
- #define W83697HF_WDT_TIMEOUT	0xf4
-@@ -209,6 +210,7 @@ static int w83627hf_init(struct watchdog_device *wdog, enum chips chip)
- 	case nct6792:
- 	case nct6793:
- 	case nct6795:
-+	case nct6796:
- 	case nct6102:
- 		/*
- 		 * These chips have a fixed WDTO# output pin (W83627UHG),
-@@ -407,6 +409,9 @@ static int wdt_find(int addr)
- 	case NCT6795_ID:
- 		ret = nct6795;
- 		break;
-+	case NCT6796_ID:
-+		ret = nct6796;
-+		break;
- 	case NCT6102_ID:
- 		ret = nct6102;
- 		cr_wdt_timeout = NCT6102D_WDT_TIMEOUT;
-@@ -450,6 +455,7 @@ static int __init wdt_init(void)
- 		"NCT6792",
- 		"NCT6793",
- 		"NCT6795",
-+		"NCT6796",
- 		"NCT6102",
- 	};
- 
++&pinctrl_0 {
++	s5m8767_irq: s5m8767-irq {
++		samsung,pins = "gpx3-2";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++};
++
+ &rtc {
+ 	status = "okay";
+ };
 -- 
 2.20.1
 
