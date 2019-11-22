@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8859F106FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F04CD106F37
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbfKVLRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:17:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57514 "EHLO mail.kernel.org"
+        id S1729452AbfKVLOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:14:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728801AbfKVKsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:35 -0500
+        id S1729177AbfKVKxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A44FF205C9;
-        Fri, 22 Nov 2019 10:48:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF57D20637;
+        Fri, 22 Nov 2019 10:53:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419715;
-        bh=julWjBlCYWiwOVW4slF5Jvmglxdu1fcIEx8uEPF98IM=;
+        s=default; t=1574420031;
+        bh=fPTTL918haYPzKywCNCsAU+vg6L7/gNh4/5v3ts11vI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EsDwliwxVQC5tAjdHJfSL58YRXrjeLceAoPKz0e9eNtSmv4ZnC6/XqIMyDwqhMTRd
-         mTsWc27i+RVJ6U9r3JxxDt0WFThKkYLdcnk5pkvvJDEE0si8r1ivzBhha1P5qR45m0
-         cYgOWli37gMoOTJ5RP1Cs+NQx4457CwDlNr10uhk=
+        b=H3EZFMMqPyMWV0hdlYSqNjuDjUi8VyyXGS1LywfND/bgZYZRk++GPMCOADqK61Y+c
+         R/8rpUHoOuiIN0kjjqTXQJ+9dtqb7OY+xju1eQk2Dw6RfWo/4sJkpgpK+UP6ERHMh+
+         jrd6H5Lh3yW7fkboLHK5Z3JsNMv1vuApR32mIdSw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Rajmohan Mani <rajmohan.mani@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 205/222] backlight: lm3639: Unconditionally call led_classdev_unregister
-Date:   Fri, 22 Nov 2019 11:29:05 +0100
-Message-Id: <20191122100917.099846929@linuxfoundation.org>
+Subject: [PATCH 4.14 093/122] media: dw9714: Fix error handling in probe function
+Date:   Fri, 22 Nov 2019 11:29:06 +0100
+Message-Id: <20191122100829.189606172@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Rajmohan Mani <rajmohan.mani@intel.com>
 
-[ Upstream commit 7cea645ae9c5a54aa7904fddb2cdf250acd63a6c ]
+[ Upstream commit f9a0b14240a2d0bd196d35e8aac73df6eabd6382 ]
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context.
+Fixed the case where v4l2_async_unregister_subdev()
+is called unnecessarily in the error handling path
+in probe function.
 
-drivers/video/backlight/lm3639_bl.c:403:14: warning: address of
-'pchip->cdev_torch' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (&pchip->cdev_torch)
-        ~~   ~~~~~~~^~~~~~~~~~
-drivers/video/backlight/lm3639_bl.c:405:14: warning: address of
-'pchip->cdev_flash' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (&pchip->cdev_flash)
-        ~~   ~~~~~~~^~~~~~~~~~
-2 warnings generated.
-
-These statements have been present since 2012, introduced by
-commit 0f59858d5119 ("backlight: add new lm3639 backlight
-driver"). Given that they have been called unconditionally since
-then presumably without any issues, removing the always true if
-statements to fix the warnings without any real world changes.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/119
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/backlight/lm3639_bl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/i2c/dw9714.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/video/backlight/lm3639_bl.c b/drivers/video/backlight/lm3639_bl.c
-index cd50df5807ead..086611c7bc03c 100644
---- a/drivers/video/backlight/lm3639_bl.c
-+++ b/drivers/video/backlight/lm3639_bl.c
-@@ -400,10 +400,8 @@ static int lm3639_remove(struct i2c_client *client)
- 
- 	regmap_write(pchip->regmap, REG_ENABLE, 0x00);
- 
--	if (&pchip->cdev_torch)
--		led_classdev_unregister(&pchip->cdev_torch);
--	if (&pchip->cdev_flash)
--		led_classdev_unregister(&pchip->cdev_flash);
-+	led_classdev_unregister(&pchip->cdev_torch);
-+	led_classdev_unregister(&pchip->cdev_flash);
- 	if (pchip->bled)
- 		device_remove_file(&(pchip->bled->dev), &dev_attr_bled_mode);
+diff --git a/drivers/media/i2c/dw9714.c b/drivers/media/i2c/dw9714.c
+index 95af4fc99cd04..c1273bcd59011 100644
+--- a/drivers/media/i2c/dw9714.c
++++ b/drivers/media/i2c/dw9714.c
+@@ -182,7 +182,8 @@ static int dw9714_probe(struct i2c_client *client)
  	return 0;
+ 
+ err_cleanup:
+-	dw9714_subdev_cleanup(dw9714_dev);
++	v4l2_ctrl_handler_free(&dw9714_dev->ctrls_vcm);
++	media_entity_cleanup(&dw9714_dev->sd.entity);
+ 	dev_err(&client->dev, "Probe failed: %d\n", rval);
+ 	return rval;
+ }
 -- 
 2.20.1
 
