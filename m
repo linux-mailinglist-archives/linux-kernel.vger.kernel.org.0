@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DF72106B4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A953C106D48
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfKVKnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
+        id S1730835AbfKVK6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:58:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729167AbfKVKm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:42:58 -0500
+        id S1730320AbfKVK6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E1B20637;
-        Fri, 22 Nov 2019 10:42:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1916520679;
+        Fri, 22 Nov 2019 10:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419377;
-        bh=uNuL2SlXQPCd2xQq6qydXDinsZiQ5RcmM24s08p/bDM=;
+        s=default; t=1574420324;
+        bh=/kUxBZofQMik3Dzfcnk3DamI5JTvSzhgcjGK39WSwNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TVD8MD5Q7mO6mQTGsqnlESU/UsJyJ91K2tXBgivmYYvwSUswyxPYeoRpjCA4qEAl8
-         HIJKBKPjVsYd8TRDGcoGMAhz0D2NtnYg5ElXNZ3kwgdqgJOJthY4rD2RMUZ0MVEcXG
-         ih0H/YpB5XShhjDWl0/8w+mFULm4/GW6VFfQDOyg=
+        b=tSgJVgtbDKkRjvces4Wyqv4V23LVi1CVmSdpr5YTULQqW5ad4vEZRJghSQKFqZ8gC
+         7zENd/yJvUexIClcziIWdcdfAWXb3sj0w3hWu+zvIS8bFz9cVYVmDQTKzSywuaGmiE
+         i6lvt5qxyQZ+6h4a3uEPh5Hfx40bMTKFGvUlsyFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 091/222] net: xilinx: fix return type of ndo_start_xmit function
+Subject: [PATCH 4.19 066/220] cxgb4: Use proper enum in IEEE_FAUX_SYNC
 Date:   Fri, 22 Nov 2019 11:27:11 +0100
-Message-Id: <20191122100910.090140408@linuxfoundation.org>
+Message-Id: <20191122100916.877422284@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 81255af8d9d5565004792c295dde49344df450ca ]
+[ Upstream commit 258b6d141878530ba1f8fc44db683822389de914 ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Found by coccinelle.
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:390:4: warning: implicit
+conversion from enumeration type 'enum cxgb4_dcb_state' to different
+enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
+                        IEEE_FAUX_SYNC(dev, dcb);
+                        ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h:70:10: note: expanded
+from macro 'IEEE_FAUX_SYNC'
+                                            CXGB4_DCB_STATE_FW_ALLSYNCED);
+                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Use the equivalent value of the expected type to silence Clang while
+resulting in no functional change.
+
+CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/xilinx/ll_temac_main.c       | 3 ++-
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 3 ++-
- drivers/net/ethernet/xilinx/xilinx_emaclite.c     | 9 +++++----
- 3 files changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index a9bd665fd1225..545f60877bb7d 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -673,7 +673,8 @@ static inline int temac_check_tx_bd_space(struct temac_local *lp, int num_frag)
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
+index 02040b99c78a0..484ee82900903 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
+@@ -67,7 +67,7 @@
+ 	do { \
+ 		if ((__dcb)->dcb_version == FW_PORT_DCB_VER_IEEE) \
+ 			cxgb4_dcb_state_fsm((__dev), \
+-					    CXGB4_DCB_STATE_FW_ALLSYNCED); \
++					    CXGB4_DCB_INPUT_FW_ALLSYNCED); \
+ 	} while (0)
  
--static int temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t
-+temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct temac_local *lp = netdev_priv(ndev);
- 	struct cdmac_bd *cur_p;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 5f21ddff9e0f9..46fcf3ec2caf7 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -655,7 +655,8 @@ static inline int axienet_check_tx_bd_space(struct axienet_local *lp,
-  * start the transmission. Additionally if checksum offloading is supported,
-  * it populates AXI Stream Control fields with appropriate values.
-  */
--static int axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t
-+axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	u32 ii;
- 	u32 num_frag;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-index aa02a03a6d8db..034b36442ee75 100644
---- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-@@ -1005,9 +1005,10 @@ static int xemaclite_close(struct net_device *dev)
-  * deferred and the Tx queue is stopped so that the deferred socket buffer can
-  * be transmitted when the Emaclite device is free to transmit data.
-  *
-- * Return:	0, always.
-+ * Return:	NETDEV_TX_OK, always.
-  */
--static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
-+static netdev_tx_t
-+xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
- {
- 	struct net_local *lp = netdev_priv(dev);
- 	struct sk_buff *new_skb;
-@@ -1028,7 +1029,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
- 		/* Take the time stamp now, since we can't do this in an ISR. */
- 		skb_tx_timestamp(new_skb);
- 		spin_unlock_irqrestore(&lp->reset_lock, flags);
--		return 0;
-+		return NETDEV_TX_OK;
- 	}
- 	spin_unlock_irqrestore(&lp->reset_lock, flags);
- 
-@@ -1037,7 +1038,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
- 	dev->stats.tx_bytes += len;
- 	dev_consume_skb_any(new_skb);
- 
--	return 0;
-+	return NETDEV_TX_OK;
- }
- 
- /**
+ /* States we can be in for a port's Data Center Bridging.
 -- 
 2.20.1
 
