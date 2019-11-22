@@ -2,81 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42167105E3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92FF0105E23
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKVB2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 20:28:16 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:44930 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfKVB2Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 20:28:16 -0500
-Received: by mail-pj1-f66.google.com with SMTP id w8so2306322pjh.11;
-        Thu, 21 Nov 2019 17:28:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Jz0EfbEsNQAkLV1wwCUeENwLvrycSeRUXKL40gy/RCM=;
-        b=gxDbIDPYIbaftf7A4iOgIRzb23HlGkbLpGLUuAq4rCDqhPb8h/RIvKtQNc12FC2idM
-         7nn/5LsyE4zA5Cdz7WrlYcjWvxUTgH4Wi/LwLB3/MJhsQcVDUY3IkbA3s689X7Efgfmk
-         vg0WKi4KJLHFmo52alK5yzza58kJGm7Qh/xinCfrgxsg9BXzv19+PHY/7+K4XbXqza5j
-         LeMBreu9a1MBTqOkSKKwjRWpl3+EpdgF9kPMj1sTUcjpNkprJQ8SO2Zw6Z+XA6QeZwUi
-         9v1jFB4RSP0sArRWdnawWXddEbm2iRGau2s0CjBuFmkiVTZ/XiVaLRqp6sSNLOaPD5V9
-         3JKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jz0EfbEsNQAkLV1wwCUeENwLvrycSeRUXKL40gy/RCM=;
-        b=lP1gAM0riOxtEh/mKPol+ua77XiGNtt7VswRW48akFprqFwf/kevxEw5h1Zn+ozqNi
-         hQ88Fi/yAj5vXtMUPvX+tyD42VBraMz0rp1f2vU9jcHrJA2RNmhR3vFzi6ux8xomSCNj
-         HwianDgQrZZusxfUyUVNhRpqoG68QDjkE9GaLmOuw4HLEQ3msudRx2buNxKfXtFEamYZ
-         tglqrbwi8rCAl1lDcjPmIaKFL/wKxTF+Kv9sDSJ/8sQbx21jYDGUeCY8jWnNbJHG8YiP
-         mlFGBZe3hChdhZY5sbTO4J7bRFi5SbTTJhX2vyvKaZrlqDZXvKA+TYGHneNPvpKXjp1k
-         eYmg==
-X-Gm-Message-State: APjAAAVk0d+LQgzFP2UzR02lRA+ye52m6zY3U8MxHEMQgZDOAR5rg1BI
-        KnzvAWRSW9om2G2lnLcrH1I=
-X-Google-Smtp-Source: APXvYqwQ0a8d7FAp9NIk01KOrDsBzyhRPEoCvYfC3bVx5KzdzXfAszdCqSwZKauFekRinPKYyfVQbg==
-X-Received: by 2002:a17:902:4a:: with SMTP id 68mr11876690pla.158.1574386095677;
-        Thu, 21 Nov 2019 17:28:15 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
-        by smtp.gmail.com with ESMTPSA id y4sm4404935pgy.27.2019.11.21.17.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 17:28:14 -0800 (PST)
-Date:   Fri, 22 Nov 2019 10:28:12 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] zram: Fix Kconfig indentation
-Message-ID: <20191122012812.GA161597@google.com>
-References: <20191121132935.29604-1-krzk@kernel.org>
+        id S1726634AbfKVBZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 20:25:49 -0500
+Received: from mga05.intel.com ([192.55.52.43]:47273 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbfKVBZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 20:25:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 17:25:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,228,1571727600"; 
+   d="scan'208";a="210108101"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
+  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2019 17:25:46 -0800
+Date:   Fri, 22 Nov 2019 09:32:45 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     kernel test robot <lkp@intel.com>, LKP <lkp@lists.01.org>,
+        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: 2989f64510 ("dma-buf: Add selftests for dma-fence"): WARNING:
+ CPU: 0 PID: 1 at lib/debugobjects.c:524 __debug_object_init
+Message-ID: <20191122013244.GC313@intel.com>
+References: <5dd63a8f.BFdOlqs/XZAJHDfR%lkp@intel.com>
+ <157432116576.24852.2065478066028556019@skylake-alporthouse-com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121132935.29604-1-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <157432116576.24852.2065478066028556019@skylake-alporthouse-com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc-ing Andrew
-
-id: 20191121132935.29604-1-krzk@kernel.org
-
-On (19/11/21 21:29), Krzysztof Kozlowski wrote:
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
+On Thu, Nov 21, 2019 at 07:26:05AM +0000, Chris Wilson wrote:
+> Quoting kernel test robot (2019-11-21 07:19:43)
+> > Greetings,
+> > 
+> > 0day kernel testing robot got the below dmesg and the first bad commit is
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > 
+> > commit 2989f6451084aed3f8cc9992477f7a9bf57a3716
+> > Author:     Chris Wilson <chris@chris-wilson.co.uk>
+> > AuthorDate: Mon Aug 19 10:59:27 2019 +0100
+> > Commit:     Chris Wilson <chris@chris-wilson.co.uk>
+> > CommitDate: Mon Aug 19 18:09:46 2019 +0100
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> That's a belated report, fixed by
+Hi Chris, thanks for the feedback, we will double check this report and
+provide update later.
 
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-
-	-ss
+> 
+> commit 6ac3a0ebfcc2f0c75ca0ca6974389ce421aa5cbd
+> Author: Chris Wilson <chris@chris-wilson.co.uk>
+> Date:   Tue Aug 20 13:21:18 2019 +0100
+> 
+> 	dmabuf: Mark up onstack timer for selftests
+> 
+> No?
+> -Chris
