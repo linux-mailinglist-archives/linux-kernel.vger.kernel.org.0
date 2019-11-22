@@ -2,122 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C79107589
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A144107596
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfKVQO4 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 22 Nov 2019 11:14:56 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:45539 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbfKVQOz (ORCPT
+        id S1727438AbfKVQQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 11:16:57 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43991 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbfKVQQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 11:14:55 -0500
-Received: from marcel-macbook.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
-        by mail.holtmann.org (Postfix) with ESMTPSA id BE461CED23;
-        Fri, 22 Nov 2019 17:24:00 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH v6 3/4] dt-bindings: net: broadcom-bluetooth: Add pcm
- config
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CAL_JsqKso2Us5VW-Qp8mENAkMmoEh7YDT+HfhRMD1BKi7q=qAw@mail.gmail.com>
-Date:   Fri, 22 Nov 2019 17:14:53 +0100
-Cc:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ondrej Jirman <megous@megous.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <FBAB12FA-8EAD-424C-9DF3-770E7D172AFD@holtmann.org>
-References: <20191118192123.82430-1-abhishekpandit@chromium.org>
- <20191118110335.v6.3.I18b06235e381accea1c73aa2f9db358645d9f201@changeid>
- <20191121212923.GA24437@bogus>
- <06AE1B9D-F048-4AF1-9826-E8CAFA44DD58@holtmann.org>
- <CAL_JsqKso2Us5VW-Qp8mENAkMmoEh7YDT+HfhRMD1BKi7q=qAw@mail.gmail.com>
-To:     Rob Herring <robh@kernel.org>
-X-Mailer: Apple Mail (2.3601.0.10)
+        Fri, 22 Nov 2019 11:16:57 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a18so3275739plm.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 08:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=wfrcrjX2H8D8RSvVc5LOIPsNb3WQnwmD64TJNBPNLUA=;
+        b=2CxFAF9vQ8BbOhqPOkf+HBDvDUxib+UWq9hNW0Tg4l/6YvGcIgULwb7zDfm9mbuP/9
+         3/EKpUXrSdv8B03hy14QpNLhWat83HNQyn1GgIfaBTMQMmmanUe+btbssVaH8haWbOpr
+         QqRPK10O9tUUfndkbGrdfQe1z6ITlCczduG7UJhZ6JNU7ZoQRSrIbazx85Z8h4rz26Xb
+         6EJVTX6A/tEz9L4CMMWPjveLs+QHDUyDxvybrIHm+D9wpJ2bnJSnESNPWmTfEoXJTO6d
+         RHERX6f1D2fDaO/gYzRlAdEHF6PJxDPr/jbgCMQMh3Z2Fj6YG7Q5lbEYKwW7Ol6/bl7e
+         sgEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=wfrcrjX2H8D8RSvVc5LOIPsNb3WQnwmD64TJNBPNLUA=;
+        b=ubMS6vFLrsFOnFcV3LGsbqJzA83Ozft+hYimwhYc4iT0/x7BS0MzTuqEUNMuAJ1NtI
+         5ziUN4lbmyG5d8Eoy16XWBi5VC89tYzH/i5PJfuFH8Cd2xnlFW4cbGzFx30r62DCYcNp
+         VJkRggRyipQ9H77qMNJQJmpNCf3W3b3Z79aP6y9t+dWo52VEN5MuVmSKGazLkxuoVVQD
+         mZEyZvQyZK7qm4BFXmbYfWTrC3afUlcF85ryVCJzEceDFZHM/eZ1MmqeU/yihJSMuzdW
+         Crl0Z+ranTVJsgJlKXjkPkAm8OhqAhDL/CdTPynrzL1DcZ2GNfaZyfPDomflWbXiJtBX
+         otTg==
+X-Gm-Message-State: APjAAAVoxQ7Pxmvwp37VLiNXu0uGx1/XV4rHz0H1jpPaLkBkQ97K2sME
+        /I44E9ndmkYQ+EGWB32zyHffqA==
+X-Google-Smtp-Source: APXvYqzTddBvl2Cxl4hWR79OGc6LvFSc0Lpv9HH5Ptn1zud7XEHq5ZxyxP4/MuJ4W/R1kultrt//VA==
+X-Received: by 2002:a17:90a:b28c:: with SMTP id c12mr19445564pjr.22.1574439415868;
+        Fri, 22 Nov 2019 08:16:55 -0800 (PST)
+Received: from localhost ([2620:10d:c090:180::9f2b])
+        by smtp.gmail.com with ESMTPSA id q3sm7349049pgl.15.2019.11.22.08.16.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 08:16:54 -0800 (PST)
+Date:   Fri, 22 Nov 2019 11:16:52 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH v4 3/9] mm/lru: replace pgdat lru_lock with lruvec lock
+Message-ID: <20191122161652.GA489821@cmpxchg.org>
+References: <1574166203-151975-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1574166203-151975-4-git-send-email-alex.shi@linux.alibaba.com>
+ <20191119160456.GD382712@cmpxchg.org>
+ <bcf6a952-5b92-50ad-cfc1-f4d9f8f63172@linux.alibaba.com>
+ <20191121220613.GB487872@cmpxchg.org>
+ <d3bbbbf5-52c5-374c-0897-899e787cecb4@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3bbbbf5-52c5-374c-0897-899e787cecb4@linux.alibaba.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
->>>> Add documentation for pcm parameters.
->>>> 
->>>> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
->>>> ---
->>>> 
->>>> Changes in v6: None
->>>> Changes in v5: None
->>>> Changes in v4: None
->>>> Changes in v3: None
->>>> Changes in v2: None
->>> 
->>> Really? I'm staring at v2 that looks a bit different.
->>> 
->>>> .../bindings/net/broadcom-bluetooth.txt       | 16 ++++++++++
->>>> include/dt-bindings/bluetooth/brcm.h          | 32 +++++++++++++++++++
->>>> 2 files changed, 48 insertions(+)
->>>> create mode 100644 include/dt-bindings/bluetooth/brcm.h
->>>> 
->>>> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> index c749dc297624..8561e4684378 100644
->>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
->>>> @@ -29,10 +29,20 @@ Optional properties:
->>>>   - "lpo": external low power 32.768 kHz clock
->>>> - vbat-supply: phandle to regulator supply for VBAT
->>>> - vddio-supply: phandle to regulator supply for VDDIO
->>>> + - brcm,bt-sco-routing: PCM, Transport, Codec, I2S
->>>> + - brcm,bt-pcm-interface-rate: 128KBps, 256KBps, 512KBps, 1024KBps, 2048KBps
->>>> + - brcm,bt-pcm-frame-type: short, long
->>>> + - brcm,bt-pcm-sync-mode: slave, master
->>>> + - brcm,bt-pcm-clock-mode: slave, master
->>> 
->>> Little of this seems unique to Broadcom. We already have some standard
->>> audio related properties for audio interfaces such as 'format',
->>> 'frame-master' and 'bitclock-master'. Ultimately, this would be tied
->>> into the audio complex of SoCs and need to work with the audio
->>> bindings. We also have HDMI audio bindings.
->>> 
->>> Maybe sco-routing is unique to BT and still needed in some form though
->>> if you describe the connection to the SoC audio complex, then maybe
->>> not? I'd assume every BT chip has some audio routing configuration.
->> 
->> so we tried to generalize this some time before and failed to get a proper consensus.
->> 
->> In general I am with you that we should just expose generic properties from the attached audio codec, but nobody has come up with anything like that. And I think aligning all chip manufacturers will take some time.
->> 
+On Fri, Nov 22, 2019 at 10:36:32AM +0800, Alex Shi wrote:
+> 在 2019/11/22 上午6:06, Johannes Weiner 写道:
+> > If we could restrict lock_page_lruvec() to working only on PageLRU
+> > pages, we could fix the problem with memory barriers. But this won't
+> > work for split_huge_page(), which is AFAICT the only user that needs
+> > to freeze the lru state of a page that could be isolated elsewhere.
+> > 
+> > So AFAICS the only option is to lock out mem_cgroup_move_account()
+> > entirely when the lru_lock is held. Which I guess should be fine.
 > 
-> That shouldn't be hard. It's a solved problem for codecs and HDMI. I
-> don't think BT is any more complicated (ignoring phones). I suspect
-> it's not solved simply because no one wants to do the work beyond
-> their 1 BT device they care about ATM.
+> I guess we can try from lock_page_memcg, is that a good start?
 
-we tried, but nobody can agree on these right now. I would be happy if others come forward and tell us how they wired up their hardware, but it hasn’t happened yet.
+Yes.
 
->> Maybe in the interim we just use brcm,bt-pcm-int-params = [00 00 ..] as initially proposed.
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 7e6387ad01f0..f4bbbf72c5b8 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1224,7 +1224,7 @@ struct lruvec *mem_cgroup_page_lruvec(struct page *page, struct pglist_data *pgd
+>                 goto out;
+>         }
 > 
-> What's the device using this? Some chromebook I suppose. I think it
-> would be better to first see how this fits in with the rest of the
-> audio subsystem. Until then, the driver should probably just default
-> to "transport" mode which I assume is audio routed over the UART
-> interface. That should work on any platform at least, but may not be
-> optimal.
+> -       memcg = page->mem_cgroup;
+> +       memcg = lock_page_memcg(page);
+>         /*
+>          * Swapcache readahead pages are added to the LRU - and
+>          * possibly migrated - before they are charged.
 
-SCO over UART doesn’t really work. Long time ago, some car kits might have done it, but in the Chromebook cases this will just not work. We need to configure the PCM settings of the Bluetooth chip.
+test_clear_page_writeback() calls this function with that lock already
+held so that would deadlock. Let's keep locking in lock_page_lruvec().
 
-If we don’t do it via DT, then this gets hardcoded in the driver source and that is not helping either. So until we get anything better, lets use brcm,bt-pcm-int-params = [00 00 ..] and get this supported upstream.
+lock_page_lruvec():
 
-Regards
+	memcg = lock_page_memcg(page);
+	lruvec = mem_cgroup_lruvec(page_pgdat(page), memcg);
 
-Marcel
+	spin_lock_irqsave(&lruvec->lru_lock, *flags);
+	return lruvec;
 
+unlock_lruvec();
+
+	spin_unlock_irqrestore(&lruvec->lru_lock);
+	__unlock_page_memcg(lruvec_memcg(lruvec));
+
+The lock ordering should be fine as well. But it might be a good idea
+to stick a might_lock(&memcg->move_lock) in lock_page_memcg() before
+that atomic_read() and test with lockdep enabled.
+
+
+But that leaves me with one more worry: compaction. We locked out
+charge moving now, so between that and knowing that the page is alive,
+we have page->mem_cgroup stable. But compaction doesn't know whether
+the page is alive - it comes from a pfn and finds out using PageLRU.
+
+In the current code, pgdat->lru_lock remains the same before and after
+the page is charged to a cgroup, so once compaction has that locked
+and it observes PageLRU, it can go ahead and isolate the page.
+
+But lruvec->lru_lock changes during charging, and then compaction may
+hold the wrong lock during isolation:
+
+compaction:				generic_file_buffered_read:
+
+					page_cache_alloc()
+
+!PageBuddy()
+
+lock_page_lruvec(page)
+  lruvec = mem_cgroup_page_lruvec()
+  spin_lock(&lruvec->lru_lock)
+  if lruvec != mem_cgroup_page_lruvec()
+    goto again
+
+					add_to_page_cache_lru()
+					  mem_cgroup_commit_charge()
+					    page->mem_cgroup = foo
+					  lru_cache_add()
+					    __pagevec_lru_add()
+					      SetPageLRU()
+
+if PageLRU(page):
+  __isolate_lru_page()
+
+I don't see what prevents the lruvec from changing under compaction,
+neither in your patches nor in Hugh's. Maybe I'm missing something?
