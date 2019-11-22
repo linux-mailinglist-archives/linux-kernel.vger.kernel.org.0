@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B1F106CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85CC9106CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfKVKyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:54:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39916 "EHLO mail.kernel.org"
+        id S1730338AbfKVKyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728614AbfKVKyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:54:22 -0500
+        id S1730329AbfKVKy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:54:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 085CD2071F;
-        Fri, 22 Nov 2019 10:54:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D529D20715;
+        Fri, 22 Nov 2019 10:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420062;
-        bh=Tc0bizS36rmC3FiUcdlL/HBwy58q2eHM3k8vAr3PYBE=;
+        s=default; t=1574420068;
+        bh=FxbYPhvLR8fg0DHgSH8WQhAhiiLiSwo6/aH4Zs4YwwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qmBQ0SuMAa1tFgBwMVVXrIDys3mp0EqVihPNkLTAKzR631i9auaPiRfJ5cghylhCQ
-         u1f2XU3xsgmaPeRPH2siOKqOgZLbK/wkgoeANF3Wa/8olShDtqpM+J+uoimLloB7+Z
-         7p/EvmBKDLzALwPnVHL6OKjTAEK8SmFrvg87hO+g=
+        b=Pgcl0zGBKtscdasSB9l483qCkrKW9K2rOEkn/Zku8Ix2WElDBhCde0opJmZlI8WkS
+         NahKfqsfUhEHyh7pVFOZ0RXOc+BX7NC+M1twtEV/dmOz7yrFzGCe8Bk4TjWAK4aDNl
+         RdwOFJfCtoOOCbv7Sf8JbW5U+P8dZknaZJu9N3qA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Hieu Tran Dang <dangtranhieu2012@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 103/122] gpio: syscon: Fix possible NULL ptr usage
-Date:   Fri, 22 Nov 2019 11:29:16 +0100
-Message-Id: <20191122100831.888882589@linuxfoundation.org>
+Subject: [PATCH 4.14 104/122] spi: fsl-lpspi: Prevent FIFO under/overrun by default
+Date:   Fri, 22 Nov 2019 11:29:17 +0100
+Message-Id: <20191122100832.065445789@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
 References: <20191122100722.177052205@linuxfoundation.org>
@@ -44,35 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+From: Hieu Tran Dang <dangtranhieu2012@gmail.com>
 
-[ Upstream commit 70728c29465bc4bfa7a8c14304771eab77e923c7 ]
+[ Upstream commit de8978c388c66b8fca192213ec9f0727e964c652 ]
 
-The priv->data->set can be NULL while flags contains GPIO_SYSCON_FEAT_OUT
-and chip->set is valid pointer. This happens in case the controller uses
-the default GPIO setter. Always use chip->set to access the setter to avoid
-possible NULL pointer dereferencing.
+Certain devices don't work well when a transmit FIFO underrun or
+receive FIFO overrun occurs. Example is the SAF400x radio chip when
+running at high speed which leads to garbage being sent to/received from
+the chip. In which case, it should stall waiting for further data to be
+available before proceeding. This patch unset the NOSTALL bit in CFGR1
+by default to prevent this issue.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-syscon.c | 2 +-
+ drivers/spi/spi-fsl-lpspi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 537cec7583fca..cf88a0bfe99ea 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -122,7 +122,7 @@ static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
- 				   BIT(offs % SYSCON_REG_BITS));
- 	}
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index cb3c73007ca15..8fe51f7541bb3 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -287,7 +287,7 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
  
--	priv->data->set(chip, offset, val);
-+	chip->set(chip, offset, val);
+ 	fsl_lpspi_set_watermark(fsl_lpspi);
  
- 	return 0;
- }
+-	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
++	temp = CFGR1_PCSCFG | CFGR1_MASTER;
+ 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
+ 		temp |= CFGR1_PCSPOL;
+ 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
 -- 
 2.20.1
 
