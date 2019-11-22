@@ -2,134 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0461067DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F658106822
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfKVIZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 03:25:30 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35050 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727422AbfKVIZX (ORCPT
+        id S1726852AbfKVIai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 03:30:38 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:27135 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726018AbfKVIai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 03:25:23 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAM8Ca4X024404;
-        Fri, 22 Nov 2019 09:24:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=7YG8hMLBlcZH9okyAWH+GnK29WW6bCIlSdmP8Pj50xc=;
- b=uY2pBRUENT6U808IvNJJEG1i+oGTu0K6UkQAwayp/bbNLUqHRt9u83Jqvaf1v6+JQ1wX
- ZzasUcvdG1WuL2QXjKyxjm4ZHPunMVyUzigvdsys15VzAg1s+wEXi79EcXcey5j4w8kZ
- kRZlk3OFfdvyix+IwF9Q2LP1kuMrqpbkfeBH8vesx0GA4qf+apH7eBthFt/oEkb0Jepd
- S3uGBnUyRC1OBGWU1fXyLh84+FanVB/Fads5+NlEGbvQH+OqHO6LNcfI1zE+g3/qNqXE
- uTvLcGCdf1FyCHLE848tYP3K0BzCoMkFGw9DYq6zcyOtc9ZinZl1a09RUBSnEmVNuHqA tQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2wa9ujfmpv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Nov 2019 09:24:48 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9B356100034;
-        Fri, 22 Nov 2019 09:24:47 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8B3552AD9F3;
-        Fri, 22 Nov 2019 09:24:47 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov 2019 09:24:46
- +0100
-From:   Christophe Roullier <christophe.roullier@st.com>
-To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
-CC:     <linux-watchdog@vger.kernel.org>, <christophe.roullier@st.com>,
+        Fri, 22 Nov 2019 03:30:38 -0500
+X-UUID: f6eec23ec8f74fedaaa4374a57dbb3fc-20191122
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=zKQOxirmySYcxcZXIgTVjcOzLInsWmu/tj21UeF5XGk=;
+        b=t2/RfkKI/ox3+OPPbvtlWkJsEST3bSklC1Y7G9DihP67Nlery+fKYhCTTZLXirZEMZje1Mhji1e+tnHUKCqCaEK3hEPvVWsrVw95mnpIs521VUNVqZddIwHzofjur2v65POm9ru7heNr5wCaVyPU5ITPVZYMsFJ5G/qNYu7wyrU=;
+X-UUID: f6eec23ec8f74fedaaa4374a57dbb3fc-20191122
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 356741794; Fri, 22 Nov 2019 16:30:31 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 22 Nov 2019 16:30:23 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 22 Nov 2019 16:30:03 +0800
+Message-ID: <1574411430.19450.5.camel@mtksdaap41>
+Subject: Re: [PATCH v17 3/6] soc: mediatek: cmdq: define the instruction
+ struct
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 1/1] drivers: watchdog: stm32_iwdg: set WDOG_HW_RUNNING at probe
-Date:   Fri, 22 Nov 2019 09:24:42 +0100
-Message-ID: <20191122082442.21695-1-christophe.roullier@st.com>
-X-Mailer: git-send-email 2.17.1
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>
+Date:   Fri, 22 Nov 2019 16:30:30 +0800
+In-Reply-To: <20191121015410.18852-4-bibby.hsieh@mediatek.com>
+References: <20191121015410.18852-1-bibby.hsieh@mediatek.com>
+         <20191121015410.18852-4-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-21_07:2019-11-21,2019-11-21 signatures=0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the watchdog hardware is already enabled during the boot process,
-when the Linux watchdog driver loads, it should start/reset the watchdog
-and tell the watchdog framework. As a result, ping can be generated from
-the watchdog framework (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set),
-until the userspace watchdog daemon takes over control
-
-Fixes:4332d113c66a ("watchdog: Add STM32 IWDG driver")
-
-Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
----
-Changes since v1:
-According to Guenter
-I follow the guidance from intel-mid_wdt.c
-and I added test to check if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set
-because we need to be flexible (depends on customer config, but watchdog
-not always start by bootloader (Uboot, ..))
-I've tested some config and it is working as expected:
-Watchdog enable in Uboot + HANDLE_BOOT_ENABLE is not set + daemon watchdog in userland ON ==> No reset IWDG2
-Watchdog enable in Uboot + HANDLE_BOOT_ENABLE is not set ==> Reset IWDG2
-Watchdog enable in Uboot + HANDLE_BOOT_ENABLE=y ==> No reset IWDG2
-Watchdog enable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON puis OFF ==> Reset IWDG2
-Watchdog disable in Uboot + HANDLE_BOOT_ENABLE is not set ==> No reset IWDG2
-Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y ==> No reset IWDG2
-Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON ==> No reset IWDG2
-Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON puis OFF ==> Reset IWDG2
-
-Thanks,
-Christophe
-
- drivers/watchdog/stm32_iwdg.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
-index a3a329011a06..7f454a6e17ba 100644
---- a/drivers/watchdog/stm32_iwdg.c
-+++ b/drivers/watchdog/stm32_iwdg.c
-@@ -50,6 +50,9 @@
- #define TIMEOUT_US	100000
- #define SLEEP_US	1000
- 
-+static bool handle_boot_enabled =
-+	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
-+
- struct stm32_iwdg_data {
- 	bool has_pclk;
- 	u32 max_prescaler;
-@@ -262,6 +265,24 @@ static int stm32_iwdg_probe(struct platform_device *pdev)
- 	watchdog_set_nowayout(wdd, WATCHDOG_NOWAYOUT);
- 	watchdog_init_timeout(wdd, 0, dev);
- 
-+	/*
-+	 * In case of CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set
-+	 * (Means U-Boot/bootloaders leaves the watchdog running)
-+	 * When we get here we should make a decision to prevent
-+	 * any side effects before user space daemon will take care of it.
-+	 * The best option, taking into consideration that there is no
-+	 * way to read values back from hardware, is to enforce watchdog
-+	 * being run with deterministic values.
-+	 */
-+	if (handle_boot_enabled) {
-+		ret = stm32_iwdg_start(wdd);
-+		if (ret)
-+			return ret;
-+
-+		/* Make sure the watchdog is serviced */
-+		set_bit(WDOG_HW_RUNNING, &wdd->status);
-+	}
-+
- 	ret = devm_watchdog_register_device(dev, wdd);
- 	if (ret)
- 		return ret;
--- 
-2.17.1
+SGksIEJpYmJ5Og0KDQpPbiBUaHUsIDIwMTktMTEtMjEgYXQgMDk6NTQgKzA4MDAsIEJpYmJ5IEhz
+aWVoIHdyb3RlOg0KPiBEZWZpbmUgYW4gaW5zdHJ1Y3Rpb24gc3RydWN0dXJlIGZvciBnY2UgZHJp
+dmVyIHRvIGFwcGVuZCBjb21tYW5kLg0KPiBUaGlzIHN0cnVjdHVyZSBjYW4gbWFrZSB0aGUgY2xp
+ZW50J3MgY29kZSBtb3JlIHJlYWRhYmlsaXR5Lg0KDQpFdmVuIHRob3VnaCBJIGRvIG5vdCBsaWtl
+IHBhc3Mgc3RydWN0IHBhcmFtZXRlciBieSB2YWx1ZSwgYnV0IHN0cnVjdA0KY21kcV9pbnN0cnVj
+dGlvbiBpcyBqdXN0IGEgNjQgYml0cyBpbnRlZ2VyIGFuZCB3b3VsZCBub3QgYmUgbW9kaWZpZWQg
+aW4NCmNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKCksIHNvDQoNClJldmlld2VkLWJ5OiBDSyBIdSA8
+Y2suaHVAbWVkaWF0ZWsuY29tPg0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCaWJieSBIc2llaCA8
+YmliYnkuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvc29jL21lZGlhdGVr
+L210ay1jbWRxLWhlbHBlci5jICAgfCA3MyArKysrKysrKysrKysrKysrLS0tLS0tLS0NCj4gIGlu
+Y2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmggfCAxMCArKysrDQo+ICAyIGZp
+bGVzIGNoYW5nZWQsIDU5IGluc2VydGlvbnMoKyksIDI0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIvZHJpdmVy
+cy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4gaW5kZXggYzhmYjY5Nzg3NjQ5Li4x
+MWJmY2MxNTBlYmQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRx
+LWhlbHBlci5jDQo+ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5j
+DQo+IEBAIC05LDEyICs5LDI0IEBADQo+ICAjaW5jbHVkZSA8bGludXgvbWFpbGJveF9jb250cm9s
+bGVyLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmg+DQo+ICAN
+Cj4gLSNkZWZpbmUgQ01EUV9BUkdfQV9XUklURV9NQVNLCTB4ZmZmZg0KPiAgI2RlZmluZSBDTURR
+X1dSSVRFX0VOQUJMRV9NQVNLCUJJVCgwKQ0KPiAgI2RlZmluZSBDTURRX0VPQ19JUlFfRU4JCUJJ
+VCgwKQ0KPiAgI2RlZmluZSBDTURRX0VPQ19DTUQJCSgodTY0KSgoQ01EUV9DT0RFX0VPQyA8PCBD
+TURRX09QX0NPREVfU0hJRlQpKSBcDQo+ICAJCQkJPDwgMzIgfCBDTURRX0VPQ19JUlFfRU4pDQo+
+ICANCj4gK3N0cnVjdCBjbWRxX2luc3RydWN0aW9uIHsNCj4gKwl1bmlvbiB7DQo+ICsJCXUzMiB2
+YWx1ZTsNCj4gKwkJdTMyIG1hc2s7DQo+ICsJfTsNCj4gKwl1bmlvbiB7DQo+ICsJCXUxNiBvZmZz
+ZXQ7DQo+ICsJCXUxNiBldmVudDsNCj4gKwl9Ow0KPiArCXU4IHN1YnN5czsNCj4gKwl1OCBvcDsN
+Cj4gK307DQo+ICsNCj4gIHN0YXRpYyB2b2lkIGNtZHFfY2xpZW50X3RpbWVvdXQoc3RydWN0IHRp
+bWVyX2xpc3QgKnQpDQo+ICB7DQo+ICAJc3RydWN0IGNtZHFfY2xpZW50ICpjbGllbnQgPSBmcm9t
+X3RpbWVyKGNsaWVudCwgdCwgdGltZXIpOw0KPiBAQCAtMTEwLDEwICsxMjIsMTAgQEAgdm9pZCBj
+bWRxX3BrdF9kZXN0cm95KHN0cnVjdCBjbWRxX3BrdCAqcGt0KQ0KPiAgfQ0KPiAgRVhQT1JUX1NZ
+TUJPTChjbWRxX3BrdF9kZXN0cm95KTsNCj4gIA0KPiAtc3RhdGljIGludCBjbWRxX3BrdF9hcHBl
+bmRfY29tbWFuZChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgZW51bSBjbWRxX2NvZGUgY29kZSwNCj4g
+LQkJCQkgICB1MzIgYXJnX2EsIHUzMiBhcmdfYikNCj4gK3N0YXRpYyBpbnQgY21kcV9wa3RfYXBw
+ZW5kX2NvbW1hbmQoc3RydWN0IGNtZHFfcGt0ICpwa3QsDQo+ICsJCQkJICAgc3RydWN0IGNtZHFf
+aW5zdHJ1Y3Rpb24gaW5zdCkNCj4gIHsNCj4gLQl1NjQgKmNtZF9wdHI7DQo+ICsJc3RydWN0IGNt
+ZHFfaW5zdHJ1Y3Rpb24gKmNtZF9wdHI7DQo+ICANCj4gIAlpZiAodW5saWtlbHkocGt0LT5jbWRf
+YnVmX3NpemUgKyBDTURRX0lOU1RfU0laRSA+IHBrdC0+YnVmX3NpemUpKSB7DQo+ICAJCS8qDQo+
+IEBAIC0xMjksOCArMTQxLDkgQEAgc3RhdGljIGludCBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChz
+dHJ1Y3QgY21kcV9wa3QgKnBrdCwgZW51bSBjbWRxX2NvZGUgY29kZSwNCj4gIAkJCV9fZnVuY19f
+LCAodTMyKXBrdC0+YnVmX3NpemUpOw0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gIAl9DQo+ICsN
+Cj4gIAljbWRfcHRyID0gcGt0LT52YV9iYXNlICsgcGt0LT5jbWRfYnVmX3NpemU7DQo+IC0JKCpj
+bWRfcHRyKSA9ICh1NjQpKChjb2RlIDw8IENNRFFfT1BfQ09ERV9TSElGVCkgfCBhcmdfYSkgPDwg
+MzIgfCBhcmdfYjsNCj4gKwkqY21kX3B0ciA9IGluc3Q7DQo+ICAJcGt0LT5jbWRfYnVmX3NpemUg
+Kz0gQ01EUV9JTlNUX1NJWkU7DQo+ICANCj4gIAlyZXR1cm4gMDsNCj4gQEAgLTEzOCwyMSArMTUx
+LDI4IEBAIHN0YXRpYyBpbnQgY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQoc3RydWN0IGNtZHFfcGt0
+ICpwa3QsIGVudW0gY21kcV9jb2RlIGNvZGUsDQo+ICANCj4gIGludCBjbWRxX3BrdF93cml0ZShz
+dHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTggc3Vic3lzLCB1MTYgb2Zmc2V0LCB1MzIgdmFsdWUpDQo+
+ICB7DQo+IC0JdTMyIGFyZ19hID0gKG9mZnNldCAmIENNRFFfQVJHX0FfV1JJVEVfTUFTSykgfA0K
+PiAtCQkgICAgKHN1YnN5cyA8PCBDTURRX1NVQlNZU19TSElGVCk7DQo+ICsJc3RydWN0IGNtZHFf
+aW5zdHJ1Y3Rpb24gaW5zdDsNCj4gIA0KPiAtCXJldHVybiBjbWRxX3BrdF9hcHBlbmRfY29tbWFu
+ZChwa3QsIENNRFFfQ09ERV9XUklURSwgYXJnX2EsIHZhbHVlKTsNCj4gKwlpbnN0Lm9wID0gQ01E
+UV9DT0RFX1dSSVRFOw0KPiArCWluc3QudmFsdWUgPSB2YWx1ZTsNCj4gKwlpbnN0Lm9mZnNldCA9
+IG9mZnNldDsNCj4gKwlpbnN0LnN1YnN5cyA9IHN1YnN5czsNCj4gKw0KPiArCXJldHVybiBjbWRx
+X3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3QpOw0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTChj
+bWRxX3BrdF93cml0ZSk7DQo+ICANCj4gIGludCBjbWRxX3BrdF93cml0ZV9tYXNrKHN0cnVjdCBj
+bWRxX3BrdCAqcGt0LCB1OCBzdWJzeXMsDQo+ICAJCQl1MTYgb2Zmc2V0LCB1MzIgdmFsdWUsIHUz
+MiBtYXNrKQ0KPiAgew0KPiAtCXUzMiBvZmZzZXRfbWFzayA9IG9mZnNldDsNCj4gKwlzdHJ1Y3Qg
+Y21kcV9pbnN0cnVjdGlvbiBpbnN0ID0geyB7MH0gfTsNCj4gKwl1MTYgb2Zmc2V0X21hc2sgPSBv
+ZmZzZXQ7DQo+ICAJaW50IGVycjsNCj4gIA0KPiAgCWlmIChtYXNrICE9IDB4ZmZmZmZmZmYpIHsN
+Cj4gLQkJZXJyID0gY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQocGt0LCBDTURRX0NPREVfTUFTSywg
+MCwgfm1hc2spOw0KPiArCQlpbnN0Lm9wID0gQ01EUV9DT0RFX01BU0s7DQo+ICsJCWluc3QubWFz
+ayA9IH5tYXNrOw0KPiArCQllcnIgPSBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3Qp
+Ow0KPiAgCQlpZiAoZXJyIDwgMCkNCj4gIAkJCXJldHVybiBlcnI7DQo+ICANCj4gQEAgLTE2Niw0
+NSArMTg2LDUwIEBAIEVYUE9SVF9TWU1CT0woY21kcV9wa3Rfd3JpdGVfbWFzayk7DQo+ICANCj4g
+IGludCBjbWRxX3BrdF93ZmUoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCkNCj4gIHsN
+Cj4gLQl1MzIgYXJnX2I7DQo+ICsJc3RydWN0IGNtZHFfaW5zdHJ1Y3Rpb24gaW5zdCA9IHsgezB9
+IH07DQo+ICANCj4gIAlpZiAoZXZlbnQgPj0gQ01EUV9NQVhfRVZFTlQpDQo+ICAJCXJldHVybiAt
+RUlOVkFMOw0KPiAgDQo+IC0JLyoNCj4gLQkgKiBXRkUgYXJnX2INCj4gLQkgKiBiaXQgMC0xMTog
+d2FpdCB2YWx1ZQ0KPiAtCSAqIGJpdCAxNTogMSAtIHdhaXQsIDAgLSBubyB3YWl0DQo+IC0JICog
+Yml0IDE2LTI3OiB1cGRhdGUgdmFsdWUNCj4gLQkgKiBiaXQgMzE6IDEgLSB1cGRhdGUsIDAgLSBu
+byB1cGRhdGUNCj4gLQkgKi8NCj4gLQlhcmdfYiA9IENNRFFfV0ZFX1VQREFURSB8IENNRFFfV0ZF
+X1dBSVQgfCBDTURRX1dGRV9XQUlUX1ZBTFVFOw0KPiArCWluc3Qub3AgPSBDTURRX0NPREVfV0ZF
+Ow0KPiArCWluc3QudmFsdWUgPSBDTURRX1dGRV9PUFRJT047DQo+ICsJaW5zdC5ldmVudCA9IGV2
+ZW50Ow0KPiAgDQo+IC0JcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgQ01EUV9D
+T0RFX1dGRSwgZXZlbnQsIGFyZ19iKTsNCj4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5kX2NvbW1h
+bmQocGt0LCBpbnN0KTsNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0woY21kcV9wa3Rfd2ZlKTsNCj4g
+IA0KPiAgaW50IGNtZHFfcGt0X2NsZWFyX2V2ZW50KHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYg
+ZXZlbnQpDQo+ICB7DQo+ICsJc3RydWN0IGNtZHFfaW5zdHJ1Y3Rpb24gaW5zdCA9IHsgezB9IH07
+DQo+ICsNCj4gIAlpZiAoZXZlbnQgPj0gQ01EUV9NQVhfRVZFTlQpDQo+ICAJCXJldHVybiAtRUlO
+VkFMOw0KPiAgDQo+IC0JcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgQ01EUV9D
+T0RFX1dGRSwgZXZlbnQsDQo+IC0JCQkJICAgICAgIENNRFFfV0ZFX1VQREFURSk7DQo+ICsJaW5z
+dC5vcCA9IENNRFFfQ09ERV9XRkU7DQo+ICsJaW5zdC52YWx1ZSA9IENNRFFfV0ZFX1VQREFURTsN
+Cj4gKwlpbnN0LmV2ZW50ID0gZXZlbnQ7DQo+ICsNCj4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5k
+X2NvbW1hbmQocGt0LCBpbnN0KTsNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0woY21kcV9wa3RfY2xl
+YXJfZXZlbnQpOw0KPiAgDQo+ICBzdGF0aWMgaW50IGNtZHFfcGt0X2ZpbmFsaXplKHN0cnVjdCBj
+bWRxX3BrdCAqcGt0KQ0KPiAgew0KPiArCXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3QgPSB7
+IHswfSB9Ow0KPiAgCWludCBlcnI7DQo+ICANCj4gIAkvKiBpbnNlcnQgRU9DIGFuZCBnZW5lcmF0
+ZSBJUlEgZm9yIGVhY2ggY29tbWFuZCBpdGVyYXRpb24gKi8NCj4gLQllcnIgPSBjbWRxX3BrdF9h
+cHBlbmRfY29tbWFuZChwa3QsIENNRFFfQ09ERV9FT0MsIDAsIENNRFFfRU9DX0lSUV9FTik7DQo+
+ICsJaW5zdC5vcCA9IENNRFFfQ09ERV9FT0M7DQo+ICsJaW5zdC52YWx1ZSA9IENNRFFfRU9DX0lS
+UV9FTjsNCj4gKwllcnIgPSBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3QpOw0KPiAg
+CWlmIChlcnIgPCAwKQ0KPiAgCQlyZXR1cm4gZXJyOw0KPiAgDQo+ICAJLyogSlVNUCB0byBlbmQg
+Ki8NCj4gLQllcnIgPSBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIENNRFFfQ09ERV9KVU1Q
+LCAwLCBDTURRX0pVTVBfUEFTUyk7DQo+ICsJaW5zdC5vcCA9IENNRFFfQ09ERV9KVU1QOw0KPiAr
+CWluc3QudmFsdWUgPSBDTURRX0pVTVBfUEFTUzsNCj4gKwllcnIgPSBjbWRxX3BrdF9hcHBlbmRf
+Y29tbWFuZChwa3QsIGluc3QpOw0KPiAgDQo+ICAJcmV0dXJuIGVycjsNCj4gIH0NCj4gZGlmZiAt
+LWdpdCBhL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmggYi9pbmNsdWRl
+L2xpbnV4L21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5oDQo+IGluZGV4IGU2ZjU0ZWY2Njk4Yi4u
+Njc4NzYwNTQ4NzkxIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNt
+ZHEtbWFpbGJveC5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWls
+Ym94LmgNCj4gQEAgLTIwLDYgKzIwLDE2IEBADQo+ICAjZGVmaW5lIENNRFFfV0ZFX1dBSVQJCQlC
+SVQoMTUpDQo+ICAjZGVmaW5lIENNRFFfV0ZFX1dBSVRfVkFMVUUJCTB4MQ0KPiAgDQo+ICsvKg0K
+PiArICogV0ZFIGFyZ19iDQo+ICsgKiBiaXQgMC0xMTogd2FpdCB2YWx1ZQ0KPiArICogYml0IDE1
+OiAxIC0gd2FpdCwgMCAtIG5vIHdhaXQNCj4gKyAqIGJpdCAxNi0yNzogdXBkYXRlIHZhbHVlDQo+
+ICsgKiBiaXQgMzE6IDEgLSB1cGRhdGUsIDAgLSBubyB1cGRhdGUNCj4gKyAqLw0KPiArI2RlZmlu
+ZSBDTURRX1dGRV9PUFRJT04JCQkoQ01EUV9XRkVfVVBEQVRFIHwgQ01EUV9XRkVfV0FJVCB8IFwN
+Cj4gKwkJCQkJQ01EUV9XRkVfV0FJVF9WQUxVRSkNCj4gKw0KPiAgLyoqIGNtZHEgZXZlbnQgbWF4
+aW11bSAqLw0KPiAgI2RlZmluZSBDTURRX01BWF9FVkVOVAkJCTB4M2ZmDQo+ICANCg0K
 
