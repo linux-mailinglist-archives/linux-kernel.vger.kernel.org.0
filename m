@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05CD106A13
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA30106D23
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfKVKbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51984 "EHLO mail.kernel.org"
+        id S1730723AbfKVK5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:57:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfKVKbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:39 -0500
+        id S1730464AbfKVK5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45BD120714;
-        Fri, 22 Nov 2019 10:31:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF6672072E;
+        Fri, 22 Nov 2019 10:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418699;
-        bh=G07mmmbZxw4U7sCnfcE050gp+/zMjMUqCmkE3k+kAnc=;
+        s=default; t=1574420262;
+        bh=dQt3xAF/0dD9AaQxedCxFQzgzRaMzkywGvh9+OmquuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tFJxmSUYjyEbQnSseeQznRKGvoblB2qCSIbtD0me0YKmvoIlBU7p9aLI5uHLijvhY
-         Acy0nFqC3hCInn7VA7VtklMpMSvl2TKYx2YDlZaBLLrElRfeH71btMusZ7s9g2Q2Zm
-         GjJXpOPsUHZZmxpmMI5zT5KIsD42ipd2+mlVEekI=
+        b=r5tK9uMPWVn2FXQtpWNWp6HsnmQRn7XWVOuff02icyIIHrtiMmqmTl7HDdMAtrmW+
+         TLyBIAtb03L2GqNW5BlYcWxhkNX70WdKocxGTzpR26In9SrALEuwKjDqKvAmRu/+Tz
+         M47TMiVpTrIobaC9lOeviTnVkTce/4pwQFmeOGGY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Patryk=20Ma=C5=82ek?= <patryk.malek@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 021/159] i40e: hold the rtnl lock on clearing interrupt scheme
+Subject: [PATCH 4.19 047/220] usb: dwc3: gadget: Check ENBLSLPM before sending ep command
 Date:   Fri, 22 Nov 2019 11:26:52 +0100
-Message-Id: <20191122100721.840727280@linuxfoundation.org>
+Message-Id: <20191122100915.601546840@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patryk Małek <patryk.malek@intel.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-[ Upstream commit 5cba17b14182696d6bb0ec83a1d087933f252241 ]
+[ Upstream commit 87dd96111b0bb8e616fcbd74dbf4bb4182f2c596 ]
 
-Hold the rtnl lock when we're clearing interrupt scheme
-in i40e_shutdown and in i40e_remove.
+When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
+GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an endpoint
+command.
 
-Signed-off-by: Patryk Małek <patryk.malek@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Current implementation only save and restore GUSB2PHYCFG.SUSPHY
+configuration. We must save and clear both GUSB2PHYCFG.ENBLSLPM and
+GUSB2PHYCFG.SUSPHY settings. Restore them after the command is
+completed.
+
+DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
+
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/dwc3/gadget.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 22c43a776c6cd..756c4ea176554 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -10828,6 +10828,7 @@ static void i40e_remove(struct pci_dev *pdev)
- 	mutex_destroy(&hw->aq.asq_mutex);
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 8398c33d08e7c..3e04004b4f1b7 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -271,27 +271,36 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
+ 	const struct usb_endpoint_descriptor *desc = dep->endpoint.desc;
+ 	struct dwc3		*dwc = dep->dwc;
+ 	u32			timeout = 1000;
++	u32			saved_config = 0;
+ 	u32			reg;
  
- 	/* Clear all dynamic memory lists of rings, q_vectors, and VSIs */
-+	rtnl_lock();
- 	i40e_clear_interrupt_scheme(pf);
- 	for (i = 0; i < pf->num_alloc_vsi; i++) {
- 		if (pf->vsi[i]) {
-@@ -10836,6 +10837,7 @@ static void i40e_remove(struct pci_dev *pdev)
- 			pf->vsi[i] = NULL;
+ 	int			cmd_status = 0;
+-	int			susphy = false;
+ 	int			ret = -EINVAL;
+ 
+ 	/*
+-	 * Synopsys Databook 2.60a states, on section 6.3.2.5.[1-8], that if
+-	 * we're issuing an endpoint command, we must check if
+-	 * GUSB2PHYCFG.SUSPHY bit is set. If it is, then we need to clear it.
++	 * When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
++	 * GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an
++	 * endpoint command.
+ 	 *
+-	 * We will also set SUSPHY bit to what it was before returning as stated
+-	 * by the same section on Synopsys databook.
++	 * Save and clear both GUSB2PHYCFG.ENBLSLPM and GUSB2PHYCFG.SUSPHY
++	 * settings. Restore them after the command is completed.
++	 *
++	 * DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
+ 	 */
+ 	if (dwc->gadget.speed <= USB_SPEED_HIGH) {
+ 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
+ 		if (unlikely(reg & DWC3_GUSB2PHYCFG_SUSPHY)) {
+-			susphy = true;
++			saved_config |= DWC3_GUSB2PHYCFG_SUSPHY;
+ 			reg &= ~DWC3_GUSB2PHYCFG_SUSPHY;
+-			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
  		}
++
++		if (reg & DWC3_GUSB2PHYCFG_ENBLSLPM) {
++			saved_config |= DWC3_GUSB2PHYCFG_ENBLSLPM;
++			reg &= ~DWC3_GUSB2PHYCFG_ENBLSLPM;
++		}
++
++		if (saved_config)
++			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
  	}
-+	rtnl_unlock();
  
- 	for (i = 0; i < I40E_MAX_VEB; i++) {
- 		kfree(pf->veb[i]);
-@@ -10982,7 +10984,13 @@ static void i40e_shutdown(struct pci_dev *pdev)
- 	wr32(hw, I40E_PFPM_WUFC,
- 	     (pf->wol_en ? I40E_PFPM_WUFC_MAG_MASK : 0));
+ 	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
+@@ -380,9 +389,9 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
+ 		dwc3_gadget_ep_get_transfer_index(dep);
+ 	}
  
-+	/* Since we're going to destroy queues during the
-+	 * i40e_clear_interrupt_scheme() we should hold the RTNL lock for this
-+	 * whole section
-+	 */
-+	rtnl_lock();
- 	i40e_clear_interrupt_scheme(pf);
-+	rtnl_unlock();
+-	if (unlikely(susphy)) {
++	if (saved_config) {
+ 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
+-		reg |= DWC3_GUSB2PHYCFG_SUSPHY;
++		reg |= saved_config;
+ 		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
+ 	}
  
- 	if (system_state == SYSTEM_POWER_OFF) {
- 		pci_wake_from_d3(pdev, pf->wol_en);
 -- 
 2.20.1
 
