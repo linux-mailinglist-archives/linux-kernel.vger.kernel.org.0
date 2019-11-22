@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C2ED106EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:10:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DA6106E9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbfKVLKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55990 "EHLO mail.kernel.org"
+        id S1730765AbfKVLKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:10:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731002AbfKVLC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:02:26 -0500
+        id S1731302AbfKVLC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:02:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A59E02073F;
-        Fri, 22 Nov 2019 11:02:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFFED207FC;
+        Fri, 22 Nov 2019 11:02:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420546;
-        bh=JQi6aKOLE0wwtWtTLw0u7djK2iBnPGoeA7mPz4NJIYo=;
+        s=default; t=1574420549;
+        bh=a09o/6erw4XFpEHbgbqRKQCSfOoCeDDbbaY/XHSBdzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gImQgi0vnfxfVtiQGo6oZxLSYJg5Lz9lvddK0G9fONjLeeyPKoXtJ1LiQeOckfj0v
-         QgT6DCeEPECiCVARzxo7F3RD1lkfjYfkWRPewcKGZ96LmZag4p9cosCnQrWzaOcPoI
-         xIhN/sH9XO4sUqmerjFSgpFWWf1t4zQR28bKhMdg=
+        b=BdG8v2qUylOII/2rdoabh1vJQliV8KrNTXbXZq7lzY/Z3htV+JvXKz5p43dDjBQuD
+         10I4UYsXoTeoDfyG6EzafjZXvJ6E4TxCTKu4As0n0eUxwyAnDRriEo+U9yA2ds7QUZ
+         2UU2o6WUTOqOO7cAHw24tz+1q75lsAwSENsKqNRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Ronald=20Tschal=C3=83=C2=A4r?= <ronald@innovation.ch>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 143/220] xfrm: use correct size to initialise sp->ovec
-Date:   Fri, 22 Nov 2019 11:28:28 +0100
-Message-Id: <20191122100923.060117962@linuxfoundation.org>
+Subject: [PATCH 4.19 144/220] ACPI / SBS: Fix rare oops when removing modules
+Date:   Fri, 22 Nov 2019 11:28:29 +0100
+Message-Id: <20191122100923.126452267@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,36 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Ronald Tschalär <ronald@innovation.ch>
 
-[ Upstream commit f1193e915748291fb205a908db33bd3debece6e2 ]
+[ Upstream commit 757c968c442397f1249bb775a7c8c03842e3e0c7 ]
 
-This place should want to initialize array, not a element,
-so it should be sizeof(array) instead of sizeof(element)
+There was a small race when removing the sbshc module where
+smbus_alarm() had queued acpi_smbus_callback() for deferred execution
+but it hadn't been run yet, so that when it did run hc had been freed
+and the module unloaded, resulting in an invalid paging request.
 
-but now this array only has one element, so no error in
-this condition that XFRM_MAX_OFFLOAD_DEPTH is 1
+A similar race existed when removing the sbs module with regards to
+acpi_sbs_callback() (which is called from acpi_smbus_callback()).
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+We therefore need to ensure no callbacks are pending or executing before
+the cleanups are done and the modules are removed.
+
+Signed-off-by: Ronald TschalÃ¤r <ronald@innovation.ch>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/osl.c   | 1 +
+ drivers/acpi/sbshc.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 790b514f86b62..d5635908587f4 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -131,7 +131,7 @@ struct sec_path *secpath_dup(struct sec_path *src)
- 	sp->len = 0;
- 	sp->olen = 0;
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index ed73f6fb0779b..b48874b8e1ea0 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -1132,6 +1132,7 @@ void acpi_os_wait_events_complete(void)
+ 	flush_workqueue(kacpid_wq);
+ 	flush_workqueue(kacpi_notify_wq);
+ }
++EXPORT_SYMBOL(acpi_os_wait_events_complete);
  
--	memset(sp->ovec, 0, sizeof(sp->ovec[XFRM_MAX_OFFLOAD_DEPTH]));
-+	memset(sp->ovec, 0, sizeof(sp->ovec));
+ struct acpi_hp_work {
+ 	struct work_struct work;
+diff --git a/drivers/acpi/sbshc.c b/drivers/acpi/sbshc.c
+index 7a3431018e0ab..5008ead4609a4 100644
+--- a/drivers/acpi/sbshc.c
++++ b/drivers/acpi/sbshc.c
+@@ -196,6 +196,7 @@ int acpi_smbus_unregister_callback(struct acpi_smb_hc *hc)
+ 	hc->callback = NULL;
+ 	hc->context = NULL;
+ 	mutex_unlock(&hc->lock);
++	acpi_os_wait_events_complete();
+ 	return 0;
+ }
  
- 	if (src) {
- 		int i;
+@@ -292,6 +293,7 @@ static int acpi_smbus_hc_remove(struct acpi_device *device)
+ 
+ 	hc = acpi_driver_data(device);
+ 	acpi_ec_remove_query_handler(hc->ec, hc->query_bit);
++	acpi_os_wait_events_complete();
+ 	kfree(hc);
+ 	device->driver_data = NULL;
+ 	return 0;
 -- 
 2.20.1
 
