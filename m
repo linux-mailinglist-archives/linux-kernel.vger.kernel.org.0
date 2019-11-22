@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB793106D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA04E107117
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbfKVLAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52294 "EHLO mail.kernel.org"
+        id S1728085AbfKVL0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:26:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730532AbfKVLAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:00:19 -0500
+        id S1728110AbfKVKee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:34:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81E022073B;
-        Fri, 22 Nov 2019 11:00:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1371820656;
+        Fri, 22 Nov 2019 10:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420419;
-        bh=0Sjkf189679x4uXqj5BLH1BM4wR2jv51XnrwoMD8oH0=;
+        s=default; t=1574418873;
+        bh=9vHTsqmnu+cuuI3EJ+XhZIbw+Rq+l0wS6KturhsKzNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Omkwv05MvTufrcdDi4iECGjK0FTaWDbEsXMdS4Ys57V1V3/ZWmCKDG/laoDvJWkKS
-         h8kxRr8vi/6L/k6CfWLNebi4EXUpdJJQO32sQGr4IbBJsuHXJkT5/PA6Qdp/1WIOJ4
-         LD9sZSZ+w4cQABQAS4fPgYOsWKMEw/juoY416cD8=
+        b=v6FeY7dogICO8sq/TPd2IPQlo3yqo4YwffLzp8nuAXwzhJ31dcoKuk8CqK3qZmzCr
+         EmehKEm2EUSKLSWWnoCFcMPq6Gf0akcT8hZweDxyg+Ifg3AlFQd9i0WwJPRYD8mwEB
+         uYLrmc1udkKCRTXzy0R9HBCV+0fDQrLA5FC+KT3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Reichl <hias@horus.com>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/220] media: rc: ir-rc6-decoder: enable toggle bit for Kathrein RCU-676 remote
+Subject: [PATCH 4.4 074/159] cpufeature: avoid warning when compiling with clang
 Date:   Fri, 22 Nov 2019 11:27:45 +0100
-Message-Id: <20191122100919.955361884@linuxfoundation.org>
+Message-Id: <20191122100758.167918460@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Reichl <hias@horus.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 85e4af0a7ae2f146769b7475ae531bf8a3f3afb4 ]
+[ Upstream commit c785896b21dd8e156326ff660050b0074d3431df ]
 
-The Kathrein RCU-676 remote uses the 32-bit rc6 protocol and toggles
-bit 15 (0x8000) on repeated button presses, like MCE remotes.
+The table id (second) argument to MODULE_DEVICE_TABLE is often
+referenced otherwise. This is not the case for CPU features. This
+leads to warnings when building the kernel with Clang:
+  arch/arm/crypto/aes-ce-glue.c:450:1: warning: variable
+    'cpu_feature_match_AES' is not needed and will not be emitted
+    [-Wunneeded-internal-declaration]
+  module_cpu_feature_match(AES, aes_init);
+  ^
 
-Add it's customer code 0x80460000 to the 32-bit rc6 toggle
-handling code to get proper scancodes and toggle reports.
+Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
+("modules: mark __inittest/__exittest as __maybe_unused").
 
-Signed-off-by: Matthias Reichl <hias@horus.com>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 67bad2fdb754 ("cpu: add generic support for CPU feature based module autoloading")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/rc/ir-rc6-decoder.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ include/linux/cpufeature.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/rc/ir-rc6-decoder.c b/drivers/media/rc/ir-rc6-decoder.c
-index 68487ce9f79b6..d96aed1343e42 100644
---- a/drivers/media/rc/ir-rc6-decoder.c
-+++ b/drivers/media/rc/ir-rc6-decoder.c
-@@ -40,6 +40,7 @@
- #define RC6_6A_MCE_TOGGLE_MASK	0x8000	/* for the body bits */
- #define RC6_6A_LCC_MASK		0xffff0000 /* RC6-6A-32 long customer code mask */
- #define RC6_6A_MCE_CC		0x800f0000 /* MCE customer code */
-+#define RC6_6A_KATHREIN_CC	0x80460000 /* Kathrein RCU-676 customer code */
- #ifndef CHAR_BIT
- #define CHAR_BIT 8	/* Normally in <limits.h> */
- #endif
-@@ -242,13 +243,17 @@ static int ir_rc6_decode(struct rc_dev *dev, struct ir_raw_event ev)
- 				toggle = 0;
- 				break;
- 			case 32:
--				if ((scancode & RC6_6A_LCC_MASK) == RC6_6A_MCE_CC) {
-+				switch (scancode & RC6_6A_LCC_MASK) {
-+				case RC6_6A_MCE_CC:
-+				case RC6_6A_KATHREIN_CC:
- 					protocol = RC_PROTO_RC6_MCE;
- 					toggle = !!(scancode & RC6_6A_MCE_TOGGLE_MASK);
- 					scancode &= ~RC6_6A_MCE_TOGGLE_MASK;
--				} else {
-+					break;
-+				default:
- 					protocol = RC_PROTO_RC6_6A_32;
- 					toggle = 0;
-+					break;
- 				}
- 				break;
- 			default:
+diff --git a/include/linux/cpufeature.h b/include/linux/cpufeature.h
+index 986c06c88d814..84d3c81b59781 100644
+--- a/include/linux/cpufeature.h
++++ b/include/linux/cpufeature.h
+@@ -45,7 +45,7 @@
+  * 'asm/cpufeature.h' of your favorite architecture.
+  */
+ #define module_cpu_feature_match(x, __initfunc)			\
+-static struct cpu_feature const cpu_feature_match_ ## x[] =	\
++static struct cpu_feature const __maybe_unused cpu_feature_match_ ## x[] = \
+ 	{ { .feature = cpu_feature(x) }, { } };			\
+ MODULE_DEVICE_TABLE(cpu, cpu_feature_match_ ## x);		\
+ 								\
 -- 
 2.20.1
 
