@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E91106B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98594106AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:36:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfKVKpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51046 "EHLO mail.kernel.org"
+        id S1728454AbfKVKgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:36:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727605AbfKVKo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:44:56 -0500
+        id S1727187AbfKVKgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:36:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D72820717;
-        Fri, 22 Nov 2019 10:44:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7FF720717;
+        Fri, 22 Nov 2019 10:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419496;
-        bh=H0/qcPuyNj8VHYkAGniOjGUPht77ncyCRxdKZH54tbM=;
+        s=default; t=1574419009;
+        bh=mktJUJG+D5qRijgSuyvrIPcvNzAZZljrj2EAqWnisME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ErUdIiNzRoLHYsfFb9uyHKtZLDC1L1yvjZ9EBQF6q//W96ylpilhFE28VU3vo3v/9
-         TTCBPY7MyBjDb3GSKam6Qb1BKd7iXvCSs1cdvMV/9BDl5eEbqzuYA0t21GMEZQuw+0
-         Q0r/hU49bhPzFhJqWiAxppaVkQSGvo42imHPl5AM=
+        b=raNUulwF0OGfz16kyZwI2KOSM8SqRmFaYyd4Y3TbAWEi2SdFfFjll/vH5x+q7cGvM
+         +Xjy74n4o7yd+WRJsHs7EUxT7asgazyC2Ch8+wQQcfOCI6hRADimW/BXYtZTlp8mfn
+         ovXG/X6xHqS4ocqAkJCjHio1E5+jm3yMbLjVuB18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoph Manszewski <c.manszewski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Joel Pepper <joel.pepper@rwth-aachen.de>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 132/222] crypto: s5p-sss: Fix Fix argument list alignment
-Date:   Fri, 22 Nov 2019 11:27:52 +0100
-Message-Id: <20191122100912.483336062@linuxfoundation.org>
+Subject: [PATCH 4.4 082/159] usb: gadget: uvc: configfs: Prevent format changes after linking header
+Date:   Fri, 22 Nov 2019 11:27:53 +0100
+Message-Id: <20191122100804.783442598@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,43 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Manszewski <c.manszewski@samsung.com>
+From: Joel Pepper <joel.pepper@rwth-aachen.de>
 
-[ Upstream commit 6c12b6ba45490eeb820fdceccf5a53f42a26799c ]
+[ Upstream commit cb2200f7af8341aaf0c6abd7ba37e4c667c41639 ]
 
-Fix misalignment of continued argument list.
+While checks are in place to avoid attributes and children of a format
+being manipulated after the format is linked into the streaming header,
+the linked flag was never actually set, invalidating the protections.
+Update the flag as appropriate in the header link calls.
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Joel Pepper <joel.pepper@rwth-aachen.de>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/s5p-sss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/uvc_configfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 500e4090e2fd4..5a37c075ee553 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -298,7 +298,7 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
- }
+diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
+index 74df80a25b469..a49ff1f5c0f93 100644
+--- a/drivers/usb/gadget/function/uvc_configfs.c
++++ b/drivers/usb/gadget/function/uvc_configfs.c
+@@ -807,6 +807,7 @@ static int uvcg_streaming_header_allow_link(struct config_item *src,
+ 	format_ptr->fmt = target_fmt;
+ 	list_add_tail(&format_ptr->entry, &src_hdr->formats);
+ 	++src_hdr->num_fmt;
++	++target_fmt->linked;
  
- static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
--			    struct scatterlist **dst)
-+			   struct scatterlist **dst)
- {
- 	void *pages;
- 	int len;
-@@ -510,7 +510,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev *dev,
- }
+ out:
+ 	mutex_unlock(&opts->lock);
+@@ -845,6 +846,8 @@ static int uvcg_streaming_header_drop_link(struct config_item *src,
+ 			break;
+ 		}
  
- static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
--				struct ablkcipher_request *req)
-+				 struct ablkcipher_request *req)
- {
- 	struct scatterlist *sg;
- 	int err;
++	--target_fmt->linked;
++
+ out:
+ 	mutex_unlock(&opts->lock);
+ 	mutex_unlock(su_mutex);
 -- 
 2.20.1
 
