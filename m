@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 360E3106A7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2D1106A7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfKVKfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
+        id S1727608AbfKVKfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728217AbfKVKfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:35:15 -0500
+        id S1727747AbfKVKfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8404820715;
-        Fri, 22 Nov 2019 10:35:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4D1520708;
+        Fri, 22 Nov 2019 10:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418915;
-        bh=mpnD1p0KP4BOslkv4vlEJkovyvNqqsZASE1Gajsr6Ts=;
+        s=default; t=1574418918;
+        bh=3PvQFrDSNvxXT8aqxDPH2197sp+KfURArbLR4QgM/34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aH5soeMA54wpNkH1b+P1Qtjmc97bPdKivYoImeTraYEW0xdgcppBbRFjlgU8iKWOi
-         F41Plvf1ScFCp7bsV8tMNHOTXxe+6DMkUx/6a67IUqRT/MiMaPqA9DEMOEtmNAi7Ic
-         VjzDh0jjwuLqGc4eRW7UW68XB6QuurSKafaPZtG4=
+        b=J+TBBCCSsmZ84UujW/giNSG/XhgUpgrtXFVkvY5VcS/csnUcFpeDqcDzc6oJzV/6r
+         PfiyMYyaeZn+cLZ+RgKRNAP6YlGQBql+ClWPgVpYUNcbLB4/8Vm/INfpqC0s8+CYl+
+         u9j4xjVMXw1pv+swvoZ5KEpE2/J+2XUX0/vTbpnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 095/159] fuse: use READ_ONCE on congestion_threshold and max_background
-Date:   Fri, 22 Nov 2019 11:28:06 +0100
-Message-Id: <20191122100815.607212036@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Ralph Siemsen <ralph.siemsen@linaro.org>
+Subject: [PATCH 4.4 096/159] Bluetooth: hci_ldisc: Fix null pointer derefence in case of early data
+Date:   Fri, 22 Nov 2019 11:28:07 +0100
+Message-Id: <20191122100816.692418047@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
 References: <20191122100704.194776704@linuxfoundation.org>
@@ -44,45 +44,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: Loic Poulain <loic.poulain@intel.com>
 
-[ Upstream commit 2a23f2b8adbe4bd584f936f7ac17a99750eed9d7 ]
+commit 84cb3df02aea4b00405521e67c4c67c2d525c364 upstream.
 
-Since they are of unsigned int type, it's allowed to read them
-unlocked during reporting to userspace. Let's underline this fact
-with READ_ONCE() macroses.
+HCI_UART_PROTO_SET flag is set before hci_uart_set_proto call. If we
+receive data from tty layer during this procedure, proto pointer may
+not be assigned yet, leading to null pointer dereference in rx method
+hci_uart_tty_receive.
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This patch fixes this issue by introducing HCI_UART_PROTO_READY flag in
+order to avoid any proto operation before proto opening and assignment.
+
+Signed-off-by: Loic Poulain <loic.poulain@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: Ralph Siemsen <ralph.siemsen@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/fuse/control.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bluetooth/hci_ldisc.c |   11 +++++++----
+ drivers/bluetooth/hci_uart.h  |    1 +
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 89a4b231e79cb..bb56c6a58fa76 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -107,7 +107,7 @@ static ssize_t fuse_conn_max_background_read(struct file *file,
- 	if (!fc)
- 		return 0;
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -227,7 +227,7 @@ static int hci_uart_flush(struct hci_dev
+ 	tty_ldisc_flush(tty);
+ 	tty_driver_flush_buffer(tty);
  
--	val = fc->max_background;
-+	val = READ_ONCE(fc->max_background);
- 	fuse_conn_put(fc);
+-	if (test_bit(HCI_UART_PROTO_SET, &hu->flags))
++	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+ 		hu->proto->flush(hu);
  
- 	return fuse_conn_limit_read(file, buf, len, ppos, val);
-@@ -144,7 +144,7 @@ static ssize_t fuse_conn_congestion_threshold_read(struct file *file,
- 	if (!fc)
- 		return 0;
+ 	return 0;
+@@ -506,7 +506,7 @@ static void hci_uart_tty_close(struct tt
  
--	val = fc->congestion_threshold;
-+	val = READ_ONCE(fc->congestion_threshold);
- 	fuse_conn_put(fc);
+ 	cancel_work_sync(&hu->write_work);
  
- 	return fuse_conn_limit_read(file, buf, len, ppos, val);
--- 
-2.20.1
-
+-	if (test_and_clear_bit(HCI_UART_PROTO_SET, &hu->flags)) {
++	if (test_and_clear_bit(HCI_UART_PROTO_READY, &hu->flags)) {
+ 		if (hdev) {
+ 			if (test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 				hci_unregister_dev(hdev);
+@@ -514,6 +514,7 @@ static void hci_uart_tty_close(struct tt
+ 		}
+ 		hu->proto->close(hu);
+ 	}
++	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
+ 
+ 	kfree(hu);
+ }
+@@ -540,7 +541,7 @@ static void hci_uart_tty_wakeup(struct t
+ 	if (tty != hu->tty)
+ 		return;
+ 
+-	if (test_bit(HCI_UART_PROTO_SET, &hu->flags))
++	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+ 		hci_uart_tx_wakeup(hu);
+ }
+ 
+@@ -564,7 +565,7 @@ static void hci_uart_tty_receive(struct
+ 	if (!hu || tty != hu->tty)
+ 		return;
+ 
+-	if (!test_bit(HCI_UART_PROTO_SET, &hu->flags))
++	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
+ 		return;
+ 
+ 	/* It does not need a lock here as it is already protected by a mutex in
+@@ -652,9 +653,11 @@ static int hci_uart_set_proto(struct hci
+ 		return err;
+ 
+ 	hu->proto = p;
++	set_bit(HCI_UART_PROTO_READY, &hu->flags);
+ 
+ 	err = hci_uart_register_dev(hu);
+ 	if (err) {
++		clear_bit(HCI_UART_PROTO_READY, &hu->flags);
+ 		p->close(hu);
+ 		return err;
+ 	}
+--- a/drivers/bluetooth/hci_uart.h
++++ b/drivers/bluetooth/hci_uart.h
+@@ -94,6 +94,7 @@ struct hci_uart {
+ /* HCI_UART proto flag bits */
+ #define HCI_UART_PROTO_SET	0
+ #define HCI_UART_REGISTERED	1
++#define HCI_UART_PROTO_READY	2
+ 
+ /* TX states  */
+ #define HCI_UART_SENDING	1
 
 
