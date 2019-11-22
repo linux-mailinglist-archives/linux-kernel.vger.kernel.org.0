@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC47106D9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F48C107130
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731198AbfKVLBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:01:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54396 "EHLO mail.kernel.org"
+        id S1728922AbfKVL1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:27:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730766AbfKVLB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:01:28 -0500
+        id S1726722AbfKVKdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:33:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88F2920706;
-        Fri, 22 Nov 2019 11:01:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1C872072D;
+        Fri, 22 Nov 2019 10:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420487;
-        bh=SLDHED6xIDXCXATD9sFjZPXRCps2xfzuuQ0qam3yhVM=;
+        s=default; t=1574418796;
+        bh=Klx/vYedqDT/UALTFgFJbMomfAZhczkTY09h71IdXCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1gJrn85hgpXLZQF1YJaLLVcTRU4adGL1A5VSiITsJDMlNUZ/pafQfGFIYZszIWih
-         4ybB5TkhTZ9wrl2o+4vaGLT4lAOpFiyTOPhxxRcMJcOZfJ80+k4BpejujLbGmtKVdQ
-         oTHwd9gvXEWfubL6Fgt/jrjQ9j1Is5g3IWbihxwM=
+        b=uEUtB12QEaAAtIzrA7YWSRfP6kgsQ5R6CW7phIR3jX5Ilj3joCkn7GqM+4+HJUsuH
+         +9RKpEqrFA3qbCkHkERo/V7WrULFTerKsMCadklNUfW5mnIcDy6jv3hq5cq7TdBO4i
+         hd4LYl+Xoce9k66XSgiX1sKYoH2wRWIM01vDhzr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 079/220] md: allow metadata updates while suspending an array - fix
-Date:   Fri, 22 Nov 2019 11:27:24 +0100
-Message-Id: <20191122100918.048620714@linuxfoundation.org>
+Subject: [PATCH 4.4 054/159] power: supply: max8998-charger: Fix platform data retrieval
+Date:   Fri, 22 Nov 2019 11:27:25 +0100
+Message-Id: <20191122100746.610472481@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-[ Upstream commit 059421e041eb461fb2b3e81c9adaec18ef03ca3c ]
+[ Upstream commit cb90a2c6f77fe9b43d1e3f759bb2f13fe7fa1811 ]
 
-Commit 35bfc52187f6 ("md: allow metadata update while suspending.")
-added support for allowing md_check_recovery() to still perform
-metadata updates while the array is entering the 'suspended' state.
-This is needed to allow the processes of entering the state to
-complete.
+Since the max8998 MFD driver supports instantiation by DT, platform data
+retrieval is handled in MFD probe and cell drivers should get use
+the pdata field of max8998_dev struct to obtain them.
 
-Unfortunately, the patch doesn't really work.  The test for
-"mddev->suspended" at the start of md_check_recovery() means that the
-function doesn't try to do anything at all while entering suspend.
-
-This patch moves the code of updating the metadata while suspending to
-*before* the test on mddev->suspended.
-
-Reported-by: Jeff Mahoney <jeffm@suse.com>
-Fixes: 35bfc52187f6 ("md: allow metadata update while suspending.")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/power/max8998_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index a8fbaa384e9ae..2fe4f93d1d7d4 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8778,6 +8778,18 @@ static void md_start_sync(struct work_struct *ws)
-  */
- void md_check_recovery(struct mddev *mddev)
+diff --git a/drivers/power/max8998_charger.c b/drivers/power/max8998_charger.c
+index b64cf0f141425..66438029bdd0c 100644
+--- a/drivers/power/max8998_charger.c
++++ b/drivers/power/max8998_charger.c
+@@ -85,7 +85,7 @@ static const struct power_supply_desc max8998_battery_desc = {
+ static int max8998_battery_probe(struct platform_device *pdev)
  {
-+	if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags) && mddev->sb_flags) {
-+		/* Write superblock - thread that called mddev_suspend()
-+		 * holds reconfig_mutex for us.
-+		 */
-+		set_bit(MD_UPDATING_SB, &mddev->flags);
-+		smp_mb__after_atomic();
-+		if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags))
-+			md_update_sb(mddev, 0);
-+		clear_bit_unlock(MD_UPDATING_SB, &mddev->flags);
-+		wake_up(&mddev->sb_wait);
-+	}
-+
- 	if (mddev->suspended)
- 		return;
- 
-@@ -8938,16 +8950,6 @@ void md_check_recovery(struct mddev *mddev)
- 	unlock:
- 		wake_up(&mddev->sb_wait);
- 		mddev_unlock(mddev);
--	} else if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags) && mddev->sb_flags) {
--		/* Write superblock - thread that called mddev_suspend()
--		 * holds reconfig_mutex for us.
--		 */
--		set_bit(MD_UPDATING_SB, &mddev->flags);
--		smp_mb__after_atomic();
--		if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags))
--			md_update_sb(mddev, 0);
--		clear_bit_unlock(MD_UPDATING_SB, &mddev->flags);
--		wake_up(&mddev->sb_wait);
- 	}
- }
- EXPORT_SYMBOL(md_check_recovery);
+ 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max8998_platform_data *pdata = dev_get_platdata(iodev->dev);
++	struct max8998_platform_data *pdata = iodev->pdata;
+ 	struct power_supply_config psy_cfg = {};
+ 	struct max8998_battery_data *max8998;
+ 	struct i2c_client *i2c;
 -- 
 2.20.1
 
