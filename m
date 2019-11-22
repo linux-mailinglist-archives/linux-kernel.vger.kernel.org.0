@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5F3106BBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC489106C7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:53:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbfKVKq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:46:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54506 "EHLO mail.kernel.org"
+        id S1729156AbfKVKwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:52:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729695AbfKVKqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:55 -0500
+        id S1727846AbfKVKw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:52:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ED602071F;
-        Fri, 22 Nov 2019 10:46:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46ACB20656;
+        Fri, 22 Nov 2019 10:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419614;
-        bh=zWC4O1+FzD5XCxY6cfO9t5+HbfsT82QfocFT7nsEfbA=;
+        s=default; t=1574419947;
+        bh=kk9s2ECVWRZh6QKxhKPAVyCqzJNCNwA+1D7J7+tmnYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1JL8HOoghsoi49MQO0BGcIWf0LQ6jzaeN3AclOFOtaqLi599AwmA5tk1SuPIUza/O
-         tpO5Ddv29GeuZK4fUgjO/WnC5CwBvFgi0n5C83GebnB71HnvZlnl/awfbTDksalGUL
-         iPmcN4mA1/opi9Uxm51clcMCoq8mScsc+qfBYRQc=
+        b=H3MLsTwTIBoRnJTpolK5RDqQCyMGyM7TpgNBAyldQhi6k+VrD+MJ+jZI0VA6yQ93e
+         n302IPkJ+PtuU3Q8Uv6b+mKDndh/GJ2uUXT1syKREL6J3zywXZtnsKd6VZH/Hm8kCV
+         7jBbFsFyIf0B3mUvbMMMoXt7ise1fyx9q5xgvj5Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+        stable@vger.kernel.org, Cameron Kaiser <spectre@floodgap.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 174/222] mtd: rawnand: sh_flctl: Use proper enum for flctl_dma_fifo0_transfer
-Date:   Fri, 22 Nov 2019 11:28:34 +0100
-Message-Id: <20191122100915.034384817@linuxfoundation.org>
+Subject: [PATCH 4.14 062/122] KVM: PPC: Book3S PR: Exiting split hack mode needs to fixup both PC and LR
+Date:   Fri, 22 Nov 2019 11:28:35 +0100
+Message-Id: <20191122100805.666729402@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Cameron Kaiser <spectre@floodgap.com>
 
-[ Upstream commit e2bfa4ca23d9b5a7bdfcf21319fad9b59e38a05c ]
+[ Upstream commit 1006284c5e411872333967b1970c2ca46a9e225f ]
 
-Clang warns when one enumerated type is converted implicitly to another:
+When an OS (currently only classic Mac OS) is running in KVM-PR and makes a
+linked jump from code with split hack addressing enabled into code that does
+not, LR is not correctly updated and reflects the previously munged PC.
 
-drivers/mtd/nand/raw/sh_flctl.c:483:46: warning: implicit conversion
-from enumeration type 'enum dma_transfer_direction' to different
-enumeration type 'enum dma_data_direction' [-Wenum-conversion]
-                flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_DEV_TO_MEM) > 0)
-                ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-drivers/mtd/nand/raw/sh_flctl.c:542:46: warning: implicit conversion
-from enumeration type 'enum dma_transfer_direction' to different
-enumeration type 'enum dma_data_direction' [-Wenum-conversion]
-                flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_MEM_TO_DEV) > 0)
-                ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-2 warnings generated.
+To fix this, this patch undoes the address munge when exiting split
+hack mode so that code relying on LR being a proper address will now
+execute. This does not affect OS X or other operating systems running
+on KVM-PR.
 
-Use the proper enums from dma_data_direction to satisfy Clang.
-
-DMA_MEM_TO_DEV = DMA_TO_DEVICE = 1
-DMA_DEV_TO_MEM = DMA_FROM_DEVICE = 2
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Cameron Kaiser <spectre@floodgap.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/nand/sh_flctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kvm/book3s.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mtd/nand/sh_flctl.c b/drivers/mtd/nand/sh_flctl.c
-index 442ce619b3b6d..d6c013f93b8c0 100644
---- a/drivers/mtd/nand/sh_flctl.c
-+++ b/drivers/mtd/nand/sh_flctl.c
-@@ -480,7 +480,7 @@ static void read_fiforeg(struct sh_flctl *flctl, int rlen, int offset)
- 
- 	/* initiate DMA transfer */
- 	if (flctl->chan_fifo0_rx && rlen >= 32 &&
--		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_DEV_TO_MEM) > 0)
-+		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_FROM_DEVICE) > 0)
- 			goto convert;	/* DMA success */
- 
- 	/* do polling transfer */
-@@ -539,7 +539,7 @@ static void write_ec_fiforeg(struct sh_flctl *flctl, int rlen,
- 
- 	/* initiate DMA transfer */
- 	if (flctl->chan_fifo0_tx && rlen >= 32 &&
--		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_MEM_TO_DEV) > 0)
-+		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_TO_DEVICE) > 0)
- 			return;	/* DMA success */
- 
- 	/* do polling transfer */
+diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
+index d38280b01ef08..1eda812499376 100644
+--- a/arch/powerpc/kvm/book3s.c
++++ b/arch/powerpc/kvm/book3s.c
+@@ -79,8 +79,11 @@ void kvmppc_unfixup_split_real(struct kvm_vcpu *vcpu)
+ {
+ 	if (vcpu->arch.hflags & BOOK3S_HFLAG_SPLIT_HACK) {
+ 		ulong pc = kvmppc_get_pc(vcpu);
++		ulong lr = kvmppc_get_lr(vcpu);
+ 		if ((pc & SPLIT_HACK_MASK) == SPLIT_HACK_OFFS)
+ 			kvmppc_set_pc(vcpu, pc & ~SPLIT_HACK_MASK);
++		if ((lr & SPLIT_HACK_MASK) == SPLIT_HACK_OFFS)
++			kvmppc_set_lr(vcpu, lr & ~SPLIT_HACK_MASK);
+ 		vcpu->arch.hflags &= ~BOOK3S_HFLAG_SPLIT_HACK;
+ 	}
+ }
 -- 
 2.20.1
 
