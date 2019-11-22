@@ -2,51 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BEC4106CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB53E106BEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730231AbfKVKxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:53:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38284 "EHLO mail.kernel.org"
+        id S1729930AbfKVKsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:48:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730224AbfKVKxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:53:36 -0500
+        id S1729152AbfKVKsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:48:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DBED20656;
-        Fri, 22 Nov 2019 10:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2669D20637;
+        Fri, 22 Nov 2019 10:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420015;
-        bh=yK1zw7+ztDz/wY5Xfb41Gx3AS89+UUsmCgSojd7FXaE=;
+        s=default; t=1574419700;
+        bh=PupgnrNiJS0Fg2hfrgcB/rrvt8DViF2+rMHAQ5nAC2w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gztkh4BRYDKJwlaBLZOl+T9yYSbTWjpprOu1yoK/QZqYtBcSzwlz6d/sFpp3z7DDp
-         oK0F2DNxzH1M0cgsKI9ItoneXBr5k4vCaWI8vbBvrfqmTfdoh9o6xkc+1J6IORuPRp
-         K2GY1Otj0HeF2MTfKPag2a9spGsapEzcAdaeNi4w=
+        b=jBTUKaV1tcxjI/xelExImj95SYz2LoDhrktyeIchwfMxUcduQbxO+wuWAFcUU2e/q
+         tyPtH09+aOL1jWwr6pwZHMtVyXkds/Ka9StYDj+EUGLv6x/BDdOJXUxIWsWw2ejyAs
+         mhtCkSIh318nmMxKq+Q0xPetfw459MY8mbsVAki8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 087/122] x86/fsgsbase/64: Fix ptrace() to read the FS/GS base accurately
-Date:   Fri, 22 Nov 2019 11:29:00 +0100
-Message-Id: <20191122100826.017145675@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 201/222] reset: Fix potential use-after-free in __of_reset_control_get()
+Date:   Fri, 22 Nov 2019 11:29:01 +0100
+Message-Id: <20191122100916.759838259@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,131 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 07e1d88adaaeab247b300926f78cc3f950dbeda3 ]
+[ Upstream commit b790c8ea5593d6dc3580adfad8e117eeb56af874 ]
 
-On 64-bit kernels ptrace can read the FS/GS base using the register access
-APIs (PTRACE_PEEKUSER, etc.) or PTRACE_ARCH_PRCTL.
+Calling of_node_put() decreases the reference count of a device tree
+object, and may free some data.
 
-Make both of these mechanisms return the actual FS/GS base.
+However, the of_phandle_args structure embedding it is passed to
+reset_controller_dev.of_xlate() after that, so it may still be accessed.
 
-This will improve debuggability by providing the correct information
-to ptracer such as GDB.
+Move the call to of_node_put() down to fix this.
 
-[ chang: Rebased and revised patch description. ]
-[ mingo: Revised the changelog some more. ]
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Markus T Metzger <markus.t.metzger@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1537312139-5580-2-git-send-email-chang.seok.bae@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[p.zabel@pengutronix.de: moved of_node_put after mutex_unlock]
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/ptrace.c | 62 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 10 deletions(-)
+ drivers/reset/core.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index 584cdd475bb31..734549492a18b 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -40,6 +40,7 @@
- #include <asm/hw_breakpoint.h>
- #include <asm/traps.h>
- #include <asm/syscall.h>
-+#include <asm/mmu_context.h>
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 188205a552613..d0ebca301afc9 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -324,28 +324,29 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ 			break;
+ 		}
+ 	}
+-	of_node_put(args.np);
  
- #include "tls.h"
+ 	if (!rcdev) {
+-		mutex_unlock(&reset_list_mutex);
+-		return ERR_PTR(-EPROBE_DEFER);
++		rstc = ERR_PTR(-EPROBE_DEFER);
++		goto out;
+ 	}
  
-@@ -343,6 +344,49 @@ static int set_segment_reg(struct task_struct *task,
- 	return 0;
+ 	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells)) {
+-		mutex_unlock(&reset_list_mutex);
+-		return ERR_PTR(-EINVAL);
++		rstc = ERR_PTR(-EINVAL);
++		goto out;
+ 	}
+ 
+ 	rstc_id = rcdev->of_xlate(rcdev, &args);
+ 	if (rstc_id < 0) {
+-		mutex_unlock(&reset_list_mutex);
+-		return ERR_PTR(rstc_id);
++		rstc = ERR_PTR(rstc_id);
++		goto out;
+ 	}
+ 
+ 	/* reset_list_mutex also protects the rcdev's reset_control list */
+ 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
+ 
++out:
+ 	mutex_unlock(&reset_list_mutex);
++	of_node_put(args.np);
+ 
+ 	return rstc;
  }
- 
-+static unsigned long task_seg_base(struct task_struct *task,
-+				   unsigned short selector)
-+{
-+	unsigned short idx = selector >> 3;
-+	unsigned long base;
-+
-+	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
-+		if (unlikely(idx >= GDT_ENTRIES))
-+			return 0;
-+
-+		/*
-+		 * There are no user segments in the GDT with nonzero bases
-+		 * other than the TLS segments.
-+		 */
-+		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
-+			return 0;
-+
-+		idx -= GDT_ENTRY_TLS_MIN;
-+		base = get_desc_base(&task->thread.tls_array[idx]);
-+	} else {
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+		struct ldt_struct *ldt;
-+
-+		/*
-+		 * If performance here mattered, we could protect the LDT
-+		 * with RCU.  This is a slow path, though, so we can just
-+		 * take the mutex.
-+		 */
-+		mutex_lock(&task->mm->context.lock);
-+		ldt = task->mm->context.ldt;
-+		if (unlikely(idx >= ldt->nr_entries))
-+			base = 0;
-+		else
-+			base = get_desc_base(ldt->entries + idx);
-+		mutex_unlock(&task->mm->context.lock);
-+#else
-+		base = 0;
-+#endif
-+	}
-+
-+	return base;
-+}
-+
- #endif	/* CONFIG_X86_32 */
- 
- static unsigned long get_flags(struct task_struct *task)
-@@ -436,18 +480,16 @@ static unsigned long getreg(struct task_struct *task, unsigned long offset)
- 
- #ifdef CONFIG_X86_64
- 	case offsetof(struct user_regs_struct, fs_base): {
--		/*
--		 * XXX: This will not behave as expected if called on
--		 * current or if fsindex != 0.
--		 */
--		return task->thread.fsbase;
-+		if (task->thread.fsindex == 0)
-+			return task->thread.fsbase;
-+		else
-+			return task_seg_base(task, task->thread.fsindex);
- 	}
- 	case offsetof(struct user_regs_struct, gs_base): {
--		/*
--		 * XXX: This will not behave as expected if called on
--		 * current or if fsindex != 0.
--		 */
--		return task->thread.gsbase;
-+		if (task->thread.gsindex == 0)
-+			return task->thread.gsbase;
-+		else
-+			return task_seg_base(task, task->thread.gsindex);
- 	}
- #endif
- 	}
 -- 
 2.20.1
 
