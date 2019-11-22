@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 809B11060DE
+	by mail.lfdr.de (Postfix) with ESMTP id EA3CC1060DF
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfKVFwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58128 "EHLO mail.kernel.org"
+        id S1728582AbfKVFwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:52:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728528AbfKVFwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:52:25 -0500
+        id S1727313AbfKVFw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:52:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF5822072E;
-        Fri, 22 Nov 2019 05:52:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E9ED20717;
+        Fri, 22 Nov 2019 05:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401944;
-        bh=cvFZvCXWVi56kGin9wBixbYsa4vDrv6sQdpsJCuvV0I=;
+        s=default; t=1574401946;
+        bh=LCMRf+GTA8PLWlhhQyo1kvbeft7FZQoVSPIC2iobdPQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BqP55pOxKGBqkE6Jqvt3ZpTCQKw3F/ihewSBM81RjUaR2Hxg1e08/8GP/6Ffi3rjO
-         o324ZaPViEVspK2OehwReFxpDVGX96RWGJhXYQ6O4ZSkZKA/jEeuv6lY4bJMye5xGE
-         lk9Fb4WC5fl+q43OpgIJ/hBpNMaGGSyVz1rTgUck=
+        b=UE8TSRUy73x9bFah/5w/neBBQ4vFB4BWQ4UXOrrP4zNCElKgOJGdwUHI4s4EJWw41
+         UDLA/Lyt/3La3/78xhKTTTTqzH9bNsK9UFusnrjy8m4jD+uDlv3VmS8ZMMbMzjxFEs
+         WpcYyqLJdsCNzSVbHUzmKmC2AOyqJ2kmEC+yCo4g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Olof Johansson <olof@lixom.net>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Skidanov <alexey.skidanov@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 168/219] lib/genalloc.c: include vmalloc.h
-Date:   Fri, 22 Nov 2019 00:48:20 -0500
-Message-Id: <20191122054911.1750-161-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 170/219] tipc: fix memory leak in tipc_nl_compat_publ_dump
+Date:   Fri, 22 Nov 2019 00:48:22 -0500
+Message-Id: <20191122054911.1750-163-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -46,41 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 35004f2e55807a1a1491db24ab512dd2f770a130 ]
+[ Upstream commit f87d8ad9233f115db92c6c087d58403b0009ed36 ]
 
-Fixes build break on most ARM/ARM64 defconfigs:
+There is a memory leak in case genlmsg_put fails.
 
-  lib/genalloc.c: In function 'gen_pool_add_virt':
-  lib/genalloc.c:190:10: error: implicit declaration of function 'vzalloc_node'; did you mean 'kzalloc_node'?
-  lib/genalloc.c:190:8: warning: assignment to 'struct gen_pool_chunk *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-  lib/genalloc.c: In function 'gen_pool_destroy':
-  lib/genalloc.c:254:3: error: implicit declaration of function 'vfree'; did you mean 'kfree'?
+Fix this by freeing *args* before return.
 
-Fixes: 6862d2fc8185 ('lib/genalloc.c: use vzalloc_node() to allocate the bitmap')
-Cc: Huang Shijie <sjhuang@iluvatar.ai>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Skidanov <alexey.skidanov@intel.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Addresses-Coverity-ID: 1476406 ("Resource leak")
+Fixes: 46273cf7e009 ("tipc: fix a missing check of genlmsg_put")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/genalloc.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/tipc/netlink_compat.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index f365d71cdc774..7e85d1e37a6ea 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -35,6 +35,7 @@
- #include <linux/interrupt.h>
- #include <linux/genalloc.h>
- #include <linux/of_device.h>
-+#include <linux/vmalloc.h>
+diff --git a/net/tipc/netlink_compat.c b/net/tipc/netlink_compat.c
+index fab0384d2b4b3..b4860084a8f56 100644
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -983,8 +983,10 @@ static int tipc_nl_compat_publ_dump(struct tipc_nl_compat_msg *msg, u32 sock)
  
- static inline size_t chunk_size(const struct gen_pool_chunk *chunk)
- {
+ 	hdr = genlmsg_put(args, 0, 0, &tipc_genl_family, NLM_F_MULTI,
+ 			  TIPC_NL_PUBL_GET);
+-	if (!hdr)
++	if (!hdr) {
++		kfree_skb(args);
+ 		return -EMSGSIZE;
++	}
+ 
+ 	nest = nla_nest_start(args, TIPC_NLA_SOCK);
+ 	if (!nest) {
 -- 
 2.20.1
 
