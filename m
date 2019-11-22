@@ -2,144 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C15F106791
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:12:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B5F10681A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:27:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKVIMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 03:12:25 -0500
-Received: from mout.web.de ([212.227.15.3]:50327 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbfKVIMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 03:12:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574410263;
-        bh=M0NbBfDQUkr/VgDzsbL81QG5vRwRapzFbAO9bUSc3kM=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=UfqJ+8+l1y+qSLRjScSjXU/0S0lwMXKblwz3OaIxj6wcDamh3RfBUcKXL3SexHcOd
-         7zZv5Kl+78Ghfe8zvgNzHgD1e0ZZdprJCZb2GZUYhr69US1whCElSgQdoLQ7FFh9g7
-         zRJD+NEPnghL7AyrY+Fdn2vAZzbnsjmiHv7R9los=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.244.174.75]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LhvYQ-1i2bAL0IE6-00n8VA; Fri, 22
- Nov 2019 09:11:03 +0100
-Subject: Re: [PATCH v4 04/13] exfat: add directory operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
+        id S1727237AbfKVI1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 03:27:23 -0500
+Received: from condef-05.nifty.com ([202.248.20.70]:59410 "EHLO
+        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfKVI1V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 03:27:21 -0500
+X-Greylist: delayed 394 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Nov 2019 03:27:20 EST
+Received: from conuserg-09.nifty.com ([10.126.8.72])by condef-05.nifty.com with ESMTP id xAM8C8D6005198;
+        Fri, 22 Nov 2019 17:12:11 +0900
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id xAM8B69D003819;
+        Fri, 22 Nov 2019 17:11:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xAM8B69D003819
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1574410266;
+        bh=Hwpn9dTrOnKWNzBjRbeo5zgicQbERpM9jetyXIWTTZY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=14cAQKK4DZUsgFFMy3GC5LfItYVOBvPBptV5CweOtOqbEEXyHWzWLypXVFI4WsLo1
+         oJmIb3T9RTNUyrQ85vqDcUIKFMa1oMz4nukFoXDud1Fju086LYtV62pcrHL4CWM3Q0
+         WCFl6RLCZhmJbxBWEx/rP3ZoTyKfDt5+1Lq8E4l90DNUVIkHBsK4jw3waoEIuzO76d
+         k7dB9iONTIu89MdmryqVKGRdHTxv2N0WxkdtP8bddmO5lcSOjrcjsPWkdWBMrWWvcm
+         UtsZjtfLNt7ctdW6NA64x8FM8Dv7u4QgB7QcbpADrewqJSQ4PflJmLjOg5gfnsZBWk
+         LY2Y1pGMKpDSw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191121052618.31117-1-namjae.jeon@samsung.com>
- <CGME20191121052917epcas1p259b8cb61ab86975cabc0cf4815a8dc38@epcas1p2.samsung.com>
- <20191121052618.31117-5-namjae.jeon@samsung.com>
- <498a958f-9066-09c6-7240-114234965c1a@web.de>
- <004901d5a0e0$f7bf1030$e73d3090$@samsung.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <0e17c0a7-9b40-12a4-3f3f-500b9abb66de@web.de>
-Date:   Fri, 22 Nov 2019 09:11:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <004901d5a0e0$f7bf1030$e73d3090$@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sprXqfhDPylyC+PS/I3B9RUW8MbH2DypxSRx8eC5UoR4qUZatvc
- 524I2jtKfD2Rz1pOhGm2+4iyX6vZ7uiWMKaEHLnl818fckYxp1lteGKSUcg7O637QiGZ27g
- Ky5oQi+TFKUGoG+zL6i3x6k2CQiwCLZAmq0hIApG69q9ylyIhIYFMFAO1l2f3we2q8fURPM
- 3NihE1Ssu3qeaW+FQNazQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+Vw750mv/qc=:WOxz6T/NdpyQa6H9Dvjl1c
- yS8P/eoAhRnNkMMUzAOlVF2ZoeYHLcXLvlkt8YclCK/ATmV0EDuJzZMZNEh5/TWg4kKsW/1bD
- m1qO5m1/rCTEcZcM74yYKxcsE6LeQqlVyTq5MvMVQjYHRZNl76pjUSZ4XfznhmdTLK0s5bKAf
- ED5p2Pk+BEzhVwPi0PEBriWw/yTD85FrgVRIE+Gt/sKqpUlqHqXrZEk/TtfKQ6y38GGbn3nQs
- pALbVnPht1KCssyTllx0kOZGLXcEC4Gmcuvo18RLElma3H3qb9ZDpNuRfH9PDSGIDLrLlRkwj
- XQoOHJWauKiDQ1NqIUbLqPgFB59BslKLku/xWs+fpqBODnKBYwW6dxSEj0eQSqTnro7hDqHvq
- uGuOnwwudnlqqxvnO5DrCq4aHVUU7g6YeGpkCamJIXs3DcGtqjWDFtmO3oGkWkfLeyvC96kQF
- nM/WVfV+4Q37tWd7LzPCHRTvmArZf/Adtd1KpiIr/U+QgAo/uPORY3X78HqcUlgehRMZQkyQ+
- A0J8kpOAjajZPH20EMHGVgUFsf29adk5Zaw5koMJD21yN3gwQwFSqfl2NmPAhyte0BZPRl5tg
- BlZGEHlJQ/u2W0s0QgXCk6GoYKC3At9Q5mzDGxSE3SDuXQaMOGDS0uyox5tPnwJyuLM5Xx5Ep
- Vt5cIVgX4BFPa+bJT0xA3qTjocl+qkRTpEPPJSPu3DROECY+Hiuyqg/CVsGj0auyhEnEyKnrm
- dAatC67uzO/UUM1T6tskNMCEvARk99VXQQs2X/qSb9xHaDB4hUt+G7WnGG7EW9Ywmtq7ER0S7
- ynlSwx0OdSJ8UUBrUNOWBfePT+F99/T49+OFJbVxJNpXWc+uuzkpGs6ULkFWpWNY7U87zL4yv
- +mHzq0SdmQnSHd9g7qGYbg+I74u+krjntQRtI41M+pGA2FFli0OLutnICv53hK7c+ZZlwQEYR
- Ml2TvJ1VcbEK7dqPjXcGOKnZLCWdwusgZJ4iixz1rWb8+J7OHwJUfnErBhuZ455cC6KDKRiH9
- 9mKwy9lAmd/+y7ttiMN5hO45yUxBsXwXCwJhMhi/fiZToW1EDVXeT16s8t253FJleSoBoWrbw
- 4LEs1FNHHD1kefJkyOW/giFjgLSpNpoAq7618RJqN5ewdonLn8hjEmyrh1s8IrIhL5JMY9spB
- ihEp8l4mSklwFdzdFdCAsBlxnXCC+tTbXYQ/3thEqUuDu6ITAN7ut7s8v5WsF60i/WgvHs9wj
- Ybz+I9ZGNPkApLetadAoYog1doT7YF8yD57koUtpji11sjyleJ5v1vhyU68k=
+        Kees Cook <keescook@chromium.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kbuild: check MODULE_* macros in non-modular code
+Date:   Fri, 22 Nov 2019 17:11:00 +0900
+Message-Id: <20191122081100.27695-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> =E2=80=A6
->>> +++ b/fs/exfat/dir.c
->> =E2=80=A6
->>> +static int exfat_readdir(struct inode *inode, struct exfat_dir_entry
->> *dir_entry)
->>> +{
->> =E2=80=A6
->>> +			if (!ep) {
->>> +				ret =3D -EIO;
->>> +				goto free_clu;
->>> +			}
->>
->> How do you think about to move a bit of common exception handling code
->> (at similar places)?
-> Not sure it is good.
+Paul Gortmaker sent a lot of patches to remove orphan modular code.
+You can see his contributions by:
 
-The software development opinions can vary also for this change pattern
-according to different design goals.
-Is such a transformation just another possibility to reduce duplicate
-source code a bit?
+  $ git log --grep='make.* explicitly non-modular'
 
-Regards,
-Markus
+To help this work, this commit adds simple shell-script to detect
+MODULE_ tags used in non-modular code.
+
+It displays suspicious use of MODULE_LICENSE, MODULE_AUTHOR,
+MODULE_DESCRIPTION, etc.
+
+I was not sure about module_param() or MODULE_PARM_DESC(). A lot of
+non-modular code uses module_param() to prefix the kernel parameter
+with the file name it resides in. If we changed module_param() to
+core_param(), the interface would be broken. MODULE_PARM_DESC() in
+non-modular code could be turned into comments or something, but I
+am not sure. I did not check them.
+
+I built x86_64_defconfig of v5.4-rc8, and this script detected
+the following:
+
+notice: asymmetric_keys: MODULE macros found in non-modular code
+notice: binfmt_elf: MODULE macros found in non-modular code
+notice: bsg: MODULE macros found in non-modular code
+notice: compat_binfmt_elf: MODULE macros found in non-modular code
+notice: component: MODULE macros found in non-modular code
+notice: debugfs: MODULE macros found in non-modular code
+notice: drm_mipi_dsi: MODULE macros found in non-modular code
+notice: freq_table: MODULE macros found in non-modular code
+notice: glob: MODULE macros found in non-modular code
+notice: intel_pstate: MODULE macros found in non-modular code
+notice: n_null: MODULE macros found in non-modular code
+notice: nvmem_core: MODULE macros found in non-modular code
+notice: power_supply: MODULE macros found in non-modular code
+notice: thermal_sys: MODULE macros found in non-modular code
+notice: tracefs: MODULE macros found in non-modular code
+notice: vgacon: MODULE macros found in non-modular code
+ To fix above, check MODULE_LICENSE(), MODULE_AUTHOR(), etc.
+ Please check #include <linux/module.h>, THIS_MODULE, too.
+
+I confirmed they are all valid.
+
+Maybe the 'debugfs' is unclear because there are tons of debugfs
+stuff in the source tree. It is talking about MODULE_ALIAS_FS()
+in fs/debugfs/inode.c because fs/debugfs/debugfs.o never becomes
+a module.
+
+[How to fix the warnings]
+
+Let's take 'asymmetric_keys' as an example.
+
+(1) grep Makefiles to find the relevant code
+
+$ git grep -A2 asymmetric_keys -- '*/Makefile' '*/Kbuild'
+crypto/Makefile:obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += asymmetric_keys/
+crypto/Makefile-obj-$(CONFIG_CRYPTO_HASH_INFO) += hash_info.o
+crypto/Makefile-crypto_simd-y := simd.o
+--
+crypto/asymmetric_keys/Makefile:obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += asymmetric_keys.o
+crypto/asymmetric_keys/Makefile-
+crypto/asymmetric_keys/Makefile:asymmetric_keys-y := \
+crypto/asymmetric_keys/Makefile-        asymmetric_type.o \
+crypto/asymmetric_keys/Makefile-        restrict.o \
+
+Then, you notice it is associated with CONFIG_ASYMMETRIC_KEY_TYPE
+and is a composite object that consists of asymmetric_type.o,
+restrict.o, ...
+
+(2) Confirm the CONFIG is boolean
+
+$ git grep -A2 'config ASYMMETRIC_KEY_TYPE' -- '*/Kconfig*'
+crypto/asymmetric_keys/Kconfig:menuconfig ASYMMETRIC_KEY_TYPE
+crypto/asymmetric_keys/Kconfig- bool "Asymmetric (public-key cryptographic) key type"
+crypto/asymmetric_keys/Kconfig- depends on KEYS
+
+Now you are sure it never get compiled as a module since
+ASYMMETRIC_KEY_TYPE is a bool type option.
+
+(3) Grep the source file(s)
+
+$ grep '^MODULE' crypto/asymmetric_keys/asymmetric_type.c
+MODULE_LICENSE("GPL");
+
+Remove the orphan MODULE tags. You may also need to do some additional
+works such as:
+
+ - replace module_*_driver with builtin_*_driver
+ - replace <linux/module.h> with <linux/init.h>
+ - remove module_exit code
+ - move credit in MODULE_AUTHOR() to the top of the file
+
+Please see Paul's commits.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2:
+  - Remove redundant back-slashes after the pipe operator '|'
+
+ scripts/modules-check.sh | 54 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+
+diff --git a/scripts/modules-check.sh b/scripts/modules-check.sh
+index f51f446707b8..7975aa61ddb8 100755
+--- a/scripts/modules-check.sh
++++ b/scripts/modules-check.sh
+@@ -13,4 +13,58 @@ check_same_name_modules()
+ 	done
+ }
+ 
++# Check MODULE_ macros in non-modular code
++check_orphan_module_macros()
++{
++	# modules.builtin.modinfo is created while linking vmlinux.
++	# It may not exist when you do 'make modules'.
++	if [ ! -r modules.builtin.modinfo ]; then
++		return
++	fi
++
++	# modules.builtin lists *real* built-in modules, i.e. controlled by
++	# tristate CONFIG options, but currently built with =y.
++	#
++	# modules.builtin.modinfo is the list of MODULE_ macros compiled
++	# into vmlinux.
++	#
++	# By diff'ing them, users of bogus MODULE_* macros will show up.
++
++	# Kbuild replaces ',' and '-' in file names with '_' for use in C.
++	real_builtin_modules=$(sed -e 's:.*/::' -e 's/\.ko$//' -e 's/,/_/g' \
++			       -e 's/-/_/g' modules.builtin | sort | uniq)
++
++	show_hint=
++
++	# Exclude '.paramtype=' and '.param=' to skip checking module_param()
++	# and MODULE_PARM_DESC().
++	module_macro_users=$(tr '\0' '\n' < modules.builtin.modinfo |
++			     sed -e '/\.parmtype=/d' -e '/\.parm=/d' |
++			     sed -n 's/\..*//p' | sort | uniq)
++
++	for m in $module_macro_users
++	do
++		warn=1
++
++		for n in $real_builtin_modules
++		do
++			if [ "$m" = "$n" ]; then
++				warn=
++				break
++			fi
++		done
++
++		if [ -n "$warn" ]; then
++			echo "notice: $m: MODULE macros found in non-modular code"
++			show_hint=1
++		fi
++	done
++
++	if [ -n "$show_hint" ]; then
++		echo " To fix above, check MODULE_LICENSE(), MODULE_AUTHOR(), etc."
++		echo " Please check #include <linux/module.h>, THIS_MODULE, too."
++	fi
++}
++
+ check_same_name_modules
++check_orphan_module_macros
+-- 
+2.17.1
+
