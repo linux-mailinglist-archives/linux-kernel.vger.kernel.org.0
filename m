@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C85106DD6
+	by mail.lfdr.de (Postfix) with ESMTP id 47C56106DD5
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731446AbfKVLDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:03:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57796 "EHLO mail.kernel.org"
+        id S1730188AbfKVLDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:03:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730625AbfKVLDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:03:35 -0500
+        id S1730607AbfKVLDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:03:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E21A2073F;
-        Fri, 22 Nov 2019 11:03:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DAFC207DD;
+        Fri, 22 Nov 2019 11:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420614;
-        bh=JwI+ye/StYPrNa8sOUciLaZ827yPQ6ei7loGtgzAWQ0=;
+        s=default; t=1574420616;
+        bh=ki+pDiUQ4TAJihOkdBBUuOsWB5MDl13oiTbkGVRNnaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zteE0IRmnfyrW1yBgQdeu2yP3ivGtfcsDpEJirxmc6QI5mESgpzmqnuzJVVKp4MOB
-         fxg3jZTYx6gupQSSfRzi2WGK5aqFcScbt1K6jNSzea2pmjBpxK3uEAa5IP5YZSrbMN
-         CTyeWzCPLYiVJso74DtIXUsqXBfDl8nVQQikTEJ8=
+        b=NYbsm/YnAoEy6rbWlDEgXjhlC082bmxVzMEozCtSRK+RZrRl7sq8tpdHyrFE+A9HF
+         f08W6Islm7vR7Jc3J6gulNFZp3ltcXUJvVNKLMNCN7aKEX5f+sthxycLw2JIqPad8U
+         wZscsNKb1HMTSyo2hX8MAnfP0eGjBVlHqyQnvETI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jithu Joseph <jithu.joseph@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>, tony.luck@intel.com,
-        gavin.hindman@intel.com, dave.hansen@intel.com, hpa@zytor.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 165/220] x86/intel_rdt: CBM overlap should also check for overlap with CDP peer
-Date:   Fri, 22 Nov 2019 11:28:50 +0100
-Message-Id: <20191122100924.645511490@linuxfoundation.org>
+        stable@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 166/220] mmc: mmci: expand startbiterr to irqmask and error check
+Date:   Fri, 22 Nov 2019 11:28:51 +0100
+Message-Id: <20191122100924.727930440@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -47,127 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Reinette Chatre <reinette.chatre@intel.com>
+From: Ludovic Barre <ludovic.barre@st.com>
 
-[ Upstream commit e5f3530c391105fdd6174852e3ea6136d073b45a ]
+[ Upstream commit daf9713c5ef8c3ffb0bdf7de11b53b2b2756c4f1 ]
 
-The CBM overlap test is used to manage the allocations of RDT resources
-where overlap is possible between resource groups. When a resource group
-is in exclusive mode then there should be no overlap between resource
-groups.
+All variants don't pretend to have a startbiterr.
+-While data error check, if status register return an error
+(like  MCI_DATACRCFAIL) we must avoid to check MCI_STARTBITERR
+(if not desired).
+-expand start_err to MCI_IRQENABLE to avoid to set this bit by default.
 
-The current overlap test only considers overlap between the same
-resources, for example, that usage of a RDT_RESOURCE_L2DATA resource
-in one resource group does not overlap with usage of a RDT_RESOURCE_L2DATA
-resource in another resource group. The problem with this is that it
-allows overlap between a RDT_RESOURCE_L2DATA resource in one resource
-group with a RDT_RESOURCE_L2CODE resource in another resource group -
-even if both resource groups are in exclusive mode. This is a problem
-because even though these appear to be different resources they end up
-sharing the same underlying hardware and thus does not fulfill the
-user's request for exclusive use of hardware resources.
-
-Fix this by including the CDP peer (if there is one) in every CBM
-overlap test. This does not impact the overlap between resources
-within the same exclusive resource group that is allowed.
-
-Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
-Reported-by: Jithu Joseph <jithu.joseph@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jithu Joseph <jithu.joseph@intel.com>
-Acked-by: Fenghua Yu <fenghua.yu@intel.com>
-Cc: tony.luck@intel.com
-Cc: gavin.hindman@intel.com
-Cc: dave.hansen@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/e538b7f56f7ca15963dce2e00ac3be8edb8a68e1.1538603665.git.reinette.chatre@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 48 ++++++++++++++++++++----
- 1 file changed, 41 insertions(+), 7 deletions(-)
+ drivers/mmc/host/mmci.c | 27 ++++++++++++++++-----------
+ drivers/mmc/host/mmci.h |  6 +++---
+ 2 files changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index bf15ffc1248fd..0d8ea82acd930 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -987,10 +987,9 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
-  *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
-  *         and @d_cdp will point to the peer RDT domain.
-  */
--static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
--						    struct rdt_domain *d,
--						    struct rdt_resource **r_cdp,
--						    struct rdt_domain **d_cdp)
-+static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
-+			    struct rdt_resource **r_cdp,
-+			    struct rdt_domain **d_cdp)
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index eb1a65cb878f0..fa6268c0f1232 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -895,14 +895,18 @@ static void
+ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+ 	      unsigned int status)
  {
- 	struct rdt_resource *_r_cdp = NULL;
- 	struct rdt_domain *_d_cdp = NULL;
-@@ -1037,7 +1036,7 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
- }
++	unsigned int status_err;
++
+ 	/* Make sure we have data to handle */
+ 	if (!data)
+ 		return;
  
- /**
-- * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-+ * __rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-  * @r: Resource to which domain instance @d belongs.
-  * @d: The domain instance for which @closid is being tested.
-  * @cbm: Capacity bitmask being tested.
-@@ -1056,8 +1055,8 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
-  *
-  * Return: false if CBM does not overlap, true if it does.
-  */
--bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
--			   unsigned long cbm, int closid, bool exclusive)
-+static bool __rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+				    unsigned long cbm, int closid, bool exclusive)
- {
- 	enum rdtgrp_mode mode;
- 	unsigned long ctrl_b;
-@@ -1092,6 +1091,41 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
- 	return false;
- }
+ 	/* First check for errors */
+-	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
+-		      host->variant->start_err |
+-		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
++	status_err = status & (host->variant->start_err |
++			       MCI_DATACRCFAIL | MCI_DATATIMEOUT |
++			       MCI_TXUNDERRUN | MCI_RXOVERRUN);
++
++	if (status_err) {
+ 		u32 remain, success;
  
-+/**
-+ * rdtgroup_cbm_overlaps - Does CBM overlap with other use of hardware
-+ * @r: Resource to which domain instance @d belongs.
-+ * @d: The domain instance for which @closid is being tested.
-+ * @cbm: Capacity bitmask being tested.
-+ * @closid: Intended closid for @cbm.
-+ * @exclusive: Only check if overlaps with exclusive resource groups
-+ *
-+ * Resources that can be allocated using a CBM can use the CBM to control
-+ * the overlap of these allocations. rdtgroup_cmb_overlaps() is the test
-+ * for overlap. Overlap test is not limited to the specific resource for
-+ * which the CBM is intended though - when dealing with CDP resources that
-+ * share the underlying hardware the overlap check should be performed on
-+ * the CDP resource sharing the hardware also.
-+ *
-+ * Refer to description of __rdtgroup_cbm_overlaps() for the details of the
-+ * overlap test.
-+ *
-+ * Return: true if CBM overlap detected, false if there is no overlap
-+ */
-+bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+			   unsigned long cbm, int closid, bool exclusive)
-+{
-+	struct rdt_resource *r_cdp;
-+	struct rdt_domain *d_cdp;
-+
-+	if (__rdtgroup_cbm_overlaps(r, d, cbm, closid, exclusive))
-+		return true;
-+
-+	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) < 0)
-+		return false;
-+
-+	return  __rdtgroup_cbm_overlaps(r_cdp, d_cdp, cbm, closid, exclusive);
-+}
-+
- /**
-  * rdtgroup_mode_test_exclusive - Test if this resource group can be exclusive
-  *
+ 		/* Terminate the DMA transfer */
+@@ -922,18 +926,18 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+ 		success = data->blksz * data->blocks - remain;
+ 
+ 		dev_dbg(mmc_dev(host->mmc), "MCI ERROR IRQ, status 0x%08x at 0x%08x\n",
+-			status, success);
+-		if (status & MCI_DATACRCFAIL) {
++			status_err, success);
++		if (status_err & MCI_DATACRCFAIL) {
+ 			/* Last block was not successful */
+ 			success -= 1;
+ 			data->error = -EILSEQ;
+-		} else if (status & MCI_DATATIMEOUT) {
++		} else if (status_err & MCI_DATATIMEOUT) {
+ 			data->error = -ETIMEDOUT;
+-		} else if (status & MCI_STARTBITERR) {
++		} else if (status_err & MCI_STARTBITERR) {
+ 			data->error = -ECOMM;
+-		} else if (status & MCI_TXUNDERRUN) {
++		} else if (status_err & MCI_TXUNDERRUN) {
+ 			data->error = -EIO;
+-		} else if (status & MCI_RXOVERRUN) {
++		} else if (status_err & MCI_RXOVERRUN) {
+ 			if (success > host->variant->fifosize)
+ 				success -= host->variant->fifosize;
+ 			else
+@@ -1790,7 +1794,7 @@ static int mmci_probe(struct amba_device *dev,
+ 			goto clk_disable;
+ 	}
+ 
+-	writel(MCI_IRQENABLE, host->base + MMCIMASK0);
++	writel(MCI_IRQENABLE | variant->start_err, host->base + MMCIMASK0);
+ 
+ 	amba_set_drvdata(dev, mmc);
+ 
+@@ -1877,7 +1881,8 @@ static void mmci_restore(struct mmci_host *host)
+ 		writel(host->datactrl_reg, host->base + MMCIDATACTRL);
+ 		writel(host->pwr_reg, host->base + MMCIPOWER);
+ 	}
+-	writel(MCI_IRQENABLE, host->base + MMCIMASK0);
++	writel(MCI_IRQENABLE | host->variant->start_err,
++	       host->base + MMCIMASK0);
+ 	mmci_reg_delay(host);
+ 
+ 	spin_unlock_irqrestore(&host->lock, flags);
+diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+index 517591d219e93..613d37ab08d20 100644
+--- a/drivers/mmc/host/mmci.h
++++ b/drivers/mmc/host/mmci.h
+@@ -181,9 +181,9 @@
+ #define MMCIFIFO		0x080 /* to 0x0bc */
+ 
+ #define MCI_IRQENABLE	\
+-	(MCI_CMDCRCFAILMASK|MCI_DATACRCFAILMASK|MCI_CMDTIMEOUTMASK|	\
+-	MCI_DATATIMEOUTMASK|MCI_TXUNDERRUNMASK|MCI_RXOVERRUNMASK|	\
+-	MCI_CMDRESPENDMASK|MCI_CMDSENTMASK|MCI_STARTBITERRMASK)
++	(MCI_CMDCRCFAILMASK | MCI_DATACRCFAILMASK | MCI_CMDTIMEOUTMASK | \
++	MCI_DATATIMEOUTMASK | MCI_TXUNDERRUNMASK | MCI_RXOVERRUNMASK |	\
++	MCI_CMDRESPENDMASK | MCI_CMDSENTMASK)
+ 
+ /* These interrupts are directed to IRQ1 when two IRQ lines are available */
+ #define MCI_IRQ1MASK \
 -- 
 2.20.1
 
