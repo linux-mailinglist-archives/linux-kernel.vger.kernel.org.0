@@ -2,163 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F658106822
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B21D10682A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKVIai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 03:30:38 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:27135 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726018AbfKVIai (ORCPT
+        id S1726944AbfKVIij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 03:38:39 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:43816 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbfKVIij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 03:30:38 -0500
-X-UUID: f6eec23ec8f74fedaaa4374a57dbb3fc-20191122
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=zKQOxirmySYcxcZXIgTVjcOzLInsWmu/tj21UeF5XGk=;
-        b=t2/RfkKI/ox3+OPPbvtlWkJsEST3bSklC1Y7G9DihP67Nlery+fKYhCTTZLXirZEMZje1Mhji1e+tnHUKCqCaEK3hEPvVWsrVw95mnpIs521VUNVqZddIwHzofjur2v65POm9ru7heNr5wCaVyPU5ITPVZYMsFJ5G/qNYu7wyrU=;
-X-UUID: f6eec23ec8f74fedaaa4374a57dbb3fc-20191122
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 356741794; Fri, 22 Nov 2019 16:30:31 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 22 Nov 2019 16:30:23 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 22 Nov 2019 16:30:03 +0800
-Message-ID: <1574411430.19450.5.camel@mtksdaap41>
-Subject: Re: [PATCH v17 3/6] soc: mediatek: cmdq: define the instruction
- struct
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>
-Date:   Fri, 22 Nov 2019 16:30:30 +0800
-In-Reply-To: <20191121015410.18852-4-bibby.hsieh@mediatek.com>
-References: <20191121015410.18852-1-bibby.hsieh@mediatek.com>
-         <20191121015410.18852-4-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 22 Nov 2019 03:38:39 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM8ZVbY195913;
+        Fri, 22 Nov 2019 08:37:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=WTM18YWQ1cM3mzHoTUydCbnnPVUiFtDYoYFk0U4GsgI=;
+ b=QrM3gVoNsZnLCLt5F0bp4TEdTP0ShkGYIFQLzNSXyoyD2Weg0LAABxoqm1I2iwF+M2P+
+ 2iiIAiStz3c2uBk0T3f9sOrRpLvPTJ7nGzQqa5ThyyE8FP5IODlwQUFqudPee7MbP4E4
+ NhV6JV5iyrRkwLPFLcHo86s0F04uLDSuaHekC/dQA6POWs98Z1XteyP2ws993Wu+P1LM
+ otC5d8qESast0kHW7L8ECwZ+4Yy0Ffi8A3l9M18rdI9cJ62niuWAIoOfn4lpsKJU3jfW
+ KluaN5TrViWHDTGVh1p8jDe2WlAY4/cynOqZOlN7nsuI1/26ZXk1s73HUhayMvuiTTIH 5A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2wa9rr12dw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 08:37:03 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM8X515106484;
+        Fri, 22 Nov 2019 08:35:03 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wdfry4y2h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 08:35:02 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAM8Yvig025684;
+        Fri, 22 Nov 2019 08:34:57 GMT
+Received: from kadam (/41.210.147.129)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 22 Nov 2019 00:34:56 -0800
+Date:   Fri, 22 Nov 2019 11:34:47 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     "'Markus Elfring'" <Markus.Elfring@web.de>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        "'Christoph Hellwig'" <hch@lst.de>,
+        "'Daniel Wagner'" <dwagner@suse.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Nikolay Borisov'" <nborisov@suse.com>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
+        "'Valdis =?utf-8?Q?Kl=C4=93tnieks'?=" <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 04/13] exfat: add directory operations
+Message-ID: <20191122083446.GG5604@kadam>
+References: <20191121052618.31117-1-namjae.jeon@samsung.com>
+ <CGME20191121052917epcas1p259b8cb61ab86975cabc0cf4815a8dc38@epcas1p2.samsung.com>
+ <20191121052618.31117-5-namjae.jeon@samsung.com>
+ <498a958f-9066-09c6-7240-114234965c1a@web.de>
+ <004901d5a0e0$f7bf1030$e73d3090$@samsung.com>
+ <0e17c0a7-9b40-12a4-3f3f-500b9abb66de@web.de>
+ <00a001d5a10d$da529670$8ef7c350$@samsung.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00a001d5a10d$da529670$8ef7c350$@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911220074
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911220075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBUaHUsIDIwMTktMTEtMjEgYXQgMDk6NTQgKzA4MDAsIEJpYmJ5IEhz
-aWVoIHdyb3RlOg0KPiBEZWZpbmUgYW4gaW5zdHJ1Y3Rpb24gc3RydWN0dXJlIGZvciBnY2UgZHJp
-dmVyIHRvIGFwcGVuZCBjb21tYW5kLg0KPiBUaGlzIHN0cnVjdHVyZSBjYW4gbWFrZSB0aGUgY2xp
-ZW50J3MgY29kZSBtb3JlIHJlYWRhYmlsaXR5Lg0KDQpFdmVuIHRob3VnaCBJIGRvIG5vdCBsaWtl
-IHBhc3Mgc3RydWN0IHBhcmFtZXRlciBieSB2YWx1ZSwgYnV0IHN0cnVjdA0KY21kcV9pbnN0cnVj
-dGlvbiBpcyBqdXN0IGEgNjQgYml0cyBpbnRlZ2VyIGFuZCB3b3VsZCBub3QgYmUgbW9kaWZpZWQg
-aW4NCmNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKCksIHNvDQoNClJldmlld2VkLWJ5OiBDSyBIdSA8
-Y2suaHVAbWVkaWF0ZWsuY29tPg0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCaWJieSBIc2llaCA8
-YmliYnkuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvc29jL21lZGlhdGVr
-L210ay1jbWRxLWhlbHBlci5jICAgfCA3MyArKysrKysrKysrKysrKysrLS0tLS0tLS0NCj4gIGlu
-Y2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmggfCAxMCArKysrDQo+ICAyIGZp
-bGVzIGNoYW5nZWQsIDU5IGluc2VydGlvbnMoKyksIDI0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIvZHJpdmVy
-cy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4gaW5kZXggYzhmYjY5Nzg3NjQ5Li4x
-MWJmY2MxNTBlYmQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRx
-LWhlbHBlci5jDQo+ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5j
-DQo+IEBAIC05LDEyICs5LDI0IEBADQo+ICAjaW5jbHVkZSA8bGludXgvbWFpbGJveF9jb250cm9s
-bGVyLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmg+DQo+ICAN
-Cj4gLSNkZWZpbmUgQ01EUV9BUkdfQV9XUklURV9NQVNLCTB4ZmZmZg0KPiAgI2RlZmluZSBDTURR
-X1dSSVRFX0VOQUJMRV9NQVNLCUJJVCgwKQ0KPiAgI2RlZmluZSBDTURRX0VPQ19JUlFfRU4JCUJJ
-VCgwKQ0KPiAgI2RlZmluZSBDTURRX0VPQ19DTUQJCSgodTY0KSgoQ01EUV9DT0RFX0VPQyA8PCBD
-TURRX09QX0NPREVfU0hJRlQpKSBcDQo+ICAJCQkJPDwgMzIgfCBDTURRX0VPQ19JUlFfRU4pDQo+
-ICANCj4gK3N0cnVjdCBjbWRxX2luc3RydWN0aW9uIHsNCj4gKwl1bmlvbiB7DQo+ICsJCXUzMiB2
-YWx1ZTsNCj4gKwkJdTMyIG1hc2s7DQo+ICsJfTsNCj4gKwl1bmlvbiB7DQo+ICsJCXUxNiBvZmZz
-ZXQ7DQo+ICsJCXUxNiBldmVudDsNCj4gKwl9Ow0KPiArCXU4IHN1YnN5czsNCj4gKwl1OCBvcDsN
-Cj4gK307DQo+ICsNCj4gIHN0YXRpYyB2b2lkIGNtZHFfY2xpZW50X3RpbWVvdXQoc3RydWN0IHRp
-bWVyX2xpc3QgKnQpDQo+ICB7DQo+ICAJc3RydWN0IGNtZHFfY2xpZW50ICpjbGllbnQgPSBmcm9t
-X3RpbWVyKGNsaWVudCwgdCwgdGltZXIpOw0KPiBAQCAtMTEwLDEwICsxMjIsMTAgQEAgdm9pZCBj
-bWRxX3BrdF9kZXN0cm95KHN0cnVjdCBjbWRxX3BrdCAqcGt0KQ0KPiAgfQ0KPiAgRVhQT1JUX1NZ
-TUJPTChjbWRxX3BrdF9kZXN0cm95KTsNCj4gIA0KPiAtc3RhdGljIGludCBjbWRxX3BrdF9hcHBl
-bmRfY29tbWFuZChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgZW51bSBjbWRxX2NvZGUgY29kZSwNCj4g
-LQkJCQkgICB1MzIgYXJnX2EsIHUzMiBhcmdfYikNCj4gK3N0YXRpYyBpbnQgY21kcV9wa3RfYXBw
-ZW5kX2NvbW1hbmQoc3RydWN0IGNtZHFfcGt0ICpwa3QsDQo+ICsJCQkJICAgc3RydWN0IGNtZHFf
-aW5zdHJ1Y3Rpb24gaW5zdCkNCj4gIHsNCj4gLQl1NjQgKmNtZF9wdHI7DQo+ICsJc3RydWN0IGNt
-ZHFfaW5zdHJ1Y3Rpb24gKmNtZF9wdHI7DQo+ICANCj4gIAlpZiAodW5saWtlbHkocGt0LT5jbWRf
-YnVmX3NpemUgKyBDTURRX0lOU1RfU0laRSA+IHBrdC0+YnVmX3NpemUpKSB7DQo+ICAJCS8qDQo+
-IEBAIC0xMjksOCArMTQxLDkgQEAgc3RhdGljIGludCBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChz
-dHJ1Y3QgY21kcV9wa3QgKnBrdCwgZW51bSBjbWRxX2NvZGUgY29kZSwNCj4gIAkJCV9fZnVuY19f
-LCAodTMyKXBrdC0+YnVmX3NpemUpOw0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gIAl9DQo+ICsN
-Cj4gIAljbWRfcHRyID0gcGt0LT52YV9iYXNlICsgcGt0LT5jbWRfYnVmX3NpemU7DQo+IC0JKCpj
-bWRfcHRyKSA9ICh1NjQpKChjb2RlIDw8IENNRFFfT1BfQ09ERV9TSElGVCkgfCBhcmdfYSkgPDwg
-MzIgfCBhcmdfYjsNCj4gKwkqY21kX3B0ciA9IGluc3Q7DQo+ICAJcGt0LT5jbWRfYnVmX3NpemUg
-Kz0gQ01EUV9JTlNUX1NJWkU7DQo+ICANCj4gIAlyZXR1cm4gMDsNCj4gQEAgLTEzOCwyMSArMTUx
-LDI4IEBAIHN0YXRpYyBpbnQgY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQoc3RydWN0IGNtZHFfcGt0
-ICpwa3QsIGVudW0gY21kcV9jb2RlIGNvZGUsDQo+ICANCj4gIGludCBjbWRxX3BrdF93cml0ZShz
-dHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTggc3Vic3lzLCB1MTYgb2Zmc2V0LCB1MzIgdmFsdWUpDQo+
-ICB7DQo+IC0JdTMyIGFyZ19hID0gKG9mZnNldCAmIENNRFFfQVJHX0FfV1JJVEVfTUFTSykgfA0K
-PiAtCQkgICAgKHN1YnN5cyA8PCBDTURRX1NVQlNZU19TSElGVCk7DQo+ICsJc3RydWN0IGNtZHFf
-aW5zdHJ1Y3Rpb24gaW5zdDsNCj4gIA0KPiAtCXJldHVybiBjbWRxX3BrdF9hcHBlbmRfY29tbWFu
-ZChwa3QsIENNRFFfQ09ERV9XUklURSwgYXJnX2EsIHZhbHVlKTsNCj4gKwlpbnN0Lm9wID0gQ01E
-UV9DT0RFX1dSSVRFOw0KPiArCWluc3QudmFsdWUgPSB2YWx1ZTsNCj4gKwlpbnN0Lm9mZnNldCA9
-IG9mZnNldDsNCj4gKwlpbnN0LnN1YnN5cyA9IHN1YnN5czsNCj4gKw0KPiArCXJldHVybiBjbWRx
-X3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3QpOw0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTChj
-bWRxX3BrdF93cml0ZSk7DQo+ICANCj4gIGludCBjbWRxX3BrdF93cml0ZV9tYXNrKHN0cnVjdCBj
-bWRxX3BrdCAqcGt0LCB1OCBzdWJzeXMsDQo+ICAJCQl1MTYgb2Zmc2V0LCB1MzIgdmFsdWUsIHUz
-MiBtYXNrKQ0KPiAgew0KPiAtCXUzMiBvZmZzZXRfbWFzayA9IG9mZnNldDsNCj4gKwlzdHJ1Y3Qg
-Y21kcV9pbnN0cnVjdGlvbiBpbnN0ID0geyB7MH0gfTsNCj4gKwl1MTYgb2Zmc2V0X21hc2sgPSBv
-ZmZzZXQ7DQo+ICAJaW50IGVycjsNCj4gIA0KPiAgCWlmIChtYXNrICE9IDB4ZmZmZmZmZmYpIHsN
-Cj4gLQkJZXJyID0gY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQocGt0LCBDTURRX0NPREVfTUFTSywg
-MCwgfm1hc2spOw0KPiArCQlpbnN0Lm9wID0gQ01EUV9DT0RFX01BU0s7DQo+ICsJCWluc3QubWFz
-ayA9IH5tYXNrOw0KPiArCQllcnIgPSBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3Qp
-Ow0KPiAgCQlpZiAoZXJyIDwgMCkNCj4gIAkJCXJldHVybiBlcnI7DQo+ICANCj4gQEAgLTE2Niw0
-NSArMTg2LDUwIEBAIEVYUE9SVF9TWU1CT0woY21kcV9wa3Rfd3JpdGVfbWFzayk7DQo+ICANCj4g
-IGludCBjbWRxX3BrdF93ZmUoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCkNCj4gIHsN
-Cj4gLQl1MzIgYXJnX2I7DQo+ICsJc3RydWN0IGNtZHFfaW5zdHJ1Y3Rpb24gaW5zdCA9IHsgezB9
-IH07DQo+ICANCj4gIAlpZiAoZXZlbnQgPj0gQ01EUV9NQVhfRVZFTlQpDQo+ICAJCXJldHVybiAt
-RUlOVkFMOw0KPiAgDQo+IC0JLyoNCj4gLQkgKiBXRkUgYXJnX2INCj4gLQkgKiBiaXQgMC0xMTog
-d2FpdCB2YWx1ZQ0KPiAtCSAqIGJpdCAxNTogMSAtIHdhaXQsIDAgLSBubyB3YWl0DQo+IC0JICog
-Yml0IDE2LTI3OiB1cGRhdGUgdmFsdWUNCj4gLQkgKiBiaXQgMzE6IDEgLSB1cGRhdGUsIDAgLSBu
-byB1cGRhdGUNCj4gLQkgKi8NCj4gLQlhcmdfYiA9IENNRFFfV0ZFX1VQREFURSB8IENNRFFfV0ZF
-X1dBSVQgfCBDTURRX1dGRV9XQUlUX1ZBTFVFOw0KPiArCWluc3Qub3AgPSBDTURRX0NPREVfV0ZF
-Ow0KPiArCWluc3QudmFsdWUgPSBDTURRX1dGRV9PUFRJT047DQo+ICsJaW5zdC5ldmVudCA9IGV2
-ZW50Ow0KPiAgDQo+IC0JcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgQ01EUV9D
-T0RFX1dGRSwgZXZlbnQsIGFyZ19iKTsNCj4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5kX2NvbW1h
-bmQocGt0LCBpbnN0KTsNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0woY21kcV9wa3Rfd2ZlKTsNCj4g
-IA0KPiAgaW50IGNtZHFfcGt0X2NsZWFyX2V2ZW50KHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYg
-ZXZlbnQpDQo+ICB7DQo+ICsJc3RydWN0IGNtZHFfaW5zdHJ1Y3Rpb24gaW5zdCA9IHsgezB9IH07
-DQo+ICsNCj4gIAlpZiAoZXZlbnQgPj0gQ01EUV9NQVhfRVZFTlQpDQo+ICAJCXJldHVybiAtRUlO
-VkFMOw0KPiAgDQo+IC0JcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgQ01EUV9D
-T0RFX1dGRSwgZXZlbnQsDQo+IC0JCQkJICAgICAgIENNRFFfV0ZFX1VQREFURSk7DQo+ICsJaW5z
-dC5vcCA9IENNRFFfQ09ERV9XRkU7DQo+ICsJaW5zdC52YWx1ZSA9IENNRFFfV0ZFX1VQREFURTsN
-Cj4gKwlpbnN0LmV2ZW50ID0gZXZlbnQ7DQo+ICsNCj4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5k
-X2NvbW1hbmQocGt0LCBpbnN0KTsNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0woY21kcV9wa3RfY2xl
-YXJfZXZlbnQpOw0KPiAgDQo+ICBzdGF0aWMgaW50IGNtZHFfcGt0X2ZpbmFsaXplKHN0cnVjdCBj
-bWRxX3BrdCAqcGt0KQ0KPiAgew0KPiArCXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3QgPSB7
-IHswfSB9Ow0KPiAgCWludCBlcnI7DQo+ICANCj4gIAkvKiBpbnNlcnQgRU9DIGFuZCBnZW5lcmF0
-ZSBJUlEgZm9yIGVhY2ggY29tbWFuZCBpdGVyYXRpb24gKi8NCj4gLQllcnIgPSBjbWRxX3BrdF9h
-cHBlbmRfY29tbWFuZChwa3QsIENNRFFfQ09ERV9FT0MsIDAsIENNRFFfRU9DX0lSUV9FTik7DQo+
-ICsJaW5zdC5vcCA9IENNRFFfQ09ERV9FT0M7DQo+ICsJaW5zdC52YWx1ZSA9IENNRFFfRU9DX0lS
-UV9FTjsNCj4gKwllcnIgPSBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3QpOw0KPiAg
-CWlmIChlcnIgPCAwKQ0KPiAgCQlyZXR1cm4gZXJyOw0KPiAgDQo+ICAJLyogSlVNUCB0byBlbmQg
-Ki8NCj4gLQllcnIgPSBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIENNRFFfQ09ERV9KVU1Q
-LCAwLCBDTURRX0pVTVBfUEFTUyk7DQo+ICsJaW5zdC5vcCA9IENNRFFfQ09ERV9KVU1QOw0KPiAr
-CWluc3QudmFsdWUgPSBDTURRX0pVTVBfUEFTUzsNCj4gKwllcnIgPSBjbWRxX3BrdF9hcHBlbmRf
-Y29tbWFuZChwa3QsIGluc3QpOw0KPiAgDQo+ICAJcmV0dXJuIGVycjsNCj4gIH0NCj4gZGlmZiAt
-LWdpdCBhL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmggYi9pbmNsdWRl
-L2xpbnV4L21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5oDQo+IGluZGV4IGU2ZjU0ZWY2Njk4Yi4u
-Njc4NzYwNTQ4NzkxIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNt
-ZHEtbWFpbGJveC5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWls
-Ym94LmgNCj4gQEAgLTIwLDYgKzIwLDE2IEBADQo+ICAjZGVmaW5lIENNRFFfV0ZFX1dBSVQJCQlC
-SVQoMTUpDQo+ICAjZGVmaW5lIENNRFFfV0ZFX1dBSVRfVkFMVUUJCTB4MQ0KPiAgDQo+ICsvKg0K
-PiArICogV0ZFIGFyZ19iDQo+ICsgKiBiaXQgMC0xMTogd2FpdCB2YWx1ZQ0KPiArICogYml0IDE1
-OiAxIC0gd2FpdCwgMCAtIG5vIHdhaXQNCj4gKyAqIGJpdCAxNi0yNzogdXBkYXRlIHZhbHVlDQo+
-ICsgKiBiaXQgMzE6IDEgLSB1cGRhdGUsIDAgLSBubyB1cGRhdGUNCj4gKyAqLw0KPiArI2RlZmlu
-ZSBDTURRX1dGRV9PUFRJT04JCQkoQ01EUV9XRkVfVVBEQVRFIHwgQ01EUV9XRkVfV0FJVCB8IFwN
-Cj4gKwkJCQkJQ01EUV9XRkVfV0FJVF9WQUxVRSkNCj4gKw0KPiAgLyoqIGNtZHEgZXZlbnQgbWF4
-aW11bSAqLw0KPiAgI2RlZmluZSBDTURRX01BWF9FVkVOVAkJCTB4M2ZmDQo+ICANCg0K
+On Fri, Nov 22, 2019 at 05:21:34PM +0900, Namjae Jeon wrote:
+> > The software development opinions can vary also for this change pattern
+> > according to different design goals.
+> > Is such a transformation just another possibility to reduce duplicate
+> > source code a bit?
+> I changed it without unnecessary goto abuse. Look at the next version later.
+> Thanks!
+
+Markus, could you stop adding kernel-janitors to the CC list?  None of
+this is at all related to kernel-janitors.  We can't see the context and
+we will never see the "next version" mentioned here.
+
+:P
+
+regards,
+dan carpenter
 
