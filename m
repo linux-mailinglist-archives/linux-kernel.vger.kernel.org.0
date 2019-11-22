@@ -2,126 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2EF8107BC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 00:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FDA107BC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 00:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfKVX5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 18:57:47 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33695 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726705AbfKVX5q (ORCPT
+        id S1726984AbfKVX7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 18:59:30 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42835 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfKVX7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 18:57:46 -0500
-Received: by mail-ot1-f68.google.com with SMTP id q23so1884008otn.0;
-        Fri, 22 Nov 2019 15:57:46 -0800 (PST)
+        Fri, 22 Nov 2019 18:59:30 -0500
+Received: by mail-io1-f67.google.com with SMTP id k13so10087239ioa.9;
+        Fri, 22 Nov 2019 15:59:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=foB4NLZVZpZHpEP+Jauf8VZD20bjVJasgM3S94B+BBs=;
+        b=X6nMM/vlSIJvr2rQybFVo45ZCgO5wPCt1i501De4QJ38e+Qw9Wfcn6S964E76rZ5KF
+         frkvASOl1adlZxqdpgbEMc+spswWqJQVXjEVQ4xYXLoxF8HQfIJBAh8rg8KHC3rqRRMK
+         0u/HD+Pg63QEocPelHZu/SjSblAGIG+ag7+BdfFJRIyK1tT+sv0gSFa+FKKkkrcyU0IQ
+         wgtONpQEgTGJhNlT7iQoUqIySotOVmas9AjxT+TJziw7x/BLwzLjrAQsCXNFGuvcxIxp
+         xlvYTux9FepMtnIPGoJg8WAX/g1ILkZu5CgqIHHeIsyZmnxBw+35uMtVDbLRDFDo1ygs
+         MLKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=frUbXg9HVcTRfaaxELwHERf+lloS19EI1WW6S+yHA38=;
-        b=Mtgn6Hp0Wb8ozbW6eCvPfqphsPvVvTYy1Fq3/CYe6r+0mw/UOpReaIPi4ZJQSvv+W/
-         W767UhB/9K7qM2sWHST2WAu5AxnYA4SU1LZyG30qI9xvUxZSMmZNr3ABuwx0z9Z6tqUe
-         elgQ9ANq2IHXvOVFQO/PaqPgK7aJXCuxUviVF/wlzqme0zvoA3gwKnG9kUuQe2y4Nn3t
-         rirF0qKbJtAKhaRQIr6zuygFdb9+IK5Gs2rK4LMbqU/jNJKw3FQpNWhxrELHMvhPWDc1
-         fgAwoZVBO4/sXNEC+pONenSDOMIyw5KqrTmTcd1xZo9f7LOHrR0VkDWSha1qaEQtTFOn
-         VfQg==
-X-Gm-Message-State: APjAAAV1Uo1u7HVhxEx9ClsVj3AUrr+Z5kvVzozFuBqok5SwEvzP6Y9O
-        yRQuiurrOA3xg4lwHYqYmh7Iw7k=
-X-Google-Smtp-Source: APXvYqwHRHTMvmyvayb6oZ7vqTCt5okUxjvzyr/SweEAZ3HXsEH7Y8guZbnlyFulghfXVoQpjJozjw==
-X-Received: by 2002:a9d:12d2:: with SMTP id g76mr13180792otg.232.1574467066059;
-        Fri, 22 Nov 2019 15:57:46 -0800 (PST)
-Received: from localhost ([2607:fb90:bd7:3743:c9ec:246b:67b7:9768])
-        by smtp.gmail.com with ESMTPSA id b135sm2608451oii.1.2019.11.22.15.57.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 15:57:45 -0800 (PST)
-Date:   Fri, 22 Nov 2019 17:57:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     allen <allen.chen@ite.com.tw>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Pi-Hsun Shih <pihsun@chromium.org>,
-        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 3/4] dt-bindings: Add binding for IT6505.
-Message-ID: <20191122235731.GB7738@bogus>
-References: <1573811564-320-1-git-send-email-allen.chen@ite.com.tw>
- <1573811564-320-4-git-send-email-allen.chen@ite.com.tw>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=foB4NLZVZpZHpEP+Jauf8VZD20bjVJasgM3S94B+BBs=;
+        b=ChrdqUXTpCfBix+2oeLBDHh/60ofrsCbG87FaWUXuHJKVtIl/6c2sxc+e2sJFhLDFk
+         zjaA6kM8p+TiRcrQvCjYXnZd8T+qDnH/prz5ErSgO0/mh/5pPCVC5AxTx0xC4p8KVEoO
+         qVdIKNuDLwsEBsQ5K5fZanLPowzzjgqvSwEnMaYyVWpn09Oox0uJDT/gNypGEXcpK30c
+         ZUdgIdU4aP+cpFMUOGPTir2g+p/6cEJcpneK21YHc5V7q4CfJW4chFFDvksmcDawQzGg
+         XwHFZAwQXs11VjubSfPAd6bfqyvZLyRzfksYbgKhYnaHHf2uq+dLTewo9Vdbs7eWTOYU
+         C4hw==
+X-Gm-Message-State: APjAAAWJ5fo2j/Zsvj0e0WA7lkwyBV3tuUNQFhDq4dVH9MEdoDBNYBna
+        T8UC+Hlgd0SB5umNxot2uYDDlsYSonDYQZfrk+8=
+X-Google-Smtp-Source: APXvYqxEYuoR4iMswSx1CzGapDzROgybF2PYu6v6V5p2Czm4oC+E00ZzOCe0P14r8QIPjTBrJxub730kaFAOaD4G31A=
+X-Received: by 2002:a6b:7e0b:: with SMTP id i11mr15044163iom.245.1574467169363;
+ Fri, 22 Nov 2019 15:59:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573811564-320-4-git-send-email-allen.chen@ite.com.tw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box> <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box> <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+ <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com> <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+ <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com>
+In-Reply-To: <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Sat, 23 Nov 2019 00:59:18 +0100
+Message-ID: <CAHpGcM+o2OwXdrj+A2_OqRg6YokfauFNiBJF-BQp0dJFvq_BrQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 05:52:19PM +0800, allen wrote:
-> From: Allen Chen <allen.chen@ite.com.tw>
-> 
-> Add a DT binding documentation for IT6505.
-> 
-> Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
-> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-> ---
->  .../bindings/display/bridge/ite,it6505.txt         | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
+Hi,
 
-Please make this a DT schema. See 
-Documentation/devicetree/writing-schema.rst.
- 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt b/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
-> new file mode 100644
-> index 00000000..72da0c4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
-> @@ -0,0 +1,28 @@
-> +iTE it6505 DP bridge bindings
-> +
-> +Required properties:
-> +        - compatible: "ite,it6505"
-> +        - reg: i2c address of the bridge
-> +        - ovdd-supply: I/O voltage
-> +        - pwr18-supply: Core voltage
-> +        - interrupts: interrupt specifier of INT pin
-> +        - reset-gpios: gpio specifier of RESET pin
-> +	- hpd-gpios:
-> +		Hotplug detect GPIO.
-> +		Indicates which GPIO should be used for hotplug detection
+Am Do., 31. Okt. 2019 um 12:43 Uhr schrieb Steven Whitehouse
+<swhiteho@redhat.com>:
+> Andreas, Bob, have I missed anything here?
 
-Indentation is not consistent.
+I've looked into this a bit, and it seems that there's a reasonable
+way to get rid of the lock taking in ->readpage and ->readpages
+without a lot of code duplication. My proposal for that consists of
+multiple patches, so I've posted it separately:
 
-> +	- port@[x]: SoC specific port nodes with endpoint definitions as defined
-> +		in Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
+https://lore.kernel.org/linux-fsdevel/20191122235324.17245-1-agruenba@redhat.com/T/#t
 
-You need to define what each port is. With the schema, that will be 
-'port@0' and 'port@1' properties.
-
-> +
-> +Example:
-> +	dp-bridge@5c {
-> +                compatible = "ite,it6505";
-> +                interrupts = <152 IRQ_TYPE_EDGE_RISING 152 0>;
-> +                reg = <0x5c>;
-> +                pinctrl-names = "default";
-> +                pinctrl-0 = <&it6505_pins>;
-> +                ovdd-supply = <&mt6358_vsim1_reg>;
-> +                pwr18-supply = <&it6505_pp18_reg>;
-> +                reset-gpios = <&pio 179 1>;
-> +                hpd-gpios = <&pio 9 0>;
-> +                extcon = <&usbc_extcon>;
-
-Not documented plus it's deprecated.
-
-You're missing ports here and they are required.
-
-Rob
+Thanks,
+Andreas
