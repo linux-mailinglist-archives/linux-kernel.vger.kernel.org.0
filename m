@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF28106174
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:57:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F5F106177
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:57:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbfKVF46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:56:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34918 "EHLO mail.kernel.org"
+        id S1727895AbfKVF5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:57:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728853AbfKVF44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:56:56 -0500
+        id S1727309AbfKVF5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:57:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE7532071B;
-        Fri, 22 Nov 2019 05:56:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 494AD20659;
+        Fri, 22 Nov 2019 05:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574402215;
-        bh=XnpCKP1VGa9Neef0VB7/f4VFR7F6r56u+ItKvz+RVng=;
+        s=default; t=1574402220;
+        bh=ZhJ+AoQEj/5MiznVVd92YNDSv6J7kOWoIuf5m+J3hN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DYs0Yo1iz7FmK4NVdqN/w67yRaULKgvrCQq/g4ZiqiljWUl7CEC455hdfYSimfBbv
-         oOKDqNr010tw5UJ6OJI/EQw663bUsS9Y0KCqLy2Vm17R3l3L1MzBtB+99QVgD+nthQ
-         yDNOoQ76/ZAyCjOTFvFXQdCp32Ie+gnrIzx8Yo8w=
+        b=G0VbUFQLZJF0tfl2zkG7voZ3Dhoz8W9c3ZGCKB8Zf9LQ/KjT/CN2mIfObv7cEgz+l
+         vkVYJcnTEoQ4S5zTE91Ik+76g1hXZQCSiRyv4SQUglfdeJGD048/nND4Rod/W7mdSN
+         dJahuvJuOUcslI++K17NveKLUufr4Yxv/02p+h54=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kyle Roeschley <kyle.roeschley@ni.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 063/127] ath6kl: Fix off by one error in scan completion
-Date:   Fri, 22 Nov 2019 00:54:41 -0500
-Message-Id: <20191122055544.3299-62-sashal@kernel.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 067/127] powerpc/44x/bamboo: Fix PCI range
+Date:   Fri, 22 Nov 2019 00:54:45 -0500
+Message-Id: <20191122055544.3299-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122055544.3299-1-sashal@kernel.org>
 References: <20191122055544.3299-1-sashal@kernel.org>
@@ -44,36 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kyle Roeschley <kyle.roeschley@ni.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-[ Upstream commit 5803c12816c43bd09e5f4247dd9313c2d9a2c41b ]
+[ Upstream commit 3cfb9ebe906b51f2942b1e251009bb251efd2ba6 ]
 
-When ath6kl was reworked to share code between regular and scheduled scans
-in commit 3b8ffc6a22ba ("ath6kl: Configure probed SSID list consistently"),
-probed SSID entry changed from 1-index to 0-indexed. However,
-ath6kl_cfg80211_scan_complete_event() was missed in that change. Fix its
-indexing so that we correctly clear out the probed SSID list.
+The bamboo dts has a bug: it uses a non-naturally aligned range
+for PCI memory space. This isnt' supported by the code, thus
+causing PCI to break on this system.
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This is due to the fact that while the chip memory map has 1G
+reserved for PCI memory, it's only 512M aligned. The code doesn't
+know how to split that into 2 different PMMs and fails, so limit
+the region to 512M.
+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath6kl/cfg80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/boot/dts/bamboo.dts | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-index f790d8021fa17..37deb9bae3643 100644
---- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-+++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-@@ -1093,7 +1093,7 @@ void ath6kl_cfg80211_scan_complete_event(struct ath6kl_vif *vif, bool aborted)
- 	if (vif->scan_req->n_ssids && vif->scan_req->ssids[0].ssid_len) {
- 		for (i = 0; i < vif->scan_req->n_ssids; i++) {
- 			ath6kl_wmi_probedssid_cmd(ar->wmi, vif->fw_vif_idx,
--						  i + 1, DISABLE_SSID_FLAG,
-+						  i, DISABLE_SSID_FLAG,
- 						  0, NULL);
- 		}
- 	}
+diff --git a/arch/powerpc/boot/dts/bamboo.dts b/arch/powerpc/boot/dts/bamboo.dts
+index aa68911f6560a..084b82ba74933 100644
+--- a/arch/powerpc/boot/dts/bamboo.dts
++++ b/arch/powerpc/boot/dts/bamboo.dts
+@@ -268,8 +268,10 @@
+ 			/* Outbound ranges, one memory and one IO,
+ 			 * later cannot be changed. Chip supports a second
+ 			 * IO range but we don't use it for now
++			 * The chip also supports a larger memory range but
++			 * it's not naturally aligned, so our code will break
+ 			 */
+-			ranges = <0x02000000 0x00000000 0xa0000000 0x00000000 0xa0000000 0x00000000 0x40000000
++			ranges = <0x02000000 0x00000000 0xa0000000 0x00000000 0xa0000000 0x00000000 0x20000000
+ 				  0x02000000 0x00000000 0x00000000 0x00000000 0xe0000000 0x00000000 0x00100000
+ 				  0x01000000 0x00000000 0x00000000 0x00000000 0xe8000000 0x00000000 0x00010000>;
+ 
 -- 
 2.20.1
 
