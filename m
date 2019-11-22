@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1497A106D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 379B3106B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbfKVK6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47150 "EHLO mail.kernel.org"
+        id S1729338AbfKVKoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729312AbfKVK5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:52 -0500
+        id S1727551AbfKVKoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECB4B20718;
-        Fri, 22 Nov 2019 10:57:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 429EF20656;
+        Fri, 22 Nov 2019 10:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420271;
-        bh=aR+7IWwqhRZDLaMIVikkwQEGC9EKDQlI50+mJ7hE0ok=;
+        s=default; t=1574419459;
+        bh=yghk864Qu3p4uLxrXvRwD8kPFl/idh9sgYH6Bz1/LXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W7nWQ7raXohxYnWuHz6o28vbGo1MQitT4Q5u7dY/y9LHY5ZPAu4z3335SuYdpASl8
-         DCDIsZ0Bxjumyb3bKf1Mo2isXT+ShIlBzXZnhLu0/GucCk+QKBaTIdpe3penu6xsTe
-         OObPTpNzAILGT+e9yT7OxyEBCbeUc1BHXzwAvICo=
+        b=RvzWVjvKO0ZYveBauCLDNuPGu/MrFGhFRl1lcAke1bzfp5K3MPNdCpEf1igWnHpb4
+         Q0ZGsd6FwJFshirtF59eegtwNCpNDqq/a6xrOo5XJfXxoFaml+JJrNdSn4n2mXIeRS
+         edGctmSo7OpfZtcSYWSPmWWDPapxqEvldrMissRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 050/220] watchdog: core: fix null pointer dereference when releasing cdev
+Subject: [PATCH 4.9 075/222] component: fix loop condition to call unbind() if bind() fails
 Date:   Fri, 22 Nov 2019 11:26:55 +0100
-Message-Id: <20191122100915.802441612@linuxfoundation.org>
+Message-Id: <20191122100908.296435014@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,51 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Banajit Goswami <bgoswami@codeaurora.org>
 
-[ Upstream commit 953b9dd7725bad55a922a35e75bff7bebf7b9978 ]
+[ Upstream commit bdae566d5d9733b6e32b378668b84eadf28a94d4 ]
 
-watchdog_stop() calls watchdog_update_worker() which needs a valid
-wdd->wd_data pointer. So, when unregistering the cdev, clear the
-pointers after we call watchdog_stop(), not before.
+During component_bind_all(), if bind() fails for any
+particular component associated with a master, unbind()
+should be called for all previous components in that
+master's match array, whose bind() might have completed
+successfully. As per the current logic, if bind() fails
+for the component at position 'n' in the master's match
+array, it would start calling unbind() from component in
+'n'th position itself and work backwards, and will always
+skip calling unbind() for component in 0th position in the
+master's match array.
+Fix this by updating the loop condition, and the logic to
+refer to the components in master's match array, so that
+unbind() is called for all components starting from 'n-1'st
+position in the array, until (and including) component in
+0th position.
 
-Fixes: bb292ac1c602 ("watchdog: Introduce watchdog_stop_on_unregister helper")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/watchdog_dev.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/base/component.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index ffbdc4642ea55..f6c24b22b37c0 100644
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -1019,16 +1019,16 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
- 		old_wd_data = NULL;
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 89b032f2ffd22..08da6160e94dd 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -461,9 +461,9 @@ int component_bind_all(struct device *master_dev, void *data)
+ 		}
+ 
+ 	if (ret != 0) {
+-		for (; i--; )
+-			if (!master->match->compare[i].duplicate) {
+-				c = master->match->compare[i].component;
++		for (; i > 0; i--)
++			if (!master->match->compare[i - 1].duplicate) {
++				c = master->match->compare[i - 1].component;
+ 				component_unbind(c, master, data);
+ 			}
  	}
- 
--	mutex_lock(&wd_data->lock);
--	wd_data->wdd = NULL;
--	wdd->wd_data = NULL;
--	mutex_unlock(&wd_data->lock);
--
- 	if (watchdog_active(wdd) &&
- 	    test_bit(WDOG_STOP_ON_UNREGISTER, &wdd->status)) {
- 		watchdog_stop(wdd);
- 	}
- 
-+	mutex_lock(&wd_data->lock);
-+	wd_data->wdd = NULL;
-+	wdd->wd_data = NULL;
-+	mutex_unlock(&wd_data->lock);
-+
- 	hrtimer_cancel(&wd_data->timer);
- 	kthread_cancel_work_sync(&wd_data->work);
- 
 -- 
 2.20.1
 
