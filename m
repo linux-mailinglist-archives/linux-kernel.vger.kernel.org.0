@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99490106F26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BED106DED
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:04:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730940AbfKVLNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:13:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42226 "EHLO mail.kernel.org"
+        id S1731569AbfKVLEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:04:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730467AbfKVKz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:55:28 -0500
+        id S1731563AbfKVLEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:04:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0E8D20718;
-        Fri, 22 Nov 2019 10:55:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1588207FC;
+        Fri, 22 Nov 2019 11:04:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420127;
-        bh=CyxFmt8RNp2/3hmmxtbe3/3gSyvkKx15wfdi3MWjiG4=;
+        s=default; t=1574420670;
+        bh=WNzOcSDtG5/ZzPIRNc452Bw+G3KZ9d2AoXandGQy9MM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CRzwYqfpYuGbib4iUYFgXXydH48t7+C3Te11cEX08p5jmxL50DToqaPjtSysQtcUX
-         P9vQKme5MfoMedGueogsOoDgDLwEFU3OCbZMzT1kgvsRHJOy7Xwz2wJQn0f9IDgXhe
-         4ThOGKcsslmucCNP5N3XzbdYy302//Vx76bHlpSM=
+        b=1T/31Wj2VRkukB8wemW1hd8GbXwOlWC5XCrztXKgPlSJ3pVCRMfWaLg3UkA1Q5U/K
+         Dp2c6htyutCYf4eyKgenljcjylw18VEbPBsKZ5H3OVzvHBz1ZZyRIM13tsKizGE2hi
+         WOHYvVWkRipTFxzArK23jJwWo9WMJBJTiSjS9w4g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 081/122] dmaengine: rcar-dmac: set scatter/gather max segment size
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 169/220] s390/kasan: avoid user access code instrumentation
 Date:   Fri, 22 Nov 2019 11:28:54 +0100
-Message-Id: <20191122100820.928960169@linuxfoundation.org>
+Message-Id: <20191122100924.963763508@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 97d49c59e219acac576e16293a6b8cb99302f62f ]
+[ Upstream commit b6cbe3e8bdff6f21f1b58b08a55f479cdcf98282 ]
 
-Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
-device_dma_parameters structure and filling in the max segment size.
+Kasan instrumentation adds "store" check for variables marked as
+modified by inline assembly. With user pointers containing addresses
+from another address space this produces false positives.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+static inline unsigned long clear_user_xc(void __user *to, ...)
+{
+	asm volatile(
+	...
+	: "+a" (to) ...
+
+User space access functions are wrapped by manually instrumented
+functions in kasan common code, which should be sufficient to catch
+errors. So, we just disable uaccess.o instrumentation altogether.
+
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sh/rcar-dmac.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/lib/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 19c7433e83097..f7ca57125ac7c 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -200,6 +200,7 @@ struct rcar_dmac {
- 	struct dma_device engine;
- 	struct device *dev;
- 	void __iomem *iomem;
-+	struct device_dma_parameters parms;
+diff --git a/arch/s390/lib/Makefile b/arch/s390/lib/Makefile
+index 57ab40188d4bd..5418d10dc2a81 100644
+--- a/arch/s390/lib/Makefile
++++ b/arch/s390/lib/Makefile
+@@ -9,5 +9,9 @@ lib-$(CONFIG_SMP) += spinlock.o
+ lib-$(CONFIG_KPROBES) += probes.o
+ lib-$(CONFIG_UPROBES) += probes.o
  
- 	unsigned int n_channels;
- 	struct rcar_dmac_chan *channels;
-@@ -1764,6 +1765,8 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 
- 	dmac->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, dmac);
-+	dmac->dev->dma_parms = &dmac->parms;
-+	dma_set_max_seg_size(dmac->dev, RCAR_DMATCR_MASK);
- 	dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
- 
- 	ret = rcar_dmac_parse_of(&pdev->dev, dmac);
++# Instrumenting memory accesses to __user data (in different address space)
++# produce false positives
++KASAN_SANITIZE_uaccess.o := n
++
+ chkbss := mem.o
+ include $(srctree)/arch/s390/scripts/Makefile.chkbss
 -- 
 2.20.1
 
