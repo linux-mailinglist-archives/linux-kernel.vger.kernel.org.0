@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A52106BC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1375C106AD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbfKVKrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54602 "EHLO mail.kernel.org"
+        id S1728678AbfKVKik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:38:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729006AbfKVKq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:58 -0500
+        id S1728162AbfKVKif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:38:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C9F420715;
-        Fri, 22 Nov 2019 10:46:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EEF42071C;
+        Fri, 22 Nov 2019 10:38:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419618;
-        bh=nDvfqjZXN6r7wwXbb9GxQ2ek1DgjPCeAya5u6EOoyBY=;
+        s=default; t=1574419115;
+        bh=3q8u0klQBwS/SXsgHA9M3plNrZgWLC6kftn5zeoaxME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tcd15dr2JTtG7Ot44Neb0QTaVls3Ee8tB0FDgejpmvwudPjNsdhQ8u5TS/bc1C2IH
-         U4UgSQv0pzq+5Ee9fN7ni46x+N1iIF6mzTR5LZeusn9oQ/XlrMYMuYQPmW4tnMRIVk
-         npl1/Z+RmWBJfEzS21kE2hiR1sCcvRlh2re+w3eM=
+        b=VTYTRQ4ZrMeNYsl+Ij87mcS4HOO0jNZOVIOTJpkTsIt7gz6+xV6dWKsMLrIrwg4b5
+         NqBOeaO/IAlZVNSwRPH38lJVpSHnBsLvWKjXGwB6ySZ+ZGeEXc74c4aDCjOqf1EGhE
+         hsnj/O7KACslUf6pJTE6whU8rqzrpxsGZh5AiTdM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 175/222] ixgbe: Fix crash with VFs and flow director on interface flap
-Date:   Fri, 22 Nov 2019 11:28:35 +0100
-Message-Id: <20191122100915.087688646@linuxfoundation.org>
+Subject: [PATCH 4.4 125/159] powerpc/pseries: Fix how we iterate over the DTL entries
+Date:   Fri, 22 Nov 2019 11:28:36 +0100
+Message-Id: <20191122100831.804266833@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radoslaw Tyl <radoslawx.tyl@intel.com>
+From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-[ Upstream commit 5d826d209164b0752c883607be4cdbbcf7cab494 ]
+[ Upstream commit 9258227e9dd1da8feddb07ad9702845546a581c9 ]
 
-This patch fix crash when we have restore flow director filters after reset
-adapter. In ixgbe_fdir_filter_restore() filter->action is outside of the
-rx_ring array, as it has a VF identifier in the upper 32 bits.
+When CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is not set, we look up dtl_idx in
+the lppaca to determine the number of entries in the buffer. Since
+lppaca is in big endian, we need to do an endian conversion before using
+this in our calculation to determine the number of entries in the
+buffer. Without this, we do not iterate over the existing entries in the
+DTL buffer properly.
 
-Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 7c105b63bd98 ("powerpc: Add CONFIG_CPU_LITTLE_ENDIAN kernel config option.")
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/dtl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index a5428b6abdac2..8ad20b7852ed7 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -4804,6 +4804,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
- 	struct ixgbe_hw *hw = &adapter->hw;
- 	struct hlist_node *node2;
- 	struct ixgbe_fdir_filter *filter;
-+	u64 action;
+diff --git a/arch/powerpc/platforms/pseries/dtl.c b/arch/powerpc/platforms/pseries/dtl.c
+index 37de83c5ef172..7a4d172c93765 100644
+--- a/arch/powerpc/platforms/pseries/dtl.c
++++ b/arch/powerpc/platforms/pseries/dtl.c
+@@ -185,7 +185,7 @@ static void dtl_stop(struct dtl *dtl)
  
- 	spin_lock(&adapter->fdir_perfect_lock);
+ static u64 dtl_current_index(struct dtl *dtl)
+ {
+-	return lppaca_of(dtl->cpu).dtl_idx;
++	return be64_to_cpu(lppaca_of(dtl->cpu).dtl_idx);
+ }
+ #endif /* CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
  
-@@ -4812,12 +4813,17 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
- 
- 	hlist_for_each_entry_safe(filter, node2,
- 				  &adapter->fdir_filter_list, fdir_node) {
-+		action = filter->action;
-+		if (action != IXGBE_FDIR_DROP_QUEUE && action != 0)
-+			action =
-+			(action >> ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF) - 1;
-+
- 		ixgbe_fdir_write_perfect_filter_82599(hw,
- 				&filter->filter,
- 				filter->sw_idx,
--				(filter->action == IXGBE_FDIR_DROP_QUEUE) ?
-+				(action == IXGBE_FDIR_DROP_QUEUE) ?
- 				IXGBE_FDIR_DROP_QUEUE :
--				adapter->rx_ring[filter->action]->reg_idx);
-+				adapter->rx_ring[action]->reg_idx);
- 	}
- 
- 	spin_unlock(&adapter->fdir_perfect_lock);
 -- 
 2.20.1
 
