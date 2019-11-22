@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F7C106F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:16:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F601107016
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:20:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbfKVLP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:15:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33982 "EHLO mail.kernel.org"
+        id S1728618AbfKVLUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:20:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729831AbfKVKvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:51:17 -0500
+        id S1728746AbfKVKqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:46:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B14E020854;
-        Fri, 22 Nov 2019 10:51:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11AC820656;
+        Fri, 22 Nov 2019 10:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419877;
-        bh=UVaB9uRriPUJ3gCh//YHEKoxCmJWEb6T3hdy2VJoApU=;
+        s=default; t=1574419564;
+        bh=T8Fo9Pn98qtvxKBkA+60vnG5I9y3wq+vC9UpR37GxZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q+V83I945lzpk5zZy4t1vVxgbB/VNQ9YqvflnKNFCMdKXAesGtsENzNwDm2ouXBHv
-         pqjItyiGWA8vYMaQdS5q8BC9uRK8tt0CKqjpdQwZMHzzxgKlVougeGqx9xWwSYdHWv
-         BdhLqnezUFuBDQWtFjSqy33hmsEfeXh//l5gK538=
+        b=vAAdsfStXRMhCN4ajzfDnOsR72X1FHQrE7/cRiYEAoJ1gmeoqx8dycws8e6xZo9PP
+         tjHkbk0FU6Y12sJIRc3J1zQ28MlE9H4qOHiY4d5YdES5GCxAiVVgE8M/pYt+Vz8aBY
+         m3kev7lT/kq7jXU+/r/bIQzpBkDjMe/wf6iWmKjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 040/122] powerpc/pseries: Fix how we iterate over the DTL entries
-Date:   Fri, 22 Nov 2019 11:28:13 +0100
-Message-Id: <20191122100754.122659764@linuxfoundation.org>
+        stable@vger.kernel.org, Krishna Ram Prakash R <krp@gtux.in>,
+        Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 154/222] libata: have ata_scsi_rw_xlat() fail invalid passthrough requests
+Date:   Fri, 22 Nov 2019 11:28:14 +0100
+Message-Id: <20191122100913.838547114@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 9258227e9dd1da8feddb07ad9702845546a581c9 ]
+commit 2d7271501720038381d45fb3dcbe4831228fc8cc upstream.
 
-When CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is not set, we look up dtl_idx in
-the lppaca to determine the number of entries in the buffer. Since
-lppaca is in big endian, we need to do an endian conversion before using
-this in our calculation to determine the number of entries in the
-buffer. Without this, we do not iterate over the existing entries in the
-DTL buffer properly.
+For passthrough requests, libata-scsi takes what the user passes in
+as gospel. This can be problematic if the user fills in the CDB
+incorrectly. One example of that is in request sizes. For read/write
+commands, the CDB contains fields describing the transfer length of
+the request. These should match with the SG_IO header fields, but
+libata-scsi currently does no validation of that.
 
-Fixes: 7c105b63bd98 ("powerpc: Add CONFIG_CPU_LITTLE_ENDIAN kernel config option.")
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Check that the number of blocks in the CDB for passthrough requests
+matches what was mapped into the request. If the CDB asks for more
+data then the validated SG_IO header fields, error it.
+
+Reported-by: Krishna Ram Prakash R <krp@gtux.in>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/powerpc/platforms/pseries/dtl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/libata-scsi.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/dtl.c b/arch/powerpc/platforms/pseries/dtl.c
-index c762689e0eb33..ef6595153642e 100644
---- a/arch/powerpc/platforms/pseries/dtl.c
-+++ b/arch/powerpc/platforms/pseries/dtl.c
-@@ -184,7 +184,7 @@ static void dtl_stop(struct dtl *dtl)
- 
- static u64 dtl_current_index(struct dtl *dtl)
- {
--	return lppaca_of(dtl->cpu).dtl_idx;
-+	return be64_to_cpu(lppaca_of(dtl->cpu).dtl_idx);
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -1734,6 +1734,21 @@ nothing_to_do:
+ 	return 1;
  }
- #endif /* CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
  
--- 
-2.20.1
-
++static bool ata_check_nblocks(struct scsi_cmnd *scmd, u32 n_blocks)
++{
++	struct request *rq = scmd->request;
++	u32 req_blocks;
++
++	if (!blk_rq_is_passthrough(rq))
++		return true;
++
++	req_blocks = blk_rq_bytes(rq) / scmd->device->sector_size;
++	if (n_blocks > req_blocks)
++		return false;
++
++	return true;
++}
++
+ /**
+  *	ata_scsi_rw_xlat - Translate SCSI r/w command into an ATA one
+  *	@qc: Storage for translated ATA taskfile
+@@ -1776,6 +1791,8 @@ static unsigned int ata_scsi_rw_xlat(str
+ 		scsi_10_lba_len(cdb, &block, &n_block);
+ 		if (cdb[1] & (1 << 3))
+ 			tf_flags |= ATA_TFLAG_FUA;
++		if (!ata_check_nblocks(scmd, n_block))
++			goto invalid_fld;
+ 		break;
+ 	case READ_6:
+ 	case WRITE_6:
+@@ -1790,6 +1807,8 @@ static unsigned int ata_scsi_rw_xlat(str
+ 		 */
+ 		if (!n_block)
+ 			n_block = 256;
++		if (!ata_check_nblocks(scmd, n_block))
++			goto invalid_fld;
+ 		break;
+ 	case READ_16:
+ 	case WRITE_16:
+@@ -1800,6 +1819,8 @@ static unsigned int ata_scsi_rw_xlat(str
+ 		scsi_16_lba_len(cdb, &block, &n_block);
+ 		if (cdb[1] & (1 << 3))
+ 			tf_flags |= ATA_TFLAG_FUA;
++		if (!ata_check_nblocks(scmd, n_block))
++			goto invalid_fld;
+ 		break;
+ 	default:
+ 		DPRINTK("no-byte command\n");
 
 
