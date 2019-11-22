@@ -2,101 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D44CC1072E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 14:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDFA1072EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 14:15:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfKVNOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 08:14:34 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6419 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbfKVNOd (ORCPT
+        id S1727954AbfKVNPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 08:15:41 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:40738 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726548AbfKVNPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 08:14:33 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd7df3b0000>; Fri, 22 Nov 2019 05:14:36 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 22 Nov 2019 05:14:33 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 22 Nov 2019 05:14:33 -0800
-Received: from [10.21.133.51] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov
- 2019 13:14:30 +0000
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20191122100704.194776704@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
-Date:   Fri, 22 Nov 2019 13:14:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 22 Nov 2019 08:15:40 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMDC3Zm016600;
+        Fri, 22 Nov 2019 14:15:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=fsOHhYzNXWXB343toBErYF3JFgQsNuXPAR+dwnBzdGI=;
+ b=0FAzw4EA1OF5EXTJYHgyEdlBJ+LLlYEYsIyl5Rpius2KHdsBDYFutFMljQDvgXJZSBcj
+ WZ9BAnGc+kgpN9AZ/bPRixPvdI5VSary5czGFV3YJUMTE1Oonh02vPb8liPPJoWl0s+C
+ xxymM2nU/9hGpRmrPFJlU3I/+ZnWslsGi0NGcF4q/gfT1qWlje1uLUzI83Wi8Cwn7DPN
+ u8IhapLtXx2vJ96YYGv9YPRk9zEIuTiX55Zv9Yu5BDBh2a2uTYsaJBEo+ZptplgNeAJe
+ Cjnkv8jKvex5+laaI3PUbz+6K3f0QgMrisiDLjZFyHlsozMOANwcjPsQKmPidJ3zP6qT Ag== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wa9ujgx69-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Nov 2019 14:15:08 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E875110002A;
+        Fri, 22 Nov 2019 14:15:07 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D1A902BE244;
+        Fri, 22 Nov 2019 14:15:07 +0100 (CET)
+Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov
+ 2019 14:15:07 +0100
+Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
+ SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
+ 15.00.1473.003; Fri, 22 Nov 2019 14:15:07 +0100
+From:   Christophe ROULLIER <christophe.roullier@st.com>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [Linux-stm32] [PATCH v2 1/1] drivers: watchdog: stm32_iwdg: set
+ WDOG_HW_RUNNING at probe
+Thread-Topic: [Linux-stm32] [PATCH v2 1/1] drivers: watchdog: stm32_iwdg: set
+ WDOG_HW_RUNNING at probe
+Thread-Index: AQHVoQ5NhIxTjK/sUU24wk/cKk90B6eW7F6AgAAucQA=
+Date:   Fri, 22 Nov 2019 13:15:07 +0000
+Message-ID: <70c319bd-866c-5305-e535-ead663652c5f@st.com>
+References: <20191122082442.21695-1-christophe.roullier@st.com>
+ <ea80ec65-8621-453c-4d5b-af38d8afeb70@pengutronix.de>
+In-Reply-To: <ea80ec65-8621-453c-4d5b-af38d8afeb70@pengutronix.de>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574428476; bh=K5WU2Jt7q2CDfjyB/BPLlKPJZ2xvbiCPlPuYvbeKy40=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=m5jDo7Pov1oZ+eS9YQGJsMNDelOQYltpuGv1pv9jY8k+tsQx+cDBJq2+hyQtBOZT0
-         6iaDswK7Ym7Hp3yC77ZfJhRnrMpIW+V2TXyW05QSgpxvo3RlFzBFbM/OPy1RWmmMp5
-         zKdzVmNic2z2bQDQ+mQRg4VkHdOkIoAd23v1FjmnWPs0JBWOKrCLXIF39p6qxbO2XV
-         9E57H1eMZDGXE2h/7Uoy/Onj7PV1o1t3QYJk7qCtsm3OqI4cv/5bYwG6dX3Ob2YcQG
-         +SqLgP1iQiE7YwqDkam93yyCQ1QPUri8/GqrBHpnGozxN0TyDWBQFE79jNNLEBhYiy
-         3dj4xgUbNF+3A==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <199B8515659CB941A78B6E41A371D31C@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-22_02:2019-11-21,2019-11-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 22/11/2019 10:26, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.203 release.
-> There are 159 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 24 Nov 2019 09:59:19 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.203-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-> Pseudo-Shortlog of commits:
-
-...
-
-> Marek Szyprowski <m.szyprowski@samsung.com>
->     ARM: dts: exynos: Disable pull control for S5M8767 PMIC
-
-The above commit is causing the following build error for ARM ...
-
-Error: /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/exynos5250-arndale.dts:560.22-23 syntax error
-FATAL ERROR: Unable to parse input tree
-scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/exynos5250-arndale.dtb' failed
-make[2]: *** [arch/arm/boot/dts/exynos5250-arndale.dtb] Error 1
-
-Cheers
-Jon
-
--- 
-nvpublic
+DQpPbiAxMS8yMi8xOSAxMToyOCBBTSwgQWhtYWQgRmF0b3VtIHdyb3RlOg0KPiBIZWxsbyBDaHJp
+c3RvcGhlLA0KPg0KPiBPbiAxMS8yMi8xOSA5OjI0IEFNLCBDaHJpc3RvcGhlIFJvdWxsaWVyIHdy
+b3RlOg0KPj4gKwkvKg0KPj4gKwkgKiBJbiBjYXNlIG9mIENPTkZJR19XQVRDSERPR19IQU5ETEVf
+Qk9PVF9FTkFCTEVEIGlzIHNldA0KPj4gKwkgKiAoTWVhbnMgVS1Cb290L2Jvb3Rsb2FkZXJzIGxl
+YXZlcyB0aGUgd2F0Y2hkb2cgcnVubmluZykNCj4+ICsJICogV2hlbiB3ZSBnZXQgaGVyZSB3ZSBz
+aG91bGQgbWFrZSBhIGRlY2lzaW9uIHRvIHByZXZlbnQNCj4+ICsJICogYW55IHNpZGUgZWZmZWN0
+cyBiZWZvcmUgdXNlciBzcGFjZSBkYWVtb24gd2lsbCB0YWtlIGNhcmUgb2YgaXQuDQo+PiArCSAq
+IFRoZSBiZXN0IG9wdGlvbiwgdGFraW5nIGludG8gY29uc2lkZXJhdGlvbiB0aGF0IHRoZXJlIGlz
+IG5vDQo+PiArCSAqIHdheSB0byByZWFkIHZhbHVlcyBiYWNrIGZyb20gaGFyZHdhcmUsIGlzIHRv
+IGVuZm9yY2Ugd2F0Y2hkb2cNCj4+ICsJICogYmVpbmcgcnVuIHdpdGggZGV0ZXJtaW5pc3RpYyB2
+YWx1ZXMuDQo+IFdoYXQgYWJvdXQgdGhlICJPTkY6IFdhdGNoZG9nIGVuYWJsZSBzdGF0dXMgYml0
+IiBpbiB0aGUgSVdER19TUiByZWdpc3Rlcj8NCj4NCj4gQ2hlZXJzDQo+IEFobWFkDQo+DQpIaSwN
+Cg0KVGhhbmtzIEFobWFkIGZvciB5b3VyIGZlZWRiYWNrLCBpdCBpcyBhIG1pc3Rha2UgaW4gb3Vy
+IHJlZiBtYW51YWwuIFRoaXMgDQpiaXQgaXMgbm90IHByZXNlbnQNCg0KaW4gb3VyIGl3ZGcgSVAs
+IHdlIHdpbGwgdXBkYXRlIG91ciBkb2N1bWVudGF0aW9uIGFjY29yZGluZ2x5Lg0KDQpSZWdhcmRz
+LA0KDQpDaHJpc3RvcGhlDQo=
