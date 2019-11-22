@@ -2,48 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DCC1107180
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F32107187
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfKVLgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:36:02 -0500
-Received: from foss.arm.com ([217.140.110.172]:46170 "EHLO foss.arm.com"
+        id S1727420AbfKVLjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:39:24 -0500
+Received: from canardo.mork.no ([148.122.252.1]:55969 "EHLO canardo.mork.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbfKVLgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:36:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82058328;
-        Fri, 22 Nov 2019 03:36:01 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B71083F703;
-        Fri, 22 Nov 2019 03:36:00 -0800 (PST)
-Date:   Fri, 22 Nov 2019 11:35:53 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Torsten Duwe <duwe@suse.de>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Subject: Re: KASAN_INLINE && patchable-function-entry
-Message-ID: <20191122113553.GA16287@lakrids.cambridge.arm.com>
-References: <20191121183630.GA3668@lakrids.cambridge.arm.com>
- <20191121142737.69978ef9@oasis.local.home>
- <20191122113257.GB15749@lakrids.cambridge.arm.com>
+        id S1726548AbfKVLjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:39:24 -0500
+Received: from miraculix.mork.no ([IPv6:2a02:2121:282:b3eb:68e2:39ff:fe1c:1a78])
+        (authenticated bits=0)
+        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id xAMBcrd3005262
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 22 Nov 2019 12:38:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+        t=1574422737; bh=wfYrn3KtkSHcvrkxgI6n4PBGeVoGDfOTKtruuPGGVD4=;
+        h=From:To:Cc:Subject:References:Date:Message-ID:From;
+        b=Y0ozO5lXpA+nwFd29Y53ZFWliMxTIZUoU2vGigHCp06zXYVgT4HjsfX260dOCgda8
+         s9VL66MrecBltNUHScS93Oa9ec83fuFi67P8jYkNbkQhhAftmKQrAdqzRPOJBOakaZ
+         2Puo0GUCo5i0m99zkforlECblwQ5qPt5hpJedpgg=
+Received: from bjorn by miraculix.mork.no with local (Exim 4.92)
+        (envelope-from <bjorn@mork.no>)
+        id 1iY7Gx-0006wV-VL; Fri, 22 Nov 2019 12:38:47 +0100
+From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To:     Yongxin Liu <yongxin.liu@windriver.com>
+Cc:     <andy@infradead.org>, <dvhart@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mario.limonciello@dell.com>
+Subject: Re: [PATCH] Revert "platform/x86: wmi: Destroy on cleanup rather than unregister"
+Organization: m
+References: <20191115052710.46880-1-yongxin.liu@windriver.com>
+Date:   Fri, 22 Nov 2019 12:38:47 +0100
+In-Reply-To: <20191115052710.46880-1-yongxin.liu@windriver.com> (Yongxin Liu's
+        message of "Fri, 15 Nov 2019 13:27:10 +0800")
+Message-ID: <87blt45eew.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191122113257.GB15749@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.101.4 at canardo
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 11:32:57AM +0000, Mark Rutland wrote:
- 
-> Another option would be to have arm64's ftrace_adjust_addr() detect this
-> case and return NULL, given we don't need to perform any call site
-> initialization for the redundant NOPs. I'm just not sure if we have all
-> the necessary information at that point, though.
+Yongxin Liu <yongxin.liu@windriver.com> writes:
 
-Whoops; I meant ftrace_call_adjust() above.
+> This reverts commit 7b11e8989618581bc0226ad313264cdc05d48d86.
+>
+> Consider the following hardware setting.
+>
+> |-PNP0C14:00
+> |  |-- device #1
+> |-PNP0C14:01
+> |  |-- device #2
+>
+> When unloading wmi driver module, device #2 will be first unregistered.
+> But device_destroy() using MKDEV(0, 0) will locate PNP0C14:00 first
+> and unregister it. This is incorrect. Should use device_unregister() to
+> unregister the real parent device.
+>
+> Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+> ---
+>  drivers/platform/x86/wmi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+> index 59e9aa0f9643..e16f660aa117 100644
+> --- a/drivers/platform/x86/wmi.c
+> +++ b/drivers/platform/x86/wmi.c
+> @@ -1347,7 +1347,7 @@ static int acpi_wmi_remove(struct platform_device *=
+device)
+>  	acpi_remove_address_space_handler(acpi_device->handle,
+>  				ACPI_ADR_SPACE_EC, &acpi_wmi_ec_space_handler);
+>  	wmi_free_devices(acpi_device);
+> -	device_destroy(&wmi_bus_class, MKDEV(0, 0));
+> +	device_unregister((struct device *)dev_get_drvdata(&device->dev));
+>=20=20
+>  	return 0;
+>  }
+> @@ -1401,7 +1401,7 @@ static int acpi_wmi_probe(struct platform_device *d=
+evice)
+>  	return 0;
+>=20=20
+>  err_remove_busdev:
+> -	device_destroy(&wmi_bus_class, MKDEV(0, 0));
+> +	device_unregister(wmi_bus_dev);
+>=20=20
+>  err_remove_notify_handler:
+>  	acpi_remove_notify_handler(acpi_device->handle, ACPI_DEVICE_NOTIFY,
 
-Mark.
+
+Definitely!  Good catch!
+
+device_create() will allow registering multiple devices with a zero
+major.  Using device_destroy() with MKDEV(0, 0) will unregister an
+arbitrary one of them.
+
+I believe all of these should be reviewed and fixed up:
+
+drivers/nvme/host/fabrics.c:    device_destroy(nvmf_class, MKDEV(0, 0));
+drivers/nvme/host/fabrics.c:    device_destroy(nvmf_class, MKDEV(0, 0));
+drivers/nvme/host/fc.c: device_destroy(&fc_class, MKDEV(0, 0));
+drivers/nvme/host/fc.c: device_destroy(&fc_class, MKDEV(0, 0));
+drivers/nvme/target/fcloop.c:   device_destroy(fcloop_class, MKDEV(0, 0));
+drivers/platform/x86/wmi.c:     device_destroy(&wmi_bus_class, MKDEV(0, 0));
+drivers/platform/x86/wmi.c:     device_destroy(&wmi_bus_class, MKDEV(0, 0));
+drivers/staging/comedi/drivers/comedi_test.c:   device_destroy(ctcls, MKDEV=
+(0, 0));
+drivers/staging/comedi/drivers/comedi_test.c:           device_destroy(ctcl=
+s, MKDEV(0, 0));
+drivers/video/fbdev/core/fbcon.c:       device_destroy(fb_class, MKDEV(0, 0=
+));
+net/netfilter/xt_IDLETIMER.c:   device_destroy(idletimer_tg_class, MKDEV(0,=
+ 0));
+net/netfilter/xt_IDLETIMER.c:   device_destroy(idletimer_tg_class, MKDEV(0,=
+ 0));
+
+
+Note that most of these probably are not bugs.  yet...
+
+But there is no reason to look up the device by dev_t for drivers
+allowing only one device anyway. Using device_unregister() directly
+makes the code easier to follow and prevents future bugs in case
+someone decides to support more devices.
+
+Maybe we should add a WARN_ON(!MAJOR(devt)) or similar to
+device_destroy() to prevent similar future problems?
+
+
+Bj=C3=B8rn
