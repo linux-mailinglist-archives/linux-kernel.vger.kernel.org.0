@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA211060B8
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD6A1060B9
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfKVFve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:51:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56432 "EHLO mail.kernel.org"
+        id S1728211AbfKVFvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:51:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728106AbfKVFvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:51:24 -0500
+        id S1728165AbfKVFvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:51:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8134E20730;
-        Fri, 22 Nov 2019 05:51:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D35E20726;
+        Fri, 22 Nov 2019 05:51:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401883;
-        bh=gjGA4RaMSHT64+qS1HoDY2NasMLucSNVblWZNdWGt3U=;
+        s=default; t=1574401891;
+        bh=NxGRVXtjD/aXIsPUuHL37B5BbTj3nmk8XEn0YOKo7Kc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PMoaUNZlFrpuE0iaU3D7r+pSHdJPSLWCSqMmfhrAzzE4K1Kx1AXsTrSFguB0U4KYD
-         cithAVcCPR8F/fXWPPc4ts6GcrZDB+DmzpxwKXGWeGkeyt9wfK0/sFNTXettWWOGFb
-         POXlsFhkChTZtL2SIU3eHS0NFGaZ8X5+mzebTzzs=
+        b=CDzEDFNFrxQAGO7Dcjn04273De5jXJx5+uGNpGumGTMczJuTfuwjq4l9dV1U//Guj
+         w/ZHbL4GmjL1K9sFhGszdcDss32niFyYN0PuLsJmce1UshgwBbA92eo3iJhz/l2Oke
+         YJOSF9SM1xbfa6VwJSNIdgBHJeEL3tuNyHUHGDVE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kyle Roeschley <kyle.roeschley@ni.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 117/219] ath6kl: Fix off by one error in scan completion
-Date:   Fri, 22 Nov 2019 00:47:29 -0500
-Message-Id: <20191122054911.1750-110-sashal@kernel.org>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 124/219] powerpc/powernv/eeh/npu: Fix uninitialized variables in opal_pci_eeh_freeze_status
+Date:   Fri, 22 Nov 2019 00:47:36 -0500
+Message-Id: <20191122054911.1750-117-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,36 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kyle Roeschley <kyle.roeschley@ni.com>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit 5803c12816c43bd09e5f4247dd9313c2d9a2c41b ]
+[ Upstream commit c20577014f85f36d4e137d3d52a1f61225b4a3d2 ]
 
-When ath6kl was reworked to share code between regular and scheduled scans
-in commit 3b8ffc6a22ba ("ath6kl: Configure probed SSID list consistently"),
-probed SSID entry changed from 1-index to 0-indexed. However,
-ath6kl_cfg80211_scan_complete_event() was missed in that change. Fix its
-indexing so that we correctly clear out the probed SSID list.
+The current implementation of the OPAL_PCI_EEH_FREEZE_STATUS call in
+skiboot's NPU driver does not touch the pci_error_type parameter so
+it might have garbage but the powernv code analyzes it nevertheless.
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This initializes pcierr and fstate to zero in all call sites.
+
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath6kl/cfg80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/eeh-powernv.c | 8 ++++----
+ arch/powerpc/platforms/powernv/pci-ioda.c    | 4 ++--
+ arch/powerpc/platforms/powernv/pci.c         | 4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-index 6c98d7903ffb6..d7c626d9594e1 100644
---- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-+++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-@@ -1093,7 +1093,7 @@ void ath6kl_cfg80211_scan_complete_event(struct ath6kl_vif *vif, bool aborted)
- 	if (vif->scan_req->n_ssids && vif->scan_req->ssids[0].ssid_len) {
- 		for (i = 0; i < vif->scan_req->n_ssids; i++) {
- 			ath6kl_wmi_probedssid_cmd(ar->wmi, vif->fw_vif_idx,
--						  i + 1, DISABLE_SSID_FLAG,
-+						  i, DISABLE_SSID_FLAG,
- 						  0, NULL);
- 		}
- 	}
+diff --git a/arch/powerpc/platforms/powernv/eeh-powernv.c b/arch/powerpc/platforms/powernv/eeh-powernv.c
+index 3c1beae29f2d8..9dd5b8909178b 100644
+--- a/arch/powerpc/platforms/powernv/eeh-powernv.c
++++ b/arch/powerpc/platforms/powernv/eeh-powernv.c
+@@ -578,8 +578,8 @@ static void pnv_eeh_get_phb_diag(struct eeh_pe *pe)
+ static int pnv_eeh_get_phb_state(struct eeh_pe *pe)
+ {
+ 	struct pnv_phb *phb = pe->phb->private_data;
+-	u8 fstate;
+-	__be16 pcierr;
++	u8 fstate = 0;
++	__be16 pcierr = 0;
+ 	s64 rc;
+ 	int result = 0;
+ 
+@@ -617,8 +617,8 @@ static int pnv_eeh_get_phb_state(struct eeh_pe *pe)
+ static int pnv_eeh_get_pe_state(struct eeh_pe *pe)
+ {
+ 	struct pnv_phb *phb = pe->phb->private_data;
+-	u8 fstate;
+-	__be16 pcierr;
++	u8 fstate = 0;
++	__be16 pcierr = 0;
+ 	s64 rc;
+ 	int result;
+ 
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index 326ca6288bb12..ee63749a2d47e 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -605,8 +605,8 @@ static int pnv_ioda_unfreeze_pe(struct pnv_phb *phb, int pe_no, int opt)
+ static int pnv_ioda_get_pe_state(struct pnv_phb *phb, int pe_no)
+ {
+ 	struct pnv_ioda_pe *slave, *pe;
+-	u8 fstate, state;
+-	__be16 pcierr;
++	u8 fstate = 0, state;
++	__be16 pcierr = 0;
+ 	s64 rc;
+ 
+ 	/* Sanity check on PE number */
+diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
+index 13aef2323bbca..db230a35609bf 100644
+--- a/arch/powerpc/platforms/powernv/pci.c
++++ b/arch/powerpc/platforms/powernv/pci.c
+@@ -602,8 +602,8 @@ static void pnv_pci_handle_eeh_config(struct pnv_phb *phb, u32 pe_no)
+ static void pnv_pci_config_check_eeh(struct pci_dn *pdn)
+ {
+ 	struct pnv_phb *phb = pdn->phb->private_data;
+-	u8	fstate;
+-	__be16	pcierr;
++	u8	fstate = 0;
++	__be16	pcierr = 0;
+ 	unsigned int pe_no;
+ 	s64	rc;
+ 
 -- 
 2.20.1
 
