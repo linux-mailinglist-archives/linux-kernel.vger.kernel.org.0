@@ -2,134 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B491068B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3611068C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfKVJRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 04:17:39 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36641 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbfKVJRi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 04:17:38 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f10so5605979oto.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 01:17:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pzjjzH4UgTeG40VA2UV6AHDBfr0Ocw4jXqlZWXYFvJ8=;
-        b=PuTHrRo6gLJNu4P4PUUZivkRf9R8+X7UdnrZdLbDNmrrt/TpJ5FOmxGiHBbktnLk7p
-         0L/NwFPVLdJbjnvUE+rXbTFVQk2JD4/qkscDImWPNAQqc2A2LZeJ94l8S2wH6NIG/TjM
-         Lguv1/sk/Rm80MHeMl/ogckNAQlZmDWVrIRac=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pzjjzH4UgTeG40VA2UV6AHDBfr0Ocw4jXqlZWXYFvJ8=;
-        b=TB/VgF7nKWN6SippWRWQJA5SaNJTaDGjVily4aHOprsyJAZPTHEcnif/rxICE8jQYP
-         +t6+PVWnzlBdBjNz5AR1goXNQoMoCKST+gsxJZ50M/CmHgXgRbpsiBR04AupbdIYTArq
-         1041VrEg3nQvuWWEOuPbEu3N0vgJ7fu9A0jetx404KJDHeBz22gawn7lkk0u4z85gsnd
-         bOuBoNa4rgZUOlihSvL0zAyGTYPT7/2SWa3GOB2As8Vw/VG67o9/Efztzv4u9JzjuG3o
-         ZuSATKYMDS1s3aajnL6dBxrRwHiIle7FBKXpZsX9dmwF8umDwmhR8008Ce6D2fF5App/
-         DkFg==
-X-Gm-Message-State: APjAAAXwaVztIGs+8Aw+PxAiktqDS4cXq/HTXZX6N7sWnusBd8zLOC3q
-        0qAfUqnZYKJWpBHqs3kjrBNeQdp8wgaej/d+bKBMPA==
-X-Google-Smtp-Source: APXvYqyhv427Hxx7/MmUbtqChclXEe6nJWw6xg1yaWUV406sDc3FO9lJ2GvjbigdCij390dY9m18ZCX2Ku6kj6cEKso=
-X-Received: by 2002:a05:6830:1649:: with SMTP id h9mr10352872otr.281.1574414257767;
- Fri, 22 Nov 2019 01:17:37 -0800 (PST)
+        id S1726813AbfKVJYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 04:24:09 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41836 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726364AbfKVJYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 04:24:09 -0500
+Received: from zn.tnic (p200300EC2F0E97008857C615A913C712.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:9700:8857:c615:a913:c712])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 20DBF1EC0CFE;
+        Fri, 22 Nov 2019 10:24:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1574414648;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=RuqK6rdw+kOj5d/goa9PzdaaZY05Qs1SpmtZlzCNFXs=;
+        b=BmIyYK3xFWOz56JiFtvKpzg2kdCM6/MW1a2gtAMukB4KUiuapSUp2ieMIKiG84xkaAogBL
+        QqlL93BvTIA0LGtNQ1B6i7cQnj4ssaoDhJkO8E0AsXoTQBN0hSQkk58z5Z6VnFC7vtMzs8
+        7eO86KAxTbUKsUAsIIiNqiV+US/DtLA=
+Date:   Fri, 22 Nov 2019 10:24:05 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     thor.thayer@linux.intel.com
+Cc:     mchehab@kernel.org, tony.luck@intel.com, james.morse@arm.com,
+        rrichter@marvell.com, Meng.Li@windriver.com,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 0/3] Altera EDAC Fix & Cleanup Patches
+Message-ID: <20191122092405.GE6289@zn.tnic>
+References: <1574361048-17572-1-git-send-email-thor.thayer@linux.intel.com>
 MIME-Version: 1.0
-References: <20191122063749.27113-1-kraxel@redhat.com> <20191122063749.27113-3-kraxel@redhat.com>
-In-Reply-To: <20191122063749.27113-3-kraxel@redhat.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 22 Nov 2019 10:17:27 +0100
-Message-ID: <CAKMK7uFz3hmPT3OE8UtUQwmv+tXsjazUWT2RVHLxAq47X+EaXA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drm: share address space for dma bufs
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh@kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        "open list:RADEON and AMDGPU DRM DRIVERS" 
-        <amd-gfx@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1574361048-17572-1-git-send-email-thor.thayer@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 7:37 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> Use the shared address space of the drm device (see drm_open() in
-> drm_file.c) for dma-bufs too.  That removes a difference betweem drm
-> device mmap vmas and dma-buf mmap vmas and fixes corner cases like
-> dropping ptes (using madvise(DONTNEED) for example) not working
-> properly.
->
-> Also remove amdgpu driver's private dmabuf update.  It is not needed
-> any more now that we are doing this for everybody.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+On Thu, Nov 21, 2019 at 12:30:45PM -0600, thor.thayer@linux.intel.com wrote:
+> From: Thor Thayer <thor.thayer@linux.intel.com>
+> 
+> This patchset includes a fix for the Stratix10 IRQ regmap
+> and cleanup of the driver as it has evolved.
+> 
+> Patch 2 and 3 were accepted into the edac-for-next branch [1]
+> but the fix should be included. Version 2 of the patches
+> rebase on top of the fix.
+> 
+> This patchset should replace the current patches[1].
+> 
+> [1] https://lore.kernel.org/linux-edac/1573156890-26891-1-git-send-email-thor.thayer@linux.intel.com/
+> 
+> Meng Li (1):
+>   EDAC/altera: Use fast register IO for S10 IRQs
+> 
+> Thor Thayer (2):
+>   EDAC/altera: Cleanup the ECC Manager
+>   EDAC/altera: Use the Altera System Manager driver
+> 
+>  drivers/edac/altera_edac.c | 152 +++------------------------------------------
+>  1 file changed, 9 insertions(+), 143 deletions(-)
+> 
+> -- 
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-But I think you want at least an ack from amd guys for double checking here.
--Daniel
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 4 +---
->  drivers/gpu/drm/drm_prime.c                 | 4 +++-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-> index d5bcdfefbad6..586db4fb46bd 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-> @@ -361,10 +361,8 @@ struct dma_buf *amdgpu_gem_prime_export(struct drm_gem_object *gobj,
->                 return ERR_PTR(-EPERM);
->
->         buf = drm_gem_prime_export(gobj, flags);
-> -       if (!IS_ERR(buf)) {
-> -               buf->file->f_mapping = gobj->dev->anon_inode->i_mapping;
-> +       if (!IS_ERR(buf))
->                 buf->ops = &amdgpu_dmabuf_ops;
-> -       }
->
->         return buf;
->  }
-> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-> index a9633bd241bb..c3fc341453c0 100644
-> --- a/drivers/gpu/drm/drm_prime.c
-> +++ b/drivers/gpu/drm/drm_prime.c
-> @@ -240,6 +240,7 @@ void drm_prime_destroy_file_private(struct drm_prime_file_private *prime_fpriv)
->  struct dma_buf *drm_gem_dmabuf_export(struct drm_device *dev,
->                                       struct dma_buf_export_info *exp_info)
->  {
-> +       struct drm_gem_object *obj = exp_info->priv;
->         struct dma_buf *dma_buf;
->
->         dma_buf = dma_buf_export(exp_info);
-> @@ -247,7 +248,8 @@ struct dma_buf *drm_gem_dmabuf_export(struct drm_device *dev,
->                 return dma_buf;
->
->         drm_dev_get(dev);
-> -       drm_gem_object_get(exp_info->priv);
-> +       drm_gem_object_get(obj);
-> +       dma_buf->file->f_mapping = obj->dev->anon_inode->i_mapping;
->
->         return dma_buf;
->  }
-> --
-> 2.18.1
->
-
+Applied, thanks.
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
