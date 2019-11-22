@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39187107150
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:28:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25374106EEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfKVKb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51562 "EHLO mail.kernel.org"
+        id S1730739AbfKVK55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:57:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727289AbfKVKb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:26 -0500
+        id S1730717AbfKVK5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 657F320717;
-        Fri, 22 Nov 2019 10:31:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D474120718;
+        Fri, 22 Nov 2019 10:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418685;
-        bh=WvA7ooE23+rMcSXpkAwDLVyHFb12QEhAyN/XFwoVHjE=;
+        s=default; t=1574420268;
+        bh=k5ZRh2ikyUYWBdoD1qh1lHWr6fCnKfqiDBwbD6/ssmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zwwGbjGsgsq4hTflqtFnv3udpsk9THDX6SXOhe5kalq+an1TIKy7AoRomcO+L5lau
-         iCic+Ih3YR6+udObEc/TQf91zcVBuGBG80aovYZaOFLyBXvEJ1juEkFNYLueRxCKjv
-         1rlktd1iEvbiP2EV+cr9L8i9YRCJKyKSFidu2GA0=
+        b=gxQ9l1NRVi0ZZm8SvrlwxOCeIO+JFCr1b4xqyZxquZvs+qXNjfWQCCxXppxGLTXYj
+         WSE32ajBIp4glUoIj+5lKouMqth/YWn92n63ETR1O4/tYm57Wf4c+epEyxrFTttiZR
+         /XLVgHLeLhJwsS4PRJ9EKorQ5d7yVscBSOZj5yDs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Burton <paul.burton@mips.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 018/159] MIPS: BCM47XX: Enable USB power on Netgear WNDR3400v3
-Date:   Fri, 22 Nov 2019 11:26:49 +0100
-Message-Id: <20191122100720.475073737@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 049/220] irqchip/irq-mvebu-icu: Fix wrong private data retrieval
+Date:   Fri, 22 Nov 2019 11:26:54 +0100
+Message-Id: <20191122100915.728633762@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-[ Upstream commit feef7918667b84f9d5653c501542dd8d84ae32af ]
+[ Upstream commit 2b4dab69dcca13c5be2ddaf1337ae4accd087de6 ]
 
-Setting GPIO 21 high seems to be required to enable power to USB ports
-on the WNDR3400v3. As there is already similar code for WNR3500L,
-make the existing USB power GPIO code generic and use that.
+The irq_domain structure has an host_data pointer that just stores
+private data. It is meant to not be touched by the IRQ core. However,
+when it comes to MSI, the MSI layer adds its own private data there
+with a structure that also has a host_data pointer.
 
-Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20259/
-Cc: Rafał Miłecki <zajec5@gmail.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Because this IRQ domain is an MSI domain, to access private data we
+should do a d->host_data->host_data, also wrapped as
+'platform_msi_get_host_data()'.
+
+This bug was lying there silently because the 'icu' structure retrieved
+this way was just called by dev_err(), only producing a
+'(NULL device *):' output on the console.
+
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/bcm47xx/workarounds.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-mvebu-icu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/bcm47xx/workarounds.c b/arch/mips/bcm47xx/workarounds.c
-index e81ce4623070e..06fb94370c7c9 100644
---- a/arch/mips/bcm47xx/workarounds.c
-+++ b/arch/mips/bcm47xx/workarounds.c
-@@ -4,9 +4,8 @@
- #include <bcm47xx_board.h>
- #include <bcm47xx.h>
- 
--static void __init bcm47xx_workarounds_netgear_wnr3500l(void)
-+static void __init bcm47xx_workarounds_enable_usb_power(int usb_power)
+diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
+index 13063339b416d..a2a3acd744911 100644
+--- a/drivers/irqchip/irq-mvebu-icu.c
++++ b/drivers/irqchip/irq-mvebu-icu.c
+@@ -105,7 +105,7 @@ static int
+ mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
+ 			       unsigned long *hwirq, unsigned int *type)
  {
--	const int usb_power = 12;
- 	int err;
+-	struct mvebu_icu *icu = d->host_data;
++	struct mvebu_icu *icu = platform_msi_get_host_data(d);
+ 	unsigned int icu_group;
  
- 	err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
-@@ -22,7 +21,10 @@ void __init bcm47xx_workarounds(void)
- 
- 	switch (board) {
- 	case BCM47XX_BOARD_NETGEAR_WNR3500L:
--		bcm47xx_workarounds_netgear_wnr3500l();
-+		bcm47xx_workarounds_enable_usb_power(12);
-+		break;
-+	case BCM47XX_BOARD_NETGEAR_WNDR3400_V3:
-+		bcm47xx_workarounds_enable_usb_power(21);
- 		break;
- 	default:
- 		/* No workaround(s) needed */
+ 	/* Check the count of the parameters in dt */
 -- 
 2.20.1
 
