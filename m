@@ -2,129 +2,637 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2EF107653
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:20:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C1D107659
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:22:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfKVRUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 12:20:50 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43340 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfKVRUu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:20:50 -0500
-Received: by mail-oi1-f196.google.com with SMTP id l20so7130024oie.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 09:20:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fN9Q7xWO0FbuGOg0ZLM+ialJgn3N+fh3qmMRWr4AQ6U=;
-        b=LemNwUSKL4Zq/wre+tl5MbDnUNuFV8wVTA/PzNJt4iFC1YfvZzAWiNNG2hmkKZsyVk
-         Ux0I9Hv8eN3hO/xU/RkQa//cWiL99jSy8YQpwI9kXWbGUA5uIuTb8mgjlJ4U+zXNTbl9
-         FbCDtaokZgJu9yVGkDkDj0hC8g6O4gN4AJ87hdzrvps3ENE4IFRcF7ppAFebtWnSDyZV
-         TgYPhansYSrM2FKPG2oiKnKP/uaBzJjiJWHHGsHNCce2uGWUekNod7gNDEYxS7lEiABy
-         ciYc+BEo447C39/mxTGF12eKz6OdAdPNvEdZKod+fnIs2gaKY3mBzxZn4TlNmB42luUc
-         rQYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fN9Q7xWO0FbuGOg0ZLM+ialJgn3N+fh3qmMRWr4AQ6U=;
-        b=CvStQmrbyyCYF0MimPc7lhOpVXEUjwccTu4ziMkTjgLDq/VxGPPmXOUGtBwCDScfwJ
-         ayoCrVomIx3UjYBPlJtFgANjPgtladKEPqFtwaEl9dPHbYYtWoxz4Lqt7WjOTz//pn+d
-         yY7U8eRKT0vpVUg3kXrookqhGFv5MLv/sZKmP5fR+dEMl7GcUubUZAvtb7WWx+Xn7Hay
-         NOoawKfzfI/OJHG15XULnSOCkuwwdoIKxwLyy9zqOfrWl9m8xr7BEarheKI4WH+FFBa8
-         7ebTZ6e6JW5huENAm8nJPNOSosYSPw6cvsk+a6lDrt21maWDi7x5uCxthcEZYWF6WDzT
-         XPKw==
-X-Gm-Message-State: APjAAAXNRZqKmpN7ZHMQEw1FRfw9qlKprIBKRG1klLL3qmEfsKCp+dnM
-        CUnqAzjfXjxVfO4Ke2gFgMa022uIPz7jgsq2mDBeqA==
-X-Google-Smtp-Source: APXvYqwhIC9vQ8yjpEDPT9U3Y2BSJTtNQkNiL/hHwJTZOR5pP0KAc6amfY2OBoTPfD1k9znhgvRcAOCxr3xuGAnF1I8=
-X-Received: by 2002:aca:3c1:: with SMTP id 184mr12377716oid.70.1574443250004;
- Fri, 22 Nov 2019 09:20:50 -0800 (PST)
+        id S1727432AbfKVRWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 12:22:49 -0500
+Received: from foss.arm.com ([217.140.110.172]:50202 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfKVRWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 12:22:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 901CFDA7;
+        Fri, 22 Nov 2019 09:22:46 -0800 (PST)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C19063F6C4;
+        Fri, 22 Nov 2019 09:22:44 -0800 (PST)
+Subject: Re: [PATCH 3/3] ARM: dts: at91: Remove the USB EP child node
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Cristian Birsan <cristian.birsan@microchip.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20191107153128.11038-1-gregory.clement@bootlin.com>
+ <20191107153128.11038-4-gregory.clement@bootlin.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <b13e902f-b375-02d3-e03d-80b5ae29f64c@arm.com>
+Date:   Fri, 22 Nov 2019 17:22:43 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <157428480574.36836.14057238306923901253.stgit@djiang5-desk3.ch.intel.com>
- <157428502934.36836.8119026517510193201.stgit@djiang5-desk3.ch.intel.com>
- <20191120215338.GN2634@zn.tnic> <247008b5-6d33-a51b-0caa-7f1991a94dbd@intel.com>
- <20191121105913.GB6540@zn.tnic> <ef6bc4a4-b307-9bc4-f3be-f7ab7232d303@intel.com>
- <20191122085953.GA6289@zn.tnic>
-In-Reply-To: <20191122085953.GA6289@zn.tnic>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 22 Nov 2019 09:20:39 -0800
-Message-ID: <CAPcyv4isyT3FOPARBc8cSANbRWjhAsJrZTkT-fYivPZZJzF=tw@mail.gmail.com>
-Subject: Re: [PATCH RFC 01/14] x86/asm: add iosubmit_cmds512() based on
- movdir64b CPU instruction
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Dave Jiang <dave.jiang@intel.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Lin, Jing" <jing.lin@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Dey, Megha" <megha.dey@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191107153128.11038-4-gregory.clement@bootlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 1:00 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Nov 21, 2019 at 09:52:19AM -0700, Dave Jiang wrote:
-> > No what I mean was those primitives are missing the checks and we should
-> > probably address that at some point.
->
-> Oh, patches are always welcome! :)
->
-> > How would I detect that? Add a size (in bytes) parameter for the total
-> > source data?
->
-> Sure.
->
-> So, here's the deal: the more I look at this thing, the more I think
-> this iosubmit_cmds512() function should not be in a generic header but
-> in an intel-/driver-specific one. Why?
->
-> Well, movdir64b is Intel-only for now, you don't have a fallback
-> option for the platforms which do not support that insn and it is more
-> preferential for you to do the feature check once at driver init and
-> then call the function because you *know* you have movdir64b support
-> and not have any feature check in the function itself, not even a fast
-> static_cpu_has() one.
->
-> And this way you can do away with alignment and size checks because you
-> control what your driver does.
->
-> If it turns out that this function needs to be shared with other
-> platforms, then we can consider lifting it into a generic header and
-> making it more generic.
->
-> Ok?
+On 07/11/2019 3:31 pm, Gregory CLEMENT wrote:
+> The endpoint configuration used to be stored in the device tree,
+> however the configuration depend on the "version" of the controller
+> itself.
+> 
+> Then the EP child node are useless and describe as deprecated in the
+> documentation binding: remove all the nodes from the SoC device tree
+> file.
 
-I do agree that iosubmit_cmds512() can live in a driver specific
-header, and it was my fault for advising Dave to make it generic. The
-long story of how that came to pass below, but the short story is yes,
-lets just make this one driver specific.
+Just as a drive-by comment, it's presumably worth getting rid of the 
+#address-cells and #size-cells properties too (here and in the binding 
+example).
 
-The long story is that there is already line of sight for a need for
-other generic movdir64b() helpers as mentioned in the changelog, and
-iosubmit_cmds512() got wrapped up in that momentum.
+Robin.
 
-For those cases the thought would be to have memset512() for case1 and
-__iowrite512_copy() for case3. Where memset512() writes a
-non-incrementing source to an incrementing destination, and
-__iowrite512_copy() copies an incrementing source to an incrementing
-destination. Those 2 helpers *would* have fallbacks, but with the
-option to use something like cpu_has_write512() to check in advance
-whether those routines will fallback, or not.
-
-That can be a discussion for a future patchset when those users arrive.
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>   arch/arm/boot/dts/at91sam9g45.dtsi |  52 -------------
+>   arch/arm/boot/dts/at91sam9rl.dtsi  |  52 -------------
+>   arch/arm/boot/dts/at91sam9x5.dtsi  |  52 -------------
+>   arch/arm/boot/dts/sama5d2.dtsi     | 118 -----------------------------
+>   arch/arm/boot/dts/sama5d3.dtsi     | 105 -------------------------
+>   arch/arm/boot/dts/sama5d4.dtsi     | 118 -----------------------------
+>   6 files changed, 497 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sam9g45.dtsi
+> index 691c95ea6175..63bfe546cd8d 100644
+> --- a/arch/arm/boot/dts/at91sam9g45.dtsi
+> +++ b/arch/arm/boot/dts/at91sam9g45.dtsi
+> @@ -1204,58 +1204,6 @@
+>   				clocks = <&udphs_clk>, <&utmi>;
+>   				clock-names = "pclk", "hclk";
+>   				status = "disabled";
+> -
+> -				ep@0 {
+> -					reg = <0>;
+> -					atmel,fifo-size = <64>;
+> -					atmel,nb-banks = <1>;
+> -				};
+> -
+> -				ep@1 {
+> -					reg = <1>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <2>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@2 {
+> -					reg = <2>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <2>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@3 {
+> -					reg = <3>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -				};
+> -
+> -				ep@4 {
+> -					reg = <4>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -				};
+> -
+> -				ep@5 {
+> -					reg = <5>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@6 {
+> -					reg = <6>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+>   			};
+>   
+>   			clk32k: sckc@fffffd50 {
+> diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam9rl.dtsi
+> index 8643b7151565..e118bacb7d7c 100644
+> --- a/arch/arm/boot/dts/at91sam9rl.dtsi
+> +++ b/arch/arm/boot/dts/at91sam9rl.dtsi
+> @@ -308,58 +308,6 @@
+>   				clocks = <&pmc PMC_TYPE_PERIPHERAL 22>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
+>   				clock-names = "pclk", "hclk";
+>   				status = "disabled";
+> -
+> -				ep@0 {
+> -					reg = <0>;
+> -					atmel,fifo-size = <64>;
+> -					atmel,nb-banks = <1>;
+> -				};
+> -
+> -				ep@1 {
+> -					reg = <1>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <2>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@2 {
+> -					reg = <2>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <2>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@3 {
+> -					reg = <3>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -				};
+> -
+> -				ep@4 {
+> -					reg = <4>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -				};
+> -
+> -				ep@5 {
+> -					reg = <5>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@6 {
+> -					reg = <6>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+>   			};
+>   
+>   			dma0: dma-controller@ffffe600 {
+> diff --git a/arch/arm/boot/dts/at91sam9x5.dtsi b/arch/arm/boot/dts/at91sam9x5.dtsi
+> index 7c2eb93f8cac..685a1b9f3ae5 100644
+> --- a/arch/arm/boot/dts/at91sam9x5.dtsi
+> +++ b/arch/arm/boot/dts/at91sam9x5.dtsi
+> @@ -876,58 +876,6 @@
+>   				clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_PERIPHERAL 23>;
+>   				clock-names = "hclk", "pclk";
+>   				status = "disabled";
+> -
+> -				ep@0 {
+> -					reg = <0>;
+> -					atmel,fifo-size = <64>;
+> -					atmel,nb-banks = <1>;
+> -				};
+> -
+> -				ep@1 {
+> -					reg = <1>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <2>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@2 {
+> -					reg = <2>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <2>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@3 {
+> -					reg = <3>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -				};
+> -
+> -				ep@4 {
+> -					reg = <4>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -				};
+> -
+> -				ep@5 {
+> -					reg = <5>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+> -
+> -				ep@6 {
+> -					reg = <6>;
+> -					atmel,fifo-size = <1024>;
+> -					atmel,nb-banks = <3>;
+> -					atmel,can-dma;
+> -					atmel,can-isoc;
+> -				};
+>   			};
+>   
+>   			watchdog: watchdog@fffffe40 {
+> diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+> index 2e2c1a7b1d1d..daafcffbe033 100644
+> --- a/arch/arm/boot/dts/sama5d2.dtsi
+> +++ b/arch/arm/boot/dts/sama5d2.dtsi
+> @@ -122,124 +122,6 @@
+>   			clocks = <&pmc PMC_TYPE_PERIPHERAL 42>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
+>   			clock-names = "pclk", "hclk";
+>   			status = "disabled";
+> -
+> -			ep@0 {
+> -				reg = <0>;
+> -				atmel,fifo-size = <64>;
+> -				atmel,nb-banks = <1>;
+> -			};
+> -
+> -			ep@1 {
+> -				reg = <1>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <3>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@2 {
+> -				reg = <2>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <3>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@3 {
+> -				reg = <3>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@4 {
+> -				reg = <4>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@5 {
+> -				reg = <5>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@6 {
+> -				reg = <6>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@7 {
+> -				reg = <7>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@8 {
+> -				reg = <8>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@9 {
+> -				reg = <9>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@10 {
+> -				reg = <10>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@11 {
+> -				reg = <11>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@12 {
+> -				reg = <12>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@13 {
+> -				reg = <13>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@14 {
+> -				reg = <14>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@15 {
+> -				reg = <15>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+>   		};
+>   
+>   		usb1: ohci@400000 {
+> diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
+> index f770aace0efd..dfd095f33f95 100644
+> --- a/arch/arm/boot/dts/sama5d3.dtsi
+> +++ b/arch/arm/boot/dts/sama5d3.dtsi
+> @@ -1402,111 +1402,6 @@
+>   			clocks = <&udphs_clk>, <&utmi>;
+>   			clock-names = "pclk", "hclk";
+>   			status = "disabled";
+> -
+> -			ep@0 {
+> -				reg = <0>;
+> -				atmel,fifo-size = <64>;
+> -				atmel,nb-banks = <1>;
+> -			};
+> -
+> -			ep@1 {
+> -				reg = <1>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <3>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@2 {
+> -				reg = <2>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <3>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@3 {
+> -				reg = <3>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -			};
+> -
+> -			ep@4 {
+> -				reg = <4>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -			};
+> -
+> -			ep@5 {
+> -				reg = <5>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -			};
+> -
+> -			ep@6 {
+> -				reg = <6>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -			};
+> -
+> -			ep@7 {
+> -				reg = <7>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -			};
+> -
+> -			ep@8 {
+> -				reg = <8>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@9 {
+> -				reg = <9>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@10 {
+> -				reg = <10>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@11 {
+> -				reg = <11>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@12 {
+> -				reg = <12>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@13 {
+> -				reg = <13>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@14 {
+> -				reg = <14>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+> -
+> -			ep@15 {
+> -				reg = <15>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -			};
+>   		};
+>   
+>   		usb1: ohci@600000 {
+> diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+> index 6ab27a7b388d..0ece6b22d287 100644
+> --- a/arch/arm/boot/dts/sama5d4.dtsi
+> +++ b/arch/arm/boot/dts/sama5d4.dtsi
+> @@ -105,124 +105,6 @@
+>   			clocks = <&pmc PMC_TYPE_PERIPHERAL 47>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
+>   			clock-names = "pclk", "hclk";
+>   			status = "disabled";
+> -
+> -			ep@0 {
+> -				reg = <0>;
+> -				atmel,fifo-size = <64>;
+> -				atmel,nb-banks = <1>;
+> -			};
+> -
+> -			ep@1 {
+> -				reg = <1>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <3>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@2 {
+> -				reg = <2>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <3>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@3 {
+> -				reg = <3>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@4 {
+> -				reg = <4>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@5 {
+> -				reg = <5>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@6 {
+> -				reg = <6>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@7 {
+> -				reg = <7>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-dma;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@8 {
+> -				reg = <8>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@9 {
+> -				reg = <9>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@10 {
+> -				reg = <10>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@11 {
+> -				reg = <11>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@12 {
+> -				reg = <12>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@13 {
+> -				reg = <13>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@14 {
+> -				reg = <14>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+> -
+> -			ep@15 {
+> -				reg = <15>;
+> -				atmel,fifo-size = <1024>;
+> -				atmel,nb-banks = <2>;
+> -				atmel,can-isoc;
+> -			};
+>   		};
+>   
+>   		usb1: ohci@500000 {
+> 
