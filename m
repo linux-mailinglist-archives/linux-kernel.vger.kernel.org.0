@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D498106E00
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F67106EFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731663AbfKVLFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:05:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60594 "EHLO mail.kernel.org"
+        id S1730377AbfKVKyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731182AbfKVLFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:05:07 -0500
+        id S1730370AbfKVKyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:54:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AB4E2070E;
-        Fri, 22 Nov 2019 11:05:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56AE320715;
+        Fri, 22 Nov 2019 10:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420705;
-        bh=0heLWYa1fdiA1uuMdun/a5Epn3QCmKknV7kBb7keeDo=;
+        s=default; t=1574420085;
+        bh=FJ+VnI9oZcBnhezxFHAHzk3I2B2oWQZz95RSyzMIKtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QUo1x5A+zpBUzBP/B5Hbk2SxdAnR2noKgmxVnYzbMib8Oif7M3UzE2UaHXCVB1Qgw
-         V8BX5QsVw9TdArQ9GsTMZUe/6AMoMsGrJrmFSqhLUq5yLkP3ue0Yykm6Iy8IB9jA0S
-         VO4/YQsIdPoZPgH5JkroP4/bWK25eTZHeKGu9go8=
+        b=GJkUzGv7O4UhOcPUkWYZ93VWnpXuKKwILSF2H6c8qafEiGml9eU+CbbSgDachtUP6
+         zd4nEwJ4Vc6Q/dIw4nXdvCOpVTrr2A+KrdpF/mqgGUDeWHOkkYObZGsBqs3jyJ8Qc5
+         h2R/yUaB8vUw9122SgboSSSORyKNybubUo5JoMpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 197/220] pinctrl: gemini: Fix up TVC clock group
-Date:   Fri, 22 Nov 2019 11:29:22 +0100
-Message-Id: <20191122100928.153411963@linuxfoundation.org>
+Subject: [PATCH 4.14 110/122] hwmon: (pwm-fan) Silence error on probe deferral
+Date:   Fri, 22 Nov 2019 11:29:23 +0100
+Message-Id: <20191122100833.920373569@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,149 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit a85c928f6a7856a09e47d9b37faa3407c7ac6a8e ]
+[ Upstream commit 9f67f7583e77fe5dc57aab3a6159c2642544eaad ]
 
-The previous fix made the TVC clock get muxed in on the
-D-Link DIR-685 instead of giving nagging warnings of this
-not working. Not good. We didn't want that, as it breaks
-video.
+Probe deferrals aren't actual errors, so silence the error message in
+case the PWM cannot yet be acquired.
 
-Create a specific group for the TVC CLK, and break out
-a specific GPIO group for it on the SL3516 so we can use
-that line as GPIO if we don't need the TVC CLK.
-
-Fixes: d17f477c5bc6 ("pinctrl: gemini: Mask and set properly")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-gemini.c | 44 ++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 8 deletions(-)
+ drivers/hwmon/pwm-fan.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
-index 1e484a36ff07e..3535f98418615 100644
---- a/drivers/pinctrl/pinctrl-gemini.c
-+++ b/drivers/pinctrl/pinctrl-gemini.c
-@@ -591,13 +591,16 @@ static const unsigned int tvc_3512_pins[] = {
- 	319, /* TVC_DATA[1] */
- 	301, /* TVC_DATA[2] */
- 	283, /* TVC_DATA[3] */
--	265, /* TVC_CLK */
- 	320, /* TVC_DATA[4] */
- 	302, /* TVC_DATA[5] */
- 	284, /* TVC_DATA[6] */
- 	266, /* TVC_DATA[7] */
- };
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index 6d30bec04f2d8..f981da686d7eb 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -221,8 +221,12 @@ static int pwm_fan_probe(struct platform_device *pdev)
  
-+static const unsigned int tvc_clk_3512_pins[] = {
-+	265, /* TVC_CLK */
-+};
+ 	ctx->pwm = devm_of_pwm_get(&pdev->dev, pdev->dev.of_node, NULL);
+ 	if (IS_ERR(ctx->pwm)) {
+-		dev_err(&pdev->dev, "Could not get PWM\n");
+-		return PTR_ERR(ctx->pwm);
++		ret = PTR_ERR(ctx->pwm);
 +
- /* NAND flash pins */
- static const unsigned int nflash_3512_pins[] = {
- 	199, 200, 201, 202, 216, 217, 218, 219, 220, 234, 235, 236, 237, 252,
-@@ -629,7 +632,7 @@ static const unsigned int pflash_3512_pins_extended[] = {
- /* Serial flash pins CE0, CE1, DI, DO, CK */
- static const unsigned int sflash_3512_pins[] = { 230, 231, 232, 233, 211 };
- 
--/* The GPIO0A (0) pin overlap with TVC and extended parallel flash */
-+/* The GPIO0A (0) pin overlap with TVC CLK and extended parallel flash */
- static const unsigned int gpio0a_3512_pins[] = { 265 };
- 
- /* The GPIO0B (1-4) pins overlap with TVC and ICE */
-@@ -823,7 +826,13 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(tvc_3512_pins),
- 		/* Conflict with character LCD and ICE */
- 		.mask = LCD_PADS_ENABLE,
--		.value = TVC_PADS_ENABLE | TVC_CLK_PAD_ENABLE,
-+		.value = TVC_PADS_ENABLE,
-+	},
-+	{
-+		.name = "tvcclkgrp",
-+		.pins = tvc_clk_3512_pins,
-+		.num_pins = ARRAY_SIZE(tvc_clk_3512_pins),
-+		.value = TVC_CLK_PAD_ENABLE,
- 	},
- 	/*
- 	 * The construction is done such that it is possible to use a serial
-@@ -860,8 +869,8 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.name = "gpio0agrp",
- 		.pins = gpio0a_3512_pins,
- 		.num_pins = ARRAY_SIZE(gpio0a_3512_pins),
--		/* Conflict with TVC */
--		.mask = TVC_PADS_ENABLE,
-+		/* Conflict with TVC CLK */
-+		.mask = TVC_CLK_PAD_ENABLE,
- 	},
- 	{
- 		.name = "gpio0bgrp",
-@@ -1531,13 +1540,16 @@ static const unsigned int tvc_3516_pins[] = {
- 	311, /* TVC_DATA[1] */
- 	394, /* TVC_DATA[2] */
- 	374, /* TVC_DATA[3] */
--	333, /* TVC_CLK */
- 	354, /* TVC_DATA[4] */
- 	395, /* TVC_DATA[5] */
- 	312, /* TVC_DATA[6] */
- 	334, /* TVC_DATA[7] */
- };
- 
-+static const unsigned int tvc_clk_3516_pins[] = {
-+	333, /* TVC_CLK */
-+};
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Could not get PWM: %d\n", ret);
 +
- /* NAND flash pins */
- static const unsigned int nflash_3516_pins[] = {
- 	243, 260, 261, 224, 280, 262, 281, 264, 300, 263, 282, 301, 320, 283,
-@@ -1570,7 +1582,7 @@ static const unsigned int pflash_3516_pins_extended[] = {
- static const unsigned int sflash_3516_pins[] = { 296, 338, 295, 359, 339 };
++		return ret;
+ 	}
  
- /* The GPIO0A (0-4) pins overlap with TVC and extended parallel flash */
--static const unsigned int gpio0a_3516_pins[] = { 333, 354, 395, 312, 334 };
-+static const unsigned int gpio0a_3516_pins[] = { 354, 395, 312, 334 };
- 
- /* The GPIO0B (5-7) pins overlap with ICE */
- static const unsigned int gpio0b_3516_pins[] = { 375, 396, 376 };
-@@ -1602,6 +1614,9 @@ static const unsigned int gpio0j_3516_pins[] = { 359, 339 };
- /* The GPIO0K (30,31) pins overlap with NAND flash */
- static const unsigned int gpio0k_3516_pins[] = { 275, 298 };
- 
-+/* The GPIO0L (0) pins overlap with TVC_CLK */
-+static const unsigned int gpio0l_3516_pins[] = { 333 };
-+
- /* The GPIO1A (0-4) pins that overlap with IDE and parallel flash */
- static const unsigned int gpio1a_3516_pins[] = { 221, 200, 222, 201, 220 };
- 
-@@ -1761,7 +1776,13 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(tvc_3516_pins),
- 		/* Conflict with character LCD */
- 		.mask = LCD_PADS_ENABLE,
--		.value = TVC_PADS_ENABLE | TVC_CLK_PAD_ENABLE,
-+		.value = TVC_PADS_ENABLE,
-+	},
-+	{
-+		.name = "tvcclkgrp",
-+		.pins = tvc_clk_3516_pins,
-+		.num_pins = ARRAY_SIZE(tvc_clk_3516_pins),
-+		.value = TVC_CLK_PAD_ENABLE,
- 	},
- 	/*
- 	 * The construction is done such that it is possible to use a serial
-@@ -1872,6 +1893,13 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		/* Conflict with parallel and NAND flash */
- 		.value = PFLASH_PADS_DISABLE | NAND_PADS_DISABLE,
- 	},
-+	{
-+		.name = "gpio0lgrp",
-+		.pins = gpio0l_3516_pins,
-+		.num_pins = ARRAY_SIZE(gpio0l_3516_pins),
-+		/* Conflict with TVE CLK */
-+		.mask = TVC_CLK_PAD_ENABLE,
-+	},
- 	{
- 		.name = "gpio1agrp",
- 		.pins = gpio1a_3516_pins,
+ 	platform_set_drvdata(pdev, ctx);
 -- 
 2.20.1
 
