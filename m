@@ -2,54 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C0601075A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:20:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A131075AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfKVQUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 11:20:35 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46602 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfKVQUf (ORCPT
+        id S1727481AbfKVQWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 11:22:10 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41856 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfKVQWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 11:20:35 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iYBfV-0008SH-BH; Fri, 22 Nov 2019 16:20:25 +0000
-Date:   Fri, 22 Nov 2019 16:20:25 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Kusanagi Kouichi <slash@ac.auone-net.jp>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: Fix !DEBUG_FS debugfs_create_automount
-Message-ID: <20191122162025.GC26530@ZenIV.linux.org.uk>
-References: <20191121102021787.MLMY.25002.ppp.dion.ne.jp@dmta0003.auone-net.jp>
+        Fri, 22 Nov 2019 11:22:10 -0500
+Received: by mail-lj1-f194.google.com with SMTP id m4so8019301ljj.8;
+        Fri, 22 Nov 2019 08:22:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ykwPMbHIRKgLrVpSpWF8yIw4jd/QEDDbiLYlnpgiqSI=;
+        b=aYyWEbnDZW6Y3pbQjaivmMd8tp9cF7ULcfzumRtyQReRZXek4w0sbzD4eUBdg0JE3b
+         sUVwwSqB/FOV7j7TQ7Tkww7sjnIRZTTUh6vVPHkg3cKfTA3o9EhkxYJQub+Tla0Tx/6G
+         UI2nzfTzxrKMd+8KSEyORBtenIqbFwcSU0pDEhNjB8UwxuKBnyvLkQd2/OLnGk7o4Vgp
+         5GRNg7DttdKOkEBDVhLDKN6SJ6Ap3Pd6M2hBo7WnaSPy6L1Dhwk84+1/LJcvHx96+KA9
+         ze+6MMe4hgXwpKpGv7Z+4GBNvST7X36o7+HtxNaC3fuA3oo9aC0rY4/KwmAtmRmtvegK
+         Yx6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ykwPMbHIRKgLrVpSpWF8yIw4jd/QEDDbiLYlnpgiqSI=;
+        b=bWqfdtpuXtXU8MJxj8TUhkzQeBQZC9OOiOJCPeZwvZd5JGDAC+wY2f42WrTcJfQ9T2
+         bxou6DpD2CRTLrynuV3gJvQCqMRbicQCTDwj7sfSQkGaDntNYzznfYuujfeMFP/NPehT
+         i6T+okhO4pq8cs9k7OkOdXIo4if6hZrpPfy1slM0AxTBkx9KjpYRLGwZIDTWYRrlZtjS
+         uFS9E6204J71AwkwsHiSzjnEuFOYCQUjefgUxZCc3LXrVyj2qndCmSf1EshQ+O8Ze3VF
+         rWwz+y+TEvf8Ne3iTwBs1EPAxJtGNwV0EU11Xk11TCk01Pfw2Jsu9J4z3RNGfUJgBhVp
+         fRSw==
+X-Gm-Message-State: APjAAAXIFrFFsRIe+KKw8EBhwniDAGIdGrh8z0Crqlc08xyZRXcdC7i2
+        lIQyYTSq33xyI8bYKjmGzYWwqwJOAHIfwH1VPBA=
+X-Google-Smtp-Source: APXvYqxx1GyP5F+ZOvgpKTjMKTAnsDhbPnJsEFf7YDLg/RvrkoqvPDe/pDx2fHxwvW0O1wDgiuNIFRu+JFSthZOpKiQ=
+X-Received: by 2002:a2e:9016:: with SMTP id h22mr12761538ljg.137.1574439727760;
+ Fri, 22 Nov 2019 08:22:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121102021787.MLMY.25002.ppp.dion.ne.jp@dmta0003.auone-net.jp>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191120154148.22067-1-orson.zhai@unisoc.com> <20191120154148.22067-3-orson.zhai@unisoc.com>
+ <CAK8P3a0x83ueAiCjLg30csc9t7VtZLEbvTp1SsbNDnwCXmWRGA@mail.gmail.com>
+In-Reply-To: <CAK8P3a0x83ueAiCjLg30csc9t7VtZLEbvTp1SsbNDnwCXmWRGA@mail.gmail.com>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Sat, 23 Nov 2019 00:21:55 +0800
+Message-ID: <CA+H2tpHtb8HHkBoaN0jsifq0oP2H=Mi8JcFwE0g6CaOLnD9aqQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] mfd: syscon: Find syscon by names with arguments support
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Orson Zhai <orson.zhai@unisoc.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kevin Tang <kevin.tang@unisoc.com>, baolin.wang@unisoc.com,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 07:20:21PM +0900, Kusanagi Kouichi wrote:
-> If DEBUG_FS=n, compile fails with the following error:
-> 
-> kernel/trace/trace.c: In function 'tracing_init_dentry':
-> kernel/trace/trace.c:8658:9: error: passing argument 3 of 'debugfs_create_automount' from incompatible pointer type [-Werror=incompatible-pointer-types]
->  8658 |         trace_automount, NULL);
->       |         ^~~~~~~~~~~~~~~
->       |         |
->       |         struct vfsmount * (*)(struct dentry *, void *)
-> In file included from kernel/trace/trace.c:24:
-> ./include/linux/debugfs.h:206:25: note: expected 'struct vfsmount * (*)(void *)' but argument is of type 'struct vfsmount * (*)(struct dentry *, void *)'
->   206 |      struct vfsmount *(*f)(void *),
->       |      ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+On Thu, Nov 21, 2019 at 11:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Wed, Nov 20, 2019 at 4:44 PM Orson Zhai <orson.zhai@unisoc.com> wrote:
+> >
+> > There are a lot of global registers used across multiple similar SoCs
+> > from Unisoc. It is not easy to manage all of them very well by current
+> > syscon helper functions.
+> >
+> > Add helper functions to get regmap and arguments by syscon-names all
+> > together.
+> >
+> > This patch does not affect original syscon code and usage. It may help
+> > other SoC vendors if they have the same trouble as well.
+> >
+> > Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+> > ---
+> >  drivers/mfd/syscon.c       | 75 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/mfd/syscon.h | 26 +++++++++++++
+> >  2 files changed, 101 insertions(+)
+> >
+> > diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> > index 660723276481..e818decc7bf2 100644
+> > --- a/drivers/mfd/syscon.c
+> > +++ b/drivers/mfd/syscon.c
+> > @@ -225,6 +225,81 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
+> >  }
+> >  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+> >
+> > +struct regmap *syscon_regmap_lookup_by_name(struct device_node *np,
+> > +                                       const char *list_name,
+> > +                                       const char *cell_name)
+> > +{
+>
+> According to the binding change I suggested, this would not take a 'cell_name'
+> argument, but instead a an arg_count.
 
-ACK.  I'd probably add something along the lines of "the stub for
-debugfs_create_automount() used in !DEBUG_FS configs is misdeclared -
-its callback argument (unused by the stub) has the wrong type.
-Get the stub in sync with the real debugfs_create_automount()."
-to commit message.
+Got it. This is much convenient for caller.
+
+>
+> > +
+> > +int syscon_get_args_by_name(struct device_node *np,
+> > +                       const char *list_name,
+> > +                       const char *cell_name,
+> > +                       int arg_count,
+> > +                       unsigned int *out_args)
+> > +{
+>
+> and I think this could be combined with it, like
+>
+> struct regmap *syscon_regmap_lookup_by_name(struct device_node *np,
+>                                        const char *name, int
+> arg_count, __u32 *out_args)
+
+Ok, I'll send V3 next week.
+
+Best,
+-Orson
+>
+>     Arnd
