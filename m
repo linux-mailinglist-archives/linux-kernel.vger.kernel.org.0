@@ -2,218 +2,307 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA85106914
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E1CA106907
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:45:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfKVJqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 04:46:06 -0500
-Received: from mail-eopbgr800079.outbound.protection.outlook.com ([40.107.80.79]:32288
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1727099AbfKVJps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 04:45:48 -0500
+Received: from mail-eopbgr770042.outbound.protection.outlook.com ([40.107.77.42]:49381
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726802AbfKVJpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 04:45:39 -0500
+        id S1726994AbfKVJpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 04:45:43 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QREfbtL1r4ZC19dYer52NhlmgszAeYKHFOv6s263rsUPZ61hbXCGOC/3v0SFCWp8Y1NTCswEUOpBefPr3l4ZVubxx3Dc3pPIwmeqKTB9iEWEhzFgWd0LlpmaKPwmEcxzzt3lMJBSdab+2wuQPRLj+pt9UeliFXokuoyNXl+eepZ31WX/RK6+ewBbRAMz6Sh00CivB3ekLB+h0/OeqGDHZnadPM765WF4CA+mRKL31DNwYLFkFzH9/0rrSjk2+eet2JcQxuSSzrGG5MkFEDHR3/7WeMLIsWN9d/mNRejRN3rSce9umukiOZjQyGJBNr5RUAxKG0QdMVfDza9cJ8ODtw==
+ b=bND0S5DalWxVfz2Tx0pmLbyw3NShNWD1qGokHLLkbkNfegd8DSU2zPegP7gTV9HzL9Cae+kGOIvV1JXApqJBPw+f255EXWGn28BXyVbfFz1bIYNsZ8p2y+mZm/FbA2gUSO/OugU+qwbit9yg8KPKrXgmkSUgob+xHr/cpX+72gHeXKJUs86rDs4k20RZuIqLPLazX3Ff4tbEt77fnleSmF7ZC4VC2M7CzOcYT6gWHe9aiVnU67fYTOORqd0HKPGfbFi2lxgjSevkM9k3vhTRnyggdoEMsjGpBnkS0YbiyPAzxSFxLYRSLGpTEZzoUpbtxiVYCZxViTUZznJO9T1vrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=My5GEXzjq+YdSFxcfZdDk/JzMNz28rCI+oq70GAKch8=;
- b=QWMe2iJFTxiZy+yAlRggIpsqJFgLgBlbulDp4yWwPdWfF1HLqqdrpAl+rcF++ihbc2Ct3RrMqdt+XP2hl2igIJAYEFWwZIlot3R1nZB3ZTW8KYKJgbalBPo3A2KiF1qGgLrxu1so3Wt0HPjqduXFSBDZR5i+TwVG4xQeqE3+Omh3gGVFXSxRvSHkPeUlo57nh5CnBzEQasruiAHjoxDQnTDaaoL4epK8PYeSj4DvN8h3fHWzvdTCpPyLVHuZ96btj0UxUMAolazZMadF4fyZ/Rc3qeFfs3TSWurGL/SxMYJ7d2krVE97lmWKhdKeKwCQpTh+HTZOVSwvvm+b8kybfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
- smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
- header.from=xilinx.com; dkim=none (message not signed); arc=none
+ bh=+fz1dqtk8WvUjuLkBhg/qwGWrrmk8haUxZMDbwSv0hk=;
+ b=eHbgzG2sdyNiEtf7IF0TJkBvEhExm6k3wLEuSuUNtYGtNqUzdLumTqzrz/RTWaW4sSijs+EXPanugZ278ZeLepEbCfqmBDYa7doVcc+ZegR7SQ7atpSuF89J6LtdjG5m4rU62d2tQTKf3sievWIn9guYwNi7Ulsc4KpTsugxl8ZYy7qVjtFI3B8JV5cTE2WVVbqMJ1iVTjt/h8BxI+zijBqDvcRJ3o9hUXVC/OqWMyW3ODhqy51YKiZm1pVNpaEsh3DZb+vufF4mpAqWVK4QnoSz4QdZAmA6Ri8LTXzLU0QNtz1XbKvcj7fW7TkqP6IrXySJeeF9Ypv/XHSg93snJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
+ dmarc=permerror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=My5GEXzjq+YdSFxcfZdDk/JzMNz28rCI+oq70GAKch8=;
- b=ENayHrXVe+CUDC+FARwK+8OEc4iJ8+4H6B01ym+IFAbS8O6VQVdQby4mRpspu3rfqPT4tLrLG23F27rU14SCKLVgZ6bkJlA83KbGGi5HhuZx9bSS6WBPQ7HYQ+mMc+EqZyI1YQweUC3fX701i8QnjhMDUP5BRL81Srt+2ayKGus=
-Received: from MN2PR02CA0031.namprd02.prod.outlook.com (2603:10b6:208:fc::44)
- by DM5PR0201MB3413.namprd02.prod.outlook.com (2603:10b6:4:7d::12) with
+ bh=+fz1dqtk8WvUjuLkBhg/qwGWrrmk8haUxZMDbwSv0hk=;
+ b=I3UzkeZfYfmCmQ5Y7It4BWXsNDp1L24g655oDW+uuPc1H+Ls+xedtUs1odW7BLsnD3Ns/Z6/qujX4/f1fBuZQ/miUtwzJEifeBAr1My+kObGQf7fRqxF/aXAPFQq8IvcWv9OF2zT2K37cm7D6fX/PTL5PgQex139Tz0ZXjXNHlk=
+Received: from CY4PR12CA0037.namprd12.prod.outlook.com (2603:10b6:903:129::23)
+ by DM6PR12MB2714.namprd12.prod.outlook.com (2603:10b6:5:42::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.16; Fri, 22 Nov
- 2019 09:45:35 +0000
-Received: from SN1NAM02FT049.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::202) by MN2PR02CA0031.outlook.office365.com
- (2603:10b6:208:fc::44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.18 via Frontend
- Transport; Fri, 22 Nov 2019 09:45:35 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
- header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT049.mail.protection.outlook.com (10.152.72.166) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
- via Frontend Transport; Fri, 22 Nov 2019 09:45:34 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <rajan.vaja@xilinx.com>)
-        id 1iY5VO-0008SL-Dq; Fri, 22 Nov 2019 01:45:34 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <rajan.vaja@xilinx.com>)
-        id 1iY5VJ-0002pC-Bt; Fri, 22 Nov 2019 01:45:29 -0800
-Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xAM9jLiW003475;
-        Fri, 22 Nov 2019 01:45:22 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <rajan.vaja@xilinx.com>)
-        id 1iY5VB-0002ob-PK; Fri, 22 Nov 2019 01:45:21 -0800
-From:   Rajan Vaja <rajan.vaja@xilinx.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, michal.simek@xilinx.com,
-        jolly.shah@xilinx.com, m.tretter@pengutronix.de,
-        gustavo@embeddedor.com, dan.carpenter@oracle.com,
-        tejas.patel@xilinx.com, nava.manne@xilinx.com, mdf@kernel.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>
-Subject: [PATCH v2 6/6] clk: zynqmp: Add support for clock with CLK_DIVIDER_POWER_OF_TWO flag
-Date:   Fri, 22 Nov 2019 01:43:34 -0800
-Message-Id: <1574415814-19797-7-git-send-email-rajan.vaja@xilinx.com>
+ 2019 09:45:40 +0000
+Received: from BN8NAM11FT059.eop-nam11.prod.protection.outlook.com
+ (2a01:111:f400:7eae::209) by CY4PR12CA0037.outlook.office365.com
+ (2603:10b6:903:129::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.16 via Frontend
+ Transport; Fri, 22 Nov 2019 09:45:40 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXMB01.amd.com (165.204.84.17) by
+ BN8NAM11FT059.mail.protection.outlook.com (10.13.177.120) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.2451.23 via Frontend Transport; Fri, 22 Nov 2019 09:45:40 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB01.amd.com
+ (10.181.40.142) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 22 Nov
+ 2019 03:45:39 -0600
+Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 22 Nov
+ 2019 03:45:39 -0600
+Received: from vishnu-All-Series.amd.com (10.180.168.240) by
+ SATLEXMB02.amd.com (10.181.40.143) with Microsoft SMTP Server id 15.1.1713.5
+ via Frontend Transport; Fri, 22 Nov 2019 03:45:36 -0600
+From:   Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+CC:     <Alexander.Deucher@amd.com>, <djkurtz@google.com>,
+        <pierre-louis.bossart@linux.intel.com>, <Akshu.Agrawal@amd.com>,
+        "Ravulapati Vishnu vardhan rao" <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH v12 1/6] ASoC: amd:Create multiple I2S platform device endpoint
+Date:   Fri, 22 Nov 2019 15:14:21 +0530
+Message-ID: <1574415866-29715-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com>
-References: <1573564580-9006-1-git-send-email-rajan.vaja@xilinx.com>
- <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(136003)(376002)(189003)(199004)(26005)(6666004)(356004)(478600001)(54906003)(36756003)(2906002)(44832011)(47776003)(11346002)(446003)(70206006)(48376002)(70586007)(2616005)(8676002)(8936002)(81166006)(50226002)(336012)(9786002)(81156014)(426003)(50466002)(4326008)(76176011)(7416002)(106002)(305945005)(36386004)(5660300002)(107886003)(16586007)(186003)(7696005)(316002)(51416003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0201MB3413;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+In-Reply-To: <1574415866-29715-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+References: <1574415866-29715-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(396003)(346002)(136003)(428003)(189003)(199004)(305945005)(4326008)(109986005)(50226002)(426003)(81156014)(8676002)(76176011)(51416003)(7696005)(8936002)(81166006)(186003)(50466002)(48376002)(53416004)(2906002)(26005)(336012)(86362001)(1671002)(70206006)(70586007)(6666004)(356004)(54906003)(316002)(16586007)(446003)(36756003)(11346002)(478600001)(5660300002)(2616005)(47776003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2714;H:SATLEXMB01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b7e8aea9-e3fc-4a8f-fc66-08d76f30b90b
-X-MS-TrafficTypeDiagnostic: DM5PR0201MB3413:
-X-Microsoft-Antispam-PRVS: <DM5PR0201MB3413B5D9B9F88BD1CF3D0832B7490@DM5PR0201MB3413.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:1186;
+X-MS-Office365-Filtering-Correlation-Id: 01952b25-6bbd-4c24-3bab-08d76f30bc24
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2714:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB271430EC1CB3179E462BEEE1E7490@DM6PR12MB2714.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:182;
 X-Forefront-PRVS: 02296943FF
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wJiay6tkmJr1pNWMFXn85jWOt6mdL+ZLAnBydbVQk21YkTp0hmA7XU3zo+7MF0BV1ogZWHy1fDNpbbp6wPBcWCBcM/oDBgYLui4R9s5GZ2KGq0qMPK6JsvQC+SQiLoC6xyOZ6n8i+E44iixhSpr4AJYhvLHry4Daznw0aAe9B0Jjx8jGl+YkzsXU3SLQyLT3W01UN4pGCnfTWhzRAqlJk1eE5xp7tgalsOeZQrXrIBf/nn7VoMbm2y+wdTyHKC77z/ZugnCwJ0WoB5Iv3cQBbwpEL4/Z7XZMRDoRkYLRAlVG08eFmN5hnRD2ztAgCeP/UY9XrYUsxekaA7lfM3Cilb5i0BlVl7O48b21OSIo+Tb/WOYLm59XlfLV0O5v4j9d6sIyVdaaWESoRIH3E1mNJBGQvgQ6VKXtL/tsVL3t1CyhFjneRNSjL1q1B/IufI4o
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2019 09:45:34.8427
+X-Microsoft-Antispam-Message-Info: aJkqAwSjiKf45LRuYwMblZ5YCrCNv0HqVwBXZyI8CxeRJYPpI9PrDjpKwQ0zEhUk74FB71TmgyZXtdy1Gmk95UQi+PWPyOv3a0GeQ26j63FVUScCc1KDgHsf3vo0mPrLR8JxYRCbUZaYsOvPliklt/YgAs61F0R4wF1MB3PQlA3vTeJZC3cqBztgzyFtfHM4K/iSO1FMcExO/w2QCrFLUo/hCoN+WA3J/UkttGKr7XnqUdMIzrDfwuI9hMPo28fCEFRN6vo/IZ140hMpa0U5Y0y/cGo3sAAFIBlX+jNDs89cEX0ZHTBY6I/fkBkIgS0n+hA0hln9tyjyx3gZif8/8dTXm2q6AdJFi2ukEY2w6qthEMXuuvzi41fYNm5xzQMOF91anBDSeX8JeBDamcx8H+DdfDaKfXZtbqrI9iel7jr2aK4jrpfrKYwsQAm5e8+k
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2019 09:45:40.1378
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7e8aea9-e3fc-4a8f-fc66-08d76f30b90b
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01952b25-6bbd-4c24-3bab-08d76f30bc24
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB01.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0201MB3413
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2714
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejas Patel <tejas.patel@xilinx.com>
+Creates Platform Device endpoints for multiple
+I2S instances: SP and  BT endpoints device.
+Pass PCI resources like MMIO, irq to the platform devices.
 
-Existing clock divider functions is not checking for
-base of divider. So, if any clock divider is power of 2
-then clock rate calculation will be wrong.
-
-Add support to calculate divider value for the clocks
-with CLK_DIVIDER_POWER_OF_TWO flag.
-
-Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/clk/zynqmp/divider.c | 36 +++++++++++++++++++++++++++++++-----
- 1 file changed, 31 insertions(+), 5 deletions(-)
+ sound/soc/amd/raven/acp3x.h     |  5 +++
+ sound/soc/amd/raven/pci-acp3x.c | 95 +++++++++++++++++++++++++++--------------
+ 2 files changed, 68 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-index e0d49cc..1d5a416 100644
---- a/drivers/clk/zynqmp/divider.c
-+++ b/drivers/clk/zynqmp/divider.c
-@@ -2,7 +2,7 @@
- /*
-  * Zynq UltraScale+ MPSoC Divider support
-  *
-- *  Copyright (C) 2016-2018 Xilinx
-+ *  Copyright (C) 2016-2019 Xilinx
-  *
-  * Adjustable divider clock implementation
-  */
-@@ -45,9 +45,26 @@ struct zynqmp_clk_divider {
+diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
+index 4f2cadd..2f15fe1 100644
+--- a/sound/soc/amd/raven/acp3x.h
++++ b/sound/soc/amd/raven/acp3x.h
+@@ -7,10 +7,15 @@
+ 
+ #include "chip_offset_byte.h"
+ 
++#define ACP3x_DEVS		3
+ #define ACP3x_PHY_BASE_ADDRESS 0x1240000
+ #define	ACP3x_I2S_MODE	0
+ #define	ACP3x_REG_START	0x1240000
+ #define	ACP3x_REG_END	0x1250200
++#define ACP3x_I2STDM_REG_START	0x1242400
++#define ACP3x_I2STDM_REG_END	0x1242410
++#define ACP3x_BT_TDM_REG_START	0x1242800
++#define ACP3x_BT_TDM_REG_END	0x1242810
+ #define I2S_MODE	0x04
+ #define	BT_TX_THRESHOLD 26
+ #define	BT_RX_THRESHOLD 25
+diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
+index facec24..94f5f21 100644
+--- a/sound/soc/amd/raven/pci-acp3x.c
++++ b/sound/soc/amd/raven/pci-acp3x.c
+@@ -16,17 +16,17 @@ struct acp3x_dev_data {
+ 	void __iomem *acp3x_base;
+ 	bool acp3x_audio_mode;
+ 	struct resource *res;
+-	struct platform_device *pdev;
++	struct platform_device *pdev[ACP3x_DEVS];
  };
  
- static inline int zynqmp_divider_get_val(unsigned long parent_rate,
--					 unsigned long rate)
-+					 unsigned long rate, u16 flags)
+ static int snd_acp3x_probe(struct pci_dev *pci,
+ 			   const struct pci_device_id *pci_id)
  {
--	return DIV_ROUND_CLOSEST(parent_rate, rate);
-+	int up, down;
-+	unsigned long up_rate, down_rate;
+-	int ret;
+-	u32 addr, val;
+ 	struct acp3x_dev_data *adata;
+-	struct platform_device_info pdevinfo;
++	struct platform_device_info pdevinfo[ACP3x_DEVS];
+ 	unsigned int irqflags;
++	int ret, i;
++	u32 addr, val;
+ 
+ 	if (pci_enable_device(pci)) {
+ 		dev_err(&pci->dev, "pci_enable_device failed\n");
+@@ -56,10 +56,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		irqflags = 0;
+ 
+ 	addr = pci_resource_start(pci, 0);
+-	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
++	adata->acp3x_base = devm_ioremap(&pci->dev, addr,
++					pci_resource_len(pci, 0));
+ 	if (!adata->acp3x_base) {
+ 		ret = -ENOMEM;
+-		goto release_regions;
++		goto disable_msi;
+ 	}
+ 	pci_set_master(pci);
+ 	pci_set_drvdata(pci, adata);
+@@ -68,11 +69,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 	switch (val) {
+ 	case I2S_MODE:
+ 		adata->res = devm_kzalloc(&pci->dev,
+-					  sizeof(struct resource) * 2,
++					  sizeof(struct resource) * 4,
+ 					  GFP_KERNEL);
+ 		if (!adata->res) {
+ 			ret = -ENOMEM;
+-			goto unmap_mmio;
++			goto disable_msi;
+ 		}
+ 
+ 		adata->res[0].name = "acp3x_i2s_iomem";
+@@ -80,40 +81,67 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		adata->res[0].start = addr;
+ 		adata->res[0].end = addr + (ACP3x_REG_END - ACP3x_REG_START);
+ 
+-		adata->res[1].name = "acp3x_i2s_irq";
+-		adata->res[1].flags = IORESOURCE_IRQ;
+-		adata->res[1].start = pci->irq;
+-		adata->res[1].end = pci->irq;
++		adata->res[1].name = "acp3x_i2s_sp";
++		adata->res[1].flags = IORESOURCE_MEM;
++		adata->res[1].start = addr + ACP3x_I2STDM_REG_START;
++		adata->res[1].end = addr + ACP3x_I2STDM_REG_END;
 +
-+	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
-+		up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+		down = DIV_ROUND_DOWN_ULL((u64)parent_rate, rate);
++		adata->res[2].name = "acp3x_i2s_bt";
++		adata->res[2].flags = IORESOURCE_MEM;
++		adata->res[2].start = addr + ACP3x_BT_TDM_REG_START;
++		adata->res[2].end = addr + ACP3x_BT_TDM_REG_END;
 +
-+		up = __roundup_pow_of_two(up);
-+		down = __rounddown_pow_of_two(down);
++		adata->res[3].name = "acp3x_i2s_irq";
++		adata->res[3].flags = IORESOURCE_IRQ;
++		adata->res[3].start = pci->irq;
++		adata->res[3].end = adata->res[3].start;
+ 
+ 		adata->acp3x_audio_mode = ACP3x_I2S_MODE;
+ 
+ 		memset(&pdevinfo, 0, sizeof(pdevinfo));
+-		pdevinfo.name = "acp3x_rv_i2s";
+-		pdevinfo.id = 0;
+-		pdevinfo.parent = &pci->dev;
+-		pdevinfo.num_res = 2;
+-		pdevinfo.res = adata->res;
+-		pdevinfo.data = &irqflags;
+-		pdevinfo.size_data = sizeof(irqflags);
+-
+-		adata->pdev = platform_device_register_full(&pdevinfo);
+-		if (IS_ERR(adata->pdev)) {
+-			dev_err(&pci->dev, "cannot register %s device\n",
+-				pdevinfo.name);
+-			ret = PTR_ERR(adata->pdev);
+-			goto unmap_mmio;
++		pdevinfo[0].name = "acp3x_rv_i2s_dma";
++		pdevinfo[0].id = 0;
++		pdevinfo[0].parent = &pci->dev;
++		pdevinfo[0].num_res = 4;
++		pdevinfo[0].res = &adata->res[0];
++		pdevinfo[0].data = &irqflags;
++		pdevinfo[0].size_data = sizeof(irqflags);
 +
-+		up_rate = DIV_ROUND_UP_ULL((u64)parent_rate, up);
-+		down_rate = DIV_ROUND_UP_ULL((u64)parent_rate, down);
++		pdevinfo[1].name = "acp3x_i2s_playcap";
++		pdevinfo[1].id = 0;
++		pdevinfo[1].parent = &pci->dev;
++		pdevinfo[1].num_res = 1;
++		pdevinfo[1].res = &adata->res[1];
 +
-+		return (rate - up_rate) <= (down_rate - rate) ? up : down;
-+
-+	} else {
-+		return DIV_ROUND_CLOSEST(parent_rate, rate);
++		pdevinfo[2].name = "acp3x_i2s_playcap";
++		pdevinfo[2].id = 1;
++		pdevinfo[2].parent = &pci->dev;
++		pdevinfo[2].num_res = 1;
++		pdevinfo[2].res = &adata->res[2];
++		for (i = 0; i < ACP3x_DEVS ; i++) {
++			adata->pdev[i] =
++				platform_device_register_full(&pdevinfo[i]);
++			if (IS_ERR(adata->pdev[i])) {
++				dev_err(&pci->dev, "cannot register %s device\n",
++					pdevinfo[i].name);
++				ret = PTR_ERR(adata->pdev[i]);
++				goto unregister_devs;
++			}
+ 		}
+ 		break;
+ 	default:
+ 		dev_err(&pci->dev, "Invalid ACP audio mode : %d\n", val);
+ 		ret = -ENODEV;
+-		goto unmap_mmio;
++		goto disable_msi;
+ 	}
+ 	return 0;
+ 
+-unmap_mmio:
++unregister_devs:
++	if (val == I2S_MODE)
++		for (i = 0 ; i < ACP3x_DEVS ; i++)
++			platform_device_unregister(adata->pdev[i]);
++disable_msi:
+ 	pci_disable_msi(pci);
+-	iounmap(adata->acp3x_base);
+ release_regions:
+ 	pci_release_regions(pci);
+ disable_pci:
+@@ -125,10 +153,12 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ static void snd_acp3x_remove(struct pci_dev *pci)
+ {
+ 	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
++	int i;
+ 
+-	platform_device_unregister(adata->pdev);
+-	iounmap(adata->acp3x_base);
+-
++	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
++		for (i = 0 ; i <  ACP3x_DEVS ; i++)
++			platform_device_unregister(adata->pdev[i]);
 +	}
- }
+ 	pci_disable_msi(pci);
+ 	pci_release_regions(pci);
+ 	pci_disable_device(pci);
+@@ -151,6 +181,7 @@ static struct pci_driver acp3x_driver  = {
  
- /**
-@@ -79,6 +96,9 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
- 	else
- 		value = div >> 16;
+ module_pci_driver(acp3x_driver);
  
-+	if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
-+		value = 1 << value;
-+
- 	if (!value) {
- 		WARN(!(divider->flags & CLK_DIVIDER_ALLOW_ZERO),
- 		     "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
-@@ -157,10 +177,13 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 		else
- 			bestdiv  = bestdiv >> 16;
- 
-+		if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
-+			bestdiv = 1 << bestdiv;
-+
- 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
- 	}
- 
--	bestdiv = zynqmp_divider_get_val(*prate, rate);
-+	bestdiv = zynqmp_divider_get_val(*prate, rate, divider->flags);
- 
- 	/*
- 	 * In case of two divisors, compute best divider values and return
-@@ -198,7 +221,7 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	int ret;
- 	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
- 
--	value = zynqmp_divider_get_val(parent_rate, rate);
-+	value = zynqmp_divider_get_val(parent_rate, rate, divider->flags);
- 	if (div_type == TYPE_DIV1) {
- 		div = value & 0xFFFF;
- 		div |= 0xffff << 16;
-@@ -207,6 +230,9 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 		div |= value << 16;
- 	}
- 
-+	if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
-+		div = __ffs(div);
-+
- 	ret = eemi_ops->clock_setdivider(clk_id, div);
- 
- 	if (ret)
++MODULE_AUTHOR("Vishnuvardhanrao.Ravulapati@amd.com");
+ MODULE_AUTHOR("Maruthi.Bayyavarapu@amd.com");
+ MODULE_DESCRIPTION("AMD ACP3x PCI driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
