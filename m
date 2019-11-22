@@ -2,110 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B09A107584
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:13:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86A77107594
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:16:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfKVQNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 11:13:18 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34522 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbfKVQNR (ORCPT
+        id S1727217AbfKVQQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 11:16:50 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54200 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726546AbfKVQQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 11:13:17 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w11so6659624ote.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 08:13:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bGAkIY/malVfTkqNJbPQAJQlDy7Ez63qwq+JecsGmso=;
-        b=u8FT0UY5EsTVWPrYHEXwEq/awgVnTMghppZ1AeqecEiteiyKKqKKc5MoolkdXaws2t
-         SmJr8j/kAOZH32nqX4kc97Hc+b2Xi0RZ+UwTC3UmkWsDiNSRL0IUXu1iPz472CIrBxyA
-         2asrCnwmK9ReGLWKVOTiYpdemWfkj60RYDmHcr5xwGgq//CV13eZreLbWWIn7aFiFVsp
-         AdFUs+Gcc30RSVGqYr8nEmr1skeEL7/65+4VpXgVfjWZDfA6hZXhhcWBXvn8yYPXs7V2
-         hSuoxj+uV9FUfKLmbTfISVzWcEclMbxPDvr3QJRJTVjI6insjBR9IqjtpDDorDVF/j0H
-         /AKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bGAkIY/malVfTkqNJbPQAJQlDy7Ez63qwq+JecsGmso=;
-        b=jEoescQEklyI65sesU8GOc8trHLyckZS5RKT/7pWjxHWcgub8r0yBCpoUuaMZvNIeT
-         pf5ydXY9zIOHxELnqFP3wBgCDbb+m6dVNHwAxqG30qUcIZVIp88O2piC0wawUX4wG31l
-         chJ+nA+myQ3DaVuQS67W4zd7MREBKiiH571wK/IylJ7Ei20ELZVSTZq/d+Is+jHrRVLV
-         d++/DCCCxxZksuMEp+IrjHKaX5rCnXfo0l21ZeCqDRWZjbOUHZIRdJyuLg934AWK1GQb
-         GrtQXnZcS92syKHr4hSU5fZX07Yq2CVFiP/IT7gjRVsM1zFIXFS/cqwecy7QFirH5e7r
-         uIOg==
-X-Gm-Message-State: APjAAAUjB+OBdnboLiXoKKCsxDFcmdYbYMySxSZwTtSiqawqu6bT0WZa
-        aX5T9qcQNrbW99366wRRKLBRhp3x4Zk0krMj+sGJiQ==
-X-Google-Smtp-Source: APXvYqxvAz/mVNKR9y0aIXP20GgQ5CMbb7RZ/EpsgTrCK2HXJUipf6SbaAdIrz0b9RTHNlsVyHExbcwWaUgQ7UotvQM=
-X-Received: by 2002:a9d:2d89:: with SMTP id g9mr11028481otb.126.1574439196834;
- Fri, 22 Nov 2019 08:13:16 -0800 (PST)
+        Fri, 22 Nov 2019 11:16:50 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMGD83m015416;
+        Fri, 22 Nov 2019 17:14:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=q+AN9vpLp99KTf4oMHYu++uvf+aTBZJ7fWpmVfAwsSA=;
+ b=IxKyGc9ou7D+Y0yLJolE3vkTsh6lhR8z5J9UPgqEeKf64aStCPXkdTCnuU8AteSIMwa0
+ ys6FNaDyfM33C7PUQvv4QpfXhEg/YWtOb39Dhdg4ieDZ+YBzU+dGC/5pYri3CfptKsAw
+ gj9xHv5Q5OVbK0EVg1O45F5JEXtb596YVGyLvTmmb9eXLIzIw98Jd6BjMk17LQObBRVr
+ xL7CiX4AGyYQn2+jE+I1aP5RJ6eVBUsrScoWqxnbof2O2ZsC8ZkLIGklPJYkuLN0nUs9
+ GnBQFoQW7IoXvSqF87hVh8RIq3z5H+qxPZ2TLD7XovJhGri/eD0W34UTJz1f8YJOYjy1 7A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2wa9uvt3qk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Nov 2019 17:14:39 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8903B100034;
+        Fri, 22 Nov 2019 17:14:38 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B9F92D378D;
+        Fri, 22 Nov 2019 17:14:38 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 22 Nov 2019 17:14:37
+ +0100
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>,
+        <arnaud.pouliquen@st.com>
+CC:     <benjamin.gaignard@st.com>, <srinivas.kandagatla@linaro.org>
+Subject: [PATCH][RFC] ASoC: stm32: sai: manage rebind issue
+Date:   Fri, 22 Nov 2019 17:14:23 +0100
+Message-ID: <20191122161423.8641-1-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20191120092831.6198-1-pagupta@redhat.com> <x49d0dmihmu.fsf@segfault.boston.devel.redhat.com>
- <CAPcyv4gCe8k1GdatAWn1991pm3QZq2WBFAGEFsZ2PXpyo2=wMw@mail.gmail.com> <x49h82vevw1.fsf@segfault.boston.devel.redhat.com>
-In-Reply-To: <x49h82vevw1.fsf@segfault.boston.devel.redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 22 Nov 2019 08:13:05 -0800
-Message-ID: <CAPcyv4idC=LgkwP+A1GKJ1CWkzUZ_RVBDCVfA3yAL9TNw1zZmw@mail.gmail.com>
-Subject: Re: [PATCH] virtio pmem: fix async flush ordering
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Pankaj Gupta <pagupta@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Vivek Goyal <vgoyal@redhat.com>,
-        Keith Busch <keith.busch@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-22_03:2019-11-21,2019-11-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 8:09 AM Jeff Moyer <jmoyer@redhat.com> wrote:
->
-> Dan Williams <dan.j.williams@intel.com> writes:
->
-> > On Wed, Nov 20, 2019 at 9:26 AM Jeff Moyer <jmoyer@redhat.com> wrote:
-> >>
-> >> Pankaj Gupta <pagupta@redhat.com> writes:
-> >>
-> >> >  Remove logic to create child bio in the async flush function which
-> >> >  causes child bio to get executed after parent bio 'pmem_make_request'
-> >> >  completes. This resulted in wrong ordering of REQ_PREFLUSH with the
-> >> >  data write request.
-> >> >
-> >> >  Instead we are performing flush from the parent bio to maintain the
-> >> >  correct order. Also, returning from function 'pmem_make_request' if
-> >> >  REQ_PREFLUSH returns an error.
-> >> >
-> >> > Reported-by: Jeff Moyer <jmoyer@redhat.com>
-> >> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> >>
-> >> There's a slight change in behavior for the error path in the
-> >> virtio_pmem driver.  Previously, all errors from virtio_pmem_flush were
-> >> converted to -EIO.  Now, they are reported as-is.  I think this is
-> >> actually an improvement.
-> >>
-> >> I'll also note that the current behavior can result in data corruption,
-> >> so this should be tagged for stable.
-> >
-> > I added that and was about to push this out, but what about the fact
-> > that now the guest will synchronously wait for flushing to occur. The
-> > goal of the child bio was to allow that to be an I/O wait with
-> > overlapping I/O, or at least not blocking the submission thread. Does
-> > the block layer synchronously wait for PREFLUSH requests?
->
-> You *have* to wait for the preflush to complete before issuing the data
-> write.  See the "Explicit cache flushes" section in
-> Documentation/block/writeback_cache_control.rst.
+The commit e894efef9ac7 ("ASoC: core: add support to card rebind")
+allows to rebind the sound card after a rebind of one of its component.
+With this commit, the sound card is actually rebound,
+but is no more functional.
 
-I'm not debating the ordering, or that the current implementation is
-obviously broken. I'm questioning whether the bio tagged with PREFLUSH
-is a barrier for future I/Os. My reading is that it is only a gate for
-past writes, and it can be queued. I.e. along the lines of
-md_flush_request().
+With the sound card rebind the simplified call sequence is:
+stm32_sai_sub_probe
+	snd_soc_register_component
+		snd_soc_try_rebind_card
+			snd_soc_instantiate_card
+	devm_snd_dmaengine_pcm_register
+
+The problem occurs because the pcm must be registered,
+before snd_soc_instantiate_card() is called.
+
+Modify SAI driver, to change the call sequence as follows:
+stm32_sai_sub_probe
+	devm_snd_dmaengine_pcm_register
+	snd_soc_register_component
+		snd_soc_try_rebind_card
+
+---
+The current patch allows to fix the issue for STM SAI driver.
+However, most of the drivers register the component first.
+So, this solution is perhaps not the right way to manage the problem.
+This may probably be handled in ASoC framework instead.
+---
+
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+---
+ sound/soc/stm/stm32_sai_sub.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 48e629ac2d88..eb35306a1232 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -1484,6 +1484,13 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, conf, 0);
++	if (ret) {
++		dev_err(&pdev->dev, "Could not register pcm dma\n");
++		return ret;
++	}
++
++
+ 	ret = devm_snd_soc_register_component(&pdev->dev, &stm32_component,
+ 					      &sai->cpu_dai_drv, 1);
+ 	if (ret)
+@@ -1492,11 +1499,6 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
+ 	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
+ 		conf = &stm32_sai_pcm_config_spdif;
+ 
+-	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, conf, 0);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Could not register pcm dma\n");
+-		return ret;
+-	}
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
