@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52FC0107114
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E659110704C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:21:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfKVKej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:34:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59458 "EHLO mail.kernel.org"
+        id S1729418AbfKVKpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727367AbfKVKei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:34:38 -0500
+        id S1728325AbfKVKpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:45:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2904320715;
-        Fri, 22 Nov 2019 10:34:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAE1720656;
+        Fri, 22 Nov 2019 10:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418876;
-        bh=cWDR+bK9eieHFdL6aHLtdxeVnto+yzXb3nykupc4aDc=;
+        s=default; t=1574419505;
+        bh=ht9seQUWdx8eONxgqfbYtB6UPmAj53mK765ewWByYfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dPmCWz8oOle2Ez7lXBlTFuVLGJWfQDQQ1Si20UDivtZCz4u2HtlWhUtYUAAooo0PV
-         uYb/WyF+Xcg9gvI9spnyh+GU4Jz/Qb8zSvzLTE5reE0LdRF0sokXa4RNExwizj/Kyb
-         mqReHCOFtCiy9HgS2TaaDxcma8XTcKSup17xX7Xs=
+        b=u6gkhruoVYXvYNz5YaDm1vJlxedtd2ea8fhmoVRx4foutvl5C6KHbHQAhCZP/0KpI
+         uDQ7lA/4Ggpwd8DmJnevsW4QsddjJUZpezBjBbHtIAmHO+9z6GN0ofDbIcVFbUkODi
+         GPmVfuBYh9+Vtm0B+brw73tfXP9LvzNj02TbkQSk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 083/159] usb: gadget: uvc: Factor out video USB request queueing
-Date:   Fri, 22 Nov 2019 11:27:54 +0100
-Message-Id: <20191122100805.666703358@linuxfoundation.org>
+Subject: [PATCH 4.9 135/222] scsi: NCR5380: Use DRIVER_SENSE to indicate valid sense data
+Date:   Fri, 22 Nov 2019 11:27:55 +0100
+Message-Id: <20191122100912.665562759@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,85 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 9d1ff5dcb3cd3390b1e56f1c24ae42c72257c4a3 ]
+[ Upstream commit 070356513963be6196142acff56acc8359069fa1 ]
 
-USB requests for video data are queued from two different locations in
-the driver, with the same code block occurring twice. Factor it out to a
-function.
+When sense data is valid, call set_driver_byte(cmd, DRIVER_SENSE).  Otherwise
+some callers of scsi_execute() will ignore sense data.  Don't set DID_ERROR or
+DID_RESET just because sense data is missing.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Paul Elder <paul.elder@ideasonboard.com>
-Tested-by: Paul Elder <paul.elder@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/uvc_video.c | 30 ++++++++++++++++---------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ drivers/scsi/NCR5380.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
-index 0f01c04d7cbd8..540917f54506a 100644
---- a/drivers/usb/gadget/function/uvc_video.c
-+++ b/drivers/usb/gadget/function/uvc_video.c
-@@ -129,6 +129,19 @@ uvc_video_encode_isoc(struct usb_request *req, struct uvc_video *video,
-  * Request handling
-  */
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index ba7b3aef3ef0b..35419ba32c467 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -617,11 +617,12 @@ static void complete_cmd(struct Scsi_Host *instance,
  
-+static int uvcg_video_ep_queue(struct uvc_video *video, struct usb_request *req)
-+{
-+	int ret;
-+
-+	ret = usb_ep_queue(video->ep, req, GFP_ATOMIC);
-+	if (ret < 0) {
-+		printk(KERN_INFO "Failed to queue request (%d).\n", ret);
-+		usb_ep_set_halt(video->ep);
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * I somehow feel that synchronisation won't be easy to achieve here. We have
-  * three events that control USB requests submission:
-@@ -193,14 +206,13 @@ uvc_video_complete(struct usb_ep *ep, struct usb_request *req)
- 
- 	video->encode(req, video, buf);
- 
--	if ((ret = usb_ep_queue(ep, req, GFP_ATOMIC)) < 0) {
--		printk(KERN_INFO "Failed to queue request (%d).\n", ret);
--		usb_ep_set_halt(ep);
--		spin_unlock_irqrestore(&video->queue.irqlock, flags);
-+	ret = uvcg_video_ep_queue(video, req);
-+	spin_unlock_irqrestore(&video->queue.irqlock, flags);
-+
-+	if (ret < 0) {
- 		uvcg_queue_cancel(queue, 0);
- 		goto requeue;
- 	}
--	spin_unlock_irqrestore(&video->queue.irqlock, flags);
- 
- 	return;
- 
-@@ -320,15 +332,13 @@ int uvcg_video_pump(struct uvc_video *video)
- 		video->encode(req, video, buf);
- 
- 		/* Queue the USB request */
--		ret = usb_ep_queue(video->ep, req, GFP_ATOMIC);
-+		ret = uvcg_video_ep_queue(video, req);
-+		spin_unlock_irqrestore(&queue->irqlock, flags);
-+
- 		if (ret < 0) {
--			printk(KERN_INFO "Failed to queue request (%d)\n", ret);
--			usb_ep_set_halt(video->ep);
--			spin_unlock_irqrestore(&queue->irqlock, flags);
- 			uvcg_queue_cancel(queue, 0);
- 			break;
- 		}
--		spin_unlock_irqrestore(&queue->irqlock, flags);
+ 	if (hostdata->sensing == cmd) {
+ 		/* Autosense processing ends here */
+-		if ((cmd->result & 0xff) != SAM_STAT_GOOD) {
++		if (status_byte(cmd->result) != GOOD) {
+ 			scsi_eh_restore_cmnd(cmd, &hostdata->ses);
+-			set_host_byte(cmd, DID_ERROR);
+-		} else
++		} else {
+ 			scsi_eh_restore_cmnd(cmd, &hostdata->ses);
++			set_driver_byte(cmd, DRIVER_SENSE);
++		}
+ 		hostdata->sensing = NULL;
  	}
  
- 	spin_lock_irqsave(&video->req_lock, flags);
+@@ -2356,7 +2357,6 @@ static int NCR5380_abort(struct scsi_cmnd *cmd)
+ 	if (list_del_cmd(&hostdata->autosense, cmd)) {
+ 		dsprintk(NDEBUG_ABORT, instance,
+ 		         "abort: removed %p from sense queue\n", cmd);
+-		set_host_byte(cmd, DID_ERROR);
+ 		complete_cmd(instance, cmd);
+ 	}
+ 
+@@ -2435,7 +2435,6 @@ static int NCR5380_bus_reset(struct scsi_cmnd *cmd)
+ 	list_for_each_entry(ncmd, &hostdata->autosense, list) {
+ 		struct scsi_cmnd *cmd = NCR5380_to_scmd(ncmd);
+ 
+-		set_host_byte(cmd, DID_RESET);
+ 		cmd->scsi_done(cmd);
+ 	}
+ 	INIT_LIST_HEAD(&hostdata->autosense);
 -- 
 2.20.1
 
