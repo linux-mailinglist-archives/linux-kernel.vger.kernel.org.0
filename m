@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF4D106C58
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF18106A85
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbfKVKvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:51:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33784 "EHLO mail.kernel.org"
+        id S1728268AbfKVKfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729252AbfKVKvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:51:12 -0500
+        id S1727717AbfKVKfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E56D02072E;
-        Fri, 22 Nov 2019 10:51:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DDF220656;
+        Fri, 22 Nov 2019 10:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419871;
-        bh=TpNyeSDmfELcoGLhQcP1ky6+6+Aylb/u+dAmwQSzoVg=;
+        s=default; t=1574418932;
+        bh=0FGA/lGC82rofF93YqFcq8aB0jY9hs9zk6WqHjuxlvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a5IuxPDVBPlYapbtOLa/598cA279/Jk5onfmlabAhpsg51RFNYAsoQlfZ1iXZhPtQ
-         t8aEl/6cpGh8tr4xlUIbI3qJLz6DtVGcHQuX45b1jGNlrKFODxXbZ//bYtURLUVvq0
-         sQ9xfTW23RGk6+Zw0bTkmP8Tkl3YIJEj1ppCGP8Q=
+        b=zrTrU1IVjhH0ZRb3QkEs+1ss1/FDMmhKcvIGW/I/M1w5CrIJNgpEL+oYXS6k4PfdH
+         V1BpjQBTVErmX0R8Mct2UlxIwG901AIMY2c+bez1VEIivaZh5Pq2P0vk/YPUWRJ/8D
+         Sb33SInPkDys2pPNKle5ssTkbVcUBAcbZhFCpWwY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 038/122] cxgb4: Use proper enum in IEEE_FAUX_SYNC
-Date:   Fri, 22 Nov 2019 11:28:11 +0100
-Message-Id: <20191122100752.871426333@linuxfoundation.org>
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jari Ruusu <jari.ruusu@gmail.com>
+Subject: [PATCH 4.4 101/159] x86/atomic: Fix smp_mb__{before,after}_atomic()
+Date:   Fri, 22 Nov 2019 11:28:12 +0100
+Message-Id: <20191122100821.012496305@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +47,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 258b6d141878530ba1f8fc44db683822389de914 ]
+commit 69d927bba39517d0980462efc051875b7f4db185 upstream.
 
-Clang warns when one enumerated type is implicitly converted to another.
+Recent probing at the Linux Kernel Memory Model uncovered a
+'surprise'. Strongly ordered architectures where the atomic RmW
+primitive implies full memory ordering and
+smp_mb__{before,after}_atomic() are a simple barrier() (such as x86)
+fail for:
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:390:4: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                        IEEE_FAUX_SYNC(dev, dcb);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h:70:10: note: expanded
-from macro 'IEEE_FAUX_SYNC'
-                                            CXGB4_DCB_STATE_FW_ALLSYNCED);
-                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	*x = 1;
+	atomic_inc(u);
+	smp_mb__after_atomic();
+	r0 = *y;
 
-Use the equivalent value of the expected type to silence Clang while
-resulting in no functional change.
+Because, while the atomic_inc() implies memory order, it
+(surprisingly) does not provide a compiler barrier. This then allows
+the compiler to re-order like so:
 
-CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
+	atomic_inc(u);
+	*x = 1;
+	smp_mb__after_atomic();
+	r0 = *y;
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Which the CPU is then allowed to re-order (under TSO rules) like:
+
+	atomic_inc(u);
+	r0 = *y;
+	*x = 1;
+
+And this very much was not intended. Therefore strengthen the atomic
+RmW ops to include a compiler barrier.
+
+NOTE: atomic_{or,and,xor} and the bitops already had the compiler
+barrier.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Jari Ruusu <jari.ruusu@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/atomic.h      |    8 ++++----
+ arch/x86/include/asm/atomic64_64.h |    8 ++++----
+ arch/x86/include/asm/barrier.h     |    4 ++--
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
-index ccf24d3dc9824..2c418c405c508 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
-@@ -67,7 +67,7 @@
- 	do { \
- 		if ((__dcb)->dcb_version == FW_PORT_DCB_VER_IEEE) \
- 			cxgb4_dcb_state_fsm((__dev), \
--					    CXGB4_DCB_STATE_FW_ALLSYNCED); \
-+					    CXGB4_DCB_INPUT_FW_ALLSYNCED); \
- 	} while (0)
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -49,7 +49,7 @@ static __always_inline void atomic_add(i
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0"
+ 		     : "+m" (v->counter)
+-		     : "ir" (i));
++		     : "ir" (i) : "memory");
+ }
  
- /* States we can be in for a port's Data Center Bridging.
--- 
-2.20.1
-
+ /**
+@@ -63,7 +63,7 @@ static __always_inline void atomic_sub(i
+ {
+ 	asm volatile(LOCK_PREFIX "subl %1,%0"
+ 		     : "+m" (v->counter)
+-		     : "ir" (i));
++		     : "ir" (i) : "memory");
+ }
+ 
+ /**
+@@ -89,7 +89,7 @@ static __always_inline int atomic_sub_an
+ static __always_inline void atomic_inc(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0"
+-		     : "+m" (v->counter));
++		     : "+m" (v->counter) :: "memory");
+ }
+ 
+ /**
+@@ -101,7 +101,7 @@ static __always_inline void atomic_inc(a
+ static __always_inline void atomic_dec(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0"
+-		     : "+m" (v->counter));
++		     : "+m" (v->counter) :: "memory");
+ }
+ 
+ /**
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -44,7 +44,7 @@ static __always_inline void atomic64_add
+ {
+ 	asm volatile(LOCK_PREFIX "addq %1,%0"
+ 		     : "=m" (v->counter)
+-		     : "er" (i), "m" (v->counter));
++		     : "er" (i), "m" (v->counter) : "memory");
+ }
+ 
+ /**
+@@ -58,7 +58,7 @@ static inline void atomic64_sub(long i,
+ {
+ 	asm volatile(LOCK_PREFIX "subq %1,%0"
+ 		     : "=m" (v->counter)
+-		     : "er" (i), "m" (v->counter));
++		     : "er" (i), "m" (v->counter) : "memory");
+ }
+ 
+ /**
+@@ -85,7 +85,7 @@ static __always_inline void atomic64_inc
+ {
+ 	asm volatile(LOCK_PREFIX "incq %0"
+ 		     : "=m" (v->counter)
+-		     : "m" (v->counter));
++		     : "m" (v->counter) : "memory");
+ }
+ 
+ /**
+@@ -98,7 +98,7 @@ static __always_inline void atomic64_dec
+ {
+ 	asm volatile(LOCK_PREFIX "decq %0"
+ 		     : "=m" (v->counter)
+-		     : "m" (v->counter));
++		     : "m" (v->counter) : "memory");
+ }
+ 
+ /**
+--- a/arch/x86/include/asm/barrier.h
++++ b/arch/x86/include/asm/barrier.h
+@@ -116,7 +116,7 @@ do {									\
+ #endif
+ 
+ /* Atomic operations are already serializing on x86 */
+-#define smp_mb__before_atomic()	barrier()
+-#define smp_mb__after_atomic()	barrier()
++#define smp_mb__before_atomic()	do { } while (0)
++#define smp_mb__after_atomic()	do { } while (0)
+ 
+ #endif /* _ASM_X86_BARRIER_H */
 
 
