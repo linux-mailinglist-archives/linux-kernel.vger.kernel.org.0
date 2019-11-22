@@ -2,94 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB9C7105EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D48105EC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:57:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfKVCxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 21:53:16 -0500
-Received: from mga07.intel.com ([134.134.136.100]:64450 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfKVCxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 21:53:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 18:53:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,228,1571727600"; 
-   d="scan'208";a="358006930"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 21 Nov 2019 18:53:15 -0800
-Received: from [10.226.38.71] (unknown [10.226.38.71])
-        by linux.intel.com (Postfix) with ESMTP id 332DA5802E4;
-        Thu, 21 Nov 2019 18:53:12 -0800 (PST)
-Subject: Re: [PATCH v8 2/2] dt-bindings: pinctrl: intel: Add for new SoC
-From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Andriy Shevchenko <andriy.shevchenko@intel.com>,
-        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
-        cheol.yong.kim@intel.com
-References: <cover.1573797249.git.rahul.tanwar@linux.intel.com>
- <b59afc497e41404fea06aa48d633cba183ee944d.1573797249.git.rahul.tanwar@linux.intel.com>
- <CACRpkdYZi-0LRjih8+2cgWZ6u-eFN5+3sW1eV2ujYRd0UBoEKQ@mail.gmail.com>
- <bf8396af-3ace-7463-0fef-890b2f5cc487@linux.intel.com>
-Message-ID: <8804e672-423e-a754-a68e-4b4a0d2d0881@linux.intel.com>
-Date:   Fri, 22 Nov 2019 10:53:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726757AbfKVC5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 21:57:00 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4158 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfKVC47 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 21:56:59 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd74e740000>; Thu, 21 Nov 2019 18:56:52 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Nov 2019 18:56:51 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 21 Nov 2019 18:56:51 -0800
+Received: from [10.2.168.213] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov
+ 2019 02:56:50 +0000
+Subject: Re: [PATCH v7 02/24] mm/gup: factor out duplicate code from four
+ routines
+To:     Jan Kara <jack@suse.cz>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+References: <20191121071354.456618-1-jhubbard@nvidia.com>
+ <20191121071354.456618-3-jhubbard@nvidia.com> <20191121080356.GA24784@lst.de>
+ <852f6c27-8b65-547b-89e0-e8f32a4d17b9@nvidia.com>
+ <20191121095411.GC18190@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <9d0846af-2c4f-7cda-dfcb-1f642943afea@nvidia.com>
+Date:   Thu, 21 Nov 2019 18:54:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <bf8396af-3ace-7463-0fef-890b2f5cc487@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191121095411.GC18190@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574391412; bh=qs/HIaIDAchvyMkQnxvFfFcxB81lObthoFNUVM9HFsU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ea5W7/2c5vGNy7OLObdGvq5o0IpGBD08qzI9LgcD4V8BzKvR7hLDcVgsFBzIPWltE
+         d8PXmpt/WgSDLuhJB1bSFzEA5jjhwY4dlcU7E+jQRx3TB5rkLOwlZyYegEL3tsBCr8
+         8qN6mxRQSSTP+FNbJyR7Zo1HLIMkYFYKo0hlXeg0mt5hFKo6iVEhrdf4E8SgIeOW2y
+         us/ORlXUDHvqcnaCH9l42SZAxDz+ZaaZrH8tpmFx0pDTmT79WYa//P0TZxa1PMT2Ec
+         60tYwrFVvqZaHos2D7eAOKA1eeY7xDL9USjPj3cYeVVtnic4Fxyow9kLNCXK7YejUg
+         or0Rt6li4HM5w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 22/11/2019 10:24 AM, Tanwar, Rahul wrote:
-> Hi Linus,
->
-> On 21/11/2019 9:53 PM, Linus Walleij wrote:
->> On Fri, Nov 15, 2019 at 10:25 AM Rahul Tanwar
->> <rahul.tanwar@linux.intel.com> wrote:
->>
->>> Add dt bindings document for pinmux & GPIO controller driver of
->>> Intel Lightning Mountain SoC.
+On 11/21/19 1:54 AM, Jan Kara wrote:
+> On Thu 21-11-19 00:29:59, John Hubbard wrote:
 >>>
->>> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
->> Patch applied, you worked hard to get these bindings done in the
->> right YAML format and all.
+>>> Otherwise this looks fine and might be a worthwhile cleanup to feed
+>>> Andrew for 5.5 independent of the gut of the changes.
+>>>
+>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>>
 >>
->> I have some generic bindings from Rob merged simultaneously
->> so it'd be great if you could investigate whether it is possible
->> to follow up with a patch to switch over from some of the local
->> grammar and toward including pinmux-node.yaml and
->> pincfg-node.yaml into these bindings.
->>
->> The method for inclusion of external generic files can be seen
->> in e.g. the display panel bindings, like how
->> panel-common.yaml is included into other bindings under
->> display/panel/*.yaml.
->>
->> Tell us if you have any problems with this!
-> Thanks. Yes, i have gone through Rob's generic pinctrl bindings patch
-> series and i was double minded if *i should still proceed with this
-> patch or wait for generic bindings patch to get merged.
->
-> I will take it up to revise this patch to include external generic
-> files from Rob as soon as kernel 5.5 is released.
+>> Thanks for the reviews! Say, it sounds like your view here is that this
+>> series should be targeted at 5.6 (not 5.5), is that what you have in mind?
+>> And get the preparatory patches (1-9, and maybe even 10-16) into 5.5?
+> 
+> One more note :) If you are going to push pin_user_pages() interfaces
+> (which I'm fine with), it would probably make sense to push also the
+> put_user_pages() -> unpin_user_pages() renaming so that that inconsistency
+> in naming does not exist in the released upstream kernel.
+> 
+> 								Honza
 
-*Fix typo above.
+Yes, that's what this patch series does. But I'm not sure if "push" here
+means, "push out: defer to 5.6", "push (now) into 5.5", or "advocate for"?
 
-> Regards,
-> Rahul
+I will note that it's not going to be easy to rename in one step, now
+that this is being split up. Because various put_user_pages()-based items
+are going into 5.5 via different maintainer trees now. Probably I'd need
+to introduce unpin_user_page() alongside put_user_page()...thoughts?
 
+thanks,
+-- 
+John Hubbard
+NVIDIA
+  
