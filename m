@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB38106B21
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A97B4106A01
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfKVKlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:41:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46178 "EHLO mail.kernel.org"
+        id S1727080AbfKVKbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:31:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728513AbfKVKlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:41:35 -0500
+        id S1726417AbfKVKbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:31:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C09220637;
-        Fri, 22 Nov 2019 10:41:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBC392071F;
+        Fri, 22 Nov 2019 10:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419294;
-        bh=v1prjkhELBhwKJpCCsadHkv68GhTa67gCjrparn07S0=;
+        s=default; t=1574418662;
+        bh=sn+m3BOLErBC6AKGL1xcvAxm0UFVxlNoCMzo8vEdi8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x9mT53RiOiKR4tQRBGHu6brsOHF2UrgUEcSo5/qBljnsGt38kzJt5SmsETgRlyHe3
-         hoM+d4HZM/TPVr8/BZmltGAHxA6kzDOxmsTD8/QTGPQkvZ5WepSNbmWRj1Ek8HxFmq
-         E3K8veGjysQxDrN9buQ/1a3wyZ/PnIGheMoSl0bc=
+        b=hLJyEpnLh2C987tYfy29zVAVfz4Rw7ayjjlloLtAH5eHhjtnqLLepGs/UK+TllC7+
+         F41X2XBaOfvV71IRY6g7GZkwNzWo5dvgNm/ew9tNCQDOgR2lPV1tlprUO2YaSh6cDx
+         jqwtuXmrGkLvwFeOixyKew5M/+9APGtoejDkHuNw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 061/222] nvmem: core: return error code instead of NULL from nvmem_device_get
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 010/159] mm: hugetlb: switch to css_tryget() in hugetlb_cgroup_charge_cgroup()
 Date:   Fri, 22 Nov 2019 11:26:41 +0100
-Message-Id: <20191122100859.001421740@linuxfoundation.org>
+Message-Id: <20191122100716.019364466@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit ca6ac25cecf0e740d7cc8e03e0ebbf8acbeca3df ]
+commit 0362f326d86c645b5e96b7dbc3ee515986ed019d upstream.
 
-nvmem_device_get() should return ERR_PTR() on error or valid pointer
-on success, but one of the code path seems to return NULL, so fix it.
+An exiting task might belong to an offline cgroup.  In this case an
+attempt to grab a cgroup reference from the task can end up with an
+infinite loop in hugetlb_cgroup_charge_cgroup(), because neither the
+cgroup will become online, neither the task will be migrated to a live
+cgroup.
 
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Fix this by switching over to css_tryget().  As css_tryget_online()
+can't guarantee that the cgroup won't go offline, in most cases the
+check doesn't make sense.  In this particular case users of
+hugetlb_cgroup_charge_cgroup() are not affected by this change.
+
+A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
+css_tryget() instead of css_tryget_online() in task_get_css()").
+
+Link: http://lkml.kernel.org/r/20191106225131.3543616-2-guro@fb.com
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/nvmem/core.c | 2 +-
+ mm/hugetlb_cgroup.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 9ca24e4d5d49c..2a0c5f3b0e509 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -609,7 +609,7 @@ static struct nvmem_device *nvmem_find(const char *name)
- 	d = bus_find_device(&nvmem_bus_type, NULL, (void *)name, nvmem_match);
- 
- 	if (!d)
--		return NULL;
-+		return ERR_PTR(-ENOENT);
- 
- 	return to_nvmem_device(d);
- }
--- 
-2.20.1
-
+--- a/mm/hugetlb_cgroup.c
++++ b/mm/hugetlb_cgroup.c
+@@ -180,7 +180,7 @@ int hugetlb_cgroup_charge_cgroup(int idx
+ again:
+ 	rcu_read_lock();
+ 	h_cg = hugetlb_cgroup_from_task(current);
+-	if (!css_tryget_online(&h_cg->css)) {
++	if (!css_tryget(&h_cg->css)) {
+ 		rcu_read_unlock();
+ 		goto again;
+ 	}
 
 
