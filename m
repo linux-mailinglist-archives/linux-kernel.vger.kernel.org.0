@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190CD1063BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:12:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D80221063A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfKVF4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:56:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33872 "EHLO mail.kernel.org"
+        id S1729090AbfKVF4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:56:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729020AbfKVF4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:56:09 -0500
+        id S1727968AbfKVF4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:56:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9C512071B;
-        Fri, 22 Nov 2019 05:56:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2910020659;
+        Fri, 22 Nov 2019 05:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574402168;
-        bh=q0IQ3eHYV/IpWj7aMT2inLwi4bdUUv+hebDTvaEJu7w=;
+        s=default; t=1574402170;
+        bh=BN0DhflK9aTP7pbgnOI1FtlaLz5PDG30I11spKOXY7I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a6h1QL/oQMpPJ0cay6HUnuz6UXf683JMIzpjjOx7xu3AgCgpq6rWjuAHLlITGxXOz
-         IRXWptEIT6j7dMemRuhPgp07DnvKx0WCD4EupjsBMCHyc7gnKPqlY0o+RF3kogbfDu
-         DIBovyuLH3JYDXVk4B4XU+bUMDiIGJTfZ8cHerL0=
+        b=PbTKPM4mvtSS6Uj2bgowykF/2RjQCMd2nGyQD5nxFaoD0t0l4valt8cu2+TLBc9R5
+         hZxKyrGrEfIpHEq/kDiW/Y/RuWwHrr0j/OTG1FMz0AjL18ACb2rSBuQcY5uc47dh/g
+         fRmaBCIWcNS5Utk1tCWOn7rt9OUjRqp2Lt85DgdE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 021/127] ubi: Put MTD device after it is not used
-Date:   Fri, 22 Nov 2019 00:53:59 -0500
-Message-Id: <20191122055544.3299-20-sashal@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 023/127] microblaze: adjust the help to the real behavior
+Date:   Fri, 22 Nov 2019 00:54:01 -0500
+Message-Id: <20191122055544.3299-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122055544.3299-1-sashal@kernel.org>
 References: <20191122055544.3299-1-sashal@kernel.org>
@@ -44,38 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit b95f83ab762dd6211351b9140f99f43644076ca8 ]
+[ Upstream commit bafcc61d998c1ca18f556d92a0e95335ac68c7da ]
 
-The MTD device reference is dropped via put_mtd_device, however its
-field ->index is read and passed to ubi_msg. To fix this, the patch
-moves the reference dropping after calling ubi_msg.
+"make ARCH=microblaze help" mentions simpleImage.<dt>.unstrip,
+but it is not a real Make target. It does not work because Makefile
+assumes "system.unstrip" is the name of DT.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+$ make ARCH=microblaze CROSS_COMPILE=microblaze-linux- simpleImage.system.unstrip
+  [ snip ]
+make[1]: *** No rule to make target 'arch/microblaze/boot/dts/system.unstrip.dtb', needed by 'arch/microblaze/boot/dts/system.dtb'.  Stop.
+make: *** [Makefile;1060: arch/microblaze/boot/dts] Error 2
+make: *** Waiting for unfinished jobs....
+
+simpleImage.<dt> works like a phony target that generates multiple
+images. Reflect the real behavior. I removed the DT directory path
+information because it is already explained a few lines below.
+
+While I am here, I deleted the redundant *_defconfig explanation.
+
+The top-level Makefile caters to list available defconfig files:
+
+  mmu_defconfig            - Build for mmu
+  nommu_defconfig          - Build for nommu
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/ubi/build.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/microblaze/Makefile | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index 6445c693d9359..0104d9537329f 100644
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -1092,10 +1092,10 @@ int ubi_detach_mtd_dev(int ubi_num, int anyway)
- 	ubi_wl_close(ubi);
- 	ubi_free_internal_volumes(ubi);
- 	vfree(ubi->vtbl);
--	put_mtd_device(ubi->mtd);
- 	vfree(ubi->peb_buf);
- 	vfree(ubi->fm_buf);
- 	ubi_msg(ubi, "mtd%d is detached", ubi->mtd->index);
-+	put_mtd_device(ubi->mtd);
- 	put_device(&ubi->dev);
- 	return 0;
- }
+diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
+index d269dd4b82795..188f07bba0959 100644
+--- a/arch/microblaze/Makefile
++++ b/arch/microblaze/Makefile
+@@ -91,11 +91,11 @@ define archhelp
+   echo '* linux.bin    - Create raw binary'
+   echo '  linux.bin.gz - Create compressed raw binary'
+   echo '  linux.bin.ub - Create U-Boot wrapped raw binary'
+-  echo '  simpleImage.<dt> - ELF image with $(arch)/boot/dts/<dt>.dts linked in'
+-  echo '                   - stripped elf with fdt blob'
+-  echo '  simpleImage.<dt>.unstrip - full ELF image with fdt blob'
+-  echo '  *_defconfig      - Select default config from arch/microblaze/configs'
+-  echo ''
++  echo '  simpleImage.<dt> - Create the following images with <dt>.dtb linked in'
++  echo '                    simpleImage.<dt>        : raw image'
++  echo '                    simpleImage.<dt>.ub     : raw image with U-Boot header'
++  echo '                    simpleImage.<dt>.unstrip: ELF (identical to vmlinux)'
++  echo '                    simpleImage.<dt>.strip  : stripped ELF'
+   echo '  Targets with <dt> embed a device tree blob inside the image'
+   echo '  These targets support board with firmware that does not'
+   echo '  support passing a device tree directly. Replace <dt> with the'
 -- 
 2.20.1
 
