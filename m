@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7359106B8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 290E7106A76
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfKVKpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51866 "EHLO mail.kernel.org"
+        id S1728205AbfKVKfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729466AbfKVKp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:27 -0500
+        id S1727561AbfKVKfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98A102073F;
-        Fri, 22 Nov 2019 10:45:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 739E920656;
+        Fri, 22 Nov 2019 10:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419526;
-        bh=Lyf/DK6TaNWV1nE4CudSgEBwr8TZnPiV8v9hGYLVzXE=;
+        s=default; t=1574418903;
+        bh=youHC11LHjAs4CWKcmpmT/pWr3+p84Nsi0dY0gcXfR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=spi14y07UxnNmNqUHiKYCgeGkO8IelAYk29qU9VkEI3PT6SkLJdKJp+J31C2OK8Nd
-         Wng3DWw4zEiU+YkF7mgvPxoZja0d68zJu/WAe524oNhMj27UEUkt0x9w4GAT3IZ5ba
-         OmJkWxgyTMBzdnMH2rTMJr/bRIH7Zwp9NSMTXm/U=
+        b=hoU7WGjH17D45ooH8DLm04fTYQHUfddQ86bi7+wOFZNiyk7Jdaf0AQs/ZALwI3iqe
+         JmbjtKXFx5+cJAgxmzDkZyxp3D2ziUn+ElTQ6FZZAXu1ZFqvmI54FnOuGC94kdIBhM
+         G4k8zNQkpoM05vEZkhEUFVgdEDdTdqVxi9mv7SGg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 142/222] ARM: dts: lpc32xx: Fix SPI controller node names
-Date:   Fri, 22 Nov 2019 11:28:02 +0100
-Message-Id: <20191122100913.102331773@linuxfoundation.org>
+        stable@vger.kernel.org, Justin Ernst <justin.ernst@hpe.com>,
+        Borislav Petkov <bp@suse.de>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 092/159] EDAC: Raise the maximum number of memory controllers
+Date:   Fri, 22 Nov 2019 11:28:03 +0100
+Message-Id: <20191122100813.313867059@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Justin Ernst <justin.ernst@hpe.com>
 
-[ Upstream commit 11236ef582b8d66290bb3b3710e03ca1d85d8ad8 ]
+[ Upstream commit 6b58859419554fb824e09cfdd73151a195473cbc ]
 
-SPI controller nodes should be named 'spi' rather than 'ssp'. Fixing the
-name enables dtc SPI bus checks.
+We observe an oops in the skx_edac module during boot:
 
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+  EDAC MC0: Giving out device to module skx_edac controller Skylake Socket#0 IMC#0
+  EDAC MC1: Giving out device to module skx_edac controller Skylake Socket#0 IMC#1
+  EDAC MC2: Giving out device to module skx_edac controller Skylake Socket#1 IMC#0
+  ...
+  EDAC MC13: Giving out device to module skx_edac controller Skylake Socket#0 IMC#1
+  EDAC MC14: Giving out device to module skx_edac controller Skylake Socket#1 IMC#0
+  EDAC MC15: Giving out device to module skx_edac controller Skylake Socket#1 IMC#1
+  Too many memory controllers: 16
+  EDAC MC: Removed device 0 for skx_edac Skylake Socket#0 IMC#0
+
+We observe there are two memory controllers per socket, with a limit
+of 16. Raise the maximum number of memory controllers from 16 to 2 *
+MAX_NUMNODES (1024).
+
+[ bp: This is just a band-aid fix until we've sorted out the whole issue
+  with the bus_type association and handling in EDAC and can get rid of
+  this arbitrary limit. ]
+
+Signed-off-by: Justin Ernst <justin.ernst@hpe.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Russ Anderson <russ.anderson@hpe.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180925143449.284634-1-justin.ernst@hpe.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/lpc32xx.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/edac.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index 0d20aadc78bb1..5fa3111731cb0 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -179,7 +179,7 @@
- 			 * ssp0 and spi1 are shared pins;
- 			 * enable one in your board dts, as needed.
- 			 */
--			ssp0: ssp@20084000 {
-+			ssp0: spi@20084000 {
- 				compatible = "arm,pl022", "arm,primecell";
- 				reg = <0x20084000 0x1000>;
- 				interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
-@@ -199,7 +199,7 @@
- 			 * ssp1 and spi2 are shared pins;
- 			 * enable one in your board dts, as needed.
- 			 */
--			ssp1: ssp@2008c000 {
-+			ssp1: spi@2008c000 {
- 				compatible = "arm,pl022", "arm,primecell";
- 				reg = <0x2008c000 0x1000>;
- 				interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/include/linux/edac.h b/include/linux/edac.h
+index 4fe67b853de04..9bb4f3311e137 100644
+--- a/include/linux/edac.h
++++ b/include/linux/edac.h
+@@ -17,6 +17,7 @@
+ #include <linux/completion.h>
+ #include <linux/workqueue.h>
+ #include <linux/debugfs.h>
++#include <linux/numa.h>
+ 
+ struct device;
+ 
+@@ -778,6 +779,6 @@ struct mem_ctl_info {
+ /*
+  * Maximum number of memory controllers in the coherent fabric.
+  */
+-#define EDAC_MAX_MCS	16
++#define EDAC_MAX_MCS	2 * MAX_NUMNODES
+ 
+ #endif
 -- 
 2.20.1
 
