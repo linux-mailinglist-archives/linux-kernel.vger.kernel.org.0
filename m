@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 785D1106518
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D59D710651B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:22:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbfKVFwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57382 "EHLO mail.kernel.org"
+        id S1728430AbfKVFwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:52:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728366AbfKVFwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:52:00 -0500
+        id S1728383AbfKVFwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:52:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A78112068F;
-        Fri, 22 Nov 2019 05:51:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A2BE2070A;
+        Fri, 22 Nov 2019 05:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401920;
-        bh=XrgJf33ZX605w5/MqKEYzTarUruBrWyg+SRbs6OYdtc=;
+        s=default; t=1574401923;
+        bh=JD+nfwlfA6FTDIx8CSLBblnhU8b9zxdQYj7UMBcMqL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q2L0S9UsmAM8rDpfUDqYewUQjpjGJCiOHi0pq7PMK7ApcZNA7dKaIQZB9mEMdsGlK
-         fQ6kpFO6ARUTiKujEvMMSALlieoMfJ+Y4sFpIcc9UPA1GCNhgZPxxOdEUol8wK1cNk
-         iANZYb/l9Egc8HBZ2tSFIYBgpRNVFyEuWi2rI6n8=
+        b=VrRptPQADb2LBdWt24/YRC4VdycjVBV3FlpmotxvAxgrtd1+K+EG9nFD459UHAD02
+         LqdEBdD/PYgdCglMgFIZ9/gYkmJkRPQTF/di0azAE6iZ2kUo2JOOmW/8gmm81JHgkd
+         s6aJ7gm4gADUnSOVRiYkWq+k3UDbJMGW8xKD0uO8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 150/219] net: marvell: fix a missing check of acpi_match_device
-Date:   Fri, 22 Nov 2019 00:48:02 -0500
-Message-Id: <20191122054911.1750-143-sashal@kernel.org>
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, ocfs2-devel@oss.oracle.com
+Subject: [PATCH AUTOSEL 4.19 152/219] ocfs2: clear journal dirty flag after shutdown journal
+Date:   Fri, 22 Nov 2019 00:48:04 -0500
+Message-Id: <20191122054911.1750-145-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -43,35 +50,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Junxiao Bi <junxiao.bi@oracle.com>
 
-[ Upstream commit 92ee77d148bf06d8c52664be4d1b862583fd5c0e ]
+[ Upstream commit d85400af790dba2aa294f0a77e712f166681f977 ]
 
-When acpi_match_device fails, its return value is NULL. Directly using
-the return value without a check may result in a NULL-pointer
-dereference. The fix checks if acpi_match_device fails, and if so,
-returns -EINVAL.
+Dirty flag of the journal should be cleared at the last stage of umount,
+if do it before jbd2_journal_destroy(), then some metadata in uncommitted
+transaction could be lost due to io error, but as dirty flag of journal
+was already cleared, we can't find that until run a full fsck.  This may
+cause system panic or other corruption.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20181121020023.3034-3-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ocfs2/journal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 9b608d23ff7ee..9d95add05e3e6 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -5131,6 +5131,8 @@ static int mvpp2_probe(struct platform_device *pdev)
- 	if (has_acpi_companion(&pdev->dev)) {
- 		acpi_id = acpi_match_device(pdev->dev.driver->acpi_match_table,
- 					    &pdev->dev);
-+		if (!acpi_id)
-+			return -EINVAL;
- 		priv->hw_version = (unsigned long)acpi_id->driver_data;
- 	} else {
- 		priv->hw_version =
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index c492cbb2410f6..4c7e9b8dca316 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -1018,7 +1018,8 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
+ 			mlog_errno(status);
+ 	}
+ 
+-	if (status == 0) {
++	/* Shutdown the kernel journal system */
++	if (!jbd2_journal_destroy(journal->j_journal) && !status) {
+ 		/*
+ 		 * Do not toggle if flush was unsuccessful otherwise
+ 		 * will leave dirty metadata in a "clean" journal
+@@ -1027,9 +1028,6 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
+ 		if (status < 0)
+ 			mlog_errno(status);
+ 	}
+-
+-	/* Shutdown the kernel journal system */
+-	jbd2_journal_destroy(journal->j_journal);
+ 	journal->j_journal = NULL;
+ 
+ 	OCFS2_I(inode)->ip_open_count--;
 -- 
 2.20.1
 
