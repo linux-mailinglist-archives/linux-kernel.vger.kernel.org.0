@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4D8106D9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA8C10712A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbfKVLBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54660 "EHLO mail.kernel.org"
+        id S1728801AbfKVL1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:27:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731212AbfKVLBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:01:36 -0500
+        id S1727936AbfKVKd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:33:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B13320721;
-        Fri, 22 Nov 2019 11:01:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7DDD20708;
+        Fri, 22 Nov 2019 10:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420496;
-        bh=l6pIeRuMJhfnBHzeFNNTbpdwiyNr5qVCW2IiF8wlkhU=;
+        s=default; t=1574418807;
+        bh=iuc+CW/MwNh7Z3Nj4jlGrhbfNy6HZQZso3XrQC80OqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iUQ1/TsLKhDVFOvjSkgJTJugXuT99UDSoDBxxMiDH0sxS8PqNM6mgcM83A98+4Fee
-         cFYpkxxHVj+N0u3lFUJb0XJ70PNpVkkRw/2QBB1psNw1tMC9RDrx5eg0I6bDLXee/n
-         VrrISZ4d+Y/yvjSdDfjXfRR8Ls9OuboJHDorcWak=
+        b=HPW46oR1Zbqv0eiSMc85mzF4ch7f5aFlz97oZ5NRQZ7SBC187xMU+A7WGBWvt7IO2
+         vM50OTUKcNaTgdMQwZBE1QEY9sVsQRh0TV5N+NuwK4yVOF2Aua7r1uVUzoGFIqC0u6
+         YPut7fXd2O9pZb9MgzPRwtvrt/TRLzd5ZXtXU9A8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 082/220] ixgbe: Fix crash with VFs and flow director on interface flap
-Date:   Fri, 22 Nov 2019 11:27:27 +0100
-Message-Id: <20191122100918.358805947@linuxfoundation.org>
+Subject: [PATCH 4.4 057/159] PCI/ACPI: Correct error message for ASPM disabling
+Date:   Fri, 22 Nov 2019 11:27:28 +0100
+Message-Id: <20191122100749.437814451@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radoslaw Tyl <radoslawx.tyl@intel.com>
+From: Sinan Kaya <okaya@kernel.org>
 
-[ Upstream commit 5d826d209164b0752c883607be4cdbbcf7cab494 ]
+[ Upstream commit 1ad61b612b95980a4d970c52022aa01dfc0f6068 ]
 
-This patch fix crash when we have restore flow director filters after reset
-adapter. In ixgbe_fdir_filter_restore() filter->action is outside of the
-rx_ring array, as it has a VF identifier in the upper 32 bits.
+If _OSC execution fails today for platforms without an _OSC entry, code is
+printing a misleading message saying disabling ASPM as follows:
 
-Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+  acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
+
+We need to ensure that platform supports ASPM to begin with.
+
+Reported-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/acpi/pci_root.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index f3e21de3b1f0b..b45a6e2ed8d15 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -5187,6 +5187,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
- 	struct ixgbe_hw *hw = &adapter->hw;
- 	struct hlist_node *node2;
- 	struct ixgbe_fdir_filter *filter;
-+	u64 action;
- 
- 	spin_lock(&adapter->fdir_perfect_lock);
- 
-@@ -5195,12 +5196,17 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
- 
- 	hlist_for_each_entry_safe(filter, node2,
- 				  &adapter->fdir_filter_list, fdir_node) {
-+		action = filter->action;
-+		if (action != IXGBE_FDIR_DROP_QUEUE && action != 0)
-+			action =
-+			(action >> ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF) - 1;
-+
- 		ixgbe_fdir_write_perfect_filter_82599(hw,
- 				&filter->filter,
- 				filter->sw_idx,
--				(filter->action == IXGBE_FDIR_DROP_QUEUE) ?
-+				(action == IXGBE_FDIR_DROP_QUEUE) ?
- 				IXGBE_FDIR_DROP_QUEUE :
--				adapter->rx_ring[filter->action]->reg_idx);
-+				adapter->rx_ring[action]->reg_idx);
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index 3b0b4bd67b71b..4031ec8024cee 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -454,8 +454,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm)
+ 	decode_osc_support(root, "OS supports", support);
+ 	status = acpi_pci_osc_support(root, support);
+ 	if (ACPI_FAILURE(status)) {
+-		dev_info(&device->dev, "_OSC failed (%s); disabling ASPM\n",
+-			 acpi_format_exception(status));
++		dev_info(&device->dev, "_OSC failed (%s)%s\n",
++			 acpi_format_exception(status),
++			 pcie_aspm_support_enabled() ? "; disabling ASPM" : "");
+ 		*no_aspm = 1;
+ 		return;
  	}
- 
- 	spin_unlock(&adapter->fdir_perfect_lock);
 -- 
 2.20.1
 
