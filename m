@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0506E106B53
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF57106D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbfKVKnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48672 "EHLO mail.kernel.org"
+        id S1730853AbfKVK7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:59:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbfKVKnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:09 -0500
+        id S1730846AbfKVK64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6A6D20637;
-        Fri, 22 Nov 2019 10:43:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2DC020721;
+        Fri, 22 Nov 2019 10:58:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419389;
-        bh=/NIyCPyZeLdBwZL2f6/XlX7dwDQA8o09yF4PJxAG3WA=;
+        s=default; t=1574420336;
+        bh=uoV+vE689AiaK2/D+SicCSmXb2xPyJ1VTO5cJn4q3Pg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2pydndonjjVUX4nzh3zAsRHTma9XSxTXgCwCkjkSUas9/q0jj3w0nrwOBMSofU/rM
-         pub70Fs5KaZDFOAfQmuZ66hPrTGQNWhHeS5OVSULa0kcN2TVAd8fru2o+3sBm/qjVU
-         VhW2Hh3TZ8PIWLrKqwAO4WrQmYyCTSF9trcvupbQ=
+        b=ezoUdE9P7iPX7pmNkp6G2rhLp+hHWCw+rjw13mMOgyUfh5210MOAPiN1FbFHqxE8M
+         aZ/dsmbeIsvFCTLTU7zVhFTYC8y7B+jcbL8fASwRBEHWwm9lq0BMLDiAcHAOPgVJ/j
+         c+jv176jctNsua+Sqf2fbSSu8k+/rieqQeY6/mB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Peter Chen <peter.chen@nxp.com>,
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 095/222] usb: chipidea: Fix otg event handler
+Subject: [PATCH 4.19 070/220] ARM: dts: at91: sama5d4_xplained: fix addressable nand flash size
 Date:   Fri, 22 Nov 2019 11:27:15 +0100
-Message-Id: <20191122100910.315599583@linuxfoundation.org>
+Message-Id: <20191122100917.226696826@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Loic Poulain <loic.poulain@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-[ Upstream commit 59739131e0ca06db7560f9073fff2fb83f6bc2a5 ]
+[ Upstream commit df90fc64367ffdb6f1b5c0f0c4940d44832b0174 ]
 
-At OTG work running time, it's possible that several events need to be
-addressed (e.g. ID and VBUS events). The current implementation handles
-only one event at a time which leads to ignoring the other one. Fix it.
+sama5d4_xplained comes with a 4Gb NAND flash. Increase the rootfs
+size to match this limit.
 
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/chipidea/otg.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/chipidea/otg.c b/drivers/usb/chipidea/otg.c
-index f36a1ac3bfbdf..b8650210be0f7 100644
---- a/drivers/usb/chipidea/otg.c
-+++ b/drivers/usb/chipidea/otg.c
-@@ -206,14 +206,17 @@ static void ci_otg_work(struct work_struct *work)
- 	}
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 4b7c762d5f223..7d554b9ab27fd 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -252,7 +252,7 @@
  
- 	pm_runtime_get_sync(ci->dev);
-+
- 	if (ci->id_event) {
- 		ci->id_event = false;
- 		ci_handle_id_switch(ci);
--	} else if (ci->b_sess_valid_event) {
-+	}
-+
-+	if (ci->b_sess_valid_event) {
- 		ci->b_sess_valid_event = false;
- 		ci_handle_vbus_change(ci);
--	} else
--		dev_err(ci->dev, "unexpected event occurs at %s\n", __func__);
-+	}
-+
- 	pm_runtime_put_sync(ci->dev);
- 
- 	enable_irq(ci->irq);
+ 						rootfs@800000 {
+ 							label = "rootfs";
+-							reg = <0x800000 0x0f800000>;
++							reg = <0x800000 0x1f800000>;
+ 						};
+ 					};
+ 				};
 -- 
 2.20.1
 
