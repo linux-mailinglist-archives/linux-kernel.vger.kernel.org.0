@@ -2,138 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D4F107487
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3CD610748E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfKVPIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 10:08:41 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:52367 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfKVPIk (ORCPT
+        id S1727172AbfKVPJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 10:09:27 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39574 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbfKVPJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 10:08:40 -0500
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MNccf-1iDS4A3GTj-00P4Ht; Fri, 22 Nov 2019 16:08:33 +0100
-From:   Laurent Vivier <laurent@vivier.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Laurent Vivier <laurent@vivier.eu>
-Subject: [RFC v2] binfmt_misc: pass binfmt_misc flags to the interpreter
-Date:   Fri, 22 Nov 2019 16:08:30 +0100
-Message-Id: <20191122150830.15855-1-laurent@vivier.eu>
-X-Mailer: git-send-email 2.21.0
+        Fri, 22 Nov 2019 10:09:26 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t8so8172644qtc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 07:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:date:in-reply-to:references:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=g5NUe7vlbEe2wgfNr66lt2YquPFqR05ke44iUlyinlU=;
+        b=YB/UzBGOwUoXBzOrmcmzXISuMyursMtRnjg5a7p/fdYK+/DyPLb/40VRF9XWScfcGz
+         xk80Cp/0W8vxIbTT9v4P1MpvrRTk794Qd/t6gFDmn5/Fy25IDRNmEnNLkYaUgJrV6q6B
+         N/MPCdJvPY81oc1zHDlVYOi3VMQVJ2sv374uH74hYXkvjnb7/jaD+sHLy2y7MuC8odee
+         xhxVxze/dTdua7AWxfk0P4nKulmMv8VsMuxBK/Sb6M/MA79onUv4a0Yx3vaG3bu+ael1
+         kc2DY3xoyoqL3B+ZKPkPmh5TvvAAOELQusgdTguCjyWXA7UJSjw/x6+rhXWuVaWZ/xOB
+         QxFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=g5NUe7vlbEe2wgfNr66lt2YquPFqR05ke44iUlyinlU=;
+        b=KHRtzzSMKfsiyjRu+e9sDp5eT3AAlfMzzTAKKR4hxBg+mtyNIv9wi13zj/WX4jshz0
+         siZih08U7V6ymtkxc8qW2HCa92bWzO2StZ9Mt59QWGFagHtJjAlD90rEpp4wDd11e2Sw
+         tUGf/bqHP8o5FFim8S7rWvKebsbQUN1if+oLGl+FsKHfaCzwBKL1BMGXXyXiqDt9BwFF
+         fu8RJ7xNT49SB2/w5jv1Osz1+Z5ZAmCXA32JPIsEYI5fFMuqj3c7C8dhBW7UpL9/t+8D
+         qSmN/heyiM+dtucs1z0uf9bVdTYUOMch1YcoFuPoTMeYkf5WrMGqtzhKqw/iRr4j0si5
+         Ua6g==
+X-Gm-Message-State: APjAAAViV+9g23Ez1Qribjq7MciYC3/oGs1tNDmv60EyNBeKhnAD+iJl
+        XtSYUi8TN/F9oASpcriB2JEang==
+X-Google-Smtp-Source: APXvYqzzaa1j6TzEWV7XVpPIlvEC8vo0OuVoYXDbGKbWsl9Gpc97/tOwGGj51dxMHx/44cMCTJ0MfA==
+X-Received: by 2002:ac8:89c:: with SMTP id v28mr3765148qth.156.1574435365519;
+        Fri, 22 Nov 2019 07:09:25 -0800 (PST)
+Received: from skullcanyon ([192.222.193.21])
+        by smtp.gmail.com with ESMTPSA id c19sm3583774qtb.30.2019.11.22.07.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 07:09:24 -0800 (PST)
+Message-ID: <767528be59275265072896e5c679e97575615fdd.camel@ndufresne.ca>
+Subject: Re: [PATCH] media: hantro: Support H264 profile control
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Hirokazu Honda <hiroh@chromium.org>, ezequiel@collabora.com,
+        mchehab@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org
+Date:   Fri, 22 Nov 2019 10:09:23 -0500
+In-Reply-To: <20191122051608.128717-1-hiroh@chromium.org>
+References: <20191122051608.128717-1-hiroh@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:NEbcxsm+SkmB3SNa2ecYAw74OLAO27N+abnqS0hw6qizot3DkL/
- oIZPMS1Fl4h2KcTVxsaiMjun8uGWTNb3MBUF3AgUHh1PAyXn9mp+dZOb+WIXeHyIeJ9aNXg
- SiJpEBEOeG4f9FM1q6B8fWmzCXye4JNtGJzNOG9SludRw/0uTQKV/UC/MlrsdGlT8vjHQ3J
- Mfd7+LCmAsMD1tVcKE+EA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:r7soFzH1jcU=:wSVdgrQR0o0d3Ul5DZ+2Qw
- c1obj69GkbQmgRldov7tQJuXqhHluogD7Uk688a/NiNREejKTACBYmQHFsbUEtfq+szeImKYx
- JjIE6ePBCuxrNjpGMTFG/p2oEIIbvlYdyGBVSPJs7hToLg1keKbCJ1HgvksG2Gu9BM/II+nnt
- KeBYDVyNhcFJVT79wqqia8c5XvWfMiuPwQP1SYIki2ZOxuOqJM6iuJT4IClsnHmUEbRZFiJs8
- TJskALBuBaw26JHOasAjsfHZfd5eObd3HD1nIF9BrcIC/WNyMcrLvyVDY67Baq5bxCELAS2mY
- /G5nPERmhK2bCvrcJDaBSPQb2t8/VWAX+4he6j7hjOS4FnxgpLwbtz+t/OCEuHCRa/yZSxSwb
- +vArW9GYM02zGTqZ0LwdJ2l2Sqh7s3ucWM5gA8r/JlxbxvFvLfpx04dARJTfGoo3vU5gH4aQf
- gwe6dkZucPNqHr0McZ2qcLmltnnX67TyZ1X82c2JHiEuiX39CfqQMAcbmhsr37uVB00nU7sdF
- WFV6bT8MJI59ZVu3GGuz3zXg5YhIh4WoY8UwOQyRD4qRPNbFRewzfmaIi0cftTYg0mp2M18yu
- eVqVRNNWmQKCHRUgHtqyru6RjUuKhP4HXdTyp6PeZ8/Mo89FzkK8Pq9SDjsM7xDo0MoREKuUD
- nTMTccJtiElBBF/R6zfIwsdCd3oTjeBzUUzC0WYQ5v4RjXvxcwcbj59y20NFhrT9D0Fe39hy+
- wKFjdglhZugsU+gTyT9Oe9yqVeXQzAbh6m1BYrEpNi/pab/HOe4Xtm9SmnpMEW3fKRV9vBJMt
- cbssmiip3eTNkCb4Xtj5OCV943C9EUcLQ2dl0+Q4WNQtDBi5s8lhv1Vb+iQTS3q83XlhOOkQZ
- 4rDn+dXTriymz8iDH75A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It can be useful to the interpreter to know which flags are in use.
+Le vendredi 22 novembre 2019 à 14:16 +0900, Hirokazu Honda a écrit :
+> The Hantro G1 decoder supports H.264 profiles from Baseline to High, with
+> the exception of the Extended profile.
+> 
+> Expose the V4L2_CID_MPEG_VIDEO_H264_PROFILE control, so that the
+> applications can query the driver for the list of supported profiles.
 
-For instance, knowing if the preserve-argv[0] is in use would
-allow to skip the pathname argument.
+Thanks for this patch. Do you think we could also add the LEVEL control
+so the profile/level enumeration becomes complete ?
 
-This patch uses an unused auxiliary vector, AT_FLAGS,  to pass the
-content of the binfmt flags (special flags: P, F, C, O).
+I'm thinking it would be nice if the v4l2 compliance test make sure
+that codecs do implement these controls (both stateful and stateless),
+it's essential for stack with software fallback, or multiple capable
+codec hardware but with different capabilities.
 
-Signed-off-by: Laurent Vivier <laurent@vivier.eu>
----
-
-Notes:
-    v2: only pass special flags (remove Magic and Enabled flags)
-
- fs/binfmt_elf.c         | 2 +-
- fs/binfmt_elf_fdpic.c   | 2 +-
- fs/binfmt_misc.c        | 6 ++++++
- include/linux/binfmts.h | 2 +-
- 4 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index c5642bcb6b46..7a34c03e5857 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -250,7 +250,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
- 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
--	NEW_AUX_ENT(AT_FLAGS, 0);
-+	NEW_AUX_ENT(AT_FLAGS, bprm->fmt_flags);
- 	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
- 	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index d86ebd0dcc3d..8fe839be125e 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -647,7 +647,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
- 	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
--	NEW_AUX_ENT(AT_FLAGS,	0);
-+	NEW_AUX_ENT(AT_FLAGS,	bprm->fmt_flags);
- 	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
- 	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..25a392f23409 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -48,6 +48,9 @@ enum {Enabled, Magic};
- #define MISC_FMT_OPEN_BINARY (1 << 30)
- #define MISC_FMT_CREDENTIALS (1 << 29)
- #define MISC_FMT_OPEN_FILE (1 << 28)
-+#define MISC_FMT_FLAGS_MASK (MISC_FMT_PRESERVE_ARGV0 | MISC_FMT_OPEN_BINARY | \
-+			     MISC_FMT_CREDENTIALS | MISC_FMT_OPEN_FILE)
-+
- 
- typedef struct {
- 	struct list_head list;
-@@ -149,6 +152,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 	if (!fmt)
- 		return retval;
- 
-+	/* pass special flags to the interpreter */
-+	bprm->fmt_flags = fmt->flags & MISC_FMT_FLAGS_MASK;
-+
- 	/* Need to be able to load the file after exec */
- 	retval = -ENOENT;
- 	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index b40fc633f3be..dae0d0d7b84d 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -60,7 +60,7 @@ struct linux_binprm {
- 				   different for binfmt_{misc,script} */
- 	unsigned interp_flags;
- 	unsigned interp_data;
--	unsigned long loader, exec;
-+	unsigned long loader, exec, fmt_flags;
- 
- 	struct rlimit rlim_stack; /* Saved RLIMIT_STACK used during exec. */
- 
--- 
-2.21.0
+> 
+> Signed-off-by: Hirokazu Honda <hiroh@chromium.org>
+> ---
+>  drivers/staging/media/hantro/hantro_drv.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/staging/media/hantro/hantro_drv.c b/drivers/staging/media/hantro/hantro_drv.c
+> index 6d9d41170832..9387619235d8 100644
+> --- a/drivers/staging/media/hantro/hantro_drv.c
+> +++ b/drivers/staging/media/hantro/hantro_drv.c
+> @@ -355,6 +355,16 @@ static const struct hantro_ctrl controls[] = {
+>  			.def = V4L2_MPEG_VIDEO_H264_START_CODE_ANNEX_B,
+>  			.max = V4L2_MPEG_VIDEO_H264_START_CODE_ANNEX_B,
+>  		},
+> +	}, {
+> +		.codec = HANTRO_H264_DECODER,
+> +		.cfg = {
+> +			.id = V4L2_CID_MPEG_VIDEO_H264_PROFILE,
+> +			.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
+> +			.max = V4L2_MPEG_VIDEO_H264_PROFILE_HIGH,
+> +			.menu_skip_mask =
+> +			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED),
+> +			.def = V4L2_MPEG_VIDEO_H264_PROFILE_MAIN,
+> +		}
+>  	}, {
+>  	},
+>  };
 
