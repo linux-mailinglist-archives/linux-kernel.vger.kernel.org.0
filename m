@@ -2,108 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE40106F05
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5E51070AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:24:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730481AbfKVKzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:55:33 -0500
-Received: from mx20.baidu.com ([111.202.115.85]:39054 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730453AbfKVKza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:55:30 -0500
-X-Greylist: delayed 968 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Nov 2019 05:55:27 EST
-Received: from BC-Mail-Ex14.internal.baidu.com (unknown [172.31.51.54])
-        by Forcepoint Email with ESMTPS id 5F2AC10F919DB;
-        Fri, 22 Nov 2019 18:39:14 +0800 (CST)
-Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
- BC-Mail-Ex14.internal.baidu.com (172.31.51.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1531.3; Fri, 22 Nov 2019 18:39:15 +0800
-Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
- BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
- 15.01.1713.004; Fri, 22 Nov 2019 18:39:15 +0800
-From:   "Li,Rongqing" <lirongqing@baidu.com>
-To:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Kan.liang@intel.com" <Kan.liang@intel.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXVt2Ml0gd2F0Y2hkb2cvaGFyZGxvY2t1cDogcmVhc3Np?=
- =?gb2312?Q?gn_last=5Ftimestamp_when_enable_nmi_event?=
-Thread-Topic: [PATCH][v2] watchdog/hardlockup: reassign last_timestamp when
- enable nmi event
-Thread-Index: AQHVhIbsJWHFXEYJak262w7TdcNcAad/qiDwgBeO69A=
-Date:   Fri, 22 Nov 2019 10:39:15 +0000
-Message-ID: <bfa8ac7ce4794fca99bebcb753648de7@baidu.com>
-References: <1571121247-19392-1-git-send-email-lirongqing@baidu.com>
- <2142496f954e4f688056c8cc347369a8@baidu.com>
-In-Reply-To: <2142496f954e4f688056c8cc347369a8@baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.198.14]
-x-baidu-bdmsfe-datecheck: 1_BC-Mail-Ex14_2019-11-22 18:39:15:620
-x-baidu-bdmsfe-viruscheck: BC-Mail-Ex14_GRAY_Inside_WithoutAtta_2019-11-22
- 18:39:15:604
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1728841AbfKVKkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:40:03 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:40964 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726546AbfKVKj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:39:59 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMAddRd023808;
+        Fri, 22 Nov 2019 11:39:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=Yb4uCeALV8Ui44IqHMV+f+MNdt/2wAzvgT9C57Q3BZw=;
+ b=gYNaqs3+QC6W3lndyyz8UqbqmpEyOIZp1U1iZ28HGNjAXmZW/dWrvDAesNWYWg3CXIuZ
+ W4rOFR9Qy/VZ3QQzNzN7VIfuYbDvN8rQmoHY92ynRaDGrF/WH5HmACEoGiloOgENoLR7
+ CtqIUfkKscVnBACUQbXZZYRrnj1tqX8W39Iv106aYETYA6bL10VcDxK+JhSNxEkeqC+q
+ Itashsf+Py7ul0X53zWXSXIXrmRkatC7mqLXOJhV4uVDmMdVXdIQNyRoJvrhxIcdOsge
+ tRoiUnfzUqyGihNiGj2xT/yMsxz+fpxiJm5x10a1RxqTxjWkv2U9Io82eNNKUyLbbtcP 9A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2wa9uvrqa0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Nov 2019 11:39:44 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 41F31100034;
+        Fri, 22 Nov 2019 11:39:43 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 133DA2B56A1;
+        Fri, 22 Nov 2019 11:39:43 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 22 Nov 2019 11:39:42
+ +0100
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] dt-bindings: arm: stm32: Convert stm32-syscon to json-schema
+Date:   Fri, 22 Nov 2019 11:39:42 +0100
+Message-ID: <20191122103942.23572-1-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-22_02:2019-11-21,2019-11-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UGluZw0KDQpUaGFua3MNCi1Sb25nUWluZw0KDQo+IC0tLS0t08q8/tStvP4tLS0tLQ0KPiC3orz+
-yMs6IExpLFJvbmdxaW5nDQo+ILeiy83KsbzkOiAyMDE5xOoxMdTCN8jVIDE4OjU0DQo+IMrVvP7I
-yzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPjsgYWtwbUBsaW51eC1mb3VuZGF0
-aW9uLm9yZzsNCj4gc2VyZ2V5LnNlbm96aGF0c2t5LndvcmtAZ21haWwuY29tOyBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOw0KPiB0Z2x4QGxpbnV0cm9uaXguZGU7IEthbi5saWFuZ0BpbnRl
-bC5jb20NCj4g1vfM4jogtPC4tDogW1BBVENIXVt2Ml0gd2F0Y2hkb2cvaGFyZGxvY2t1cDogcmVh
-c3NpZ24gbGFzdF90aW1lc3RhbXAgd2hlbg0KPiBlbmFibGUgbm1pIGV2ZW50DQo+IA0KPiBQaW5n
-DQo+IA0KPiBUaGFua3MNCj4gDQo+IC1MaQ0KPiANCj4gPiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4g
-PiC3orz+yMs6IGxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBbbWFpbHRv
-OmxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmddILT6se0gTGkgUm9uZ1FpbmcNCj4g
-PiC3osvNyrG85DogMjAxOcTqMTDUwjE1yNUgMTQ6MzQNCj4gPiDK1bz+yMs6IGFrcG1AbGludXgt
-Zm91bmRhdGlvbi5vcmc7IHNlcmdleS5zZW5vemhhdHNreS53b3JrQGdtYWlsLmNvbTsNCj4gPiBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyB0Z2x4QGxpbnV0cm9uaXguZGU7IEthbi5saWFu
-Z0BpbnRlbC5jb20NCj4gPiDW98ziOiBbUEFUQ0hdW3YyXSB3YXRjaGRvZy9oYXJkbG9ja3VwOiBy
-ZWFzc2lnbiBsYXN0X3RpbWVzdGFtcCB3aGVuDQo+ID4gZW5hYmxlIG5taSBldmVudA0KPiA+DQo+
-ID4gbGFzdF90aW1lc3RhbXAgaXMgbm90IGluaXRpYWxpemVkIGFuZCBpcyB6ZXJvIGFmdGVyIGJv
-b3QsIG9yIHN0b3AgdG8NCj4gPiBmb3J3YXJkIHdoZW4gbm1pIHdhdGNoZG9nIGlzIGRpc2FibGVk
-OyBhbmQgZmFsc2UgcG9zaXRpdmVzIHN0aWxsIGlzDQo+ID4gcG9zc2libGUgd2hlbiByZXN0YXJ0
-IE5NSSB0aW1lciBhZnRlciBzdG9wcGluZyAxMjAgc2Vjb25kcw0KPiA+DQo+ID4gc28gcmVhc3Np
-Z24gbGFzdF90aW1lc3RhbXAgYWx3YXlzIHdoZW4gZW5hYmxlIG5taSBldmVudA0KPiA+DQo+ID4g
-Rml4ZXM6IDdlZGFlYjY4NDFkZiAoImtlcm5lbC93YXRjaGRvZzogUHJldmVudCBmYWxzZSBwb3Np
-dGl2ZXMgd2l0aA0KPiA+IHR1cmJvDQo+ID4gbW9kZXMiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IExp
-IFJvbmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBaaGFu
-ZyBZdSA8emhhbmd5dTMxQGJhaWR1LmNvbT4NCj4gPiAtLS0NCj4gPg0KPiA+IHYxLS0+djI6IG1h
-a2UgaXQgYmUgYWJsZSB0byBiZSBjb21waWxlZCBvbiBubw0KPiA+IHYxLS0+Q09ORklHX0hBUkRM
-T0NLVVBfQ0hFQ0tfVElNRVNUQU1QIHBsYXRmb3JtDQo+ID4NCj4gPiBrZXJuZWwvd2F0Y2hkb2df
-aGxkLmMgfCAxOCArKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE3IGlu
-c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwv
-d2F0Y2hkb2dfaGxkLmMgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMgaW5kZXgNCj4gPiAyNDdiZjBi
-MTU4MmMuLmYxNGQxODI4MDM4NyAxMDA2NDQNCj4gPiAtLS0gYS9rZXJuZWwvd2F0Y2hkb2dfaGxk
-LmMNCj4gPiArKysgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMNCj4gPiBAQCAtOTEsMTEgKzkxLDI0
-IEBAIHN0YXRpYyBib29sIHdhdGNoZG9nX2NoZWNrX3RpbWVzdGFtcCh2b2lkKQ0KPiA+ICAJX190
-aGlzX2NwdV93cml0ZShsYXN0X3RpbWVzdGFtcCwgbm93KTsNCj4gPiAgCXJldHVybiB0cnVlOw0K
-PiA+ICB9DQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCB3YXRjaGRvZ190b3VjaF90aW1lc3RhbXAo
-aW50IGNwdSkgew0KPiA+ICsNCj4gPiArCWt0aW1lX3Qgbm93ID0ga3RpbWVfZ2V0X21vbm9fZmFz
-dF9ucygpOw0KPiA+ICsNCj4gPiArCXBlcl9jcHUobGFzdF90aW1lc3RhbXAsIGNwdSkgPSBub3c7
-DQo+ID4gK30NCj4gPiAgI2Vsc2UNCj4gPiAgc3RhdGljIGlubGluZSBib29sIHdhdGNoZG9nX2No
-ZWNrX3RpbWVzdGFtcCh2b2lkKSAgew0KPiA+ICAJcmV0dXJuIHRydWU7DQo+ID4gIH0NCj4gPiAr
-DQo+ID4gK3N0YXRpYyB2b2lkIHdhdGNoZG9nX3RvdWNoX3RpbWVzdGFtcChpbnQgY3B1KSB7DQo+
-ID4gKw0KPiA+ICt9DQo+ID4gICNlbmRpZg0KPiA+DQo+ID4gIHN0YXRpYyBzdHJ1Y3QgcGVyZl9l
-dmVudF9hdHRyIHdkX2h3X2F0dHIgPSB7IEBAIC0xOTYsNiArMjA5LDcgQEAgdm9pZA0KPiA+IGhh
-cmRsb2NrdXBfZGV0ZWN0b3JfcGVyZl9lbmFibGUodm9pZCkNCj4gPiAgCWlmICghYXRvbWljX2Zl
-dGNoX2luYygmd2F0Y2hkb2dfY3B1cykpDQo+ID4gIAkJcHJfaW5mbygiRW5hYmxlZC4gUGVybWFu
-ZW50bHkgY29uc3VtZXMgb25lIGh3LVBNVSBjb3VudGVyLlxuIik7DQo+ID4NCj4gPiArCXdhdGNo
-ZG9nX3RvdWNoX3RpbWVzdGFtcChzbXBfcHJvY2Vzc29yX2lkKCkpOw0KPiA+ICAJcGVyZl9ldmVu
-dF9lbmFibGUodGhpc19jcHVfcmVhZCh3YXRjaGRvZ19ldikpOw0KPiA+ICB9DQo+ID4NCj4gPiBA
-QCAtMjc0LDggKzI4OCwxMCBAQCB2b2lkIF9faW5pdCBoYXJkbG9ja3VwX2RldGVjdG9yX3BlcmZf
-cmVzdGFydCh2b2lkKQ0KPiA+ICAJZm9yX2VhY2hfb25saW5lX2NwdShjcHUpIHsNCj4gPiAgCQlz
-dHJ1Y3QgcGVyZl9ldmVudCAqZXZlbnQgPSBwZXJfY3B1KHdhdGNoZG9nX2V2LCBjcHUpOw0KPiA+
-DQo+ID4gLQkJaWYgKGV2ZW50KQ0KPiA+ICsJCWlmIChldmVudCkgew0KPiA+ICsJCQl3YXRjaGRv
-Z190b3VjaF90aW1lc3RhbXAoY3B1KTsNCj4gPiAgCQkJcGVyZl9ldmVudF9lbmFibGUoZXZlbnQp
-Ow0KPiA+ICsJCX0NCj4gPiAgCX0NCj4gPiAgfQ0KPiA+DQo+ID4gLS0NCj4gPiAyLjE2LjINCg0K
+Convert the STM32 syscon binding to DT schema format using json-schema.
+
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+
+diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+new file mode 100644
+index 000000000000..0dedf94c8578
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/arm/stm32/st,stm32-syscon.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: STMicroelectronics STM32 Platforms System Controller bindings
++
++maintainers:
++  - Alexandre Torgue <alexandre.torgue@st.com>
++  - Christophe Roullier <christophe.roullier@st.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++        - enum:
++          - st,stm32mp157-syscfg
++        - const: syscon
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++examples:
++  - |
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    syscfg: syscon@50020000 {
++        compatible = "st,stm32mp157-syscfg", "syscon";
++        reg = <0x50020000 0x400>;
++        clocks = <&rcc SYSCFG>;
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt b/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt
+deleted file mode 100644
+index c92d411fd023..000000000000
+--- a/Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-STMicroelectronics STM32 Platforms System Controller
+-
+-Properties:
+-   - compatible : should contain two values. First value must be :
+-                 - " st,stm32mp157-syscfg " - for stm32mp157 based SoCs,
+-                 second value must be always "syscon".
+-   - reg : offset and length of the register set.
+-   - clocks: phandle to the syscfg clock
+-
+- Example:
+-         syscfg: syscon@50020000 {
+-                 compatible = "st,stm32mp157-syscfg", "syscon";
+-                 reg = <0x50020000 0x400>;
+-                 clocks = <&rcc SYSCFG>;
+-         };
+-
+-- 
+2.17.1
+
