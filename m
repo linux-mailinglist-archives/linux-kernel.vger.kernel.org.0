@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB64106D41
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9E7106B40
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbfKVK6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48424 "EHLO mail.kernel.org"
+        id S1728521AbfKVKmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:42:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730796AbfKVK61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:58:27 -0500
+        id S1728529AbfKVKmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:42:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A66E20706;
-        Fri, 22 Nov 2019 10:58:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A91B20707;
+        Fri, 22 Nov 2019 10:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420306;
-        bh=FK6rddTPTwK/CMpUf7Wy6HlR4JUMAdjtf1wQY9MQNek=;
+        s=default; t=1574419359;
+        bh=/iiWpYIah33RZaJSah7hoPv2+EwlM7QCexritnX69Z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BGZrGv/3TCIHDw0PhTYp35AoMWdnun9bUHAlgrVBoj+XyV5yRtuhQLUdP6ECxEvsr
-         VZoN1SeBw7GShwf1AZc/oWR8kCrp4EI/r5ieWTmLxmMac9rHcHtW7XFzHbOUU1OnYy
-         eu8uWzAgA0t5YOGVh+SVGU9ZOlFMog9HAsNAMHeI=
+        b=nXbz5uQt8xAergb0A0D0omWlMWO8FYbXerWc60z2YvMzeZRpjrHU+0JHI7Vl4BndO
+         WOsicMK8yxLXtTU93HHW6sC17VRHJDjhX+STlC+xsn06F5vS1hEdEptSrbxxXnPoW1
+         270Cjsnbj4VjAIaLHcEx5vLb+p7WRKyBj8fj67oY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 061/220] clk: keystone: Enable TISCI clocks if K3_ARCH
+Subject: [PATCH 4.9 086/222] RDMA/i40iw: Fix incorrect iterator type
 Date:   Fri, 22 Nov 2019 11:27:06 +0100
-Message-Id: <20191122100916.481097690@linuxfoundation.org>
+Message-Id: <20191122100909.781384355@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nishanth Menon <nm@ti.com>
+From: Håkon Bugge <Haakon.Bugge@oracle.com>
 
-[ Upstream commit 2f149e6e14bcb5e581e49307b54aafcd6f74a74f ]
+[ Upstream commit 802fa45cd320de319e86c93bca72abec028ba059 ]
 
-K3_ARCH uses TISCI for clocks as well. Enable the same
-for the driver support.
+Commit f27b4746f378 ("i40iw: add connection management code") uses an
+incorrect rcu iterator, whilst holding the rtnl_lock. Since the
+critical region invokes i40iw_manage_qhash(), which is a sleeping
+function, the rcu locking and traversal cannot be used.
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/Makefile         | 1 +
- drivers/clk/keystone/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/i40iw/i40iw_cm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a84c5573cabea..ed344eb717cc4 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -73,6 +73,7 @@ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
- obj-y					+= imgtec/
- obj-$(CONFIG_ARCH_MXC)			+= imx/
- obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
-+obj-$(CONFIG_ARCH_K3)			+= keystone/
- obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
- obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
- obj-y					+= mediatek/
-diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
-index 7e9f0176578a6..b04927d06cd10 100644
---- a/drivers/clk/keystone/Kconfig
-+++ b/drivers/clk/keystone/Kconfig
-@@ -7,7 +7,7 @@ config COMMON_CLK_KEYSTONE
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_cm.c b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+index 85637696f6e96..282a726351c81 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_cm.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+@@ -1652,7 +1652,7 @@ static enum i40iw_status_code i40iw_add_mqh_6(struct i40iw_device *iwdev,
+ 	unsigned long flags;
  
- config TI_SCI_CLK
- 	tristate "TI System Control Interface clock drivers"
--	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
-+	depends on (ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST) && OF
- 	depends on TI_SCI_PROTOCOL
- 	default ARCH_KEYSTONE
- 	---help---
+ 	rtnl_lock();
+-	for_each_netdev_rcu(&init_net, ip_dev) {
++	for_each_netdev(&init_net, ip_dev) {
+ 		if ((((rdma_vlan_dev_vlan_id(ip_dev) < I40IW_NO_VLAN) &&
+ 		      (rdma_vlan_dev_real_dev(ip_dev) == iwdev->netdev)) ||
+ 		     (ip_dev == iwdev->netdev)) && (ip_dev->flags & IFF_UP)) {
 -- 
 2.20.1
 
