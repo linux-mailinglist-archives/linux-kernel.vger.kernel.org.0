@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E914106C47
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4376106D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfKVKu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33032 "EHLO mail.kernel.org"
+        id S1728905AbfKVLAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:00:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728482AbfKVKuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:50:54 -0500
+        id S1730990AbfKVLAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:00:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A02520656;
-        Fri, 22 Nov 2019 10:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DFD32075E;
+        Fri, 22 Nov 2019 11:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419853;
-        bh=/O8vgSfJmlffn4M56jr8hXU25VCaMFhRBL/Sk4VvUmI=;
+        s=default; t=1574420407;
+        bh=ZYrFksE4yNjkyeNCuIbjQzFI5EWbnQ4cFzJZE5BH2JE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJYt+kXDEZhpGhc4AuL6UErOz5VbM8jocW14qxZcjZ8KVHN5JEUFhfXQBtd30NjTa
-         W+01+qp9/0ZPAkbFFnZ0BPQmyQEaWCe+ttAZNCqKGhWcbut0Iqh2AkUwrNENI3GEr7
-         sly7CoAoBXLWOXpX2MFLl6hZF4A8QNZgc9oe0bfk=
+        b=uv6fCID55b0KeqD7Zr2UaMR3qjZA/ANPfJmVsKI4ZH8oTYBof5qYOdS9e6juFDxus
+         L+PxwF+wlELIP7Ie+JI2unh0RznkMAFyuJzOAKVoqM+YzIKCurcBJBWCSqM7IPDy1n
+         1w2eKU6lWZTL7h5GT1uZIhwB0FDdH/kPEYIIXugk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 007/122] mm/memory_hotplug: fix updating the node span
-Date:   Fri, 22 Nov 2019 11:27:40 +0100
-Message-Id: <20191122100727.359872325@linuxfoundation.org>
+        stable@vger.kernel.org, Anton Blanchard <anton@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 096/220] powerpc/time: Use clockevents_register_device(), fixing an issue with large decrementer
+Date:   Fri, 22 Nov 2019 11:27:41 +0100
+Message-Id: <20191122100919.626302041@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,63 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Anton Blanchard <anton@ozlabs.org>
 
-commit 656d571193262a11c2daa4012e53e4d645bbce56 upstream.
+[ Upstream commit 8b78fdb045de60a4eb35460092bbd3cffa925353 ]
 
-We recently started updating the node span based on the zone span to
-avoid touching uninitialized memmaps.
+We currently cap the decrementer clockevent at 4 seconds, even on systems
+with large decrementer support. Fix this by converting the code to use
+clockevents_register_device() which calculates the upper bound based on
+the max_delta passed in.
 
-Currently, we will always detect the node span to start at 0, meaning a
-node can easily span too many pages.  pgdat_is_empty() will still work
-correctly if all zones span no pages.  We should skip over all zones
-without spanned pages and properly handle the first detected zone that
-spans pages.
-
-Unfortunately, in contrast to the zone span (/proc/zoneinfo), the node
-span cannot easily be inspected and tested.  The node span gives no real
-guarantees when an architecture supports memory hotplug, meaning it can
-easily contain holes or span pages of different nodes.
-
-The node span is not really used after init on architectures that
-support memory hotplug.
-
-E.g., we use it in mm/memory_hotplug.c:try_offline_node() and in
-mm/kmemleak.c:kmemleak_scan().  These users seem to be fine.
-
-Link: http://lkml.kernel.org/r/20191027222714.5313-1-david@redhat.com
-Fixes: 00d6c019b5bc ("mm/memory_hotplug: don't access uninitialized memmaps in shrink_pgdat_span()")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Anton Blanchard <anton@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memory_hotplug.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/powerpc/kernel/time.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -470,6 +470,14 @@ static void update_pgdat_span(struct pgl
- 					     zone->spanned_pages;
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 70f145e024877..6a1f0a084ca35 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -984,10 +984,10 @@ static void register_decrementer_clockevent(int cpu)
+ 	*dec = decrementer_clockevent;
+ 	dec->cpumask = cpumask_of(cpu);
  
- 		/* No need to lock the zones, they can't change. */
-+		if (!zone->spanned_pages)
-+			continue;
-+		if (!node_end_pfn) {
-+			node_start_pfn = zone->zone_start_pfn;
-+			node_end_pfn = zone_end_pfn;
-+			continue;
-+		}
++	clockevents_config_and_register(dec, ppc_tb_freq, 2, decrementer_max);
 +
- 		if (zone_end_pfn > node_end_pfn)
- 			node_end_pfn = zone_end_pfn;
- 		if (zone->zone_start_pfn < node_start_pfn)
+ 	printk_once(KERN_DEBUG "clockevent: %s mult[%x] shift[%d] cpu[%d]\n",
+ 		    dec->name, dec->mult, dec->shift, cpu);
+-
+-	clockevents_register_device(dec);
+ }
+ 
+ static void enable_large_decrementer(void)
+@@ -1035,18 +1035,7 @@ static void __init set_decrementer_max(void)
+ 
+ static void __init init_decrementer_clockevent(void)
+ {
+-	int cpu = smp_processor_id();
+-
+-	clockevents_calc_mult_shift(&decrementer_clockevent, ppc_tb_freq, 4);
+-
+-	decrementer_clockevent.max_delta_ns =
+-		clockevent_delta2ns(decrementer_max, &decrementer_clockevent);
+-	decrementer_clockevent.max_delta_ticks = decrementer_max;
+-	decrementer_clockevent.min_delta_ns =
+-		clockevent_delta2ns(2, &decrementer_clockevent);
+-	decrementer_clockevent.min_delta_ticks = 2;
+-
+-	register_decrementer_clockevent(cpu);
++	register_decrementer_clockevent(smp_processor_id());
+ }
+ 
+ void secondary_cpu_time_init(void)
+-- 
+2.20.1
+
 
 
