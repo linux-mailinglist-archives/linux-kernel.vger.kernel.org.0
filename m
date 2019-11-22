@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFBE106BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E568B106CCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbfKVKrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55892 "EHLO mail.kernel.org"
+        id S1728469AbfKVKy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727642AbfKVKrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:46 -0500
+        id S1730394AbfKVKy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:54:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D08B620637;
-        Fri, 22 Nov 2019 10:47:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20CE42071C;
+        Fri, 22 Nov 2019 10:54:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419665;
-        bh=NKBfqAv6RndEcqs2ia5kpL1lCcer34AuTvHEDkQdefc=;
+        s=default; t=1574420097;
+        bh=GTMVDaXzuzU2Vu00XLlOwXvvEsFSRCcG11kDpNM1lzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tU4V1d5gLVBP7EAL/PX5vZ3HONtc01dljn/j6QhyY/dzgyahB5GSa6UL2qzWz3ScU
-         DZPn9gcHDZeGX+g6SW4XGZd2YDDLqms1OjIxhnQ3TovYEqHIJp290Doszl+hS4wRRv
-         f5P6PtCdtZXc0t0hMyU9YGgci+HDW8XQeHQ9czu4=
+        b=rANbdL93v19VceodQY3smlEwk7Yak1rfD4iJTo7+WYAgWTIc/uMv6r5kDnEThrZbO
+         Ch9tKxgxbL3UOHJ6wjqDniwLQvxc40KOzIyrCuX5daq7UdLNEStWtog6t6ElBYyIkS
+         F5pfKSmtiIegLCI5faTQTfhiFbI6s+afrqezmOz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Suman Anna <s-anna@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 190/222] NFSv4.x: fix lock recovery during delegation recall
-Date:   Fri, 22 Nov 2019 11:28:50 +0100
-Message-Id: <20191122100916.019304202@linuxfoundation.org>
+Subject: [PATCH 4.14 078/122] remoteproc: Check for NULL firmwares in sysfs interface
+Date:   Fri, 22 Nov 2019 11:28:51 +0100
+Message-Id: <20191122100818.237329904@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Suman Anna <s-anna@ti.com>
 
-[ Upstream commit 44f411c353bf6d98d5a34f8f1b8605d43b2e50b8 ]
+[ Upstream commit faeadbb64094757150a8c2a3175ca418dbdd472c ]
 
-Running "./nfstest_delegation --runtest recall26" uncovers that
-client doesn't recover the lock when we have an appending open,
-where the initial open got a write delegation.
+The remoteproc framework provides a sysfs file 'firmware'
+for modifying the firmware image name from userspace. Add
+an additional check to ensure NULL firmwares are errored
+out right away, rather than getting a delayed error while
+requesting a firmware during the start of a remoteproc
+later on.
 
-Instead of checking for the passed in open context against
-the file lock's open context. Check that the state is the same.
-
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Tested-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/delegation.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index 46afd7cdcc378..9a8830a0f31f9 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -101,7 +101,7 @@ int nfs4_check_delegation(struct inode *inode, fmode_t flags)
- 	return nfs4_do_check_delegation(inode, flags, false);
- }
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 47be411400e56..3a4c3d7cafca3 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -48,6 +48,11 @@ static ssize_t firmware_store(struct device *dev,
+ 	}
  
--static int nfs_delegation_claim_locks(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid)
-+static int nfs_delegation_claim_locks(struct nfs4_state *state, const nfs4_stateid *stateid)
- {
- 	struct inode *inode = state->inode;
- 	struct file_lock *fl;
-@@ -116,7 +116,7 @@ static int nfs_delegation_claim_locks(struct nfs_open_context *ctx, struct nfs4_
- 	spin_lock(&flctx->flc_lock);
- restart:
- 	list_for_each_entry(fl, list, fl_list) {
--		if (nfs_file_open_context(fl->fl_file) != ctx)
-+		if (nfs_file_open_context(fl->fl_file)->state != state)
- 			continue;
- 		spin_unlock(&flctx->flc_lock);
- 		status = nfs4_lock_delegation_recall(fl, state, stateid);
-@@ -163,7 +163,7 @@ static int nfs_delegation_claim_opens(struct inode *inode,
- 		seq = raw_seqcount_begin(&sp->so_reclaim_seqcount);
- 		err = nfs4_open_delegation_recall(ctx, state, stateid, type);
- 		if (!err)
--			err = nfs_delegation_claim_locks(ctx, state, stateid);
-+			err = nfs_delegation_claim_locks(state, stateid);
- 		if (!err && read_seqcount_retry(&sp->so_reclaim_seqcount, seq))
- 			err = -EAGAIN;
- 		mutex_unlock(&sp->so_delegreturn_mutex);
+ 	len = strcspn(buf, "\n");
++	if (!len) {
++		dev_err(dev, "can't provide a NULL firmware\n");
++		err = -EINVAL;
++		goto out;
++	}
+ 
+ 	p = kstrndup(buf, len, GFP_KERNEL);
+ 	if (!p) {
 -- 
 2.20.1
 
