@@ -2,79 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FD010766B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04AA5107685
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:38:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfKVR0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 12:26:54 -0500
-Received: from foss.arm.com ([217.140.110.172]:50254 "EHLO foss.arm.com"
+        id S1726739AbfKVRin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 12:38:43 -0500
+Received: from mga03.intel.com ([134.134.136.65]:28062 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfKVR0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:26:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85757FEC;
-        Fri, 22 Nov 2019 09:26:53 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 022DE3F6C4;
-        Fri, 22 Nov 2019 09:26:52 -0800 (PST)
-Date:   Fri, 22 Nov 2019 17:26:51 +0000
-From:   Mark Brown <broonie@kernel.org>
+        id S1726046AbfKVRin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 12:38:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 09:38:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,230,1571727600"; 
+   d="scan'208";a="238682978"
+Received: from sygreen1-mobl4.amr.corp.intel.com (HELO [10.252.195.68]) ([10.252.195.68])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Nov 2019 09:38:40 -0800
+Subject: Re: [alsa-devel] [PATCH v12 2/6] ASoC: amd: Refactoring of DAI from
+ DMA driver
 To:     Ravulapati Vishnu vardhan rao 
         <Vishnuvardhanrao.Ravulapati@amd.com>
 Cc:     Alexander.Deucher@amd.com, djkurtz@google.com,
-        pierre-louis.bossart@linux.intel.com, Akshu.Agrawal@amd.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
+        Akshu.Agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>,
         "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v11 1/6] ASoC: amd:Create multiple I2S platform
- device endpoints
-Message-ID: <20191122172651.GF6849@sirena.org.uk>
-References: <1574336761-16717-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1574336761-16717-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        <alsa-devel@alsa-project.org>
+References: <1574415866-29715-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1574415866-29715-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <7f4ccc51-7bdd-d1c6-605a-0b432485de73@linux.intel.com>
+Date:   Fri, 22 Nov 2019 09:33:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DO5DiztRLs659m5i"
-Content-Disposition: inline
-In-Reply-To: <1574336761-16717-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Cookie: sillema sillema nika su
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1574415866-29715-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---DO5DiztRLs659m5i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>   static int acp3x_audio_probe(struct platform_device *pdev)
+>   {
+> -	int status;
+>   	struct resource *res;
+>   	struct i2s_dev_data *adata;
+>   	unsigned int irqflags;
+> +	int status, ret;
+>   
+>   	if (!pdev->dev.platform_data) {
+>   		dev_err(&pdev->dev, "platform_data not retrieved\n");
+> @@ -622,7 +426,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
+>   
+>   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>   	if (!res) {
+> -		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
+> +		dev_err(&pdev->dev, "IORESOURCE_MEM FAILED\n");
+>   		return -ENODEV;
+>   	}
+>   
+> @@ -632,60 +436,64 @@ static int acp3x_audio_probe(struct platform_device *pdev)
+>   
+>   	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
+>   					 resource_size(res));
+> +	if (!adata->acp3x_base)
+> +		return -ENOMEM;
+>   
+>   	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+>   	if (!res) {
+>   		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
+> -		return -ENODEV;
+> +		return -ENOMEM;
 
-On Thu, Nov 21, 2019 at 05:15:56PM +0530, Ravulapati Vishnu vardhan rao wrote:
-> Creates Platform Device endpoints for multiple
-> I2S instances: SP and  BT endpoints device.
-> Pass PCI resources like MMIO, irq to the platform devices.
+it's odd for a -ENOMEM code to returned for IRQs?
 
-Please when you're posting stuff don't put these RESEND tags on some
-patches in the series, they're not helpful - having them in some but not
-all patches is inconsistent, you're sending a new version of the series
-here.
+>   	}
+>   
+>   	adata->i2s_irq = res->start;
+> -	adata->play_stream = NULL;
+> -	adata->capture_stream = NULL;
+>   
+>   	dev_set_drvdata(&pdev->dev, adata);
+>   	/* Initialize ACP */
+>   	status = acp3x_init(adata->acp3x_base);
+>   	if (status)
+>   		return -ENODEV;
+> +
+>   	status = devm_snd_soc_register_component(&pdev->dev,
+>   						 &acp3x_i2s_component,
+> -						 &acp3x_i2s_dai_driver, 1);
+> +						 NULL, 0);
+>   	if (status) {
+> -		dev_err(&pdev->dev, "Fail to register acp i2s dai\n");
+> +		dev_err(&pdev->dev, "Fail to register acp i2s component\n");
+> +		ret = -ENODEV;
+>   		goto dev_err;
+>   	}
+>   	status = devm_request_irq(&pdev->dev, adata->i2s_irq, i2s_irq_handler,
+>   				  irqflags, "ACP3x_I2S_IRQ", adata);
+>   	if (status) {
+>   		dev_err(&pdev->dev, "ACP3x I2S IRQ request failed\n");
+> +		ret = -ENODEV;
+>   		goto dev_err;
+>   	}
+>   
+> -	pm_runtime_set_autosuspend_delay(&pdev->dev, 10000);
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
+>   	pm_runtime_use_autosuspend(&pdev->dev);
+>   	pm_runtime_enable(&pdev->dev);
+>   	return 0;
+> +
+>   dev_err:
+>   	status = acp3x_deinit(adata->acp3x_base);
+>   	if (status)
+>   		dev_err(&pdev->dev, "ACP de-init failed\n");
+>   	else
+> -		dev_info(&pdev->dev, "ACP de-initialized\n");
+> -	/*ignore device status and return driver probe error*/
+> -	return -ENODEV;
+> +		dev_dbg(&pdev->dev, "ACP de-initialized\n");
+> +	return ret;
+>   }
 
---DO5DiztRLs659m5i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3YGloACgkQJNaLcl1U
-h9Cv0wf7BLPxHi6VlmnTYgV2HFFERU+rkkk/A78kSRLvCcFbJT+mzHY7PvqTNDSi
-G8OoUscWHgFVfVvsfGQV3fscMC9RFpQQJeKsw0/4Z9YPWhrkUZGlSnWJi0oW63oF
-lmhUmzsmhCgIlSPHFcDZcNTuY0prLy9zEfQqlnk2zVWBJ5TTpK94bzio19HYKCK2
-NgVJx8eFAyGRSDBC2hy2qxOYQ3gOARdwADsmq43KR1oVT2Ru66QZT6V6ZVgFurJr
-unKYQoLepbAC4SHNMrMGIvTAdVJKJfl5/8kuRaWOrUCw8XSjerYeG2g1WxJwm/TD
-u3Gnrw8NkkWUT3XcAFMbZ+vJcvokjw==
-=+sSD
------END PGP SIGNATURE-----
-
---DO5DiztRLs659m5i--
