@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA04E107117
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D48F107054
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:21:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbfKVL0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:26:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59338 "EHLO mail.kernel.org"
+        id S1727330AbfKVKon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728110AbfKVKee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:34:34 -0500
+        id S1727665AbfKVKoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1371820656;
-        Fri, 22 Nov 2019 10:34:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6F5820715;
+        Fri, 22 Nov 2019 10:44:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418873;
-        bh=9vHTsqmnu+cuuI3EJ+XhZIbw+Rq+l0wS6KturhsKzNY=;
+        s=default; t=1574419477;
+        bh=ChGD2ngo7hWVlif2s8Gwz2uOlVS8L+USK1NJnQkRaCE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v6FeY7dogICO8sq/TPd2IPQlo3yqo4YwffLzp8nuAXwzhJ31dcoKuk8CqK3qZmzCr
-         EmehKEm2EUSKLSWWnoCFcMPq6Gf0akcT8hZweDxyg+Ifg3AlFQd9i0WwJPRYD8mwEB
-         uYLrmc1udkKCRTXzy0R9HBCV+0fDQrLA5FC+KT3E=
+        b=a620sZWclMcbVM8kj9jzNtSH4INIg2tbSItX3T0oEaeEM+aryB3Bg4HcZ5TB7Adsr
+         nDybSbAj79BNKqCIpK8O2TMcnL0ORSViHGkqiQ27K3ARnFpCml7dXWOkkcHjvZL0ew
+         QfCjzJFxDHBgA/2bx0XNf6NOn7EyEQkuM7txDpKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 074/159] cpufeature: avoid warning when compiling with clang
-Date:   Fri, 22 Nov 2019 11:27:45 +0100
-Message-Id: <20191122100758.167918460@linuxfoundation.org>
+Subject: [PATCH 4.9 126/222] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Date:   Fri, 22 Nov 2019 11:27:46 +0100
+Message-Id: <20191122100912.128028960@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit c785896b21dd8e156326ff660050b0074d3431df ]
+[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
 
-The table id (second) argument to MODULE_DEVICE_TABLE is often
-referenced otherwise. This is not the case for CPU features. This
-leads to warnings when building the kernel with Clang:
-  arch/arm/crypto/aes-ce-glue.c:450:1: warning: variable
-    'cpu_feature_match_AES' is not needed and will not be emitted
-    [-Wunneeded-internal-declaration]
-  module_cpu_feature_match(AES, aes_init);
-  ^
+Fix MMC1 cmd pin pull-up causing issues on carrier boards without
+external pull-up.
 
-Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
-("modules: mark __inittest/__exittest as __maybe_unused").
-
-Fixes: 67bad2fdb754 ("cpu: add generic support for CPU feature based module autoloading")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/cpufeature.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/cpufeature.h b/include/linux/cpufeature.h
-index 986c06c88d814..84d3c81b59781 100644
---- a/include/linux/cpufeature.h
-+++ b/include/linux/cpufeature.h
-@@ -45,7 +45,7 @@
-  * 'asm/cpufeature.h' of your favorite architecture.
-  */
- #define module_cpu_feature_match(x, __initfunc)			\
--static struct cpu_feature const cpu_feature_match_ ## x[] =	\
-+static struct cpu_feature const __maybe_unused cpu_feature_match_ ## x[] = \
- 	{ { .feature = cpu_feature(x) }, { } };			\
- MODULE_DEVICE_TABLE(cpu, cpu_feature_match_ ## x);		\
- 								\
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 192b95177aac3..826bdd0b8a257 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -147,14 +147,14 @@
+ 
+ 			/* Apalis MMC1 */
+ 			sdmmc3_clk_pa6 {
+-				nvidia,pins = "sdmmc3_clk_pa6",
+-					      "sdmmc3_cmd_pa7";
++				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_dat0_pb7 {
+-				nvidia,pins = "sdmmc3_dat0_pb7",
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
+ 					      "sdmmc3_dat1_pb6",
+ 					      "sdmmc3_dat2_pb5",
+ 					      "sdmmc3_dat3_pb4",
 -- 
 2.20.1
 
