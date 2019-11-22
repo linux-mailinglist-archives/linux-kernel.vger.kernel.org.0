@@ -2,116 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9191064DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E011064B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfKVFwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:32 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39889 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfKVFw1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:52:27 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o9so2651834plk.6;
-        Thu, 21 Nov 2019 21:52:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ckLwa/VOAk8CvjaGKDK4OpF4xZPUB1jalCdAAe4Ph14=;
-        b=XOCQ8dKn0cFcZmYo9Y3f8p/f32J34C5arVvVNW7bAuVSIdRxkQ3NhYTA19JBKxfy85
-         6SvTKCyrlVzzm5SPQ45PZULT/RF7QXuhEgm8AjHlv0Z/WPyKfNPpqT0gbst4OdTsa/NZ
-         SgxgSbVnXQExo+FipLVfxiq6dVO+twjqoNHlhz7JJUYfBBGihpUYoE6jQ0jrLh5ITYTe
-         4bREYgEMESCdCWOlu1iS6LYi72iqzzSF5VOqCMCxsMLWkJeD9aFgF9ez1oVJ/R4907Sc
-         bXHalbX3kqjMLCP3OzPLeuo220JYYvyTvkW+fAkqcqeX76dRcPGxdETzqVcoYwC9wz65
-         g7cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ckLwa/VOAk8CvjaGKDK4OpF4xZPUB1jalCdAAe4Ph14=;
-        b=c6fZF67K0szbVY4xyyKNaKqtMBC1J3gBba4yMTBDBFXzcXhppdeAPlLtMtEOzOptxN
-         Jk73V9SBcp5nqiIgTNY4k5i7Xcb3yNplYsURx4qYjpQOSfY57INMGmjEzWzymM8sJyq7
-         R/Dofst0QIK3EyyappC7VourqcdHNCzSXc+T6+jicx6V88ID0fPKl0vqbCBwVvEXaVnm
-         Gx5gOrWinYCe2fMfyTsBucjnpgtCe+wue1rjZd5gQJszBXlFPieYAH9FWj7LY8LPY62Z
-         /HkjruJtgwIQirqTg/Pi8riVIjoXaH4bi+WNH/qS1zo9CJZdsG/F8SJsgL9UhnvDU9FE
-         suHA==
-X-Gm-Message-State: APjAAAWwOYFwbsN7bSl3+kFcmZEJm13YG1BiYeiG3xIriEwW6mg6z2/l
-        4ueCXiyiGGH6Qv8FjhUzjkmza94W
-X-Google-Smtp-Source: APXvYqywnXZbUloOg9v2/MEC9tVggw4Z6GO5iNfkOqFY20G+9JvjSna7ZWiyzs6FbZAHlBnTxD7Spw==
-X-Received: by 2002:a17:902:6bc3:: with SMTP id m3mr12367822plt.329.1574401945999;
-        Thu, 21 Nov 2019 21:52:25 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id i2sm5073190pgt.34.2019.11.21.21.52.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 21:52:25 -0800 (PST)
-Subject: Re: [PATCH] hwmon: Fix Kconfig indentation
-To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-References: <20191120134153.15418-1-krzk@kernel.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e93c7c7e-dac7-8c8d-c68a-edaa9106d6ac@roeck-us.net>
-Date:   Thu, 21 Nov 2019 21:52:24 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728927AbfKVFzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:55:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727506AbfKVFzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:55:47 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9252B20717;
+        Fri, 22 Nov 2019 05:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574402146;
+        bh=r3ucmFbcWpJNyhV1/cUTXuEJMILhTtPI5BcKyByQya8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lpokl0pX6fbLvM7NVnp+MdBmbiDUl6xq7i0CrsCOL3+7AaVtMA9TynU8912OATANc
+         6R7HcD9VVY5IR17P1rEf9uSOTGYlZXmwgmuz6t9I6zdZsRl4EQPMzIht1VQ6eU8zPh
+         /m6gw/2osCFMQk1zAwScPJdCAWMECZPk82KqwNK0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 001/127] scsi: lpfc: Fix kernel Oops due to null pring pointers
+Date:   Fri, 22 Nov 2019 00:53:40 -0500
+Message-Id: <20191122055544.3299-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191120134153.15418-1-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/19 5:41 AM, Krzysztof Kozlowski wrote:
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+From: James Smart <jsmart2021@gmail.com>
 
-Quite frankly I'd rather not have to deal with such cosmetic changes.
+[ Upstream commit 5a9eeff57f340238c39c95d8e7e54c96fc722de7 ]
 
-Guenter
+Driver is hitting null pring pointers in lpfc_do_work().
 
-> ---
->   drivers/hwmon/Kconfig | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 2b73d5fc7966..1dc4f1226496 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -495,10 +495,10 @@ config SENSORS_F75375S
->   	  will be called f75375s.
->   
->   config SENSORS_MC13783_ADC
-> -        tristate "Freescale MC13783/MC13892 ADC"
-> -        depends on MFD_MC13XXX
-> -        help
-> -          Support for the A/D converter on MC13783 and MC13892 PMIC.
-> +	tristate "Freescale MC13783/MC13892 ADC"
-> +	depends on MFD_MC13XXX
-> +	help
-> +	  Support for the A/D converter on MC13783 and MC13892 PMIC.
->   
->   config SENSORS_FSCHMD
->   	tristate "Fujitsu Siemens Computers sensor chips"
-> @@ -1314,10 +1314,10 @@ config SENSORS_NPCM7XX
->   	imply THERMAL
->   	help
->   	  This driver provides support for Nuvoton NPCM750/730/715/705 PWM
-> -          and Fan controllers.
-> +	  and Fan controllers.
->   
-> -          This driver can also be built as a module. If so, the module
-> -          will be called npcm750-pwm-fan.
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called npcm750-pwm-fan.
->   
->   config SENSORS_NSA320
->   	tristate "ZyXEL NSA320 and compatible fan speed and temperature sensors"
-> 
+Pointer assignment occurs based on SLI-revision. If recovering after an
+error, its possible the sli revision for the port was cleared, making the
+lpfc_phba_elsring() not return a ring pointer, thus the null pointer.
+
+Add SLI revision checking to lpfc_phba_elsring() and status checking to all
+callers.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/lpfc/lpfc.h      | 6 ++++++
+ drivers/scsi/lpfc/lpfc_els.c  | 2 ++
+ drivers/scsi/lpfc/lpfc_init.c | 7 ++++++-
+ drivers/scsi/lpfc/lpfc_sli.c  | 2 ++
+ 4 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc.h b/drivers/scsi/lpfc/lpfc.h
+index bc61cc8bc6f02..03e95a3216c8c 100644
+--- a/drivers/scsi/lpfc/lpfc.h
++++ b/drivers/scsi/lpfc/lpfc.h
+@@ -1239,6 +1239,12 @@ lpfc_sli_read_hs(struct lpfc_hba *phba)
+ static inline struct lpfc_sli_ring *
+ lpfc_phba_elsring(struct lpfc_hba *phba)
+ {
++	/* Return NULL if sli_rev has become invalid due to bad fw */
++	if (phba->sli_rev != LPFC_SLI_REV4  &&
++	    phba->sli_rev != LPFC_SLI_REV3  &&
++	    phba->sli_rev != LPFC_SLI_REV2)
++		return NULL;
++
+ 	if (phba->sli_rev == LPFC_SLI_REV4) {
+ 		if (phba->sli4_hba.els_wq)
+ 			return phba->sli4_hba.els_wq->pring;
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index ddd29752d96dc..0032465d1b630 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -1335,6 +1335,8 @@ lpfc_els_abort_flogi(struct lpfc_hba *phba)
+ 			Fabric_DID);
+ 
+ 	pring = lpfc_phba_elsring(phba);
++	if (unlikely(!pring))
++		return -EIO;
+ 
+ 	/*
+ 	 * Check the txcmplq for an iocb that matches the nport the driver is
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 25612ccf6ff28..1da125afebddb 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -1773,7 +1773,12 @@ lpfc_sli4_port_sta_fn_reset(struct lpfc_hba *phba, int mbx_action,
+ 	lpfc_offline(phba);
+ 	/* release interrupt for possible resource change */
+ 	lpfc_sli4_disable_intr(phba);
+-	lpfc_sli_brdrestart(phba);
++	rc = lpfc_sli_brdrestart(phba);
++	if (rc) {
++		lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
++				"6309 Failed to restart board\n");
++		return rc;
++	}
+ 	/* request and enable interrupt */
+ 	intr_mode = lpfc_sli4_enable_intr(phba, phba->intr_mode);
+ 	if (intr_mode == LPFC_INTR_ERROR) {
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 6c2b098b76095..0128ea32b208f 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -4421,6 +4421,8 @@ lpfc_sli_brdrestart_s4(struct lpfc_hba *phba)
+ 	hba_aer_enabled = phba->hba_flag & HBA_AER_ENABLED;
+ 
+ 	rc = lpfc_sli4_brdreset(phba);
++	if (rc)
++		return rc;
+ 
+ 	spin_lock_irq(&phba->hbalock);
+ 	phba->pport->stopped = 0;
+-- 
+2.20.1
 
