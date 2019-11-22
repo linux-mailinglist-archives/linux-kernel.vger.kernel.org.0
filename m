@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3095A106A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C6F106B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbfKVKbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50956 "EHLO mail.kernel.org"
+        id S1729033AbfKVKln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:41:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbfKVKbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:08 -0500
+        id S1727107AbfKVKll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:41:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B106020708;
-        Fri, 22 Nov 2019 10:31:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC9C52071F;
+        Fri, 22 Nov 2019 10:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418668;
-        bh=WiBksml3Di1WYFYiOQH1mulf+M8x8gaNtPvMG683ctI=;
+        s=default; t=1574419300;
+        bh=pK3JiVdDG4pG661QQcM6zzwb4qeK05/7/x0H6NkhWIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=StY2qZclZgjg8KoYf/QV2jZDqxS6YGOtJa8Mlo4Vzzyd+EFQemZt+0WQcaZJXUEpY
-         evDfxinV/T6Xm3zH9cMs0+68LcShqBDlSb2619yROYJZ90YeNut+wtrGJsI/qvIY0l
-         5Eb3Kv4WEiO6BmikZHLg1C54IViXfzD4FowMkdIw=
+        b=ZDUcfbw13LFTrti5GW8nq6IRPQNrQOE2Gt3xCf9CvNBSeOSWF7bshiBsSZOIdGdFN
+         3O4vmKZmYCrJGs9krbPCjcAYb7L3Q5iaMZ/VH17Xl8xl9niQKy1Vcgbr9ASRV615iP
+         0dlgXNTPGRTCbVEjw9GlGYjfZ30/WfZOu1RD2GOQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 012/159] iio: dac: mcp4922: fix error handling in mcp4922_write_raw
+Subject: [PATCH 4.9 063/222] media: dvb: fix compat ioctl translation
 Date:   Fri, 22 Nov 2019 11:26:43 +0100
-Message-Id: <20191122100718.354014416@linuxfoundation.org>
+Message-Id: <20191122100900.539626447@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +44,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 0833627fc3f757a0dca11e2a9c46c96335a900ee ]
+[ Upstream commit 1ccbeeb888ac33627d91f1ccf0b84ef3bcadef24 ]
 
-Do not try to write negative values and make sure that the write goes well.
+The VIDEO_GET_EVENT and VIDEO_STILLPICTURE was added back in 2005 but
+it never worked because the command number is wrong.
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Using the right command number means we have a better chance of them
+actually doing the right thing, though clearly nobody has ever tried
+it successfully.
+
+I noticed these while auditing the remaining users of compat_time_t
+for y2038 bugs. This one is fine in that regard, it just never did
+anything.
+
+Fixes: 6e87abd0b8cb ("[DVB]: Add compat ioctl handling.")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/dac/mcp4922.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/compat_ioctl.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/dac/mcp4922.c b/drivers/iio/dac/mcp4922.c
-index 3854d201a5d6c..68dd0be1ac076 100644
---- a/drivers/iio/dac/mcp4922.c
-+++ b/drivers/iio/dac/mcp4922.c
-@@ -94,17 +94,22 @@ static int mcp4922_write_raw(struct iio_dev *indio_dev,
- 		long mask)
- {
- 	struct mcp4922_state *state = iio_priv(indio_dev);
-+	int ret;
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 4b7da4409c60c..5b832e83772a6 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -160,6 +160,7 @@ struct compat_video_event {
+ 		unsigned int frame_rate;
+ 	} u;
+ };
++#define VIDEO_GET_EVENT32 _IOR('o', 28, struct compat_video_event)
  
- 	if (val2 != 0)
- 		return -EINVAL;
+ static int do_video_get_event(struct file *file,
+ 		unsigned int cmd, struct compat_video_event __user *up)
+@@ -171,7 +172,7 @@ static int do_video_get_event(struct file *file,
+ 	if (kevent == NULL)
+ 		return -EFAULT;
  
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
--		if (val > GENMASK(chan->scan_type.realbits-1, 0))
-+		if (val < 0 || val > GENMASK(chan->scan_type.realbits - 1, 0))
- 			return -EINVAL;
- 		val <<= chan->scan_type.shift;
--		state->value[chan->channel] = val;
--		return mcp4922_spi_write(state, chan->channel, val);
-+
-+		ret = mcp4922_spi_write(state, chan->channel, val);
-+		if (!ret)
-+			state->value[chan->channel] = val;
-+		return ret;
-+
- 	default:
- 		return -EINVAL;
- 	}
+-	err = do_ioctl(file, cmd, (unsigned long)kevent);
++	err = do_ioctl(file, VIDEO_GET_EVENT, (unsigned long)kevent);
+ 	if (!err) {
+ 		err  = convert_in_user(&kevent->type, &up->type);
+ 		err |= convert_in_user(&kevent->timestamp, &up->timestamp);
+@@ -190,6 +191,7 @@ struct compat_video_still_picture {
+         compat_uptr_t iFrame;
+         int32_t size;
+ };
++#define VIDEO_STILLPICTURE32 _IOW('o', 30, struct compat_video_still_picture)
+ 
+ static int do_video_stillpicture(struct file *file,
+ 		unsigned int cmd, struct compat_video_still_picture __user *up)
+@@ -212,7 +214,7 @@ static int do_video_stillpicture(struct file *file,
+ 	if (err)
+ 		return -EFAULT;
+ 
+-	err = do_ioctl(file, cmd, (unsigned long) up_native);
++	err = do_ioctl(file, VIDEO_STILLPICTURE, (unsigned long) up_native);
+ 
+ 	return err;
+ }
+@@ -1484,9 +1486,9 @@ static long do_ioctl_trans(unsigned int cmd,
+ 		return rtc_ioctl(file, cmd, argp);
+ 
+ 	/* dvb */
+-	case VIDEO_GET_EVENT:
++	case VIDEO_GET_EVENT32:
+ 		return do_video_get_event(file, cmd, argp);
+-	case VIDEO_STILLPICTURE:
++	case VIDEO_STILLPICTURE32:
+ 		return do_video_stillpicture(file, cmd, argp);
+ 	case VIDEO_SET_SPU_PALETTE:
+ 		return do_video_set_spu_palette(file, cmd, argp);
 -- 
 2.20.1
 
