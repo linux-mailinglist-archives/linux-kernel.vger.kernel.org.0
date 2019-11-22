@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9C38106B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D83F7106D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbfKVKlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:41:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46412 "EHLO mail.kernel.org"
+        id S1730666AbfKVK53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:57:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728120AbfKVKln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:41:43 -0500
+        id S1730651AbfKVK5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A87BC20715;
-        Fri, 22 Nov 2019 10:41:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AF1C20718;
+        Fri, 22 Nov 2019 10:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419303;
-        bh=IKe3NgO/UtZdXa4rzM4MFaxevILnmTQeYY26tJYkwg0=;
+        s=default; t=1574420237;
+        bh=cSP2I36sgXizIVf9FnNRZCxT9E+EkRMfG2cJCSFnRmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XqwMuoWD3NqZDr5DOTLTZ/PAmDnwmb4rTvDLlF6QUZBc+V4+S/O4Vg30How+XjswZ
-         fNq+wqNKOecWB+cfjFyeuxF8SYphlxK7l+diIF6kO4DjipZLCy/P56eJf/R7x7RDw5
-         7SGXRZlHKuGmsHN3OkpM3IXHnIkVALeKUmbcfKuI=
+        b=TZ/Bf/vo61m8qJQN1CUXKOwrO/+a7hKWiV6uPFKVOGRKT9J5Fbe+BejDZFMEg/4gp
+         40XQgereD7EYilmcH3WlVZ5mq+RkhstDsQar62eUvkSg/RNhxT8hdpsN/e09szO8nB
+         gkwXVuubPnVgnN90wehMseIvivIYOn72/suQrPUY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 064/222] ALSA: intel8x0m: Register irq handler after register initializations
+Subject: [PATCH 4.19 039/220] rtlwifi: btcoex: Use proper enumerated types for Wi-Fi only interface
 Date:   Fri, 22 Nov 2019 11:26:44 +0100
-Message-Id: <20191122100901.595258220@linuxfoundation.org>
+Message-Id: <20191122100915.126568457@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,64 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 7064f376d4a10686f51c879401a569bb4babf9c6 ]
+[ Upstream commit 31138a827d1b3d6e4855bddb5a1e44e7b32309c0 ]
 
-The interrupt handler has to be acquired after the other resource
-initialization when allocated with IRQF_SHARED.  Otherwise it's
-triggered before the resource gets ready, and may lead to unpleasant
-behavior.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1327:34:
+warning: implicit conversion from enumeration type 'enum
+btc_chip_interface' to different enumeration type 'enum
+wifionly_chip_interface' [-Wenum-conversion]
+                wifionly_cfg->chip_interface = BTC_INTF_PCI;
+                                             ~ ^~~~~~~~~~~~
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1330:34:
+warning: implicit conversion from enumeration type 'enum
+btc_chip_interface' to different enumeration type 'enum
+wifionly_chip_interface' [-Wenum-conversion]
+                wifionly_cfg->chip_interface = BTC_INTF_USB;
+                                             ~ ^~~~~~~~~~~~
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1333:34:
+warning: implicit conversion from enumeration type 'enum
+btc_chip_interface' to different enumeration type 'enum
+wifionly_chip_interface' [-Wenum-conversion]
+                wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
+                                             ~ ^~~~~~~~~~~~~~~~
+3 warnings generated.
+
+Use the values from the correct enumerated type, wifionly_chip_interface.
+
+BTC_INTF_UNKNOWN = WIFIONLY_INTF_UNKNOWN = 0
+BTC_INTF_PCI = WIFIONLY_INTF_PCI = 1
+BTC_INTF_USB = WIFIONLY_INTF_USB = 2
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/135
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/intel8x0m.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ .../net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c   | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/pci/intel8x0m.c b/sound/pci/intel8x0m.c
-index 1bc98c867133d..2286dfd72ff7e 100644
---- a/sound/pci/intel8x0m.c
-+++ b/sound/pci/intel8x0m.c
-@@ -1171,16 +1171,6 @@ static int snd_intel8x0m_create(struct snd_card *card,
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+index b026e80940a4d..6fbf8845a2ab6 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -1324,13 +1324,13 @@ bool exhalbtc_initlize_variables_wifi_only(struct rtl_priv *rtlpriv)
+ 
+ 	switch (rtlpriv->rtlhal.interface) {
+ 	case INTF_PCI:
+-		wifionly_cfg->chip_interface = BTC_INTF_PCI;
++		wifionly_cfg->chip_interface = WIFIONLY_INTF_PCI;
+ 		break;
+ 	case INTF_USB:
+-		wifionly_cfg->chip_interface = BTC_INTF_USB;
++		wifionly_cfg->chip_interface = WIFIONLY_INTF_USB;
+ 		break;
+ 	default:
+-		wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
++		wifionly_cfg->chip_interface = WIFIONLY_INTF_UNKNOWN;
+ 		break;
  	}
  
-  port_inited:
--	if (request_irq(pci->irq, snd_intel8x0m_interrupt, IRQF_SHARED,
--			KBUILD_MODNAME, chip)) {
--		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
--		snd_intel8x0m_free(chip);
--		return -EBUSY;
--	}
--	chip->irq = pci->irq;
--	pci_set_master(pci);
--	synchronize_irq(chip->irq);
--
- 	/* initialize offsets */
- 	chip->bdbars_count = 2;
- 	tbl = intel_regs;
-@@ -1224,11 +1214,21 @@ static int snd_intel8x0m_create(struct snd_card *card,
- 	chip->int_sta_reg = ICH_REG_GLOB_STA;
- 	chip->int_sta_mask = int_sta_masks;
- 
-+	pci_set_master(pci);
-+
- 	if ((err = snd_intel8x0m_chip_init(chip, 1)) < 0) {
- 		snd_intel8x0m_free(chip);
- 		return err;
- 	}
- 
-+	if (request_irq(pci->irq, snd_intel8x0m_interrupt, IRQF_SHARED,
-+			KBUILD_MODNAME, chip)) {
-+		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
-+		snd_intel8x0m_free(chip);
-+		return -EBUSY;
-+	}
-+	chip->irq = pci->irq;
-+
- 	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
- 		snd_intel8x0m_free(chip);
- 		return err;
 -- 
 2.20.1
 
