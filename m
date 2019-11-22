@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E038106AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:36:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50D03106B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfKVKgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:36:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36506 "EHLO mail.kernel.org"
+        id S1729380AbfKVKou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbfKVKgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:36:35 -0500
+        id S1727630AbfKVKoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47E7F20715;
-        Fri, 22 Nov 2019 10:36:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8312720717;
+        Fri, 22 Nov 2019 10:44:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418994;
-        bh=sYb0kI6xjNmTi/Z3GcNdyHBUYvIrv95pkcRwyTj4ySM=;
+        s=default; t=1574419486;
+        bh=0TzDo2o1u8nxxb/Sq/KXyMi+SDVIeTDpEFCStzh3eEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KMp2z+lYnQMTCA/n27ODPttxgR8fk3dWf2XLyBfCr+uWnZWIMEi2WaDgJVJoSv3iq
-         42tfX0yAkT+VZk2oMptbB77mcsYIAJ9YlPTEMbiJCTC2QDx1DZss5fAAXpTweDhPsL
-         xVBGz4AMkvT71UE+/eCS1SyM1xdTIocts8cNB7F8=
+        b=1qZgQC28leLQVYHbvJpm3Vx0nd+p8LrYHdNnaDtFipUAh/iA0aVhbxFMomJMjulxB
+         urcTYILi4oU0NYnqeMkjSa5iCGMNL80hbJAM0GhahIsJTTQDzRT/RmXgW/hiuyU42f
+         7dpdKganmAaATSy9hxbAlbjqvQB/vGKWckKmbxgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rachel Mozes <rachel.mozes@intel.com>,
-        Dengcheng Zhu <dzhu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
-        ralf@linux-mips.org, linux-mips@linux-mips.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 078/159] MIPS: kexec: Relax memory restriction
+        stable@vger.kernel.org, Justin Ernst <justin.ernst@hpe.com>,
+        Borislav Petkov <bp@suse.de>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 129/222] EDAC: Raise the maximum number of memory controllers
 Date:   Fri, 22 Nov 2019 11:27:49 +0100
-Message-Id: <20191122100800.597897797@linuxfoundation.org>
+Message-Id: <20191122100912.297510008@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dengcheng Zhu <dzhu@wavecomp.com>
+From: Justin Ernst <justin.ernst@hpe.com>
 
-[ Upstream commit a6da4d6fdf8bd512c98d3ac7f1d16bc4bb282919 ]
+[ Upstream commit 6b58859419554fb824e09cfdd73151a195473cbc ]
 
-We can rely on the system kernel and the dump capture kernel themselves in
-memory usage.
+We observe an oops in the skx_edac module during boot:
 
-Being restrictive with 512MB limit may cause kexec tool failure on some
-platforms.
+  EDAC MC0: Giving out device to module skx_edac controller Skylake Socket#0 IMC#0
+  EDAC MC1: Giving out device to module skx_edac controller Skylake Socket#0 IMC#1
+  EDAC MC2: Giving out device to module skx_edac controller Skylake Socket#1 IMC#0
+  ...
+  EDAC MC13: Giving out device to module skx_edac controller Skylake Socket#0 IMC#1
+  EDAC MC14: Giving out device to module skx_edac controller Skylake Socket#1 IMC#0
+  EDAC MC15: Giving out device to module skx_edac controller Skylake Socket#1 IMC#1
+  Too many memory controllers: 16
+  EDAC MC: Removed device 0 for skx_edac Skylake Socket#0 IMC#0
 
-Tested-by: Rachel Mozes <rachel.mozes@intel.com>
-Reported-by: Rachel Mozes <rachel.mozes@intel.com>
-Signed-off-by: Dengcheng Zhu <dzhu@wavecomp.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20568/
-Cc: pburton@wavecomp.com
-Cc: ralf@linux-mips.org
-Cc: linux-mips@linux-mips.org
+We observe there are two memory controllers per socket, with a limit
+of 16. Raise the maximum number of memory controllers from 16 to 2 *
+MAX_NUMNODES (1024).
+
+[ bp: This is just a band-aid fix until we've sorted out the whole issue
+  with the bus_type association and handling in EDAC and can get rid of
+  this arbitrary limit. ]
+
+Signed-off-by: Justin Ernst <justin.ernst@hpe.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Russ Anderson <russ.anderson@hpe.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180925143449.284634-1-justin.ernst@hpe.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/kexec.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/edac.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/include/asm/kexec.h b/arch/mips/include/asm/kexec.h
-index ee25ebbf2a288..b6a4d4aa548f5 100644
---- a/arch/mips/include/asm/kexec.h
-+++ b/arch/mips/include/asm/kexec.h
-@@ -12,11 +12,11 @@
- #include <asm/stacktrace.h>
+diff --git a/include/linux/edac.h b/include/linux/edac.h
+index 9e0d78966552c..c6233227720c7 100644
+--- a/include/linux/edac.h
++++ b/include/linux/edac.h
+@@ -17,6 +17,7 @@
+ #include <linux/completion.h>
+ #include <linux/workqueue.h>
+ #include <linux/debugfs.h>
++#include <linux/numa.h>
  
- /* Maximum physical address we can use pages from */
--#define KEXEC_SOURCE_MEMORY_LIMIT (0x20000000)
-+#define KEXEC_SOURCE_MEMORY_LIMIT (-1UL)
- /* Maximum address we can reach in physical address mode */
--#define KEXEC_DESTINATION_MEMORY_LIMIT (0x20000000)
-+#define KEXEC_DESTINATION_MEMORY_LIMIT (-1UL)
-  /* Maximum address we can use for the control code buffer */
--#define KEXEC_CONTROL_MEMORY_LIMIT (0x20000000)
-+#define KEXEC_CONTROL_MEMORY_LIMIT (-1UL)
- /* Reserve 3*4096 bytes for board-specific info */
- #define KEXEC_CONTROL_PAGE_SIZE (4096 + 3*4096)
+ struct device;
  
+@@ -778,6 +779,6 @@ struct mem_ctl_info {
+ /*
+  * Maximum number of memory controllers in the coherent fabric.
+  */
+-#define EDAC_MAX_MCS	16
++#define EDAC_MAX_MCS	2 * MAX_NUMNODES
+ 
+ #endif
 -- 
 2.20.1
 
