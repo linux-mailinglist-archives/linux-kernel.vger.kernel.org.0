@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F305A106AB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:37:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F42106BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfKVKha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:37:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39032 "EHLO mail.kernel.org"
+        id S1729704AbfKVKqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:46:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727961AbfKVKh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:37:28 -0500
+        id S1729695AbfKVKqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:46:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B6202072D;
-        Fri, 22 Nov 2019 10:37:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A241C20637;
+        Fri, 22 Nov 2019 10:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419047;
-        bh=63k5nOaH9wWUNGkyw0bu+WSVUTGRbskLnuFvOyvlJww=;
+        s=default; t=1574419612;
+        bh=3q8u0klQBwS/SXsgHA9M3plNrZgWLC6kftn5zeoaxME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZsTl7dpfvi1Yq6ZOZRlDZ6V8Mp+VU1Qncw3dHAQUsJrAd9iTXpOEa8YGhenWi7uLi
-         YW/bTJuX14vFtEx4icqyHe5D45i6PJf+ypz7YDus2q0pltzVZ/oQUPieM14NvdVjcL
-         qFo1tcjKU7J7hckdtPDjk8rxc+34KLFXZSXWEtqQ=
+        b=nGwhZFb7cp9/yw025RqbX/5yRoXp2KsssWtUwPGOIpob1kXiGaQJJfC1IUA+VDBGO
+         m/BbL0aOXpEzDtgQwp0YQgrHZeZdYuNh9EriRw3Mp1/ZEW2AXyy/xSTtI/kMU7b3re
+         ihTIiFUQv1vc6sZqKZRJFFPg6JqTf2kLN+Ahx8V4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 122/159] cxgb4: Use proper enum in cxgb4_dcb_handle_fw_update
+Subject: [PATCH 4.9 173/222] powerpc/pseries: Fix how we iterate over the DTL entries
 Date:   Fri, 22 Nov 2019 11:28:33 +0100
-Message-Id: <20191122100831.368980755@linuxfoundation.org>
+Message-Id: <20191122100914.969780014@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-[ Upstream commit 3b0b8f0d9a259f6a428af63e7a77547325f8e081 ]
+[ Upstream commit 9258227e9dd1da8feddb07ad9702845546a581c9 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+When CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is not set, we look up dtl_idx in
+the lppaca to determine the number of entries in the buffer. Since
+lppaca is in big endian, we need to do an endian conversion before using
+this in our calculation to determine the number of entries in the
+buffer. Without this, we do not iterate over the existing entries in the
+DTL buffer properly.
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:303:7: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                         ? CXGB4_DCB_STATE_FW_ALLSYNCED
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:304:7: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                         : CXGB4_DCB_STATE_FW_INCOMPLETE);
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-2 warnings generated.
-
-Use the equivalent value of the expected type to silence Clang while
-resulting in no functional change.
-
-CXGB4_DCB_STATE_FW_INCOMPLETE = CXGB4_DCB_INPUT_FW_INCOMPLETE = 2
-CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 7c105b63bd98 ("powerpc: Add CONFIG_CPU_LITTLE_ENDIAN kernel config option.")
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/dtl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-index 052c660aca80a..658609c1bdabe 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-@@ -266,8 +266,8 @@ void cxgb4_dcb_handle_fw_update(struct adapter *adap,
- 		enum cxgb4_dcb_state_input input =
- 			((pcmd->u.dcb.control.all_syncd_pkd &
- 			  FW_PORT_CMD_ALL_SYNCD_F)
--			 ? CXGB4_DCB_STATE_FW_ALLSYNCED
--			 : CXGB4_DCB_STATE_FW_INCOMPLETE);
-+			 ? CXGB4_DCB_INPUT_FW_ALLSYNCED
-+			 : CXGB4_DCB_INPUT_FW_INCOMPLETE);
+diff --git a/arch/powerpc/platforms/pseries/dtl.c b/arch/powerpc/platforms/pseries/dtl.c
+index 37de83c5ef172..7a4d172c93765 100644
+--- a/arch/powerpc/platforms/pseries/dtl.c
++++ b/arch/powerpc/platforms/pseries/dtl.c
+@@ -185,7 +185,7 @@ static void dtl_stop(struct dtl *dtl)
  
- 		if (dcb->dcb_version != FW_PORT_DCB_VER_UNKNOWN) {
- 			dcb_running_version = FW_PORT_CMD_DCB_VERSION_G(
+ static u64 dtl_current_index(struct dtl *dtl)
+ {
+-	return lppaca_of(dtl->cpu).dtl_idx;
++	return be64_to_cpu(lppaca_of(dtl->cpu).dtl_idx);
+ }
+ #endif /* CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
+ 
 -- 
 2.20.1
 
