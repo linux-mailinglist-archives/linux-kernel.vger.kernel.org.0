@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C9B4106B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFDEA106B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfKVKlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:41:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45302 "EHLO mail.kernel.org"
+        id S1729028AbfKVKld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728551AbfKVKlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:41:00 -0500
+        id S1728282AbfKVKlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:41:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 045F22071F;
-        Fri, 22 Nov 2019 10:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D452920718;
+        Fri, 22 Nov 2019 10:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419259;
-        bh=cz9yANBsZW2qAh4Evu4ZWcIfTP6aODRHbacB8e9E0Ik=;
+        s=default; t=1574419291;
+        bh=UcVJUPglSscPWgOYcHOUcXLNRDwLqyUnDRJRi2uan6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A55ASMvHa35gPowENgN3BMwY+QAuebAv//FPP6bvjQJfTGLFd/rfGPiINdHTNMRSd
-         jpGwoVZC1FoOpe46lohdbE1y5C32SesmIHex2WxUmSDErt81c5J0vG4bxLoiBDEpTj
-         eXnrej2jpyPeNc0b5H8pjxaDS9DRTsXnZK4r4vh0=
+        b=1nG3EM9Z/OP+WBhnhWojqSxG+nu/qQK8zARAiZoUkODWe2aYpNR/0QJ8ylJ6m68uG
+         qMpYzrsnFo9zabHErC5Hsh7s/iNHos08jC4Rz+II4yRx4BTUX/kWtcducH5RV5QLlT
+         hF/JWQnLpMkhEDYQfmMNg9OK6ZfbQyRFERQ3rQZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 024/222] gfs2: Dont set GFS2_RDF_UPTODATE when the lvb is updated
-Date:   Fri, 22 Nov 2019 11:26:04 +0100
-Message-Id: <20191122100838.381317027@linuxfoundation.org>
+Subject: [PATCH 4.9 025/222] ASoC: dpcm: Properly initialise hw->rate_max
+Date:   Fri, 22 Nov 2019 11:26:05 +0100
+Message-Id: <20191122100838.904100409@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -43,60 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit 4f36cb36c9d14340bb200d2ad9117b03ce992cfe ]
+[ Upstream commit e33ffbd9cd39da09831ce62c11025d830bf78d9e ]
 
-The GFS2_RDF_UPTODATE flag in the rgrp is used to determine when
-a rgrp buffer is valid. It's cleared when the glock is invalidated,
-signifying that the buffer data is now invalid. But before this
-patch, function update_rgrp_lvb was setting the flag when it
-determined it had a valid lvb. But that's an invalid assumption:
-just because you have a valid lvb doesn't mean you have valid
-buffers. After all, another node may have made the lvb valid,
-and this node just fetched it from the glock via dlm.
+If the CPU DAI does not initialise rate_max, say if using
+using KNOT or CONTINUOUS, then the rate_max field will be
+initialised to 0. A value of zero in the rate_max field of
+the hardware runtime will cause the sound card to support no
+sample rates at all. Obviously this is not desired, just a
+different mechanism is being used to apply the constraints. As
+such update the setting of rate_max in dpcm_init_runtime_hw
+to be consistent with the non-DPCM cases and set rate_max to
+UINT_MAX if nothing is defined on the CPU DAI.
 
-Consider this scenario:
-1. The file system is mounted with RGRPLVB option.
-2. In gfs2_inplace_reserve it locks the rgrp glock EX, but thanks
-   to GL_SKIP, it skips the gfs2_rgrp_bh_get.
-3. Since loops == 0 and the allocation target (ap->target) is
-   bigger than the largest known chunk of blocks in the rgrp
-   (rs->rs_rbm.rgd->rd_extfail_pt) it skips that rgrp and bypasses
-   the call to gfs2_rgrp_bh_get there as well.
-4. update_rgrp_lvb sees the lvb MAGIC number is valid, so bypasses
-   gfs2_rgrp_bh_get, but it still sets sets GFS2_RDF_UPTODATE due
-   to this invalid assumption.
-5. The next time update_rgrp_lvb is called, it sees the bit is set
-   and just returns 0, assuming both the lvb and rgrp are both
-   uptodate. But since this is a smaller allocation, or space has
-   been freed by another node, thus adjusting the lvb values,
-   it decides to use the rgrp for allocations, with invalid rd_free
-   due to the fact it was never updated.
-
-This patch changes update_rgrp_lvb so it doesn't set the UPTODATE
-flag anymore. That way, it has no choice but to fetch the latest
-values.
-
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/gfs2/rgrp.c | 2 +-
+ sound/soc/soc-pcm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
-index 0731267072706..f77a38755aea6 100644
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1211,7 +1211,7 @@ static int update_rgrp_lvb(struct gfs2_rgrpd *rgd)
- 	rl_flags = be32_to_cpu(rgd->rd_rgl->rl_flags);
- 	rl_flags &= ~GFS2_RDF_MASK;
- 	rgd->rd_flags &= GFS2_RDF_MASK;
--	rgd->rd_flags |= (rl_flags | GFS2_RDF_UPTODATE | GFS2_RDF_CHECK);
-+	rgd->rd_flags |= (rl_flags | GFS2_RDF_CHECK);
- 	if (rgd->rd_rgl->rl_unlinked == 0)
- 		rgd->rd_flags &= ~GFS2_RDF_CHECK;
- 	rgd->rd_free = be32_to_cpu(rgd->rd_rgl->rl_free);
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 1d00f6e894ef4..d69559e458725 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1592,7 +1592,7 @@ static void dpcm_init_runtime_hw(struct snd_pcm_runtime *runtime,
+ 				 u64 formats)
+ {
+ 	runtime->hw.rate_min = stream->rate_min;
+-	runtime->hw.rate_max = stream->rate_max;
++	runtime->hw.rate_max = min_not_zero(stream->rate_max, UINT_MAX);
+ 	runtime->hw.channels_min = stream->channels_min;
+ 	runtime->hw.channels_max = stream->channels_max;
+ 	if (runtime->hw.formats)
 -- 
 2.20.1
 
