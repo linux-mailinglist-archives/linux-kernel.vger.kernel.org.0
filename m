@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 379B3106B73
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC71106A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbfKVKoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:44:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
+        id S1727466AbfKVKbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:31:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbfKVKoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:44:20 -0500
+        id S1727430AbfKVKbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:31:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 429EF20656;
-        Fri, 22 Nov 2019 10:44:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E59720714;
+        Fri, 22 Nov 2019 10:31:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419459;
-        bh=yghk864Qu3p4uLxrXvRwD8kPFl/idh9sgYH6Bz1/LXI=;
+        s=default; t=1574418708;
+        bh=HImH6DBQCdYDbrYV5nm8VU8wabB9MtuWvxvVxo2aZSQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RvzWVjvKO0ZYveBauCLDNuPGu/MrFGhFRl1lcAke1bzfp5K3MPNdCpEf1igWnHpb4
-         Q0ZGsd6FwJFshirtF59eegtwNCpNDqq/a6xrOo5XJfXxoFaml+JJrNdSn4n2mXIeRS
-         edGctmSo7OpfZtcSYWSPmWWDPapxqEvldrMissRM=
+        b=yuDmyK83uaWrVnoLjDYphLg6ZMUz63FNqC3rASYHFzTFZHT1MdIlxi8YL7Mj+/jlx
+         khBw6gTuwbC8oaIWGcnNso5hc3q1s/Cj2+fUz0qqbl+RVKWKvz78UT8BvGnGp0KWUl
+         XSfrrU2Tz7o8RrWB6IRO8R1AbYW8yyaMxaV7QjL4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>,
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 075/222] component: fix loop condition to call unbind() if bind() fails
+Subject: [PATCH 4.4 024/159] rtl8187: Fix warning generated when strncpy() destination length matches the sixe argument
 Date:   Fri, 22 Nov 2019 11:26:55 +0100
-Message-Id: <20191122100908.296435014@linuxfoundation.org>
+Message-Id: <20191122100722.924886289@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Banajit Goswami <bgoswami@codeaurora.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-[ Upstream commit bdae566d5d9733b6e32b378668b84eadf28a94d4 ]
+[ Upstream commit 199ba9faca909e77ac533449ecd1248123ce89e7 ]
 
-During component_bind_all(), if bind() fails for any
-particular component associated with a master, unbind()
-should be called for all previous components in that
-master's match array, whose bind() might have completed
-successfully. As per the current logic, if bind() fails
-for the component at position 'n' in the master's match
-array, it would start calling unbind() from component in
-'n'th position itself and work backwards, and will always
-skip calling unbind() for component in 0th position in the
-master's match array.
-Fix this by updating the loop condition, and the logic to
-refer to the components in master's match array, so that
-unbind() is called for all components starting from 'n-1'st
-position in the array, until (and including) component in
-0th position.
+In gcc8, when the 3rd argument (size) of a call to strncpy() matches the
+length of the first argument, the compiler warns of the possibility of an
+unterminated string. Using strlcpy() forces a null at the end.
 
-Signed-off-by: Banajit Goswami <bgoswami@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/component.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index 89b032f2ffd22..08da6160e94dd 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -461,9 +461,9 @@ int component_bind_all(struct device *master_dev, void *data)
- 		}
+diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c b/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
+index c2d5b495c179a..c089540116fa7 100644
+--- a/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
++++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
+@@ -146,7 +146,7 @@ static int rtl8187_register_led(struct ieee80211_hw *dev,
+ 	led->dev = dev;
+ 	led->ledpin = ledpin;
+ 	led->is_radio = is_radio;
+-	strncpy(led->name, name, sizeof(led->name));
++	strlcpy(led->name, name, sizeof(led->name));
  
- 	if (ret != 0) {
--		for (; i--; )
--			if (!master->match->compare[i].duplicate) {
--				c = master->match->compare[i].component;
-+		for (; i > 0; i--)
-+			if (!master->match->compare[i - 1].duplicate) {
-+				c = master->match->compare[i - 1].component;
- 				component_unbind(c, master, data);
- 			}
- 	}
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
 -- 
 2.20.1
 
