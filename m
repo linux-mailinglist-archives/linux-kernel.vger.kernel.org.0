@@ -2,122 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0948510729D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 14:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D65631072AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 14:01:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfKVNAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 08:00:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57242 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726813AbfKVNAw (ORCPT
+        id S1727891AbfKVNBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 08:01:51 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42858 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727835AbfKVNBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 08:00:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574427650;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/ETyTIpWW0X6VRUyIQmpufjqzQzz/3LOVGP1+Sl83YY=;
-        b=LP5DlBDESlBh69QRl9ZTDmtbMb4VgSZMwADch7N1l4LNKEAgOminVQN9A2ev4mZgCBFgeA
-        kcd+eT09IlVyYMAfkRXK6rkRo2IuSCx1hpu+igEy/90Aw8cUMh0exuwpup7RYAi3NwpUsU
-        GaV10UWY4vCHRElWxEYHe3h0OggK27Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-398-TZiyAIdROzSjwdbLH4TeZw-1; Fri, 22 Nov 2019 08:00:44 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 506291852E21;
-        Fri, 22 Nov 2019 13:00:43 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1DA5960141;
-        Fri, 22 Nov 2019 13:00:43 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 893BF220AFF; Fri, 22 Nov 2019 08:00:42 -0500 (EST)
-Date:   Fri, 22 Nov 2019 08:00:42 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dgilbert@redhat.com,
-        miklos@szeredi.hu
-Subject: Re: [PATCH 4/4] virtiofs: Support blocking posix locks
- (fcntl(F_SETLKW))
-Message-ID: <20191122130042.GB8636@redhat.com>
-References: <20191115205705.2046-1-vgoyal@redhat.com>
- <20191115205705.2046-5-vgoyal@redhat.com>
- <20191121170020.GE445244@stefanha-x1.localdomain>
+        Fri, 22 Nov 2019 08:01:49 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y19so5438787lfl.9
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 05:01:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dn2Q+lxc2hD365R8dpx/qDcvh0SW6iReRcimhdnvJVs=;
+        b=T3iDSlAsyuLG+UJUCmoncxR1Bu/bnkXL+KTq5dtWsOPEk5RpZ8edNc98Onwl6slav+
+         /6e8hX+pTkWaSIXGqEuy9X9rZyNwmY4TERtxiAfEDekog4Gkz38xdZQ0RSgGTrgjfXWm
+         Owq4J8pZTVADQ/t5uY4imCraJJ2dIrTT2uwE0EY2E3x+Uro8T1zF0BkVxkc8pF0FsqBl
+         y6GKP5K6axb8BQ38YAG8H8sPZiX4W7XuFOsvWqrZ1MviJOCm684lRjpNZpMzH8na0jOx
+         wqdeYsaHigtxhdjowwJZrUBM8VUa8C/SZB2DM3PbahSmncXpmbcvjBgy4Xy+mo3eR0h4
+         1WBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dn2Q+lxc2hD365R8dpx/qDcvh0SW6iReRcimhdnvJVs=;
+        b=NplRicZy7XPk1g9wirn7ihefD5yiUuMQFcVUGiiahXnfVnCATW8rRLU4vLh6Pt8r9H
+         kisXJ1nkGbqFP1/0AJinLg9DrLxL9dms/fGGUKdXyWKy79OTXSJHolEi8RHrdYJQnClO
+         6UhqTCcT4/Bsui7h6xt72EffIy6F/tBr2Y3w11xJE3MnNb22TFVVPlaeayMewgW6hTag
+         yPjMfFy+DQaD4SnG0WD3b4BjTRcVpX4iVN5aiumM5r2MRskzKo47QuRTIue75iet5JTS
+         lqImpZ3LxnLXQoLV7zhsKANP9L134Ckr1qjWgsMMO7NdceDssliBKBBNyD63Pcci6Nah
+         V5XQ==
+X-Gm-Message-State: APjAAAVRPUL/crrcKNQ5UikvrANYwqAUZRuJwTkGAMTuz7EU8Ridopsg
+        oOtqohgMcKYXLv64bYJSs3SbkwP4cwHDgwr4yl0+8g==
+X-Google-Smtp-Source: APXvYqzo/k0rIsJGGL399pE+GzotZ33QW/YQlNt/JpZVm7SU204RwrS3/eFE+xu+DFtDva5eWFhzGzqC/njjDmo3YqM=
+X-Received: by 2002:ac2:4945:: with SMTP id o5mr11596350lfi.93.1574427707515;
+ Fri, 22 Nov 2019 05:01:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191121170020.GE445244@stefanha-x1.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: TZiyAIdROzSjwdbLH4TeZw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <20191122061839.24904-1-hui.song_1@nxp.com>
+In-Reply-To: <20191122061839.24904-1-hui.song_1@nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 22 Nov 2019 14:01:35 +0100
+Message-ID: <CACRpkdYhLoGdGQt_jzj5aFa-EY_kMimoVShi7QFLG3sZbC436w@mail.gmail.com>
+Subject: Re: [PATCH v1] gpio : mpc8xxx : ls1088a/ls1028a edge detection mode
+ bug fixs.
+To:     Hui Song <hui.song_1@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 05:00:20PM +0000, Stefan Hajnoczi wrote:
+On Fri, Nov 22, 2019 at 7:18 AM Hui Song <hui.song_1@nxp.com> wrote:
 
-[..]
-> > +static int virtio_fs_handle_notify(struct virtio_fs *vfs,
-> > +=09=09=09=09   struct virtio_fs_notify *notify)
-> > +{
-> > +=09int ret =3D 0;
-> > +=09struct fuse_out_header *oh =3D &notify->out_hdr;
-> > +=09struct fuse_notify_lock_out *lo;
-> > +
-> > +=09/*
-> > +=09 * For notifications, oh.unique is 0 and oh->error contains code
-> > +=09 * for which notification as arrived.
-> > +=09 */
-> > +=09switch(oh->error) {
-> > +=09case FUSE_NOTIFY_LOCK:
-> > +=09=09lo =3D (struct fuse_notify_lock_out *) &notify->outarg;
-> > +=09=09notify_complete_waiting_req(vfs, lo);
-> > +=09=09break;
-> > +=09default:
-> > +=09=09printk("virtio-fs: Unexpected notification %d\n", oh->error);
-> > +=09}
-> > +=09return ret;
-> > +}
->=20
-> Is this specific to virtio or can be it handled in common code?
+> From: Song Hui <hui.song_1@nxp.com>
+>
+> On these boards, the irq_set_type must point one valid function pointer
+> that can correctly set both edge and falling edge.
+>
+> Signed-off-by: Song Hui <hui.song_1@nxp.com>
 
-This is not specific to virtio_fs. In principle, regular fuse daemon could
-implement something similar. Though they might not have to because client
-can just block without introducing deadlock possibilities.
+Patch applied!
 
-Anyway, I will look into moving this code into fuse common.
-
-[..]
-> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> > index 373cada89815..45f0c4efec8e 100644
-> > --- a/include/uapi/linux/fuse.h
-> > +++ b/include/uapi/linux/fuse.h
-> > @@ -481,6 +481,7 @@ enum fuse_notify_code {
-> >  =09FUSE_NOTIFY_STORE =3D 4,
-> >  =09FUSE_NOTIFY_RETRIEVE =3D 5,
-> >  =09FUSE_NOTIFY_DELETE =3D 6,
-> > +=09FUSE_NOTIFY_LOCK =3D 7,
-> >  =09FUSE_NOTIFY_CODE_MAX,
-> >  };
-> > =20
-> > @@ -868,6 +869,12 @@ struct fuse_notify_retrieve_in {
-> >  =09uint64_t=09dummy4;
-> >  };
-> > =20
-> > +struct fuse_notify_lock_out {
-> > +=09uint64_t=09id;
->=20
-> Please call this field "unique" or "lock_unique" so it's clear this
-> identifier is the fuse_header_in->unique value of the lock request.
-
-Ok, will do.
-
-Vivek
-
+Yours,
+Linus Walleij
