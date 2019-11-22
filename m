@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54685106543
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A954B10652D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbfKVGXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:23:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57084 "EHLO mail.kernel.org"
+        id S1728357AbfKVFv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:51:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfKVFvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:51:47 -0500
+        id S1728286AbfKVFvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:51:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0A0020840;
-        Fri, 22 Nov 2019 05:51:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F05192070A;
+        Fri, 22 Nov 2019 05:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401907;
-        bh=L7kOZ2DuuxrBOah1HpwY0bLme+c1Dzk3lN0xbxhInE8=;
+        s=default; t=1574401909;
+        bh=M40l9of/5w28DtT7o9OfgX+vth97LDYxOA329hDtE/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DvgdHLDlEM56ZKNnAZ29/MmnsMW9I1Vxukv4gan0Y3gqQ6lRyGsVFX79FqnTWyLul
-         yllQGyv39KqpO9zACx257UUrX/T7G+D1yQnafokLg/vuCiP8emScmrYNwufTWiIGrm
-         55PQgtEBtnBk475fMK/rX9ol3jnSFzHswI/HKjqw=
+        b=0rkQ++TFMXvT8iUUBigEzLP+NTt1gQIVvGGl1U15YtzKqduMeScHNXFEITn+ytFGh
+         lltUWGH6RAFsBRpXvlIQLokcf+folzcBPXqQb5xpATQJrXAdKWqbgx0m/p8NJPhezi
+         3qNsmEU5LJXvKm2mGs+69l/ocnId3woOx37uylRs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aditya Pakki <pakki001@umn.edu>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 138/219] net/netlink_compat: Fix a missing check of nla_parse_nested
-Date:   Fri, 22 Nov 2019 00:47:50 -0500
-Message-Id: <20191122054911.1750-131-sashal@kernel.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        ceph-devel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 140/219] libceph: drop last_piece logic from write_partial_message_data()
+Date:   Fri, 22 Nov 2019 00:47:52 -0500
+Message-Id: <20191122054911.1750-133-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,39 +42,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-[ Upstream commit 89dfd0083751d00d5d7ead36f6d8b045bf89c5e1 ]
+[ Upstream commit 1f6b821aef78e3d79e8d598ae59fc7e23fb6c563 ]
 
-In tipc_nl_compat_sk_dump(), if nla_parse_nested() fails, it could return
-an error. To be consistent with other invocations of the function call,
-on error, the fix passes the return value upstream.
+last_piece is for the last piece in the current data item, not in the
+entire data payload of the message.  This is harmful for messages with
+multiple data items.  On top of that, we don't need to signal the end
+of a data payload either because it is always followed by a footer.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+We used to signal "more" unconditionally, until commit fe38a2b67bc6
+("libceph: start defining message data cursor").  Part of a large
+series, it introduced cursor->last_piece and also mistakenly inverted
+the hint by passing last_piece for "more".  This was corrected with
+commit c2cfa1940097 ("libceph: Fix ceph_tcp_sendpage()'s more boolean
+usage").
+
+As it is, last_piece is not helping at all: because Nagle algorithm is
+disabled, for a simple message with two 512-byte data items we end up
+emitting three packets: front + first data item, second data item and
+footer.  Go back to the original pre-fe38a2b67bc6 behavior -- a single
+packet in most cases.
+
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/netlink_compat.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/ceph/messenger.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/net/tipc/netlink_compat.c b/net/tipc/netlink_compat.c
-index 318c541970ecd..6494d6b5e1b24 100644
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -1030,8 +1030,11 @@ static int tipc_nl_compat_sk_dump(struct tipc_nl_compat_msg *msg,
- 		u32 node;
- 		struct nlattr *con[TIPC_NLA_CON_MAX + 1];
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index f7d7f32ac673c..6514816947fbe 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -1612,7 +1612,6 @@ static int write_partial_message_data(struct ceph_connection *con)
+ 		struct page *page;
+ 		size_t page_offset;
+ 		size_t length;
+-		bool last_piece;
+ 		int ret;
  
--		nla_parse_nested(con, TIPC_NLA_CON_MAX,
--				 sock[TIPC_NLA_SOCK_CON], NULL, NULL);
-+		err = nla_parse_nested(con, TIPC_NLA_CON_MAX,
-+				       sock[TIPC_NLA_SOCK_CON], NULL, NULL);
-+
-+		if (err)
-+			return err;
+ 		if (!cursor->resid) {
+@@ -1620,10 +1619,9 @@ static int write_partial_message_data(struct ceph_connection *con)
+ 			continue;
+ 		}
  
- 		node = nla_get_u32(con[TIPC_NLA_CON_NODE]);
- 		tipc_tlv_sprintf(msg->rep, "  connected to <%u.%u.%u:%u>",
+-		page = ceph_msg_data_next(cursor, &page_offset, &length,
+-					  &last_piece);
+-		ret = ceph_tcp_sendpage(con->sock, page, page_offset,
+-					length, !last_piece);
++		page = ceph_msg_data_next(cursor, &page_offset, &length, NULL);
++		ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
++					true);
+ 		if (ret <= 0) {
+ 			if (do_datacrc)
+ 				msg->footer.data_crc = cpu_to_le32(crc);
 -- 
 2.20.1
 
