@@ -2,149 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8958106F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73318106D96
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730417AbfKVLOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:14:33 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43820 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729812AbfKVKxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:53:33 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8E4B590A9B10BA22F71E;
-        Fri, 22 Nov 2019 18:53:30 +0800 (CST)
-Received: from [127.0.0.1] (10.173.221.225) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 22 Nov 2019
- 18:53:27 +0800
-Subject: Re: [PATCH] powerpc/pseries: remove variable 'status' set but not
- used
-To:     Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <mahesh@linux.vnet.ibm.com>, <paulus@samba.org>
-References: <1573873650-62511-1-git-send-email-chenwandun@huawei.com>
- <87blt8csyx.fsf@mpe.ellerman.id.au>
- <b1591f1d-ddd6-1cd5-afd6-c42eb4671a03@linux.ibm.com>
-From:   Chen Wandun <chenwandun@huawei.com>
-Message-ID: <dec2820f-dfb5-49a8-63fb-f75a3f469ba1@huawei.com>
-Date:   Fri, 22 Nov 2019 18:53:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1731167AbfKVLBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:01:21 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:53164 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731147AbfKVLBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:01:15 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1iY6gR-0004Ha-Mh; Fri, 22 Nov 2019 19:01:03 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1iY6gO-0002bV-Sv; Fri, 22 Nov 2019 19:01:00 +0800
+Date:   Fri, 22 Nov 2019 19:01:00 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 -next] crypto: sun8i-ce - Fix memdup.cocci warnings
+Message-ID: <20191122110100.5ofkfpy5rxrqu5nz@gondor.apana.org.au>
+References: <20191109024403.47106-1-yuehaibing@huawei.com>
+ <20191112072314.145064-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <b1591f1d-ddd6-1cd5-afd6-c42eb4671a03@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.221.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112072314.145064-1-yuehaibing@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OK, I will make a modification and repost the patch.
+On Tue, Nov 12, 2019 at 07:23:14AM +0000, YueHaibing wrote:
+> Use kmemdup rather than duplicating its implementation
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: fix patch title 'sun8i-ss' -> 'sun8i-ce'
+> ---
+>  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks
-Chen Wandun
-
-On 2019/11/21 5:34, Tyrel Datwyler wrote:
-> On 11/18/19 9:53 PM, Michael Ellerman wrote:
->> Chen Wandun <chenwandun@huawei.com> writes:
->>> Fixes gcc '-Wunused-but-set-variable' warning:
->>>
->>> arch/powerpc/platforms/pseries/ras.c: In function ras_epow_interrupt:
->>> arch/powerpc/platforms/pseries/ras.c:319:6: warning: variable status set but not used [-Wunused-but-set-variable]
->>
->> Thanks for the patch.
->>
->> But it almost certainly is wrong to not check the status.
-> 
-> Agreed, I started drafting a NACK response, but got sidetracked.
-> 
->>
->> It's calling firmware and just assuming that the call succeeded. It then
->> goes on to use the result that should have been written by firmware, but
->> is now potentially random junk.
->>
->> So I'd much rather a patch to change it to check the status.
-> 
-> +1
-> 
->>
->>> diff --git a/arch/powerpc/platforms/pseries/ras.c b/arch/powerpc/platforms/pseries/ras.c
->>> index 1d7f973..4a61d0f 100644
->>> --- a/arch/powerpc/platforms/pseries/ras.c
->>> +++ b/arch/powerpc/platforms/pseries/ras.c
->>> @@ -316,12 +316,11 @@ static irqreturn_t ras_hotplug_interrupt(int irq, void *dev_id)
->>>   /* Handle environmental and power warning (EPOW) interrupts. */
->>>   static irqreturn_t ras_epow_interrupt(int irq, void *dev_id)
->>>   {
->>> -	int status;
->>>   	int state;
->>>   	int critical;
->>>   
->>> -	status = rtas_get_sensor_fast(EPOW_SENSOR_TOKEN, EPOW_SENSOR_INDEX,
->>> -				      &state);
->>> +	rtas_get_sensor_fast(EPOW_SENSOR_TOKEN, EPOW_SENSOR_INDEX,
->>> +			     &state);
->>
->> This is calling a helper which already does some translation of the
->> return value, any value < 0 indicates an error.
-> 
-> There are three possible architected failures here: Hardware, Non-existant
-> sensor, and an DR isolation error which namely would be reported in the status
-> as -EIO, -EINVAL, and -EFAULT. Further, the EPOW sensor is required, and is not
-> a DR entity so we can never get an -EINVAL or -EFAULT (baring broken firmware).
-> This leaves -EIO (HARDWARE_ERROR) and as I mention further down this will
-> generate its own error log in response. So, I don't think we need to do any
-> reporting here, and just return.
-> 
->>
->>> @@ -330,12 +329,12 @@ static irqreturn_t ras_epow_interrupt(int irq, void *dev_id)
->>>   
->>>   	spin_lock(&ras_log_buf_lock);
->>>   
->>> -	status = rtas_call(ras_check_exception_token, 6, 1, NULL,
->>> -			   RTAS_VECTOR_EXTERNAL_INTERRUPT,
->>> -			   virq_to_hw(irq),
->>> -			   RTAS_EPOW_WARNING,
->>> -			   critical, __pa(&ras_log_buf),
->>> -				rtas_get_error_log_max());
->>> +	rtas_call(ras_check_exception_token, 6, 1, NULL,
->>> +		  RTAS_VECTOR_EXTERNAL_INTERRUPT,
->>> +		  virq_to_hw(irq),
->>> +		  RTAS_EPOW_WARNING,
->>> +		  critical, __pa(&ras_log_buf),
->>> +		  rtas_get_error_log_max());
->>
->> This is directly calling firmware.
->>
->> As documented in LoPAPR, a negative status indicates an error, 0
->> indicates a new error log was found (ie. the function should continue),
->> or 1 there was no error log (ie. nothing to do).
-> 
-> It is highly unlikely that we will find no new error log since we are processing
-> an interrupt that supposedly fired to tell us there is a new one. However, the
-> ras_log_buf is never zeroed so in the unlikely case there is no new error log we
-> will parse stale data from the previous log. Better safe than sorry and just return.
-> 
-> In the case of an error the only error code we supposedly can get here is -1
-> (HARDWARE_ERROR), and the RTAS handling will generate an error log in response
-> to that. So, I don't think we need to report anything here. I would suggest for
-> the (status != 0) case that you just return.
-> 
-> -Tyrel
-> 
->>
->> cheers
->>
->>>   	log_error(ras_log_buf, ERR_TYPE_RTAS_LOG, 0);
->>>   
->>> -- 
->>> 2.7.4
-> 
-> 
-> .
-> 
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
