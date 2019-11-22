@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7981060D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A691060D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfKVFwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57406 "EHLO mail.kernel.org"
+        id S1728457AbfKVFwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:52:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728378AbfKVFwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:52:02 -0500
+        id S1728425AbfKVFwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:52:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3FA62071B;
-        Fri, 22 Nov 2019 05:52:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E20BE20721;
+        Fri, 22 Nov 2019 05:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401921;
-        bh=pSfYKfebvfswSMG9aERDVNa+OxFdxdH6xAe+7HpCZGE=;
+        s=default; t=1574401929;
+        bh=/PKAD3AkTjyL9c8QHOk65inIyuVXFHetGmXfEQaBdZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q5z6UGBUfK586y5/CPBQeIGcqnjjNx1txP4ipEA5rkHmZdESi5DIylMWsNhu1Qywc
-         VO0lExIQMvso1W0TqlCT96WhatcrT42ujFW4CSqTCj3CO+X32sVPzKjCt993Ij01OI
-         9st5WhJXVJdwfomlgG4U33u6rxs+oxi2aHnhMUgc=
+        b=Eh4Y/MZnnh2MimFV3TlPe+Cup/L4JvqYCsNhjbQFOiCZ6IF8yz2QJbb2b/c2RNlw2
+         71t/OLKxnxH7rbvw9bdGMelERLssJZWDBsOdBTrz5YGahi+HLrlwFI9SMc4710H33X
+         Ef5NLgtwiDrIukvxtYBkZlZYS5h6YUdm6WmPYlk8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>, Peng Hao <peng.hao2@zte.com.cn>,
-        Zhao Qiang <qiang.zhao@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 151/219] net/wan/fsl_ucc_hdlc: Avoid double free in ucc_hdlc_probe()
-Date:   Fri, 22 Nov 2019 00:48:03 -0500
-Message-Id: <20191122054911.1750-144-sashal@kernel.org>
+Cc:     Wentao Wang <witallwang@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 156/219] mm/page_alloc.c: deduplicate __memblock_free_early() and memblock_free()
+Date:   Fri, 22 Nov 2019 00:48:08 -0500
+Message-Id: <20191122054911.1750-149-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,37 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Wentao Wang <witallwang@gmail.com>
 
-[ Upstream commit 40752b3eae29f8ca2378e978a02bd6dbeeb06d16 ]
+[ Upstream commit d31cfe7bff9109476da92c245b56083e9b48d60a ]
 
-This patch fixes potential double frees if register_hdlc_device() fails.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
-CC: Zhao Qiang <qiang.zhao@nxp.com>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-CC: linuxppc-dev@lists.ozlabs.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/C8ECE1B7A767434691FEEFA3A01765D72AFB8E78@MX203CL03.corp.emc.com
+Signed-off-by: Wentao Wang <witallwang@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c | 1 -
- 1 file changed, 1 deletion(-)
+ mm/memblock.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index 5f0366a125e26..0212f576a838c 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -1113,7 +1113,6 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
- 	if (register_hdlc_device(dev)) {
- 		ret = -ENOBUFS;
- 		pr_err("ucc_hdlc: unable to register hdlc device\n");
--		free_netdev(dev);
- 		goto free_dev;
- 	}
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 237944479d25a..bb4e32c6b19e9 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1537,12 +1537,7 @@ void * __init memblock_virt_alloc_try_nid(
+  */
+ void __init __memblock_free_early(phys_addr_t base, phys_addr_t size)
+ {
+-	phys_addr_t end = base + size - 1;
+-
+-	memblock_dbg("%s: [%pa-%pa] %pF\n",
+-		     __func__, &base, &end, (void *)_RET_IP_);
+-	kmemleak_free_part_phys(base, size);
+-	memblock_remove_range(&memblock.reserved, base, size);
++	memblock_free(base, size);
+ }
  
+ /**
 -- 
 2.20.1
 
