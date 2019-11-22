@@ -2,40 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D5D106AD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 869B8106C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:49:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbfKVKig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:38:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40888 "EHLO mail.kernel.org"
+        id S1730000AbfKVKtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:49:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbfKVKia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:38:30 -0500
+        id S1729630AbfKVKtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:49:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 980422071C;
-        Fri, 22 Nov 2019 10:38:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4343120637;
+        Fri, 22 Nov 2019 10:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419109;
-        bh=ECia0m3I7RkZ/ZIWXe5fVco6mSwc0Zb+Dw4IIV3D7MU=;
+        s=default; t=1574419747;
+        bh=uXJnpNa2DlT2etLUcYrrcS9giJvdo6ordh6k9tSg9PM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=afS1d4pQ7gqT+5qO/iUK3rz3LAJVGA7xqJdNLBJ+HvSi4K7siDsc7DbaOOR+fws0I
-         hcRcEZZDM4MM3M0FxbTX34pz80Z4u7nAgQ3F9DQsNeKu42NQpSeTXM46qLxbkDCW3s
-         1Yy3zQNoOPH5OB9Dq0g69UICCAg0/eN+HmkdaVK0=
+        b=PT2MyWSn5AOzlXPK6HLALFtGWwIMxD+yVSXMgn1QzT5EiE2SyyeDW9m3KEZHm184E
+         513Kk+buuIa20bYn420DnJwiWXYkRHrnj6bpqpIW5xvPuB9jbBVM5lWGs+GZJKk4q2
+         6FCdWxGAq9alydDaynEhcdJsdrHZP2iN5TbClIM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 4.4 159/159] arm64: uaccess: Ensure PAN is re-enabled after unhandled uaccess fault
-Date:   Fri, 22 Nov 2019 11:29:10 +0100
-Message-Id: <20191122100850.205491207@linuxfoundation.org>
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        baiyaowei@cmss.chinamobile.com, bhe@redhat.com,
+        dan.j.williams@intel.com, dyoung@redhat.com,
+        kexec@lists.infradead.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 211/222] x86/kexec: Correct KEXEC_BACKUP_SRC_END off-by-one error
+Date:   Fri, 22 Nov 2019 11:29:11 +0100
+Message-Id: <20191122100917.646811418@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,120 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Tatashin <pasha.tatashin@soleen.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-commit 94bb804e1e6f0a9a77acf20d7c70ea141c6c821e upstream.
+[ Upstream commit 51fbf14f2528a8c6401290e37f1c893a2412f1d3 ]
 
-A number of our uaccess routines ('__arch_clear_user()' and
-'__arch_copy_{in,from,to}_user()') fail to re-enable PAN if they
-encounter an unhandled fault whilst accessing userspace.
+The only use of KEXEC_BACKUP_SRC_END is as an argument to
+walk_system_ram_res():
 
-For CPUs implementing both hardware PAN and UAO, this bug has no effect
-when both extensions are in use by the kernel.
+  int crash_load_segments(struct kimage *image)
+  {
+    ...
+    walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
+                        image, determine_backup_region);
 
-For CPUs implementing hardware PAN but not UAO, this means that a kernel
-using hardware PAN may execute portions of code with PAN inadvertently
-disabled, opening us up to potential security vulnerabilities that rely
-on userspace access from within the kernel which would usually be
-prevented by this mechanism. In other words, parts of the kernel run the
-same way as they would on a CPU without PAN implemented/emulated at all.
+walk_system_ram_res() expects "start, end" arguments that are inclusive,
+i.e., the range to be walked includes both the start and end addresses.
 
-For CPUs not implementing hardware PAN and instead relying on software
-emulation via 'CONFIG_ARM64_SW_TTBR0_PAN=y', the impact is unfortunately
-much worse. Calling 'schedule()' with software PAN disabled means that
-the next task will execute in the kernel using the page-table and ASID
-of the previous process even after 'switch_mm()', since the actual
-hardware switch is deferred until return to userspace. At this point, or
-if there is a intermediate call to 'uaccess_enable()', the page-table
-and ASID of the new process are installed. Sadly, due to the changes
-introduced by KPTI, this is not an atomic operation and there is a very
-small window (two instructions) where the CPU is configured with the
-page-table of the old task and the ASID of the new task; a speculative
-access in this state is disastrous because it would corrupt the TLB
-entries for the new task with mappings from the previous address space.
+KEXEC_BACKUP_SRC_END was previously defined as (640 * 1024UL), which is the
+first address *past* the desired 0-640KB range.
 
-As Pavel explains:
+Define KEXEC_BACKUP_SRC_END as (640 * 1024UL - 1) so the KEXEC_BACKUP_SRC
+region is [0-0x9ffff], not [0-0xa0000].
 
-  | I was able to reproduce memory corruption problem on Broadcom's SoC
-  | ARMv8-A like this:
-  |
-  | Enable software perf-events with PERF_SAMPLE_CALLCHAIN so userland's
-  | stack is accessed and copied.
-  |
-  | The test program performed the following on every CPU and forking
-  | many processes:
-  |
-  |	unsigned long *map = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE,
-  |				  MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-  |	map[0] = getpid();
-  |	sched_yield();
-  |	if (map[0] != getpid()) {
-  |		fprintf(stderr, "Corruption detected!");
-  |	}
-  |	munmap(map, PAGE_SIZE);
-  |
-  | From time to time I was getting map[0] to contain pid for a
-  | different process.
-
-Ensure that PAN is re-enabled when returning after an unhandled user
-fault from our uaccess routines.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 338d4f49d6f7 ("arm64: kernel: Add support for Privileged Access Never")
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-[will: rewrote commit message]
-[will: backport for 4.4.y stable kernels]
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: dd5f726076cc ("kexec: support for kexec on panic using new system call")
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Brijesh Singh <brijesh.singh@amd.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Lianbo Jiang <lijiang@redhat.com>
+CC: Takashi Iwai <tiwai@suse.de>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Tom Lendacky <thomas.lendacky@amd.com>
+CC: Vivek Goyal <vgoyal@redhat.com>
+CC: baiyaowei@cmss.chinamobile.com
+CC: bhe@redhat.com
+CC: dan.j.williams@intel.com
+CC: dyoung@redhat.com
+CC: kexec@lists.infradead.org
+Link: http://lkml.kernel.org/r/153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/lib/clear_user.S     |    2 ++
- arch/arm64/lib/copy_from_user.S |    2 ++
- arch/arm64/lib/copy_in_user.S   |    2 ++
- arch/arm64/lib/copy_to_user.S   |    2 ++
- 4 files changed, 8 insertions(+)
+ arch/x86/include/asm/kexec.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -62,5 +62,7 @@ ENDPROC(__clear_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9:	mov	x0, x2			// return the original size
-+ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_HAS_PAN, \
-+	    CONFIG_ARM64_PAN)
- 	ret
- 	.previous
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -85,5 +85,7 @@ ENDPROC(__copy_from_user)
- 	strb	wzr, [dst], #1			// zero remaining buffer space
- 	cmp	dst, end
- 	b.lo	9999b
-+ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_HAS_PAN, \
-+	    CONFIG_ARM64_PAN)
- 	ret
- 	.previous
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -81,5 +81,7 @@ ENDPROC(__copy_in_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9998:	sub	x0, end, dst			// bytes not copied
-+ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_HAS_PAN, \
-+	    CONFIG_ARM64_PAN)
- 	ret
- 	.previous
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -79,5 +79,7 @@ ENDPROC(__copy_to_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9998:	sub	x0, end, dst			// bytes not copied
-+ALTERNATIVE("nop", __stringify(SET_PSTATE_PAN(1)), ARM64_HAS_PAN, \
-+	    CONFIG_ARM64_PAN)
- 	ret
- 	.previous
+diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+index 282630e4c6ea4..1624a7ffa95d8 100644
+--- a/arch/x86/include/asm/kexec.h
++++ b/arch/x86/include/asm/kexec.h
+@@ -66,7 +66,7 @@ struct kimage;
+ 
+ /* Memory to backup during crash kdump */
+ #define KEXEC_BACKUP_SRC_START	(0UL)
+-#define KEXEC_BACKUP_SRC_END	(640 * 1024UL)	/* 640K */
++#define KEXEC_BACKUP_SRC_END	(640 * 1024UL - 1)	/* 640K */
+ 
+ /*
+  * CPU does not save ss and sp on stack if execution is already
+-- 
+2.20.1
+
 
 
