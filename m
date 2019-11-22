@@ -2,102 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AE6105E1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:23:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE96105E28
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:26:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfKVBXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 20:23:40 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7162 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726265AbfKVBXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 20:23:40 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D9A5B40ED3F3102114FE;
-        Fri, 22 Nov 2019 09:23:38 +0800 (CST)
-Received: from [127.0.0.1] (10.184.213.217) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 22 Nov 2019
- 09:23:32 +0800
-Subject: Re: [PATCH] tmpfs: use ida to get inode number
-To:     Hugh Dickins <hughd@google.com>
-CC:     Matthew Wilcox <willy@infradead.org>, <viro@zeniv.linux.org.uk>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-        "J. R. Okajima" <hooanon05g@gmail.com>
-References: <1574259798-144561-1-git-send-email-zhengbin13@huawei.com>
- <20191120154552.GS20752@bombadil.infradead.org>
- <1c64e7c2-6460-49cf-6db0-ec5f5f7e09c4@huawei.com>
- <alpine.LSU.2.11.1911202026040.1825@eggly.anvils>
- <d22bcbcb-d507-7c8c-e946-704ffc499fa6@huawei.com>
- <alpine.LSU.2.11.1911211125190.1697@eggly.anvils>
-From:   "zhengbin (A)" <zhengbin13@huawei.com>
-Message-ID: <5423a199-eefb-0a02-6e86-1f6210939c11@huawei.com>
-Date:   Fri, 22 Nov 2019 09:23:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1726695AbfKVB06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 20:26:58 -0500
+Received: from onstation.org ([52.200.56.107]:33714 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfKVB05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 20:26:57 -0500
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 482153EE6F;
+        Fri, 22 Nov 2019 01:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1574386016;
+        bh=Kq+RNFpqhutChH3/+5/pT8eAUKeDkBlnAGwXIrYo9xI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RL09JusxKP7Q2NBDbvwmFjeJDGHFW1vkN8cZqS9rqhpxdQEmg8v8HesxPW00j66BV
+         sS3yuBiW71E5aQ2H7bC/JjONlWFZD/JANow9HKUK8ETpVKrC3PqkDvI7cMXd4n2fA8
+         FNB9N6NYZYQJkBT8RFVJ7+82hbn702AWaMIEo8fY=
+From:   Brian Masney <masneyb@onstation.org>
+To:     robdclark@gmail.com, sean@poorly.run, robh+dt@kernel.org
+Cc:     airlied@linux.ie, daniel@ffwll.ch, jcrouse@codeaurora.org,
+        dianders@chromium.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 0/4] drm/msm/gpu: add support for ocmem interconnect
+Date:   Thu, 21 Nov 2019 20:26:41 -0500
+Message-Id: <20191122012645.7430-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1911211125190.1697@eggly.anvils>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.184.213.217]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some A3xx and all A4xx Adreno GPUs do not have GMEM inside the GPU core
+and must use the On Chip MEMory (OCMEM) in order to be functional.
+There's a separate interconnect path that needs to be setup to OCMEM.
+This patch series adds support for that path, and sets the votes for the
+two interconnect paths to the highest speed for a3xx and a4xx-based
+platforms.
 
-On 2019/11/22 3:53, Hugh Dickins wrote:
-> On Thu, 21 Nov 2019, zhengbin (A) wrote:
->> On 2019/11/21 12:52, Hugh Dickins wrote:
->>> Just a rushed FYI without looking at your patch or comments.
->>>
->>> Internally (in Google) we do rely on good tmpfs inode numbers more
->>> than on those of other get_next_ino() filesystems, and carry a patch
->>> to mm/shmem.c for it to use 64-bit inode numbers (and separate inode
->>> number space for each superblock) - essentially,
->>>
->>> 	ino = sbinfo->next_ino++;
->>> 	/* Avoid 0 in the low 32 bits: might appear deleted */
->>> 	if (unlikely((unsigned int)ino == 0))
->>> 		ino = sbinfo->next_ino++;
->>>
->>> Which I think would be faster, and need less memory, than IDA.
->>> But whether that is of general interest, or of interest to you,
->>> depends upon how prevalent 32-bit executables built without
->>> __FILE_OFFSET_BITS=64 still are these days.
->> So how google think about this? inode number > 32-bit, but 32-bit executables
->> cat not handle this?
-> Google is free to limit what executables are run on its machines,
-> and how they are built, so little problem here.
->
-> A general-purpose 32-bit Linux distribution does not have that freedom,
-> does not want to limit what the user runs.  But I thought that by now
-> they (and all serious users of 32-bit systems) were building their own
-> executables with _FILE_OFFSET_BITS=64 (I was too generous with the
-> underscores yesterday); and I thought that defined __USE_FILE_OFFSET64,
-> and that typedef'd ino_t to be __ino64_t.  And the 32-bit kernel would
-> have __ARCH_WANT_STAT64, which delivers st_ino as unsigned long long.
->
-> So I thought that a modern, professional 32-bit executable would be
-> dealing in 64-bit inode numbers anyway.  But I am not a system builder,
-> so perhaps I'm being naive.  And of course some users may have to support
-> some old userspace, or apps that assign inode numbers to "int" or "long"
-> or whatever.  I have no insight into the extent of that problem.
+Changes since v1:
+- Don't rename icc_path to gfx_mem_icc_path. Leave existing variable
+  named as is and add comment to declaration in struct msm_gpu.
 
-So how to solve this problem?
+Brian Masney (4):
+  dt-bindings: drm/msm/gpu: document second interconnect
+  drm/msm/gpu: add support for ocmem interconnect path
+  drm/msm/a3xx: set interconnect bandwidth vote
+  drm/msm/a4xx: set interconnect bandwidth vote
 
-1. tmpfs use ida or other data structure
+ .../devicetree/bindings/display/msm/gpu.txt        |  6 +++++-
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c              |  8 ++++++++
+ drivers/gpu/drm/msm/adreno/a4xx_gpu.c              |  8 ++++++++
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c            | 14 +++++++++++++-
+ drivers/gpu/drm/msm/msm_gpu.h                      |  7 +++++++
+ 5 files changed, 41 insertions(+), 2 deletions(-)
 
-2. tmpfs use 64-bit, each superblock a inode number space
-
-3. do not do anything, If somebody hits this bug, let them solve for themselves
-
-4. (last_ino change to 64-bit)get_next_ino -->other filesystems will be ok, but it was rejected before
-
->
-> Hugh
->
-> .
->
+-- 
+2.21.0
 
