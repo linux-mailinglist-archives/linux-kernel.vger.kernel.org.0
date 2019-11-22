@@ -2,37 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E81C0106A6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9F7106A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:34:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfKVKev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:34:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60036 "EHLO mail.kernel.org"
+        id S1727650AbfKVKey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728142AbfKVKet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:34:49 -0500
+        id S1728156AbfKVKev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:34:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C77120656;
-        Fri, 22 Nov 2019 10:34:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EAF420721;
+        Fri, 22 Nov 2019 10:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418888;
-        bh=avT296kkH6vYPf/CZXBH0ZritG7eBuOV/le7rkHC914=;
+        s=default; t=1574418891;
+        bh=RN5s4WwjmeKO7kh5V7ierCiAzxj8M84zs8kaJC64wO4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2MuGPCeEP/qS9eQE+KlCMI3Yb0HmMu5bScE37TPaMt6+i+0xwhw7vrDRf7Hhvnq2B
-         6/2Sguoi/S+lm2FlcVHoLfGTygnGVkpduFxpDY1dMrHqu8dVuFie5HgRvxJ67GBGk9
-         AY3lqHsnRsglRhk4EChMKaG3DAcaL5lia3DgxIrU=
+        b=tpfpOOeOVbDJrPLEKaqIIvU2pCB7QoDtdFLkwN0F3aHTER+XJll8PAoFZNMEz433c
+         Je7hpXX9gA0teUnd45n6WL2rdFKgDZZ+9rMuq3FGmROyPFIm+aTM83gMuM0Jx7Xw2g
+         yErMBgLTVKGwCfvhP81MPZ+TdCRr5DZZ1zm0zJHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Qiang <liq3ea@gmail.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Jason Yan <yanaijie@huawei.com>,
+        chenxiang <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Ewan Milne <emilne@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Tomas Henzl <thenzl@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 087/159] vfio/pci: Fix potential memory leak in vfio_msi_cap_len
-Date:   Fri, 22 Nov 2019 11:27:58 +0100
-Message-Id: <20191122100809.415095358@linuxfoundation.org>
+Subject: [PATCH 4.4 088/159] scsi: libsas: always unregister the old device if going to discover new
+Date:   Fri, 22 Nov 2019 11:27:59 +0100
+Message-Id: <20191122100810.346407112@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
 References: <20191122100704.194776704@linuxfoundation.org>
@@ -45,35 +51,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li Qiang <liq3ea@gmail.com>
+From: Jason Yan <yanaijie@huawei.com>
 
-[ Upstream commit 30ea32ab1951c80c6113f300fce2c70cd12659e4 ]
+[ Upstream commit 32c850bf587f993b2620b91e5af8a64a7813f504 ]
 
-Free allocated vdev->msi_perm in error path.
+If we went into sas_rediscover_dev() the attached_sas_addr was already insured
+not to be zero. So it's unnecessary to check if the attached_sas_addr is zero.
 
-Signed-off-by: Li Qiang <liq3ea@gmail.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+And although if the sas address is not changed, we always have to unregister
+the old device when we are going to register a new one. We cannot just leave
+the device there and bring up the new.
+
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: chenxiang <chenxiang66@hisilicon.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Ewan Milne <emilne@redhat.com>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Tomas Henzl <thenzl@redhat.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci_config.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index c55c632a3b249..ad5929fbceb16 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1130,8 +1130,10 @@ static int vfio_msi_cap_len(struct vfio_pci_device *vdev, u8 pos)
- 		return -ENOMEM;
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 400eee9d77832..d44f18f773c0f 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -2049,14 +2049,11 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
+ 		return res;
+ 	}
  
- 	ret = init_pci_cap_msi_perm(vdev->msi_perm, len, flags);
--	if (ret)
-+	if (ret) {
-+		kfree(vdev->msi_perm);
- 		return ret;
-+	}
+-	/* delete the old link */
+-	if (SAS_ADDR(phy->attached_sas_addr) &&
+-	    SAS_ADDR(sas_addr) != SAS_ADDR(phy->attached_sas_addr)) {
+-		SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
+-			    SAS_ADDR(dev->sas_addr), phy_id,
+-			    SAS_ADDR(phy->attached_sas_addr));
+-		sas_unregister_devs_sas_addr(dev, phy_id, last);
+-	}
++	/* we always have to delete the old device when we went here */
++	SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
++		    SAS_ADDR(dev->sas_addr), phy_id,
++		    SAS_ADDR(phy->attached_sas_addr));
++	sas_unregister_devs_sas_addr(dev, phy_id, last);
  
- 	return len;
+ 	return sas_discover_new(dev, phy_id);
  }
 -- 
 2.20.1
