@@ -2,68 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F70105EBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB9C7105EBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfKVCyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 21:54:35 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37110 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726335AbfKVCyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 21:54:35 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CC91417F34D28DAFA269;
-        Fri, 22 Nov 2019 10:54:31 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 22 Nov 2019 10:54:21 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <claudiu.manoil@nxp.com>, <davem@davemloft.net>,
-        <vladimir.oltean@nxp.com>, <po.liu@nxp.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next] enetc: make enetc_setup_tc_mqprio static
-Date:   Fri, 22 Nov 2019 10:52:40 +0800
-Message-ID: <20191122025240.8226-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726546AbfKVCxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 21:53:16 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64450 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbfKVCxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 21:53:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 18:53:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,228,1571727600"; 
+   d="scan'208";a="358006930"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 21 Nov 2019 18:53:15 -0800
+Received: from [10.226.38.71] (unknown [10.226.38.71])
+        by linux.intel.com (Postfix) with ESMTP id 332DA5802E4;
+        Thu, 21 Nov 2019 18:53:12 -0800 (PST)
+Subject: Re: [PATCH v8 2/2] dt-bindings: pinctrl: intel: Add for new SoC
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Andriy Shevchenko <andriy.shevchenko@intel.com>,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com
+References: <cover.1573797249.git.rahul.tanwar@linux.intel.com>
+ <b59afc497e41404fea06aa48d633cba183ee944d.1573797249.git.rahul.tanwar@linux.intel.com>
+ <CACRpkdYZi-0LRjih8+2cgWZ6u-eFN5+3sW1eV2ujYRd0UBoEKQ@mail.gmail.com>
+ <bf8396af-3ace-7463-0fef-890b2f5cc487@linux.intel.com>
+Message-ID: <8804e672-423e-a754-a68e-4b4a0d2d0881@linux.intel.com>
+Date:   Fri, 22 Nov 2019 10:53:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <bf8396af-3ace-7463-0fef-890b2f5cc487@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While using ARCH=mips CROSS_COMPILE=mips-linux-gnu- command to compile,
-make C=2 drivers/net/ethernet/freescale/enetc/enetc.o
 
-one warning can be found:
-drivers/net/ethernet/freescale/enetc/enetc.c:1439:5:
-warning: symbol 'enetc_setup_tc_mqprio' was not declared.
-Should it be static?
 
-This patch make symbol enetc_setup_tc_mqprio static.
-Fixes: 34c6adf1977b ("enetc: Configure the Time-Aware Scheduler via tc-taprio offload")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/net/ethernet/freescale/enetc/enetc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 22/11/2019 10:24 AM, Tanwar, Rahul wrote:
+> Hi Linus,
+>
+> On 21/11/2019 9:53 PM, Linus Walleij wrote:
+>> On Fri, Nov 15, 2019 at 10:25 AM Rahul Tanwar
+>> <rahul.tanwar@linux.intel.com> wrote:
+>>
+>>> Add dt bindings document for pinmux & GPIO controller driver of
+>>> Intel Lightning Mountain SoC.
+>>>
+>>> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+>> Patch applied, you worked hard to get these bindings done in the
+>> right YAML format and all.
+>>
+>> I have some generic bindings from Rob merged simultaneously
+>> so it'd be great if you could investigate whether it is possible
+>> to follow up with a patch to switch over from some of the local
+>> grammar and toward including pinmux-node.yaml and
+>> pincfg-node.yaml into these bindings.
+>>
+>> The method for inclusion of external generic files can be seen
+>> in e.g. the display panel bindings, like how
+>> panel-common.yaml is included into other bindings under
+>> display/panel/*.yaml.
+>>
+>> Tell us if you have any problems with this!
+> Thanks. Yes, i have gone through Rob's generic pinctrl bindings patch
+> series and i was double minded if *i should still proceed with this
+> patch or wait for generic bindings patch to get merged.
+>
+> I will take it up to revise this patch to include external generic
+> files from Rob as soon as kernel 5.5 is released.
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-index f6b00c6..27f6fd1 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-@@ -1436,7 +1436,7 @@ int enetc_close(struct net_device *ndev)
- 	return 0;
- }
- 
--int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
-+static int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
- {
- 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
- 	struct tc_mqprio_qopt *mqprio = type_data;
--- 
-2.7.4
+*Fix typo above.
+
+> Regards,
+> Rahul
 
