@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D48F107054
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:21:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67AE51070F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfKVKon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:44:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50604 "EHLO mail.kernel.org"
+        id S1727904AbfKVKfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfKVKoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:44:37 -0500
+        id S1728202AbfKVKfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6F5820715;
-        Fri, 22 Nov 2019 10:44:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB10B20715;
+        Fri, 22 Nov 2019 10:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419477;
-        bh=ChGD2ngo7hWVlif2s8Gwz2uOlVS8L+USK1NJnQkRaCE=;
+        s=default; t=1574418906;
+        bh=Cg+4qi4q+XTTYzZRmspi7f+I4Y5Jitg8gRm9nE/UjfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a620sZWclMcbVM8kj9jzNtSH4INIg2tbSItX3T0oEaeEM+aryB3Bg4HcZ5TB7Adsr
-         nDybSbAj79BNKqCIpK8O2TMcnL0ORSViHGkqiQ27K3ARnFpCml7dXWOkkcHjvZL0ew
-         QfCjzJFxDHBgA/2bx0XNf6NOn7EyEQkuM7txDpKE=
+        b=ZG2UN2KgTVnUY7/Uuae/KFYieaItJJVRNeRIwc58Z1N4pcV6b6eRNt/oFUI1uliR4
+         hteyFb5EyhNS0muPxJexsFo+rbgCsF1werdKEBq3ylwGgeeH7rz7p/kbgE5jdXnFOk
+         Eton6zjzXjyP4fvbkpe5H8V0iordOrgHirVmjpx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Shahed Shaikh <Shahed.Shaikh@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 126/222] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Subject: [PATCH 4.4 075/159] bnx2x: Ignore bandwidth attention in single function mode
 Date:   Fri, 22 Nov 2019 11:27:46 +0100
-Message-Id: <20191122100912.128028960@linuxfoundation.org>
+Message-Id: <20191122100759.367500457@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Shahed Shaikh <Shahed.Shaikh@cavium.com>
 
-[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
+[ Upstream commit 75a110a1783ef8324ffd763b24f4ac268253cbca ]
 
-Fix MMC1 cmd pin pull-up causing issues on carrier boards without
-external pull-up.
+This is a workaround for FW bug -
+MFW generates bandwidth attention in single function mode, which
+is only expected to be generated in multi function mode.
+This undesired attention in SF mode results in incorrect HW
+configuration and resulting into Tx timeout.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Shahed Shaikh <Shahed.Shaikh@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 192b95177aac3..826bdd0b8a257 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -147,14 +147,14 @@
- 
- 			/* Apalis MMC1 */
- 			sdmmc3_clk_pa6 {
--				nvidia,pins = "sdmmc3_clk_pa6",
--					      "sdmmc3_cmd_pa7";
-+				nvidia,pins = "sdmmc3_clk_pa6";
- 				nvidia,function = "sdmmc3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			sdmmc3_dat0_pb7 {
--				nvidia,pins = "sdmmc3_dat0_pb7",
-+				nvidia,pins = "sdmmc3_cmd_pa7",
-+					      "sdmmc3_dat0_pb7",
- 					      "sdmmc3_dat1_pb6",
- 					      "sdmmc3_dat2_pb5",
- 					      "sdmmc3_dat3_pb4",
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index d450d8b3708cd..82960603da332 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -3532,6 +3532,16 @@ static void bnx2x_drv_info_iscsi_stat(struct bnx2x *bp)
+  */
+ static void bnx2x_config_mf_bw(struct bnx2x *bp)
+ {
++	/* Workaround for MFW bug.
++	 * MFW is not supposed to generate BW attention in
++	 * single function mode.
++	 */
++	if (!IS_MF(bp)) {
++		DP(BNX2X_MSG_MCP,
++		   "Ignoring MF BW config in single function mode\n");
++		return;
++	}
++
+ 	if (bp->link_vars.link_up) {
+ 		bnx2x_cmng_fns_init(bp, true, CMNG_FNS_MINMAX);
+ 		bnx2x_link_sync_notify(bp);
 -- 
 2.20.1
 
