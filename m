@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A079106C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5866106D6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfKVKuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:50:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32800 "EHLO mail.kernel.org"
+        id S1730975AbfKVLAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:00:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728006AbfKVKut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:50:49 -0500
+        id S1728201AbfKVK76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:59:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FCD220656;
-        Fri, 22 Nov 2019 10:50:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C26820721;
+        Fri, 22 Nov 2019 10:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419848;
-        bh=0fKSn/6t25Xp9f8N5Uee9DlHvJWj5SqkHIrfON8LGSs=;
+        s=default; t=1574420397;
+        bh=B2KYIyJoPWeC/UNCnJwJ0lmKqBLfynwxhRwcJ6I1OCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w5b2d6fBw/istAEvnaSxCsGLSsVrHIPjkUHIZf4XoNnk3ISrT3f6EoseLxnh54HtI
-         kb4MVwos3fAUDXv+vc6/tUrFM5LTXbEJ1aJIyhnhfADMbeC+ze4u0G7bTl9VJl3PEt
-         2y3BCTv23szCk9Zz8RWD1yiuLp4JZAW5e90/9zBo=
+        b=tQwN/+eViaqTndfaYBqpwYSMORPV7EH4HQ1JqKOyfXky+YsYwNG0kogksEn7UkeZn
+         h7FbF3Kkj+OkuEQbLs9AppYFoIpbF/Dset5obQbG+OUNJfX5eIeOAdohPDCL7R12DV
+         NpaRwCSfERp/Ahb0RNXQcDAYil5E+y+gYOiJo78A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 4.14 005/122] idr: Fix idr_get_next race with idr_remove
+        stable@vger.kernel.org, Bob Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 093/220] ACPICA: Never run _REG on system_memory and system_IO
 Date:   Fri, 22 Nov 2019 11:27:38 +0100
-Message-Id: <20191122100724.918031839@linuxfoundation.org>
+Message-Id: <20191122100919.368561070@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,136 +45,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox (Oracle) <willy@infradead.org>
+From: Bob Moore <robert.moore@intel.com>
 
-commit 5c089fd0c73411f2170ab795c9ffc16718c7d007 upstream.
+[ Upstream commit 8b1cafdcb4b75c5027c52f1e82b47ebe727ad7ed ]
 
-If the entry is deleted from the IDR between the call to
-radix_tree_iter_find() and rcu_dereference_raw(), idr_get_next()
-will return NULL, which will end the iteration prematurely.  We should
-instead continue to the next entry in the IDR.  This only happens if the
-iteration is protected by the RCU lock.  Most IDR users use a spinlock
-or semaphore to exclude simultaneous modifications.  It was noticed once
-the PID allocator was converted to use the IDR, as it uses the RCU lock,
-but there may be other users elsewhere in the kernel.
+These address spaces are defined by the ACPI spec to be
+"always available", and thus _REG should never be run on them.
+Provides compatibility with other ACPI implementations.
 
-We can't use the normal pattern of calling radix_tree_deref_retry()
-(which catches both a retry entry in a leaf node and a node entry in
-the root) as the IDR supports storing entries which are unaligned,
-which will trigger an infinite loop if they are encountered.  Instead,
-we have to explicitly check whether the entry is a retry entry.
-
-Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-Reported-by: Brendan Gregg <bgregg@netflix.com>
-Tested-by: Brendan Gregg <bgregg@netflix.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/idr.c                           |   18 +++++++++++-
- tools/testing/radix-tree/idr-test.c |   52 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 68 insertions(+), 2 deletions(-)
+ drivers/acpi/acpica/acevents.h |  2 ++
+ drivers/acpi/acpica/aclocal.h  |  2 +-
+ drivers/acpi/acpica/evregion.c | 17 +++++++++++++++--
+ drivers/acpi/acpica/evrgnini.c |  6 +-----
+ drivers/acpi/acpica/evxfregn.c |  1 -
+ 5 files changed, 19 insertions(+), 9 deletions(-)
 
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -111,13 +111,27 @@ void *idr_get_next(struct idr *idr, int
- {
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
-+	void *entry = NULL;
+diff --git a/drivers/acpi/acpica/acevents.h b/drivers/acpi/acpica/acevents.h
+index 298180bf7e3c1..bfcc68b9f708d 100644
+--- a/drivers/acpi/acpica/acevents.h
++++ b/drivers/acpi/acpica/acevents.h
+@@ -230,6 +230,8 @@ acpi_ev_default_region_setup(acpi_handle handle,
  
--	slot = radix_tree_iter_find(&idr->idr_rt, &iter, *nextid);
-+	radix_tree_for_each_slot(slot, &idr->idr_rt, &iter, *nextid) {
-+		entry = radix_tree_deref_slot(slot);
-+		if (!entry)
-+			continue;
-+		if (!radix_tree_deref_retry(entry))
-+			break;
-+		if (slot != (void *)&idr->idr_rt.rnode &&
-+				entry != (void *)RADIX_TREE_INTERNAL_NODE)
-+			break;
-+		slot = radix_tree_iter_retry(&iter);
-+	}
- 	if (!slot)
- 		return NULL;
+ acpi_status acpi_ev_initialize_region(union acpi_operand_object *region_obj);
  
-+	if (WARN_ON_ONCE(iter.index > INT_MAX))
-+		return NULL;
++u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
 +
- 	*nextid = iter.index;
--	return rcu_dereference_raw(*slot);
-+	return entry;
- }
- EXPORT_SYMBOL(idr_get_next);
- 
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -177,6 +177,57 @@ void idr_get_next_test(void)
- 	idr_destroy(&idr);
- }
- 
-+static inline void *idr_mk_value(unsigned long v)
-+{
-+	BUG_ON((long)v < 0);
-+	return (void *)((v & 1) | 2 | (v << 1));
-+}
-+
-+DEFINE_IDR(find_idr);
-+
-+static void *idr_throbber(void *arg)
-+{
-+	time_t start = time(NULL);
-+	int id = *(int *)arg;
-+
-+	rcu_register_thread();
-+	do {
-+		idr_alloc(&find_idr, idr_mk_value(id), id, id + 1, GFP_KERNEL);
-+		idr_remove(&find_idr, id);
-+	} while (time(NULL) < start + 10);
-+	rcu_unregister_thread();
-+
-+	return NULL;
-+}
-+
-+void idr_find_test_1(int anchor_id, int throbber_id)
-+{
-+	pthread_t throbber;
-+	time_t start = time(NULL);
-+
-+	pthread_create(&throbber, NULL, idr_throbber, &throbber_id);
-+
-+	BUG_ON(idr_alloc(&find_idr, idr_mk_value(anchor_id), anchor_id,
-+				anchor_id + 1, GFP_KERNEL) != anchor_id);
-+
-+	do {
-+		int id = 0;
-+		void *entry = idr_get_next(&find_idr, &id);
-+		BUG_ON(entry != idr_mk_value(id));
-+	} while (time(NULL) < start + 11);
-+
-+	pthread_join(throbber, NULL);
-+
-+	idr_remove(&find_idr, anchor_id);
-+	BUG_ON(!idr_is_empty(&find_idr));
-+}
-+
-+void idr_find_test(void)
-+{
-+	idr_find_test_1(100000, 0);
-+	idr_find_test_1(0, 100000);
-+}
-+
- void idr_checks(void)
- {
- 	unsigned long i;
-@@ -234,6 +285,7 @@ void idr_checks(void)
- 	idr_null_test();
- 	idr_nowait_test();
- 	idr_get_next_test();
-+	idr_find_test();
- }
- 
  /*
+  * evsci - SCI (System Control Interrupt) handling/dispatch
+  */
+diff --git a/drivers/acpi/acpica/aclocal.h b/drivers/acpi/acpica/aclocal.h
+index 0f28a38a43ea1..99b0da8991098 100644
+--- a/drivers/acpi/acpica/aclocal.h
++++ b/drivers/acpi/acpica/aclocal.h
+@@ -395,9 +395,9 @@ struct acpi_simple_repair_info {
+ /* Info for running the _REG methods */
+ 
+ struct acpi_reg_walk_info {
+-	acpi_adr_space_type space_id;
+ 	u32 function;
+ 	u32 reg_run_count;
++	acpi_adr_space_type space_id;
+ };
+ 
+ /*****************************************************************************
+diff --git a/drivers/acpi/acpica/evregion.c b/drivers/acpi/acpica/evregion.c
+index 70c2bd169f669..49decca4e08ff 100644
+--- a/drivers/acpi/acpica/evregion.c
++++ b/drivers/acpi/acpica/evregion.c
+@@ -653,6 +653,19 @@ acpi_ev_execute_reg_methods(struct acpi_namespace_node *node,
+ 
+ 	ACPI_FUNCTION_TRACE(ev_execute_reg_methods);
+ 
++	/*
++	 * These address spaces do not need a call to _REG, since the ACPI
++	 * specification defines them as: "must always be accessible". Since
++	 * they never change state (never become unavailable), no need to ever
++	 * call _REG on them. Also, a data_table is not a "real" address space,
++	 * so do not call _REG. September 2018.
++	 */
++	if ((space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) ||
++	    (space_id == ACPI_ADR_SPACE_SYSTEM_IO) ||
++	    (space_id == ACPI_ADR_SPACE_DATA_TABLE)) {
++		return_VOID;
++	}
++
+ 	info.space_id = space_id;
+ 	info.function = function;
+ 	info.reg_run_count = 0;
+@@ -714,8 +727,8 @@ acpi_ev_reg_run(acpi_handle obj_handle,
+ 	}
+ 
+ 	/*
+-	 * We only care about regions.and objects that are allowed to have address
+-	 * space handlers
++	 * We only care about regions and objects that are allowed to have
++	 * address space handlers
+ 	 */
+ 	if ((node->type != ACPI_TYPE_REGION) && (node != acpi_gbl_root_node)) {
+ 		return (AE_OK);
+diff --git a/drivers/acpi/acpica/evrgnini.c b/drivers/acpi/acpica/evrgnini.c
+index 39284deedd885..17df5dacd43cf 100644
+--- a/drivers/acpi/acpica/evrgnini.c
++++ b/drivers/acpi/acpica/evrgnini.c
+@@ -16,9 +16,6 @@
+ #define _COMPONENT          ACPI_EVENTS
+ ACPI_MODULE_NAME("evrgnini")
+ 
+-/* Local prototypes */
+-static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
+-
+ /*******************************************************************************
+  *
+  * FUNCTION:    acpi_ev_system_memory_region_setup
+@@ -33,7 +30,6 @@ static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
+  * DESCRIPTION: Setup a system_memory operation region
+  *
+  ******************************************************************************/
+-
+ acpi_status
+ acpi_ev_system_memory_region_setup(acpi_handle handle,
+ 				   u32 function,
+@@ -313,7 +309,7 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
+  *
+  ******************************************************************************/
+ 
+-static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node)
++u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node)
+ {
+ 	acpi_status status;
+ 	struct acpi_pnp_device_id *hid;
+diff --git a/drivers/acpi/acpica/evxfregn.c b/drivers/acpi/acpica/evxfregn.c
+index 091415b14fbf1..3b3a25d9f0e6d 100644
+--- a/drivers/acpi/acpica/evxfregn.c
++++ b/drivers/acpi/acpica/evxfregn.c
+@@ -193,7 +193,6 @@ acpi_remove_address_space_handler(acpi_handle device,
+ 				 */
+ 				region_obj =
+ 				    handler_obj->address_space.region_list;
+-
+ 			}
+ 
+ 			/* Remove this Handler object from the list */
+-- 
+2.20.1
+
 
 
