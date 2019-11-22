@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C56106DD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32102106E1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730188AbfKVLDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:03:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57874 "EHLO mail.kernel.org"
+        id S1730648AbfKVLGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:06:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730607AbfKVLDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:03:37 -0500
+        id S1731819AbfKVLGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:06:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DAFC207DD;
-        Fri, 22 Nov 2019 11:03:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5585D2088F;
+        Fri, 22 Nov 2019 11:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420616;
-        bh=ki+pDiUQ4TAJihOkdBBUuOsWB5MDl13oiTbkGVRNnaw=;
+        s=default; t=1574420773;
+        bh=3V4B+5FPwQ+goJN1+z1cIB2n93aSNpU3SDah4sLezHk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NYbsm/YnAoEy6rbWlDEgXjhlC082bmxVzMEozCtSRK+RZrRl7sq8tpdHyrFE+A9HF
-         f08W6Islm7vR7Jc3J6gulNFZp3ltcXUJvVNKLMNCN7aKEX5f+sthxycLw2JIqPad8U
-         wZscsNKb1HMTSyo2hX8MAnfP0eGjBVlHqyQnvETI=
+        b=0F1WRVWDIbO+mXTO6bLqZ7hx3XsnDibAo6dNHnjPeUeAMsMwNv+MhL3amngWWMiYs
+         +z9fHnf8zjRAKaMiRou/nwizk2Qhlni6s6zrDW4ixeXjYbcceMm3tWQFOlt/D0aF+x
+         swUt+Dyv7ktsarBmXyjyr7CdUR1pUVSW3tfXY+fQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 166/220] mmc: mmci: expand startbiterr to irqmask and error check
-Date:   Fri, 22 Nov 2019 11:28:51 +0100
-Message-Id: <20191122100924.727930440@linuxfoundation.org>
+Subject: [PATCH 4.19 167/220] s390/kasan: avoid vdso instrumentation
+Date:   Fri, 22 Nov 2019 11:28:52 +0100
+Message-Id: <20191122100924.813862210@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,111 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit daf9713c5ef8c3ffb0bdf7de11b53b2b2756c4f1 ]
+[ Upstream commit 348498458505e202df41b6b9a78da448d39298b7 ]
 
-All variants don't pretend to have a startbiterr.
--While data error check, if status register return an error
-(like  MCI_DATACRCFAIL) we must avoid to check MCI_STARTBITERR
-(if not desired).
--expand start_err to MCI_IRQENABLE to avoid to set this bit by default.
+vdso is mapped into user space processes, which won't have kasan
+shodow mapped.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/mmci.c | 27 ++++++++++++++++-----------
- drivers/mmc/host/mmci.h |  6 +++---
- 2 files changed, 19 insertions(+), 14 deletions(-)
+ arch/s390/kernel/vdso32/Makefile | 3 ++-
+ arch/s390/kernel/vdso64/Makefile | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index eb1a65cb878f0..fa6268c0f1232 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -895,14 +895,18 @@ static void
- mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
- 	      unsigned int status)
- {
-+	unsigned int status_err;
-+
- 	/* Make sure we have data to handle */
- 	if (!data)
- 		return;
+diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
+index 04dd3e2c3bd9b..e76309fbbcb3b 100644
+--- a/arch/s390/kernel/vdso32/Makefile
++++ b/arch/s390/kernel/vdso32/Makefile
+@@ -28,9 +28,10 @@ obj-y += vdso32_wrapper.o
+ extra-y += vdso32.lds
+ CPPFLAGS_vdso32.lds += -P -C -U$(ARCH)
  
- 	/* First check for errors */
--	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
--		      host->variant->start_err |
--		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
-+	status_err = status & (host->variant->start_err |
-+			       MCI_DATACRCFAIL | MCI_DATATIMEOUT |
-+			       MCI_TXUNDERRUN | MCI_RXOVERRUN);
-+
-+	if (status_err) {
- 		u32 remain, success;
+-# Disable gcov profiling and ubsan for VDSO code
++# Disable gcov profiling, ubsan and kasan for VDSO code
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
++KASAN_SANITIZE := n
  
- 		/* Terminate the DMA transfer */
-@@ -922,18 +926,18 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
- 		success = data->blksz * data->blocks - remain;
+ # Force dependency (incbin is bad)
+ $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
+diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
+index ddebc26cd9494..f849ac61c5da0 100644
+--- a/arch/s390/kernel/vdso64/Makefile
++++ b/arch/s390/kernel/vdso64/Makefile
+@@ -28,9 +28,10 @@ obj-y += vdso64_wrapper.o
+ extra-y += vdso64.lds
+ CPPFLAGS_vdso64.lds += -P -C -U$(ARCH)
  
- 		dev_dbg(mmc_dev(host->mmc), "MCI ERROR IRQ, status 0x%08x at 0x%08x\n",
--			status, success);
--		if (status & MCI_DATACRCFAIL) {
-+			status_err, success);
-+		if (status_err & MCI_DATACRCFAIL) {
- 			/* Last block was not successful */
- 			success -= 1;
- 			data->error = -EILSEQ;
--		} else if (status & MCI_DATATIMEOUT) {
-+		} else if (status_err & MCI_DATATIMEOUT) {
- 			data->error = -ETIMEDOUT;
--		} else if (status & MCI_STARTBITERR) {
-+		} else if (status_err & MCI_STARTBITERR) {
- 			data->error = -ECOMM;
--		} else if (status & MCI_TXUNDERRUN) {
-+		} else if (status_err & MCI_TXUNDERRUN) {
- 			data->error = -EIO;
--		} else if (status & MCI_RXOVERRUN) {
-+		} else if (status_err & MCI_RXOVERRUN) {
- 			if (success > host->variant->fifosize)
- 				success -= host->variant->fifosize;
- 			else
-@@ -1790,7 +1794,7 @@ static int mmci_probe(struct amba_device *dev,
- 			goto clk_disable;
- 	}
+-# Disable gcov profiling and ubsan for VDSO code
++# Disable gcov profiling, ubsan and kasan for VDSO code
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
++KASAN_SANITIZE := n
  
--	writel(MCI_IRQENABLE, host->base + MMCIMASK0);
-+	writel(MCI_IRQENABLE | variant->start_err, host->base + MMCIMASK0);
- 
- 	amba_set_drvdata(dev, mmc);
- 
-@@ -1877,7 +1881,8 @@ static void mmci_restore(struct mmci_host *host)
- 		writel(host->datactrl_reg, host->base + MMCIDATACTRL);
- 		writel(host->pwr_reg, host->base + MMCIPOWER);
- 	}
--	writel(MCI_IRQENABLE, host->base + MMCIMASK0);
-+	writel(MCI_IRQENABLE | host->variant->start_err,
-+	       host->base + MMCIMASK0);
- 	mmci_reg_delay(host);
- 
- 	spin_unlock_irqrestore(&host->lock, flags);
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 517591d219e93..613d37ab08d20 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -181,9 +181,9 @@
- #define MMCIFIFO		0x080 /* to 0x0bc */
- 
- #define MCI_IRQENABLE	\
--	(MCI_CMDCRCFAILMASK|MCI_DATACRCFAILMASK|MCI_CMDTIMEOUTMASK|	\
--	MCI_DATATIMEOUTMASK|MCI_TXUNDERRUNMASK|MCI_RXOVERRUNMASK|	\
--	MCI_CMDRESPENDMASK|MCI_CMDSENTMASK|MCI_STARTBITERRMASK)
-+	(MCI_CMDCRCFAILMASK | MCI_DATACRCFAILMASK | MCI_CMDTIMEOUTMASK | \
-+	MCI_DATATIMEOUTMASK | MCI_TXUNDERRUNMASK | MCI_RXOVERRUNMASK |	\
-+	MCI_CMDRESPENDMASK | MCI_CMDSENTMASK)
- 
- /* These interrupts are directed to IRQ1 when two IRQ lines are available */
- #define MCI_IRQ1MASK \
+ # Force dependency (incbin is bad)
+ $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
 -- 
 2.20.1
 
