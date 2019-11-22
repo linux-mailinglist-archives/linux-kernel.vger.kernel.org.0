@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F804106D5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0CDB106B57
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730913AbfKVK7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:59:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50328 "EHLO mail.kernel.org"
+        id S1729237AbfKVKn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:43:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730906AbfKVK7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:59:23 -0500
+        id S1729216AbfKVKnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:43:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28A2A20706;
-        Fri, 22 Nov 2019 10:59:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0852A20637;
+        Fri, 22 Nov 2019 10:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420362;
-        bh=GwUErkfOcTNNe8fJakwxrN+hDieJPLPdT00X3OCbnKQ=;
+        s=default; t=1574419403;
+        bh=2xHlJ7gI+TDUsL3xXM2gRKzP41ulc+uIo4yml40r8aQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I1ZgLjG1xq5Rx2d6r7x8UvbP7fq8OgjUfhpfcE2qPtYGMRIi0MYAsZ69as7goAu4l
-         qrBwYl8AAzjw31dl0l0+w26LNis+gyr+3xLnSWCqL4aloYYO6xC8t+4xZ0Q4Wippte
-         EXxAVbBcs9bXgLBiETAwZY5KS4UofE3qeX0gkvxc=
+        b=pv+e1FCkXYZqCsnwT+WyFxhwZiDbaDjpQxJ+8jeCv7lASbBrT8LmKFfGbdrzAf7lF
+         uk/p38gfdtbhNcHOvXbS6t5c+F9YzRXTiQ3faNJBeu3tDovB7QnvvFJYVY3LXh59fd
+         l+k8TU6XQ4Ne9rG+wgrzYYL7AEDQH575Z4SSBnkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 074/220] PM / hibernate: Check the success of generating md5 digest before hibernation
+Subject: [PATCH 4.9 099/222] ARM: dts: ux500: Correct SCU unit address
 Date:   Fri, 22 Nov 2019 11:27:19 +0100
-Message-Id: <20191122100917.596370205@linuxfoundation.org>
+Message-Id: <20191122100910.563764366@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 749fa17093ff67b31dea864531a3698b6a95c26c ]
+[ Upstream commit 2f217d24ecaec2012e628d21e244eef0608656a4 ]
 
-Currently if get_e820_md5() fails, then it will hibernate nevertheless.
-Actually the error code should be propagated to upper caller so that
-the hibernation could be aware of the result and terminates the process
-if md5 digest fails.
+The unit address of the Cortex-A9 SCU device node contains one zero too
+many.  Remove it.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/power/hibernate_64.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/ste-dbx5x0.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
-index c9986041a5e12..6c3ec193a2465 100644
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -266,9 +266,9 @@ static int get_e820_md5(struct e820_table *table, void *buf)
- 	return ret;
- }
+diff --git a/arch/arm/boot/dts/ste-dbx5x0.dtsi b/arch/arm/boot/dts/ste-dbx5x0.dtsi
+index d309314f3a364..45869c3234358 100644
+--- a/arch/arm/boot/dts/ste-dbx5x0.dtsi
++++ b/arch/arm/boot/dts/ste-dbx5x0.dtsi
+@@ -188,7 +188,7 @@
+ 			      <0xa0410100 0x100>;
+ 		};
  
--static void hibernation_e820_save(void *buf)
-+static int hibernation_e820_save(void *buf)
- {
--	get_e820_md5(e820_table_firmware, buf);
-+	return get_e820_md5(e820_table_firmware, buf);
- }
- 
- static bool hibernation_e820_mismatch(void *buf)
-@@ -288,8 +288,9 @@ static bool hibernation_e820_mismatch(void *buf)
- 	return memcmp(result, buf, MD5_DIGEST_SIZE) ? true : false;
- }
- #else
--static void hibernation_e820_save(void *buf)
-+static int hibernation_e820_save(void *buf)
- {
-+	return 0;
- }
- 
- static bool hibernation_e820_mismatch(void *buf)
-@@ -334,9 +335,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
- 
- 	rdr->magic = RESTORE_MAGIC;
- 
--	hibernation_e820_save(rdr->e820_digest);
--
--	return 0;
-+	return hibernation_e820_save(rdr->e820_digest);
- }
- 
- /**
+-		scu@a04100000 {
++		scu@a0410000 {
+ 			compatible = "arm,cortex-a9-scu";
+ 			reg = <0xa0410000 0x100>;
+ 		};
 -- 
 2.20.1
 
