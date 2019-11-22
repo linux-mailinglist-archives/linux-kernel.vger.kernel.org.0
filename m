@@ -2,72 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 205CE105DA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 01:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF51105DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 01:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfKVAZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 19:25:53 -0500
-Received: from mga11.intel.com ([192.55.52.93]:13408 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbfKVAZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 19:25:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 16:25:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
-   d="scan'208";a="219280751"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga002.jf.intel.com with ESMTP; 21 Nov 2019 16:25:44 -0800
-Date:   Thu, 21 Nov 2019 16:37:54 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 4/6] x86/split_lock: Enumerate split lock detection
- if the IA32_CORE_CAPABILITIES MSR is not supported
-Message-ID: <20191122003754.GF199273@romley-ivt3.sc.intel.com>
-References: <1574297603-198156-5-git-send-email-fenghua.yu@intel.com>
- <D4D6F51D-D791-4B78-8FCA-5D419B1D079C@amacapital.net>
+        id S1726540AbfKVAay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 19:30:54 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43104 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfKVAax (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 19:30:53 -0500
+Received: by mail-ed1-f67.google.com with SMTP id w6so4425149edx.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 16:30:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p8S5GRxfxB7MPCj+Eww2v+N3SSDa3SwY872hQxbGyeE=;
+        b=SwDeNapr8C2hZtNWi6QBd3lpU7IbLJ10rTgPoY37OuwGIIHILjqN8ZXIj83SFbbr7g
+         YzAi6ZwttEnHRQxMLHdr0KR362IBbLpoJ5EQeuCtrhGYhqHmbxJ2UblkssOkCiA4sPgS
+         Rml0Bkr1b8tqWCIvh+G9oBFMyxor3gMwJDbS/53jn8rJ3kmsZTBXA1PjvNfIKfTdTwLC
+         wF3jnFSC3C9BdMkjWYAGvnrnEMotMC0HvDkDZ3uMzOkU+lr7w1aQmLJPPyOQb/OkjBFA
+         PHVlsE9Glij+peO87AM8pBwdkmSWP8tNYMCmSsqv0mrQedYRcQNccHHzELqAuMzRn8/g
+         566A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p8S5GRxfxB7MPCj+Eww2v+N3SSDa3SwY872hQxbGyeE=;
+        b=CEIU/AhVR7k+Y1PUaLkaowExjkSgp89axzGMbYtZ8+Td8ADrA9T3bEqme1h7RCdyXc
+         7wAL0eDypyf6n8N46/siV4XJE5R/LlV7wTv/2PUOIfLfKe7w6XgtY9l5ZQyf4b3tMqpt
+         wgGCRi45HUZLNBKpW9VXO56him1fGWAlb9lpl1muJ446/4HTVbEZi33LNzQ+zoNZ3RfA
+         uf7dL+km3m+z+Agopy/u78aKOOZM8nGtJ1YNhQhclOxBG7Di0CW0UbbKv3n9LRoeI+62
+         5R4AGXlAUlQocIaBzQOsbUAQaXqM0iPbLHwVatkXtldPvhaMblNIpdHjcCeCjc0rU0ll
+         QXeQ==
+X-Gm-Message-State: APjAAAU2g4T04GL70CNeCSgxdAT72hIGEHKe76HkFg1YxCY+1scWNdIX
+        EgLZ5KGgBRh4qVTPsSdHb5iNS6cfoQ+7nlzFj59IaA==
+X-Google-Smtp-Source: APXvYqybAjsW4IBztIRMQztbxdt6s24fSxLSh87RJOD7czfT0URIvB2H9RrIUrGlfVNwROY40qStEmAhGA2156oOCE0=
+X-Received: by 2002:a17:906:90b:: with SMTP id i11mr18003315ejd.109.1574382651825;
+ Thu, 21 Nov 2019 16:30:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D4D6F51D-D791-4B78-8FCA-5D419B1D079C@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20191121184805.414758-1-pasha.tatashin@soleen.com>
+ <20191121184805.414758-2-pasha.tatashin@soleen.com> <20191122002258.GD25745@shell.armlinux.org.uk>
+In-Reply-To: <20191122002258.GD25745@shell.armlinux.org.uk>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 21 Nov 2019 19:30:41 -0500
+Message-ID: <CA+CK2bDtADA2eVwJAUEPhpic8vXWegh8yLjo6Q6WmXZDxAfJpA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm/arm64/xen: use C inlines for privcmd_call
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, steve.capper@arm.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
+        sstabellini@kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, stefan@agner.ch,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 02:07:38PM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Nov 20, 2019, at 5:45 PM, Fenghua Yu <fenghua.yu@intel.com> wrote:
-> > 
-> > ﻿Architecturally the split lock detection feature is enumerated by
-> > IA32_CORE_CAPABILITIES MSR and future CPU models will indicate presence
-> > of the feature by setting bit 5. But the feature is present in a few
-> > older models where split lock detection is enumerated by the CPU models.
-> > 
-> > Use a "x86_cpu_id" table to list the older CPU models with the feature.
-> > 
-> 
-> This may need to be disabled if the HYPERVISOR bit is set.
+> > +#ifdef CONFIG_CPU_SW_DOMAIN_PAN
+> > +static __always_inline void uaccess_enable(void)
+> > +{
+> > +     unsigned long val = DACR_UACCESS_ENABLE;
+> > +
+> > +     asm volatile("mcr p15, 0, %0, c3, c0, 0" : : "r" (val));
+> > +     isb();
+> > +}
+> > +
+> > +static __always_inline void uaccess_disable(void)
+> > +{
+> > +     unsigned long val = DACR_UACCESS_ENABLE;
 
-How about just keeping this patch set as basic enabling code and
-keep HYPERVISOR out of scope as of now? KVM folks will have better
-handling of split lock in KVM once this patch set is available in
-the kernel.
+Oops, should be DACR_UACCESS_DISABLE.
 
-Thanks.
+> > +
+> > +     asm volatile("mcr p15, 0, %0, c3, c0, 0" : : "r" (val));
+> > +     isb();
+> > +}
+>
+> Rather than inventing these, why not use uaccess_save_and_enable()..
+> uaccess_restore() around the Xen call?
 
--Fenghua
+Thank you for suggestion: uaccess_enable() and uaccess_disable() are
+common calls with arm64, so I will need them, but I think I can use
+set_domain() with DACR_UACCESS_DISABLE /DACR_UACCESS_ENABLE inside
+these inlines.
+
+Pasha
