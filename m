@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95787106EFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B11A106E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbfKVKy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:54:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41050 "EHLO mail.kernel.org"
+        id S1731709AbfKVLFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:05:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728979AbfKVKyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:54:55 -0500
+        id S1731331AbfKVLFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:05:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7129C20721;
-        Fri, 22 Nov 2019 10:54:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62F6720872;
+        Fri, 22 Nov 2019 11:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420094;
-        bh=+ugDS3NL4mHHN24G7VTK1jmCHcSW7yZCBs8zU+QAsHI=;
+        s=default; t=1574420720;
+        bh=km4X5vKqo7Inc5aIAMHNteD9crBieiW9GgVbiAH/MyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D+ldxuwjR5HQHsu6GRs3bmiEWMCJsa20oH/Ef3OuN4oiS7Y3OMzG1UQtOQC98Qeea
-         CcDg7ZOY1diMJbmKNLP9EA3F6UQ2zhomluVpQFCH6J6AOOsWyXz2WMR0blAZhAoFWq
-         9TgvJ9SkWZPtbUIuALi1TVyVI5xN7LOFWex8z2YY=
+        b=ngbh18ZJ0aDKdWoHNZvCp2NrQtRzfZDGXV6JUb1WJcfQizedh0xv9POf6AhxBwUNq
+         aWYf/osnqb7yociXscuF4kgjo0yrFWkjbPF3DiVVb024jLtZ3WZ6C6zlj+htWGQqkJ
+         o2Iuifqd80mlbK3DY4rQCS0vIK4i3zf+LJR4SVAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
+        stable@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 113/122] misc: cxl: Fix possible null pointer dereference
-Date:   Fri, 22 Nov 2019 11:29:26 +0100
-Message-Id: <20191122100835.272176088@linuxfoundation.org>
+Subject: [PATCH 4.19 202/220] hwmon: (ina3221) Fix INA3221_CONFIG_MODE macros
+Date:   Fri, 22 Nov 2019 11:29:27 +0100
+Message-Id: <20191122100928.409190290@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-[ Upstream commit 3dac3583bf1a61db6aaf31dfd752c677a4400afd ]
+[ Upstream commit 791ebc9d34e9d212fc03742c31654b017d385926 ]
 
-It is not safe to dereference an object before a null test. It is
-not needed and just remove them. Ftrace can be used instead.
+The three INA3221_CONFIG_MODE macros are not correctly defined here.
+The MODE3-1 bits are located at BIT 2-0 according to the datasheet.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+So this patch just fixes them by shifting all of them with a correct
+offset. However, this isn't a crital bug fix as the driver does not
+use any of them at this point.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/cxl/guest.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/hwmon/ina3221.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/cxl/guest.c b/drivers/misc/cxl/guest.c
-index 1a64eb185cfd5..de2ce55395454 100644
---- a/drivers/misc/cxl/guest.c
-+++ b/drivers/misc/cxl/guest.c
-@@ -1028,8 +1028,6 @@ int cxl_guest_init_afu(struct cxl *adapter, int slice, struct device_node *afu_n
+diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+index e6b49500c52ae..8c9555313fc3d 100644
+--- a/drivers/hwmon/ina3221.c
++++ b/drivers/hwmon/ina3221.c
+@@ -38,9 +38,9 @@
+ #define INA3221_WARN3			0x0c
+ #define INA3221_MASK_ENABLE		0x0f
  
- void cxl_guest_remove_afu(struct cxl_afu *afu)
- {
--	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
--
- 	if (!afu)
- 		return;
+-#define INA3221_CONFIG_MODE_SHUNT	BIT(1)
+-#define INA3221_CONFIG_MODE_BUS		BIT(2)
+-#define INA3221_CONFIG_MODE_CONTINUOUS	BIT(3)
++#define INA3221_CONFIG_MODE_SHUNT	BIT(0)
++#define INA3221_CONFIG_MODE_BUS		BIT(1)
++#define INA3221_CONFIG_MODE_CONTINUOUS	BIT(2)
+ 
+ #define INA3221_RSHUNT_DEFAULT		10000
  
 -- 
 2.20.1
