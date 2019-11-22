@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5866106D6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F7B106B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730975AbfKVLAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:00:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
+        id S1729424AbfKVKpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfKVK76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:59:58 -0500
+        id S1728761AbfKVKpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:45:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C26820721;
-        Fri, 22 Nov 2019 10:59:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2FDA20717;
+        Fri, 22 Nov 2019 10:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420397;
-        bh=B2KYIyJoPWeC/UNCnJwJ0lmKqBLfynwxhRwcJ6I1OCA=;
+        s=default; t=1574419508;
+        bh=LKMhtjxEW4lnTFxYqZTK/rlDQFdEDmQqHjo7U3iI96Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tQwN/+eViaqTndfaYBqpwYSMORPV7EH4HQ1JqKOyfXky+YsYwNG0kogksEn7UkeZn
-         h7FbF3Kkj+OkuEQbLs9AppYFoIpbF/Dset5obQbG+OUNJfX5eIeOAdohPDCL7R12DV
-         NpaRwCSfERp/Ahb0RNXQcDAYil5E+y+gYOiJo78A=
+        b=udicQBa4zdlF0qgtAncchN6YonRAvjevxkiuEWzJnnvfqEphfLMHav0fBP5W9A0tj
+         dDFhlYdWudd3Hk42vXmK3OfwyNI1UCPRanP3mz21D5rnx37fB5OwajozgVHU2dlIuz
+         /mnlehyb2A3vYaKjPpu0IZyOsoWD/6rS93fkWxlY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Tomasz Nowicki <tnowicki@caviumnetworks.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/220] ACPICA: Never run _REG on system_memory and system_IO
+Subject: [PATCH 4.9 118/222] coresight: etm4x: Configure EL2 exception level when kernel is running in HYP
 Date:   Fri, 22 Nov 2019 11:27:38 +0100
-Message-Id: <20191122100919.368561070@linuxfoundation.org>
+Message-Id: <20191122100911.664304131@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,132 +45,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Moore <robert.moore@intel.com>
+From: Tomasz Nowicki <tnowicki@caviumnetworks.com>
 
-[ Upstream commit 8b1cafdcb4b75c5027c52f1e82b47ebe727ad7ed ]
+[ Upstream commit b860801e3237ec4c74cf8de0be4816996757ae5c ]
 
-These address spaces are defined by the ACPI spec to be
-"always available", and thus _REG should never be run on them.
-Provides compatibility with other ACPI implementations.
+For non-VHE systems host kernel runs at EL1 and jumps to EL2 whenever
+hypervisor code should be executed. In this case ETM4x driver must
+restrict configuration to EL1 when it setups kernel tracing.
+However, there is no separate hypervisor privilege level when VHE
+is enabled, the host kernel runs at EL2.
 
-Signed-off-by: Bob Moore <robert.moore@intel.com>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This patch fixes configuration of TRCACATRn register for VHE systems
+so that ETM_EXLEVEL_NS_HYP bit is used instead of ETM_EXLEVEL_NS_OS
+to on/off kernel tracing. At the same time, it moves common code
+to new helper.
+
+Signed-off-by: Tomasz Nowicki <tnowicki@caviumnetworks.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpica/acevents.h |  2 ++
- drivers/acpi/acpica/aclocal.h  |  2 +-
- drivers/acpi/acpica/evregion.c | 17 +++++++++++++++--
- drivers/acpi/acpica/evrgnini.c |  6 +-----
- drivers/acpi/acpica/evxfregn.c |  1 -
- 5 files changed, 19 insertions(+), 9 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x.c | 40 +++++++++----------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/acpi/acpica/acevents.h b/drivers/acpi/acpica/acevents.h
-index 298180bf7e3c1..bfcc68b9f708d 100644
---- a/drivers/acpi/acpica/acevents.h
-+++ b/drivers/acpi/acpica/acevents.h
-@@ -230,6 +230,8 @@ acpi_ev_default_region_setup(acpi_handle handle,
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+index 44d6c29e26448..22079f886f452 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+@@ -35,6 +35,7 @@
+ #include <linux/pm_runtime.h>
+ #include <asm/sections.h>
+ #include <asm/local.h>
++#include <asm/virt.h>
  
- acpi_status acpi_ev_initialize_region(union acpi_operand_object *region_obj);
+ #include "coresight-etm4x.h"
+ #include "coresight-etm-perf.h"
+@@ -615,7 +616,7 @@ static void etm4_set_default_config(struct etmv4_config *config)
+ 	config->vinst_ctrl |= BIT(0);
+ }
  
-+u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
-+
- /*
-  * evsci - SCI (System Control Interrupt) handling/dispatch
-  */
-diff --git a/drivers/acpi/acpica/aclocal.h b/drivers/acpi/acpica/aclocal.h
-index 0f28a38a43ea1..99b0da8991098 100644
---- a/drivers/acpi/acpica/aclocal.h
-+++ b/drivers/acpi/acpica/aclocal.h
-@@ -395,9 +395,9 @@ struct acpi_simple_repair_info {
- /* Info for running the _REG methods */
- 
- struct acpi_reg_walk_info {
--	acpi_adr_space_type space_id;
- 	u32 function;
- 	u32 reg_run_count;
-+	acpi_adr_space_type space_id;
- };
- 
- /*****************************************************************************
-diff --git a/drivers/acpi/acpica/evregion.c b/drivers/acpi/acpica/evregion.c
-index 70c2bd169f669..49decca4e08ff 100644
---- a/drivers/acpi/acpica/evregion.c
-+++ b/drivers/acpi/acpica/evregion.c
-@@ -653,6 +653,19 @@ acpi_ev_execute_reg_methods(struct acpi_namespace_node *node,
- 
- 	ACPI_FUNCTION_TRACE(ev_execute_reg_methods);
- 
-+	/*
-+	 * These address spaces do not need a call to _REG, since the ACPI
-+	 * specification defines them as: "must always be accessible". Since
-+	 * they never change state (never become unavailable), no need to ever
-+	 * call _REG on them. Also, a data_table is not a "real" address space,
-+	 * so do not call _REG. September 2018.
-+	 */
-+	if ((space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) ||
-+	    (space_id == ACPI_ADR_SPACE_SYSTEM_IO) ||
-+	    (space_id == ACPI_ADR_SPACE_DATA_TABLE)) {
-+		return_VOID;
-+	}
-+
- 	info.space_id = space_id;
- 	info.function = function;
- 	info.reg_run_count = 0;
-@@ -714,8 +727,8 @@ acpi_ev_reg_run(acpi_handle obj_handle,
- 	}
- 
- 	/*
--	 * We only care about regions.and objects that are allowed to have address
--	 * space handlers
-+	 * We only care about regions and objects that are allowed to have
-+	 * address space handlers
- 	 */
- 	if ((node->type != ACPI_TYPE_REGION) && (node != acpi_gbl_root_node)) {
- 		return (AE_OK);
-diff --git a/drivers/acpi/acpica/evrgnini.c b/drivers/acpi/acpica/evrgnini.c
-index 39284deedd885..17df5dacd43cf 100644
---- a/drivers/acpi/acpica/evrgnini.c
-+++ b/drivers/acpi/acpica/evrgnini.c
-@@ -16,9 +16,6 @@
- #define _COMPONENT          ACPI_EVENTS
- ACPI_MODULE_NAME("evrgnini")
- 
--/* Local prototypes */
--static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
--
- /*******************************************************************************
-  *
-  * FUNCTION:    acpi_ev_system_memory_region_setup
-@@ -33,7 +30,6 @@ static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node);
-  * DESCRIPTION: Setup a system_memory operation region
-  *
-  ******************************************************************************/
--
- acpi_status
- acpi_ev_system_memory_region_setup(acpi_handle handle,
- 				   u32 function,
-@@ -313,7 +309,7 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
-  *
-  ******************************************************************************/
- 
--static u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node)
-+u8 acpi_ev_is_pci_root_bridge(struct acpi_namespace_node *node)
+-static u64 etm4_get_access_type(struct etmv4_config *config)
++static u64 etm4_get_ns_access_type(struct etmv4_config *config)
  {
- 	acpi_status status;
- 	struct acpi_pnp_device_id *hid;
-diff --git a/drivers/acpi/acpica/evxfregn.c b/drivers/acpi/acpica/evxfregn.c
-index 091415b14fbf1..3b3a25d9f0e6d 100644
---- a/drivers/acpi/acpica/evxfregn.c
-+++ b/drivers/acpi/acpica/evxfregn.c
-@@ -193,7 +193,6 @@ acpi_remove_address_space_handler(acpi_handle device,
- 				 */
- 				region_obj =
- 				    handler_obj->address_space.region_list;
--
- 			}
+ 	u64 access_type = 0;
  
- 			/* Remove this Handler object from the list */
+@@ -626,17 +627,26 @@ static u64 etm4_get_access_type(struct etmv4_config *config)
+ 	 *   Bit[13] Exception level 1 - OS
+ 	 *   Bit[14] Exception level 2 - Hypervisor
+ 	 *   Bit[15] Never implemented
+-	 *
+-	 * Always stay away from hypervisor mode.
+ 	 */
+-	access_type = ETM_EXLEVEL_NS_HYP;
+-
+-	if (config->mode & ETM_MODE_EXCL_KERN)
+-		access_type |= ETM_EXLEVEL_NS_OS;
++	if (!is_kernel_in_hyp_mode()) {
++		/* Stay away from hypervisor mode for non-VHE */
++		access_type =  ETM_EXLEVEL_NS_HYP;
++		if (config->mode & ETM_MODE_EXCL_KERN)
++			access_type |= ETM_EXLEVEL_NS_OS;
++	} else if (config->mode & ETM_MODE_EXCL_KERN) {
++		access_type = ETM_EXLEVEL_NS_HYP;
++	}
+ 
+ 	if (config->mode & ETM_MODE_EXCL_USER)
+ 		access_type |= ETM_EXLEVEL_NS_APP;
+ 
++	return access_type;
++}
++
++static u64 etm4_get_access_type(struct etmv4_config *config)
++{
++	u64 access_type = etm4_get_ns_access_type(config);
++
+ 	/*
+ 	 * EXLEVEL_S, bits[11:8], don't trace anything happening
+ 	 * in secure state.
+@@ -890,20 +900,10 @@ void etm4_config_trace_mode(struct etmv4_config *config)
+ 
+ 	addr_acc = config->addr_acc[ETM_DEFAULT_ADDR_COMP];
+ 	/* clear default config */
+-	addr_acc &= ~(ETM_EXLEVEL_NS_APP | ETM_EXLEVEL_NS_OS);
++	addr_acc &= ~(ETM_EXLEVEL_NS_APP | ETM_EXLEVEL_NS_OS |
++		      ETM_EXLEVEL_NS_HYP);
+ 
+-	/*
+-	 * EXLEVEL_NS, bits[15:12]
+-	 * The Exception levels are:
+-	 *   Bit[12] Exception level 0 - Application
+-	 *   Bit[13] Exception level 1 - OS
+-	 *   Bit[14] Exception level 2 - Hypervisor
+-	 *   Bit[15] Never implemented
+-	 */
+-	if (mode & ETM_MODE_EXCL_KERN)
+-		addr_acc |= ETM_EXLEVEL_NS_OS;
+-	else
+-		addr_acc |= ETM_EXLEVEL_NS_APP;
++	addr_acc |= etm4_get_ns_access_type(config);
+ 
+ 	config->addr_acc[ETM_DEFAULT_ADDR_COMP] = addr_acc;
+ 	config->addr_acc[ETM_DEFAULT_ADDR_COMP + 1] = addr_acc;
 -- 
 2.20.1
 
