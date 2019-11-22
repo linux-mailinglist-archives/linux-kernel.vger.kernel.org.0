@@ -2,133 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6021074F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A7F1074FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:35:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfKVPdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 10:33:18 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:33792 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726613AbfKVPdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 10:33:17 -0500
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id xAMFX7ka032603
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Nov 2019 16:33:07 +0100
-Received: from [139.25.68.37] ([139.25.68.37])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id xAMFX64q016437;
-        Fri, 22 Nov 2019 16:33:07 +0100
-Subject: Re: [PATCH v3 1/2] gpio: sch: Add edge event support
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-References: <cover.1574277614.git.jan.kiszka@siemens.com>
- <42ae6149a14f81fd86c5acb5bd33e987123b6bed.1574277614.git.jan.kiszka@siemens.com>
- <20191122111219.GW32742@smile.fi.intel.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <5d7399ce-1776-18ef-3bb5-6e3e8e7e7524@siemens.com>
-Date:   Fri, 22 Nov 2019 16:33:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727047AbfKVPfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 10:35:16 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:59376 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726633AbfKVPfP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 10:35:15 -0500
+Received: (qmail 2808 invoked by uid 2102); 22 Nov 2019 10:35:14 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 22 Nov 2019 10:35:14 -0500
+Date:   Fri, 22 Nov 2019 10:35:14 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <hverkuil@xs4all.nl>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <mchehab@kernel.org>,
+        <oneukum@suse.com>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
+In-Reply-To: <0000000000002d684a0597ecf0b5@google.com>
+Message-ID: <Pine.LNX.4.44L0.1911221031300.1511-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20191122111219.GW32742@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.11.19 12:12, Andy Shevchenko wrote:
-> On Wed, Nov 20, 2019 at 08:20:13PM +0100, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> Add the required infrastructure consisting of an irq_chip_generic with
->> its irq_chip_type callbacks to enable and report edge events of the pins
->> to the gpio core. The actual hook-up of the event interrupt will happen
->> separately.
-> 
->> +static int sch_irq_type(struct irq_data *d, unsigned int type)
->> +{
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
->> +	struct sch_gpio *sch = gc->private;
->> +	unsigned int gpio_num = d->irq - sch->irq_base;
->> +	unsigned long flags;
->> +	int rising = 0;
->> +	int falling = 0;
->> +
->> +	switch (type & IRQ_TYPE_SENSE_MASK) {
->> +	case IRQ_TYPE_EDGE_RISING:
->> +		rising = 1;
->> +		break;
->> +	case IRQ_TYPE_EDGE_FALLING:
->> +		falling = 1;
->> +		break;
->> +	case IRQ_TYPE_EDGE_BOTH:
->> +		rising = 1;
->> +		falling = 1;
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	spin_lock_irqsave(&sch->lock, flags);
->> +	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
->> +	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
->> +	spin_unlock_irqrestore(&sch->lock, flags);
-> 
-> Won't we need to set up IRQ handler here and use handle_bad_irq() during
-> initialization phase?
+On Fri, 22 Nov 2019, syzbot wrote:
 
-Why? This is just defining the edge type, not whether an interrupt could 
-be generated or not. Also, we only have edge events here, so no reason 
-to switch types.
-
+> Hello,
 > 
->> +
->> +	return 0;
->> +}
+> syzbot has tested the proposed patch but the reproducer still triggered  
+> crash:
+> INFO: rcu detected stall in dummy_timer
 > 
->> +	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
->> +					NUMA_NO_NODE);
->> +	if (irq_base < 0)
->> +		return irq_base;
->> +	sch->irq_base = irq_base;
->> +
->> +	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
->> +					 NULL, handle_simple_irq);
->> +	if (!gc)
->> +		return -ENOMEM;
->> +
->> +	gc->private = sch;
->> +	ct = gc->chip_types;
->> +
->> +	ct->chip.irq_mask = sch_irq_mask;
->> +	ct->chip.irq_unmask = sch_irq_unmask;
->> +	ct->chip.irq_set_type = sch_irq_type;
->> +
->> +	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
->> +					  IRQ_MSK(sch->chip.ngpio),
->> +					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
->> +	if (ret)
->> +		return ret;
-> 
-> Shan't we do this in the (similar) way how it's done in pinctrl-cherryview.c
-> driver? (Keep in mind later patches which are going to be v5.5)
-> 
+> radio-si470x 1-1:0.0: non-zero urb status (-71)
+> radio-si470x 4-1:0.0: non-zero urb status (-71)
+> radio-si470x 3-1:0.0: non-zero urb status (-71)
 
-Can you be a bit more specific for me? Do you mean the pattern 
-gpiochip_irqchip_add / gpiochip_set_chained_irqchip? What would be the 
-difference / benefit? And how would I link sch_sci_handler to that pattern?
+Oliver:
 
-Jan
+The reason for this stall is because the driver goes into a tight
+resubmit loop when the interrupt URB completes with an unrecognized
+error status.  Instead, the driver should log an error message and
+avoid resubmitting.  Error recovery can be done at a higher level.
 
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+In other words, change the
+
+			goto resubmit; /* Maybe we can recover. */
+
+line in the completion handler into a return.
+
+Alan Stern
+
