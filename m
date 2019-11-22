@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81EB3107468
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 15:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A00210746A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 15:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbfKVO6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 09:58:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59206 "EHLO mail.kernel.org"
+        id S1727645AbfKVO6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 09:58:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbfKVO6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 09:58:12 -0500
+        id S1727566AbfKVO6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 09:58:15 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63A382072D;
-        Fri, 22 Nov 2019 14:58:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02F4620748;
+        Fri, 22 Nov 2019 14:58:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574434691;
-        bh=hWoigqBHbzS6dVqaCF23/6XuZ0aEotA12dAXx16wvzw=;
+        s=default; t=1574434694;
+        bh=Z5oJsPKLFutnvTtVTPLAF6w8g8/mnS9Hmvy/0TagU8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VSdqFPAInDqdD43Hgkp7loF+V6J9KRHEw/pM039DXLJlKdU0fhFPhF5BNiW0bM3PU
-         WwDIfN50n3/qSTB+GfisN2Su1MzjpwR7qo4rOeEhTpACqtDcqsmgTSaf/P5L4VHnE6
-         Sci0nK//24/dwJk08oHmvbjWgUvAsK+Er8N0xRsU=
+        b=lx+7mD9tZtnxaXK3SB+ubivbafuKr2DW7F9xyWiLznCswdCqeSFQVd+r1a6Rx/w5m
+         ye/6bbRs85xzxkAbMLgrF0/fymrljW9m0VsrZs1Om6aE1nkiORK7KNEzw9omdRp+Tr
+         jX4bUGaSxpAUiNkrVMbiE/HW7vaxo3gh3bF4xTZw=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -32,9 +32,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 19/26] perf pmu: When using default config, record which bits of config were changed by the user
-Date:   Fri, 22 Nov 2019 11:57:04 -0300
-Message-Id: <20191122145711.3171-20-acme@kernel.org>
+Subject: [PATCH 20/26] perf intel-pt: Add support for recording AUX area samples
+Date:   Fri, 22 Nov 2019 11:57:05 -0300
+Message-Id: <20191122145711.3171-21-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191122145711.3171-1-acme@kernel.org>
 References: <20191122145711.3171-1-acme@kernel.org>
@@ -47,157 +47,255 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Default config for a PMU is defined before selected events are parsed.
-That allows the user-entered config to override the default config.
-
-However that does not allow for changing the default config based on
-other options.
-
-For example, if the user chooses AUX area sampling mode, in the case of
-Intel PT, the psb_period needs to be small for sampling, so there is a
-need to set the default psb_period to 0 (2 KiB) in that case. However
-that should not override a value set by the user. To allow for that,
-when using default config, record which bits of config were changed by
-the user.
+Set up the default number of mmap pages, default sample size and default
+psb_period for AUX area sampling. Add documentation also.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191115124225.5247-13-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20191115124225.5247-14-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c        |  2 ++
- tools/perf/util/evsel_config.h |  2 ++
- tools/perf/util/parse-events.c | 42 +++++++++++++++++++++++++++++++++-
- tools/perf/util/pmu.c          | 10 ++++++++
- tools/perf/util/pmu.h          |  1 +
- 5 files changed, 56 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/intel-pt.txt | 59 ++++++++++++++++++-
+ tools/perf/arch/x86/util/auxtrace.c   |  2 +
+ tools/perf/arch/x86/util/intel-pt.c   | 81 ++++++++++++++++++++++++++-
+ 3 files changed, 139 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ad7665a546cf..f4dea055b080 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -849,6 +849,8 @@ static void apply_config_terms(struct evsel *evsel,
- 		case PERF_EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE:
- 			/* Already applied by auxtrace */
- 			break;
-+		case PERF_EVSEL__CONFIG_TERM_CFG_CHG:
-+			break;
- 		default:
- 			break;
- 		}
-diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-index 6e654ede8fbe..1f8d2fe0b66e 100644
---- a/tools/perf/util/evsel_config.h
-+++ b/tools/perf/util/evsel_config.h
-@@ -26,6 +26,7 @@ enum evsel_term_type {
- 	PERF_EVSEL__CONFIG_TERM_PERCORE,
- 	PERF_EVSEL__CONFIG_TERM_AUX_OUTPUT,
- 	PERF_EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE,
-+	PERF_EVSEL__CONFIG_TERM_CFG_CHG,
- };
+diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
+index e0d9e7dd4f17..2cf2d9e9d0da 100644
+--- a/tools/perf/Documentation/intel-pt.txt
++++ b/tools/perf/Documentation/intel-pt.txt
+@@ -434,6 +434,56 @@ pwr_evt		Enable power events.  The power events provide information about
+ 		"0" otherwise.
  
- struct perf_evsel_config_term {
-@@ -46,6 +47,7 @@ struct perf_evsel_config_term {
- 		bool	      percore;
- 		bool	      aux_output;
- 		u32	      aux_sample_size;
-+		u64	      cfg_chg;
- 	} val;
- 	bool weak;
- };
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index fc5e27bc8315..6c313c4087ed 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1290,7 +1290,40 @@ do {								\
- 			break;
- 		}
- 	}
--#undef ADD_EVSEL_CONFIG
-+	return 0;
+ 
++AUX area sampling option
++------------------------
++
++To select Intel PT "sampling" the AUX area sampling option can be used:
++
++	--aux-sample
++
++Optionally it can be followed by the sample size in bytes e.g.
++
++	--aux-sample=8192
++
++In addition, the Intel PT event to sample must be defined e.g.
++
++	-e intel_pt//u
++
++Samples on other events will be created containing Intel PT data e.g. the
++following will create Intel PT samples on the branch-misses event, note the
++events must be grouped using {}:
++
++	perf record --aux-sample -e '{intel_pt//u,branch-misses:u}'
++
++An alternative to '--aux-sample' is to add the config term 'aux-sample-size' to
++events.  In this case, the grouping is implied e.g.
++
++	perf record -e intel_pt//u -e branch-misses/aux-sample-size=8192/u
++
++is the same as:
++
++	perf record -e '{intel_pt//u,branch-misses/aux-sample-size=8192/u}'
++
++but allows for also using an address filter e.g.:
++
++	perf record -e intel_pt//u --filter 'filter * @/bin/ls' -e branch-misses/aux-sample-size=8192/u -- ls
++
++It is important to select a sample size that is big enough to contain at least
++one PSB packet.  If not a warning will be displayed:
++
++	Intel PT sample size (%zu) may be too small for PSB period (%zu)
++
++The calculation used for that is: if sample_size <= psb_period + 256 display the
++warning.  When sampling is used, psb_period defaults to 0 (2KiB).
++
++The default sample size is 4KiB.
++
++The sample size is passed in aux_sample_size in struct perf_event_attr.  The
++sample size is limited by the maximum event size which is 64KiB.  It is
++difficult to know how big the event might be without the trace sample attached,
++but the tool validates that the sample size is not greater than 60KiB.
++
++
+ new snapshot option
+ -------------------
+ 
+@@ -487,8 +537,8 @@ their mlock limit (which defaults to 64KiB but is not multiplied by the number
+ of cpus).
+ 
+ In full-trace mode, powers of two are allowed for buffer size, with a minimum
+-size of 2 pages.  In snapshot mode, it is the same but the minimum size is
+-1 page.
++size of 2 pages.  In snapshot mode or sampling mode, it is the same but the
++minimum size is 1 page.
+ 
+ The mmap size and auxtrace mmap size are displayed if the -vv option is used e.g.
+ 
+@@ -501,12 +551,17 @@ Intel PT modes of operation
+ 
+ Intel PT can be used in 2 modes:
+ 	full-trace mode
++	sample mode
+ 	snapshot mode
+ 
+ Full-trace mode traces continuously e.g.
+ 
+ 	perf record -e intel_pt//u uname
+ 
++Sample mode attaches a Intel PT sample to other events e.g.
++
++	perf record --aux-sample -e intel_pt//u -e branch-misses:u
++
+ Snapshot mode captures the available data when a signal is sent e.g.
+ 
+ 	perf record -v -e intel_pt//u -S ./loopy 1000000000 &
+diff --git a/tools/perf/arch/x86/util/auxtrace.c b/tools/perf/arch/x86/util/auxtrace.c
+index 96f4a2c11893..092543cad324 100644
+--- a/tools/perf/arch/x86/util/auxtrace.c
++++ b/tools/perf/arch/x86/util/auxtrace.c
+@@ -26,6 +26,8 @@ struct auxtrace_record *auxtrace_record__init_intel(struct evlist *evlist,
+ 	bool found_bts = false;
+ 
+ 	intel_pt_pmu = perf_pmu__find(INTEL_PT_PMU_NAME);
++	if (intel_pt_pmu)
++		intel_pt_pmu->auxtrace = true;
+ 	intel_bts_pmu = perf_pmu__find(INTEL_BTS_PMU_NAME);
+ 
+ 	evlist__for_each_entry(evlist, evsel) {
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index d6d26256915f..20df442fdf36 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -17,6 +17,7 @@
+ #include "../../util/event.h"
+ #include "../../util/evlist.h"
+ #include "../../util/evsel.h"
++#include "../../util/evsel_config.h"
+ #include "../../util/cpumap.h"
+ #include "../../util/mmap.h"
+ #include <subcmd/parse-options.h>
+@@ -551,6 +552,43 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 					evsel->core.attr.config);
+ }
+ 
++static void intel_pt_config_sample_mode(struct perf_pmu *intel_pt_pmu,
++					struct evsel *evsel)
++{
++	struct perf_evsel_config_term *term;
++	u64 user_bits = 0, bits;
++
++	term = perf_evsel__get_config_term(evsel, CFG_CHG);
++	if (term)
++		user_bits = term->val.cfg_chg;
++
++	bits = perf_pmu__format_bits(&intel_pt_pmu->format, "psb_period");
++
++	/* Did user change psb_period */
++	if (bits & user_bits)
++		return;
++
++	/* Set psb_period to 0 */
++	evsel->core.attr.config &= ~bits;
 +}
 +
-+/*
-+ * Add PERF_EVSEL__CONFIG_TERM_CFG_CHG where cfg_chg will have a bit set for
-+ * each bit of attr->config that the user has changed.
-+ */
-+static int get_config_chgs(struct perf_pmu *pmu, struct list_head *head_config,
-+			   struct list_head *head_terms)
++static void intel_pt_min_max_sample_sz(struct evlist *evlist,
++				       size_t *min_sz, size_t *max_sz)
 +{
-+	struct parse_events_term *term;
-+	u64 bits = 0;
-+	int type;
++	struct evsel *evsel;
 +
-+	list_for_each_entry(term, head_config, list) {
-+		switch (term->type_term) {
-+		case PARSE_EVENTS__TERM_TYPE_USER:
-+			type = perf_pmu__format_type(&pmu->format, term->config);
-+			if (type != PERF_PMU_FORMAT_VALUE_CONFIG)
-+				continue;
-+			bits |= perf_pmu__format_bits(&pmu->format, term->config);
-+			break;
-+		case PARSE_EVENTS__TERM_TYPE_CONFIG:
-+			bits = ~(u64)0;
-+			break;
-+		default:
-+			break;
-+		}
++	evlist__for_each_entry(evlist, evsel) {
++		size_t sz = evsel->core.attr.aux_sample_size;
++
++		if (!sz)
++			continue;
++		if (min_sz && (sz < *min_sz || !*min_sz))
++			*min_sz = sz;
++		if (max_sz && sz > *max_sz)
++			*max_sz = sz;
 +	}
-+
-+	if (bits)
-+		ADD_CONFIG_TERM(CFG_CHG, cfg_chg, bits);
-+
-+#undef ADD_CONFIG_TERM
- 	return 0;
- }
- 
-@@ -1419,6 +1452,13 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	if (get_config_terms(head_config, &config_terms))
- 		return -ENOMEM;
- 
-+	/*
-+	 * When using default config, record which bits of attr->config were
-+	 * changed by the user.
-+	 */
-+	if (pmu->default_config && get_config_chgs(pmu, head_config, &config_terms))
-+		return -ENOMEM;
-+
- 	if (perf_pmu__config(pmu, &attr, head_config, parse_state->error)) {
- 		struct perf_evsel_config_term *pos, *tmp;
- 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index db1e57113f4b..e8d348988026 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -931,6 +931,16 @@ __u64 perf_pmu__format_bits(struct list_head *formats, const char *name)
- 	return bits;
- }
- 
-+int perf_pmu__format_type(struct list_head *formats, const char *name)
-+{
-+	struct perf_pmu_format *format = pmu_find_format(formats, name);
-+
-+	if (!format)
-+		return -1;
-+
-+	return format->value;
 +}
 +
  /*
-  * Sets value based on the format definition (format parameter)
-  * and unformated value (value parameter).
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 2eb7a7001307..6737e3d5d568 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -72,6 +72,7 @@ int perf_pmu__config_terms(struct list_head *formats,
- 			   struct list_head *head_terms,
- 			   bool zero, struct parse_events_error *error);
- __u64 perf_pmu__format_bits(struct list_head *formats, const char *name);
-+int perf_pmu__format_type(struct list_head *formats, const char *name);
- int perf_pmu__check_alias(struct perf_pmu *pmu, struct list_head *head_terms,
- 			  struct perf_pmu_info *info);
- struct list_head *perf_pmu__alias(struct perf_pmu *pmu,
+  * Currently, there is not enough information to disambiguate different PEBS
+  * events, so only allow one.
+@@ -606,6 +644,11 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
+ 		return -EINVAL;
+ 	}
+ 
++	if (opts->auxtrace_snapshot_mode && opts->auxtrace_sample_mode) {
++		pr_err("Snapshot mode (" INTEL_PT_PMU_NAME " PMU) and sample trace cannot be used together\n");
++		return -EINVAL;
++	}
++
+ 	if (opts->use_clockid) {
+ 		pr_err("Cannot use clockid (-k option) with " INTEL_PT_PMU_NAME "\n");
+ 		return -EINVAL;
+@@ -617,6 +660,9 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
+ 	if (!opts->full_auxtrace)
+ 		return 0;
+ 
++	if (opts->auxtrace_sample_mode)
++		intel_pt_config_sample_mode(intel_pt_pmu, intel_pt_evsel);
++
+ 	err = intel_pt_validate_config(intel_pt_pmu, intel_pt_evsel);
+ 	if (err)
+ 		return err;
+@@ -666,6 +712,34 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
+ 				    opts->auxtrace_snapshot_size, psb_period);
+ 	}
+ 
++	/* Set default sizes for sample mode */
++	if (opts->auxtrace_sample_mode) {
++		size_t psb_period = intel_pt_psb_period(intel_pt_pmu, evlist);
++		size_t min_sz = 0, max_sz = 0;
++
++		intel_pt_min_max_sample_sz(evlist, &min_sz, &max_sz);
++		if (!opts->auxtrace_mmap_pages && !privileged &&
++		    opts->mmap_pages == UINT_MAX)
++			opts->mmap_pages = KiB(256) / page_size;
++		if (!opts->auxtrace_mmap_pages) {
++			size_t sz = round_up(max_sz, page_size) / page_size;
++
++			opts->auxtrace_mmap_pages = roundup_pow_of_two(sz);
++		}
++		if (max_sz > opts->auxtrace_mmap_pages * (size_t)page_size) {
++			pr_err("Sample size %zu must not be greater than AUX area tracing mmap size %zu\n",
++			       max_sz,
++			       opts->auxtrace_mmap_pages * (size_t)page_size);
++			return -EINVAL;
++		}
++		pr_debug2("Intel PT min. sample size: %zu max. sample size: %zu\n",
++			  min_sz, max_sz);
++		if (psb_period &&
++		    min_sz <= psb_period + INTEL_PT_PSB_PERIOD_NEAR)
++			ui__warning("Intel PT sample size (%zu) may be too small for PSB period (%zu)\n",
++				    min_sz, psb_period);
++	}
++
+ 	/* Set default sizes for full trace mode */
+ 	if (opts->full_auxtrace && !opts->auxtrace_mmap_pages) {
+ 		if (privileged) {
+@@ -682,7 +756,7 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
+ 		size_t sz = opts->auxtrace_mmap_pages * (size_t)page_size;
+ 		size_t min_sz;
+ 
+-		if (opts->auxtrace_snapshot_mode)
++		if (opts->auxtrace_snapshot_mode || opts->auxtrace_sample_mode)
+ 			min_sz = KiB(4);
+ 		else
+ 			min_sz = KiB(8);
+@@ -1136,5 +1210,10 @@ struct auxtrace_record *intel_pt_recording_init(int *err)
+ 	ptr->itr.parse_snapshot_options = intel_pt_parse_snapshot_options;
+ 	ptr->itr.reference = intel_pt_reference;
+ 	ptr->itr.read_finish = intel_pt_read_finish;
++	/*
++	 * Decoding starts at a PSB packet. Minimum PSB period is 2K so 4K
++	 * should give at least 1 PSB per sample.
++	 */
++	ptr->itr.default_aux_sample_size = 4096;
+ 	return &ptr->itr;
+ }
 -- 
 2.21.0
 
