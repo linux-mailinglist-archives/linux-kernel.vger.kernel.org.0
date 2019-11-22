@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA30106D23
+	by mail.lfdr.de (Postfix) with ESMTP id CFD8D106D25
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730723AbfKVK5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:57:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46794 "EHLO mail.kernel.org"
+        id S1730730AbfKVK54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:57:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730464AbfKVK5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:43 -0500
+        id S1730471AbfKVK5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF6672072E;
-        Fri, 22 Nov 2019 10:57:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E00220718;
+        Fri, 22 Nov 2019 10:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420262;
-        bh=dQt3xAF/0dD9AaQxedCxFQzgzRaMzkywGvh9+OmquuM=;
+        s=default; t=1574420265;
+        bh=Won7SlOQeI+Zv/jE+G+dXFjBkqoZGFbtpIQEj4ENMVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r5tK9uMPWVn2FXQtpWNWp6HsnmQRn7XWVOuff02icyIIHrtiMmqmTl7HDdMAtrmW+
-         TLyBIAtb03L2GqNW5BlYcWxhkNX70WdKocxGTzpR26In9SrALEuwKjDqKvAmRu/+Tz
-         M47TMiVpTrIobaC9lOeviTnVkTce/4pwQFmeOGGY=
+        b=taJeLzOHdrZkxUgdKmqr4tDqHIb9KmH4n5b8QUzgoEC6l/sNJ6co156EF4x9FfE7H
+         yh1taJySgsTCRnnXrznuIhN3gXc6ZudfXM+kz0qyvjqUkjq6i8Dtq0EGgT3opQwReW
+         DbcPJftEHonATHr3uSLiJ2Gpoe8TwqhYR+vsykjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org,
+        Andrew Zaborowski <andrew.zaborowski@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 047/220] usb: dwc3: gadget: Check ENBLSLPM before sending ep command
-Date:   Fri, 22 Nov 2019 11:26:52 +0100
-Message-Id: <20191122100915.601546840@linuxfoundation.org>
+Subject: [PATCH 4.19 048/220] nl80211: Fix a GET_KEY reply attribute
+Date:   Fri, 22 Nov 2019 11:26:53 +0100
+Message-Id: <20191122100915.667442952@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,89 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Andrew Zaborowski <andrew.zaborowski@intel.com>
 
-[ Upstream commit 87dd96111b0bb8e616fcbd74dbf4bb4182f2c596 ]
+[ Upstream commit efdfce7270de85a8706d1ea051bef3a7486809ff ]
 
-When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
-GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an endpoint
-command.
+Use the NL80211_KEY_IDX attribute inside the NL80211_ATTR_KEY in
+NL80211_CMD_GET_KEY responses to comply with nl80211_key_policy.
+This is unlikely to affect existing userspace.
 
-Current implementation only save and restore GUSB2PHYCFG.SUSPHY
-configuration. We must save and clear both GUSB2PHYCFG.ENBLSLPM and
-GUSB2PHYCFG.SUSPHY settings. Restore them after the command is
-completed.
-
-DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
-
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ net/wireless/nl80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 8398c33d08e7c..3e04004b4f1b7 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -271,27 +271,36 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 	const struct usb_endpoint_descriptor *desc = dep->endpoint.desc;
- 	struct dwc3		*dwc = dep->dwc;
- 	u32			timeout = 1000;
-+	u32			saved_config = 0;
- 	u32			reg;
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 2ef1f56504cbb..5075fd293febb 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -3396,7 +3396,7 @@ static void get_key_callback(void *c, struct key_params *params)
+ 			 params->cipher)))
+ 		goto nla_put_failure;
  
- 	int			cmd_status = 0;
--	int			susphy = false;
- 	int			ret = -EINVAL;
+-	if (nla_put_u8(cookie->msg, NL80211_ATTR_KEY_IDX, cookie->idx))
++	if (nla_put_u8(cookie->msg, NL80211_KEY_IDX, cookie->idx))
+ 		goto nla_put_failure;
  
- 	/*
--	 * Synopsys Databook 2.60a states, on section 6.3.2.5.[1-8], that if
--	 * we're issuing an endpoint command, we must check if
--	 * GUSB2PHYCFG.SUSPHY bit is set. If it is, then we need to clear it.
-+	 * When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
-+	 * GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an
-+	 * endpoint command.
- 	 *
--	 * We will also set SUSPHY bit to what it was before returning as stated
--	 * by the same section on Synopsys databook.
-+	 * Save and clear both GUSB2PHYCFG.ENBLSLPM and GUSB2PHYCFG.SUSPHY
-+	 * settings. Restore them after the command is completed.
-+	 *
-+	 * DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
- 	 */
- 	if (dwc->gadget.speed <= USB_SPEED_HIGH) {
- 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
- 		if (unlikely(reg & DWC3_GUSB2PHYCFG_SUSPHY)) {
--			susphy = true;
-+			saved_config |= DWC3_GUSB2PHYCFG_SUSPHY;
- 			reg &= ~DWC3_GUSB2PHYCFG_SUSPHY;
--			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 		}
-+
-+		if (reg & DWC3_GUSB2PHYCFG_ENBLSLPM) {
-+			saved_config |= DWC3_GUSB2PHYCFG_ENBLSLPM;
-+			reg &= ~DWC3_GUSB2PHYCFG_ENBLSLPM;
-+		}
-+
-+		if (saved_config)
-+			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
- 	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
-@@ -380,9 +389,9 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 		dwc3_gadget_ep_get_transfer_index(dep);
- 	}
- 
--	if (unlikely(susphy)) {
-+	if (saved_config) {
- 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
--		reg |= DWC3_GUSB2PHYCFG_SUSPHY;
-+		reg |= saved_config;
- 		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
+ 	nla_nest_end(cookie->msg, key);
 -- 
 2.20.1
 
