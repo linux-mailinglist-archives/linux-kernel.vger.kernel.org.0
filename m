@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F242106FDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64666106FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbfKVLSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:18:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57214 "EHLO mail.kernel.org"
+        id S1730549AbfKVLRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:17:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729917AbfKVKsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:23 -0500
+        id S1729951AbfKVKs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:48:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9714205C9;
-        Fri, 22 Nov 2019 10:48:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB08A2071F;
+        Fri, 22 Nov 2019 10:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419703;
-        bh=rIE4VPIrEIPSgI9Tss7jaX/soOHcNIuRa+Zq6z6B5Dc=;
+        s=default; t=1574419709;
+        bh=wuFV/Q3pP6kDQ8IyS7nsyXbODbwVXLDPUfz79SNORZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yFHEH3MUj4Mn1rchZ0z3DrdrqW9tekLMnX+3ChYs2S6svGYZ6CqgA9genQcsEn99k
-         QrlJIdTWMi923eX73o9cVJl7/lKSjoMk2hfs2NorZcvgHyA9ePFIwNKii0WDKsvw+w
-         H1rVQ2gdjOtZhnI9M49rBTHujxrb+TZIQM7v4Q+4=
+        b=m8Gxb4MOkYtjCYnqI75I1O8Q4IzpKwOj3CY9CD6BZG7dCyMfQPFelHkl8dtJCwNCb
+         G8fRuqcGmZBYaKkz2UPrXrXkpku7cJnWYiQ+5x9BPsZOwJHmH8j3mHGQUJPPb5ndjN
+         EM4gC1FWEyGPtiNj0Wo7rTu1+1or8ptKKZjd6KiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shenghui Wang <shhuiw@foxmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 202/222] bcache: recal cached_dev_sectors on detach
-Date:   Fri, 22 Nov 2019 11:29:02 +0100
-Message-Id: <20191122100916.847108132@linuxfoundation.org>
+Subject: [PATCH 4.9 203/222] s390/kasan: avoid vdso instrumentation
+Date:   Fri, 22 Nov 2019 11:29:03 +0100
+Message-Id: <20191122100916.925099032@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -44,36 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shenghui Wang <shhuiw@foxmail.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 46010141da6677b81cc77f9b47f8ac62bd1cbfd3 ]
+[ Upstream commit 348498458505e202df41b6b9a78da448d39298b7 ]
 
-Recal cached_dev_sectors on cached_dev detached, as recal done on
-cached_dev attached.
+vdso is mapped into user space processes, which won't have kasan
+shodow mapped.
 
-Update the cached_dev_sectors before bcache_device_detach called
-as bcache_device_detach will set bcache_device->c to NULL.
-
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/kernel/vdso32/Makefile | 3 ++-
+ arch/s390/kernel/vdso64/Makefile | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index c5bc3e5e921e4..080f9afcde8da 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -904,6 +904,7 @@ static void cached_dev_detach_finish(struct work_struct *w)
- 	bch_write_bdev_super(dc, &cl);
- 	closure_sync(&cl);
+diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
+index ca7c3c34f94ba..2bb3a255e51a4 100644
+--- a/arch/s390/kernel/vdso32/Makefile
++++ b/arch/s390/kernel/vdso32/Makefile
+@@ -24,9 +24,10 @@ obj-y += vdso32_wrapper.o
+ extra-y += vdso32.lds
+ CPPFLAGS_vdso32.lds += -P -C -U$(ARCH)
  
-+	calc_cached_dev_sectors(dc->disk.c);
- 	bcache_device_detach(&dc->disk);
- 	list_move(&dc->list, &uncached_devices);
+-# Disable gcov profiling and ubsan for VDSO code
++# Disable gcov profiling, ubsan and kasan for VDSO code
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
++KASAN_SANITIZE := n
  
+ # Force dependency (incbin is bad)
+ $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
+diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
+index 84af2b6b64c42..76c56b5382be9 100644
+--- a/arch/s390/kernel/vdso64/Makefile
++++ b/arch/s390/kernel/vdso64/Makefile
+@@ -24,9 +24,10 @@ obj-y += vdso64_wrapper.o
+ extra-y += vdso64.lds
+ CPPFLAGS_vdso64.lds += -P -C -U$(ARCH)
+ 
+-# Disable gcov profiling and ubsan for VDSO code
++# Disable gcov profiling, ubsan and kasan for VDSO code
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
++KASAN_SANITIZE := n
+ 
+ # Force dependency (incbin is bad)
+ $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
 -- 
 2.20.1
 
