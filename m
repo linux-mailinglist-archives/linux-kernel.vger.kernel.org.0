@@ -2,303 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA27106A0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4AF106A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfKVKbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43918 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727297AbfKVKb2 (ORCPT
+        id S1727788AbfKVKcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:32:46 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:46477 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbfKVKcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574418686;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FlOZ5zqkxPswmHPOY4akzRfmqrkgFo/O2Djc8eOm0Q8=;
-        b=Au7OZzg95qfKtqheCwo/zJZNNZ5xyi9mnwRdqFkO1USGwpzsFxWWMa52DopGZPt3bKO89m
-        DKsJ5JaODzEr4HOqgwvy4Q4niJjr7A9BhbRdBJxH8kWnNTbC3kgJ6WBaNnMuJkBgAwExXm
-        Y+WrIVIOzaGallbikuVAxbvSvNUOdcY=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-36-FpVaJ0iUO-yWtZKAr_7FBw-1; Fri, 22 Nov 2019 05:31:25 -0500
-Received: by mail-qk1-f199.google.com with SMTP id o11so4031969qkk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 02:31:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jUNfNcFYrnFo3vyliVS23hPPWffkd+zA0rWCMO8GM2A=;
-        b=b0HcZIuBxQlDYjunyMd+lVLgUrA/TgYgvn1sVUgYdwzVgy1GzKNSNDG7cFbRg3ebvu
-         x9N5ikYzg06su3DX9UEswZzEaC983wSyBLGrpIssWnvESBdf+LkGtA5ei2Xp5t7rKc2l
-         VDDzqYwbkl4V5VGpf2QXrqWRSoe2WrbQTMVO1Pt1rdRNtt/qq0sRiskX0KGtkpOjOy0S
-         vIh4KmLhhEvBdjl34elpTzNhsYWPAbFRxJP2AC/xicLvE5CWuOVKVhMxQvMEAXdAk4AM
-         +WGuP3mNqer3S5AJA7eY8XL1igDuxs5NN/K7gw+xOyReaoGKwGPz4Im9lkC+7BDIoYKv
-         kubw==
-X-Gm-Message-State: APjAAAUWUB6nGK0kTqwfz7QsJ1JNRfIHRGhtXlDIhnesU5Dfc+y9PskJ
-        uUnSCO6Ns6gURa5GdMhF2gjEV0PeIRbOQv0SRqdcje9VnIPFMpQGqaNaikcTD9pb717cwbpxHwK
-        lPp2eHvm6NcCP5/TTLfYoix2F
-X-Received: by 2002:ac8:ccf:: with SMTP id o15mr13578824qti.380.1574418684933;
-        Fri, 22 Nov 2019 02:31:24 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzqWjQYE0JViMErwUJLyP31KaReAxhSG7SzcnEEeUUZg6KiYptY1y7iF0uI6KQLrQqeTSBM5A==
-X-Received: by 2002:ac8:ccf:: with SMTP id o15mr13578801qti.380.1574418684642;
-        Fri, 22 Nov 2019 02:31:24 -0800 (PST)
-Received: from redhat.com (bzq-79-176-6-42.red.bezeqint.net. [79.176.6.42])
-        by smtp.gmail.com with ESMTPSA id g7sm2775765qkl.20.2019.11.22.02.31.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 02:31:23 -0800 (PST)
-Date:   Fri, 22 Nov 2019 05:31:19 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Julio Faracco <jcfaracco@gmail.com>
-Cc:     netdev@vger.kernel.org, dnmendes76@gmail.com,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] drivers: net: virtio_net: Implement a
- dev_watchdog handler
-Message-ID: <20191122052506-mutt-send-email-mst@kernel.org>
-References: <20191122013636.1041-1-jcfaracco@gmail.com>
+        Fri, 22 Nov 2019 05:32:43 -0500
+Received: from mail-qv1-f41.google.com ([209.85.219.41]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M3loZ-1iXHA21Rlz-000uvV; Fri, 22 Nov 2019 11:32:41 +0100
+Received: by mail-qv1-f41.google.com with SMTP id i3so2653964qvv.7;
+        Fri, 22 Nov 2019 02:32:41 -0800 (PST)
+X-Gm-Message-State: APjAAAX8Qcr5zEsLc+CNVuyN+m7wacOtbzHYx4uXV0JKdjnF9Rdcjym4
+        4KQGb5VX/phTNIh5ckYJwlL42K5ZYqOd0kXky08=
+X-Google-Smtp-Source: APXvYqx2ZSHe23mYINfOOU60D79xPVDOEFWb0PSxQosYjZVAO0Vxhh+wY96QDTJ+T25991Kim1tOTWU1wRiwYqOJI2I=
+X-Received: by 2002:a0c:a9cc:: with SMTP id c12mr6256439qvb.222.1574418760137;
+ Fri, 22 Nov 2019 02:32:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191122013636.1041-1-jcfaracco@gmail.com>
-X-MC-Unique: FpVaJ0iUO-yWtZKAr_7FBw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <cover.1574073572.git.baolin.wang7@gmail.com> <81d66ceaa2763cfc1e5ccb605bb3a4194b947f0d.1574073572.git.baolin.wang7@gmail.com>
+In-Reply-To: <81d66ceaa2763cfc1e5ccb605bb3a4194b947f0d.1574073572.git.baolin.wang7@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 22 Nov 2019 11:32:24 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1bUt+HERWtGEKmhdD9ctX0GRQQbXHxtUnJ8KNu=v87aw@mail.gmail.com>
+Message-ID: <CAK8P3a1bUt+HERWtGEKmhdD9ctX0GRQQbXHxtUnJ8KNu=v87aw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mmc: Add MMC host software queue support
+To:     Baolin Wang <baolin.wang7@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paolo Valente <paolo.valente@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:rNyivOOdNQwk7nYLT6NW3Y7gYZpHVHrBU454HCUNgI9G7YwsRle
+ KsWKRyXo3Va9BDfdITrfLu0cs/KHQUDypHzYzqDqtgqThV5vgo3gh4D4RMY9P+nxm1l/U8M
+ 8p9a96/hXoovps8c4kmiG0FkKv5d06uzHiU2H2LACnqebgoeMXfOgMqnmMZD98IoABAGLDF
+ 3TGBOmVEEbGyCEvIJzdTg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VxGXkeP1g54=:UHFsbRYHY1vWjkKUfwB3ds
+ 8F1EDS9+uWE/fnd7xdNG2Cj93syunR19vUqZVc/8Wcl4QKq5naH36l1RFRW4Tb31C2YTSMvkd
+ KuW3lwoGWT7YX0TPrUQi2GX++2rHrEn4m1DBrzQRju7KRmsusWaaCM1bR92B+eZ9lzIJPVLha
+ bba6CO1HYHbcb4/rBIvcp+g7EuecwOzEBZMIamHPs5Ep6WhpP1KPBqPBUDMSq1j5GVaEhGLuS
+ RHAgClUZTiASL0CqjxCbiQS0/LXNF2Wg6NOvbOZY733QrD52+7NWe9n/9+sqmtu0g4CROoO3u
+ I7NGXXTDrnAVGtC4dPQZxR4leXgFDc7XzWK0lkyTvjpgcuiWN5vVairTAtofvIKXaT4qo98lB
+ NL6HViVg2CK0KB51GYZ/Wz4X50sCM28TRmbr6lJ1Emokey42uATEDPNdzVwTvW9KURNKFSB0g
+ wRbKpjRXDLr8fPV5EefVpNJdVQ0tuaS1gvF8jn4/l1mvDvzMIVCufJFZ/IhLapRGMrSxit69h
+ aeI0ikArY2YS83lQFD6orASSugIOMW+TghIixHcfkNgtrgiJ8sJ53l0fS+xuBp1zY7w6gBykn
+ d1Db5fwrcmaafjJmL5UUFrALc3kbbYsbPEACRmkAO5n0lN/jne4bozmN1SkSKw+v0m5gNeMxE
+ xpUKOEmvZG+O3aDB2IQNU7DXf2A2t54TsoFKnAUau3qF1ku6e0jSsmqdAiXhon4noeSbmD1qp
+ 71gbiV68D4yd1WCJcM7kmw72u9k08Ylw4tjVjqO+J9ySbXnjLeD2yJPJ6hLadP6l5mO1N4tQd
+ 8przuovtC5UF4kj5xT7FAORhYFjF76mUdaC61V2qOE/g6e3XT0/Ma4FW7PM9ca96hg62vlOAj
+ 5D7JPr5l80NaLf0iWkYA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 10:36:36PM -0300, Julio Faracco wrote:
-> Driver virtio_net is not handling error events for TX provided by
-> dev_watchdog. This event is reached when transmission queue is having
-> problems to transmit packets. This could happen for any reason. To
-> enable it, driver should have .ndo_tx_timeout implemented.
->=20
-> This commit brings back virtnet_reset method to recover TX queues from a
-> error state. That function is called by schedule_work method and it puts
-> the reset function into work queue.
->=20
-> As the error cause is unknown at this moment, it would be better to
-> reset all queues.
->=20
-> Signed-off-by: Julio Faracco <jcfaracco@gmail.com>
-> Signed-off-by: Daiane Mendes <dnmendes76@gmail.com>
-> Cc: Jason Wang <jasowang@redhat.com>
-> ---
-> v1-v2: Tag `net-next` was included to indentify where patch would be
-> applied.
-> ---
->  drivers/net/virtio_net.c | 95 +++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 94 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 4d7d5434cc5d..31890d77eaf2 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -75,6 +75,7 @@ struct virtnet_sq_stats {
->  =09u64 xdp_tx;
->  =09u64 xdp_tx_drops;
->  =09u64 kicks;
-> +=09u64 tx_timeouts;
->  };
-> =20
->  struct virtnet_rq_stats {
-> @@ -98,6 +99,7 @@ static const struct virtnet_stat_desc virtnet_sq_stats_=
-desc[] =3D {
->  =09{ "xdp_tx",=09=09VIRTNET_SQ_STAT(xdp_tx) },
->  =09{ "xdp_tx_drops",=09VIRTNET_SQ_STAT(xdp_tx_drops) },
->  =09{ "kicks",=09=09VIRTNET_SQ_STAT(kicks) },
-> +=09{ "tx_timeouts",=09VIRTNET_SQ_STAT(tx_timeouts) },
->  };
-> =20
->  static const struct virtnet_stat_desc virtnet_rq_stats_desc[] =3D {
-> @@ -211,6 +213,9 @@ struct virtnet_info {
->  =09/* Work struct for config space updates */
->  =09struct work_struct config_work;
-> =20
-> +=09/* Work struct for resetting the virtio-net driver. */
-> +=09struct work_struct reset_work;
-> +
->  =09/* Does the affinity hint is set for virtqueues? */
->  =09bool affinity_hint_set;
-> =20
-> @@ -1721,7 +1726,7 @@ static void virtnet_stats(struct net_device *dev,
->  =09int i;
-> =20
->  =09for (i =3D 0; i < vi->max_queue_pairs; i++) {
-> -=09=09u64 tpackets, tbytes, rpackets, rbytes, rdrops;
-> +=09=09u64 tpackets, tbytes, terrors, rpackets, rbytes, rdrops;
->  =09=09struct receive_queue *rq =3D &vi->rq[i];
->  =09=09struct send_queue *sq =3D &vi->sq[i];
-> =20
-> @@ -1729,6 +1734,7 @@ static void virtnet_stats(struct net_device *dev,
->  =09=09=09start =3D u64_stats_fetch_begin_irq(&sq->stats.syncp);
->  =09=09=09tpackets =3D sq->stats.packets;
->  =09=09=09tbytes   =3D sq->stats.bytes;
-> +=09=09=09terrors  =3D sq->stats.tx_timeouts;
->  =09=09} while (u64_stats_fetch_retry_irq(&sq->stats.syncp, start));
-> =20
->  =09=09do {
-> @@ -1743,6 +1749,7 @@ static void virtnet_stats(struct net_device *dev,
->  =09=09tot->rx_bytes   +=3D rbytes;
->  =09=09tot->tx_bytes   +=3D tbytes;
->  =09=09tot->rx_dropped +=3D rdrops;
-> +=09=09tot->tx_errors  +=3D terrors;
->  =09}
-> =20
->  =09tot->tx_dropped =3D dev->stats.tx_dropped;
-> @@ -2578,6 +2585,33 @@ static int virtnet_set_features(struct net_device =
-*dev,
->  =09return 0;
->  }
-> =20
-> +static void virtnet_tx_timeout(struct net_device *dev)
-> +{
-> +=09struct virtnet_info *vi =3D netdev_priv(dev);
-> +=09u32 i;
-> +
-> +=09netdev_warn(dev, "TX timeout stats:\n");
-> +=09/* find the stopped queue the same way dev_watchdog() does */
-> +=09for (i =3D 0; i < vi->curr_queue_pairs; i++) {
-> +=09=09struct send_queue *sq =3D &vi->sq[i];
-> +
-> +=09=09if (!netif_xmit_stopped(netdev_get_tx_queue(dev, i))) {
-> +=09=09=09netdev_warn(dev, " Available send queue: %d, sq: %s, vq: %d, na=
-me: %s\n",
-> +=09=09=09=09    i, sq->name, sq->vq->index, sq->vq->name);
-
-What does this mean?
-
-> +=09=09=09continue;
-> +=09=09}
-> +
-> +=09=09u64_stats_update_begin(&sq->stats.syncp);
-> +=09=09sq->stats.tx_timeouts++;
-> +=09=09u64_stats_update_end(&sq->stats.syncp);
-> +
-> +=09=09netdev_warn(dev, " Unavailable send queue: %d, sq: %s, vq: %d, nam=
-e: %s\n",
-> +=09=09=09    i, sq->name, sq->vq->index, sq->vq->name);
-> +=09}
-
-Can we make the warning less cryptic?
-I wonder why don't we get the sq from timeout directly?
-Would seem cleaner.
-
-> +
-> +=09schedule_work(&vi->reset_work);
-> +}
-> +
->  static const struct net_device_ops virtnet_netdev =3D {
->  =09.ndo_open            =3D virtnet_open,
->  =09.ndo_stop   =09     =3D virtnet_close,
-> @@ -2593,6 +2627,7 @@ static const struct net_device_ops virtnet_netdev =
-=3D {
->  =09.ndo_features_check=09=3D passthru_features_check,
->  =09.ndo_get_phys_port_name=09=3D virtnet_get_phys_port_name,
->  =09.ndo_set_features=09=3D virtnet_set_features,
-> +=09.ndo_tx_timeout=09=09=3D virtnet_tx_timeout,
->  };
-> =20
->  static void virtnet_config_changed_work(struct work_struct *work)
-> @@ -2982,6 +3017,62 @@ static int virtnet_validate(struct virtio_device *=
-vdev)
->  =09return 0;
->  }
-> =20
-> +static void _remove_vq_common(struct virtnet_info *vi)
-> +{
-> +=09vi->vdev->config->reset(vi->vdev);
-> +
-> +=09/* Free unused buffers in both send and recv, if any. */
-> +=09free_unused_bufs(vi);
-> +
-> +=09_free_receive_bufs(vi);
-> +
-> +=09free_receive_page_frags(vi);
-> +
-> +=09virtnet_del_vqs(vi);
-> +}
-> +
-> +static int _virtnet_reset(struct virtnet_info *vi)
-> +{
-> +=09struct virtio_device *vdev =3D vi->vdev;
-> +=09int ret;
-> +
-> +=09virtio_config_disable(vdev);
-> +=09vdev->failed =3D vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_FAI=
-LED;
-> +
-> +=09virtnet_freeze_down(vdev);
-> +=09_remove_vq_common(vi);
-> +
-> +=09virtio_add_status(vdev, VIRTIO_CONFIG_S_ACKNOWLEDGE);
-> +=09virtio_add_status(vdev, VIRTIO_CONFIG_S_DRIVER);
-> +
-> +=09ret =3D virtio_finalize_features(vdev);
-> +=09if (ret)
-> +=09=09goto err;
-> +
-> +=09ret =3D virtnet_restore_up(vdev);
-> +=09if (ret)
-> +=09=09goto err;
-> +
-> +=09ret =3D _virtnet_set_queues(vi, vi->curr_queue_pairs);
-> +=09if (ret)
-> +=09=09goto err;
-> +
-> +=09virtio_add_status(vdev, VIRTIO_CONFIG_S_DRIVER_OK);
-> +=09virtio_config_enable(vdev);
-
-
-Is this enough? E.g. all RX mode programming has been lost.
-
-
-
-> +=09return 0;
-> +err:
-> +=09virtio_add_status(vdev, VIRTIO_CONFIG_S_FAILED);
-> +=09return ret;
-> +}
-> +
-> +static void virtnet_reset(struct work_struct *work)
-> +{
-> +=09struct virtnet_info *vi =3D
-> +=09=09container_of(work, struct virtnet_info, reset_work);
-> +
-> +=09_virtnet_reset(vi);
-> +}
-> +
->  static int virtnet_probe(struct virtio_device *vdev)
->  {
->  =09int i, err =3D -ENOMEM;
-> @@ -3011,6 +3102,7 @@ static int virtnet_probe(struct virtio_device *vdev=
-)
->  =09dev->netdev_ops =3D &virtnet_netdev;
->  =09dev->features =3D NETIF_F_HIGHDMA;
-> =20
-> +=09dev->watchdog_timeo =3D 5 * HZ;
->  =09dev->ethtool_ops =3D &virtnet_ethtool_ops;
->  =09SET_NETDEV_DEV(dev, &vdev->dev);
+On Mon, Nov 18, 2019 at 11:43 AM Baolin Wang <baolin.wang7@gmail.com> wrote:
 >
+> From: Baolin Wang <baolin.wang@linaro.org>
+>
+> Now the MMC read/write stack will always wait for previous request is
+> completed by mmc_blk_rw_wait(), before sending a new request to hardware,
+> or queue a work to complete request, that will bring context switching
+> overhead, especially for high I/O per second rates, to affect the IO
+> performance.
+>
+> Thus this patch introduces MMC software queue interface based on the
+> hardware command queue engine's interfaces, which is similar with the
+> hardware command queue engine's idea, that can remove the context
+> switching. Moreover we set the default queue depth as 32 for software
+> queue, which allows more requests to be prepared, merged and inserted
+> into IO scheduler to improve performance, but we only allow 2 requests
+> in flight, that is enough to let the irq handler always trigger the
+> next request without a context switch, as well as avoiding a long latency.
+>
+> From the fio testing data in cover letter, we can see the software
+> queue can improve some performance with 4K block size, increasing
+> about 16% for random read, increasing about 90% for random write,
+> though no obvious improvement for sequential read and write.
+>
+> Moreover we can expand the software queue interface to support MMC
+> packed request or packed command in future.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
 
-Is there a way to make this tuneable from ethtool?
- =20
-> @@ -3068,6 +3160,7 @@ static int virtnet_probe(struct virtio_device *vdev=
-)
->  =09vdev->priv =3D vi;
-> =20
->  =09INIT_WORK(&vi->config_work, virtnet_config_changed_work);
-> +=09INIT_WORK(&vi->reset_work, virtnet_reset);
-> =20
->  =09/* If we can receive ANY GSO packets, we must allocate large ones. */
->  =09if (virtio_has_feature(vdev, VIRTIO_NET_F_GUEST_TSO4) ||
-> --=20
-> 2.17.1
+Overall, this looks like enough of a win that I think we should just
+use the current version for the moment, while still working on all the
+other improvements.
 
+My biggest concern is the naming of "software queue", which is
+a concept that runs against the idea of doing all the heavy lifting,
+in particular the queueing in bfq.
+
+Then again, it does not /actually/ do much queuing at all, beyond
+preparing a single request so it can fire it off early. Even with the
+packed command support added in, there is not really any queuing
+beyond what it has to do anyway.
+
+Using the infrastructure that was added for cqe seems like a good
+compromise, as this already has a way to hand down multiple
+requests to the hardware and is overall more modern than the
+existing support.
+
+I still think we should do all the other things I mentioned in my
+earlier reply today, but they can be done as add-ons:
+
+- remove all blocking calls from the queue_rq() function:
+  partition-change, retune, etc should become non-blocking
+  operations that return busy in the queue_rq function.
+
+- get bfq to send down multiple requests all the way into
+  the device driver, so we don't have to actually queue them
+  here at all to do packed commands
+
+- add packed command support
+
+- submit cmds from hardirq context if this is advantageous,
+  and move everything else in the irq handler into irqthread
+  context in order to remove all other workqueue and softirq
+  processing from the request processing path.
+
+If we can agree on this as the rough plan for the future,
+feel free to add my
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
