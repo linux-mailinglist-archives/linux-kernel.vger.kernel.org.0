@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CDC106ACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43511106CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:55:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbfKVKiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:38:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40640 "EHLO mail.kernel.org"
+        id S1730053AbfKVKyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728639AbfKVKiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:38:21 -0500
+        id S1730274AbfKVKx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A8A020717;
-        Fri, 22 Nov 2019 10:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29F3620637;
+        Fri, 22 Nov 2019 10:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419100;
-        bh=1hd1YxdqOSmo/ZPMrdo8EiQzXs7O4BTVZC1l95ZHnf8=;
+        s=default; t=1574420036;
+        bh=SGlEMGtMG096loXgaMD0JkGrovumKL9ByZfXDWAIQkg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=igEjMqtT5ruajg6Eue92NZVCxLo33mZuanhXMz+0a59Ah6nLzxBZ3IikBfWvAjMKe
-         84UNs2Pm1944MV/f3d9oX6UTPO1HJ6MZhR+KoMJW72UX2K9OnGyjv1ZM0UzF2gyMuz
-         7SI1KO6c2tC0Ai3CXULsd+tuji7Re94BN2H3/sCc=
+        b=EHoWWMvBBlcl5rr7QYPp24Y3pvVt+Na/a0CCayUDCM+4zmhopBCR8kcz4VIFQgdWc
+         iDlxFutvlcMnphNWnRIKXJhAMPtvYI/da2f+dOJDIaEn20WWlpsgeWH81j7ErO92VP
+         aQcWR3mFu/+jCWbTuYjgGScBNalvjnUKCQ0D//QA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 156/159] mac80211: minstrel: fix CCK rate group streams value
+Subject: [PATCH 4.14 094/122] s390/kasan: avoid vdso instrumentation
 Date:   Fri, 22 Nov 2019 11:29:07 +0100
-Message-Id: <20191122100848.969348509@linuxfoundation.org>
+Message-Id: <20191122100829.698641186@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 80df9be67c44cb636bbc92caeddad8caf334c53c ]
+[ Upstream commit 348498458505e202df41b6b9a78da448d39298b7 ]
 
-Fixes a harmless underflow issue when CCK rates are actively being used
+vdso is mapped into user space processes, which won't have kasan
+shodow mapped.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rc80211_minstrel_ht.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/vdso32/Makefile | 3 ++-
+ arch/s390/kernel/vdso64/Makefile | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
-index 239ed6e92b89d..ff3b28e7dbce8 100644
---- a/net/mac80211/rc80211_minstrel_ht.c
-+++ b/net/mac80211/rc80211_minstrel_ht.c
-@@ -128,7 +128,7 @@
+diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
+index 101cadabfc89e..6d87f800b4f2c 100644
+--- a/arch/s390/kernel/vdso32/Makefile
++++ b/arch/s390/kernel/vdso32/Makefile
+@@ -25,9 +25,10 @@ obj-y += vdso32_wrapper.o
+ extra-y += vdso32.lds
+ CPPFLAGS_vdso32.lds += -P -C -U$(ARCH)
  
- #define CCK_GROUP					\
- 	[MINSTREL_CCK_GROUP] = {			\
--		.streams = 0,				\
-+		.streams = 1,				\
- 		.flags = 0,				\
- 		.duration = {				\
- 			CCK_DURATION_LIST(false),	\
+-# Disable gcov profiling and ubsan for VDSO code
++# Disable gcov profiling, ubsan and kasan for VDSO code
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
++KASAN_SANITIZE := n
+ 
+ # Force dependency (incbin is bad)
+ $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
+diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
+index 36bbafcf4a770..4bc166b8c0cbd 100644
+--- a/arch/s390/kernel/vdso64/Makefile
++++ b/arch/s390/kernel/vdso64/Makefile
+@@ -25,9 +25,10 @@ obj-y += vdso64_wrapper.o
+ extra-y += vdso64.lds
+ CPPFLAGS_vdso64.lds += -P -C -U$(ARCH)
+ 
+-# Disable gcov profiling and ubsan for VDSO code
++# Disable gcov profiling, ubsan and kasan for VDSO code
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
++KASAN_SANITIZE := n
+ 
+ # Force dependency (incbin is bad)
+ $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
 -- 
 2.20.1
 
