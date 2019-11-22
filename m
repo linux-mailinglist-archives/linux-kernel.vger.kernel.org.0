@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4C5106BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA07106C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:53:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbfKVKre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55506 "EHLO mail.kernel.org"
+        id S1729076AbfKVKxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:53:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728250AbfKVKra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:30 -0500
+        id S1729883AbfKVKxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C491020718;
-        Fri, 22 Nov 2019 10:47:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD30A20718;
+        Fri, 22 Nov 2019 10:52:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419650;
-        bh=chzf4IhDLjFrOwKhnx4ivJ8C5s2YcKWi2TRsAL7b7lY=;
+        s=default; t=1574419980;
+        bh=Vp7x52tWRWgDfeFgld4Gwk0u6iwjQtfSbiDkxb/zxYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KUlf0HjPLn7FGXwb9jU3QiyxN/N/0aTxv4wRcvoRq69yZql7Ri/YeEYYJkZZojln+
-         IDw4BEQn1HKj85S7OpplZKq+/BVBzQqLdv0wu9VNMgPjRm3xWjuEkTk+PgEX0lREhG
-         lkiydBb2h9dPeblGSTUHta0TPXwoCOdVtJbtuPJM=
+        b=0BRNS8/uOErxMrRv51H/+F3GsFIw5ZIwH+Dw+BDgFmv6yI6thT5OlvG1KeQyZ1KrS
+         2Cuws2jTtH2e548Yv8QuHHMQRv4mZc2FaMq9gpx1ymT6ErVqUWto16LAk4CP1BCwXl
+         25uOGXN36kB+vItUEQL8sPRhlyu/Lqq0n+YuJSr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 185/222] cpu/SMT: State SMT is disabled even with nosmt and without "=force"
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 072/122] i2c: brcmstb: Allow enabling the driver on DSL SoCs
 Date:   Fri, 22 Nov 2019 11:28:45 +0100
-Message-Id: <20191122100915.700325008@linuxfoundation.org>
+Message-Id: <20191122100813.572596429@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit d0e7d14455d41163126afecd0fcce935463cc512 ]
+[ Upstream commit e1eba2ea54a2de0e4c58d87270d25706bb77b844 ]
 
-When booting with "nosmt=force" a message is issued into dmesg to
-confirm that SMT has been force-disabled but such a message is not
-issued when only "nosmt" is on the kernel command line.
+ARCH_BCM_63XX which is used by ARM-based DSL SoCs from Broadcom uses the
+same controller, make it possible to select the STB driver and update
+the Kconfig and help text a bit.
 
-Fix that.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181004172227.10094-1-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cpu.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/i2c/busses/Kconfig | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 0ed3e9deda306..c2573e858009b 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -379,6 +379,7 @@ void __init cpu_smt_disable(bool force)
- 		pr_info("SMT: Force disabled\n");
- 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
- 	} else {
-+		pr_info("SMT: disabled\n");
- 		cpu_smt_control = CPU_SMT_DISABLED;
- 	}
- }
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 45a3f3ca29b38..b72a25585d52b 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -429,12 +429,13 @@ config I2C_BCM_KONA
+ 	  If you do not need KONA I2C interface, say N.
+ 
+ config I2C_BRCMSTB
+-	tristate "BRCM Settop I2C controller"
+-	depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST
++	tristate "BRCM Settop/DSL I2C controller"
++	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_63XX || \
++		   COMPILE_TEST
+ 	default y
+ 	help
+ 	  If you say yes to this option, support will be included for the
+-	  I2C interface on the Broadcom Settop SoCs.
++	  I2C interface on the Broadcom Settop/DSL SoCs.
+ 
+ 	  If you do not need I2C interface, say N.
+ 
 -- 
 2.20.1
 
