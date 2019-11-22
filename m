@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 409F4106D47
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF72106B4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730823AbfKVK6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48868 "EHLO mail.kernel.org"
+        id S1729180AbfKVKnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:43:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730138AbfKVK6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:58:39 -0500
+        id S1729167AbfKVKm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:42:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 164C820706;
-        Fri, 22 Nov 2019 10:58:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6E1B20637;
+        Fri, 22 Nov 2019 10:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420318;
-        bh=tdM4px7N/SUXA7AVlSHCbaiQKS2rLnq7VuLZXvmZw7U=;
+        s=default; t=1574419377;
+        bh=uNuL2SlXQPCd2xQq6qydXDinsZiQ5RcmM24s08p/bDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KSHu73fcFqZXXQOaCfilPPFYtGNBpKEqQIy7BDoMYJsSTBcUrZaez2ETyqwYsAuPU
-         jW67XJrDtiZq9/Cun0NDFoKdxi81Gzfu4cB6dO5H4iSAdi5JmkaTQvxpDUu2pcmSot
-         DkebFnc8/80NoxO71QiYMunpbzBu4zBpgayDiO5g=
+        b=TVD8MD5Q7mO6mQTGsqnlESU/UsJyJ91K2tXBgivmYYvwSUswyxPYeoRpjCA4qEAl8
+         HIJKBKPjVsYd8TRDGcoGMAhz0D2NtnYg5ElXNZ3kwgdqgJOJthY4rD2RMUZ0MVEcXG
+         ih0H/YpB5XShhjDWl0/8w+mFULm4/GW6VFfQDOyg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 065/220] cxgb4: Use proper enum in cxgb4_dcb_handle_fw_update
-Date:   Fri, 22 Nov 2019 11:27:10 +0100
-Message-Id: <20191122100916.787111665@linuxfoundation.org>
+Subject: [PATCH 4.9 091/222] net: xilinx: fix return type of ndo_start_xmit function
+Date:   Fri, 22 Nov 2019 11:27:11 +0100
+Message-Id: <20191122100910.090140408@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 3b0b8f0d9a259f6a428af63e7a77547325f8e081 ]
+[ Upstream commit 81255af8d9d5565004792c295dde49344df450ca ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:303:7: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                         ? CXGB4_DCB_STATE_FW_ALLSYNCED
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:304:7: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                         : CXGB4_DCB_STATE_FW_INCOMPLETE);
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-2 warnings generated.
+Found by coccinelle.
 
-Use the equivalent value of the expected type to silence Clang while
-resulting in no functional change.
-
-CXGB4_DCB_STATE_FW_INCOMPLETE = CXGB4_DCB_INPUT_FW_INCOMPLETE = 2
-CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/xilinx/ll_temac_main.c       | 3 ++-
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 3 ++-
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c     | 9 +++++----
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-index b34f0f077a310..838692948c0b2 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-@@ -273,8 +273,8 @@ void cxgb4_dcb_handle_fw_update(struct adapter *adap,
- 		enum cxgb4_dcb_state_input input =
- 			((pcmd->u.dcb.control.all_syncd_pkd &
- 			  FW_PORT_CMD_ALL_SYNCD_F)
--			 ? CXGB4_DCB_STATE_FW_ALLSYNCED
--			 : CXGB4_DCB_STATE_FW_INCOMPLETE);
-+			 ? CXGB4_DCB_INPUT_FW_ALLSYNCED
-+			 : CXGB4_DCB_INPUT_FW_INCOMPLETE);
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index a9bd665fd1225..545f60877bb7d 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -673,7 +673,8 @@ static inline int temac_check_tx_bd_space(struct temac_local *lp, int num_frag)
+ 	return 0;
+ }
  
- 		if (dcb->dcb_version != FW_PORT_DCB_VER_UNKNOWN) {
- 			dcb_running_version = FW_PORT_CMD_DCB_VERSION_G(
+-static int temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t
++temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct temac_local *lp = netdev_priv(ndev);
+ 	struct cdmac_bd *cur_p;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 5f21ddff9e0f9..46fcf3ec2caf7 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -655,7 +655,8 @@ static inline int axienet_check_tx_bd_space(struct axienet_local *lp,
+  * start the transmission. Additionally if checksum offloading is supported,
+  * it populates AXI Stream Control fields with appropriate values.
+  */
+-static int axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t
++axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	u32 ii;
+ 	u32 num_frag;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+index aa02a03a6d8db..034b36442ee75 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
++++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+@@ -1005,9 +1005,10 @@ static int xemaclite_close(struct net_device *dev)
+  * deferred and the Tx queue is stopped so that the deferred socket buffer can
+  * be transmitted when the Emaclite device is free to transmit data.
+  *
+- * Return:	0, always.
++ * Return:	NETDEV_TX_OK, always.
+  */
+-static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
++static netdev_tx_t
++xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
+ {
+ 	struct net_local *lp = netdev_priv(dev);
+ 	struct sk_buff *new_skb;
+@@ -1028,7 +1029,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
+ 		/* Take the time stamp now, since we can't do this in an ISR. */
+ 		skb_tx_timestamp(new_skb);
+ 		spin_unlock_irqrestore(&lp->reset_lock, flags);
+-		return 0;
++		return NETDEV_TX_OK;
+ 	}
+ 	spin_unlock_irqrestore(&lp->reset_lock, flags);
+ 
+@@ -1037,7 +1038,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
+ 	dev->stats.tx_bytes += len;
+ 	dev_consume_skb_any(new_skb);
+ 
+-	return 0;
++	return NETDEV_TX_OK;
+ }
+ 
+ /**
 -- 
 2.20.1
 
