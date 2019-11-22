@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 028EA106E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ACC4106DD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730980AbfKVLJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:09:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56546 "EHLO mail.kernel.org"
+        id S1731006AbfKVLDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:03:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731342AbfKVLCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:02:47 -0500
+        id S1731412AbfKVLDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:03:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 336672075E;
-        Fri, 22 Nov 2019 11:02:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ECEF2073F;
+        Fri, 22 Nov 2019 11:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420566;
-        bh=nFIHgYARN6QoZyAs6j4pPa0Obg16o0fLwzGO5HLl37g=;
+        s=default; t=1574420596;
+        bh=N/hyzp1OWfb2l1l5eiOD5E610sSGkUzaZnDfc14bxfk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rwSP38dYMgWhRPBoqKnNKIGuqJ/hr7+M5OLMjb850nM6kqVzXNQ5AwQf7528Llf3k
-         3uA3xNoY30+jh4hSRG3KgtHtk81m4EulyuYD8UOIQHDMXnDbiUOzJQrd78Z08tdzIu
-         vCq21u9O4v5AlzSCQqJi0E6AYLsjd9LH409jjZmo=
+        b=p9uX2xNLo0vWTvSYPjqCF6ZRDzTnJ9/S1yBVPdz/K6kNYoL/Cj56iukjS3jfnEb7P
+         Kxar59fOaLDC/jc8GYZ7CfiBMfBXS3p+5k6lL9nZM6oHG3eHzA355hMIxQ0CvemJ1w
+         0JD79p8XWtrtgJjOjQRpta1MthnPElWkewd7xcWc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rami Rosen <ramirose@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 123/220] dmaengine: ioat: fix prototype of ioat_enumerate_channels
-Date:   Fri, 22 Nov 2019 11:28:08 +0100
-Message-Id: <20191122100921.592923006@linuxfoundation.org>
+        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 124/220] media: ov5640: fix framerate update
+Date:   Fri, 22 Nov 2019 11:28:09 +0100
+Message-Id: <20191122100921.669666315@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -43,56 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rami Rosen <ramirose@gmail.com>
+From: Hugues Fruchet <hugues.fruchet@st.com>
 
-[ Upstream commit f4d34aa8c887a8a2d23ef546da0efa10e3f77241 ]
+[ Upstream commit 0929983e49c81c1d413702cd9b83bb06c4a2555c ]
 
-Signed-off-by: Rami Rosen <ramirose@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Changing framerate right before streamon had no effect,
+the new framerate value was taken into account only at
+next streamon, fix this.
+
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ioat/init.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/media/i2c/ov5640.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 21a5708985bc2..0fec3c554fe35 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -129,7 +129,7 @@ static void
- ioat_init_channel(struct ioatdma_device *ioat_dma,
- 		  struct ioatdma_chan *ioat_chan, int idx);
- static void ioat_intr_quirk(struct ioatdma_device *ioat_dma);
--static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
-+static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
- static int ioat3_dma_self_test(struct ioatdma_device *ioat_dma);
+diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+index a3bbef682fb8e..2023df14f8282 100644
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -2572,8 +2572,6 @@ static int ov5640_s_frame_interval(struct v4l2_subdev *sd,
+ 	if (frame_rate < 0)
+ 		frame_rate = OV5640_15_FPS;
  
- static int ioat_dca_enabled = 1;
-@@ -575,7 +575,7 @@ static void ioat_dma_remove(struct ioatdma_device *ioat_dma)
-  * ioat_enumerate_channels - find and initialize the device's channels
-  * @ioat_dma: the ioat dma device to be enumerated
-  */
--static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
-+static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
- {
- 	struct ioatdma_chan *ioat_chan;
- 	struct device *dev = &ioat_dma->pdev->dev;
-@@ -594,7 +594,7 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
- 	xfercap_log = readb(ioat_dma->reg_base + IOAT_XFERCAP_OFFSET);
- 	xfercap_log &= 0x1f; /* bits [4:0] valid */
- 	if (xfercap_log == 0)
--		return 0;
-+		return;
- 	dev_dbg(dev, "%s: xfercap = %d\n", __func__, 1 << xfercap_log);
- 
- 	for (i = 0; i < dma->chancnt; i++) {
-@@ -611,7 +611,6 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
- 		}
+-	sensor->current_fr = frame_rate;
+-	sensor->frame_interval = fi->interval;
+ 	mode = ov5640_find_mode(sensor, frame_rate, mode->hact,
+ 				mode->vact, true);
+ 	if (!mode) {
+@@ -2581,7 +2579,10 @@ static int ov5640_s_frame_interval(struct v4l2_subdev *sd,
+ 		goto out;
  	}
- 	dma->chancnt = i;
--	return i;
- }
  
- /**
+-	if (mode != sensor->current_mode) {
++	if (mode != sensor->current_mode ||
++	    frame_rate != sensor->current_fr) {
++		sensor->current_fr = frame_rate;
++		sensor->frame_interval = fi->interval;
+ 		sensor->current_mode = mode;
+ 		sensor->pending_mode_change = true;
+ 	}
 -- 
 2.20.1
 
