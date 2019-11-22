@@ -2,67 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB74D107AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 23:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67414107ACB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 23:45:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfKVWkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 17:40:09 -0500
-Received: from mga01.intel.com ([192.55.52.88]:61230 "EHLO mga01.intel.com"
+        id S1726760AbfKVWpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 17:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbfKVWkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 17:40:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 14:40:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,231,1571727600"; 
-   d="scan'208";a="409029712"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Nov 2019 14:40:05 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 13/13] KVM: x86: Allow userspace to disable the kernel's emulator
-Date:   Fri, 22 Nov 2019 14:39:59 -0800
-Message-Id: <20191122223959.13545-14-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122223959.13545-1-sean.j.christopherson@intel.com>
-References: <20191122223959.13545-1-sean.j.christopherson@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726526AbfKVWpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 17:45:05 -0500
+Subject: Re: [GIT] Networking
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574462704;
+        bh=d8oXppx+2YbgA8Cf5mAhkifdEjS+4TUDqLDsK0lT574=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=1wzvzz4lR+zlu3lEAiGWnzAIZF6WTEZipsM+D0f1oMSBsm6zXIDPTvV95sz/P3FY6
+         +PxmKlhfAwND8HOuaL5behgADLMVAy5UxKDMaGFoEvseXNtj73+UlplNHqyHwprfwx
+         KKkuhdhuouw2C78M5g9+WPl/CWrt8IvNJRDCM6lE=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191122.101751.1677491851513930094.davem@davemloft.net>
+References: <20191122.101751.1677491851513930094.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191122.101751.1677491851513930094.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
+ refs/heads/master
+X-PR-Tracked-Commit-Id: 5b1d9c17a3e0c16e1c9adf9c8a89f2735cb6dff8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 34c36f4564b8a3339db3ce832a5aaf1871185685
+Message-Id: <157446270451.8590.2299555023167506203.pr-tracker-bot@kernel.org>
+Date:   Fri, 22 Nov 2019 22:45:04 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose the emulator control to userspace via a module param.
+The pull request you sent on Fri, 22 Nov 2019 10:17:51 -0800 (PST):
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/x86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git refs/heads/master
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 312dd5f8172c..4e5a27874656 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -155,7 +155,8 @@ EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
- static bool __read_mostly force_emulation_prefix = false;
- module_param(force_emulation_prefix, bool, S_IRUGO);
- 
--static const bool enable_emulator = true;
-+static bool __read_mostly enable_emulator = true;
-+module_param_named(emulator, enable_emulator, bool, 0440);
- 
- int __read_mostly pi_inject_timer = -1;
- module_param(pi_inject_timer, bint, S_IRUGO | S_IWUSR);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/34c36f4564b8a3339db3ce832a5aaf1871185685
+
+Thank you!
+
 -- 
-2.24.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
