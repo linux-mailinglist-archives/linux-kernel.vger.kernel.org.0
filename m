@@ -2,98 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35676106CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D78C71069FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730497AbfKVKzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:55:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730205AbfKVKzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:55:39 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6213E20637;
-        Fri, 22 Nov 2019 10:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420138;
-        bh=xfiRYlBrrR42DVKHJwACyiYlj/Argp6WATZos1+CRlg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G09i9nCxSXOY5taRVOwEy+7xcmVPrSP41Krs67Oytz+o31iCTt5aPA1fJoBUgavaM
-         nUlqqj9u4047xHprgGcJw6Mp3XO5+dge5BxFcNg+n+eogQ4SrZlhdsudG3p6VwQsT7
-         7COBBoSHG3MIrLab34AazM2jXtTLKRymOaJryqzQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 122/122] mmc: tmio: fix SCC error handling to avoid false positive CRC error
-Date:   Fri, 22 Nov 2019 11:29:35 +0100
-Message-Id: <20191122100838.472460553@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726865AbfKVKaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:30:30 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36585 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfKVKaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:30:30 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k13so3180488pgh.3;
+        Fri, 22 Nov 2019 02:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KZF4nCg+mr6Tu7VsbFdxmJAwi8ka4CeGB3j0/tQUh5Q=;
+        b=fWB0qAhi80fT+Q/RQ4rWbGdN28X7xewAfOZCug4QaKIQuw3pBgWLvWdanya5EjKNsY
+         uA0MY2/5Ao72E5fmBT0xrPh2z2ouGbMatpGmufUyjoPziIAbW06cymmArvFfcFugSzEY
+         pCJSJXdezGTB1OqJIa3HgOYNZhrTLQRf0r4LobJn4Y/Z7hNCgl/+F4TzTK5euJxHLtuJ
+         jcPAcLm0gy5stx3QrMpA50j8kHh//UbZVdkJ7duKZH3Nj+/CD38YUmJ6CQ5ugSDaz5aF
+         SxeZ5g5SqpDasHHoTL0m887lrtqeSayGmJhke7iH+Et8bZZ5Way9/fR6ai9FmN4JhYhW
+         ytZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KZF4nCg+mr6Tu7VsbFdxmJAwi8ka4CeGB3j0/tQUh5Q=;
+        b=UgUn9kuDLqzlvY8P4ufaZmYeljm0RDu0Q5jYg9tsy914qILpgIFNlNYkIOBKtn5BzC
+         SDSstQ+Fm1+uXZPeYvJbsCxQxjPE57EpbVBqCtPpOREynS+VsItY3CNz2mGQSdpkKnD7
+         SiRJv2nOP8ej6kazJzhdOn9Kxm2YU4qJpUqh0fmQ7qKd2xlE2gaH4iAJbg4BI+DfzAqc
+         JUpkEmBi95TUvE0cKTTTIaTCJX3o/rwFa2o2G00IF7dzt2N7JtA3fYKVnhbbwdPGZGyY
+         eWuSbS860tDzSFGlldWWtjvI7I/ZApt4VSGksloaj1ua5Ws3dFi5jW3209ard9xPDONw
+         nISQ==
+X-Gm-Message-State: APjAAAVtLgnb89ku7pP8dEiIMEHcXJ3B51c+sSZvDtnMedb6cyWqSugP
+        Oiw5lW6x9OXds5PLdPdv2Lo=
+X-Google-Smtp-Source: APXvYqycOpmM/n3thMeej5yGENE2TyzgFM6MbEvwtSCL1aM0q8MUKsgmF/CiLfo61cTKps1pxWyPDA==
+X-Received: by 2002:aa7:9639:: with SMTP id r25mr16489748pfg.17.1574418628685;
+        Fri, 22 Nov 2019 02:30:28 -0800 (PST)
+Received: from cnn ([2402:3a80:46d:ffdd:5d90:34b2:635a:ec78])
+        by smtp.gmail.com with ESMTPSA id f59sm2247416pje.0.2019.11.22.02.30.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Nov 2019 02:30:28 -0800 (PST)
+Date:   Fri, 22 Nov 2019 16:00:22 +0530
+From:   Manikandan <manikandan.hcl.ers.epl@gmail.com>
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     joel@jms.id.au, vijaykhemka@fb.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        manikandan.e@hcl.com
+Subject: Re: [PATCH v2] ARM: dts: aspeed: Adding Facebook Yosemite V2 BMC
+Message-ID: <20191122103022.GA15913@cnn>
+References: <20191118123707.GA5560@cnn>
+ <b2f503f0-0f13-46bc-a1be-c82a42b85797@www.fastmail.com>
+ <D34D3A2F-9CD5-4924-8407-F6EB0A4C66B5@fb.com>
+ <20191121074843.GA10607@cnn>
+ <0fce7468-bb35-4d47-8d5d-abc228e99085@www.fastmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0fce7468-bb35-4d47-8d5d-abc228e99085@www.fastmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
 
-[ Upstream commit 51b72656bb39fdcb8f3174f4007bcc83ad1d275f ]
+From 9a17872b5faf2c00ab0b572bac0072e44a3d8b91 Mon Sep 17 00:00:00 2001
+From: manikandan-e <manikandan.hcl.ers.epl@gmail.com>
+Date: Thu, 21 Nov 2019 11:57:07 +0530
+Subject: [PATCH] ARM: dts: aspeed: Adding Facebook Yosemite V2 BMC
 
-If an SCC error occurs during a read/write command execution, a false
-positive CRC error message is output.
+The Yosemite V2 is a facebook multi-node server
+platform that host four OCP server. The BMC
+in the Yosemite V2 platorm based on AST2500 SoC.
 
-mmcblk0: response CRC error sending r/w cmd command, card status 0x900
+This patch adds linux device tree entry related to
+Yosemite V2 specific devices connected to BMC SoC.
 
-check_scc_error() checks SCC_RVSREQ.RVSERR bit. RVSERR detects a
-correction error in the next (up or down) delay tap position. However,
-since the command is successful, only retuning needs to be executed.
-This has been confirmed by HW engineers.
-
-Thus, on SCC error, set retuning flag instead of setting an error code.
-
-Fixes: b85fb0a1c8ae ("mmc: tmio: Fix SCC error detection")
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[wsa: updated comment and commit message, removed some braces]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: manikandan-e <manikandan.hcl.ers.epl@gmail.com>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../boot/dts/aspeed-bmc-facebook-yosemitev2.dts    | 152 +++++++++++++++++++++
+ 1 file changed, 152 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 01e51b7945750..2fd862dc97701 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -914,8 +914,9 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
- 
-+	/* SCC error means retune, but executed command was still successful */
- 	if (host->check_scc_error && host->check_scc_error(host))
--		mrq->cmd->error = -EILSEQ;
-+		mmc_retune_needed(host->mmc);
- 
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
+diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+new file mode 100644
+index 0000000..5f9a2e1
+--- /dev/null
++++ b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright (c) 2018 Facebook Inc.
++/dts-v1/;
++
++#include "aspeed-g5.dtsi"
++#include <dt-bindings/gpio/aspeed-gpio.h>
++
++/ {
++	model = "Facebook Yosemitev2 BMC";
++	compatible = "facebook,yosemitev2-bmc", "aspeed,ast2500";
++	aliases {
++		serial0 = &uart1;
++		serial4 = &uart5;
++	};
++	chosen {
++		stdout-path = &uart5;
++		bootargs = "console=ttyS4,115200 earlyprintk";
++	};
++
++	memory@80000000 {
++		reg = <0x80000000 0x20000000>;
++	};
++
++	iio-hwmon {
++		// VOLATAGE SENSOR
++		compatible = "iio-hwmon";
++		io-channels = <&adc 0> , <&adc 1> , <&adc 2> ,  <&adc 3> ,
++		<&adc 4> , <&adc 5> , <&adc 6> ,  <&adc 7> ,
++		<&adc 8> , <&adc 9> , <&adc 10>, <&adc 11> ,
++		<&adc 12> , <&adc 13> , <&adc 14> , <&adc 15> ;
++	};
++};
++
++&fmc {
++	status = "okay";
++	flash@0 {
++		status = "okay";
++		m25p,fast-read;
++#include "openbmc-flash-layout.dtsi"
++	};
++};
++
++&spi1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_spi1_default>;
++	flash@0 {
++		status = "okay";
++		m25p,fast-read;
++		label = "pnor";
++	};
++};
++
++&uart5 {
++	// BMC Console
++	status = "okay";
++};
++
++&mac0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rmii1_default>;
++	use-ncsi;
++};
++
++&adc {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_adc0_default
++		&pinctrl_adc1_default
++		&pinctrl_adc2_default
++		&pinctrl_adc3_default
++		&pinctrl_adc4_default
++		&pinctrl_adc5_default
++		&pinctrl_adc6_default
++		&pinctrl_adc7_default
++		&pinctrl_adc8_default
++		&pinctrl_adc9_default
++		&pinctrl_adc10_default
++		&pinctrl_adc11_default
++		&pinctrl_adc12_default
++		&pinctrl_adc13_default
++		&pinctrl_adc14_default
++		&pinctrl_adc15_default>;
++};
++
++&i2c8 {
++	status = "okay";
++	//FRU EEPROM
++	eeprom@51 {
++		compatible = "atmel,24c64";
++		reg = <0x51>;
++		pagesize = <32>;
++	};
++};
++
++&i2c9 {
++	status = "okay";
++	tmp421@4e {
++	//INLET TEMP
++		compatible = "ti,tmp421";
++		reg = <0x4e>;
++	};
++	//OUTLET TEMP
++	tmp421@4f {
++		compatible = "ti,tmp421";
++		reg = <0x4f>;
++	};
++};
++
++&i2c10 {
++	status = "okay";
++	//HSC
++	adm1278@40 {
++		compatible = "adi,adm1278";
++		reg = <0x40>;
++	};
++};
++
++&i2c11 {
++	status = "okay";
++	//MEZZ_TEMP_SENSOR
++	tmp421@1f {
++		compatible = "ti,tmp421";
++		reg = <0x1f>;
++	};
++};
++
++&i2c12 {
++	status = "okay";
++	//MEZZ_FRU
++	eeprom@51 {
++		compatible = "atmel,24c64";
++		reg = <0x51>;
++		pagesize = <32>;
++	};
++};
++
++&pwm_tacho {
++	status = "okay";
++	//FSC
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
++	fan@0 {
++		reg = <0x00>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
++	};
++	fan@1 {
++		reg = <0x01>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x02>;
++	};
++};
 -- 
-2.20.1
+2.7.4
 
 
-
+On Fri, Nov 22, 2019 at 09:16:39AM +1030, Andrew Jeffery wrote:
+> 
+> 
+> On Thu, 21 Nov 2019, at 18:18, Manikandan wrote:
+> > 
+> > Hi Andrew/Vijay,
+> > 
+> > Thanks for the review .
+> > 
+> > The following changes done in dts and tested in Facebook Yosemite V2 
+> > BMC platform,
+> >   1. LPC feature removed as not supported .
+> >   2. VUART feature removed as not supported.
+> >   3. Host UART feature removed as not in the current scope.
+> >   4. ADC pinctrl details added in dts.
+> 
+> Can you please re-send the patch as a v2 and inline to the mail rather than
+> as an attachment?
+> 
+> Cheers,
+> 
+> Andrew
