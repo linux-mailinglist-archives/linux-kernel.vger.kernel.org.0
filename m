@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACBED107085
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88582106ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbfKVLWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:22:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48006 "EHLO mail.kernel.org"
+        id S1730829AbfKVK6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:58:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727747AbfKVKmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:42:42 -0500
+        id S1730808AbfKVK6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D346620715;
-        Fri, 22 Nov 2019 10:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3400C20706;
+        Fri, 22 Nov 2019 10:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419362;
-        bh=0K5Le4/yUVvQ+7LVnDH2eIxwNTpwnAm+e6EkDjNqOyY=;
+        s=default; t=1574420312;
+        bh=OpXDIx5xOYY97zeVa/FNBxT/29iZH3I1AKxSms1pfW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GmVoWriA4/3Or6+UrMP+p5w9iaxkChr+mtIdURb3Lrd/TO96zRtL4ORY1A3uzD3NU
-         fOKbVpUXRMIMzV0dUq+eFoebi9+JRw+B+xbMio/l7DLlVVJ7/Futlu/Tnc4gwdDTrs
-         IW51hTex6mb6WscKaazzZYMwgnYXhajAwuT/DvDU=
+        b=XoAPSufW4JmHJCMUj0/8zLH37ZRDv3UtjeR11Tdx63eME4HF5sl9eg4mej+kow/Ea
+         kfsykfy/vafJGyp5DWTj4U5PFkR5ToRLiLNGvZ1pQvNreeHnhkhWiMtRIpxXEhpm25
+         hXmeDU6FfOfvmK6UTLtjJ1shkiGUNGNYbJotlMdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 087/222] libfdt: Ensure INT_MAX is defined in libfdt_env.h
-Date:   Fri, 22 Nov 2019 11:27:07 +0100
-Message-Id: <20191122100909.853136152@linuxfoundation.org>
+Subject: [PATCH 4.19 063/220] x86/PCI: Apply VMDs AERSID fixup generically
+Date:   Fri, 22 Nov 2019 11:27:08 +0100
+Message-Id: <20191122100916.631460501@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,66 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Jon Derrick <jonathan.derrick@intel.com>
 
-[ Upstream commit 53dd9dce6979bc54d64a3a09a2fb20187a025be7 ]
+[ Upstream commit 4f475e8e0a6d4f5d430350d1f74f7e4899fb1692 ]
 
-The next update of libfdt has a new dependency on INT_MAX. Update the
-instances of libfdt_env.h in the kernel to either include the necessary
-header with the definition or define it locally.
+A root port Device ID changed between simulation and production.  Rather
+than match Device IDs which may not be future-proof if left unmaintained,
+match all root ports which exist in a VMD domain.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/compressed/libfdt_env.h | 2 ++
- arch/powerpc/boot/libfdt_env.h        | 2 ++
- include/linux/libfdt_env.h            | 1 +
- 3 files changed, 5 insertions(+)
+ arch/x86/pci/fixup.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 17ae0f3efac8e..005bf4ff1b4cb 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -5,6 +5,8 @@
- #include <linux/string.h>
- #include <asm/byteorder.h>
+diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
+index bd372e8965571..527e69b120025 100644
+--- a/arch/x86/pci/fixup.c
++++ b/arch/x86/pci/fixup.c
+@@ -629,17 +629,11 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x8c10, quirk_apple_mbp_poweroff);
+ static void quirk_no_aersid(struct pci_dev *pdev)
+ {
+ 	/* VMD Domain */
+-	if (is_vmd(pdev->bus))
++	if (is_vmd(pdev->bus) && pci_is_root_bus(pdev->bus))
+ 		pdev->bus->bus_flags |= PCI_BUS_FLAGS_NO_AERSID;
+ }
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2030, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2031, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2032, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2033, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x334a, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x334b, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x334c, quirk_no_aersid);
+-DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x334d, quirk_no_aersid);
++DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
++			      PCI_CLASS_BRIDGE_PCI, 8, quirk_no_aersid);
  
-+#define INT_MAX			((int)(~0U>>1))
-+
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 7e3789ea396b8..0b3db6322c793 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -4,6 +4,8 @@
- #include <types.h>
- #include <string.h>
- 
-+#define INT_MAX			((int)(~0U>>1))
-+
- #include "of.h"
- 
- typedef u32 uint32_t;
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index 2a663c6bb4285..8850e243c9406 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -1,6 +1,7 @@
- #ifndef _LIBFDT_ENV_H
- #define _LIBFDT_ENV_H
- 
-+#include <linux/kernel.h>	/* For INT_MAX */
- #include <linux/string.h>
- 
- #include <asm/byteorder.h>
+ static void quirk_intel_th_dnv(struct pci_dev *dev)
+ {
 -- 
 2.20.1
 
