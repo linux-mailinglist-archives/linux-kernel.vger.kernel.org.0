@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32102106E1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:06:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA9B106FF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730648AbfKVLGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:06:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34358 "EHLO mail.kernel.org"
+        id S1729821AbfKVKsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:48:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731819AbfKVLGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:06:14 -0500
+        id S1728281AbfKVKr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:47:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5585D2088F;
-        Fri, 22 Nov 2019 11:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 765B820715;
+        Fri, 22 Nov 2019 10:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420773;
-        bh=3V4B+5FPwQ+goJN1+z1cIB2n93aSNpU3SDah4sLezHk=;
+        s=default; t=1574419677;
+        bh=uwR+ZkkgiwpN6ZchteRgte5Qy/AWfYAwBCYwH+Xv/ZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0F1WRVWDIbO+mXTO6bLqZ7hx3XsnDibAo6dNHnjPeUeAMsMwNv+MhL3amngWWMiYs
-         +z9fHnf8zjRAKaMiRou/nwizk2Qhlni6s6zrDW4ixeXjYbcceMm3tWQFOlt/D0aF+x
-         swUt+Dyv7ktsarBmXyjyr7CdUR1pUVSW3tfXY+fQ=
+        b=zzhvlcZj/5LrBjU7vWbhoOb6IT3tsbhoYB2Jxf3LbiQB2gmsJnH9V2U7+hFORmi9o
+         eS+mvB/xdx8AdO6Jef1JZ9QPbnzOuLU4XgGKkLoAEwPj8xFWilKtzAcTSZrN6mrsW9
+         MhmHgH1kkcKmbn2S5R3LPwiMaiceiXm6MjuO79jA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+        stable@vger.kernel.org, Julian Sax <jsbc@gmx.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 167/220] s390/kasan: avoid vdso instrumentation
-Date:   Fri, 22 Nov 2019 11:28:52 +0100
-Message-Id: <20191122100924.813862210@linuxfoundation.org>
+Subject: [PATCH 4.9 193/222] Input: silead - try firmware reload after unsuccessful resume
+Date:   Fri, 22 Nov 2019 11:28:53 +0100
+Message-Id: <20191122100916.197821172@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Julian Sax <jsbc@gmx.de>
 
-[ Upstream commit 348498458505e202df41b6b9a78da448d39298b7 ]
+[ Upstream commit dde27443211062e841806feaf690674b7c3a599f ]
 
-vdso is mapped into user space processes, which won't have kasan
-shodow mapped.
+A certain silead controller (Chip ID: 0x56810000) loses its firmware
+after suspend, causing the resume to fail. This patch tries to load
+the firmware, should a resume error occur and retries the resuming.
 
-Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Julian Sax <jsbc@gmx.de>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/vdso32/Makefile | 3 ++-
- arch/s390/kernel/vdso64/Makefile | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/input/touchscreen/silead.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
-index 04dd3e2c3bd9b..e76309fbbcb3b 100644
---- a/arch/s390/kernel/vdso32/Makefile
-+++ b/arch/s390/kernel/vdso32/Makefile
-@@ -28,9 +28,10 @@ obj-y += vdso32_wrapper.o
- extra-y += vdso32.lds
- CPPFLAGS_vdso32.lds += -P -C -U$(ARCH)
+diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
+index f502c8488be86..867772878c0c8 100644
+--- a/drivers/input/touchscreen/silead.c
++++ b/drivers/input/touchscreen/silead.c
+@@ -504,20 +504,33 @@ static int __maybe_unused silead_ts_suspend(struct device *dev)
+ static int __maybe_unused silead_ts_resume(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
++	bool second_try = false;
+ 	int error, status;
  
--# Disable gcov profiling and ubsan for VDSO code
-+# Disable gcov profiling, ubsan and kasan for VDSO code
- GCOV_PROFILE := n
- UBSAN_SANITIZE := n
-+KASAN_SANITIZE := n
+ 	silead_ts_set_power(client, SILEAD_POWER_ON);
  
- # Force dependency (incbin is bad)
- $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
-diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
-index ddebc26cd9494..f849ac61c5da0 100644
---- a/arch/s390/kernel/vdso64/Makefile
-+++ b/arch/s390/kernel/vdso64/Makefile
-@@ -28,9 +28,10 @@ obj-y += vdso64_wrapper.o
- extra-y += vdso64.lds
- CPPFLAGS_vdso64.lds += -P -C -U$(ARCH)
++ retry:
+ 	error = silead_ts_reset(client);
+ 	if (error)
+ 		return error;
  
--# Disable gcov profiling and ubsan for VDSO code
-+# Disable gcov profiling, ubsan and kasan for VDSO code
- GCOV_PROFILE := n
- UBSAN_SANITIZE := n
-+KASAN_SANITIZE := n
++	if (second_try) {
++		error = silead_ts_load_fw(client);
++		if (error)
++			return error;
++	}
++
+ 	error = silead_ts_startup(client);
+ 	if (error)
+ 		return error;
  
- # Force dependency (incbin is bad)
- $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
+ 	status = silead_ts_get_status(client);
+ 	if (status != SILEAD_STATUS_OK) {
++		if (!second_try) {
++			second_try = true;
++			dev_dbg(dev, "Reloading firmware after unsuccessful resume\n");
++			goto retry;
++		}
+ 		dev_err(dev, "Resume error, status: 0x%02x\n", status);
+ 		return -ENODEV;
+ 	}
 -- 
 2.20.1
 
