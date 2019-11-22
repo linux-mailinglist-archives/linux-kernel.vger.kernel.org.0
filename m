@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8493F106A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4218106C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:53:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbfKVKfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:35:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32966 "EHLO mail.kernel.org"
+        id S1730102AbfKVKxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:53:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728217AbfKVKfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:35:13 -0500
+        id S1727762AbfKVKxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD96E20708;
-        Fri, 22 Nov 2019 10:35:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 838942072E;
+        Fri, 22 Nov 2019 10:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418912;
-        bh=sqb++TXGGyVWzTbjaKuwOI/0PkCaHEm9xxhq7qwYYes=;
+        s=default; t=1574419986;
+        bh=S42pxMw6/wYTxvLBzsja1ndTqzGbyWY3pPEbYY4F1S4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fjlmm52Cs8+QQOZtQywMkf3NLwm+kv2qergEdF5ndw1o/Qsyu8qy2xR015ot2wqyB
-         hVJUgPBots2ZXtyLAvidnb/xJMVZDyxwRUh7oi3I8NSHv5vh/HsyYEUnVnftB6alF8
-         K7+JRTEIlcPjycaV9gOsAyravc4vMavQjE+2p+U4=
+        b=RCU2oQTWwjboIOxtXmmmGjeViXSk2eu/91Kk2S2CS04D+RkKSsHbwkAm37gcgAZVD
+         hFIfNYtmhjo9U331B/ZdXESEgT95Yg1icFABCE8toYfNx/QPV516qRaYnC0mmMLKpO
+         bQOB0GUcSyX52XF+4lQ1mXB4GXCf6viWj040dPoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 094/159] arm64: dts: amd: Fix SPI bus warnings
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 032/122] dmaengine: timb_dma: Use proper enum in td_prep_slave_sg
 Date:   Fri, 22 Nov 2019 11:28:05 +0100
-Message-Id: <20191122100815.429043688@linuxfoundation.org>
+Message-Id: <20191122100747.720313352@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit e9f0878c4b2004ac19581274c1ae4c61ae3ca70e ]
+[ Upstream commit 5e621f5d538985f010035c6f3e28c22829d36db1 ]
 
-dtc has new checks for SPI buses. Fix the warnings in node names.
+Clang warns when implicitly converting from one enumerated type to
+another. Avoid this by using the equivalent value from the expected
+type.
 
-arch/arm64/boot/dts/amd/amd-overdrive.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/amd/amd-overdrive-rev-b0.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
+drivers/dma/timb_dma.c:548:27: warning: implicit conversion from
+enumeration type 'enum dma_transfer_direction' to different enumeration
+type 'enum dma_data_direction' [-Wenum-conversion]
+                td_desc->desc_list_len, DMA_MEM_TO_DEV);
+                                        ^~~~~~~~~~~~~~
+1 warning generated.
 
-Cc: Brijesh Singh <brijeshkumar.singh@amd.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/timb_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-index 2874d92881fda..a3030c868be5f 100644
---- a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-+++ b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-@@ -84,7 +84,7 @@
- 			clock-names = "uartclk", "apb_pclk";
- 		};
+diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
+index 896bafb7a5324..cf6588cc3efdc 100644
+--- a/drivers/dma/timb_dma.c
++++ b/drivers/dma/timb_dma.c
+@@ -545,7 +545,7 @@ static struct dma_async_tx_descriptor *td_prep_slave_sg(struct dma_chan *chan,
+ 	}
  
--		spi0: ssp@e1020000 {
-+		spi0: spi@e1020000 {
- 			status = "disabled";
- 			compatible = "arm,pl022", "arm,primecell";
- 			#gpio-cells = <2>;
-@@ -95,7 +95,7 @@
- 			clock-names = "apb_pclk";
- 		};
+ 	dma_sync_single_for_device(chan2dmadev(chan), td_desc->txd.phys,
+-		td_desc->desc_list_len, DMA_MEM_TO_DEV);
++		td_desc->desc_list_len, DMA_TO_DEVICE);
  
--		spi1: ssp@e1030000 {
-+		spi1: spi@e1030000 {
- 			status = "disabled";
- 			compatible = "arm,pl022", "arm,primecell";
- 			#gpio-cells = <2>;
+ 	return &td_desc->txd;
+ }
 -- 
 2.20.1
 
