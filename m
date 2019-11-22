@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40ABB106D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A5AA106AF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:40:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbfKVK5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:57:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
+        id S1728420AbfKVKkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:40:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727351AbfKVK46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:56:58 -0500
+        id S1728857AbfKVKkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:40:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF20920718;
-        Fri, 22 Nov 2019 10:56:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A719A2071F;
+        Fri, 22 Nov 2019 10:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420217;
-        bh=le8YsAdSof++XonceReapTGQ5IqL5e0lvkiY/PXkKr4=;
+        s=default; t=1574419209;
+        bh=HImH6DBQCdYDbrYV5nm8VU8wabB9MtuWvxvVxo2aZSQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BdOVcApr/sgy9+rxxfLGFqy06YyNNqPm6GPb5YKugHqYKc6uXNNK0Jg3fyXLSEJfS
-         gwJCkvvksw1GTzemwtZ2z1xv1XHQZ7gNOmNfuKd1k1sDpROe8D6rFEy5SssuG2Si/6
-         yQfmkdcE5JeTG8CzqkaxVcL9k3dJQzZHzLo/mCx0=
+        b=VMYwDV9lVhRc2rR/ar0Chs9aOqm8fxzgpqHlJEAof4Mg+CYWn65NZBDjzUuuOzkO/
+         kixJSMv98esvQvb6XwUci8GKW4Ouun5iRDWYmzfp7dYYo6wLd4ZtniS1/bZqHHX9yd
+         vjKsBozcp/OkAZoQ/Jpn1T/CPAau0ArgBvSQEQBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 4.19 009/220] arm64: uaccess: Ensure PAN is re-enabled after unhandled uaccess fault
-Date:   Fri, 22 Nov 2019 11:26:14 +0100
-Message-Id: <20191122100913.330478139@linuxfoundation.org>
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 035/222] rtl8187: Fix warning generated when strncpy() destination length matches the sixe argument
+Date:   Fri, 22 Nov 2019 11:26:15 +0100
+Message-Id: <20191122100845.186210915@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,116 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Tatashin <pasha.tatashin@soleen.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 94bb804e1e6f0a9a77acf20d7c70ea141c6c821e upstream.
+[ Upstream commit 199ba9faca909e77ac533449ecd1248123ce89e7 ]
 
-A number of our uaccess routines ('__arch_clear_user()' and
-'__arch_copy_{in,from,to}_user()') fail to re-enable PAN if they
-encounter an unhandled fault whilst accessing userspace.
+In gcc8, when the 3rd argument (size) of a call to strncpy() matches the
+length of the first argument, the compiler warns of the possibility of an
+unterminated string. Using strlcpy() forces a null at the end.
 
-For CPUs implementing both hardware PAN and UAO, this bug has no effect
-when both extensions are in use by the kernel.
-
-For CPUs implementing hardware PAN but not UAO, this means that a kernel
-using hardware PAN may execute portions of code with PAN inadvertently
-disabled, opening us up to potential security vulnerabilities that rely
-on userspace access from within the kernel which would usually be
-prevented by this mechanism. In other words, parts of the kernel run the
-same way as they would on a CPU without PAN implemented/emulated at all.
-
-For CPUs not implementing hardware PAN and instead relying on software
-emulation via 'CONFIG_ARM64_SW_TTBR0_PAN=y', the impact is unfortunately
-much worse. Calling 'schedule()' with software PAN disabled means that
-the next task will execute in the kernel using the page-table and ASID
-of the previous process even after 'switch_mm()', since the actual
-hardware switch is deferred until return to userspace. At this point, or
-if there is a intermediate call to 'uaccess_enable()', the page-table
-and ASID of the new process are installed. Sadly, due to the changes
-introduced by KPTI, this is not an atomic operation and there is a very
-small window (two instructions) where the CPU is configured with the
-page-table of the old task and the ASID of the new task; a speculative
-access in this state is disastrous because it would corrupt the TLB
-entries for the new task with mappings from the previous address space.
-
-As Pavel explains:
-
-  | I was able to reproduce memory corruption problem on Broadcom's SoC
-  | ARMv8-A like this:
-  |
-  | Enable software perf-events with PERF_SAMPLE_CALLCHAIN so userland's
-  | stack is accessed and copied.
-  |
-  | The test program performed the following on every CPU and forking
-  | many processes:
-  |
-  |	unsigned long *map = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE,
-  |				  MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-  |	map[0] = getpid();
-  |	sched_yield();
-  |	if (map[0] != getpid()) {
-  |		fprintf(stderr, "Corruption detected!");
-  |	}
-  |	munmap(map, PAGE_SIZE);
-  |
-  | From time to time I was getting map[0] to contain pid for a
-  | different process.
-
-Ensure that PAN is re-enabled when returning after an unhandled user
-fault from our uaccess routines.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 338d4f49d6f7 ("arm64: kernel: Add support for Privileged Access Never")
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-[will: rewrote commit message]
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/lib/clear_user.S     |    1 +
- arch/arm64/lib/copy_from_user.S |    1 +
- arch/arm64/lib/copy_in_user.S   |    1 +
- arch/arm64/lib/copy_to_user.S   |    1 +
- 4 files changed, 4 insertions(+)
+ drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -57,5 +57,6 @@ ENDPROC(__arch_clear_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9:	mov	x0, x2			// return the original size
-+	uaccess_disable_not_uao x2, x3
- 	ret
- 	.previous
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -75,5 +75,6 @@ ENDPROC(__arch_copy_from_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9998:	sub	x0, end, dst			// bytes not copied
-+	uaccess_disable_not_uao x3, x4
- 	ret
- 	.previous
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -77,5 +77,6 @@ ENDPROC(__arch_copy_in_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9998:	sub	x0, end, dst			// bytes not copied
-+	uaccess_disable_not_uao x3, x4
- 	ret
- 	.previous
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -74,5 +74,6 @@ ENDPROC(__arch_copy_to_user)
- 	.section .fixup,"ax"
- 	.align	2
- 9998:	sub	x0, end, dst			// bytes not copied
-+	uaccess_disable_not_uao x3, x4
- 	ret
- 	.previous
+diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c b/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
+index c2d5b495c179a..c089540116fa7 100644
+--- a/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
++++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/leds.c
+@@ -146,7 +146,7 @@ static int rtl8187_register_led(struct ieee80211_hw *dev,
+ 	led->dev = dev;
+ 	led->ledpin = ledpin;
+ 	led->is_radio = is_radio;
+-	strncpy(led->name, name, sizeof(led->name));
++	strlcpy(led->name, name, sizeof(led->name));
+ 
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
+-- 
+2.20.1
+
 
 
