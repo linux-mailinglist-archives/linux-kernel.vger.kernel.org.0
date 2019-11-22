@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7972C106BF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:49:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB8B4106ACB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbfKVKso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:48:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57638 "EHLO mail.kernel.org"
+        id S1728653AbfKVKiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:38:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729949AbfKVKsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:41 -0500
+        id S1728648AbfKVKiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:38:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D56E205C9;
-        Fri, 22 Nov 2019 10:48:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6D3A20717;
+        Fri, 22 Nov 2019 10:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419721;
-        bh=Y5gSmstb9HkkjIeygMwLJ2UsJ94HGuiTlu/bS/iLyic=;
+        s=default; t=1574419103;
+        bh=w2R0AhNPNW/ElN+upJgmEjLUW3sR9jsv/BbJNxPSCw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WzKyzDIeJeM/3vGyUQCf4wlWbvMF1NnNpx/RejzvEwlRV2ez+IBXegl/VlKU++2Ov
-         ro/ZYCAGRSVmXyMsc8QyqVdG96basl38kYw4t0JNj3eDBg4YMg+0UrqtKbnIZP9xmH
-         4xseShym+CtNdL/DrC75EyClQ4aXuehkyOk288to=
+        b=BSwFDvxrpHE4jad+CuZUfqtXSqfkodaGlh2YM2/G3IS8wV3d7pnxaEFhPwiy6EpM6
+         EF4SAuBY3tKmbdOV3jFdG8Hu+uEHd1uOnq20fpahTM8ahsyCXeIkzeFWcy9l6gRUrT
+         vVnlzXeq8rCmPJOTbjbbf0yfexlT54O9t9T6IB2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, rostedt@goodmis.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        He Zhe <zhe.he@windriver.com>, Petr Mladek <pmladek@suse.com>,
+        stable@vger.kernel.org, Huibin Hong <huibin.hong@rock-chips.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 207/222] printk: Give error on attempt to set log buffer length to over 2G
-Date:   Fri, 22 Nov 2019 11:29:07 +0100
-Message-Id: <20191122100917.268363697@linuxfoundation.org>
+Subject: [PATCH 4.4 157/159] spi: rockchip: initialize dma_slave_config properly
+Date:   Fri, 22 Nov 2019 11:29:08 +0100
+Message-Id: <20191122100849.248889196@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,87 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+From: Huibin Hong <huibin.hong@rock-chips.com>
 
-[ Upstream commit e6fe3e5b7d16e8f146a4ae7fe481bc6e97acde1e ]
+[ Upstream commit dd8fd2cbc73f8650f651da71fc61a6e4f30c1566 ]
 
-The current printk() is ready to handle log buffer size up to 2G.
-Give an explicit error for users who want to use larger log buffer.
+The rxconf and txconf structs are allocated on the
+stack, so make sure we zero them before filling out
+the relevant fields.
 
-Also fix printk formatting to show the 2G as a positive number.
-
-Link: http://lkml.kernel.org/r/20181008135916.gg4kkmoki5bgtco5@pathway.suse.cz
-Cc: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Suggested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-[pmladek: Fixed to the really safe limit 2GB.]
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Huibin Hong <huibin.hong@rock-chips.com>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/spi/spi-rockchip.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 6607d77afe55a..a0339c458c140 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -383,6 +383,7 @@ static u32 clear_idx;
- /* record buffer */
- #define LOG_ALIGN __alignof__(struct printk_log)
- #define __LOG_BUF_LEN (1 << CONFIG_LOG_BUF_SHIFT)
-+#define LOG_BUF_LEN_MAX (u32)(1 << 31)
- static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
- static char *log_buf = __log_buf;
- static u32 log_buf_len = __LOG_BUF_LEN;
-@@ -983,18 +984,23 @@ void log_buf_kexec_setup(void)
- static unsigned long __initdata new_log_buf_len;
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index 035767c020720..f42ae9efb255c 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -444,6 +444,9 @@ static void rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 	struct dma_slave_config rxconf, txconf;
+ 	struct dma_async_tx_descriptor *rxdesc, *txdesc;
  
- /* we practice scaling the ring buffer by powers of 2 */
--static void __init log_buf_len_update(unsigned size)
-+static void __init log_buf_len_update(u64 size)
- {
-+	if (size > (u64)LOG_BUF_LEN_MAX) {
-+		size = (u64)LOG_BUF_LEN_MAX;
-+		pr_err("log_buf over 2G is not supported.\n");
-+	}
++	memset(&rxconf, 0, sizeof(rxconf));
++	memset(&txconf, 0, sizeof(txconf));
 +
- 	if (size)
- 		size = roundup_pow_of_two(size);
- 	if (size > log_buf_len)
--		new_log_buf_len = size;
-+		new_log_buf_len = (unsigned long)size;
- }
- 
- /* save requested log_buf_len since it's too early to process it */
- static int __init log_buf_len_setup(char *str)
- {
--	unsigned int size;
-+	u64 size;
- 
- 	if (!str)
- 		return -EINVAL;
-@@ -1064,7 +1070,7 @@ void __init setup_log_buf(int early)
- 	}
- 
- 	if (unlikely(!new_log_buf)) {
--		pr_err("log_buf_len: %ld bytes not available\n",
-+		pr_err("log_buf_len: %lu bytes not available\n",
- 			new_log_buf_len);
- 		return;
- 	}
-@@ -1077,8 +1083,8 @@ void __init setup_log_buf(int early)
- 	memcpy(log_buf, __log_buf, __LOG_BUF_LEN);
- 	raw_spin_unlock_irqrestore(&logbuf_lock, flags);
- 
--	pr_info("log_buf_len: %d bytes\n", log_buf_len);
--	pr_info("early log buf free: %d(%d%%)\n",
-+	pr_info("log_buf_len: %u bytes\n", log_buf_len);
-+	pr_info("early log buf free: %u(%u%%)\n",
- 		free, (free * 100) / __LOG_BUF_LEN);
- }
- 
+ 	spin_lock_irqsave(&rs->lock, flags);
+ 	rs->state &= ~RXBUSY;
+ 	rs->state &= ~TXBUSY;
 -- 
 2.20.1
 
