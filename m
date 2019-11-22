@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E1B106A1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE59106B1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfKVKb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52724 "EHLO mail.kernel.org"
+        id S1728999AbfKVKlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:41:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbfKVKb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:57 -0500
+        id S1728990AbfKVKlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:41:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4635920714;
-        Fri, 22 Nov 2019 10:31:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE1C92073B;
+        Fri, 22 Nov 2019 10:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418716;
-        bh=ImmlDRzMG4QM7y293HzEHL2Nt8F3ObbdD/6TybDalBU=;
+        s=default; t=1574419277;
+        bh=YWaFJwHRcxWDbhkR+hZxM1T/r643o/UQYp0ATZ5LpZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X4/XEmRJ9jmfGIB14OIn4frqvyNVkXzQLbwRIXZlKb+DMheaHvObK9pGpERb7jc14
-         EKgfbGG027WYTtfUEsHQH17AFINm0iox3cIPUxsXJc10OZdmKe6ljcFI/zPIcfG47V
-         ++2xEAEwtTZot7+u4bKXudXFRse9tmCPVZkOQ1O0=
+        b=ZW02fS9omoaffFLeySYKAfl3VQv7hA5EbVGCXFX1vrJvwiR3vTitIs/oVBXtgvfc3
+         cwRS7JB4r2X+KzxRcz8qOPhlBdSv7lyyYYFwhbHI8iNz2eslOcjSztHWnHZYT3FgeX
+         mhsYGlCllEptgc9JZcIe/yU5aYbXwFnv2SI1gxVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 004/159] ALSA: usb-audio: not submit urb for stopped endpoint
-Date:   Fri, 22 Nov 2019 11:26:35 +0100
-Message-Id: <20191122100708.764223290@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <matthew.wilcox@oracle.com>,
+        George Kennedy <george.kennedy@oracle.com>,
+        Mark Kanda <mark.kanda@oracle.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 056/222] scsi: sym53c8xx: fix NULL pointer dereference panic in sym_int_sir()
+Date:   Fri, 22 Nov 2019 11:26:36 +0100
+Message-Id: <20191122100856.772482212@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
+From: George Kennedy <george.kennedy@oracle.com>
 
-commit 528699317dd6dc722dccc11b68800cf945109390 upstream.
+[ Upstream commit 288315e95264b6355e26609e9dec5dc4563d4ab0 ]
 
-While output urb's snd_complete_urb() is executing, calling
-prepare_outbound_urb() may cause endpoint stopped before
-prepare_outbound_urb() returns and result in next urb submitted
-to stopped endpoint. usb-audio driver cannot re-use it afterwards as
-the urb is still hold by usb stack.
+sym_int_sir() in sym_hipd.c does not check the command pointer for NULL before
+using it in debug message prints.
 
-This change checks EP_FLAG_RUNNING flag after prepare_outbound_urb() again
-to let snd_complete_urb() know the endpoint already stopped and does not
-submit next urb. Below kind of error will be fixed:
-
-[  213.153103] usb 1-2: timeout: still 1 active urbs on EP #1
-[  213.164121] usb 1-2: cannot submit urb 0, error -16: unknown error
-
-Signed-off-by: Henry Lin <henryl@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191113021420.13377-1-henryl@nvidia.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Suggested-by: Matthew Wilcox <matthew.wilcox@oracle.com>
+Signed-off-by: George Kennedy <george.kennedy@oracle.com>
+Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+Acked-by: Matthew Wilcox <matthew.wilcox@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/endpoint.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/sym53c8xx_2/sym_hipd.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -403,6 +403,9 @@ static void snd_complete_urb(struct urb
- 		}
+diff --git a/drivers/scsi/sym53c8xx_2/sym_hipd.c b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+index c6425e3df5a04..f1c7714377524 100644
+--- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
++++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+@@ -4371,6 +4371,13 @@ static void sym_nego_rejected(struct sym_hcb *np, struct sym_tcb *tp, struct sym
+ 	OUTB(np, HS_PRT, HS_BUSY);
+ }
  
- 		prepare_outbound_urb(ep, ctx);
-+		/* can be stopped during prepare callback */
-+		if (unlikely(!test_bit(EP_FLAG_RUNNING, &ep->flags)))
-+			goto exit_clear;
- 	} else {
- 		retire_inbound_urb(ep, ctx);
- 		/* can be stopped during retire callback */
++#define sym_printk(lvl, tp, cp, fmt, v...) do { \
++	if (cp)							\
++		scmd_printk(lvl, cp->cmd, fmt, ##v);		\
++	else							\
++		starget_printk(lvl, tp->starget, fmt, ##v);	\
++} while (0)
++
+ /*
+  *  chip exception handler for programmed interrupts.
+  */
+@@ -4416,7 +4423,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	 *  been selected with ATN.  We do not want to handle that.
+ 	 */
+ 	case SIR_SEL_ATN_NO_MSG_OUT:
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 				"No MSG OUT phase after selection with ATN\n");
+ 		goto out_stuck;
+ 	/*
+@@ -4424,7 +4431,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	 *  having reselected the initiator.
+ 	 */
+ 	case SIR_RESEL_NO_MSG_IN:
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 				"No MSG IN phase after reselection\n");
+ 		goto out_stuck;
+ 	/*
+@@ -4432,7 +4439,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	 *  an IDENTIFY.
+ 	 */
+ 	case SIR_RESEL_NO_IDENTIFY:
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 				"No IDENTIFY after reselection\n");
+ 		goto out_stuck;
+ 	/*
+@@ -4461,7 +4468,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	case SIR_RESEL_ABORTED:
+ 		np->lastmsg = np->msgout[0];
+ 		np->msgout[0] = M_NOOP;
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 			"message %x sent on bad reselection\n", np->lastmsg);
+ 		goto out;
+ 	/*
+-- 
+2.20.1
+
 
 
