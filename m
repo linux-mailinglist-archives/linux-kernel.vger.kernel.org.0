@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4218106C8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 360E3106A7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730102AbfKVKxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:53:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37324 "EHLO mail.kernel.org"
+        id S1728230AbfKVKfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727762AbfKVKxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:53:06 -0500
+        id S1728217AbfKVKfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 838942072E;
-        Fri, 22 Nov 2019 10:53:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8404820715;
+        Fri, 22 Nov 2019 10:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419986;
-        bh=S42pxMw6/wYTxvLBzsja1ndTqzGbyWY3pPEbYY4F1S4=;
+        s=default; t=1574418915;
+        bh=mpnD1p0KP4BOslkv4vlEJkovyvNqqsZASE1Gajsr6Ts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RCU2oQTWwjboIOxtXmmmGjeViXSk2eu/91Kk2S2CS04D+RkKSsHbwkAm37gcgAZVD
-         hFIfNYtmhjo9U331B/ZdXESEgT95Yg1icFABCE8toYfNx/QPV516qRaYnC0mmMLKpO
-         bQOB0GUcSyX52XF+4lQ1mXB4GXCf6viWj040dPoE=
+        b=aH5soeMA54wpNkH1b+P1Qtjmc97bPdKivYoImeTraYEW0xdgcppBbRFjlgU8iKWOi
+         F41Plvf1ScFCp7bsV8tMNHOTXxe+6DMkUx/6a67IUqRT/MiMaPqA9DEMOEtmNAi7Ic
+         VjzDh0jjwuLqGc4eRW7UW68XB6QuurSKafaPZtG4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 032/122] dmaengine: timb_dma: Use proper enum in td_prep_slave_sg
-Date:   Fri, 22 Nov 2019 11:28:05 +0100
-Message-Id: <20191122100747.720313352@linuxfoundation.org>
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 095/159] fuse: use READ_ONCE on congestion_threshold and max_background
+Date:   Fri, 22 Nov 2019 11:28:06 +0100
+Message-Id: <20191122100815.607212036@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-[ Upstream commit 5e621f5d538985f010035c6f3e28c22829d36db1 ]
+[ Upstream commit 2a23f2b8adbe4bd584f936f7ac17a99750eed9d7 ]
 
-Clang warns when implicitly converting from one enumerated type to
-another. Avoid this by using the equivalent value from the expected
-type.
+Since they are of unsigned int type, it's allowed to read them
+unlocked during reporting to userspace. Let's underline this fact
+with READ_ONCE() macroses.
 
-drivers/dma/timb_dma.c:548:27: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-                td_desc->desc_list_len, DMA_MEM_TO_DEV);
-                                        ^~~~~~~~~~~~~~
-1 warning generated.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/timb_dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/control.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index 896bafb7a5324..cf6588cc3efdc 100644
---- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -545,7 +545,7 @@ static struct dma_async_tx_descriptor *td_prep_slave_sg(struct dma_chan *chan,
- 	}
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 89a4b231e79cb..bb56c6a58fa76 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -107,7 +107,7 @@ static ssize_t fuse_conn_max_background_read(struct file *file,
+ 	if (!fc)
+ 		return 0;
  
- 	dma_sync_single_for_device(chan2dmadev(chan), td_desc->txd.phys,
--		td_desc->desc_list_len, DMA_MEM_TO_DEV);
-+		td_desc->desc_list_len, DMA_TO_DEVICE);
+-	val = fc->max_background;
++	val = READ_ONCE(fc->max_background);
+ 	fuse_conn_put(fc);
  
- 	return &td_desc->txd;
- }
+ 	return fuse_conn_limit_read(file, buf, len, ppos, val);
+@@ -144,7 +144,7 @@ static ssize_t fuse_conn_congestion_threshold_read(struct file *file,
+ 	if (!fc)
+ 		return 0;
+ 
+-	val = fc->congestion_threshold;
++	val = READ_ONCE(fc->congestion_threshold);
+ 	fuse_conn_put(fc);
+ 
+ 	return fuse_conn_limit_read(file, buf, len, ppos, val);
 -- 
 2.20.1
 
