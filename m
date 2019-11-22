@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CECC106A26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1379C106D10
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfKVKcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:32:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53340 "EHLO mail.kernel.org"
+        id S1730416AbfKVK5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:57:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbfKVKcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:32:12 -0500
+        id S1730405AbfKVK5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFAD220717;
-        Fri, 22 Nov 2019 10:32:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0BB2072E;
+        Fri, 22 Nov 2019 10:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418731;
-        bh=D7qducevV4dscdu8vqj//jFEEvNI9gZw9vA53n65Fqo=;
+        s=default; t=1574420228;
+        bh=5MH6Ax/vtJQFiVkOpwSaJoxC1Gi53ZAWxPTk71j1TkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ok/DIgWWIukscgfwKzb10VriocGY9qePbo+Bhrl04wlCIa9PsRQm4Luepu1CvwDfD
-         sxWS4Wm8tlZ8ehvBKizpYKBdfz6oKCq9hobIk6FvF10LiXGoLfWZUQav72F7/9eYCR
-         QMPepS1mMPfliRO91RPGLM8HMKzyoKGjCfxYwlFg=
+        b=qvnTW3rVsN8K3gTCFIV4Ou7Vfpdb0/aeE/5HYqfyuIN359esmjaTYm6FoDyduMQWv
+         XLrESa3F4NYHQRmYlyWBubUtvGKjcSsDDPMn1nltOOUra2KiQsoTtK4auqoJK/Hk3u
+         4FwYdEpbTmeRNVMyhYj8UL8MsLIDP4HIYhoWoRVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Shakeel Butt <shakeeb@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Koutn <mkoutny@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 009/159] mm: memcg: switch to css_tryget() in get_mem_cgroup_from_mm()
-Date:   Fri, 22 Nov 2019 11:26:40 +0100
-Message-Id: <20191122100715.172098707@linuxfoundation.org>
+        stable@vger.kernel.org, Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 036/220] kvm: arm/arm64: Fix stage2_flush_memslot for 4 level page table
+Date:   Fri, 22 Nov 2019 11:26:41 +0100
+Message-Id: <20191122100914.936074739@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,80 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 00d484f354d85845991b40141d40ba9e5eb60faf upstream.
+[ Upstream commit d2db7773ba864df6b4e19643dfc54838550d8049 ]
 
-We've encountered a rcu stall in get_mem_cgroup_from_mm():
+So far we have only supported 3 level page table with fixed IPA of
+40bits, where PUD is folded. With 4 level page tables, we need
+to check if the PUD entry is valid or not. Fix stage2_flush_memslot()
+to do this check, before walking down the table.
 
-  rcu: INFO: rcu_sched self-detected stall on CPU
-  rcu: 33-....: (21000 ticks this GP) idle=6c6/1/0x4000000000000002 softirq=35441/35441 fqs=5017
-  (t=21031 jiffies g=324821 q=95837) NMI backtrace for cpu 33
-  <...>
-  RIP: 0010:get_mem_cgroup_from_mm+0x2f/0x90
-  <...>
-   __memcg_kmem_charge+0x55/0x140
-   __alloc_pages_nodemask+0x267/0x320
-   pipe_write+0x1ad/0x400
-   new_sync_write+0x127/0x1c0
-   __kernel_write+0x4f/0xf0
-   dump_emit+0x91/0xc0
-   writenote+0xa0/0xc0
-   elf_core_dump+0x11af/0x1430
-   do_coredump+0xc65/0xee0
-   get_signal+0x132/0x7c0
-   do_signal+0x36/0x640
-   exit_to_usermode_loop+0x61/0xd0
-   do_syscall_64+0xd4/0x100
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The problem is caused by an exiting task which is associated with an
-offline memcg.  We're iterating over and over in the do {} while
-(!css_tryget_online()) loop, but obviously the memcg won't become online
-and the exiting task won't be migrated to a live memcg.
-
-Let's fix it by switching from css_tryget_online() to css_tryget().
-
-As css_tryget_online() cannot guarantee that the memcg won't go offline,
-the check is usually useless, except some rare cases when for example it
-determines if something should be presented to a user.
-
-A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
-css_tryget() instead of css_tryget_online() in task_get_css()").
-
-Johannes:
-
-: The bug aside, it doesn't matter whether the cgroup is online for the
-: callers.  It used to matter when offlining needed to evacuate all charges
-: from the memcg, and so needed to prevent new ones from showing up, but we
-: don't care now.
-
-Link: http://lkml.kernel.org/r/20191106225131.3543616-1-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Shakeel Butt <shakeeb@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Michal Koutn <mkoutny@suse.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Acked-by: Christoffer Dall <cdall@kernel.org>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memcontrol.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/mmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -833,7 +833,7 @@ static struct mem_cgroup *get_mem_cgroup
- 			if (unlikely(!memcg))
- 				memcg = root_mem_cgroup;
- 		}
--	} while (!css_tryget_online(&memcg->css));
-+	} while (!css_tryget(&memcg->css));
- 	rcu_read_unlock();
- 	return memcg;
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 1344557a70852..bf330b493c1e7 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -412,7 +412,8 @@ static void stage2_flush_memslot(struct kvm *kvm,
+ 	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+ 	do {
+ 		next = stage2_pgd_addr_end(addr, end);
+-		stage2_flush_puds(kvm, pgd, addr, next);
++		if (!stage2_pgd_none(*pgd))
++			stage2_flush_puds(kvm, pgd, addr, next);
+ 	} while (pgd++, addr = next, addr != end);
  }
+ 
+-- 
+2.20.1
+
 
 
