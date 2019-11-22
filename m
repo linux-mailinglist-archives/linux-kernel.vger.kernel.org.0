@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E72106B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C474106C31
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbfKVKpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
+        id S1727909AbfKVKui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:50:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727978AbfKVKpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:14 -0500
+        id S1729435AbfKVKud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:50:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEE2620718;
-        Fri, 22 Nov 2019 10:45:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5632A205C9;
+        Fri, 22 Nov 2019 10:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419513;
-        bh=G6zvpt+DJmKU1FZM1LJkiwHRd+NsLNlOnyjrZk1GsLM=;
+        s=default; t=1574419832;
+        bh=PdQVLVDvmxyVyKUrtgndumSRZV085gVoUxALfMKFSKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNNk8ef1HusK69C/qEOnYD3RWahv0fILsDLpdc/oicu26xze9ySYTeOaI+tM2u/BG
-         SIYHOaz7FHuQRka9KDN+4/vi14Dn48ELmBO7CfzsmZ8qm8ROlcqKvAJWr6UlpUKqhP
-         iupjxyNU8Rw4LKCMPv+cgcyOqOirtBYtLt2asC6E=
+        b=ikMxKO+SLQWQZmJSP9GJQaD+1l1WVEY80/qqvPiMT4rSXgAxKyo+BdU81bRdiU4PC
+         RRCy4b2Y6sYG/qaQWvarGtN+8tNZaoAnFpkig1KA2PGbOtao7kj7Gf4YKZ6ksVNbGu
+         TdmRErQLhyV3E04sI8Tn44ULBS8E4VmwZedzlqL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Nick Kossifidis <mickflemm@gmail.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 137/222] scsi: NCR5380: Dont clear busy flag when abort fails
+Subject: [PATCH 4.14 024/122] ath9k: fix reporting calculated new FFT upper max
 Date:   Fri, 22 Nov 2019 11:27:57 +0100
-Message-Id: <20191122100912.781673396@linuxfoundation.org>
+Message-Id: <20191122100739.517562947@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Simon Wunderlich <sw@simonwunderlich.de>
 
-[ Upstream commit 45ddc1b24806cc8f1a09f23dd4e7b6e4a8ae36e1 ]
+[ Upstream commit 4fb5837ac2bd46a85620b297002c704e9958f64d ]
 
-When NCR5380_abort() returns FAILED, the driver forgets that the target is
-still busy. Hence, further commands may be sent to the target, which may fail
-during selection and produce the error message, "reselection after won
-arbitration?". Prevent this by leaving the busy flag set when NCR5380_abort()
-fails.
+Since the debug print code is outside of the loop, it shouldn't use the loop
+iterator anymore but instead print the found maximum index.
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Nick Kossifidis <mickflemm@gmail.com>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath9k/common-spectral.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 15c0fff7519be..a4856eeac26f6 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -626,8 +626,6 @@ static void complete_cmd(struct Scsi_Host *instance,
- 		hostdata->sensing = NULL;
- 	}
+diff --git a/drivers/net/wireless/ath/ath9k/common-spectral.c b/drivers/net/wireless/ath/ath9k/common-spectral.c
+index a41bcbda1d9e8..37d5994eb1ccd 100644
+--- a/drivers/net/wireless/ath/ath9k/common-spectral.c
++++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
+@@ -411,7 +411,7 @@ ath_cmn_process_ht20_40_fft(struct ath_rx_status *rs,
  
--	hostdata->busy[scmd_id(cmd)] &= ~(1 << cmd->device->lun);
--
- 	cmd->scsi_done(cmd);
- }
- 
-@@ -1799,6 +1797,7 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
- 				cmd->result = DID_ERROR << 16;
- 				complete_cmd(instance, cmd);
- 				hostdata->connected = NULL;
-+				hostdata->busy[scmd_id(cmd)] &= ~(1 << cmd->device->lun);
- 				return;
- #endif
- 			case PHASE_DATAIN:
-@@ -1881,6 +1880,7 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
- 					         cmd, scmd_id(cmd), cmd->device->lun);
- 
- 					hostdata->connected = NULL;
-+					hostdata->busy[scmd_id(cmd)] &= ~(1 << cmd->device->lun);
- 
- 					cmd->result &= ~0xffff;
- 					cmd->result |= cmd->SCp.Status;
-@@ -2040,6 +2040,7 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
- 				NCR5380_transfer_pio(instance, &phase, &len, &data);
- 				if (msgout == ABORT) {
- 					hostdata->connected = NULL;
-+					hostdata->busy[scmd_id(cmd)] &= ~(1 << cmd->device->lun);
- 					cmd->result = DID_ERROR << 16;
- 					complete_cmd(instance, cmd);
- 					maybe_release_dma_irq(instance);
-@@ -2194,13 +2195,16 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
- 		dsprintk(NDEBUG_RESELECTION | NDEBUG_QUEUES, instance,
- 		         "reselect: removed %p from disconnected queue\n", tmp);
- 	} else {
-+		int target = ffs(target_mask) - 1;
-+
- 		shost_printk(KERN_ERR, instance, "target bitmask 0x%02x lun %d not in disconnected queue.\n",
- 		             target_mask, lun);
- 		/*
- 		 * Since we have an established nexus that we can't do anything
- 		 * with, we must abort it.
- 		 */
--		do_abort(instance);
-+		if (do_abort(instance) == 0)
-+			hostdata->busy[target] &= ~(1 << lun);
- 		return;
- 	}
- 
-@@ -2368,8 +2372,10 @@ static int NCR5380_abort(struct scsi_cmnd *cmd)
- out:
- 	if (result == FAILED)
- 		dsprintk(NDEBUG_ABORT, instance, "abort: failed to abort %p\n", cmd);
--	else
-+	else {
-+		hostdata->busy[scmd_id(cmd)] &= ~(1 << cmd->device->lun);
- 		dsprintk(NDEBUG_ABORT, instance, "abort: successfully aborted %p\n", cmd);
-+	}
- 
- 	queue_work(hostdata->work_q, &hostdata->main_task);
- 	maybe_release_dma_irq(instance);
+ 		ath_dbg(common, SPECTRAL_SCAN,
+ 			"Calculated new upper max 0x%X at %i\n",
+-			tmp_mag, i);
++			tmp_mag, fft_sample_40.upper_max_index);
+ 	} else
+ 	for (i = dc_pos; i < SPECTRAL_HT20_40_NUM_BINS; i++) {
+ 		if (fft_sample_40.data[i] == (upper_mag >> max_exp))
 -- 
 2.20.1
 
