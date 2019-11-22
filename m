@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7765106BD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D586B106AAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbfKVKrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55400 "EHLO mail.kernel.org"
+        id S1728504AbfKVKhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:37:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729131AbfKVKr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:28 -0500
+        id S1727142AbfKVKhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:37:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C8FA2072E;
-        Fri, 22 Nov 2019 10:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C46A20721;
+        Fri, 22 Nov 2019 10:37:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419647;
-        bh=Z0bJMnUiULIar3u4GSZxW0PS+omYKWonl1kytRe6kjo=;
+        s=default; t=1574419026;
+        bh=BfsY3M/4bqCtzOYH+rqzQMH+VaQOEdNiiE1gHRZMQnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CGN2VZNgBIAA+QNcH7nz83JMTO/0KuWTm8R4a+waWtKgqTVGGXHHiJwDG9/2kB/i6
-         HfX9ajlVygWPwq+hIBtvn4oTHs6dUQmePadVslfA15woFehlQDK6KMwOEqGn75USXx
-         02ZaZIlAEYxtQXQNKDSPcwHh+/S3m0Y2PlVDkHN4=
+        b=D/7bZDg/ddk99EqU4tnQOFE+Sja1T6Qph2uoXc3gbz4KATqKkKzKbFDJhw4j84Xnf
+         yjRgh5gRc4atv6QjzYAk8Z9JEXayVLXCBwEGtZGdei4XhFGKSINxdRqdRWwV47/mIE
+         nytVx0adpctpdjBq1M5soD6gMehtrWGHcrEJ1yRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 184/222] mtd: physmap_of: Release resources on error
+Subject: [PATCH 4.4 133/159] mtd: physmap_of: Release resources on error
 Date:   Fri, 22 Nov 2019 11:28:44 +0100
-Message-Id: <20191122100915.626051656@linuxfoundation.org>
+Message-Id: <20191122100834.682397672@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -63,10 +63,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/mtd/maps/physmap_of.c b/drivers/mtd/maps/physmap_of.c
-index 3fad35942895c..7a716bed11580 100644
+index e46b4e9836668..77e7542fa8e42 100644
 --- a/drivers/mtd/maps/physmap_of.c
 +++ b/drivers/mtd/maps/physmap_of.c
-@@ -29,7 +29,6 @@
+@@ -28,7 +28,6 @@
  struct of_flash_list {
  	struct mtd_info *mtd;
  	struct map_info map;
@@ -74,7 +74,7 @@ index 3fad35942895c..7a716bed11580 100644
  };
  
  struct of_flash {
-@@ -54,18 +53,10 @@ static int of_flash_remove(struct platform_device *dev)
+@@ -53,18 +52,10 @@ static int of_flash_remove(struct platform_device *dev)
  			mtd_concat_destroy(info->cmtd);
  	}
  
@@ -109,9 +109,9 @@ index 3fad35942895c..7a716bed11580 100644
  
  		err = -ENXIO;
  		width = of_get_property(dp, "bank-width", NULL);
-@@ -247,15 +239,6 @@ static int of_flash_probe(struct platform_device *dev)
- 			return err;
- 		}
+@@ -242,15 +234,6 @@ static int of_flash_probe(struct platform_device *dev)
+ 		info->list[i].map.bankwidth = be32_to_cpup(width);
+ 		info->list[i].map.device_node = dp;
  
 -		err = -ENOMEM;
 -		info->list[i].map.virt = ioremap(info->list[i].map.phys,
