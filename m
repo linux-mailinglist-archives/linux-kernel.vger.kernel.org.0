@@ -2,326 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E98DE10720A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 13:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3890F107215
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 13:22:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfKVMQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 07:16:04 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38690 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfKVMQE (ORCPT
+        id S1727599AbfKVMWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 07:22:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41339 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbfKVMWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 07:16:04 -0500
-Received: by mail-oi1-f195.google.com with SMTP id a14so6299468oid.5;
-        Fri, 22 Nov 2019 04:16:03 -0800 (PST)
+        Fri, 22 Nov 2019 07:22:37 -0500
+Received: by mail-lj1-f195.google.com with SMTP id m4so7125455ljj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 04:22:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nmv33MELYtHNW1JfSh62V5xviPKhtu29GeC7rSDHuak=;
+        b=ldxD3IhYiBpXt0HtDqPy+vLU768rI80wemhHlXIxuozaMFv5BDMGXKOwBdiTtG9qrR
+         K7zRO7F/VgnMzk8I8ViyED5oc2rFQNjKTHMCKLQzSVexza+EwBbDstq+EFImT/WDe/zG
+         503aY643zXLckIPlmPcnJgLOZJdjVCE1nglK67MKhx6dB+GbBLtRnybiR8UXj6qrbp9x
+         dqZlKECSFxFo0Hoi4CrvCufy4IpzUbDbldl2pNTGpKSx5NJLQo5vB78ttUb88d8B/gwV
+         ogwPci75B5adEZt65PD+NaL85SKKIgd2iVepO5qxnX7cs08JeYbvg5nc8A2VuhY8jRZr
+         KH+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lQHNnuoOQnLpcapdvCKakorWZ7TP7hEo0W29cllI7Qc=;
-        b=hPJELbBiPeQiJ31bPAXw0pJ//OnLfg1U0tk1dYcmK1KnYpHQA13xEmrEhW1fCO/D9+
-         H93H5LaCS/eTVAE0v/m6CxH7I+Lt9E/E5k+VodXadkYx804YnN0KNYK8AB3SQUTze3CA
-         +uVzAZ08WZdx09fn/btLH3RNyGXbUR9T79h2i1LLA5rKywAP/UnEVIveCgpJuiLmjYGN
-         XotvbNY6SZpR7v8PU6o6b+4FD4cDCDQ+fQRiuiQcSf9K56jyXgNiTKtHM4ZHvPeAk7iy
-         CpfQ9nhvFICxTiMWHADVmS811xYDsn37N77S/UXxQYddIs3+nCeCkPWjCA47kfoef/iz
-         w6hA==
-X-Gm-Message-State: APjAAAVYaaqCjDVsCfM5gbIBXx4LZVCBXPJq2d5vxXqR6Ye19mHCaFZF
-        1/9WiTl2a7F6vJkQA/rYWf4oB0EuxNze9vDPrqs=
-X-Google-Smtp-Source: APXvYqxHo926KeaIbrfShZpxhqANPkGIke2PeeiFN2YMRaOSGngTdr0+do9j+cdfyP1X0m0d/eGn2nXmRVmin4QbCek=
-X-Received: by 2002:aca:d4c6:: with SMTP id l189mr11582452oig.68.1574424962548;
- Fri, 22 Nov 2019 04:16:02 -0800 (PST)
+        bh=Nmv33MELYtHNW1JfSh62V5xviPKhtu29GeC7rSDHuak=;
+        b=HeLqK1DVTiDIP/qCQSZWLup2rFRKcWBpusLevMJSOEir08D+WDfhPXZg2Dj5K4SiIb
+         SjVWh/ZTv8/dSS6vXELVXJ8RNOO+ejGZWR1eXKKMzQiconHtmnh+rEY2ACLy1HnAL7bt
+         novpnymSIfQLSgrzjBlftubHxAwfW+lIcF8ZLQ93edl5eDCc46YgLd/3w7gakGJeGuaj
+         hjtK7TGo98LyrMxXMkAKwljt4n1d0sNzH+LfVpcz7cyTYp7mB2D2j+j4fbOyT1hErRll
+         qhzlurV+vPGJ9isXYvU9D39cCcC5nI3pT/gKFGqroc5uO6lrUjqc0kn/FWu1E21wXY3Y
+         Oh3w==
+X-Gm-Message-State: APjAAAVnCT0NXyY57CPYiApM4RkGGqjTj/0YcDpE/EsuZW2dWdK2lVgb
+        PnsHWRHD43Kj9PuAbUOpq6AzTSsxSC9X2k7z6f/JdJdodn4=
+X-Google-Smtp-Source: APXvYqyuibo8EMRCgLutCbJAKbmXaQdrAZ0ALQbk7n8Lv+v95MQiTUFmPlM0+aEEhGrw1vBXS7BDDJdva4A7Rhaxntk=
+X-Received: by 2002:a2e:8597:: with SMTP id b23mr12114009lji.218.1574425354454;
+ Fri, 22 Nov 2019 04:22:34 -0800 (PST)
 MIME-Version: 1.0
-References: <CAJZ5v0h=7zu3A+ojgUSmwTH0KeXmYP5OKDL__rwkkWaWqcJcWQ@mail.gmail.com>
- <20191121112821.GU11621@lahna.fi.intel.com> <CAJZ5v0hQhj5Wf+piU11abC4pF26yM=XHGHAcDv8Jsgdx04aN-w@mail.gmail.com>
- <20191121114610.GW11621@lahna.fi.intel.com> <20191121125236.GX11621@lahna.fi.intel.com>
- <CAJZ5v0iMwhudB7O0hR-6KfRfa+_iGOY=t0Zzeh6+9OiTzeYJfA@mail.gmail.com>
- <20191121194942.GY11621@lahna.fi.intel.com> <CAJZ5v0gyna0b135uxBVfNXgB9v-U9-93EYe0uzsr2BukJ9OtuA@mail.gmail.com>
- <20191122103637.GA11621@lahna.fi.intel.com> <CAJZ5v0gifnGZcKr6mgc6C2EfqX13OyJnOac0uDxYNKN=A0cgMg@mail.gmail.com>
- <20191122115214.GH11621@lahna.fi.intel.com>
-In-Reply-To: <20191122115214.GH11621@lahna.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 22 Nov 2019 13:15:50 +0100
-Message-ID: <CAJZ5v0h+x6C4iGS4gH=auLtQRgicjrLejaSQjsigKwgZPMtjpg@mail.gmail.com>
-Subject: Re: [PATCH v4] pci: prevent putting nvidia GPUs into lower device
- states on certain intel bridges
-To:     Mika Westerberg <mika.westerberg@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Karol Herbst <kherbst@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Dave Airlie <airlied@gmail.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>
+References: <20191120133409.9217-1-peter.ujfalusi@ti.com> <20191120133409.9217-3-peter.ujfalusi@ti.com>
+In-Reply-To: <20191120133409.9217-3-peter.ujfalusi@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 22 Nov 2019 13:22:23 +0100
+Message-ID: <CACRpkdYt5P=GNc3EgHb-ry9fxMbXfpZd4FC=tuLqonNJKUM2wg@mail.gmail.com>
+Subject: Re: [RFC 2/2] gpiolib: Support for (output only) shared GPIO line
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 12:52 PM Mika Westerberg
-<mika.westerberg@intel.com> wrote:
->
+On Wed, Nov 20, 2019 at 2:34 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
 
-[cut]
+> This patch adds basic support for handling shared GPIO lines in the core.
+> The line must be configured with a child node in DT.
+> Based on the configuration the core will use different strategy to manage
+> the shared line:
+> refcounted low: Keep the line low as long as there is at least one low
+>                 request is registered
+> refcounted high: Keep the line high as long as there is at least one high
+>                 request is registered
+> pass through: all requests are allowed to go through without refcounting.
+>
+> The pass through mode is equivalent to how currently the
+> GPIOD_FLAGS_BIT_NONEXCLUSIVE is handled.
+>
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[I'm really running out of time for today, unfortunately.]
+This is a good start! Some ideas on how I'd like this to develop.
 
-> > > > The current design is mostly based on the PCI PM Spec 1.2, so it would
-> > > > be consequent to follow system-wide suspend in PM-runtime and avoid
-> > > > putting PCIe ports holding devices in D0 into any low-power states.
-> > > > but that would make the approach in the $subject patch ineffective.
-> > > >
-> > > > Moreover, the fact that there are separate branches for "Windows 7"
-> > > > and "Windows 8+" kind of suggest a change in the expected behavior
-> > > > between Windows 7 and Windows 8, from the AML perspective.  I would
-> > > > guess that Windows 7 followed PCI PM 1.2 and Windows 8 (and later)
-> > > > does something else.
-> > >
-> > > My understanding (which may not be correct) is that up to Windows 7 it
-> > > never put the devices into D3cold runtime. Only when the system entered
-> > > Sx states it evaluated the _OFF methods.
-> >
-> > I see.
+>  drivers/gpio/gpiolib-of.c |  28 ++++++--
+>  drivers/gpio/gpiolib.c    | 132 +++++++++++++++++++++++++++++++++++---
 
-I think I have misunderstood what you said.
+Please put this API under its own Kconfig option
+and in its own file in
+drivers/gpio/gpiolib-refcounted.c
+local header in
+drivers/gpio/gpiolib-refcounted.h
+only built in if the appropriate Kconfig is selected.
 
-I also think that Windows 7 and before didin't do RTD3, but it did PCI
-PM nevertheless and platform firmware could expect it to behave in a
-specific way in that respect.  That expected behavior seems to have
-changed in the next generations of Windows, as reflected by the OS
-version and _REV checks in ASL.
+Consumer header in
+include/linux/gpio/reference-counted.h
+And add external driver API to this last file.
 
-> > > Starting from Windows 8 it started doing this runtime so devices can
-> > > enter D3cold even when system is in S0.
-> >
-> > Hmm.  So by setting _REV to 5 we effectively change the _OFF into a NOP?
->
-> No, there are two paths in the _OFF() and them some common code such as
-> removing power etc.
->
-> What the _REV 5 did is that it went into path where the AML seemed to
-> directly disable the link.
->
-> The other path that is taken with Windows 8+ does not disable the link
-> but instead it puts it to low power L2 or L3 state (I suppose L3 since
-> it removes the power and the GPU probably does not support wake).
+> --- a/drivers/gpio/gpiolib-of.c
 
-OK, so the very existence of the two paths means that the OS behavior
-expected by the firmware in the two cases represented by them is
-different.  Presumably, the expected hardware configuration in which
-the AML runs also is different in these two cases.
+No commenting on this because as pointed out in the binding
+patch I want this done by simply detecting the same GPIO
+being referenced by several <&gpio N> phandles.
 
-> The ASL code is below. PGOF() gets called from the power resource
-> _OFF():
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index ca9bc1e4803c..0eec0857e3a8 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -111,11 +111,18 @@ struct gpio_desc {
+>  #define FLAG_PULL_UP    13     /* GPIO has pull up enabled */
+>  #define FLAG_PULL_DOWN  14     /* GPIO has pull down enabled */
+>  #define FLAG_BIAS_DISABLE    15        /* GPIO has pull disabled */
+> +#define FLAG_IS_SHARED 16      /* GPIO is shared */
 
-I'll look at it in detail when I have some more time later.
+This is a good way of flagging that this is a refcounted GPIO
+I would call it FLAG_IS_REFERENCE_COUNTED as it is
+more precise to what it means.
 
->         Method (PGOF, 1, Serialized)
->         {
->             PIOF = Arg0
->             If ((PIOF == Zero))
->             {
->                 If ((SGGP == Zero))
->                 {
->                     Return (Zero)
->                 }
->             }
->             ElseIf ((PIOF == One))
->             {
->                 If ((P1GP == Zero))
->                 {
->                     Return (Zero)
->                 }
->             }
->             ElseIf ((PIOF == 0x02))
->             {
->                 If ((P2GP == Zero))
->                 {
->                     Return (Zero)
->                 }
->             }
->
->             PEBA = \XBAS /* External reference */
->             PDEV = GDEV (PIOF)
->             PFUN = GFUN (PIOF)
->             Name (SCLK, Package (0x03)
->             {
->                 One,
->                 0x80,
->                 Zero
->             })
->             If ((CCHK (PIOF, Zero) == Zero))
->             {
->                 Return (Zero)
->             }
->
->             \_SB.PCI0.PEG0.PEGP.LTRE = \_SB.PCI0.PEG0.LREN
->             If ((Arg0 == Zero))
->             {
->                 ELC0 = LCT0 /* \_SB_.PCI0.LCT0 */
->                 H0VI = S0VI /* \_SB_.PCI0.S0VI */
->                 H0DI = S0DI /* \_SB_.PCI0.S0DI */
->                 ECP0 = LCP0 /* \_SB_.PCI0.LCP0 */
->             }
->             ElseIf ((Arg0 == One))
->             {
->                 ELC1 = LCT1 /* \_SB_.PCI0.LCT1 */
->                 H1VI = S1VI /* \_SB_.PCI0.S1VI */
->                 H1DI = S1DI /* \_SB_.PCI0.S1DI */
->                 ECP1 = LCP1 /* \_SB_.PCI0.LCP1 */
->             }
->             ElseIf ((Arg0 == 0x02))
->             {
->                 ELC2 = LCT2 /* \_SB_.PCI0.LCT2 */
->                 H2VI = S2VI /* \_SB_.PCI0.S2VI */
->                 H2DI = S2DI /* \_SB_.PCI0.S2DI */
->                 ECP2 = LCP2 /* \_SB_.PCI0.LCP2 */
->             }
->
->             If (((OSYS <= 0x07D9) || ((OSYS == 0x07DF) && (_REV ==
->                 0x05))))
->             {
->                 If ((PIOF == Zero))
->                 {
->                     P0LD = One
->                     TCNT = Zero
->                     While ((TCNT < LDLY))
->                     {
->                         If ((P0LT == 0x08))
->                         {
->                             Break
->                         }
->
->                         Sleep (0x10)
->                         TCNT += 0x10
->                     }
->
->                     P0RM = One
->                     P0AP = 0x03
->                 }
->                 ElseIf ((PIOF == One))
->                 {
->                     P1LD = One
->                     TCNT = Zero
->                     While ((TCNT < LDLY))
->                     {
->                         If ((P1LT == 0x08))
->                         {
->                             Break
->                         }
->
->                         Sleep (0x10)
->                         TCNT += 0x10
->                     }
->
->                     P1RM = One
->                     P1AP = 0x03
->                 }
->                 ElseIf ((PIOF == 0x02))
->                 {
->                     P2LD = One
->                     TCNT = Zero
->                     While ((TCNT < LDLY))
->                     {
->                         If ((P2LT == 0x08))
->                         {
->                             Break
->                         }
->
->                         Sleep (0x10)
->                         TCNT += 0x10
->                     }
->
->                     P2RM = One
->                     P2AP = 0x03
->                 }
->
->                 If ((PBGE != Zero))
->                 {
->                     If (SBDL (PIOF))
->                     {
->                         MBDL = GMXB (PIOF)
->                         PDUB (PIOF, MBDL)
->                     }
->                 }
->             }
->             Else
->             {
->                 LKDS (PIOF)
->             }
->
->             If ((DerefOf (SCLK [Zero]) != Zero))
->             {
->                 PCRO (0xDC, 0x100C, DerefOf (SCLK [One]))
->                 Sleep (0x10)
->             }
->
->             GPPR (PIOF, Zero)
->             If ((OSYS != 0x07D9))
->             {
->                 DIWK (PIOF)
->             }
->
->             \_SB.SGOV (0x01010004, Zero)
->             Sleep (0x14)
->             Return (Zero)
->         }
->
-> > > > Now, the structure of the "Windows 8+" branch
-> > > > described by you suggests that, at least in the cases when it is going
-> > > > to remove power from the port eventually, it goes straight for the
-> > > > link preparation (the L2/L3 Ready transition) and power removal
-> > > > without bothering to program the downstream device and port into D3hot
-> > > > (because that's kind of redundant).
-> > > >
-> > > > That hypothetical "Windows 8+" approach may really work universally,
-> > > > because it doesn't seem to break any rules (going straight from D0 to
-> > > > D3cold is not disallowed and doing that for both a port and a
-> > > > downstream device at the same time is kind of OK either, as long as
-> > > > the link is ready for that).
-> > >
-> > > I guess it depends on how you interpret the specs ;-) From PCIe 5.0 sec
-> > > 5.8 we can see the supported PM state transitions and it shows that you
-> > > get to D3cold through D3hot. Of course the device goes into D3cold if
-> > > you simply remove its power so I agree with you as well. However, if
-> > > there is _PS3 method we can't skip the D3hot phase.
-> >
-> > That's my understanding too, but I'm wondering about direct PMCSR
-> > writes.  It is unclear to me if they are necessary, or more precisely,
-> > whether or not Windows 10, say, carries them out if ACPI PM is going
-> > to be applied.
->
-> According to this:
->
-> https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/pci-power-management-and-device-drivers#scenario-1-turning-off-a-device
->
-> it does write PMCSR.
+> +#define FLAG_REFCOUNT_LOW 17   /* Shared GPIO is refcounted for raw low */
+> +#define FLAG_REFCOUNT_HIGH 18  /* Shared GPIO is refcounted for raw high */
 
-But I don't think that the case at hand is covered by this at all.
+Do not put this here, keep it in the local refcounted GPIO
+struct gpio_refcount_desc.
 
-In the "generic" case covered by the doc, the world is simple: the
-device has a PMCSR and some AML, possibly to support D3cold.  You use
-both and are happy.  And you don't care about the upstream PCIe port
-at all.
+>         /* Connection label */
+>         const char              *label;
+>         /* Name of the GPIO */
+>         const char              *name;
+> +       /* Number of users of a shared GPIO */
+> +       int                     shared_users;
+> +       /* Reference counter for shared GPIO (low or high level) */
+> +       int                     level_refcount;
 
-In the case at had you need a power resource at the PCIe port level to
-put the downstream device into D3cold (BTW, I'm not even sure if the
-port really is power managed by this at all), so they both are treated
-kind of as a combo.  Quite a bit more complicated in my view.
+We can't expand this struct for everyone on the planet like this.
 
-> > Maybe I'm going too far with my conclusions, but please let me know
-> > what you think about the approach proposed at the end of
-> > https://lore.kernel.org/linux-pm/CAJZ5v0iQttGB4m5TbzCtjp2C1j5qEkUhqhpWb++LhSk3mbW=Lw@mail.gmail.com/T/#t
-> > ?
->
-> Yes, I think that is better approach.
+In the local header
 
-OK, thanks!
+drivers/gpio/gpiolib-refcount.h create something like:
 
-If I have the time next week, I'll try to prototype patch to implement
-this idea.
+struct gpio_refcount_desc {
+    struct gpio_desc *gd;
+    int shared_users;
+    int level_refcount;
+};
+
+This should be the opaque cookie returned to consumers of this new
+refcounted API.
+
+It defines the reference counted API as separate and optional from
+the non-reference counted API, also using its own API.
+
+The only effect on the core
+gpiolib will be the single flag in struct gpio_desc; and some
+calls into the shared code with stubs if the support for systems
+that do not enable the reference counting API.
+
+Yours,
+Linus Walleij
