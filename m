@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19449106B51
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF2A106D51
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbfKVKnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48722 "EHLO mail.kernel.org"
+        id S1729333AbfKVK7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:59:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728784AbfKVKnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:12 -0500
+        id S1730507AbfKVK67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C86720717;
-        Fri, 22 Nov 2019 10:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84F4420706;
+        Fri, 22 Nov 2019 10:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419391;
-        bh=q0HxcKvb9Z3rOWVbGowKsn/8p/HzGtoz1XeQPsgPasI=;
+        s=default; t=1574420339;
+        bh=k8Y5H6Z36lm9qTZE69Um8n6ih5/V0cui+ibzPJzQNgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1lh2QZY1XKPsF+/i98nx4GuhICEENViJGef2TDfFbCmqN4xktTx6obzkbzvBKRH1V
-         Wa3DxDnGDqbbfYbSfmWTDJ33CuloEpds4mQeWtEw22vttnOdFFhWrFaqwz7vtTrKin
-         qofzBLb81dnr/zrJdjT5LIntlNsX5toOF7clS+ZU=
+        b=F4Y3jJjQ1Gm2kOdTlJGDaYCZvsgCi/2l3M/IX7aBjOPwaXVRSa00eSp8NTg/beYiC
+         FRe4/Z18L/WMeQwj1CtBvgdGpmtA2acqxyotECsd2JUohqBmF5eqADA9/HBsC0nyn9
+         3Ky299flvfYwiEJ5qlmrdwBS+lzzDgPhyIchWt5s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 096/222] mlxsw: spectrum: Init shaper for TCs 8..15
+Subject: [PATCH 4.19 071/220] ARM: dts: at91: at91sam9x5cm: fix addressable nand flash size
 Date:   Fri, 22 Nov 2019 11:27:16 +0100
-Message-Id: <20191122100910.383588139@linuxfoundation.org>
+Message-Id: <20191122100917.312639816@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-[ Upstream commit a9f36656b519a9a21309793c306941a3cd0eeb8f ]
+[ Upstream commit 6f270d88a0c4a11725afd8fd2001ae408733afbf ]
 
-With introduction of MC-aware mode to mlxsw, it became necessary to
-configure TCs above 7 as well. There is now code in mlxsw to disable ETS
-for these higher classes, but disablement of max shaper was neglected.
+at91sam9x5cm comes with a 2Gb NAND flash. Fix the rootfs size to
+match this limit.
 
-By default, max shaper is currently disabled to begin with, so the
-problem is just cosmetic. However, for symmetry, do like we do for ETS
-configuration, and call mlxsw_sp_port_ets_maxrate_set() for both TC i
-and i + 8.
-
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/at91sam9x5cm.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-index 585a40cc6470b..8460c4807567c 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -2191,6 +2191,13 @@ static int mlxsw_sp_port_ets_init(struct mlxsw_sp_port *mlxsw_sp_port)
- 						    MLXSW_REG_QEEC_MAS_DIS);
- 		if (err)
- 			return err;
-+
-+		err = mlxsw_sp_port_ets_maxrate_set(mlxsw_sp_port,
-+						    MLXSW_REG_QEEC_HIERARCY_TC,
-+						    i + 8, i,
-+						    MLXSW_REG_QEEC_MAS_DIS);
-+		if (err)
-+			return err;
- 	}
+diff --git a/arch/arm/boot/dts/at91sam9x5cm.dtsi b/arch/arm/boot/dts/at91sam9x5cm.dtsi
+index 4908ee07e6287..993eabe1cf7a5 100644
+--- a/arch/arm/boot/dts/at91sam9x5cm.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5cm.dtsi
+@@ -100,7 +100,7 @@
  
- 	/* Map all priorities to traffic class 0. */
+ 						rootfs@800000 {
+ 							label = "rootfs";
+-							reg = <0x800000 0x1f800000>;
++							reg = <0x800000 0x0f800000>;
+ 						};
+ 					};
+ 				};
 -- 
 2.20.1
 
