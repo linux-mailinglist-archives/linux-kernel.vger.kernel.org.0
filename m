@@ -2,90 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1F5107A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 23:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF17107A7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 23:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfKVWSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 17:18:11 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39350 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfKVWSK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 17:18:10 -0500
-Received: by mail-il1-f194.google.com with SMTP id a7so8424666ild.6;
-        Fri, 22 Nov 2019 14:18:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=OcMwtQEtA1kBJVjI97wDUd/HBiETecLR0KIP2QKCP7A=;
-        b=p9b6N/JqsFMqVAv2bqrpHxMY4MFM8rQcF/vNqlPkeeuOkfYUvUKeFexbEgsvyMk+UR
-         gfGnNgftG620wXUYLsn3kj6rQWK6pC8ouNXdQxz5XzQZhw6tkbBiU9y3U4S4Nlz5WuB1
-         JjH9cRhD7DnvylG4L5CR+HJ4R4NdKsZADP8Y2ty8LsPZk4f3eKJ4zmENkV3FoMhVVty6
-         tlMZkV+k2H455vOFR05NNDuu9kg7LzvPsqk2zAjzb6/83MkRW6QNSRP7tc2t90/ENNok
-         uHiQR1c14Drr5/Ar0BKDTDHz1xXa2MbcoIavib5DVKEVEq2p/DCWkgXab31ES0VLwXBR
-         r/9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OcMwtQEtA1kBJVjI97wDUd/HBiETecLR0KIP2QKCP7A=;
-        b=mWFKgJFqLAYgTmadIsPGYaiDFb9LhVa2oQ3WWfdwYlNswU9qaFwYhaorPiiQVZCpz0
-         evxsyvk1cCgwjODYKvt4EAMKpDD3e8s/l93YPAf6vdnMYSyAH8+x11IVPVDSfiTqJyBW
-         GlD9VXnLh26epuNY7quvSFJyTbI9tJZkggjT3X4i0Gf+nz6JTFl7W8mxeF+IjTJeq6cL
-         atLEktro8OWfJCMc1SoDIlzuEzcXT0+X4tRh0Jaq4QIkfsyvQpfLTP4K8jTkjlZ38X7X
-         y5onaYFYSyACm0ah8zft4aI8T5rIElpz8MACENPX4Wy7p7qoLLI80sx8u+xOKZyCVl+k
-         WD+g==
-X-Gm-Message-State: APjAAAVYscyvRSutwYtFfbJa8PKFqaYCMX6dAFDxi5kOLooK/SRQ9UjW
-        khCEkR7AXvi5si2XFhI8tlI=
-X-Google-Smtp-Source: APXvYqwiXN1tlkkC6bY7gBRG1YbHPHmBp+O662RAbnjqt7qAkMI5QriegNMQU/s44MG32bJuBC1Iuw==
-X-Received: by 2002:a92:6802:: with SMTP id d2mr5133576ilc.173.1574461090007;
-        Fri, 22 Nov 2019 14:18:10 -0800 (PST)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id o184sm3323935ila.45.2019.11.22.14.18.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 14:18:09 -0800 (PST)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     emamd001@umn.edu, Navid Emamdoost <navid.emamdoost@gmail.com>
-Subject: [PATCH] sctp: Fix memory leak in sctp_sf_do_5_2_4_dupcook
-Date:   Fri, 22 Nov 2019 16:17:56 -0600
-Message-Id: <20191122221759.32271-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726920AbfKVWT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 17:19:57 -0500
+Received: from mga09.intel.com ([134.134.136.24]:15223 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726813AbfKVWT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 17:19:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 14:19:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,231,1571727600"; 
+   d="scan'208";a="409025722"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga006.fm.intel.com with ESMTP; 22 Nov 2019 14:19:55 -0800
+Date:   Fri, 22 Nov 2019 14:19:55 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     Marios Pomonis <pomonis@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Finco <nifi@google.com>, Andrew Honig <ahonig@google.com>
+Subject: Re: [PATCH] KVM: x86: Extend Spectre-v1 mitigation
+Message-ID: <20191122221955.GI31235@linux.intel.com>
+References: <20191122184039.7189-1-pomonis@google.com>
+ <1ADDE0A8-40F1-4642-B8CC-8DE38609DC10@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1ADDE0A8-40F1-4642-B8CC-8DE38609DC10@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the implementation of sctp_sf_do_5_2_4_dupcook() the allocated
-new_asoc is leaked if security_sctp_assoc_request() fails. Release it
-via sctp_association_free().
+On Sat, Nov 23, 2019 at 12:03:27AM +0200, Liran Alon wrote:
+> 
+> > On 22 Nov 2019, at 20:40, Marios Pomonis <pomonis@google.com> wrote:
+> > @@ -5828,6 +5836,8 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
+> > {
+> > 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> > 	u32 exit_reason = vmx->exit_reason;
+> > +	u32 bounded_exit_reason = array_index_nospec(exit_reason,
+> > +						kvm_vmx_max_exit_handlers);
+> 
+> Unlike the rest of this patch changes, exit_reason is not attacker-controllable.
+> Therefore, I don’t think we need this change to vmx_handle_exit().
 
-Fixes: 2277c7cd75e3 ("sctp: Add LSM hooks")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- net/sctp/sm_statefuns.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I waffled on this one too.  Theoretically, if an attacker finds a way to
+trigger a VM-Exit that isn't yet known to KVM, and coordinates across
+userspace and guest to keep rerunning the attack in the guest instead of
+killing the VM (on the unexpected VM-Exit), then exit_reason is sort of
+under attacker control.
 
-diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-index 0c21c52fc408..4ab8208a2dd4 100644
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -2160,8 +2160,10 @@ enum sctp_disposition sctp_sf_do_5_2_4_dupcook(
- 
- 	/* Update socket peer label if first association. */
- 	if (security_sctp_assoc_request((struct sctp_endpoint *)ep,
--					chunk->skb))
-+					chunk->skb)) {
-+		sctp_association_free(new_asoc);
- 		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-+	}
- 
- 	/* Set temp so that it won't be added into hashtable */
- 	new_asoc->temp = 1;
--- 
-2.17.1
-
+Of course the above scenario would require a bug in KVM, e.g. enable an
+unknown enabling/exiting control, or in a CPU, e.g. generate a new VM-Exit
+without software opt-in or generate a completely bogus VM-Exit.  The
+whole thing is pretty far fetched...
