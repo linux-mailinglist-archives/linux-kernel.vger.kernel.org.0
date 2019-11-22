@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87A8E1064D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4455C1064F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:21:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbfKVFwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58454 "EHLO mail.kernel.org"
+        id S1729476AbfKVGUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 01:20:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728617AbfKVFwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:52:39 -0500
+        id S1728652AbfKVFwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:52:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D4A72071F;
-        Fri, 22 Nov 2019 05:52:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 505282071F;
+        Fri, 22 Nov 2019 05:52:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401958;
-        bh=ePJ2pkZNK2a4mQjfJXGV5Pv+SMUz7DMtBlOvjCi1n7Y=;
+        s=default; t=1574401962;
+        bh=bU8lHFm9OBXC+O3oT+aSOg/7u1TW8GHVR7WkQspLb68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C7n3M9KkLNHLdJa8OmwOGM/laX+CcSrKZd1jVNAPUS4ajQAfwMc+Hzu8Va3HQLvDf
-         /PXEPVDDaLssgvxK7SUo9WfhaNs079fX6z8r364+Q32J02pv3qBpfw8/SmJnXGSzNR
-         U6u9jkdT7lwcYzxq0381bFfd5kBHXEnnckY5nn00=
+        b=Frk+KZg/YVcmIOjD7VsUhvCFtWFBx0p9zPrE454kmijE5cRDVe73lQRU1NUXxUP05
+         XTyx1fb3Y1rsWJzIs1ehLUR/jOxdIhkbIvlUYlAwRdXk56RBL2omhoU6zoEq+FI6di
+         kUrnnlXlTfeOE7D+lrEChw9mvpbzVinRz4Uk4FkI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Karsten Graul <kgraul@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 180/219] net/smc: prevent races between smc_lgr_terminate() and smc_conn_free()
-Date:   Fri, 22 Nov 2019 00:48:32 -0500
-Message-Id: <20191122054911.1750-173-sashal@kernel.org>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 183/219] xfs: end sync buffer I/O properly on shutdown error
+Date:   Fri, 22 Nov 2019 00:48:35 -0500
+Message-Id: <20191122054911.1750-176-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -45,46 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Karsten Graul <kgraul@linux.ibm.com>
+From: Brian Foster <bfoster@redhat.com>
 
-[ Upstream commit 77f838ace755d2f466536c44dac6c856f62cd901 ]
+[ Upstream commit 465fa17f4a303d9fdff9eac4d45f91ece92e96ca ]
 
-To prevent races between smc_lgr_terminate() and smc_conn_free() add an
-extra check of the lgr field before accessing it, and cancel a delayed
-free_work when a new smc connection is created.
-This fixes the problem that free_work cleared the lgr variable but
-smc_lgr_terminate() or smc_conn_free() still access it in parallel.
+As of commit e339dd8d8b ("xfs: use sync buffer I/O for sync delwri
+queue submission"), the delwri submission code uses sync buffer I/O
+for sync delwri I/O. Instead of waiting on async I/O to unlock the
+buffer, it uses the underlying sync I/O completion mechanism.
 
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+If delwri buffer submission fails due to a shutdown scenario, an
+error is set on the buffer and buffer completion never occurs. This
+can cause xfs_buf_delwri_submit() to deadlock waiting on a
+completion event.
+
+We could check the error state before waiting on such buffers, but
+that doesn't serialize against the case of an error set via a racing
+I/O completion. Instead, invoke I/O completion in the shutdown case
+regardless of buffer I/O type.
+
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/xfs/xfs_buf.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index 18daebcef1813..2c9baf8bf1189 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -128,6 +128,8 @@ static void smc_lgr_unregister_conn(struct smc_connection *conn)
- {
- 	struct smc_link_group *lgr = conn->lgr;
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index e839907e8492f..78173870502ce 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1470,8 +1470,7 @@ __xfs_buf_submit(
+ 		xfs_buf_ioerror(bp, -EIO);
+ 		bp->b_flags &= ~XBF_DONE;
+ 		xfs_buf_stale(bp);
+-		if (bp->b_flags & XBF_ASYNC)
+-			xfs_buf_ioend(bp);
++		xfs_buf_ioend(bp);
+ 		return -EIO;
+ 	}
  
-+	if (!lgr)
-+		return;
- 	write_lock_bh(&lgr->conns_lock);
- 	if (conn->alert_token_local) {
- 		__smc_lgr_unregister_conn(conn);
-@@ -612,6 +614,8 @@ int smc_conn_create(struct smc_sock *smc, bool is_smcd, int srv_first_contact,
- 			local_contact = SMC_REUSE_CONTACT;
- 			conn->lgr = lgr;
- 			smc_lgr_register_conn(conn); /* add smc conn to lgr */
-+			if (delayed_work_pending(&lgr->free_work))
-+				cancel_delayed_work(&lgr->free_work);
- 			write_unlock_bh(&lgr->conns_lock);
- 			break;
- 		}
 -- 
 2.20.1
 
