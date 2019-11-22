@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C7C7106D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBB5106B6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbfKVK7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:59:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50876 "EHLO mail.kernel.org"
+        id S1729324AbfKVKoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730921AbfKVK7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:59:38 -0500
+        id S1728832AbfKVKoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E11720706;
-        Fri, 22 Nov 2019 10:59:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30F1320715;
+        Fri, 22 Nov 2019 10:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420377;
-        bh=iHrSDbtmO6iDPDxEj/3JzV833eWtqf2Bv0P7k8m6R14=;
+        s=default; t=1574419444;
+        bh=rYpbs0dKw7NuXQPuiS1JlwOkFwEBEGYINd5c/qDq/JM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yXu/dg5aW1uaD2ei0JFD7VHWMD+C/Vyf07mVRgDyGWvqybBFNPu1Ws1Ht5NAA/yty
-         FH8+aSApAvsvxhqHQuDFN9ue0SfT7SDiEil1T0ict80xMtHZ9QT6JSEGV2zcoCv4qA
-         MYhcoAxhWfpc5+FZs7FPpciEa4LajMu0zRNkS0Ps=
+        b=Heums4T0EEmlYkzghQkcDScRzdkxh7B/rQAmC07gPGSqWCDRgy19G8FkOD0UPJ4BR
+         dR7A9l+Ms2bKvpu16sts5cCA9nPpKG8uHAnrMdjxjagdZbdY8YAaADQkgpZsToU1zx
+         Q0n3+Npj95a7IKmrhL6tJoeCAN3zUW2qtT3uq9/w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lijun Ou <oulijun@huawei.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/220] RDMA/hns: Bugfix for CM test
+Subject: [PATCH 4.9 112/222] usb: gadget: uvc: configfs: Drop leaked references to config items
 Date:   Fri, 22 Nov 2019 11:27:32 +0100
-Message-Id: <20191122100918.844138442@linuxfoundation.org>
+Message-Id: <20191122100911.324855796@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lijun Ou <oulijun@huawei.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[ Upstream commit 15fc056fba7b17b9abfbe80a12f188403fc949fb ]
+[ Upstream commit 86f3daed59bceb4fa7981d85e89f63ebbae1d561 ]
 
-It will print the warning when the MSB bit of SLID is not zero running
-cm_req_handler function that test CM. It needs to fixed zero when test
-RoCE device.
+Some of the .allow_link() and .drop_link() operations implementations
+call config_group_find_item() and then leak the reference to the
+returned item. Fix this by dropping those references where needed.
 
-Signed-off-by: Lijun Ou <oulijun@huawei.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/function/uvc_configfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index c8a3864f19122..7a7232927b126 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -2268,6 +2268,7 @@ static int hns_roce_v2_poll_one(struct hns_roce_cq *hr_cq,
- 		wc->src_qp = (u8)roce_get_field(cqe->byte_32,
- 						V2_CQE_BYTE_32_RMT_QPN_M,
- 						V2_CQE_BYTE_32_RMT_QPN_S);
-+		wc->slid = 0;
- 		wc->wc_flags |= (roce_get_bit(cqe->byte_32,
- 					      V2_CQE_BYTE_32_GRH_S) ?
- 					      IB_WC_GRH : 0);
+diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
+index d7dcd39fe12cb..3803dda54666b 100644
+--- a/drivers/usb/gadget/function/uvc_configfs.c
++++ b/drivers/usb/gadget/function/uvc_configfs.c
+@@ -543,6 +543,7 @@ static int uvcg_control_class_allow_link(struct config_item *src,
+ unlock:
+ 	mutex_unlock(&opts->lock);
+ out:
++	config_item_put(header);
+ 	mutex_unlock(su_mutex);
+ 	return ret;
+ }
+@@ -584,6 +585,7 @@ static int uvcg_control_class_drop_link(struct config_item *src,
+ unlock:
+ 	mutex_unlock(&opts->lock);
+ out:
++	config_item_put(header);
+ 	mutex_unlock(su_mutex);
+ 	return ret;
+ }
+@@ -2047,6 +2049,7 @@ static int uvcg_streaming_class_allow_link(struct config_item *src,
+ unlock:
+ 	mutex_unlock(&opts->lock);
+ out:
++	config_item_put(header);
+ 	mutex_unlock(su_mutex);
+ 	return ret;
+ }
+@@ -2091,6 +2094,7 @@ static int uvcg_streaming_class_drop_link(struct config_item *src,
+ unlock:
+ 	mutex_unlock(&opts->lock);
+ out:
++	config_item_put(header);
+ 	mutex_unlock(su_mutex);
+ 	return ret;
+ }
 -- 
 2.20.1
 
