@@ -2,63 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF9FF106112
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10060106154
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:56:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbfKVFxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:53:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
+        id S1728938AbfKVFzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:55:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728894AbfKVFxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:53:46 -0500
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+        id S1728924AbfKVFzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:55:48 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA10C20672;
-        Fri, 22 Nov 2019 05:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBC4720659;
+        Fri, 22 Nov 2019 05:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574402026;
-        bh=ZFLASfdovryR7LiQczr3/sQr5TcaQLVbPu/4tYd/oKU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QquYUjLfoTKdsrZ7MGtb3zHo/ZcZ4eCgYnavZ2KTeAXwgXTlanJiQeZGwbOa/WSsk
-         eu/fGao9IahHDtq0K3z+JCGsgxxJ9UQrrsT9x6oTE3671lv6kdNaYHGs+WGyHiawdv
-         i1/Xo+JaZO4wL7Yqf8jtDKF3LcQbDBL07Y/4QpWI=
-Received: by mail-lf1-f49.google.com with SMTP id f16so4565818lfm.3;
-        Thu, 21 Nov 2019 21:53:45 -0800 (PST)
-X-Gm-Message-State: APjAAAWSq1ftPLIjXsXF254B0iV6JsiIEi0lu1VOfZwznTNNVLNCaNgt
-        4cHkeQojyh5CMCPxzHWoandg0wNuc7UqO4IWHCE=
-X-Google-Smtp-Source: APXvYqxWlWvyv7M1PttJXoThDFMC3mJKD4wDrzEDT/AI63x858kL8RmqFmef/OrVPWtH2YgBq5PxUJwQ50uKJsXNy+s=
-X-Received: by 2002:ac2:51b5:: with SMTP id f21mr10474788lfk.159.1574402023874;
- Thu, 21 Nov 2019 21:53:43 -0800 (PST)
+        s=default; t=1574402148;
+        bh=JpUGC9nWCZCTQes37a4qys2DDjrsol2d6dZ4/1Ex844=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YLyOcHvXgUABV+Pqm28+qciCTzqmUrcnCcUTdozkotepYLNk3nQ5GFHHLMpXgSyRG
+         /sJ/RQ33jjkihtLXdgqp6eVuDdJdCZpoo0EnBNlO+ZymvGFQ4G5/Jm8D9j/AAnCWA4
+         TfXQZE1agPtB/XAfpKksBcKk/GOSwHAL5+IWPE4k=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 003/127] ARM: dts: Fix up SQ201 flash access
+Date:   Fri, 22 Nov 2019 00:53:42 -0500
+Message-Id: <20191122055544.3299-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191122055544.3299-1-sashal@kernel.org>
+References: <20191122055544.3299-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20191120134153.15418-1-krzk@kernel.org> <e93c7c7e-dac7-8c8d-c68a-edaa9106d6ac@roeck-us.net>
-In-Reply-To: <e93c7c7e-dac7-8c8d-c68a-edaa9106d6ac@roeck-us.net>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 22 Nov 2019 13:53:32 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPfw0nEFJum_uVqSBzNX2b_gVFbSuoz6gnULhyCENHORqw@mail.gmail.com>
-Message-ID: <CAJKOXPfw0nEFJum_uVqSBzNX2b_gVFbSuoz6gnULhyCENHORqw@mail.gmail.com>
-Subject: Re: [PATCH] hwmon: Fix Kconfig indentation
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 at 13:52, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 11/20/19 5:41 AM, Krzysztof Kozlowski wrote:
-> > Adjust indentation from spaces to tab (+optional two spaces) as in
-> > coding style with command like:
-> >       $ sed -e 's/^        /\t/' -i */Kconfig
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Quite frankly I'd rather not have to deal with such cosmetic changes.
+From: Linus Walleij <linus.walleij@linaro.org>
 
-I understand, let's skip it then.
+[ Upstream commit d88b11ef91b15d0af9c0676cbf4f441a0dff0c56 ]
 
-Best regards,
-Krzysztof
+This sets the partition information on the SQ201 to be read
+out from the RedBoot partition table, removes the static
+partition table and sets our boot options to mount root from
+/dev/mtdblock2 where the squashfs+JFFS2 resides.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/gemini-sq201.dts | 37 ++++--------------------------
+ 1 file changed, 5 insertions(+), 32 deletions(-)
+
+diff --git a/arch/arm/boot/dts/gemini-sq201.dts b/arch/arm/boot/dts/gemini-sq201.dts
+index 63c02ca9513c4..e9e2f6ff0c583 100644
+--- a/arch/arm/boot/dts/gemini-sq201.dts
++++ b/arch/arm/boot/dts/gemini-sq201.dts
+@@ -20,7 +20,7 @@
+ 	};
+ 
+ 	chosen {
+-		bootargs = "console=ttyS0,115200n8";
++		bootargs = "console=ttyS0,115200n8 root=/dev/mtdblock2 rw rootfstype=squashfs,jffs2 rootwait";
+ 		stdout-path = &uart0;
+ 	};
+ 
+@@ -71,37 +71,10 @@
+ 			/* 16MB of flash */
+ 			reg = <0x30000000 0x01000000>;
+ 
+-			partition@0 {
+-				label = "RedBoot";
+-				reg = <0x00000000 0x00120000>;
+-				read-only;
+-			};
+-			partition@120000 {
+-				label = "Kernel";
+-				reg = <0x00120000 0x00200000>;
+-			};
+-			partition@320000 {
+-				label = "Ramdisk";
+-				reg = <0x00320000 0x00600000>;
+-			};
+-			partition@920000 {
+-				label = "Application";
+-				reg = <0x00920000 0x00600000>;
+-			};
+-			partition@f20000 {
+-				label = "VCTL";
+-				reg = <0x00f20000 0x00020000>;
+-				read-only;
+-			};
+-			partition@f40000 {
+-				label = "CurConf";
+-				reg = <0x00f40000 0x000a0000>;
+-				read-only;
+-			};
+-			partition@fe0000 {
+-				label = "FIS directory";
+-				reg = <0x00fe0000 0x00020000>;
+-				read-only;
++			partitions {
++				compatible = "redboot-fis";
++				/* Eraseblock at 0xfe0000 */
++				fis-index-block = <0x1fc>;
+ 			};
+ 		};
+ 
+-- 
+2.20.1
+
