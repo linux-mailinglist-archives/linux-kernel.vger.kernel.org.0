@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E5E106DB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D49C2106DB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbfKVLCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:02:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55736 "EHLO mail.kernel.org"
+        id S1731305AbfKVLCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:02:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729321AbfKVLCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:02:18 -0500
+        id S1731284AbfKVLCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:02:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE4822075B;
-        Fri, 22 Nov 2019 11:02:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A87702073F;
+        Fri, 22 Nov 2019 11:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420537;
-        bh=VIMaAfth/Y/IlP5VCI9SmKGkfzw3jp29bSCwyGKtv9E=;
+        s=default; t=1574420540;
+        bh=s5iwcHxkRt8+t8tvmr6U2LXDWYdG4gCtv2HSTwEukQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1LF4qptZMUQ2NaL744XdGXQMrTgEi/19rNvMlctP2eY32MHaiOC3ThgQf3ANE9NM9
-         tVxsEEKcbK/JPCc662Sxgw1KuQxFxFwYhKmX5CX4YmVhTkS5N1aBTl7iJ4U64qsI5G
-         zFc0wDID98ZmAgcCDcCRhS8IOwzR4zJZ67+o4MJM=
+        b=AeOfmunaI0ZxCg8VJFMv91PwsQ8mee6aU8SNL5jaZsHvHDv2GgeWEhxqOkgTp3cGW
+         nefq/w61MVz/OmTFZIaJpUNAofM962mvDxHFbK8Uva7pdZ11E6VGcVNlzD9LaxmC5r
+         hsnilXufVnLZxdc2ttkloU6rrTr9iXpddJDSRHBY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 140/220] dmaengine: rcar-dmac: set scatter/gather max segment size
-Date:   Fri, 22 Nov 2019 11:28:25 +0100
-Message-Id: <20191122100922.861135736@linuxfoundation.org>
+        stable@vger.kernel.org, Radu Solea <radu.solea@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 141/220] crypto: mxs-dcp - Fix SHA null hashes and output length
+Date:   Fri, 22 Nov 2019 11:28:26 +0100
+Message-Id: <20191122100922.927466811@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,41 +45,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Radu Solea <radu.solea@nxp.com>
 
-[ Upstream commit 97d49c59e219acac576e16293a6b8cb99302f62f ]
+[ Upstream commit c709eebaf5c5faa8a0f140355f9cfe67e8f7afb1 ]
 
-Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
-device_dma_parameters structure and filling in the max segment size.
+DCP writes at least 32 bytes in the output buffer instead of hash length
+as documented. Add intermediate buffer to prevent write out of bounds.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+When requested to produce null hashes DCP fails to produce valid output.
+Add software workaround to bypass hardware and return valid output.
+
+Signed-off-by: Radu Solea <radu.solea@nxp.com>
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sh/rcar-dmac.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/crypto/mxs-dcp.c | 47 +++++++++++++++++++++++++++++++---------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 041ce864097e4..80ff95f75199f 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -198,6 +198,7 @@ struct rcar_dmac {
- 	struct dma_device engine;
- 	struct device *dev;
- 	void __iomem *iomem;
-+	struct device_dma_parameters parms;
+diff --git a/drivers/crypto/mxs-dcp.c b/drivers/crypto/mxs-dcp.c
+index 56bd28174f525..3425ccc012168 100644
+--- a/drivers/crypto/mxs-dcp.c
++++ b/drivers/crypto/mxs-dcp.c
+@@ -28,9 +28,24 @@
  
- 	unsigned int n_channels;
- 	struct rcar_dmac_chan *channels;
-@@ -1814,6 +1815,8 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ #define DCP_MAX_CHANS	4
+ #define DCP_BUF_SZ	PAGE_SIZE
++#define DCP_SHA_PAY_SZ  64
  
- 	dmac->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, dmac);
-+	dmac->dev->dma_parms = &dmac->parms;
-+	dma_set_max_seg_size(dmac->dev, RCAR_DMATCR_MASK);
- 	dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
+ #define DCP_ALIGNMENT	64
  
- 	ret = rcar_dmac_parse_of(&pdev->dev, dmac);
++/*
++ * Null hashes to align with hw behavior on imx6sl and ull
++ * these are flipped for consistency with hw output
++ */
++const uint8_t sha1_null_hash[] =
++	"\x09\x07\xd8\xaf\x90\x18\x60\x95\xef\xbf"
++	"\x55\x32\x0d\x4b\x6b\x5e\xee\xa3\x39\xda";
++
++const uint8_t sha256_null_hash[] =
++	"\x55\xb8\x52\x78\x1b\x99\x95\xa4"
++	"\x4c\x93\x9b\x64\xe4\x41\xae\x27"
++	"\x24\xb9\x6f\x99\xc8\xf4\xfb\x9a"
++	"\x14\x1c\xfc\x98\x42\xc4\xb0\xe3";
++
+ /* DCP DMA descriptor. */
+ struct dcp_dma_desc {
+ 	uint32_t	next_cmd_addr;
+@@ -48,6 +63,7 @@ struct dcp_coherent_block {
+ 	uint8_t			aes_in_buf[DCP_BUF_SZ];
+ 	uint8_t			aes_out_buf[DCP_BUF_SZ];
+ 	uint8_t			sha_in_buf[DCP_BUF_SZ];
++	uint8_t			sha_out_buf[DCP_SHA_PAY_SZ];
+ 
+ 	uint8_t			aes_key[2 * AES_KEYSIZE_128];
+ 
+@@ -513,8 +529,6 @@ static int mxs_dcp_run_sha(struct ahash_request *req)
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+ 	struct dcp_async_ctx *actx = crypto_ahash_ctx(tfm);
+ 	struct dcp_sha_req_ctx *rctx = ahash_request_ctx(req);
+-	struct hash_alg_common *halg = crypto_hash_alg_common(tfm);
+-
+ 	struct dcp_dma_desc *desc = &sdcp->coh->desc[actx->chan];
+ 
+ 	dma_addr_t digest_phys = 0;
+@@ -536,10 +550,23 @@ static int mxs_dcp_run_sha(struct ahash_request *req)
+ 	desc->payload = 0;
+ 	desc->status = 0;
+ 
++	/*
++	 * Align driver with hw behavior when generating null hashes
++	 */
++	if (rctx->init && rctx->fini && desc->size == 0) {
++		struct hash_alg_common *halg = crypto_hash_alg_common(tfm);
++		const uint8_t *sha_buf =
++			(actx->alg == MXS_DCP_CONTROL1_HASH_SELECT_SHA1) ?
++			sha1_null_hash : sha256_null_hash;
++		memcpy(sdcp->coh->sha_out_buf, sha_buf, halg->digestsize);
++		ret = 0;
++		goto done_run;
++	}
++
+ 	/* Set HASH_TERM bit for last transfer block. */
+ 	if (rctx->fini) {
+-		digest_phys = dma_map_single(sdcp->dev, req->result,
+-					     halg->digestsize, DMA_FROM_DEVICE);
++		digest_phys = dma_map_single(sdcp->dev, sdcp->coh->sha_out_buf,
++					     DCP_SHA_PAY_SZ, DMA_FROM_DEVICE);
+ 		desc->control0 |= MXS_DCP_CONTROL0_HASH_TERM;
+ 		desc->payload = digest_phys;
+ 	}
+@@ -547,9 +574,10 @@ static int mxs_dcp_run_sha(struct ahash_request *req)
+ 	ret = mxs_dcp_start_dma(actx);
+ 
+ 	if (rctx->fini)
+-		dma_unmap_single(sdcp->dev, digest_phys, halg->digestsize,
++		dma_unmap_single(sdcp->dev, digest_phys, DCP_SHA_PAY_SZ,
+ 				 DMA_FROM_DEVICE);
+ 
++done_run:
+ 	dma_unmap_single(sdcp->dev, buf_phys, DCP_BUF_SZ, DMA_TO_DEVICE);
+ 
+ 	return ret;
+@@ -567,6 +595,7 @@ static int dcp_sha_req_to_buf(struct crypto_async_request *arq)
+ 	const int nents = sg_nents(req->src);
+ 
+ 	uint8_t *in_buf = sdcp->coh->sha_in_buf;
++	uint8_t *out_buf = sdcp->coh->sha_out_buf;
+ 
+ 	uint8_t *src_buf;
+ 
+@@ -621,11 +650,9 @@ static int dcp_sha_req_to_buf(struct crypto_async_request *arq)
+ 
+ 		actx->fill = 0;
+ 
+-		/* For some reason, the result is flipped. */
+-		for (i = 0; i < halg->digestsize / 2; i++) {
+-			swap(req->result[i],
+-			     req->result[halg->digestsize - i - 1]);
+-		}
++		/* For some reason the result is flipped */
++		for (i = 0; i < halg->digestsize; i++)
++			req->result[i] = out_buf[halg->digestsize - i - 1];
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
