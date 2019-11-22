@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1693A106EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52FC0107114
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfKVLA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:00:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53290 "EHLO mail.kernel.org"
+        id S1727527AbfKVKej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:34:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728932AbfKVLAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:00:49 -0500
+        id S1727367AbfKVKei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:34:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 167FB20706;
-        Fri, 22 Nov 2019 11:00:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2904320715;
+        Fri, 22 Nov 2019 10:34:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420448;
-        bh=VZ69EaVF1a9oQj7zBLNDMh1JGIjNLhQeYaadd78Ayrg=;
+        s=default; t=1574418876;
+        bh=cWDR+bK9eieHFdL6aHLtdxeVnto+yzXb3nykupc4aDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VY+kL1bJ1xMrX1BxAFg1bgftH1UfQO6+j5jQeDgUcus52es/lSEQPPTFWgbUpSGTc
-         gGqHGgAdDvh7Xr5aITT/Ca5VNlygFgJkgMpd5fEcEgrlSnQ9aC56UhPGcqzP4tSrLF
-         wWu1KWSK+Kg+5PLWcJ8FomtiWjqylY8e+tys3QN8=
+        b=dPmCWz8oOle2Ez7lXBlTFuVLGJWfQDQQ1Si20UDivtZCz4u2HtlWhUtYUAAooo0PV
+         uYb/WyF+Xcg9gvI9spnyh+GU4Jz/Qb8zSvzLTE5reE0LdRF0sokXa4RNExwizj/Kyb
+         mqReHCOFtCiy9HgS2TaaDxcma8XTcKSup17xX7Xs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 109/220] mtd: physmap_of: Release resources on error
+Subject: [PATCH 4.4 083/159] usb: gadget: uvc: Factor out video USB request queueing
 Date:   Fri, 22 Nov 2019 11:27:54 +0100
-Message-Id: <20191122100920.607987616@linuxfoundation.org>
+Message-Id: <20191122100805.666703358@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,86 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[ Upstream commit ef0de747f7ad179c7698a5b0e28db05f18ecbf57 ]
+[ Upstream commit 9d1ff5dcb3cd3390b1e56f1c24ae42c72257c4a3 ]
 
-During probe, if there was an error the memory region and the memory
-map were not properly released.This can lead a system unusable if
-deferred probe is in use.
+USB requests for video data are queued from two different locations in
+the driver, with the same code block occurring twice. Factor it out to a
+function.
 
-Replace mem_request and map with devm_ioremap_resource
-
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Paul Elder <paul.elder@ideasonboard.com>
+Tested-by: Paul Elder <paul.elder@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/maps/physmap_of_core.c | 27 +++++----------------------
- 1 file changed, 5 insertions(+), 22 deletions(-)
+ drivers/usb/gadget/function/uvc_video.c | 30 ++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mtd/maps/physmap_of_core.c b/drivers/mtd/maps/physmap_of_core.c
-index 4129535b8e46f..ece605d78c215 100644
---- a/drivers/mtd/maps/physmap_of_core.c
-+++ b/drivers/mtd/maps/physmap_of_core.c
-@@ -31,7 +31,6 @@
- struct of_flash_list {
- 	struct mtd_info *mtd;
- 	struct map_info map;
--	struct resource *res;
- };
+diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
+index 0f01c04d7cbd8..540917f54506a 100644
+--- a/drivers/usb/gadget/function/uvc_video.c
++++ b/drivers/usb/gadget/function/uvc_video.c
+@@ -129,6 +129,19 @@ uvc_video_encode_isoc(struct usb_request *req, struct uvc_video *video,
+  * Request handling
+  */
  
- struct of_flash {
-@@ -56,18 +55,10 @@ static int of_flash_remove(struct platform_device *dev)
- 			mtd_concat_destroy(info->cmtd);
++static int uvcg_video_ep_queue(struct uvc_video *video, struct usb_request *req)
++{
++	int ret;
++
++	ret = usb_ep_queue(video->ep, req, GFP_ATOMIC);
++	if (ret < 0) {
++		printk(KERN_INFO "Failed to queue request (%d).\n", ret);
++		usb_ep_set_halt(video->ep);
++	}
++
++	return ret;
++}
++
+ /*
+  * I somehow feel that synchronisation won't be easy to achieve here. We have
+  * three events that control USB requests submission:
+@@ -193,14 +206,13 @@ uvc_video_complete(struct usb_ep *ep, struct usb_request *req)
+ 
+ 	video->encode(req, video, buf);
+ 
+-	if ((ret = usb_ep_queue(ep, req, GFP_ATOMIC)) < 0) {
+-		printk(KERN_INFO "Failed to queue request (%d).\n", ret);
+-		usb_ep_set_halt(ep);
+-		spin_unlock_irqrestore(&video->queue.irqlock, flags);
++	ret = uvcg_video_ep_queue(video, req);
++	spin_unlock_irqrestore(&video->queue.irqlock, flags);
++
++	if (ret < 0) {
+ 		uvcg_queue_cancel(queue, 0);
+ 		goto requeue;
+ 	}
+-	spin_unlock_irqrestore(&video->queue.irqlock, flags);
+ 
+ 	return;
+ 
+@@ -320,15 +332,13 @@ int uvcg_video_pump(struct uvc_video *video)
+ 		video->encode(req, video, buf);
+ 
+ 		/* Queue the USB request */
+-		ret = usb_ep_queue(video->ep, req, GFP_ATOMIC);
++		ret = uvcg_video_ep_queue(video, req);
++		spin_unlock_irqrestore(&queue->irqlock, flags);
++
+ 		if (ret < 0) {
+-			printk(KERN_INFO "Failed to queue request (%d)\n", ret);
+-			usb_ep_set_halt(video->ep);
+-			spin_unlock_irqrestore(&queue->irqlock, flags);
+ 			uvcg_queue_cancel(queue, 0);
+ 			break;
+ 		}
+-		spin_unlock_irqrestore(&queue->irqlock, flags);
  	}
  
--	for (i = 0; i < info->list_size; i++) {
-+	for (i = 0; i < info->list_size; i++)
- 		if (info->list[i].mtd)
- 			map_destroy(info->list[i].mtd);
- 
--		if (info->list[i].map.virt)
--			iounmap(info->list[i].map.virt);
--
--		if (info->list[i].res) {
--			release_resource(info->list[i].res);
--			kfree(info->list[i].res);
--		}
--	}
- 	return 0;
- }
- 
-@@ -215,10 +206,11 @@ static int of_flash_probe(struct platform_device *dev)
- 
- 		err = -EBUSY;
- 		res_size = resource_size(&res);
--		info->list[i].res = request_mem_region(res.start, res_size,
--						       dev_name(&dev->dev));
--		if (!info->list[i].res)
-+		info->list[i].map.virt = devm_ioremap_resource(&dev->dev, &res);
-+		if (IS_ERR(info->list[i].map.virt)) {
-+			err = PTR_ERR(info->list[i].map.virt);
- 			goto err_out;
-+		}
- 
- 		err = -ENXIO;
- 		width = of_get_property(dp, "bank-width", NULL);
-@@ -246,15 +238,6 @@ static int of_flash_probe(struct platform_device *dev)
- 		if (err)
- 			goto err_out;
- 
--		err = -ENOMEM;
--		info->list[i].map.virt = ioremap(info->list[i].map.phys,
--						 info->list[i].map.size);
--		if (!info->list[i].map.virt) {
--			dev_err(&dev->dev, "Failed to ioremap() flash"
--				" region\n");
--			goto err_out;
--		}
--
- 		simple_map_init(&info->list[i].map);
- 
- 		/*
+ 	spin_lock_irqsave(&video->req_lock, flags);
 -- 
 2.20.1
 
