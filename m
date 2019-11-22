@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2DD107463
+	by mail.lfdr.de (Postfix) with ESMTP id 8C969107464
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 15:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbfKVO6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 09:58:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59120 "EHLO mail.kernel.org"
+        id S1727561AbfKVO6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 09:58:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727425AbfKVO6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 09:58:06 -0500
+        id S1727516AbfKVO6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 09:58:10 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A9862073B;
-        Fri, 22 Nov 2019 14:58:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF60F20730;
+        Fri, 22 Nov 2019 14:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574434686;
-        bh=cHg/O589AKGsVWgFP8zppA3o0r/Kmjmz5rJ70N/4m6M=;
+        s=default; t=1574434688;
+        bh=XKiISVLCmYRbT7a/PJXfowqAzOFzM9sp7HMJkAZ26Ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ztWrUzX4B/cpZtAvN7WOraNpk1JQwblJ8y+IWOQMkJU1DxDWLcHq/vzxsPDIDOru7
-         aoGIW1lfLohDKf0m4OlPmkEJ5ddYu+ZRUVC1bQseCckfh1X9tYgz4ijTSUyu7H7k2d
-         YLwYRldGnYDpMz5je4uDUeziu/ZJOja2BHOvqPfo=
+        b=X2wy09V2Qe7H4kXvcSzp3TEo5ZT18KmFRnJ/ftUv/lkq/Cq4bHl0w3yl8A4HWIMbQ
+         ZpEORf0gIW9w1GP2YVd9svUfGtmIKAGReAeGw2L4ZQcLZ8pqVidrAI8zkXNgD0vFvZ
+         E6mKZfB87rz8BrKre8jpfvp1rQLU8R0ZKuWlNrso=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -32,9 +32,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 17/26] perf session: Add facility to peek at all events
-Date:   Fri, 22 Nov 2019 11:57:02 -0300
-Message-Id: <20191122145711.3171-18-acme@kernel.org>
+Subject: [PATCH 18/26] perf auxtrace: Add support for queuing AUX area samples
+Date:   Fri, 22 Nov 2019 11:57:03 -0300
+Message-Id: <20191122145711.3171-19-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191122145711.3171-1-acme@kernel.org>
 References: <20191122145711.3171-1-acme@kernel.org>
@@ -47,75 +47,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-AUX area samples are not limited in how far back in time the sample
-could start. Consequently samples must be queued in advance to allow for
-time-ordered processing. To achieve that, add
-perf_session__peek_events() that walks and peeks at all the events.
+Add functions to queue AUX area samples in advance
+(auxtrace_queue_data()) or individually (auxtrace_queues__add_sample())
+or find out what queue a sample belongs on
+(auxtrace_queues__sample_queue()).
+
+auxtrace_queue_data() can also queue snapshot data which keeps snapshots
+and samples ordered with respect to each other in case support for that
+is desired.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191115124225.5247-11-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20191115124225.5247-12-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/session.c | 28 ++++++++++++++++++++++++++++
- tools/perf/util/session.h |  5 +++++
- 2 files changed, 33 insertions(+)
+ tools/perf/util/auxtrace.c | 107 +++++++++++++++++++++++++++++++++++++
+ tools/perf/util/auxtrace.h |  15 ++++++
+ 2 files changed, 122 insertions(+)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index ab4dae1efea3..d0d7d25b23e3 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1659,6 +1659,34 @@ int perf_session__peek_event(struct perf_session *session, off_t file_offset,
- 	return 0;
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 4f5c5fe3516b..eb087e7df6f4 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -1004,6 +1004,113 @@ struct auxtrace_buffer *auxtrace_buffer__next(struct auxtrace_queue *queue,
+ 	}
  }
  
-+int perf_session__peek_events(struct perf_session *session, u64 offset,
-+			      u64 size, peek_events_cb_t cb, void *data)
++struct auxtrace_queue *auxtrace_queues__sample_queue(struct auxtrace_queues *queues,
++						     struct perf_sample *sample,
++						     struct perf_session *session)
 +{
-+	u64 max_offset = offset + size;
-+	char buf[PERF_SAMPLE_MAX_SIZE];
-+	union perf_event *event;
-+	int err;
++	struct perf_sample_id *sid;
++	unsigned int idx;
++	u64 id;
 +
-+	do {
-+		err = perf_session__peek_event(session, offset, buf,
-+					       PERF_SAMPLE_MAX_SIZE, &event,
-+					       NULL);
-+		if (err)
-+			return err;
++	id = sample->id;
++	if (!id)
++		return NULL;
 +
-+		err = cb(session, event, offset, data);
-+		if (err)
-+			return err;
++	sid = perf_evlist__id2sid(session->evlist, id);
++	if (!sid)
++		return NULL;
 +
-+		offset += event->header.size;
-+		if (event->header.type == PERF_RECORD_AUXTRACE)
-+			offset += event->auxtrace.size;
++	idx = sid->idx;
 +
-+	} while (offset < max_offset);
++	if (idx >= queues->nr_queues)
++		return NULL;
 +
-+	return err;
++	return &queues->queue_array[idx];
 +}
 +
- static s64 perf_session__process_event(struct perf_session *session,
- 				       union perf_event *event, u64 file_offset)
++int auxtrace_queues__add_sample(struct auxtrace_queues *queues,
++				struct perf_session *session,
++				struct perf_sample *sample, u64 data_offset,
++				u64 reference)
++{
++	struct auxtrace_buffer buffer = {
++		.pid = -1,
++		.data_offset = data_offset,
++		.reference = reference,
++		.size = sample->aux_sample.size,
++	};
++	struct perf_sample_id *sid;
++	u64 id = sample->id;
++	unsigned int idx;
++
++	if (!id)
++		return -EINVAL;
++
++	sid = perf_evlist__id2sid(session->evlist, id);
++	if (!sid)
++		return -ENOENT;
++
++	idx = sid->idx;
++	buffer.tid = sid->tid;
++	buffer.cpu = sid->cpu;
++
++	return auxtrace_queues__add_buffer(queues, session, idx, &buffer, NULL);
++}
++
++struct queue_data {
++	bool samples;
++	bool events;
++};
++
++static int auxtrace_queue_data_cb(struct perf_session *session,
++				  union perf_event *event, u64 offset,
++				  void *data)
++{
++	struct queue_data *qd = data;
++	struct perf_sample sample;
++	int err;
++
++	if (qd->events && event->header.type == PERF_RECORD_AUXTRACE) {
++		if (event->header.size < sizeof(struct perf_record_auxtrace))
++			return -EINVAL;
++		offset += event->header.size;
++		return session->auxtrace->queue_data(session, NULL, event,
++						     offset);
++	}
++
++	if (!qd->samples || event->header.type != PERF_RECORD_SAMPLE)
++		return 0;
++
++	err = perf_evlist__parse_sample(session->evlist, event, &sample);
++	if (err)
++		return err;
++
++	if (!sample.aux_sample.size)
++		return 0;
++
++	offset += sample.aux_sample.data - (void *)event;
++
++	return session->auxtrace->queue_data(session, &sample, NULL, offset);
++}
++
++int auxtrace_queue_data(struct perf_session *session, bool samples, bool events)
++{
++	struct queue_data qd = {
++		.samples = samples,
++		.events = events,
++	};
++
++	if (auxtrace__dont_decode(session))
++		return 0;
++
++	if (!session->auxtrace || !session->auxtrace->queue_data)
++		return -EINVAL;
++
++	return perf_session__peek_events(session, session->header.data_offset,
++					 session->header.data_size,
++					 auxtrace_queue_data_cb, &qd);
++}
++
+ void *auxtrace_buffer__get_data(struct auxtrace_buffer *buffer, int fd)
  {
-diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-index 8456e1d868fd..f76480166d38 100644
---- a/tools/perf/util/session.h
-+++ b/tools/perf/util/session.h
-@@ -64,6 +64,11 @@ int perf_session__peek_event(struct perf_session *session, off_t file_offset,
- 			     void *buf, size_t buf_sz,
- 			     union perf_event **event_ptr,
- 			     struct perf_sample *sample);
-+typedef int (*peek_events_cb_t)(struct perf_session *session,
-+				union perf_event *event, u64 offset,
-+				void *data);
-+int perf_session__peek_events(struct perf_session *session, u64 offset,
-+			      u64 size, peek_events_cb_t cb, void *data);
- 
- int perf_session__process_events(struct perf_session *session);
- 
+ 	size_t adj = buffer->data_offset & (page_size - 1);
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 4a8ac7de6e22..749d72cd9c7b 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -141,6 +141,8 @@ struct auxtrace_index {
+  * struct auxtrace - session callbacks to allow AUX area data decoding.
+  * @process_event: lets the decoder see all session events
+  * @process_auxtrace_event: process a PERF_RECORD_AUXTRACE event
++ * @queue_data: queue an AUX sample or PERF_RECORD_AUXTRACE event for later
++ *              processing
+  * @dump_auxtrace_sample: dump AUX area sample data
+  * @flush_events: process any remaining data
+  * @free_events: free resources associated with event processing
+@@ -154,6 +156,9 @@ struct auxtrace {
+ 	int (*process_auxtrace_event)(struct perf_session *session,
+ 				      union perf_event *event,
+ 				      struct perf_tool *tool);
++	int (*queue_data)(struct perf_session *session,
++			  struct perf_sample *sample, union perf_event *event,
++			  u64 data_offset);
+ 	void (*dump_auxtrace_sample)(struct perf_session *session,
+ 				     struct perf_sample *sample);
+ 	int (*flush_events)(struct perf_session *session,
+@@ -467,9 +472,19 @@ int auxtrace_queues__add_event(struct auxtrace_queues *queues,
+ 			       struct perf_session *session,
+ 			       union perf_event *event, off_t data_offset,
+ 			       struct auxtrace_buffer **buffer_ptr);
++struct auxtrace_queue *
++auxtrace_queues__sample_queue(struct auxtrace_queues *queues,
++			      struct perf_sample *sample,
++			      struct perf_session *session);
++int auxtrace_queues__add_sample(struct auxtrace_queues *queues,
++				struct perf_session *session,
++				struct perf_sample *sample, u64 data_offset,
++				u64 reference);
+ void auxtrace_queues__free(struct auxtrace_queues *queues);
+ int auxtrace_queues__process_index(struct auxtrace_queues *queues,
+ 				   struct perf_session *session);
++int auxtrace_queue_data(struct perf_session *session, bool samples,
++			bool events);
+ struct auxtrace_buffer *auxtrace_buffer__next(struct auxtrace_queue *queue,
+ 					      struct auxtrace_buffer *buffer);
+ void *auxtrace_buffer__get_data(struct auxtrace_buffer *buffer, int fd);
 -- 
 2.21.0
 
