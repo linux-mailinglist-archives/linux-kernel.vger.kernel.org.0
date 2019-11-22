@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B234106BA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87501106C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfKVKqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:46:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53208 "EHLO mail.kernel.org"
+        id S1729665AbfKVKv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729622AbfKVKqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:13 -0500
+        id S1729802AbfKVKv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28DE120730;
-        Fri, 22 Nov 2019 10:46:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 521A120715;
+        Fri, 22 Nov 2019 10:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419572;
-        bh=YoAQqpCpMdIlQ80ZmYkZIXm+v4XVPdSGfske2Le15so=;
+        s=default; t=1574419885;
+        bh=ENLaFmlq2o6BrANfDwjWLVdeKtxLU22mhH9zgrr8jqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CLtsKLmvCAP969A9sKV66ZtU7xzPze6eICkCusQP4qtTBmpCkWomWOowmoKwRsBuB
-         EWZepPvnZ3XGD+LIWV8az7cAowL7SeL++elr2+/2HZ5HmVb5qcAZaisnzazoaXk1HD
-         y2F3vK+lWr6Jn1TAiHnGwYorsQ3vobs5TH6NjyLg=
+        b=FaHRu4+hPohoMsemSKRgD30XuKZ19k1XUKz1fQLmzsvOh7Ntpw1N2+dxrz3bGNvFe
+         gPWX/YZeXhwUkzxoFIuBnRDrK2ZiDlnf2gRGs6JiWitnpUbbc5NcWw+lxgeXazSqHA
+         tlzlPRwsv691kzeP1YHMAKhSOyarGHjONVuwVp9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Wei Liu <wei.liu2@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 156/222] net: xen-netback: fix return type of ndo_start_xmit function
+Subject: [PATCH 4.14 043/122] ARM: dts: at91: at91sam9x5cm: fix addressable nand flash size
 Date:   Fri, 22 Nov 2019 11:28:16 +0100
-Message-Id: <20191122100913.961717661@linuxfoundation.org>
+Message-Id: <20191122100755.167362534@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-[ Upstream commit a9ca7f17c6d240e269a24cbcd76abf9a940309dd ]
+[ Upstream commit 6f270d88a0c4a11725afd8fd2001ae408733afbf ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+at91sam9x5cm comes with a 2Gb NAND flash. Fix the rootfs size to
+match this limit.
 
-Found by coccinelle.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Wei Liu <wei.liu2@citrix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/xen-netback/interface.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/at91sam9x5cm.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/xen-netback/interface.c b/drivers/net/xen-netback/interface.c
-index e1f47b6ea3b76..46008f2845502 100644
---- a/drivers/net/xen-netback/interface.c
-+++ b/drivers/net/xen-netback/interface.c
-@@ -171,7 +171,8 @@ static u16 xenvif_select_queue(struct net_device *dev, struct sk_buff *skb,
- 	return vif->hash.mapping[skb_get_hash_raw(skb) % size];
- }
+diff --git a/arch/arm/boot/dts/at91sam9x5cm.dtsi b/arch/arm/boot/dts/at91sam9x5cm.dtsi
+index bdeaa0b64a5bf..0a673a7082be1 100644
+--- a/arch/arm/boot/dts/at91sam9x5cm.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5cm.dtsi
+@@ -88,7 +88,7 @@
  
--static int xenvif_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+xenvif_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct xenvif *vif = netdev_priv(dev);
- 	struct xenvif_queue *queue = NULL;
+ 						rootfs@800000 {
+ 							label = "rootfs";
+-							reg = <0x800000 0x1f800000>;
++							reg = <0x800000 0x0f800000>;
+ 						};
+ 					};
+ 				};
 -- 
 2.20.1
 
