@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B187C106B60
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7CBA106A45
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:33:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbfKVKnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49394 "EHLO mail.kernel.org"
+        id S1727942AbfKVKd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:33:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728856AbfKVKno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:44 -0500
+        id S1727050AbfKVKdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:33:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E79C720637;
-        Fri, 22 Nov 2019 10:43:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7D2B20708;
+        Fri, 22 Nov 2019 10:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419424;
-        bh=6hPBnO6cyInfrI7QPc5HYLgV1DJSGN4IqdU+EtM4yrE=;
+        s=default; t=1574418804;
+        bh=tyo6kBRBm1QkQkkx+3ckrmLBrKm+CEEt7pqVzB1udDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UIK4PSt8645a/tdGCg+uhXims8/zMKZWaVGmYBwtuGRkp7sZV2lcC9oz8jB9WCx51
-         bLxjnk2Y1B2WZdes8TiwxSW5WSxIrvyW7OztLbHuXx8rvDjnXKFQVK/60iQTHVUPB8
-         Q/cbW0gUny3GGA/SFoL7Wm6sQZ1sbePa0zFqNnyM=
+        b=EE0cMs5LsFcqOXiiptnlMsjNW25cf/arlDfMBVgSnCp7FBCrLnZn1CV6hECyVMmOh
+         cV+e+Y9d8uEBhGwfrgZmESX0ChKvva2CnXtm8MMf+AZ6WHVdpnliNjP7cGRZoQ+2aT
+         CCFOXNoA5pnvl3vwbLNzGdYn6e9dAzkLwYnfa46Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 106/222] net: micrel: fix return type of ndo_start_xmit function
-Date:   Fri, 22 Nov 2019 11:27:26 +0100
-Message-Id: <20191122100910.975533656@linuxfoundation.org>
+Subject: [PATCH 4.4 056/159] s390/qeth: invoke softirqs after napi_schedule()
+Date:   Fri, 22 Nov 2019 11:27:27 +0100
+Message-Id: <20191122100747.920640313@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 2b49117a5abee8478b0470cba46ac74f93b4a479 ]
+[ Upstream commit 4d19db777a2f32c9b76f6fd517ed8960576cb43e ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+Calling napi_schedule() from process context does not ensure that the
+NET_RX softirq is run in a timely fashion. So trigger it manually.
 
-Found by coccinelle.
+This is no big issue with current code. A call to ndo_open() is usually
+followed by a ndo_set_rx_mode() call, and for qeth this contains a
+spin_unlock_bh(). Except for OSN, where qeth_l2_set_rx_mode() bails out
+early.
+Nevertheless it's best to not depend on this behaviour, and just fix
+the issue at its source like all other drivers do. For instance see
+commit 83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule").
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: a1c3ed4c9ca0 ("qeth: NAPI support for l2 and l3 discipline")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/micrel/ks8695net.c  | 2 +-
- drivers/net/ethernet/micrel/ks8851_mll.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/s390/net/qeth_l2_main.c | 3 +++
+ drivers/s390/net/qeth_l3_main.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/micrel/ks8695net.c b/drivers/net/ethernet/micrel/ks8695net.c
-index 20cb85bc0c5f8..6135d90f368fa 100644
---- a/drivers/net/ethernet/micrel/ks8695net.c
-+++ b/drivers/net/ethernet/micrel/ks8695net.c
-@@ -1156,7 +1156,7 @@ ks8695_timeout(struct net_device *ndev)
-  *	sk_buff and adds it to the TX ring. It then kicks the TX DMA
-  *	engine to ensure transmission begins.
-  */
--static int
-+static netdev_tx_t
- ks8695_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct ks8695_priv *ksp = netdev_priv(ndev);
-diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
-index 2fc5cd56c0a84..8dc1f0277117d 100644
---- a/drivers/net/ethernet/micrel/ks8851_mll.c
-+++ b/drivers/net/ethernet/micrel/ks8851_mll.c
-@@ -1020,9 +1020,9 @@ static void ks_write_qmu(struct ks_net *ks, u8 *pdata, u16 len)
-  * spin_lock_irqsave is required because tx and rx should be mutual exclusive.
-  * So while tx is in-progress, prevent IRQ interrupt from happenning.
-  */
--static int ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
--	int retv = NETDEV_TX_OK;
-+	netdev_tx_t retv = NETDEV_TX_OK;
- 	struct ks_net *ks = netdev_priv(netdev);
+diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
+index 22045e7d78ac3..97211f7f0cf02 100644
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -996,7 +996,10 @@ static int __qeth_l2_open(struct net_device *dev)
  
- 	disable_irq(netdev->irq);
+ 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
+ 		napi_enable(&card->napi);
++		local_bh_disable();
+ 		napi_schedule(&card->napi);
++		/* kick-start the NAPI softirq: */
++		local_bh_enable();
+ 	} else
+ 		rc = -EIO;
+ 	return rc;
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index 2cc9bc1ef1e38..0d71d2e6419af 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -3031,7 +3031,10 @@ static int __qeth_l3_open(struct net_device *dev)
+ 
+ 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
+ 		napi_enable(&card->napi);
++		local_bh_disable();
+ 		napi_schedule(&card->napi);
++		/* kick-start the NAPI softirq: */
++		local_bh_enable();
+ 	} else
+ 		rc = -EIO;
+ 	return rc;
 -- 
 2.20.1
 
