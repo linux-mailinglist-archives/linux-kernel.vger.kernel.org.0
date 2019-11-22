@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13BA2106B03
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:40:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F635106CEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfKVKki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:40:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44582 "EHLO mail.kernel.org"
+        id S1730562AbfKVK4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:56:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbfKVKkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:40:36 -0500
+        id S1729945AbfKVK4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:56:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 592682071F;
-        Fri, 22 Nov 2019 10:40:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19BC520637;
+        Fri, 22 Nov 2019 10:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419235;
-        bh=iNI6aIqX57rJOwK0WFOJwkCfxZwraFcXPRaFy23k3mg=;
+        s=default; t=1574420171;
+        bh=3HupZYx6MhBx2F4Mzie0QMEcyeLD1vimJQsbHaUp8Ag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QW8O3vt/Z6C2WEbJyspr8+LIxLKxGbpPlJlGp4z3hyGo4eBr1f8zdIV155qeu+GVW
-         aVdlXz6ax2CKMTMrttWq3Y1k41cH2VVRpjIpKiGVR+034/DwjqmdPXEVHotXAeaWqb
-         Qg8gHdptSWVnx0fSCUv5iZp1bKJk9TmsnAXmcHKU=
+        b=x+Ow85NM7a/7OPrA6YFSMKJiZp55Ff8XJjRzQ1XjmdtQG5RZ59zuKcGGlnyMngZUs
+         ttM4cdXzNXQJrV++VMCN6NnFhcSpyBJb5Iq6tZyqDQHAPeuJdOSc4U0lO7PD+XVQ8q
+         UNJbgdD4u7j9p1Ld0AOHAME6FEQ2mA8mIIR0OfGM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 043/222] ARM: dts: omap3-gta04: give spi_lcd node a label so that we can overwrite in other DTS files
+Subject: [PATCH 4.19 018/220] ARM: dts: omap5: enable OTG role for DWC3 controller
 Date:   Fri, 22 Nov 2019 11:26:23 +0100
-Message-Id: <20191122100851.148276671@linuxfoundation.org>
+Message-Id: <20191122100913.846907236@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,31 +47,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: H. Nikolaus Schaller <hns@goldelico.com>
 
-[ Upstream commit fa0d7dc355c890725b6178dab0cc11b194203afa ]
+[ Upstream commit 656c1a65ab555ee5c7cd0d6aee8ab82ca3c1795f ]
 
-needed for device variants based on GTA04 board but with
-different display panel (driver).
+Since SMPS10 and OTG cable detection extcon are described here, and
+work to enable OTG power when an OTG cable is plugged in, we can
+define OTG mode in the controller (which is disabled by default in
+omap5.dtsi).
 
+Tested on OMAP5EVM and Pyra.
+
+Suggested-by: Roger Quadros <rogerq@ti.com>
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/omap5-board-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index b3a8b1f24499a..95c6ac44e307f 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -70,7 +70,7 @@
- 		#sound-dai-cells = <0>;
- 	};
+diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
+index 8b8db9d8e9126..c2dc4199b4ec2 100644
+--- a/arch/arm/boot/dts/omap5-board-common.dtsi
++++ b/arch/arm/boot/dts/omap5-board-common.dtsi
+@@ -703,6 +703,10 @@
+ 	vbus-supply = <&smps10_out1_reg>;
+ };
  
--	spi_lcd {
-+	spi_lcd: spi_lcd {
- 		compatible = "spi-gpio";
- 		#address-cells = <0x1>;
- 		#size-cells = <0x0>;
++&dwc3 {
++	dr_mode = "otg";
++};
++
+ &mcspi1 {
+ 
+ };
 -- 
 2.20.1
 
