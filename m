@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75C7D106DE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:04:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44CD1070B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:24:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731512AbfKVLEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:04:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58706 "EHLO mail.kernel.org"
+        id S1728626AbfKVKiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:38:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730859AbfKVLEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:04:04 -0500
+        id S1727297AbfKVKiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:38:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99D692084D;
-        Fri, 22 Nov 2019 11:04:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39F3D20717;
+        Fri, 22 Nov 2019 10:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420644;
-        bh=UrD8YiwKxXaJ/kMLAEuxrBkiQf0urUIp4Z3Wm6yFIqQ=;
+        s=default; t=1574419088;
+        bh=mwos+MVeoqtMRotueUyVTiTBMiid/z7oNgxPt77TpPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mC/pRhoRje24QTG1xbrP/Jr3aOg/rnuHAbrwQDbzMbZ9iJ2y9wGM9HPtfG8ztE3JU
-         6HCjpSERA6D6/dJWXwQBy2D4cR8Co9vDJMcRm7SRsFtbwvlzX3zkbvWIRKbx3c9S3P
-         rBhUWEOr7oQMShRTO0Ifmyg2L+teEn1yMdqkE/Co=
+        b=r+SzjdkiyAWF/VaTCjYs1MFOMA4mCyibQoEupu/g49+Qwz0Sj5620SZxHSSuz2aiI
+         0G1upF5qPBUcvuWVrTr7cUSzVpQ1+P+4mLb1mR8DBWTEfjhikgWYOEYwinWG8FvTop
+         XiaP5U/hZt0g0txiHH629E29k3L/91vU9bXlhQ4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Connor McAdams <conmanx360@gmail.com>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 178/220] ALSA: hda/ca0132 - Fix input effect controls for desktop cards
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 152/159] gpio: syscon: Fix possible NULL ptr usage
 Date:   Fri, 22 Nov 2019 11:29:03 +0100
-Message-Id: <20191122100925.648885708@linuxfoundation.org>
+Message-Id: <20191122100844.892559679@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Connor McAdams <conmanx360@gmail.com>
+From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit 7a2dc84fc480aec4f8f96e152327423014edf668 ]
+[ Upstream commit 70728c29465bc4bfa7a8c14304771eab77e923c7 ]
 
-This patch removes the echo cancellation control for desktop cards, and
-makes use of the special 0x47 SCP command for noise reduction.
+The priv->data->set can be NULL while flags contains GPIO_SYSCON_FEAT_OUT
+and chip->set is valid pointer. This happens in case the controller uses
+the default GPIO setter. Always use chip->set to access the setter to avoid
+possible NULL pointer dereferencing.
 
-Signed-off-by: Connor McAdams <conmanx360@gmail.com>
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_ca0132.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-syscon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index f2cabfdced05c..6a9b89e05daea 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -4521,7 +4521,7 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 			val = 0;
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 7b25fdf648023..f579938552cc5 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -127,7 +127,7 @@ static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
+ 				   BIT(offs % SYSCON_REG_BITS));
+ 	}
  
- 		/* If Voice Focus on SBZ, set to two channel. */
--		if ((nid == VOICE_FOCUS) && (spec->quirk == QUIRK_SBZ)
-+		if ((nid == VOICE_FOCUS) && (spec->use_pci_mmio)
- 				&& (spec->cur_mic_type != REAR_LINE_IN)) {
- 			if (spec->effects_switch[CRYSTAL_VOICE -
- 						 EFFECT_START_NID]) {
-@@ -4540,7 +4540,7 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 		 * For SBZ noise reduction, there's an extra command
- 		 * to module ID 0x47. No clue why.
- 		 */
--		if ((nid == NOISE_REDUCTION) && (spec->quirk == QUIRK_SBZ)
-+		if ((nid == NOISE_REDUCTION) && (spec->use_pci_mmio)
- 				&& (spec->cur_mic_type != REAR_LINE_IN)) {
- 			if (spec->effects_switch[CRYSTAL_VOICE -
- 						 EFFECT_START_NID]) {
-@@ -5856,8 +5856,8 @@ static int ca0132_build_controls(struct hda_codec *codec)
- 	 */
- 	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT;
- 	for (i = 0; i < num_fx; i++) {
--		/* SBZ and R3D break if Echo Cancellation is used. */
--		if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3D) {
-+		/* Desktop cards break if Echo Cancellation is used. */
-+		if (spec->use_pci_mmio) {
- 			if (i == (ECHO_CANCELLATION - IN_EFFECT_START_NID +
- 						OUT_EFFECTS_COUNT))
- 				continue;
+-	priv->data->set(chip, offset, val);
++	chip->set(chip, offset, val);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
