@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02438106C17
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C5A4106CC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbfKVKtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:49:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59210 "EHLO mail.kernel.org"
+        id S1730352AbfKVKyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730045AbfKVKtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:49:40 -0500
+        id S1730143AbfKVKyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:54:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3767A20718;
-        Fri, 22 Nov 2019 10:49:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDC7120706;
+        Fri, 22 Nov 2019 10:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419779;
-        bh=j9Zcp3P2qjbCbgdGS8uBWmnp7vlhR4j9Ra7HKixGESQ=;
+        s=default; t=1574420074;
+        bh=ZhaejBiZlZmk0+HgH9Jh1GY+ficYYpHrDSmFxd6848E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JKhc/FE2KSk/Jj5hn0eUq8CxDcHYbVggL8Jqwzr8uL/Gj0n1xsJ6Hpzje0BF0Zzf/
-         TNtmBEkKPtqozN7M3/dqgXQaQfzCIPK99M+mrRjUFdr8eI4S9Is4x68ajkvpuZVyK1
-         9mf9aaZZPQa5SJo43gJOO5zbCJk/G5fltUSy1OjY=
+        b=uExblJk3KQLfoo0PmsSXpBr0yXvEQLReRNusckYFJbGdHV3sNPXXOJQTyqEBHDV/J
+         AVa6kCIEbijr0HQXqkoXHIDNcnWBlumMkNf0FrN8hXqQvfi3+BE3TW+JZbh/lR7c/E
+         I0E/XRs2hBD5yPyBL1ynki+HimirRlm3LLvy4Op8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Trent Piepho <tpiepho@impinj.com>,
+        =?UTF-8?q?Jan=20Kundr=C3=83=C2=A1t?= <jan.kundrat@cesnet.cz>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 219/222] mac80211: minstrel: fix CCK rate group streams value
+Subject: [PATCH 4.14 106/122] spi: spidev: Fix OF tree warning logic
 Date:   Fri, 22 Nov 2019 11:29:19 +0100
-Message-Id: <20191122100918.403586496@linuxfoundation.org>
+Message-Id: <20191122100832.932331523@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Trent Piepho <tpiepho@impinj.com>
 
-[ Upstream commit 80df9be67c44cb636bbc92caeddad8caf334c53c ]
+[ Upstream commit 605b3bec73cbd74b4ac937b580cd0b47d1300484 ]
 
-Fixes a harmless underflow issue when CCK rates are actively being used
+spidev will make a big fuss if a device tree node binds a device by
+using "spidev" as the node's compatible property.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+However, the logic for this isn't looking for "spidev" in the
+compatible, but rather checking that the device is NOT compatible with
+spidev's list of devices.
+
+This causes a false positive if a device not named "rohm,dh2228fv", etc.
+binds to spidev, even if a means other than putting "spidev" in the
+device tree was used.  E.g., the sysfs driver_override attribute.
+
+Signed-off-by: Trent Piepho <tpiepho@impinj.com>
+Reviewed-by: Jan KundrÃ¡t <jan.kundrat@cesnet.cz>
+Tested-by: Jan KundrÃ¡t <jan.kundrat@cesnet.cz>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rc80211_minstrel_ht.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spidev.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
-index 30fbabf4bcbc1..593184d14b3ef 100644
---- a/net/mac80211/rc80211_minstrel_ht.c
-+++ b/net/mac80211/rc80211_minstrel_ht.c
-@@ -128,7 +128,7 @@
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index cda10719d1d1b..c5fe08bc34a0a 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -724,11 +724,9 @@ static int spidev_probe(struct spi_device *spi)
+ 	 * compatible string, it is a Linux implementation thing
+ 	 * rather than a description of the hardware.
+ 	 */
+-	if (spi->dev.of_node && !of_match_device(spidev_dt_ids, &spi->dev)) {
+-		dev_err(&spi->dev, "buggy DT: spidev listed directly in DT\n");
+-		WARN_ON(spi->dev.of_node &&
+-			!of_match_device(spidev_dt_ids, &spi->dev));
+-	}
++	WARN(spi->dev.of_node &&
++	     of_device_is_compatible(spi->dev.of_node, "spidev"),
++	     "%pOF: buggy DT: spidev listed directly in DT\n", spi->dev.of_node);
  
- #define CCK_GROUP					\
- 	[MINSTREL_CCK_GROUP] = {			\
--		.streams = 0,				\
-+		.streams = 1,				\
- 		.flags = 0,				\
- 		.duration = {				\
- 			CCK_DURATION_LIST(false),	\
+ 	spidev_probe_acpi(spi);
+ 
 -- 
 2.20.1
 
