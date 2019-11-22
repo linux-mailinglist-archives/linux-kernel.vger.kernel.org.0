@@ -2,55 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D35BB1076AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E031076B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:46:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfKVRpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 12:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbfKVRpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:45:05 -0500
-Subject: Re: [git pull] drm fixes for 5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574444704;
-        bh=kQYKiTk7zb6jNlv5eVIlG9ohIWg/3K5a0IpZFhJDlSo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=JhePflTCymCOIzX8FRr+WcY8U4aAGNvdY4a3rsXVAeJGsa5HmPakqpJ127p3SRBpK
-         5xbhZR6SS5MTklbsxazgHL1P/kU3x3r2iEyUPIqvimAuBzpRprjqeGVWCV3XSnUwLH
-         eF1J5OQfPFelplTGl0ratmL3yKvzrlpiCUQhkCrw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9txZ7F80TCRMtgRbkCGcv=gCp9_+YoZLZRBo2N7H09jN=Q@mail.gmail.com>
-References: <CAPM=9txZ7F80TCRMtgRbkCGcv=gCp9_+YoZLZRBo2N7H09jN=Q@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9txZ7F80TCRMtgRbkCGcv=gCp9_+YoZLZRBo2N7H09jN=Q@mail.gmail.com>
-X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
- tags/drm-fixes-2019-11-22
-X-PR-Tracked-Commit-Id: 51658c04c338d7ef98d6c2c19009e4814632db50
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5d867ab037e58da3356b95bd1a7cb8efe3501958
-Message-Id: <157444470451.7762.2473889646692778156.pr-tracker-bot@kernel.org>
-Date:   Fri, 22 Nov 2019 17:45:04 +0000
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        id S1727059AbfKVRqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 12:46:09 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:38210 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbfKVRqI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 12:46:08 -0500
+Received: from localhost (c-73-35-209-67.hsd1.wa.comcast.net [73.35.209.67])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E46A21527DCCB;
+        Fri, 22 Nov 2019 09:46:07 -0800 (PST)
+Date:   Fri, 22 Nov 2019 09:46:07 -0800 (PST)
+Message-Id: <20191122.094607.2168889001623078802.davem@davemloft.net>
+To:     andrea.mayer@uniroma2.it
+Cc:     sergei.shtylyov@cogentembedded.com, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, dav.lebrun@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next, v3 1/1] seg6: allow local packet processing for
+ SRv6 End.DT6 behavior
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191122162242.2574-2-andrea.mayer@uniroma2.it>
+References: <20191122162242.2574-1-andrea.mayer@uniroma2.it>
+        <20191122162242.2574-2-andrea.mayer@uniroma2.it>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 22 Nov 2019 09:46:08 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 22 Nov 2019 10:43:28 +1000:
+From: Andrea Mayer <andrea.mayer@uniroma2.it>
+Date: Fri, 22 Nov 2019 17:22:42 +0100
 
-> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-11-22
+> End.DT6 behavior makes use of seg6_lookup_nexthop() function which drops
+> all packets that are destined to be locally processed. However, DT* should
+> be able to deliver decapsulated packets that are destined to local
+> addresses. Function seg6_lookup_nexthop() is also used by DX6, so in order
+> to maintain compatibility I created another routing helper function which
+> is called seg6_lookup_any_nexthop(). This function is able to take into
+> account both packets that have to be processed locally and the ones that
+> are destined to be forwarded directly to another machine. Hence,
+> seg6_lookup_any_nexthop() is used in DT6 rather than seg6_lookup_nexthop()
+> to allow local delivery.
+> 
+> Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5d867ab037e58da3356b95bd1a7cb8efe3501958
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Applied to net-next
