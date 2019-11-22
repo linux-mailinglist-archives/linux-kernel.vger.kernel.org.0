@@ -2,100 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4D1105EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F70105EBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfKVCsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 21:48:22 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39091 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfKVCsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 21:48:21 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t8so6188709qtc.6;
-        Thu, 21 Nov 2019 18:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kcTUf2TDslgtfE0mrOTBMX2KCORD2HShVFksqMj/7OU=;
-        b=bVN3K5FGwZdk81xHSTnUk8DyzV8+J2Ui1N59igzM9LKSic8pC7zBOZLGg8Fs1KZYJ6
-         c6xGGIz7pSTAxBl+dD5sfhu1Di0ZHAcGh9TuuLTvfBKf5UrPK1RrUfQQOTW5i22yreiq
-         mUrMOiPzoE7fPMQQaLApKVfYyh9FgZNqdly6tXnR1U5vbJzVGWnsu9Ju06ThLp/FjQz4
-         OS5XuDtFyCShNwN4+JvG/0p+d6NZt2mS5OmH3PgsCqxalLDOBa0KuRU8euu3OtXU7Lha
-         PSzr0EG3ZTCWdpVI9yYBJxYPxQ8+NCTYDmbzFXtqO034W+l+GWO9/lVCAGQkpazDDJgH
-         +H0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kcTUf2TDslgtfE0mrOTBMX2KCORD2HShVFksqMj/7OU=;
-        b=fVcOVsv5QNOUblaSoMHKLqLdV4swZ1Hv+tRfdI4zy/1+np1tPkuqQGlWoPVtv1ciU/
-         J7I+WcTk6H9kFgbwRsl6SlFrHT1ZRdeOMHfCSoWtPbqBHj3K42ZjT4V/XaFFD/9FjYG6
-         FOdXRcwsg98gEd1w+gsn2hyqmj2hKtSoGrH+YWQxlbv1zpXkA0/arIUGHaaItT4/jRkj
-         CshEdgkkfLIvmgiSiDQ/HmkyAPPGoYnbk3NLlDHJaLdja70hUkmZzPEtCyV7k8TPR/Dx
-         AFSZVzdcEHTfaekNh4IuwxDLlPpgORF4WET8rUcAVc2Dr/kFQF7lBahkpTLKxKm1n6DH
-         j9Pg==
-X-Gm-Message-State: APjAAAU//tmQdZRSZvjse3fjy5vjw7gT/MTiMP6p3kJ6cua4xPgWT2qt
-        Tc094Wtx7bDAa8+x6YhNDYVEGTCHWB3/5F6/JGs=
-X-Google-Smtp-Source: APXvYqwhsbac3UJkuATVMCvOKUJHDGuFPAH/+wmphHO3f7ImjfzwCk5Np3Jdaiw+7WBV1H/QhvlD13ohb2a635elWM8=
-X-Received: by 2002:ac8:6d31:: with SMTP id r17mr12124199qtu.28.1574390899451;
- Thu, 21 Nov 2019 18:48:19 -0800 (PST)
+        id S1726676AbfKVCyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 21:54:35 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37110 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726335AbfKVCyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 21:54:35 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CC91417F34D28DAFA269;
+        Fri, 22 Nov 2019 10:54:31 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 22 Nov 2019 10:54:21 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <claudiu.manoil@nxp.com>, <davem@davemloft.net>,
+        <vladimir.oltean@nxp.com>, <po.liu@nxp.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH -next] enetc: make enetc_setup_tc_mqprio static
+Date:   Fri, 22 Nov 2019 10:52:40 +0800
+Message-ID: <20191122025240.8226-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190808173028.1930-1-yamada.masahiro@socionext.com>
- <CAEbi=3cZ29rmO55DcZSi8PmELay08HByabPETu_UOgXKZPk0cw@mail.gmail.com> <CAK7LNATw0V8yzh=62QefN+hHvUfaHNW1ZtSmLhtVJHJDqvbXMA@mail.gmail.com>
-In-Reply-To: <CAK7LNATw0V8yzh=62QefN+hHvUfaHNW1ZtSmLhtVJHJDqvbXMA@mail.gmail.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Fri, 22 Nov 2019 10:47:42 +0800
-Message-ID: <CAEbi=3e1WcdD2fkpoyPi6FjWpBD+kFNZtpucmrHtKPj4WvucGA@mail.gmail.com>
-Subject: Re: [PATCH] nds32: remove unneeded clean-files for DTB
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Nickhu <nickhu@andestech.com>, Vincent Chen <deanbo422@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro Yamada <yamada.masahiro@socionext.com> =E6=96=BC 2019=E5=B9=B411=
-=E6=9C=8821=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=886:24=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> On Thu, Nov 21, 2019 at 6:46 PM Greentime Hu <green.hu@gmail.com> wrote:
-> >
-> > Masahiro Yamada <yamada.masahiro@socionext.com> =E6=96=BC 2019=E5=B9=B4=
-8=E6=9C=889=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=881:31=E5=AF=AB=E9=
-=81=93=EF=BC=9A
-> > >
-> > > These patterns are cleaned-up by the top-level Makefile
-> > >
-> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > ---
-> > >
-> > >  arch/nds32/boot/dts/Makefile | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > >
-> > > diff --git a/arch/nds32/boot/dts/Makefile b/arch/nds32/boot/dts/Makef=
-ile
-> > > index fff8ade7a84f..f84bd529b6fd 100644
-> > > --- a/arch/nds32/boot/dts/Makefile
-> > > +++ b/arch/nds32/boot/dts/Makefile
-> > > @@ -5,5 +5,3 @@ else
-> > >  BUILTIN_DTB :=3D
-> > >  endif
-> > >  obj-$(CONFIG_OF) +=3D $(BUILTIN_DTB)
-> > > -
-> > > -clean-files :=3D *.dtb *.dtb.S
-> >
-> > Thanks, Masahiro.
-> > Acked-by: Greentime Hu <green.hu@gmail.com>
->
->
-> Would you apply this to the nds32 tree?
+While using ARCH=mips CROSS_COMPILE=mips-linux-gnu- command to compile,
+make C=2 drivers/net/ethernet/freescale/enetc/enetc.o
 
-Yes, it will be queued in the nds32 next branch.
+one warning can be found:
+drivers/net/ethernet/freescale/enetc/enetc.c:1439:5:
+warning: symbol 'enetc_setup_tc_mqprio' was not declared.
+Should it be static?
+
+This patch make symbol enetc_setup_tc_mqprio static.
+Fixes: 34c6adf1977b ("enetc: Configure the Time-Aware Scheduler via tc-taprio offload")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index f6b00c6..27f6fd1 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -1436,7 +1436,7 @@ int enetc_close(struct net_device *ndev)
+ 	return 0;
+ }
+ 
+-int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
++static int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+ 	struct tc_mqprio_qopt *mqprio = type_data;
+-- 
+2.7.4
+
