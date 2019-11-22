@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3450010705D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A946107132
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbfKVKnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48902 "EHLO mail.kernel.org"
+        id S1727873AbfKVKdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:33:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728160AbfKVKnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:18 -0500
+        id S1727833AbfKVKc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:32:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DA4320637;
-        Fri, 22 Nov 2019 10:43:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8605520708;
+        Fri, 22 Nov 2019 10:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419397;
-        bh=DRVLIb+S6bls2U4zyuL8VSpcvNgjGL1bKo8eVmAIHsg=;
+        s=default; t=1574418777;
+        bh=ON1L6FHRZCSgyfc+YX7cNsYgDakQmYbouwjMn0KnQBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CmK46BqW1d8KrMaermz356UF5zYKZoas1FXheaQivB/uy0GDePTcN+rEXEKVla+SE
-         9xph8MySxS8fMQTrTmmlU3ZHXGwAh9Nvu3femKh7RU/BVm4drDTUE6E5ZZO7uzCvJB
-         71DKPFL4kXV26MU/LGxRolBaXsmvb9IpjZRK4iic=
+        b=m/I7/hHmjJsxkt2YOfX6lOV3sCmVw/jQBWht/McL6ZRZ/cxZX+ZHvRc2icjaV42iT
+         GTz7azdJG1I/dqSTHdAjfc6yIuoOvuerVXIlfoohDcwd5abxQhxxChuVK0WxFW8etp
+         8LLXvSyVXdTja1bC7B4BkS1gD9cvYxZ3YhfH9qvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 098/222] f2fs: fix to recover inodes uid/gid during POR
-Date:   Fri, 22 Nov 2019 11:27:18 +0100
-Message-Id: <20191122100910.506214983@linuxfoundation.org>
+Subject: [PATCH 4.4 048/159] llc: avoid blocking in llc_sap_close()
+Date:   Fri, 22 Nov 2019 11:27:19 +0100
+Message-Id: <20191122100740.546114454@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit dc4cd1257c86451cec3e8e352cc376348e4f4af4 ]
+[ Upstream commit 9708d2b5b7c648e8e0a40d11e8cea12f6277f33c ]
 
-Step to reproduce this bug:
-1. logon as root
-2. mount -t f2fs /dev/sdd /mnt;
-3. touch /mnt/file;
-4. chown system /mnt/file; chgrp system /mnt/file;
-5. xfs_io -f /mnt/file -c "fsync";
-6. godown /mnt;
-7. umount /mnt;
-8. mount -t f2fs /dev/sdd /mnt;
+llc_sap_close() is called by llc_sap_put() which
+could be called in BH context in llc_rcv(). We can't
+block in BH.
 
-After step 8) we will expect file's uid/gid are all system, but during
-recovery, these two fields were not been recovered, fix it.
+There is no reason to block it here, kfree_rcu() should
+be sufficient.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/net/llc.h  | 1 +
+ net/llc/llc_core.c | 4 +---
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 9de1480a86bd3..e87b7d7e80fc7 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -179,6 +179,8 @@ static void recover_inode(struct inode *inode, struct page *page)
- 	char *name;
+diff --git a/include/net/llc.h b/include/net/llc.h
+index 82d989995d18a..95e5ced4c1339 100644
+--- a/include/net/llc.h
++++ b/include/net/llc.h
+@@ -66,6 +66,7 @@ struct llc_sap {
+ 	int sk_count;
+ 	struct hlist_nulls_head sk_laddr_hash[LLC_SK_LADDR_HASH_ENTRIES];
+ 	struct hlist_head sk_dev_hash[LLC_SK_DEV_HASH_ENTRIES];
++	struct rcu_head rcu;
+ };
  
- 	inode->i_mode = le16_to_cpu(raw->i_mode);
-+	i_uid_write(inode, le32_to_cpu(raw->i_uid));
-+	i_gid_write(inode, le32_to_cpu(raw->i_gid));
- 	f2fs_i_size_write(inode, le64_to_cpu(raw->i_size));
- 	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
- 	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
+ static inline
+diff --git a/net/llc/llc_core.c b/net/llc/llc_core.c
+index e896a2c53b120..f1e442a39db8d 100644
+--- a/net/llc/llc_core.c
++++ b/net/llc/llc_core.c
+@@ -127,9 +127,7 @@ void llc_sap_close(struct llc_sap *sap)
+ 	list_del_rcu(&sap->node);
+ 	spin_unlock_bh(&llc_sap_list_lock);
+ 
+-	synchronize_rcu();
+-
+-	kfree(sap);
++	kfree_rcu(sap, rcu);
+ }
+ 
+ static struct packet_type llc_packet_type __read_mostly = {
 -- 
 2.20.1
 
