@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07272106D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C8E5106B3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfKVK6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48104 "EHLO mail.kernel.org"
+        id S1729136AbfKVKmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:42:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730781AbfKVK6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:58:18 -0500
+        id S1729125AbfKVKme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:42:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 410DB20706;
-        Fri, 22 Nov 2019 10:58:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 546FA20707;
+        Fri, 22 Nov 2019 10:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420297;
-        bh=kL0HXZps80TZHqhI8/x93MmrZiMXxsREYGLIJetJgV0=;
+        s=default; t=1574419353;
+        bh=iwRWbDProyYvqoWQb+Dd2CWpBQbyunJ8/Hs4YVIOTCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZ/xXgR9U5QRayUjLD35T4Ofv4zKbOgK+GrvDvCnYyxH1zalAypIucd7oi8/z58tj
-         X56/mTScI+p4+k3o2DjwRWj/V8C1l5tVOip/agIA5KCNoYHPm7r7x0v4EzbpawrSRU
-         O3+r3uauBazs+SUDLcjRdFgkqsMoGSMma4YWuHzo=
+        b=IbGtaP7e4lDvHqpdQhsjPf7b4HyrQpwhMQsaz91KwncDzx+kJz8+guOelIiwgKDWK
+         cn8/+daFYD10F6dZLD4TpoF8UDAHa8t/+4izN+9ZJYQ2MEz+ss7mAJYT1NIR5kt9Qn
+         BnUOaGwvSek88NhIXQbNUTCD32O4bHEJb3GM7tHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 058/220] dmaengine: timb_dma: Use proper enum in td_prep_slave_sg
-Date:   Fri, 22 Nov 2019 11:27:03 +0100
-Message-Id: <20191122100916.293549628@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 084/222] powerpc/64s/hash: Fix stab_rr off by one initialization
+Date:   Fri, 22 Nov 2019 11:27:04 +0100
+Message-Id: <20191122100909.586252449@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 5e621f5d538985f010035c6f3e28c22829d36db1 ]
+[ Upstream commit 09b4438db13fa83b6219aee5993711a2aa2a0c64 ]
 
-Clang warns when implicitly converting from one enumerated type to
-another. Avoid this by using the equivalent value from the expected
-type.
+This causes SLB alloation to start 1 beyond the start of the SLB.
+There is no real problem because after it wraps it stats behaving
+properly, it's just surprisig to see when looking at SLB traces.
 
-drivers/dma/timb_dma.c:548:27: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-                td_desc->desc_list_len, DMA_MEM_TO_DEV);
-                                        ^~~~~~~~~~~~~~
-1 warning generated.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/timb_dma.c | 2 +-
+ arch/powerpc/mm/slb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index 395c698edb4d7..fc0f9c8766a87 100644
---- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -545,7 +545,7 @@ static struct dma_async_tx_descriptor *td_prep_slave_sg(struct dma_chan *chan,
+diff --git a/arch/powerpc/mm/slb.c b/arch/powerpc/mm/slb.c
+index 64c9a91773af4..96c41b55b106b 100644
+--- a/arch/powerpc/mm/slb.c
++++ b/arch/powerpc/mm/slb.c
+@@ -321,7 +321,7 @@ void slb_initialize(void)
+ #endif
  	}
  
- 	dma_sync_single_for_device(chan2dmadev(chan), td_desc->txd.phys,
--		td_desc->desc_list_len, DMA_MEM_TO_DEV);
-+		td_desc->desc_list_len, DMA_TO_DEVICE);
+-	get_paca()->stab_rr = SLB_NUM_BOLTED;
++	get_paca()->stab_rr = SLB_NUM_BOLTED - 1;
  
- 	return &td_desc->txd;
- }
+ 	lflags = SLB_VSID_KERNEL | linear_llp;
+ 	vflags = SLB_VSID_KERNEL | vmalloc_llp;
 -- 
 2.20.1
 
