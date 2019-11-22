@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9851B106B76
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B63106A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbfKVKog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:44:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
+        id S1727372AbfKVKbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:31:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfKVKob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:44:31 -0500
+        id S1727316AbfKVKb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:31:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1E5220715;
-        Fri, 22 Nov 2019 10:44:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A807220731;
+        Fri, 22 Nov 2019 10:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419471;
-        bh=DpxXol/N+y1B3DaIv9bxMgSgTTtMjnNY+SmzKS17Jhs=;
+        s=default; t=1574418689;
+        bh=yb2jTU2J1Pcb1tIvnOIHJBWKHeSbxjsNa/OwZZEyHl0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bSTvMgr3VxSwzPHqTy+k/MH5c3OEfzjPkyUqiXb3LucSpJ+ZVBV8sSMOtVbE0aO6a
-         fyM8MNiO8LvMs1QOQ3sKUhnK1ZtSqqCjh/blBVV95j6qAUNDEnxM2+jEG24hWGrUSK
-         PPjcUDnd9mSfb9px9F9nSwGJQBHJJimqMwto27p0=
+        b=oo6qjxn58J23CCOWvWeEIfkalwtj2WO/jEjoi7H1f6V+i6A5/8bI+WDGd1jL7e3Dv
+         HRMvpTmFS9rk9K8plTaxamjydVr0ABykvTvqIodTfV5v9UFPOsQUZcxb1nDE9UOVEy
+         BjgPb51I453K8L+kDJ68FmWgye35pFRnfF76fO1Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 069/222] ARM: dts: socfpga: Fix I2C bus unit-address error
-Date:   Fri, 22 Nov 2019 11:26:49 +0100
-Message-Id: <20191122100905.349899034@linuxfoundation.org>
+Subject: [PATCH 4.4 019/159] ARM: dts: exynos: Fix sound in Snow-rev5 Chromebook
+Date:   Fri, 22 Nov 2019 11:26:50 +0100
+Message-Id: <20191122100720.731102034@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit cbbc488ed85061a765cf370c3e41f383c1e0add6 ]
+[ Upstream commit 64858773d78e820003a94e5a7179d368213655d6 ]
 
-dtc has new checks for I2C buses. Fix the warnings in unit-addresses.
+This patch adds missing properties to the CODEC and sound nodes, so the
+audio will work also on Snow rev5 Chromebook. This patch is an extension
+to the commit e9eefc3f8ce0 ("ARM: dts: exynos: Add missing clock and
+DAI properties to the max98095 node in Snow Chromebook")
+and commit 6ab569936d60 ("ARM: dts: exynos: Enable HDMI audio on Snow
+Chromebook").  It has been reported that such changes work fine on the
+rev5 board too.
 
-arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dtb: Warning (i2c_bus_reg): /soc/i2c@ffc04000/adxl345@0: I2C bus unit address format error, expected "53"
-
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+[krzk: Fixed typo in phandle to &max98090]
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-index afea3645ada43..89d55894d9162 100644
---- a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-+++ b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-@@ -88,7 +88,7 @@
- 	status = "okay";
- 	speed-mode = <0>;
+diff --git a/arch/arm/boot/dts/exynos5250-snow-rev5.dts b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
+index f811dc8006605..0d46f754070e4 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-rev5.dts
++++ b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
+@@ -23,6 +23,14 @@
  
--	adxl345: adxl345@0 {
-+	adxl345: adxl345@53 {
- 		compatible = "adi,adxl345";
- 		reg = <0x53>;
+ 		samsung,model = "Snow-I2S-MAX98090";
+ 		samsung,audio-codec = <&max98090>;
++
++		cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		codec {
++			sound-dai = <&max98090 0>, <&hdmi>;
++		};
+ 	};
+ };
+ 
+@@ -34,6 +42,9 @@
+ 		interrupt-parent = <&gpx0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98090_irq>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "mclk";
++		#sound-dai-cells = <1>;
+ 	};
+ };
  
 -- 
 2.20.1
