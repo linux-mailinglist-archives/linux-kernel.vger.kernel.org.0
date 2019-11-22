@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5019B106DC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:03:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E664106F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:15:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731373AbfKVLC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:02:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56718 "EHLO mail.kernel.org"
+        id S1728872AbfKVKwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:52:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731023AbfKVLCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:02:53 -0500
+        id S1728666AbfKVKwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:52:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD458207FA;
-        Fri, 22 Nov 2019 11:02:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBD8B20637;
+        Fri, 22 Nov 2019 10:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420572;
-        bh=eHQG1+45UnU0f2+tIK6SyHL4QPGWNo5WyA4FhoQxtTo=;
+        s=default; t=1574419950;
+        bh=MX3Ehabkq3f2CSRb7ik1HoCIDf2ozhTD6e8JcQDK1Ps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3nKADSxQVzPkG2n+ptOA1HEdul8Rm0arjl2MJ5KJ3cDynQjB7n2gQJYmPbJ/a4Uo
-         bekQybriS15IlWUKhjal1j86v0Y6ViElMte6W+6j2ot48fiI3Vq0ZQSdIAk80A/opc
-         GHEyxEfQGkNNisgPEHdvepL2Od1lSzDEAaYm3q34=
+        b=uKydgzYCyHmV4nZ+meQzAaGb+/7PEhqOBdOGzEq1CDWQltREAS2xKyICuPutTtthl
+         CFDj+L3DtYpQAXScu2LhQAiYLKmxw/hjbE9mOXI4PnljsI7M8xMEABnCT3N/xDjf9S
+         sKaQqkNWubj7e7MozjEA/UGTT5NfIick+55kEHGY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 151/220] atmel_lcdfb: support native-mode display-timings
+Subject: [PATCH 4.14 063/122] USB: serial: cypress_m8: fix interrupt-out transfer length
 Date:   Fri, 22 Nov 2019 11:28:36 +0100
-Message-Id: <20191122100923.595617511@linuxfoundation.org>
+Message-Id: <20191122100806.299996276@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,114 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sam Ravnborg <sam@ravnborg.org>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 60e5e48dba72c6b59a7a9c7686ba320766913368 ]
+[ Upstream commit 56445eef55cb5904096fed7a73cf87b755dfffc7 ]
 
-When a device tree set a display-timing using native-mode
-then according to the bindings doc this should:
+Fix interrupt-out transfer length which was being set to the
+transfer-buffer length rather than the size of the outgoing packet.
 
-    native-mode:
-    The native mode for the display, in case multiple
-    modes are provided.
-    When omitted, assume the first node is the native.
+Note that no slab data was leaked as the whole transfer buffer is always
+cleared before each transfer.
 
-The atmel_lcdfb used the last timing subnode and did not
-respect the timing mode specified with native-mode.
-
-Introduce use of of_get_videomode() which allowed
-a nice simplification of the code while also
-added support for native-mode.
-
-As a nice side-effect this fixes a memory leak where the
-data used for timings and the display_np was not freed.
-
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 9aa8dae7b1fa ("cypress_m8: use usb_fill_int_urb where appropriate")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/atmel_lcdfb.c | 43 +++++++------------------------
- 1 file changed, 9 insertions(+), 34 deletions(-)
+ drivers/usb/serial/cypress_m8.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
-index 076d24afbd728..4ed55e6bbb840 100644
---- a/drivers/video/fbdev/atmel_lcdfb.c
-+++ b/drivers/video/fbdev/atmel_lcdfb.c
-@@ -22,6 +22,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <video/of_videomode.h>
- #include <video/of_display_timing.h>
- #include <linux/regulator/consumer.h>
- #include <video/videomode.h>
-@@ -1028,11 +1029,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 	struct device *dev = &sinfo->pdev->dev;
- 	struct device_node *np =dev->of_node;
- 	struct device_node *display_np;
--	struct device_node *timings_np;
--	struct display_timings *timings;
- 	struct atmel_lcdfb_power_ctrl_gpio *og;
- 	bool is_gpio_power = false;
-+	struct fb_videomode fb_vm;
- 	struct gpio_desc *gpiod;
-+	struct videomode vm;
- 	int ret = -ENOENT;
- 	int i;
+diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
+index 90110de715e01..d0aa4c853f56a 100644
+--- a/drivers/usb/serial/cypress_m8.c
++++ b/drivers/usb/serial/cypress_m8.c
+@@ -773,7 +773,7 @@ static void cypress_send(struct usb_serial_port *port)
  
-@@ -1105,44 +1106,18 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 	pdata->lcdcon_is_backlight = of_property_read_bool(display_np, "atmel,lcdcon-backlight");
- 	pdata->lcdcon_pol_negative = of_property_read_bool(display_np, "atmel,lcdcon-backlight-inverted");
- 
--	timings = of_get_display_timings(display_np);
--	if (!timings) {
--		dev_err(dev, "failed to get display timings\n");
--		ret = -EINVAL;
-+	ret = of_get_videomode(display_np, &vm, OF_USE_NATIVE_MODE);
-+	if (ret) {
-+		dev_err(dev, "failed to get videomode from DT\n");
- 		goto put_display_node;
- 	}
- 
--	timings_np = of_get_child_by_name(display_np, "display-timings");
--	if (!timings_np) {
--		dev_err(dev, "failed to find display-timings node\n");
--		ret = -ENODEV;
-+	ret = fb_videomode_from_videomode(&vm, &fb_vm);
-+	if (ret < 0)
- 		goto put_display_node;
--	}
- 
--	for (i = 0; i < of_get_child_count(timings_np); i++) {
--		struct videomode vm;
--		struct fb_videomode fb_vm;
--
--		ret = videomode_from_timings(timings, &vm, i);
--		if (ret < 0)
--			goto put_timings_node;
--		ret = fb_videomode_from_videomode(&vm, &fb_vm);
--		if (ret < 0)
--			goto put_timings_node;
--
--		fb_add_videomode(&fb_vm, &info->modelist);
--	}
--
--	/*
--	 * FIXME: Make sure we are not referencing any fields in display_np
--	 * and timings_np and drop our references to them before returning to
--	 * avoid leaking the nodes on probe deferral and driver unbind.
--	 */
--
--	return 0;
-+	fb_add_videomode(&fb_vm, &info->modelist);
- 
--put_timings_node:
--	of_node_put(timings_np);
- put_display_node:
- 	of_node_put(display_np);
- 	return ret;
+ 	usb_fill_int_urb(port->interrupt_out_urb, port->serial->dev,
+ 		usb_sndintpipe(port->serial->dev, port->interrupt_out_endpointAddress),
+-		port->interrupt_out_buffer, port->interrupt_out_size,
++		port->interrupt_out_buffer, actual_size,
+ 		cypress_write_int_callback, port, priv->write_urb_interval);
+ 	result = usb_submit_urb(port->interrupt_out_urb, GFP_ATOMIC);
+ 	if (result) {
 -- 
 2.20.1
 
