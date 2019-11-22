@@ -2,130 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40131105F1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 04:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 846D4105F1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 04:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfKVDzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 22:55:12 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:34277 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfKVDzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 22:55:12 -0500
-Received: by mail-qk1-f196.google.com with SMTP id b188so5164498qkg.1;
-        Thu, 21 Nov 2019 19:55:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qJgHMdwa86FwHH2BnJx9o+uMlPWtDWtUBpBKhEzQlcY=;
-        b=Sxmjshlz5yQTTOAu4nNlUJS9ai2wiwJeX0ygWPGzFMWcijwQNby78HeDWMV3GcWFGr
-         dKFhOWQ+5YutSHLh/72G2qH+4/W/9tSp4AA31Y17O1jJPG6dwxRTnkOdA6du+xVZ+quh
-         EoZTOmtQLwoPJaAEegsbqDbIgy0UZpXXwViXBAgv7b3Xe9y06o8mZPHcEABc4PUQqYup
-         9OqZ8KgEUA3NgMcEitln6PK2S1p99eQMyVYhWJCxOIuUEoSSP2jamezxHyVeU5pMMa2r
-         oJn7oOSLBcxArtpGepvPTBLbKlJz2OGAk5n3usrTUVmWwKNXBS2W5JxY0x+ZE9sw+ZF8
-         gHXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qJgHMdwa86FwHH2BnJx9o+uMlPWtDWtUBpBKhEzQlcY=;
-        b=eCR0sQa5xuzv6+vWCDekk/WU2IEVw6xohO/za4VOHIixxIIWlzxeQ+qNmYHD1Kq2Oc
-         rqFaIY14cUDaVnPmug9vBeLZrhl+wq0tGUAlIMuJW8wweOgAvNriudzdd5TLV1rmHDWM
-         30/2u93qbOdJTBvCRa0Zpmk3/h+LD0vWH0JI84UWEhpq6kbKyeHR51hAUGzfdO1wN0IV
-         1UTIZizN5cwPLAkysF9QZqUYmOA1rd5q4+XTznR+wQKcfI8Dpcyvrj3BShW2EtO7G1kq
-         p1qR1NeRKT81I143eqTcJ74bIpxMc6pJXbVCBMLERUoG6X7J/GT6wiuw2pmHGsOaUtrE
-         stKQ==
-X-Gm-Message-State: APjAAAULqbr4zJmcbcWuxiJXgFXohuI+UMM9hdPnKHAK/u/++yAHKAss
-        ptW1fF3csXeDn4n2slfgS3Y=
-X-Google-Smtp-Source: APXvYqyUtQvoeHjTF0Q5RJf3zqSSH2BrJdKM5Vc34ZQusjqABGdyO8t9oxG78TRsAwjdEakEXLs4mw==
-X-Received: by 2002:a37:4884:: with SMTP id v126mr11657411qka.45.1574394910917;
-        Thu, 21 Nov 2019 19:55:10 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id p54sm2873833qta.39.2019.11.21.19.55.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 19:55:10 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     linus.walleij@linaro.org, corbet@lwn.net, bgolaszewski@baylibre.com
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] Documentation: gpio: driver.rst: Fix warnings
-Date:   Fri, 22 Nov 2019 00:47:02 -0300
-Message-Id: <20191122034702.58563-1-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726554AbfKVDuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 22:50:22 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:55199 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbfKVDuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 22:50:22 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47K2WZ5L4tz9sPc;
+        Fri, 22 Nov 2019 14:50:18 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574394619;
+        bh=2AW5dIptEKr3oKfVoVT5nQiD8l09V84ep4w+jwikWYQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TRYqz3wuZwmtaGtcxdT0c+5/QSoirHs6NpZxi2FvM3meNyI7+KxKtxiltR6HHjskt
+         m0oRg0Gj3ahTY3kZCx6r7b9lzXBNp4QN1CucMSxk3hCzQZC5EXHUJITeuSaGWCj7j7
+         qKQfgv0k9ygqEkq5KHzkrABZzpBhQ8z9uIel828UqdiSgWNpylATwNQ9syV/qNTGnM
+         wSAHc8xJGJkFlzduCjn9kfLSoSPFi+pZoCT0lsYDbSWJPn7l9L0nQo//rhq1CfdMhO
+         VeBHZA4zBa0HFx6pzKt8VxLftrLkYhGAsoSf0SCMhOyCDXaHWg1HV28LKma8rzpmdV
+         JHmi1yNijc2wA==
+Date:   Fri, 22 Nov 2019 14:50:18 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robherring2@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>
+Subject: linux-next: manual merge of the rpmsg tree with the devicetree tree
+Message-ID: <20191122145018.5f8a3187@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/8SzoS3lxrnRaCQRI=qQTa5l";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+--Sig_/8SzoS3lxrnRaCQRI=qQTa5l
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fix warnings due to incorrect rst markup. Also improved the presentation
-a little without changing the underlying content.
+Hi all,
 
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
----
- Documentation/driver-api/gpio/driver.rst | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+Today's linux-next merge of the rpmsg tree got a conflict in:
 
-diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
-index 3fdb32422f8a..c58f54783237 100644
---- a/Documentation/driver-api/gpio/driver.rst
-+++ b/Documentation/driver-api/gpio/driver.rst
-@@ -5,7 +5,7 @@ GPIO Driver Interface
- This document serves as a guide for writers of GPIO chip drivers.
- 
- Each GPIO controller driver needs to include the following header, which defines
--the structures used to define a GPIO driver:
-+the structures used to define a GPIO driver::
- 
- 	#include <linux/gpio/driver.h>
- 
-@@ -398,12 +398,15 @@ provided. A big portion of overhead code will be managed by gpiolib,
- under the assumption that your interrupts are 1-to-1-mapped to the
- GPIO line index:
- 
--  GPIO line offset   Hardware IRQ
--  0                  0
--  1                  1
--  2                  2
--  ...                ...
--  ngpio-1            ngpio-1
-+.. csv-table::
-+    :header: GPIO line offset, Hardware IRQ
-+
-+    0,0
-+    1,1
-+    2,2
-+    ...,...
-+    ngpio-1, ngpio-1
-+
- 
- If some GPIO lines do not have corresponding IRQs, the bitmask valid_mask
- and the flag need_valid_mask in gpio_irq_chip can be used to mask off some
-@@ -413,7 +416,7 @@ The preferred way to set up the helpers is to fill in the
- struct gpio_irq_chip inside struct gpio_chip before adding the gpio_chip.
- If you do this, the additional irq_chip will be set up by gpiolib at the
- same time as setting up the rest of the GPIO functionality. The following
--is a typical example of a cascaded interrupt handler using gpio_irq_chip:
-+is a typical example of a cascaded interrupt handler using gpio_irq_chip::
- 
-   /* Typical state container with dynamic irqchip */
-   struct my_gpio {
-@@ -448,7 +451,7 @@ is a typical example of a cascaded interrupt handler using gpio_irq_chip:
-   return devm_gpiochip_add_data(dev, &g->gc, g);
- 
- The helper support using hierarchical interrupt controllers as well.
--In this case the typical set-up will look like this:
-+In this case the typical set-up will look like this::
- 
-   /* Typical state container with dynamic irqchip */
-   struct my_gpio {
--- 
-2.24.0
+  Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
 
+between commit:
+
+  34376eb1b084 ("dt-bindings: remoteproc: convert stm32-rproc to json-schem=
+a")
+
+from the devicetree tree and commit:
+
+  14ea1d04ed0f ("dt-bindings: remoteproc: stm32: add wakeup-source")
+
+from the rpmsg tree.
+
+I fixed it up (I just deleted the file - more updates may be required)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8SzoS3lxrnRaCQRI=qQTa5l
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3XWvoACgkQAVBC80lX
+0GxYfAf/aJc5dhpYKSGf6lUXgArU9SBbp2CaxntSD93aunBwyflePrqjE4o4n1Oz
+d6Ymu7vFEycv4BQbAjihSi9TxZqPf0KKXM18IXed/xzoxctt98PZxvL6M/apertL
+uDFq87WbqcJqPe3cPh++Z1EeJ/tadA8Qnv7r0uvTRksbJpe4ub0C1fuEs1Hnhzr5
+dmWLuD9vbU1806t02Icsy3W4eX/ElfsbIKNCc7ajqrTvZ4Vd8SRS77VsflCeWnYu
+KXxebiKrqpo0yBoP4Q5pJenKEt87OCVfAr1OdfhgI0XQuNatHdG/0TFu4XPFV8cG
+qP+/qdymnWSIRMO0Msr2mVNV17Pkzg==
+=NLH0
+-----END PGP SIGNATURE-----
+
+--Sig_/8SzoS3lxrnRaCQRI=qQTa5l--
