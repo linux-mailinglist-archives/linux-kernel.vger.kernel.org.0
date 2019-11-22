@@ -2,66 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0199B107621
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE49107623
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:02:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfKVRCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 12:02:03 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41326 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbfKVRCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:02:02 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 103F26D9;
-        Fri, 22 Nov 2019 17:02:02 +0000 (UTC)
-Date:   Fri, 22 Nov 2019 10:02:01 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Cc:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] Documentation: security: core.rst: fix warnings
-Message-ID: <20191122100201.30b1e71f@lwn.net>
-In-Reply-To: <20191122041806.68650-1-dwlsalmeida@gmail.com>
-References: <20191122041806.68650-1-dwlsalmeida@gmail.com>
-Organization: LWN.net
+        id S1727534AbfKVRCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 12:02:06 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:47150 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfKVRCG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 12:02:06 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iYCJm-0000wX-Rm; Fri, 22 Nov 2019 17:02:02 +0000
+Date:   Fri, 22 Nov 2019 17:02:02 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        linkinjeon@gmail.com, Markus.Elfring@web.de,
+        sj1557.seo@samsung.com, dwagner@suse.de
+Subject: Re: [PATCH v3 03/13] exfat: add inode operations
+Message-ID: <20191122170202.GE26530@ZenIV.linux.org.uk>
+References: <20191119093718.3501-1-namjae.jeon@samsung.com>
+ <CGME20191119094021epcas1p16e9ebb9fd8a1b25c64b09899a31988b9@epcas1p1.samsung.com>
+ <20191119093718.3501-4-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191119093718.3501-4-namjae.jeon@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 01:18:06 -0300
-"Daniel W. S. Almeida" <dwlsalmeida@gmail.com> wrote:
+On Tue, Nov 19, 2019 at 04:37:08AM -0500, Namjae Jeon wrote:
+> This adds the implementation of inode operations for exfat.
 
-> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-> 
-> Fix warnings due to missing markup, no change in content otherwise.
-> 
-> Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
-> ---
->  Documentation/security/keys/core.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-> index d6d8b0b756b6..d9b0b859018b 100644
-> --- a/Documentation/security/keys/core.rst
-> +++ b/Documentation/security/keys/core.rst
-> @@ -1102,7 +1102,7 @@ payload contents" for more information.
->      See also Documentation/security/keys/request-key.rst.
->  
->  
-> - *  To search for a key in a specific domain, call:
-> + *  To search for a key in a specific domain, call::
->  
->  	struct key *request_key_tag(const struct key_type *type,
->  				    const char *description,
-
-Applied, thanks.
-
-jon
+Could you explain where is ->d_time ever read?
