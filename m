@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD40107157
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:28:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DCFF106F1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfKVKbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51284 "EHLO mail.kernel.org"
+        id S1730996AbfKVLMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:12:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbfKVKbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:17 -0500
+        id S1730669AbfKVK50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA3AB20714;
-        Fri, 22 Nov 2019 10:31:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 983D720718;
+        Fri, 22 Nov 2019 10:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418677;
-        bh=ib4vu3ssWv+BcS446FDJwbNCxuG0zk6e/VuXGHHpq9s=;
+        s=default; t=1574420245;
+        bh=/h7+WxnT0pQCjhRylNYlpEwLKKiUKIyEzlcqA3+++JY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=muei4eGIJeupfwF/RUubW7HqryKomCoDkUSO8IhFfiZdYYwjGyvWMm8eA5GtqarQT
-         d5RCFcjVeUidhM6zOIx9kt+mCJ/DpZGVra0UttmPcRmbmb4nRhIlchVCOYPnyzN+yn
-         sQKt+ambYHo+X5C729Nugku/b1w+tf6JqwI7Dd18=
+        b=LhRUYdDSZBn8crz0plgGpLz+QxjE/ScBveS9QtrY91N37sSWZlou/v9zU5HE3YymQ
+         24bJRgOSvdd68EvFfnCph5sIzuLKWBSat5RbmOiJZERMnuJZKaVlNPXArhCxalm5pL
+         gV/5Bm7Yb+QfMgfwgS7n2WJySukdaxRDloCnIoc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 015/159] ALSA: seq: Do error checks at creating system ports
-Date:   Fri, 22 Nov 2019 11:26:46 +0100
-Message-Id: <20191122100719.708083696@linuxfoundation.org>
+Subject: [PATCH 4.19 042/220] PM / devfreq: Fix handling of min/max_freq == 0
+Date:   Fri, 22 Nov 2019 11:26:47 +0100
+Message-Id: <20191122100915.310523363@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,70 +46,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit b8e131542b47b81236ecf6768c923128e1f5db6e ]
+[ Upstream commit df5cf4a36178c5d4f2b8b9469cb2f722e64cd102 ]
 
-snd_seq_system_client_init() doesn't check the errors returned from
-its port creations.  Let's do it properly and handle the error paths.
+Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding the
+devfreq device") initializes df->min/max_freq with the min/max OPP when
+the device is added. Later commit f1d981eaecf8 ("PM / devfreq: Use the
+available min/max frequency") adds df->scaling_min/max_freq and the
+following to the frequency adjustment code:
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+  max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+
+With the current handling of min/max_freq this is incorrect:
+
+Even though df->max_freq is now initialized to a value != 0 user space
+can still set it to 0, in this case max_freq would be 0 instead of
+df->scaling_max_freq as intended. In consequence the frequency adjustment
+is not performed:
+
+  if (max_freq && freq > max_freq) {
+	freq = max_freq;
+
+To fix this set df->min/max freq to the min/max OPP in max/max_freq_store,
+when the user passes a value of 0. This also prevents df->max_freq from
+being set below the min OPP when df->min_freq is 0, and similar for
+min_freq. Since it is now guaranteed that df->min/max_freq can't be 0 the
+checks for this case can be removed.
+
+Fixes: f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/seq/seq_system.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/devfreq/devfreq.c | 42 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
-diff --git a/sound/core/seq/seq_system.c b/sound/core/seq/seq_system.c
-index 8ce1d0b40dce1..ce1f1e4727ab1 100644
---- a/sound/core/seq/seq_system.c
-+++ b/sound/core/seq/seq_system.c
-@@ -123,6 +123,7 @@ int __init snd_seq_system_client_init(void)
- {
- 	struct snd_seq_port_callback pcallbacks;
- 	struct snd_seq_port_info *port;
-+	int err;
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 62ead442a8721..8e21bedc74c38 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -327,11 +327,11 @@ int update_devfreq(struct devfreq *devfreq)
+ 	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+ 	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
  
- 	port = kzalloc(sizeof(*port), GFP_KERNEL);
- 	if (!port)
-@@ -144,7 +145,10 @@ int __init snd_seq_system_client_init(void)
- 	port->flags = SNDRV_SEQ_PORT_FLG_GIVEN_PORT;
- 	port->addr.client = sysclient;
- 	port->addr.port = SNDRV_SEQ_PORT_SYSTEM_TIMER;
--	snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT, port);
-+	err = snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT,
-+					port);
-+	if (err < 0)
-+		goto error_port;
+-	if (min_freq && freq < min_freq) {
++	if (freq < min_freq) {
+ 		freq = min_freq;
+ 		flags &= ~DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use GLB */
+ 	}
+-	if (max_freq && freq > max_freq) {
++	if (freq > max_freq) {
+ 		freq = max_freq;
+ 		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
+ 	}
+@@ -1171,17 +1171,26 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
+ 	struct devfreq *df = to_devfreq(dev);
+ 	unsigned long value;
+ 	int ret;
+-	unsigned long max;
  
- 	/* register announcement port */
- 	strcpy(port->name, "Announce");
-@@ -154,16 +158,24 @@ int __init snd_seq_system_client_init(void)
- 	port->flags = SNDRV_SEQ_PORT_FLG_GIVEN_PORT;
- 	port->addr.client = sysclient;
- 	port->addr.port = SNDRV_SEQ_PORT_SYSTEM_ANNOUNCE;
--	snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT, port);
-+	err = snd_seq_kernel_client_ctl(sysclient, SNDRV_SEQ_IOCTL_CREATE_PORT,
-+					port);
-+	if (err < 0)
-+		goto error_port;
- 	announce_port = port->addr.port;
+ 	ret = sscanf(buf, "%lu", &value);
+ 	if (ret != 1)
+ 		return -EINVAL;
  
- 	kfree(port);
- 	return 0;
+ 	mutex_lock(&df->lock);
+-	max = df->max_freq;
+-	if (value && max && value > max) {
+-		ret = -EINVAL;
+-		goto unlock;
 +
-+ error_port:
-+	snd_seq_system_client_done();
-+	kfree(port);
-+	return err;
- }
++	if (value) {
++		if (value > df->max_freq) {
++			ret = -EINVAL;
++			goto unlock;
++		}
++	} else {
++		unsigned long *freq_table = df->profile->freq_table;
++
++		/* Get minimum frequency according to sorting order */
++		if (freq_table[0] < freq_table[df->profile->max_state - 1])
++			value = freq_table[0];
++		else
++			value = freq_table[df->profile->max_state - 1];
+ 	}
  
+ 	df->min_freq = value;
+@@ -1206,17 +1215,26 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
+ 	struct devfreq *df = to_devfreq(dev);
+ 	unsigned long value;
+ 	int ret;
+-	unsigned long min;
  
- /* unregister our internal client */
--void __exit snd_seq_system_client_done(void)
-+void snd_seq_system_client_done(void)
- {
- 	int oldsysclient = sysclient;
+ 	ret = sscanf(buf, "%lu", &value);
+ 	if (ret != 1)
+ 		return -EINVAL;
  
+ 	mutex_lock(&df->lock);
+-	min = df->min_freq;
+-	if (value && min && value < min) {
+-		ret = -EINVAL;
+-		goto unlock;
++
++	if (value) {
++		if (value < df->min_freq) {
++			ret = -EINVAL;
++			goto unlock;
++		}
++	} else {
++		unsigned long *freq_table = df->profile->freq_table;
++
++		/* Get maximum frequency according to sorting order */
++		if (freq_table[0] < freq_table[df->profile->max_state - 1])
++			value = freq_table[df->profile->max_state - 1];
++		else
++			value = freq_table[0];
+ 	}
+ 
+ 	df->max_freq = value;
 -- 
 2.20.1
 
