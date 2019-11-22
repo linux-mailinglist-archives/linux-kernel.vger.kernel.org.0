@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25374106EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B79B310706B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:22:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730739AbfKVK55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:57:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47006 "EHLO mail.kernel.org"
+        id S1729347AbfKVKo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730717AbfKVK5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:49 -0500
+        id S1726846AbfKVKoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D474120718;
-        Fri, 22 Nov 2019 10:57:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E50E820637;
+        Fri, 22 Nov 2019 10:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420268;
-        bh=k5ZRh2ikyUYWBdoD1qh1lHWr6fCnKfqiDBwbD6/ssmo=;
+        s=default; t=1574419462;
+        bh=dBhYL/8fBTCGaEmqO7RyJD8piCm0z71coejeJpx+Kp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gxQ9l1NRVi0ZZm8SvrlwxOCeIO+JFCr1b4xqyZxquZvs+qXNjfWQCCxXppxGLTXYj
-         WSE32ajBIp4glUoIj+5lKouMqth/YWn92n63ETR1O4/tYm57Wf4c+epEyxrFTttiZR
-         /XLVgHLeLhJwsS4PRJ9EKorQ5d7yVscBSOZj5yDs=
+        b=RsK1xIO5f9jtgbvMW9uNV6lv1+zsleWOndehagnQSIJzgqCjUEiivqg4iKqaaHtEG
+         SxuOx8+7NFQ8oAqXKJtmC9KYECreYz5hNpdFS5Ol1tppZZOFAG1F1eNdcMN6co0IL4
+         pGkJBsHFUqp543mIIIEQFC5HHV8oWQUyHp7Hv22Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 049/220] irqchip/irq-mvebu-icu: Fix wrong private data retrieval
-Date:   Fri, 22 Nov 2019 11:26:54 +0100
-Message-Id: <20191122100915.728633762@linuxfoundation.org>
+        stable@vger.kernel.org, Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 076/222] kernfs: Fix range checks in kernfs_get_target_path
+Date:   Fri, 22 Nov 2019 11:26:56 +0100
+Message-Id: <20191122100908.434672347@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-[ Upstream commit 2b4dab69dcca13c5be2ddaf1337ae4accd087de6 ]
+[ Upstream commit a75e78f21f9ad4b810868c89dbbabcc3931591ca ]
 
-The irq_domain structure has an host_data pointer that just stores
-private data. It is meant to not be touched by the IRQ core. However,
-when it comes to MSI, the MSI layer adds its own private data there
-with a structure that also has a host_data pointer.
+The terminating NUL byte is only there because the buffer is
+allocated with kzalloc(PAGE_SIZE, GFP_KERNEL), but since the
+range-check is off-by-one, and PAGE_SIZE==PATH_MAX, the
+returned string may not be zero-terminated if it is exactly
+PATH_MAX characters long.  Furthermore also the initial loop
+may theoretically exceed PATH_MAX and cause a fault.
 
-Because this IRQ domain is an MSI domain, to access private data we
-should do a d->host_data->host_data, also wrapped as
-'platform_msi_get_host_data()'.
-
-This bug was lying there silently because the 'icu' structure retrieved
-this way was just called by dev_err(), only producing a
-'(NULL device *):' output on the console.
-
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-mvebu-icu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/kernfs/symlink.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
-index 13063339b416d..a2a3acd744911 100644
---- a/drivers/irqchip/irq-mvebu-icu.c
-+++ b/drivers/irqchip/irq-mvebu-icu.c
-@@ -105,7 +105,7 @@ static int
- mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
- 			       unsigned long *hwirq, unsigned int *type)
- {
--	struct mvebu_icu *icu = d->host_data;
-+	struct mvebu_icu *icu = platform_msi_get_host_data(d);
- 	unsigned int icu_group;
+diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
+index 80317b04c84a2..e431a850f2f2b 100644
+--- a/fs/kernfs/symlink.c
++++ b/fs/kernfs/symlink.c
+@@ -63,6 +63,9 @@ static int kernfs_get_target_path(struct kernfs_node *parent,
+ 		if (base == kn)
+ 			break;
  
- 	/* Check the count of the parameters in dt */
++		if ((s - path) + 3 >= PATH_MAX)
++			return -ENAMETOOLONG;
++
+ 		strcpy(s, "../");
+ 		s += 3;
+ 		base = base->parent;
+@@ -79,7 +82,7 @@ static int kernfs_get_target_path(struct kernfs_node *parent,
+ 	if (len < 2)
+ 		return -EINVAL;
+ 	len--;
+-	if ((s - path) + len > PATH_MAX)
++	if ((s - path) + len >= PATH_MAX)
+ 		return -ENAMETOOLONG;
+ 
+ 	/* reverse fillup of target string from target to base */
 -- 
 2.20.1
 
