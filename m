@@ -2,40 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16ED9106AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BEC4106CA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfKVKiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:38:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39952 "EHLO mail.kernel.org"
+        id S1730231AbfKVKxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:53:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727893AbfKVKh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:37:57 -0500
+        id S1730224AbfKVKxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84E2B2072D;
-        Fri, 22 Nov 2019 10:37:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DBED20656;
+        Fri, 22 Nov 2019 10:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419077;
-        bh=e1wBrB3GGsfoNvFx3VCcrXtM39XVDHUzUOTodt4IOHE=;
+        s=default; t=1574420015;
+        bh=yK1zw7+ztDz/wY5Xfb41Gx3AS89+UUsmCgSojd7FXaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jGmT+k2d3LRlqMrGD5IUbczQYN/t9c5vSe8KRc88jahviDj4HypQPHd+I+OAHxzKJ
-         VVgeUsE0mauURiOCQyZ/N128vrWBR/Mf3/JGY2KDG75lxYzW6aZeY7q8SqHfQl1wHc
-         G59pO2hk7oolHyMWPinwCWKZVz4WSbNAhNXdIkX8=
+        b=Gztkh4BRYDKJwlaBLZOl+T9yYSbTWjpprOu1yoK/QZqYtBcSzwlz6d/sFpp3z7DDp
+         oK0F2DNxzH1M0cgsKI9ItoneXBr5k4vCaWI8vbBvrfqmTfdoh9o6xkc+1J6IORuPRp
+         K2GY1Otj0HeF2MTfKPag2a9spGsapEzcAdaeNi4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Smith <tim.smith@citrix.com>,
-        Mark Syms <mark.syms@citrix.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 149/159] GFS2: Flush the GFS2 delete workqueue before stopping the kernel threads
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 087/122] x86/fsgsbase/64: Fix ptrace() to read the FS/GS base accurately
 Date:   Fri, 22 Nov 2019 11:29:00 +0100
-Message-Id: <20191122100843.116471321@linuxfoundation.org>
+Message-Id: <20191122100826.017145675@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +56,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tim Smith <tim.smith@citrix.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit 1eb8d7387908022951792a46fa040ad3942b3b08 ]
+[ Upstream commit 07e1d88adaaeab247b300926f78cc3f950dbeda3 ]
 
-Flushing the workqueue can cause operations to happen which might
-call gfs2_log_reserve(), or get stuck waiting for locks taken by such
-operations.  gfs2_log_reserve() can io_schedule(). If this happens, it
-will never wake because the only thing which can wake it is gfs2_logd()
-which was already stopped.
+On 64-bit kernels ptrace can read the FS/GS base using the register access
+APIs (PTRACE_PEEKUSER, etc.) or PTRACE_ARCH_PRCTL.
 
-This causes umount of a gfs2 filesystem to wedge permanently if, for
-example, the umount immediately follows a large delete operation.
+Make both of these mechanisms return the actual FS/GS base.
 
-When this occured, the following stack trace was obtained from the
-umount command
+This will improve debuggability by providing the correct information
+to ptracer such as GDB.
 
-[<ffffffff81087968>] flush_workqueue+0x1c8/0x520
-[<ffffffffa0666e29>] gfs2_make_fs_ro+0x69/0x160 [gfs2]
-[<ffffffffa0667279>] gfs2_put_super+0xa9/0x1c0 [gfs2]
-[<ffffffff811b7edf>] generic_shutdown_super+0x6f/0x100
-[<ffffffff811b7ff7>] kill_block_super+0x27/0x70
-[<ffffffffa0656a71>] gfs2_kill_sb+0x71/0x80 [gfs2]
-[<ffffffff811b792b>] deactivate_locked_super+0x3b/0x70
-[<ffffffff811b79b9>] deactivate_super+0x59/0x60
-[<ffffffff811d2998>] cleanup_mnt+0x58/0x80
-[<ffffffff811d2a12>] __cleanup_mnt+0x12/0x20
-[<ffffffff8108c87d>] task_work_run+0x7d/0xa0
-[<ffffffff8106d7d9>] exit_to_usermode_loop+0x73/0x98
-[<ffffffff81003961>] syscall_return_slowpath+0x41/0x50
-[<ffffffff815a594c>] int_ret_from_sys_call+0x25/0x8f
-[<ffffffffffffffff>] 0xffffffffffffffff
+[ chang: Rebased and revised patch description. ]
+[ mingo: Revised the changelog some more. ]
 
-Signed-off-by: Tim Smith <tim.smith@citrix.com>
-Signed-off-by: Mark Syms <mark.syms@citrix.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Markus T Metzger <markus.t.metzger@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1537312139-5580-2-git-send-email-chang.seok.bae@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/gfs2/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/ptrace.c | 62 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 52 insertions(+), 10 deletions(-)
 
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index 894fb01a91dab..a4eb38c1f5548 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -835,10 +835,10 @@ static int gfs2_make_fs_ro(struct gfs2_sbd *sdp)
- 	if (error && !test_bit(SDF_SHUTDOWN, &sdp->sd_flags))
- 		return error;
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 584cdd475bb31..734549492a18b 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -40,6 +40,7 @@
+ #include <asm/hw_breakpoint.h>
+ #include <asm/traps.h>
+ #include <asm/syscall.h>
++#include <asm/mmu_context.h>
  
-+	flush_workqueue(gfs2_delete_workqueue);
- 	kthread_stop(sdp->sd_quotad_process);
- 	kthread_stop(sdp->sd_logd_process);
+ #include "tls.h"
  
--	flush_workqueue(gfs2_delete_workqueue);
- 	gfs2_quota_sync(sdp->sd_vfs, 0);
- 	gfs2_statfs_sync(sdp->sd_vfs, 0);
+@@ -343,6 +344,49 @@ static int set_segment_reg(struct task_struct *task,
+ 	return 0;
+ }
  
++static unsigned long task_seg_base(struct task_struct *task,
++				   unsigned short selector)
++{
++	unsigned short idx = selector >> 3;
++	unsigned long base;
++
++	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
++		if (unlikely(idx >= GDT_ENTRIES))
++			return 0;
++
++		/*
++		 * There are no user segments in the GDT with nonzero bases
++		 * other than the TLS segments.
++		 */
++		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
++			return 0;
++
++		idx -= GDT_ENTRY_TLS_MIN;
++		base = get_desc_base(&task->thread.tls_array[idx]);
++	} else {
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++		struct ldt_struct *ldt;
++
++		/*
++		 * If performance here mattered, we could protect the LDT
++		 * with RCU.  This is a slow path, though, so we can just
++		 * take the mutex.
++		 */
++		mutex_lock(&task->mm->context.lock);
++		ldt = task->mm->context.ldt;
++		if (unlikely(idx >= ldt->nr_entries))
++			base = 0;
++		else
++			base = get_desc_base(ldt->entries + idx);
++		mutex_unlock(&task->mm->context.lock);
++#else
++		base = 0;
++#endif
++	}
++
++	return base;
++}
++
+ #endif	/* CONFIG_X86_32 */
+ 
+ static unsigned long get_flags(struct task_struct *task)
+@@ -436,18 +480,16 @@ static unsigned long getreg(struct task_struct *task, unsigned long offset)
+ 
+ #ifdef CONFIG_X86_64
+ 	case offsetof(struct user_regs_struct, fs_base): {
+-		/*
+-		 * XXX: This will not behave as expected if called on
+-		 * current or if fsindex != 0.
+-		 */
+-		return task->thread.fsbase;
++		if (task->thread.fsindex == 0)
++			return task->thread.fsbase;
++		else
++			return task_seg_base(task, task->thread.fsindex);
+ 	}
+ 	case offsetof(struct user_regs_struct, gs_base): {
+-		/*
+-		 * XXX: This will not behave as expected if called on
+-		 * current or if fsindex != 0.
+-		 */
+-		return task->thread.gsbase;
++		if (task->thread.gsindex == 0)
++			return task->thread.gsbase;
++		else
++			return task_seg_base(task, task->thread.gsindex);
+ 	}
+ #endif
+ 	}
 -- 
 2.20.1
 
