@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 696C5106E04
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95787106EFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfKVLFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:05:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60928 "EHLO mail.kernel.org"
+        id S1730398AbfKVKy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731687AbfKVLFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:05:18 -0500
+        id S1728979AbfKVKyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:54:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECBD22084D;
-        Fri, 22 Nov 2019 11:05:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7129C20721;
+        Fri, 22 Nov 2019 10:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420717;
-        bh=42AfC1JAgQnwGHw73JvEkXmD6v+DlYzI2SFaT4NhMX8=;
+        s=default; t=1574420094;
+        bh=+ugDS3NL4mHHN24G7VTK1jmCHcSW7yZCBs8zU+QAsHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=owb26dLtY2R7UVLlk3XYcW1qjxma+vv+lg2xohds9ymVZa7lLPJynYtbVgXrFvdkX
-         M9eKAOoqNYqIkfe+0k/GIAnoqyESjpOASesJH7VC3ySYUTljzIXI5e+vNpbm2NmqLC
-         Bnttk3AzDaNoXk+svM0GMco9RhEPcUo5nEmevHVc=
+        b=D+ldxuwjR5HQHsu6GRs3bmiEWMCJsa20oH/Ef3OuN4oiS7Y3OMzG1UQtOQC98Qeea
+         CcDg7ZOY1diMJbmKNLP9EA3F6UQ2zhomluVpQFCH6J6AOOsWyXz2WMR0blAZhAoFWq
+         9TgvJ9SkWZPtbUIuALi1TVyVI5xN7LOFWex8z2YY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 201/220] hwmon: (pwm-fan) Silence error on probe deferral
+Subject: [PATCH 4.14 113/122] misc: cxl: Fix possible null pointer dereference
 Date:   Fri, 22 Nov 2019 11:29:26 +0100
-Message-Id: <20191122100928.357504267@linuxfoundation.org>
+Message-Id: <20191122100835.272176088@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-[ Upstream commit 9f67f7583e77fe5dc57aab3a6159c2642544eaad ]
+[ Upstream commit 3dac3583bf1a61db6aaf31dfd752c677a4400afd ]
 
-Probe deferrals aren't actual errors, so silence the error message in
-case the PWM cannot yet be acquired.
+It is not safe to dereference an object before a null test. It is
+not needed and just remove them. Ftrace can be used instead.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pwm-fan.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/misc/cxl/guest.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 7f01fad0d3e34..65de80bd63d8c 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -221,8 +221,12 @@ static int pwm_fan_probe(struct platform_device *pdev)
+diff --git a/drivers/misc/cxl/guest.c b/drivers/misc/cxl/guest.c
+index 1a64eb185cfd5..de2ce55395454 100644
+--- a/drivers/misc/cxl/guest.c
++++ b/drivers/misc/cxl/guest.c
+@@ -1028,8 +1028,6 @@ int cxl_guest_init_afu(struct cxl *adapter, int slice, struct device_node *afu_n
  
- 	ctx->pwm = devm_of_pwm_get(&pdev->dev, pdev->dev.of_node, NULL);
- 	if (IS_ERR(ctx->pwm)) {
--		dev_err(&pdev->dev, "Could not get PWM\n");
--		return PTR_ERR(ctx->pwm);
-+		ret = PTR_ERR(ctx->pwm);
-+
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Could not get PWM: %d\n", ret);
-+
-+		return ret;
- 	}
+ void cxl_guest_remove_afu(struct cxl_afu *afu)
+ {
+-	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
+-
+ 	if (!afu)
+ 		return;
  
- 	platform_set_drvdata(pdev, ctx);
 -- 
 2.20.1
 
