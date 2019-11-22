@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45F56106AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E8DC106BC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfKVKiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:38:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41346 "EHLO mail.kernel.org"
+        id S1728593AbfKVKrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:47:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbfKVKip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:38:45 -0500
+        id S1728876AbfKVKrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:47:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9911320637;
-        Fri, 22 Nov 2019 10:38:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C5372072D;
+        Fri, 22 Nov 2019 10:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419124;
-        bh=7Oz3PQNUNgCniA01lkUK3vBCs4s5pP39V23TBiRS1qQ=;
+        s=default; t=1574419629;
+        bh=l51evxqU8zJCOrGtKLHrLz9etFFXDJe12qIraGCuN0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IW72KgJpW8CDJuGzMMlgJ8FX76uVBPZUKG8LAkZbZ1Ixelz5b+0u9HHS0YVU/nutU
-         9yXP527OnebBrDRci2cS0wHaeNTSJP51xUeZBaB/+wt5MzDANCe7BzY2QmK9JWt4av
-         zG2+MIKi7//bjuUHlN+IBiz+YzzuaPjPqWlef5dY=
+        b=nicBKheNa4gLazAWllnTzu87dnug6/8faKTSWLeFKx0SgrGTlRZnb4M5Y6BKlBWbU
+         ZzJjeR2qZfA2kbLygygKpAxrz2GoTytX9nW7rdOFJCKcT8tKNa89kgmfLNgZPF5S8A
+         dAxwcbYiWss8JPkZcXQnjZUvv7n1ddLjUu5sdrRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 128/159] IB/mthca: Fix error return code in __mthca_init_one()
+        stable@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 179/222] ata: ep93xx: Use proper enums for directions
 Date:   Fri, 22 Nov 2019 11:28:39 +0100
-Message-Id: <20191122100832.990179210@linuxfoundation.org>
+Message-Id: <20191122100915.325927049@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 39f2495618c5e980d2873ea3f2d1877dd253e07a ]
+[ Upstream commit 6adde4a36f1b6a562a1057fbb1065007851050e7 ]
 
-Fix to return a negative error code from the mthca_cmd_init() error
-handling case instead of 0, as done elsewhere in this function.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Fixes: 80fd8238734c ("[PATCH] IB/mthca: Encapsulate command interface init")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+drivers/ata/pata_ep93xx.c:662:36: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
+                                        ~ ^~~~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:670:36: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
+                                        ~ ^~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:681:19: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        conf.direction = DMA_FROM_DEVICE;
+                       ~ ^~~~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:692:19: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        conf.direction = DMA_TO_DEVICE;
+                       ~ ^~~~~~~~~~~~~
+
+Use the equivalent valued enums from the expected type so that Clang no
+longer warns about a conversion.
+
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mthca/mthca_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ata/pata_ep93xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mthca/mthca_main.c b/drivers/infiniband/hw/mthca/mthca_main.c
-index ded76c101dde3..834b06aacc2bf 100644
---- a/drivers/infiniband/hw/mthca/mthca_main.c
-+++ b/drivers/infiniband/hw/mthca/mthca_main.c
-@@ -989,7 +989,8 @@ static int __mthca_init_one(struct pci_dev *pdev, int hca_type)
- 		goto err_free_dev;
- 	}
+diff --git a/drivers/ata/pata_ep93xx.c b/drivers/ata/pata_ep93xx.c
+index bd6b089c67a3a..634c814cbeda4 100644
+--- a/drivers/ata/pata_ep93xx.c
++++ b/drivers/ata/pata_ep93xx.c
+@@ -659,7 +659,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 	 * start of new transfer.
+ 	 */
+ 	drv_data->dma_rx_data.port = EP93XX_DMA_IDE;
+-	drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
++	drv_data->dma_rx_data.direction = DMA_DEV_TO_MEM;
+ 	drv_data->dma_rx_data.name = "ep93xx-pata-rx";
+ 	drv_data->dma_rx_channel = dma_request_channel(mask,
+ 		ep93xx_pata_dma_filter, &drv_data->dma_rx_data);
+@@ -667,7 +667,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 		return;
  
--	if (mthca_cmd_init(mdev)) {
-+	err = mthca_cmd_init(mdev);
-+	if (err) {
- 		mthca_err(mdev, "Failed to init command interface, aborting.\n");
- 		goto err_free_dev;
- 	}
+ 	drv_data->dma_tx_data.port = EP93XX_DMA_IDE;
+-	drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
++	drv_data->dma_tx_data.direction = DMA_MEM_TO_DEV;
+ 	drv_data->dma_tx_data.name = "ep93xx-pata-tx";
+ 	drv_data->dma_tx_channel = dma_request_channel(mask,
+ 		ep93xx_pata_dma_filter, &drv_data->dma_tx_data);
+@@ -678,7 +678,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 
+ 	/* Configure receive channel direction and source address */
+ 	memset(&conf, 0, sizeof(conf));
+-	conf.direction = DMA_FROM_DEVICE;
++	conf.direction = DMA_DEV_TO_MEM;
+ 	conf.src_addr = drv_data->udma_in_phys;
+ 	conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	if (dmaengine_slave_config(drv_data->dma_rx_channel, &conf)) {
+@@ -689,7 +689,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 
+ 	/* Configure transmit channel direction and destination address */
+ 	memset(&conf, 0, sizeof(conf));
+-	conf.direction = DMA_TO_DEVICE;
++	conf.direction = DMA_MEM_TO_DEV;
+ 	conf.dst_addr = drv_data->udma_out_phys;
+ 	conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	if (dmaengine_slave_config(drv_data->dma_tx_channel, &conf)) {
 -- 
 2.20.1
 
