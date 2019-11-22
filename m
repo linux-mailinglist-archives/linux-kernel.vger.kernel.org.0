@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD811070CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0F61070D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:25:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbfKVKjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:39:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43084 "EHLO mail.kernel.org"
+        id S1729437AbfKVLYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:24:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727395AbfKVKjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:39:43 -0500
+        id S1727329AbfKVKjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:39:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 482E420721;
-        Fri, 22 Nov 2019 10:39:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10EA52071C;
+        Fri, 22 Nov 2019 10:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419182;
-        bh=9lO1imc9AkSk65FSLE3NlJ+ZwySJsQ3+6ogMVEiY88I=;
+        s=default; t=1574419153;
+        bh=sMuIECjAf/onTndK4V13lbx+H72rT2nSj8F/ccPmjhc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L+vxMf/u5axVCSGcTt1hpc72YBSAIeQ7wpcdBfdtZIt0NwiWUmtqXlGIy31MAal2v
-         DUksqWexKiKPkBdy4cuQGAJuhRzpxztXxxgiLMW/nN/DhyARurKbO0Qqjgfm0zzONR
-         H6I39/qefBW8exixriDdfJP66kTKswIe16UkX/rQ=
+        b=hIAsVbfKhA6uclmd8f+d1vn7NEOgwyjqSdsHIavGMB4w64O6vdlCkjei+ZxyWWbVH
+         VuXd8eitp4mfT/nyLUi65IUkUiZAQqNN32G1IRfTiivpcHOzxm8r8Q+VXSD9fTsbws
+         fs/meJ7pkZfU8ZY9uVU5cFDb2Y5UCuWXdiUSUDJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 007/222] Input: synaptics-rmi4 - clear IRQ enables for F54
-Date:   Fri, 22 Nov 2019 11:25:47 +0100
-Message-Id: <20191122100831.673137806@linuxfoundation.org>
+        stable@vger.kernel.org, Tamizh chelvam <tamizhr@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 016/222] ath10k: fix kernel panic by moving pci flush after napi_disable
+Date:   Fri, 22 Nov 2019 11:25:56 +0100
+Message-Id: <20191122100835.292390044@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -43,34 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Tamizh chelvam <tamizhr@codeaurora.org>
 
-commit 549766ac2ac1f6c8bb85906bbcea759541bb19a2 upstream.
+[ Upstream commit bd1d395070cca4f42a93e520b0597274789274a4 ]
 
-The driver for F54 just polls the status and doesn't even have a IRQ
-handler registered. Make sure to disable all F54 IRQs, so we don't crash
-the kernel on a nonexistent handler.
+When continuously running wifi up/down sequence, the napi poll
+can be scheduled after the CE buffers being freed by ath10k_pci_flush
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Link: https://lore.kernel.org/r/20191105114402.6009-1-l.stach@pengutronix.de
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Steps:
+  In a certain condition, during wifi down below scenario might occur.
 
+ath10k_stop->ath10k_hif_stop->napi_schedule->ath10k_pci_flush->napi_poll(napi_synchronize).
+
+In the above scenario, CE buffer entries will be freed up and become NULL in
+ath10k_pci_flush. And the napi_poll has been invoked after the flush process
+and it will try to get the skb from the CE buffer entry and perform some action on that.
+Since the CE buffer already cleaned by pci flush this action will create NULL
+pointer dereference and trigger below kernel panic.
+
+Unable to handle kernel NULL pointer dereference at virtual address 0000005c
+PC is at ath10k_pci_htt_rx_cb+0x64/0x3ec [ath10k_pci]
+ath10k_pci_htt_rx_cb [ath10k_pci]
+ath10k_ce_per_engine_service+0x74/0xc4 [ath10k_pci]
+ath10k_ce_per_engine_service [ath10k_pci]
+ath10k_ce_per_engine_service_any+0x74/0x80 [ath10k_pci]
+ath10k_ce_per_engine_service_any [ath10k_pci]
+ath10k_pci_napi_poll+0x48/0xec [ath10k_pci]
+ath10k_pci_napi_poll [ath10k_pci]
+net_rx_action+0xac/0x160
+net_rx_action
+__do_softirq+0xdc/0x208
+__do_softirq
+irq_exit+0x84/0xe0
+irq_exit
+__handle_domain_irq+0x80/0xa0
+__handle_domain_irq
+gic_handle_irq+0x38/0x5c
+gic_handle_irq
+__irq_usr+0x44/0x60
+
+Tested on QCA4019 and firmware version 10.4.3.2.1.1-00010
+
+Signed-off-by: Tamizh chelvam <tamizhr@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/rmi4/rmi_f54.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/ahb.c | 4 ++--
+ drivers/net/wireless/ath/ath10k/pci.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/input/rmi4/rmi_f54.c
-+++ b/drivers/input/rmi4/rmi_f54.c
-@@ -617,7 +617,7 @@ static int rmi_f54_config(struct rmi_fun
- {
- 	struct rmi_driver *drv = fn->rmi_dev->driver;
+diff --git a/drivers/net/wireless/ath/ath10k/ahb.c b/drivers/net/wireless/ath/ath10k/ahb.c
+index da770af830369..125b5c31b2b0a 100644
+--- a/drivers/net/wireless/ath/ath10k/ahb.c
++++ b/drivers/net/wireless/ath/ath10k/ahb.c
+@@ -658,10 +658,10 @@ static void ath10k_ahb_hif_stop(struct ath10k *ar)
+ 	ath10k_ahb_irq_disable(ar);
+ 	synchronize_irq(ar_ahb->irq);
  
--	drv->set_irq_bits(fn->rmi_dev, fn->irq_mask);
-+	drv->clear_irq_bits(fn->rmi_dev, fn->irq_mask);
- 
- 	return 0;
+-	ath10k_pci_flush(ar);
+-
+ 	napi_synchronize(&ar->napi);
+ 	napi_disable(&ar->napi);
++
++	ath10k_pci_flush(ar);
  }
+ 
+ static int ath10k_ahb_hif_power_up(struct ath10k *ar)
+diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
+index 25b8d501d437e..b7bac14d1487b 100644
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -1781,9 +1781,9 @@ static void ath10k_pci_hif_stop(struct ath10k *ar)
+ 
+ 	ath10k_pci_irq_disable(ar);
+ 	ath10k_pci_irq_sync(ar);
+-	ath10k_pci_flush(ar);
+ 	napi_synchronize(&ar->napi);
+ 	napi_disable(&ar->napi);
++	ath10k_pci_flush(ar);
+ 
+ 	spin_lock_irqsave(&ar_pci->ps_lock, flags);
+ 	WARN_ON(ar_pci->ps_wake_refcount > 0);
+-- 
+2.20.1
+
 
 
