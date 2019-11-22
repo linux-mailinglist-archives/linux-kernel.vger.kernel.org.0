@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B6A1070AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F08F1070A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:24:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfKVKkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:40:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43476 "EHLO mail.kernel.org"
+        id S1728859AbfKVKkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:40:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728829AbfKVKj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:39:58 -0500
+        id S1728369AbfKVKkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:40:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFED02071F;
-        Fri, 22 Nov 2019 10:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2CE62075B;
+        Fri, 22 Nov 2019 10:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419197;
-        bh=fp4JUvyBejBKU6QRe+D7+l2nCEkoKaaJfl7XBKfJXvk=;
+        s=default; t=1574419203;
+        bh=lZXxMuWIybLFtXGs8v1ZWRWHg9eTWJ+Zb4KyQrFSfR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LpOct5KkIfyxSWJ/vrlkgdCqi7iGewGtCrphLTOOCR1SQ98dZsEzyqEjjJr3DkMyO
-         M8W5NV3F46ijLbkpK2J6pJzlVBLn48FvL1XbfGikNPbF9YGTc93knFEY+NwiHi0bvY
-         //NzyP8sAfBJ8mPjqL7huC92IIwFQJr83vcVMCSE=
+        b=i/CiCn+Qz2PTm9nUT9w6VBzQogCAoqgberlFv+8b6ZrMoJzg2TYCMu0InP3oP06cr
+         kNpgsVzhsrkTRnuQi6AAW66rqGzfW+LKZfwSeepJuCjaXu0fpY80JU6UL2cadEHetT
+         U4gre8Jdx1lLap+bQglOdX521G9srkpnXLJA4GIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Patryk=20Ma=C5=82ek?= <patryk.malek@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 031/222] i40e: Prevent deleting MAC address from VF when set by PF
-Date:   Fri, 22 Nov 2019 11:26:11 +0100
-Message-Id: <20191122100842.982289419@linuxfoundation.org>
+Subject: [PATCH 4.9 033/222] iwlwifi: mvm: avoid sending too many BARs
+Date:   Fri, 22 Nov 2019 11:26:13 +0100
+Message-Id: <20191122100843.751274099@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -46,43 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patryk Małek <patryk.malek@intel.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 5907cf6c5bbe78be2ed18b875b316c6028b20634 ]
+[ Upstream commit 1a19c139be18ed4d6d681049cc48586fae070120 ]
 
-To prevent VF from deleting MAC address that was assigned by the
-PF we need to check for that scenario when we try to delete a MAC
-address from a VF.
+When we receive TX response, we may release a few packets
+due to a hole that was closed in the transmission window.
 
-Signed-off-by: Patryk Małek <patryk.malek@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+However, if that frame failed, we will mark all the released
+frames as failed and will send multiple BARs.
+
+This affects statistics badly, and cause unnecessary frames
+transmission.
+
+Instead, mark all the following packets as success, with the
+desired result of sending a bar for the failed frame only.
+
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 54b8ee2583f14..7484ad3c955db 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -2000,6 +2000,16 @@ static int i40e_vc_del_mac_addr_msg(struct i40e_vf *vf, u8 *msg, u16 msglen)
- 			ret = I40E_ERR_INVALID_MAC_ADDR;
- 			goto error_param;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+index 1aa74b87599ff..63dcea640d076 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+@@ -1303,6 +1303,14 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
+ 			break;
  		}
-+
-+		if (vf->pf_set_mac &&
-+		    ether_addr_equal(al->list[i].addr,
-+				     vf->default_lan_addr.addr)) {
-+			dev_err(&pf->pdev->dev,
-+				"MAC addr %pM has been set by PF, cannot delete it for VF %d, reset VF to change MAC addr\n",
-+				vf->default_lan_addr.addr, vf->vf_id);
-+			ret = I40E_ERR_PARAM;
-+			goto error_param;
-+		}
- 	}
- 	vsi = pf->vsi[vf->lan_vsi_idx];
  
++		/*
++		 * If we are freeing multiple frames, mark all the frames
++		 * but the first one as acked, since they were acknowledged
++		 * before
++		 * */
++		if (skb_freed > 1)
++			info->flags |= IEEE80211_TX_STAT_ACK;
++
+ 		iwl_mvm_tx_status_check_trigger(mvm, status);
+ 
+ 		info->status.rates[0].count = tx_resp->failure_frame + 1;
 -- 
 2.20.1
 
