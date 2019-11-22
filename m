@@ -2,299 +2,304 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C065A1071A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2F410715F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfKVLml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:42:41 -0500
-Received: from mga01.intel.com ([192.55.52.88]:15289 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728073AbfKVLmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:42:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 03:42:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
-   d="scan'208";a="358110542"
-Received: from yiliu-dev.bj.intel.com ([10.238.156.139])
-  by orsmga004.jf.intel.com with ESMTP; 22 Nov 2019 03:42:34 -0800
-From:   Liu Yi L <yi.l.liu@intel.com>
-To:     alex.williamson@redhat.com, kwankhede@nvidia.com
-Cc:     kevin.tian@intel.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
-        yi.y.sun@intel.com, joro@8bytes.org, jean-philippe.brucker@arm.com,
-        peterx@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [PATCH v3 10/10] samples: refine vfio-mdev-pci driver
-Date:   Thu, 21 Nov 2019 19:23:47 +0800
-Message-Id: <1574335427-3763-11-git-send-email-yi.l.liu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574335427-3763-1-git-send-email-yi.l.liu@intel.com>
-References: <1574335427-3763-1-git-send-email-yi.l.liu@intel.com>
+        id S1727435AbfKVLae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:30:34 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44572 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfKVLad (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:30:33 -0500
+Received: by mail-oi1-f196.google.com with SMTP id s71so6154108oih.11;
+        Fri, 22 Nov 2019 03:30:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1AztedQRtvfRwxfo3QRrdXEr1MGU4pSr0i/7X1wXzMk=;
+        b=M0LWIbI8S9K+vRpuTVgrSG1PV6hU/V7sdvF3QcQLdWOAwVCjzsPGoFw/8Wy5DXRJ/N
+         6Gf/xv9U8yq1jjdH3IaG9P+VS8j+iOKVEjJJ0/ypLGBJU0mHoRN1eJXqtIkSaXqtzWT4
+         vdkVYdRdp8FzeBI/YsEAWgUs3WKWE0m+396EtA+pISeCPxX3MYIbECpnOR2PzoOCzyAv
+         qmfZO7BryPxID+RjZJfXhlQDhchx++FW60gW1KMWaydPxan5sVRKYr3xNHV+1BJDddl1
+         abIfvBdPU0UiOzC9LnNcgjfkuhgRsIzF8ZEdamO6Bmi/6aqwDzo32eAK1YpKq1MIWSiP
+         xDRA==
+X-Gm-Message-State: APjAAAW6Ybh2bo5CibRH8BYlIAt71svRuxb5npkwdzxwBVXjUQLLi4V/
+        iQb5fTZb3P4819FpcyeyhKlMVps8zmNOnsHPPow=
+X-Google-Smtp-Source: APXvYqzti1aGeFlD9zDtiv/CrHKaEJKHYU24UOkwwawEgE4xSBwiOz2/phcrsYazP5xsApZ2IvGteoKR1Op2YMhdvWc=
+X-Received: by 2002:aca:1101:: with SMTP id 1mr12076316oir.103.1574422232306;
+ Fri, 22 Nov 2019 03:30:32 -0800 (PST)
+MIME-Version: 1.0
+References: <CAJZ5v0hkT-fHFOQKzp2qYPyR+NUa4c-G-uGLPZuQxqsG454PiQ@mail.gmail.com>
+ <CACO55ttTPi2XpRRM_NYJU5c5=OvG0=-YngFy1BiR8WpHkavwXw@mail.gmail.com>
+ <CAJZ5v0h=7zu3A+ojgUSmwTH0KeXmYP5OKDL__rwkkWaWqcJcWQ@mail.gmail.com>
+ <20191121112821.GU11621@lahna.fi.intel.com> <CAJZ5v0hQhj5Wf+piU11abC4pF26yM=XHGHAcDv8Jsgdx04aN-w@mail.gmail.com>
+ <20191121114610.GW11621@lahna.fi.intel.com> <20191121125236.GX11621@lahna.fi.intel.com>
+ <CAJZ5v0iMwhudB7O0hR-6KfRfa+_iGOY=t0Zzeh6+9OiTzeYJfA@mail.gmail.com>
+ <20191121194942.GY11621@lahna.fi.intel.com> <CAJZ5v0gyna0b135uxBVfNXgB9v-U9-93EYe0uzsr2BukJ9OtuA@mail.gmail.com>
+ <20191122103637.GA11621@lahna.fi.intel.com>
+In-Reply-To: <20191122103637.GA11621@lahna.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 22 Nov 2019 12:30:20 +0100
+Message-ID: <CAJZ5v0gifnGZcKr6mgc6C2EfqX13OyJnOac0uDxYNKN=A0cgMg@mail.gmail.com>
+Subject: Re: [PATCH v4] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+To:     Mika Westerberg <mika.westerberg@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Karol Herbst <kherbst@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Dave Airlie <airlied@gmail.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Williamson <alex.williamson@redhat.com>
+On Fri, Nov 22, 2019 at 11:36 AM Mika Westerberg
+<mika.westerberg@intel.com> wrote:
+>
+> On Thu, Nov 21, 2019 at 11:39:23PM +0100, Rafael J. Wysocki wrote:
+> > On Thu, Nov 21, 2019 at 8:49 PM Mika Westerberg
+> > <mika.westerberg@intel.com> wrote:
+> > >
+> > > On Thu, Nov 21, 2019 at 04:43:24PM +0100, Rafael J. Wysocki wrote:
+> > > > On Thu, Nov 21, 2019 at 1:52 PM Mika Westerberg
+> > > > <mika.westerberg@intel.com> wrote:
+> > > > >
+> > > > > On Thu, Nov 21, 2019 at 01:46:14PM +0200, Mika Westerberg wrote:
+> > > > > > On Thu, Nov 21, 2019 at 12:34:22PM +0100, Rafael J. Wysocki wrote:
+> > > > > > > On Thu, Nov 21, 2019 at 12:28 PM Mika Westerberg
+> > > > > > > <mika.westerberg@intel.com> wrote:
+> > > > > > > >
+> > > > > > > > On Wed, Nov 20, 2019 at 11:29:33PM +0100, Rafael J. Wysocki wrote:
+> > > > > > > > > > last week or so I found systems where the GPU was under the "PCI
+> > > > > > > > > > Express Root Port" (name from lspci) and on those systems all of that
+> > > > > > > > > > seems to work. So I am wondering if it's indeed just the 0x1901 one,
+> > > > > > > > > > which also explains Mikas case that Thunderbolt stuff works as devices
+> > > > > > > > > > never get populated under this particular bridge controller, but under
+> > > > > > > > > > those "Root Port"s
+> > > > > > > > >
+> > > > > > > > > It always is a PCIe port, but its location within the SoC may matter.
+> > > > > > > >
+> > > > > > > > Exactly. Intel hardware has PCIe ports on CPU side (these are called
+> > > > > > > > PEG, PCI Express Graphics, ports), and the PCH side. I think the IP is
+> > > > > > > > still the same.
+> > > > > > > >
+> > > > > > > > > Also some custom AML-based power management is involved and that may
+> > > > > > > > > be making specific assumptions on the configuration of the SoC and the
+> > > > > > > > > GPU at the time of its invocation which unfortunately are not known to
+> > > > > > > > > us.
+> > > > > > > > >
+> > > > > > > > > However, it looks like the AML invoked to power down the GPU from
+> > > > > > > > > acpi_pci_set_power_state() gets confused if it is not in PCI D0 at
+> > > > > > > > > that point, so it looks like that AML tries to access device memory on
+> > > > > > > > > the GPU (beyond the PCI config space) or similar which is not
+> > > > > > > > > accessible in PCI power states below D0.
+> > > > > > > >
+> > > > > > > > Or the PCI config space of the GPU when the parent root port is in D3hot
+> > > > > > > > (as it is the case here). Also then the GPU config space is not
+> > > > > > > > accessible.
+> > > > > > >
+> > > > > > > Why would the parent port be in D3hot at that point?  Wouldn't that be
+> > > > > > > a suspend ordering violation?
+> > > > > >
+> > > > > > No. We put the GPU into D3hot first,
+> > > >
+> > > > OK
+> > > >
+> > > > Does this involve any AML, like a _PS3 under the GPU object?
+> > >
+> > > I don't see _PS3 (nor _PS0) for that object. If I read it right the GPU
+> > > itself is not described in ACPI tables at all.
+> >
+> > OK
+> >
+> > > > > > then the root port and then turn
+> > > > > > off the power resource (which is attached to the root port) resulting
+> > > > > > the topology entering D3cold.
+> > > > >
+> > > > > I don't see that happening in the AML though.
+> > > >
+> > > > Which AML do you mean, specifically?  The _OFF method for the root
+> > > > port's _PR3 power resource or something else?
+> > >
+> > > The root port's _OFF method for the power resource returned by its _PR3.
+> >
+> > OK, so without the $subject patch we (1) program the downstream
+> > component (GPU) into D3hot, then we (2) program the port holding it
+> > into D3hot and then we (3) let the AML (_OFF for the power resource
+> > listed by _PR3 under the port object) run.
+> >
+> > Something strange happens at this point (and I guess that _OFF doesn't
+> > even reach the point where it removes power from the port which is why
+> > we see a lock-up).
+>
+> It does not necessary lead to lock-up. Here is dmesg from Karol's
+> system:
+>
+>   https://gist.githubusercontent.com/karolherbst/40eb091c7b7b33ef993525de660f1a3b/raw/2380e31f566e93e5ba7c87ef545420965d4c492c/gistfile1.txt
+>
+> what seems to happen is that the GPU never "comes back" from D3cold so
+> the driver starts breaking apart as the hardware is gone now.
 
-This patch refines the implementation of original vfio-mdev-pci driver.
+I meant a lock-up in hardware to be precise, that causes it to stop to
+respond (which causes it to appear to be permanently in D3cold).
 
-And the vfio-mdev-pci-type_name will be named per the following rule:
+I wonder if the port accepts PCI config space writes then.
 
-	vmdev->attr.name = kasprintf(GFP_KERNEL,
-				     "%04x:%04x:%04x:%04x:%06x:%02x",
-				     pdev->vendor, pdev->device,
-				     pdev->subsystem_vendor,
-				     pdev->subsystem_device, pdev->class,
-				     pdev->revision);
+> > We know that skipping (1) makes things work and we kind of suspect
+> > that skipping (3) would make things work either, but what about doing
+> > (1) and (3) without (2)?
+>
+> You mean in this particular case or in general?
 
-Before usage, check the /sys/bus/pci/devices/$bdf/mdev_supported_types/
-to ensure the final mdev_supported_types for the specific device.
+In this case in particular to start with.  Just do an experiment to
+see what happens if we skip pci_raw_set_power_state() for the port
+instead of skipping it for the downstream device.
 
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
----
- drivers/vfio/pci/vfio_mdev_pci.c | 123 +++++++++++++++++++++++----------------
- 1 file changed, 73 insertions(+), 50 deletions(-)
+> Because if the port has _PSx methods we need to put it into D3hot AFAIK.
 
-diff --git a/drivers/vfio/pci/vfio_mdev_pci.c b/drivers/vfio/pci/vfio_mdev_pci.c
-index 1eb4ddc..a1f62cf 100644
---- a/drivers/vfio/pci/vfio_mdev_pci.c
-+++ b/drivers/vfio/pci/vfio_mdev_pci.c
-@@ -65,18 +65,22 @@ MODULE_PARM_DESC(disable_idle_d3,
- 
- static struct pci_driver vfio_mdev_pci_driver;
- 
--static ssize_t
--name_show(struct kobject *kobj, struct device *dev, char *buf)
--{
--	return sprintf(buf, "%s-type1\n", dev_name(dev));
--}
--
--MDEV_TYPE_ATTR_RO(name);
-+struct vfio_mdev_pci_device {
-+	struct vfio_pci_device vdev;
-+	struct mdev_parent_ops ops;
-+	struct attribute_group *groups[2];
-+	struct attribute_group attr;
-+	atomic_t avail;
-+};
- 
- static ssize_t
- available_instances_show(struct kobject *kobj, struct device *dev, char *buf)
- {
--	return sprintf(buf, "%d\n", 1);
-+	struct vfio_mdev_pci_device *vmdev;
-+
-+	vmdev = pci_get_drvdata(to_pci_dev(dev));
-+
-+	return sprintf(buf, "%d\n", atomic_read(&vmdev->avail));
- }
- 
- MDEV_TYPE_ATTR_RO(available_instances);
-@@ -90,64 +94,61 @@ static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
- MDEV_TYPE_ATTR_RO(device_api);
- 
- static struct attribute *vfio_mdev_pci_types_attrs[] = {
--	&mdev_type_attr_name.attr,
- 	&mdev_type_attr_device_api.attr,
- 	&mdev_type_attr_available_instances.attr,
- 	NULL,
- };
- 
--static struct attribute_group vfio_mdev_pci_type_group1 = {
--	.name  = "type1",
--	.attrs = vfio_mdev_pci_types_attrs,
--};
--
--struct attribute_group *vfio_mdev_pci_type_groups[] = {
--	&vfio_mdev_pci_type_group1,
--	NULL,
--};
--
- struct vfio_mdev_pci {
- 	struct vfio_pci_device *vdev;
- 	struct mdev_device *mdev;
--	unsigned long handle;
- };
- 
- static int vfio_mdev_pci_create(struct kobject *kobj, struct mdev_device *mdev)
- {
- 	struct device *pdev;
--	struct vfio_pci_device *vdev;
-+	struct vfio_mdev_pci_device *vmdev;
- 	struct vfio_mdev_pci *pmdev;
- 	int ret;
- 
- 	pdev = mdev_parent_dev(mdev);
--	vdev = dev_get_drvdata(pdev);
-+	vmdev = dev_get_drvdata(pdev);
-+
-+	if (atomic_dec_if_positive(&vmdev->avail) < 0)
-+		return -ENOSPC;
-+
- 	pmdev = kzalloc(sizeof(struct vfio_mdev_pci), GFP_KERNEL);
--	if (pmdev == NULL) {
--		ret = -EBUSY;
--		goto out;
-+	if (!pmdev) {
-+		atomic_inc(&vmdev->avail);
-+		return -ENOMEM;
- 	}
- 
- 	pmdev->mdev = mdev;
--	pmdev->vdev = vdev;
-+	pmdev->vdev = &vmdev->vdev;
- 	mdev_set_drvdata(mdev, pmdev);
- 	ret = mdev_set_iommu_device(mdev_dev(mdev), pdev);
- 	if (ret) {
- 		pr_info("%s, failed to config iommu isolation for mdev: %s on pf: %s\n",
- 			__func__, dev_name(mdev_dev(mdev)), dev_name(pdev));
--		goto out;
-+		kfree(pmdev);
-+		atomic_inc(&vmdev->avail);
-+		return ret;
- 	}
- 
- 	pr_info("%s, creation succeeded for mdev: %s\n", __func__,
- 		     dev_name(mdev_dev(mdev)));
--out:
--	return ret;
-+	return 0;
- }
- 
- static int vfio_mdev_pci_remove(struct mdev_device *mdev)
- {
- 	struct vfio_mdev_pci *pmdev = mdev_get_drvdata(mdev);
-+	struct vfio_mdev_pci_device *vmdev;
-+
-+	vmdev = container_of(pmdev->vdev, struct vfio_mdev_pci_device, vdev);
- 
- 	kfree(pmdev);
-+	atomic_inc(&vmdev->avail);
- 	pr_info("%s, succeeded for mdev: %s\n", __func__,
- 		     dev_name(mdev_dev(mdev)));
- 
-@@ -241,24 +242,12 @@ static ssize_t vfio_mdev_pci_write(struct mdev_device *mdev,
- 	return vfio_pci_write(pmdev->vdev, (char __user *)buf, count, ppos);
- }
- 
--static const struct mdev_parent_ops vfio_mdev_pci_ops = {
--	.supported_type_groups	= vfio_mdev_pci_type_groups,
--	.create			= vfio_mdev_pci_create,
--	.remove			= vfio_mdev_pci_remove,
--
--	.open			= vfio_mdev_pci_open,
--	.release		= vfio_mdev_pci_release,
--
--	.read			= vfio_mdev_pci_read,
--	.write			= vfio_mdev_pci_write,
--	.mmap			= vfio_mdev_pci_mmap,
--	.ioctl			= vfio_mdev_pci_ioctl,
--};
--
- static int vfio_mdev_pci_driver_probe(struct pci_dev *pdev,
- 				       const struct pci_device_id *id)
- {
-+	struct vfio_mdev_pci_device *vmdev;
- 	struct vfio_pci_device *vdev;
-+	const struct mdev_parent_ops *ops;
- 	int ret;
- 
- 	if (pdev->hdr_type != PCI_HEADER_TYPE_NORMAL)
-@@ -277,10 +266,38 @@ static int vfio_mdev_pci_driver_probe(struct pci_dev *pdev,
- 		return -EBUSY;
- 	}
- 
--	vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
--	if (!vdev)
-+	vmdev = kzalloc(sizeof(*vmdev), GFP_KERNEL);
-+	if (!vmdev)
- 		return -ENOMEM;
- 
-+	vmdev->attr.name = kasprintf(GFP_KERNEL,
-+				     "%04x:%04x:%04x:%04x:%06x:%02x",
-+				     pdev->vendor, pdev->device,
-+				     pdev->subsystem_vendor,
-+				     pdev->subsystem_device, pdev->class,
-+				     pdev->revision);
-+	if (!vmdev->attr.name) {
-+		kfree(vmdev);
-+		return -ENOMEM;
-+	}
-+
-+	atomic_set(&vmdev->avail, 1);
-+
-+	vmdev->attr.attrs = vfio_mdev_pci_types_attrs;
-+	vmdev->groups[0] = &vmdev->attr;
-+
-+	vmdev->ops.supported_type_groups = vmdev->groups;
-+	vmdev->ops.create = vfio_mdev_pci_create;
-+	vmdev->ops.remove = vfio_mdev_pci_remove;
-+	vmdev->ops.open	= vfio_mdev_pci_open;
-+	vmdev->ops.release = vfio_mdev_pci_release;
-+	vmdev->ops.read = vfio_mdev_pci_read;
-+	vmdev->ops.write = vfio_mdev_pci_write;
-+	vmdev->ops.mmap = vfio_mdev_pci_mmap;
-+	vmdev->ops.ioctl = vfio_mdev_pci_ioctl;
-+	ops = &vmdev->ops;
-+
-+	vdev = &vmdev->vdev;
- 	vdev->pdev = pdev;
- 	vdev->irq_type = VFIO_PCI_NUM_IRQS;
- 	mutex_init(&vdev->igate);
-@@ -293,7 +310,7 @@ static int vfio_mdev_pci_driver_probe(struct pci_dev *pdev,
- #endif
- 	vdev->disable_idle_d3 = disable_idle_d3;
- 
--	pci_set_drvdata(pdev, vdev);
-+	pci_set_drvdata(pdev, vmdev);
- 
- 	ret = vfio_pci_reflck_attach(vdev);
- 	if (ret) {
-@@ -324,7 +341,7 @@ static int vfio_mdev_pci_driver_probe(struct pci_dev *pdev,
- 		vfio_pci_set_power_state(vdev, PCI_D3hot);
- 	}
- 
--	ret = mdev_register_device(&pdev->dev, &vfio_mdev_pci_ops);
-+	ret = mdev_register_device(&pdev->dev, ops);
- 	if (ret)
- 		pr_err("Cannot register mdev for device %s\n",
- 			dev_name(&pdev->dev));
-@@ -336,12 +353,17 @@ static int vfio_mdev_pci_driver_probe(struct pci_dev *pdev,
- 
- static void vfio_mdev_pci_driver_remove(struct pci_dev *pdev)
- {
-+	struct vfio_mdev_pci_device *vmdev;
- 	struct vfio_pci_device *vdev;
- 
--	vdev = pci_get_drvdata(pdev);
--	if (!vdev)
-+	mdev_unregister_device(&pdev->dev);
-+
-+	vmdev = pci_get_drvdata(pdev);
-+	if (!vmdev)
- 		return;
- 
-+	vdev = &vmdev->vdev;
-+
- 	vfio_pci_reflck_put(vdev->reflck);
- 
- 	kfree(vdev->region);
-@@ -359,7 +381,8 @@ static void vfio_mdev_pci_driver_remove(struct pci_dev *pdev)
- 				VGA_RSRC_LEGACY_IO | VGA_RSRC_LEGACY_MEM);
- 	}
- 
--	kfree(vdev);
-+	kfree(vmdev->attr.name);
-+	kfree(vmdev);
- }
- 
- static struct pci_driver vfio_mdev_pci_driver = {
--- 
-2.7.4
+Yes, we need to run _PS3 then, but maybe we don't need to write to its
+PMCSR directly.
 
+> > > > > Basically the difference is that when Windows 7 or Linux (the _REV==5
+> > > > > check) then we directly do link disable whereas in Windows 8+ we invoke
+> > > > > LKDS() method that puts the link into L2/L3. None of the fields they
+> > > > > access seem to touch the GPU itself.
+> > > >
+> > > > So that may be where the problem is.
+> > > >
+> > > > Putting the downstream component into PCI D[1-3] is expected to put
+> > > > the link into L1, so I'm not sure how that plays with the later
+> > > > attempt to put it into L2/L3 Ready.
+> > >
+> > > That should be fine. What I've seen the link goes into L1 when
+> > > downstream component is put to D-state (not D0) and then it is put back
+> > > to L0 when L2/3 ready is propagated. Eventually it goes into L2 or L3.
+> >
+> > Well, that's the expected behavior, but the observed behavior isn't as
+> > expected. :-)
+>
+> Right :)
+>
+> > > > Also, L2/L3 Ready is expected to be transient, so finally power should
+> > > > be removed somehow.
+> > >
+> > > There is GPIO for both power and PERST, I think the line here:
+> > >
+> > >   \_SB.SGOV (0x01010004, Zero)
+> > >
+> > > is the one that removes power.
+> >
+> > OK
+> >
+> > > > > LKDS() for the first PEG port looks like this:
+> > > > >
+> > > > >    P0L2 = One
+> > > > >    Sleep (0x10)
+> > > > >    Local0 = Zero
+> > > > >    While (P0L2)
+> > > > >    {
+> > > > >         If ((Local0 > 0x04))
+> > > > >         {
+> > > > >             Break
+> > > > >         }
+> > > > >
+> > > > >         Sleep (0x10)
+> > > > >         Local0++
+> > > > >    }
+> > > > >
+> > > > > One thing that comes to mind is that the loop can end even if P0L2 is
+> > > > > not cleared as it does only 5 iterations with 16 ms sleep between. Maybe
+> > > > > Sleep() is implemented differently in Windows? I mean Linux may be
+> > > > > "faster" here and return prematurely and if we leave the port into D0
+> > > > > this does not happen, or something. I'm just throwing out ideas :)
+> > > >
+> > > > But this actually works for the downstream component in D0, doesn't it?
+> > >
+> > > It does and that leaves the link in L0 so it could be that then the
+> > > above AML works better or something.
+> >
+> > That would be my guess.
+> >
+> > > That reminds me, ASPM may have something to do with this as well.
+> >
+> > Not really if D-states are involved.
+> >
+> > > > Also, if the downstream component is in D0, the port actually should
+> > > > stay in D0 too, so what would happen with the $subject patch applied?
+> > >
+> > > Parent port cannot be lower D-state than the child so I agree it should
+> > > stay in D0 as well. However, it seems that what happens is that the
+> > > issue goes away :)
+> >
+> > Well, at least this is kind of out of the spec.
+> >
+> > Note that pci_pm_suspend_noirq() won't let the port go into D3 if the
+> > downstream device is in D0, so the $subject patch will not work as
+> > expected in the suspend-to-idle case.
+> >
+> > Also we really should make up our minds on whether or not to force
+> > PCIe ports to stay in D0 when downstream devices are in D0 and be
+> > consequent about that.  Right now we do one thing during system-wide
+> > suspend and the other one in PM-runtime, which is confusing.
+> >
+> > The current design is mostly based on the PCI PM Spec 1.2, so it would
+> > be consequent to follow system-wide suspend in PM-runtime and avoid
+> > putting PCIe ports holding devices in D0 into any low-power states.
+> > but that would make the approach in the $subject patch ineffective.
+> >
+> > Moreover, the fact that there are separate branches for "Windows 7"
+> > and "Windows 8+" kind of suggest a change in the expected behavior
+> > between Windows 7 and Windows 8, from the AML perspective.  I would
+> > guess that Windows 7 followed PCI PM 1.2 and Windows 8 (and later)
+> > does something else.
+>
+> My understanding (which may not be correct) is that up to Windows 7 it
+> never put the devices into D3cold runtime. Only when the system entered
+> Sx states it evaluated the _OFF methods.
+
+I see.
+
+> Starting from Windows 8 it started doing this runtime so devices can
+> enter D3cold even when system is in S0.
+
+Hmm.  So by setting _REV to 5 we effectively change the _OFF into a NOP?
+
+> > Now, the structure of the "Windows 8+" branch
+> > described by you suggests that, at least in the cases when it is going
+> > to remove power from the port eventually, it goes straight for the
+> > link preparation (the L2/L3 Ready transition) and power removal
+> > without bothering to program the downstream device and port into D3hot
+> > (because that's kind of redundant).
+> >
+> > That hypothetical "Windows 8+" approach may really work universally,
+> > because it doesn't seem to break any rules (going straight from D0 to
+> > D3cold is not disallowed and doing that for both a port and a
+> > downstream device at the same time is kind of OK either, as long as
+> > the link is ready for that).
+>
+> I guess it depends on how you interpret the specs ;-) From PCIe 5.0 sec
+> 5.8 we can see the supported PM state transitions and it shows that you
+> get to D3cold through D3hot. Of course the device goes into D3cold if
+> you simply remove its power so I agree with you as well. However, if
+> there is _PS3 method we can't skip the D3hot phase.
+
+That's my understanding too, but I'm wondering about direct PMCSR
+writes.  It is unclear to me if they are necessary, or more precisely,
+whether or not Windows 10, say, carries them out if ACPI PM is going
+to be applied.
+
+Maybe I'm going too far with my conclusions, but please let me know
+what you think about the approach proposed at the end of
+https://lore.kernel.org/linux-pm/CAJZ5v0iQttGB4m5TbzCtjp2C1j5qEkUhqhpWb++LhSk3mbW=Lw@mail.gmail.com/T/#t
+?
