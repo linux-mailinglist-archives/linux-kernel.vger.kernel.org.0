@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD8D106A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC9A106D6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfKVKeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:34:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57848 "EHLO mail.kernel.org"
+        id S1730984AbfKVLAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:00:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbfKVKeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:34:03 -0500
+        id S1728201AbfKVLAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:00:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CD6A20708;
-        Fri, 22 Nov 2019 10:34:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B69792071F;
+        Fri, 22 Nov 2019 11:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418841;
-        bh=yZBjIYUSvTUH+vh5HgsliBEQ/jj7faC66rAHinOBbjk=;
+        s=default; t=1574420401;
+        bh=DQTeCkJ2KBezvBPt10XsX8eI318QCbKRiA3j0R1qspQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RU1/xljAvoIt2sLsoXkzgoB8bxAF8ypbt9U9nF03M/FZaUZbeL63SH/QnIemb8Ys5
-         QlbZ/NEtEhHZAauGkb803w84AIWEwCoWzHfz8J1wgFQAe8GZ/8SwUf9knUZDhErbNb
-         QmFCIiUqsJnkjt5efMkdmu4XpLhcQsiiOTkByAa4=
+        b=EXHdMP2MPWl2vJwGGYdVjDyXGczYEOnc6jiOmOb73Lu4t4oJNWd91vgyDYt7rbx45
+         TkaaeK6ZW2KwmTBARBImN1zV5+GkRNWUq0Go45G8boYGhIJA/tGTF0SW+nWrt3wsJv
+         BCG1TcG+NISDKACvVtVHSQ6UGv2KDH4/dhtvUHO4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 068/159] net: amd: fix return type of ndo_start_xmit function
+Subject: [PATCH 4.19 094/220] cpuidle: menu: Fix wakeup statistics updates for polling state
 Date:   Fri, 22 Nov 2019 11:27:39 +0100
-Message-Id: <20191122100755.461419551@linuxfoundation.org>
+Message-Id: <20191122100919.455143250@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,138 +46,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-[ Upstream commit fe72352e37ae8478f4c97975a9831f0c50f22e73 ]
+[ Upstream commit 5f26bdceb9c0a5e6c696aa2899d077cd3ae93413 ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+If the CPU exits the "polling" state due to the time limit in the
+loop in poll_idle(), this is not a real wakeup and it just means
+that the "polling" state selection was not adequate.  The governor
+mispredicted short idle duration, but had a more suitable state been
+selected, the CPU might have spent more time in it.  In fact, there
+is no reason to expect that there would have been a wakeup event
+earlier than the next timer in that case.
 
-Found by coccinelle.
+Handling such cases as regular wakeups in menu_update() may cause the
+menu governor to make suboptimal decisions going forward, but ignoring
+them altogether would not be correct either, because every time
+menu_select() is invoked, it makes a separate new attempt to predict
+the idle duration taking distinct time to the closest timer event as
+input and the outcomes of all those attempts should be recorded.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+For this reason, make menu_update() always assume that if the
+"polling" state was exited due to the time limit, the next proper
+wakeup event for the CPU would be the next timer event (not
+including the tick).
+
+Fixes: a37b969a61c1 "cpuidle: poll_state: Add time limit to poll_idle()"
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amd/am79c961a.c     | 2 +-
- drivers/net/ethernet/amd/atarilance.c    | 6 ++++--
- drivers/net/ethernet/amd/declance.c      | 2 +-
- drivers/net/ethernet/amd/sun3lance.c     | 6 ++++--
- drivers/net/ethernet/amd/sunlance.c      | 2 +-
- drivers/net/ethernet/amd/xgbe/xgbe-drv.c | 4 ++--
- 6 files changed, 13 insertions(+), 9 deletions(-)
+ drivers/cpuidle/governors/menu.c | 10 ++++++++++
+ drivers/cpuidle/poll_state.c     |  6 +++++-
+ include/linux/cpuidle.h          |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amd/am79c961a.c b/drivers/net/ethernet/amd/am79c961a.c
-index 87e727b921dc0..1ad401fed4698 100644
---- a/drivers/net/ethernet/amd/am79c961a.c
-+++ b/drivers/net/ethernet/amd/am79c961a.c
-@@ -440,7 +440,7 @@ static void am79c961_timeout(struct net_device *dev)
- /*
-  * Transmit a packet
-  */
--static int
-+static netdev_tx_t
- am79c961_sendpacket(struct sk_buff *skb, struct net_device *dev)
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index e26a40971b263..6d7f6b9bb373a 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -512,6 +512,16 @@ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		 * duration predictor do a better job next time.
+ 		 */
+ 		measured_us = 9 * MAX_INTERESTING / 10;
++	} else if ((drv->states[last_idx].flags & CPUIDLE_FLAG_POLLING) &&
++		   dev->poll_time_limit) {
++		/*
++		 * The CPU exited the "polling" state due to a time limit, so
++		 * the idle duration prediction leading to the selection of that
++		 * state was inaccurate.  If a better prediction had been made,
++		 * the CPU might have been woken up from idle by the next timer.
++		 * Assume that to be the case.
++		 */
++		measured_us = data->next_timer_us;
+ 	} else {
+ 		/* measured value */
+ 		measured_us = cpuidle_get_last_residency(dev);
+diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+index 3f86d23c592ec..36ff5a1d94226 100644
+--- a/drivers/cpuidle/poll_state.c
++++ b/drivers/cpuidle/poll_state.c
+@@ -17,6 +17,8 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
  {
- 	struct dev_priv *priv = netdev_priv(dev);
-diff --git a/drivers/net/ethernet/amd/atarilance.c b/drivers/net/ethernet/amd/atarilance.c
-index b10964e8cb546..a1dc65136d9fa 100644
---- a/drivers/net/ethernet/amd/atarilance.c
-+++ b/drivers/net/ethernet/amd/atarilance.c
-@@ -339,7 +339,8 @@ static unsigned long lance_probe1( struct net_device *dev, struct lance_addr
-                                    *init_rec );
- static int lance_open( struct net_device *dev );
- static void lance_init_ring( struct net_device *dev );
--static int lance_start_xmit( struct sk_buff *skb, struct net_device *dev );
-+static netdev_tx_t lance_start_xmit(struct sk_buff *skb,
-+				    struct net_device *dev);
- static irqreturn_t lance_interrupt( int irq, void *dev_id );
- static int lance_rx( struct net_device *dev );
- static int lance_close( struct net_device *dev );
-@@ -770,7 +771,8 @@ static void lance_tx_timeout (struct net_device *dev)
+ 	u64 time_start = local_clock();
  
- /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
++	dev->poll_time_limit = false;
++
+ 	local_irq_enable();
+ 	if (!current_set_polling_and_test()) {
+ 		unsigned int loop_count = 0;
+@@ -27,8 +29,10 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+ 				continue;
  
--static int lance_start_xmit( struct sk_buff *skb, struct net_device *dev )
-+static netdev_tx_t
-+lance_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct lance_private *lp = netdev_priv(dev);
- 	struct lance_ioreg	 *IO = lp->iobase;
-diff --git a/drivers/net/ethernet/amd/declance.c b/drivers/net/ethernet/amd/declance.c
-index b584b78237dfd..5e994f981feae 100644
---- a/drivers/net/ethernet/amd/declance.c
-+++ b/drivers/net/ethernet/amd/declance.c
-@@ -893,7 +893,7 @@ static void lance_tx_timeout(struct net_device *dev)
- 	netif_wake_queue(dev);
- }
+ 			loop_count = 0;
+-			if (local_clock() - time_start > POLL_IDLE_TIME_LIMIT)
++			if (local_clock() - time_start > POLL_IDLE_TIME_LIMIT) {
++				dev->poll_time_limit = true;
+ 				break;
++			}
+ 		}
+ 	}
+ 	current_clr_polling();
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 4325d6fdde9b6..317aecaed8970 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -81,6 +81,7 @@ struct cpuidle_device {
+ 	unsigned int		registered:1;
+ 	unsigned int		enabled:1;
+ 	unsigned int		use_deepest_state:1;
++	unsigned int		poll_time_limit:1;
+ 	unsigned int		cpu;
  
--static int lance_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t lance_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct lance_private *lp = netdev_priv(dev);
- 	volatile struct lance_regs *ll = lp->ll;
-diff --git a/drivers/net/ethernet/amd/sun3lance.c b/drivers/net/ethernet/amd/sun3lance.c
-index 3d8c6b2cdea4c..09271665712da 100644
---- a/drivers/net/ethernet/amd/sun3lance.c
-+++ b/drivers/net/ethernet/amd/sun3lance.c
-@@ -235,7 +235,8 @@ struct lance_private {
- static int lance_probe( struct net_device *dev);
- static int lance_open( struct net_device *dev );
- static void lance_init_ring( struct net_device *dev );
--static int lance_start_xmit( struct sk_buff *skb, struct net_device *dev );
-+static netdev_tx_t lance_start_xmit(struct sk_buff *skb,
-+				    struct net_device *dev);
- static irqreturn_t lance_interrupt( int irq, void *dev_id);
- static int lance_rx( struct net_device *dev );
- static int lance_close( struct net_device *dev );
-@@ -511,7 +512,8 @@ static void lance_init_ring( struct net_device *dev )
- }
- 
- 
--static int lance_start_xmit( struct sk_buff *skb, struct net_device *dev )
-+static netdev_tx_t
-+lance_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct lance_private *lp = netdev_priv(dev);
- 	int entry, len;
-diff --git a/drivers/net/ethernet/amd/sunlance.c b/drivers/net/ethernet/amd/sunlance.c
-index 8914170fccfff..babb0a5fb8de4 100644
---- a/drivers/net/ethernet/amd/sunlance.c
-+++ b/drivers/net/ethernet/amd/sunlance.c
-@@ -1106,7 +1106,7 @@ static void lance_tx_timeout(struct net_device *dev)
- 	netif_wake_queue(dev);
- }
- 
--static int lance_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t lance_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct lance_private *lp = netdev_priv(dev);
- 	int entry, skblen, len;
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
-index 64034ff081a0c..23fc244eb8a4d 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
-@@ -1390,7 +1390,7 @@ static int xgbe_close(struct net_device *netdev)
- 	return 0;
- }
- 
--static int xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct xgbe_prv_data *pdata = netdev_priv(netdev);
- 	struct xgbe_hw_if *hw_if = &pdata->hw_if;
-@@ -1399,7 +1399,7 @@ static int xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	struct xgbe_ring *ring;
- 	struct xgbe_packet_data *packet;
- 	struct netdev_queue *txq;
--	int ret;
-+	netdev_tx_t ret;
- 
- 	DBGPR("-->xgbe_xmit: skb->len = %d\n", skb->len);
- 
+ 	int			last_residency;
 -- 
 2.20.1
 
