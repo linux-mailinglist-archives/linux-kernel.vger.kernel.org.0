@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F6AA106A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0506E106B53
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbfKVKcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:32:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54374 "EHLO mail.kernel.org"
+        id S1729199AbfKVKnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:43:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727747AbfKVKck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:32:40 -0500
+        id S1728031AbfKVKnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:43:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42F382071C;
-        Fri, 22 Nov 2019 10:32:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6A6D20637;
+        Fri, 22 Nov 2019 10:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418759;
-        bh=k+zAYsoWvMmMxQVYUXNHmoxyfXwgy1E1ib5zhobtrJo=;
+        s=default; t=1574419389;
+        bh=/NIyCPyZeLdBwZL2f6/XlX7dwDQA8o09yF4PJxAG3WA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vp+nEF8QmZlj0X9NbNef3h2GWJUH6jRZuo7j/8FTfOpMT1UWJ6KubW/WLFpbEUBDC
-         bqO8ao/eP5O5r6DWcUFdKeE6gauSotmBMC5LjjmhHbp7KtzWPQlQMcrXgn/WpzwPqd
-         abOLBNJoaC6HrnGhkzpsO9St0Cdx/JBaEowmNFkw=
+        b=2pydndonjjVUX4nzh3zAsRHTma9XSxTXgCwCkjkSUas9/q0jj3w0nrwOBMSofU/rM
+         pub70Fs5KaZDFOAfQmuZ66hPrTGQNWhHeS5OVSULa0kcN2TVAd8fru2o+3sBm/qjVU
+         VhW2Hh3TZ8PIWLrKqwAO4WrQmYyCTSF9trcvupbQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 043/159] kprobes: Dont call BUG_ON() if there is a kprobe in use on free list
-Date:   Fri, 22 Nov 2019 11:27:14 +0100
-Message-Id: <20191122100737.054664317@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Peter Chen <peter.chen@nxp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 095/222] usb: chipidea: Fix otg event handler
+Date:   Fri, 22 Nov 2019 11:27:15 +0100
+Message-Id: <20191122100910.315599583@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,48 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit cbdd96f5586151e48317d90a403941ec23f12660 ]
+[ Upstream commit 59739131e0ca06db7560f9073fff2fb83f6bc2a5 ]
 
-Instead of calling BUG_ON(), if we find a kprobe in use on free kprobe
-list, just remove it from the list and keep it on kprobe hash list
-as same as other in-use kprobes.
+At OTG work running time, it's possible that several events need to be
+addressed (e.g. ID and VBUS events). The current implementation handles
+only one event at a time which leads to ignoring the other one. Fix it.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/153666126882.21306.10738207224288507996.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kprobes.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/chipidea/otg.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index fdde50d39a46d..f59f49bc2a5d5 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -514,8 +514,14 @@ static void do_free_cleaned_kprobes(void)
- 	struct optimized_kprobe *op, *tmp;
- 
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
--		BUG_ON(!kprobe_unused(&op->kp));
- 		list_del_init(&op->list);
-+		if (WARN_ON_ONCE(!kprobe_unused(&op->kp))) {
-+			/*
-+			 * This must not happen, but if there is a kprobe
-+			 * still in use, keep it on kprobes hash list.
-+			 */
-+			continue;
-+		}
- 		free_aggr_kprobe(&op->kp);
+diff --git a/drivers/usb/chipidea/otg.c b/drivers/usb/chipidea/otg.c
+index f36a1ac3bfbdf..b8650210be0f7 100644
+--- a/drivers/usb/chipidea/otg.c
++++ b/drivers/usb/chipidea/otg.c
+@@ -206,14 +206,17 @@ static void ci_otg_work(struct work_struct *work)
  	}
- }
+ 
+ 	pm_runtime_get_sync(ci->dev);
++
+ 	if (ci->id_event) {
+ 		ci->id_event = false;
+ 		ci_handle_id_switch(ci);
+-	} else if (ci->b_sess_valid_event) {
++	}
++
++	if (ci->b_sess_valid_event) {
+ 		ci->b_sess_valid_event = false;
+ 		ci_handle_vbus_change(ci);
+-	} else
+-		dev_err(ci->dev, "unexpected event occurs at %s\n", __func__);
++	}
++
+ 	pm_runtime_put_sync(ci->dev);
+ 
+ 	enable_irq(ci->irq);
 -- 
 2.20.1
 
