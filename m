@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4875D106B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E05CD106A13
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729229AbfKVKn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48940 "EHLO mail.kernel.org"
+        id S1727415AbfKVKbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:31:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729205AbfKVKnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:21 -0500
+        id S1727316AbfKVKbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:31:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 594F120707;
-        Fri, 22 Nov 2019 10:43:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45BD120714;
+        Fri, 22 Nov 2019 10:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419400;
-        bh=lxaBYjJ5B0CHoLiYBCq+c4Te2XzDh6prC0xrVXJ31bc=;
+        s=default; t=1574418699;
+        bh=G07mmmbZxw4U7sCnfcE050gp+/zMjMUqCmkE3k+kAnc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=02ikqq6uluY2vMDEa3kE7RVE/4NqfUSb1vNNn459ls1SSXLk4MpbwrSTdJxGszK6N
-         moV4JFJlbT+rvcVYQcn+oHWGCHa787Y6/bqF/+Ya/lzP180qftbOfoPYIK6MZgXJR1
-         ZbEWATuEU2wZTTi8ITHxlX3iyDIp3npfMKJuksD4=
+        b=tFJxmSUYjyEbQnSseeQznRKGvoblB2qCSIbtD0me0YKmvoIlBU7p9aLI5uHLijvhY
+         Acy0nFqC3hCInn7VA7VtklMpMSvl2TKYx2YDlZaBLLrElRfeH71btMusZ7s9g2Q2Zm
+         GjJXpOPsUHZZmxpmMI5zT5KIsD42ipd2+mlVEekI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Patryk=20Ma=C5=82ek?= <patryk.malek@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 072/222] power: supply: ab8500_fg: silence uninitialized variable warnings
+Subject: [PATCH 4.4 021/159] i40e: hold the rtnl lock on clearing interrupt scheme
 Date:   Fri, 22 Nov 2019 11:26:52 +0100
-Message-Id: <20191122100907.048522137@linuxfoundation.org>
+Message-Id: <20191122100721.840727280@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,76 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Patryk Małek <patryk.malek@intel.com>
 
-[ Upstream commit 54baff8d4e5dce2cef61953b1dc22079cda1ddb1 ]
+[ Upstream commit 5cba17b14182696d6bb0ec83a1d087933f252241 ]
 
-If kstrtoul() fails then we print "charge_full" when it's uninitialized.
-The debug printk doesn't add anything so I deleted it and cleaned these
-two functions up a bit.
+Hold the rtnl lock when we're clearing interrupt scheme
+in i40e_shutdown and in i40e_remove.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Patryk Małek <patryk.malek@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/ab8500_fg.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
-index 2199f673118c0..ea8c26a108f00 100644
---- a/drivers/power/supply/ab8500_fg.c
-+++ b/drivers/power/supply/ab8500_fg.c
-@@ -2437,17 +2437,14 @@ static ssize_t charge_full_store(struct ab8500_fg *di, const char *buf,
- 				 size_t count)
- {
- 	unsigned long charge_full;
--	ssize_t ret;
-+	int ret;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 22c43a776c6cd..756c4ea176554 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -10828,6 +10828,7 @@ static void i40e_remove(struct pci_dev *pdev)
+ 	mutex_destroy(&hw->aq.asq_mutex);
  
- 	ret = kstrtoul(buf, 10, &charge_full);
-+	if (ret)
-+		return ret;
+ 	/* Clear all dynamic memory lists of rings, q_vectors, and VSIs */
++	rtnl_lock();
+ 	i40e_clear_interrupt_scheme(pf);
+ 	for (i = 0; i < pf->num_alloc_vsi; i++) {
+ 		if (pf->vsi[i]) {
+@@ -10836,6 +10837,7 @@ static void i40e_remove(struct pci_dev *pdev)
+ 			pf->vsi[i] = NULL;
+ 		}
+ 	}
++	rtnl_unlock();
  
--	dev_dbg(di->dev, "Ret %zd charge_full %lu", ret, charge_full);
--
--	if (!ret) {
--		di->bat_cap.max_mah = (int) charge_full;
--		ret = count;
--	}
--	return ret;
-+	di->bat_cap.max_mah = (int) charge_full;
-+	return count;
- }
+ 	for (i = 0; i < I40E_MAX_VEB; i++) {
+ 		kfree(pf->veb[i]);
+@@ -10982,7 +10984,13 @@ static void i40e_shutdown(struct pci_dev *pdev)
+ 	wr32(hw, I40E_PFPM_WUFC,
+ 	     (pf->wol_en ? I40E_PFPM_WUFC_MAG_MASK : 0));
  
- static ssize_t charge_now_show(struct ab8500_fg *di, char *buf)
-@@ -2459,20 +2456,16 @@ static ssize_t charge_now_store(struct ab8500_fg *di, const char *buf,
- 				 size_t count)
- {
- 	unsigned long charge_now;
--	ssize_t ret;
-+	int ret;
++	/* Since we're going to destroy queues during the
++	 * i40e_clear_interrupt_scheme() we should hold the RTNL lock for this
++	 * whole section
++	 */
++	rtnl_lock();
+ 	i40e_clear_interrupt_scheme(pf);
++	rtnl_unlock();
  
- 	ret = kstrtoul(buf, 10, &charge_now);
-+	if (ret)
-+		return ret;
- 
--	dev_dbg(di->dev, "Ret %zd charge_now %lu was %d",
--		ret, charge_now, di->bat_cap.prev_mah);
--
--	if (!ret) {
--		di->bat_cap.user_mah = (int) charge_now;
--		di->flags.user_cap = true;
--		ret = count;
--		queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
--	}
--	return ret;
-+	di->bat_cap.user_mah = (int) charge_now;
-+	di->flags.user_cap = true;
-+	queue_delayed_work(di->fg_wq, &di->fg_periodic_work, 0);
-+	return count;
- }
- 
- static struct ab8500_fg_sysfs_entry charge_full_attr =
+ 	if (system_state == SYSTEM_POWER_OFF) {
+ 		pci_wake_from_d3(pdev, pf->wol_en);
 -- 
 2.20.1
 
