@@ -2,73 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C09106408
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC95E1064A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:19:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbfKVGOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:14:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51920 "EHLO mail.kernel.org"
+        id S1729265AbfKVGTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 01:19:02 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:57604 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729187AbfKVGOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 01:14:20 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE58A20707;
-        Fri, 22 Nov 2019 06:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574403259;
-        bh=v2yq6QuBQJWjhwP+bGg0C5drFr5wc3WHgW3vI2tG9V8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i9G61iSVM2qLV2TX+OVljOYZomPg/5KVEbfGJZJQ2e8zbSqvS7tZl2kl8ilkjVBhr
-         pXIi+CqI3bk+t65h/jR2rr/ESmARhHA4ptOo/dhb5NJg0yYzuvzmTma4P7utWrVgzV
-         L1rPXhOslnOQkvE2puOOhidLaJZ1bvdHJaMO97Io=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.4 68/68] mtd: Remove a debug trace in mtdpart.c
-Date:   Fri, 22 Nov 2019 01:13:01 -0500
-Message-Id: <20191122061301.4947-67-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191122061301.4947-1-sashal@kernel.org>
-References: <20191122061301.4947-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1729691AbfKVGTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 01:19:00 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6BD8D2006C5;
+        Fri, 22 Nov 2019 07:18:58 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B0FF200AEA;
+        Fri, 22 Nov 2019 07:18:53 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id ECA14402B3;
+        Fri, 22 Nov 2019 14:18:46 +0800 (SGT)
+From:   Hui Song <hui.song_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Song Hui <hui.song_1@nxp.com>
+Subject: [PATCH v1] gpio : mpc8xxx :  ls1088a/ls1028a edge detection mode bug fixs.
+Date:   Fri, 22 Nov 2019 14:18:39 +0800
+Message-Id: <20191122061839.24904-1-hui.song_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <bbrezillon@kernel.org>
+From: Song Hui <hui.song_1@nxp.com>
 
-[ Upstream commit bda2ab56356b9acdfab150f31c4bac9846253092 ]
+On these boards, the irq_set_type must point one valid function pointer
+that can correctly set both edge and falling edge.
 
-Commit 2b6f0090a333 ("mtd: Check add_mtd_device() ret code") contained
-a leftover of the debug session that led to this bug fix. Remove this
-pr_info().
-
-Fixes: 2b6f0090a333 ("mtd: Check add_mtd_device() ret code")
-Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Song Hui <hui.song_1@nxp.com>
 ---
- drivers/mtd/mtdpart.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpio/gpio-mpc8xxx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index 9b48be05cd1af..59772510452a5 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -624,7 +624,6 @@ int mtd_add_partition(struct mtd_info *master, const char *name,
- 	mutex_unlock(&mtd_partitions_mutex);
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 81f0f31..8ddb23b 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -296,6 +296,7 @@ static const struct mpc8xxx_gpio_devtype mpc512x_gpio_devtype = {
  
- 	free_partition(new);
--	pr_info("%s:%i\n", __func__, __LINE__);
+ static const struct mpc8xxx_gpio_devtype ls1028a_gpio_devtype = {
+ 	.gpio_dir_in_init = ls1028a_gpio_dir_in_init,
++	.irq_set_type = mpc8xxx_irq_set_type,
+ };
  
- 	return ret;
- }
+ static const struct mpc8xxx_gpio_devtype mpc5125_gpio_devtype = {
 -- 
-2.20.1
+2.9.5
 
