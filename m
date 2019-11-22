@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C71106087
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DE8106088
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfKVFto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:49:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53876 "EHLO mail.kernel.org"
+        id S1727262AbfKVFtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:49:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbfKVFtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:49:40 -0500
+        id S1727227AbfKVFto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:49:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748E920718;
-        Fri, 22 Nov 2019 05:49:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDDF820708;
+        Fri, 22 Nov 2019 05:49:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401780;
-        bh=SX2sF24SxxN0DTRfvAZ+p3qN/yPB1GS57zgjqYDAA+o=;
+        s=default; t=1574401783;
+        bh=F3GGm7t3WHwYNXVgUb+L8W3UBg8MBtvEOZG23w1T2JQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y5YPfQbrgF4CuNiuoCfOAH7TH3cehkxgDJwSShK1FC5R2vmO7UbJv4yDWbpj9joHb
-         8LLmvu4oLgBucIPULJs8ZctV86eSgJCFp3g/0IXRdseRdq1hAgFaPeOsN4U+1DHWEg
-         rf4R8xyeZpaFiTM+JMX3+L7u80grqRZmPWg177t0=
+        b=mh3JeGh7AnLMLr45Ae0KwNw0KeuNy+BjnqPrhWR3fdMVRX+ZgkbtPNNVibAYdsX8M
+         FXSlEhIzpXQImJP+/X6yzO3wBOx7osCfpBaUeeqfjUWMG8RxnblXuROUgn2pUTNrmm
+         JvUIHs6J0ji9hr54zOM6tg1KljIWZuYmD+h79zw4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 029/219] ARM: OMAP1: fix USB configuration for device-only setups
-Date:   Fri, 22 Nov 2019 00:46:01 -0500
-Message-Id: <20191122054911.1750-22-sashal@kernel.org>
+Cc:     Gal Pressman <galpress@amazon.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 032/219] RDMA/vmw_pvrdma: Use atomic memory allocation in create AH
+Date:   Fri, 22 Nov 2019 00:46:04 -0500
+Message-Id: <20191122054911.1750-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,49 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Gal Pressman <galpress@amazon.com>
 
-[ Upstream commit c7b7b5cbd0c859b1546a5a3455d457708bdadf4c ]
+[ Upstream commit a276a4d93bf1580d737f38d1810e5f4b166f3edd ]
 
-Currently we do USB configuration only if the host mode (CONFIG_USB)
-is enabled. But it should be done also in the case of device-only setups,
-so change the condition to CONFIG_USB_SUPPORT. This allows to use
-omap_udc on Palm Tungsten E.
+Create address handle callback should not sleep, use GFP_ATOMIC instead of
+GFP_KERNEL for memory allocation.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
+Cc: Adit Ranadive <aditr@vmware.com>
+Signed-off-by: Gal Pressman <galpress@amazon.com>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/Makefile           | 2 +-
- arch/arm/mach-omap1/include/mach/usb.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap1/Makefile b/arch/arm/mach-omap1/Makefile
-index e8ccf51c6f292..ec0235899de20 100644
---- a/arch/arm/mach-omap1/Makefile
-+++ b/arch/arm/mach-omap1/Makefile
-@@ -25,7 +25,7 @@ obj-y					+= $(i2c-omap-m) $(i2c-omap-y)
+diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
+index b65d10b0a8759..f4cb5cf26006f 100644
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
+@@ -555,7 +555,7 @@ struct ib_ah *pvrdma_create_ah(struct ib_pd *pd, struct rdma_ah_attr *ah_attr,
+ 	if (!atomic_add_unless(&dev->num_ahs, 1, dev->dsr->caps.max_ah))
+ 		return ERR_PTR(-ENOMEM);
  
- led-y := leds.o
- 
--usb-fs-$(CONFIG_USB)			:= usb.o
-+usb-fs-$(CONFIG_USB_SUPPORT)		:= usb.o
- obj-y					+= $(usb-fs-m) $(usb-fs-y)
- 
- # Specific board support
-diff --git a/arch/arm/mach-omap1/include/mach/usb.h b/arch/arm/mach-omap1/include/mach/usb.h
-index 77867778d4ec7..5429d86c7190d 100644
---- a/arch/arm/mach-omap1/include/mach/usb.h
-+++ b/arch/arm/mach-omap1/include/mach/usb.h
-@@ -11,7 +11,7 @@
- 
- #include <linux/platform_data/usb-omap1.h>
- 
--#if IS_ENABLED(CONFIG_USB)
-+#if IS_ENABLED(CONFIG_USB_SUPPORT)
- void omap1_usb_init(struct omap_usb_config *pdata);
- #else
- static inline void omap1_usb_init(struct omap_usb_config *pdata)
+-	ah = kzalloc(sizeof(*ah), GFP_KERNEL);
++	ah = kzalloc(sizeof(*ah), GFP_ATOMIC);
+ 	if (!ah) {
+ 		atomic_dec(&dev->num_ahs);
+ 		return ERR_PTR(-ENOMEM);
 -- 
 2.20.1
 
