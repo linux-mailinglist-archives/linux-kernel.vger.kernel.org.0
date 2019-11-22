@@ -2,507 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C8F107499
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B01E107494
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:09:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfKVPKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 10:10:37 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35469 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfKVPKg (ORCPT
+        id S1727218AbfKVPJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 10:09:52 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22764 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726633AbfKVPJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 10:10:36 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s10so3233366plp.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 07:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dBvLpMBGdm7mhVC8aAjSisPFKkvAJLWz9oR0VioKAaM=;
-        b=Dj/pZsgCjOBLiZqposF01kJgythg7E4SGGh+pGg/u3svdPTIbJgDX5y61SEwml/WjW
-         ZLvcB2kVZKKlbNEJwhodHb8+lL6o6Yzgxn7qmiGe1rtmnxcZZkvQISz5erYvTrI7tJwq
-         qUQN5H9gr8cWehWGTCiBOsM1XCNfNqPoYZTwRc1cRj0o7DIuB+1mSDpn5tVUvlaiyjpV
-         X0zVQhtY4oekP34qRKOOU6LUl+DYq6Avy6gYqDNFC+ZTNm1F24rYzg20pCntdBxDbHsn
-         naIaL/9A+Cpd1xd4wLipYeNkYhMRArINXTJq/PzftGrSg9rDXIF3THBMsrfiyhI5XwN/
-         zU5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dBvLpMBGdm7mhVC8aAjSisPFKkvAJLWz9oR0VioKAaM=;
-        b=AovpNhaaEqZ0U9CRTcCPrBEM+cd0e8/bqD3bbQxHbnDp9VDfYt8BzXJHWTwHSo5coi
-         XlfNCtCPaJOFFs+RJ1OkkcYbQvKNvJCcQIZCRwE0cr8MaUBUxQXDQLZ1PjzYhMqbJwrt
-         9ah1x5LZPXmTIIDetyahNJIBmwtWygBPR335AsuLcvGc7fUFxIb09Gx2FyZOPIlXMNGH
-         oM4YTsENpQYz9gjOT2/v3m9bNbM+fheZC/s/rG5HC22UwBwfPerWF4JnPNoL/grIdA44
-         61dqjbE6xhFRJaWO5kcPfaRcr3A1jN5njuHs795lXklEf0Bd2sK3NZENj9Y34Mavj1KP
-         UeVw==
-X-Gm-Message-State: APjAAAWqs6rps1iB223Gu92Bab+xusM5VvV6aoB491sBSiTROcj4THhg
-        XADds54g2Ei/TehwrfjceuHZXA==
-X-Google-Smtp-Source: APXvYqzu14sJjGlaWMmh7BafUUdz6jfWpTJXWDHwINi7SO8IA1gxQKmMr6I5SoIKxl1ZsqEmigp6VQ==
-X-Received: by 2002:a17:90a:23c4:: with SMTP id g62mr19695637pje.121.1574435434932;
-        Fri, 22 Nov 2019 07:10:34 -0800 (PST)
-Received: from localhost.localdomain ([240e:362:496:8600:f5af:2744:25c3:d01a])
-        by smtp.gmail.com with ESMTPSA id a19sm8066021pfn.144.2019.11.22.07.09.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 22 Nov 2019 07:10:34 -0800 (PST)
-From:   Zhangfei Gao <zhangfei.gao@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan.cameron@huawei.com, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org
-Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: [PATCH v9 4/4] crypto: hisilicon - register zip engine to uacce
-Date:   Fri, 22 Nov 2019 23:07:41 +0800
-Message-Id: <1574435261-6031-5-git-send-email-zhangfei.gao@linaro.org>
+        Fri, 22 Nov 2019 10:09:52 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMF7wYc020482;
+        Fri, 22 Nov 2019 16:09:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=MJxLlMpkLwVBG7NqhYGIo7Hw2zbfifhhyH7WA1YqF4g=;
+ b=llpDGCROJQ+hykPjdrR5b6ESI5LHfDcB5g288dqaJtCv1Sf2fsO8yenoXkYT3IM8zP4O
+ m60PtaRg/m9hw4s6BNYPPIV/tMt2xpCSxo5wsBWlX1ke+xZpSKfFjJxESeqkUF/b6X7S
+ DS+G6LxqCre2TcpkrDjBBAr+SJsLO/tGefQXZeIbxLMW/wnOIGtmeD89eeHwY4F7mEGo
+ UO0GKwIx4kjwbyXM7XI0o1ZKq50Br/Te5ALWpBcbqcA4KkM+598/O6osj+DBnMuBllOo
+ OH4yhGyxPp8EKetK8GOudVHWYWlyn4QxxgXgAK0LorQ5p0fpV50iSXpmGroc1FfZBPZ9 8g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2wa9uphww3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Nov 2019 16:09:25 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3387710002A;
+        Fri, 22 Nov 2019 16:09:24 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EDB362C38C5;
+        Fri, 22 Nov 2019 16:09:23 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov 2019 16:09:23
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] iio: adc: stm32-adc: Add check on overrun interrupt
+Date:   Fri, 22 Nov 2019 16:08:14 +0100
+Message-ID: <1574435294-19510-1-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574435261-6031-1-git-send-email-zhangfei.gao@linaro.org>
-References: <1574435261-6031-1-git-send-email-zhangfei.gao@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-22_02:2019-11-21,2019-11-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register qm to uacce framework for user crypto driver
+Enable overrun interrupt on STM32 ADC. In case data register hasn't been
+read (by CPU or DMA), overrun condition is detected when there's new
+conversion data available. Stop grabbing data and log an error message.
+Use a threaded irq to avoid printing the error message from hard irq
+context.
 
-Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
- drivers/crypto/hisilicon/qm.c           | 234 +++++++++++++++++++++++++++++++-
- drivers/crypto/hisilicon/qm.h           |  11 ++
- drivers/crypto/hisilicon/zip/zip_main.c |  16 ++-
- include/uapi/misc/uacce/hisi_qm.h       |  23 ++++
- 4 files changed, 277 insertions(+), 7 deletions(-)
- create mode 100644 include/uapi/misc/uacce/hisi_qm.h
+ drivers/iio/adc/stm32-adc-core.c | 14 +++++------
+ drivers/iio/adc/stm32-adc-core.h |  9 +++++++
+ drivers/iio/adc/stm32-adc.c      | 53 ++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 67 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index a8ed6990..7d23daa 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -9,6 +9,9 @@
- #include <linux/log2.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-+#include <linux/uacce.h>
-+#include <linux/uaccess.h>
-+#include <uapi/misc/uacce/hisi_qm.h>
- #include "qm.h"
+diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
+index 6537f4f..97655d7 100644
+--- a/drivers/iio/adc/stm32-adc-core.c
++++ b/drivers/iio/adc/stm32-adc-core.c
+@@ -280,21 +280,21 @@ static int stm32h7_adc_clk_sel(struct platform_device *pdev,
+ static const struct stm32_adc_common_regs stm32f4_adc_common_regs = {
+ 	.csr = STM32F4_ADC_CSR,
+ 	.ccr = STM32F4_ADC_CCR,
+-	.eoc1_msk = STM32F4_EOC1,
+-	.eoc2_msk = STM32F4_EOC2,
+-	.eoc3_msk = STM32F4_EOC3,
++	.eoc1_msk = STM32F4_EOC1 | STM32F4_OVR1,
++	.eoc2_msk = STM32F4_EOC2 | STM32F4_OVR2,
++	.eoc3_msk = STM32F4_EOC3 | STM32F4_OVR3,
+ 	.ier = STM32F4_ADC_CR1,
+-	.eocie_msk = STM32F4_EOCIE,
++	.eocie_msk = STM32F4_EOCIE | STM32F4_OVRIE,
+ };
  
- /* eq/aeq irq enable */
-@@ -467,6 +470,11 @@ static void qm_poll_qp(struct hisi_qp *qp, struct hisi_qm *qm)
+ /* STM32H7 common registers definitions */
+ static const struct stm32_adc_common_regs stm32h7_adc_common_regs = {
+ 	.csr = STM32H7_ADC_CSR,
+ 	.ccr = STM32H7_ADC_CCR,
+-	.eoc1_msk = STM32H7_EOC_MST,
+-	.eoc2_msk = STM32H7_EOC_SLV,
++	.eoc1_msk = STM32H7_EOC_MST | STM32H7_OVR_MST,
++	.eoc2_msk = STM32H7_EOC_SLV | STM32H7_OVR_SLV,
+ 	.ier = STM32H7_ADC_IER,
+-	.eocie_msk = STM32H7_EOCIE,
++	.eocie_msk = STM32H7_EOCIE | STM32H7_OVRIE,
+ };
+ 
+ static const unsigned int stm32_adc_offset[STM32_ADC_MAX_ADCS] = {
+diff --git a/drivers/iio/adc/stm32-adc-core.h b/drivers/iio/adc/stm32-adc-core.h
+index 2579d51..2322809 100644
+--- a/drivers/iio/adc/stm32-adc-core.h
++++ b/drivers/iio/adc/stm32-adc-core.h
+@@ -51,10 +51,12 @@
+ #define STM32F4_ADC_CCR			(STM32_ADCX_COMN_OFFSET + 0x04)
+ 
+ /* STM32F4_ADC_SR - bit fields */
++#define STM32F4_OVR			BIT(5)
+ #define STM32F4_STRT			BIT(4)
+ #define STM32F4_EOC			BIT(1)
+ 
+ /* STM32F4_ADC_CR1 - bit fields */
++#define STM32F4_OVRIE			BIT(26)
+ #define STM32F4_RES_SHIFT		24
+ #define STM32F4_RES_MASK		GENMASK(25, 24)
+ #define STM32F4_SCAN			BIT(8)
+@@ -72,8 +74,11 @@
+ #define STM32F4_ADON			BIT(0)
+ 
+ /* STM32F4_ADC_CSR - bit fields */
++#define STM32F4_OVR3			BIT(21)
+ #define STM32F4_EOC3			BIT(17)
++#define STM32F4_OVR2			BIT(13)
+ #define STM32F4_EOC2			BIT(9)
++#define STM32F4_OVR1			BIT(5)
+ #define STM32F4_EOC1			BIT(1)
+ 
+ /* STM32F4_ADC_CCR - bit fields */
+@@ -103,10 +108,12 @@
+ 
+ /* STM32H7_ADC_ISR - bit fields */
+ #define STM32MP1_VREGREADY		BIT(12)
++#define STM32H7_OVR			BIT(4)
+ #define STM32H7_EOC			BIT(2)
+ #define STM32H7_ADRDY			BIT(0)
+ 
+ /* STM32H7_ADC_IER - bit fields */
++#define STM32H7_OVRIE			STM32H7_OVR
+ #define STM32H7_EOCIE			STM32H7_EOC
+ 
+ /* STM32H7_ADC_CR - bit fields */
+@@ -155,7 +162,9 @@ enum stm32h7_adc_dmngt {
+ #define STM32H7_LINCALFACT_MASK		GENMASK(29, 0)
+ 
+ /* STM32H7_ADC_CSR - bit fields */
++#define STM32H7_OVR_SLV			BIT(20)
+ #define STM32H7_EOC_SLV			BIT(18)
++#define STM32H7_OVR_MST			BIT(4)
+ #define STM32H7_EOC_MST			BIT(2)
+ 
+ /* STM32H7_ADC_CCR - bit fields */
+diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
+index 3b291d7..9361f92 100644
+--- a/drivers/iio/adc/stm32-adc.c
++++ b/drivers/iio/adc/stm32-adc.c
+@@ -117,7 +117,9 @@ struct stm32_adc_regs {
+  * struct stm32_adc_regspec - stm32 registers definition
+  * @dr:			data register offset
+  * @ier_eoc:		interrupt enable register & eocie bitfield
++ * @ier_ovr:		interrupt enable register & overrun bitfield
+  * @isr_eoc:		interrupt status register & eoc bitfield
++ * @isr_ovr:		interrupt status register & overrun bitfield
+  * @sqr:		reference to sequence registers array
+  * @exten:		trigger control register & bitfield
+  * @extsel:		trigger selection register & bitfield
+@@ -128,7 +130,9 @@ struct stm32_adc_regs {
+ struct stm32_adc_regspec {
+ 	const u32 dr;
+ 	const struct stm32_adc_regs ier_eoc;
++	const struct stm32_adc_regs ier_ovr;
+ 	const struct stm32_adc_regs isr_eoc;
++	const struct stm32_adc_regs isr_ovr;
+ 	const struct stm32_adc_regs *sqr;
+ 	const struct stm32_adc_regs exten;
+ 	const struct stm32_adc_regs extsel;
+@@ -337,7 +341,9 @@ static const unsigned int stm32f4_adc_smp_cycles[STM32_ADC_MAX_SMP + 1] = {
+ static const struct stm32_adc_regspec stm32f4_adc_regspec = {
+ 	.dr = STM32F4_ADC_DR,
+ 	.ier_eoc = { STM32F4_ADC_CR1, STM32F4_EOCIE },
++	.ier_ovr = { STM32F4_ADC_CR1, STM32F4_OVRIE },
+ 	.isr_eoc = { STM32F4_ADC_SR, STM32F4_EOC },
++	.isr_ovr = { STM32F4_ADC_SR, STM32F4_OVR },
+ 	.sqr = stm32f4_sq,
+ 	.exten = { STM32F4_ADC_CR2, STM32F4_EXTEN_MASK, STM32F4_EXTEN_SHIFT },
+ 	.extsel = { STM32F4_ADC_CR2, STM32F4_EXTSEL_MASK,
+@@ -429,7 +435,9 @@ static const unsigned int stm32h7_adc_smp_cycles[STM32_ADC_MAX_SMP + 1] = {
+ static const struct stm32_adc_regspec stm32h7_adc_regspec = {
+ 	.dr = STM32H7_ADC_DR,
+ 	.ier_eoc = { STM32H7_ADC_IER, STM32H7_EOCIE },
++	.ier_ovr = { STM32H7_ADC_IER, STM32H7_OVRIE },
+ 	.isr_eoc = { STM32H7_ADC_ISR, STM32H7_EOC },
++	.isr_ovr = { STM32H7_ADC_ISR, STM32H7_OVR },
+ 	.sqr = stm32h7_sq,
+ 	.exten = { STM32H7_ADC_CFGR, STM32H7_EXTEN_MASK, STM32H7_EXTEN_SHIFT },
+ 	.extsel = { STM32H7_ADC_CFGR, STM32H7_EXTSEL_MASK,
+@@ -506,6 +514,18 @@ static void stm32_adc_conv_irq_disable(struct stm32_adc *adc)
+ 			   adc->cfg->regs->ier_eoc.mask);
+ }
+ 
++static void stm32_adc_ovr_irq_enable(struct stm32_adc *adc)
++{
++	stm32_adc_set_bits(adc, adc->cfg->regs->ier_ovr.reg,
++			   adc->cfg->regs->ier_ovr.mask);
++}
++
++static void stm32_adc_ovr_irq_disable(struct stm32_adc *adc)
++{
++	stm32_adc_clr_bits(adc, adc->cfg->regs->ier_ovr.reg,
++			   adc->cfg->regs->ier_ovr.mask);
++}
++
+ static void stm32_adc_set_res(struct stm32_adc *adc)
  {
- 	struct qm_cqe *cqe = qp->cqe + qp->qp_status.cq_head;
- 
-+	if (qp->event_cb) {
-+		qp->event_cb(qp);
-+		return;
-+	}
-+
- 	if (qp->req_cb) {
- 		while (QM_CQE_PHASE(cqe) == qp->qp_status.cqc_phase) {
- 			dma_rmb();
-@@ -1271,7 +1279,7 @@ static int qm_qp_ctx_cfg(struct hisi_qp *qp, int qp_id, int pasid)
-  * @qp: The qp we want to start to run.
-  * @arg: Accelerator specific argument.
-  *
-- * After this function, qp can receive request from user. Return qp_id if
-+ * After this function, qp can receive request from user. Return 0 if
-  * successful, Return -EBUSY if failed.
-  */
- int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
-@@ -1316,7 +1324,7 @@ int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
- 
- 	dev_dbg(dev, "queue %d started\n", qp_id);
- 
--	return qp_id;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(hisi_qm_start_qp);
- 
-@@ -1397,6 +1405,213 @@ static void hisi_qm_cache_wb(struct hisi_qm *qm)
+ 	const struct stm32_adc_regs *res = &adc->cfg->regs->res;
+@@ -1205,6 +1225,19 @@ static int stm32_adc_read_raw(struct iio_dev *indio_dev,
  	}
  }
  
-+static void qm_qp_event_notifier(struct hisi_qp *qp)
++static irqreturn_t stm32_adc_threaded_isr(int irq, void *data)
 +{
-+	wake_up_interruptible(&qp->uacce_q->wait);
++	struct stm32_adc *adc = data;
++	struct iio_dev *indio_dev = iio_priv_to_dev(adc);
++	const struct stm32_adc_regspec *regs = adc->cfg->regs;
++	u32 status = stm32_adc_readl(adc, regs->isr_eoc.reg);
++
++	if (status & regs->isr_ovr.mask)
++		dev_err(&indio_dev->dev, "Overrun interrupt, stopping.\n");
++
++	return IRQ_HANDLED;
 +}
 +
-+static int hisi_qm_get_available_instances(struct uacce_device *uacce)
-+{
-+	int i, ret;
-+	struct hisi_qm *qm = uacce->priv;
-+
-+	read_lock(&qm->qps_lock);
-+	for (i = 0, ret = 0; i < qm->qp_num; i++)
-+		if (!qm->qp_array[i])
-+			ret++;
-+	read_unlock(&qm->qps_lock);
-+
-+	return ret;
-+}
-+
-+static int hisi_qm_uacce_get_queue(struct uacce_device *uacce,
-+				   unsigned long arg,
-+				   struct uacce_queue *q)
-+{
-+	struct hisi_qm *qm = uacce->priv;
-+	struct hisi_qp *qp;
-+	u8 alg_type = 0;
-+
-+	qp = hisi_qm_create_qp(qm, alg_type);
-+	if (IS_ERR(qp))
-+		return PTR_ERR(qp);
-+
-+	q->priv = qp;
-+	q->uacce = uacce;
-+	qp->uacce_q = q;
-+	qp->event_cb = qm_qp_event_notifier;
-+	qp->pasid = arg;
-+
-+	return 0;
-+}
-+
-+static void hisi_qm_uacce_put_queue(struct uacce_queue *q)
-+{
-+	struct hisi_qp *qp = q->priv;
-+
-+	hisi_qm_cache_wb(qp->qm);
-+	hisi_qm_release_qp(qp);
-+}
-+
-+/* map sq/cq/doorbell to user space */
-+static int hisi_qm_uacce_mmap(struct uacce_queue *q,
-+			      struct vm_area_struct *vma,
-+			      struct uacce_qfile_region *qfr)
-+{
-+	struct hisi_qp *qp = q->priv;
-+	struct hisi_qm *qm = qp->qm;
-+	size_t sz = vma->vm_end - vma->vm_start;
-+	struct pci_dev *pdev = qm->pdev;
-+	struct device *dev = &pdev->dev;
-+	unsigned long vm_pgoff;
-+	int ret;
-+
-+	switch (qfr->type) {
-+	case UACCE_QFRT_MMIO:
-+		if (qm->ver == QM_HW_V2) {
-+			if (sz > PAGE_SIZE * (QM_DOORBELL_PAGE_NR +
-+			    QM_DOORBELL_SQ_CQ_BASE_V2 / PAGE_SIZE))
-+				return -EINVAL;
-+		} else {
-+			if (sz > PAGE_SIZE * QM_DOORBELL_PAGE_NR)
-+				return -EINVAL;
-+		}
-+
-+		vma->vm_flags |= VM_IO;
-+
-+		return remap_pfn_range(vma, vma->vm_start,
-+				       qm->phys_base >> PAGE_SHIFT,
-+				       sz, pgprot_noncached(vma->vm_page_prot));
-+	case UACCE_QFRT_DUS:
-+		if (sz != qp->qdma.size)
-+			return -EINVAL;
-+
+ static irqreturn_t stm32_adc_isr(int irq, void *data)
+ {
+ 	struct stm32_adc *adc = data;
+@@ -1212,6 +1245,17 @@ static irqreturn_t stm32_adc_isr(int irq, void *data)
+ 	const struct stm32_adc_regspec *regs = adc->cfg->regs;
+ 	u32 status = stm32_adc_readl(adc, regs->isr_eoc.reg);
+ 
++	if (status & regs->isr_ovr.mask) {
 +		/*
-+		 * dma_mmap_coherent() requires vm_pgoff as 0
-+		 * restore vm_pfoff to initial value for mmap()
++		 * Overrun occurred on regular conversions: data for wrong
++		 * channel may be read. Unconditionally disable interrupts
++		 * to stop processing data and print error message.
 +		 */
-+		vm_pgoff = vma->vm_pgoff;
-+		vma->vm_pgoff = 0;
-+		ret = dma_mmap_coherent(dev, vma, qp->qdma.va,
-+					qp->qdma.dma, sz);
-+		vma->vm_pgoff = vm_pgoff;
-+		return ret;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int hisi_qm_uacce_start_queue(struct uacce_queue *q)
-+{
-+	struct hisi_qp *qp = q->priv;
-+
-+	return hisi_qm_start_qp(qp, qp->pasid);
-+}
-+
-+static void hisi_qm_uacce_stop_queue(struct uacce_queue *q)
-+{
-+	hisi_qm_stop_qp(q->priv);
-+}
-+
-+static int qm_set_sqctype(struct uacce_queue *q, u16 type)
-+{
-+	struct hisi_qm *qm = q->uacce->priv;
-+	struct hisi_qp *qp = q->priv;
-+
-+	write_lock(&qm->qps_lock);
-+	qp->alg_type = type;
-+	write_unlock(&qm->qps_lock);
-+
-+	return 0;
-+}
-+
-+static long hisi_qm_uacce_ioctl(struct uacce_queue *q, unsigned int cmd,
-+				unsigned long arg)
-+{
-+	struct hisi_qp *qp = q->priv;
-+	struct hisi_qp_ctx qp_ctx;
-+
-+	if (cmd == UACCE_CMD_QM_SET_QP_CTX) {
-+		if (copy_from_user(&qp_ctx, (void __user *)arg,
-+				   sizeof(struct hisi_qp_ctx)))
-+			return -EFAULT;
-+
-+		if (qp_ctx.qc_type != 0 && qp_ctx.qc_type != 1)
-+			return -EINVAL;
-+
-+		qm_set_sqctype(q, qp_ctx.qc_type);
-+		qp_ctx.id = qp->qp_id;
-+
-+		if (copy_to_user((void __user *)arg, &qp_ctx,
-+				 sizeof(struct hisi_qp_ctx)))
-+			return -EFAULT;
-+	} else {
-+		return -EINVAL;
++		stm32_adc_ovr_irq_disable(adc);
++		stm32_adc_conv_irq_disable(adc);
++		return IRQ_WAKE_THREAD;
 +	}
 +
-+	return 0;
-+}
-+
-+static const struct uacce_ops uacce_qm_ops = {
-+	.get_available_instances = hisi_qm_get_available_instances,
-+	.get_queue = hisi_qm_uacce_get_queue,
-+	.put_queue = hisi_qm_uacce_put_queue,
-+	.start_queue = hisi_qm_uacce_start_queue,
-+	.stop_queue = hisi_qm_uacce_stop_queue,
-+	.mmap = hisi_qm_uacce_mmap,
-+	.ioctl = hisi_qm_uacce_ioctl,
-+};
-+
-+static int qm_alloc_uacce(struct hisi_qm *qm)
-+{
-+	struct pci_dev *pdev = qm->pdev;
-+	struct uacce_device *uacce;
-+	unsigned long mmio_page_nr;
-+	unsigned long dus_page_nr;
-+	struct uacce_interface interface = {
-+		.flags = UACCE_DEV_SVA,
-+		.ops = &uacce_qm_ops,
-+	};
-+
-+	strncpy(interface.name, pdev->driver->name, sizeof(interface.name));
-+
-+	uacce = uacce_alloc(&pdev->dev, &interface);
-+	if (IS_ERR(uacce))
-+		return PTR_ERR(uacce);
-+
-+	if (uacce->flags & UACCE_DEV_SVA) {
-+		qm->use_sva = true;
-+	} else {
-+		/* only consider sva case */
-+		uacce_remove(uacce);
-+		return -EINVAL;
-+	}
-+
-+	uacce->is_vf = pdev->is_virtfn;
-+	uacce->priv = qm;
-+	uacce->algs = qm->algs;
-+
-+	if (qm->ver == QM_HW_V1) {
-+		mmio_page_nr = QM_DOORBELL_PAGE_NR;
-+		uacce->api_ver = HISI_QM_API_VER_BASE;
-+	} else {
-+		mmio_page_nr = QM_DOORBELL_PAGE_NR +
-+			QM_DOORBELL_SQ_CQ_BASE_V2 / PAGE_SIZE;
-+		uacce->api_ver = HISI_QM_API_VER2_BASE;
-+	}
-+
-+	dus_page_nr = (PAGE_SIZE - 1 + qm->sqe_size * QM_Q_DEPTH +
-+		       sizeof(struct qm_cqe) * QM_Q_DEPTH) >> PAGE_SHIFT;
-+
-+	uacce->qf_pg_num[UACCE_QFRT_MMIO] = mmio_page_nr;
-+	uacce->qf_pg_num[UACCE_QFRT_DUS]  = dus_page_nr;
-+
-+	qm->uacce = uacce;
-+
-+	return 0;
-+}
-+
- /**
-  * hisi_qm_init() - Initialize configures about qm.
-  * @qm: The qm needing init.
-@@ -1421,10 +1636,14 @@ int hisi_qm_init(struct hisi_qm *qm)
- 		return -EINVAL;
- 	}
+ 	if (status & regs->isr_eoc.mask) {
+ 		/* Reading DR also clears EOC status flag */
+ 		adc->buffer[adc->bufi] = stm32_adc_readw(adc, regs->dr);
+@@ -1441,6 +1485,8 @@ static int __stm32_adc_buffer_postenable(struct iio_dev *indio_dev)
+ 	/* Reset adc buffer index */
+ 	adc->bufi = 0;
  
-+	ret = qm_alloc_uacce(qm);
-+	if (ret < 0)
-+		dev_warn(&pdev->dev, "fail to alloc uacce (%d)\n", ret);
++	stm32_adc_ovr_irq_enable(adc);
 +
- 	ret = pci_enable_device_mem(pdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to enable device mem!\n");
--		return ret;
-+		goto err_remove_uacce;
- 	}
+ 	if (!adc->dma_chan)
+ 		stm32_adc_conv_irq_enable(adc);
  
- 	ret = pci_request_mem_regions(pdev, qm->dev_name);
-@@ -1433,8 +1652,9 @@ int hisi_qm_init(struct hisi_qm *qm)
- 		goto err_disable_pcidev;
- 	}
+@@ -1481,6 +1527,8 @@ static void __stm32_adc_buffer_predisable(struct iio_dev *indio_dev)
+ 	if (!adc->dma_chan)
+ 		stm32_adc_conv_irq_disable(adc);
  
--	qm->io_base = ioremap(pci_resource_start(pdev, PCI_BAR_2),
--			      pci_resource_len(qm->pdev, PCI_BAR_2));
-+	qm->phys_base = pci_resource_start(pdev, PCI_BAR_2);
-+	qm->phys_size = pci_resource_len(qm->pdev, PCI_BAR_2);
-+	qm->io_base = ioremap(qm->phys_base, qm->phys_size);
- 	if (!qm->io_base) {
- 		ret = -EIO;
- 		goto err_release_mem_regions;
-@@ -1476,6 +1696,8 @@ int hisi_qm_init(struct hisi_qm *qm)
- 	pci_release_mem_regions(pdev);
- err_disable_pcidev:
- 	pci_disable_device(pdev);
-+err_remove_uacce:
-+	uacce_remove(qm->uacce);
- 
- 	return ret;
- }
-@@ -1492,6 +1714,8 @@ void hisi_qm_uninit(struct hisi_qm *qm)
- 	struct pci_dev *pdev = qm->pdev;
- 	struct device *dev = &pdev->dev;
- 
-+	uacce_remove(qm->uacce);
++	stm32_adc_ovr_irq_disable(adc);
 +
- 	if (qm->use_dma_api && qm->qdma.va) {
- 		hisi_qm_cache_wb(qm);
- 		dma_free_coherent(dev, qm->qdma.size,
-diff --git a/drivers/crypto/hisilicon/qm.h b/drivers/crypto/hisilicon/qm.h
-index 103e2fd..16a176f 100644
---- a/drivers/crypto/hisilicon/qm.h
-+++ b/drivers/crypto/hisilicon/qm.h
-@@ -77,6 +77,9 @@
+ 	if (adc->dma_chan)
+ 		dmaengine_terminate_sync(adc->dma_chan);
  
- #define HISI_ACC_SGL_SGE_NR_MAX		255
+@@ -1818,8 +1866,9 @@ static int stm32_adc_probe(struct platform_device *pdev)
+ 	if (adc->irq < 0)
+ 		return adc->irq;
  
-+/* page number for queue file region */
-+#define QM_DOORBELL_PAGE_NR		1
-+
- enum qp_state {
- 	QP_STOP,
- };
-@@ -161,7 +164,12 @@ struct hisi_qm {
- 	u32 error_mask;
- 	u32 msi_mask;
- 
-+	const char *algs;
- 	bool use_dma_api;
-+	bool use_sva;
-+	resource_size_t phys_base;
-+	resource_size_t phys_size;
-+	struct uacce_device *uacce;
- };
- 
- struct hisi_qp_status {
-@@ -191,10 +199,13 @@ struct hisi_qp {
- 	struct hisi_qp_ops *hw_ops;
- 	void *qp_ctx;
- 	void (*req_cb)(struct hisi_qp *qp, void *data);
-+	void (*event_cb)(struct hisi_qp *qp);
- 	struct work_struct work;
- 	struct workqueue_struct *wq;
- 
- 	struct hisi_qm *qm;
-+	u16 pasid;
-+	struct uacce_queue *uacce_q;
- };
- 
- int hisi_qm_init(struct hisi_qm *qm);
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index 3de9412..27971d2 100644
---- a/drivers/crypto/hisilicon/zip/zip_main.c
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -11,6 +11,7 @@
- #include <linux/pci.h>
- #include <linux/seq_file.h>
- #include <linux/topology.h>
-+#include <linux/uacce.h>
- #include "zip.h"
- 
- #define PCI_DEVICE_ID_ZIP_PF		0xa250
-@@ -313,8 +314,14 @@ static void hisi_zip_set_user_domain_and_cache(struct hisi_zip *hisi_zip)
- 	writel(AXUSER_BASE, base + HZIP_BD_RUSER_32_63);
- 	writel(AXUSER_BASE, base + HZIP_SGL_RUSER_32_63);
- 	writel(AXUSER_BASE, base + HZIP_BD_WUSER_32_63);
--	writel(AXUSER_BASE, base + HZIP_DATA_RUSER_32_63);
--	writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
-+
-+	if (hisi_zip->qm.use_sva) {
-+		writel(AXUSER_BASE | AXUSER_SSV, base + HZIP_DATA_RUSER_32_63);
-+		writel(AXUSER_BASE | AXUSER_SSV, base + HZIP_DATA_WUSER_32_63);
-+	} else {
-+		writel(AXUSER_BASE, base + HZIP_DATA_RUSER_32_63);
-+		writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
-+	}
- 
- 	/* let's open all compression/decompression cores */
- 	writel(DECOMP_CHECK_ENABLE | ALL_COMP_DECOMP_EN,
-@@ -670,6 +677,7 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	qm->pdev = pdev;
- 	qm->ver = rev_id;
- 
-+	qm->algs = "zlib\ngzip";
- 	qm->sqe_size = HZIP_SQE_SIZE;
- 	qm->dev_name = hisi_zip_name;
- 	qm->fun_type = (pdev->device == PCI_DEVICE_ID_ZIP_PF) ? QM_HW_PF :
-@@ -713,6 +721,10 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	hisi_zip_add_to_list(hisi_zip);
- 
-+	ret = uacce_register(qm->uacce);
-+	if (ret)
-+		goto err_qm_uninit;
-+
- 	return 0;
- 
- err_qm_uninit:
-diff --git a/include/uapi/misc/uacce/hisi_qm.h b/include/uapi/misc/uacce/hisi_qm.h
-new file mode 100644
-index 0000000..6435f0b
---- /dev/null
-+++ b/include/uapi/misc/uacce/hisi_qm.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+#ifndef _UAPI_HISI_QM_H
-+#define _UAPI_HISI_QM_H
-+
-+#include <linux/types.h>
-+
-+/**
-+ * struct hisi_qp_ctx - User data for hisi qp.
-+ * @id: qp_index return to user space
-+ * @qc_type: Accelerator algorithm type
-+ */
-+struct hisi_qp_ctx {
-+	__u16 id;
-+	__u16 qc_type;
-+};
-+
-+#define HISI_QM_API_VER_BASE "hisi_qm_v1"
-+#define HISI_QM_API_VER2_BASE "hisi_qm_v2"
-+
-+/* UACCE_CMD_QM_SET_QP_CTX: Set qp algorithm type */
-+#define UACCE_CMD_QM_SET_QP_CTX	_IOWR('H', 10, struct hisi_qp_ctx)
-+
-+#endif
+-	ret = devm_request_irq(&pdev->dev, adc->irq, stm32_adc_isr,
+-			       0, pdev->name, adc);
++	ret = devm_request_threaded_irq(&pdev->dev, adc->irq, stm32_adc_isr,
++					stm32_adc_threaded_isr,
++					0, pdev->name, adc);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request IRQ\n");
+ 		return ret;
 -- 
 2.7.4
 
