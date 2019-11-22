@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E951F106AAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C73106BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbfKVKhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:37:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37972 "EHLO mail.kernel.org"
+        id S1729332AbfKVKr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:47:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727142AbfKVKhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:37:04 -0500
+        id S1727395AbfKVKrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:47:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 829C52071C;
-        Fri, 22 Nov 2019 10:37:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09C9420637;
+        Fri, 22 Nov 2019 10:47:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419024;
-        bh=GAknvF9Xra1VDxZSBLEx+eB5pfkKd1dvyjA3FwvGZAM=;
+        s=default; t=1574419644;
+        bh=XzZBn4TQb5p09UhPbtTd7mbOVh4J/ulq/n1RLpPhf3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iU2KeyUKvVpEV1icHnD4tFzHxoGVhcE/zc+5plfSZ6v8OnbRogx7blat5/pwrQLx0
-         dTbraHKIcjlopNg6rzuLdv05QFwwVS/In7P+CoaXhAPN2gAfh49IjV+wh3shx+HOF/
-         v92mW0n9Z7Q4svFmrqYK6GFqrxOqNpoKdncNWtXY=
+        b=yy9jsG1GlwcJjY+WQ+ABAjMV75+AkBFld2mWxqJK1YfDBk4bT//k2+3AfqE3OEKJZ
+         uGHN7IaUXyoQnyOg5itiTXNWUSNPUgjWI7gKHLCf+4t0JlOiDWLg5oyfsj0NZTLUuK
+         YHoBZMZ/WbkIkuHx0DpiWon4VTgleoODlRH9v7tc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 132/159] USB: serial: cypress_m8: fix interrupt-out transfer length
+Subject: [PATCH 4.9 183/222] USB: serial: cypress_m8: fix interrupt-out transfer length
 Date:   Fri, 22 Nov 2019 11:28:43 +0100
-Message-Id: <20191122100834.189827261@linuxfoundation.org>
+Message-Id: <20191122100915.572628659@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,7 +61,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
-index 244acb1299a95..e92cd1eceefa2 100644
+index bbeeb2bd55a83..2c915be1db4ce 100644
 --- a/drivers/usb/serial/cypress_m8.c
 +++ b/drivers/usb/serial/cypress_m8.c
 @@ -773,7 +773,7 @@ static void cypress_send(struct usb_serial_port *port)
