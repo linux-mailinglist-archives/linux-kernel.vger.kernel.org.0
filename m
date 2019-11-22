@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E1D106DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:03:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 145BD1070C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731407AbfKVLDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:03:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56998 "EHLO mail.kernel.org"
+        id S1727141AbfKVKiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731391AbfKVLDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:03:03 -0500
+        id S1728692AbfKVKir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:38:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6704E2073F;
-        Fri, 22 Nov 2019 11:03:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 471A520717;
+        Fri, 22 Nov 2019 10:38:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420582;
-        bh=G6ZmbjlEdVI5jq0wy0vOQ6tyqnphqoGqRLRcQP8vXYM=;
+        s=default; t=1574419126;
+        bh=l51evxqU8zJCOrGtKLHrLz9etFFXDJe12qIraGCuN0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ceeM0VL9+eRAdu1nHiiCtnvhezJCV2/akawT8YIe3Izo85tTZo9ApEVmvyg6p80Ty
-         E1wzyk8b7wr11j5pvszLjod/xSzs7yoEv9RTqIh7kJplJFp2mJ5I/2RWbYMX+UdtJt
-         feUl+N1QnN0v4hoeqk+y0TcqhXNlxREbm/8A9vzA=
+        b=GrYNWA7lhgaXLML4fI39XrtORglhoI4gQzeu1tF5gurfIjv08TfxepOpvyz7mz72l
+         Pgd/mgC5hUJiDSQ+O1p1BY0lGRMlt2tcqhfOktVuJn56PlrYUlHuclr+uXeYm1mkdV
+         AloahyhmwX4opANWxRPGOB2ColiZX+KMorklLWts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 155/220] reset: Fix potential use-after-free in __of_reset_control_get()
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 129/159] ata: ep93xx: Use proper enums for directions
 Date:   Fri, 22 Nov 2019 11:28:40 +0100
-Message-Id: <20191122100923.863834722@linuxfoundation.org>
+Message-Id: <20191122100833.138524394@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit b790c8ea5593d6dc3580adfad8e117eeb56af874 ]
+[ Upstream commit 6adde4a36f1b6a562a1057fbb1065007851050e7 ]
 
-Calling of_node_put() decreases the reference count of a device tree
-object, and may free some data.
+Clang warns when one enumerated type is implicitly converted to another.
 
-However, the of_phandle_args structure embedding it is passed to
-reset_controller_dev.of_xlate() after that, so it may still be accessed.
+drivers/ata/pata_ep93xx.c:662:36: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
+                                        ~ ^~~~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:670:36: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
+                                        ~ ^~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:681:19: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        conf.direction = DMA_FROM_DEVICE;
+                       ~ ^~~~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:692:19: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        conf.direction = DMA_TO_DEVICE;
+                       ~ ^~~~~~~~~~~~~
 
-Move the call to of_node_put() down to fix this.
+Use the equivalent valued enums from the expected type so that Clang no
+longer warns about a conversion.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[p.zabel@pengutronix.de: moved of_node_put after mutex_unlock]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/reset/core.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/ata/pata_ep93xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 225e34c56b94a..d1887c0ed5d3f 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -496,28 +496,29 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- 			break;
- 		}
- 	}
--	of_node_put(args.np);
+diff --git a/drivers/ata/pata_ep93xx.c b/drivers/ata/pata_ep93xx.c
+index bd6b089c67a3a..634c814cbeda4 100644
+--- a/drivers/ata/pata_ep93xx.c
++++ b/drivers/ata/pata_ep93xx.c
+@@ -659,7 +659,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 	 * start of new transfer.
+ 	 */
+ 	drv_data->dma_rx_data.port = EP93XX_DMA_IDE;
+-	drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
++	drv_data->dma_rx_data.direction = DMA_DEV_TO_MEM;
+ 	drv_data->dma_rx_data.name = "ep93xx-pata-rx";
+ 	drv_data->dma_rx_channel = dma_request_channel(mask,
+ 		ep93xx_pata_dma_filter, &drv_data->dma_rx_data);
+@@ -667,7 +667,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 		return;
  
- 	if (!rcdev) {
--		mutex_unlock(&reset_list_mutex);
--		return ERR_PTR(-EPROBE_DEFER);
-+		rstc = ERR_PTR(-EPROBE_DEFER);
-+		goto out;
- 	}
+ 	drv_data->dma_tx_data.port = EP93XX_DMA_IDE;
+-	drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
++	drv_data->dma_tx_data.direction = DMA_MEM_TO_DEV;
+ 	drv_data->dma_tx_data.name = "ep93xx-pata-tx";
+ 	drv_data->dma_tx_channel = dma_request_channel(mask,
+ 		ep93xx_pata_dma_filter, &drv_data->dma_tx_data);
+@@ -678,7 +678,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
  
- 	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells)) {
--		mutex_unlock(&reset_list_mutex);
--		return ERR_PTR(-EINVAL);
-+		rstc = ERR_PTR(-EINVAL);
-+		goto out;
- 	}
+ 	/* Configure receive channel direction and source address */
+ 	memset(&conf, 0, sizeof(conf));
+-	conf.direction = DMA_FROM_DEVICE;
++	conf.direction = DMA_DEV_TO_MEM;
+ 	conf.src_addr = drv_data->udma_in_phys;
+ 	conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	if (dmaengine_slave_config(drv_data->dma_rx_channel, &conf)) {
+@@ -689,7 +689,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
  
- 	rstc_id = rcdev->of_xlate(rcdev, &args);
- 	if (rstc_id < 0) {
--		mutex_unlock(&reset_list_mutex);
--		return ERR_PTR(rstc_id);
-+		rstc = ERR_PTR(rstc_id);
-+		goto out;
- 	}
- 
- 	/* reset_list_mutex also protects the rcdev's reset_control list */
- 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
- 
-+out:
- 	mutex_unlock(&reset_list_mutex);
-+	of_node_put(args.np);
- 
- 	return rstc;
- }
+ 	/* Configure transmit channel direction and destination address */
+ 	memset(&conf, 0, sizeof(conf));
+-	conf.direction = DMA_TO_DEVICE;
++	conf.direction = DMA_MEM_TO_DEV;
+ 	conf.dst_addr = drv_data->udma_out_phys;
+ 	conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	if (dmaengine_slave_config(drv_data->dma_tx_channel, &conf)) {
 -- 
 2.20.1
 
