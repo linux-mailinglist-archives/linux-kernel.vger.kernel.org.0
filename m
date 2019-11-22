@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 716C2106DE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E443106DE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:04:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731542AbfKVLEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:04:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59094 "EHLO mail.kernel.org"
+        id S1731547AbfKVLEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:04:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730923AbfKVLEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:04:16 -0500
+        id S1731537AbfKVLET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:04:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A3DD2084D;
-        Fri, 22 Nov 2019 11:04:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14B312084D;
+        Fri, 22 Nov 2019 11:04:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420655;
-        bh=RCewstX/TBOlPvkRFaX/7Ew/LarAdpNmJALeRfGKJbs=;
+        s=default; t=1574420658;
+        bh=I/hN7bioODU5zQWOx0AH4pWxYq6n0Y2wxs/LWEPYvns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M53mCO3uhJz+e6mijFDCdfLRGVIGnCzaZGwRfpi/rzV0rSPIL6RCeQQJ/ss65slyK
-         Hb4jo+vsBQB7i7+UzBaE8V0Bokl3X1H4OgAfHsTqMBEAZ+BVmrlYJKFHWdwzsno2gK
-         MJrpJA9fyoa4mEVLOZv0RRwwckFWmeZtsRn86+BY=
+        b=VGFUsbn6um+wiAWUkZRkD4+oMTE5q9aH9wpIsGmkFr4kusgfJvfpIfw7o0Ms0I2Fv
+         hSriu/7/35Pq2DEh5X2MLo/W6U69h1DryfwsDBHlON/mosEa449V/kS45Lo0TsE8Lb
+         8vbgeCOy/3a66Oe2yJt7kIoKO0qnipS6Old93S/c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 182/220] lightnvm: pblk: fix write amplificiation calculation
-Date:   Fri, 22 Nov 2019 11:29:07 +0100
-Message-Id: <20191122100927.382284687@linuxfoundation.org>
+Subject: [PATCH 4.19 183/220] lightnvm: pblk: guarantee mw_cunits on read buffer
+Date:   Fri, 22 Nov 2019 11:29:08 +0100
+Message-Id: <20191122100927.433258602@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,44 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+From: Javier González <javier@javigon.com>
 
-[ Upstream commit 765462fa4c4d0fd3eb718f2ba14cb04c35219854 ]
+[ Upstream commit d672d92d9c433c365fd6cdb4da1c02562b5f1178 ]
 
-When the user data counter exceeds 32 bits, the write amplification
-calculation does not provide the right value. Fix this by using
-div64_u64 in stead of div64.
+OCSSD 2.0 defines the amount of data that the host must buffer per chunk
+to guarantee reads through the geometry field mw_cunits. This value is
+the base that pblk uses to determine the size of its read buffer.
+Currently, this size is set to be the closes power-of-2 to mw_cunits
+times the number of parallel units available to the pblk instance for
+each open line (currently one). When an entry (4KB) is put in the
+buffer, the L2P table points to it. As the buffer wraps up, the L2P is
+updated to point to addresses on the device, thus guaranteeing mw_cunits
+at a chunk level.
 
-Fixes: 76758390f83e ("lightnvm: pblk: export write amplification counters to sysfs")
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+However, given that pblk cannot write to the device under ws_min
+(normally ws_opt), there might be a window in which the buffer starts
+wrapping up and updating L2P entries before the mw_cunits value in a
+chunk has been surpassed.
+
+In order not to violate the mw_cunits constrain in this case, account
+for ws_opt on the read buffer creation.
+
+Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/lightnvm/pblk-sysfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/lightnvm/pblk-init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 8d2ed510c04b3..bdc86ee4c7793 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -343,7 +343,6 @@ static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
- {
- 	int sz;
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 145922589b0c6..dc32274881b2f 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -181,7 +181,8 @@ static int pblk_rwb_init(struct pblk *pblk)
+ 	unsigned int power_size, power_seg_sz;
+ 	int pgs_in_buffer;
  
--
- 	sz = snprintf(page, PAGE_SIZE,
- 			"user:%lld gc:%lld pad:%lld WA:",
- 			user, gc, pad);
-@@ -355,7 +354,7 @@ static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
- 		u32 wa_frac;
+-	pgs_in_buffer = max(geo->mw_cunits, geo->ws_opt) * geo->all_luns;
++	pgs_in_buffer = (max(geo->mw_cunits, geo->ws_opt) + geo->ws_opt)
++								* geo->all_luns;
  
- 		wa_int = (user + gc + pad) * 100000;
--		wa_int = div_u64(wa_int, user);
-+		wa_int = div64_u64(wa_int, user);
- 		wa_int = div_u64_rem(wa_int, 100000, &wa_frac);
- 
- 		sz += snprintf(page + sz, PAGE_SIZE - sz, "%llu.%05u\n",
+ 	if (write_buffer_size && (write_buffer_size > pgs_in_buffer))
+ 		buffer_size = write_buffer_size;
 -- 
 2.20.1
 
