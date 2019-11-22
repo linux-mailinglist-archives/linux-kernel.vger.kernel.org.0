@@ -2,97 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 504751077D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 20:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D19B1077E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 20:14:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfKVTJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 14:09:28 -0500
-Received: from mga05.intel.com ([192.55.52.43]:37384 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbfKVTJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 14:09:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 11:09:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,230,1571727600"; 
-   d="scan'208";a="259799981"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Nov 2019 11:09:27 -0800
-Date:   Fri, 22 Nov 2019 11:09:27 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH v3 12/19] x86/vmx: Introduce VMX_FEATURES_*
-Message-ID: <20191122190927.GB31235@linux.intel.com>
-References: <20191119031240.7779-1-sean.j.christopherson@intel.com>
- <20191119031240.7779-13-sean.j.christopherson@intel.com>
- <20191121165250.GK6540@zn.tnic>
- <20191121215017.GC16617@linux.intel.com>
- <20191122183641.GJ6289@zn.tnic>
+        id S1727091AbfKVTOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 14:14:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53854 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbfKVTOh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 14:14:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gOyQruMzd8cHJN8Wf5sPNmqzqGIJ/LKI5zHiYqR3hGI=; b=kT/xV0hGuxZ7gwzWbRz3dvrNK
+        bm7Yd1zPV7vGh/tZW0S463Dye7peW+iCv96x7ScnJTuoyrbAKXpx0uu1VXzTGJq25fKAo5+rVuEmX
+        W7+8XOq2e4w92yQdEI6Po5ektSt6l0hRzNspcf84eaof8gNeWrDZLWJnPU36/NfLl7b5PiT78/I+9
+        nMR+jqOdEfooVW5BuROqc7uzduyjg+jOwbtInR9hot2SfI15Rmd1bA8SDrlTuySW69mTUzkk0YRYH
+        VKZ8S9yniPuvTdekcr1rhxX29d3OBHwXp9W/SCzBxDkQ56OOft2P8oM+SyqTzwumqekod55YEO4D0
+        jkCJWJXNw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iYEO2-0002hz-81; Fri, 22 Nov 2019 19:14:34 +0000
+Date:   Fri, 22 Nov 2019 11:14:34 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        syzbot+21cfe1f803e0e158acf1@syzkaller.appspotmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: Replace bio_check_ro()'s WARN_ON()
+Message-ID: <20191122191434.GA10150@infradead.org>
+References: <20180824211535.GA22251@beast>
+ <201911221052.0FDE1A1@keescook>
+ <20191122190707.GA2136@infradead.org>
+ <94976fb5-12d3-557d-7f31-347d6116b18c@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191122183641.GJ6289@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <94976fb5-12d3-557d-7f31-347d6116b18c@kernel.dk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 07:36:41PM +0100, Borislav Petkov wrote:
-> On Thu, Nov 21, 2019 at 01:50:17PM -0800, Sean Christopherson wrote:
-> > As for why I want to keep these out of cpu_has()... VMX has a concept of
-> > features being fixed "on", e.g. early CPUs don't allow disabling off CR3
-> > interception.  A cpu_has() approach doesn't work well since it loses the
-> > information regarding which bits are fixed-1.  KVM also has several module
-> > params that can be used to disable use of features, i.e. we don't want
-> > cpu_has() for VMX features because the KVM-specific variables need to be
-> > the canonical reference.
+On Fri, Nov 22, 2019 at 12:09:14PM -0700, Jens Axboe wrote:
+> On 11/22/19 12:07 PM, Christoph Hellwig wrote:
+> > On Fri, Nov 22, 2019 at 10:53:22AM -0800, Kees Cook wrote:
+> >> Friendly ping! I keep tripping over this. Can this please get applied so
+> >> we can silence syzbot and avoid needless WARNs? :)
+> > 
+> > What call stack reaches this?  Upper layers should never submit a write
+> > bio on a read-only queue, and we need to fix that in the upper layer.
 > 
-> Well, you can use the cpu_has() machinery for stuff like that too - we
-> can clear bits there too: clear_cpu_cap() - and since clearing those
-> bits are only for /proc/cpuinfo reporting, it's not like anything would
-> break if that flag is gone. Just saying, in case you want to use the
-> machinery for that.
+> It's an fsync, the trace is here:
+> 
+> https://syzkaller.appspot.com/x/log.txt?x=159503d2e00000
 
-It doesn't fit the KVM use case very well.  There is an obnoxious amount
-of legacy KVM code that exists only to support old processors (10+ years
-old), but that we can't get rid of because people are still actively
-running KVM on old hardware.  KVM provides module params so that we can
-easily test those flows on modern hardware, e.g. for certain changes I'll
-reload and retest KVM 2-3 times with different settings.
-
-In theory we could do something like recompute VMX_FEATURE_* when KVM is
-loaded, but that'd be a bit ugly and there are also tenative plans to move
-the relevant module params under an ioctl() so that they can be toggled on
-a per-VM basis to help automate testing, and IIRC for customers running
-certain legacy workloads alongside normal VMs
-
-> And that would avoid some of the duplication of having KVM-specific
-> variables *and* VMX_FEATURE_* flags, where latter are not really
-> toggleable but only for /proc/cpuinfo. Especially if you wanna enforce
-> "developers to define a VMX_FEATURE flag when adding support for a new
-> hardware feature."
+Oh.  I think this is a bug in the block layer, we should not treat
+a sync as write for the purposes of is read-only checks, as it never
+writes data to the device.  At the request layer we alread use
+the proper REQ_OP_FLUSH, but at the bio layer we are still abusing
+empty writes apparently.  I'll try to cook up something over the
+weekend.
