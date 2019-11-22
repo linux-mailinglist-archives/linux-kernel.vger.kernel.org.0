@@ -2,98 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA300105E84
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58786105E8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:13:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfKVCM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 21:12:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfKVCM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 21:12:27 -0500
-Received: from oasis.local.home (unknown [66.170.99.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAD8F20692;
-        Fri, 22 Nov 2019 02:12:25 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 21:12:24 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Nadav Amit <namit@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-acpi@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH 04/12] x86/kprobes: Explicitly include vmalloc.h for
- set_vm_flush_reset_perms()
-Message-ID: <20191121211224.15f006b4@oasis.local.home>
-In-Reply-To: <20191119002121.4107-5-sean.j.christopherson@intel.com>
-References: <20191119002121.4107-1-sean.j.christopherson@intel.com>
-        <20191119002121.4107-5-sean.j.christopherson@intel.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726803AbfKVCNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 21:13:36 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46752 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfKVCNg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 21:13:36 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM29MIY144986;
+        Fri, 22 Nov 2019 02:13:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=rbaVrfvNpeSog8dcDylxXVV3ptewurNNj/oaRb7B83Y=;
+ b=R2IINA7yBSLivO2IMdgp/49coWk21Epjfp4oasnXp4JR8Xl36Wq1bKjmfDLFRe/hZWS1
+ RDLkt318zMmlHs5PpIjfbG5UckhjCAdkr6Ud4Vffj7Gt0h6BPvi1Fet6dfE62+65DWod
+ ZlAnicLodJTK82OFh9D2dodBEcQXU6ZYsA0rord8BGLYg167LzVabB93Rw9BmjkOIxy4
+ B1ujsT/aE2Kpz3U85HiWIz9KY6oPP0mqBWRuFyFTf8zH2OpUuiGLZO0At4hMwV9I/KJH
+ SfjEd6xa+/tDmNj0mn7II5+O8lxm96dItBfEQetr8wKE+yexou7v0hPydQMqbzc1VKlP Pg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2wa8hu7xs4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 02:13:17 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM28gGV112601;
+        Fri, 22 Nov 2019 02:13:16 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wdfrwd8jw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 02:13:16 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAM2DFHx013213;
+        Fri, 22 Nov 2019 02:13:15 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 18:13:14 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <hch@lst.de>, <linux-scsi@vger.kernel.org>,
+        <chenxiang66@hisilicon.com>, <linux-kernel@vger.kernel.org>,
+        <yanaijie@huawei.com>
+Subject: Re: [PATCH] scsi: scsi_transport_sas: Fix memory leak when removing devices
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1574242755-94156-1-git-send-email-john.garry@huawei.com>
+Date:   Thu, 21 Nov 2019 21:13:12 -0500
+In-Reply-To: <1574242755-94156-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Wed, 20 Nov 2019 17:39:15 +0800")
+Message-ID: <yq136egd5fr.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=822
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911220017
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=908 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911220017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Nov 2019 16:21:13 -0800
-Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-> The inclusion of linux/vmalloc.h, which is required for its definition
-> of set_vm_flush_reset_perms(), is somehow dependent on asm/realmode.h
-> being included by asm/acpi.h.  Explicitly include linux/vmalloc.h so
-> that a future patch can drop the realmode.h include from asm/acpi.h
-> without breaking the build.
-> 
-> Fixes: 241a1f2238064 ("x86/kprobes: Use vmalloc special flag")
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+John,
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Removing a non-host rphy causes a memory leak:
 
--- Steve
+Applied to 5.5/scsi-queue, thanks!
 
-> ---
->  arch/x86/kernel/kprobes/core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index 4f13af7cbcdb..a0c223ab7264 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -40,6 +40,7 @@
->  #include <linux/frame.h>
->  #include <linux/kasan.h>
->  #include <linux/moduleloader.h>
-> +#include <linux/vmalloc.h>
->  
->  #include <asm/text-patching.h>
->  #include <asm/cacheflush.h>
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
