@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E0C106BDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE0B106CD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfKVKrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55970 "EHLO mail.kernel.org"
+        id S1730466AbfKVKzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:55:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729810AbfKVKrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:48 -0500
+        id S1730453AbfKVKzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:55:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E61F20715;
-        Fri, 22 Nov 2019 10:47:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A811E2071F;
+        Fri, 22 Nov 2019 10:55:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419668;
-        bh=5W2ErCyc47JdlxUbc9VA8AEfZ4i7AtaSVHCx4GuH8Jc=;
+        s=default; t=1574420121;
+        bh=YM+20L3XfJDfQla675w1xo0yGmW/B4bzJN2PdZ3ouaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PPUVEx07Et3S4fAVT6zFsUieHksH2iheun2zZPOjSkHRzu9FAGyoGdkU8lAKXGXxh
-         g+4dG+42Z7S8Qai4V/D+DdY1fJsIdNyQQZReTMd2Gg0D2oVCV0LoCXqqLWTHLsLin+
-         KH+FUAE3JYxjufIszogch6/V3vQwrmf1Wy7YkNHo=
+        b=E9ix6s8f3NqbyS7S4l6gKFqzAlZ4ZIDuiI/5TKFFJY8aDb5ZD2flc5RO2/yW08Mop
+         e6RMYmaPEIra9C9q8+4W/hRJ8XkxpYtTgU1/1YorMuMOGT5UywgVqQcQo9Lcwyda53
+         g8/dPLwYxv1jtNbkj7S/cAFHsjvX1BdIJ6SAatTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rami Rosen <ramirose@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 191/222] dmaengine: ioat: fix prototype of ioat_enumerate_channels
-Date:   Fri, 22 Nov 2019 11:28:51 +0100
-Message-Id: <20191122100916.080432176@linuxfoundation.org>
+        stable@vger.kernel.org, Lianbo Jiang <lijiang@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, akpm@linux-foundation.org, dan.j.williams@intel.com,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
+        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
+        jroedel@suse.de, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 079/122] kexec: Allocate decrypted control pages for kdump if SME is enabled
+Date:   Fri, 22 Nov 2019 11:28:52 +0100
+Message-Id: <20191122100819.526924385@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +49,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rami Rosen <ramirose@gmail.com>
+From: Lianbo Jiang <lijiang@redhat.com>
 
-[ Upstream commit f4d34aa8c887a8a2d23ef546da0efa10e3f77241 ]
+[ Upstream commit 9cf38d5559e813cccdba8b44c82cc46ba48d0896 ]
 
-Signed-off-by: Rami Rosen <ramirose@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+When SME is enabled in the first kernel, it needs to allocate decrypted
+pages for kdump because when the kdump kernel boots, these pages need to
+be accessed decrypted in the initial boot stage, before SME is enabled.
+
+ [ bp: clean up text. ]
+
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kexec@lists.infradead.org
+Cc: tglx@linutronix.de
+Cc: mingo@redhat.com
+Cc: hpa@zytor.com
+Cc: akpm@linux-foundation.org
+Cc: dan.j.williams@intel.com
+Cc: bhelgaas@google.com
+Cc: baiyaowei@cmss.chinamobile.com
+Cc: tiwai@suse.de
+Cc: brijesh.singh@amd.com
+Cc: dyoung@redhat.com
+Cc: bhe@redhat.com
+Cc: jroedel@suse.de
+Link: https://lkml.kernel.org/r/20180930031033.22110-3-lijiang@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ioat/init.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/kexec_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index d139706f01fe8..9d936584d3310 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -129,7 +129,7 @@ static void
- ioat_init_channel(struct ioatdma_device *ioat_dma,
- 		  struct ioatdma_chan *ioat_chan, int idx);
- static void ioat_intr_quirk(struct ioatdma_device *ioat_dma);
--static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
-+static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
- static int ioat3_dma_self_test(struct ioatdma_device *ioat_dma);
- 
- static int ioat_dca_enabled = 1;
-@@ -573,7 +573,7 @@ static void ioat_dma_remove(struct ioatdma_device *ioat_dma)
-  * ioat_enumerate_channels - find and initialize the device's channels
-  * @ioat_dma: the ioat dma device to be enumerated
-  */
--static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
-+static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
- {
- 	struct ioatdma_chan *ioat_chan;
- 	struct device *dev = &ioat_dma->pdev->dev;
-@@ -592,7 +592,7 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
- 	xfercap_log = readb(ioat_dma->reg_base + IOAT_XFERCAP_OFFSET);
- 	xfercap_log &= 0x1f; /* bits [4:0] valid */
- 	if (xfercap_log == 0)
--		return 0;
-+		return;
- 	dev_dbg(dev, "%s: xfercap = %d\n", __func__, 1 << xfercap_log);
- 
- 	for (i = 0; i < dma->chancnt; i++) {
-@@ -609,7 +609,6 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 8f15665ab6167..27cf24e285e0c 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -473,6 +473,10 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
  		}
  	}
- 	dma->chancnt = i;
--	return i;
+ 
++	/* Ensure that these pages are decrypted if SME is enabled. */
++	if (pages)
++		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
++
+ 	return pages;
  }
  
- /**
+@@ -867,6 +871,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result  = -ENOMEM;
+ 			goto out;
+ 		}
++		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+ 		ptr = kmap(page);
+ 		ptr += maddr & ~PAGE_MASK;
+ 		mchunk = min_t(size_t, mbytes,
+@@ -884,6 +889,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result = copy_from_user(ptr, buf, uchunk);
+ 		kexec_flush_icache_page(page);
+ 		kunmap(page);
++		arch_kexec_pre_free_pages(page_address(page), 1);
+ 		if (result) {
+ 			result = -EFAULT;
+ 			goto out;
 -- 
 2.20.1
 
