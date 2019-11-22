@@ -2,273 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 080A7106932
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C1C106973
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:02:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfKVJr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 04:47:57 -0500
-Received: from mga07.intel.com ([134.134.136.100]:27492 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbfKVJr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 04:47:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 01:47:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
-   d="scan'208";a="259684756"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Nov 2019 01:47:52 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     x86@kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH][v4] x86/resctrl: Add task resctrl information display
-Date:   Fri, 22 Nov 2019 17:58:33 +0800
-Message-Id: <20191122095833.20861-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726752AbfKVKCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:02:23 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26764 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726100AbfKVKCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:02:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574416940;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q5brik//Uj78Imdw+Nasd8kB1YSOqMDawTRFR2gNwAc=;
+        b=UlNet/e/vMxmEgMGO0nLCJF4wOK2DyUJzQBVA06EoBW0Uf8YSunAwwqZKvDdcwKx35Ow+2
+        T8nixD5EaFVqgKi0LRGYd9GpKvqNxtR6y0CGBtU0KDLK/DGIuZpHr3+1+pnWv9OUfZo5IO
+        kOEpqX/pzaZNbW+C/BSq5aWcc85WsQY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-375-Jw1Np3e6OH-AOQ2HPnuygQ-1; Fri, 22 Nov 2019 05:02:17 -0500
+Received: by mail-wm1-f71.google.com with SMTP id z3so2859974wmk.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 02:02:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TxlQ/8hM2ybpNrpWCxq4vBt3O3dzk/gjN30vFVF3w9c=;
+        b=hhdguYTCh+l7aDq9fwZdDv/q87Wn1EDe7O9CLS9oE3bVXKPufB71ihN63FJ8ZIo00y
+         wgQSEC3eukF8yQwqNz7aEWwXq5y4FVJihEKTVGmKXewqYReYa2/eCoes/yikk9Zsz4A2
+         yKGnvrWwQGnvTWjkrao7VLkPalSuZbHeLpCtzJnvumhvKXsY29xvGpBh9gaZJ82kWiJg
+         uNByKpj4AD/KUdcNUsQffCSteQPxLLQYh0g1oNnlvLfLFGCOHPywKQQcL3qTzhn1iL8N
+         y5tnFYnJ4/zwGOEWAg4WOVIncImMP1FFb17kVTz36R1K6P49y05HDNapwJ/CRUdymVhT
+         kDwA==
+X-Gm-Message-State: APjAAAWGqk0ZW76kvtL4jrvDl6QapfHOirdHSqXOItgI3nki69NUDtUV
+        j47zDXDNL83lG5OvvkuKrQyrepVpV0/ed2CdaXv8J3b9kWSYr09XVsCZOrP0KrPQ/vuBEfLVA95
+        /sjSZn4SWg9gBBu0d25eTHUR+
+X-Received: by 2002:a1c:3d8a:: with SMTP id k132mr904876wma.144.1574416936568;
+        Fri, 22 Nov 2019 02:02:16 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwnfT8kemugquSzuCzADN8nk7bWDwXV59utNsTdM9vDxjzVAVfFfI24LbFsDpJ3AH0GMJIOQA==
+X-Received: by 2002:a1c:3d8a:: with SMTP id k132mr904842wma.144.1574416936299;
+        Fri, 22 Nov 2019 02:02:16 -0800 (PST)
+Received: from steredhat.homenet.telecomitalia.it (a-nu5-32.tin.it. [212.216.181.31])
+        by smtp.gmail.com with ESMTPSA id v19sm2111293wrg.38.2019.11.22.02.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 02:02:15 -0800 (PST)
+Date:   Fri, 22 Nov 2019 11:02:12 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@gmail.com>, netdev@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Dexuan Cui <decui@microsoft.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: Re: [PATCH net-next 4/6] vsock: add vsock_loopback transport
+Message-ID: <20191122100212.u3mvt6qkay7zexz7@steredhat.homenet.telecomitalia.it>
+References: <20191119110121.14480-1-sgarzare@redhat.com>
+ <20191119110121.14480-5-sgarzare@redhat.com>
+ <20191121093458.GB439743@stefanha-x1.localdomain>
+ <20191121095948.bc7lc3ptsh6jxizw@steredhat>
+ <20191121152517.zfedz6hg6ftcb2ks@steredhat>
+ <20191122092546.GA464656@stefanha-x1.localdomain>
+MIME-Version: 1.0
+In-Reply-To: <20191122092546.GA464656@stefanha-x1.localdomain>
+X-MC-Unique: Jw1Np3e6OH-AOQ2HPnuygQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Monitoring tools that want to find out which resctrl control
-and monitor groups a task belongs to must currently read
-the "tasks" file in every group until they locate the process
-ID.
+On Fri, Nov 22, 2019 at 09:25:46AM +0000, Stefan Hajnoczi wrote:
+> On Thu, Nov 21, 2019 at 04:25:17PM +0100, Stefano Garzarella wrote:
+> > On Thu, Nov 21, 2019 at 10:59:48AM +0100, Stefano Garzarella wrote:
+> > > On Thu, Nov 21, 2019 at 09:34:58AM +0000, Stefan Hajnoczi wrote:
+> > > > On Tue, Nov 19, 2019 at 12:01:19PM +0100, Stefano Garzarella wrote:
+> > > > > +static struct workqueue_struct *vsock_loopback_workqueue;
+> > > > > +static struct vsock_loopback *the_vsock_loopback;
+> > > >=20
+> > > > the_vsock_loopback could be a static global variable (not a pointer=
+) and
+> > > > vsock_loopback_workqueue could also be included in the struct.
+> > > >=20
+> > > > The RCU pointer is really a way to synchronize vsock_loopback_send_=
+pkt()
+> > > > and vsock_loopback_cancel_pkt() with module exit.  There is no othe=
+r
+> > > > reason for using a pointer.
+> > > >=20
+> > > > It's cleaner to implement the synchronization once in af_vsock.c (o=
+r
+> > > > virtio_transport_common.c) instead of making each transport do it.
+> > > > Maybe try_module_get() and related APIs provide the necessary seman=
+tics
+> > > > so that core vsock code can hold the transport module while it's be=
+ing
+> > > > used to send/cancel a packet.
+> > >=20
+> > > Right, the module cannot be unloaded until open sockets, so here the
+> > > synchronization is not needed.
+> > >=20
+> > > The synchronization come from virtio-vsock device that can be
+> > > hot-unplugged while sockets are still open, but that can't happen her=
+e.
+> > >=20
+> > > I will remove the pointers and RCU in the v2.
+> > >=20
+> > > Can I keep your R-b or do you prefer to watch v2 first?
+>=20
+> I'd like to review v2.
+>=20
 
-Add an additional file /proc/{pid}/resctrl to provide this
-information.
+Sure!
 
-The output is as followed according to Thomas's suggestion,
-for example:
+> > > > > +MODULE_ALIAS_NETPROTO(PF_VSOCK);
+> > > >=20
+> > > > Why does this module define the alias for PF_VSOCK?  Doesn't anothe=
+r
+> > > > module already define this alias?
+> > >=20
+> > > It is a way to load this module when PF_VSOCK is starting to be used.
+> > > MODULE_ALIAS_NETPROTO(PF_VSOCK) is already defined in vmci_transport
+> > > and hyperv_transport. IIUC it is used for the same reason.
+> > >=20
+> > > In virtio_transport we don't need it because it will be loaded when
+> > > the PCI device is discovered.
+> > >=20
+> > > Do you think there's a better way?
+> > > Should I include the vsock_loopback transport directly in af_vsock
+> > > without creating a new module?
+> > >=20
+> >=20
+> > That last thing I said may not be possible:
+> > I remembered that I tried, but DEPMOD found a cyclic dependency because
+> > vsock_transport use virtio_transport_common that use vsock, so if I
+> > include vsock_transport in the vsock module, DEPMOD is not happy.
+> >=20
+> > Do you think it's okay in this case to keep MODULE_ALIAS_NETPROTO(PF_VS=
+OCK)
+> > or is there a better way?
+>=20
+> The reason I asked is because the semantics of duplicate module aliases
+> aren't clear to me.  Do all modules with the same alias get loaded?
+> Or just the first?  Or ...?
 
- 1)   ""
-      Resctrl is not available.
+It wasn't clear to me either, but when I tried, I saw that all modules
+with the same alias got loaded.
 
- 2)   "/"
-      Task is part of the root group, task is not associated to
-      any monitoring group.
-
- 3)   "/mon_groups/mon0"
-      Task is part of the root group and monitoring group mon0.
-
- 4)   "/group0"
-      Task is part of control group group0, task is not associated
-      to any monitoring group.
-
- 5)   "/group0/mon_groups/mon1"
-      Task is part of control group group0 and monitoring group mon1.
-
-Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
-v2: Reduce indentation level in proc_resctrl_show()
-    according to Boris's suggestion.
-    Create the include/linux/resctrl.h header and
-    declare proc_resctrl_show() in this file, so
-    that other architectures would probably use it
-    in the future. Different architectures should
-    implement architectural specific proc_resctrl_show()
-    accordingly.
-
-v3: Return empty string if the resctrl filesystem has
-    not been mounted per Boris's suggestion.
-    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
-    to better represent its usage. Move PROC_CPU_RESCTRL
-    from arch/Kconfig to fs/proc/Kconfig.
-    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
-
-v4: According to Thomas's suggestion, changed the output
-    from multiple lines to one single line.
----
- arch/x86/Kconfig                       |  1 +
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 78 ++++++++++++++++++++++++++
- fs/proc/Kconfig                        |  4 ++
- fs/proc/base.c                         |  7 +++
- include/linux/resctrl.h                | 16 ++++++
- 5 files changed, 106 insertions(+)
- create mode 100644 include/linux/resctrl.h
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8ef85139553f..252364d18887 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -455,6 +455,7 @@ config X86_CPU_RESCTRL
- 	bool "x86 CPU resource control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
- 	select KERNFS
-+	select PROC_CPU_RESCTRL		if PROC_FS
- 	help
- 	  Enable x86 CPU resource control support.
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 2e3b06d6bbc6..f8898fe3e85c 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -725,6 +725,84 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+/*
-+ * A task can only be part of one control
-+ * group and of one monitoring group which
-+ * is associated to that control group.
-+ * So one line is simple and clear enough:
-+ *
-+ * 1)   ""
-+ *    Resctrl is not available.
-+ *
-+ * 2)   "/"
-+ *    Task is part of the root group, and it is
-+ *    not associated to any monitoring group.
-+ *
-+ * 3)   "/mon_groups/mon0"
-+ *    Task is part of the root group and monitoring
-+ *    group mon0.
-+ *
-+ * 4)   "/group0"
-+ *    Task is part of control group group0, and it is
-+ *    not associated to any monitoring group.
-+ *
-+ * 5)   "/group0/mon_groups/mon1"
-+ *    Task is part of control group group0 and monitoring
-+ *    group mon1.
-+ */
-+int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk)
-+{
-+	struct rdtgroup *rdtg;
-+	int ret = 0;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	/* Return empty if resctrl has not been mounted. */
-+	if (!static_branch_unlikely(&rdt_enable_key))
-+		goto unlock;
-+
-+	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+		struct rdtgroup *crg;
-+
-+		/*
-+		 * Task information is only relevant for shareable
-+		 * and exclusive groups.
-+		 */
-+		if (rdtg->mode != RDT_MODE_SHAREABLE &&
-+		    rdtg->mode != RDT_MODE_EXCLUSIVE)
-+			continue;
-+
-+		if (rdtg->closid != tsk->closid)
-+			continue;
-+
-+		seq_printf(s, "/%s", rdtg->kn->name);
-+		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+				    mon.crdtgrp_list) {
-+			if (tsk->rmid != crg->mon.rmid)
-+				continue;
-+			seq_printf(s, "%smon_groups/%s",
-+				   rdtg == &rdtgroup_default ? "" : "/",
-+				   crg->kn->name);
-+			break;
-+		}
-+		seq_puts(s, "\n");
-+		goto unlock;
-+	}
-+	/*
-+	 * The above search should succeed. Otherwise return
-+	 * with an error.
-+	 */
-+	ret = -ENOENT;
-+unlock:
-+	mutex_unlock(&rdtgroup_mutex);
-+
-+	return ret;
-+}
-+#endif
-+
- static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- 				    struct seq_file *seq, void *v)
- {
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index cb5629bd5fff..ae96a339d24d 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -103,3 +103,7 @@ config PROC_CHILDREN
- config PROC_PID_ARCH_STATUS
- 	def_bool n
- 	depends on PROC_FS
-+
-+config PROC_CPU_RESCTRL
-+	def_bool n
-+	depends on PROC_FS
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..0e4b8bf2b986 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -94,6 +94,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/stat.h>
- #include <linux/posix-timers.h>
-+#include <linux/resctrl.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score",  S_IRUGO, proc_oom_score),
- 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score", S_IRUGO, proc_oom_score),
- 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-new file mode 100644
-index 000000000000..50b147784d55
---- /dev/null
-+++ b/include/linux/resctrl.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _RESCTRL_H
-+#define _RESCTRL_H
-+
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+#include <linux/proc_fs.h>
-+
-+int proc_resctrl_show(struct seq_file *m,
-+		      struct pid_namespace *ns,
-+		      struct pid *pid,
-+		      struct task_struct *tsk);
-+
-+#endif
-+
-+#endif /* _RESCTRL_H */
--- 
-2.17.1
+Stefano
 
