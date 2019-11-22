@@ -2,68 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DDD41077E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 20:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A5D61077C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 20:02:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfKVTRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 14:17:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51734 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726698AbfKVTRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 14:17:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AE6AAB275;
-        Fri, 22 Nov 2019 19:17:19 +0000 (UTC)
-Message-ID: <1574449256.2659.2.camel@suse.com>
-Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>
-Cc:     andreyknvl@google.com, hverkuil@xs4all.nl,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Date:   Fri, 22 Nov 2019 20:00:56 +0100
-In-Reply-To: <Pine.LNX.4.44L0.1911221031300.1511-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1911221031300.1511-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727028AbfKVTCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 14:02:13 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:38077 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfKVTCN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 14:02:13 -0500
+Received: by mail-pj1-f65.google.com with SMTP id f7so3416108pjw.5;
+        Fri, 22 Nov 2019 11:02:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rXO9cqEQmTofVcUIhUtd2eNJuGiff/iEv3zoqiv6qHo=;
+        b=JVGcKgS9V2ip/SRxOAk03Fht0RCY6Asf7kXy1KRaOcWczzcWUR9yBEdsrXVf1lOz6y
+         04H5Bq9Y20bNKdrti7DmVLKFnqaSwl9oNSyZgzRP/BRIH8fJrdidtavACPXt46uQjo/k
+         plm33ARALqvWtCTxKcktBDH+w4Tj4eHjlXnCpjcvpB7TW/hN1nybRlSy+2X2IThkczQl
+         0+xdWthH+823/yFLAnzV26AG0BiBQIiKhddpUZ6Pk0CpzCXGnkRx+eRPb9TD42c4pPzE
+         mFO9GWvyz9dCkAfdJ2oNp5u2HVvg1XtAgxXQ7MQbEZNAu6g9nYLy0vNyyOebfD0r8txr
+         olQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rXO9cqEQmTofVcUIhUtd2eNJuGiff/iEv3zoqiv6qHo=;
+        b=mmUEmaTvCuiIGMoHPL1onbj/rPdTHVZ3ggurD3A0mGF5vbM20pXnnH+WFp3SqxlEUi
+         eyqV2PvWWqobdPOXvqMwvjn7t+SEz5KnkBIts0RcQonB9GkRxDfC2xAVwri9QhAWMyzY
+         gXVbeSAmK15j4ZRdKRj8zYkrq2zSc3MI7qc3ouEeVoaZMgEdPE11XH0+IzzK6f4vHuvG
+         6WR0pCGkPZtwFA7RzTSU2rqPPLjgDYTv0xWrpoxHIma/vpOxtbY3JfMZqHjMTfryZmGm
+         sgnjZOfvNiFJy+X2ZL8+D9Tosv2pizZUkBTMjvlQMs56UNoebFW16AlXILstpeuUUCk1
+         bfXg==
+X-Gm-Message-State: APjAAAU8RIMVPWWezy+OZe5xgrqruWC+1R5fVo5Ci5YL5J+olFS8EIjP
+        Cz2Aiwj5rubGqU68SlxeADY=
+X-Google-Smtp-Source: APXvYqxmIeXmYqTAGH5G6KIOCDjlzWl389mvrK8MD9R9K8eUmje6qYAJBh9w3bdvna6APckPqBIq8w==
+X-Received: by 2002:a17:90a:db43:: with SMTP id u3mr21080194pjx.56.1574449332145;
+        Fri, 22 Nov 2019 11:02:12 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id l21sm3554290pjt.28.2019.11.22.11.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 11:02:11 -0800 (PST)
+Date:   Fri, 22 Nov 2019 11:02:08 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        emamd001@umn.edu
+Subject: Re: [PATCH] Input: Fix memory leak in psxpad_spi_probe
+Message-ID: <20191122190208.GA248138@dtor-ws>
+References: <20191121200115.24846-1-navid.emamdoost@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121200115.24846-1-navid.emamdoost@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 22.11.2019, 10:35 -0500 schrieb Alan Stern:
-> On Fri, 22 Nov 2019, syzbot wrote:
-> 
-> > Hello,
-> > 
-> > syzbot has tested the proposed patch but the reproducer still triggered  
-> > crash:
-> > INFO: rcu detected stall in dummy_timer
-> > 
-> > radio-si470x 1-1:0.0: non-zero urb status (-71)
-> > radio-si470x 4-1:0.0: non-zero urb status (-71)
-> > radio-si470x 3-1:0.0: non-zero urb status (-71)
-> 
-> Oliver:
-> 
-> The reason for this stall is because the driver goes into a tight
-> resubmit loop when the interrupt URB completes with an unrecognized
-> error status.  Instead, the driver should log an error message and
-> avoid resubmitting.  Error recovery can be done at a higher level.
-> 
-> In other words, change the
-> 
-> 			goto resubmit; /* Maybe we can recover. */
-> 
-> line in the completion handler into a return.
+Hi Navid,
 
-I thought so, too. That is why I poisoned the URB. Am I dense?
+On Thu, Nov 21, 2019 at 02:01:11PM -0600, Navid Emamdoost wrote:
+> In the implementation of psxpad_spi_probe() the allocated memory for
+> pdev is leaked if psxpad_spi_init_ff() or input_register_polled_device()
+> fail. The solution is using device managed allocation, like the one used
+> for pad. Perform the allocation using
+> devm_input_allocate_polled_device().
+> 
+> Fixes: 8be193c7b1f4 ("Input: add support for PlayStation 1/2 joypads connected via SPI")
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-	Regards
-		Oliver
+This is fixed in the current version of the driver, but you can send it
+to stable@gerkernel.orf with my
 
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+> ---
+>  drivers/input/joystick/psxpad-spi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/joystick/psxpad-spi.c b/drivers/input/joystick/psxpad-spi.c
+> index 7eee1b0e360f..99a6052500ca 100644
+> --- a/drivers/input/joystick/psxpad-spi.c
+> +++ b/drivers/input/joystick/psxpad-spi.c
+> @@ -292,7 +292,7 @@ static int psxpad_spi_probe(struct spi_device *spi)
+>  	if (!pad)
+>  		return -ENOMEM;
+>  
+> -	pdev = input_allocate_polled_device();
+> +	pdev = devm_input_allocate_polled_device(&spi->dev);
+>  	if (!pdev) {
+>  		dev_err(&spi->dev, "failed to allocate input device\n");
+>  		return -ENOMEM;
+> -- 
+> 2.17.1
+> 
+
+-- 
+Dmitry
