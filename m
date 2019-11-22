@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F9F107135
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C16106D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfKVKdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:33:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55062 "EHLO mail.kernel.org"
+        id S1731050AbfKVLAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:00:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727796AbfKVKdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:33:00 -0500
+        id S1727179AbfKVLA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:00:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DCEE20708;
-        Fri, 22 Nov 2019 10:32:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3351C2073F;
+        Fri, 22 Nov 2019 11:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418779;
-        bh=gOF/g1JGF/2ta+CRXg0IuDDeSmSxHnfLjPshvyA+44c=;
+        s=default; t=1574420427;
+        bh=mvmcZdrkG5dSBFb2qDk8NGuPqozB3u6Kci68/K4eDoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2WNI4w0bzBkb27fzxjSZWPml2b1dyVhLRyUx37devmi/KuHSJMGTSmkjVj8XJiOdk
-         ziJRCCrJ1U9pGEtCU1WyH9Q2cPmLA6R+qdlxZqa7cE9Iy+rQekZaySY+ZVQI2YOY01
-         02+U9XtAAJr6k64+RD7Bz7h+ALu5l3puQr5lSwpQ=
+        b=wLU5itDn/RB3znULosEzETWwQ4w684MaOBffi3lWNl0Bz39pQj3cArHZL8ao/v8fC
+         XPQIC8uk8qpiPCNaNgHbbptFt6/nfui4ln1DwJYwcKMa27JGg2BBysNOMFQdPiLd0g
+         Et7w4qkksJZdH2Nd0q2mGrwhNwuMVWhSAodOIsrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Modra <amodra@gmail.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 049/159] powerpc/vdso: Correct call frame information
-Date:   Fri, 22 Nov 2019 11:27:20 +0100
-Message-Id: <20191122100742.187174726@linuxfoundation.org>
+Subject: [PATCH 4.19 076/220] clocksource/drivers/sh_cmt: Fixup for 64-bit machines
+Date:   Fri, 22 Nov 2019 11:27:21 +0100
+Message-Id: <20191122100917.792973619@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,98 +46,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Modra <amodra@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 56d20861c027498b5a1112b4f9f05b56d906fdda ]
+[ Upstream commit 22627c6f3ed3d9d0df13eec3c831b08f8186c38e ]
 
-Call Frame Information is used by gdb for back-traces and inserting
-breakpoints on function return for the "finish" command.  This failed
-when inside __kernel_clock_gettime.  More concerning than difficulty
-debugging is that CFI is also used by stack frame unwinding code to
-implement exceptions.  If you have an app that needs to handle
-asynchronous exceptions for some reason, and you are unlucky enough to
-get one inside the VDSO time functions, your app will crash.
+When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed
+that 'max_delta_ns' for the broadcast timer (CMT) was shown as 1000 in
+/proc/timer_list. It turned out that when calculating it, the driver did
+1 << 32 (causing what I think was undefined behavior) resulting in a zero
+delta, later clamped to 1000 by cev_delta2ns(). The root cause turned out
+to be that the driver abused *unsigned long* for the CMT register values
+(which are 16/32-bit), so that the calculation of 'ch->max_match_value'
+in sh_cmt_setup_channel() used the wrong branch. Using more proper 'u32'
+instead fixed 'max_delta_ns' and even fixed the switching an active
+clocksource to CMT (which caused the system to turn non-interactive
+before).
 
-What's wrong:  There is control flow in __kernel_clock_gettime that
-reaches label 99 without saving lr in r12.  CFI info however is
-interpreted by the unwinder without reference to control flow: It's a
-simple matter of "Execute all the CFI opcodes up to the current
-address".  That means the unwinder thinks r12 contains the return
-address at label 99.  Disabuse it of that notion by resetting CFI for
-the return address at label 99.
-
-Note that the ".cfi_restore lr" could have gone anywhere from the
-"mtlr r12" a few instructions earlier to the instruction at label 99.
-I put the CFI as late as possible, because in general that's best
-practice (and if possible grouped with other CFI in order to reduce
-the number of CFI opcodes executed when unwinding).  Using r12 as the
-return address is perfectly fine after the "mtlr r12" since r12 on
-that code path still contains the return address.
-
-__get_datapage also has a CFI error.  That function temporarily saves
-lr in r0, and reflects that fact with ".cfi_register lr,r0".  A later
-use of r0 means the CFI at that point isn't correct, as r0 no longer
-contains the return address.  Fix that too.
-
-Signed-off-by: Alan Modra <amodra@gmail.com>
-Tested-by: Reza Arbab <arbab@linux.ibm.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/vdso32/datapage.S     | 1 +
- arch/powerpc/kernel/vdso32/gettimeofday.S | 1 +
- arch/powerpc/kernel/vdso64/datapage.S     | 1 +
- arch/powerpc/kernel/vdso64/gettimeofday.S | 1 +
- 4 files changed, 4 insertions(+)
+ drivers/clocksource/sh_cmt.c | 72 +++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 39 deletions(-)
 
-diff --git a/arch/powerpc/kernel/vdso32/datapage.S b/arch/powerpc/kernel/vdso32/datapage.S
-index 59cf5f452879b..9d112e1b31b8b 100644
---- a/arch/powerpc/kernel/vdso32/datapage.S
-+++ b/arch/powerpc/kernel/vdso32/datapage.S
-@@ -37,6 +37,7 @@ data_page_branch:
- 	mtlr	r0
- 	addi	r3, r3, __kernel_datapage_offset-data_page_branch
- 	lwz	r0,0(r3)
-+  .cfi_restore lr
- 	add	r3,r0,r3
- 	blr
-   .cfi_endproc
-diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
-index 6b2b69616e776..7b341b86216c2 100644
---- a/arch/powerpc/kernel/vdso32/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
-@@ -139,6 +139,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
- 	 */
- 99:
- 	li	r0,__NR_clock_gettime
-+  .cfi_restore lr
- 	sc
- 	blr
-   .cfi_endproc
-diff --git a/arch/powerpc/kernel/vdso64/datapage.S b/arch/powerpc/kernel/vdso64/datapage.S
-index 7612eeb31da14..6832e41c372b0 100644
---- a/arch/powerpc/kernel/vdso64/datapage.S
-+++ b/arch/powerpc/kernel/vdso64/datapage.S
-@@ -37,6 +37,7 @@ data_page_branch:
- 	mtlr	r0
- 	addi	r3, r3, __kernel_datapage_offset-data_page_branch
- 	lwz	r0,0(r3)
-+  .cfi_restore lr
- 	add	r3,r0,r3
- 	blr
-   .cfi_endproc
-diff --git a/arch/powerpc/kernel/vdso64/gettimeofday.S b/arch/powerpc/kernel/vdso64/gettimeofday.S
-index 3820213248836..09b2a49f6dd53 100644
---- a/arch/powerpc/kernel/vdso64/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso64/gettimeofday.S
-@@ -124,6 +124,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
- 	 */
- 99:
- 	li	r0,__NR_clock_gettime
-+  .cfi_restore lr
- 	sc
- 	blr
-   .cfi_endproc
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index bbbf37c471a39..49302086f36fd 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -78,18 +78,17 @@ struct sh_cmt_info {
+ 	unsigned int channels_mask;
+ 
+ 	unsigned long width; /* 16 or 32 bit version of hardware block */
+-	unsigned long overflow_bit;
+-	unsigned long clear_bits;
++	u32 overflow_bit;
++	u32 clear_bits;
+ 
+ 	/* callbacks for CMSTR and CMCSR access */
+-	unsigned long (*read_control)(void __iomem *base, unsigned long offs);
++	u32 (*read_control)(void __iomem *base, unsigned long offs);
+ 	void (*write_control)(void __iomem *base, unsigned long offs,
+-			      unsigned long value);
++			      u32 value);
+ 
+ 	/* callbacks for CMCNT and CMCOR access */
+-	unsigned long (*read_count)(void __iomem *base, unsigned long offs);
+-	void (*write_count)(void __iomem *base, unsigned long offs,
+-			    unsigned long value);
++	u32 (*read_count)(void __iomem *base, unsigned long offs);
++	void (*write_count)(void __iomem *base, unsigned long offs, u32 value);
+ };
+ 
+ struct sh_cmt_channel {
+@@ -103,9 +102,9 @@ struct sh_cmt_channel {
+ 
+ 	unsigned int timer_bit;
+ 	unsigned long flags;
+-	unsigned long match_value;
+-	unsigned long next_match_value;
+-	unsigned long max_match_value;
++	u32 match_value;
++	u32 next_match_value;
++	u32 max_match_value;
+ 	raw_spinlock_t lock;
+ 	struct clock_event_device ced;
+ 	struct clocksource cs;
+@@ -160,24 +159,22 @@ struct sh_cmt_device {
+ #define SH_CMT32_CMCSR_CKS_RCLK1	(7 << 0)
+ #define SH_CMT32_CMCSR_CKS_MASK		(7 << 0)
+ 
+-static unsigned long sh_cmt_read16(void __iomem *base, unsigned long offs)
++static u32 sh_cmt_read16(void __iomem *base, unsigned long offs)
+ {
+ 	return ioread16(base + (offs << 1));
+ }
+ 
+-static unsigned long sh_cmt_read32(void __iomem *base, unsigned long offs)
++static u32 sh_cmt_read32(void __iomem *base, unsigned long offs)
+ {
+ 	return ioread32(base + (offs << 2));
+ }
+ 
+-static void sh_cmt_write16(void __iomem *base, unsigned long offs,
+-			   unsigned long value)
++static void sh_cmt_write16(void __iomem *base, unsigned long offs, u32 value)
+ {
+ 	iowrite16(value, base + (offs << 1));
+ }
+ 
+-static void sh_cmt_write32(void __iomem *base, unsigned long offs,
+-			   unsigned long value)
++static void sh_cmt_write32(void __iomem *base, unsigned long offs, u32 value)
+ {
+ 	iowrite32(value, base + (offs << 2));
+ }
+@@ -242,7 +239,7 @@ static const struct sh_cmt_info sh_cmt_info[] = {
+ #define CMCNT 1 /* channel register */
+ #define CMCOR 2 /* channel register */
+ 
+-static inline unsigned long sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
++static inline u32 sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
+ {
+ 	if (ch->iostart)
+ 		return ch->cmt->info->read_control(ch->iostart, 0);
+@@ -250,8 +247,7 @@ static inline unsigned long sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
+ 		return ch->cmt->info->read_control(ch->cmt->mapbase, 0);
+ }
+ 
+-static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	if (ch->iostart)
+ 		ch->cmt->info->write_control(ch->iostart, 0, value);
+@@ -259,39 +255,35 @@ static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch,
+ 		ch->cmt->info->write_control(ch->cmt->mapbase, 0, value);
+ }
+ 
+-static inline unsigned long sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
++static inline u32 sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
+ {
+ 	return ch->cmt->info->read_control(ch->ioctrl, CMCSR);
+ }
+ 
+-static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	ch->cmt->info->write_control(ch->ioctrl, CMCSR, value);
+ }
+ 
+-static inline unsigned long sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
++static inline u32 sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
+ {
+ 	return ch->cmt->info->read_count(ch->ioctrl, CMCNT);
+ }
+ 
+-static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	ch->cmt->info->write_count(ch->ioctrl, CMCNT, value);
+ }
+ 
+-static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch,
+-				      unsigned long value)
++static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch, u32 value)
+ {
+ 	ch->cmt->info->write_count(ch->ioctrl, CMCOR, value);
+ }
+ 
+-static unsigned long sh_cmt_get_counter(struct sh_cmt_channel *ch,
+-					int *has_wrapped)
++static u32 sh_cmt_get_counter(struct sh_cmt_channel *ch, u32 *has_wrapped)
+ {
+-	unsigned long v1, v2, v3;
+-	int o1, o2;
++	u32 v1, v2, v3;
++	u32 o1, o2;
+ 
+ 	o1 = sh_cmt_read_cmcsr(ch) & ch->cmt->info->overflow_bit;
+ 
+@@ -311,7 +303,8 @@ static unsigned long sh_cmt_get_counter(struct sh_cmt_channel *ch,
+ 
+ static void sh_cmt_start_stop_ch(struct sh_cmt_channel *ch, int start)
+ {
+-	unsigned long flags, value;
++	unsigned long flags;
++	u32 value;
+ 
+ 	/* start stop register shared by multiple timer channels */
+ 	raw_spin_lock_irqsave(&ch->cmt->lock, flags);
+@@ -418,11 +411,11 @@ static void sh_cmt_disable(struct sh_cmt_channel *ch)
+ static void sh_cmt_clock_event_program_verify(struct sh_cmt_channel *ch,
+ 					      int absolute)
+ {
+-	unsigned long new_match;
+-	unsigned long value = ch->next_match_value;
+-	unsigned long delay = 0;
+-	unsigned long now = 0;
+-	int has_wrapped;
++	u32 value = ch->next_match_value;
++	u32 new_match;
++	u32 delay = 0;
++	u32 now = 0;
++	u32 has_wrapped;
+ 
+ 	now = sh_cmt_get_counter(ch, &has_wrapped);
+ 	ch->flags |= FLAG_REPROGRAM; /* force reprogram */
+@@ -619,9 +612,10 @@ static struct sh_cmt_channel *cs_to_sh_cmt(struct clocksource *cs)
+ static u64 sh_cmt_clocksource_read(struct clocksource *cs)
+ {
+ 	struct sh_cmt_channel *ch = cs_to_sh_cmt(cs);
+-	unsigned long flags, raw;
++	unsigned long flags;
+ 	unsigned long value;
+-	int has_wrapped;
++	u32 has_wrapped;
++	u32 raw;
+ 
+ 	raw_spin_lock_irqsave(&ch->lock, flags);
+ 	value = ch->total_cycles;
 -- 
 2.20.1
 
