@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 228871070D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:25:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD811070CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfKVLYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:24:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42830 "EHLO mail.kernel.org"
+        id S1728220AbfKVKjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:39:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbfKVKje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:39:34 -0500
+        id S1727395AbfKVKjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:39:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556E820715;
-        Fri, 22 Nov 2019 10:39:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 482E420721;
+        Fri, 22 Nov 2019 10:39:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419173;
-        bh=ImmlDRzMG4QM7y293HzEHL2Nt8F3ObbdD/6TybDalBU=;
+        s=default; t=1574419182;
+        bh=9lO1imc9AkSk65FSLE3NlJ+ZwySJsQ3+6ogMVEiY88I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cakd225a+qmawMHJxqQkWaIBU2uxmVj4Bb75MfAnaKOpJfRzR/vE1Jl4cKV+4kZd1
-         ryyD3EcY56mdQET5TFZCe6M4214lLBFdmkcVZSryPH2t4HwgyX7qRDMZkOmzDSYXYa
-         7tMji0ePcMJjrObiLbo6bn8lHU+hGC/CeEgz7DO8=
+        b=L+vxMf/u5axVCSGcTt1hpc72YBSAIeQ7wpcdBfdtZIt0NwiWUmtqXlGIy31MAal2v
+         DUksqWexKiKPkBdy4cuQGAJuhRzpxztXxxgiLMW/nN/DhyARurKbO0Qqjgfm0zzONR
+         H6I39/qefBW8exixriDdfJP66kTKswIe16UkX/rQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 004/222] ALSA: usb-audio: not submit urb for stopped endpoint
-Date:   Fri, 22 Nov 2019 11:25:44 +0100
-Message-Id: <20191122100831.363618518@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 007/222] Input: synaptics-rmi4 - clear IRQ enables for F54
+Date:   Fri, 22 Nov 2019 11:25:47 +0100
+Message-Id: <20191122100831.673137806@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -43,44 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 528699317dd6dc722dccc11b68800cf945109390 upstream.
+commit 549766ac2ac1f6c8bb85906bbcea759541bb19a2 upstream.
 
-While output urb's snd_complete_urb() is executing, calling
-prepare_outbound_urb() may cause endpoint stopped before
-prepare_outbound_urb() returns and result in next urb submitted
-to stopped endpoint. usb-audio driver cannot re-use it afterwards as
-the urb is still hold by usb stack.
+The driver for F54 just polls the status and doesn't even have a IRQ
+handler registered. Make sure to disable all F54 IRQs, so we don't crash
+the kernel on a nonexistent handler.
 
-This change checks EP_FLAG_RUNNING flag after prepare_outbound_urb() again
-to let snd_complete_urb() know the endpoint already stopped and does not
-submit next urb. Below kind of error will be fixed:
-
-[  213.153103] usb 1-2: timeout: still 1 active urbs on EP #1
-[  213.164121] usb 1-2: cannot submit urb 0, error -16: unknown error
-
-Signed-off-by: Henry Lin <henryl@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191113021420.13377-1-henryl@nvidia.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Link: https://lore.kernel.org/r/20191105114402.6009-1-l.stach@pengutronix.de
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/endpoint.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/rmi4/rmi_f54.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -403,6 +403,9 @@ static void snd_complete_urb(struct urb
- 		}
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -617,7 +617,7 @@ static int rmi_f54_config(struct rmi_fun
+ {
+ 	struct rmi_driver *drv = fn->rmi_dev->driver;
  
- 		prepare_outbound_urb(ep, ctx);
-+		/* can be stopped during prepare callback */
-+		if (unlikely(!test_bit(EP_FLAG_RUNNING, &ep->flags)))
-+			goto exit_clear;
- 	} else {
- 		retire_inbound_urb(ep, ctx);
- 		/* can be stopped during retire callback */
+-	drv->set_irq_bits(fn->rmi_dev, fn->irq_mask);
++	drv->clear_irq_bits(fn->rmi_dev, fn->irq_mask);
+ 
+ 	return 0;
+ }
 
 
