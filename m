@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81644106A2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2D9106B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbfKVKca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:32:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53836 "EHLO mail.kernel.org"
+        id S1729170AbfKVKm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:42:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbfKVKcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:32:25 -0500
+        id S1729157AbfKVKmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:42:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71FB82082F;
-        Fri, 22 Nov 2019 10:32:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E94C42071F;
+        Fri, 22 Nov 2019 10:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418745;
-        bh=B6jxOLBd/9zLkLYcoyos7p5ppKFoQ1iXiFOWPgY7BhY=;
+        s=default; t=1574419371;
+        bh=u5HAUch/zt0qKhz/JRb40yB5Wv5KwFM6XhDO9ftbcdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=08mn1FOG2F8rygIaglGgsQ2cpNuNgv/E+2w7FndyyULxIa/kqSHrR5CIPsFma2z7V
-         oq9867p6bQBiXOXBvq5C3flaq/ick2VhQXwSUtB/BgWfssO+iLZYUjLHdaYrhL5I2o
-         qwK5vJJX3Jzql9iICa3hwtuZSwJRBh6Gseplmo8s=
+        b=A7PjIVpiVus7WQmcauc5MBCTTv6SqOK+QhWxbtuINzjLErSw2O/Qzyh8eNKIFPEYp
+         QPMkGkbEJEnBTZqJ7vJ/cCdg2AAoSSrl6yofezr+9w29/j5mMDyqiKzoTWnd32thzt
+         4vaD1G/OrYYRe+zM3Z6HAED0AzQyPb62nJXfUj3o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 038/159] signal: Properly deliver SIGSEGV from x86 uprobes
+Subject: [PATCH 4.9 089/222] power: supply: twl4030_charger: disable eoc interrupt on linear charge
 Date:   Fri, 22 Nov 2019 11:27:09 +0100
-Message-Id: <20191122100734.245850658@linuxfoundation.org>
+Message-Id: <20191122100909.975432940@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 4a63c1ffd384ebdce40aac9c997dab68379137be ]
+[ Upstream commit 079cdff3d0a09c5da10ae1be35def7a116776328 ]
 
-For userspace to tell the difference between an random signal
-and an exception, the exception must include siginfo information.
+This avoids getting woken up from suspend after power interruptions
+when the bci wrongly thinks the battery is full just because
+of input current going low because of low input power
 
-Using SEND_SIG_FORCED for SIGSEGV is thus wrong, and it will result in
-userspace seeing si_code == SI_USER (like a random signal) instead of
-si_code == SI_KERNEL or a more specific si_code as all exceptions
-deliver.
-
-Therefore replace force_sig_info(SIGSEGV, SEND_SIG_FORCE, current)
-with force_sig(SIG_SEGV, current) which gets this right and is shorter
-and easier to type.
-
-Fixes: 791eca10107f ("uretprobes/x86: Hijack return address")
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/uprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/twl4030_charger.c | 27 +++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index 178d63cac321b..60b12c14cf6fb 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -983,7 +983,7 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs
- 		pr_err("uprobe: return address clobbered: pid=%d, %%sp=%#lx, "
- 			"%%ip=%#lx\n", current->pid, regs->sp, regs->ip);
+diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
+index 14fed11e8f6e3..5b1f147b11cb0 100644
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -469,6 +469,7 @@ static void twl4030_current_worker(struct work_struct *data)
+ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
+ {
+ 	int ret;
++	u32 reg;
  
--		force_sig_info(SIGSEGV, SEND_SIG_FORCED, current);
-+		force_sig(SIGSEGV, current);
- 	}
+ 	if (bci->usb_mode == CHARGE_OFF)
+ 		enable = false;
+@@ -482,14 +483,38 @@ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
+ 			bci->usb_enabled = 1;
+ 		}
  
- 	return -1;
+-		if (bci->usb_mode == CHARGE_AUTO)
++		if (bci->usb_mode == CHARGE_AUTO) {
++			/* Enable interrupts now. */
++			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_ICHGEOC |
++					TWL4030_TBATOR2 | TWL4030_TBATOR1 |
++					TWL4030_BATSTS);
++			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
++				       TWL4030_INTERRUPTS_BCIIMR1A);
++			if (ret < 0) {
++				dev_err(bci->dev,
++					"failed to unmask interrupts: %d\n",
++					ret);
++				return ret;
++			}
+ 			/* forcing the field BCIAUTOUSB (BOOT_BCI[1]) to 1 */
+ 			ret = twl4030_clear_set_boot_bci(0, TWL4030_BCIAUTOUSB);
++		}
+ 
+ 		/* forcing USBFASTMCHG(BCIMFSTS4[2]) to 1 */
+ 		ret = twl4030_clear_set(TWL_MODULE_MAIN_CHARGE, 0,
+ 			TWL4030_USBFASTMCHG, TWL4030_BCIMFSTS4);
+ 		if (bci->usb_mode == CHARGE_LINEAR) {
++			/* Enable interrupts now. */
++			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_TBATOR2 |
++					TWL4030_TBATOR1 | TWL4030_BATSTS);
++			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
++				       TWL4030_INTERRUPTS_BCIIMR1A);
++			if (ret < 0) {
++				dev_err(bci->dev,
++					"failed to unmask interrupts: %d\n",
++					ret);
++				return ret;
++			}
+ 			twl4030_clear_set_boot_bci(TWL4030_BCIAUTOAC|TWL4030_CVENAC, 0);
+ 			/* Watch dog key: WOVF acknowledge */
+ 			ret = twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0x33,
 -- 
 2.20.1
 
