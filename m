@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F72106D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D155E106A68
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730753AbfKVK6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47344 "EHLO mail.kernel.org"
+        id S1727409AbfKVKeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:34:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730742AbfKVK56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:58 -0500
+        id S1727425AbfKVKeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:34:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFC322073B;
-        Fri, 22 Nov 2019 10:57:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 679AD20708;
+        Fri, 22 Nov 2019 10:34:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420277;
-        bh=pPjVqW+TzBuF+V00o4hpuDk0lt7UMlrEz4zrYZiDHD8=;
+        s=default; t=1574418870;
+        bh=fjra+qU2IHILUSaeMQ2IA40jQ4nA30zAozzoI8R+DHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QCzWHFHQvb+bHKex08ljJvRi3j9SWq/SFku//HKTHu9K2zC7zDUa6CpRZ9VHwnxD/
-         KbYnsY0FUKToDBE7lQNwKtqVCZRQ+XMy6F739222cnPokFXukPyZABGIQTYfFsLY+C
-         Hb9yRLQ5iTUxQ/ZDgCu2JSi2WZIJKQWgZYK+Hhf4=
+        b=VY0VJuneOOZ08KF7amL9TNTg4f/dVKi/Lmho5vWM7EugDr+92s/Op/FdT9swm4Pv3
+         Hz/BP1CZO3c01TV6M4oAcV/A8Z22XEmzpkV9+MORAliuB/q6CInkapB3Q7fWM14rSt
+         ng5ShJ9MT870gFviddMpg2Gwfoqf/PBphrE7Bf+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/220] watchdog: sama5d4: fix timeout-sec usage
+Subject: [PATCH 4.4 026/159] ASoC: sgtl5000: avoid division by zero if lo_vag is zero
 Date:   Fri, 22 Nov 2019 11:26:57 +0100
-Message-Id: <20191122100915.919777684@linuxfoundation.org>
+Message-Id: <20191122100724.490920259@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Romain Izard <romain.izard.pro@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 2e0432f8f8ad11b4bd208445360220efa5b37d82 ]
+[ Upstream commit 9ab708aef61f5620113269a9d1bdb1543d1207d0 ]
 
-When using watchdog_init_timeout to update the default timeout value,
-an error means that there is no "timeout-sec" in the relevant device
-tree node.
+In the case where lo_vag <= SGTL5000_LINE_OUT_GND_BASE, lo_vag
+is set to zero and later vol_quot is computed by dividing by
+lo_vag causing a division by zero error.  Fix this by avoiding
+a zero division and set vol_quot to zero in this specific case
+so that the lowest setting for i is correctly set.
 
-This should not prevent binding of the driver to the device.
-
-Fixes: 976932e40036 ("watchdog: sama5d4: make use of timeout-secs provided in devicetree")
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/sama5d4_wdt.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ sound/soc/codecs/sgtl5000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-index 255169916dbb6..1e93c1b0e3cfc 100644
---- a/drivers/watchdog/sama5d4_wdt.c
-+++ b/drivers/watchdog/sama5d4_wdt.c
-@@ -247,11 +247,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	ret = watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
--	if (ret) {
--		dev_err(&pdev->dev, "unable to set timeout value\n");
--		return ret;
--	}
-+	watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
- 
- 	timeout = WDT_SEC2TICKS(wdd->timeout);
- 
+diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+index 4808b70ec12cb..a3dd7030f629c 100644
+--- a/sound/soc/codecs/sgtl5000.c
++++ b/sound/soc/codecs/sgtl5000.c
+@@ -1415,7 +1415,7 @@ static int sgtl5000_set_power_regs(struct snd_soc_codec *codec)
+ 	 * Searching for a suitable index solving this formula:
+ 	 * idx = 40 * log10(vag_val / lo_cagcntrl) + 15
+ 	 */
+-	vol_quot = (vag * 100) / lo_vag;
++	vol_quot = lo_vag ? (vag * 100) / lo_vag : 0;
+ 	lo_vol = 0;
+ 	for (i = 0; i < ARRAY_SIZE(vol_quot_table); i++) {
+ 		if (vol_quot >= vol_quot_table[i])
 -- 
 2.20.1
 
