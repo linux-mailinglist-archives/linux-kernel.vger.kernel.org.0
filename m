@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEB80106BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E23106AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbfKVKrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55046 "EHLO mail.kernel.org"
+        id S1728479AbfKVKhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:37:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729756AbfKVKrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:17 -0500
+        id S1727208AbfKVKg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:36:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47F0420637;
-        Fri, 22 Nov 2019 10:47:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8FC820656;
+        Fri, 22 Nov 2019 10:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419635;
+        s=default; t=1574419018;
         bh=iufa2eP/TUMfHuSqsOfMqcEWWdjpkgEBSDuAnm64Qv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g9hVG/jNncM98gqctLESBzmt2UVWaunuGkeCBtt6Z5H7O9lR5bLe9+4Mp3uwKIVFQ
-         4TLopnGeJvw3tmhA5DBzTnoWwpw/FRwXlaYayAxG1W6nWFgPXHqYJEeEzL+4EfWlh5
-         AYDo6SXtJVqtTgAXUmcMZrax+TU2MqwkGljHdyb0=
+        b=2Q8p4Xb2D9aaLeDLm4XKYVwZtgFyacZZAhL3Yway8G0MRkCqt4xIXcl5Quh2Dk6Nu
+         9j3noTI29X64DVoIvVwp3Pr+wjuS8FO5NBhwoNnuM0e4n9Lq+Wea/AQhg7RYqnFE0U
+         tULJyA95JHYTWzNiaHqE8K3Si+oBjG6Vl9KIlkLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Pobega <mpobega@neverware.com>,
         Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 181/222] ALSA: hda/sigmatel - Disable automute for Elo VuPoint
+Subject: [PATCH 4.4 130/159] ALSA: hda/sigmatel - Disable automute for Elo VuPoint
 Date:   Fri, 22 Nov 2019 11:28:41 +0100
-Message-Id: <20191122100915.446256424@linuxfoundation.org>
+Message-Id: <20191122100833.459550266@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
