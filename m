@@ -2,89 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA3C105DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:04:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2F1105E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:16:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfKVBDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 20:03:55 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39691 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfKVBDs (ORCPT
+        id S1726554AbfKVBQj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 21 Nov 2019 20:16:39 -0500
+Received: from cnshjsmin05.app.nokia-sbell.com ([116.246.26.45]:60792 "EHLO
+        cnshjsmin05.nokia-sbell.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726329AbfKVBQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 20:03:48 -0500
-Received: by mail-lj1-f194.google.com with SMTP id p18so5365907ljc.6
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 17:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=m913jDXRVfEU7lrY83rHrp6DULNdfWEGAoaZqXDkLTA=;
-        b=pdPSpxfBL1Ad/3JxV2mSmO4/6BOLjdGP/pkx3d6hs6QjMYWgNGmqybdAf8cVPb89MZ
-         7iy9H6Bwou+6jSwmM1TkH0C9Mb3il/QOlSAbnUqSfnXx9R4E3u4GoTFqXkAYmUgbtWG/
-         tldohmrkjSlw5hFcoW0L9cq3GjjCoh3i9UnrYfAl89Haytv6HBQTb73zmL5Nk1fmEdxY
-         H31lfYB9925iXHbcDYjLF1RNJTiR5EYdDBnU0AAQfTpg0fiXE0TuYDdFNdeBB0waW0GY
-         jKh67f3p7oxgyRw2uOMO5swxmrTiGZHbsFXZ73I5CTvbVBFrzxOtnpwyrzVggFornKH6
-         tDFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=m913jDXRVfEU7lrY83rHrp6DULNdfWEGAoaZqXDkLTA=;
-        b=e6fljJZPdXe48LnKcHFbNBszS4ElqY1pOjPrRQGFDVzVT5TzxhNJXkBgEns1lGOoRE
-         H0K9JtPxB9v1S3lYhLq0GRabcyFLB6TSI1jn5H8yKOicbvk050K4MSw2DggsqRXPLXQW
-         QOgngdRpaQRZrGzAjUQwI+fDz4beP/btme6Pa3Wzy1/cMqF/iAV8hgZ/H80dKUSQfF4h
-         zmYm+/Ax4D/E5eIfUz/nABjlCgWnOUhnIoxnKuHQTtuZO5uHofLKqa1hY/OB/QkNSKHm
-         FM99u/TTOu1jQ7WvHqNhW5EmYOzK5jNN7abBIpfEjR7HrPzHQNPDSO6Zvw/t8VIwqZ+Y
-         WxrA==
-X-Gm-Message-State: APjAAAWwUnlBNGB41MxcWV3MYD3BPofVpjLGjUA+CRLneOj6w2St2Sh2
-        2mBbPNrbS2gAbs8RTExFqBD1ww==
-X-Google-Smtp-Source: APXvYqwnfSXY9PpKVzQQhCKshLxwXTVie+X/fnKl31b0ZdToCRb9i101bmYL66lYSpv5fqV8f+CPAQ==
-X-Received: by 2002:a2e:575c:: with SMTP id r28mr9849257ljd.245.1574384626222;
-        Thu, 21 Nov 2019 17:03:46 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id s27sm2253515lfc.31.2019.11.21.17.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 17:03:45 -0800 (PST)
-Date:   Thu, 21 Nov 2019 17:03:35 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Haiyang Zhang <haiyangz@microsoft.com>
-Cc:     "sashal@kernel.org" <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
+        Thu, 21 Nov 2019 20:16:39 -0500
+X-AuditID: ac18929d-49dff700000014de-85-5dd736f3c3c1
+Received: from CNSHPPEXCH1603.nsn-intra.net (Unknown_Domain [135.251.51.103])
+        (using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by cnshjsmin05.nokia-sbell.com (Symantec Messaging Gateway) with SMTP id 90.DC.05342.3F637DD5; Fri, 22 Nov 2019 09:16:35 +0800 (HKT)
+Received: from CNSHPPEXCH1601.nsn-intra.net (135.251.51.101) by
+ CNSHPPEXCH1603.nsn-intra.net (135.251.51.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 22 Nov 2019 09:16:35 +0800
+Received: from CNSHPPEXCH1601.nsn-intra.net ([135.251.51.101]) by
+ CNSHPPEXCH1601.nsn-intra.net ([135.251.51.101]) with mapi id 15.01.1713.007;
+ Fri, 22 Nov 2019 09:16:35 +0800
+From:   "Wang, Peng 1. (NSB - CN/Hangzhou)" <peng.1.wang@nokia-sbell.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     Guenter Roeck <groeck7@gmail.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net,v2 1/2] hv_netvsc: Fix offset usage in
- netvsc_send_table()
-Message-ID: <20191121170335.2f73792d@cakuba.netronome.com>
-In-Reply-To: <MN2PR21MB13750EBD53CFDFCBA36CF1D8CA490@MN2PR21MB1375.namprd21.prod.outlook.com>
-References: <1574372021-29439-1-git-send-email-haiyangz@microsoft.com>
-        <1574372021-29439-2-git-send-email-haiyangz@microsoft.com>
-        <20191121150445.47fc3358@cakuba.netronome.com>
-        <MN2PR21MB13750EBD53CFDFCBA36CF1D8CA490@MN2PR21MB1375.namprd21.prod.outlook.com>
-Organization: Netronome Systems, Ltd.
+Subject: RE: [PATCH v2] watchdog: make DesignWare watchdog allow users to set
+ bigger timeout value
+Thread-Topic: [PATCH v2] watchdog: make DesignWare watchdog allow users to set
+ bigger timeout value
+Thread-Index: AdWgVy1kREB4bw5dQ4u+4ZEezt20u///t7KA//7BtxA=
+Date:   Fri, 22 Nov 2019 01:16:34 +0000
+Message-ID: <a66f73ba253b41f8956eb85e3cc67a4a@nokia-sbell.com>
+References: <dc8ce91610dd4860858bfe92f104d74a@nokia-sbell.com>
+ <20191121141508.GA13249@roeck-us.net>
+In-Reply-To: <20191121141508.GA13249@roeck-us.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [135.251.51.115]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsXS/ts4Xfez2fVYg5VLzS32dV5nsri8aw6b
+        xY11+9gtniw8w2Tx+OU/ZgdWj52z7rJ7rFyzBsj63sDu8XmTXABLFJdNSmpOZllqkb5dAlfG
+        /6W3WQomC1ccPveGvYHxLH8XIyeHhICJRNv7CYxdjFwcQgKHmCQ2XjvADOH8ZZS4vuY7lLOJ
+        UWLSt6tsIC1sAu4STZvWgdkiAmoSzada2ECKmAUeMEq8P7IXyOHgEBZIkfjSwQNRkyrxbcIB
+        JgjbSuLlqy1gNouAqsTX3n5GEJtXwE5i0f8pjCCtQgJpEl//pIOEOQWMJE6vuMsKYjMKyEpM
+        e3QfrJVZQFzi1pP5TBAfCEgs2XOeGcIWlXj5+B8ryBgJASWJvg1Q5ToSC3Z/YoOwtSWWLXzN
+        DLFVUOLkzCcsExjFZiGZOgtJyywkLbOQtCxgZFnFKJ2cV5yRVZybmWdgqpeXn52ZqFuclJqT
+        o5ecn7uJERh7ayQmzd3B2NkZf4hRgINRiYf3ReW1WCHWxLLiytxDjBIczEoivHuuX4kV4k1J
+        rKxKLcqPLyrNSS0+xCjNwaIkztsyeWGskEB6YklqdmpqQWoRTJaJg1OqgVF0wzel59+iXU64
+        bv0qpzA1Y+HJRdqh/6dmMhaEGioeOuhxMbLHqrXkdvU0feWvU0W4lRlXMkrtOdWYzaR6ou1t
+        /pEfn/9K3ONaVbGzzIfV6tnHMN34FdKrb+96ovtHKcrhQVtizeT7xz84Fe3bXDnHqSHzx2r+
+        7XZLJNTX1Ns+nagjUZWRuEmJpTgj0VCLuag4EQCPDo//uQIAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 00:54:20 +0000, Haiyang Zhang wrote:
-> > >
-> > > -	tab = (u32 *)((unsigned long)&nvmsg->msg.v5_msg.send_table +
-> > > -		      nvmsg->msg.v5_msg.send_table.offset);
-> > > +	if (offset > msglen - count * sizeof(u32)) {  
-> > 
-> > Can't this underflow now? What if msglen is small?  
-> msglen came from the vmbus container message. We trust it to be big
-> enough for the data region.
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Ok, it looked like it was read from some descriptor which could
-potentially be controlled by "the other side" but I trust your
-judgement :)
+Roeck, thanks for your time to guide me to finish the review. Do I need to re-send a mail with your sign?
 
-Both patches LGTM, then.
+Peng Wang
+
+-----Original Message-----
+From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter Roeck
+Sent: Thursday, November 21, 2019 10:15 PM
+To: Wang, Peng 1. (NSB - CN/Hangzhou) <peng.1.wang@nokia-sbell.com>
+Cc: Guenter Roeck <groeck7@gmail.com>; wim@linux-watchdog.org; linux-watchdog@vger.kernel.org; linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] watchdog: make DesignWare watchdog allow users to set bigger timeout value
+
+On Thu, Nov 21, 2019 at 10:35:12AM +0000, Wang, Peng 1. (NSB - CN/Hangzhou) wrote:
+> From aabaa4b709bd451e566c906e8d1dca48f92f9b12 Mon Sep 17 00:00:00 2001
+> From: Peng Wang <peng.1.wang@nokia-sbell.com>
+> Date: Wed, 20 Nov 2019 15:12:59 +0800
+> Subject: [PATCH] watchdog: make DesignWare watchdog allow users to set 
+> bigger  timeout value
+> 
+> watchdog_dev.c provides means to allow users to set bigger timeout 
+> value than HW can support, make DesignWare watchdog align with this.
+> 
+> ---
+> 
+> v2 -> v1:
+>        - use top_s to compare with wdd->max_hw_heartbeat_ms
+>        - update wdd->timeout in case it's greater than HW supports
+>        - fix comments error
+> 
+> v1: initial version
+> 
+> Signed-off-by: Peng Wang <peng.1.wang@nokia-sbell.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  drivers/watchdog/dw_wdt.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c 
+> index fef7c61..12c116e 100644
+> --- a/drivers/watchdog/dw_wdt.c
+> +++ b/drivers/watchdog/dw_wdt.c
+> @@ -114,7 +114,15 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
+>  	writel(top_val | top_val << WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT,
+>  	       dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
+>  
+> -	wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
+> +	/*
+> +	 * In case users set bigger timeout value than HW can support,
+> +	 * kernel(watchdog_dev.c) helps to feed watchdog before 
+> +	 * wdd->max_hw_heartbeat_ms
+> +	 */
+> +	if ( top_s * 1000 <= wdd->max_hw_heartbeat_ms )
+> +		wdd->timeout = dw_wdt_top_in_seconds(dw_wdt, top_val);
+> +	else
+> +		wdd->timeout = top_s;
+>  
+>  	return 0;
+>  }
+> --
+> 1.8.3.1
+> 
