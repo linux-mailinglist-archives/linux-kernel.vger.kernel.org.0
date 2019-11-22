@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F34A2106CBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02438106C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbfKVKyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:54:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40196 "EHLO mail.kernel.org"
+        id S1728939AbfKVKtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:49:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727991AbfKVKyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:54:33 -0500
+        id S1730045AbfKVKtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:49:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10EF620706;
-        Fri, 22 Nov 2019 10:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3767A20718;
+        Fri, 22 Nov 2019 10:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420071;
-        bh=5ZZg/xigrTA2+oyrMBGTOMx97kcHllNc7EFKeSaV/nQ=;
+        s=default; t=1574419779;
+        bh=j9Zcp3P2qjbCbgdGS8uBWmnp7vlhR4j9Ra7HKixGESQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vPj6wGbVT9wKmO/kQ45Ay0l1k4eSSw+5RrXporQnB4c2QNg6jtXsK6X8n16aZjno3
-         eW8HwPrIllHm2EAWRVIecz48I0OBdO1rYbSE0ZuMF1E6zL2XM8ZQpMW3X6+8aOx4yX
-         taOGaCR8aGFFba23jyyC2M3c/5ax/C41Zw5MJwUg=
+        b=JKhc/FE2KSk/Jj5hn0eUq8CxDcHYbVggL8Jqwzr8uL/Gj0n1xsJ6Hpzje0BF0Zzf/
+         TNtmBEkKPtqozN7M3/dqgXQaQfzCIPK99M+mrRjUFdr8eI4S9Is4x68ajkvpuZVyK1
+         9mf9aaZZPQa5SJo43gJOO5zbCJk/G5fltUSy1OjY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 105/122] pinctrl: gemini: Mask and set properly
-Date:   Fri, 22 Nov 2019 11:29:18 +0100
-Message-Id: <20191122100832.406597374@linuxfoundation.org>
+Subject: [PATCH 4.9 219/222] mac80211: minstrel: fix CCK rate group streams value
+Date:   Fri, 22 Nov 2019 11:29:19 +0100
+Message-Id: <20191122100918.403586496@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit d17f477c5bc6b4a5dd9f51ae263870da132a8e89 ]
+[ Upstream commit 80df9be67c44cb636bbc92caeddad8caf334c53c ]
 
-The code was written under the assumption that the
-regmap_update_bits() would mask the bits in the mask and
-set the bits in the value.
+Fixes a harmless underflow issue when CCK rates are actively being used
 
-It missed the points that it will not set bits in the value
-unless these are also masked in the mask. Set value bits
-that are not in the mask will simply be ignored.
-
-Fixes: 06351d133dea ("pinctrl: add a Gemini SoC pin controller")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-gemini.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/mac80211/rc80211_minstrel_ht.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
-index 39e6221e71000..05441dc2519d2 100644
---- a/drivers/pinctrl/pinctrl-gemini.c
-+++ b/drivers/pinctrl/pinctrl-gemini.c
-@@ -2164,7 +2164,8 @@ static int gemini_pmx_set_mux(struct pinctrl_dev *pctldev,
- 		 func->name, grp->name);
+diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
+index 30fbabf4bcbc1..593184d14b3ef 100644
+--- a/net/mac80211/rc80211_minstrel_ht.c
++++ b/net/mac80211/rc80211_minstrel_ht.c
+@@ -128,7 +128,7 @@
  
- 	regmap_read(pmx->map, GLOBAL_MISC_CTRL, &before);
--	regmap_update_bits(pmx->map, GLOBAL_MISC_CTRL, grp->mask,
-+	regmap_update_bits(pmx->map, GLOBAL_MISC_CTRL,
-+			   grp->mask | grp->value,
- 			   grp->value);
- 	regmap_read(pmx->map, GLOBAL_MISC_CTRL, &after);
- 
+ #define CCK_GROUP					\
+ 	[MINSTREL_CCK_GROUP] = {			\
+-		.streams = 0,				\
++		.streams = 1,				\
+ 		.flags = 0,				\
+ 		.duration = {				\
+ 			CCK_DURATION_LIST(false),	\
 -- 
 2.20.1
 
