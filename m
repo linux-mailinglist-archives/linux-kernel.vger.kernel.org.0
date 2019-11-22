@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F8D106086
+	by mail.lfdr.de (Postfix) with ESMTP id 96C71106087
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:50:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfKVFtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53708 "EHLO mail.kernel.org"
+        id S1727230AbfKVFto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:49:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbfKVFtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:49:35 -0500
+        id S1727171AbfKVFtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:49:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1CF2070E;
-        Fri, 22 Nov 2019 05:49:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 748E920718;
+        Fri, 22 Nov 2019 05:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401774;
-        bh=S/UYcjtquDy0CcPqAHpXYiJOsV3eqyYvXDEKlXM21iE=;
+        s=default; t=1574401780;
+        bh=SX2sF24SxxN0DTRfvAZ+p3qN/yPB1GS57zgjqYDAA+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dQv7R4a3mZ406EO6pURFQa76WFYgyVbt2fVavv3rgT1EnT417IuWLDLaoKHs0w5GV
-         NfaCm2tNhagPlsPr8XTjsi30XrTZwi86VmxxzNtjfqkatJacDmI8Hp+JtjDJgqugSi
-         0YHK/6IiJ0E8+J78GqA6kHGS0Yj5+WhaOSdMLXmU=
+        b=Y5YPfQbrgF4CuNiuoCfOAH7TH3cehkxgDJwSShK1FC5R2vmO7UbJv4yDWbpj9joHb
+         8LLmvu4oLgBucIPULJs8ZctV86eSgJCFp3g/0IXRdseRdq1hAgFaPeOsN4U+1DHWEg
+         rf4R8xyeZpaFiTM+JMX3+L7u80grqRZmPWg177t0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 024/219] ARM: dts: Fix hsi gdd range for omap4
-Date:   Fri, 22 Nov 2019 00:45:56 -0500
-Message-Id: <20191122054911.1750-17-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 029/219] ARM: OMAP1: fix USB configuration for device-only setups
+Date:   Fri, 22 Nov 2019 00:46:01 -0500
+Message-Id: <20191122054911.1750-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,44 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-[ Upstream commit e9e685480b74aef3f3d0967dadb52eea3ff625d2 ]
+[ Upstream commit c7b7b5cbd0c859b1546a5a3455d457708bdadf4c ]
 
-While reviewing the missing mcasp ranges I noticed omap4 hsi range
-for gdd is wrong so let's fix it.
+Currently we do USB configuration only if the host mode (CONFIG_USB)
+is enabled. But it should be done also in the case of device-only setups,
+so change the condition to CONFIG_USB_SUPPORT. This allows to use
+omap_udc on Palm Tungsten E.
 
-I'm not aware of any omap4 devices in mainline kernel though that use
-hsi though.
-
-Fixes: 84badc5ec5fc ("ARM: dts: omap4: Move l4 child devices to probe
-them with ti-sysc")
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap4-l4.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap1/Makefile           | 2 +-
+ arch/arm/mach-omap1/include/mach/usb.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap4-l4.dtsi b/arch/arm/boot/dts/omap4-l4.dtsi
-index 6eb26b837446c..5059ecac44787 100644
---- a/arch/arm/boot/dts/omap4-l4.dtsi
-+++ b/arch/arm/boot/dts/omap4-l4.dtsi
-@@ -196,12 +196,12 @@
- 			clock-names = "fck";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			ranges = <0x0 0x58000 0x4000>;
-+			ranges = <0x0 0x58000 0x5000>;
+diff --git a/arch/arm/mach-omap1/Makefile b/arch/arm/mach-omap1/Makefile
+index e8ccf51c6f292..ec0235899de20 100644
+--- a/arch/arm/mach-omap1/Makefile
++++ b/arch/arm/mach-omap1/Makefile
+@@ -25,7 +25,7 @@ obj-y					+= $(i2c-omap-m) $(i2c-omap-y)
  
- 			hsi: hsi@0 {
- 				compatible = "ti,omap4-hsi";
- 				reg = <0x0 0x4000>,
--				      <0x4a05c000 0x1000>;
-+				      <0x5000 0x1000>;
- 				reg-names = "sys", "gdd";
+ led-y := leds.o
  
- 				clocks = <&l3_init_clkctrl OMAP4_HSI_CLKCTRL 0>;
+-usb-fs-$(CONFIG_USB)			:= usb.o
++usb-fs-$(CONFIG_USB_SUPPORT)		:= usb.o
+ obj-y					+= $(usb-fs-m) $(usb-fs-y)
+ 
+ # Specific board support
+diff --git a/arch/arm/mach-omap1/include/mach/usb.h b/arch/arm/mach-omap1/include/mach/usb.h
+index 77867778d4ec7..5429d86c7190d 100644
+--- a/arch/arm/mach-omap1/include/mach/usb.h
++++ b/arch/arm/mach-omap1/include/mach/usb.h
+@@ -11,7 +11,7 @@
+ 
+ #include <linux/platform_data/usb-omap1.h>
+ 
+-#if IS_ENABLED(CONFIG_USB)
++#if IS_ENABLED(CONFIG_USB_SUPPORT)
+ void omap1_usb_init(struct omap_usb_config *pdata);
+ #else
+ static inline void omap1_usb_init(struct omap_usb_config *pdata)
 -- 
 2.20.1
 
