@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0FD4107115
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC62107144
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfKVKee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:34:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59120 "EHLO mail.kernel.org"
+        id S1727664AbfKVKcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:32:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728093AbfKVKe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:34:28 -0500
+        id S1727640AbfKVKcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:32:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EBE720656;
-        Fri, 22 Nov 2019 10:34:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BF102071B;
+        Fri, 22 Nov 2019 10:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418867;
-        bh=VD4UdahY3GQ+xQ2/+jHwTXiwPVyL987arVvNOOss+w0=;
+        s=default; t=1574418739;
+        bh=SFfvz0Kc7W4a0FIGmtaHxaA83yiAFH8FLxKr99BQamc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ea7IAH5rnDm5kEu5/sDA/dsVgQxhTcDxu7Pw5HwkQ3zJIJCnc5AUMVrt848e22rdi
-         OCkTdGrDjK9bhFTtj7ITjPp/QFD/3ZwSkP1VGvTT2nIWwWbGnyyGp+ApQfRxk+6G33
-         r+ptG050Gd9bO28Gelm0uDN192q7nWdfGM05Gpmc=
+        b=i3MEFj2jAVMjEuHVwnelGL3TIjvJEgdEpfbkLYDOERZzzKbX+iQB8hRO6WbY5Y375
+         G4axvCuxg3r+tzHeJ/WDbwRN7RRRXcx3o4K7o/ngiDHBgPCnL3Vc8mXbF7bCjYo33D
+         jhA3JHXRqkWOCDaVSROEZjhE30ILRD50w8AcC8XM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Silsby <dansilsby@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 035/159] dmaengine: dma-jz4780: Further residue status fix
-Date:   Fri, 22 Nov 2019 11:27:06 +0100
-Message-Id: <20191122100731.330660345@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 036/159] signal: Always ignore SIGKILL and SIGSTOP sent to the global init
+Date:   Fri, 22 Nov 2019 11:27:07 +0100
+Message-Id: <20191122100731.907587368@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
 References: <20191122100704.194776704@linuxfoundation.org>
@@ -45,44 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Silsby <dansilsby@gmail.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-[ Upstream commit 83ef4fb7556b6a673f755da670cbacab7e2c7f1b ]
+[ Upstream commit 86989c41b5ea08776c450cb759592532314a4ed6 ]
 
-Func jz4780_dma_desc_residue() expects the index to the next hw
-descriptor as its last parameter. Caller func jz4780_dma_tx_status(),
-however, applied modulus before passing it. When the current hw
-descriptor was last in the list, the index passed became zero.
+If the first process started (aka /sbin/init) receives a SIGKILL it
+will panic the system if it is delivered.  Making the system unusable
+and undebugable.  It isn't much better if the first process started
+receives SIGSTOP.
 
-The resulting excess of reported residue especially caused problems
-with cyclic DMA transfer clients, i.e. ALSA AIC audio output, which
-rely on this for determining current DMA location within buffer.
+So always ignore SIGSTOP and SIGKILL sent to init.
 
-Combined with the recent and related residue-reporting fixes, spurious
-ALSA audio underruns on jz4770 hardware are now fixed.
+This is done in a separate clause in sig_task_ignored as force_sig_info
+can clear SIG_UNKILLABLE and this protection should work even then.
 
-Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-jz4780.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/signal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 8344b7c91fe35..1d01e3805f9c2 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -576,7 +576,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
- 					to_jz4780_dma_desc(vdesc), 0);
- 	} else if (cookie == jzchan->desc->vdesc.tx.cookie) {
- 		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
--			  (jzchan->curr_hwdesc + 1) % jzchan->desc->count);
-+					jzchan->curr_hwdesc + 1);
- 	} else
- 		txstate->residue = 0;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 072fd152ab01e..3095b2309876d 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -71,6 +71,10 @@ static int sig_task_ignored(struct task_struct *t, int sig, bool force)
  
+ 	handler = sig_handler(t, sig);
+ 
++	/* SIGKILL and SIGSTOP may not be sent to the global init */
++	if (unlikely(is_global_init(t) && sig_kernel_only(sig)))
++		return true;
++
+ 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
+ 	    handler == SIG_DFL && !(force && sig_kernel_only(sig)))
+ 		return 1;
 -- 
 2.20.1
 
