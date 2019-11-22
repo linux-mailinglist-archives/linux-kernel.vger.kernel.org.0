@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 819ED106D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A04B9106AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:40:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfKVK4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
+        id S1728417AbfKVKkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:40:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730631AbfKVK4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:56:48 -0500
+        id S1728021AbfKVKkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:40:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34DD520715;
-        Fri, 22 Nov 2019 10:56:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 284CD20731;
+        Fri, 22 Nov 2019 10:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420207;
-        bh=1adrwKuMK3kQTekHZtyUU6FYo2ZHlGYXq2VqmDwP6us=;
+        s=default; t=1574419200;
+        bh=TqqrcKleofOp6WEaP0GxHanALfR3V+fgwguyLNso3HY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y0I9ExPymUZ7TJzPL3ZDduXKlDKswMi0mDai3W+vr6G6xafJzfJvTDPP/VQT1QZn+
-         8kBGTYBeW67OgIFRwvWQw0C1zRjwZgicG9DPTQjR+wLaTqMGvMqk0AtqFWV7zN09uU
-         yRpOmbkH1O1mzGWJTzG6KD55GCOUCJcQW73Khmkw=
+        b=dwd5tvHUVuPo4RtKyBZzbYFYilRTk/sj4G9xtP7UzlkEipZERxJ1kjrw+Dx/OqQyc
+         y04rOEm9HRnn9Ry/4sNeNNqQacEaZ8ug2ySICVZi0zAr3GHpElNEoH7mBcpY8jvRsd
+         jXkoujYSNoZgADVB/qGkVyGiflkJtg3KB5WpSCFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 4.19 006/220] idr: Fix idr_get_next race with idr_remove
-Date:   Fri, 22 Nov 2019 11:26:11 +0100
-Message-Id: <20191122100913.132280707@linuxfoundation.org>
+        stable@vger.kernel.org, Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 032/222] IB/rxe: fixes for rdma read retry
+Date:   Fri, 22 Nov 2019 11:26:12 +0100
+Message-Id: <20191122100843.117303445@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,139 +44,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox (Oracle) <willy@infradead.org>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-commit 5c089fd0c73411f2170ab795c9ffc16718c7d007 upstream.
+[ Upstream commit 030e46e495af855a13964a0aab9753ea82a96edc ]
 
-If the entry is deleted from the IDR between the call to
-radix_tree_iter_find() and rcu_dereference_raw(), idr_get_next()
-will return NULL, which will end the iteration prematurely.  We should
-instead continue to the next entry in the IDR.  This only happens if the
-iteration is protected by the RCU lock.  Most IDR users use a spinlock
-or semaphore to exclude simultaneous modifications.  It was noticed once
-the PID allocator was converted to use the IDR, as it uses the RCU lock,
-but there may be other users elsewhere in the kernel.
+When a read request is retried for the remaining partial
+data, the response may restart from read response first
+or read response only. So support those cases.
 
-We can't use the normal pattern of calling radix_tree_deref_retry()
-(which catches both a retry entry in a leaf node and a node entry in
-the root) as the IDR supports storing entries which are unaligned,
-which will trigger an infinite loop if they are encountered.  Instead,
-we have to explicitly check whether the entry is a retry entry.
+Do not advance the comp psn beyond the current wqe's last_psn
+as that could skip over an entire read wqe and will cause the
+req_retry() logic to set an incorrect req psn.
+An example sequence is as follows:
+Write        PSN 40 -- this is the current WQE.
+Read request PSN 41
+Write        PSN 42
+Receive ACK  PSN 42 -- this will complete the current WQE
+for PSN 40, and set the comp psn to 42 which is a problem
+because the read request at PSN 41 has been skipped over.
+So when req_retry() tries to retransmit the read request,
+it sets the req psn to 42 which is incorrect.
 
-Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-Reported-by: Brendan Gregg <bgregg@netflix.com>
-Tested-by: Brendan Gregg <bgregg@netflix.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When retrying a read request, calculate the number of psns
+completed based on the dma resid instead of the wqe first_psn.
+The wqe first_psn could have moved if the read request was
+retried multiple times.
 
+Set the reth length to the dma resid to handle read retries for
+the remaining partial data.
 
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/idr.c                           |   15 +++++++++-
- tools/testing/radix-tree/idr-test.c |   52 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_comp.c | 21 ++++++++++++++++-----
+ drivers/infiniband/sw/rxe/rxe_req.c  | 15 +++++++++------
+ 2 files changed, 25 insertions(+), 11 deletions(-)
 
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -231,11 +231,22 @@ void *idr_get_next(struct idr *idr, int
+diff --git a/drivers/infiniband/sw/rxe/rxe_comp.c b/drivers/infiniband/sw/rxe/rxe_comp.c
+index df15b6d7b645e..b03a6206d9be7 100644
+--- a/drivers/infiniband/sw/rxe/rxe_comp.c
++++ b/drivers/infiniband/sw/rxe/rxe_comp.c
+@@ -250,6 +250,17 @@ static inline enum comp_state check_ack(struct rxe_qp *qp,
+ 	case IB_OPCODE_RC_RDMA_READ_RESPONSE_MIDDLE:
+ 		if (pkt->opcode != IB_OPCODE_RC_RDMA_READ_RESPONSE_MIDDLE &&
+ 		    pkt->opcode != IB_OPCODE_RC_RDMA_READ_RESPONSE_LAST) {
++			/* read retries of partial data may restart from
++			 * read response first or response only.
++			 */
++			if ((pkt->psn == wqe->first_psn &&
++			     pkt->opcode ==
++			     IB_OPCODE_RC_RDMA_READ_RESPONSE_FIRST) ||
++			    (wqe->first_psn == wqe->last_psn &&
++			     pkt->opcode ==
++			     IB_OPCODE_RC_RDMA_READ_RESPONSE_ONLY))
++				break;
++
+ 			return COMPST_ERROR;
+ 		}
+ 		break;
+@@ -486,11 +497,11 @@ static inline enum comp_state complete_wqe(struct rxe_qp *qp,
+ 					   struct rxe_pkt_info *pkt,
+ 					   struct rxe_send_wqe *wqe)
  {
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
-+	void *entry = NULL;
- 	unsigned long base = idr->idr_base;
- 	unsigned long id = *nextid;
+-	qp->comp.opcode = -1;
+-
+-	if (pkt) {
+-		if (psn_compare(pkt->psn, qp->comp.psn) >= 0)
+-			qp->comp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
++	if (pkt && wqe->state == wqe_state_pending) {
++		if (psn_compare(wqe->last_psn, qp->comp.psn) >= 0) {
++			qp->comp.psn = (wqe->last_psn + 1) & BTH_PSN_MASK;
++			qp->comp.opcode = -1;
++		}
  
- 	id = (id < base) ? 0 : id - base;
--	slot = radix_tree_iter_find(&idr->idr_rt, &iter, id);
-+	radix_tree_for_each_slot(slot, &idr->idr_rt, &iter, id) {
-+		entry = radix_tree_deref_slot(slot);
-+		if (!entry)
-+			continue;
-+		if (!radix_tree_deref_retry(entry))
-+			break;
-+		if (slot != (void *)&idr->idr_rt.rnode &&
-+				entry != (void *)RADIX_TREE_INTERNAL_NODE)
-+			break;
-+		slot = radix_tree_iter_retry(&iter);
-+	}
- 	if (!slot)
- 		return NULL;
- 	id = iter.index + base;
-@@ -244,7 +255,7 @@ void *idr_get_next(struct idr *idr, int
- 		return NULL;
+ 		if (qp->req.wait_psn) {
+ 			qp->req.wait_psn = 0;
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index 0f9fe2ca2a91a..6fb771290c566 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -72,9 +72,6 @@ static void req_retry(struct rxe_qp *qp)
+ 	int npsn;
+ 	int first = 1;
  
- 	*nextid = id;
--	return rcu_dereference_raw(*slot);
-+	return entry;
- }
- EXPORT_SYMBOL(idr_get_next);
+-	wqe = queue_head(qp->sq.queue);
+-	npsn = (qp->comp.psn - wqe->first_psn) & BTH_PSN_MASK;
+-
+ 	qp->req.wqe_index	= consumer_index(qp->sq.queue);
+ 	qp->req.psn		= qp->comp.psn;
+ 	qp->req.opcode		= -1;
+@@ -106,11 +103,17 @@ static void req_retry(struct rxe_qp *qp)
+ 		if (first) {
+ 			first = 0;
  
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -227,6 +227,57 @@ void idr_u32_test(int base)
- 	idr_u32_test1(&idr, 0xffffffff);
- }
+-			if (mask & WR_WRITE_OR_SEND_MASK)
++			if (mask & WR_WRITE_OR_SEND_MASK) {
++				npsn = (qp->comp.psn - wqe->first_psn) &
++					BTH_PSN_MASK;
+ 				retry_first_write_send(qp, wqe, mask, npsn);
++			}
  
-+static inline void *idr_mk_value(unsigned long v)
-+{
-+	BUG_ON((long)v < 0);
-+	return (void *)((v & 1) | 2 | (v << 1));
-+}
-+
-+DEFINE_IDR(find_idr);
-+
-+static void *idr_throbber(void *arg)
-+{
-+	time_t start = time(NULL);
-+	int id = *(int *)arg;
-+
-+	rcu_register_thread();
-+	do {
-+		idr_alloc(&find_idr, idr_mk_value(id), id, id + 1, GFP_KERNEL);
-+		idr_remove(&find_idr, id);
-+	} while (time(NULL) < start + 10);
-+	rcu_unregister_thread();
-+
-+	return NULL;
-+}
-+
-+void idr_find_test_1(int anchor_id, int throbber_id)
-+{
-+	pthread_t throbber;
-+	time_t start = time(NULL);
-+
-+	pthread_create(&throbber, NULL, idr_throbber, &throbber_id);
-+
-+	BUG_ON(idr_alloc(&find_idr, idr_mk_value(anchor_id), anchor_id,
-+				anchor_id + 1, GFP_KERNEL) != anchor_id);
-+
-+	do {
-+		int id = 0;
-+		void *entry = idr_get_next(&find_idr, &id);
-+		BUG_ON(entry != idr_mk_value(id));
-+	} while (time(NULL) < start + 11);
-+
-+	pthread_join(throbber, NULL);
-+
-+	idr_remove(&find_idr, anchor_id);
-+	BUG_ON(!idr_is_empty(&find_idr));
-+}
-+
-+void idr_find_test(void)
-+{
-+	idr_find_test_1(100000, 0);
-+	idr_find_test_1(0, 100000);
-+}
-+
- void idr_checks(void)
- {
- 	unsigned long i;
-@@ -307,6 +358,7 @@ void idr_checks(void)
- 	idr_u32_test(4);
- 	idr_u32_test(1);
- 	idr_u32_test(0);
-+	idr_find_test();
- }
+-			if (mask & WR_READ_MASK)
++			if (mask & WR_READ_MASK) {
++				npsn = (wqe->dma.length - wqe->dma.resid) /
++					qp->mtu;
+ 				wqe->iova += npsn * qp->mtu;
++			}
+ 		}
  
- #define module_init(x)
+ 		wqe->state = wqe_state_posted;
+@@ -439,7 +442,7 @@ static struct sk_buff *init_req_packet(struct rxe_qp *qp,
+ 	if (pkt->mask & RXE_RETH_MASK) {
+ 		reth_set_rkey(pkt, ibwr->wr.rdma.rkey);
+ 		reth_set_va(pkt, wqe->iova);
+-		reth_set_len(pkt, wqe->dma.length);
++		reth_set_len(pkt, wqe->dma.resid);
+ 	}
+ 
+ 	if (pkt->mask & RXE_IMMDT_MASK)
+-- 
+2.20.1
+
 
 
