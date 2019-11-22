@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF95F106D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D415107061
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731119AbfKVLBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:01:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53632 "EHLO mail.kernel.org"
+        id S1728360AbfKVKnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:43:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730365AbfKVLBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:01:01 -0500
+        id S1729256AbfKVKnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:43:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D9BB20679;
-        Fri, 22 Nov 2019 11:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D53F020637;
+        Fri, 22 Nov 2019 10:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420460;
-        bh=sZyurtuWXFYsgOUj80/7yxV09L1SNtY4gxeDxJst5wo=;
+        s=default; t=1574419415;
+        bh=9vHTsqmnu+cuuI3EJ+XhZIbw+Rq+l0wS6KturhsKzNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PpnLpxBmFH+nxp7f9dIBV5BtG+S+UeCSci4gQ/49UDIF9MAGGfZxQy/j6Ujyxyxmi
-         ggl8tC2qAXB8t8Q2idkK1JaOQpZ/0YF7FmtCZqSgQmhHx73AICfm0UvrlEAQSVU5jH
-         jpiOrqGpwasT8J6dFboZ4OFSWUohNaSEmFXUa0mY=
+        b=r6OdkX97n895jeTFNU5uzwUv5euYDzfdlM6us1q9JOsOBVBFgI05ElzIVXOBvqYqt
+         irNG4tHfoAC40ndrqsD3NTqSI9M+aea25gwanLttfY6gwWme/C5tepXcZRy1Gq3jvL
+         SxuBwpFXKuP238tzKZgvCZLJgpWFe5sv9+PeoStg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 077/220] clocksource/drivers/sh_cmt: Fix clocksource width for 32-bit machines
-Date:   Fri, 22 Nov 2019 11:27:22 +0100
-Message-Id: <20191122100917.876690317@linuxfoundation.org>
+Subject: [PATCH 4.9 103/222] cpufeature: avoid warning when compiling with clang
+Date:   Fri, 22 Nov 2019 11:27:23 +0100
+Message-Id: <20191122100910.799884000@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,58 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 37e7742c55ba856eaec7e35673ee370f36eb17f3 ]
+[ Upstream commit c785896b21dd8e156326ff660050b0074d3431df ]
 
-The driver seems to abuse *unsigned long* not only for the (32-bit)
-register values but also for the 'sh_cmt_channel::total_cycles' which
-needs to always be 64-bit -- as a result, the clocksource's mask is
-needlessly clamped down to 32-bits on the 32-bit machines...
+The table id (second) argument to MODULE_DEVICE_TABLE is often
+referenced otherwise. This is not the case for CPU features. This
+leads to warnings when building the kernel with Clang:
+  arch/arm/crypto/aes-ce-glue.c:450:1: warning: variable
+    'cpu_feature_match_AES' is not needed and will not be emitted
+    [-Wunneeded-internal-declaration]
+  module_cpu_feature_match(AES, aes_init);
+  ^
 
-Fixes: 19bdc9d061bc ("clocksource: sh_cmt clocksource support")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
+("modules: mark __inittest/__exittest as __maybe_unused").
+
+Fixes: 67bad2fdb754 ("cpu: add generic support for CPU feature based module autoloading")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/sh_cmt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/cpufeature.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 49302086f36fd..cec90a4c79b34 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -108,7 +108,7 @@ struct sh_cmt_channel {
- 	raw_spinlock_t lock;
- 	struct clock_event_device ced;
- 	struct clocksource cs;
--	unsigned long total_cycles;
-+	u64 total_cycles;
- 	bool cs_enabled;
- };
- 
-@@ -613,8 +613,8 @@ static u64 sh_cmt_clocksource_read(struct clocksource *cs)
- {
- 	struct sh_cmt_channel *ch = cs_to_sh_cmt(cs);
- 	unsigned long flags;
--	unsigned long value;
- 	u32 has_wrapped;
-+	u64 value;
- 	u32 raw;
- 
- 	raw_spin_lock_irqsave(&ch->lock, flags);
-@@ -688,7 +688,7 @@ static int sh_cmt_register_clocksource(struct sh_cmt_channel *ch,
- 	cs->disable = sh_cmt_clocksource_disable;
- 	cs->suspend = sh_cmt_clocksource_suspend;
- 	cs->resume = sh_cmt_clocksource_resume;
--	cs->mask = CLOCKSOURCE_MASK(sizeof(unsigned long) * 8);
-+	cs->mask = CLOCKSOURCE_MASK(sizeof(u64) * 8);
- 	cs->flags = CLOCK_SOURCE_IS_CONTINUOUS;
- 
- 	dev_info(&ch->cmt->pdev->dev, "ch%u: used as clock source\n",
+diff --git a/include/linux/cpufeature.h b/include/linux/cpufeature.h
+index 986c06c88d814..84d3c81b59781 100644
+--- a/include/linux/cpufeature.h
++++ b/include/linux/cpufeature.h
+@@ -45,7 +45,7 @@
+  * 'asm/cpufeature.h' of your favorite architecture.
+  */
+ #define module_cpu_feature_match(x, __initfunc)			\
+-static struct cpu_feature const cpu_feature_match_ ## x[] =	\
++static struct cpu_feature const __maybe_unused cpu_feature_match_ ## x[] = \
+ 	{ { .feature = cpu_feature(x) }, { } };			\
+ MODULE_DEVICE_TABLE(cpu, cpu_feature_match_ ## x);		\
+ 								\
 -- 
 2.20.1
 
