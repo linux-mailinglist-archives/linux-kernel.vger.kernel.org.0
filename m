@@ -2,54 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D174107249
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 13:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66341107250
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 13:40:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfKVMjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 07:39:46 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:44810 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfKVMjq (ORCPT
+        id S1727663AbfKVMkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 07:40:47 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:32993 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfKVMkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 07:39:46 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.92.3)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1iY8Dp-0003I7-LC; Fri, 22 Nov 2019 13:39:37 +0100
-Message-ID: <2e0b6e7c1e97d57f392d7a3da843d1357a9a33f7.camel@sipsolutions.net>
-Subject: Re: [PATCH] nl80211: 802.11: mesh: Handle Beacon/probe response IE
- length in cfg80211_notify_new_peer_candidate() for 80211ac/ax mode.
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Shashidhara C <shashidharac333@gmail.com>, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 22 Nov 2019 13:39:36 +0100
-In-Reply-To: <CAHG=F9_0VsZ3hFnbD4_eFmr_4D_6Oraqcu+JPOUA=SJ3u9dL9g@mail.gmail.com> (sfid-20191116_112604_647586_6EF4ABD3)
-References: <CAHG=F9_0VsZ3hFnbD4_eFmr_4D_6Oraqcu+JPOUA=SJ3u9dL9g@mail.gmail.com>
-         (sfid-20191116_112604_647586_6EF4ABD3)
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Fri, 22 Nov 2019 07:40:46 -0500
+Received: by mail-ot1-f65.google.com with SMTP id q23so189681otn.0;
+        Fri, 22 Nov 2019 04:40:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=P8+OAUBA/fDF3XT6t24NhhHUdp2lceigt5e2uxicyNc=;
+        b=KhIWcH95MxHuZwMN87/m1+t6PV7ZIqIwGX1aOvdpVD8CIcpLdMz3Y162S8F1vsV6Hx
+         b2qIkhEeKr167GWcb9bVNuekWoVfvcUTquxSOkJQar9e9taIKqYUhJKx6BxSqyGqjj2z
+         sPLpPJlalox8isrCw2kAHjCozrlrads97oBKWVm427LYRtwKXK3sGIDBRiAEXpzuvKrh
+         SARLeDpVKZpRaATNOlFOy2W7e6z0XsUlwS+7fQfhxuLo5HLr9JCW2BjF6Qy3YC1zavou
+         28Bj/I/xiLaZI7Q6kp3MPnsN0bmuz9/bGb5CqucdC1AODEzW3lLYLy+BNS3DKV0SjyPZ
+         7Dbw==
+X-Gm-Message-State: APjAAAX5sylPPIbhdgHZqgWKjoNyD57pA2bXrmw/R9Gocb1S971L2AHb
+        ZJgczwAFTdUuJmYj25AvS4/luLAIWSlR7xgFo8Y=
+X-Google-Smtp-Source: APXvYqym6di3udjt8st7eyLGZZoUbzp+A0FVQPSr14/+QFiHu7iKSsSmW6o1d6uhL2ceToi3JrbgjX4AL4cMhq1p3NA=
+X-Received: by 2002:a9d:7d01:: with SMTP id v1mr10045872otn.167.1574426446148;
+ Fri, 22 Nov 2019 04:40:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 22 Nov 2019 13:40:35 +0100
+Message-ID: <CAJZ5v0ioXnbzy86fV7=JfZwjawfN45xXs8-b2xMtnTEy8ACsuw@mail.gmail.com>
+Subject: [GIT PULL] Power management regression fix for final v5.4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-11-16 at 15:55 +0530, Shashidhara C wrote:
-> In function cfg80211_notify_new_peer_candidate(), beacon IE length (i.e. u8 ie_len) is not
-> handled for processing 80211AC/AX beacon/probe response. ie_len can hold maximum 
-> integer value of 255. In case of 80211AC/AX, the mesh beacon/probe response IE length 
-> is more than 255, making ie_len to wrap around and causing failure while parsing
-> beacon/probe response IEs in wpa_supplicant.
-> 
-> ie_len type in cfg80211_notify_new_peer_candidate() is modified to u16 to handle this issue.
-> 
-> Issue is found in v4.4.60, issue exists in latest v5.4.0-rc6. Verified the fix in v4.4.60.
+Hi Linus,
 
-[snip]
+Please pull from the tag
 
-You cannot send patches as html email :)
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-5.4-final
 
-johannes
+with top-most commit 05ff1ba412fd6bd48d56dd4c0baff626533728cc
 
+ PM: QoS: Invalidate frequency QoS requests after removal
+
+on top of commit af42d3466bdc8f39806b26f593604fdc54140bcb
+
+ Linux 5.4-rc8
+
+to receive a power management regression fix for final 5.4.
+
+This fixes problems with switching cpufreq drivers on some x86 systems
+with ACPI (and with changing the operation modes of the intel_pstate
+driver on those systems) introduced by recent changes related to the
+management of frequency limits in cpufreq.
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      PM: QoS: Invalidate frequency QoS requests after removal
+
+---------------
+
+ kernel/power/qos.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
