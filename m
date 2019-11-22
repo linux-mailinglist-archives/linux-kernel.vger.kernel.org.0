@@ -2,169 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCA91074D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:27:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D32961074C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 16:27:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfKVP1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 10:27:18 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41676 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbfKVP1R (ORCPT
+        id S1726975AbfKVP1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 10:27:11 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:59318 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726100AbfKVP1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 10:27:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b18so9073029wrj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 07:27:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uArUv8vdpySZgh7Lm5Xr7vRuWHgZ37E7MwLwkpMIDCE=;
-        b=NaRspV1i9R/2DSgO46P3hMCkjk1YhaYl/30P0KnMRJ4U2uvFGg3fyz0Adr5Jvd2tOs
-         eN0cW4S1Frgb4REXIEtg2D0LYumT1r8ky//58cBQQ3nZGGPeaxEo0lCTHngODV8isvfq
-         W82UlSHKhkNGQOOq36treKn6APbHFSpLG+0dFlmrZZSujY7v8yE9lKTGkPRnL6nseJWm
-         01BumRD7UQxFXWoLol0hM1dgiNFU9P+mFr3MudOfVmKMxprhxWd5tWk789FwO7mK6Igz
-         lOJRq6RcGGB1vWLC8Blp6UdSHvoICayQN2/Iz4s7GX/jXbDRLUPGeLRU8uCjFc2ygEvF
-         vIGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uArUv8vdpySZgh7Lm5Xr7vRuWHgZ37E7MwLwkpMIDCE=;
-        b=Lku3MCMlIGOQkIarEoW9OxzsxMCUXBeIutsgAOCy5UGgu61eQoeet6hOJqw5fAux8a
-         zutHKsoCD9AzVnSs77qObu/Guwp+aKm56PfF3AVaVxr/FMvMkeP5cPjarbxACl180G9j
-         E/BWYewHFoyK0rX12KV0/dWdsnxXHFni2CXFF5iWe8pCdgDq9b68NfCBmtQwbzUuOBfZ
-         7r2ylUj1s/p79PgR3CS+g58jzDPUjwG2SotG25Z3hAuqm8Nonz4Lfyjq1SU4Hoxmih1I
-         mmQBYjGqIGRbrRNSRWgkWIadMT5XE4YMAxy6oWrQLQTqCE9kh9eewRSSuoyMoyuinvfh
-         uHVA==
-X-Gm-Message-State: APjAAAUp+HuRcF5vgiwkUlWKVUPZBXmvCDz6whAt4IIOGbh5FxXazIji
-        2BKAVNE08QlGgNGe6UZreemPjQ==
-X-Google-Smtp-Source: APXvYqxpsLMTp4Sdlls7Ue49+WvdlWM7+fPYuN826F9zWH2JGbW4mESQKUt8w3gc6nmveBI8y85HEg==
-X-Received: by 2002:adf:fad1:: with SMTP id a17mr17735327wrs.328.1574436435728;
-        Fri, 22 Nov 2019 07:27:15 -0800 (PST)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id a206sm4061081wmf.15.2019.11.22.07.27.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 22 Nov 2019 07:27:15 -0800 (PST)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org, rostedt@goodmis.org, mingo@redhat.com
-Cc:     bjorn.andersson@linaro.org, vincent.guittot@linaro.org,
-        daidavid1@codeaurora.org, okukatla@codeaurora.org,
-        evgreen@chromium.org, mka@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        georgi.djakov@linaro.org
-Subject: [PATCH v3 1/3] interconnect: Move internal structs into a separate file
-Date:   Fri, 22 Nov 2019 17:27:10 +0200
-Message-Id: <20191122152712.19105-2-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122152712.19105-1-georgi.djakov@linaro.org>
-References: <20191122152712.19105-1-georgi.djakov@linaro.org>
+        Fri, 22 Nov 2019 10:27:11 -0500
+Received: (qmail 2667 invoked by uid 2102); 22 Nov 2019 10:27:10 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 22 Nov 2019 10:27:10 -0500
+Date:   Fri, 22 Nov 2019 10:27:10 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Pete Zaitcev <zaitcev@redhat.com>
+cc:     syzbot <syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com>,
+        <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <jrdr.linux@gmail.com>, <keescook@chromium.org>,
+        <kstewart@linuxfoundation.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>, <tglx@linutronix.de>,
+        <viro@zeniv.linux.org.uk>
+Subject: Re: possible deadlock in mon_bin_vma_fault
+In-Reply-To: <20191121173825.1527c3a5@suzdal.zaitcev.lan>
+Message-ID: <Pine.LNX.4.44L0.1911221017590.1511-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the interconnect framework internal structs into a separate file,
-so that it can be included and used by ftrace code. This will allow us
-to expose some more useful information in the traces.
+On Thu, 21 Nov 2019, Pete Zaitcev wrote:
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/interconnect/core.c     | 30 ++-----------------------
- drivers/interconnect/internal.h | 40 +++++++++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+), 28 deletions(-)
- create mode 100644 drivers/interconnect/internal.h
+> On Thu, 21 Nov 2019 11:20:20 -0500 (EST)
+> Alan Stern <stern@rowland.harvard.edu> wrote:
+> 
+> > On Thu, 21 Nov 2019, Pete Zaitcev wrote:
+> > 
+> > > Anyway... If you are looking at it too, what do you think about not using
+> > > any locks in mon_bin_vma_fault() at all? Isn't it valid? I think I tried
+> > > to be "safe", but it only uses things that are constants unless we're
+> > > opening and closing; a process cannot make page faults unless it has
+> > > some thing mapped; and that is only possible if device is open and stays
+> > > open. Can you find a hole in this reasoning?  
+> > 
+> > I think you're right. [...]
+> 
+> How about the appended patch, then? You like?
+> 
+> Do you happen to know how to refer to a syzbot report in a commit message?
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index c498796adc07..b06ed180bae3 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -19,39 +19,13 @@
- #include <linux/of.h>
- #include <linux/overflow.h>
- 
-+#include "internal.h"
-+
- static DEFINE_IDR(icc_idr);
- static LIST_HEAD(icc_providers);
- static DEFINE_MUTEX(icc_lock);
- static struct dentry *icc_debugfs_dir;
- 
--/**
-- * struct icc_req - constraints that are attached to each node
-- * @req_node: entry in list of requests for the particular @node
-- * @node: the interconnect node to which this constraint applies
-- * @dev: reference to the device that sets the constraints
-- * @tag: path tag (optional)
-- * @avg_bw: an integer describing the average bandwidth in kBps
-- * @peak_bw: an integer describing the peak bandwidth in kBps
-- */
--struct icc_req {
--	struct hlist_node req_node;
--	struct icc_node *node;
--	struct device *dev;
--	u32 tag;
--	u32 avg_bw;
--	u32 peak_bw;
--};
--
--/**
-- * struct icc_path - interconnect path structure
-- * @num_nodes: number of hops (nodes)
-- * @reqs: array of the requests applicable to this path of nodes
-- */
--struct icc_path {
--	size_t num_nodes;
--	struct icc_req reqs[];
--};
--
- static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
- {
- 	if (!n)
-diff --git a/drivers/interconnect/internal.h b/drivers/interconnect/internal.h
-new file mode 100644
-index 000000000000..5853e8faf223
---- /dev/null
-+++ b/drivers/interconnect/internal.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Interconnect framework internal structs
-+ *
-+ * Copyright (c) 2019, Linaro Ltd.
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#ifndef __DRIVERS_INTERCONNECT_INTERNAL_H
-+#define __DRIVERS_INTERCONNECT_INTERNAL_H
-+
-+/**
-+ * struct icc_req - constraints that are attached to each node
-+ * @req_node: entry in list of requests for the particular @node
-+ * @node: the interconnect node to which this constraint applies
-+ * @dev: reference to the device that sets the constraints
-+ * @tag: path tag (optional)
-+ * @avg_bw: an integer describing the average bandwidth in kBps
-+ * @peak_bw: an integer describing the peak bandwidth in kBps
-+ */
-+struct icc_req {
-+	struct hlist_node req_node;
-+	struct icc_node *node;
-+	struct device *dev;
-+	u32 tag;
-+	u32 avg_bw;
-+	u32 peak_bw;
-+};
-+
-+/**
-+ * struct icc_path - interconnect path structure
-+ * @num_nodes: number of hops (nodes)
-+ * @reqs: array of the requests applicable to this path of nodes
-+ */
-+struct icc_path {
-+	size_t num_nodes;
-+	struct icc_req reqs[];
-+};
-+
-+#endif
+As Dmitry mentioned, you should put the Reported-by: line from the
+original syzbot bug report (see
+<https://marc.info/?l=linux-usb&m=153601206710985&w=2>) in the patch.
+
+> -- Pete
+> 
+> commit 628f3bbf37eee21cce4cfbfaa6a796b129d7736d
+> Author: Pete Zaitcev <zaitcev@kotori.zaitcev.us>
+> Date:   Thu Nov 21 17:24:00 2019 -0600
+> 
+>     usb: Fix a deadlock in usbmon between mmap and read
+>     
+>     Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
+> 
+> diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
+> index ac2b4fcc265f..fb7df9810bad 100644
+> --- a/drivers/usb/mon/mon_bin.c
+> +++ b/drivers/usb/mon/mon_bin.c
+> @@ -1039,12 +1039,18 @@ static long mon_bin_ioctl(struct file *file, unsigned int cmd, unsigned long arg
+>  
+>  		mutex_lock(&rp->fetch_lock);
+>  		spin_lock_irqsave(&rp->b_lock, flags);
+> -		mon_free_buff(rp->b_vec, rp->b_size/CHUNK_SIZE);
+> -		kfree(rp->b_vec);
+> -		rp->b_vec  = vec;
+> -		rp->b_size = size;
+> -		rp->b_read = rp->b_in = rp->b_out = rp->b_cnt = 0;
+> -		rp->cnt_lost = 0;
+> +		if (rp->mmap_active) {
+> +			mon_free_buff(vec, size/CHUNK_SIZE);
+> +			kfree(vec);
+> +			ret = -EBUSY;
+
+It would be more elegant to do the rp->mmap_active test before calling
+kcalloc and mon_alloc_buf.  But of course that's a pretty minor thing.
+
+> +		} else {
+> +			mon_free_buff(rp->b_vec, rp->b_size/CHUNK_SIZE);
+> +			kfree(rp->b_vec);
+> +			rp->b_vec  = vec;
+> +			rp->b_size = size;
+> +			rp->b_read = rp->b_in = rp->b_out = rp->b_cnt = 0;
+> +			rp->cnt_lost = 0;
+> +		}
+>  		spin_unlock_irqrestore(&rp->b_lock, flags);
+>  		mutex_unlock(&rp->fetch_lock);
+>  		}
+> @@ -1093,11 +1099,11 @@ static long mon_bin_ioctl(struct file *file, unsigned int cmd, unsigned long arg
+>  			return ret;
+>  		if (put_user(ret, &uptr->nfetch))
+>  			return -EFAULT;
+> -		ret = 0;
+
+What's the reason for this change?
+
+>  		}
+>  		break;
+>  
+> -	case MON_IOCG_STATS: {
+> +	case MON_IOCG_STATS:
+> +		{
+
+And this one?  This disagrees with the usual kernel style.
+
+>  		struct mon_bin_stats __user *sp;
+>  		unsigned int nevents;
+>  		unsigned int ndropped;
+> @@ -1113,7 +1119,6 @@ static long mon_bin_ioctl(struct file *file, unsigned int cmd, unsigned long arg
+>  			return -EFAULT;
+>  		if (put_user(nevents, &sp->queued))
+>  			return -EFAULT;
+> -
+>  		}
+>  		break;
+>  
+> @@ -1216,13 +1221,21 @@ mon_bin_poll(struct file *file, struct poll_table_struct *wait)
+>  static void mon_bin_vma_open(struct vm_area_struct *vma)
+>  {
+>  	struct mon_reader_bin *rp = vma->vm_private_data;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&rp->b_lock, flags);
+>  	rp->mmap_active++;
+> +	spin_unlock_irqrestore(&rp->b_lock, flags);
+>  }
+>  
+>  static void mon_bin_vma_close(struct vm_area_struct *vma)
+>  {
+> +	unsigned long flags;
+> +
+>  	struct mon_reader_bin *rp = vma->vm_private_data;
+> +	spin_lock_irqsave(&rp->b_lock, flags);
+>  	rp->mmap_active--;
+> +	spin_unlock_irqrestore(&rp->b_lock, flags);
+>  }
+>  
+>  /*
+> @@ -1234,16 +1247,12 @@ static vm_fault_t mon_bin_vma_fault(struct vm_fault *vmf)
+>  	unsigned long offset, chunk_idx;
+>  	struct page *pageptr;
+>  
+> -	mutex_lock(&rp->fetch_lock);
+>  	offset = vmf->pgoff << PAGE_SHIFT;
+> -	if (offset >= rp->b_size) {
+> -		mutex_unlock(&rp->fetch_lock);
+> +	if (offset >= rp->b_size)
+>  		return VM_FAULT_SIGBUS;
+> -	}
+>  	chunk_idx = offset / CHUNK_SIZE;
+>  	pageptr = rp->b_vec[chunk_idx].pg;
+>  	get_page(pageptr);
+> -	mutex_unlock(&rp->fetch_lock);
+>  	vmf->page = pageptr;
+>  	return 0;
+>  }
+
+Apart from the items mentioned above, this looks right to me.
+
+Alan Stern
+
