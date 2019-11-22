@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB48106A7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 022D0106B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfKVKfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:35:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
+        id S1728861AbfKVKpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbfKVKfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:35:21 -0500
+        id S1729545AbfKVKps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:45:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ADD520708;
-        Fri, 22 Nov 2019 10:35:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3806820715;
+        Fri, 22 Nov 2019 10:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418920;
-        bh=2GHJ6Ir6mspFPNcJwnTR9HqLEbOuLJQN5DVWsjltPR8=;
+        s=default; t=1574419547;
+        bh=rJDJge3+QKwft/bx/SfxZuk9VqWcGSI7AVWouRhcak4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ftv8eTFD3vvSQ4mXfAOc+h0IK0OAwcocxA5rUB4BiJod4DZQ5gYzypyCV5Z4r8pgg
-         tWLcV/ZaNzW+OpIof5NDz2u3Os3ndaGb2pjb3znAyUauBMQ6jkABZfzWCTMOhCFXsA
-         s2WfMO5/jZQN5ImhwfOBAbsYRLRCdwAQsjDCcmSI=
+        b=IbohhMmcT7VGBWn5bVOP/uiDYiVfM/YuiEEvfbLp0YhEO0pAdD6vDvM2AvhI2pCs9
+         3Ly9DiJqDSxf38JM3SqdEIur7Rvo+owV7+IqUKJimJXGDqOSft3xzEIdzNCO81eu/N
+         Zk5T/dkeuka0q5gfVAWPikjpVH3L0uEVuWpP2f5U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Jeremy Cline <jcline@redhat.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Ralph Siemsen <ralph.siemsen@linaro.org>
-Subject: [PATCH 4.4 097/159] Bluetooth: hci_ldisc: Postpone HCI_UART_PROTO_READY bit set in hci_uart_set_proto()
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 4.9 148/222] net: cdc_ncm: Signedness bug in cdc_ncm_set_dgram_size()
 Date:   Fri, 22 Nov 2019 11:28:08 +0100
-Message-Id: <20191122100817.654793586@linuxfoundation.org>
+Message-Id: <20191122100913.462388506@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,59 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 56897b217a1d0a91c9920cb418d6b3fe922f590a upstream.
+commit a56dcc6b455830776899ce3686735f1172e12243 upstream.
 
-task A:                                task B:
-hci_uart_set_proto                     flush_to_ldisc
- - p->open(hu) -> h5_open  //alloc h5  - receive_buf
- - set_bit HCI_UART_PROTO_READY         - tty_port_default_receive_buf
- - hci_uart_register_dev                 - tty_ldisc_receive_buf
-                                          - hci_uart_tty_receive
-				           - test_bit HCI_UART_PROTO_READY
-				            - h5_recv
- - clear_bit HCI_UART_PROTO_READY             while() {
- - p->open(hu) -> h5_close //free h5
-				              - h5_rx_3wire_hdr
-				               - h5_reset()  //use-after-free
-                                              }
+This code is supposed to test for negative error codes and partial
+reads, but because sizeof() is size_t (unsigned) type then negative
+error codes are type promoted to high positive values and the condition
+doesn't work as expected.
 
-It could use ioctl to set hci uart proto, but there is
-a use-after-free issue when hci_uart_register_dev() fail in
-hci_uart_set_proto(), see stack above, fix this by setting
-HCI_UART_PROTO_READY bit only when hci_uart_register_dev()
-return success.
-
-Reported-by: syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reviewed-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Cc: Ralph Siemsen <ralph.siemsen@linaro.org>
+Fixes: 332f989a3b00 ("CDC-NCM: handle incomplete transfer of MTU")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/hci_ldisc.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/usb/cdc_ncm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -653,15 +653,14 @@ static int hci_uart_set_proto(struct hci
- 		return err;
- 
- 	hu->proto = p;
--	set_bit(HCI_UART_PROTO_READY, &hu->flags);
- 
- 	err = hci_uart_register_dev(hu);
- 	if (err) {
--		clear_bit(HCI_UART_PROTO_READY, &hu->flags);
- 		p->close(hu);
- 		return err;
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -577,7 +577,7 @@ static void cdc_ncm_set_dgram_size(struc
+ 	err = usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
+ 			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
+ 			      0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
+-	if (err < sizeof(max_datagram_size)) {
++	if (err != sizeof(max_datagram_size)) {
+ 		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
+ 		goto out;
  	}
- 
-+	set_bit(HCI_UART_PROTO_READY, &hu->flags);
- 	return 0;
- }
- 
 
 
