@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6292C106A4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DC8106B6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfKVKdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:33:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56614 "EHLO mail.kernel.org"
+        id S1729315AbfKVKoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727960AbfKVKdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:33:37 -0500
+        id S1728886AbfKVKoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14D6720714;
-        Fri, 22 Nov 2019 10:33:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71F7A20656;
+        Fri, 22 Nov 2019 10:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418816;
-        bh=Dy0nQHLC0EG49p21cGnkSnEVhDvhAHZJBiKFNBod/08=;
+        s=default; t=1574419442;
+        bh=eEownlkPfVu13wGtnwr3XoSC/zxbkHiIhTahBXw1/Cg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6jfH/QaTWZ74XsPvbzZ5we3gSRnEgaA/+LILUUCmPwS/heDmpYwphPPBJB4nt3rt
-         ZjHiZantWWxrOi92UGBd/SbmSmu4mExZcRH1Pry3uJBNHQBpWFEWKOz7PH8bBJFEgz
-         VUb4uiz9vNZhCXCrVNpHyqw5HrwoAPa/+oHBpIEQ=
+        b=bv3vDBXZVl42cM1FCsT/3ereif5iXxVMCQkVLB/LwZCHwGwZqc1If7iReqotgd/oB
+         uuaHQeQMrEi1Jfm5fuk3dDjGFHeYS0SIMZtx6d5aQx0U+LY2/GNzIAZFMhH7NtBgpD
+         ppf5BIx6q2/TeZuSNZiVmciyDO82L/LwVNsXqc9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 060/159] powerpc/64s/hash: Fix stab_rr off by one initialization
+Subject: [PATCH 4.9 111/222] media: davinci: Fix implicit enum conversion warning
 Date:   Fri, 22 Nov 2019 11:27:31 +0100
-Message-Id: <20191122100751.286058517@linuxfoundation.org>
+Message-Id: <20191122100911.268008102@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 09b4438db13fa83b6219aee5993711a2aa2a0c64 ]
+[ Upstream commit 4158757395b300b6eb308fc20b96d1d231484413 ]
 
-This causes SLB alloation to start 1 beyond the start of the SLB.
-There is no real problem because after it wraps it stats behaving
-properly, it's just surprisig to see when looking at SLB traces.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+drivers/media/platform/davinci/vpbe_display.c:524:24: warning: implicit
+conversion from enumeration type 'enum osd_v_exp_ratio' to different
+enumeration type 'enum osd_h_exp_ratio' [-Wenum-conversion]
+                        layer_info->h_exp = V_EXP_6_OVER_5;
+                                          ~ ^~~~~~~~~~~~~~
+1 warning generated.
+
+This appears to be a copy and paste error judging from the couple of
+lines directly above this statement and the way that height is handled
+in the if block above this one.
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/slb.c | 2 +-
+ drivers/media/platform/davinci/vpbe_display.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/slb.c b/arch/powerpc/mm/slb.c
-index 309027208f7c0..27f00a7c1085f 100644
---- a/arch/powerpc/mm/slb.c
-+++ b/arch/powerpc/mm/slb.c
-@@ -322,7 +322,7 @@ void slb_initialize(void)
- #endif
- 	}
- 
--	get_paca()->stab_rr = SLB_NUM_BOLTED;
-+	get_paca()->stab_rr = SLB_NUM_BOLTED - 1;
- 
- 	lflags = SLB_VSID_KERNEL | linear_llp;
- 	vflags = SLB_VSID_KERNEL | vmalloc_llp;
+diff --git a/drivers/media/platform/davinci/vpbe_display.c b/drivers/media/platform/davinci/vpbe_display.c
+index a9bc0175e4d3d..c839003953a74 100644
+--- a/drivers/media/platform/davinci/vpbe_display.c
++++ b/drivers/media/platform/davinci/vpbe_display.c
+@@ -518,7 +518,7 @@ vpbe_disp_calculate_scale_factor(struct vpbe_display *disp_dev,
+ 		else if (v_scale == 4)
+ 			layer_info->v_zoom = ZOOM_X4;
+ 		if (v_exp)
+-			layer_info->h_exp = V_EXP_6_OVER_5;
++			layer_info->v_exp = V_EXP_6_OVER_5;
+ 	} else {
+ 		/* no scaling, only cropping. Set display area to crop area */
+ 		cfg->ysize = expected_ysize;
 -- 
 2.20.1
 
