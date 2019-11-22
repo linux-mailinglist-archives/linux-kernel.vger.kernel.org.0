@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A541060CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 574FB1060CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbfKVFwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57190 "EHLO mail.kernel.org"
+        id S1728381AbfKVFwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:52:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbfKVFvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:51:52 -0500
+        id S1728313AbfKVFvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:51:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DCF020721;
-        Fri, 22 Nov 2019 05:51:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39A752072D;
+        Fri, 22 Nov 2019 05:51:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401911;
-        bh=H4fzkwRnyDHbgjcBi7TGcVgeTqMYGyUEBJ2d/LTsAVg=;
+        s=default; t=1574401912;
+        bh=89gxeJGzthezn63gW8QWdpmf0myFbNkTNKcj5J4kHOA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U+cptFQoWeCPi+LAjwDaFPYQ4lP7/xYrcQgpLzfGNnbg5SyxEypmP387Nn54dis03
-         BIMGm53IogbE7yEFLhChmGLefE9Qq5JJce+qF6zrdwtT4A08DaTC7xKHcmOl7Z/Hki
-         CfU4k0WEugklx/QHrVF+z9EYzIPdMgc4R59U9NXI=
+        b=k8yU9nyO2MCMRRYUq1qfTlMQZKQcIT7fxnAheWoNGxHVkzoZgS4xWOeNcDRcQWyh9
+         2dDZ2cZlvV4DNMPmC8ne4RPmAZC19OJwBTgdY6c+1Lh0agdQdv8tLnMGYzz1gSdOY7
+         55dhWb0SJ5Q5EPvx0skzz9sLWjCwAgfic3WizAAY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 142/219] f2fs: fix to dirty inode synchronously
-Date:   Fri, 22 Nov 2019 00:47:54 -0500
-Message-Id: <20191122054911.1750-135-sashal@kernel.org>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 143/219] um: Include sys/uio.h to have writev()
+Date:   Fri, 22 Nov 2019 00:47:55 -0500
+Message-Id: <20191122054911.1750-136-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -43,34 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Richard Weinberger <richard@nod.at>
 
-[ Upstream commit b32e019049e959ee10ec359893c9dd5d057dad55 ]
+[ Upstream commit 0053102a869f1b909904b1b85ac282e2744deaab ]
 
-If user change inode's i_flags via ioctl, let's add it into global
-dirty list, so that checkpoint can guarantee its persistence before
-fsync, it can make checkpoint keeping strong consistency.
+sys/uio.h gives us writev(), otherwise the build might fail on
+some systems.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 49da7e64f33e ("High Performance UML Vector Network Driver")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/drivers/vector_user.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 8d1eb8dec6058..7a5e84cfccf5e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1668,7 +1668,7 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 4d6a78e31089f..00c4c2735a5f7 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -30,6 +30,7 @@
+ #include <stdlib.h>
+ #include <os.h>
+ #include <um_malloc.h>
++#include <sys/uio.h>
+ #include "vector_user.h"
  
- 	inode->i_ctime = current_time(inode);
- 	f2fs_set_inode_flags(inode);
--	f2fs_mark_inode_dirty_sync(inode, false);
-+	f2fs_mark_inode_dirty_sync(inode, true);
- 	return 0;
- }
- 
+ #define ID_GRE 0
 -- 
 2.20.1
 
