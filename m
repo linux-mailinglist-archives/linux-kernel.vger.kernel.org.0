@@ -2,218 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2B5F10681A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:27:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BD51067A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 09:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfKVI1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 03:27:23 -0500
-Received: from condef-05.nifty.com ([202.248.20.70]:59410 "EHLO
-        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbfKVI1V (ORCPT
+        id S1726722AbfKVITA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 03:19:00 -0500
+Received: from mail-il1-f182.google.com ([209.85.166.182]:39947 "EHLO
+        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfKVITA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 03:27:21 -0500
-X-Greylist: delayed 394 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Nov 2019 03:27:20 EST
-Received: from conuserg-09.nifty.com ([10.126.8.72])by condef-05.nifty.com with ESMTP id xAM8C8D6005198;
-        Fri, 22 Nov 2019 17:12:11 +0900
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id xAM8B69D003819;
-        Fri, 22 Nov 2019 17:11:06 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xAM8B69D003819
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1574410266;
-        bh=Hwpn9dTrOnKWNzBjRbeo5zgicQbERpM9jetyXIWTTZY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=14cAQKK4DZUsgFFMy3GC5LfItYVOBvPBptV5CweOtOqbEEXyHWzWLypXVFI4WsLo1
-         oJmIb3T9RTNUyrQ85vqDcUIKFMa1oMz4nukFoXDud1Fju086LYtV62pcrHL4CWM3Q0
-         WCFl6RLCZhmJbxBWEx/rP3ZoTyKfDt5+1Lq8E4l90DNUVIkHBsK4jw3waoEIuzO76d
-         k7dB9iONTIu89MdmryqVKGRdHTxv2N0WxkdtP8bddmO5lcSOjrcjsPWkdWBMrWWvcm
-         UtsZjtfLNt7ctdW6NA64x8FM8Dv7u4QgB7QcbpADrewqJSQ4PflJmLjOg5gfnsZBWk
-         LY2Y1pGMKpDSw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kbuild: check MODULE_* macros in non-modular code
-Date:   Fri, 22 Nov 2019 17:11:00 +0900
-Message-Id: <20191122081100.27695-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 22 Nov 2019 03:19:00 -0500
+Received: by mail-il1-f182.google.com with SMTP id v17so2189530ilg.7;
+        Fri, 22 Nov 2019 00:18:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ysnhqpcDifNtA6ZEpiA8FU7zKxqqga8EknENlPaN0u8=;
+        b=YtlNhRdAncXEsgQ+beLXQOZQm2MQA/W53swM6V4mhNax3lEDiAejf05GfOiyJ19Py0
+         7te741stGu86F2U/IFoY2XQrGDxESPtCUUNMfRGpW58eUDw1q4MYLJL5w9lga4PjbpoY
+         tjMZyFnxj7ILPTGAGSitHz5YRO7Yvgc8UFsAOdm6RKoEEwWA4HKmByUyCggvKP6IXjmf
+         8DM5SvBPmG8kXNbbzxYuEQdvuIxX7VONW41/j5V+kvzm7C4GfAl06J9uhWJjxL834yG1
+         sz28B/mFlFUPNwRH6zLNWeZwcOnBMs0cEvOxMd8a0uvsxd80b4dbRYv50Xh2hZ056b9E
+         lM5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ysnhqpcDifNtA6ZEpiA8FU7zKxqqga8EknENlPaN0u8=;
+        b=dy2fRvpKPmJjBqcx6EXGlQaRFoUP4WHHVBNE1FTEV9lq7KqZo0/IQ4n0dsIz3HfPuu
+         Y+bjCAiLzINPRssTAstkyPuGHFxnLP89+z6ANPQ34C/V7to/kiQ+5NarwPw/LJHZvFoY
+         vnUuwCcfLBusrXYd/XXSJlEjcLoEirIbHW6hDTozQWvgcBFikzcHkiM2Fv0iu2HWmhAs
+         PoI4BHYl/kpaLhSn2+6RDTzzv0Vf6q5BneD/24WVgpPr3KvHjN1Licpuny/aLBn5gor7
+         q4HupomDshn7qD0NxLqQbIbGhQ8p/1l2OfHXtbHMdDi6vdW6Oc/CVOe2R+ozerVpVn5z
+         MoNg==
+X-Gm-Message-State: APjAAAUGPKOMqXdyLsWQkpJzDsmmpjCkrVh0wuqZwJi+9sOkGCXForPS
+        xJRC8F39IN3nftKjgR8pI8lZ9r99LO4F3s9Ab/Y=
+X-Google-Smtp-Source: APXvYqxvYsfe3tlRWTOvw0hcohTpGGT03glJaVhRL0xnuYE2VyeVqqG1xEXn+ALRkzIfjaJuE0x1jN3IXIBV24nUUig=
+X-Received: by 2002:a92:5b86:: with SMTP id c6mr14683342ilg.135.1574410737554;
+ Fri, 22 Nov 2019 00:18:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20191120081628.26701-1-yu.c.chen@intel.com> <alpine.DEB.2.21.1911201055260.6731@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1911201055260.6731@nanos.tec.linutronix.de>
+From:   Yu Chen <yu.chen.surf@gmail.com>
+Date:   Fri, 22 Nov 2019 16:18:46 +0800
+Message-ID: <CADjb_WR4Lwjdu9aQOnfm21rcYqoAK-25V-cmRABPzpduUWBGsQ@mail.gmail.com>
+Subject: Re: [PATCH][v3] x86/resctrl: Add task resctrl information display
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Chen Yu <yu.c.chen@intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paul Gortmaker sent a lot of patches to remove orphan modular code.
-You can see his contributions by:
+Hi Thomas,
+On Wed, Nov 20, 2019 at 7:23 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Wed, 20 Nov 2019, Chen Yu wrote:
+> > Monitoring tools that want to find out which resctrl CTRL
+> > and MONITOR groups a task belongs to must currently read
+> > the "tasks" file in every group until they locate the process
+> > ID.
+> >
+> > Add an additional file /proc/{pid}/resctrl to provide this
+> > information.
+> >
+> > For example:
+> >  cat /proc/1193/resctrl
+> > CTRL_MON:/ctrl_grp0
+> > MON:/ctrl_grp0/mon_groups/mon_grp0
+>
+> The formatting is quite ugly and I don't see why this needs to be multiple
+> lines and have these uppercase prefixes.
+>
+> A task can only be part of one control group and of one monitoring group
+> which is associated to the control group. So just providing:
+>
+>  1)   ""
+>  2)   "/"
+>  3)   "/mon_groups/mon0"
+>  4)   "/group0"
+>  5)   "/group0/mon_groups/mon1"
+>
+> is simple and clear enough, i.e.:
+>
+> #1: Resctrl is not available
+>
+> #2: Task is part of the root group, task not associated to any monitoring
+>     group
+>
+> #3: Task is part of the root group and monitoring group mon0
+>
+> #4: Task is part of control group group0, task not associated to any
+>     monitoring group
+>
+> #5: Task is part of control group group0 and monitoring group mon1
+>
+> Hmm?
+>
+Yes, good idea, this is much more simpler.  I'll send the new version
+out based on this.
 
-  $ git log --grep='make.* explicitly non-modular'
-
-To help this work, this commit adds simple shell-script to detect
-MODULE_ tags used in non-modular code.
-
-It displays suspicious use of MODULE_LICENSE, MODULE_AUTHOR,
-MODULE_DESCRIPTION, etc.
-
-I was not sure about module_param() or MODULE_PARM_DESC(). A lot of
-non-modular code uses module_param() to prefix the kernel parameter
-with the file name it resides in. If we changed module_param() to
-core_param(), the interface would be broken. MODULE_PARM_DESC() in
-non-modular code could be turned into comments or something, but I
-am not sure. I did not check them.
-
-I built x86_64_defconfig of v5.4-rc8, and this script detected
-the following:
-
-notice: asymmetric_keys: MODULE macros found in non-modular code
-notice: binfmt_elf: MODULE macros found in non-modular code
-notice: bsg: MODULE macros found in non-modular code
-notice: compat_binfmt_elf: MODULE macros found in non-modular code
-notice: component: MODULE macros found in non-modular code
-notice: debugfs: MODULE macros found in non-modular code
-notice: drm_mipi_dsi: MODULE macros found in non-modular code
-notice: freq_table: MODULE macros found in non-modular code
-notice: glob: MODULE macros found in non-modular code
-notice: intel_pstate: MODULE macros found in non-modular code
-notice: n_null: MODULE macros found in non-modular code
-notice: nvmem_core: MODULE macros found in non-modular code
-notice: power_supply: MODULE macros found in non-modular code
-notice: thermal_sys: MODULE macros found in non-modular code
-notice: tracefs: MODULE macros found in non-modular code
-notice: vgacon: MODULE macros found in non-modular code
- To fix above, check MODULE_LICENSE(), MODULE_AUTHOR(), etc.
- Please check #include <linux/module.h>, THIS_MODULE, too.
-
-I confirmed they are all valid.
-
-Maybe the 'debugfs' is unclear because there are tons of debugfs
-stuff in the source tree. It is talking about MODULE_ALIAS_FS()
-in fs/debugfs/inode.c because fs/debugfs/debugfs.o never becomes
-a module.
-
-[How to fix the warnings]
-
-Let's take 'asymmetric_keys' as an example.
-
-(1) grep Makefiles to find the relevant code
-
-$ git grep -A2 asymmetric_keys -- '*/Makefile' '*/Kbuild'
-crypto/Makefile:obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += asymmetric_keys/
-crypto/Makefile-obj-$(CONFIG_CRYPTO_HASH_INFO) += hash_info.o
-crypto/Makefile-crypto_simd-y := simd.o
---
-crypto/asymmetric_keys/Makefile:obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += asymmetric_keys.o
-crypto/asymmetric_keys/Makefile-
-crypto/asymmetric_keys/Makefile:asymmetric_keys-y := \
-crypto/asymmetric_keys/Makefile-        asymmetric_type.o \
-crypto/asymmetric_keys/Makefile-        restrict.o \
-
-Then, you notice it is associated with CONFIG_ASYMMETRIC_KEY_TYPE
-and is a composite object that consists of asymmetric_type.o,
-restrict.o, ...
-
-(2) Confirm the CONFIG is boolean
-
-$ git grep -A2 'config ASYMMETRIC_KEY_TYPE' -- '*/Kconfig*'
-crypto/asymmetric_keys/Kconfig:menuconfig ASYMMETRIC_KEY_TYPE
-crypto/asymmetric_keys/Kconfig- bool "Asymmetric (public-key cryptographic) key type"
-crypto/asymmetric_keys/Kconfig- depends on KEYS
-
-Now you are sure it never get compiled as a module since
-ASYMMETRIC_KEY_TYPE is a bool type option.
-
-(3) Grep the source file(s)
-
-$ grep '^MODULE' crypto/asymmetric_keys/asymmetric_type.c
-MODULE_LICENSE("GPL");
-
-Remove the orphan MODULE tags. You may also need to do some additional
-works such as:
-
- - replace module_*_driver with builtin_*_driver
- - replace <linux/module.h> with <linux/init.h>
- - remove module_exit code
- - move credit in MODULE_AUTHOR() to the top of the file
-
-Please see Paul's commits.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
-  - Remove redundant back-slashes after the pipe operator '|'
-
- scripts/modules-check.sh | 54 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
-
-diff --git a/scripts/modules-check.sh b/scripts/modules-check.sh
-index f51f446707b8..7975aa61ddb8 100755
---- a/scripts/modules-check.sh
-+++ b/scripts/modules-check.sh
-@@ -13,4 +13,58 @@ check_same_name_modules()
- 	done
- }
- 
-+# Check MODULE_ macros in non-modular code
-+check_orphan_module_macros()
-+{
-+	# modules.builtin.modinfo is created while linking vmlinux.
-+	# It may not exist when you do 'make modules'.
-+	if [ ! -r modules.builtin.modinfo ]; then
-+		return
-+	fi
-+
-+	# modules.builtin lists *real* built-in modules, i.e. controlled by
-+	# tristate CONFIG options, but currently built with =y.
-+	#
-+	# modules.builtin.modinfo is the list of MODULE_ macros compiled
-+	# into vmlinux.
-+	#
-+	# By diff'ing them, users of bogus MODULE_* macros will show up.
-+
-+	# Kbuild replaces ',' and '-' in file names with '_' for use in C.
-+	real_builtin_modules=$(sed -e 's:.*/::' -e 's/\.ko$//' -e 's/,/_/g' \
-+			       -e 's/-/_/g' modules.builtin | sort | uniq)
-+
-+	show_hint=
-+
-+	# Exclude '.paramtype=' and '.param=' to skip checking module_param()
-+	# and MODULE_PARM_DESC().
-+	module_macro_users=$(tr '\0' '\n' < modules.builtin.modinfo |
-+			     sed -e '/\.parmtype=/d' -e '/\.parm=/d' |
-+			     sed -n 's/\..*//p' | sort | uniq)
-+
-+	for m in $module_macro_users
-+	do
-+		warn=1
-+
-+		for n in $real_builtin_modules
-+		do
-+			if [ "$m" = "$n" ]; then
-+				warn=
-+				break
-+			fi
-+		done
-+
-+		if [ -n "$warn" ]; then
-+			echo "notice: $m: MODULE macros found in non-modular code"
-+			show_hint=1
-+		fi
-+	done
-+
-+	if [ -n "$show_hint" ]; then
-+		echo " To fix above, check MODULE_LICENSE(), MODULE_AUTHOR(), etc."
-+		echo " Please check #include <linux/module.h>, THIS_MODULE, too."
-+	fi
-+}
-+
- check_same_name_modules
-+check_orphan_module_macros
--- 
-2.17.1
-
+Thanks,
+Chenyu
