@@ -2,93 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AAC510701C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 722A9106FD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfKVLUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:20:30 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17016 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729560AbfKVKpy (ORCPT
+        id S1729890AbfKVKsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:48:16 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34667 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728909AbfKVKsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:54 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd7bc630001>; Fri, 22 Nov 2019 02:45:55 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 22 Nov 2019 02:45:52 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 22 Nov 2019 02:45:52 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov
- 2019 10:45:52 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 22 Nov 2019 10:45:52 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.48]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dd7bc5b0001>; Fri, 22 Nov 2019 02:45:51 -0800
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <andrew.murray@arm.com>
-CC:     <kishon@ti.com>, <gustavo.pimentel@synopsys.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH 5/6] arm64: tegra: Enable GPIO controllers nodes for P2972-0000 platform
-Date:   Fri, 22 Nov 2019 16:15:04 +0530
-Message-ID: <20191122104505.8986-6-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191122104505.8986-1-vidyas@nvidia.com>
-References: <20191122104505.8986-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 22 Nov 2019 05:48:12 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iY6Tv-00034P-4G; Fri, 22 Nov 2019 11:48:07 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D46661C0081;
+        Fri, 22 Nov 2019 11:48:06 +0100 (CET)
+Date:   Fri, 22 Nov 2019 10:48:06 -0000
+From:   "tip-bot2 for Marco Elver" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/kcsan] build, kcsan: Add KCSAN build exceptions
+Cc:     Marco Elver <elver@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574419555; bh=F6/Ov3FRHWjTCpHNYAElFVGDpjp7zAUe/K07HA+D/Lo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=RRTdKrP/hxJqKkvG/cuJyacZRDOqI7uPuqzizjVNNiqEsoFMusGXZE5R1G2IgDAUq
-         ClJG0K8nW6Rvwhqs88MB9UZxgH3qQz9p8urjvKNyQjEt9eZNVSUVaaG7cHXURgeJhZ
-         NcYsG3lrMc6ukL3NJUYLXW2v8f1CxvT5jS64ny+0V5YFauKIN7hjMSdHhlj6Oso90B
-         CDRQ+wYcU/PV4D+AdZDNPzpyxZObKoCzPeyY5j0YgjnZqK1A2N4HQ83UdZRIeEJYKC
-         hKslp3sSJ3pO2NCbJP1KNZhR9YIuljsi0MPC9FqaQkNO4n1/FThVggly0V7K61ZObP
-         SHajOjncPpD6A==
+Message-ID: <157441968680.21853.6993504124584856250.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable GPIO controllers nodes for P2972-0000 platform which are required
-by other controllers in the SoC for example when PCIe C5 controller
-operates in endpoint mode.
+The following commit has been merged into the locking/kcsan branch of tip:
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Commit-ID:     0ebba7141eadc4804ec5b4bb5106331b0c3abf4c
+Gitweb:        https://git.kernel.org/tip/0ebba7141eadc4804ec5b4bb5106331b0c3abf4c
+Author:        Marco Elver <elver@google.com>
+AuthorDate:    Thu, 14 Nov 2019 19:02:58 +01:00
+Committer:     Paul E. McKenney <paulmck@kernel.org>
+CommitterDate: Sat, 16 Nov 2019 07:23:14 -08:00
+
+build, kcsan: Add KCSAN build exceptions
+
+This blacklists several compilation units from KCSAN. See the respective
+inline comments for the reasoning.
+
+Signed-off-by: Marco Elver <elver@google.com>
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/firmware/efi/libstub/Makefile | 2 ++
+ kernel/Makefile                       | 5 +++++
+ kernel/sched/Makefile                 | 6 ++++++
+ mm/Makefile                           | 8 ++++++++
+ 4 files changed, 21 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 353a6a22196d..7eb64b816e08 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -37,6 +37,14 @@
- 			status = "okay";
- 		};
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index ee0661d..5d0a645 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -31,7 +31,9 @@ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+ 				   -D__DISABLE_EXPORTS
  
-+		gpio@2200000 {
-+			status = "okay";
-+		};
+ GCOV_PROFILE			:= n
++# Sanitizer runtimes are unavailable and cannot be linked here.
+ KASAN_SANITIZE			:= n
++KCSAN_SANITIZE			:= n
+ UBSAN_SANITIZE			:= n
+ OBJECT_FILES_NON_STANDARD	:= y
+ 
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 74ab46e..cc53f7c 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -23,6 +23,9 @@ endif
+ # Prevents flicker of uninteresting __do_softirq()/__local_bh_disable_ip()
+ # in coverage traces.
+ KCOV_INSTRUMENT_softirq.o := n
++# Avoid KCSAN instrumentation in softirq ("No shared variables, all the data
++# are CPU local" => assume no data races), to reduce overhead in interrupts.
++KCSAN_SANITIZE_softirq.o = n
+ # These are called from save_stack_trace() on slub debug path,
+ # and produce insane amounts of uninteresting coverage.
+ KCOV_INSTRUMENT_module.o := n
+@@ -30,6 +33,7 @@ KCOV_INSTRUMENT_extable.o := n
+ # Don't self-instrument.
+ KCOV_INSTRUMENT_kcov.o := n
+ KASAN_SANITIZE_kcov.o := n
++KCSAN_SANITIZE_kcov.o := n
+ CFLAGS_kcov.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+ 
+ # cond_syscall is currently not LTO compatible
+@@ -118,6 +122,7 @@ obj-$(CONFIG_RSEQ) += rseq.o
+ 
+ obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += stackleak.o
+ KASAN_SANITIZE_stackleak.o := n
++KCSAN_SANITIZE_stackleak.o := n
+ KCOV_INSTRUMENT_stackleak.o := n
+ 
+ $(obj)/configs.o: $(obj)/config_data.gz
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index 21fb5a5..e9307a9 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -7,6 +7,12 @@ endif
+ # that is not a function of syscall inputs. E.g. involuntary context switches.
+ KCOV_INSTRUMENT := n
+ 
++# There are numerous races here, however, most of them due to plain accesses.
++# This would make it even harder for syzbot to find reproducers, because these
++# bugs trigger without specific input. Disable by default, but should re-enable
++# eventually.
++KCSAN_SANITIZE := n
 +
-+		gpio@c2f0000 {
-+			status = "okay";
-+		};
+ ifneq ($(CONFIG_SCHED_OMIT_FRAME_POINTER),y)
+ # According to Alan Modra <alan@linuxcare.com.au>, the -fno-omit-frame-pointer is
+ # needed for x86 only.  Why this used to be enabled for all architectures is beyond
+diff --git a/mm/Makefile b/mm/Makefile
+index d996846..56c1964 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -7,6 +7,14 @@ KASAN_SANITIZE_slab_common.o := n
+ KASAN_SANITIZE_slab.o := n
+ KASAN_SANITIZE_slub.o := n
+ 
++# These produce frequent data race reports: most of them are due to races on
++# the same word but accesses to different bits of that word. Re-enable KCSAN
++# for these when we have more consensus on what to do about them.
++KCSAN_SANITIZE_slab_common.o := n
++KCSAN_SANITIZE_slab.o := n
++KCSAN_SANITIZE_slub.o := n
++KCSAN_SANITIZE_page_alloc.o := n
 +
- 		pwm@c340000 {
- 			status = "okay";
- 		};
--- 
-2.17.1
-
+ # These files are disabled because they produce non-interesting and/or
+ # flaky coverage that is not a function of syscall inputs. E.g. slab is out of
+ # free pages, or a task is migrated between nodes.
