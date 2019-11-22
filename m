@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C50106EA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB983106F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbfKVLKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:10:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55482 "EHLO mail.kernel.org"
+        id S1729164AbfKVKvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730833AbfKVLCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:02:09 -0500
+        id S1728683AbfKVKvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E11AC20748;
-        Fri, 22 Nov 2019 11:02:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 081B920718;
+        Fri, 22 Nov 2019 10:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420528;
-        bh=LD0zpAPXOabySlgSce1XhF2cp8ezbUfqKJ+jwcNMh1w=;
+        s=default; t=1574419909;
+        bh=HBHtmJu5V/blqrrfin0uViVbx9hl+U8z088qsdK+aUc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SP2xYrzCezxsmxOJ7h/eA1FpDI/9t99fg4ICk8pUKeipgu3IIFxVzxH8dD8GcRmBv
-         Z5fUe1m7rJdZy8UjzF36TqE3fdmvVeSBmgk1LlaZvYAys7odTf5EUfJS27eXSBC1h4
-         QMk+PmUUKAsnTFIQH42zOTeLWJ3qL33bw/Jk419E=
+        b=kftPpfzlJLsiGLi7pOsANnAoH9vjx/6xw2+MXKRs6ahg72XOYNzZRsV/t56qvXnWq
+         ihwyMv+qfypaIyoSxeY07PBAvIyyysYWLjsqDmwTPxfwTJPjIOtrEFMX6C9AxgexPF
+         NftgL0EJeTmh0dGPAiNXOB0n7OlC0qiXHuRFkWtI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lianbo Jiang <lijiang@redhat.com>,
-        Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, akpm@linux-foundation.org, dan.j.williams@intel.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
-        jroedel@suse.de, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 138/220] kexec: Allocate decrypted control pages for kdump if SME is enabled
+        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 050/122] ixgbe: Fix ixgbe TX hangs with XDP_TX beyond queue limit
 Date:   Fri, 22 Nov 2019 11:28:23 +0100
-Message-Id: <20191122100922.727399494@linuxfoundation.org>
+Message-Id: <20191122100757.457782342@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,69 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lianbo Jiang <lijiang@redhat.com>
+From: Radoslaw Tyl <radoslawx.tyl@intel.com>
 
-[ Upstream commit 9cf38d5559e813cccdba8b44c82cc46ba48d0896 ]
+[ Upstream commit 8d7179b1e2d64b3493c0114916486fe92e6109a9 ]
 
-When SME is enabled in the first kernel, it needs to allocate decrypted
-pages for kdump because when the kdump kernel boots, these pages need to
-be accessed decrypted in the initial boot stage, before SME is enabled.
+We have Tx hang when number Tx and XDP queues are more than 64.
+In XDP always is MTQC == 0x0 (64TxQs). We need more space for Tx queues.
 
- [ bp: clean up text. ]
-
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: kexec@lists.infradead.org
-Cc: tglx@linutronix.de
-Cc: mingo@redhat.com
-Cc: hpa@zytor.com
-Cc: akpm@linux-foundation.org
-Cc: dan.j.williams@intel.com
-Cc: bhelgaas@google.com
-Cc: baiyaowei@cmss.chinamobile.com
-Cc: tiwai@suse.de
-Cc: brijesh.singh@amd.com
-Cc: dyoung@redhat.com
-Cc: bhe@redhat.com
-Cc: jroedel@suse.de
-Link: https://lkml.kernel.org/r/20180930031033.22110-3-lijiang@redhat.com
+Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kexec_core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index f50b90d0d1c28..faeec8255e7e0 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -473,6 +473,10 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
- 		}
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 01c120d656c54..d1472727ef882 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -3490,12 +3490,18 @@ static void ixgbe_setup_mtqc(struct ixgbe_adapter *adapter)
+ 		else
+ 			mtqc |= IXGBE_MTQC_64VF;
+ 	} else {
+-		if (tcs > 4)
++		if (tcs > 4) {
+ 			mtqc = IXGBE_MTQC_RT_ENA | IXGBE_MTQC_8TC_8TQ;
+-		else if (tcs > 1)
++		} else if (tcs > 1) {
+ 			mtqc = IXGBE_MTQC_RT_ENA | IXGBE_MTQC_4TC_4TQ;
+-		else
+-			mtqc = IXGBE_MTQC_64Q_1PB;
++		} else {
++			u8 max_txq = adapter->num_tx_queues +
++				adapter->num_xdp_queues;
++			if (max_txq > 63)
++				mtqc = IXGBE_MTQC_RT_ENA | IXGBE_MTQC_4TC_4TQ;
++			else
++				mtqc = IXGBE_MTQC_64Q_1PB;
++		}
  	}
  
-+	/* Ensure that these pages are decrypted if SME is enabled. */
-+	if (pages)
-+		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
-+
- 	return pages;
- }
- 
-@@ -869,6 +873,7 @@ static int kimage_load_crash_segment(struct kimage *image,
- 			result  = -ENOMEM;
- 			goto out;
- 		}
-+		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
- 		ptr = kmap(page);
- 		ptr += maddr & ~PAGE_MASK;
- 		mchunk = min_t(size_t, mbytes,
-@@ -886,6 +891,7 @@ static int kimage_load_crash_segment(struct kimage *image,
- 			result = copy_from_user(ptr, buf, uchunk);
- 		kexec_flush_icache_page(page);
- 		kunmap(page);
-+		arch_kexec_pre_free_pages(page_address(page), 1);
- 		if (result) {
- 			result = -EFAULT;
- 			goto out;
+ 	IXGBE_WRITE_REG(hw, IXGBE_MTQC, mtqc);
 -- 
 2.20.1
 
