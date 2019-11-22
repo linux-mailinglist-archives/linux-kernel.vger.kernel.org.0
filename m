@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 574FB1060CF
+	by mail.lfdr.de (Postfix) with ESMTP id CA7981060D0
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfKVFwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:52:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57214 "EHLO mail.kernel.org"
+        id S1727105AbfKVFwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:52:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728313AbfKVFvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:51:53 -0500
+        id S1728378AbfKVFwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:52:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39A752072D;
-        Fri, 22 Nov 2019 05:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3FA62071B;
+        Fri, 22 Nov 2019 05:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401912;
-        bh=89gxeJGzthezn63gW8QWdpmf0myFbNkTNKcj5J4kHOA=;
+        s=default; t=1574401921;
+        bh=pSfYKfebvfswSMG9aERDVNa+OxFdxdH6xAe+7HpCZGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k8yU9nyO2MCMRRYUq1qfTlMQZKQcIT7fxnAheWoNGxHVkzoZgS4xWOeNcDRcQWyh9
-         2dDZ2cZlvV4DNMPmC8ne4RPmAZC19OJwBTgdY6c+1Lh0agdQdv8tLnMGYzz1gSdOY7
-         55dhWb0SJ5Q5EPvx0skzz9sLWjCwAgfic3WizAAY=
+        b=q5z6UGBUfK586y5/CPBQeIGcqnjjNx1txP4ipEA5rkHmZdESi5DIylMWsNhu1Qywc
+         VO0lExIQMvso1W0TqlCT96WhatcrT42ujFW4CSqTCj3CO+X32sVPzKjCt993Ij01OI
+         9st5WhJXVJdwfomlgG4U33u6rxs+oxi2aHnhMUgc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 143/219] um: Include sys/uio.h to have writev()
-Date:   Fri, 22 Nov 2019 00:47:55 -0500
-Message-Id: <20191122054911.1750-136-sashal@kernel.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>, Peng Hao <peng.hao2@zte.com.cn>,
+        Zhao Qiang <qiang.zhao@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 151/219] net/wan/fsl_ucc_hdlc: Avoid double free in ucc_hdlc_probe()
+Date:   Fri, 22 Nov 2019 00:48:03 -0500
+Message-Id: <20191122054911.1750-144-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -42,32 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Weinberger <richard@nod.at>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 0053102a869f1b909904b1b85ac282e2744deaab ]
+[ Upstream commit 40752b3eae29f8ca2378e978a02bd6dbeeb06d16 ]
 
-sys/uio.h gives us writev(), otherwise the build might fail on
-some systems.
+This patch fixes potential double frees if register_hdlc_device() fails.
 
-Fixes: 49da7e64f33e ("High Performance UML Vector Network Driver")
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
+CC: Zhao Qiang <qiang.zhao@nxp.com>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: linuxppc-dev@lists.ozlabs.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/drivers/vector_user.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wan/fsl_ucc_hdlc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-index 4d6a78e31089f..00c4c2735a5f7 100644
---- a/arch/um/drivers/vector_user.c
-+++ b/arch/um/drivers/vector_user.c
-@@ -30,6 +30,7 @@
- #include <stdlib.h>
- #include <os.h>
- #include <um_malloc.h>
-+#include <sys/uio.h>
- #include "vector_user.h"
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 5f0366a125e26..0212f576a838c 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -1113,7 +1113,6 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
+ 	if (register_hdlc_device(dev)) {
+ 		ret = -ENOBUFS;
+ 		pr_err("ucc_hdlc: unable to register hdlc device\n");
+-		free_netdev(dev);
+ 		goto free_dev;
+ 	}
  
- #define ID_GRE 0
 -- 
 2.20.1
 
