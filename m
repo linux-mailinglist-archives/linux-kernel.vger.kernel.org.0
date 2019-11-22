@@ -2,44 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 133281065C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FDB310658C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:26:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbfKVG0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:26:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55458 "EHLO mail.kernel.org"
+        id S1727921AbfKVFuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:50:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727838AbfKVFun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:50:43 -0500
+        id S1727856AbfKVFur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:50:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 438B72070E;
-        Fri, 22 Nov 2019 05:50:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B9B42072E;
+        Fri, 22 Nov 2019 05:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401842;
-        bh=uI7WqOCmD7pPLkF6NG+fgAmT0gxRGJ+luTIViUcMrsI=;
+        s=default; t=1574401845;
+        bh=HB5lXUSzpl8k8VPM+f95nsCXDStsmwdSJQzLR6O5n0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KGDjY7nQu9Minmqz1bq32PtsP2TampjnWNqDlBYiruYMcuzW6wpVQmUdhkn6rEajJ
-         1aPFtxQPv18ylFajvJUvtJaioEHphSCtjy06UyFwFlMiFDuupziPwWIYcGZllMjgh1
-         OK/E1ugv4BrnOIhkKmWw4Kct2tktz0nb53cwXPug=
+        b=RXX9ywVwhTk0UJPbWm3KUbd/kRH2Vzizh4JbxljHjka+rfPqHkPjL+kgrSuU/crzv
+         VVfT0KKdmNwj13uiFjUWL+lg4Y9Lv/I0YlqeLDGNhx6nNlk/+2XgkMVVXhGxvczZW1
+         WN8HiOL22Iy5iADzBtyiXTe1t7eUpgC62y1E1xyY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yonghong Song <yhs@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 082/219] kprobes: Blacklist symbols in arch-defined prohibited area
-Date:   Fri, 22 Nov 2019 00:46:54 -0500
-Message-Id: <20191122054911.1750-75-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 084/219] vfio-mdev/samples: Use u8 instead of char for handle functions
+Date:   Fri, 22 Nov 2019 00:46:56 -0500
+Message-Id: <20191122054911.1750-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -52,147 +44,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit fb1a59fae8baa3f3c69b72a87ff94fc4fa5683ec ]
+[ Upstream commit 8ba35b3a0046d6573c98f00461d9bd1b86250d35 ]
 
-Blacklist symbols in arch-defined probe-prohibited areas.
-With this change, user can see all symbols which are prohibited
-to probe in debugfs.
+Clang warns:
 
-All archtectures which have custom prohibit areas should define
-its own arch_populate_kprobe_blacklist() function, but unless that,
-all symbols marked __kprobes are blacklisted.
+samples/vfio-mdev/mtty.c:592:39: warning: implicit conversion from 'int'
+to 'char' changes value from 162 to -94 [-Wconstant-conversion]
+                *buf = UART_MSR_DSR | UART_MSR_DDSR | UART_MSR_DCD;
+                     ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+1 warning generated.
 
-Reported-by: Andrea Righi <righi.andrea@gmail.com>
-Tested-by: Andrea Righi <righi.andrea@gmail.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yonghong Song <yhs@fb.com>
-Link: http://lkml.kernel.org/r/154503485491.26176.15823229545155174796.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Turns out that all uses of buf in this function ultimately end up stored
+or cast to an unsigned type. Just use u8, which has the same number of
+bits but can store this larger number so Clang no longer warns.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/kprobes.h |  3 ++
- kernel/kprobes.c        | 67 ++++++++++++++++++++++++++++++++---------
- 2 files changed, 56 insertions(+), 14 deletions(-)
+ samples/vfio-mdev/mtty.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index 32cae0f35b9d4..9adb92ad24d3f 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -243,10 +243,13 @@ extern int arch_init_kprobes(void);
- extern void show_registers(struct pt_regs *regs);
- extern void kprobes_inc_nmissed_count(struct kprobe *p);
- extern bool arch_within_kprobe_blacklist(unsigned long addr);
-+extern int arch_populate_kprobe_blacklist(void);
- extern bool arch_kprobe_on_func_entry(unsigned long offset);
- extern bool kprobe_on_func_entry(kprobe_opcode_t *addr, const char *sym, unsigned long offset);
- 
- extern bool within_kprobe_blacklist(unsigned long addr);
-+extern int kprobe_add_ksym_blacklist(unsigned long entry);
-+extern int kprobe_add_area_blacklist(unsigned long start, unsigned long end);
- 
- struct kprobe_insn_cache {
- 	struct mutex mutex;
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index b8efca9dc2cbb..c4f1acb2e7d20 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2090,6 +2090,47 @@ void dump_kprobe(struct kprobe *kp)
+diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+index 7abb79d8313d9..f6732aa16bb1f 100644
+--- a/samples/vfio-mdev/mtty.c
++++ b/samples/vfio-mdev/mtty.c
+@@ -171,7 +171,7 @@ static struct mdev_state *find_mdev_state_by_uuid(uuid_le uuid)
+ 	return NULL;
  }
- NOKPROBE_SYMBOL(dump_kprobe);
  
-+int kprobe_add_ksym_blacklist(unsigned long entry)
-+{
-+	struct kprobe_blacklist_entry *ent;
-+	unsigned long offset = 0, size = 0;
-+
-+	if (!kernel_text_address(entry) ||
-+	    !kallsyms_lookup_size_offset(entry, &size, &offset))
-+		return -EINVAL;
-+
-+	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
-+	if (!ent)
-+		return -ENOMEM;
-+	ent->start_addr = entry;
-+	ent->end_addr = entry + size;
-+	INIT_LIST_HEAD(&ent->list);
-+	list_add_tail(&ent->list, &kprobe_blacklist);
-+
-+	return (int)size;
-+}
-+
-+/* Add all symbols in given area into kprobe blacklist */
-+int kprobe_add_area_blacklist(unsigned long start, unsigned long end)
-+{
-+	unsigned long entry;
-+	int ret = 0;
-+
-+	for (entry = start; entry < end; entry += ret) {
-+		ret = kprobe_add_ksym_blacklist(entry);
-+		if (ret < 0)
-+			return ret;
-+		if (ret == 0)	/* In case of alias symbol */
-+			ret = 1;
-+	}
-+	return 0;
-+}
-+
-+int __init __weak arch_populate_kprobe_blacklist(void)
-+{
-+	return 0;
-+}
-+
- /*
-  * Lookup and populate the kprobe_blacklist.
-  *
-@@ -2101,26 +2142,24 @@ NOKPROBE_SYMBOL(dump_kprobe);
- static int __init populate_kprobe_blacklist(unsigned long *start,
- 					     unsigned long *end)
+-void dump_buffer(char *buf, uint32_t count)
++void dump_buffer(u8 *buf, uint32_t count)
  {
-+	unsigned long entry;
- 	unsigned long *iter;
--	struct kprobe_blacklist_entry *ent;
--	unsigned long entry, offset = 0, size = 0;
-+	int ret;
- 
- 	for (iter = start; iter < end; iter++) {
- 		entry = arch_deref_entry_point((void *)*iter);
--
--		if (!kernel_text_address(entry) ||
--		    !kallsyms_lookup_size_offset(entry, &size, &offset))
-+		ret = kprobe_add_ksym_blacklist(entry);
-+		if (ret == -EINVAL)
- 			continue;
--
--		ent = kmalloc(sizeof(*ent), GFP_KERNEL);
--		if (!ent)
--			return -ENOMEM;
--		ent->start_addr = entry;
--		ent->end_addr = entry + size;
--		INIT_LIST_HEAD(&ent->list);
--		list_add_tail(&ent->list, &kprobe_blacklist);
-+		if (ret < 0)
-+			return ret;
- 	}
--	return 0;
-+
-+	/* Symbols in __kprobes_text are blacklisted */
-+	ret = kprobe_add_area_blacklist((unsigned long)__kprobes_text_start,
-+					(unsigned long)__kprobes_text_end);
-+
-+	return ret ? : arch_populate_kprobe_blacklist();
+ #if defined(DEBUG)
+ 	int i;
+@@ -250,7 +250,7 @@ static void mtty_create_config_space(struct mdev_state *mdev_state)
  }
  
- /* Module notifier call back, checking kprobes on the module */
+ static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
+-				 char *buf, u32 count)
++				 u8 *buf, u32 count)
+ {
+ 	u32 cfg_addr, bar_mask, bar_index = 0;
+ 
+@@ -304,7 +304,7 @@ static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
+ }
+ 
+ static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
+-				u16 offset, char *buf, u32 count)
++				u16 offset, u8 *buf, u32 count)
+ {
+ 	u8 data = *buf;
+ 
+@@ -475,7 +475,7 @@ static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
+ }
+ 
+ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
+-			    u16 offset, char *buf, u32 count)
++			    u16 offset, u8 *buf, u32 count)
+ {
+ 	/* Handle read requests by guest */
+ 	switch (offset) {
+@@ -650,7 +650,7 @@ static void mdev_read_base(struct mdev_state *mdev_state)
+ 	}
+ }
+ 
+-static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
++static ssize_t mdev_access(struct mdev_device *mdev, u8 *buf, size_t count,
+ 			   loff_t pos, bool is_write)
+ {
+ 	struct mdev_state *mdev_state;
+@@ -698,7 +698,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ #if defined(DEBUG_REGS)
+ 			pr_info("%s: BAR%d  WR @0x%llx %s val:0x%02x dlab:%d\n",
+ 				__func__, index, offset, wr_reg[offset],
+-				(u8)*buf, mdev_state->s[index].dlab);
++				*buf, mdev_state->s[index].dlab);
+ #endif
+ 			handle_bar_write(index, mdev_state, offset, buf, count);
+ 		} else {
+@@ -708,7 +708,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ #if defined(DEBUG_REGS)
+ 			pr_info("%s: BAR%d  RD @0x%llx %s val:0x%02x dlab:%d\n",
+ 				__func__, index, offset, rd_reg[offset],
+-				(u8)*buf, mdev_state->s[index].dlab);
++				*buf, mdev_state->s[index].dlab);
+ #endif
+ 		}
+ 		break;
+@@ -827,7 +827,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		if (count >= 4 && !(*ppos % 4)) {
+ 			u32 val;
+ 
+-			ret =  mdev_access(mdev, (char *)&val, sizeof(val),
++			ret =  mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					   *ppos, false);
+ 			if (ret <= 0)
+ 				goto read_err;
+@@ -839,7 +839,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		} else if (count >= 2 && !(*ppos % 2)) {
+ 			u16 val;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, false);
+ 			if (ret <= 0)
+ 				goto read_err;
+@@ -851,7 +851,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		} else {
+ 			u8 val;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, false);
+ 			if (ret <= 0)
+ 				goto read_err;
+@@ -889,7 +889,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 			if (copy_from_user(&val, buf, sizeof(val)))
+ 				goto write_err;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, true);
+ 			if (ret <= 0)
+ 				goto write_err;
+@@ -901,7 +901,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 			if (copy_from_user(&val, buf, sizeof(val)))
+ 				goto write_err;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, true);
+ 			if (ret <= 0)
+ 				goto write_err;
+@@ -913,7 +913,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 			if (copy_from_user(&val, buf, sizeof(val)))
+ 				goto write_err;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, true);
+ 			if (ret <= 0)
+ 				goto write_err;
 -- 
 2.20.1
 
