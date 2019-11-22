@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 880D7106D34
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E59B8106B18
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730779AbfKVK6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:58:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47790 "EHLO mail.kernel.org"
+        id S1728992AbfKVKlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:41:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730773AbfKVK6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:58:09 -0500
+        id S1727648AbfKVKlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:41:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8F882071C;
-        Fri, 22 Nov 2019 10:58:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B8472071C;
+        Fri, 22 Nov 2019 10:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420289;
-        bh=MMgzRe5yVk3nwNXkDvps5UuvfqiDrf2kC1LxpPtNu0Q=;
+        s=default; t=1574419273;
+        bh=sFmxPLvoOWEfl00tsENoIxTweNEQt91iXnciTX2cmDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lU/8QRCLiWXUC7g7juz6SCd64BVh6m9EfQSWHp8e2TOIRY43QadEtNzh5lq7D6uBJ
-         x1+MkE9mymEVIuXyL1Xak1Q22j3g9h/ACldkfEp6tr+FosXDm+Zgwoe2kDWBEgioDm
-         QtO6UyMbvcYUQRWifxTzGXA7Pjnrdm682rCCg2tE=
+        b=tpKd4f6rbOwafNgJVwvjKJcBr9zhAdDliIylGujmo83NBbm2aNZuMQAoNXlL5siH2
+         WtW6mlmTIaqUc8114SbWsLALHwOV/XV1fTM4Pul4jL0UmnMzojRDmfcM48e/yBCmh3
+         QL4pm1AIltChR3pvmuMCnG9zUODkRZByj2q8OmDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 029/220] IB/hfi1: Error path MAD response size is incorrect
-Date:   Fri, 22 Nov 2019 11:26:34 +0100
-Message-Id: <20191122100914.513996783@linuxfoundation.org>
+Subject: [PATCH 4.9 055/222] f2fs: fix memory leak of percpu counter in fill_super()
+Date:   Fri, 22 Nov 2019 11:26:35 +0100
+Message-Id: <20191122100856.252357588@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,47 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 935c84ac649a147e1aad2c48ee5c5a1a9176b2d0 ]
+[ Upstream commit 4a70e255449c9a13eed7a6eeecc85a1ea63cef76 ]
 
-If a MAD packet has incorrect header information, the logic uses the reply
-path to report the error.  The reply path expects *resp_len to be set
-prior to return.  Unfortunately, *resp_len is set to 0 for this path.
-This causes an incorrect response packet.
+In fill_super -> init_percpu_info, we should destroy percpu counter
+in error path, otherwise memory allcoated for percpu counter will
+leak.
 
-Fix by ensuring that the *resp_len is defaulted to the incoming packet
-size (wc->bytes_len - sizeof(GRH)).
-
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/mad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
-index f208a25d0e4f5..1669548e91dcf 100644
---- a/drivers/infiniband/hw/hfi1/mad.c
-+++ b/drivers/infiniband/hw/hfi1/mad.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2015-2017 Intel Corporation.
-+ * Copyright(c) 2015-2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -4829,7 +4829,7 @@ static int hfi1_process_opa_mad(struct ib_device *ibdev, int mad_flags,
- 	int ret;
- 	int pkey_idx;
- 	int local_mad = 0;
--	u32 resp_len = 0;
-+	u32 resp_len = in_wc->byte_len - sizeof(*in_grh);
- 	struct hfi1_ibport *ibp = to_iport(ibdev, port);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9eff18c1f3e46..e0ac676e0a35c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1650,8 +1650,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
  
- 	pkey_idx = hfi1_lookup_pkey_idx(ibp, LIM_MGMT_P_KEY);
+-	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
++	err = percpu_counter_init(&sbi->total_valid_inode_count, 0,
+ 								GFP_KERNEL);
++	if (err)
++		percpu_counter_destroy(&sbi->alloc_valid_block_count);
++
++	return err;
+ }
+ 
+ /*
 -- 
 2.20.1
 
