@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D2D106BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEB80106BC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbfKVKrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54990 "EHLO mail.kernel.org"
+        id S1729300AbfKVKrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:47:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726942AbfKVKrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:13 -0500
+        id S1729756AbfKVKrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:47:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3B7D20637;
-        Fri, 22 Nov 2019 10:47:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47F0420637;
+        Fri, 22 Nov 2019 10:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419632;
-        bh=uPqAL7yy9auhhcmmWvGPsA0w0sPseh05Du9m9H55Qlg=;
+        s=default; t=1574419635;
+        bh=iufa2eP/TUMfHuSqsOfMqcEWWdjpkgEBSDuAnm64Qv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ouypDPHlmYH6YTbqkzFhcy0nHnq29APrbe3PCRjlP3TqUWVAA80ar4/uK4IL3CuGo
-         8ZfCHpz/GHgW/cBbdSKsDAmCdPDLCVoR0ivZ4jXeddJqjn9naurUygaMLktyX7t11Q
-         EGz/uZdQZxFG4iO3xmsIBg01UF+hTRgZSDkLmst8=
+        b=g9hVG/jNncM98gqctLESBzmt2UVWaunuGkeCBtt6Z5H7O9lR5bLe9+4Mp3uwKIVFQ
+         4TLopnGeJvw3tmhA5DBzTnoWwpw/FRwXlaYayAxG1W6nWFgPXHqYJEeEzL+4EfWlh5
+         AYDo6SXtJVqtTgAXUmcMZrax+TU2MqwkGljHdyb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 180/222] media: pxa_camera: Fix check for pdev->dev.of_node
-Date:   Fri, 22 Nov 2019 11:28:40 +0100
-Message-Id: <20191122100915.388038454@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Pobega <mpobega@neverware.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 181/222] ALSA: hda/sigmatel - Disable automute for Elo VuPoint
+Date:   Fri, 22 Nov 2019 11:28:41 +0100
+Message-Id: <20191122100915.446256424@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -46,46 +43,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Michael Pobega <mpobega@neverware.com>
 
-[ Upstream commit 44d7f1a77d8c84f8e42789b5475b74ae0e6d4758 ]
+[ Upstream commit d153135e93a50cdb6f1b52e238909e9965b56056 ]
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context.
+The Elo VuPoint 15MX has two headphone jacks of which neither work by
+default. Disabling automute allows ALSA to work normally with the
+speakers & left headphone jack.
 
-drivers/media/platform/pxa_camera.c:2400:17: warning: address of
-'pdev->dev.of_node' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (&pdev->dev.of_node && !pcdev->pdata) {
-             ~~~~~~~~~~^~~~~~~ ~~
-1 warning generated.
+Future pin configuration changes may be required in the future to get
+the right headphone jack working in tandem.
 
-Judging from the rest of the kernel, it seems like this was an error and
-just the value of of_node should be checked rather than the address.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Michael Pobega <mpobega@neverware.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/pxa_camera.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_sigmatel.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
-index 390d708c807a0..3fab9f776afa7 100644
---- a/drivers/media/platform/pxa_camera.c
-+++ b/drivers/media/platform/pxa_camera.c
-@@ -2334,7 +2334,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
- 	pcdev->res = res;
+diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c
+index 0abab7926dca3..d1a6d20ace0da 100644
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -77,6 +77,7 @@ enum {
+ 	STAC_DELL_M6_BOTH,
+ 	STAC_DELL_EQ,
+ 	STAC_ALIENWARE_M17X,
++	STAC_ELO_VUPOINT_15MX,
+ 	STAC_92HD89XX_HP_FRONT_JACK,
+ 	STAC_92HD89XX_HP_Z1_G2_RIGHT_MIC_JACK,
+ 	STAC_92HD73XX_ASUS_MOBO,
+@@ -1875,6 +1876,18 @@ static void stac92hd73xx_fixup_no_jd(struct hda_codec *codec,
+ 		codec->no_jack_detect = 1;
+ }
  
- 	pcdev->pdata = pdev->dev.platform_data;
--	if (&pdev->dev.of_node && !pcdev->pdata) {
-+	if (pdev->dev.of_node && !pcdev->pdata) {
- 		err = pxa_camera_pdata_from_dt(&pdev->dev, pcdev, &pcdev->asd);
- 	} else {
- 		pcdev->platform_flags = pcdev->pdata->flags;
++
++static void stac92hd73xx_disable_automute(struct hda_codec *codec,
++				     const struct hda_fixup *fix, int action)
++{
++	struct sigmatel_spec *spec = codec->spec;
++
++	if (action != HDA_FIXUP_ACT_PRE_PROBE)
++		return;
++
++	spec->gen.suppress_auto_mute = 1;
++}
++
+ static const struct hda_fixup stac92hd73xx_fixups[] = {
+ 	[STAC_92HD73XX_REF] = {
+ 		.type = HDA_FIXUP_FUNC,
+@@ -1900,6 +1913,10 @@ static const struct hda_fixup stac92hd73xx_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = stac92hd73xx_fixup_alienware_m17x,
+ 	},
++	[STAC_ELO_VUPOINT_15MX] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = stac92hd73xx_disable_automute,
++	},
+ 	[STAC_92HD73XX_INTEL] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = intel_dg45id_pin_configs,
+@@ -1938,6 +1955,7 @@ static const struct hda_model_fixup stac92hd73xx_models[] = {
+ 	{ .id = STAC_DELL_M6_BOTH, .name = "dell-m6" },
+ 	{ .id = STAC_DELL_EQ, .name = "dell-eq" },
+ 	{ .id = STAC_ALIENWARE_M17X, .name = "alienware" },
++	{ .id = STAC_ELO_VUPOINT_15MX, .name = "elo-vupoint-15mx" },
+ 	{ .id = STAC_92HD73XX_ASUS_MOBO, .name = "asus-mobo" },
+ 	{}
+ };
+@@ -1987,6 +2005,8 @@ static const struct snd_pci_quirk stac92hd73xx_fixup_tbl[] = {
+ 		      "Alienware M17x", STAC_ALIENWARE_M17X),
+ 	SND_PCI_QUIRK(PCI_VENDOR_ID_DELL, 0x0490,
+ 		      "Alienware M17x R3", STAC_DELL_EQ),
++	SND_PCI_QUIRK(0x1059, 0x1011,
++		      "ELO VuPoint 15MX", STAC_ELO_VUPOINT_15MX),
+ 	SND_PCI_QUIRK(PCI_VENDOR_ID_HP, 0x1927,
+ 				"HP Z1 G2", STAC_92HD89XX_HP_Z1_G2_RIGHT_MIC_JACK),
+ 	SND_PCI_QUIRK(PCI_VENDOR_ID_HP, 0x2b17,
 -- 
 2.20.1
 
