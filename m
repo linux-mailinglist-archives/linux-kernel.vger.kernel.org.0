@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 738EE106D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D2E106D8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbfKVLBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:01:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53554 "EHLO mail.kernel.org"
+        id S1730356AbfKVLBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:01:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730815AbfKVLA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:00:58 -0500
+        id S1730365AbfKVLBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:01:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C664120854;
-        Fri, 22 Nov 2019 11:00:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1C1D20706;
+        Fri, 22 Nov 2019 11:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420457;
-        bh=fBbQ3hY/iIGB0eisovGFu4wYug6SWpG8iVJxCxl6P8I=;
+        s=default; t=1574420463;
+        bh=2KUh2tDx0koScgjBuyBrWUfhSOsfanBbT7qewGFoA70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YekZZYrz0JlsfqwKpJQd/AjtQJuNIyUO4vE5yB4ZW8zE0ta2vAyHEu3dv/Wl70PWk
-         6EjUqRUh7Jw9hNsShSmpS+J5n2aDkIfwYamqvnMXm/QWRnWqzzFwRH7lwc13CVRnI/
-         A23E2L3KrHrenY9QLEX8lAU5Xm0aGdhlb4PnA2MQ=
+        b=yG/nVej9fuNzyhI/66KZ/mPYPLnax7TDhDGeqPYzfY8gmSstwMCudfoBTQAIXbeas
+         F8RhmxGzb2fJ5AqdRuLfFVjTaLUWmsEGCJc70fozgRgWPkOtje1Pv1uDL+bj1L8Anf
+         EI4vLYY21onNS6ZaArr6Dx//WE1v6vIM43upKzIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chung-Hsien Hsu <stanley.hsu@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        stable@vger.kernel.org,
+        Igor mitsyanko <igor.mitsyanko.os@quantenna.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 112/220] brcmfmac: fix full timeout waiting for action frame on-channel tx
-Date:   Fri, 22 Nov 2019 11:27:57 +0100
-Message-Id: <20191122100920.811309077@linuxfoundation.org>
+Subject: [PATCH 4.19 113/220] qtnfmac: request userspace to do OBSS scanning if FW can not
+Date:   Fri, 22 Nov 2019 11:27:58 +0100
+Message-Id: <20191122100920.879502762@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -45,88 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chung-Hsien Hsu <stanley.hsu@cypress.com>
+From: Igor Mitsyanko <igor.mitsyanko.os@quantenna.com>
 
-[ Upstream commit fbf07000960d9c8a13fdc17c6de0230d681c7543 ]
+[ Upstream commit 92246b126ebf66ab1fec9d631df78d7c675b66db ]
 
-The driver sends an action frame down and waits for a completion signal
-triggered by the received BRCMF_E_ACTION_FRAME_OFF_CHAN_COMPLETE event
-to continue the process. However, the action frame could be transmitted
-either on the current channel or on an off channel. For the on-channel
-case, only BRCMF_E_ACTION_FRAME_COMPLETE event will be received when
-the frame is transmitted, which make the driver always wait a full
-timeout duration. This patch has the completion signal be triggered by
-receiving the BRCMF_E_ACTION_FRAME_COMPLETE event for the on-channel
-case.
+In case firmware reports that it can not do OBSS scanning for 40MHz
+2.4GHz channels itself, tell userpsace to do that instead by setting
+NL80211_FEATURE_NEED_OBSS_SCAN flag.
 
-This change fixes WFA p2p certification 5.1.19 failure.
-
-Signed-off-by: Chung-Hsien Hsu <stanley.hsu@cypress.com>
-Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Signed-off-by: Igor mitsyanko <igor.mitsyanko.os@quantenna.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../wireless/broadcom/brcm80211/brcmfmac/p2p.c  | 17 +++++++++++++++--
- .../wireless/broadcom/brcm80211/brcmfmac/p2p.h  |  2 ++
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 3 +++
+ drivers/net/wireless/quantenna/qtnfmac/qlink.h    | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-index 7822740a8cb40..456a1bf008b3d 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-@@ -1457,10 +1457,12 @@ int brcmf_p2p_notify_action_tx_complete(struct brcmf_if *ifp,
- 		return 0;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index 4aa332f4646b1..1519d986b74a4 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -1109,6 +1109,9 @@ int qtnf_wiphy_register(struct qtnf_hw_info *hw_info, struct qtnf_wmac *mac)
+ 	if (hw_info->hw_capab & QLINK_HW_CAPAB_SCAN_RANDOM_MAC_ADDR)
+ 		wiphy->features |= NL80211_FEATURE_SCAN_RANDOM_MAC_ADDR;
  
- 	if (e->event_code == BRCMF_E_ACTION_FRAME_COMPLETE) {
--		if (e->status == BRCMF_E_STATUS_SUCCESS)
-+		if (e->status == BRCMF_E_STATUS_SUCCESS) {
- 			set_bit(BRCMF_P2P_STATUS_ACTION_TX_COMPLETED,
- 				&p2p->status);
--		else {
-+			if (!p2p->wait_for_offchan_complete)
-+				complete(&p2p->send_af_done);
-+		} else {
- 			set_bit(BRCMF_P2P_STATUS_ACTION_TX_NOACK, &p2p->status);
- 			/* If there is no ack, we don't need to wait for
- 			 * WLC_E_ACTION_FRAME_OFFCHAN_COMPLETE event
-@@ -1511,6 +1513,17 @@ static s32 brcmf_p2p_tx_action_frame(struct brcmf_p2p_info *p2p,
- 	p2p->af_sent_channel = le32_to_cpu(af_params->channel);
- 	p2p->af_tx_sent_jiffies = jiffies;
- 
-+	if (test_bit(BRCMF_P2P_STATUS_DISCOVER_LISTEN, &p2p->status) &&
-+	    p2p->af_sent_channel ==
-+	    ieee80211_frequency_to_channel(p2p->remain_on_channel.center_freq))
-+		p2p->wait_for_offchan_complete = false;
-+	else
-+		p2p->wait_for_offchan_complete = true;
++	if (!(hw_info->hw_capab & QLINK_HW_CAPAB_OBSS_SCAN))
++		wiphy->features |= NL80211_FEATURE_NEED_OBSS_SCAN;
 +
-+	brcmf_dbg(TRACE, "Waiting for %s tx completion event\n",
-+		  (p2p->wait_for_offchan_complete) ?
-+		   "off-channel" : "on-channel");
-+
- 	timeout = wait_for_completion_timeout(&p2p->send_af_done,
- 					      P2P_AF_MAX_WAIT_TIME);
- 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h
-index 0e8b34d2d85cb..39f0d02180882 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h
-@@ -124,6 +124,7 @@ struct afx_hdl {
-  * @gon_req_action: about to send go negotiation requets frame.
-  * @block_gon_req_tx: drop tx go negotiation requets frame.
-  * @p2pdev_dynamically: is p2p device if created by module param or supplicant.
-+ * @wait_for_offchan_complete: wait for off-channel tx completion event.
+ #ifdef CONFIG_PM
+ 	if (macinfo->wowlan)
+ 		wiphy->wowlan = macinfo->wowlan;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/qlink.h b/drivers/net/wireless/quantenna/qtnfmac/qlink.h
+index 99d37e3efba63..c5ae4ea9a47a9 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/qlink.h
++++ b/drivers/net/wireless/quantenna/qtnfmac/qlink.h
+@@ -71,6 +71,7 @@ struct qlink_msg_header {
+  * @QLINK_HW_CAPAB_DFS_OFFLOAD: device implements DFS offload functionality
+  * @QLINK_HW_CAPAB_SCAN_RANDOM_MAC_ADDR: device supports MAC Address
+  *	Randomization in probe requests.
++ * @QLINK_HW_CAPAB_OBSS_SCAN: device can perform OBSS scanning.
   */
- struct brcmf_p2p_info {
- 	struct brcmf_cfg80211_info *cfg;
-@@ -144,6 +145,7 @@ struct brcmf_p2p_info {
- 	bool gon_req_action;
- 	bool block_gon_req_tx;
- 	bool p2pdev_dynamically;
-+	bool wait_for_offchan_complete;
+ enum qlink_hw_capab {
+ 	QLINK_HW_CAPAB_REG_UPDATE		= BIT(0),
+@@ -78,6 +79,7 @@ enum qlink_hw_capab {
+ 	QLINK_HW_CAPAB_DFS_OFFLOAD		= BIT(2),
+ 	QLINK_HW_CAPAB_SCAN_RANDOM_MAC_ADDR	= BIT(3),
+ 	QLINK_HW_CAPAB_PWR_MGMT			= BIT(4),
++	QLINK_HW_CAPAB_OBSS_SCAN		= BIT(5),
  };
  
- s32 brcmf_p2p_attach(struct brcmf_cfg80211_info *cfg, bool p2pdev_forced);
+ enum qlink_iface_type {
 -- 
 2.20.1
 
