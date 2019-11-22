@@ -2,139 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40961107149
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:28:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71618107137
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbfKVKbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:53 -0500
-Received: from mout.web.de ([212.227.15.3]:37665 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727453AbfKVKbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574418620;
-        bh=O2UnRxlxavQ5jorOhKL9yhuALJHowD/hkaHhoUSfn98=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=lrz9yymJw9DpZHSlUVqEgCODeziDha6ztDmG9/RjxKgMcndA6u4a3fO4ZY9M5ZUcA
-         xETQnuAfE9/dvoMYdwh46Bq8Y/Lgb7V4CrJqclSfggr/hRfET3Jkl+8PeEDAIpBJrO
-         0jE95efbesVhyqLYQMtC/505MUdFXO7kLJmCXtHo=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.244.174.75]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LzKJV-1hlJ7q3qsb-014Vq0; Fri, 22
- Nov 2019 11:30:20 +0100
-Subject: Re: [v4 04/13] exfat: add directory operations
-To:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191121052618.31117-1-namjae.jeon@samsung.com>
- <CGME20191121052917epcas1p259b8cb61ab86975cabc0cf4815a8dc38@epcas1p2.samsung.com>
- <20191121052618.31117-5-namjae.jeon@samsung.com>
- <498a958f-9066-09c6-7240-114234965c1a@web.de>
- <004901d5a0e0$f7bf1030$e73d3090$@samsung.com>
- <0e17c0a7-9b40-12a4-3f3f-500b9abb66de@web.de> <20191122085242.GA19926@lst.de>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <d8db04fd-6e6e-7912-6725-10a1840bc5a7@web.de>
-Date:   Fri, 22 Nov 2019 11:30:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727855AbfKVL1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:27:17 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:35837 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727849AbfKVKdC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:33:02 -0500
+Received: by mail-io1-f69.google.com with SMTP id h7so4566341ioh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 02:33:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=rhYDm+zochRcMNdTm5jb0yCTb8qYLiR5nZayvXZYJEU=;
+        b=OF+MfCuVZns9sC1/IRvwsLAldHKDSOnSZp2PxObSZayqNHq+XYhAQKsWyiRxMEDPQ1
+         6DAyUUQL3bmDwwRs/P5BhBlJrwT6vqrqds2fg/uzNL0w4NhcTwg30MAjPVi9p6a4z8As
+         0wh3ntYej9WsYpd+aDy4CYdlgvbDrLzu9O918zGMlPWQUnY7sIl8gdcOno8AdTMMTTTZ
+         +o7EhZOEAqMTqZSK39mV1poCYRCnTq0VmEh/4OPV9N8ofv1qD8s9SQSBIe2m/arFYsL/
+         PHsh6toppPuLoR/KmY6BrRcLlfpdyfd9jUCRoeBlMn38L0xJyv5swRmB6JsZkAPgUybc
+         mpgw==
+X-Gm-Message-State: APjAAAWLkpDt1VUmsqYLvuore5nq6g8cuv+4GCb9XDlFx3yHfL2bka2P
+        zNl5U50RsaX8FYTaJpRhxCGzNrpj6eo3hK2jGeHSOEuIudr7
+X-Google-Smtp-Source: APXvYqy7sQm8PbBUwtS/ukFd+yV2n2R7QPeGzm2D97/L795lSTd1k3wRc9YkvviTgko2ApkWIn24MAtVHQKuh3bZCrHjhdEkDLOO
 MIME-Version: 1.0
-In-Reply-To: <20191122085242.GA19926@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:UyQojwwGufTGcLRdg5g9YTHTR83YlNmDROOWK71bSlCvfv+pM3B
- xLKrSLvAS8m+w1fXejKHhNk8TOjq9JzFLsKFnZDYgOSffcL61y/T4cUIIQZQgvB1MJvDIcR
- aC6SnfMuKRl0MxaSbHw8wLKX778OIXv6znSmDHTDOWmsJd5lV2AjSFetL7fxU5Xr++60eax
- m2N/Nv4em+TGuTWIFws0w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yMv+jCSneRQ=:B5u5vVeJvDsWk/GDVpjDTA
- QCZZ9fGcH7PirFJg/5xfbbPNZKEBrkSVHYbM7Gp4FY5ToKnHpOVZuBwJFCnRfTtxyhILHLDys
- 5BdDYCWzi/sN7ld4iwAFfpij8SF8jt3zL+noP38whP+p9mW08dlVlSPcm5NK5nGF8wamH5VyJ
- fBHAT5tmn3U9cw871xHN/HI5LTioOrBugpUx7Lp258YlPudMRFijKe317WS+lUxHTuAvV+csd
- hMB1Uvp6j+7w8eh4CmnQ8GfHhzdWh/2oJRmaa2XxzF/ZhzXKrMdiQmWP5amAe545xINX6kWDu
- cZsqE+AkJXHqmOyMPuaFjs0rYXBzYY3bFzqeqw4Fbywl7OnkV2EBmLFYkaxWnciB8PTq2apMQ
- Jjh/mJc0oYyVStm2Vwer21NokYay8lx+HfNyrnhrODsAUW28kpD3s0ygHtaSXyh90J6Qi2IjN
- 91MhWc9+AdFNbVUh1z+OLEgQDZGs7QRtXusb2gG6RPy4Hc55uiF158FYeko6qc6uIVHYl6Wwk
- 6SLJKYKMIxzFsZUIfgM+d1cbBghjuZiAuGD5JOv/fjDpC2a7ijaoI/pGOn566HIdwVDaNiIMI
- kk0HhCXCYsJyczlWYq/dT7pYrwY8F3swrHv2e9Amu8+qBoE00WdNlchCXC5lLjQCGQG48O47e
- 818FEn/ASPxxUmp27hSaEDPBDhSMyFHYUz2N0Np6ubqzrEDwfqUWKthx8TjVWsaj3O2VvY5xH
- R+/veeiLuu3TYqeOEXXO93oOMHkX8zxJlU3qtS28xBdg3qsrKXMRwNT8PusyTH/PlWVJaolu1
- lXgdW7JAnmttxdQJKNs0JDbgJPJkmiC81KyHZBrxi5j4q+UOoTvmEgTGvTfWv4rWTq8D7SYB2
- tqekEF7eBaSRjOORcnQ7sUHYo0qre3M77vE26IxwG00RGZW1y+/F5XBSxxyVGAFGCkp+TriyG
- SiVr7McQ/LpM22wonnLzzGbEOS+51qGNysgkgujJW0giucPAACIC7zEqrEOp+24hjJsSD1u0V
- qnnZ36+A/6f86taol8X54Vfnewe4cNDffoLcyt/Doi4vswEXlM/s0ASNfG07SxV/bFA7IwF17
- hmWJPeGeEQTWnRkN05dcb2BN0ycqCm2uXLK7I7JLdc+jpIqmlpxz890+/YNimLX357HWQ5Jcj
- AyVD9+2b4jgnuMYm/oqQfv8hJgbRUMV7S4rDnqdfCO5m57BAgsoYMWoQDoA2v3WtTdUQ6W9An
- OfyrzpU2+E7ZpSLbtdwW1alRTeKUzED2mA+VrHGTi/BOQgliJ+6c7Tq+OHHs=
+X-Received: by 2002:a6b:6d05:: with SMTP id a5mr12725122iod.133.1574418781132;
+ Fri, 22 Nov 2019 02:33:01 -0800 (PST)
+Date:   Fri, 22 Nov 2019 02:33:01 -0800
+In-Reply-To: <1574337654.29504.0.camel@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002d684a0597ecf0b5@google.com>
+Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
+From:   syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, hverkuil@xs4all.nl,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-usb@vger.kernel.org, mchehab@kernel.org, oneukum@suse.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> please leave people alone with your opinions.
+Hello,
 
-I propose to reconsider this suggestion.
+syzbot has tested the proposed patch but the reproducer still triggered  
+crash:
+INFO: rcu detected stall in dummy_timer
+
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 4-1:0.0: non-zero urb status (-71)
+radio-si470x 3-1:0.0: non-zero urb status (-71)
+rcu: INFO: rcu_sched self-detected stall on CPU
+rcu: 	1-...!: (8177 ticks this GP) idle=78e/1/0x4000000000000004  
+softirq=3439/3439 fqs=0
+	(t=10502 jiffies g=2653 q=23)
+rcu: rcu_sched kthread starved for 10504 jiffies! g2653 f0x0  
+RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: RCU grace-period kthread stack dump:
+rcu_sched       R  running task    29744    10      2 0x80004000
+Call Trace:
+  schedule+0xca/0x250 kernel/sched/core.c:4136
+  schedule_timeout+0x440/0xb20 kernel/time/timer.c:1895
+  rcu_gp_fqs_loop kernel/rcu/tree.c:1639 [inline]
+  rcu_gp_kthread+0xaff/0x29e0 kernel/rcu/tree.c:1799
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+NMI backtrace for cpu 1
+CPU: 1 PID: 1737 Comm: kworker/1:3 Not tainted 5.4.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x55/0x96 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1b0/0x1c7 lib/nmi_backtrace.c:62
+  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+  rcu_dump_cpu_stacks+0x169/0x1b3 kernel/rcu/tree_stall.h:254
+  print_cpu_stall kernel/rcu/tree_stall.h:455 [inline]
+  check_cpu_stall kernel/rcu/tree_stall.h:529 [inline]
+  rcu_pending kernel/rcu/tree.c:2795 [inline]
+  rcu_sched_clock_irq.cold+0x4da/0x936 kernel/rcu/tree.c:2244
+  update_process_times+0x25/0x60 kernel/time/timer.c:1726
+  tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:167
+  tick_sched_timer+0x42/0x130 kernel/time/tick-sched.c:1299
+  __run_hrtimer kernel/time/hrtimer.c:1514 [inline]
+  __hrtimer_run_queues+0x303/0xc60 kernel/time/hrtimer.c:1576
+  hrtimer_interrupt+0x2e8/0x730 kernel/time/hrtimer.c:1638
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1110 [inline]
+  smp_apic_timer_interrupt+0xf5/0x500 arch/x86/kernel/apic/apic.c:1135
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/irqflags.h:85 [inline]
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
+[inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x40/0x50  
+kernel/locking/spinlock.c:191
+Code: e8 95 14 b3 fb 48 89 ef e8 6d f3 b3 fb f6 c7 02 75 11 53 9d e8 61 ba  
+d0 fb 65 ff 0d a2 67 8f 7a 5b 5d c3 e8 02 be d0 fb 53 9d <eb> ed 0f 1f 40  
+00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 fd 65 ff
+RSP: 0018:ffff8881db309b08 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000007 RBX: 0000000000000206 RCX: 0000000000000002
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff8881d065084c
+RBP: ffff8881d50f4000 R08: ffff8881d0650000 R09: fffffbfff11b23b8
+R10: fffffbfff11b23b7 R11: ffffffff88d91dbf R12: 0000000000000080
+R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8881d46bcd00
+  spin_unlock_irqrestore include/linux/spinlock.h:393 [inline]
+  dummy_timer+0x131b/0x2fa2 drivers/usb/gadget/udc/dummy_hcd.c:1980
+  call_timer_fn+0x179/0x650 kernel/time/timer.c:1404
+  expire_timers kernel/time/timer.c:1449 [inline]
+  __run_timers kernel/time/timer.c:1773 [inline]
+  __run_timers kernel/time/timer.c:1740 [inline]
+  run_timer_softirq+0x5e3/0x1490 kernel/time/timer.c:1786
+  __do_softirq+0x221/0x912 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x178/0x1a0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x12f/0x500 arch/x86/kernel/apic/apic.c:1137
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/irqflags.h:85 [inline]
+RIP: 0010:console_unlock+0xb4f/0xc40 kernel/printk/printk.c:2477
+Code: 32 fe ff ff e8 a2 ae 15 00 48 8b bc 24 80 00 00 00 e8 b5 dd ff ff e9  
+29 fb ff ff e8 8b ae 15 00 e8 06 db 1a 00 ff 74 24 30 9d <e9> 15 fb ff ff  
+e8 67 f0 3c 00 e9 de f6 ff ff e8 6d f0 3c 00 e9 98
+RSP: 0018:ffff8881c06beda0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000007 RBX: 0000000000000200 RCX: 0000000000000006
+RDX: 0000000000000000 RSI: ffff8881d06508f0 RDI: ffff8881d065084c
+RBP: 0000000000000001 R08: ffff8881d0650000 R09: fffffbfff11b23ae
+R10: fffffbfff11b23ad R11: ffffffff88d91d6f R12: 0000000000000047
+R13: dffffc0000000000 R14: ffffffff8293f390 R15: ffffffff87077070
+  vprintk_emit+0x171/0x3e0 kernel/printk/printk.c:1996
+  dev_vprintk_emit+0x4fc/0x541 drivers/base/core.c:3312
+  dev_printk_emit+0xba/0xf1 drivers/base/core.c:3323
+  __dev_printk+0x1db/0x203 drivers/base/core.c:3335
+  _dev_warn+0xd7/0x109 drivers/base/core.c:3379
+  si470x_set_report.isra.0.constprop.0.cold+0x32/0x41  
+drivers/media/radio/si470x/radio-si470x-usb.c:234
+  si470x_set_register+0x11c/0x180  
+drivers/media/radio/si470x/radio-si470x-usb.c:269
+  si470x_start+0x72/0x2bf  
+drivers/media/radio/si470x/radio-si470x-common.c:374
+  si470x_start_usb+0x507/0x53d  
+drivers/media/radio/si470x/radio-si470x-usb.c:549
+  si470x_usb_driver_probe.cold+0x6e5/0x8b2  
+drivers/media/radio/si470x/radio-si470x-usb.c:737
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x6d0 drivers/base/dd.c:548
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
+  __device_attach+0x217/0x360 drivers/base/dd.c:894
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
+  device_add+0xae6/0x16f0 drivers/base/core.c:2201
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x6d0 drivers/base/dd.c:548
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
+  __device_attach+0x217/0x360 drivers/base/dd.c:894
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
+  device_add+0xae6/0x16f0 drivers/base/core.c:2201
+  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+  hub_port_connect drivers/usb/core/hub.c:5183 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5323 [inline]
+  port_event drivers/usb/core/hub.c:5469 [inline]
+  hub_event+0x1dd0/0x37e0 drivers/usb/core/hub.c:5551
+  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 4-1:0.0: non-zero urb status (-71)
+radio-si470x 3-1:0.0: non-zero urb status (-71)
+radio-si470x 4-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 3-1:0.0: non-zero urb status (-71)
+radio-si470x 3-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 4-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 3-1:0.0: non-zero urb status (-71)
+radio-si470x 4-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 6-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 6-1:0.0: non-zero urb status (-71)
+radio-si470x 1-1:0.0: non-zero urb status (-71)
+radio-si470x 6-1:0.0: non-zero urb status (-71)
+radio-si470x 2-1:0.0: non-zero urb status (-71)
+radio-si470x 5-1:0.0: non-zero urb status (-71)
+radio-si470x 5-1:0.0: non-zero urb status (-71)
+radio-si470x 2-1:0.0: non-zero urb status (-71)
+radio-si470x 5-1:0.0: non-zero urb status (-71)
+radio-si470x 5-1:0.0: non-zero urb status (-71)
+radio-si470x 2-1:0.0: non-zero urb status (-71)
+radio-si470x 5-1:0.0: non-zero urb status (-71)
+radio-si470x 2-1:0.0: non-zero urb status (-71)
+radio-si470x 5-1:0.0: non-zero urb status (-71)
+radio-si470x 2-1:0.0: non-zero urb status (-71)
+radio-si470x 4-1:0.0: non-zero urb status (-71)
+radio-si470x 6-1:0.0: non-zero urb status (-71)
+radio-si470x 6-1:0.0: non-zero urb status (-71)
 
 
-> They actually do create value
+Tested on:
 
-This is generally usual.
+commit:         22be26f7 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=11821c22e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
+dashboard link: https://syzkaller.appspot.com/bug?extid=9ca7a12fd736d93e0232
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12ae33ace00000
 
-
-> and don't need your personal opinion on coding style trolling.
-
-I got the impression that some of my views fit also to the usage
-of the Linux coding style often enough.
-
-The clarification of different opinions will hopefully trigger
-further useful software improvements.
-
-Regards,
-Markus
