@@ -2,357 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40FF3107329
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 14:30:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F5A5107312
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 14:25:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfKVNaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 08:30:05 -0500
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:54482 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727261AbfKVNaC (ORCPT
+        id S1726875AbfKVNZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 08:25:39 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38084 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbfKVNZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 08:30:02 -0500
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMDN46w011404;
-        Fri, 22 Nov 2019 08:29:57 -0500
-Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2058.outbound.protection.outlook.com [104.47.48.58])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2wbg0jtqxx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Nov 2019 08:29:56 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UCw9cy4VK1utpCimHJol08uXGlPS+Ewek+3RVD1938ke7bJI7+9aqvpXnNMxAkA0P3v0j+vj9llgwrTSSbSNp9n3XXBcO02lB8udrKo2I0jkOFaPlD8ivFSRQu+lCvrJwvb7BjX7G/EKStSssqBIZ69l+iEpJSgro+uv95HovP0vdcJkguH0NntDCP9oY3beRmSoGmGtRbNT3dlh8LB2zh6Tp3VApRmrpVmwC/1bxTKv/qu9DIzwGwVLvVuIvyGUmAE1ZioVzwndiCNA8sS572teD6Ji2fFE87bccITHakBEGSk3xes6CgLYpXQuMkqC46dlZKcedzM6ypPjeRFZeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zuDtxP97Yf1STuzzivkjZpSASW2OlCseq0JxV7qkWCI=;
- b=QC5ufB0w+XsxfJ+EhyeVb71OE4zivCUfqTMYMUEXyqoa6acjUQrjF8FgckDbUZRLS2S/tvUoK2n64WQxYCc1F0XRLSAmZITQBn/AJh9LcjQCh+WWu8zbsPGodiGw05AT+Ux3jkMFV6eeu/YQo7EoDQmdaneHwourScOhss/9nio6hm2+S6MYVRJ8jucIVyiO1Yc0TNHPzQFK/Hm/o/9smQzww2bTthQ4bePjepKhvw40+33uOKFBqTHlsyjxgSiFgv2ISDom+qL/AqCNL3vcB4C6UFWVyiDtqpQqV1KDnXkVOcBU72/GCvrny6+cORHAm9NCC7xoxPkn1Qild9jkMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
+        Fri, 22 Nov 2019 08:25:38 -0500
+Received: by mail-wr1-f66.google.com with SMTP id i12so8614562wro.5;
+        Fri, 22 Nov 2019 05:25:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zuDtxP97Yf1STuzzivkjZpSASW2OlCseq0JxV7qkWCI=;
- b=4EKW0VQ3sVrT3d4JUU1VR2a1LFQjiZIDvz77CPyin53YkprIiXgoabOqdmSj3W7FdQSI90nq6JJFwG3zsX7m0fk5yAkhV4O+S0V/wiRguWDjjI9fgmAwqWll3S6ayFbDnuV8Fez2N700Y/J/i+O1b0MqZJqnOxc/7NsJ1QJkb30=
-Received: from BN6PR03CA0111.namprd03.prod.outlook.com (2603:10b6:404:10::25)
- by SN6PR03MB3936.namprd03.prod.outlook.com (2603:10b6:805:72::31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.19; Fri, 22 Nov
- 2019 13:29:54 +0000
-Received: from BL2NAM02FT040.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::209) by BN6PR03CA0111.outlook.office365.com
- (2603:10b6:404:10::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17 via Frontend
- Transport; Fri, 22 Nov 2019 13:29:54 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- BL2NAM02FT040.mail.protection.outlook.com (10.152.77.193) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
- via Frontend Transport; Fri, 22 Nov 2019 13:29:54 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id xAMDTjjW015757
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 22 Nov 2019 05:29:45 -0800
-Received: from saturn.ad.analog.com (10.48.65.119) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 22 Nov 2019 08:29:53 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <nuno.sa@analog.com>,
-        <Michael.Hennerich@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2 02/11] iio: imu: adis: add unlocked read/write function versions
-Date:   Fri, 22 Nov 2019 15:24:12 +0200
-Message-ID: <20191122132421.5500-3-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191122132421.5500-1-alexandru.ardelean@analog.com>
-References: <20191122132421.5500-1-alexandru.ardelean@analog.com>
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0NHwgBSUws38Es7Xi/rZX05Xqj++OpNble994Q4twz8=;
+        b=nOil050ebumEVh6B4CMpHHxn/QX9acBxM3S9OLut6akRaRuTuBPBe5v+ETuUb0xLBk
+         6S93YBoJ8ZjLEfTcsfAQDWNhbmhGOJ8ReZDwL+gWlIfb0dJrt4DghYC7C84CbJwYmENQ
+         dBeSioVD4jg/Rsah2pbJNu4W08WN8+pkJ4bZyBMRGcSTfDCqCNyzegFTPQ4LR0+9XfR5
+         RSMLNr4S5tdnmPAXBTDWBoweI2frennUR3IycN4Ga6wFah55fmDbWRFbazA60VbVwSm4
+         8Ir6SxYLMs/lulTCQ4VenlRkOc3/HenQDMs3gyYqF8Paq82JaADF8T0olsWuBDSIH82g
+         RBRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0NHwgBSUws38Es7Xi/rZX05Xqj++OpNble994Q4twz8=;
+        b=ZyEl0yV1hiG1AGGN27UkuhLnQ0+ju+tRliUDHrp05Ay+TUVmQM6X/GDZPcWTiXlkGm
+         i9JZ1kUGexlb8SuEvfoIXTMcGqukq1eiafCQz9/K1qsFjKz1a/wBmwmroYLiDFL81nr1
+         UtegWoNcyseoxelYf0Rv9zPGBPMgXOJUsJJdIUo/e/HiECA5lYi/DogOZinGKgqY9l5T
+         QTSv+Ym/fmsUEN6oh9Y+YGpybzujszapjN9yQYl/fTUnfBSV2m72am1JX9/QrolKyjo8
+         t8HPVszEAFtlbrqE39+tJE32kohRmTlbOThfc7pIgRbpITdJTFkwweA6KcRo3gqXXYiI
+         vHmQ==
+X-Gm-Message-State: APjAAAXu558n4CGs0zua3JgKhg5ouc0xklstHQRVJrXbt7jFZujhcFv0
+        o0uM+A1RWA6UaDldOkUoOZs=
+X-Google-Smtp-Source: APXvYqy6agudNWkX1IVOAditiOZUSDYrvFhjkwzj3/rM6+m7on3EEcqbwap2TkpnfGhY2DRwUzliEA==
+X-Received: by 2002:adf:fbc1:: with SMTP id d1mr18273847wrs.267.1574429135841;
+        Fri, 22 Nov 2019 05:25:35 -0800 (PST)
+Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
+        by smtp.gmail.com with ESMTPSA id g74sm3414148wme.5.2019.11.22.05.25.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 05:25:34 -0800 (PST)
+Date:   Fri, 22 Nov 2019 14:25:33 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com,
+        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH 6/6] arm64: tegra: Add support for PCIe endpoint mode in
+ P2972-0000 platform
+Message-ID: <20191122132533.GD1315704@ulmo>
+References: <20191122104505.8986-1-vidyas@nvidia.com>
+ <20191122104505.8986-7-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(376002)(39860400002)(189003)(199004)(51416003)(305945005)(106002)(4326008)(336012)(426003)(26005)(47776003)(7636002)(5660300002)(2906002)(44832011)(54906003)(50466002)(70586007)(14444005)(7696005)(76176011)(110136005)(446003)(1076003)(186003)(11346002)(86362001)(107886003)(2616005)(2870700001)(70206006)(48376002)(316002)(50226002)(8936002)(8676002)(478600001)(246002)(36756003)(356004)(6666004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3936;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b4f13529-58b1-4c3e-4f7f-08d76f500f6e
-X-MS-TrafficTypeDiagnostic: SN6PR03MB3936:
-X-Microsoft-Antispam-PRVS: <SN6PR03MB3936D7865EDF71C07EFC6EA6F9490@SN6PR03MB3936.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-Forefront-PRVS: 02296943FF
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: P8QqVvQnY3LiZRT0ImKnuFUZYXOyMnAK536YltLNh/aZXaJQlu9iGri86/0FpL10Me6Y9LLu+qEOETNdGj3KjyudpaSVKMUF/lpHFf1uprIuDiv69FKeFqUvssSClY8SfZoI4j/1CP9slumGIPcA+b7CY0QHsxboykFzXAoLSQ0gjeJvqJxGdkZWK7ZGezfiah+ehk394Nc5QyNyqNXtZzA1Yx8uQKBZ+gRNfPFZ8tfaW4K3y4myrhnBnAmccGoh38o2/mx0s1Bx3Wh8T1F081jwKuWrE60Xg/9xB29d+DZ8dYBEu2DhsoWvjSpnKTH8JLlZVhhGKOWDAkBTKRc4QXTA9EBdBTkabIba1hiJppUTIrfe8lNTCxpuD8tpLQXA0Ut+b0PkfEzoON4G9jeIftKib07JAcsXkvOsMeUz2AAubN7MJD8Ne70/H9StDT+K
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2019 13:29:54.2728
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4f13529-58b1-4c3e-4f7f-08d76f500f6e
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3936
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-22_02:2019-11-21,2019-11-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- suspectscore=0 adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1911220119
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mJm6k4Vb/yFcL9ZU"
+Content-Disposition: inline
+In-Reply-To: <20191122104505.8986-7-vidyas@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will allow more flexible control to group reads & writes into a single
-lock (particularly the state_lock).
 
-The end-goal is to remove the indio_dev->mlock usage, and the simplest fix
-would have been to just add another lock, which would not be a good idea on
-the long-run.
+--mJm6k4Vb/yFcL9ZU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/imu/adis.c       |  35 +++++------
- include/linux/iio/imu/adis.h | 116 ++++++++++++++++++++++++++++++++++-
- 2 files changed, 130 insertions(+), 21 deletions(-)
+On Fri, Nov 22, 2019 at 04:15:05PM +0530, Vidya Sagar wrote:
+> Add endpoint mode support for PCIe C5 controller in P2972-0000 platform
+> with information about supplies, PHY, PERST GPIO and GPIO that controls
+> PCIe reference clock coming from the host system.
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/ar=
+m64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> index 7eb64b816e08..58c3a9677bc8 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> @@ -43,6 +43,19 @@
+> =20
+>  		gpio@c2f0000 {
+>  			status =3D "okay";
+> +			/*
+> +			 * Change the below node's status to 'okay' when
+> +			 * PCIe C5 controller is enabled to operate in endpoint
+> +			 * to allow REFCLK from the host system to flow into
+> +			 * the controller.
+> +			 */
+> +			pex-refclk-sel-high {
+> +				gpio-hog;
+> +				output-high;
+> +				gpios =3D <TEGRA194_AON_GPIO(AA, 5) 0>;
+> +				label =3D "pex_refclk_sel_high";
+> +				status =3D "disabled";
+> +			};
 
-diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-index db562fec79b2..2f518e6c727d 100644
---- a/drivers/iio/imu/adis.c
-+++ b/drivers/iio/imu/adis.c
-@@ -26,7 +26,14 @@
- #define ADIS_MSC_CTRL_DATA_RDY_DIO2	BIT(0)
- #define ADIS_GLOB_CMD_SW_RESET		BIT(7)
- 
--int adis_write_reg(struct adis *adis, unsigned int reg,
-+/**
-+ * __adis_write_reg() - write N bytes to register (unlocked version)
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the two registers
-+ * @value: The value to write to device (up to 4 bytes)
-+ * @size: The size of the @value (in bytes)
-+ */
-+int __adis_write_reg(struct adis *adis, unsigned int reg,
- 	unsigned int value, unsigned int size)
- {
- 	unsigned int page = reg / ADIS_PAGE_SIZE;
-@@ -70,8 +77,6 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
- 		},
- 	};
- 
--	mutex_lock(&adis->state_lock);
--
- 	spi_message_init(&msg);
- 
- 	if (adis->current_page != page) {
-@@ -96,8 +101,7 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
- 		adis->tx[3] = value & 0xff;
- 		break;
- 	default:
--		ret = -EINVAL;
--		goto out_unlock;
-+		return -EINVAL;
- 	}
- 
- 	xfers[size].cs_change = 0;
-@@ -113,20 +117,18 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
- 		adis->current_page = page;
- 	}
- 
--out_unlock:
--	mutex_unlock(&adis->state_lock);
--
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(adis_write_reg);
-+EXPORT_SYMBOL_GPL(__adis_write_reg);
- 
- /**
-- * adis_read_reg() - read 2 bytes from a 16-bit register
-+ * __adis_read_reg() - read N bytes from register (unlocked version)
-  * @adis: The adis device
-  * @reg: The address of the lower of the two registers
-  * @val: The value read back from the device
-+ * @size: The size of the @val buffer
-  */
--int adis_read_reg(struct adis *adis, unsigned int reg,
-+int __adis_read_reg(struct adis *adis, unsigned int reg,
- 	unsigned int *val, unsigned int size)
- {
- 	unsigned int page = reg / ADIS_PAGE_SIZE;
-@@ -166,7 +168,6 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
- 		},
- 	};
- 
--	mutex_lock(&adis->state_lock);
- 	spi_message_init(&msg);
- 
- 	if (adis->current_page != page) {
-@@ -188,15 +189,14 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
- 		spi_message_add_tail(&xfers[3], &msg);
- 		break;
- 	default:
--		ret = -EINVAL;
--		goto out_unlock;
-+		return -EINVAL;
- 	}
- 
- 	ret = spi_sync(adis->spi, &msg);
- 	if (ret) {
- 		dev_err(&adis->spi->dev, "Failed to read register 0x%02X: %d\n",
- 				reg, ret);
--		goto out_unlock;
-+		return ret;
- 	} else {
- 		adis->current_page = page;
- 	}
-@@ -210,12 +210,9 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
- 		break;
- 	}
- 
--out_unlock:
--	mutex_unlock(&adis->state_lock);
--
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(adis_read_reg);
-+EXPORT_SYMBOL_GPL(__adis_read_reg);
- 
- #ifdef CONFIG_DEBUG_FS
- 
-diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
-index 100b5d1cebf1..38ebe41092e1 100644
---- a/include/linux/iio/imu/adis.h
-+++ b/include/linux/iio/imu/adis.h
-@@ -75,11 +75,123 @@ int adis_init(struct adis *adis, struct iio_dev *indio_dev,
- 	struct spi_device *spi, const struct adis_data *data);
- int adis_reset(struct adis *adis);
- 
--int adis_write_reg(struct adis *adis, unsigned int reg,
-+int __adis_write_reg(struct adis *adis, unsigned int reg,
- 	unsigned int val, unsigned int size);
--int adis_read_reg(struct adis *adis, unsigned int reg,
-+int __adis_read_reg(struct adis *adis, unsigned int reg,
- 	unsigned int *val, unsigned int size);
- 
-+/**
-+ * __adis_write_reg_8() - Write single byte to a register (unlocked)
-+ * @adis: The adis device
-+ * @reg: The address of the register to be written
-+ * @value: The value to write
-+ */
-+static inline int __adis_write_reg_8(struct adis *adis, unsigned int reg,
-+	uint8_t val)
-+{
-+	return __adis_write_reg(adis, reg, val, 1);
-+}
-+
-+/**
-+ * __adis_write_reg_16() - Write 2 bytes to a pair of registers (unlocked)
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the two registers
-+ * @value: Value to be written
-+ */
-+static inline int __adis_write_reg_16(struct adis *adis, unsigned int reg,
-+	uint16_t val)
-+{
-+	return __adis_write_reg(adis, reg, val, 2);
-+}
-+
-+/**
-+ * __adis_write_reg_32() - write 4 bytes to four registers (unlocked)
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the four register
-+ * @value: Value to be written
-+ */
-+static inline int __adis_write_reg_32(struct adis *adis, unsigned int reg,
-+	uint32_t val)
-+{
-+	return __adis_write_reg(adis, reg, val, 4);
-+}
-+
-+/**
-+ * __adis_read_reg_16() - read 2 bytes from a 16-bit register (unlocked)
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the two registers
-+ * @val: The value read back from the device
-+ */
-+static inline int __adis_read_reg_16(struct adis *adis, unsigned int reg,
-+	uint16_t *val)
-+{
-+	unsigned int tmp;
-+	int ret;
-+
-+	ret = __adis_read_reg(adis, reg, &tmp, 2);
-+	if (ret == 0)
-+		*val = tmp;
-+
-+	return ret;
-+}
-+
-+/**
-+ * __adis_read_reg_32() - read 4 bytes from a 32-bit register (unlocked)
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the two registers
-+ * @val: The value read back from the device
-+ */
-+static inline int __adis_read_reg_32(struct adis *adis, unsigned int reg,
-+	uint32_t *val)
-+{
-+	unsigned int tmp;
-+	int ret;
-+
-+	ret = __adis_read_reg(adis, reg, &tmp, 4);
-+	if (ret == 0)
-+		*val = tmp;
-+
-+	return ret;
-+}
-+
-+/**
-+ * adis_write_reg() - write N bytes to register
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the two registers
-+ * @value: The value to write to device (up to 4 bytes)
-+ * @size: The size of the @value (in bytes)
-+ */
-+static inline int adis_write_reg(struct adis *adis, unsigned int reg,
-+	unsigned int val, unsigned int size)
-+{
-+	int ret;
-+
-+	mutex_lock(&adis->state_lock);
-+	ret = __adis_write_reg(adis, reg, val, size);
-+	mutex_unlock(&adis->state_lock);
-+
-+	return ret;
-+}
-+
-+/**
-+ * adis_read_reg() - read N bytes from register
-+ * @adis: The adis device
-+ * @reg: The address of the lower of the two registers
-+ * @val: The value read back from the device
-+ * @size: The size of the @val buffer
-+ */
-+static int adis_read_reg(struct adis *adis, unsigned int reg,
-+	unsigned int *val, unsigned int size)
-+{
-+	int ret;
-+
-+	mutex_lock(&adis->state_lock);
-+	ret = __adis_read_reg(adis, reg, val, size);
-+	mutex_unlock(&adis->state_lock);
-+
-+	return ret;
-+}
-+
- /**
-  * adis_write_reg_8() - Write single byte to a register
-  * @adis: The adis device
--- 
-2.20.1
+Why don't we put this into the PCIe controller's node as a reference to
+that GPIO? Seems like the controller would know exactly when this pin
+needs to go high or low, so why does it have to be a hog?
 
+Thierry
+
+>  		};
+> =20
+>  		pwm@c340000 {
+> @@ -144,6 +157,22 @@
+>  			    "p2u-5", "p2u-6", "p2u-7";
+>  	};
+> =20
+> +	pcie_ep@141a0000 {
+> +		status =3D "disabled";
+> +
+> +		vddio-pex-ctl-supply =3D <&vdd_1v8ao>;
+> +
+> +		nvidia,pex-rst-gpio =3D <&gpio TEGRA194_MAIN_GPIO(GG, 1)
+> +					GPIO_ACTIVE_LOW>;
+> +
+> +		phys =3D <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
+> +		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
+> +		       <&p2u_nvhs_6>, <&p2u_nvhs_7>;
+> +
+> +		phy-names =3D "p2u-0", "p2u-1", "p2u-2", "p2u-3", "p2u-4",
+> +			    "p2u-5", "p2u-6", "p2u-7";
+> +	};
+> +
+>  	fan: fan {
+>  		compatible =3D "pwm-fan";
+>  		pwms =3D <&pwm4 0 45334>;
+> --=20
+> 2.17.1
+>=20
+
+--mJm6k4Vb/yFcL9ZU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3X4c0ACgkQ3SOs138+
+s6ExNQ//WK62BmgmHIoNRd5DoXDTiVMFPJTXYrKK2KEpJs39EqwfkZAYEPlfb5Si
+4vAm7OchTFGLzcRQRxYlVS5ZHo9eDkHAE7pKUKkgm3Li6QTvGXlt7oRsiVv1luJx
+AoqNX99LtHkgEBSLFnVIgpsstcX1Jx3DDkwjO+IINkJf+Et2GLU0Y1ez932QXf6r
+eN343fUsKg5+bcIqk2hLnWCCaPe3YR9sYpRJF6psoHPOHgb4o3k7lGKUqwRHCPAB
+qAq3iOral1OmZ+GQ06d3/OZHI33QG2UOqOhTTw+Xw67QernnguTI+jBAiTAZD62Y
+jdIJ3X6M2t93o7yTwczq4IaTy46lktLeEXWoIWOPQiIuFWQhylfDGjVPv8Qin9JG
+Ru9qCZXi1WWIDZGo99ZPB7iIyPPCB4T0cGR+nNH5i+PC4N5/6EfCXjg9gL33HB9n
+brPkgl21YRmVt6JU04pKxCjcrajsR570CwfS5VMa4y6pImJiYP6cdfxdJ9Om0hei
+sEmduQY1iRmoYthWXBgb3VIpZdd38nhaId4LbWhFHHObI5VZWvI1rgtkf7eq3mUV
+tQEqkdpr7cLPdqjvEMf/0rffGC6UVeyeA2y7jSyHkKjrwMADSTysQz2YPtQenUhn
+RRey8lUXMdiZ0XueNYIxYxijYYd1JhnVidJEfEK+FVR+59j0UHA=
+=aw/J
+-----END PGP SIGNATURE-----
+
+--mJm6k4Vb/yFcL9ZU--
