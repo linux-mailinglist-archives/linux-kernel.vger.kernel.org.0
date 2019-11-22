@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 940EB106BB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 534D4106C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbfKVKqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:46:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53984 "EHLO mail.kernel.org"
+        id S1729744AbfKVKt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:49:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729672AbfKVKqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:40 -0500
+        id S1729007AbfKVKtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:49:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9209205C9;
-        Fri, 22 Nov 2019 10:46:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36FDF20656;
+        Fri, 22 Nov 2019 10:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419600;
-        bh=RN5s4WwjmeKO7kh5V7ierCiAzxj8M84zs8kaJC64wO4=;
+        s=default; t=1574419794;
+        bh=UThevYjOWrjqoe8lNkAfqn/QK8mwMPAoI0Tg0kzVEwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PhdkL7DRwCKhuNHTnPm5d+AvjkiVU7xe6wSmdAgMxlcpRq/dV9fSUxWMNV9YtAYNK
-         nvUEaseYa4II4f52B8MBCvreYqXnBHdTwGOOGGIxkhqwYq/wGz9Z8ThqLRrS3+mqkJ
-         qJlKWlX2FncG98HU5sA8r+UCAYv9XW8uQXnHd2Qw=
+        b=OI3e/yyibC/5+eVOAGI2defEDdwwGtHhGFrpEec1Bh9i+kmBJDS83LRMizK6Sxgai
+         xHNYqujay54hdT0lfo9n3mxF5CVTgeAN05hJScb58Ne1s8lbhhEUBY43o98FR3h2ho
+         h1Qv9W4zREClVY5acDdveVsUn4x6R+5je7Gtr5XM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Yan <yanaijie@huawei.com>,
-        chenxiang <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Ewan Milne <emilne@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Tomas Henzl <thenzl@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 124/222] scsi: libsas: always unregister the old device if going to discover new
-Date:   Fri, 22 Nov 2019 11:27:44 +0100
-Message-Id: <20191122100912.015779336@linuxfoundation.org>
+Subject: [PATCH 4.14 012/122] ARM: dts: dra7: Enable workaround for errata i870 in PCIe host mode
+Date:   Fri, 22 Nov 2019 11:27:45 +0100
+Message-Id: <20191122100731.375944773@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,58 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit 32c850bf587f993b2620b91e5af8a64a7813f504 ]
+[ Upstream commit b830526f304764753fcb8b4a563a94080e982a6c ]
 
-If we went into sas_rediscover_dev() the attached_sas_addr was already insured
-not to be zero. So it's unnecessary to check if the attached_sas_addr is zero.
+Add ti,syscon-unaligned-access property to PCIe RC nodes to set
+appropriate bits in CTRL_CORE_SMA_SW_7 register to enable workaround for
+errata i870.
 
-And although if the sas address is not changed, we always have to unregister
-the old device when we are going to register a new one. We cannot just leave
-the device there and bring up the new.
-
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: chenxiang <chenxiang66@hisilicon.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Johannes Thumshirn <jthumshirn@suse.de>
-CC: Ewan Milne <emilne@redhat.com>
-CC: Christoph Hellwig <hch@lst.de>
-CC: Tomas Henzl <thenzl@redhat.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/libsas/sas_expander.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/dra7.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 400eee9d77832..d44f18f773c0f 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -2049,14 +2049,11 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
- 		return res;
- 	}
- 
--	/* delete the old link */
--	if (SAS_ADDR(phy->attached_sas_addr) &&
--	    SAS_ADDR(sas_addr) != SAS_ADDR(phy->attached_sas_addr)) {
--		SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
--			    SAS_ADDR(dev->sas_addr), phy_id,
--			    SAS_ADDR(phy->attached_sas_addr));
--		sas_unregister_devs_sas_addr(dev, phy_id, last);
--	}
-+	/* we always have to delete the old device when we went here */
-+	SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
-+		    SAS_ADDR(dev->sas_addr), phy_id,
-+		    SAS_ADDR(phy->attached_sas_addr));
-+	sas_unregister_devs_sas_addr(dev, phy_id, last);
- 
- 	return sas_discover_new(dev, phy_id);
- }
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index 09686d73f9479..fec965009b9fc 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -314,6 +314,7 @@
+ 						<0 0 0 2 &pcie1_intc 2>,
+ 						<0 0 0 3 &pcie1_intc 3>,
+ 						<0 0 0 4 &pcie1_intc 4>;
++				ti,syscon-unaligned-access = <&scm_conf1 0x14 1>;
+ 				status = "disabled";
+ 				pcie1_intc: interrupt-controller {
+ 					interrupt-controller;
+@@ -367,6 +368,7 @@
+ 						<0 0 0 2 &pcie2_intc 2>,
+ 						<0 0 0 3 &pcie2_intc 3>,
+ 						<0 0 0 4 &pcie2_intc 4>;
++				ti,syscon-unaligned-access = <&scm_conf1 0x14 2>;
+ 				pcie2_intc: interrupt-controller {
+ 					interrupt-controller;
+ 					#address-cells = <0>;
 -- 
 2.20.1
 
