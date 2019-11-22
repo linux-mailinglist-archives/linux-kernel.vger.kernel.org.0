@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E664106F51
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD8E106E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:09:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728872AbfKVKwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:52:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
+        id S1731385AbfKVLDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:03:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728666AbfKVKwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:52:30 -0500
+        id S1731028AbfKVLCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:02:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBD8B20637;
-        Fri, 22 Nov 2019 10:52:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D0052075E;
+        Fri, 22 Nov 2019 11:02:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419950;
-        bh=MX3Ehabkq3f2CSRb7ik1HoCIDf2ozhTD6e8JcQDK1Ps=;
+        s=default; t=1574420574;
+        bh=7ZCL7NcTxYsKgq1kH/R/h8GRcaWqaQ0rSb8KFEgYlJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uKydgzYCyHmV4nZ+meQzAaGb+/7PEhqOBdOGzEq1CDWQltREAS2xKyICuPutTtthl
-         CFDj+L3DtYpQAXScu2LhQAiYLKmxw/hjbE9mOXI4PnljsI7M8xMEABnCT3N/xDjf9S
-         sKaQqkNWubj7e7MozjEA/UGTT5NfIick+55kEHGY=
+        b=w6vHqwSr2jP4WhvtZvzLGLX84PvpkrEBWl0QpydOp3ErJxaWjcm6uI7M+l7PH+072
+         tiUpAQg7EY09dmVPOgRdhBppUD5mMjnfu6V1jT6Udr8Cn+cNhWvMR5RiMLpV6mskUN
+         OAuCihBrQ4n4cweIEpN7KCxqUWWSNiasUjtajeIc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 063/122] USB: serial: cypress_m8: fix interrupt-out transfer length
-Date:   Fri, 22 Nov 2019 11:28:36 +0100
-Message-Id: <20191122100806.299996276@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Peter Malone <peter.malone@gmail.com>
+Subject: [PATCH 4.19 152/220] fbdev: sbuslib: use checked version of put_user()
+Date:   Fri, 22 Nov 2019 11:28:37 +0100
+Message-Id: <20191122100923.662799247@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 56445eef55cb5904096fed7a73cf87b755dfffc7 ]
+[ Upstream commit d8bad911e5e55e228d59c0606ff7e6b8131ca7bf ]
 
-Fix interrupt-out transfer length which was being set to the
-transfer-buffer length rather than the size of the outgoing packet.
+I'm not sure why the code assumes that only the first put_user() needs
+an access_ok() check.  I have made all the put_user() and get_user()
+calls checked.
 
-Note that no slab data was leaked as the whole transfer buffer is always
-cleared before each transfer.
-
-Fixes: 9aa8dae7b1fa ("cypress_m8: use usb_fill_int_urb where appropriate")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Mathieu Malaterre <malat@debian.org>
+Cc: Peter Malone <peter.malone@gmail.com>,
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/cypress_m8.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/sbuslib.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
-index 90110de715e01..d0aa4c853f56a 100644
---- a/drivers/usb/serial/cypress_m8.c
-+++ b/drivers/usb/serial/cypress_m8.c
-@@ -773,7 +773,7 @@ static void cypress_send(struct usb_serial_port *port)
+diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
+index a436d44f1b7fb..90c51330969c2 100644
+--- a/drivers/video/fbdev/sbuslib.c
++++ b/drivers/video/fbdev/sbuslib.c
+@@ -106,11 +106,11 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		struct fbtype __user *f = (struct fbtype __user *) arg;
  
- 	usb_fill_int_urb(port->interrupt_out_urb, port->serial->dev,
- 		usb_sndintpipe(port->serial->dev, port->interrupt_out_endpointAddress),
--		port->interrupt_out_buffer, port->interrupt_out_size,
-+		port->interrupt_out_buffer, actual_size,
- 		cypress_write_int_callback, port, priv->write_urb_interval);
- 	result = usb_submit_urb(port->interrupt_out_urb, GFP_ATOMIC);
- 	if (result) {
+ 		if (put_user(type, &f->fb_type) ||
+-		    __put_user(info->var.yres, &f->fb_height) ||
+-		    __put_user(info->var.xres, &f->fb_width) ||
+-		    __put_user(fb_depth, &f->fb_depth) ||
+-		    __put_user(0, &f->fb_cmsize) ||
+-		    __put_user(fb_size, &f->fb_cmsize))
++		    put_user(info->var.yres, &f->fb_height) ||
++		    put_user(info->var.xres, &f->fb_width) ||
++		    put_user(fb_depth, &f->fb_depth) ||
++		    put_user(0, &f->fb_cmsize) ||
++		    put_user(fb_size, &f->fb_cmsize))
+ 			return -EFAULT;
+ 		return 0;
+ 	}
+@@ -125,10 +125,10 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		unsigned int index, count, i;
+ 
+ 		if (get_user(index, &c->index) ||
+-		    __get_user(count, &c->count) ||
+-		    __get_user(ured, &c->red) ||
+-		    __get_user(ugreen, &c->green) ||
+-		    __get_user(ublue, &c->blue))
++		    get_user(count, &c->count) ||
++		    get_user(ured, &c->red) ||
++		    get_user(ugreen, &c->green) ||
++		    get_user(ublue, &c->blue))
+ 			return -EFAULT;
+ 
+ 		cmap.len = 1;
+@@ -165,10 +165,10 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		u8 red, green, blue;
+ 
+ 		if (get_user(index, &c->index) ||
+-		    __get_user(count, &c->count) ||
+-		    __get_user(ured, &c->red) ||
+-		    __get_user(ugreen, &c->green) ||
+-		    __get_user(ublue, &c->blue))
++		    get_user(count, &c->count) ||
++		    get_user(ured, &c->red) ||
++		    get_user(ugreen, &c->green) ||
++		    get_user(ublue, &c->blue))
+ 			return -EFAULT;
+ 
+ 		if (index + count > cmap->len)
 -- 
 2.20.1
 
