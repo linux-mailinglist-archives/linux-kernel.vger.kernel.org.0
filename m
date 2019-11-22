@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45616106541
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:23:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F0D10653F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbfKVGXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:23:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57166 "EHLO mail.kernel.org"
+        id S1728974AbfKVGXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 01:23:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728298AbfKVFvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:51:51 -0500
+        id S1727008AbfKVFvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:51:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0916520717;
-        Fri, 22 Nov 2019 05:51:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D5DA2070A;
+        Fri, 22 Nov 2019 05:51:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401910;
-        bh=pnHoMJ/VIf/bpAE19w6W//LfMUwzElYtDIiJ9wLpwgo=;
+        s=default; t=1574401913;
+        bh=+MPkf+/1ZgSXTTcyRZTaHbIWLFnK7BZRQH9Tcq5LrlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rVpGJBIFVn9ld64xGBlidcb1MVObsr3xoN5VZeHEw3BojbKasOoWgHvZzvT8HspwT
-         SxNFD44RR/9DN4U6ZaidiTDa+ysR7PIycotTimvc05BqzBn8GRexr5J7G0MyCf7qhG
-         auL0SqARIlpdOlIeg1irbs6IBU/WN59fBpFLR1to=
+        b=ur/qXM0UZOHhrmqSRKTl8ZLjoNzUpMOB500Me/fMwxbCH4ydP/o0fBv+VwmDz1dvq
+         UJIRaMpsetUpCiCX66/JR21ermiDEe8N+3ahPkwLG5fMzi+jQISxawS5fKrEbz8kYF
+         TdpX2BjkZ5kZZfgK6h4Ih5yP0HyRy478sYhDrzuY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qiuyang Sun <sunqiuyang@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 141/219] f2fs: fix block address for __check_sit_bitmap
-Date:   Fri, 22 Nov 2019 00:47:53 -0500
-Message-Id: <20191122054911.1750-134-sashal@kernel.org>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 144/219] um: Make GCOV depend on !KCOV
+Date:   Fri, 22 Nov 2019 00:47:56 -0500
+Message-Id: <20191122054911.1750-137-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,34 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
+From: Richard Weinberger <richard@nod.at>
 
-[ Upstream commit 9249dded7b5cb539a8c8698b25d08a3c15261470 ]
+[ Upstream commit 550ed0e2036663b35cec12374b835444f9c60454 ]
 
-Should use lstart (logical start address) instead of start (in dev) here.
-This fixes a bug in multi-device scenarios.
+Both do more or less the same thing and are mutually exclusive.
+If both are enabled the build will fail.
+Sooner or later we can kill UML's GCOV.
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/Kconfig.debug | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 10d5dcdb34be6..01cb87b12d40b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1101,7 +1101,7 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 		list_move_tail(&dc->list, wait_list);
- 
- 		/* sanity check on discard range */
--		__check_sit_bitmap(sbi, start, start + len);
-+		__check_sit_bitmap(sbi, lstart, lstart + len);
- 
- 		bio->bi_private = dc;
- 		bio->bi_end_io = f2fs_submit_discard_endio;
+diff --git a/arch/um/Kconfig.debug b/arch/um/Kconfig.debug
+index 2014597605ea9..85726eeec3451 100644
+--- a/arch/um/Kconfig.debug
++++ b/arch/um/Kconfig.debug
+@@ -16,6 +16,7 @@ config GPROF
+ config GCOV
+ 	bool "Enable gcov support"
+ 	depends on DEBUG_INFO
++	depends on !KCOV
+ 	help
+ 	  This option allows developers to retrieve coverage data from a UML
+ 	  session.
 -- 
 2.20.1
 
