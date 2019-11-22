@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 274FE107121
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05F2310700D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:20:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbfKVL0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:26:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58072 "EHLO mail.kernel.org"
+        id S1728320AbfKVLT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:19:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726984AbfKVKeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:34:08 -0500
+        id S1728297AbfKVKqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:46:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E129920656;
-        Fri, 22 Nov 2019 10:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06C67205C9;
+        Fri, 22 Nov 2019 10:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418847;
-        bh=wFarCmC1vgEJ83u0SNHI/6bTj2VuSACrgAQl9SOjl9w=;
+        s=default; t=1574419591;
+        bh=6yocqwmT1R9PbCLWfIRomMKgZoo1uKcOq6TLIs/TVFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AziTzzy1jeP3ExBoO2HQG5T2OnVtjRuXxekg99FlgqQ2gBp0nLnzjyRSt91aLdeUl
-         749XEcT5C5/2a97SS2fNT9wIAnUoy/h5LAOgKguHt0B/rS2M1YNSyn9uVX+E7W9JFS
-         nHW1oMkWXvipjQj2hcd2/z5BpnHTYw+pJL+3WEwQ=
+        b=rUUjX9yjoY/VqxmOBjx1ru+mqkndN7rv1gsTAjXodFyMDs2M8S3m+MTZ8x489yp0m
+         NjlRGKYaEgwjsfYuYc+ITqU3kI3PbrhG7xEMp7ZbphJm+thkx3dJ5GZg+Mhx4XJ7/Z
+         XzXWbt067uVid4nARUy2VXU+bqKVscYYzBBUnri0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 070/159] ARM: dts: am335x-evm: fix number of cpsw
+Subject: [PATCH 4.9 121/222] misc: genwqe: should return proper error value.
 Date:   Fri, 22 Nov 2019 11:27:41 +0100
-Message-Id: <20191122100756.409105340@linuxfoundation.org>
+Message-Id: <20191122100911.844134552@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-[ Upstream commit dcbf6b18d81bcdc51390ca1b258c17e2e13b7d0c ]
+[ Upstream commit 02241995b004faa7d9ff628e97f24056190853f8 ]
 
-am335x-evm has only one CPSW external port physically wired, but DT defines
-2 ext. ports. As result, PHY connection failure reported for the second
-ext. port.
+The function should return -EFAULT when copy_from_user fails. Even
+though the caller does not distinguish them. but we should keep backward
+compatibility.
 
-Update DT to reflect am335x-evm board HW configuration, and, while here,
-switch to use phy-handle instead of phy_id.
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am335x-evm.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/misc/genwqe/card_utils.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am335x-evm.dts b/arch/arm/boot/dts/am335x-evm.dts
-index d9d00ab863a21..2b8614e406f03 100644
---- a/arch/arm/boot/dts/am335x-evm.dts
-+++ b/arch/arm/boot/dts/am335x-evm.dts
-@@ -697,6 +697,7 @@
- 	pinctrl-0 = <&cpsw_default>;
- 	pinctrl-1 = <&cpsw_sleep>;
- 	status = "okay";
-+	slaves = <1>;
- };
+diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
+index b642b4fd731b6..95584bffa4eaf 100644
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -298,7 +298,7 @@ static int genwqe_sgl_size(int num_pages)
+ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 			  void __user *user_addr, size_t user_size)
+ {
+-	int rc;
++	int ret = -ENOMEM;
+ 	struct pci_dev *pci_dev = cd->pci_dev;
  
- &davinci_mdio {
-@@ -704,15 +705,14 @@
- 	pinctrl-0 = <&davinci_mdio_default>;
- 	pinctrl-1 = <&davinci_mdio_sleep>;
- 	status = "okay";
--};
+ 	sgl->fpage_offs = offset_in_page((unsigned long)user_addr);
+@@ -317,7 +317,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 	if (get_order(sgl->sgl_size) > MAX_ORDER) {
+ 		dev_err(&pci_dev->dev,
+ 			"[%s] err: too much memory requested!\n", __func__);
+-		return -ENOMEM;
++		return ret;
+ 	}
  
--&cpsw_emac0 {
--	phy_id = <&davinci_mdio>, <0>;
--	phy-mode = "rgmii-txid";
-+	ethphy0: ethernet-phy@0 {
-+		reg = <0>;
-+	};
- };
+ 	sgl->sgl = __genwqe_alloc_consistent(cd, sgl->sgl_size,
+@@ -325,7 +325,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 	if (sgl->sgl == NULL) {
+ 		dev_err(&pci_dev->dev,
+ 			"[%s] err: no memory available!\n", __func__);
+-		return -ENOMEM;
++		return ret;
+ 	}
  
--&cpsw_emac1 {
--	phy_id = <&davinci_mdio>, <1>;
-+&cpsw_emac0 {
-+	phy-handle = <&ethphy0>;
- 	phy-mode = "rgmii-txid";
- };
+ 	/* Only use buffering on incomplete pages */
+@@ -338,7 +338,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 		/* Sync with user memory */
+ 		if (copy_from_user(sgl->fpage + sgl->fpage_offs,
+ 				   user_addr, sgl->fpage_size)) {
+-			rc = -EFAULT;
++			ret = -EFAULT;
+ 			goto err_out;
+ 		}
+ 	}
+@@ -351,7 +351,7 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 		/* Sync with user memory */
+ 		if (copy_from_user(sgl->lpage, user_addr + user_size -
+ 				   sgl->lpage_size, sgl->lpage_size)) {
+-			rc = -EFAULT;
++			ret = -EFAULT;
+ 			goto err_out2;
+ 		}
+ 	}
+@@ -373,7 +373,8 @@ int genwqe_alloc_sync_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
+ 	sgl->sgl = NULL;
+ 	sgl->sgl_dma_addr = 0;
+ 	sgl->sgl_size = 0;
+-	return -ENOMEM;
++
++	return ret;
+ }
  
+ int genwqe_setup_sgl(struct genwqe_dev *cd, struct genwqe_sgl *sgl,
 -- 
 2.20.1
 
