@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D809106FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:19:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFEAD106DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:03:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbfKVLTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:19:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55112 "EHLO mail.kernel.org"
+        id S1731423AbfKVLD1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:03:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726942AbfKVKrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:47:19 -0500
+        id S1731408AbfKVLDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:03:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A21D20656;
-        Fri, 22 Nov 2019 10:47:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FE182075E;
+        Fri, 22 Nov 2019 11:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419638;
-        bh=P+UQtROkCA51/TMMU3JLQRCuGXr6mCdR6xtD5hFuvU4=;
+        s=default; t=1574420591;
+        bh=iORbwAUQT32YOs7L6orzyi2v9UCPskwpAZJBMgtZrms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DfwyjoByUpsXEKmB5q6agsRtfUFQ4+CTnU6rwf9nxVAix5QuKo8iLJ++dEgnTCLRk
-         HqSqbnCoHaJxoq7KDBfDV+zRoOT9se22di2qBmOSlzqtaVMhYdTvp4gnIRsW420Tzu
-         IMHxlWBWSoQxFSagSu5Hitiv+KONFePEMXNxvhis=
+        b=T1ZMlQAmLJ4WhGDxENgt6zqmwgHJPvU8OC1iW2WIBvSEsarjX9tBsa1Gi0VgKWfR+
+         PLS8tTTp1OYloslvoB1VmjNLMDtd2RYMFJIP3TPJx/s6naKWgh1WFyzEhJZZkNSaE8
+         pJv9l92XxsXJz8deRK3ioG92avT4kOlFdm0VOLrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cameron Kaiser <spectre@floodgap.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 182/222] KVM: PPC: Book3S PR: Exiting split hack mode needs to fixup both PC and LR
-Date:   Fri, 22 Nov 2019 11:28:42 +0100
-Message-Id: <20191122100915.509282448@linuxfoundation.org>
+Subject: [PATCH 4.19 158/220] platform/x86: mlx-platform: Properly use mlxplat_mlxcpld_msn201x_items
+Date:   Fri, 22 Nov 2019 11:28:43 +0100
+Message-Id: <20191122100924.075147228@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cameron Kaiser <spectre@floodgap.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 1006284c5e411872333967b1970c2ca46a9e225f ]
+[ Upstream commit 8289c4b6f2e53750de78bd38cecb6bce4d7a988c ]
 
-When an OS (currently only classic Mac OS) is running in KVM-PR and makes a
-linked jump from code with split hack addressing enabled into code that does
-not, LR is not correctly updated and reflects the previously munged PC.
+Clang warns that mlxplat_mlxcpld_msn201x_items is not going to be
+emitted in the final assembly because it's only used in ARRAY_SIZE right
+now, which is a compile time evaluation since the array's size is known.
 
-To fix this, this patch undoes the address munge when exiting split
-hack mode so that code relying on LR being a proper address will now
-execute. This does not affect OS X or other operating systems running
-on KVM-PR.
+drivers/platform/x86/mlx-platform.c:555:32: warning: variable
+'mlxplat_mlxcpld_msn201x_items' is not needed and will not be emitted
+[-Wunneeded-internal-declaration]
+static struct mlxreg_core_item mlxplat_mlxcpld_msn201x_items[] = {
+                               ^
+1 warning generated.
 
-Signed-off-by: Cameron Kaiser <spectre@floodgap.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+It appears this was a copy and paste mistake from when this item was
+first added. Use the definition in mlxplat_mlxcpld_msn201x_data so that
+Clang no longer warns.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/141
+Fixes: a49a41482f61 ("platform/x86: mlx-platform: Add support for new msn201x system type")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Vadim Pasternak <vadimp@mellanox.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/platform/x86/mlx-platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
-index 73c3c127d8584..209cad89a11a5 100644
---- a/arch/powerpc/kvm/book3s.c
-+++ b/arch/powerpc/kvm/book3s.c
-@@ -78,8 +78,11 @@ void kvmppc_unfixup_split_real(struct kvm_vcpu *vcpu)
- {
- 	if (vcpu->arch.hflags & BOOK3S_HFLAG_SPLIT_HACK) {
- 		ulong pc = kvmppc_get_pc(vcpu);
-+		ulong lr = kvmppc_get_lr(vcpu);
- 		if ((pc & SPLIT_HACK_MASK) == SPLIT_HACK_OFFS)
- 			kvmppc_set_pc(vcpu, pc & ~SPLIT_HACK_MASK);
-+		if ((lr & SPLIT_HACK_MASK) == SPLIT_HACK_OFFS)
-+			kvmppc_set_lr(vcpu, lr & ~SPLIT_HACK_MASK);
- 		vcpu->arch.hflags &= ~BOOK3S_HFLAG_SPLIT_HACK;
- 	}
- }
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index 742a0c2179256..d17db140cb1fc 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -575,7 +575,7 @@ static struct mlxreg_core_item mlxplat_mlxcpld_msn201x_items[] = {
+ 
+ static
+ struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_msn201x_data = {
+-	.items = mlxplat_mlxcpld_msn21xx_items,
++	.items = mlxplat_mlxcpld_msn201x_items,
+ 	.counter = ARRAY_SIZE(mlxplat_mlxcpld_msn201x_items),
+ 	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
+ 	.mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
 -- 
 2.20.1
 
