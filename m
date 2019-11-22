@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72DB1106ED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81749106F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730895AbfKVK7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:59:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50146 "EHLO mail.kernel.org"
+        id S1729440AbfKVK5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:57:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730637AbfKVK7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:59:17 -0500
+        id S1727749AbfKVK5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3972C20706;
-        Fri, 22 Nov 2019 10:59:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 232F820721;
+        Fri, 22 Nov 2019 10:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420356;
-        bh=iOCWkkQyNZ9HFAZK0cqFlOadkurC8YTumm+nF+4sP6Y=;
+        s=default; t=1574420231;
+        bh=X2bHHl2RcPZJlk2yD2hIgmtodJF2T9sbh3u768snjnI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FEWZjyj+SNARVnVXICeEUnQ+ERB3V+T6Au0izBmeatzTFyiwfr//UlKiEX0eB32J
-         qXcYRVFAOTlCcxXXZ5stTA9JgSsnFSxixQHOTDIL0bmxD+0gubPRKA6ZLcyaCAkz6q
-         bSrxsDeYR7chZZl6NlrjPW2sVRS6hhRhfOBEHeqs=
+        b=puT73QDVgvVkEJ7iysVzURkB8aAUsneTRbtMUe5Ml9U60cppA54E5dWbEeZC7S5IU
+         fS+6qc5GgO+RPS1ZMpu+CuRTdVg0NLJyDbvRdj1QuJaxaCVHsoW9mJ8O4Jdr2EK2Px
+         N+AfW5MzeNQJHqNfk4YX1X61XKnGg+vBeGmgxJK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 035/220] iommu/arm-smmu-v3: Fix unexpected CMD_SYNC timeout
-Date:   Fri, 22 Nov 2019 11:26:40 +0100
-Message-Id: <20191122100914.880014065@linuxfoundation.org>
+Subject: [PATCH 4.19 037/220] arm64/numa: Report correct memblock range for the dummy node
+Date:   Fri, 22 Nov 2019 11:26:42 +0100
+Message-Id: <20191122100915.006738285@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,84 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
 
-[ Upstream commit 0f02477d16980938a84aba8688a4e3a303306116 ]
+[ Upstream commit 77cfe950901e5c13aca2df6437a05f39dd9a929b ]
 
-The condition break condition of:
+The dummy node ID is marked into all memory ranges on the system. So the
+dummy node really extends the entire memblock.memory. Hence report correct
+extent information for the dummy node using memblock range helper functions
+instead of the range [0LLU, PFN_PHYS(max_pfn) - 1)].
 
-	(int)(VAL - sync_idx) >= 0
-
-in the __arm_smmu_sync_poll_msi() polling loop requires that sync_idx
-must be increased monotonically according to the sequence of the CMDs in
-the cmdq.
-
-However, since the msidata is populated using atomic_inc_return_relaxed()
-before taking the command-queue spinlock, then the following scenario
-can occur:
-
-CPU0			CPU1
-msidata=0
-			msidata=1
-			insert cmd1
-insert cmd0
-			smmu execute cmd1
-smmu execute cmd0
-			poll timeout, because msidata=1 is overridden by
-			cmd0, that means VAL=0, sync_idx=1.
-
-This is not a functional problem, since the caller will eventually either
-timeout or exit due to another CMD_SYNC, however it's clearly not what
-the code is supposed to be doing. Fix it, by incrementing the sequence
-count with the command-queue lock held, allowing us to drop the atomic
-operations altogether.
-
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[will: dropped the specialised cmd building routine for now]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 1a2db30034 ("arm64, numa: Add NUMA support for arm64 platforms")
+Acked-by: Punit Agrawal <punit.agrawal@arm.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ arch/arm64/mm/numa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 40fbf20d69e5a..2ab7100bcff12 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -567,7 +567,7 @@ struct arm_smmu_device {
+diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+index 146c04ceaa514..54529b4ed5130 100644
+--- a/arch/arm64/mm/numa.c
++++ b/arch/arm64/mm/numa.c
+@@ -432,7 +432,7 @@ static int __init dummy_numa_init(void)
+ 	if (numa_off)
+ 		pr_info("NUMA disabled\n"); /* Forced off on command line. */
+ 	pr_info("Faking a node at [mem %#018Lx-%#018Lx]\n",
+-		0LLU, PFN_PHYS(max_pfn) - 1);
++		memblock_start_of_DRAM(), memblock_end_of_DRAM() - 1);
  
- 	int				gerr_irq;
- 	int				combined_irq;
--	atomic_t			sync_nr;
-+	u32				sync_nr;
- 
- 	unsigned long			ias; /* IPA */
- 	unsigned long			oas; /* PA */
-@@ -964,14 +964,13 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
- 	struct arm_smmu_cmdq_ent ent = {
- 		.opcode = CMDQ_OP_CMD_SYNC,
- 		.sync	= {
--			.msidata = atomic_inc_return_relaxed(&smmu->sync_nr),
- 			.msiaddr = virt_to_phys(&smmu->sync_count),
- 		},
- 	};
- 
--	arm_smmu_cmdq_build_cmd(cmd, &ent);
--
- 	spin_lock_irqsave(&smmu->cmdq.lock, flags);
-+	ent.sync.msidata = ++smmu->sync_nr;
-+	arm_smmu_cmdq_build_cmd(cmd, &ent);
- 	arm_smmu_cmdq_insert_cmd(smmu, cmd);
- 	spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
- 
-@@ -2196,7 +2195,6 @@ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
- {
- 	int ret;
- 
--	atomic_set(&smmu->sync_nr, 0);
- 	ret = arm_smmu_init_queues(smmu);
- 	if (ret)
- 		return ret;
+ 	for_each_memblock(memory, mblk) {
+ 		ret = numa_add_memblk(0, mblk->base, mblk->base + mblk->size);
 -- 
 2.20.1
 
