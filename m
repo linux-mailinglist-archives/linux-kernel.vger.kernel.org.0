@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0AB0106EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99315107142
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:27:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbfKVLLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:11:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49864 "EHLO mail.kernel.org"
+        id S1727585AbfKVKcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:32:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730868AbfKVK7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:59:08 -0500
+        id S1727547AbfKVKcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:32:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A528F20706;
-        Fri, 22 Nov 2019 10:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BC7A20714;
+        Fri, 22 Nov 2019 10:32:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420348;
-        bh=urMkjndaCFT8P0B6YUlwM2kbeo3+BVId8Tiq7RtV6pc=;
+        s=default; t=1574418726;
+        bh=E5zs1M/0RJADfTrN7tYc7NV9NtH57DlhyBb+rh5cvug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=df8cISyilpwZ5Trkg1pj1rU4BCijUM1Ds0XlA3dQU3bmxE+WsoXVAPx+M0Zznxymp
-         lqgFO99cy4DLe6Yru5V7qpGBE5zWDo2xKkFPdFfpNi8t6slQqcomfE2DRQ56yBdYor
-         uwXl8icW8JE/BIiJWDCvWDVIXStQJx7cKNSZfhLw=
+        b=y2a30h9DWjss9qzeow5N6ca2haNWhGtsmgIpbnsNEsfM4m0RnaGAIaK4NII5949yO
+         fpJHQaR4ayrj6kbQQXUcLIbmDwU377VYHLRl+BmoFW7j3HtV/fOkXguJJKlxuYkRUD
+         kiSO0xpQEg850unP37P3ixsk5UnE61tsfpP9G3d8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 032/220] mt76x2: disable WLAN core before probe
-Date:   Fri, 22 Nov 2019 11:26:37 +0100
-Message-Id: <20191122100914.699320675@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 007/159] ecryptfs_lookup_interpose(): lower_dentry->d_parent is not stable either
+Date:   Fri, 22 Nov 2019 11:26:38 +0100
+Message-Id: <20191122100710.798333925@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +42,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 62e04f8a31fcc375c978b7f83b4229a10c3e746d ]
+commit 762c69685ff7ad5ad7fee0656671e20a0c9c864d upstream.
 
-If the WLAN core is still active during initialization, it might cause
-the MCU or DMA to hang. This can happen during soft reboot, so disable
-the core + clock early to avoid this issue.
+We need to get the underlying dentry of parent; sure, absent the races
+it is the parent of underlying dentry, but there's nothing to prevent
+losing a timeslice to preemtion in the middle of evaluation of
+lower_dentry->d_parent->d_inode, having another process move lower_dentry
+around and have its (ex)parent not pinned anymore and freed on memory
+pressure.  Then we regain CPU and try to fetch ->d_inode from memory
+that is freed by that point.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+dentry->d_parent *is* stable here - it's an argument of ->lookup() and
+we are guaranteed that it won't be moved anywhere until we feed it
+to d_add/d_splice_alias.  So we safely go that way to get to its
+underlying dentry.
+
+Cc: stable@vger.kernel.org # since 2009 or so
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2_init_common.c | 4 ++++
- drivers/net/wireless/mediatek/mt76/mt76x2_pci.c         | 1 +
- 2 files changed, 5 insertions(+)
+ fs/ecryptfs/inode.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_init_common.c b/drivers/net/wireless/mediatek/mt76/mt76x2_init_common.c
-index 324b2a4b8b67c..54a9e1dfaf7a4 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_init_common.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_init_common.c
-@@ -72,6 +72,9 @@ void mt76x2_reset_wlan(struct mt76x2_dev *dev, bool enable)
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -330,9 +330,9 @@ static int ecryptfs_lookup_interpose(str
+ 				     struct dentry *lower_dentry,
+ 				     struct inode *dir_inode)
  {
- 	u32 val;
++	struct path *path = ecryptfs_dentry_to_lower_path(dentry->d_parent);
+ 	struct inode *inode, *lower_inode;
+ 	struct ecryptfs_dentry_info *dentry_info;
+-	struct vfsmount *lower_mnt;
+ 	int rc = 0;
  
-+	if (!enable)
-+		goto out;
-+
- 	val = mt76_rr(dev, MT_WLAN_FUN_CTRL);
- 
- 	val &= ~MT_WLAN_FUN_CTRL_FRC_WL_ANT_SEL;
-@@ -87,6 +90,7 @@ void mt76x2_reset_wlan(struct mt76x2_dev *dev, bool enable)
- 	mt76_wr(dev, MT_WLAN_FUN_CTRL, val);
- 	udelay(20);
- 
-+out:
- 	mt76x2_set_wlan_state(dev, enable);
- }
- EXPORT_SYMBOL_GPL(mt76x2_reset_wlan);
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_pci.c b/drivers/net/wireless/mediatek/mt76/mt76x2_pci.c
-index e66f047ea4481..26cfda24ce085 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_pci.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_pci.c
-@@ -53,6 +53,7 @@ mt76pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	dentry_info = kmem_cache_alloc(ecryptfs_dentry_info_cache, GFP_KERNEL);
+@@ -344,12 +344,11 @@ static int ecryptfs_lookup_interpose(str
  		return -ENOMEM;
+ 	}
  
- 	mt76_mmio_init(&dev->mt76, pcim_iomap_table(pdev)[0]);
-+	mt76x2_reset_wlan(dev, false);
+-	lower_mnt = mntget(ecryptfs_dentry_to_lower_mnt(dentry->d_parent));
+-	fsstack_copy_attr_atime(dir_inode, d_inode(lower_dentry->d_parent));
++	fsstack_copy_attr_atime(dir_inode, d_inode(path->dentry));
+ 	BUG_ON(!d_count(lower_dentry));
  
- 	dev->mt76.rev = mt76_rr(dev, MT_ASIC_VERSION);
- 	dev_info(dev->mt76.dev, "ASIC revision: %08x\n", dev->mt76.rev);
--- 
-2.20.1
-
+ 	ecryptfs_set_dentry_private(dentry, dentry_info);
+-	dentry_info->lower_path.mnt = lower_mnt;
++	dentry_info->lower_path.mnt = mntget(path->mnt);
+ 	dentry_info->lower_path.dentry = lower_dentry;
+ 
+ 	/*
 
 
