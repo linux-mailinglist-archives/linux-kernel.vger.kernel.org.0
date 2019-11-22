@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3E3106C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB354106B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbfKVKuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:50:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60806 "EHLO mail.kernel.org"
+        id S1729451AbfKVKpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfKVKuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:50:39 -0500
+        id S1727978AbfKVKpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:45:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48999205C9;
-        Fri, 22 Nov 2019 10:50:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5812620718;
+        Fri, 22 Nov 2019 10:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419838;
-        bh=SFa9Hrg+Z/KkxLOuH+wdWC71jllfBEWNrvKlWM6RZBA=;
+        s=default; t=1574419518;
+        bh=wg46qknz9Hf2607OK9IVon7QRzTj/a1p1YRAecuuMHk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V8sagXy8ZPKZz+tO8I1uKecPw3cgk1QPYMzHw0JNJ3BMKIvO/spSLWcf0EXRmm0/z
-         NsKe0yrAobbp/n9OJQZDipSfosPOZfKUYSV255nMNq1CpRIw2LdG2KNVHSxFKmPfTF
-         b0bdV5htoK8cbj7J+DnWiroQu9LFR9+W5i5KP70A=
+        b=lHvr2G/Y1GRHuRdnWWfQVOFizn8FPgMsPkpnTi0h9dqTl+/0DtLGN7LQgfIbw5iHc
+         xk3fi0YhFcvdSvJQB2KDu5ossWFeHppYTIFQ9dCu3I1CEPIctO91Z/j5CFGKIJ1QiY
+         F2tlp/drvrj5IHHMwLZ2icD9Cpi7/2/Iiqf/MyTY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 026/122] usb: dwc3: gadget: Check ENBLSLPM before sending ep command
+Subject: [PATCH 4.9 139/222] scsi: NCR5380: Handle BUS FREE during reselection
 Date:   Fri, 22 Nov 2019 11:27:59 +0100
-Message-Id: <20191122100741.290644583@linuxfoundation.org>
+Message-Id: <20191122100912.901414049@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 87dd96111b0bb8e616fcbd74dbf4bb4182f2c596 ]
+[ Upstream commit ca694afad707cb3ae2fdef3b28454444d9ac726e ]
 
-When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
-GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an endpoint
-command.
+The X3T9.2 specification (draft) says, under "6.1.4.2 RESELECTION time-out
+procedure", that a target may assert RST or go to BUS FREE phase if the
+initiator does not respond within 200 us. Something like this has been
+observed with AztecMonster II target. When it happens, all we can do is wait
+for the target to try again.
 
-Current implementation only save and restore GUSB2PHYCFG.SUSPHY
-configuration. We must save and clear both GUSB2PHYCFG.ENBLSLPM and
-GUSB2PHYCFG.SUSPHY settings. Restore them after the command is
-completed.
-
-DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
-
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ drivers/scsi/NCR5380.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 5916340c41621..e96b22d6fa52e 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -277,27 +277,36 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 	const struct usb_endpoint_descriptor *desc = dep->endpoint.desc;
- 	struct dwc3		*dwc = dep->dwc;
- 	u32			timeout = 1000;
-+	u32			saved_config = 0;
- 	u32			reg;
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index 03f9ddbc37fbb..27270631c70c2 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -2133,6 +2133,9 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
  
- 	int			cmd_status = 0;
--	int			susphy = false;
- 	int			ret = -EINVAL;
- 
- 	/*
--	 * Synopsys Databook 2.60a states, on section 6.3.2.5.[1-8], that if
--	 * we're issuing an endpoint command, we must check if
--	 * GUSB2PHYCFG.SUSPHY bit is set. If it is, then we need to clear it.
-+	 * When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
-+	 * GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an
-+	 * endpoint command.
- 	 *
--	 * We will also set SUSPHY bit to what it was before returning as stated
--	 * by the same section on Synopsys databook.
-+	 * Save and clear both GUSB2PHYCFG.ENBLSLPM and GUSB2PHYCFG.SUSPHY
-+	 * settings. Restore them after the command is completed.
-+	 *
-+	 * DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
- 	 */
- 	if (dwc->gadget.speed <= USB_SPEED_HIGH) {
- 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
- 		if (unlikely(reg & DWC3_GUSB2PHYCFG_SUSPHY)) {
--			susphy = true;
-+			saved_config |= DWC3_GUSB2PHYCFG_SUSPHY;
- 			reg &= ~DWC3_GUSB2PHYCFG_SUSPHY;
--			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 		}
-+
-+		if (reg & DWC3_GUSB2PHYCFG_ENBLSLPM) {
-+			saved_config |= DWC3_GUSB2PHYCFG_ENBLSLPM;
-+			reg &= ~DWC3_GUSB2PHYCFG_ENBLSLPM;
-+		}
-+
-+		if (saved_config)
-+			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
- 	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
-@@ -395,9 +404,9 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 		}
- 	}
- 
--	if (unlikely(susphy)) {
-+	if (saved_config) {
- 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
--		reg |= DWC3_GUSB2PHYCFG_SUSPHY;
-+		reg |= saved_config;
- 		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
+ 	if (NCR5380_poll_politely(instance,
+ 	                          STATUS_REG, SR_REQ, SR_REQ, 2 * HZ) < 0) {
++		if ((NCR5380_read(STATUS_REG) & (SR_BSY | SR_SEL)) == 0)
++			/* BUS FREE phase */
++			return;
+ 		shost_printk(KERN_ERR, instance, "reselect: REQ timeout\n");
+ 		do_abort(instance);
+ 		return;
 -- 
 2.20.1
 
