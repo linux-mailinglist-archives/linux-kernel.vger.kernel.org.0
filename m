@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3F9106A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3A3106C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbfKVKgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:36:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35582 "EHLO mail.kernel.org"
+        id S1728949AbfKVKuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:50:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728352AbfKVKgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:36:11 -0500
+        id S1727994AbfKVKuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:50:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 957EE20708;
-        Fri, 22 Nov 2019 10:36:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C8F720656;
+        Fri, 22 Nov 2019 10:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418971;
-        bh=HrZydUBmD092wPT0uKXS80UwIaoK0i9UKqcYugJM4+c=;
+        s=default; t=1574419806;
+        bh=ZCHLhni9I5Hq8zgWjDgMU4vLfAwPEpoV4JgK5zdxmCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IKrRC6aeNtOlR5/WcZs931+IhpC+4vQUq4OILFwSEGcioNpCHJIqNGzfsjKHL9Eil
-         gr1Dj5oGGsCUv5kxHxAXRCQ7Ub7UOjUpi0qac9GDeNZW6d133Qa+SHBM6juz0jy1qz
-         et375ZHBqUXG7Hgku2bNdLUdytcgW/5/V/nrAYgA=
+        b=dn+ZKgQ2VKoDJVBB+YW6gkgrz/h+kmjPDYlvpaTsOJVjHBThCX8V15FdkW6lvsVVa
+         xaWbkqCv/2WhS3ZstkVwu6fIIMGuuYT9FdN7pvTsDNfVk3y6UfgsKErFW/JqLoaox5
+         H3hAuonqDTtktcLw8Glgu4KYhBxCh0a9/jRs7jnk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Whitehead <tedheadster@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 077/159] x86/CPU: Use correct macros for Cyrix calls
-Date:   Fri, 22 Nov 2019 11:27:48 +0100
-Message-Id: <20191122100800.482085842@linuxfoundation.org>
+        stable@vger.kernel.org, Philipp Rossak <embed3d@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 016/122] ARM: dts: sun8i: h3-h5: ir register size should be the whole memory block
+Date:   Fri, 22 Nov 2019 11:27:49 +0100
+Message-Id: <20191122100734.304732181@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,65 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Whitehead <tedheadster@gmail.com>
+From: Philipp Rossak <embed3d@gmail.com>
 
-[ Upstream commit 03b099bdcdf7125d4a63dc9ddeefdd454e05123d ]
+[ Upstream commit 6c700289a3e84d5d3f2a95cf27732a7f7fce105b ]
 
-There are comments in processor-cyrix.h advising you to _not_ make calls
-using the deprecated macros in this style:
+The size of the register should be the size of the whole memory block,
+not just the registers, that are needed.
 
-  setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
-
-This is because it expands the macro into a non-functioning calling
-sequence. The calling order must be:
-
-  outb(CX86_CCR2, 0x22);
-  inb(0x23);
-
->From the comments:
-
- * When using the old macros a line like
- *   setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x88);
- * gets expanded to:
- *  do {
- *    outb((CX86_CCR2), 0x22);
- *    outb((({
- *        outb((CX86_CCR2), 0x22);
- *        inb(0x23);
- *    }) | 0x88), 0x23);
- *  } while (0);
-
-The new macros fix this problem, so use them instead.
-
-Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Andy Lutomirski <luto@amacapital.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180921212041.13096-2-tedheadster@gmail.com
+Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/cyrix.c | 2 +-
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
-index 6e4e4191abb56..151625a83d9e2 100644
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -433,7 +433,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
- 			/* enable MAPEN  */
- 			setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);
- 			/* enable cpuid  */
--			setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
-+			setCx86(CX86_CCR4, getCx86(CX86_CCR4) | 0x80);
- 			/* disable MAPEN */
- 			setCx86(CX86_CCR3, ccr3);
- 			local_irq_restore(flags);
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 11240a8313c26..03f37081fc64e 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -594,7 +594,7 @@
+ 			clock-names = "apb", "ir";
+ 			resets = <&r_ccu RST_APB0_IR>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+-			reg = <0x01f02000 0x40>;
++			reg = <0x01f02000 0x400>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
 2.20.1
 
