@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89190106FDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:19:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1FDA106E37
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbfKVKsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:48:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56964 "EHLO mail.kernel.org"
+        id S1731826AbfKVLGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:06:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729899AbfKVKsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:18 -0500
+        id S1731815AbfKVLGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:06:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C58D620656;
-        Fri, 22 Nov 2019 10:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E5082075E;
+        Fri, 22 Nov 2019 11:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419697;
-        bh=NGvcGUUb/zX84EsKjg1TLdH6Al2JKVLtjEr2dAXuSVE=;
+        s=default; t=1574420770;
+        bh=7uykPxA/I2LccFSMWbafqDlyn70uAtU8Wu+4C3s1Uj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBRXYM9nnLo0ZM43z25xuJFxMYl0j00ObzX8YsQ/q4brJLk/h39HY1ZnXbSoC+rv5
-         COqsMU0/P9TfucbCbwj/7xEVPUbQkG+eDnUH38kw0WI4GxPrl5x4kcrxhsXXsw9bzD
-         TPfuIb5ffpgWyCKtJ9XOZPg2E5pdVPx64KK34Oc4=
+        b=F5G5EXlJY10mnQzQhAnsPuV68Fx+9lLlBG67GVwUSbPhxkbSELjkO/nQ3ZapzCLyS
+         6RGCWSWrwN/5Eh82whn/YynJg7K61a9LYv7ciT1odIgtVI05Egj8BzaCbBWJOOyyx4
+         6cy+7vcyWUgbCxFaqiEqz28Hy8oY7V7SCVxG2kCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Peter Malone <peter.malone@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 200/222] fbdev: sbuslib: integer overflow in sbusfb_ioctl_helper()
-Date:   Fri, 22 Nov 2019 11:29:00 +0100
-Message-Id: <20191122100916.671409720@linuxfoundation.org>
+Subject: [PATCH 4.19 176/220] media: cx231xx: fix potential sign-extension overflow on large shift
+Date:   Fri, 22 Nov 2019 11:29:01 +0100
+Message-Id: <20191122100925.510342763@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,36 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit e5017716adb8aa5c01c52386c1b7470101ffe9c5 ]
+[ Upstream commit 32ae592036d7aeaabcccb2b1715373a68639a768 ]
 
-The "index + count" addition can overflow.  Both come directly from the
-user.  This bug leads to an information leak.
+Shifting the u8 value[3] by an int can lead to sign-extension
+overflow. For example, if value[3] is 0xff and the shift is 24 then it
+is promoted to int and then the top bit is sign-extended so that all
+upper 32 bits are set.  Fix this by casting value[3] to a u32 before
+the shift.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Peter Malone <peter.malone@gmail.com>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Detected by CoverityScan, CID#1016522 ("Unintended sign extension")
+
+Fixes: e0d3bafd0258 ("V4L/DVB (10954): Add cx231xx USB driver")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/sbuslib.c | 2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
-index b425718925c01..52e161dbd2047 100644
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -170,7 +170,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
- 		    get_user(ublue, &c->blue))
- 			return -EFAULT;
- 
--		if (index + count > cmap->len)
-+		if (index > cmap->len || count > cmap->len - index)
- 			return -EINVAL;
- 
- 		for (i = 0; i < count; i++) {
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
+index f7fcd733a2ca8..963739fa86718 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -1389,7 +1389,7 @@ int cx231xx_g_register(struct file *file, void *priv,
+ 		ret = cx231xx_read_ctrl_reg(dev, VRT_GET_REGISTER,
+ 				(u16)reg->reg, value, 4);
+ 		reg->val = value[0] | value[1] << 8 |
+-			value[2] << 16 | value[3] << 24;
++			value[2] << 16 | (u32)value[3] << 24;
+ 		reg->size = 4;
+ 		break;
+ 	case 1:	/* AFE - read byte */
 -- 
 2.20.1
 
