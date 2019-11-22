@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7B0106DAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A89B2106DB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:02:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731267AbfKVLCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:02:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55200 "EHLO mail.kernel.org"
+        id S1730679AbfKVLCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:02:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731233AbfKVLB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:01:57 -0500
+        id S1731253AbfKVLCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:02:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 369DE2077B;
-        Fri, 22 Nov 2019 11:01:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 765782075B;
+        Fri, 22 Nov 2019 11:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420516;
-        bh=j1xtx9yjAgRktUtejvRwP+MnUo+B8NrgqFSuVJrAbdw=;
+        s=default; t=1574420520;
+        bh=7kkQdKM17MDDKEtGn+Zxkx5RKER3gUy2kCYhpw782+w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E6ppTCtVK/PRsOGaBKCJnUYzworPB7Lck3LGBjgOGTFdS3MNl+FvKsuAWIeyCeLxI
-         cvPakyYOmqnHHeMz9qWyX3KdF+94lDbn1JEAFHDonwaXFVfO46PUVqRfueMewitxaX
-         K+IHZYzkYyRc98GIRhu293Tf2fe2n33tYjDhH/lc=
+        b=nUBKjVJDGI9eYSB8p9sAkHL/RQDA+RR1FvXPJe09uHcHfPIG/GBqIHqteqGJnRDii
+         BERShfQ785cF+FGdqzxrqwxDLdFozM0UDsnl7qDHnfscUbUOd8gNYvS5k9+wGoYqhb
+         /SgI3v/opLEBR4mhvVB9IekpwBBqRHE3OPg+pMeU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
+        stable@vger.kernel.org, Lucas Bates <lucasb@mojatatu.com>,
+        Davide Caratti <dcaratti@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 134/220] net: hns3: Fix for rx vlan id handle to support Rev 0x21 hardware
-Date:   Fri, 22 Nov 2019 11:28:19 +0100
-Message-Id: <20191122100922.456733870@linuxfoundation.org>
+Subject: [PATCH 4.19 135/220] tc-testing: fix build of eBPF programs
+Date:   Fri, 22 Nov 2019 11:28:20 +0100
+Message-Id: <20191122100922.526045628@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -45,92 +45,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 701a6d6ac78c76083ddb7c6581fdbedd95093e11 ]
+[ Upstream commit cf5eafbfa586d030f9321cee516b91d089e38280 ]
 
-In revision 0x20, we use vlan id != 0 to check whether a vlan tag
-has been offloaded, so vlan id 0 is not supported.
+rely on uAPI headers in the current kernel tree, rather than requiring the
+correct version installed on the test system. While at it, group all
+sections in a single binary and test the 'section' parameter.
 
-In revision 0x21, rx buffer descriptor adds two bits to indicate
-whether one or more vlan tags have been offloaded, so vlan id 0
-is valid now.
-
-This patch seperates the handle for vlan id 0, add vlan id 0 support
-for revision 0x21.
-
-Fixes: 5b5455a9ed5a ("net: hns3: Add STRP_TAGP field support for hardware revision 0x21")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Reported-by: Lucas Bates <lucasb@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 30 ++++++++-----------
- 1 file changed, 13 insertions(+), 17 deletions(-)
+ .../testing/selftests/tc-testing/bpf/Makefile | 29 +++++++++++++++++++
+ .../testing/selftests/tc-testing/bpf/action.c | 23 +++++++++++++++
+ .../tc-testing/tc-tests/actions/bpf.json      | 16 +++++-----
+ .../selftests/tc-testing/tdc_config.py        |  4 ++-
+ 4 files changed, 63 insertions(+), 9 deletions(-)
+ create mode 100644 tools/testing/selftests/tc-testing/bpf/Makefile
+ create mode 100644 tools/testing/selftests/tc-testing/bpf/action.c
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 15030df574a8b..e11a7de20b8f4 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2124,18 +2124,18 @@ static void hns3_rx_skb(struct hns3_enet_ring *ring, struct sk_buff *skb)
- 	napi_gro_receive(&ring->tqp_vector->napi, skb);
- }
+diff --git a/tools/testing/selftests/tc-testing/bpf/Makefile b/tools/testing/selftests/tc-testing/bpf/Makefile
+new file mode 100644
+index 0000000000000..dc92eb271d9a1
+--- /dev/null
++++ b/tools/testing/selftests/tc-testing/bpf/Makefile
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: GPL-2.0
++
++APIDIR := ../../../../include/uapi
++TEST_GEN_FILES = action.o
++
++top_srcdir = ../../../../..
++include ../../lib.mk
++
++CLANG ?= clang
++LLC   ?= llc
++PROBE := $(shell $(LLC) -march=bpf -mcpu=probe -filetype=null /dev/null 2>&1)
++
++ifeq ($(PROBE),)
++  CPU ?= probe
++else
++  CPU ?= generic
++endif
++
++CLANG_SYS_INCLUDES := $(shell $(CLANG) -v -E - </dev/null 2>&1 \
++	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }')
++
++CLANG_FLAGS = -I. -I$(APIDIR) \
++	      $(CLANG_SYS_INCLUDES) \
++	      -Wno-compare-distinct-pointer-types
++
++$(OUTPUT)/%.o: %.c
++	$(CLANG) $(CLANG_FLAGS) \
++		 -O2 -target bpf -emit-llvm -c $< -o - |      \
++	$(LLC) -march=bpf -mcpu=$(CPU) $(LLC_FLAGS) -filetype=obj -o $@
+diff --git a/tools/testing/selftests/tc-testing/bpf/action.c b/tools/testing/selftests/tc-testing/bpf/action.c
+new file mode 100644
+index 0000000000000..c32b99b80e19e
+--- /dev/null
++++ b/tools/testing/selftests/tc-testing/bpf/action.c
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0
++ * Copyright (c) 2018 Davide Caratti, Red Hat inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of version 2 of the GNU General Public
++ * License as published by the Free Software Foundation.
++ */
++
++#include <linux/bpf.h>
++#include <linux/pkt_cls.h>
++
++__attribute__((section("action-ok"),used)) int action_ok(struct __sk_buff *s)
++{
++	return TC_ACT_OK;
++}
++
++__attribute__((section("action-ko"),used)) int action_ko(struct __sk_buff *s)
++{
++	s->data = 0x0;
++	return TC_ACT_OK;
++}
++
++char _license[] __attribute__((section("license"),used)) = "GPL";
+diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json b/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json
+index 6f289a49e5ecf..1a9b282dd0be2 100644
+--- a/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json
++++ b/tools/testing/selftests/tc-testing/tc-tests/actions/bpf.json
+@@ -55,7 +55,7 @@
+             "bpf"
+         ],
+         "setup": [
+-            "printf '#include <linux/bpf.h>\nchar l[] __attribute__((section(\"license\"),used))=\"GPL\"; __attribute__((section(\"action\"),used)) int m(struct __sk_buff *s) { return 2; }' | clang -O2 -x c -c - -target bpf -o _b.o",
++            "make -C bpf",
+             [
+                 "$TC action flush action bpf",
+                 0,
+@@ -63,14 +63,14 @@
+                 255
+             ]
+         ],
+-        "cmdUnderTest": "$TC action add action bpf object-file _b.o index 667",
++        "cmdUnderTest": "$TC action add action bpf object-file $EBPFDIR/action.o section action-ok index 667",
+         "expExitCode": "0",
+         "verifyCmd": "$TC action get action bpf index 667",
+-        "matchPattern": "action order [0-9]*: bpf _b.o:\\[action\\] id [0-9]* tag 3b185187f1855c4c( jited)? default-action pipe.*index 667 ref",
++        "matchPattern": "action order [0-9]*: bpf action.o:\\[action-ok\\] id [0-9]* tag [0-9a-f]{16}( jited)? default-action pipe.*index 667 ref",
+         "matchCount": "1",
+         "teardown": [
+             "$TC action flush action bpf",
+-            "rm -f _b.o"
++            "make -C bpf clean"
+         ]
+     },
+     {
+@@ -81,7 +81,7 @@
+             "bpf"
+         ],
+         "setup": [
+-            "printf '#include <linux/bpf.h>\nchar l[] __attribute__((section(\"license\"),used))=\"GPL\"; __attribute__((section(\"action\"),used)) int m(struct __sk_buff *s) { s->data = 0x0; return 2; }' | clang -O2 -x c -c - -target bpf -o _c.o",
++            "make -C bpf",
+             [
+                 "$TC action flush action bpf",
+                 0,
+@@ -89,10 +89,10 @@
+                 255
+             ]
+         ],
+-        "cmdUnderTest": "$TC action add action bpf object-file _c.o index 667",
++        "cmdUnderTest": "$TC action add action bpf object-file $EBPFDIR/action.o section action-ko index 667",
+         "expExitCode": "255",
+         "verifyCmd": "$TC action get action bpf index 667",
+-        "matchPattern": "action order [0-9]*: bpf _c.o:\\[action\\] id [0-9].*index 667 ref",
++        "matchPattern": "action order [0-9]*: bpf action.o:\\[action-ko\\] id [0-9].*index 667 ref",
+         "matchCount": "0",
+         "teardown": [
+             [
+@@ -101,7 +101,7 @@
+                 1,
+                 255
+             ],
+-            "rm -f _c.o"
++            "make -C bpf clean"
+         ]
+     },
+     {
+diff --git a/tools/testing/selftests/tc-testing/tdc_config.py b/tools/testing/selftests/tc-testing/tdc_config.py
+index a023d0d62b25c..d651bc1501bdb 100644
+--- a/tools/testing/selftests/tc-testing/tdc_config.py
++++ b/tools/testing/selftests/tc-testing/tdc_config.py
+@@ -16,7 +16,9 @@ NAMES = {
+           'DEV2': '',
+           'BATCH_FILE': './batch.txt',
+           # Name of the namespace to use
+-          'NS': 'tcut'
++          'NS': 'tcut',
++          # Directory containing eBPF test programs
++          'EBPFDIR': './bpf'
+         }
  
--static u16 hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
--			       struct hns3_desc *desc, u32 l234info)
-+static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
-+				struct hns3_desc *desc, u32 l234info,
-+				u16 *vlan_tag)
- {
- 	struct pci_dev *pdev = ring->tqp->handle->pdev;
--	u16 vlan_tag;
  
- 	if (pdev->revision == 0x20) {
--		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
--		if (!(vlan_tag & VLAN_VID_MASK))
--			vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
-+		*vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
-+		if (!(*vlan_tag & VLAN_VID_MASK))
-+			*vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
- 
--		return vlan_tag;
-+		return (*vlan_tag != 0);
- 	}
- 
- #define HNS3_STRP_OUTER_VLAN	0x1
-@@ -2144,17 +2144,14 @@ static u16 hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
- 	switch (hnae3_get_field(l234info, HNS3_RXD_STRP_TAGP_M,
- 				HNS3_RXD_STRP_TAGP_S)) {
- 	case HNS3_STRP_OUTER_VLAN:
--		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
--		break;
-+		*vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
-+		return true;
- 	case HNS3_STRP_INNER_VLAN:
--		vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
--		break;
-+		*vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
-+		return true;
- 	default:
--		vlan_tag = 0;
--		break;
-+		return false;
- 	}
--
--	return vlan_tag;
- }
- 
- static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
-@@ -2256,8 +2253,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
- 	if (netdev->features & NETIF_F_HW_VLAN_CTAG_RX) {
- 		u16 vlan_tag;
- 
--		vlan_tag = hns3_parse_vlan_tag(ring, desc, l234info);
--		if (vlan_tag & VLAN_VID_MASK)
-+		if (hns3_parse_vlan_tag(ring, desc, l234info, &vlan_tag))
- 			__vlan_hwaccel_put_tag(skb,
- 					       htons(ETH_P_8021Q),
- 					       vlan_tag);
 -- 
 2.20.1
 
