@@ -2,78 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B1110665B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:31:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B37E106683
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfKVG3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:29:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbfKVFt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:49:57 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727135AbfKVGcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 01:32:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39637 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726529AbfKVGcq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 01:32:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574404365;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ihHqeHetXpxDUSWXALWO2fESEh+WPpRGUu/UkNC3/0k=;
+        b=iSyZiWWcaaWHYk4/K9z+CR/QYvErqm4OsWYuKY6m16p6H3yI7W7IDN/i13J+OdReYjCmzP
+        Q3L67rVF0NXGuNVDQkM8eg6MGl3BE+U2oJfdMMaeODNgJiNthgKkmzCfhXH+hn5zGcerg4
+        8TR2ETya36lKpb22tBuYg/DoArnANsI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-365-3jIkdFjwOJmqko0S6EzAiQ-1; Fri, 22 Nov 2019 01:32:41 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 893E82070B;
-        Fri, 22 Nov 2019 05:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401796;
-        bh=hRQeDkByL8QEKVXoXktXKnPJwQx473J1hBcnIlZEy3k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l5567OOMi2HSqclILq58Q5cIb6CZeh3LJv9ABLD3KHsja1Mm2JyIZjc/PC9uhVPJM
-         ZCMA8leDHLzoV8QCpyFAXfi/b8wammknZ12Ofzbt4hPzLQGt+k0AxT5OX6nQ1yLoSj
-         su6zgTVsJBLyt9MMx/70piwmQ4j5PlPI6nDLEosY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 043/219] arm64: dts: renesas: draak: Fix CVBS input
-Date:   Fri, 22 Nov 2019 00:46:15 -0500
-Message-Id: <20191122054911.1750-36-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
-References: <20191122054911.1750-1-sashal@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B032801E74;
+        Fri, 22 Nov 2019 06:32:38 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F2815F700;
+        Fri, 22 Nov 2019 06:32:37 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id D0D161747D; Fri, 22 Nov 2019 07:32:36 +0100 (CET)
+Date:   Fri, 22 Nov 2019 07:32:36 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <mripard@kernel.org>
+Subject: Re: [Intel-gfx] [PATCH 2/2] drm: share address space for dma bufs
+Message-ID: <20191122063236.vs3bh6xvmswlszte@sirius.home.kraxel.org>
+References: <20191121103807.18424-1-kraxel@redhat.com>
+ <20191121103807.18424-3-kraxel@redhat.com>
+ <14063C7AD467DE4B82DEDB5C278E8663D9C8F533@FMSMSX108.amr.corp.intel.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <14063C7AD467DE4B82DEDB5C278E8663D9C8F533@FMSMSX108.amr.corp.intel.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: 3jIkdFjwOJmqko0S6EzAiQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Thu, Nov 21, 2019 at 04:42:10PM +0000, Ruhl, Michael J wrote:
+> >-----Original Message-----
+> >From: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org> On Behalf Of G=
+erd
+> >Hoffmann
+> >Sent: Thursday, November 21, 2019 5:38 AM
+> >To: dri-devel@lists.freedesktop.org
+> >Cc: David Airlie <airlied@linux.ie>; intel-gfx@lists.freedesktop.org; op=
+en list
+> ><linux-kernel@vger.kernel.org>; Maxime Ripard <mripard@kernel.org>; Gerd
+> >Hoffmann <kraxel@redhat.com>
+> >Subject: [Intel-gfx] [PATCH 2/2] drm: share address space for dma bufs
+> >
+> >Use the shared address space of the drm device (see drm_open() in
+> >drm_file.c) for dma-bufs too.  That removes a difference betweem drm
+> >device mmap vmas and dma-buf mmap vmas and fixes corner cases like
+> >unmaps not working properly.
+>=20
+> Hi Gerd,
+>=20
+> Just want to make sure I understand this...
+>=20
+> So unmaps will not work correctly for mappings when a driver does a
+> drm_vma_node_unamp()?
 
-[ Upstream commit 6f61a2c8f1f6163c7e08c77c5f71df0427e4d2f6 ]
+Completely removing the mapping (aka munmap syscall) works fine.
+Zapping the pte's (using madvise(dontneed) for example) doesn't.
 
-A typo in the adv7180 DT node prevents successful probing of the VIN.
-Fix it.
+> This is a day one bug?
 
-Fixes: 6a0942c20f5c ("arm64: dts: renesas: draak: Describe CVBS input")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I guess so, but I'll leave that to others being active longer than me in
+drm hacking to answer ...
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index a8e8f2669d4c5..1b8f19ee257f0 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -188,7 +188,7 @@
- 		compatible = "adi,adv7180cp";
- 		reg = <0x20>;
- 
--		port {
-+		ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
--- 
-2.20.1
+cheers,
+  Gerd
 
