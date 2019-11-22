@@ -2,72 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC8CC1071CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:57:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37FB71071E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 13:02:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfKVL53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:57:29 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7168 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726714AbfKVL53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:57:29 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 23638AEFA52CB2BDF56B;
-        Fri, 22 Nov 2019 19:57:27 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 22 Nov 2019 19:57:16 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH v2] tty: serial: samsung: remove variable 'ufstat' set but not used
-Date:   Fri, 22 Nov 2019 20:04:18 +0800
-Message-ID: <1574424258-138975-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574421159-113624-1-git-send-email-chenwandun@huawei.com>
-References: <1574421159-113624-1-git-send-email-chenwandun@huawei.com>
+        id S1727361AbfKVMCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 07:02:39 -0500
+Received: from mx.kolabnow.com ([95.128.36.42]:9250 "EHLO mx.kolabnow.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726690AbfKVMCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 07:02:39 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id CED4A411C8;
+        Fri, 22 Nov 2019 12:53:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+        content-transfer-encoding:mime-version:message-id:date:date
+        :subject:subject:from:from:received:received:received; s=
+        dkim20160331; t=1574423624; x=1576238025; bh=S105/5m7v5DzK5AjvSc
+        p3bpyf5exlALTKIwDoT2gS2M=; b=MKa4zP6Ei9m5nZ8WTwKKN6npezuEbMJuBmP
+        es/0Dd2qt+S1zG2wMmTR1fUo97AiAV54NA3DYPIclc9/Jew025p2R0AdDhdYbvHT
+        b7Q7h0X1xDywJruvNhFm+pxB7VfakUl6bii84/uVxkaqTgpbYdohp7wT0Mkwi1//
+        VbjnHKF3chgkfceDsEvlur8sZRtdL/U88fhIqhnvGjlniXGwY2WSHfeK3LNLLiCU
+        lNONLsliRpzW0sAou1Nk30qevRv9Y6BOZpnCuhk96AlNONWSBbawiT6NCU+r7xzB
+        qSMViyVMc62yLQu8eQj892gHS5LUt0AbWKZsm5Mg4nxdVRmWKv2//zBM+NY31c/S
+        oY/kZMZjyGrCZGw1dJmsu2TLVEnsVWhaH9qjwnUsOKBmUAryW9jpXjgxQq7ziv0D
+        neMGHaM3zXLAjQSZDs25J9qwvlH7EiE72jm7akFEMc+XH+S4k+zhJ7LkcFUwILdG
+        CCcVIoGVdi5rgIuz0tD0Q+vN9ddyl0EJHuz1r1W5j9STk2MFZotl6WrqR4ujynmy
+        vDbn2qN0BkYvuIPAe/Y1P3NCKs/O9yDDTlZaGD8qvWNjD4T8ys5zpA1Jkaum8INo
+        jPkUvqdZamvRxwgrzPTouVQNKApXnBlEi6D2dTC+wWEs8WnGKyBMTjL22Nzo5z7W
+        Jf9Qn7dM=
+X-Virus-Scanned: amavisd-new at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: -1.9
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 tagged_above=-10 required=5
+        tests=[BAYES_00=-1.9] autolearn=ham autolearn_force=no
+Received: from mx.kolabnow.com ([127.0.0.1])
+        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id w5JxwDGQgqhI; Fri, 22 Nov 2019 12:53:44 +0100 (CET)
+Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
+        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id 47A5140D57;
+        Fri, 22 Nov 2019 12:53:44 +0100 (CET)
+Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
+        by int-mx001.mykolab.com (Postfix) with ESMTPS id DC73E1617;
+        Fri, 22 Nov 2019 12:53:43 +0100 (CET)
+From:   Federico Vaga <federico.vaga@vaga.pv.it>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Federico Vaga <federico.vaga@vaga.pv.it>
+Subject: [PATCH] doc: fix reference to core-api/namespaces.rst
+Date:   Fri, 22 Nov 2019 12:53:37 +0100
+Message-Id: <20191122115337.1541-1-federico.vaga@vaga.pv.it>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+This patch:
 
-drivers/tty/serial/samsung_tty.c: In function s3c24xx_serial_rx_chars_dma:
-drivers/tty/serial/samsung_tty.c:549:24: warning: variable ufstat set but not used [-Wunused-but-set-variable]
+commit fcfacb9f8374 ("doc: move namespaces.rst from kbuild/ to core-api/")
 
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+forgot to update the document kernel-hacking/hacking.rst.
+
+In addition to the fix the path now is a cross-reference to the document.
+
+Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 ---
- drivers/tty/serial/samsung_tty.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/core-api/symbol-namespaces.rst | 2 ++
+ Documentation/kernel-hacking/hacking.rst     | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 83fd516..ab3c7d1 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -546,7 +546,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport);
+diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
+index 982ed7b568ac..6791f8a5d726 100644
+--- a/Documentation/core-api/symbol-namespaces.rst
++++ b/Documentation/core-api/symbol-namespaces.rst
+@@ -1,3 +1,5 @@
++.. _core-api-namespace:
++
+ =================
+ Symbol Namespaces
+ =================
+diff --git a/Documentation/kernel-hacking/hacking.rst b/Documentation/kernel-hacking/hacking.rst
+index a3ddb213a5e1..107c8fd3f6c0 100644
+--- a/Documentation/kernel-hacking/hacking.rst
++++ b/Documentation/kernel-hacking/hacking.rst
+@@ -601,7 +601,7 @@ Defined in ``include/linux/export.h``
  
- static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
- {
--	unsigned int utrstat, ufstat, received;
-+	unsigned int utrstat, received;
- 	struct s3c24xx_uart_port *ourport = dev_id;
- 	struct uart_port *port = &ourport->port;
- 	struct s3c24xx_uart_dma *dma = ourport->dma;
-@@ -556,7 +556,7 @@ static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
- 	struct dma_tx_state state;
+ This is the variant of `EXPORT_SYMBOL()` that allows specifying a symbol
+ namespace. Symbol Namespaces are documented in
+-``Documentation/kbuild/namespaces.rst``.
++:ref:`Documentation/core-api/symbol-namespaces.rst <core-api-namespace>`.
  
- 	utrstat = rd_regl(port, S3C2410_UTRSTAT);
--	ufstat = rd_regl(port, S3C2410_UFSTAT);
-+	rd_regl(port, S3C2410_UFSTAT);
+ :c:func:`EXPORT_SYMBOL_NS_GPL()`
+ --------------------------------
+@@ -610,7 +610,7 @@ Defined in ``include/linux/export.h``
  
- 	spin_lock_irqsave(&port->lock, flags);
+ This is the variant of `EXPORT_SYMBOL_GPL()` that allows specifying a symbol
+ namespace. Symbol Namespaces are documented in
+-``Documentation/kbuild/namespaces.rst``.
++:ref:`Documentation/core-api/symbol-namespaces.rst <core-api-namespace>`.
  
+ Routines and Conventions
+ ========================
 -- 
-2.7.4
+2.21.0
 
