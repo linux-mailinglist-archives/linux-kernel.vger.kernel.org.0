@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2D9106B46
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 409F4106D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbfKVKm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:42:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48354 "EHLO mail.kernel.org"
+        id S1730823AbfKVK6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:58:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729157AbfKVKmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:42:52 -0500
+        id S1730138AbfKVK6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E94C42071F;
-        Fri, 22 Nov 2019 10:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 164C820706;
+        Fri, 22 Nov 2019 10:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419371;
-        bh=u5HAUch/zt0qKhz/JRb40yB5Wv5KwFM6XhDO9ftbcdI=;
+        s=default; t=1574420318;
+        bh=tdM4px7N/SUXA7AVlSHCbaiQKS2rLnq7VuLZXvmZw7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A7PjIVpiVus7WQmcauc5MBCTTv6SqOK+QhWxbtuINzjLErSw2O/Qzyh8eNKIFPEYp
-         QPMkGkbEJEnBTZqJ7vJ/cCdg2AAoSSrl6yofezr+9w29/j5mMDyqiKzoTWnd32thzt
-         4vaD1G/OrYYRe+zM3Z6HAED0AzQyPb62nJXfUj3o=
+        b=KSHu73fcFqZXXQOaCfilPPFYtGNBpKEqQIy7BDoMYJsSTBcUrZaez2ETyqwYsAuPU
+         jW67XJrDtiZq9/Cun0NDFoKdxi81Gzfu4cB6dO5H4iSAdi5JmkaTQvxpDUu2pcmSot
+         DkebFnc8/80NoxO71QiYMunpbzBu4zBpgayDiO5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 089/222] power: supply: twl4030_charger: disable eoc interrupt on linear charge
-Date:   Fri, 22 Nov 2019 11:27:09 +0100
-Message-Id: <20191122100909.975432940@linuxfoundation.org>
+Subject: [PATCH 4.19 065/220] cxgb4: Use proper enum in cxgb4_dcb_handle_fw_update
+Date:   Fri, 22 Nov 2019 11:27:10 +0100
+Message-Id: <20191122100916.787111665@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 079cdff3d0a09c5da10ae1be35def7a116776328 ]
+[ Upstream commit 3b0b8f0d9a259f6a428af63e7a77547325f8e081 ]
 
-This avoids getting woken up from suspend after power interruptions
-when the bci wrongly thinks the battery is full just because
-of input current going low because of low input power
+Clang warns when one enumerated type is implicitly converted to another.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:303:7: warning: implicit
+conversion from enumeration type 'enum cxgb4_dcb_state' to different
+enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
+                         ? CXGB4_DCB_STATE_FW_ALLSYNCED
+                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:304:7: warning: implicit
+conversion from enumeration type 'enum cxgb4_dcb_state' to different
+enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
+                         : CXGB4_DCB_STATE_FW_INCOMPLETE);
+                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.
+
+Use the equivalent value of the expected type to silence Clang while
+resulting in no functional change.
+
+CXGB4_DCB_STATE_FW_INCOMPLETE = CXGB4_DCB_INPUT_FW_INCOMPLETE = 2
+CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/twl4030_charger.c | 27 +++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
-index 14fed11e8f6e3..5b1f147b11cb0 100644
---- a/drivers/power/supply/twl4030_charger.c
-+++ b/drivers/power/supply/twl4030_charger.c
-@@ -469,6 +469,7 @@ static void twl4030_current_worker(struct work_struct *data)
- static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
- {
- 	int ret;
-+	u32 reg;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
+index b34f0f077a310..838692948c0b2 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
+@@ -273,8 +273,8 @@ void cxgb4_dcb_handle_fw_update(struct adapter *adap,
+ 		enum cxgb4_dcb_state_input input =
+ 			((pcmd->u.dcb.control.all_syncd_pkd &
+ 			  FW_PORT_CMD_ALL_SYNCD_F)
+-			 ? CXGB4_DCB_STATE_FW_ALLSYNCED
+-			 : CXGB4_DCB_STATE_FW_INCOMPLETE);
++			 ? CXGB4_DCB_INPUT_FW_ALLSYNCED
++			 : CXGB4_DCB_INPUT_FW_INCOMPLETE);
  
- 	if (bci->usb_mode == CHARGE_OFF)
- 		enable = false;
-@@ -482,14 +483,38 @@ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
- 			bci->usb_enabled = 1;
- 		}
- 
--		if (bci->usb_mode == CHARGE_AUTO)
-+		if (bci->usb_mode == CHARGE_AUTO) {
-+			/* Enable interrupts now. */
-+			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_ICHGEOC |
-+					TWL4030_TBATOR2 | TWL4030_TBATOR1 |
-+					TWL4030_BATSTS);
-+			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
-+				       TWL4030_INTERRUPTS_BCIIMR1A);
-+			if (ret < 0) {
-+				dev_err(bci->dev,
-+					"failed to unmask interrupts: %d\n",
-+					ret);
-+				return ret;
-+			}
- 			/* forcing the field BCIAUTOUSB (BOOT_BCI[1]) to 1 */
- 			ret = twl4030_clear_set_boot_bci(0, TWL4030_BCIAUTOUSB);
-+		}
- 
- 		/* forcing USBFASTMCHG(BCIMFSTS4[2]) to 1 */
- 		ret = twl4030_clear_set(TWL_MODULE_MAIN_CHARGE, 0,
- 			TWL4030_USBFASTMCHG, TWL4030_BCIMFSTS4);
- 		if (bci->usb_mode == CHARGE_LINEAR) {
-+			/* Enable interrupts now. */
-+			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_TBATOR2 |
-+					TWL4030_TBATOR1 | TWL4030_BATSTS);
-+			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
-+				       TWL4030_INTERRUPTS_BCIIMR1A);
-+			if (ret < 0) {
-+				dev_err(bci->dev,
-+					"failed to unmask interrupts: %d\n",
-+					ret);
-+				return ret;
-+			}
- 			twl4030_clear_set_boot_bci(TWL4030_BCIAUTOAC|TWL4030_CVENAC, 0);
- 			/* Watch dog key: WOVF acknowledge */
- 			ret = twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0x33,
+ 		if (dcb->dcb_version != FW_PORT_DCB_VER_UNKNOWN) {
+ 			dcb_running_version = FW_PORT_CMD_DCB_VERSION_G(
 -- 
 2.20.1
 
