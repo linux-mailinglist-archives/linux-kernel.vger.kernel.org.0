@@ -2,107 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949A8105F31
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 05:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CAC9105F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 05:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfKVEZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 23:25:12 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46982 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbfKVEZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 23:25:11 -0500
-Received: by mail-pl1-f196.google.com with SMTP id l4so2543192plt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 20:25:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8TaUjGR1ZK3h0U41Xrlyjvus/YvOSCFkyRPWGIeHKfc=;
-        b=aD1jwx6z+f92KHKX9yFRTVyInNQGgPastRMpBKSMyxmF2ijG8yfcbYaFjNY/T0Od60
-         PjZVloFTMviB3NolgoCvOibRwFT2q48VSBw4RoS5Y3uv4HEPgAoa19m6hUClXA/2AXIP
-         oN/mzFwnwtEV57HtZ4f66U+f4j9e/ng+/5fC4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8TaUjGR1ZK3h0U41Xrlyjvus/YvOSCFkyRPWGIeHKfc=;
-        b=fV4OtwJparJLpaJLeNO1ayJq9J2P7kviRLSCu1r2xwtF0Ry+lxDZUcKpbpR3ER2EIx
-         sBT38FDjyGM01F1gNVxyYG/7LnaUzxva5+d6x04ITRiG7/bBy769HI6RjHBkWXMhlGJf
-         WbXwdPB3sXqhONS9JJANNY4CMzAhGyeQJOmYexVz5O2OeJXgZfq1lEvct4AfBK5hCCmP
-         FvWmt8bLiLGm/Tzs9fpUmHlEliEAeD4fKy1O64XlS9MiKoggfNjHp8J5nPbT1vclqW/p
-         e6g/49LTvYxRlBr/b+zXsZOSaFC3KbOIzRLA9rUb7aGcWyXVkGDHbpP3slVswTbD0yHH
-         JKeg==
-X-Gm-Message-State: APjAAAXNrHCJhv8L1kOdBbfJI0c7FogeLr99CyAbINdCakGdly6M/L57
-        3lj8wihoVKrJw+VNlHOtFzYqHQ==
-X-Google-Smtp-Source: APXvYqw0xEIHeWcFvt2KpNgve53FlnVWf404GB3ugZXsdS5M/ZbW3Sav8UMHXT9d/R+RDe02HDJFzg==
-X-Received: by 2002:a17:902:7287:: with SMTP id d7mr12522360pll.333.1574396710980;
-        Thu, 21 Nov 2019 20:25:10 -0800 (PST)
-Received: from ikjn-p920.tpe.corp.google.com ([2401:fa00:1:10:254e:2b40:ef8:ee17])
-        by smtp.gmail.com with ESMTPSA id d11sm5680854pfq.72.2019.11.21.20.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 20:25:10 -0800 (PST)
-From:   Ikjoon Jang <ikjn@chromium.org>
-To:     linux-usb@vger.kernel.org
-Cc:     GregKroah-Hartman <gregkh@linuxfoundation.org>,
-        RobHerring <robh+dt@kernel.org>,
-        MarkRutland <mark.rutland@arm.com>,
-        AlanStern <stern@rowland.harvard.edu>,
-        SuwanKim <suwan.kim027@gmail.com>,
-        "GustavoA . R . Silva" <gustavo@embeddedor.com>,
-        IkjoonJang <ikjn@chromium.org>, JohanHovold <johan@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        drinkcat@chromium.org
-Subject: [PATCH v3 2/2] usb: overridable hub bInterval by device node
-Date:   Fri, 22 Nov 2019 12:25:07 +0800
-Message-Id: <20191122042507.205716-1-ikjn@chromium.org>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+        id S1726573AbfKVEeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 23:34:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726500AbfKVEeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 23:34:06 -0500
+Received: from localhost (unknown [171.61.94.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CB4320704;
+        Fri, 22 Nov 2019 04:34:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574397246;
+        bh=RbVhcnfxDZXYbq5FrYM2h68FLrNpgIh467ix1PTKw1M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=avS4p66UA4nU92G88TOUa4dZerKvnZcw9sfXPjNIWCxyz78jSEoHODin8INeG3195
+         7Wv0lY8ZkKRXZ80CdyM566gwHXKrjw9p4BySG+iNQFprnRi9xCF9b+Tdg/3u9l1rh3
+         xOIB4eswglMDrpRZ9C4lg8A7sTCOIyNYWQvQmIpc=
+Date:   Fri, 22 Nov 2019 10:04:02 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     broonie@kernel.org, geert@linux-m68k.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] spi: pic32: Retire dma_request_slave_channel_compat()
+Message-ID: <20191122043402.GJ82508@vkoul-mobl>
+References: <20191121092703.30465-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121092703.30465-1-peter.ujfalusi@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables hub device to override its own endpoint descriptor's
-bInterval when the hub has a device node with "hub,interval" property.
+On 21-11-19, 11:27, Peter Ujfalusi wrote:
+> There is no reason to use the dma_request_slave_channel_compat() as no
+> filter function and parameter is provided.
+> 
+> Switch the driver to use dma_request_chan() instead and add support for
+> deferred probing against DMA channel.
 
-When we know reducing autosuspend delay for built-in HIDs is better for
-power saving, we can reduce it to the optimal value. But if a parent hub
-has a long bInterval, mouse lags a lot from more frequent autosuspend.
-So this enables overriding bInterval for a hard wired hub device only
-when we know that reduces the power consumption.
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
----
- drivers/usb/core/config.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
-index 5f40117e68e7..1939f2ff87ef 100644
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -6,6 +6,7 @@
- #include <linux/usb.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/hcd.h>
-+#include <linux/usb/of.h>
- #include <linux/usb/quirks.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-@@ -257,6 +258,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
- 	memcpy(&endpoint->desc, d, n);
- 	INIT_LIST_HEAD(&endpoint->urb_list);
- 
-+	/* device node property overrides bInterval */
-+	if (usb_of_has_combined_node(to_usb_device(ddev)))
-+		of_property_read_u8(ddev->of_node, "hub,interval",
-+				    &d->bInterval);
-+
- 	/*
- 	 * Fix up bInterval values outside the legal range.
- 	 * Use 10 or 8 ms if no proper value can be guessed.
 -- 
-2.24.0.432.g9d3f5f5b63-goog
-
+~Vinod
