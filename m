@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 370D4106E4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B84321070DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbfKVLHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33210 "EHLO mail.kernel.org"
+        id S1728587AbfKVKhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:37:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731728AbfKVLFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:05:36 -0500
+        id S1727706AbfKVKhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:37:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E1220840;
-        Fri, 22 Nov 2019 11:05:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F88F20708;
+        Fri, 22 Nov 2019 10:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420735;
+        s=default; t=1574419067;
         bh=julWjBlCYWiwOVW4slF5Jvmglxdu1fcIEx8uEPF98IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a63Hclo4I0spReMkO8ztfeiAHkFPxaq5YwcVPF1Xd/cx8lCyqrI2e/i6sD2DrHrCm
-         cDBJO0wvUheAH+W4Al8Z3WIFFNXbdR97pEetPJip4FiDOcz7Jfxc3co5fsxTSaa2eh
-         3oNdIHaGTf+aJFwAMXtZu9cyJvtIBzC+kaJWwVw8=
+        b=BKQroPfpglQIcrxeak4SjIHpk0NbhH8dgeHdijfhKxwRp9wQSoyOFZRuQ9HMBFMjV
+         1alLPH9N0W8co2pPooqkMMwR228or3SA/XrUr3GXcMIU6owlgI7In4XiGUfzEH6/vV
+         uCmJF/SQusrSrfsEKj3XBolYqEAiqfQQjeGkuNj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 171/220] backlight: lm3639: Unconditionally call led_classdev_unregister
-Date:   Fri, 22 Nov 2019 11:28:56 +0100
-Message-Id: <20191122100925.124648045@linuxfoundation.org>
+Subject: [PATCH 4.4 146/159] backlight: lm3639: Unconditionally call led_classdev_unregister
+Date:   Fri, 22 Nov 2019 11:28:57 +0100
+Message-Id: <20191122100841.344611282@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
