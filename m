@@ -2,105 +2,261 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C911069B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 021F21069BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfKVKO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:14:27 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45364 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726526AbfKVKO0 (ORCPT
+        id S1726985AbfKVKPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:15:40 -0500
+Received: from pietrobattiston.it ([92.243.7.39]:44218 "EHLO
+        jauntuale.pietrobattiston.it" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726500AbfKVKPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:14:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574417665;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T42/pXgZB3vn3EGD0jhf0dBoC1Q7FFJ7xvZPD2Z1Aeo=;
-        b=QMDE9kQyHAZFiHYcbdjVskgMDJz2YKL9qe9xhqd4ecrtOfE9YhXYVpGQ6J5z300/+P3MMp
-        s0qVh/JBFU4nArrWB5whHMlZTpr2F4nCo2k3eWzq469u8BJMhiNas9kzfwN8qoPZs8xK1Q
-        hmbG6NUx4COAhdL54k2jmEB6ax1XIzU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-102-_iaOcnaFNzOiy5VohVwcSw-1; Fri, 22 Nov 2019 05:14:22 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 22 Nov 2019 05:15:39 -0500
+Received: from amalgama (unknown [185.194.187.136])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A6CAE1883521;
-        Fri, 22 Nov 2019 10:14:19 +0000 (UTC)
-Received: from [10.36.118.121] (unknown [10.36.118.121])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B9B086E717;
-        Fri, 22 Nov 2019 10:14:16 +0000 (UTC)
-Subject: Re: [RFC v1 00/19] Modify zonelist to nodelist v1
-To:     "lixinhai.lxh@gmail.com" <lixinhai.lxh@gmail.com>,
-        Pengfei Li <fly@kernel.page>, akpm <akpm@linux-foundation.org>
-Cc:     mgorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, cl <cl@linux.com>,
-        "iamjoonsoo.kim" <iamjoonsoo.kim@lge.com>, guro <guro@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20191121151811.49742-1-fly@kernel.page>
- <2019112215245905276118@gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <7dbec505-ce53-e1f0-6ed4-8cb0328dfc79@redhat.com>
-Date:   Fri, 22 Nov 2019 11:14:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        (Authenticated sender: giovanni)
+        by jauntuale.pietrobattiston.it (Postfix) with ESMTPSA id 29CB8E0DA8;
+        Fri, 22 Nov 2019 11:15:37 +0100 (CET)
+Received: by amalgama (Postfix, from userid 1000)
+        id A54343C004F; Fri, 22 Nov 2019 11:15:20 +0100 (CET)
+From:   Giovanni Mascellani <gio@debian.org>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Giovanni Mascellani <gio@debian.org>
+Subject: [PATCH v6 1/2] dell-smm-hwmon: Add support for disabling automatic BIOS fan control
+Date:   Fri, 22 Nov 2019 11:15:18 +0100
+Message-Id: <20191122101519.1246458-1-gio@debian.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <2019112215245905276118@gmail.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: _iaOcnaFNzOiy5VohVwcSw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.11.19 08:25, lixinhai.lxh@gmail.com wrote:
-> On 2019-11-21=C2=A0at 23:17=C2=A0Pengfei Li=C2=A0wrote:
->> Motivation
->> ----------
->> Currently if we want to iterate through all the nodes we have to
->> traverse all the zones from the zonelist.
->>
->> So in order to reduce the number of loops required to traverse node,
->> this series of patches modified the zonelist to nodelist.
->>
->> Two new macros have been introduced:
->> 1) for_each_node_nlist
->> 2) for_each_node_nlist_nodemask
->>
->>
->> Benefit
->> -------
->> 1. For a NUMA system with N nodes, each node has M zones, the number
->>  =C2=A0=C2=A0 of loops is reduced from N*M times to N times when travers=
-ing node.
->>
->=20
-> It looks to me that we don't really have system which has N nodes and
-> each node with=C2=A0M zones in its address range.
-> We may have systems which has several nodes, but only the first node has
-> all zone types, other nodes only have NORMAL zone. (Evenly distribute the
-> !NORMAL zones on all nodes is not reasonable, as those zones have limited
-> size)
-> So iterate over zones to reach nodes should at N level, not M*N level.
+This patch exports standard hwmon pwmX_enable sysfs attribute for
+enabling or disabling automatic fan control by BIOS. Standard value
+"1" is for disabling automatic BIOS fan control and value "2" for
+enabling.
 
-I guess NORMAL/MOVABLE/DEVICE would be common for most nodes, while I do=20
-agree that usually we will only have 1 or 2 zones per node (when we have=20
-many nodes). So it would be something like c*N, whereby c is most=20
-probably on average 2.
+By default BIOS auto mode is enabled by laptop firmware.
 
---=20
+When BIOS auto mode is enabled, custom fan speed value (set via hwmon
+pwmX sysfs attribute) is overwritten by SMM in few seconds and
+therefore any custom settings are without effect. So this is reason
+why implementing option for disabling BIOS auto mode is needed.
 
-Thanks,
+So finally this patch allows kernel to set and control fan speed on
+laptops, but it can be dangerous (like setting speed of other fans).
 
-David / dhildenb
+The SMM commands to enable or disable automatic fan control are not
+documented and are not the same on all Dell laptops. Therefore a
+whitelist is used to send the correct codes only on laptopts for which
+they are known.
+
+This patch was originally developed by Pali Rohár; later Giovanni
+Mascellani implemented the whitelist.
+
+Signed-off-by: Giovanni Mascellani <gio@debian.org>
+Co-Developed-by: Pali Rohár <pali.rohar@gmail.com>
+Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+---
+ drivers/hwmon/dell-smm-hwmon.c | 114 ++++++++++++++++++++++++++++++---
+ 1 file changed, 104 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+index 4212d022d253..25d160b36a57 100644
+--- a/drivers/hwmon/dell-smm-hwmon.c
++++ b/drivers/hwmon/dell-smm-hwmon.c
+@@ -68,6 +68,8 @@ static uint i8k_pwm_mult;
+ static uint i8k_fan_max = I8K_FAN_HIGH;
+ static bool disallow_fan_type_call;
+ static bool disallow_fan_support;
++static unsigned int manual_fan;
++static unsigned int auto_fan;
+ 
+ #define I8K_HWMON_HAVE_TEMP1	(1 << 0)
+ #define I8K_HWMON_HAVE_TEMP2	(1 << 1)
+@@ -300,6 +302,20 @@ static int i8k_get_fan_nominal_speed(int fan, int speed)
+ 	return i8k_smm(&regs) ? : (regs.eax & 0xffff) * i8k_fan_mult;
+ }
+ 
++/*
++ * Enable or disable automatic BIOS fan control support
++ */
++static int i8k_enable_fan_auto_mode(bool enable)
++{
++	struct smm_regs regs = { };
++
++	if (disallow_fan_support)
++		return -EINVAL;
++
++	regs.eax = enable ? auto_fan : manual_fan;
++	return i8k_smm(&regs);
++}
++
+ /*
+  * Set the fan speed (off, low, high). Returns the new fan status.
+  */
+@@ -726,6 +742,35 @@ static ssize_t i8k_hwmon_pwm_store(struct device *dev,
+ 	return err < 0 ? -EIO : count;
+ }
+ 
++static ssize_t i8k_hwmon_pwm_enable_store(struct device *dev,
++					  struct device_attribute *attr,
++					  const char *buf, size_t count)
++{
++	int err;
++	bool enable;
++	unsigned long val;
++
++	if (!auto_fan)
++		return -ENODEV;
++
++	err = kstrtoul(buf, 10, &val);
++	if (err)
++		return err;
++
++	if (val == 1)
++		enable = false;
++	else if (val == 2)
++		enable = true;
++	else
++		return -EINVAL;
++
++	mutex_lock(&i8k_mutex);
++	err = i8k_enable_fan_auto_mode(enable);
++	mutex_unlock(&i8k_mutex);
++
++	return err ? err : count;
++}
++
+ static SENSOR_DEVICE_ATTR_RO(temp1_input, i8k_hwmon_temp, 0);
+ static SENSOR_DEVICE_ATTR_RO(temp1_label, i8k_hwmon_temp_label, 0);
+ static SENSOR_DEVICE_ATTR_RO(temp2_input, i8k_hwmon_temp, 1);
+@@ -749,6 +794,7 @@ static SENSOR_DEVICE_ATTR_RO(temp10_label, i8k_hwmon_temp_label, 9);
+ static SENSOR_DEVICE_ATTR_RO(fan1_input, i8k_hwmon_fan, 0);
+ static SENSOR_DEVICE_ATTR_RO(fan1_label, i8k_hwmon_fan_label, 0);
+ static SENSOR_DEVICE_ATTR_RW(pwm1, i8k_hwmon_pwm, 0);
++static SENSOR_DEVICE_ATTR_WO(pwm1_enable, i8k_hwmon_pwm_enable, 0);
+ static SENSOR_DEVICE_ATTR_RO(fan2_input, i8k_hwmon_fan, 1);
+ static SENSOR_DEVICE_ATTR_RO(fan2_label, i8k_hwmon_fan_label, 1);
+ static SENSOR_DEVICE_ATTR_RW(pwm2, i8k_hwmon_pwm, 1);
+@@ -780,12 +826,13 @@ static struct attribute *i8k_attrs[] = {
+ 	&sensor_dev_attr_fan1_input.dev_attr.attr,	/* 20 */
+ 	&sensor_dev_attr_fan1_label.dev_attr.attr,	/* 21 */
+ 	&sensor_dev_attr_pwm1.dev_attr.attr,		/* 22 */
+-	&sensor_dev_attr_fan2_input.dev_attr.attr,	/* 23 */
+-	&sensor_dev_attr_fan2_label.dev_attr.attr,	/* 24 */
+-	&sensor_dev_attr_pwm2.dev_attr.attr,		/* 25 */
+-	&sensor_dev_attr_fan3_input.dev_attr.attr,	/* 26 */
+-	&sensor_dev_attr_fan3_label.dev_attr.attr,	/* 27 */
+-	&sensor_dev_attr_pwm3.dev_attr.attr,		/* 28 */
++	&sensor_dev_attr_pwm1_enable.dev_attr.attr,	/* 23 */
++	&sensor_dev_attr_fan2_input.dev_attr.attr,	/* 24 */
++	&sensor_dev_attr_fan2_label.dev_attr.attr,	/* 25 */
++	&sensor_dev_attr_pwm2.dev_attr.attr,		/* 26 */
++	&sensor_dev_attr_fan3_input.dev_attr.attr,	/* 27 */
++	&sensor_dev_attr_fan3_label.dev_attr.attr,	/* 28 */
++	&sensor_dev_attr_pwm3.dev_attr.attr,		/* 29 */
+ 	NULL
+ };
+ 
+@@ -828,16 +875,19 @@ static umode_t i8k_is_visible(struct kobject *kobj, struct attribute *attr,
+ 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_TEMP10))
+ 		return 0;
+ 
+-	if (index >= 20 && index <= 22 &&
++	if (index >= 20 && index <= 23 &&
+ 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN1))
+ 		return 0;
+-	if (index >= 23 && index <= 25 &&
++	if (index >= 24 && index <= 26 &&
+ 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN2))
+ 		return 0;
+-	if (index >= 26 && index <= 28 &&
++	if (index >= 27 && index <= 29 &&
+ 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_FAN3))
+ 		return 0;
+ 
++	if (index == 23 && !auto_fan)
++		return 0;
++
+ 	return attr->mode;
+ }
+ 
+@@ -1135,12 +1185,48 @@ static struct dmi_system_id i8k_blacklist_fan_support_dmi_table[] __initdata = {
+ 	{ }
+ };
+ 
++struct i8k_fan_control_data {
++	unsigned int manual_fan;
++	unsigned int auto_fan;
++};
++
++enum i8k_fan_controls {
++	I8K_FAN_34A3_35A3,
++};
++
++static const struct i8k_fan_control_data i8k_fan_control_data[] = {
++	[I8K_FAN_34A3_35A3] = {
++		.manual_fan = 0x34a3,
++		.auto_fan = 0x35a3,
++	},
++};
++
++static struct dmi_system_id i8k_whitelist_fan_control[] __initdata = {
++	{
++		.ident = "Dell Precision 5530",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Precision 5530"),
++		},
++		.driver_data = (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
++	},
++	{
++		.ident = "Dell Latitude E6440",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Latitude E6440"),
++		},
++		.driver_data = (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
++	},
++	{ }
++};
++
+ /*
+  * Probe for the presence of a supported laptop.
+  */
+ static int __init i8k_probe(void)
+ {
+-	const struct dmi_system_id *id;
++	const struct dmi_system_id *id, *fan_control;
+ 	int fan, ret;
+ 
+ 	/*
+@@ -1200,6 +1286,14 @@ static int __init i8k_probe(void)
+ 	i8k_fan_max = fan_max ? : I8K_FAN_HIGH;	/* Must not be 0 */
+ 	i8k_pwm_mult = DIV_ROUND_UP(255, i8k_fan_max);
+ 
++	fan_control = dmi_first_match(i8k_whitelist_fan_control);
++	if (fan_control && fan_control->driver_data) {
++		const struct i8k_fan_control_data *fan_control_data = fan_control->driver_data;
++		manual_fan = fan_control_data->manual_fan;
++		auto_fan = fan_control_data->auto_fan;
++		pr_info("enabling support for setting automatic/manual fan control\n");
++	}
++
+ 	if (!fan_mult) {
+ 		/*
+ 		 * Autodetect fan multiplier based on nominal rpm
+-- 
+2.24.0
 
