@@ -2,133 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B92106F6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8958106F44
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfKVKv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:51:58 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58470 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730111AbfKVKvw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:51:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+LEvCZkUnHSn1ZAatYIRXWWTq0G8KGnsYQbP9mJBms4=; b=tmQkQ9J52n1dHJKLZorJDboDu
-        omRcgyQd4d/LXMNsFUgrHg+rkujOQV01/zVPCgA7k2yQMrq6Ks8LNVkmAEARLARytP4luV6lipzrr
-        Zb/rLvt1pYNj6KslApl/Af0WOrBNMwalSKZwzT0hcmJJ9hap1n8CXKTJ1m0qFQnZBAgH934B26xyG
-        teXguRPp/Rbnc2Op4xCTePsgmPRwYcORETAyIU5aeo+pHNds3lzbovx3eMigWXwO+q85FnvLXeOPe
-        vQUN4JWEn/h1DsNEYFe1zX9T3Rhx5DzxzgIm5CNdndjqie6dGrchca7ZeDjXM2Fp1P5bveKIhI0+M
-        5pO0u2a6A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iY6XP-0005jK-V3; Fri, 22 Nov 2019 10:51:45 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1701D3075DD;
-        Fri, 22 Nov 2019 11:50:30 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4A3A2202BC5A1; Fri, 22 Nov 2019 11:51:41 +0100 (CET)
-Date:   Fri, 22 Nov 2019 11:51:41 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Message-ID: <20191122105141.GY4114@hirez.programming.kicks-ass.net>
-References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
- <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
- <20191121060444.GA55272@gmail.com>
- <20191121130153.GS4097@hirez.programming.kicks-ass.net>
- <20191121171214.GD12042@gmail.com>
- <20191121173444.GA5581@agluck-desk2.amr.corp.intel.com>
+        id S1730417AbfKVLOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:14:33 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43820 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729812AbfKVKxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:33 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8E4B590A9B10BA22F71E;
+        Fri, 22 Nov 2019 18:53:30 +0800 (CST)
+Received: from [127.0.0.1] (10.173.221.225) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 22 Nov 2019
+ 18:53:27 +0800
+Subject: Re: [PATCH] powerpc/pseries: remove variable 'status' set but not
+ used
+To:     Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <mahesh@linux.vnet.ibm.com>, <paulus@samba.org>
+References: <1573873650-62511-1-git-send-email-chenwandun@huawei.com>
+ <87blt8csyx.fsf@mpe.ellerman.id.au>
+ <b1591f1d-ddd6-1cd5-afd6-c42eb4671a03@linux.ibm.com>
+From:   Chen Wandun <chenwandun@huawei.com>
+Message-ID: <dec2820f-dfb5-49a8-63fb-f75a3f469ba1@huawei.com>
+Date:   Fri, 22 Nov 2019 18:53:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121173444.GA5581@agluck-desk2.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b1591f1d-ddd6-1cd5-afd6-c42eb4671a03@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.221.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 09:34:44AM -0800, Luck, Tony wrote:
+OK, I will make a modification and repost the patch.
 
-> You'll notice that we are at version 10 ... lots of things have been tried
-> in previous versions. This new version is to get the core functionality
-> in, so we can build fancier features later.
+Thanks
+Chen Wandun
 
-The cover letter actually mentions that as a non-goal. Seems like a
-conflicting message here.
-
-> Enabling by default at this point would result in a flurry of complaints
-> about applications being killed and kernels panicing. That would be
-> followed by:
-
-I thought we already found and fixed all the few kernel users that got
-it wrong?
-
-And applications? I've desktop'ed around a little with:
-
-  perf stat -e sq_misc.split_lock -a -I 1000
-
-running and that shows exactly, a grant total of, _ZERO_ split lock
-usage. Except when I run my explicit split lock proglet, then it goes
-through the roof.
-
-So I really don't buy that argument. Like I've been saying forever, sane
-architectures have never allowed unaligned atomics in the first place,
-this means that sane software won't have any.
-
-Furthermore, split_lock has been a performance issue on x86 for a long
-long time, which is another reason why x86-specific software will not
-have them.
-
-And if you really really worry, just do a mode that pr_warn()s about the
-userspace instead of SIGBUS.
-
-> #include <linus/all-caps-rant-about-backwards-compatability.h>
->
-> and the patches being reverted.
-
-I don't buy that either, it would _maybe_ mean flipping the default. But
-that very much depends on how many users and what sort of 'quality'
-software they're running.
-
-I suspect we can get away with a no_split_lock_detect boot flag. We've
-had various such kernel flags in the past for new/dodgy features and
-we've lived through that just fine.
-
-Witness: no5lvl, noapic, noclflush noefi, nofxsr, etc..
-
-> This version can serve a very useful purpose. CI systems with h/w that
-> supports split lock can enable it and begin the process of finding
-> and fixing the remaining kernel issues. Especially helpful if they run
-> randconfig and fuzzers.
-
-A non-lethal default enabled variant would be even better for them :-)
-
-> We'd also find out which libraries and applications currently use
-> split locks.
-
-On my debian desktop, absolutely nothing I've used in the past hour or
-so. That includes both major browsers and some A/V stuff, as well as
-building a kernel and writing emails.
-
-> Any developer with concerns about their BIOS using split locks can also
-> enable using this patch and begin testing today.
-
-I don't worry about developers much; they can't fix their BIOS other
-than to return the box and try and get their money back :/
+On 2019/11/21 5:34, Tyrel Datwyler wrote:
+> On 11/18/19 9:53 PM, Michael Ellerman wrote:
+>> Chen Wandun <chenwandun@huawei.com> writes:
+>>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>>
+>>> arch/powerpc/platforms/pseries/ras.c: In function ras_epow_interrupt:
+>>> arch/powerpc/platforms/pseries/ras.c:319:6: warning: variable status set but not used [-Wunused-but-set-variable]
+>>
+>> Thanks for the patch.
+>>
+>> But it almost certainly is wrong to not check the status.
+> 
+> Agreed, I started drafting a NACK response, but got sidetracked.
+> 
+>>
+>> It's calling firmware and just assuming that the call succeeded. It then
+>> goes on to use the result that should have been written by firmware, but
+>> is now potentially random junk.
+>>
+>> So I'd much rather a patch to change it to check the status.
+> 
+> +1
+> 
+>>
+>>> diff --git a/arch/powerpc/platforms/pseries/ras.c b/arch/powerpc/platforms/pseries/ras.c
+>>> index 1d7f973..4a61d0f 100644
+>>> --- a/arch/powerpc/platforms/pseries/ras.c
+>>> +++ b/arch/powerpc/platforms/pseries/ras.c
+>>> @@ -316,12 +316,11 @@ static irqreturn_t ras_hotplug_interrupt(int irq, void *dev_id)
+>>>   /* Handle environmental and power warning (EPOW) interrupts. */
+>>>   static irqreturn_t ras_epow_interrupt(int irq, void *dev_id)
+>>>   {
+>>> -	int status;
+>>>   	int state;
+>>>   	int critical;
+>>>   
+>>> -	status = rtas_get_sensor_fast(EPOW_SENSOR_TOKEN, EPOW_SENSOR_INDEX,
+>>> -				      &state);
+>>> +	rtas_get_sensor_fast(EPOW_SENSOR_TOKEN, EPOW_SENSOR_INDEX,
+>>> +			     &state);
+>>
+>> This is calling a helper which already does some translation of the
+>> return value, any value < 0 indicates an error.
+> 
+> There are three possible architected failures here: Hardware, Non-existant
+> sensor, and an DR isolation error which namely would be reported in the status
+> as -EIO, -EINVAL, and -EFAULT. Further, the EPOW sensor is required, and is not
+> a DR entity so we can never get an -EINVAL or -EFAULT (baring broken firmware).
+> This leaves -EIO (HARDWARE_ERROR) and as I mention further down this will
+> generate its own error log in response. So, I don't think we need to do any
+> reporting here, and just return.
+> 
+>>
+>>> @@ -330,12 +329,12 @@ static irqreturn_t ras_epow_interrupt(int irq, void *dev_id)
+>>>   
+>>>   	spin_lock(&ras_log_buf_lock);
+>>>   
+>>> -	status = rtas_call(ras_check_exception_token, 6, 1, NULL,
+>>> -			   RTAS_VECTOR_EXTERNAL_INTERRUPT,
+>>> -			   virq_to_hw(irq),
+>>> -			   RTAS_EPOW_WARNING,
+>>> -			   critical, __pa(&ras_log_buf),
+>>> -				rtas_get_error_log_max());
+>>> +	rtas_call(ras_check_exception_token, 6, 1, NULL,
+>>> +		  RTAS_VECTOR_EXTERNAL_INTERRUPT,
+>>> +		  virq_to_hw(irq),
+>>> +		  RTAS_EPOW_WARNING,
+>>> +		  critical, __pa(&ras_log_buf),
+>>> +		  rtas_get_error_log_max());
+>>
+>> This is directly calling firmware.
+>>
+>> As documented in LoPAPR, a negative status indicates an error, 0
+>> indicates a new error log was found (ie. the function should continue),
+>> or 1 there was no error log (ie. nothing to do).
+> 
+> It is highly unlikely that we will find no new error log since we are processing
+> an interrupt that supposedly fired to tell us there is a new one. However, the
+> ras_log_buf is never zeroed so in the unlikely case there is no new error log we
+> will parse stale data from the previous log. Better safe than sorry and just return.
+> 
+> In the case of an error the only error code we supposedly can get here is -1
+> (HARDWARE_ERROR), and the RTAS handling will generate an error log in response
+> to that. So, I don't think we need to report anything here. I would suggest for
+> the (status != 0) case that you just return.
+> 
+> -Tyrel
+> 
+>>
+>> cheers
+>>
+>>>   	log_error(ras_log_buf, ERR_TYPE_RTAS_LOG, 0);
+>>>   
+>>> -- 
+>>> 2.7.4
+> 
+> 
+> .
+> 
 
