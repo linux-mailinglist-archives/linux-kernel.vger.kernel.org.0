@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E659110704C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:21:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D241106D87
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfKVKpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51294 "EHLO mail.kernel.org"
+        id S1731092AbfKVLAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:00:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728325AbfKVKpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:06 -0500
+        id S1730440AbfKVLAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:00:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAE1720656;
-        Fri, 22 Nov 2019 10:45:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C75EB20679;
+        Fri, 22 Nov 2019 11:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419505;
-        bh=ht9seQUWdx8eONxgqfbYtB6UPmAj53mK765ewWByYfQ=;
+        s=default; t=1574420451;
+        bh=XRvnylUpGzfPdPpjbHa5Bu+gFEj6YjRPwqZH4SaSa+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u6gkhruoVYXvYNz5YaDm1vJlxedtd2ea8fhmoVRx4foutvl5C6KHbHQAhCZP/0KpI
-         uDQ7lA/4Ggpwd8DmJnevsW4QsddjJUZpezBjBbHtIAmHO+9z6GN0ofDbIcVFbUkODi
-         GPmVfuBYh9+Vtm0B+brw73tfXP9LvzNj02TbkQSk=
+        b=quF1jZ8gPGmnLr3ofgliwNiaqIhQ1tjZcs7u+12hD8BxlQqbLGm2Sm4UM9WSx/fC3
+         6uXw4bdhhq682RxaZcADLPh+cQrMgj84/lFfXqM+IT97jINWZkFbbWDE1myzRwV0dD
+         /LBO/K4FMU6GufN+/ICLKfdwYd/nQ6VPodNLibHo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 135/222] scsi: NCR5380: Use DRIVER_SENSE to indicate valid sense data
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 110/220] cpu/SMT: State SMT is disabled even with nosmt and without "=force"
 Date:   Fri, 22 Nov 2019 11:27:55 +0100
-Message-Id: <20191122100912.665562759@linuxfoundation.org>
+Message-Id: <20191122100920.676724471@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Borislav Petkov <bp@suse.de>
 
-[ Upstream commit 070356513963be6196142acff56acc8359069fa1 ]
+[ Upstream commit d0e7d14455d41163126afecd0fcce935463cc512 ]
 
-When sense data is valid, call set_driver_byte(cmd, DRIVER_SENSE).  Otherwise
-some callers of scsi_execute() will ignore sense data.  Don't set DID_ERROR or
-DID_RESET just because sense data is missing.
+When booting with "nosmt=force" a message is issued into dmesg to
+confirm that SMT has been force-disabled but such a message is not
+issued when only "nosmt" is on the kernel command line.
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fix that.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20181004172227.10094-1-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ kernel/cpu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index ba7b3aef3ef0b..35419ba32c467 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -617,11 +617,12 @@ static void complete_cmd(struct Scsi_Host *instance,
- 
- 	if (hostdata->sensing == cmd) {
- 		/* Autosense processing ends here */
--		if ((cmd->result & 0xff) != SAM_STAT_GOOD) {
-+		if (status_byte(cmd->result) != GOOD) {
- 			scsi_eh_restore_cmnd(cmd, &hostdata->ses);
--			set_host_byte(cmd, DID_ERROR);
--		} else
-+		} else {
- 			scsi_eh_restore_cmnd(cmd, &hostdata->ses);
-+			set_driver_byte(cmd, DRIVER_SENSE);
-+		}
- 		hostdata->sensing = NULL;
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 9bb57ce57d98d..8d6b8b5493f9f 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -375,6 +375,7 @@ void __init cpu_smt_disable(bool force)
+ 		pr_info("SMT: Force disabled\n");
+ 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
+ 	} else {
++		pr_info("SMT: disabled\n");
+ 		cpu_smt_control = CPU_SMT_DISABLED;
  	}
- 
-@@ -2356,7 +2357,6 @@ static int NCR5380_abort(struct scsi_cmnd *cmd)
- 	if (list_del_cmd(&hostdata->autosense, cmd)) {
- 		dsprintk(NDEBUG_ABORT, instance,
- 		         "abort: removed %p from sense queue\n", cmd);
--		set_host_byte(cmd, DID_ERROR);
- 		complete_cmd(instance, cmd);
- 	}
- 
-@@ -2435,7 +2435,6 @@ static int NCR5380_bus_reset(struct scsi_cmnd *cmd)
- 	list_for_each_entry(ncmd, &hostdata->autosense, list) {
- 		struct scsi_cmnd *cmd = NCR5380_to_scmd(ncmd);
- 
--		set_host_byte(cmd, DID_RESET);
- 		cmd->scsi_done(cmd);
- 	}
- 	INIT_LIST_HEAD(&hostdata->autosense);
+ }
 -- 
 2.20.1
 
