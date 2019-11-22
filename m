@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49966106A8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18329106C5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfKVKft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:35:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
+        id S1729961AbfKVKv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728288AbfKVKfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:35:46 -0500
+        id S1729197AbfKVKvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16C7120715;
-        Fri, 22 Nov 2019 10:35:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C57C20715;
+        Fri, 22 Nov 2019 10:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418944;
-        bh=edcdRs8qjLW9Buch9MPov4jh7ZiXSUmJVTFNJjzWTOs=;
+        s=default; t=1574419883;
+        bh=Ws/++C/6yz3D2eqU9vCnRueTeOtZH2HVRq3VtWoVuao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xTVI54vZCS0NEJDkkYttvVLJDZ/bFgXUFhQFjuZy73oLalCWlRUt9qC0mDqpXl2W9
-         6ZHhVhOF6lAvIbb3npdcxyWwE6QOFjLTwRSKSDtU8YiGWY89I6Bil+MxSpD9KFe3r6
-         uNNh43PTQKAUl0L/WiwSecKfZduMiheGGXBDb8y8=
+        b=YoUc3bN0hlJIAKwHENOaVeW80Ninv6GCZV6tlBiA2vfjShsUqoipN8qxyG+2tkRbF
+         URVH33FrBwa5PMg3fJhtb1qB6YJatAKUP3DUAvJgS+kHpgo57P2IaikUHq3yroVVj2
+         NxEfhhMKCWLfPqyr/4fSGaPcNRDbOoSZYDvgR2gM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Johansen <john.johansen@canonical.com>
-Subject: [PATCH 4.4 104/159] apparmor: fix module parameters can be changed after policy is locked
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 042/122] ARM: dts: at91: sama5d4_xplained: fix addressable nand flash size
 Date:   Fri, 22 Nov 2019 11:28:15 +0100
-Message-Id: <20191122100823.450440259@linuxfoundation.org>
+Message-Id: <20191122100754.977428648@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,158 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Johansen <john.johansen@canonical.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-commit 58acf9d911c8831156634a44d0b022d683e1e50c upstream.
+[ Upstream commit df90fc64367ffdb6f1b5c0f0c4940d44832b0174 ]
 
-the policy_lock parameter is a one way switch that prevents policy
-from being further modified. Unfortunately some of the module parameters
-can effectively modify policy by turning off enforcement.
+sama5d4_xplained comes with a 4Gb NAND flash. Increase the rootfs
+size to match this limit.
 
-split policy_admin_capable into a view check and a full admin check,
-and update the admin check to test the policy_lock parameter.
-
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/include/policy.h |    2 ++
- security/apparmor/lsm.c            |   22 ++++++++++------------
- security/apparmor/policy.c         |   18 +++++++++++++++++-
- 3 files changed, 29 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/security/apparmor/include/policy.h
-+++ b/security/apparmor/include/policy.h
-@@ -403,6 +403,8 @@ static inline int AUDIT_MODE(struct aa_p
- 	return profile->audit;
- }
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index cf712444b2c2c..10f2fb9e0ea61 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -240,7 +240,7 @@
  
-+bool policy_view_capable(void);
-+bool policy_admin_capable(void);
- bool aa_may_manage_policy(int op);
- 
- #endif /* __AA_POLICY_H */
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -749,51 +749,49 @@ __setup("apparmor=", apparmor_enabled_se
- /* set global flag turning off the ability to load policy */
- static int param_set_aalockpolicy(const char *val, const struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_admin_capable())
- 		return -EPERM;
--	if (aa_g_lock_policy)
--		return -EACCES;
- 	return param_set_bool(val, kp);
- }
- 
- static int param_get_aalockpolicy(char *buffer, const struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_view_capable())
- 		return -EPERM;
- 	return param_get_bool(buffer, kp);
- }
- 
- static int param_set_aabool(const char *val, const struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_admin_capable())
- 		return -EPERM;
- 	return param_set_bool(val, kp);
- }
- 
- static int param_get_aabool(char *buffer, const struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_view_capable())
- 		return -EPERM;
- 	return param_get_bool(buffer, kp);
- }
- 
- static int param_set_aauint(const char *val, const struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_admin_capable())
- 		return -EPERM;
- 	return param_set_uint(val, kp);
- }
- 
- static int param_get_aauint(char *buffer, const struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_view_capable())
- 		return -EPERM;
- 	return param_get_uint(buffer, kp);
- }
- 
- static int param_get_audit(char *buffer, struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_view_capable())
- 		return -EPERM;
- 
- 	if (!apparmor_enabled)
-@@ -805,7 +803,7 @@ static int param_get_audit(char *buffer,
- static int param_set_audit(const char *val, struct kernel_param *kp)
- {
- 	int i;
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_admin_capable())
- 		return -EPERM;
- 
- 	if (!apparmor_enabled)
-@@ -826,7 +824,7 @@ static int param_set_audit(const char *v
- 
- static int param_get_mode(char *buffer, struct kernel_param *kp)
- {
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_admin_capable())
- 		return -EPERM;
- 
- 	if (!apparmor_enabled)
-@@ -838,7 +836,7 @@ static int param_get_mode(char *buffer,
- static int param_set_mode(const char *val, struct kernel_param *kp)
- {
- 	int i;
--	if (!capable(CAP_MAC_ADMIN))
-+	if (!policy_admin_capable())
- 		return -EPERM;
- 
- 	if (!apparmor_enabled)
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -916,6 +916,22 @@ static int audit_policy(int op, gfp_t gf
- 			&sa, NULL);
- }
- 
-+bool policy_view_capable(void)
-+{
-+	struct user_namespace *user_ns = current_user_ns();
-+	bool response = false;
-+
-+	if (ns_capable(user_ns, CAP_MAC_ADMIN))
-+		response = true;
-+
-+	return response;
-+}
-+
-+bool policy_admin_capable(void)
-+{
-+	return policy_view_capable() && !aa_g_lock_policy;
-+}
-+
- /**
-  * aa_may_manage_policy - can the current task manage policy
-  * @op: the policy manipulation operation being done
-@@ -930,7 +946,7 @@ bool aa_may_manage_policy(int op)
- 		return 0;
- 	}
- 
--	if (!capable(CAP_MAC_ADMIN)) {
-+	if (!policy_admin_capable()) {
- 		audit_policy(op, GFP_KERNEL, NULL, "not policy admin", -EACCES);
- 		return 0;
- 	}
+ 						rootfs@800000 {
+ 							label = "rootfs";
+-							reg = <0x800000 0x0f800000>;
++							reg = <0x800000 0x1f800000>;
+ 						};
+ 					};
+ 				};
+-- 
+2.20.1
+
 
 
