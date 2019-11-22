@@ -2,120 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3976E1077E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 20:16:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 011151077DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 20:13:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfKVTQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 14:16:35 -0500
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:52207 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbfKVTQe (ORCPT
+        id S1726977AbfKVTNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 14:13:32 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41314 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbfKVTNb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 14:16:34 -0500
-Received: by mail-wm1-f48.google.com with SMTP id g206so8346253wme.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 11:16:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=unipv-it.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=kLw3pFSIZDVbnCzJ9DTnz/kpdFIQj08MUYSImiLSK9M=;
-        b=lAULhbd8gCUzzbSRRCbFnF6HAk0C7AHCoTACxfKB1tGKbxZSaDKIWDVgNHcAchLKv8
-         LDscNLVVrwROJqNW/pTga43LR4PFONqZ7jHpBUOBg71E3CkWo1YRYhaaqichBafqJfKF
-         y1rvUMfk4dHQAWQJDnFFWv26VPlA3Vqtqq2QWXvLiG0x0tMjKXr1IB3gh9MgBAFdtLVJ
-         as+HJxKP7zNBtroVe5un15GzXgCXdDsVj8YIZrYL8pjzhQHQvbOcOVFECaRLTc1enM3e
-         F2Q8pRjvMyCrDZYlMM9fVE1FRmDSieqznFogt6IAF67w6W8vbx5SUMzCF7Ycu1oo/c4b
-         hVHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=kLw3pFSIZDVbnCzJ9DTnz/kpdFIQj08MUYSImiLSK9M=;
-        b=Snd0QUKc4wZ5gNJocKTc8fzmRAi777WiMcb9fNo7uq1OiIk3Uy0MwbJRoLKag8QSgF
-         x87kP/f08mFliqZxGRVViVZ8HUVe2zsfBPwJayfOA/A4v7UnqDU2khvCevIxOQH7S9Zl
-         1y6k4zLYUH9TIV4L4qDWa7o4wuO6HRnXvmDwuz6y1TsQuSqLUqFv9twg0//9DFGhFWWP
-         B4+cb4Kk4q6sKEycRmmya9XIcL9UolgZ8UpPTsKHnf5eJPEhxKJmfsFaqyUCR1hMgdM+
-         EVvb9+mwnuxar+6qO9JCZ3ZYHAIFW68EJgna96nQnX3/+GLygjknRnmbySiKbTIDy1l+
-         KONA==
-X-Gm-Message-State: APjAAAV0kyjD5j1FZeOt7GsQ/xYBaV04zQ5aAeGfAzEsyhwXurU8fH5/
-        clhKGHLC2lPzs0EVONjqi+mneQ==
-X-Google-Smtp-Source: APXvYqyS5KI1oHFoY6/zQrlq8Yiqp7iqxRVDi01q+CokCcH37IjXgrnE6wN04s/h+IuCAivbEKXemw==
-X-Received: by 2002:a7b:c34a:: with SMTP id l10mr14130871wmj.66.1574450191767;
-        Fri, 22 Nov 2019 11:16:31 -0800 (PST)
-Received: from angus.unipv.it (angus.unipv.it. [193.206.67.163])
-        by smtp.gmail.com with ESMTPSA id t14sm8525469wrw.87.2019.11.22.11.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 11:16:31 -0800 (PST)
-Message-ID: <fa3b0cf1f88e42e1200101bccbc797e4e7778d58.camel@unipv.it>
-Subject: Re: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-From:   Andrea Vai <andrea.vai@unipv.it>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Date:   Fri, 22 Nov 2019 20:16:30 +0100
-In-Reply-To: <20191109222828.GA30568@ming.t460p>
-References: <Pine.LNX.4.44L0.1911061044070.1694-100000@iolanthe.rowland.org>
-         <BYAPR04MB5816640CEF40CB52430BBD3AE7790@BYAPR04MB5816.namprd04.prod.outlook.com>
-         <b22c1dd95e6a262cf2667bee3913b412c1436746.camel@unipv.it>
-         <BYAPR04MB58167B95AF6B7CDB39D24C52E7780@BYAPR04MB5816.namprd04.prod.outlook.com>
-         <CAOsYWL3NkDw6iK3q81=5L-02w=VgPF_+tYvfgnTihgCcwKgA+g@mail.gmail.com>
-         <20191109222828.GA30568@ming.t460p>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Fri, 22 Nov 2019 14:13:31 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAMJDR4C075675;
+        Fri, 22 Nov 2019 13:13:27 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574450007;
+        bh=/UE78adoj5jfmn5s0/pawIXnBxu/CSqkZM2E28jJp4Q=;
+        h=From:To:CC:Subject:Date;
+        b=DfMVZ0FAdIQLQFoNtEN+jiLma4oIRpzR9utWKYX7T6Ct1HWgeJgOvNuQFPUK1lauu
+         F3l2GbWXmCPPrRfQtH0K105yspfI0N5lMqW9xqemoRC7JSHx7NIz6uphbTjrfhUIK0
+         gGviVnCdqgNDb8ymXzuXge8+Yp/hWpdGYMBguCwU=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAMJDRdu025466
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 Nov 2019 13:13:27 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 22
+ Nov 2019 13:13:26 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 22 Nov 2019 13:13:26 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAMJDQTs103737;
+        Fri, 22 Nov 2019 13:13:26 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jyri Sarha <jsarha@ti.com>, Benoit Parrot <bparrot@ti.com>
+Subject: [PATCH] dtc: checks: check_graph_port: skip node name check in overlay case
+Date:   Fri, 22 Nov 2019 13:16:31 -0600
+Message-ID: <20191122191631.2382-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il giorno dom, 10/11/2019 alle 06.28 +0800, Ming Lei ha scritto:
-> Another thing we could try is to use 'none' via the following
-> command:
-> 
->  echo none > /sys/block/sdh/queue/scheduler  #suppose 'sdh' points
-> to the usb storage disk
-> 
-> Because USB storage HBA is single hw queue, which depth is 1. This
-> way
-> should change to dispatch IO in the order of bio submission.
-> 
-> Andrea, could you switch io scheduler to none and update us if
-> difference
-> can be made?
+In check_graph_port() we need to skip the node name check in the overlay
+case as it causes a false positive warning.
 
-Using the new kernel, there is indeed a difference because the time to
-copy a file is 1800 seconds with [mq-deadline], and 340 seconds with
-[none]. But that is still far away from the old kernel, which performs
-the copy of the same file in 76 seconds.
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+---
+ checks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Side notes:
-
-- The numbers above are average values calculated on 100 trials for
-each  different situation. As previously noticed on this thread, with
-the new kernel the times are also very different among the different
-trials in the same situation. With the old kernel the standard
-deviation on the times in a set of 100 trials is much smaller (to give
-some mean/sigma values: m=1800->s=530; m=340->s=131; m=76->s=13; ).
-
-- The size of the transferred file has been 1GB in these trials.
-Smaller files don't always give appreciable differences, but if you
-want I can also provide those data. Of course, I can also provide the
-raw data of each set of trials.
-
-Thanks,
-and bye,
-
-Andrea
+diff --git a/checks.c b/checks.c
+index 756f0fa9203f..6b6712da146a 100644
+--- a/checks.c
++++ b/checks.c
+@@ -1707,7 +1707,8 @@ static void check_graph_port(struct check *c, struct dt_info *dti,
+ 	if (node->bus != &graph_port_bus)
+ 		return;
+ 
+-	if (!strprefixeq(node->name, node->basenamelen, "port"))
++	if (!strprefixeq(node->name, node->basenamelen, "port") &&
++	    !(dti->dtsflags & DTSF_PLUGIN))
+ 		FAIL(c, dti, node, "graph port node name should be 'port'");
+ 
+ 	check_graph_reg(c, dti, node);
+-- 
+2.17.1
 
