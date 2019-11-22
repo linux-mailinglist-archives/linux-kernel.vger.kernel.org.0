@@ -2,114 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 505E9107601
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9CF107607
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:53:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfKVQwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 11:52:18 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:46632 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfKVQwS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 11:52:18 -0500
-Received: by mail-pj1-f68.google.com with SMTP id a16so3260665pjs.13
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 08:52:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bIBZ/pDagkMXdQDKDvezMxRb4iRHYel+ahYnkHe//Mw=;
-        b=YcLtVyutJTxK26Jq0OiYsnmEyoQyQFjeO7obWVSHlkjXGA69msCHJ1tBa8EQQRL9BJ
-         jtOccOm7EWgUTRF7S9XJcsjIq0zkEfG/N3/29fz0xT/jA7K7rz5FtX7XAPEZ1CgnL2no
-         9joKepTABeANY85Wb7q9PUBRCq6t16ZMupPEw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bIBZ/pDagkMXdQDKDvezMxRb4iRHYel+ahYnkHe//Mw=;
-        b=H4Rw3xucKTn1t8o4vh3/DE52aQVyQ6LkPjGJUFwSg1Evz1QeFuUMVdEOkjXQwooT4a
-         X86xyGal9XCLHhVqdtudafYu50IeofTwR3cLEJd3TuT043vPAQ18mB9Zyrh5Sr797cIy
-         bsgCwuAQc+myhJCxxiXv+a0NnY3ucM/esmfkOMO9lVzafSQFmQUI/rkVbX4xNd0Tty0a
-         oUdWmoq3YwpYMdleKvj5M7Cz7OFRwTetMX41yAljkzFrg/Z9dtK27unrHLsVbDEGjRkW
-         6TIdku0Qk83lmnqJI0fvy4bGJxR3uekqa/WZ7dqju+DQni3MXR+86Cqbt26UEgngSAZ6
-         pUww==
-X-Gm-Message-State: APjAAAUqDt0rN/251OS1OjY6pU+cgZMsdsvVjulqYxZZMtiSf2VsyCg5
-        N9hujsAPS5yHJNaRamuD9CFUDw==
-X-Google-Smtp-Source: APXvYqzZwZG+BeFAjZyROOnizhpZkQHwGQ/kubJmglsdvzHe+7MOqzo4fPiO5n3oqh16frUICgp+OA==
-X-Received: by 2002:a17:90a:de4:: with SMTP id 91mr20505683pjv.113.1574441537644;
-        Fri, 22 Nov 2019 08:52:17 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u65sm8020297pfb.35.2019.11.22.08.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 08:52:16 -0800 (PST)
-Date:   Fri, 22 Nov 2019 08:52:15 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Elena Petrova <lenaptr@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH v2 0/3] ubsan: Split out bounds checker
-Message-ID: <201911220845.622FDC4@keescook>
-References: <20191121181519.28637-1-keescook@chromium.org>
- <CACT4Y+b3JZM=TSvUPZRMiJEPNH69otidRCqq9gmKX53UHxYqLg@mail.gmail.com>
+        id S1727511AbfKVQxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 11:53:25 -0500
+Received: from mga05.intel.com ([192.55.52.43]:27190 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726620AbfKVQxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 11:53:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 08:53:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,230,1571727600"; 
+   d="scan'208";a="205519460"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Nov 2019 08:53:23 -0800
+Subject: Re: [PATCH 1/5] dmaengine: Store module owner in dma_device struct
+To:     Vinod Koul <vkoul@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20191022214616.7943-1-logang@deltatee.com>
+ <20191022214616.7943-2-logang@deltatee.com>
+ <20191109171853.GF952516@vkoul-mobl>
+ <3a19f075-6a86-4ace-9184-227f3dc2f2d3@deltatee.com>
+ <20191112055540.GY952516@vkoul-mobl>
+ <5ca7ef5d-dda7-e36c-1d40-ef67612d2ac4@deltatee.com>
+ <20191114045555.GJ952516@vkoul-mobl>
+ <fa45de06-089f-367c-7816-2ee040e41d24@deltatee.com>
+ <20191122052010.GO82508@vkoul-mobl>
+From:   Dave Jiang <dave.jiang@intel.com>
+Message-ID: <4c03b5c6-6f25-2753-22b9-7cdcb4f8b527@intel.com>
+Date:   Fri, 22 Nov 2019 09:53:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+b3JZM=TSvUPZRMiJEPNH69otidRCqq9gmKX53UHxYqLg@mail.gmail.com>
+In-Reply-To: <20191122052010.GO82508@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 10:07:29AM +0100, Dmitry Vyukov wrote:
-> On Thu, Nov 21, 2019 at 7:15 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > v2:
-> >     - clarify Kconfig help text (aryabinin)
-> >     - add reviewed-by
-> >     - aim series at akpm, which seems to be where ubsan goes through?
-> > v1: https://lore.kernel.org/lkml/20191120010636.27368-1-keescook@chromium.org
-> >
-> > This splits out the bounds checker so it can be individually used. This
-> > is expected to be enabled in Android and hopefully for syzbot. Includes
-> > LKDTM tests for behavioral corner-cases (beyond just the bounds checker).
-> >
-> > -Kees
+
+
+On 11/21/19 10:20 PM, Vinod Koul wrote:
+> On 14-11-19, 10:03, Logan Gunthorpe wrote:
+>>
+>>
+>> On 2019-11-13 9:55 p.m., Vinod Koul wrote:
+>>>> But that's the problem. We can't expect our users to be "nice" and not
+>>>> unbind when the driver is in use. Killing the kernel if the user
+>>>> unexpectedly unbinds is not acceptable.
+>>>
+>>> And that is why we review the code and ensure this does not happen and
+>>> behaviour is as expected
+>>
+>> Yes, but the current code can kill the kernel when the driver is unbound.
+>>
+>>>>>> I suspect this is less of an issue for most devices as they wouldn't
+>>>>>> normally be unbound while in use (for example there's really no reason
+>>>>>> to ever unbind IOAT seeing it's built into the system). Though, the fact
+>>>>>> is, the user could unbind these devices at anytime and we don't want to
+>>>>>> panic if they do.
+>>>>>
+>>>>> There are many drivers which do modules so yes I am expecting unbind and
+>>>>> even a bind following that to work
+>>>>
+>>>> Except they will panic if they unbind while in use, so that's a
+>>>> questionable definition of "work".
+>>>
+>>> dmaengine core has module reference so while they are being used they
+>>> won't be removed (unless I complete misread the driver core behaviour)
+>>
+>> Yes, as I mentioned in my other email, holding a module reference does
+>> not prevent the driver from being unbound. Any driver can be unbound by
+>> the user at any time without the module being removed.
 > 
-> +syzkaller mailing list
+> That sounds okay then.
+
+I'm actually glad Logan is putting some work in addressing this. I also 
+ran into the same issue as well dealing with unbinds on my new driver.
+
+>>
+>> Essentially, at any time, a user can do this:
+>>
+>> echo 0000:83:00.4 > /sys/bus/pci/drivers/plx_dma/unbind
+>>
+>> Which will call plx_dma_remove() regardless of whether anyone has a
+>> reference to the module, and regardless of whether the dma channel is
+>> currently in use. I feel it is important that drivers support this
+>> without crashing, and my plx_dma driver does the correct thing here.
+>>
+>> Logan
 > 
-> This is great!
-> 
-> I wanted to enable UBSAN on syzbot for a long time. And it's
-> _probably_ not lots of work. But it was stuck on somebody actually
-> dedicating some time specifically for it.
-> Kees, or anybody else interested, could you provide relevant configs
-> that (1) useful for kernel, (2) we want 100% cleanliness, (3) don't
-> fire all the time even without fuzzing? Anything else required to
-> enable UBSAN? I don't see anything. syzbot uses gcc 8.something, which
-> I assume should be enough (but we can upgrade if necessary).
-
-Nothing external should be needed; GCC and Clang support the ubsan
-options. Once this series lands, it should be possible to just enable
-this with:
-
-CONFIG_UBSAN=y
-CONFIG_UBSAN_BOUNDS=y
-# CONFIG_UBSAN_MISC is not set
-
-Based on initial testing, the bounds checker isn't very noisy, but I
-haven't spun up a syzbot instance to really confirm this yet (that was
-on the TODO list for today to let it run over the weekend).
-
--- 
-Kees Cook
