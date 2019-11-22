@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B875106A50
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E0C106D64
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfKVKdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:33:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56822 "EHLO mail.kernel.org"
+        id S1730956AbfKVK7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:59:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727976AbfKVKdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:33:42 -0500
+        id S1730195AbfKVK7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:59:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C02720708;
-        Fri, 22 Nov 2019 10:33:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BF512073F;
+        Fri, 22 Nov 2019 10:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418821;
-        bh=0K5Le4/yUVvQ+7LVnDH2eIxwNTpwnAm+e6EkDjNqOyY=;
+        s=default; t=1574420383;
+        bh=Ic/ThZASihVe9m0Cw4VZvzcaHxILVDuvsrUKP9b9wYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FwZjmDhqYV+rgw2kcZLQWnPHu+66eFQ35Z27AbL3SsoGImpjiy2EXlxe6h5tlp/JP
-         eIzSqJ+eKbNd6GhpWLOCtL4EBPE1u2Yb/a+fWbz8/J1WrRaEjj4bP81hh10cnBZ9Af
-         4nK1P7o3QSq0uJcG78mjZfk8iSyN/8eEOuRfAdrE=
+        b=0vhz9Kk7z2ZGUrZRUErk7yA45VDALfURyazIJ6c9Ze67sfT+ndAFP5H+wVKi6QubJ
+         Z5OlOTNeBlv5qQuakez455TdaQFApvhCIFXpDxMVRBKWMPFSdqDr4zpCsKLb+IIR+v
+         Q2TFizi1xkM217i5oQvcj+K8pYPwtkmA+Ur/YzV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 062/159] libfdt: Ensure INT_MAX is defined in libfdt_env.h
-Date:   Fri, 22 Nov 2019 11:27:33 +0100
-Message-Id: <20191122100752.929251532@linuxfoundation.org>
+Subject: [PATCH 4.19 089/220] IB/mlx4: Avoid implicit enumerated type conversion
+Date:   Fri, 22 Nov 2019 11:27:34 +0100
+Message-Id: <20191122100919.031788785@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,66 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 53dd9dce6979bc54d64a3a09a2fb20187a025be7 ]
+[ Upstream commit b56511c15713ba6c7572e77a41f7ddba9c1053ec ]
 
-The next update of libfdt has a new dependency on INT_MAX. Update the
-instances of libfdt_env.h in the kernel to either include the necessary
-header with the definition or define it locally.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+type 'enum ib_qp_create_flags' [-Wenum-conversion]
+                qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+                                                    ~ ^~~~~~~~~~~~~~~~~~~~~~~
+
+drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+type 'enum ib_qp_create_flags' [-Wenum-conversion]
+                qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+                                                    ~ ^~~~~~~~~~~~~~~~~
+
+The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+type ib_qp_create_flags. Make that clear to Clang by changing the
+create_flags type to u32.
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/compressed/libfdt_env.h | 2 ++
- arch/powerpc/boot/libfdt_env.h        | 2 ++
- include/linux/libfdt_env.h            | 1 +
- 3 files changed, 5 insertions(+)
+ include/rdma/ib_verbs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 17ae0f3efac8e..005bf4ff1b4cb 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -5,6 +5,8 @@
- #include <linux/string.h>
- #include <asm/byteorder.h>
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index f3d475024d376..54e4d1fd21f8f 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -1147,7 +1147,7 @@ struct ib_qp_init_attr {
+ 	struct ib_qp_cap	cap;
+ 	enum ib_sig_type	sq_sig_type;
+ 	enum ib_qp_type		qp_type;
+-	enum ib_qp_create_flags	create_flags;
++	u32			create_flags;
  
-+#define INT_MAX			((int)(~0U>>1))
-+
- typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 7e3789ea396b8..0b3db6322c793 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -4,6 +4,8 @@
- #include <types.h>
- #include <string.h>
- 
-+#define INT_MAX			((int)(~0U>>1))
-+
- #include "of.h"
- 
- typedef u32 uint32_t;
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index 2a663c6bb4285..8850e243c9406 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -1,6 +1,7 @@
- #ifndef _LIBFDT_ENV_H
- #define _LIBFDT_ENV_H
- 
-+#include <linux/kernel.h>	/* For INT_MAX */
- #include <linux/string.h>
- 
- #include <asm/byteorder.h>
+ 	/*
+ 	 * Only needed for special QP types, or when using the RW API.
 -- 
 2.20.1
 
