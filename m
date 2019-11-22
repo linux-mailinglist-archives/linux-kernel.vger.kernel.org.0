@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022D0106B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE51106A81
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728861AbfKVKpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52412 "EHLO mail.kernel.org"
+        id S1727127AbfKVKf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729545AbfKVKps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:48 -0500
+        id S1727388AbfKVKfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3806820715;
-        Fri, 22 Nov 2019 10:45:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A59BE20637;
+        Fri, 22 Nov 2019 10:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419547;
-        bh=rJDJge3+QKwft/bx/SfxZuk9VqWcGSI7AVWouRhcak4=;
+        s=default; t=1574418924;
+        bh=wdelKJofsea4ejOrCFnoP4sWAiQO/Sw8Fby/doyW6Sk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IbohhMmcT7VGBWn5bVOP/uiDYiVfM/YuiEEvfbLp0YhEO0pAdD6vDvM2AvhI2pCs9
-         3Ly9DiJqDSxf38JM3SqdEIur7Rvo+owV7+IqUKJimJXGDqOSft3xzEIdzNCO81eu/N
-         Zk5T/dkeuka0q5gfVAWPikjpVH3L0uEVuWpP2f5U=
+        b=e8Vh8VI3vuniwKnWScme6N14cHl7nTdBJOMgR7wRbFrJExkCk6K90tI1e5dNp+pbl
+         /6HAj5051tMP0eA+/mPPX9RSo7V9MdfsDiww2SWu7IvqYyJyoamoQXntJzPFTvU8zh
+         XWi9oaDwD6/9aEXvta2urjHNX/v61ZP0fE7AX/c8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH 4.9 148/222] net: cdc_ncm: Signedness bug in cdc_ncm_set_dgram_size()
-Date:   Fri, 22 Nov 2019 11:28:08 +0100
-Message-Id: <20191122100913.462388506@linuxfoundation.org>
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 4.4 098/159] memfd: Use radix_tree_deref_slot_protected to avoid the warning.
+Date:   Fri, 22 Nov 2019 11:28:09 +0100
+Message-Id: <20191122100818.517338061@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-commit a56dcc6b455830776899ce3686735f1172e12243 upstream.
+The commit eb4058d8daf8 ("memfd: Fix locking when tagging pins")
+introduces the following warning messages.
 
-This code is supposed to test for negative error codes and partial
-reads, but because sizeof() is size_t (unsigned) type then negative
-error codes are type promoted to high positive values and the condition
-doesn't work as expected.
+*WARNING: suspicious RCU usage in memfd_wait_for_pins*
 
-Fixes: 332f989a3b00 ("CDC-NCM: handle incomplete transfer of MTU")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+It is because we still use radix_tree_deref_slot without read_rcu_lock.
+We should use radix_tree_deref_slot_protected instead in the case.
+
+Cc: stable@vger.kernel.org
+Fixes: eb4058d8daf8 ("memfd: Fix locking when tagging pins")
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/usb/cdc_ncm.c |    2 +-
+ mm/shmem.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -577,7 +577,7 @@ static void cdc_ncm_set_dgram_size(struc
- 	err = usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
- 			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
- 			      0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
--	if (err < sizeof(max_datagram_size)) {
-+	if (err != sizeof(max_datagram_size)) {
- 		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
- 		goto out;
- 	}
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1862,7 +1862,7 @@ static void shmem_tag_pins(struct addres
+ 	spin_lock_irq(&mapping->tree_lock);
+ restart:
+ 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
+-		page = radix_tree_deref_slot(slot);
++		page = radix_tree_deref_slot_protected(slot, &mapping->tree_lock);
+ 		if (!page || radix_tree_exception(page)) {
+ 			if (radix_tree_deref_retry(page))
+ 				goto restart;
 
 
