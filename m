@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C20106E8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BDB1070E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731190AbfKVLJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:09:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57518 "EHLO mail.kernel.org"
+        id S1729009AbfKVLZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:25:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729992AbfKVLDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:03:23 -0500
+        id S1726716AbfKVKhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:37:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F28E02073F;
-        Fri, 22 Nov 2019 11:03:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40B0420717;
+        Fri, 22 Nov 2019 10:37:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420602;
-        bh=8xNOoACWH3K2CUyjJCpoBhrHykxp+H3DVrmXt4ZVvNI=;
+        s=default; t=1574419035;
+        bh=jklRnbWyUn1g3R8PppErtgWOyC8AuluYe2sHZYjRpM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EQDkejTbjVfTrYTjrfrQE8dhubSeHZsZPr9d+MuOsqgB4EAuMlf4oNi5Mw/Yeu2Br
-         Sl3TL/50vdgw0L/kXdd6MgZQMWBfWNDa2gkvT2SZmB1HvKQICCiqI8twzNPkMxoJgE
-         4jI5ccILoilLmnCOc1OFcWZVrR6JujOj9MSHPibY=
+        b=YT02dLuLbed0FVIOWSTvd8jsjumiEF7p/nGIcXy2IGga+F6hNzzAp/PckjC5Ta8g4
+         bW+OLIgF+wbaeRqGwp7xpRxehwqhy+UtuQ8jBR7txxvm12PBqyXUImyAfGbEVSUBW3
+         nwNkp2PSgDOQCCOCzlxMrcSuYmqRTuh2vMOq3RSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 161/220] media: cx18: Dont check for address of video_dev
-Date:   Fri, 22 Nov 2019 11:28:46 +0100
-Message-Id: <20191122100924.323286385@linuxfoundation.org>
+        stable@vger.kernel.org, Rami Rosen <ramirose@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 136/159] dmaengine: ioat: fix prototype of ioat_enumerate_channels
+Date:   Fri, 22 Nov 2019 11:28:47 +0100
+Message-Id: <20191122100835.835464207@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Rami Rosen <ramirose@gmail.com>
 
-[ Upstream commit eb1ca9a428fdc3f98be4898f6cd8bcb803878619 ]
+[ Upstream commit f4d34aa8c887a8a2d23ef546da0efa10e3f77241 ]
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context.
-
-drivers/media/pci/cx18/cx18-driver.c:1255:23: warning: address of
-'cx->streams[i].video_dev' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-                if (&cx->streams[i].video_dev)
-                ~~   ~~~~~~~~~~~~~~~^~~~~~~~~
-1 warning generated.
-
-Check whether v4l2_dev is null, not the address, so that the statement
-doesn't fire all the time. This check has been present since 2009,
-introduced by commit 21a278b85d3c ("V4L/DVB (11619): cx18: Simplify the
-work handler for outgoing mailbox commands")
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Rami Rosen <ramirose@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/cx18/cx18-driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/ioat/init.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
-index 0c389a3fb4e5f..e64f9093cd6d3 100644
---- a/drivers/media/pci/cx18/cx18-driver.c
-+++ b/drivers/media/pci/cx18/cx18-driver.c
-@@ -1252,7 +1252,7 @@ static void cx18_cancel_out_work_orders(struct cx18 *cx)
+diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+index 106fa9b327d92..92b0a7a042ee0 100644
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -128,7 +128,7 @@ static void
+ ioat_init_channel(struct ioatdma_device *ioat_dma,
+ 		  struct ioatdma_chan *ioat_chan, int idx);
+ static void ioat_intr_quirk(struct ioatdma_device *ioat_dma);
+-static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
++static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
+ static int ioat3_dma_self_test(struct ioatdma_device *ioat_dma);
+ 
+ static int ioat_dca_enabled = 1;
+@@ -593,7 +593,7 @@ static void ioat_dma_remove(struct ioatdma_device *ioat_dma)
+  * ioat_enumerate_channels - find and initialize the device's channels
+  * @ioat_dma: the ioat dma device to be enumerated
+  */
+-static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
++static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
  {
- 	int i;
- 	for (i = 0; i < CX18_MAX_STREAMS; i++)
--		if (&cx->streams[i].video_dev)
-+		if (cx->streams[i].video_dev.v4l2_dev)
- 			cancel_work_sync(&cx->streams[i].out_work_order);
+ 	struct ioatdma_chan *ioat_chan;
+ 	struct device *dev = &ioat_dma->pdev->dev;
+@@ -612,7 +612,7 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
+ 	xfercap_log = readb(ioat_dma->reg_base + IOAT_XFERCAP_OFFSET);
+ 	xfercap_log &= 0x1f; /* bits [4:0] valid */
+ 	if (xfercap_log == 0)
+-		return 0;
++		return;
+ 	dev_dbg(dev, "%s: xfercap = %d\n", __func__, 1 << xfercap_log);
+ 
+ 	for (i = 0; i < dma->chancnt; i++) {
+@@ -629,7 +629,6 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
+ 		}
+ 	}
+ 	dma->chancnt = i;
+-	return i;
  }
  
+ /**
 -- 
 2.20.1
 
