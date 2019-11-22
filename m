@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02781106B63
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64901106A14
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfKVKnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49604 "EHLO mail.kernel.org"
+        id S1727431AbfKVKbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:31:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727646AbfKVKnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:53 -0500
+        id S1726840AbfKVKbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:31:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FE6320715;
-        Fri, 22 Nov 2019 10:43:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21D1D20714;
+        Fri, 22 Nov 2019 10:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419432;
-        bh=HShIySpLPUNeFNOt26VHwgmGLAKWF2+VsW+uRVUMwGI=;
+        s=default; t=1574418701;
+        bh=rrZSbi4G4miTJyPIz+Y84gcUjifvPimzBYe2sbVKh24=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zLhCZQutHFwWZWeF0dS9XhHMW7tg5lLPWLW8DxOsw6v5TrTWfne8xg5PYCch6AVnZ
-         nWk/r65sdOms7WfI3fR5MZI2vpg3a5FaP1YcMwjDzI5izD97BRV4iQXhvttDEyikFN
-         DLE+dYeqxe06i3GbNsLJXfrIgnsd72vdthJ2h5Xw=
+        b=etv7C/rwpWf1ZGlrt9I3fQw3xF8DKeIiqG5bq87+2gPZ5ojDe8UpKon0QKmsOfjAc
+         EqTjglrIEJ5T8qkIc1CXQdmRfaqVVvyx5x+QSuucpfLOPXuyFNGvC99qrL4rgVHbvb
+         iknAVsWrR3A/5Np0oH9U4N5WV2dIZ+3sDS4IGOws=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        =?UTF-8?q?Patryk=20Ma=C5=82ek?= <patryk.malek@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 073/222] power: reset: at91-poweroff: do not procede if at91_shdwc is allocated
+Subject: [PATCH 4.4 022/159] i40e: Prevent deleting MAC address from VF when set by PF
 Date:   Fri, 22 Nov 2019 11:26:53 +0100
-Message-Id: <20191122100907.543194787@linuxfoundation.org>
+Message-Id: <20191122100721.942284583@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Patryk Małek <patryk.malek@intel.com>
 
-[ Upstream commit 9f1e44774be578fb92776add95f1fcaf8284d692 ]
+[ Upstream commit 5907cf6c5bbe78be2ed18b875b316c6028b20634 ]
 
-There should be only one instance of struct shdwc in the system. This is
-referenced through at91_shdwc. Return in probe if at91_shdwc is already
-allocated.
+To prevent VF from deleting MAC address that was assigned by the
+PF we need to check for that scenario when we try to delete a MAC
+address from a VF.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Patryk Małek <patryk.malek@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/reset/at91-sama5d2_shdwc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/reset/at91-sama5d2_shdwc.c
-index 90b0b5a70ce52..04ca990e8f6cb 100644
---- a/drivers/power/reset/at91-sama5d2_shdwc.c
-+++ b/drivers/power/reset/at91-sama5d2_shdwc.c
-@@ -246,6 +246,9 @@ static int __init at91_shdwc_probe(struct platform_device *pdev)
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
- 
-+	if (at91_shdwc)
-+		return -EBUSY;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index e116d9a99b8e9..cdb263875efb3 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -1677,6 +1677,16 @@ static int i40e_vc_del_mac_addr_msg(struct i40e_vf *vf, u8 *msg, u16 msglen)
+ 			ret = I40E_ERR_INVALID_MAC_ADDR;
+ 			goto error_param;
+ 		}
 +
- 	at91_shdwc = devm_kzalloc(&pdev->dev, sizeof(*at91_shdwc), GFP_KERNEL);
- 	if (!at91_shdwc)
- 		return -ENOMEM;
++		if (vf->pf_set_mac &&
++		    ether_addr_equal(al->list[i].addr,
++				     vf->default_lan_addr.addr)) {
++			dev_err(&pf->pdev->dev,
++				"MAC addr %pM has been set by PF, cannot delete it for VF %d, reset VF to change MAC addr\n",
++				vf->default_lan_addr.addr, vf->vf_id);
++			ret = I40E_ERR_PARAM;
++			goto error_param;
++		}
+ 	}
+ 	vsi = pf->vsi[vf->lan_vsi_idx];
+ 
 -- 
 2.20.1
 
