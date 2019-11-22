@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93531106DFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 370D4106E4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbfKVLFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:05:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60508 "EHLO mail.kernel.org"
+        id S1731408AbfKVLHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:07:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731281AbfKVLFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:05:03 -0500
+        id S1731728AbfKVLFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:05:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 947D02075E;
-        Fri, 22 Nov 2019 11:05:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6E1220840;
+        Fri, 22 Nov 2019 11:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420703;
-        bh=CISu5P/jMUfzxYshfYe9HfhmQSco0Rm52SQyQxCrb00=;
+        s=default; t=1574420735;
+        bh=julWjBlCYWiwOVW4slF5Jvmglxdu1fcIEx8uEPF98IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXrttcLWCi8aFEbfmM786mInEo9iwyacALsTm0BSI8QYPpXvgjst0hKgcS3nXThqC
-         WAgEXAX+mZXBKlsvON6OLQGqNHaBTdKP2yqI1kPaAgvU8zRf51D0y/OUEHXMeLfY78
-         xudwUkLt4N11XcnaZmrqd6FVnjAp49m9kNT+kEeY=
+        b=a63Hclo4I0spReMkO8ztfeiAHkFPxaq5YwcVPF1Xd/cx8lCyqrI2e/i6sD2DrHrCm
+         cDBJO0wvUheAH+W4Al8Z3WIFFNXbdR97pEetPJip4FiDOcz7Jfxc3co5fsxTSaa2eh
+         3oNdIHaGTf+aJFwAMXtZu9cyJvtIBzC+kaJWwVw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lianbo Jiang <lijiang@redhat.com>,
-        Borislav Petkov <bp@suse.de>, x86@kernel.org,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 170/220] proc/vmcore: Fix i386 build error of missing copy_oldmem_page_encrypted()
-Date:   Fri, 22 Nov 2019 11:28:55 +0100
-Message-Id: <20191122100925.051133866@linuxfoundation.org>
+Subject: [PATCH 4.19 171/220] backlight: lm3639: Unconditionally call led_classdev_unregister
+Date:   Fri, 22 Nov 2019 11:28:56 +0100
+Message-Id: <20191122100925.124648045@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,47 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit cf089611f4c446285046fcd426d90c18f37d2905 ]
+[ Upstream commit 7cea645ae9c5a54aa7904fddb2cdf250acd63a6c ]
 
-Lianbo reported a build error with a particular 32-bit config, see Link
-below for details.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context.
 
-Provide a weak copy_oldmem_page_encrypted() function which architectures
-can override, in the same manner other functionality in that file is
-supplied.
+drivers/video/backlight/lm3639_bl.c:403:14: warning: address of
+'pchip->cdev_torch' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (&pchip->cdev_torch)
+        ~~   ~~~~~~~^~~~~~~~~~
+drivers/video/backlight/lm3639_bl.c:405:14: warning: address of
+'pchip->cdev_flash' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (&pchip->cdev_flash)
+        ~~   ~~~~~~~^~~~~~~~~~
+2 warnings generated.
 
-Reported-by: Lianbo Jiang <lijiang@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: x86@kernel.org
-Link: http://lkml.kernel.org/r/710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com
+These statements have been present since 2012, introduced by
+commit 0f59858d5119 ("backlight: add new lm3639 backlight
+driver"). Given that they have been called unconditionally since
+then presumably without any issues, removing the always true if
+statements to fix the warnings without any real world changes.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/119
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/vmcore.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/video/backlight/lm3639_bl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index cbde728f8ac60..5c5f161763c8c 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -176,6 +176,16 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 	return remap_pfn_range(vma, from, pfn, size, prot);
- }
+diff --git a/drivers/video/backlight/lm3639_bl.c b/drivers/video/backlight/lm3639_bl.c
+index cd50df5807ead..086611c7bc03c 100644
+--- a/drivers/video/backlight/lm3639_bl.c
++++ b/drivers/video/backlight/lm3639_bl.c
+@@ -400,10 +400,8 @@ static int lm3639_remove(struct i2c_client *client)
  
-+/*
-+ * Architectures which support memory encryption override this.
-+ */
-+ssize_t __weak
-+copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-+			   unsigned long offset, int userbuf)
-+{
-+	return copy_oldmem_page(pfn, buf, csize, offset, userbuf);
-+}
-+
- /*
-  * Copy to either kernel or user space
-  */
+ 	regmap_write(pchip->regmap, REG_ENABLE, 0x00);
+ 
+-	if (&pchip->cdev_torch)
+-		led_classdev_unregister(&pchip->cdev_torch);
+-	if (&pchip->cdev_flash)
+-		led_classdev_unregister(&pchip->cdev_flash);
++	led_classdev_unregister(&pchip->cdev_torch);
++	led_classdev_unregister(&pchip->cdev_flash);
+ 	if (pchip->bled)
+ 		device_remove_file(&(pchip->bled->dev), &dev_attr_bled_mode);
+ 	return 0;
 -- 
 2.20.1
 
