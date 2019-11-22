@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F17F106B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D73106A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbfKVKp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51656 "EHLO mail.kernel.org"
+        id S1728187AbfKVKfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729070AbfKVKpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:22 -0500
+        id S1728171AbfKVKe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:34:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11B242071C;
-        Fri, 22 Nov 2019 10:45:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E2362072E;
+        Fri, 22 Nov 2019 10:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419521;
-        bh=qFMPdXUEH6vwVV5eu/FaLP6bhy2xtehholYH6iinTzU=;
+        s=default; t=1574418897;
+        bh=DAgjWYRQf/Pepdfl7HaxtWpkqKg1eDbMhQhEiRzh5oQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rxa4exafLJ8MJ5A8ZOT4VbYJIMbn+4C8OX8Cj7NWXiJNiegvjjFBLsIODYIywg6pr
-         Btjl1WMPPVjRp3i5qWOdl7+hl4JjFCg+WGVUHxDHDDQ85ZlAUNtWu/Gw2Y5jVVJTbP
-         tRmvmyV9RtlFOaMRB2X/uuDpKGrfrKbS+hMYPjWY=
+        b=BEo0D1WdZAtmCuNgVoqmDzZoPYIg9vr4CSArP5DL8JMBCr5JUFOEGstLm3BOj5E1A
+         Mcvlo5Ulo83nkfqs+X5oCIi5TgnLUd49DTJJhVlp963Y9x+fKIUiGxcHhw4IHCVkK5
+         OrZ5BSA7IWVhZ2yYrmZoq4nd9Z1Zhe1vtBMxw1E0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brijesh Singh <brijeshkumar.singh@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 140/222] arm64: dts: amd: Fix SPI bus warnings
-Date:   Fri, 22 Nov 2019 11:28:00 +0100
-Message-Id: <20191122100912.955623871@linuxfoundation.org>
+Subject: [PATCH 4.4 090/159] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Date:   Fri, 22 Nov 2019 11:28:01 +0100
+Message-Id: <20191122100811.029414666@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit e9f0878c4b2004ac19581274c1ae4c61ae3ca70e ]
+[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
 
-dtc has new checks for SPI buses. Fix the warnings in node names.
+Fix MMC1 cmd pin pull-up causing issues on carrier boards without
+external pull-up.
 
-arch/arm64/boot/dts/amd/amd-overdrive.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/amd/amd-overdrive-rev-b0.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dtb: Warning (spi_bus_bridge): /smb/ssp@e1030000: node name for SPI buses should be 'spi'
-
-Cc: Brijesh Singh <brijeshkumar.singh@amd.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-index bd3adeac374f4..2973a14523eaf 100644
---- a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-+++ b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
-@@ -106,7 +106,7 @@
- 			clock-names = "uartclk", "apb_pclk";
- 		};
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index bf361277fe105..9a8c20cd06885 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -147,14 +147,14 @@
  
--		spi0: ssp@e1020000 {
-+		spi0: spi@e1020000 {
- 			status = "disabled";
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0 0xe1020000 0 0x1000>;
-@@ -116,7 +116,7 @@
- 			clock-names = "apb_pclk";
- 		};
- 
--		spi1: ssp@e1030000 {
-+		spi1: spi@e1030000 {
- 			status = "disabled";
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0 0xe1030000 0 0x1000>;
+ 			/* Apalis MMC1 */
+ 			sdmmc3_clk_pa6 {
+-				nvidia,pins = "sdmmc3_clk_pa6",
+-					      "sdmmc3_cmd_pa7";
++				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_dat0_pb7 {
+-				nvidia,pins = "sdmmc3_dat0_pb7",
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
+ 					      "sdmmc3_dat1_pb6",
+ 					      "sdmmc3_dat2_pb5",
+ 					      "sdmmc3_dat3_pb4",
 -- 
 2.20.1
 
