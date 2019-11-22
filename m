@@ -2,866 +2,1297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A0EA106BE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A65F106BEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:48:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfKVKsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:48:23 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34682 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729866AbfKVKsT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:19 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iY6Tu-000345-D5; Fri, 22 Nov 2019 11:48:06 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 067351C0081;
-        Fri, 22 Nov 2019 11:48:06 +0100 (CET)
-Date:   Fri, 22 Nov 2019 10:48:05 -0000
-From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/kcsan] kcsan: Improve various small stylistic details
-Cc:     linux-kernel@vger.kernel.org, Marco Elver <elver@google.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>
+        id S1729939AbfKVKs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:48:27 -0500
+Received: from mail-eopbgr70054.outbound.protection.outlook.com ([40.107.7.54]:28323
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729436AbfKVKsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:48:24 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DSbugRl50dRzBL8elSIneMNzLxS8WmVjYKn4cwmg9TffFZXj/BFks/EhF6+jmmR7v0zAVIQcCDRuJag6tyVFZjTtzJKSMW7dP47cgCNkTM6RVd9GMqgTgOO97wZ7x8xV+hoYhZWvJIarYjT6xH8evgiDx3o7VUPyhmeeGTJoc7eBYGvqnqt+wDBkXWdfocO1z99lIXYY5vP8dQHJPCYmdwjTZtq0dKHPn8Wj6FKRuu+XbcfOT0sc7ME+DAn+NvkAkL6YiYLb5muQCLUKavPgjkGvuarnDYY/tvChMSCvsQJMgN0lVQRgEDeDTVrTWCMhpT+vKADLO6qCI5fsue+mFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=co9cb+A0AGS5c92Syz8c52yrV+P87z5U37kAMuET7MY=;
+ b=TdD4cr2gOb37Dw+mcCdSQwXEWb79zKuWV8acrfw05ppnWiCk+GnBdIiC4P42pk/0PWOXEwYPUia9de+AT9FSUnmxbkNjqcGd511IdYq47FRSaQXbsSW4j7jiOauIpw0dInIk2W6z3gdu4lG+kn4lQve5vhJxStZ8QQLgd8RwRE2tN+TGsQgmDUTeC2P29PDsVyuDgr1+eTTGGGGwE7K5Bu4amIUtwvA4YlHnzwHXNBreJuuotcW+jPwF7LWTiCsaZgN69qRD87joGhkc8A/iwYoGd5xeAwE0VSQ8WK0AreL/nvL2ZEnyza8xOePxjlTx9dXKQ/+KzfrpkmUR32cwfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=co9cb+A0AGS5c92Syz8c52yrV+P87z5U37kAMuET7MY=;
+ b=F1/5SwTU+8zFFz5oza746JooiNHxe5PhcTMWjzNTDa7lIsfRvUeKpgUQa1uNGaGc/mRRDYEfd3TLd9aC+jVAheG4MEy0GP6yYy6RSjyVEBZkFNIU2wje/f6oMw8PdcE+O57WcbkR53CDThvmbi1M7bOM+9xURZdEDK/wzH7sxoY=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB5074.eurprd04.prod.outlook.com (20.177.42.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2474.19; Fri, 22 Nov 2019 10:48:12 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2474.019; Fri, 22 Nov 2019
+ 10:48:12 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Jacky Bai <ping.bai@nxp.com>
+CC:     Peng Fan <peng.fan@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v2 02/11] clk: imx: Rename the SCCG to SSCG
+Thread-Topic: [PATCH v2 02/11] clk: imx: Rename the SCCG to SSCG
+Thread-Index: AQHVoSJVos81iAs140qQzPKlu2RTzQ==
+Date:   Fri, 22 Nov 2019 10:48:12 +0000
+Message-ID: <1574419679-3813-3-git-send-email-abel.vesa@nxp.com>
+References: <1574419679-3813-1-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1574419679-3813-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR0402CA0020.eurprd04.prod.outlook.com
+ (2603:10a6:208:15::33) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [89.37.124.34]
+x-mailer: git-send-email 2.7.4
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 32aec2a1-8b4b-4844-23a2-08d76f397836
+x-ms-traffictypediagnostic: AM0PR04MB5074:|AM0PR04MB5074:
+x-ms-exchange-purlcount: 1
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5074B55F5C7DC52ABE2460AFF6490@AM0PR04MB5074.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 02296943FF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(478600001)(14444005)(256004)(6506007)(54906003)(30864003)(7736002)(305945005)(316002)(71200400001)(5660300002)(110136005)(102836004)(186003)(86362001)(66066001)(71190400001)(2906002)(4326008)(76176011)(966005)(99286004)(36756003)(26005)(52116002)(386003)(8936002)(3846002)(2616005)(446003)(44832011)(11346002)(66556008)(66476007)(66446008)(64756008)(6486002)(66946007)(6436002)(81166006)(8676002)(81156014)(6636002)(6306002)(6512007)(25786009)(14454004)(50226002)(6116002)(559001)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5074;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 97Z1JjGEZaRD6EXCwUJyNT9c7RIPFc4X/p2UpaH+MbwRW2dlawxiP/VPITcQrnTZN2bK+GOuGNdw/DFDRUVaLBBCf77BYvVUutJiMu1P4nlX2Awdl5B0BD/piDe0cHZn5JcECBLoZxknDPOkOwoi1ERdT223b6fWbgkx6a9vk0D8y0xVnEGvxz3cpQ98c5didl0nJkuBt26Y6DWI8YgmX5a2aVM/aYMl7ZeZPjUiXyxx+jOrrL5yWR/aQH3CapQWCXfygBB/hcompSs9pqr8ZbB84nvdK4gm5kkP089InpVNDsah4PniPycr7tSVsHelY1cQQ/AJyiRJyR0k5Wd4BY5RX1s8KzoqsnQKITUu05ApPOW5/KmlDG/PGvJV+vGb5kOxo3JADjd2Dm2aYLcWvML+zJcNgv9GSEBn3uEET9NgWdtP/VmnV0wjniYBv7LmLkIsFPpfiqM0P24wc6MLH/Ccy0OSvNbkkd7E/jlkkb0=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Message-ID: <157441968587.21853.8015673127826132324.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32aec2a1-8b4b-4844-23a2-08d76f397836
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2019 10:48:12.0865
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xAJDDFY2k/RtlIw+nM5VvZaI+78GqUPS5AZ8mDAt4VwzzjKOrAGT01ssqhdG1YGyeUtyFwCkzjLuNYIGyhW1sg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5074
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/kcsan branch of tip:
+According to the manual the acronym stands for
+Spread Sprectum Clock Generator.
 
-Commit-ID:     5cbaefe9743bf14c9d3106db0cc19f8cb0a3ca22
-Gitweb:        https://git.kernel.org/tip/5cbaefe9743bf14c9d3106db0cc19f8cb0a3ca22
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 20 Nov 2019 10:41:43 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 20 Nov 2019 10:47:23 +01:00
-
-kcsan: Improve various small stylistic details
-
-Tidy up a few bits:
-
-  - Fix typos and grammar, improve wording.
-
-  - Remove spurious newlines that are col80 warning artifacts where the
-    resulting line-break is worse than the disease it's curing.
-
-  - Use core kernel coding style to improve readability and reduce
-    spurious code pattern variations.
-
-  - Use better vertical alignment for structure definitions and initialization
-    sequences.
-
-  - Misc other small details.
-
-No change in functionality intended.
-
-Cc: linux-kernel@vger.kernel.org
-Cc: Marco Elver <elver@google.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- arch/x86/Kconfig               |  2 +-
- include/linux/compiler-clang.h |  2 +-
- include/linux/compiler.h       |  2 +-
- include/linux/kcsan-checks.h   | 22 ++++--------
- include/linux/kcsan.h          | 23 ++++--------
- include/linux/seqlock.h        |  8 ++--
- kernel/kcsan/atomic.h          |  2 +-
- kernel/kcsan/core.c            | 59 ++++++++++++++-----------------
- kernel/kcsan/debugfs.c         | 62 +++++++++++++++------------------
- kernel/kcsan/encoding.h        | 25 ++++++-------
- kernel/kcsan/kcsan.h           | 11 +++---
- kernel/kcsan/report.c          | 42 ++++++++++------------
- kernel/kcsan/test.c            |  6 +--
- kernel/sched/Makefile          |  2 +-
- lib/Kconfig.kcsan              | 16 +++------
- 15 files changed, 131 insertions(+), 153 deletions(-)
+ drivers/clk/imx/Makefile       |   2 +-
+ drivers/clk/imx/clk-imx8mq.c   |   6 +-
+ drivers/clk/imx/clk-sccg-pll.c | 549 -------------------------------------=
+----
+ drivers/clk/imx/clk-sscg-pll.c | 549 +++++++++++++++++++++++++++++++++++++=
+++++
+ drivers/clk/imx/clk.h          |   4 +-
+ 5 files changed, 555 insertions(+), 555 deletions(-)
+ delete mode 100644 drivers/clk/imx/clk-sccg-pll.c
+ create mode 100644 drivers/clk/imx/clk-sscg-pll.c
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 9933ca8..9cfa4a5 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -226,7 +226,7 @@ config X86
- 	select VIRT_TO_BUS
- 	select X86_FEATURE_NAMES		if PROC_FS
- 	select PROC_PID_ARCH_STATUS		if PROC_FS
--	select HAVE_ARCH_KCSAN if X86_64
-+	select HAVE_ARCH_KCSAN			if X86_64
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index a213eb5..2cb42d8 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -16,7 +16,7 @@
- #define KASAN_ABI_VERSION 5
- 
- #if __has_feature(address_sanitizer) || __has_feature(hwaddress_sanitizer)
--/* emulate gcc's __SANITIZE_ADDRESS__ flag */
-+/* Emulate GCC's __SANITIZE_ADDRESS__ flag */
- #define __SANITIZE_ADDRESS__
- #define __no_sanitize_address \
- 		__attribute__((no_sanitize("address", "hwaddress")))
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 7d3e777..ad8c761 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -313,7 +313,7 @@ unsigned long read_word_at_a_time(const void *addr)
- #include <linux/kcsan.h>
- 
- /*
-- * data_race: macro to document that accesses in an expression may conflict with
-+ * data_race(): macro to document that accesses in an expression may conflict with
-  * other concurrent accesses resulting in data races, but the resulting
-  * behaviour is deemed safe regardless.
-  *
-diff --git a/include/linux/kcsan-checks.h b/include/linux/kcsan-checks.h
-index e782206..ef3ee23 100644
---- a/include/linux/kcsan-checks.h
-+++ b/include/linux/kcsan-checks.h
-@@ -8,17 +8,17 @@
- /*
-  * Access type modifiers.
-  */
--#define KCSAN_ACCESS_WRITE 0x1
-+#define KCSAN_ACCESS_WRITE  0x1
- #define KCSAN_ACCESS_ATOMIC 0x2
- 
- /*
-- * __kcsan_*: Always calls into runtime when KCSAN is enabled. This may be used
-+ * __kcsan_*: Always calls into the runtime when KCSAN is enabled. This may be used
-  * even in compilation units that selectively disable KCSAN, but must use KCSAN
-- * to validate access to an address.   Never use these in header files!
-+ * to validate access to an address. Never use these in header files!
-  */
- #ifdef CONFIG_KCSAN
- /**
-- * __kcsan_check_access - check generic access for data race
-+ * __kcsan_check_access - check generic access for data races
-  *
-  * @ptr address of access
-  * @size size of access
-@@ -32,7 +32,7 @@ static inline void __kcsan_check_access(const volatile void *ptr, size_t size,
- #endif
- 
- /*
-- * kcsan_*: Only calls into runtime when the particular compilation unit has
-+ * kcsan_*: Only calls into the runtime when the particular compilation unit has
-  * KCSAN instrumentation enabled. May be used in header files.
-  */
- #ifdef __SANITIZE_THREAD__
-@@ -77,16 +77,12 @@ static inline void kcsan_check_access(const volatile void *ptr, size_t size,
- 	kcsan_check_access(ptr, size, KCSAN_ACCESS_WRITE)
- 
- /*
-- * Check for atomic accesses: if atomic access are not ignored, this simply
-- * aliases to kcsan_check_access, otherwise becomes a no-op.
-+ * Check for atomic accesses: if atomic accesses are not ignored, this simply
-+ * aliases to kcsan_check_access(), otherwise becomes a no-op.
-  */
- #ifdef CONFIG_KCSAN_IGNORE_ATOMICS
--#define kcsan_check_atomic_read(...)                                           \
--	do {                                                                   \
--	} while (0)
--#define kcsan_check_atomic_write(...)                                          \
--	do {                                                                   \
--	} while (0)
-+#define kcsan_check_atomic_read(...)	do { } while (0)
-+#define kcsan_check_atomic_write(...)	do { } while (0)
- #else
- #define kcsan_check_atomic_read(ptr, size)                                     \
- 	kcsan_check_access(ptr, size, KCSAN_ACCESS_ATOMIC)
-diff --git a/include/linux/kcsan.h b/include/linux/kcsan.h
-index 9047048..1019e3a 100644
---- a/include/linux/kcsan.h
-+++ b/include/linux/kcsan.h
-@@ -94,21 +94,14 @@ void kcsan_atomic_next(int n);
- 
- #else /* CONFIG_KCSAN */
- 
--static inline void kcsan_init(void) { }
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 77a3d71..3724ba7 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -18,7 +18,7 @@ obj-$(CONFIG_MXC_CLK) +=3D \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+ 	clk-pllv4.o \
+-	clk-sccg-pll.o \
++	clk-sscg-pll.o \
+ 	clk-pll14xx.o
+=20
+ obj-$(CONFIG_MXC_CLK_SCU) +=3D \
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 5f10a60..f2a35b1 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -342,9 +342,9 @@ static int imx8mq_clocks_probe(struct platform_device *=
+pdev)
+=20
+ 	clks[IMX8MQ_SYS1_PLL_OUT] =3D imx_clk_fixed("sys1_pll_out", 800000000);
+ 	clks[IMX8MQ_SYS2_PLL_OUT] =3D imx_clk_fixed("sys2_pll_out", 1000000000);
+-	clks[IMX8MQ_SYS3_PLL_OUT] =3D imx_clk_sccg_pll("sys3_pll_out", sys3_pll_o=
+ut_sels, ARRAY_SIZE(sys3_pll_out_sels), 0, 0, 0, base + 0x48, CLK_IS_CRITIC=
+AL);
+-	clks[IMX8MQ_DRAM_PLL_OUT] =3D imx_clk_sccg_pll("dram_pll_out", dram_pll_o=
+ut_sels, ARRAY_SIZE(dram_pll_out_sels), 0, 0, 0, base + 0x60, CLK_IS_CRITIC=
+AL);
+-	clks[IMX8MQ_VIDEO2_PLL_OUT] =3D imx_clk_sccg_pll("video2_pll_out", video2=
+_pll_out_sels, ARRAY_SIZE(video2_pll_out_sels), 0, 0, 0, base + 0x54, 0);
++	clks[IMX8MQ_SYS3_PLL_OUT] =3D imx_clk_sscg_pll("sys3_pll_out", sys3_pll_o=
+ut_sels, ARRAY_SIZE(sys3_pll_out_sels), 0, 0, 0, base + 0x48, CLK_IS_CRITIC=
+AL);
++	clks[IMX8MQ_DRAM_PLL_OUT] =3D imx_clk_sscg_pll("dram_pll_out", dram_pll_o=
+ut_sels, ARRAY_SIZE(dram_pll_out_sels), 0, 0, 0, base + 0x60, CLK_IS_CRITIC=
+AL);
++	clks[IMX8MQ_VIDEO2_PLL_OUT] =3D imx_clk_sscg_pll("video2_pll_out", video2=
+_pll_out_sels, ARRAY_SIZE(video2_pll_out_sels), 0, 0, 0, base + 0x54, 0);
+=20
+ 	/* SYS PLL1 fixed output */
+ 	clks[IMX8MQ_SYS1_PLL_40M_CG] =3D imx_clk_gate("sys1_pll_40m_cg", "sys1_pl=
+l_out", base + 0x30, 9);
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.=
+c
+deleted file mode 100644
+index 5d65f65..00000000
+--- a/drivers/clk/imx/clk-sccg-pll.c
++++ /dev/null
+@@ -1,549 +0,0 @@
+-// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+-/*
+- * Copyright 2018 NXP.
+- *
+- * This driver supports the SCCG plls found in the imx8m SOCs
+- *
+- * Documentation for this SCCG pll can be found at:
+- *   https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D8=
+34
+- */
 -
--static inline void kcsan_disable_current(void) { }
+-#include <linux/clk-provider.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/iopoll.h>
+-#include <linux/slab.h>
+-#include <linux/bitfield.h>
 -
--static inline void kcsan_enable_current(void) { }
+-#include "clk.h"
 -
--static inline void kcsan_nestable_atomic_begin(void) { }
+-/* PLL CFGs */
+-#define PLL_CFG0		0x0
+-#define PLL_CFG1		0x4
+-#define PLL_CFG2		0x8
 -
--static inline void kcsan_nestable_atomic_end(void) { }
+-#define PLL_DIVF1_MASK		GENMASK(18, 13)
+-#define PLL_DIVF2_MASK		GENMASK(12, 7)
+-#define PLL_DIVR1_MASK		GENMASK(27, 25)
+-#define PLL_DIVR2_MASK		GENMASK(24, 19)
+-#define PLL_DIVQ_MASK           GENMASK(6, 1)
+-#define PLL_REF_MASK		GENMASK(2, 0)
 -
--static inline void kcsan_flat_atomic_begin(void) { }
+-#define PLL_LOCK_MASK		BIT(31)
+-#define PLL_PD_MASK		BIT(7)
 -
--static inline void kcsan_flat_atomic_end(void) { }
+-/* These are the specification limits for the SSCG PLL */
+-#define PLL_REF_MIN_FREQ		25000000UL
+-#define PLL_REF_MAX_FREQ		235000000UL
 -
--static inline void kcsan_atomic_next(int n) { }
-+static inline void kcsan_init(void)			{ }
-+static inline void kcsan_disable_current(void)		{ }
-+static inline void kcsan_enable_current(void)		{ }
-+static inline void kcsan_nestable_atomic_begin(void)	{ }
-+static inline void kcsan_nestable_atomic_end(void)	{ }
-+static inline void kcsan_flat_atomic_begin(void)	{ }
-+static inline void kcsan_flat_atomic_end(void)		{ }
-+static inline void kcsan_atomic_next(int n)		{ }
- 
- #endif /* CONFIG_KCSAN */
- 
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index f52c91b..f80d50c 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -48,7 +48,7 @@
-  *
-  * As a consequence, we take the following best-effort approach for raw usage
-  * via seqcount_t under KCSAN: upon beginning a seq-reader critical section,
-- * pessimistically mark then next KCSAN_SEQLOCK_REGION_MAX memory accesses as
-+ * pessimistically mark the next KCSAN_SEQLOCK_REGION_MAX memory accesses as
-  * atomics; if there is a matching read_seqcount_retry() call, no following
-  * memory operations are considered atomic. Usage of seqlocks via seqlock_t
-  * interface is not affected.
-@@ -265,7 +265,7 @@ static inline void raw_write_seqcount_end(seqcount_t *s)
-  * usual consistency guarantee. It is one wmb cheaper, because we can
-  * collapse the two back-to-back wmb()s.
-  *
-- * Note that, writes surrounding the barrier should be declared atomic (e.g.
-+ * Note that writes surrounding the barrier should be declared atomic (e.g.
-  * via WRITE_ONCE): a) to ensure the writes become visible to other threads
-  * atomically, avoiding compiler optimizations; b) to document which writes are
-  * meant to propagate to the reader critical section. This is necessary because
-@@ -465,7 +465,7 @@ static inline unsigned read_seqbegin(const seqlock_t *sl)
- {
- 	unsigned ret = read_seqcount_begin(&sl->seqcount);
- 
--	kcsan_atomic_next(0);  /* non-raw usage, assume closing read_seqretry */
-+	kcsan_atomic_next(0);  /* non-raw usage, assume closing read_seqretry() */
- 	kcsan_flat_atomic_begin();
- 	return ret;
- }
-@@ -473,7 +473,7 @@ static inline unsigned read_seqbegin(const seqlock_t *sl)
- static inline unsigned read_seqretry(const seqlock_t *sl, unsigned start)
- {
- 	/*
--	 * Assume not nested: read_seqretry may be called multiple times when
-+	 * Assume not nested: read_seqretry() may be called multiple times when
- 	 * completing read critical section.
- 	 */
- 	kcsan_flat_atomic_end();
-diff --git a/kernel/kcsan/atomic.h b/kernel/kcsan/atomic.h
-index c9c3fe6..576e03d 100644
---- a/kernel/kcsan/atomic.h
-+++ b/kernel/kcsan/atomic.h
-@@ -6,7 +6,7 @@
- #include <linux/jiffies.h>
- 
- /*
-- * Helper that returns true if access to ptr should be considered as an atomic
-+ * Helper that returns true if access to @ptr should be considered an atomic
-  * access, even though it is not explicitly atomic.
-  *
-  * List all volatile globals that have been observed in races, to suppress
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index d9410d5..3314fc2 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -19,10 +19,10 @@ bool kcsan_enabled;
- 
- /* Per-CPU kcsan_ctx for interrupts */
- static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
--	.disable_count = 0,
--	.atomic_next = 0,
--	.atomic_nest_count = 0,
--	.in_flat_atomic = false,
-+	.disable_count		= 0,
-+	.atomic_next		= 0,
-+	.atomic_nest_count	= 0,
-+	.in_flat_atomic		= false,
- };
- 
- /*
-@@ -50,11 +50,11 @@ static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
-  *   slot=9:  [10, 11,  9]
-  *   slot=63: [64, 65, 63]
-  */
--#define NUM_SLOTS (1 + 2 * KCSAN_CHECK_ADJACENT)
-+#define NUM_SLOTS (1 + 2*KCSAN_CHECK_ADJACENT)
- #define SLOT_IDX(slot, i) (slot + ((i + KCSAN_CHECK_ADJACENT) % NUM_SLOTS))
- 
- /*
-- * SLOT_IDX_FAST is used in fast-path. Not first checking the address's primary
-+ * SLOT_IDX_FAST is used in the fast-path. Not first checking the address's primary
-  * slot (middle) is fine if we assume that data races occur rarely. The set of
-  * indices {SLOT_IDX(slot, i) | i in [0, NUM_SLOTS)} is equivalent to
-  * {SLOT_IDX_FAST(slot, i) | i in [0, NUM_SLOTS)}.
-@@ -68,9 +68,9 @@ static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
-  * zero-initialized state matches INVALID_WATCHPOINT.
-  *
-  * Add NUM_SLOTS-1 entries to account for overflow; this helps avoid having to
-- * use more complicated SLOT_IDX_FAST calculation with modulo in fast-path.
-+ * use more complicated SLOT_IDX_FAST calculation with modulo in the fast-path.
-  */
--static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS - 1];
-+static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS-1];
- 
- /*
-  * Instructions to skip watching counter, used in should_watch(). We use a
-@@ -78,7 +78,8 @@ static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS - 1];
-  */
- static DEFINE_PER_CPU(long, kcsan_skip);
- 
--static inline atomic_long_t *find_watchpoint(unsigned long addr, size_t size,
-+static inline atomic_long_t *find_watchpoint(unsigned long addr,
-+					     size_t size,
- 					     bool expect_write,
- 					     long *encoded_watchpoint)
- {
-@@ -110,8 +111,8 @@ static inline atomic_long_t *find_watchpoint(unsigned long addr, size_t size,
- 	return NULL;
- }
- 
--static inline atomic_long_t *insert_watchpoint(unsigned long addr, size_t size,
--					       bool is_write)
-+static inline atomic_long_t *
-+insert_watchpoint(unsigned long addr, size_t size, bool is_write)
- {
- 	const int slot = watchpoint_slot(addr);
- 	const long encoded_watchpoint = encode_watchpoint(addr, size, is_write);
-@@ -120,21 +121,16 @@ static inline atomic_long_t *insert_watchpoint(unsigned long addr, size_t size,
- 
- 	/* Check slot index logic, ensuring we stay within array bounds. */
- 	BUILD_BUG_ON(SLOT_IDX(0, 0) != KCSAN_CHECK_ADJACENT);
--	BUILD_BUG_ON(SLOT_IDX(0, KCSAN_CHECK_ADJACENT + 1) != 0);
--	BUILD_BUG_ON(SLOT_IDX(CONFIG_KCSAN_NUM_WATCHPOINTS - 1,
--			      KCSAN_CHECK_ADJACENT) !=
--		     ARRAY_SIZE(watchpoints) - 1);
--	BUILD_BUG_ON(SLOT_IDX(CONFIG_KCSAN_NUM_WATCHPOINTS - 1,
--			      KCSAN_CHECK_ADJACENT + 1) !=
--		     ARRAY_SIZE(watchpoints) - NUM_SLOTS);
-+	BUILD_BUG_ON(SLOT_IDX(0, KCSAN_CHECK_ADJACENT+1) != 0);
-+	BUILD_BUG_ON(SLOT_IDX(CONFIG_KCSAN_NUM_WATCHPOINTS-1, KCSAN_CHECK_ADJACENT) != ARRAY_SIZE(watchpoints)-1);
-+	BUILD_BUG_ON(SLOT_IDX(CONFIG_KCSAN_NUM_WATCHPOINTS-1, KCSAN_CHECK_ADJACENT+1) != ARRAY_SIZE(watchpoints) - NUM_SLOTS);
- 
- 	for (i = 0; i < NUM_SLOTS; ++i) {
- 		long expect_val = INVALID_WATCHPOINT;
- 
- 		/* Try to acquire this slot. */
- 		watchpoint = &watchpoints[SLOT_IDX(slot, i)];
--		if (atomic_long_try_cmpxchg_relaxed(watchpoint, &expect_val,
--						    encoded_watchpoint))
-+		if (atomic_long_try_cmpxchg_relaxed(watchpoint, &expect_val, encoded_watchpoint))
- 			return watchpoint;
- 	}
- 
-@@ -150,11 +146,10 @@ static inline atomic_long_t *insert_watchpoint(unsigned long addr, size_t size,
-  *	2. the thread that set up the watchpoint already removed it;
-  *	3. the watchpoint was removed and then re-used.
-  */
--static inline bool try_consume_watchpoint(atomic_long_t *watchpoint,
--					  long encoded_watchpoint)
-+static inline bool
-+try_consume_watchpoint(atomic_long_t *watchpoint, long encoded_watchpoint)
- {
--	return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint,
--					       CONSUMED_WATCHPOINT);
-+	return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint, CONSUMED_WATCHPOINT);
- }
- 
- /*
-@@ -162,14 +157,13 @@ static inline bool try_consume_watchpoint(atomic_long_t *watchpoint,
-  */
- static inline bool remove_watchpoint(atomic_long_t *watchpoint)
- {
--	return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) !=
--	       CONSUMED_WATCHPOINT;
-+	return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) != CONSUMED_WATCHPOINT;
- }
- 
- static inline struct kcsan_ctx *get_ctx(void)
- {
- 	/*
--	 * In interrupt, use raw_cpu_ptr to avoid unnecessary checks, that would
-+	 * In interrupts, use raw_cpu_ptr to avoid unnecessary checks, that would
- 	 * also result in calls that generate warnings in uaccess regions.
- 	 */
- 	return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
-@@ -260,7 +254,8 @@ static inline unsigned int get_delay(void)
-  */
- 
- static noinline void kcsan_found_watchpoint(const volatile void *ptr,
--					    size_t size, bool is_write,
-+					    size_t size,
-+					    bool is_write,
- 					    atomic_long_t *watchpoint,
- 					    long encoded_watchpoint)
- {
-@@ -296,8 +291,8 @@ static noinline void kcsan_found_watchpoint(const volatile void *ptr,
- 	user_access_restore(flags);
- }
- 
--static noinline void kcsan_setup_watchpoint(const volatile void *ptr,
--					    size_t size, bool is_write)
-+static noinline void
-+kcsan_setup_watchpoint(const volatile void *ptr, size_t size, bool is_write)
- {
- 	atomic_long_t *watchpoint;
- 	union {
-@@ -346,8 +341,8 @@ static noinline void kcsan_setup_watchpoint(const volatile void *ptr,
- 	watchpoint = insert_watchpoint((unsigned long)ptr, size, is_write);
- 	if (watchpoint == NULL) {
- 		/*
--		 * Out of capacity: the size of `watchpoints`, and the frequency
--		 * with which `should_watch()` returns true should be tweaked so
-+		 * Out of capacity: the size of 'watchpoints', and the frequency
-+		 * with which should_watch() returns true should be tweaked so
- 		 * that this case happens very rarely.
- 		 */
- 		kcsan_counter_inc(KCSAN_COUNTER_NO_CAPACITY);
-diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
-index 041d520..bec42da 100644
---- a/kernel/kcsan/debugfs.c
-+++ b/kernel/kcsan/debugfs.c
-@@ -24,39 +24,31 @@ static atomic_long_t counters[KCSAN_COUNTER_COUNT];
-  * whitelist or blacklist.
-  */
- static struct {
--	unsigned long *addrs; /* array of addresses */
--	size_t size; /* current size */
--	int used; /* number of elements used */
--	bool sorted; /* if elements are sorted */
--	bool whitelist; /* if list is a blacklist or whitelist */
-+	unsigned long	*addrs;		/* array of addresses */
-+	size_t		size;		/* current size */
-+	int		used;		/* number of elements used */
-+	bool		sorted;		/* if elements are sorted */
-+	bool		whitelist;	/* if list is a blacklist or whitelist */
- } report_filterlist = {
--	.addrs = NULL,
--	.size = 8, /* small initial size */
--	.used = 0,
--	.sorted = false,
--	.whitelist = false, /* default is blacklist */
-+	.addrs		= NULL,
-+	.size		= 8,		/* small initial size */
-+	.used		= 0,
-+	.sorted		= false,
-+	.whitelist	= false,	/* default is blacklist */
- };
- static DEFINE_SPINLOCK(report_filterlist_lock);
- 
- static const char *counter_to_name(enum kcsan_counter_id id)
- {
- 	switch (id) {
--	case KCSAN_COUNTER_USED_WATCHPOINTS:
--		return "used_watchpoints";
--	case KCSAN_COUNTER_SETUP_WATCHPOINTS:
--		return "setup_watchpoints";
--	case KCSAN_COUNTER_DATA_RACES:
--		return "data_races";
--	case KCSAN_COUNTER_NO_CAPACITY:
--		return "no_capacity";
--	case KCSAN_COUNTER_REPORT_RACES:
--		return "report_races";
--	case KCSAN_COUNTER_RACES_UNKNOWN_ORIGIN:
--		return "races_unknown_origin";
--	case KCSAN_COUNTER_UNENCODABLE_ACCESSES:
--		return "unencodable_accesses";
--	case KCSAN_COUNTER_ENCODING_FALSE_POSITIVES:
--		return "encoding_false_positives";
-+	case KCSAN_COUNTER_USED_WATCHPOINTS:		return "used_watchpoints";
-+	case KCSAN_COUNTER_SETUP_WATCHPOINTS:		return "setup_watchpoints";
-+	case KCSAN_COUNTER_DATA_RACES:			return "data_races";
-+	case KCSAN_COUNTER_NO_CAPACITY:			return "no_capacity";
-+	case KCSAN_COUNTER_REPORT_RACES:		return "report_races";
-+	case KCSAN_COUNTER_RACES_UNKNOWN_ORIGIN:	return "races_unknown_origin";
-+	case KCSAN_COUNTER_UNENCODABLE_ACCESSES:	return "unencodable_accesses";
-+	case KCSAN_COUNTER_ENCODING_FALSE_POSITIVES:	return "encoding_false_positives";
- 	case KCSAN_COUNTER_COUNT:
- 		BUG();
- 	}
-@@ -116,7 +108,7 @@ bool kcsan_skip_report_debugfs(unsigned long func_addr)
- 
- 	if (!kallsyms_lookup_size_offset(func_addr, &symbolsize, &offset))
- 		return false;
--	func_addr -= offset; /* get function start */
-+	func_addr -= offset; /* Get function start */
- 
- 	spin_lock_irqsave(&report_filterlist_lock, flags);
- 	if (report_filterlist.used == 0)
-@@ -195,6 +187,7 @@ static ssize_t insert_report_filterlist(const char *func)
- 
- out:
- 	spin_unlock_irqrestore(&report_filterlist_lock, flags);
+-#define PLL_STAGE1_MIN_FREQ		1600000000UL
+-#define PLL_STAGE1_MAX_FREQ		2400000000UL
+-
+-#define PLL_STAGE1_REF_MIN_FREQ		25000000UL
+-#define PLL_STAGE1_REF_MAX_FREQ		54000000UL
+-
+-#define PLL_STAGE2_MIN_FREQ		1200000000UL
+-#define PLL_STAGE2_MAX_FREQ		2400000000UL
+-
+-#define PLL_STAGE2_REF_MIN_FREQ		54000000UL
+-#define PLL_STAGE2_REF_MAX_FREQ		75000000UL
+-
+-#define PLL_OUT_MIN_FREQ		20000000UL
+-#define PLL_OUT_MAX_FREQ		1200000000UL
+-
+-#define PLL_DIVR1_MAX			7
+-#define PLL_DIVR2_MAX			63
+-#define PLL_DIVF1_MAX			63
+-#define PLL_DIVF2_MAX			63
+-#define PLL_DIVQ_MAX			63
+-
+-#define PLL_BYPASS_NONE			0x0
+-#define PLL_BYPASS1			0x2
+-#define PLL_BYPASS2			0x1
+-
+-#define SSCG_PLL_BYPASS1_MASK           BIT(5)
+-#define SSCG_PLL_BYPASS2_MASK           BIT(4)
+-#define SSCG_PLL_BYPASS_MASK		GENMASK(5, 4)
+-
+-#define PLL_SCCG_LOCK_TIMEOUT		70
+-
+-struct clk_sccg_pll_setup {
+-	int divr1, divf1;
+-	int divr2, divf2;
+-	int divq;
+-	int bypass;
+-
+-	uint64_t vco1;
+-	uint64_t vco2;
+-	uint64_t fout;
+-	uint64_t ref;
+-	uint64_t ref_div1;
+-	uint64_t ref_div2;
+-	uint64_t fout_request;
+-	int fout_error;
+-};
+-
+-struct clk_sccg_pll {
+-	struct clk_hw	hw;
+-	const struct clk_ops  ops;
+-
+-	void __iomem *base;
+-
+-	struct clk_sccg_pll_setup setup;
+-
+-	u8 parent;
+-	u8 bypass1;
+-	u8 bypass2;
+-};
+-
+-#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
+-
+-static int clk_sccg_pll_wait_lock(struct clk_sccg_pll *pll)
+-{
+-	u32 val;
+-
+-	val =3D readl_relaxed(pll->base + PLL_CFG0);
+-
+-	/* don't wait for lock if all plls are bypassed */
+-	if (!(val & SSCG_PLL_BYPASS2_MASK))
+-		return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK,
+-						0, PLL_SCCG_LOCK_TIMEOUT);
+-
+-	return 0;
+-}
+-
+-static int clk_sccg_pll2_check_match(struct clk_sccg_pll_setup *setup,
+-					struct clk_sccg_pll_setup *temp_setup)
+-{
+-	int new_diff =3D temp_setup->fout - temp_setup->fout_request;
+-	int diff =3D temp_setup->fout_error;
+-
+-	if (abs(diff) > abs(new_diff)) {
+-		temp_setup->fout_error =3D new_diff;
+-		memcpy(setup, temp_setup, sizeof(struct clk_sccg_pll_setup));
+-
+-		if (temp_setup->fout_request =3D=3D temp_setup->fout)
+-			return 0;
+-	}
+-	return -1;
+-}
+-
+-static int clk_sccg_divq_lookup(struct clk_sccg_pll_setup *setup,
+-				struct clk_sccg_pll_setup *temp_setup)
+-{
+-	int ret =3D -EINVAL;
+-
+-	for (temp_setup->divq =3D 0; temp_setup->divq <=3D PLL_DIVQ_MAX;
+-	     temp_setup->divq++) {
+-		temp_setup->vco2 =3D temp_setup->vco1;
+-		do_div(temp_setup->vco2, temp_setup->divr2 + 1);
+-		temp_setup->vco2 *=3D 2;
+-		temp_setup->vco2 *=3D temp_setup->divf2 + 1;
+-		if (temp_setup->vco2 >=3D PLL_STAGE2_MIN_FREQ &&
+-				temp_setup->vco2 <=3D PLL_STAGE2_MAX_FREQ) {
+-			temp_setup->fout =3D temp_setup->vco2;
+-			do_div(temp_setup->fout, 2 * (temp_setup->divq + 1));
+-
+-			ret =3D clk_sccg_pll2_check_match(setup, temp_setup);
+-			if (!ret) {
+-				temp_setup->bypass =3D PLL_BYPASS1;
+-				return ret;
+-			}
+-		}
+-	}
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_divf2_lookup(struct clk_sccg_pll_setup *setup,
+-					struct clk_sccg_pll_setup *temp_setup)
+-{
+-	int ret =3D -EINVAL;
+-
+-	for (temp_setup->divf2 =3D 0; temp_setup->divf2 <=3D PLL_DIVF2_MAX;
+-	     temp_setup->divf2++) {
+-		ret =3D clk_sccg_divq_lookup(setup, temp_setup);
+-		if (!ret)
+-			return ret;
+-	}
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_divr2_lookup(struct clk_sccg_pll_setup *setup,
+-				struct clk_sccg_pll_setup *temp_setup)
+-{
+-	int ret =3D -EINVAL;
+-
+-	for (temp_setup->divr2 =3D 0; temp_setup->divr2 <=3D PLL_DIVR2_MAX;
+-	     temp_setup->divr2++) {
+-		temp_setup->ref_div2 =3D temp_setup->vco1;
+-		do_div(temp_setup->ref_div2, temp_setup->divr2 + 1);
+-		if (temp_setup->ref_div2 >=3D PLL_STAGE2_REF_MIN_FREQ &&
+-		    temp_setup->ref_div2 <=3D PLL_STAGE2_REF_MAX_FREQ) {
+-			ret =3D clk_sccg_divf2_lookup(setup, temp_setup);
+-			if (!ret)
+-				return ret;
+-		}
+-	}
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_pll2_find_setup(struct clk_sccg_pll_setup *setup,
+-					struct clk_sccg_pll_setup *temp_setup,
+-					uint64_t ref)
+-{
+-
+-	int ret =3D -EINVAL;
+-
+-	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
+-		return ret;
+-
+-	temp_setup->vco1 =3D ref;
+-
+-	ret =3D clk_sccg_divr2_lookup(setup, temp_setup);
+-	return ret;
+-}
+-
+-static int clk_sccg_divf1_lookup(struct clk_sccg_pll_setup *setup,
+-				struct clk_sccg_pll_setup *temp_setup)
+-{
+-	int ret =3D -EINVAL;
+-
+-	for (temp_setup->divf1 =3D 0; temp_setup->divf1 <=3D PLL_DIVF1_MAX;
+-	     temp_setup->divf1++) {
+-		uint64_t vco1 =3D temp_setup->ref;
+-
+-		do_div(vco1, temp_setup->divr1 + 1);
+-		vco1 *=3D 2;
+-		vco1 *=3D temp_setup->divf1 + 1;
+-
+-		ret =3D clk_sccg_pll2_find_setup(setup, temp_setup, vco1);
+-		if (!ret) {
+-			temp_setup->bypass =3D PLL_BYPASS_NONE;
+-			return ret;
+-		}
+-	}
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_divr1_lookup(struct clk_sccg_pll_setup *setup,
+-				struct clk_sccg_pll_setup *temp_setup)
+-{
+-	int ret =3D -EINVAL;
+-
+-	for (temp_setup->divr1 =3D 0; temp_setup->divr1 <=3D PLL_DIVR1_MAX;
+-	     temp_setup->divr1++) {
+-		temp_setup->ref_div1 =3D temp_setup->ref;
+-		do_div(temp_setup->ref_div1, temp_setup->divr1 + 1);
+-		if (temp_setup->ref_div1 >=3D PLL_STAGE1_REF_MIN_FREQ &&
+-		    temp_setup->ref_div1 <=3D PLL_STAGE1_REF_MAX_FREQ) {
+-			ret =3D clk_sccg_divf1_lookup(setup, temp_setup);
+-			if (!ret)
+-				return ret;
+-		}
+-	}
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_pll1_find_setup(struct clk_sccg_pll_setup *setup,
+-					struct clk_sccg_pll_setup *temp_setup,
+-					uint64_t ref)
+-{
+-
+-	int ret =3D -EINVAL;
+-
+-	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
+-		return ret;
+-
+-	temp_setup->ref =3D ref;
+-
+-	ret =3D clk_sccg_divr1_lookup(setup, temp_setup);
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_pll_find_setup(struct clk_sccg_pll_setup *setup,
+-					uint64_t prate,
+-					uint64_t rate, int try_bypass)
+-{
+-	struct clk_sccg_pll_setup temp_setup;
+-	int ret =3D -EINVAL;
+-
+-	memset(&temp_setup, 0, sizeof(struct clk_sccg_pll_setup));
+-	memset(setup, 0, sizeof(struct clk_sccg_pll_setup));
+-
+-	temp_setup.fout_error =3D PLL_OUT_MAX_FREQ;
+-	temp_setup.fout_request =3D rate;
+-
+-	switch (try_bypass) {
+-
+-	case PLL_BYPASS2:
+-		if (prate =3D=3D rate) {
+-			setup->bypass =3D PLL_BYPASS2;
+-			setup->fout =3D rate;
+-			ret =3D 0;
+-		}
+-		break;
+-
+-	case PLL_BYPASS1:
+-		ret =3D clk_sccg_pll2_find_setup(setup, &temp_setup, prate);
+-		break;
+-
+-	case PLL_BYPASS_NONE:
+-		ret =3D clk_sccg_pll1_find_setup(setup, &temp_setup, prate);
+-		break;
+-	}
+-
+-	return ret;
+-}
+-
+-
+-static int clk_sccg_pll_is_prepared(struct clk_hw *hw)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-
+-	u32 val =3D readl_relaxed(pll->base + PLL_CFG0);
+-
+-	return (val & PLL_PD_MASK) ? 0 : 1;
+-}
+-
+-static int clk_sccg_pll_prepare(struct clk_hw *hw)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val;
+-
+-	val =3D readl_relaxed(pll->base + PLL_CFG0);
+-	val &=3D ~PLL_PD_MASK;
+-	writel_relaxed(val, pll->base + PLL_CFG0);
+-
+-	return clk_sccg_pll_wait_lock(pll);
+-}
+-
+-static void clk_sccg_pll_unprepare(struct clk_hw *hw)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val;
+-
+-	val =3D readl_relaxed(pll->base + PLL_CFG0);
+-	val |=3D PLL_PD_MASK;
+-	writel_relaxed(val, pll->base + PLL_CFG0);
+-}
+-
+-static unsigned long clk_sccg_pll_recalc_rate(struct clk_hw *hw,
+-					 unsigned long parent_rate)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val, divr1, divf1, divr2, divf2, divq;
+-	u64 temp64;
+-
+-	val =3D readl_relaxed(pll->base + PLL_CFG2);
+-	divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
+-	divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
+-	divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
+-	divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
+-	divq =3D FIELD_GET(PLL_DIVQ_MASK, val);
+-
+-	temp64 =3D parent_rate;
+-
+-	val =3D readl(pll->base + PLL_CFG0);
+-	if (val & SSCG_PLL_BYPASS2_MASK) {
+-		temp64 =3D parent_rate;
+-	} else if (val & SSCG_PLL_BYPASS1_MASK) {
+-		temp64 *=3D divf2;
+-		do_div(temp64, (divr2 + 1) * (divq + 1));
+-	} else {
+-		temp64 *=3D 2;
+-		temp64 *=3D (divf1 + 1) * (divf2 + 1);
+-		do_div(temp64, (divr1 + 1) * (divr2 + 1) * (divq + 1));
+-	}
+-
+-	return temp64;
+-}
+-
+-static int clk_sccg_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-			    unsigned long parent_rate)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	struct clk_sccg_pll_setup *setup =3D &pll->setup;
+-	u32 val;
+-
+-	/* set bypass here too since the parent might be the same */
+-	val =3D readl(pll->base + PLL_CFG0);
+-	val &=3D ~SSCG_PLL_BYPASS_MASK;
+-	val |=3D FIELD_PREP(SSCG_PLL_BYPASS_MASK, setup->bypass);
+-	writel(val, pll->base + PLL_CFG0);
+-
+-	val =3D readl_relaxed(pll->base + PLL_CFG2);
+-	val &=3D ~(PLL_DIVF1_MASK | PLL_DIVF2_MASK);
+-	val &=3D ~(PLL_DIVR1_MASK | PLL_DIVR2_MASK | PLL_DIVQ_MASK);
+-	val |=3D FIELD_PREP(PLL_DIVF1_MASK, setup->divf1);
+-	val |=3D FIELD_PREP(PLL_DIVF2_MASK, setup->divf2);
+-	val |=3D FIELD_PREP(PLL_DIVR1_MASK, setup->divr1);
+-	val |=3D FIELD_PREP(PLL_DIVR2_MASK, setup->divr2);
+-	val |=3D FIELD_PREP(PLL_DIVQ_MASK, setup->divq);
+-	writel_relaxed(val, pll->base + PLL_CFG2);
+-
+-	return clk_sccg_pll_wait_lock(pll);
+-}
+-
+-static u8 clk_sccg_pll_get_parent(struct clk_hw *hw)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val;
+-	u8 ret =3D pll->parent;
+-
+-	val =3D readl(pll->base + PLL_CFG0);
+-	if (val & SSCG_PLL_BYPASS2_MASK)
+-		ret =3D pll->bypass2;
+-	else if (val & SSCG_PLL_BYPASS1_MASK)
+-		ret =3D pll->bypass1;
+-	return ret;
+-}
+-
+-static int clk_sccg_pll_set_parent(struct clk_hw *hw, u8 index)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val;
+-
+-	val =3D readl(pll->base + PLL_CFG0);
+-	val &=3D ~SSCG_PLL_BYPASS_MASK;
+-	val |=3D FIELD_PREP(SSCG_PLL_BYPASS_MASK, pll->setup.bypass);
+-	writel(val, pll->base + PLL_CFG0);
+-
+-	return clk_sccg_pll_wait_lock(pll);
+-}
+-
+-static int __clk_sccg_pll_determine_rate(struct clk_hw *hw,
+-					struct clk_rate_request *req,
+-					uint64_t min,
+-					uint64_t max,
+-					uint64_t rate,
+-					int bypass)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	struct clk_sccg_pll_setup *setup =3D &pll->setup;
+-	struct clk_hw *parent_hw =3D NULL;
+-	int bypass_parent_index;
+-	int ret =3D -EINVAL;
+-
+-	req->max_rate =3D max;
+-	req->min_rate =3D min;
+-
+-	switch (bypass) {
+-	case PLL_BYPASS2:
+-		bypass_parent_index =3D pll->bypass2;
+-		break;
+-	case PLL_BYPASS1:
+-		bypass_parent_index =3D pll->bypass1;
+-		break;
+-	default:
+-		bypass_parent_index =3D pll->parent;
+-		break;
+-	}
+-
+-	parent_hw =3D clk_hw_get_parent_by_index(hw, bypass_parent_index);
+-	ret =3D __clk_determine_rate(parent_hw, req);
+-	if (!ret) {
+-		ret =3D clk_sccg_pll_find_setup(setup, req->rate,
+-						rate, bypass);
+-	}
+-
+-	req->best_parent_hw =3D parent_hw;
+-	req->best_parent_rate =3D req->rate;
+-	req->rate =3D setup->fout;
+-
+-	return ret;
+-}
+-
+-static int clk_sccg_pll_determine_rate(struct clk_hw *hw,
+-				       struct clk_rate_request *req)
+-{
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	struct clk_sccg_pll_setup *setup =3D &pll->setup;
+-	uint64_t rate =3D req->rate;
+-	uint64_t min =3D req->min_rate;
+-	uint64_t max =3D req->max_rate;
+-	int ret =3D -EINVAL;
+-
+-	if (rate < PLL_OUT_MIN_FREQ || rate > PLL_OUT_MAX_FREQ)
+-		return ret;
+-
+-	ret =3D __clk_sccg_pll_determine_rate(hw, req, req->rate, req->rate,
+-						rate, PLL_BYPASS2);
+-	if (!ret)
+-		return ret;
+-
+-	ret =3D __clk_sccg_pll_determine_rate(hw, req, PLL_STAGE1_REF_MIN_FREQ,
+-						PLL_STAGE1_REF_MAX_FREQ, rate,
+-						PLL_BYPASS1);
+-	if (!ret)
+-		return ret;
+-
+-	ret =3D __clk_sccg_pll_determine_rate(hw, req, PLL_REF_MIN_FREQ,
+-						PLL_REF_MAX_FREQ, rate,
+-						PLL_BYPASS_NONE);
+-	if (!ret)
+-		return ret;
+-
+-	if (setup->fout >=3D min && setup->fout <=3D max)
+-		ret =3D 0;
+-
+-	return ret;
+-}
+-
+-static const struct clk_ops clk_sccg_pll_ops =3D {
+-	.prepare	=3D clk_sccg_pll_prepare,
+-	.unprepare	=3D clk_sccg_pll_unprepare,
+-	.is_prepared	=3D clk_sccg_pll_is_prepared,
+-	.recalc_rate	=3D clk_sccg_pll_recalc_rate,
+-	.set_rate	=3D clk_sccg_pll_set_rate,
+-	.set_parent	=3D clk_sccg_pll_set_parent,
+-	.get_parent	=3D clk_sccg_pll_get_parent,
+-	.determine_rate	=3D clk_sccg_pll_determine_rate,
+-};
+-
+-struct clk *imx_clk_sccg_pll(const char *name,
+-				const char * const *parent_names,
+-				u8 num_parents,
+-				u8 parent, u8 bypass1, u8 bypass2,
+-				void __iomem *base,
+-				unsigned long flags)
+-{
+-	struct clk_sccg_pll *pll;
+-	struct clk_init_data init;
+-	struct clk_hw *hw;
+-	int ret;
+-
+-	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll)
+-		return ERR_PTR(-ENOMEM);
+-
+-	pll->parent =3D parent;
+-	pll->bypass1 =3D bypass1;
+-	pll->bypass2 =3D bypass2;
+-
+-	pll->base =3D base;
+-	init.name =3D name;
+-	init.ops =3D &clk_sccg_pll_ops;
+-
+-	init.flags =3D flags;
+-	init.parent_names =3D parent_names;
+-	init.num_parents =3D num_parents;
+-
+-	pll->base =3D base;
+-	pll->hw.init =3D &init;
+-
+-	hw =3D &pll->hw;
+-
+-	ret =3D clk_hw_register(NULL, hw);
+-	if (ret) {
+-		kfree(pll);
+-		return ERR_PTR(ret);
+-	}
+-
+-	return hw->clk;
+-}
+diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.=
+c
+new file mode 100644
+index 00000000..0669e17
+--- /dev/null
++++ b/drivers/clk/imx/clk-sscg-pll.c
+@@ -0,0 +1,549 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright 2018 NXP.
++ *
++ * This driver supports the SCCG plls found in the imx8m SOCs
++ *
++ * Documentation for this SCCG pll can be found at:
++ *   https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D8=
+34
++ */
 +
- 	return ret;
- }
- 
-@@ -226,8 +219,8 @@ static int debugfs_open(struct inode *inode, struct file *file)
- 	return single_open(file, show_info, NULL);
- }
- 
--static ssize_t debugfs_write(struct file *file, const char __user *buf,
--			     size_t count, loff_t *off)
-+static ssize_t
-+debugfs_write(struct file *file, const char __user *buf, size_t count, loff_t *off)
- {
- 	char kbuf[KSYM_NAME_LEN];
- 	char *arg;
-@@ -264,10 +257,13 @@ static ssize_t debugfs_write(struct file *file, const char __user *buf,
- 	return count;
- }
- 
--static const struct file_operations debugfs_ops = { .read = seq_read,
--						    .open = debugfs_open,
--						    .write = debugfs_write,
--						    .release = single_release };
-+static const struct file_operations debugfs_ops =
-+{
-+	.read	 = seq_read,
-+	.open	 = debugfs_open,
-+	.write	 = debugfs_write,
-+	.release = single_release
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++#include <linux/bitfield.h>
++
++#include "clk.h"
++
++/* PLL CFGs */
++#define PLL_CFG0		0x0
++#define PLL_CFG1		0x4
++#define PLL_CFG2		0x8
++
++#define PLL_DIVF1_MASK		GENMASK(18, 13)
++#define PLL_DIVF2_MASK		GENMASK(12, 7)
++#define PLL_DIVR1_MASK		GENMASK(27, 25)
++#define PLL_DIVR2_MASK		GENMASK(24, 19)
++#define PLL_DIVQ_MASK           GENMASK(6, 1)
++#define PLL_REF_MASK		GENMASK(2, 0)
++
++#define PLL_LOCK_MASK		BIT(31)
++#define PLL_PD_MASK		BIT(7)
++
++/* These are the specification limits for the SSCG PLL */
++#define PLL_REF_MIN_FREQ		25000000UL
++#define PLL_REF_MAX_FREQ		235000000UL
++
++#define PLL_STAGE1_MIN_FREQ		1600000000UL
++#define PLL_STAGE1_MAX_FREQ		2400000000UL
++
++#define PLL_STAGE1_REF_MIN_FREQ		25000000UL
++#define PLL_STAGE1_REF_MAX_FREQ		54000000UL
++
++#define PLL_STAGE2_MIN_FREQ		1200000000UL
++#define PLL_STAGE2_MAX_FREQ		2400000000UL
++
++#define PLL_STAGE2_REF_MIN_FREQ		54000000UL
++#define PLL_STAGE2_REF_MAX_FREQ		75000000UL
++
++#define PLL_OUT_MIN_FREQ		20000000UL
++#define PLL_OUT_MAX_FREQ		1200000000UL
++
++#define PLL_DIVR1_MAX			7
++#define PLL_DIVR2_MAX			63
++#define PLL_DIVF1_MAX			63
++#define PLL_DIVF2_MAX			63
++#define PLL_DIVQ_MAX			63
++
++#define PLL_BYPASS_NONE			0x0
++#define PLL_BYPASS1			0x2
++#define PLL_BYPASS2			0x1
++
++#define SSCG_PLL_BYPASS1_MASK           BIT(5)
++#define SSCG_PLL_BYPASS2_MASK           BIT(4)
++#define SSCG_PLL_BYPASS_MASK		GENMASK(5, 4)
++
++#define PLL_SCCG_LOCK_TIMEOUT		70
++
++struct clk_sscg_pll_setup {
++	int divr1, divf1;
++	int divr2, divf2;
++	int divq;
++	int bypass;
++
++	uint64_t vco1;
++	uint64_t vco2;
++	uint64_t fout;
++	uint64_t ref;
++	uint64_t ref_div1;
++	uint64_t ref_div2;
++	uint64_t fout_request;
++	int fout_error;
 +};
- 
- void __init kcsan_debugfs_init(void)
- {
-diff --git a/kernel/kcsan/encoding.h b/kernel/kcsan/encoding.h
-index e17bdac..b63890e 100644
---- a/kernel/kcsan/encoding.h
-+++ b/kernel/kcsan/encoding.h
-@@ -10,7 +10,8 @@
- #include "kcsan.h"
- 
- #define SLOT_RANGE PAGE_SIZE
--#define INVALID_WATCHPOINT 0
 +
-+#define INVALID_WATCHPOINT  0
- #define CONSUMED_WATCHPOINT 1
- 
- /*
-@@ -34,24 +35,24 @@
-  * Both these are assumed to be very unlikely. However, in case it still happens
-  * happens, the report logic will filter out the false positive (see report.c).
-  */
--#define WATCHPOINT_ADDR_BITS (BITS_PER_LONG - 1 - WATCHPOINT_SIZE_BITS)
-+#define WATCHPOINT_ADDR_BITS (BITS_PER_LONG-1 - WATCHPOINT_SIZE_BITS)
- 
- /*
-  * Masks to set/retrieve the encoded data.
-  */
--#define WATCHPOINT_WRITE_MASK BIT(BITS_PER_LONG - 1)
-+#define WATCHPOINT_WRITE_MASK BIT(BITS_PER_LONG-1)
- #define WATCHPOINT_SIZE_MASK                                                   \
--	GENMASK(BITS_PER_LONG - 2, BITS_PER_LONG - 2 - WATCHPOINT_SIZE_BITS)
-+	GENMASK(BITS_PER_LONG-2, BITS_PER_LONG-2 - WATCHPOINT_SIZE_BITS)
- #define WATCHPOINT_ADDR_MASK                                                   \
--	GENMASK(BITS_PER_LONG - 3 - WATCHPOINT_SIZE_BITS, 0)
-+	GENMASK(BITS_PER_LONG-3 - WATCHPOINT_SIZE_BITS, 0)
- 
- static inline bool check_encodable(unsigned long addr, size_t size)
- {
- 	return size <= MAX_ENCODABLE_SIZE;
- }
- 
--static inline long encode_watchpoint(unsigned long addr, size_t size,
--				     bool is_write)
-+static inline long
-+encode_watchpoint(unsigned long addr, size_t size, bool is_write)
- {
- 	return (long)((is_write ? WATCHPOINT_WRITE_MASK : 0) |
- 		      (size << WATCHPOINT_ADDR_BITS) |
-@@ -59,17 +60,17 @@ static inline long encode_watchpoint(unsigned long addr, size_t size,
- }
- 
- static inline bool decode_watchpoint(long watchpoint,
--				     unsigned long *addr_masked, size_t *size,
-+				     unsigned long *addr_masked,
-+				     size_t *size,
- 				     bool *is_write)
- {
- 	if (watchpoint == INVALID_WATCHPOINT ||
- 	    watchpoint == CONSUMED_WATCHPOINT)
- 		return false;
- 
--	*addr_masked = (unsigned long)watchpoint & WATCHPOINT_ADDR_MASK;
--	*size = ((unsigned long)watchpoint & WATCHPOINT_SIZE_MASK) >>
--		WATCHPOINT_ADDR_BITS;
--	*is_write = !!((unsigned long)watchpoint & WATCHPOINT_WRITE_MASK);
-+	*addr_masked =    (unsigned long)watchpoint & WATCHPOINT_ADDR_MASK;
-+	*size	     =   ((unsigned long)watchpoint & WATCHPOINT_SIZE_MASK) >> WATCHPOINT_ADDR_BITS;
-+	*is_write    = !!((unsigned long)watchpoint & WATCHPOINT_WRITE_MASK);
- 
- 	return true;
- }
-diff --git a/kernel/kcsan/kcsan.h b/kernel/kcsan/kcsan.h
-index 1bb2f1c..d3b9a96 100644
---- a/kernel/kcsan/kcsan.h
-+++ b/kernel/kcsan/kcsan.h
-@@ -72,14 +72,14 @@ enum kcsan_counter_id {
- /*
-  * Increment/decrement counter with given id; avoid calling these in fast-path.
-  */
--void kcsan_counter_inc(enum kcsan_counter_id id);
--void kcsan_counter_dec(enum kcsan_counter_id id);
-+extern void kcsan_counter_inc(enum kcsan_counter_id id);
-+extern void kcsan_counter_dec(enum kcsan_counter_id id);
- 
- /*
-  * Returns true if data races in the function symbol that maps to func_addr
-  * (offsets are ignored) should *not* be reported.
-  */
--bool kcsan_skip_report_debugfs(unsigned long func_addr);
-+extern bool kcsan_skip_report_debugfs(unsigned long func_addr);
- 
- enum kcsan_report_type {
- 	/*
-@@ -99,10 +99,11 @@ enum kcsan_report_type {
- 	 */
- 	KCSAN_REPORT_RACE_UNKNOWN_ORIGIN,
++struct clk_sscg_pll {
++	struct clk_hw	hw;
++	const struct clk_ops  ops;
++
++	void __iomem *base;
++
++	struct clk_sscg_pll_setup setup;
++
++	u8 parent;
++	u8 bypass1;
++	u8 bypass2;
++};
++
++#define to_clk_sscg_pll(_hw) container_of(_hw, struct clk_sscg_pll, hw)
++
++static int clk_sscg_pll_wait_lock(struct clk_sscg_pll *pll)
++{
++	u32 val;
++
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++
++	/* don't wait for lock if all plls are bypassed */
++	if (!(val & SSCG_PLL_BYPASS2_MASK))
++		return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK,
++						0, PLL_SCCG_LOCK_TIMEOUT);
++
++	return 0;
++}
++
++static int clk_sscg_pll2_check_match(struct clk_sscg_pll_setup *setup,
++					struct clk_sscg_pll_setup *temp_setup)
++{
++	int new_diff =3D temp_setup->fout - temp_setup->fout_request;
++	int diff =3D temp_setup->fout_error;
++
++	if (abs(diff) > abs(new_diff)) {
++		temp_setup->fout_error =3D new_diff;
++		memcpy(setup, temp_setup, sizeof(struct clk_sscg_pll_setup));
++
++		if (temp_setup->fout_request =3D=3D temp_setup->fout)
++			return 0;
++	}
++	return -1;
++}
++
++static int clk_sscg_divq_lookup(struct clk_sscg_pll_setup *setup,
++				struct clk_sscg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divq =3D 0; temp_setup->divq <=3D PLL_DIVQ_MAX;
++	     temp_setup->divq++) {
++		temp_setup->vco2 =3D temp_setup->vco1;
++		do_div(temp_setup->vco2, temp_setup->divr2 + 1);
++		temp_setup->vco2 *=3D 2;
++		temp_setup->vco2 *=3D temp_setup->divf2 + 1;
++		if (temp_setup->vco2 >=3D PLL_STAGE2_MIN_FREQ &&
++				temp_setup->vco2 <=3D PLL_STAGE2_MAX_FREQ) {
++			temp_setup->fout =3D temp_setup->vco2;
++			do_div(temp_setup->fout, 2 * (temp_setup->divq + 1));
++
++			ret =3D clk_sscg_pll2_check_match(setup, temp_setup);
++			if (!ret) {
++				temp_setup->bypass =3D PLL_BYPASS1;
++				return ret;
++			}
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sscg_divf2_lookup(struct clk_sscg_pll_setup *setup,
++					struct clk_sscg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divf2 =3D 0; temp_setup->divf2 <=3D PLL_DIVF2_MAX;
++	     temp_setup->divf2++) {
++		ret =3D clk_sscg_divq_lookup(setup, temp_setup);
++		if (!ret)
++			return ret;
++	}
++
++	return ret;
++}
++
++static int clk_sscg_divr2_lookup(struct clk_sscg_pll_setup *setup,
++				struct clk_sscg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divr2 =3D 0; temp_setup->divr2 <=3D PLL_DIVR2_MAX;
++	     temp_setup->divr2++) {
++		temp_setup->ref_div2 =3D temp_setup->vco1;
++		do_div(temp_setup->ref_div2, temp_setup->divr2 + 1);
++		if (temp_setup->ref_div2 >=3D PLL_STAGE2_REF_MIN_FREQ &&
++		    temp_setup->ref_div2 <=3D PLL_STAGE2_REF_MAX_FREQ) {
++			ret =3D clk_sscg_divf2_lookup(setup, temp_setup);
++			if (!ret)
++				return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sscg_pll2_find_setup(struct clk_sscg_pll_setup *setup,
++					struct clk_sscg_pll_setup *temp_setup,
++					uint64_t ref)
++{
++
++	int ret =3D -EINVAL;
++
++	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
++		return ret;
++
++	temp_setup->vco1 =3D ref;
++
++	ret =3D clk_sscg_divr2_lookup(setup, temp_setup);
++	return ret;
++}
++
++static int clk_sscg_divf1_lookup(struct clk_sscg_pll_setup *setup,
++				struct clk_sscg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divf1 =3D 0; temp_setup->divf1 <=3D PLL_DIVF1_MAX;
++	     temp_setup->divf1++) {
++		uint64_t vco1 =3D temp_setup->ref;
++
++		do_div(vco1, temp_setup->divr1 + 1);
++		vco1 *=3D 2;
++		vco1 *=3D temp_setup->divf1 + 1;
++
++		ret =3D clk_sscg_pll2_find_setup(setup, temp_setup, vco1);
++		if (!ret) {
++			temp_setup->bypass =3D PLL_BYPASS_NONE;
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sscg_divr1_lookup(struct clk_sscg_pll_setup *setup,
++				struct clk_sscg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divr1 =3D 0; temp_setup->divr1 <=3D PLL_DIVR1_MAX;
++	     temp_setup->divr1++) {
++		temp_setup->ref_div1 =3D temp_setup->ref;
++		do_div(temp_setup->ref_div1, temp_setup->divr1 + 1);
++		if (temp_setup->ref_div1 >=3D PLL_STAGE1_REF_MIN_FREQ &&
++		    temp_setup->ref_div1 <=3D PLL_STAGE1_REF_MAX_FREQ) {
++			ret =3D clk_sscg_divf1_lookup(setup, temp_setup);
++			if (!ret)
++				return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sscg_pll1_find_setup(struct clk_sscg_pll_setup *setup,
++					struct clk_sscg_pll_setup *temp_setup,
++					uint64_t ref)
++{
++
++	int ret =3D -EINVAL;
++
++	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
++		return ret;
++
++	temp_setup->ref =3D ref;
++
++	ret =3D clk_sscg_divr1_lookup(setup, temp_setup);
++
++	return ret;
++}
++
++static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
++					uint64_t prate,
++					uint64_t rate, int try_bypass)
++{
++	struct clk_sscg_pll_setup temp_setup;
++	int ret =3D -EINVAL;
++
++	memset(&temp_setup, 0, sizeof(struct clk_sscg_pll_setup));
++	memset(setup, 0, sizeof(struct clk_sscg_pll_setup));
++
++	temp_setup.fout_error =3D PLL_OUT_MAX_FREQ;
++	temp_setup.fout_request =3D rate;
++
++	switch (try_bypass) {
++
++	case PLL_BYPASS2:
++		if (prate =3D=3D rate) {
++			setup->bypass =3D PLL_BYPASS2;
++			setup->fout =3D rate;
++			ret =3D 0;
++		}
++		break;
++
++	case PLL_BYPASS1:
++		ret =3D clk_sscg_pll2_find_setup(setup, &temp_setup, prate);
++		break;
++
++	case PLL_BYPASS_NONE:
++		ret =3D clk_sscg_pll1_find_setup(setup, &temp_setup, prate);
++		break;
++	}
++
++	return ret;
++}
++
++
++static int clk_sscg_pll_is_prepared(struct clk_hw *hw)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++
++	u32 val =3D readl_relaxed(pll->base + PLL_CFG0);
++
++	return (val & PLL_PD_MASK) ? 0 : 1;
++}
++
++static int clk_sscg_pll_prepare(struct clk_hw *hw)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	u32 val;
++
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++	val &=3D ~PLL_PD_MASK;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	return clk_sscg_pll_wait_lock(pll);
++}
++
++static void clk_sscg_pll_unprepare(struct clk_hw *hw)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	u32 val;
++
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++	val |=3D PLL_PD_MASK;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++}
++
++static unsigned long clk_sscg_pll_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	u32 val, divr1, divf1, divr2, divf2, divq;
++	u64 temp64;
++
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
++	divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
++	divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
++	divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
++	divq =3D FIELD_GET(PLL_DIVQ_MASK, val);
++
++	temp64 =3D parent_rate;
++
++	val =3D readl(pll->base + PLL_CFG0);
++	if (val & SSCG_PLL_BYPASS2_MASK) {
++		temp64 =3D parent_rate;
++	} else if (val & SSCG_PLL_BYPASS1_MASK) {
++		temp64 *=3D divf2;
++		do_div(temp64, (divr2 + 1) * (divq + 1));
++	} else {
++		temp64 *=3D 2;
++		temp64 *=3D (divf1 + 1) * (divf2 + 1);
++		do_div(temp64, (divr1 + 1) * (divr2 + 1) * (divq + 1));
++	}
++
++	return temp64;
++}
++
++static int clk_sscg_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	struct clk_sscg_pll_setup *setup =3D &pll->setup;
++	u32 val;
++
++	/* set bypass here too since the parent might be the same */
++	val =3D readl(pll->base + PLL_CFG0);
++	val &=3D ~SSCG_PLL_BYPASS_MASK;
++	val |=3D FIELD_PREP(SSCG_PLL_BYPASS_MASK, setup->bypass);
++	writel(val, pll->base + PLL_CFG0);
++
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	val &=3D ~(PLL_DIVF1_MASK | PLL_DIVF2_MASK);
++	val &=3D ~(PLL_DIVR1_MASK | PLL_DIVR2_MASK | PLL_DIVQ_MASK);
++	val |=3D FIELD_PREP(PLL_DIVF1_MASK, setup->divf1);
++	val |=3D FIELD_PREP(PLL_DIVF2_MASK, setup->divf2);
++	val |=3D FIELD_PREP(PLL_DIVR1_MASK, setup->divr1);
++	val |=3D FIELD_PREP(PLL_DIVR2_MASK, setup->divr2);
++	val |=3D FIELD_PREP(PLL_DIVQ_MASK, setup->divq);
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	return clk_sscg_pll_wait_lock(pll);
++}
++
++static u8 clk_sscg_pll_get_parent(struct clk_hw *hw)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	u32 val;
++	u8 ret =3D pll->parent;
++
++	val =3D readl(pll->base + PLL_CFG0);
++	if (val & SSCG_PLL_BYPASS2_MASK)
++		ret =3D pll->bypass2;
++	else if (val & SSCG_PLL_BYPASS1_MASK)
++		ret =3D pll->bypass1;
++	return ret;
++}
++
++static int clk_sscg_pll_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	u32 val;
++
++	val =3D readl(pll->base + PLL_CFG0);
++	val &=3D ~SSCG_PLL_BYPASS_MASK;
++	val |=3D FIELD_PREP(SSCG_PLL_BYPASS_MASK, pll->setup.bypass);
++	writel(val, pll->base + PLL_CFG0);
++
++	return clk_sscg_pll_wait_lock(pll);
++}
++
++static int __clk_sscg_pll_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req,
++					uint64_t min,
++					uint64_t max,
++					uint64_t rate,
++					int bypass)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	struct clk_sscg_pll_setup *setup =3D &pll->setup;
++	struct clk_hw *parent_hw =3D NULL;
++	int bypass_parent_index;
++	int ret =3D -EINVAL;
++
++	req->max_rate =3D max;
++	req->min_rate =3D min;
++
++	switch (bypass) {
++	case PLL_BYPASS2:
++		bypass_parent_index =3D pll->bypass2;
++		break;
++	case PLL_BYPASS1:
++		bypass_parent_index =3D pll->bypass1;
++		break;
++	default:
++		bypass_parent_index =3D pll->parent;
++		break;
++	}
++
++	parent_hw =3D clk_hw_get_parent_by_index(hw, bypass_parent_index);
++	ret =3D __clk_determine_rate(parent_hw, req);
++	if (!ret) {
++		ret =3D clk_sscg_pll_find_setup(setup, req->rate,
++						rate, bypass);
++	}
++
++	req->best_parent_hw =3D parent_hw;
++	req->best_parent_rate =3D req->rate;
++	req->rate =3D setup->fout;
++
++	return ret;
++}
++
++static int clk_sscg_pll_determine_rate(struct clk_hw *hw,
++				       struct clk_rate_request *req)
++{
++	struct clk_sscg_pll *pll =3D to_clk_sscg_pll(hw);
++	struct clk_sscg_pll_setup *setup =3D &pll->setup;
++	uint64_t rate =3D req->rate;
++	uint64_t min =3D req->min_rate;
++	uint64_t max =3D req->max_rate;
++	int ret =3D -EINVAL;
++
++	if (rate < PLL_OUT_MIN_FREQ || rate > PLL_OUT_MAX_FREQ)
++		return ret;
++
++	ret =3D __clk_sscg_pll_determine_rate(hw, req, req->rate, req->rate,
++						rate, PLL_BYPASS2);
++	if (!ret)
++		return ret;
++
++	ret =3D __clk_sscg_pll_determine_rate(hw, req, PLL_STAGE1_REF_MIN_FREQ,
++						PLL_STAGE1_REF_MAX_FREQ, rate,
++						PLL_BYPASS1);
++	if (!ret)
++		return ret;
++
++	ret =3D __clk_sscg_pll_determine_rate(hw, req, PLL_REF_MIN_FREQ,
++						PLL_REF_MAX_FREQ, rate,
++						PLL_BYPASS_NONE);
++	if (!ret)
++		return ret;
++
++	if (setup->fout >=3D min && setup->fout <=3D max)
++		ret =3D 0;
++
++	return ret;
++}
++
++static const struct clk_ops clk_sscg_pll_ops =3D {
++	.prepare	=3D clk_sscg_pll_prepare,
++	.unprepare	=3D clk_sscg_pll_unprepare,
++	.is_prepared	=3D clk_sscg_pll_is_prepared,
++	.recalc_rate	=3D clk_sscg_pll_recalc_rate,
++	.set_rate	=3D clk_sscg_pll_set_rate,
++	.set_parent	=3D clk_sscg_pll_set_parent,
++	.get_parent	=3D clk_sscg_pll_get_parent,
++	.determine_rate	=3D clk_sscg_pll_determine_rate,
++};
++
++struct clk *imx_clk_sscg_pll(const char *name,
++				const char * const *parent_names,
++				u8 num_parents,
++				u8 parent, u8 bypass1, u8 bypass2,
++				void __iomem *base,
++				unsigned long flags)
++{
++	struct clk_sscg_pll *pll;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->parent =3D parent;
++	pll->bypass1 =3D bypass1;
++	pll->bypass2 =3D bypass2;
++
++	pll->base =3D base;
++	init.name =3D name;
++	init.ops =3D &clk_sscg_pll_ops;
++
++	init.flags =3D flags;
++	init.parent_names =3D parent_names;
++	init.num_parents =3D num_parents;
++
++	pll->base =3D base;
++	pll->hw.init =3D &init;
++
++	hw =3D &pll->hw;
++
++	ret =3D clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pll);
++		return ERR_PTR(ret);
++	}
++
++	return hw->clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 30ddbc1..9330632 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -24,7 +24,7 @@ enum imx_pllv1_type {
+ 	IMX_PLLV1_IMX35,
  };
-+
- /*
-  * Print a race report from thread that encountered the race.
-  */
--void kcsan_report(const volatile void *ptr, size_t size, bool is_write,
--		  bool value_change, int cpu_id, enum kcsan_report_type type);
-+extern void kcsan_report(const volatile void *ptr, size_t size, bool is_write,
-+			 bool value_change, int cpu_id, enum kcsan_report_type type);
- 
- #endif /* _KERNEL_KCSAN_KCSAN_H */
-diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
-index ead5610..0eea05a 100644
---- a/kernel/kcsan/report.c
-+++ b/kernel/kcsan/report.c
-@@ -22,13 +22,13 @@
-  * the reports, with reporting being in the slow-path.
-  */
- static struct {
--	const volatile void *ptr;
--	size_t size;
--	bool is_write;
--	int task_pid;
--	int cpu_id;
--	unsigned long stack_entries[NUM_STACK_ENTRIES];
--	int num_stack_entries;
-+	const volatile void	*ptr;
-+	size_t			size;
-+	bool			is_write;
-+	int			task_pid;
-+	int			cpu_id;
-+	unsigned long		stack_entries[NUM_STACK_ENTRIES];
-+	int			num_stack_entries;
- } other_info = { .ptr = NULL };
- 
- /*
-@@ -40,8 +40,8 @@ static DEFINE_SPINLOCK(report_lock);
- /*
-  * Special rules to skip reporting.
-  */
--static bool skip_report(bool is_write, bool value_change,
--			unsigned long top_frame)
-+static bool
-+skip_report(bool is_write, bool value_change, unsigned long top_frame)
- {
- 	if (IS_ENABLED(CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY) && is_write &&
- 	    !value_change) {
-@@ -105,6 +105,7 @@ static int sym_strcmp(void *addr1, void *addr2)
- 
- 	snprintf(buf1, sizeof(buf1), "%pS", addr1);
- 	snprintf(buf2, sizeof(buf2), "%pS", addr2);
-+
- 	return strncmp(buf1, buf2, sizeof(buf1));
- }
- 
-@@ -116,8 +117,7 @@ static bool print_report(const volatile void *ptr, size_t size, bool is_write,
- 			 enum kcsan_report_type type)
- {
- 	unsigned long stack_entries[NUM_STACK_ENTRIES] = { 0 };
--	int num_stack_entries =
--		stack_trace_save(stack_entries, NUM_STACK_ENTRIES, 1);
-+	int num_stack_entries = stack_trace_save(stack_entries, NUM_STACK_ENTRIES, 1);
- 	int skipnr = get_stack_skipnr(stack_entries, num_stack_entries);
- 	int other_skipnr;
- 
-@@ -131,7 +131,7 @@ static bool print_report(const volatile void *ptr, size_t size, bool is_write,
- 		other_skipnr = get_stack_skipnr(other_info.stack_entries,
- 						other_info.num_stack_entries);
- 
--		/* value_change is only known for the other thread */
-+		/* @value_change is only known for the other thread */
- 		if (skip_report(other_info.is_write, value_change,
- 				other_info.stack_entries[other_skipnr]))
- 			return false;
-@@ -241,13 +241,12 @@ retry:
- 		if (other_info.ptr != NULL)
- 			break; /* still in use, retry */
- 
--		other_info.ptr = ptr;
--		other_info.size = size;
--		other_info.is_write = is_write;
--		other_info.task_pid = in_task() ? task_pid_nr(current) : -1;
--		other_info.cpu_id = cpu_id;
--		other_info.num_stack_entries = stack_trace_save(
--			other_info.stack_entries, NUM_STACK_ENTRIES, 1);
-+		other_info.ptr			= ptr;
-+		other_info.size			= size;
-+		other_info.is_write		= is_write;
-+		other_info.task_pid		= in_task() ? task_pid_nr(current) : -1;
-+		other_info.cpu_id		= cpu_id;
-+		other_info.num_stack_entries	= stack_trace_save(other_info.stack_entries, NUM_STACK_ENTRIES, 1);
- 
- 		spin_unlock_irqrestore(&report_lock, *flags);
- 
-@@ -299,6 +298,7 @@ retry:
- 	}
- 
- 	spin_unlock_irqrestore(&report_lock, *flags);
-+
- 	goto retry;
- }
- 
-@@ -309,9 +309,7 @@ void kcsan_report(const volatile void *ptr, size_t size, bool is_write,
- 
- 	kcsan_disable_current();
- 	if (prepare_report(&flags, ptr, size, is_write, cpu_id, type)) {
--		if (print_report(ptr, size, is_write, value_change, cpu_id,
--				 type) &&
--		    panic_on_warn)
-+		if (print_report(ptr, size, is_write, value_change, cpu_id, type) && panic_on_warn)
- 			panic("panic_on_warn set ...\n");
- 
- 		release_report(&flags, type);
-diff --git a/kernel/kcsan/test.c b/kernel/kcsan/test.c
-index 0bae63c..cc60002 100644
---- a/kernel/kcsan/test.c
-+++ b/kernel/kcsan/test.c
-@@ -34,7 +34,7 @@ static bool test_encode_decode(void)
- 		if (WARN_ON(!check_encodable(addr, size)))
- 			return false;
- 
--		/* encode and decode */
-+		/* Encode and decode */
- 		{
- 			const long encoded_watchpoint =
- 				encode_watchpoint(addr, size, is_write);
-@@ -42,7 +42,7 @@ static bool test_encode_decode(void)
- 			size_t verif_size;
- 			bool verif_is_write;
- 
--			/* check special watchpoints */
-+			/* Check special watchpoints */
- 			if (WARN_ON(decode_watchpoint(
- 				    INVALID_WATCHPOINT, &verif_masked_addr,
- 				    &verif_size, &verif_is_write)))
-@@ -52,7 +52,7 @@ static bool test_encode_decode(void)
- 				    &verif_size, &verif_is_write)))
- 				return false;
- 
--			/* check decoding watchpoint returns same data */
-+			/* Check decoding watchpoint returns same data */
- 			if (WARN_ON(!decode_watchpoint(
- 				    encoded_watchpoint, &verif_masked_addr,
- 				    &verif_size, &verif_is_write)))
-diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
-index e9307a9..5fc9c9b 100644
---- a/kernel/sched/Makefile
-+++ b/kernel/sched/Makefile
-@@ -7,7 +7,7 @@ endif
- # that is not a function of syscall inputs. E.g. involuntary context switches.
- KCOV_INSTRUMENT := n
- 
--# There are numerous races here, however, most of them due to plain accesses.
-+# There are numerous data races here, however, most of them are due to plain accesses.
- # This would make it even harder for syzbot to find reproducers, because these
- # bugs trigger without specific input. Disable by default, but should re-enable
- # eventually.
-diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
-index 5dd464e..3f78b14 100644
---- a/lib/Kconfig.kcsan
-+++ b/lib/Kconfig.kcsan
-@@ -6,7 +6,6 @@ config HAVE_ARCH_KCSAN
- menuconfig KCSAN
- 	bool "KCSAN: watchpoint-based dynamic data race detector"
- 	depends on HAVE_ARCH_KCSAN && !KASAN && STACKTRACE
--	default n
- 	help
- 	  Kernel Concurrency Sanitizer is a dynamic data race detector, which
- 	  uses a watchpoint-based sampling approach to detect races. See
-@@ -16,13 +15,12 @@ if KCSAN
- 
- config KCSAN_DEBUG
- 	bool "Debugging of KCSAN internals"
--	default n
- 
- config KCSAN_SELFTEST
- 	bool "Perform short selftests on boot"
- 	default y
- 	help
--	  Run KCSAN selftests on boot. On test failure, causes kernel to panic.
-+	  Run KCSAN selftests on boot. On test failure, causes the kernel to panic.
- 
- config KCSAN_EARLY_ENABLE
- 	bool "Early enable during boot"
-@@ -62,7 +60,8 @@ config KCSAN_DELAY_RANDOMIZE
- 	default y
- 	help
- 	  If delays should be randomized, where the maximum is KCSAN_UDELAY_*.
--	  If false, the chosen delays are always KCSAN_UDELAY_* defined above.
-+	  If false, the chosen delays are always the KCSAN_UDELAY_* values
-+	  as defined above.
- 
- config KCSAN_SKIP_WATCH
- 	int "Skip instructions before setting up watchpoint"
-@@ -86,9 +85,9 @@ config KCSAN_SKIP_WATCH_RANDOMIZE
- # parameters, to optimize for the common use-case, we avoid this because: (a)
- # it would impact performance (and we want to avoid static branch for all
- # {READ,WRITE}_ONCE, atomic_*, bitops, etc.), and (b) complicate the design
--# without real benefit. The main purpose of the below options are for use in
--# fuzzer configs to control reported data races, and are not expected to be
--# switched frequently by a user.
-+# without real benefit. The main purpose of the below options is for use in
-+# fuzzer configs to control reported data races, and they are not expected
-+# to be switched frequently by a user.
- 
- config KCSAN_REPORT_RACE_UNKNOWN_ORIGIN
- 	bool "Report races of unknown origin"
-@@ -103,13 +102,12 @@ config KCSAN_REPORT_VALUE_CHANGE_ONLY
- 	bool "Only report races where watcher observed a data value change"
- 	default y
- 	help
--	  If enabled and a conflicting write is observed via watchpoint, but
-+	  If enabled and a conflicting write is observed via a watchpoint, but
- 	  the data value of the memory location was observed to remain
- 	  unchanged, do not report the data race.
- 
- config KCSAN_IGNORE_ATOMICS
- 	bool "Do not instrument marked atomic accesses"
--	default n
- 	help
- 	  If enabled, never instruments marked atomic accesses. This results in
- 	  not reporting data races where one access is atomic and the other is
+=20
+-enum imx_sccg_pll_type {
++enum imx_sscg_pll_type {
+ 	SCCG_PLL1,
+ 	SCCG_PLL2,
+ };
+@@ -109,7 +109,7 @@ struct clk *imx_clk_pllv2(const char *name, const char =
+*parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+=20
+-struct clk *imx_clk_sccg_pll(const char *name,
++struct clk *imx_clk_sscg_pll(const char *name,
+ 				const char * const *parent_names,
+ 				u8 num_parents,
+ 				u8 parent, u8 bypass1, u8 bypass2,
+--=20
+2.7.4
+
