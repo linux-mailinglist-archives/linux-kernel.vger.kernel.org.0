@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C436D106D52
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58188106A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbfKVK7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:59:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49790 "EHLO mail.kernel.org"
+        id S1726100AbfKVKcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:32:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730387AbfKVK7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:59:05 -0500
+        id S1727547AbfKVKcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:32:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 678DB20721;
-        Fri, 22 Nov 2019 10:59:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B85062077B;
+        Fri, 22 Nov 2019 10:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420344;
-        bh=WatvhTlnTrUeKgE4vGEfMfvYTXMAw5MLRYU+EHcOmmA=;
+        s=default; t=1574418722;
+        bh=/yiiXOWAr9PvapQdaj5ekwCQqFmwzeoTbzKcrhuHjvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0OBl3o81e3Mm8tOZX/W3tHcPHF89vZYyDUUx7l0WdESKXjVSW5FBJlm3I3MmYKQ27
-         gZSwm0+fNGLrHxQXLdOBVe1flOmY6ZB/Ek8pWT/ggdjXK+GkfMK0LV2LF1y2r7FX2L
-         kp1XTvqC7d8m1ur8wRiJunqqsWCeycpBTh5QZJI8=
+        b=o7FTCVhM3YS3QD9HaW78/4MBqiD8H1wsSAdbdbK2AFmfdN4OyD/d9NgCldccIPosd
+         vhkZvL7qrUXB+IyXWOP/+kZG3Rp3tn3MTtdpa/WJRv0NWX08rrORUlBhF+fsR1d+CC
+         xywplSGxHYxdfloGUfy/o1jX2HB7bkwnuEACkCsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Felix Fietkau <nbd@nbd.name>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/220] mt76x2: fix tx power configuration for VHT mcs 9
-Date:   Fri, 22 Nov 2019 11:26:36 +0100
-Message-Id: <20191122100914.627267228@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 006/159] ecryptfs_lookup_interpose(): lower_dentry->d_inode is not stable
+Date:   Fri, 22 Nov 2019 11:26:37 +0100
+Message-Id: <20191122100710.046390303@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +42,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 60b6645ef1a9239a02c70adeae136298395d145a ]
+commit e72b9dd6a5f17d0fb51f16f8685f3004361e83d0 upstream.
 
-Fix tx power configuration for VHT 1SS/STBC mcs 9 since
-in MT_TX_PWR_CFG_{8,9} mcs 8,9 bits are GENMASK(21,16) and
-GENMASK(29,24) while GENMASK(15,6) are marked as reserved
+lower_dentry can't go from positive to negative (we have it pinned),
+but it *can* go from negative to positive.  So fetching ->d_inode
+into a local variable, doing a blocking allocation, checking that
+now ->d_inode is non-NULL and feeding the value we'd fetched
+earlier to a function that won't accept NULL is not a good idea.
 
-Fixes: 7bc04215a66b ("mt76: add driver code for MT76x2e")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2_phy_common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ecryptfs/inode.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_phy_common.c b/drivers/net/wireless/mediatek/mt76/mt76x2_phy_common.c
-index 9fd6ab4cbb949..ca68dd184489b 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_phy_common.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_phy_common.c
-@@ -232,9 +232,9 @@ void mt76x2_phy_set_txpower(struct mt76x2_dev *dev)
- 	mt76_wr(dev, MT_TX_PWR_CFG_7,
- 		mt76x2_tx_power_mask(t.ofdm[6], t.vht[8], t.ht[6], t.vht[8]));
- 	mt76_wr(dev, MT_TX_PWR_CFG_8,
--		mt76x2_tx_power_mask(t.ht[14], t.vht[8], t.vht[8], 0));
-+		mt76x2_tx_power_mask(t.ht[14], 0, t.vht[8], t.vht[8]));
- 	mt76_wr(dev, MT_TX_PWR_CFG_9,
--		mt76x2_tx_power_mask(t.ht[6], t.vht[8], t.vht[8], 0));
-+		mt76x2_tx_power_mask(t.ht[6], 0, t.vht[8], t.vht[8]));
- }
- EXPORT_SYMBOL_GPL(mt76x2_phy_set_txpower);
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -330,7 +330,7 @@ static int ecryptfs_lookup_interpose(str
+ 				     struct dentry *lower_dentry,
+ 				     struct inode *dir_inode)
+ {
+-	struct inode *inode, *lower_inode = d_inode(lower_dentry);
++	struct inode *inode, *lower_inode;
+ 	struct ecryptfs_dentry_info *dentry_info;
+ 	struct vfsmount *lower_mnt;
+ 	int rc = 0;
+@@ -352,7 +352,15 @@ static int ecryptfs_lookup_interpose(str
+ 	dentry_info->lower_path.mnt = lower_mnt;
+ 	dentry_info->lower_path.dentry = lower_dentry;
  
--- 
-2.20.1
-
+-	if (d_really_is_negative(lower_dentry)) {
++	/*
++	 * negative dentry can go positive under us here - its parent is not
++	 * locked.  That's OK and that could happen just as we return from
++	 * ecryptfs_lookup() anyway.  Just need to be careful and fetch
++	 * ->d_inode only once - it's not stable here.
++	 */
++	lower_inode = READ_ONCE(lower_dentry->d_inode);
++
++	if (!lower_inode) {
+ 		/* We want to add because we couldn't find in lower */
+ 		d_add(dentry, NULL);
+ 		return 0;
 
 
