@@ -2,128 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A77107594
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:16:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C79107589
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 17:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbfKVQQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 11:16:50 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54200 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726546AbfKVQQu (ORCPT
+        id S1727360AbfKVQO4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 22 Nov 2019 11:14:56 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:45539 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbfKVQOz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 11:16:50 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMGD83m015416;
-        Fri, 22 Nov 2019 17:14:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=q+AN9vpLp99KTf4oMHYu++uvf+aTBZJ7fWpmVfAwsSA=;
- b=IxKyGc9ou7D+Y0yLJolE3vkTsh6lhR8z5J9UPgqEeKf64aStCPXkdTCnuU8AteSIMwa0
- ys6FNaDyfM33C7PUQvv4QpfXhEg/YWtOb39Dhdg4ieDZ+YBzU+dGC/5pYri3CfptKsAw
- gj9xHv5Q5OVbK0EVg1O45F5JEXtb596YVGyLvTmmb9eXLIzIw98Jd6BjMk17LQObBRVr
- xL7CiX4AGyYQn2+jE+I1aP5RJ6eVBUsrScoWqxnbof2O2ZsC8ZkLIGklPJYkuLN0nUs9
- GnBQFoQW7IoXvSqF87hVh8RIq3z5H+qxPZ2TLD7XovJhGri/eD0W34UTJz1f8YJOYjy1 7A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2wa9uvt3qk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Nov 2019 17:14:39 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8903B100034;
-        Fri, 22 Nov 2019 17:14:38 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B9F92D378D;
-        Fri, 22 Nov 2019 17:14:38 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 22 Nov 2019 17:14:37
- +0100
-From:   Olivier Moysan <olivier.moysan@st.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>,
-        <arnaud.pouliquen@st.com>
-CC:     <benjamin.gaignard@st.com>, <srinivas.kandagatla@linaro.org>
-Subject: [PATCH][RFC] ASoC: stm32: sai: manage rebind issue
-Date:   Fri, 22 Nov 2019 17:14:23 +0100
-Message-ID: <20191122161423.8641-1-olivier.moysan@st.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-22_03:2019-11-21,2019-11-22 signatures=0
+        Fri, 22 Nov 2019 11:14:55 -0500
+Received: from marcel-macbook.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
+        by mail.holtmann.org (Postfix) with ESMTPSA id BE461CED23;
+        Fri, 22 Nov 2019 17:24:00 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
+Subject: Re: [PATCH v6 3/4] dt-bindings: net: broadcom-bluetooth: Add pcm
+ config
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CAL_JsqKso2Us5VW-Qp8mENAkMmoEh7YDT+HfhRMD1BKi7q=qAw@mail.gmail.com>
+Date:   Fri, 22 Nov 2019 17:14:53 +0100
+Cc:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ondrej Jirman <megous@megous.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <FBAB12FA-8EAD-424C-9DF3-770E7D172AFD@holtmann.org>
+References: <20191118192123.82430-1-abhishekpandit@chromium.org>
+ <20191118110335.v6.3.I18b06235e381accea1c73aa2f9db358645d9f201@changeid>
+ <20191121212923.GA24437@bogus>
+ <06AE1B9D-F048-4AF1-9826-E8CAFA44DD58@holtmann.org>
+ <CAL_JsqKso2Us5VW-Qp8mENAkMmoEh7YDT+HfhRMD1BKi7q=qAw@mail.gmail.com>
+To:     Rob Herring <robh@kernel.org>
+X-Mailer: Apple Mail (2.3601.0.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit e894efef9ac7 ("ASoC: core: add support to card rebind")
-allows to rebind the sound card after a rebind of one of its component.
-With this commit, the sound card is actually rebound,
-but is no more functional.
+Hi Rob,
 
-With the sound card rebind the simplified call sequence is:
-stm32_sai_sub_probe
-	snd_soc_register_component
-		snd_soc_try_rebind_card
-			snd_soc_instantiate_card
-	devm_snd_dmaengine_pcm_register
+>>>> Add documentation for pcm parameters.
+>>>> 
+>>>> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+>>>> ---
+>>>> 
+>>>> Changes in v6: None
+>>>> Changes in v5: None
+>>>> Changes in v4: None
+>>>> Changes in v3: None
+>>>> Changes in v2: None
+>>> 
+>>> Really? I'm staring at v2 that looks a bit different.
+>>> 
+>>>> .../bindings/net/broadcom-bluetooth.txt       | 16 ++++++++++
+>>>> include/dt-bindings/bluetooth/brcm.h          | 32 +++++++++++++++++++
+>>>> 2 files changed, 48 insertions(+)
+>>>> create mode 100644 include/dt-bindings/bluetooth/brcm.h
+>>>> 
+>>>> diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> index c749dc297624..8561e4684378 100644
+>>>> --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+>>>> @@ -29,10 +29,20 @@ Optional properties:
+>>>>   - "lpo": external low power 32.768 kHz clock
+>>>> - vbat-supply: phandle to regulator supply for VBAT
+>>>> - vddio-supply: phandle to regulator supply for VDDIO
+>>>> + - brcm,bt-sco-routing: PCM, Transport, Codec, I2S
+>>>> + - brcm,bt-pcm-interface-rate: 128KBps, 256KBps, 512KBps, 1024KBps, 2048KBps
+>>>> + - brcm,bt-pcm-frame-type: short, long
+>>>> + - brcm,bt-pcm-sync-mode: slave, master
+>>>> + - brcm,bt-pcm-clock-mode: slave, master
+>>> 
+>>> Little of this seems unique to Broadcom. We already have some standard
+>>> audio related properties for audio interfaces such as 'format',
+>>> 'frame-master' and 'bitclock-master'. Ultimately, this would be tied
+>>> into the audio complex of SoCs and need to work with the audio
+>>> bindings. We also have HDMI audio bindings.
+>>> 
+>>> Maybe sco-routing is unique to BT and still needed in some form though
+>>> if you describe the connection to the SoC audio complex, then maybe
+>>> not? I'd assume every BT chip has some audio routing configuration.
+>> 
+>> so we tried to generalize this some time before and failed to get a proper consensus.
+>> 
+>> In general I am with you that we should just expose generic properties from the attached audio codec, but nobody has come up with anything like that. And I think aligning all chip manufacturers will take some time.
+>> 
+> 
+> That shouldn't be hard. It's a solved problem for codecs and HDMI. I
+> don't think BT is any more complicated (ignoring phones). I suspect
+> it's not solved simply because no one wants to do the work beyond
+> their 1 BT device they care about ATM.
 
-The problem occurs because the pcm must be registered,
-before snd_soc_instantiate_card() is called.
+we tried, but nobody can agree on these right now. I would be happy if others come forward and tell us how they wired up their hardware, but it hasn’t happened yet.
 
-Modify SAI driver, to change the call sequence as follows:
-stm32_sai_sub_probe
-	devm_snd_dmaengine_pcm_register
-	snd_soc_register_component
-		snd_soc_try_rebind_card
+>> Maybe in the interim we just use brcm,bt-pcm-int-params = [00 00 ..] as initially proposed.
+> 
+> What's the device using this? Some chromebook I suppose. I think it
+> would be better to first see how this fits in with the rest of the
+> audio subsystem. Until then, the driver should probably just default
+> to "transport" mode which I assume is audio routed over the UART
+> interface. That should work on any platform at least, but may not be
+> optimal.
 
----
-The current patch allows to fix the issue for STM SAI driver.
-However, most of the drivers register the component first.
-So, this solution is perhaps not the right way to manage the problem.
-This may probably be handled in ASoC framework instead.
----
+SCO over UART doesn’t really work. Long time ago, some car kits might have done it, but in the Chromebook cases this will just not work. We need to configure the PCM settings of the Bluetooth chip.
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
----
- sound/soc/stm/stm32_sai_sub.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+If we don’t do it via DT, then this gets hardcoded in the driver source and that is not helping either. So until we get anything better, lets use brcm,bt-pcm-int-params = [00 00 ..] and get this supported upstream.
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 48e629ac2d88..eb35306a1232 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -1484,6 +1484,13 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, conf, 0);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not register pcm dma\n");
-+		return ret;
-+	}
-+
-+
- 	ret = devm_snd_soc_register_component(&pdev->dev, &stm32_component,
- 					      &sai->cpu_dai_drv, 1);
- 	if (ret)
-@@ -1492,11 +1499,6 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
- 	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
- 		conf = &stm32_sai_pcm_config_spdif;
- 
--	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, conf, 0);
--	if (ret) {
--		dev_err(&pdev->dev, "Could not register pcm dma\n");
--		return ret;
--	}
- 
- 	return 0;
- }
--- 
-2.17.1
+Regards
+
+Marcel
 
