@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DEFE106C4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE157106C1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729581AbfKVKvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:51:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33268 "EHLO mail.kernel.org"
+        id S1728650AbfKVKty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:49:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729435AbfKVKvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:51:00 -0500
+        id S1727924AbfKVKtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:49:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 370972072E;
-        Fri, 22 Nov 2019 10:50:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67BAD20872;
+        Fri, 22 Nov 2019 10:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419859;
-        bh=6Z+G+COGPjXzNfhuUuQehBnFKTpcoGKfJp1s4WRAswU=;
+        s=default; t=1574419788;
+        bh=mGM2iICIWnmG/JTWLsOe+qYgsPuoE13JMoQ2jwvaX3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jgQ26OuqvirsjtsORGzBgMH7wppkurjXwQCjvTTCPphPpRfY2XpMtF9SofMJKq/wI
-         qW0LAaM73pjJAa3w65Y9Pgeiue1pQjozpcbIn7nI5HiBzft1jxpyqqYeiu5z1BjZM6
-         UQrDpl8z3So+o2wpxjc32C38fvY5A6ISiukdnAOI=
+        b=fTXP2fiuYmvxF+8U7KgftWSly5w3l8a3FP5bc+h6d5D/YEPFIrxCip5ad+M9kj/Nc
+         O2x51OwEzx5vs9pxAuRHPqwpPNoGUaeA5B7MsRp8pMIl9yTPHskP80BTztc8nQd5Kp
+         47fUlUsmfxoH1ubKkhzZ3I6lShPTCwetu4+R4nJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tavis Ormandy <taviso@gmail.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 009/122] fbdev: Ditch fb_edid_add_monspecs
-Date:   Fri, 22 Nov 2019 11:27:42 +0100
-Message-Id: <20191122100728.878663679@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 010/122] net: ovs: fix return type of ndo_start_xmit function
+Date:   Fri, 22 Nov 2019 11:27:43 +0100
+Message-Id: <20191122100729.788558530@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
 References: <20191122100722.177052205@linuxfoundation.org>
@@ -46,237 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 3b8720e63f4a1fc6f422a49ecbaa3b59c86d5aaf upstream.
+[ Upstream commit eddf11e18dff0e8671e06ce54e64cfc843303ab9 ]
 
-It's dead code ever since
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-commit 34280340b1dc74c521e636f45cd728f9abf56ee2
-Author: Geert Uytterhoeven <geert+renesas@glider.be>
-Date:   Fri Dec 4 17:01:43 2015 +0100
+Found by coccinelle.
 
-    fbdev: Remove unused SH-Mobile HDMI driver
-
-Also with this gone we can remove the cea_modes db. This entire thing
-is massively incomplete anyway, compared to the CEA parsing that
-drm_edid.c does.
-
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tavis Ormandy <taviso@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190721201956.941-1-daniel.vetter@ffwll.ch
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/core/fbmon.c  |   95 --------------------------------------
- drivers/video/fbdev/core/modedb.c |   57 ----------------------
- include/linux/fb.h                |    3 -
- 3 files changed, 155 deletions(-)
+ net/openvswitch/vport-internal_dev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/core/fbmon.c
-+++ b/drivers/video/fbdev/core/fbmon.c
-@@ -997,97 +997,6 @@ void fb_edid_to_monspecs(unsigned char *
- 	DPRINTK("========================================\n");
+diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+index 1c09ad457d2a9..1083b5e901349 100644
+--- a/net/openvswitch/vport-internal_dev.c
++++ b/net/openvswitch/vport-internal_dev.c
+@@ -44,7 +44,8 @@ static struct internal_dev *internal_dev_priv(struct net_device *netdev)
  }
  
--/**
-- * fb_edid_add_monspecs() - add monitor video modes from E-EDID data
-- * @edid:	128 byte array with an E-EDID block
-- * @spacs:	monitor specs to be extended
-- */
--void fb_edid_add_monspecs(unsigned char *edid, struct fb_monspecs *specs)
--{
--	unsigned char *block;
--	struct fb_videomode *m;
--	int num = 0, i;
--	u8 svd[64], edt[(128 - 4) / DETAILED_TIMING_DESCRIPTION_SIZE];
--	u8 pos = 4, svd_n = 0;
--
--	if (!edid)
--		return;
--
--	if (!edid_checksum(edid))
--		return;
--
--	if (edid[0] != 0x2 ||
--	    edid[2] < 4 || edid[2] > 128 - DETAILED_TIMING_DESCRIPTION_SIZE)
--		return;
--
--	DPRINTK("  Short Video Descriptors\n");
--
--	while (pos < edid[2]) {
--		u8 len = edid[pos] & 0x1f, type = (edid[pos] >> 5) & 7;
--		pr_debug("Data block %u of %u bytes\n", type, len);
--		if (type == 2) {
--			for (i = pos; i < pos + len; i++) {
--				u8 idx = edid[pos + i] & 0x7f;
--				svd[svd_n++] = idx;
--				pr_debug("N%sative mode #%d\n",
--					 edid[pos + i] & 0x80 ? "" : "on-n", idx);
--			}
--		} else if (type == 3 && len >= 3) {
--			/* Check Vendor Specific Data Block.  For HDMI,
--			   it is always 00-0C-03 for HDMI Licensing, LLC. */
--			if (edid[pos + 1] == 3 && edid[pos + 2] == 0xc &&
--			    edid[pos + 3] == 0)
--				specs->misc |= FB_MISC_HDMI;
--		}
--		pos += len + 1;
--	}
--
--	block = edid + edid[2];
--
--	DPRINTK("  Extended Detailed Timings\n");
--
--	for (i = 0; i < (128 - edid[2]) / DETAILED_TIMING_DESCRIPTION_SIZE;
--	     i++, block += DETAILED_TIMING_DESCRIPTION_SIZE)
--		if (PIXEL_CLOCK != 0)
--			edt[num++] = block - edid;
--
--	/* Yikes, EDID data is totally useless */
--	if (!(num + svd_n))
--		return;
--
--	m = kzalloc((specs->modedb_len + num + svd_n) *
--		       sizeof(struct fb_videomode), GFP_KERNEL);
--
--	if (!m)
--		return;
--
--	memcpy(m, specs->modedb, specs->modedb_len * sizeof(struct fb_videomode));
--
--	for (i = specs->modedb_len; i < specs->modedb_len + num; i++) {
--		get_detailed_timing(edid + edt[i - specs->modedb_len], &m[i]);
--		if (i == specs->modedb_len)
--			m[i].flag |= FB_MODE_IS_FIRST;
--		pr_debug("Adding %ux%u@%u\n", m[i].xres, m[i].yres, m[i].refresh);
--	}
--
--	for (i = specs->modedb_len + num; i < specs->modedb_len + num + svd_n; i++) {
--		int idx = svd[i - specs->modedb_len - num];
--		if (!idx || idx >= ARRAY_SIZE(cea_modes)) {
--			pr_warn("Reserved SVD code %d\n", idx);
--		} else if (!cea_modes[idx].xres) {
--			pr_warn("Unimplemented SVD code %d\n", idx);
--		} else {
--			memcpy(&m[i], cea_modes + idx, sizeof(m[i]));
--			pr_debug("Adding SVD #%d: %ux%u@%u\n", idx,
--				 m[i].xres, m[i].yres, m[i].refresh);
--		}
--	}
--
--	kfree(specs->modedb);
--	specs->modedb = m;
--	specs->modedb_len = specs->modedb_len + num + svd_n;
--}
--
- /*
-  * VESA Generalized Timing Formula (GTF)
-  */
-@@ -1497,9 +1406,6 @@ int fb_parse_edid(unsigned char *edid, s
- void fb_edid_to_monspecs(unsigned char *edid, struct fb_monspecs *specs)
+ /* Called with rcu_read_lock_bh. */
+-static int internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
++static netdev_tx_t
++internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
  {
+ 	int len, err;
+ 
+@@ -63,7 +64,7 @@ static int internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	} else {
+ 		netdev->stats.tx_errors++;
+ 	}
+-	return 0;
++	return NETDEV_TX_OK;
  }
--void fb_edid_add_monspecs(unsigned char *edid, struct fb_monspecs *specs)
--{
--}
- void fb_destroy_modedb(struct fb_videomode *modedb)
- {
- }
-@@ -1607,7 +1513,6 @@ EXPORT_SYMBOL(fb_firmware_edid);
  
- EXPORT_SYMBOL(fb_parse_edid);
- EXPORT_SYMBOL(fb_edid_to_monspecs);
--EXPORT_SYMBOL(fb_edid_add_monspecs);
- EXPORT_SYMBOL(fb_get_mode);
- EXPORT_SYMBOL(fb_validate_mode);
- EXPORT_SYMBOL(fb_destroy_modedb);
---- a/drivers/video/fbdev/core/modedb.c
-+++ b/drivers/video/fbdev/core/modedb.c
-@@ -289,63 +289,6 @@ static const struct fb_videomode modedb[
- };
- 
- #ifdef CONFIG_FB_MODE_HELPERS
--const struct fb_videomode cea_modes[65] = {
--	/* #1: 640x480p@59.94/60Hz */
--	[1] = {
--		NULL, 60, 640, 480, 39722, 48, 16, 33, 10, 96, 2, 0,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--	/* #3: 720x480p@59.94/60Hz */
--	[3] = {
--		NULL, 60, 720, 480, 37037, 60, 16, 30, 9, 62, 6, 0,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--	/* #5: 1920x1080i@59.94/60Hz */
--	[5] = {
--		NULL, 60, 1920, 1080, 13763, 148, 88, 15, 2, 44, 5,
--		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
--		FB_VMODE_INTERLACED, 0,
--	},
--	/* #7: 720(1440)x480iH@59.94/60Hz */
--	[7] = {
--		NULL, 60, 1440, 480, 18554/*37108*/, 114, 38, 15, 4, 124, 3, 0,
--		FB_VMODE_INTERLACED, 0,
--	},
--	/* #9: 720(1440)x240pH@59.94/60Hz */
--	[9] = {
--		NULL, 60, 1440, 240, 18554, 114, 38, 16, 4, 124, 3, 0,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--	/* #18: 720x576pH@50Hz */
--	[18] = {
--		NULL, 50, 720, 576, 37037, 68, 12, 39, 5, 64, 5, 0,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--	/* #19: 1280x720p@50Hz */
--	[19] = {
--		NULL, 50, 1280, 720, 13468, 220, 440, 20, 5, 40, 5,
--		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--	/* #20: 1920x1080i@50Hz */
--	[20] = {
--		NULL, 50, 1920, 1080, 13480, 148, 528, 15, 5, 528, 5,
--		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
--		FB_VMODE_INTERLACED, 0,
--	},
--	/* #32: 1920x1080p@23.98/24Hz */
--	[32] = {
--		NULL, 24, 1920, 1080, 13468, 148, 638, 36, 4, 44, 5,
--		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--	/* #35: (2880)x480p4x@59.94/60Hz */
--	[35] = {
--		NULL, 60, 2880, 480, 9250, 240, 64, 30, 9, 248, 6, 0,
--		FB_VMODE_NONINTERLACED, 0,
--	},
--};
--
- const struct fb_videomode vesa_modes[] = {
- 	/* 0 640x350-85 VESA */
- 	{ NULL, 85, 640, 350, 31746,  96, 32, 60, 32, 64, 3,
---- a/include/linux/fb.h
-+++ b/include/linux/fb.h
-@@ -725,8 +725,6 @@ extern int fb_parse_edid(unsigned char *
- extern const unsigned char *fb_firmware_edid(struct device *device);
- extern void fb_edid_to_monspecs(unsigned char *edid,
- 				struct fb_monspecs *specs);
--extern void fb_edid_add_monspecs(unsigned char *edid,
--				 struct fb_monspecs *specs);
- extern void fb_destroy_modedb(struct fb_videomode *modedb);
- extern int fb_find_mode_cvt(struct fb_videomode *mode, int margins, int rb);
- extern unsigned char *fb_ddc_read(struct i2c_adapter *adapter);
-@@ -800,7 +798,6 @@ struct dmt_videomode {
- 
- extern const char *fb_mode_option;
- extern const struct fb_videomode vesa_modes[];
--extern const struct fb_videomode cea_modes[65];
- extern const struct dmt_videomode dmt_modes[];
- 
- struct fb_modelist {
+ static int internal_dev_open(struct net_device *netdev)
+-- 
+2.20.1
+
 
 
