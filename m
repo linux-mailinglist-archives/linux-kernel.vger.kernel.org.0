@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E9F106AC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B8AF106CAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:55:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbfKVKiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:38:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40378 "EHLO mail.kernel.org"
+        id S1730265AbfKVKxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:53:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbfKVKiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:38:12 -0500
+        id S1730223AbfKVKxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF1922072D;
-        Fri, 22 Nov 2019 10:38:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7286120715;
+        Fri, 22 Nov 2019 10:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419091;
-        bh=W+ZYmJ3tALheWbUv4P01KUCmLl9oUrjKMEXFXL+OArg=;
+        s=default; t=1574420025;
+        bh=VgPPyE22Zgxe2jV9lOAP3R21u862evy97/e4M8bGaoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CHQRpoCRyF6PUxKoFfemk3TO1QD6GQmstxhpyXtVdtJsydeKmgPrW5gZw8pF66eJe
-         0mor3rg1yTekbRg4ds7ldZyDDMrWfqvyeVrnrYkaO6wgg9PEDgQTwTSgdEiSgQAxMa
-         5Ma7drQhAq5w4hSUODl0xNWpQPzVTawJvW0atKXs=
+        b=YO5UZEaydh7/+gcEwQZIsvQNhVrnFs4AlM7T2ffuVwhA2URPTwgdYnCfVIZYoZCTF
+         AkG80dnYtFi1b9uZhNwB3NvxakRnq/5Oy0AktxaV1jdZ73wnpnVkVUE7bdu+TH2hOd
+         rc0c6SgX98FpeAlHnSd1nY9d8R7p4apnjrRaFvOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Trent Piepho <tpiepho@impinj.com>,
-        =?UTF-8?q?Jan=20Kundr=C3=83=C2=A1t?= <jan.kundrat@cesnet.cz>,
+        stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 153/159] spi: spidev: Fix OF tree warning logic
+Subject: [PATCH 4.14 091/122] reset: Fix potential use-after-free in __of_reset_control_get()
 Date:   Fri, 22 Nov 2019 11:29:04 +0100
-Message-Id: <20191122100846.710231917@linuxfoundation.org>
+Message-Id: <20191122100828.274593621@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trent Piepho <tpiepho@impinj.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 605b3bec73cbd74b4ac937b580cd0b47d1300484 ]
+[ Upstream commit b790c8ea5593d6dc3580adfad8e117eeb56af874 ]
 
-spidev will make a big fuss if a device tree node binds a device by
-using "spidev" as the node's compatible property.
+Calling of_node_put() decreases the reference count of a device tree
+object, and may free some data.
 
-However, the logic for this isn't looking for "spidev" in the
-compatible, but rather checking that the device is NOT compatible with
-spidev's list of devices.
+However, the of_phandle_args structure embedding it is passed to
+reset_controller_dev.of_xlate() after that, so it may still be accessed.
 
-This causes a false positive if a device not named "rohm,dh2228fv", etc.
-binds to spidev, even if a means other than putting "spidev" in the
-device tree was used.  E.g., the sysfs driver_override attribute.
+Move the call to of_node_put() down to fix this.
 
-Signed-off-by: Trent Piepho <tpiepho@impinj.com>
-Reviewed-by: Jan KundrÃ¡t <jan.kundrat@cesnet.cz>
-Tested-by: Jan KundrÃ¡t <jan.kundrat@cesnet.cz>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[p.zabel@pengutronix.de: moved of_node_put after mutex_unlock]
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spidev.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/reset/core.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index d0e7dfc647cf2..c5f1045561acc 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -713,11 +713,9 @@ static int spidev_probe(struct spi_device *spi)
- 	 * compatible string, it is a Linux implementation thing
- 	 * rather than a description of the hardware.
- 	 */
--	if (spi->dev.of_node && !of_match_device(spidev_dt_ids, &spi->dev)) {
--		dev_err(&spi->dev, "buggy DT: spidev listed directly in DT\n");
--		WARN_ON(spi->dev.of_node &&
--			!of_match_device(spidev_dt_ids, &spi->dev));
--	}
-+	WARN(spi->dev.of_node &&
-+	     of_device_is_compatible(spi->dev.of_node, "spidev"),
-+	     "%pOF: buggy DT: spidev listed directly in DT\n", spi->dev.of_node);
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index da4292e9de978..72b96b5c75a8f 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -466,28 +466,29 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ 			break;
+ 		}
+ 	}
+-	of_node_put(args.np);
  
- 	/* Allocate driver data */
- 	spidev = kzalloc(sizeof(*spidev), GFP_KERNEL);
+ 	if (!rcdev) {
+-		mutex_unlock(&reset_list_mutex);
+-		return ERR_PTR(-EPROBE_DEFER);
++		rstc = ERR_PTR(-EPROBE_DEFER);
++		goto out;
+ 	}
+ 
+ 	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells)) {
+-		mutex_unlock(&reset_list_mutex);
+-		return ERR_PTR(-EINVAL);
++		rstc = ERR_PTR(-EINVAL);
++		goto out;
+ 	}
+ 
+ 	rstc_id = rcdev->of_xlate(rcdev, &args);
+ 	if (rstc_id < 0) {
+-		mutex_unlock(&reset_list_mutex);
+-		return ERR_PTR(rstc_id);
++		rstc = ERR_PTR(rstc_id);
++		goto out;
+ 	}
+ 
+ 	/* reset_list_mutex also protects the rcdev's reset_control list */
+ 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
+ 
++out:
+ 	mutex_unlock(&reset_list_mutex);
++	of_node_put(args.np);
+ 
+ 	return rstc;
+ }
 -- 
 2.20.1
 
