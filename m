@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F67106EFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC28106E01
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfKVKyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:54:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40698 "EHLO mail.kernel.org"
+        id S1731673AbfKVLFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:05:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730370AbfKVKyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:54:46 -0500
+        id S1731656AbfKVLFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:05:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56AE320715;
-        Fri, 22 Nov 2019 10:54:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E8B2075E;
+        Fri, 22 Nov 2019 11:05:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420085;
-        bh=FJ+VnI9oZcBnhezxFHAHzk3I2B2oWQZz95RSyzMIKtM=;
+        s=default; t=1574420708;
+        bh=0KIFf+yZ8C/VuVjVmiu3e3orCWGVm8Ohdi7wNMRPvMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJkUzGv7O4UhOcPUkWYZ93VWnpXuKKwILSF2H6c8qafEiGml9eU+CbbSgDachtUP6
-         zd4nEwJ4Vc6Q/dIw4nXdvCOpVTrr2A+KrdpF/mqgGUDeWHOkkYObZGsBqs3jyJ8Qc5
-         h2R/yUaB8vUw9122SgboSSSORyKNybubUo5JoMpY=
+        b=j+lDfLKjZNu8oZgeUlo6gCn8LUc55+YiI8YimvaWktBXr44C6os4AI/viZ7K9BDPg
+         zPMvBqFS66EcZDk+8/w4m5hmhO0GRqDEgxaV8gDPPhxovo+b3+/gX0p/jniIhaIfo0
+         hORxcf2fXQAIAeoy4cm+5ecEP2yDZ6ML7U5XcCfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Ching Huang <ching2048@areca.com.tw>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 110/122] hwmon: (pwm-fan) Silence error on probe deferral
+Subject: [PATCH 4.19 198/220] scsi: arcmsr: clean up clang warning on extraneous parentheses
 Date:   Fri, 22 Nov 2019 11:29:23 +0100
-Message-Id: <20191122100833.920373569@linuxfoundation.org>
+Message-Id: <20191122100928.204102618@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 9f67f7583e77fe5dc57aab3a6159c2642544eaad ]
+[ Upstream commit ca2ade24157693b4e533ccec69df00ef719d4aad ]
 
-Probe deferrals aren't actual errors, so silence the error message in
-case the PWM cannot yet be acquired.
+There are extraneous parantheses that are causing clang to produce a
+warning so remove these.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Clean up 3 clang warnings:
+equality comparison with extraneous parentheses [-Wparentheses-equality]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Ching Huang <ching2048@areca.com.tw>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pwm-fan.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/arcmsr/arcmsr_hba.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 6d30bec04f2d8..f981da686d7eb 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -221,8 +221,12 @@ static int pwm_fan_probe(struct platform_device *pdev)
- 
- 	ctx->pwm = devm_of_pwm_get(&pdev->dev, pdev->dev.of_node, NULL);
- 	if (IS_ERR(ctx->pwm)) {
--		dev_err(&pdev->dev, "Could not get PWM\n");
--		return PTR_ERR(ctx->pwm);
-+		ret = PTR_ERR(ctx->pwm);
-+
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Could not get PWM: %d\n", ret);
-+
-+		return ret;
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 12316ef4c8931..c75d4695f9828 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -4135,9 +4135,9 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 		pci_read_config_byte(acb->pdev, i, &value[i]);
  	}
- 
- 	platform_set_drvdata(pdev, ctx);
+ 	/* hardware reset signal */
+-	if ((acb->dev_id == 0x1680)) {
++	if (acb->dev_id == 0x1680) {
+ 		writel(ARCMSR_ARC1680_BUS_RESET, &pmuA->reserved1[0]);
+-	} else if ((acb->dev_id == 0x1880)) {
++	} else if (acb->dev_id == 0x1880) {
+ 		do {
+ 			count++;
+ 			writel(0xF, &pmuC->write_sequence);
+@@ -4161,7 +4161,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 		} while (((readl(&pmuE->host_diagnostic_3xxx) &
+ 			ARCMSR_ARC1884_DiagWrite_ENABLE) == 0) && (count < 5));
+ 		writel(ARCMSR_ARC188X_RESET_ADAPTER, &pmuE->host_diagnostic_3xxx);
+-	} else if ((acb->dev_id == 0x1214)) {
++	} else if (acb->dev_id == 0x1214) {
+ 		writel(0x20, pmuD->reset_request);
+ 	} else {
+ 		pci_write_config_byte(acb->pdev, 0x84, 0x20);
 -- 
 2.20.1
 
