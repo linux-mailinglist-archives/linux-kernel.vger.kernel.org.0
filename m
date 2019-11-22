@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB1C2106A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 880D7106D34
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfKVKb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:31:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52610 "EHLO mail.kernel.org"
+        id S1730779AbfKVK6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:58:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727453AbfKVKby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:31:54 -0500
+        id S1730773AbfKVK6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E84E320715;
-        Fri, 22 Nov 2019 10:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8F882071C;
+        Fri, 22 Nov 2019 10:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574418713;
-        bh=9eGy7rDJK9QWTl0r5O5OE6yxX5YP5muOp9WUESCQ99w=;
+        s=default; t=1574420289;
+        bh=MMgzRe5yVk3nwNXkDvps5UuvfqiDrf2kC1LxpPtNu0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=STMAWPDJD1yMN+e2Pl5SwNDGLJhZZ7uVdoEzHLKY6AIdHvMoa1JfR9fzDA1U+4foW
-         xYY3XUfjr7+uY3KA43uCreV2fG/NRJW+F70wvHFZ0gAZRCFMiajnZnsY6vk4F4c/fW
-         3MxFRqOO7roG90+HiAF1TNnLI6FwoNXRVRZzrsyM=
+        b=lU/8QRCLiWXUC7g7juz6SCd64BVh6m9EfQSWHp8e2TOIRY43QadEtNzh5lq7D6uBJ
+         x1+MkE9mymEVIuXyL1Xak1Q22j3g9h/ACldkfEp6tr+FosXDm+Zgwoe2kDWBEgioDm
+         QtO6UyMbvcYUQRWifxTzGXA7Pjnrdm682rCCg2tE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        syzbot+abe1ab7afc62c6bb6377@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 003/159] ALSA: usb-audio: Fix missing error check at mixer resolution test
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 029/220] IB/hfi1: Error path MAD response size is incorrect
 Date:   Fri, 22 Nov 2019 11:26:34 +0100
-Message-Id: <20191122100707.180070936@linuxfoundation.org>
+Message-Id: <20191122100914.513996783@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-commit 167beb1756791e0806365a3f86a0da10d7a327ee upstream.
+[ Upstream commit 935c84ac649a147e1aad2c48ee5c5a1a9176b2d0 ]
 
-A check of the return value from get_cur_mix_raw() is missing at the
-resolution test code in get_min_max_with_quirks(), which may leave the
-variable untouched, leading to a random uninitialized value, as
-detected by syzkaller fuzzer.
+If a MAD packet has incorrect header information, the logic uses the reply
+path to report the error.  The reply path expects *resp_len to be set
+prior to return.  Unfortunately, *resp_len is set to 0 for this path.
+This causes an incorrect response packet.
 
-Add the missing return error check for fixing that.
+Fix by ensuring that the *resp_len is defaulted to the incoming packet
+size (wc->bytes_len - sizeof(GRH)).
 
-Reported-and-tested-by: syzbot+abe1ab7afc62c6bb6377@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191109181658.30368-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/mixer.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/mad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1045,7 +1045,8 @@ static int get_min_max_with_quirks(struc
- 		if (cval->min + cval->res < cval->max) {
- 			int last_valid_res = cval->res;
- 			int saved, test, check;
--			get_cur_mix_raw(cval, minchn, &saved);
-+			if (get_cur_mix_raw(cval, minchn, &saved) < 0)
-+				goto no_res_check;
- 			for (;;) {
- 				test = saved;
- 				if (test < cval->max)
-@@ -1065,6 +1066,7 @@ static int get_min_max_with_quirks(struc
- 			snd_usb_set_cur_mix_value(cval, minchn, 0, saved);
- 		}
+diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
+index f208a25d0e4f5..1669548e91dcf 100644
+--- a/drivers/infiniband/hw/hfi1/mad.c
++++ b/drivers/infiniband/hw/hfi1/mad.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright(c) 2015-2017 Intel Corporation.
++ * Copyright(c) 2015-2018 Intel Corporation.
+  *
+  * This file is provided under a dual BSD/GPLv2 license.  When using or
+  * redistributing this file, you may do so under either license.
+@@ -4829,7 +4829,7 @@ static int hfi1_process_opa_mad(struct ib_device *ibdev, int mad_flags,
+ 	int ret;
+ 	int pkey_idx;
+ 	int local_mad = 0;
+-	u32 resp_len = 0;
++	u32 resp_len = in_wc->byte_len - sizeof(*in_grh);
+ 	struct hfi1_ibport *ibp = to_iport(ibdev, port);
  
-+no_res_check:
- 		cval->initialized = 1;
- 	}
- 
+ 	pkey_idx = hfi1_lookup_pkey_idx(ibp, LIM_MGMT_P_KEY);
+-- 
+2.20.1
+
 
 
