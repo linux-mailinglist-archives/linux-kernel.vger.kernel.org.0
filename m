@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F17106DA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A30210701E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:20:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731231AbfKVLBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:01:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54822 "EHLO mail.kernel.org"
+        id S1729525AbfKVKpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731220AbfKVLBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:01:42 -0500
+        id S1729521AbfKVKpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:45:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80B1A20679;
-        Fri, 22 Nov 2019 11:01:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45D6C20718;
+        Fri, 22 Nov 2019 10:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420502;
-        bh=KyMv468KYUxa0zlBPzJSuBJ/C6Qe6r6JSM8MqWf4Ufw=;
+        s=default; t=1574419541;
+        bh=1cb9MWqtHS9XKZYwGFko2caVYbppdnjIrOxi/cdSZbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tj0wquWCTL3z/5ztb79/H7p/VmAvhTucVeWYnTmCRjnKG1sovW8cd8AmNFNgyIdz/
-         MYQpl/rL9yc3dyhO2kvviD8v0zasxaNAjRljGUOP2qlFJgwgJ7EeOxgkFD9ltJdXPE
-         YfUPO/gy7UKBmzq5yMsftAE3o0hjEVn8A7f4ltQc=
+        b=AlT73KSCUU0uQ+DVZKeUGHMHdAL1++rZ17VLt5agtA+RrvkWedBmosFBu/x4n+nK3
+         tCAAPpiZX3nm5/erbY7zPUWtDHfeBhj7RjfibUrGS62HuFr98o7C3/arv9teQ2MNtd
+         qadOrjxmzkqnF/L6gS0uDwbp/Sa6vKAcfxvqdseo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, rostedt@goodmis.org,
-        He Zhe <zhe.he@windriver.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/220] printk: Correct wrong casting
+        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 4.9 146/222] memfd: Use radix_tree_deref_slot_protected to avoid the warning.
 Date:   Fri, 22 Nov 2019 11:28:06 +0100
-Message-Id: <20191122100921.440779527@linuxfoundation.org>
+Message-Id: <20191122100913.339562558@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-[ Upstream commit 51a72ab7372d85c96104e58036f1b49ba11e5d2b ]
+The commit 3ce6b467b9b2 ("memfd: Fix locking when tagging pins")
+introduces the following warning messages.
 
-log_first_seq and console_seq are 64-bit unsigned integers.
-Correct a wrong casting that might cut off the output.
+*WARNING: suspicious RCU usage in memfd_wait_for_pins*
 
-Link: http://lkml.kernel.org/r/1538239553-81805-2-git-send-email-zhe.he@windriver.com
-Cc: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-[sergey.senozhatsky@gmail.com: More descriptive commit message]
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+It is because we still use radix_tree_deref_slot without read_rcu_lock.
+We should use radix_tree_deref_slot_protected instead in the case.
+
+Cc: stable@vger.kernel.org
+Fixes: 3ce6b467b9b2 ("memfd: Fix locking when tagging pins")
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/printk/printk.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ mm/shmem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 11d70fd15e706..52390f5a1db11 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2358,8 +2358,9 @@ void console_unlock(void)
- 		printk_safe_enter_irqsave(flags);
- 		raw_spin_lock(&logbuf_lock);
- 		if (console_seq < log_first_seq) {
--			len = sprintf(text, "** %u printk messages dropped **\n",
--				      (unsigned)(log_first_seq - console_seq));
-+			len = sprintf(text,
-+				      "** %llu printk messages dropped **\n",
-+				      log_first_seq - console_seq);
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2464,7 +2464,7 @@ static void shmem_tag_pins(struct addres
  
- 			/* messages are gone, move to first one */
- 			console_seq = log_first_seq;
--- 
-2.20.1
-
+ 	spin_lock_irq(&mapping->tree_lock);
+ 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
+-		page = radix_tree_deref_slot(slot);
++		page = radix_tree_deref_slot_protected(slot, &mapping->tree_lock);
+ 		if (!page || radix_tree_exception(page)) {
+ 			if (radix_tree_deref_retry(page)) {
+ 				slot = radix_tree_iter_retry(&iter);
 
 
