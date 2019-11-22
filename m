@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1379C106D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB38106B21
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730416AbfKVK5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:57:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45774 "EHLO mail.kernel.org"
+        id S1726803AbfKVKlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:41:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730405AbfKVK5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:08 -0500
+        id S1728513AbfKVKlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:41:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E0BB2072E;
-        Fri, 22 Nov 2019 10:57:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C09220637;
+        Fri, 22 Nov 2019 10:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420228;
-        bh=5MH6Ax/vtJQFiVkOpwSaJoxC1Gi53ZAWxPTk71j1TkI=;
+        s=default; t=1574419294;
+        bh=v1prjkhELBhwKJpCCsadHkv68GhTa67gCjrparn07S0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qvnTW3rVsN8K3gTCFIV4Ou7Vfpdb0/aeE/5HYqfyuIN359esmjaTYm6FoDyduMQWv
-         XLrESa3F4NYHQRmYlyWBubUtvGKjcSsDDPMn1nltOOUra2KiQsoTtK4auqoJK/Hk3u
-         4FwYdEpbTmeRNVMyhYj8UL8MsLIDP4HIYhoWoRVQ=
+        b=x9mT53RiOiKR4tQRBGHu6brsOHF2UrgUEcSo5/qBljnsGt38kzJt5SmsETgRlyHe3
+         hoM+d4HZM/TPVr8/BZmltGAHxA6kzDOxmsTD8/QTGPQkvZ5WepSNbmWRj1Ek8HxFmq
+         E3K8veGjysQxDrN9buQ/1a3wyZ/PnIGheMoSl0bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoffer Dall <cdall@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 036/220] kvm: arm/arm64: Fix stage2_flush_memslot for 4 level page table
+Subject: [PATCH 4.9 061/222] nvmem: core: return error code instead of NULL from nvmem_device_get
 Date:   Fri, 22 Nov 2019 11:26:41 +0100
-Message-Id: <20191122100914.936074739@linuxfoundation.org>
+Message-Id: <20191122100859.001421740@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit d2db7773ba864df6b4e19643dfc54838550d8049 ]
+[ Upstream commit ca6ac25cecf0e740d7cc8e03e0ebbf8acbeca3df ]
 
-So far we have only supported 3 level page table with fixed IPA of
-40bits, where PUD is folded. With 4 level page tables, we need
-to check if the PUD entry is valid or not. Fix stage2_flush_memslot()
-to do this check, before walking down the table.
+nvmem_device_get() should return ERR_PTR() on error or valid pointer
+on success, but one of the code path seems to return NULL, so fix it.
 
-Acked-by: Christoffer Dall <cdall@kernel.org>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/arm/mmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvmem/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 1344557a70852..bf330b493c1e7 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -412,7 +412,8 @@ static void stage2_flush_memslot(struct kvm *kvm,
- 	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
- 	do {
- 		next = stage2_pgd_addr_end(addr, end);
--		stage2_flush_puds(kvm, pgd, addr, next);
-+		if (!stage2_pgd_none(*pgd))
-+			stage2_flush_puds(kvm, pgd, addr, next);
- 	} while (pgd++, addr = next, addr != end);
- }
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 9ca24e4d5d49c..2a0c5f3b0e509 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -609,7 +609,7 @@ static struct nvmem_device *nvmem_find(const char *name)
+ 	d = bus_find_device(&nvmem_bus_type, NULL, (void *)name, nvmem_match);
  
+ 	if (!d)
+-		return NULL;
++		return ERR_PTR(-ENOENT);
+ 
+ 	return to_nvmem_device(d);
+ }
 -- 
 2.20.1
 
