@@ -2,154 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 769161079FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 22:31:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E6B107A01
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 22:33:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKVVbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 16:31:42 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:33238 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfKVVbm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 16:31:42 -0500
-Received: by mail-pj1-f65.google.com with SMTP id o14so3589058pjr.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 13:31:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HbJjs9npQivb+peN/P+/x5LBE//DdoQclSZUko6OYFA=;
-        b=RFawcsOwCqAQEn5boyIcXR16Ki/HBDzNNs0+cfhfK/kOpeyl3s8AHaiARmdz+ZidjB
-         tJ2SwyEjjvDTYo3b8eRbD4+idgXO6jzJhsyQsU1N9jFOBUKU/ICLSLcrNrwVSAG26FRt
-         mgbyxJR2ijBrYIlmXhPJo5cnY7XAXQ2RV9AGiTEH0Ie5M7qcw0YKVIywOI+Y1qNXGqUD
-         vjmWo0N4xOcDGJEox/RXx1+0KyCIDwXccWf5MjxA9sNtL6+MUWVe9cZxWK76dKG76+wX
-         rEezAue56G/PQbfE7FrX69tJh7oZX4SgtzibTF05UKvBRhgEORQef9S4SFRKg6WHZIa9
-         2JHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HbJjs9npQivb+peN/P+/x5LBE//DdoQclSZUko6OYFA=;
-        b=WXK18u9mpPtuR7Us9RVUHZ1sKjm0K+iByPtGqwLEsQmJoBDXagnatoklVL5iST1GU/
-         raZxGznDlF5rBGqYlDBUY4QWjgfLDr54X3LBFNsYmwHOuc8Jq9fKZBSGKQw34UjNFCx3
-         l2/J4DcqH1+OK41UNr7b2CukLMLRXad8Hu/MngcDcE9S3jG3BByyJqmEAMKuE3AHJCW8
-         va2ysh3mQj3lCmUy6nR6fLZaUHrClwjnxRhCfXBIERZ2kMuRl83aaWWQV3MQf4LQrpzI
-         uMuommdKD+DYMQSUQYORytyBPhYNdwttSSY47QvXP/gta2fuWnbqpMQowuQnF0uTRjuS
-         GDBw==
-X-Gm-Message-State: APjAAAVHC4k2CSQaMNfMYPTPcwBiaUcCPXSBtDF0MNQy5W1jqlJLBhpN
-        Rbvr8/qMyOucxtckSrR4p5OyxGn33GCmWRjYHPV3dw==
-X-Google-Smtp-Source: APXvYqwp9oirAfneUwU+SoycQWx2Iqme1ayHmlDX0a5gLCpzGo05spCaML0qO0qityULcE1WRKI5UM8d92l2Uk+Stzw=
-X-Received: by 2002:a17:902:9682:: with SMTP id n2mr16075888plp.336.1574458300970;
- Fri, 22 Nov 2019 13:31:40 -0800 (PST)
+        id S1726813AbfKVVdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 16:33:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726089AbfKVVdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 16:33:36 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0797A2070E;
+        Fri, 22 Nov 2019 21:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574458414;
+        bh=72tyMCAZ0qkQO4t35kUTecfC5+rGEvcEc7cHz5fcAAA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oVSvsArPSBwjRysWNnAYSHWNIPdGthplosP+VNlKImbUjlesrgdgfNILVT98rE0oQ
+         QEGdvBBvPMxMcFiv9/++TK+sbT/1vaxYscJxc61Em/M4jU/deNDsy0+AhXvAsqSlvY
+         9rvQUkNUdTySj2RlRraGo1plCLTxy+J9oJ/NoXzI=
+Date:   Fri, 22 Nov 2019 22:33:31 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/220] 4.19.86-stable review
+Message-ID: <20191122213331.GA2102330@kroah.com>
+References: <20191122100912.732983531@linuxfoundation.org>
+ <ae3d804f-594b-80f9-048b-7da45806278c@roeck-us.net>
+ <20191122151631.GA2083451@kroah.com>
+ <20191122170534.GV20752@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <000000000000109c040597dc5843@google.com> <Pine.LNX.4.44L0.1911221150350.1511-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1911221150350.1511-100000@iolanthe.rowland.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Sat, 23 Nov 2019 06:31:30 +0900
-Message-ID: <CAAeHK+xQo8S8mmMgrOHOwC3iOnZJOZvYNaAei-tMrJA36R6OMQ@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in hub_event
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     syzbot <syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191122170534.GV20752@bombadil.infradead.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 1:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
->
-> On Thu, 21 Nov 2019, syzbot wrote:
->
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    46178223 usb: gadget: add raw-gadget interface
-> > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=15a05836e00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=99c88c44660624e7
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=ec5f884c4a135aa0dbb9
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1061395ae00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13653d1ce00000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com
-> >
-> > rcu: INFO: rcu_sched self-detected stall on CPU
->
-> > RIP: 0010:hid_apply_multiplier drivers/hid/hid-core.c:1058 [inline]
-> > RIP: 0010:hid_setup_resolution_multiplier+0x33b/0x990
-> > drivers/hid/hid-core.c:1114
+On Fri, Nov 22, 2019 at 09:05:34AM -0800, Matthew Wilcox wrote:
+> On Fri, Nov 22, 2019 at 04:16:31PM +0100, Greg Kroah-Hartman wrote:
+> > On Fri, Nov 22, 2019 at 06:47:05AM -0800, Guenter Roeck wrote:
+> > > On 11/22/19 2:26 AM, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.19.86 release.
+> > > > There are 220 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Sun, 24 Nov 2019 09:59:19 +0000.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > 
+> > > I see the following warning (at least for arm64, ppc64, and x86_64).
+> > > This seems to be caused by "idr: Fix idr_get_next race with idr_remove".
+> > > v4.14.y is also affected. Mainline and v5.3.y are not affected.
+> 
+> That makes sense; the code in question is different after 4.19.
+> Thanks for the report; it's very clear.
+> 
+> > Willy, this looks like something from your patch, is it to be expected?
+> 
+> It's harmless; the problem is that we can't check whether the dereference
+> is safe.  The caller isn't holding the RCU lock, and the IDR code doesn't
+> know what lock is being held to make this dereference safe.  Do you want
+> a changelog for this oneliner which disables the checking?
+> 
+> diff --git a/lib/idr.c b/lib/idr.c
+> index 49e7918603c7..6ff3b1c36e0a 100644
+> --- a/lib/idr.c
+> +++ b/lib/idr.c
+> @@ -237,7 +237,7 @@ void *idr_get_next(struct idr *idr, int *nextid)
+>  
+>  	id = (id < base) ? 0 : id - base;
+>  	radix_tree_for_each_slot(slot, &idr->idr_rt, &iter, id) {
+> -		entry = radix_tree_deref_slot(slot);
+> +		entry = rcu_dereference_raw(*slot);
+>  		if (!entry)
+>  			continue;
+>  		if (!radix_tree_deref_retry(entry))
 
-I'm not sure, but the stack trace reminds me of this issue, so this
-report might be related:
+Thanks for this, I'll merge it with the existing patch tomorrow, it's
+late here...
 
-https://groups.google.com/d/msg/syzkaller-bugs/X0zVbh8aFEM/NsPcshjxBgAJ
-
->
-> Diagnostic patch.
->
-> #syz test: https://github.com/google/kasan.git 46178223
->
->  drivers/hid/hid-core.c |   17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
->
-> Index: usb-devel/drivers/hid/hid-core.c
-> ===================================================================
-> --- usb-devel.orig/drivers/hid/hid-core.c
-> +++ usb-devel/drivers/hid/hid-core.c
-> @@ -1055,8 +1055,13 @@ static void hid_apply_multiplier(struct
->          */
->         multiplier_collection = &hid->collection[multiplier->usage->collection_index];
->         while (multiplier_collection->parent_idx != -1 &&
-> -              multiplier_collection->type != HID_COLLECTION_LOGICAL)
-> +              multiplier_collection->type != HID_COLLECTION_LOGICAL) {
-> +               hid_info(hid, "collection %d %px parent %d\n",
-> +       multiplier_collection - hid->collection, multiplier_collection,
-> +       multiplier_collection->parent_idx);
->                 multiplier_collection = &hid->collection[multiplier_collection->parent_idx];
-> +       }
-> +       hid_info(hid, "Got collection\n");
->
->         effective_multiplier = hid_calculate_multiplier(hid, multiplier);
->
-> @@ -1069,6 +1074,7 @@ static void hid_apply_multiplier(struct
->                                                       effective_multiplier);
->                 }
->         }
-> +       hid_info(hid, "Applied multiplier\n");
->  }
->
->  /*
-> @@ -1103,16 +1109,23 @@ void hid_setup_resolution_multiplier(str
->
->         rep_enum = &hid->report_enum[HID_FEATURE_REPORT];
->         list_for_each_entry(rep, &rep_enum->report_list, list) {
-> +               hid_info(hid, "Start report %px maxfield %d\n",
-> +       rep, rep->maxfield);
->                 for (i = 0; i < rep->maxfield; i++) {
->                         /* Ignore if report count is out of bounds. */
->                         if (rep->field[i]->report_count < 1)
->                                 continue;
->
-> +                       hid_info(hid, "Field %d %px maxusage %d\n",
-> +       i, rep->field[i], rep->field[i]->maxusage);
->                         for (j = 0; j < rep->field[i]->maxusage; j++) {
->                                 usage = &rep->field[i]->usage[j];
-> -                               if (usage->hid == HID_GD_RESOLUTION_MULTIPLIER)
-> +                               if (usage->hid == HID_GD_RESOLUTION_MULTIPLIER) {
-> +                                       hid_info(hid, "Usage %d %px\n",
-> +       j, usage);
->                                         hid_apply_multiplier(hid,
->                                                              rep->field[i]);
-> +                               }
->                         }
->                 }
->         }
->
+greg k-h
