@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A39106E08
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A25BF106E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731717AbfKVLF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:05:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
+        id S1731443AbfKVLHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:07:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730755AbfKVLFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:05:23 -0500
+        id S1731043AbfKVLF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:05:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4B9B207FC;
-        Fri, 22 Nov 2019 11:05:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 203582075E;
+        Fri, 22 Nov 2019 11:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420723;
-        bh=Hk1LfhPBk8mf4j0A6gLA3Gxbg20jEn3kThQ4rBD+a2E=;
+        s=default; t=1574420726;
+        bh=Nbm+0sMkxlk6HRLaRQOFwTLW1an+JMQpxxCNSerK81o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ClfBvbA8kVKFmmyT/SoDPFwBcWmYXIHp/zKuXz/k/TwqSy0eKaIS14hjeDus5A26z
-         /5Hn0pYckzPsLWZXX2vBIIa2NAqkTbOLf4txIYFXubxEKnpwMxVPcIqyFb2OvxacRo
-         BKShQiECGb9ZuHI1bylbvzfSgUeYCxnQoOBxbaPI=
+        b=GbDfBdziNQxr1UDGKg43lIPoFey3MOj8yZDcn0VHN/n5G8BKGgMJxxxJaXDD8jXsx
+         eJmER9oRMaCtoBK0SHQX+imHa0Sudw5SJALf7d0dSKposYQz7y3/DWCGQQQO8xPnph
+         hH8Kck7DlV4BjqE7ejpUJlZo3taIaNdHzXpW0JoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kun Yi <kunyi@google.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 203/220] hwmon: (npcm-750-pwm-fan) Change initial pwm target to 255
-Date:   Fri, 22 Nov 2019 11:29:28 +0100
-Message-Id: <20191122100928.459962906@linuxfoundation.org>
+Subject: [PATCH 4.19 204/220] selftests: forwarding: Have lldpad_app_wait_set() wait for unknown, too
+Date:   Fri, 22 Nov 2019 11:29:29 +0100
+Message-Id: <20191122100928.511539235@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,34 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kun Yi <kunyi@google.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit f21c8e753b1dcb8f9e5b096db1f7f4e6fdfa7258 ]
+[ Upstream commit 372809055f6c830ff978564e09f58bcb9e9b937c ]
 
-Change initial PWM target to 255 to prevent overheating, for example
-when BMC hangs in userspace or when userspace fan control application is
-not implemented yet.
+Immediately after mlxsw module is probed and lldpad started, added APP
+entries are briefly in "unknown" state before becoming "pending". That's
+the state that lldpad_app_wait_set() typically sees, and since there are
+no pending entries at that time, it bails out. However the entries have
+not been pushed to the kernel yet at that point, and thus the test case
+fails.
 
-Signed-off-by: Kun Yi <kunyi@google.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fix by waiting for both unknown and pending entries to disappear before
+proceeding.
+
+Fixes: d159261f3662 ("selftests: mlxsw: Add test for trust-DSCP")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/npcm750-pwm-fan.c | 2 +-
+ tools/testing/selftests/net/forwarding/lib.sh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
-index b998f9fbed41e..979b579bc118f 100644
---- a/drivers/hwmon/npcm750-pwm-fan.c
-+++ b/drivers/hwmon/npcm750-pwm-fan.c
-@@ -52,7 +52,7 @@
+diff --git a/tools/testing/selftests/net/forwarding/lib.sh b/tools/testing/selftests/net/forwarding/lib.sh
+index ca53b539aa2d1..08bac6cf1bb3a 100644
+--- a/tools/testing/selftests/net/forwarding/lib.sh
++++ b/tools/testing/selftests/net/forwarding/lib.sh
+@@ -251,7 +251,7 @@ lldpad_app_wait_set()
+ {
+ 	local dev=$1; shift
  
- /* Define the Counter Register, value = 100 for match 100% */
- #define NPCM7XX_PWM_COUNTER_DEFAULT_NUM		255
--#define NPCM7XX_PWM_CMR_DEFAULT_NUM		127
-+#define NPCM7XX_PWM_CMR_DEFAULT_NUM		255
- #define NPCM7XX_PWM_CMR_MAX			255
- 
- /* default all PWM channels PRESCALE2 = 1 */
+-	while lldptool -t -i $dev -V APP -c app | grep -q pending; do
++	while lldptool -t -i $dev -V APP -c app | grep -Eq "pending|unknown"; do
+ 		echo "$dev: waiting for lldpad to push pending APP updates"
+ 		sleep 5
+ 	done
 -- 
 2.20.1
 
