@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B7F8106BAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:46:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98610106C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbfKVKqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:46:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53670 "EHLO mail.kernel.org"
+        id S1730110AbfKVKvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727356AbfKVKqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:30 -0500
+        id S1729281AbfKVKvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B1ED205C9;
-        Fri, 22 Nov 2019 10:46:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 542A32073B;
+        Fri, 22 Nov 2019 10:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419588;
-        bh=kXNOEwTkbk/XgDvVUWPtHQyag8ypRU/8Z5+0HVIZWDQ=;
+        s=default; t=1574419906;
+        bh=JzuVXnbANtHScJdB3rqEe/ae8c7To3o2P+Dk19lLAnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=posmr6uRwczatHFIo4JDO/hUjqR04Bfs2K+E4Lb+lrOmn+Zbm72PWGjqAXoSo0Z6F
-         5CMWNodqmLakvUgdTsj5cUCiObNnr4ZeIgxrrzq1O8DqmE64RsNX+LvRRMeWt8fX4y
-         Dn3a3NqXDktGPPe4OPdef5foJKUUw7uYciHrqOFM=
+        b=JLgz0QhqwwKBUew4u+TTYNEKbmzpfN/uGQ6JtA7eR3y9O1906HgYEZU4StCXyr8Od
+         9RydVAzbrPk3HlBwarcuUpw9vaPiT2qew5sLOsf7E21qS2IArIac+KeGJWWIoYOpTH
+         Ik7ouLOLU5Js42VkOfw1ue9+T3vI9pQCQ8lgmKps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 162/222] ath10k: fix vdev-start timeout on error
+Subject: [PATCH 4.14 049/122] md: allow metadata updates while suspending an array - fix
 Date:   Fri, 22 Nov 2019 11:28:22 +0100
-Message-Id: <20191122100914.327562768@linuxfoundation.org>
+Message-Id: <20191122100757.092527726@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,115 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Greear <greearb@candelatech.com>
+From: NeilBrown <neilb@suse.com>
 
-[ Upstream commit 833fd34d743c728afe6d127ef7bee67e7d9199a8 ]
+[ Upstream commit 059421e041eb461fb2b3e81c9adaec18ef03ca3c ]
 
-The vdev-start-response message should cause the
-completion to fire, even in the error case.  Otherwise,
-the user still gets no useful information and everything
-is blocked until the timeout period.
+Commit 35bfc52187f6 ("md: allow metadata update while suspending.")
+added support for allowing md_check_recovery() to still perform
+metadata updates while the array is entering the 'suspended' state.
+This is needed to allow the processes of entering the state to
+complete.
 
-Add some warning text to print out the invalid status
-code to aid debugging, and propagate failure code.
+Unfortunately, the patch doesn't really work.  The test for
+"mddev->suspended" at the start of md_check_recovery() means that the
+function doesn't try to do anything at all while entering suspend.
 
-Signed-off-by: Ben Greear <greearb@candelatech.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch moves the code of updating the metadata while suspending to
+*before* the test on mddev->suspended.
+
+Reported-by: Jeff Mahoney <jeffm@suse.com>
+Fixes: 35bfc52187f6 ("md: allow metadata update while suspending.")
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/core.h |  1 +
- drivers/net/wireless/ath/ath10k/mac.c  |  2 +-
- drivers/net/wireless/ath/ath10k/wmi.c  | 19 ++++++++++++++++---
- drivers/net/wireless/ath/ath10k/wmi.h  |  8 +++++++-
- 4 files changed, 25 insertions(+), 5 deletions(-)
+ drivers/md/md.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
-index 90c0c4a7175db..414153cd57845 100644
---- a/drivers/net/wireless/ath/ath10k/core.h
-+++ b/drivers/net/wireless/ath/ath10k/core.h
-@@ -811,6 +811,7 @@ struct ath10k {
- 
- 	struct completion install_key_done;
- 
-+	int last_wmi_vdev_start_status;
- 	struct completion vdev_setup_done;
- 
- 	struct workqueue_struct *workqueue;
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 1588fe8110d00..2294ba311c47a 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -947,7 +947,7 @@ static inline int ath10k_vdev_setup_sync(struct ath10k *ar)
- 	if (time_left == 0)
- 		return -ETIMEDOUT;
- 
--	return 0;
-+	return ar->last_wmi_vdev_start_status;
- }
- 
- static int ath10k_monitor_vdev_start(struct ath10k *ar, int vdev_id)
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index c208fed048554..af3bc06b4aeda 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -3103,18 +3103,31 @@ void ath10k_wmi_event_vdev_start_resp(struct ath10k *ar, struct sk_buff *skb)
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index e529cef5483a8..b942c74f1ce83 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8736,6 +8736,18 @@ static void md_start_sync(struct work_struct *ws)
+  */
+ void md_check_recovery(struct mddev *mddev)
  {
- 	struct wmi_vdev_start_ev_arg arg = {};
- 	int ret;
-+	u32 status;
- 
- 	ath10k_dbg(ar, ATH10K_DBG_WMI, "WMI_VDEV_START_RESP_EVENTID\n");
- 
-+	ar->last_wmi_vdev_start_status = 0;
-+
- 	ret = ath10k_wmi_pull_vdev_start(ar, skb, &arg);
- 	if (ret) {
- 		ath10k_warn(ar, "failed to parse vdev start event: %d\n", ret);
--		return;
-+		ar->last_wmi_vdev_start_status = ret;
-+		goto out;
- 	}
- 
--	if (WARN_ON(__le32_to_cpu(arg.status)))
--		return;
-+	status = __le32_to_cpu(arg.status);
-+	if (WARN_ON_ONCE(status)) {
-+		ath10k_warn(ar, "vdev-start-response reports status error: %d (%s)\n",
-+			    status, (status == WMI_VDEV_START_CHAN_INVALID) ?
-+			    "chan-invalid" : "unknown");
-+		/* Setup is done one way or another though, so we should still
-+		 * do the completion, so don't return here.
++	if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags) && mddev->sb_flags) {
++		/* Write superblock - thread that called mddev_suspend()
++		 * holds reconfig_mutex for us.
 +		 */
-+		ar->last_wmi_vdev_start_status = -EINVAL;
++		set_bit(MD_UPDATING_SB, &mddev->flags);
++		smp_mb__after_atomic();
++		if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags))
++			md_update_sb(mddev, 0);
++		clear_bit_unlock(MD_UPDATING_SB, &mddev->flags);
++		wake_up(&mddev->sb_wait);
 +	}
- 
-+out:
- 	complete(&ar->vdev_setup_done);
- }
- 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.h b/drivers/net/wireless/ath/ath10k/wmi.h
-index 9b8562ff66987..cce028ea9b57d 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -6248,11 +6248,17 @@ struct wmi_ch_info_ev_arg {
- 	__le32 rx_frame_count;
- };
- 
-+/* From 10.4 firmware, not sure all have the same values. */
-+enum wmi_vdev_start_status {
-+	WMI_VDEV_START_OK = 0,
-+	WMI_VDEV_START_CHAN_INVALID,
-+};
 +
- struct wmi_vdev_start_ev_arg {
- 	__le32 vdev_id;
- 	__le32 req_id;
- 	__le32 resp_type; /* %WMI_VDEV_RESP_ */
--	__le32 status;
-+	__le32 status; /* See wmi_vdev_start_status enum above */
- };
+ 	if (mddev->suspended)
+ 		return;
  
- struct wmi_peer_kick_ev_arg {
+@@ -8896,16 +8908,6 @@ void md_check_recovery(struct mddev *mddev)
+ 	unlock:
+ 		wake_up(&mddev->sb_wait);
+ 		mddev_unlock(mddev);
+-	} else if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags) && mddev->sb_flags) {
+-		/* Write superblock - thread that called mddev_suspend()
+-		 * holds reconfig_mutex for us.
+-		 */
+-		set_bit(MD_UPDATING_SB, &mddev->flags);
+-		smp_mb__after_atomic();
+-		if (test_bit(MD_ALLOW_SB_UPDATE, &mddev->flags))
+-			md_update_sb(mddev, 0);
+-		clear_bit_unlock(MD_UPDATING_SB, &mddev->flags);
+-		wake_up(&mddev->sb_wait);
+ 	}
+ }
+ EXPORT_SYMBOL(md_check_recovery);
 -- 
 2.20.1
 
