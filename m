@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E645C106522
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5C010651F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbfKVGVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:21:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57766 "EHLO mail.kernel.org"
+        id S1729426AbfKVGVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 01:21:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728442AbfKVFwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:52:13 -0500
+        id S1728425AbfKVFwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:52:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89E892084B;
-        Fri, 22 Nov 2019 05:52:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F185320721;
+        Fri, 22 Nov 2019 05:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401932;
-        bh=MBxeDnP2vJ6YQSAW4kvOLr2ixbZPyUPv7eGEKXCsK1E=;
+        s=default; t=1574401934;
+        bh=aSTWXn1mXOhWQyL0OsDJGPKyYnCAWp191htXRIztyUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ejXSKt8lgPc8c3+6bJPLR1zllH7ErlFYereR1p0lfrqdRBG43An9XLdKqZ44JD+tl
-         rMoD3uvXsYT95LwPj3RNo40r0WzYFQjqmywq1ZKPb5d1b4Df6deF6H//pTDTiUwS7B
-         b64GM4prghzxpsEcIDMXxm+olrEg97zHMkp37C9A=
+        b=WkVuvFNMf0PHy5ioMXucrM4EgCzpOfSXH32iDLVPclun7ixOzg6Q8ysA/xFycXTSB
+         5H65I4hc4Meobuh9G5nLtoeswZl06YMQB1tCS8xyJml0xn4kz6iIX9ElJkWOWHmqOJ
+         9fqE4421XvmHqFhEJ6tdPQOxANWC0tzR8t1/pouM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 158/219] netfilter: nf_tables: fix a missing check of nla_put_failure
-Date:   Fri, 22 Nov 2019 00:48:10 -0500
-Message-Id: <20191122054911.1750-151-sashal@kernel.org>
+Cc:     Aditya Pakki <pakki001@umn.edu>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 160/219] infiniband: bnxt_re: qplib: Check the return value of send_message
+Date:   Fri, 22 Nov 2019 00:48:12 -0500
+Message-Id: <20191122054911.1750-153-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -44,33 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Aditya Pakki <pakki001@umn.edu>
 
-[ Upstream commit eb8950861c1bfd3eecc8f6faad213e3bca0dc395 ]
+[ Upstream commit 94edd87a1c59f3efa6fdf4e98d6d492e6cec6173 ]
 
-If nla_nest_start() may fail. The fix checks its return value and goes
-to nla_put_failure if it fails.
+In bnxt_qplib_map_tc2cos(), bnxt_qplib_rcfw_send_message() can return an
+error value but it is lost. Propagate this error to the callers.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_api.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 24fddf0322790..4c1a88b7ba285 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -5735,6 +5735,8 @@ static int nf_tables_fill_flowtable_info(struct sk_buff *skb, struct net *net,
- 		goto nla_put_failure;
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+index 4097f3fa25c5f..09e7d3dd30553 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+@@ -775,9 +775,8 @@ int bnxt_qplib_map_tc2cos(struct bnxt_qplib_res *res, u16 *cids)
+ 	req.cos0 = cpu_to_le16(cids[0]);
+ 	req.cos1 = cpu_to_le16(cids[1]);
  
- 	nest = nla_nest_start(skb, NFTA_FLOWTABLE_HOOK);
-+	if (!nest)
-+		goto nla_put_failure;
- 	if (nla_put_be32(skb, NFTA_FLOWTABLE_HOOK_NUM, htonl(flowtable->hooknum)) ||
- 	    nla_put_be32(skb, NFTA_FLOWTABLE_HOOK_PRIORITY, htonl(flowtable->priority)))
- 		goto nla_put_failure;
+-	bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp, NULL,
+-				     0);
+-	return 0;
++	return bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp,
++						NULL, 0);
+ }
+ 
+ int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
 -- 
 2.20.1
 
