@@ -2,67 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFDF107626
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50BED107628
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 18:03:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfKVRCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 12:02:53 -0500
-Received: from ms.lwn.net ([45.79.88.28]:41338 "EHLO ms.lwn.net"
+        id S1727568AbfKVRDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 12:03:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbfKVRCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:02:52 -0500
-Received: from lwn.net (localhost [127.0.0.1])
+        id S1726666AbfKVRDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 12:03:08 -0500
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 2D6F837B;
-        Fri, 22 Nov 2019 17:02:52 +0000 (UTC)
-Date:   Fri, 22 Nov 2019 10:02:51 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] Documentation: Remove bootmem_debug from
- kernel-parameters.txt
-Message-ID: <20191122100251.378d67a0@lwn.net>
-In-Reply-To: <157443061745.20995.9432492850513217966.stgit@devnote2>
-References: <157443061745.20995.9432492850513217966.stgit@devnote2>
-Organization: LWN.net
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A42D2068F;
+        Fri, 22 Nov 2019 17:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574442188;
+        bh=jlTkGBmduhW5Z9IkQgZbzzr3Bts6Sjdcdm8LYUYHxC8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=reFIdMAgahopPDn/2ncx0UBdxHzH3BHshBxB8Vb0y+rCZLh/jPHT6elYoKPN7Uat4
+         AKxtrtY+hLuC6fR2QY5lqwSvW8UXDTloxro43jzY8bIj40aj6FLIU8/XHlTJulBFzV
+         0hn8WxcjylMDhPN0ggP4bGD4xWFHqSmcuG/CngsQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191114001925.159276-1-sboyd@kernel.org>
+References: <20191114001925.159276-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: ingenic: Allow drivers to be built with COMPILE_TEST
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 22 Nov 2019 09:03:07 -0800
+Message-Id: <20191122170308.3A42D2068F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 22:50:17 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Remove bootmem_debug kernel paramenter because it has been
-> replaced by memblock=debug.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Mike Rapoport <rppt@linux.ibm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
+Quoting Stephen Boyd (2019-11-13 16:19:25)
+> We don't need the MIPS architecture or even a MIPS compiler to compile
+> test these drivers. Let's add a COMPILE_TEST possibility on the
+> menuconfig here so that we can build these drivers on more
+> configurations.
+>=20
+> Cc: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a84a83f8881e..02eae837272e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -437,8 +437,6 @@
->  			no delay (0).
->  			Format: integer
->  
-> -	bootmem_debug	[KNL] Enable bootmem allocator debug messages.
-> -
->  	bert_disable	[ACPI]
->  			Disable BERT OS support on buggy BIOSes.
 
-Applied, thanks.
+Applied to clk-next
 
-jon
