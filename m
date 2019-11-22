@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44395106B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E179106D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbfKVKmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:42:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48114 "EHLO mail.kernel.org"
+        id S1730817AbfKVK6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:58:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727994AbfKVKmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:42:45 -0500
+        id S1730428AbfKVK6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:58:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11E7420637;
-        Fri, 22 Nov 2019 10:42:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF1162071F;
+        Fri, 22 Nov 2019 10:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419365;
-        bh=mhEsLx7KU48NwFqWRHpN8NgSjlodsAZnIe6j3ihnMZI=;
+        s=default; t=1574420315;
+        bh=/ocGoJgUZnU/MR4jKC+MPYAL4fHXHIMop3CtzsQDJYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w2k5w+P+g5crDlTb/gAX1EuNl9kxMFaJeCd5XLaUT4AUQ/zF0tqphw123GQeVtf9E
-         gRZdFFPTZh8kPqVDbSufxSk7h5uXURy0qf3wVA5TmxrU9Lfd3ooxf70nv11PnjAZD4
-         IO4Nt++hhIj2lvwEs2yx9BraaodeLYu6c7U0b5b4=
+        b=wvFAOX2uo4AFtKrvQuboFlMDeWuO3FhQV/QxA6lSWz761cIlReiITRvbgVypNpnKs
+         fCWgCwilzOCNC6OuB7etLEDiUCk8V5HPwdAwY7ohSQodaHMRSyv15IISOKAoPPrFap
+         eBu/OLDcpqi6Or8WhLcT+AzddOQQcm+TnEfwiA2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 088/222] power: supply: twl4030_charger: fix charging current out-of-bounds
-Date:   Fri, 22 Nov 2019 11:27:08 +0100
-Message-Id: <20191122100909.908074851@linuxfoundation.org>
+Subject: [PATCH 4.19 064/220] mei: samples: fix a signedness bug in amt_host_if_call()
+Date:   Fri, 22 Nov 2019 11:27:09 +0100
+Message-Id: <20191122100916.715118916@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 8314c212f995bc0d06b54ad02ef0ab4089781540 ]
+[ Upstream commit 185647813cac080453cb73a2e034a8821049f2a7 ]
 
-the charging current uses unsigned int variables, if we step back
-if the current is still low, we would run into negative which
-means setting the target to a huge value.
-Better add checks here.
+"out_buf_sz" needs to be signed for the error handling to work.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/twl4030_charger.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ samples/mei/mei-amt-version.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
-index bcd4dc304f270..14fed11e8f6e3 100644
---- a/drivers/power/supply/twl4030_charger.c
-+++ b/drivers/power/supply/twl4030_charger.c
-@@ -449,7 +449,8 @@ static void twl4030_current_worker(struct work_struct *data)
- 
- 	if (v < USB_MIN_VOLT) {
- 		/* Back up and stop adjusting. */
--		bci->usb_cur -= USB_CUR_STEP;
-+		if (bci->usb_cur >= USB_CUR_STEP)
-+			bci->usb_cur -= USB_CUR_STEP;
- 		bci->usb_cur_target = bci->usb_cur;
- 	} else if (bci->usb_cur >= bci->usb_cur_target ||
- 		   bci->usb_cur + USB_CUR_STEP > USB_MAX_CURRENT) {
+diff --git a/samples/mei/mei-amt-version.c b/samples/mei/mei-amt-version.c
+index bb9988914a563..32234481ad7db 100644
+--- a/samples/mei/mei-amt-version.c
++++ b/samples/mei/mei-amt-version.c
+@@ -370,7 +370,7 @@ static uint32_t amt_host_if_call(struct amt_host_if *acmd,
+ 			unsigned int expected_sz)
+ {
+ 	uint32_t in_buf_sz;
+-	uint32_t out_buf_sz;
++	ssize_t out_buf_sz;
+ 	ssize_t written;
+ 	uint32_t status;
+ 	struct amt_host_if_resp_header *msg_hdr;
 -- 
 2.20.1
 
