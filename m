@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A30106C8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 211DC106AB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:37:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730075AbfKVKxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:53:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37226 "EHLO mail.kernel.org"
+        id S1728527AbfKVKhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:37:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728194AbfKVKxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:53:03 -0500
+        id S1728006AbfKVKhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:37:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0C6E20656;
-        Fri, 22 Nov 2019 10:53:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBEF820656;
+        Fri, 22 Nov 2019 10:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419983;
-        bh=KaHnPYN5/MPj2GtvUEXYozLLZvWi2VlSLe56OZ+ZlJY=;
+        s=default; t=1574419038;
+        bh=fI/sHNHGSc0l4/Uf78vJqDg2ySHPHwPPg75JGYqJpZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VnWuiKCJb7NUHn2z46PBchomxWdMMUBFdyzuOS4M7sB80EpDtANB4U+odz98kTPH4
-         UElSYAh9/RuI4ocG2+XwT6SYJ9sD7tXE8jOjsRmOjrRTOyoWR/zb25rb2pro6Rp3Nf
-         zp0QEVOfYjWLPg8XWVM2Zg/tWXIwPFdOM/YPlUGU=
+        b=PZvaXT+g5/WilqxL53OqkBoii6s64w+q/i+h9wsx4r2YiRFlzu2utae8vYAqH+G5y
+         iOanGqgNDNDSTmgoHZYHyYYavldiLBfOEKS0Fvl5cwcb9fFCxAOdI0auj4x+MgzAxC
+         UxW7vsTOQ7NFphQkGpRwMMPQ3yN/WuVCmAtIEMi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Martin Kepplinger <martink@posteo.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 073/122] NFSv4.x: fix lock recovery during delegation recall
-Date:   Fri, 22 Nov 2019 11:28:46 +0100
-Message-Id: <20191122100814.434207446@linuxfoundation.org>
+Subject: [PATCH 4.4 137/159] Input: st1232 - set INPUT_PROP_DIRECT property
+Date:   Fri, 22 Nov 2019 11:28:48 +0100
+Message-Id: <20191122100836.203593565@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Martin Kepplinger <martink@posteo.de>
 
-[ Upstream commit 44f411c353bf6d98d5a34f8f1b8605d43b2e50b8 ]
+[ Upstream commit 20bbb312079494a406c10c90932e3c80837c9d94 ]
 
-Running "./nfstest_delegation --runtest recall26" uncovers that
-client doesn't recover the lock when we have an appending open,
-where the initial open got a write delegation.
+This is how userspace checks for touchscreen devices most reliably.
 
-Instead of checking for the passed in open context against
-the file lock's open context. Check that the state is the same.
-
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Martin Kepplinger <martink@posteo.de>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/delegation.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/touchscreen/st1232.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index 61bc0a6ba08b1..04d57e11577e0 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -101,7 +101,7 @@ int nfs4_check_delegation(struct inode *inode, fmode_t flags)
- 	return nfs4_do_check_delegation(inode, flags, false);
- }
+diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
+index e943678ce54cd..f1c574d6be17f 100644
+--- a/drivers/input/touchscreen/st1232.c
++++ b/drivers/input/touchscreen/st1232.c
+@@ -203,6 +203,7 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 	input_dev->id.bustype = BUS_I2C;
+ 	input_dev->dev.parent = &client->dev;
  
--static int nfs_delegation_claim_locks(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid)
-+static int nfs_delegation_claim_locks(struct nfs4_state *state, const nfs4_stateid *stateid)
- {
- 	struct inode *inode = state->inode;
- 	struct file_lock *fl;
-@@ -116,7 +116,7 @@ static int nfs_delegation_claim_locks(struct nfs_open_context *ctx, struct nfs4_
- 	spin_lock(&flctx->flc_lock);
- restart:
- 	list_for_each_entry(fl, list, fl_list) {
--		if (nfs_file_open_context(fl->fl_file) != ctx)
-+		if (nfs_file_open_context(fl->fl_file)->state != state)
- 			continue;
- 		spin_unlock(&flctx->flc_lock);
- 		status = nfs4_lock_delegation_recall(fl, state, stateid);
-@@ -163,7 +163,7 @@ static int nfs_delegation_claim_opens(struct inode *inode,
- 		seq = raw_seqcount_begin(&sp->so_reclaim_seqcount);
- 		err = nfs4_open_delegation_recall(ctx, state, stateid, type);
- 		if (!err)
--			err = nfs_delegation_claim_locks(ctx, state, stateid);
-+			err = nfs_delegation_claim_locks(state, stateid);
- 		if (!err && read_seqcount_retry(&sp->so_reclaim_seqcount, seq))
- 			err = -EAGAIN;
- 		mutex_unlock(&sp->so_delegreturn_mutex);
++	__set_bit(INPUT_PROP_DIRECT, input_dev->propbit);
+ 	__set_bit(EV_SYN, input_dev->evbit);
+ 	__set_bit(EV_KEY, input_dev->evbit);
+ 	__set_bit(EV_ABS, input_dev->evbit);
 -- 
 2.20.1
 
