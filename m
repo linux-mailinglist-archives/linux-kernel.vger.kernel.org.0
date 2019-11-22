@@ -2,131 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A00AA106E8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 546A9107037
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbfKVLJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:09:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbfKVLJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:09:42 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39A4C20721;
-        Fri, 22 Nov 2019 11:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420981;
-        bh=n8d6UTShe+rr8XtiSW5yvnCZrv4R4ecqNqUVJje3t94=;
-        h=Date:From:To:Subject:From;
-        b=F6KrkRTPrwK7LArw5ezp6ESUbO9alTqy/06CC3FgOsdXsy97jCB4ZmrC3MfkKBf7v
-         pnmDrp3+372LyAl0Wloa/6NH9Z8WkGMcXlL5JZEyyzpPwwiS6BjzURId8j3ItvdLsK
-         QBoQF4HeJ/aJW/Z0PTH/CsCV2LOMTBV3ehxwfLpI=
-Date:   Fri, 22 Nov 2019 11:44:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] debugfs: remove return value of debugfs_create_regset32()
-Message-ID: <20191122104453.GA2017837@kroah.com>
+        id S1729458AbfKVKpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:24 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10368 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728642AbfKVKpV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:45:21 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd7bc410000>; Fri, 22 Nov 2019 02:45:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 22 Nov 2019 02:45:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 22 Nov 2019 02:45:19 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov
+ 2019 10:45:19 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 22 Nov 2019 10:45:19 +0000
+Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.48]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dd7bc3a0001>; Fri, 22 Nov 2019 02:45:18 -0800
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <andrew.murray@arm.com>
+CC:     <kishon@ti.com>, <gustavo.pimentel@synopsys.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH 1/6] soc/tegra: bpmp: Update ABI header
+Date:   Fri, 22 Nov 2019 16:15:00 +0530
+Message-ID: <20191122104505.8986-2-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191122104505.8986-1-vidyas@nvidia.com>
+References: <20191122104505.8986-1-vidyas@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574419521; bh=WbZi9iAoLwfEFJsQN2GWHRgTWfU+vRs78ozDlVh5aUs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=cAZe+uR2E+SHtXkhvp/sV5HwiJ4pGBtPb5LtbEXtXzUSABNKfDleGwwKclVEvW1Yi
+         aiBHAW+X7P2LtOvMpG9BRGE1qNKomBwbWs6CZ5tOYBdwwtnuj89633Tz14q5Tk965G
+         XsiIq81F1CIeyFaS91CEQAEzKc9OxqCPG2rBiEAkbwD1huJwwEh6m/RaXeqAjx2YoZ
+         XXKodtjnwK2F0yDWqFM5NeyVWR1++/jefp9gHLfWC0gV2hqoTpWtgBhU01QXNhGmmO
+         Ldje0Io+ed332aRRl2y+ZjEB4Pxa+mLNftcgIoN8FfeGpVdOGu7f0zHnLIGQZDd0hi
+         9YfX/3VwtBwLQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No one checks the return value of debugfs_create_regset32(), as it's not
-needed, so make the return value void, so that no one tries to do so in
-the future.
+Update the firmware header to support uninitialization of UPHY PLL
+when the PCIe controller is operating in endpoint mode and host cuts
+the PCIe reference clock.
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
- Documentation/filesystems/debugfs.txt |  6 +++---
- fs/debugfs/file.c                     | 17 ++++-------------
- include/linux/debugfs.h               | 13 ++++++-------
- 3 files changed, 13 insertions(+), 23 deletions(-)
+ include/soc/tegra/bpmp-abi.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/debugfs.txt b/Documentation/filesystems/debugfs.txt
-index 93c825d38232..8e235384e5ff 100644
---- a/Documentation/filesystems/debugfs.txt
-+++ b/Documentation/filesystems/debugfs.txt
-@@ -164,9 +164,9 @@ file.
- 	void __iomem *base;
-     };
- 
--    struct dentry *debugfs_create_regset32(const char *name, umode_t mode,
--				     struct dentry *parent,
--				     struct debugfs_regset32 *regset);
-+    debugfs_create_regset32(const char *name, umode_t mode,
-+			    struct dentry *parent,
-+			    struct debugfs_regset32 *regset);
- 
-     void debugfs_print_regs32(struct seq_file *s, struct debugfs_reg32 *regs,
- 			 int nregs, void __iomem *base, char *prefix);
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index a86cb0b1c69c..8dba75d40b36 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -1078,21 +1078,12 @@ static const struct file_operations fops_regset32 = {
-  * This function creates a file in debugfs with the given name that reports
-  * the names and values of a set of 32-bit registers. If the @mode variable
-  * is so set it can be read from. Writing is not supported.
-- *
-- * This function will return a pointer to a dentry if it succeeds.  This
-- * pointer must be passed to the debugfs_remove() function when the file is
-- * to be removed (no automatic cleanup happens if your module is unloaded,
-- * you are responsible here.)  If an error occurs, %ERR_PTR(-ERROR) will be
-- * returned.
-- *
-- * If debugfs is not enabled in the kernel, the value %ERR_PTR(-ENODEV) will
-- * be returned.
+diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+index cac6f610b3fe..322d06e21918 100644
+--- a/include/soc/tegra/bpmp-abi.h
++++ b/include/soc/tegra/bpmp-abi.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
   */
--struct dentry *debugfs_create_regset32(const char *name, umode_t mode,
--				       struct dentry *parent,
--				       struct debugfs_regset32 *regset)
-+void debugfs_create_regset32(const char *name, umode_t mode,
-+			     struct dentry *parent,
-+			     struct debugfs_regset32 *regset)
- {
--	return debugfs_create_file(name, mode, parent, regset, &fops_regset32);
-+	debugfs_create_file(name, mode, parent, regset, &fops_regset32);
- }
- EXPORT_SYMBOL_GPL(debugfs_create_regset32);
  
-diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index edcf1357b1be..9726738de814 100644
---- a/include/linux/debugfs.h
-+++ b/include/linux/debugfs.h
-@@ -127,9 +127,9 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
- 				  struct dentry *parent,
- 				  struct debugfs_blob_wrapper *blob);
+ #ifndef _ABI_BPMP_ABI_H_
+@@ -2119,6 +2119,7 @@ enum {
+ 	CMD_UPHY_PCIE_LANE_MARGIN_STATUS = 2,
+ 	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT = 3,
+ 	CMD_UPHY_PCIE_CONTROLLER_STATE = 4,
++	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF = 5,
+ 	CMD_UPHY_MAX,
+ };
  
--struct dentry *debugfs_create_regset32(const char *name, umode_t mode,
--				     struct dentry *parent,
--				     struct debugfs_regset32 *regset);
-+void debugfs_create_regset32(const char *name, umode_t mode,
-+			     struct dentry *parent,
-+			     struct debugfs_regset32 *regset);
+@@ -2151,6 +2152,11 @@ struct cmd_uphy_pcie_controller_state_request {
+ 	uint8_t enable;
+ } __ABI_PACKED;
  
- void debugfs_print_regs32(struct seq_file *s, const struct debugfs_reg32 *regs,
- 			  int nregs, void __iomem *base, char *prefix);
-@@ -300,11 +300,10 @@ static inline struct dentry *debugfs_create_blob(const char *name, umode_t mode,
- 	return ERR_PTR(-ENODEV);
- }
++struct cmd_uphy_ep_controller_pll_off_request {
++	/** @brief EP controller number, valid: 0, 4, 5 */
++	uint8_t ep_controller;
++} __ABI_PACKED;
++
+ /**
+  * @ingroup UPHY
+  * @brief Request with #MRQ_UPHY
+@@ -2165,6 +2171,7 @@ struct cmd_uphy_pcie_controller_state_request {
+  * |CMD_UPHY_PCIE_LANE_MARGIN_STATUS     |                                        |
+  * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT |cmd_uphy_ep_controller_pll_init_request |
+  * |CMD_UPHY_PCIE_CONTROLLER_STATE       |cmd_uphy_pcie_controller_state_request  |
++ * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF  |cmd_uphy_ep_controller_pll_off_request  |
+  *
+  */
  
--static inline struct dentry *debugfs_create_regset32(const char *name,
--				   umode_t mode, struct dentry *parent,
--				   struct debugfs_regset32 *regset)
-+static inline void debugfs_create_regset32(const char *name, umode_t mode,
-+					   struct dentry *parent,
-+					   struct debugfs_regset32 *regset)
- {
--	return ERR_PTR(-ENODEV);
- }
+@@ -2178,6 +2185,7 @@ struct mrq_uphy_request {
+ 		struct cmd_uphy_margin_control_request uphy_set_margin_control;
+ 		struct cmd_uphy_ep_controller_pll_init_request ep_ctrlr_pll_init;
+ 		struct cmd_uphy_pcie_controller_state_request controller_state;
++		struct cmd_uphy_ep_controller_pll_off_request ep_ctrlr_pll_off;
+ 	} __UNION_ANON;
+ } __ABI_PACKED;
  
- static inline void debugfs_print_regs32(struct seq_file *s, const struct debugfs_reg32 *regs,
 -- 
-2.24.0
+2.17.1
 
