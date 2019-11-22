@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD2D106CF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C267E106CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730577AbfKVK4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:56:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44104 "EHLO mail.kernel.org"
+        id S1730622AbfKVK4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:56:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730563AbfKVK4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:56:18 -0500
+        id S1730109AbfKVK4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:56:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F188E2071C;
-        Fri, 22 Nov 2019 10:56:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D60D20715;
+        Fri, 22 Nov 2019 10:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420177;
-        bh=KOxhOyJHSWa7DPV+48JX7Z1O9zoxYUJ7NP+wrtc+h3E=;
+        s=default; t=1574420199;
+        bh=wxOmL7IPVisL9tNKCQ8v1irIg/JlK6orRS2rAjsOAy4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oE5YAKcDPSDCHOYrL0wvwnYHuu233kQsb/Iq0bD2gYPt6fftdC2EuP+E/LFfsjFLf
-         jP6wvNyktM1WMr4paTpTBbnimMOYdYzb+CJX3MT7APldnBUuKSsf2TwpsfeoL1ZhRC
-         dOoGNSSTtCw3/zaN3OBoB65gLJfXN/CQfIx8Fh+k=
+        b=bmSdvbl9gSEYKPr/Jtxoh2tK8uOiPJ8L7xbtDyAh4nisE89tEHO7yyVbHG++sGhh8
+         inQF/vMV9BZeo/HCZ0Pt1JjoewJquq34Xusx+c/iuZyKl0ynRNCWNipizpCNwR5K66
+         BawGVX6eaamCdApmehCK4fNAvQ2P7b7r1VIY16lc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 002/220] i2c: mediatek: modify threshold passed to i2c_get_dma_safe_msg_buf()
-Date:   Fri, 22 Nov 2019 11:26:07 +0100
-Message-Id: <20191122100912.877438787@linuxfoundation.org>
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 4.19 003/220] tee: optee: add missing of_node_put after of_device_is_available
+Date:   Fri, 22 Nov 2019 11:26:08 +0100
+Message-Id: <20191122100912.931081612@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -44,61 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hsin-Yi Wang <hsinyi@chromium.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit bc1a7f75c85e226e82f183d30d75c357f92b6029 upstream.
+commit c7c0d8df0b94a67377555a550b8d66ee2ad2f4ed upstream.
 
-DMA with zero-length transfers doesn't make sense and this HW doesn't
-support them at all, so increase the threshold.
+Add an of_node_put when a tested device node is not available.
 
-Fixes: fc66b39fe36a ("i2c: mediatek: Use DMA safe buffers for i2c transactions")
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-[wsa: reworded commit message]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+identifier f;
+local idexpression e;
+expression x;
+@@
+
+e = f(...);
+... when != of_node_put(e)
+    when != x = e
+    when != e = x
+    when any
+if (<+...of_device_is_available(e)...+>) {
+  ... when != of_node_put(e)
+(
+  return e;
+|
++ of_node_put(e);
+  return ...;
+)
+}
+// </smpl>
+
+Fixes: db878f76b9ff ("tee: optee: take DT status property into account")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-mt65xx.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tee/optee/core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-mt65xx.c
-+++ b/drivers/i2c/busses/i2c-mt65xx.c
-@@ -503,7 +503,7 @@ static int mtk_i2c_do_transfer(struct mt
- 		writel(I2C_DMA_INT_FLAG_NONE, i2c->pdmabase + OFFSET_INT_FLAG);
- 		writel(I2C_DMA_CON_RX, i2c->pdmabase + OFFSET_CON);
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -696,8 +696,10 @@ static int __init optee_driver_init(void
+ 		return -ENODEV;
  
--		dma_rd_buf = i2c_get_dma_safe_msg_buf(msgs, 0);
-+		dma_rd_buf = i2c_get_dma_safe_msg_buf(msgs, 1);
- 		if (!dma_rd_buf)
- 			return -ENOMEM;
+ 	np = of_find_matching_node(fw_np, optee_match);
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
  
-@@ -526,7 +526,7 @@ static int mtk_i2c_do_transfer(struct mt
- 		writel(I2C_DMA_INT_FLAG_NONE, i2c->pdmabase + OFFSET_INT_FLAG);
- 		writel(I2C_DMA_CON_TX, i2c->pdmabase + OFFSET_CON);
- 
--		dma_wr_buf = i2c_get_dma_safe_msg_buf(msgs, 0);
-+		dma_wr_buf = i2c_get_dma_safe_msg_buf(msgs, 1);
- 		if (!dma_wr_buf)
- 			return -ENOMEM;
- 
-@@ -549,7 +549,7 @@ static int mtk_i2c_do_transfer(struct mt
- 		writel(I2C_DMA_CLR_FLAG, i2c->pdmabase + OFFSET_INT_FLAG);
- 		writel(I2C_DMA_CLR_FLAG, i2c->pdmabase + OFFSET_CON);
- 
--		dma_wr_buf = i2c_get_dma_safe_msg_buf(msgs, 0);
-+		dma_wr_buf = i2c_get_dma_safe_msg_buf(msgs, 1);
- 		if (!dma_wr_buf)
- 			return -ENOMEM;
- 
-@@ -561,7 +561,7 @@ static int mtk_i2c_do_transfer(struct mt
- 			return -ENOMEM;
- 		}
- 
--		dma_rd_buf = i2c_get_dma_safe_msg_buf((msgs + 1), 0);
-+		dma_rd_buf = i2c_get_dma_safe_msg_buf((msgs + 1), 1);
- 		if (!dma_rd_buf) {
- 			dma_unmap_single(i2c->dev, wpaddr,
- 					 msgs->len, DMA_TO_DEVICE);
+ 	optee = optee_probe(np);
+ 	of_node_put(np);
 
 
