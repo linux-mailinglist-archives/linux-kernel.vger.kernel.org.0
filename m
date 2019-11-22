@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C16106D7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF95F106D8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731050AbfKVLAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:00:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52592 "EHLO mail.kernel.org"
+        id S1731119AbfKVLBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:01:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbfKVLA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:00:28 -0500
+        id S1730365AbfKVLBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:01:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3351C2073F;
-        Fri, 22 Nov 2019 11:00:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D9BB20679;
+        Fri, 22 Nov 2019 11:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420427;
-        bh=mvmcZdrkG5dSBFb2qDk8NGuPqozB3u6Kci68/K4eDoA=;
+        s=default; t=1574420460;
+        bh=sZyurtuWXFYsgOUj80/7yxV09L1SNtY4gxeDxJst5wo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wLU5itDn/RB3znULosEzETWwQ4w684MaOBffi3lWNl0Bz39pQj3cArHZL8ao/v8fC
-         XPQIC8uk8qpiPCNaNgHbbptFt6/nfui4ln1DwJYwcKMa27JGg2BBysNOMFQdPiLd0g
-         Et7w4qkksJZdH2Nd0q2mGrwhNwuMVWhSAodOIsrc=
+        b=PpnLpxBmFH+nxp7f9dIBV5BtG+S+UeCSci4gQ/49UDIF9MAGGfZxQy/j6Ujyxyxmi
+         ggl8tC2qAXB8t8Q2idkK1JaOQpZ/0YF7FmtCZqSgQmhHx73AICfm0UvrlEAQSVU5jH
+         jpiOrqGpwasT8J6dFboZ4OFSWUohNaSEmFXUa0mY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/220] clocksource/drivers/sh_cmt: Fixup for 64-bit machines
-Date:   Fri, 22 Nov 2019 11:27:21 +0100
-Message-Id: <20191122100917.792973619@linuxfoundation.org>
+Subject: [PATCH 4.19 077/220] clocksource/drivers/sh_cmt: Fix clocksource width for 32-bit machines
+Date:   Fri, 22 Nov 2019 11:27:22 +0100
+Message-Id: <20191122100917.876690317@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -48,206 +49,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 22627c6f3ed3d9d0df13eec3c831b08f8186c38e ]
+[ Upstream commit 37e7742c55ba856eaec7e35673ee370f36eb17f3 ]
 
-When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed
-that 'max_delta_ns' for the broadcast timer (CMT) was shown as 1000 in
-/proc/timer_list. It turned out that when calculating it, the driver did
-1 << 32 (causing what I think was undefined behavior) resulting in a zero
-delta, later clamped to 1000 by cev_delta2ns(). The root cause turned out
-to be that the driver abused *unsigned long* for the CMT register values
-(which are 16/32-bit), so that the calculation of 'ch->max_match_value'
-in sh_cmt_setup_channel() used the wrong branch. Using more proper 'u32'
-instead fixed 'max_delta_ns' and even fixed the switching an active
-clocksource to CMT (which caused the system to turn non-interactive
-before).
+The driver seems to abuse *unsigned long* not only for the (32-bit)
+register values but also for the 'sh_cmt_channel::total_cycles' which
+needs to always be 64-bit -- as a result, the clocksource's mask is
+needlessly clamped down to 32-bits on the 32-bit machines...
 
+Fixes: 19bdc9d061bc ("clocksource: sh_cmt clocksource support")
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/sh_cmt.c | 72 +++++++++++++++++-------------------
- 1 file changed, 33 insertions(+), 39 deletions(-)
+ drivers/clocksource/sh_cmt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index bbbf37c471a39..49302086f36fd 100644
+index 49302086f36fd..cec90a4c79b34 100644
 --- a/drivers/clocksource/sh_cmt.c
 +++ b/drivers/clocksource/sh_cmt.c
-@@ -78,18 +78,17 @@ struct sh_cmt_info {
- 	unsigned int channels_mask;
- 
- 	unsigned long width; /* 16 or 32 bit version of hardware block */
--	unsigned long overflow_bit;
--	unsigned long clear_bits;
-+	u32 overflow_bit;
-+	u32 clear_bits;
- 
- 	/* callbacks for CMSTR and CMCSR access */
--	unsigned long (*read_control)(void __iomem *base, unsigned long offs);
-+	u32 (*read_control)(void __iomem *base, unsigned long offs);
- 	void (*write_control)(void __iomem *base, unsigned long offs,
--			      unsigned long value);
-+			      u32 value);
- 
- 	/* callbacks for CMCNT and CMCOR access */
--	unsigned long (*read_count)(void __iomem *base, unsigned long offs);
--	void (*write_count)(void __iomem *base, unsigned long offs,
--			    unsigned long value);
-+	u32 (*read_count)(void __iomem *base, unsigned long offs);
-+	void (*write_count)(void __iomem *base, unsigned long offs, u32 value);
- };
- 
- struct sh_cmt_channel {
-@@ -103,9 +102,9 @@ struct sh_cmt_channel {
- 
- 	unsigned int timer_bit;
- 	unsigned long flags;
--	unsigned long match_value;
--	unsigned long next_match_value;
--	unsigned long max_match_value;
-+	u32 match_value;
-+	u32 next_match_value;
-+	u32 max_match_value;
+@@ -108,7 +108,7 @@ struct sh_cmt_channel {
  	raw_spinlock_t lock;
  	struct clock_event_device ced;
  	struct clocksource cs;
-@@ -160,24 +159,22 @@ struct sh_cmt_device {
- #define SH_CMT32_CMCSR_CKS_RCLK1	(7 << 0)
- #define SH_CMT32_CMCSR_CKS_MASK		(7 << 0)
+-	unsigned long total_cycles;
++	u64 total_cycles;
+ 	bool cs_enabled;
+ };
  
--static unsigned long sh_cmt_read16(void __iomem *base, unsigned long offs)
-+static u32 sh_cmt_read16(void __iomem *base, unsigned long offs)
- {
- 	return ioread16(base + (offs << 1));
- }
- 
--static unsigned long sh_cmt_read32(void __iomem *base, unsigned long offs)
-+static u32 sh_cmt_read32(void __iomem *base, unsigned long offs)
- {
- 	return ioread32(base + (offs << 2));
- }
- 
--static void sh_cmt_write16(void __iomem *base, unsigned long offs,
--			   unsigned long value)
-+static void sh_cmt_write16(void __iomem *base, unsigned long offs, u32 value)
- {
- 	iowrite16(value, base + (offs << 1));
- }
- 
--static void sh_cmt_write32(void __iomem *base, unsigned long offs,
--			   unsigned long value)
-+static void sh_cmt_write32(void __iomem *base, unsigned long offs, u32 value)
- {
- 	iowrite32(value, base + (offs << 2));
- }
-@@ -242,7 +239,7 @@ static const struct sh_cmt_info sh_cmt_info[] = {
- #define CMCNT 1 /* channel register */
- #define CMCOR 2 /* channel register */
- 
--static inline unsigned long sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
-+static inline u32 sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
- {
- 	if (ch->iostart)
- 		return ch->cmt->info->read_control(ch->iostart, 0);
-@@ -250,8 +247,7 @@ static inline unsigned long sh_cmt_read_cmstr(struct sh_cmt_channel *ch)
- 		return ch->cmt->info->read_control(ch->cmt->mapbase, 0);
- }
- 
--static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch,
--				      unsigned long value)
-+static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch, u32 value)
- {
- 	if (ch->iostart)
- 		ch->cmt->info->write_control(ch->iostart, 0, value);
-@@ -259,39 +255,35 @@ static inline void sh_cmt_write_cmstr(struct sh_cmt_channel *ch,
- 		ch->cmt->info->write_control(ch->cmt->mapbase, 0, value);
- }
- 
--static inline unsigned long sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
-+static inline u32 sh_cmt_read_cmcsr(struct sh_cmt_channel *ch)
- {
- 	return ch->cmt->info->read_control(ch->ioctrl, CMCSR);
- }
- 
--static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch,
--				      unsigned long value)
-+static inline void sh_cmt_write_cmcsr(struct sh_cmt_channel *ch, u32 value)
- {
- 	ch->cmt->info->write_control(ch->ioctrl, CMCSR, value);
- }
- 
--static inline unsigned long sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
-+static inline u32 sh_cmt_read_cmcnt(struct sh_cmt_channel *ch)
- {
- 	return ch->cmt->info->read_count(ch->ioctrl, CMCNT);
- }
- 
--static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch,
--				      unsigned long value)
-+static inline void sh_cmt_write_cmcnt(struct sh_cmt_channel *ch, u32 value)
- {
- 	ch->cmt->info->write_count(ch->ioctrl, CMCNT, value);
- }
- 
--static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch,
--				      unsigned long value)
-+static inline void sh_cmt_write_cmcor(struct sh_cmt_channel *ch, u32 value)
- {
- 	ch->cmt->info->write_count(ch->ioctrl, CMCOR, value);
- }
- 
--static unsigned long sh_cmt_get_counter(struct sh_cmt_channel *ch,
--					int *has_wrapped)
-+static u32 sh_cmt_get_counter(struct sh_cmt_channel *ch, u32 *has_wrapped)
- {
--	unsigned long v1, v2, v3;
--	int o1, o2;
-+	u32 v1, v2, v3;
-+	u32 o1, o2;
- 
- 	o1 = sh_cmt_read_cmcsr(ch) & ch->cmt->info->overflow_bit;
- 
-@@ -311,7 +303,8 @@ static unsigned long sh_cmt_get_counter(struct sh_cmt_channel *ch,
- 
- static void sh_cmt_start_stop_ch(struct sh_cmt_channel *ch, int start)
- {
--	unsigned long flags, value;
-+	unsigned long flags;
-+	u32 value;
- 
- 	/* start stop register shared by multiple timer channels */
- 	raw_spin_lock_irqsave(&ch->cmt->lock, flags);
-@@ -418,11 +411,11 @@ static void sh_cmt_disable(struct sh_cmt_channel *ch)
- static void sh_cmt_clock_event_program_verify(struct sh_cmt_channel *ch,
- 					      int absolute)
- {
--	unsigned long new_match;
--	unsigned long value = ch->next_match_value;
--	unsigned long delay = 0;
--	unsigned long now = 0;
--	int has_wrapped;
-+	u32 value = ch->next_match_value;
-+	u32 new_match;
-+	u32 delay = 0;
-+	u32 now = 0;
-+	u32 has_wrapped;
- 
- 	now = sh_cmt_get_counter(ch, &has_wrapped);
- 	ch->flags |= FLAG_REPROGRAM; /* force reprogram */
-@@ -619,9 +612,10 @@ static struct sh_cmt_channel *cs_to_sh_cmt(struct clocksource *cs)
- static u64 sh_cmt_clocksource_read(struct clocksource *cs)
+@@ -613,8 +613,8 @@ static u64 sh_cmt_clocksource_read(struct clocksource *cs)
  {
  	struct sh_cmt_channel *ch = cs_to_sh_cmt(cs);
--	unsigned long flags, raw;
-+	unsigned long flags;
- 	unsigned long value;
--	int has_wrapped;
-+	u32 has_wrapped;
-+	u32 raw;
+ 	unsigned long flags;
+-	unsigned long value;
+ 	u32 has_wrapped;
++	u64 value;
+ 	u32 raw;
  
  	raw_spin_lock_irqsave(&ch->lock, flags);
- 	value = ch->total_cycles;
+@@ -688,7 +688,7 @@ static int sh_cmt_register_clocksource(struct sh_cmt_channel *ch,
+ 	cs->disable = sh_cmt_clocksource_disable;
+ 	cs->suspend = sh_cmt_clocksource_suspend;
+ 	cs->resume = sh_cmt_clocksource_resume;
+-	cs->mask = CLOCKSOURCE_MASK(sizeof(unsigned long) * 8);
++	cs->mask = CLOCKSOURCE_MASK(sizeof(u64) * 8);
+ 	cs->flags = CLOCK_SOURCE_IS_CONTINUOUS;
+ 
+ 	dev_info(&ch->cmt->pdev->dev, "ch%u: used as clock source\n",
 -- 
 2.20.1
 
