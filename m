@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94BA3106EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F9910707D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730593AbfKVLM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:12:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47226 "EHLO mail.kernel.org"
+        id S1728500AbfKVKmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:42:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730485AbfKVK5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:54 -0500
+        id S1728184AbfKVKmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:42:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F96B2071F;
-        Fri, 22 Nov 2019 10:57:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40AC720707;
+        Fri, 22 Nov 2019 10:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420274;
-        bh=KB354o3/r9P+JtBFvnw5fnhLSpxOdIW6UqA4GyhnQBY=;
+        s=default; t=1574419338;
+        bh=uzUz+CrFI7pvV8ks0f+j4NUBeLRuSb5YZL/KBMxG/yE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z4+daHzcgtnSuY+zY3dvLsWwEezPEcjJqgCqlijtsMO3astqfNbFDoogeoJaxDcIM
-         1gb8q6ltmAyRmoBtlfG6gF+3xZTZK5q9iMuQoEpgJIntM6+ZOs6Z3nzQWIOdIBLQHg
-         F66390mT42pio8V1M9kgXEpQA+hoCtVgMXvxj3eo=
+        b=CrXGfD2kmVdTUyC1khpcUiZD4CelhnZrM8APuZTqk6jAOQo5wJ+WaJtG33K+LXxm5
+         94bOdjWAayBC48y3POWP6iI9A6W2EsAWsWH4Nv04vzqvQGHVRYQWKxD6W0ub0NstP+
+         349ajYaVXM3efiYrHl6W50QR7egd+sjJxMpzKvWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/220] watchdog: renesas_wdt: stop when unregistering
-Date:   Fri, 22 Nov 2019 11:26:56 +0100
-Message-Id: <20191122100915.866371312@linuxfoundation.org>
+Subject: [PATCH 4.9 079/222] ath9k: Fix a locking bug in ath9k_add_interface()
+Date:   Fri, 22 Nov 2019 11:26:59 +0100
+Message-Id: <20191122100909.124357643@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,38 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 14de99b44b34dbb9d0f64845b1cbb675e047767e ]
+[ Upstream commit 461cf036057477805a8a391e5fd0f5264a5e56a8 ]
 
-We want to go into a sane state when unregistering. Currently, it
-happens that the watchdog stops when unbinding because of RuntimePM
-stopping the core clock. When rebinding, the core clock gets reactivated
-and the watchdog fires even though it hasn't been opened by userspace
-yet. Strange scenario, yes, but sane state is much preferred anyhow.
+We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
+mode interface") but accidentally missed part of the locking change.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+The lock has to be held earlier so that we're holding it when we do
+"sc->tx99_vif = vif;" and also there in the current code there is a
+stray unlock before we have taken the lock.
+
+Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/renesas_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/ath9k/main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index d01efd342dc0c..62d9d3edcdf25 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -239,6 +239,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
- 	watchdog_set_restart_priority(&priv->wdev, 0);
-+	watchdog_stop_on_unregister(&priv->wdev);
+diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
+index f6151a00041d6..abc997427bae5 100644
+--- a/drivers/net/wireless/ath/ath9k/main.c
++++ b/drivers/net/wireless/ath/ath9k/main.c
+@@ -1249,6 +1249,7 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
+ 	struct ath_vif *avp = (void *)vif->drv_priv;
+ 	struct ath_node *an = &avp->mcast_node;
  
- 	/* This overrides the default timeout only if DT configuration was found */
- 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
++	mutex_lock(&sc->mutex);
+ 	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
+ 		if (sc->cur_chan->nvifs >= 1) {
+ 			mutex_unlock(&sc->mutex);
+@@ -1257,8 +1258,6 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
+ 		sc->tx99_vif = vif;
+ 	}
+ 
+-	mutex_lock(&sc->mutex);
+-
+ 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
+ 	sc->cur_chan->nvifs++;
+ 
 -- 
 2.20.1
 
