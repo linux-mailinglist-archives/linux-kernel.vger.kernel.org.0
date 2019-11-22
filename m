@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB53E106BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEBC106CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbfKVKsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:48:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57086 "EHLO mail.kernel.org"
+        id S1730241AbfKVKxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:53:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729152AbfKVKsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:21 -0500
+        id S1730224AbfKVKxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:53:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2669D20637;
-        Fri, 22 Nov 2019 10:48:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2147820715;
+        Fri, 22 Nov 2019 10:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419700;
-        bh=PupgnrNiJS0Fg2hfrgcB/rrvt8DViF2+rMHAQ5nAC2w=;
+        s=default; t=1574420020;
+        bh=7ZCL7NcTxYsKgq1kH/R/h8GRcaWqaQ0rSb8KFEgYlJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jBTUKaV1tcxjI/xelExImj95SYz2LoDhrktyeIchwfMxUcduQbxO+wuWAFcUU2e/q
-         tyPtH09+aOL1jWwr6pwZHMtVyXkds/Ka9StYDj+EUGLv6x/BDdOJXUxIWsWw2ejyAs
-         mhtCkSIh318nmMxKq+Q0xPetfw459MY8mbsVAki8=
+        b=zxetFUFyJ6E1l+v0ovPIzci9CxUYjXch7m1RwFXg9v4OU7DR76nBe7nhd3fDDlH/+
+         cSN/MH2yBv6qsYsygBtJU+nerudDegIZiisgwSSrlvXVFWvtF72he4sZdBsPBEySSj
+         N6jTlMDm25W/ElfxZDMRM6MIkZ7r1dq0gdleQWFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 201/222] reset: Fix potential use-after-free in __of_reset_control_get()
-Date:   Fri, 22 Nov 2019 11:29:01 +0100
-Message-Id: <20191122100916.759838259@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Peter Malone <peter.malone@gmail.com>
+Subject: [PATCH 4.14 089/122] fbdev: sbuslib: use checked version of put_user()
+Date:   Fri, 22 Nov 2019 11:29:02 +0100
+Message-Id: <20191122100827.630697809@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit b790c8ea5593d6dc3580adfad8e117eeb56af874 ]
+[ Upstream commit d8bad911e5e55e228d59c0606ff7e6b8131ca7bf ]
 
-Calling of_node_put() decreases the reference count of a device tree
-object, and may free some data.
+I'm not sure why the code assumes that only the first put_user() needs
+an access_ok() check.  I have made all the put_user() and get_user()
+calls checked.
 
-However, the of_phandle_args structure embedding it is passed to
-reset_controller_dev.of_xlate() after that, so it may still be accessed.
-
-Move the call to of_node_put() down to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[p.zabel@pengutronix.de: moved of_node_put after mutex_unlock]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Mathieu Malaterre <malat@debian.org>
+Cc: Peter Malone <peter.malone@gmail.com>,
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/reset/core.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/video/fbdev/sbuslib.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 188205a552613..d0ebca301afc9 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -324,28 +324,29 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- 			break;
- 		}
+diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
+index a436d44f1b7fb..90c51330969c2 100644
+--- a/drivers/video/fbdev/sbuslib.c
++++ b/drivers/video/fbdev/sbuslib.c
+@@ -106,11 +106,11 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		struct fbtype __user *f = (struct fbtype __user *) arg;
+ 
+ 		if (put_user(type, &f->fb_type) ||
+-		    __put_user(info->var.yres, &f->fb_height) ||
+-		    __put_user(info->var.xres, &f->fb_width) ||
+-		    __put_user(fb_depth, &f->fb_depth) ||
+-		    __put_user(0, &f->fb_cmsize) ||
+-		    __put_user(fb_size, &f->fb_cmsize))
++		    put_user(info->var.yres, &f->fb_height) ||
++		    put_user(info->var.xres, &f->fb_width) ||
++		    put_user(fb_depth, &f->fb_depth) ||
++		    put_user(0, &f->fb_cmsize) ||
++		    put_user(fb_size, &f->fb_cmsize))
+ 			return -EFAULT;
+ 		return 0;
  	}
--	of_node_put(args.np);
+@@ -125,10 +125,10 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		unsigned int index, count, i;
  
- 	if (!rcdev) {
--		mutex_unlock(&reset_list_mutex);
--		return ERR_PTR(-EPROBE_DEFER);
-+		rstc = ERR_PTR(-EPROBE_DEFER);
-+		goto out;
- 	}
+ 		if (get_user(index, &c->index) ||
+-		    __get_user(count, &c->count) ||
+-		    __get_user(ured, &c->red) ||
+-		    __get_user(ugreen, &c->green) ||
+-		    __get_user(ublue, &c->blue))
++		    get_user(count, &c->count) ||
++		    get_user(ured, &c->red) ||
++		    get_user(ugreen, &c->green) ||
++		    get_user(ublue, &c->blue))
+ 			return -EFAULT;
  
- 	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells)) {
--		mutex_unlock(&reset_list_mutex);
--		return ERR_PTR(-EINVAL);
-+		rstc = ERR_PTR(-EINVAL);
-+		goto out;
- 	}
+ 		cmap.len = 1;
+@@ -165,10 +165,10 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		u8 red, green, blue;
  
- 	rstc_id = rcdev->of_xlate(rcdev, &args);
- 	if (rstc_id < 0) {
--		mutex_unlock(&reset_list_mutex);
--		return ERR_PTR(rstc_id);
-+		rstc = ERR_PTR(rstc_id);
-+		goto out;
- 	}
+ 		if (get_user(index, &c->index) ||
+-		    __get_user(count, &c->count) ||
+-		    __get_user(ured, &c->red) ||
+-		    __get_user(ugreen, &c->green) ||
+-		    __get_user(ublue, &c->blue))
++		    get_user(count, &c->count) ||
++		    get_user(ured, &c->red) ||
++		    get_user(ugreen, &c->green) ||
++		    get_user(ublue, &c->blue))
+ 			return -EFAULT;
  
- 	/* reset_list_mutex also protects the rcdev's reset_control list */
- 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
- 
-+out:
- 	mutex_unlock(&reset_list_mutex);
-+	of_node_put(args.np);
- 
- 	return rstc;
- }
+ 		if (index + count > cmap->len)
 -- 
 2.20.1
 
