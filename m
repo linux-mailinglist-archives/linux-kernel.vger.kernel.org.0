@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7415106D1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9851B106B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730695AbfKVK5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:57:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46454 "EHLO mail.kernel.org"
+        id S1728235AbfKVKog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730671AbfKVK5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:57:31 -0500
+        id S1727665AbfKVKob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E3142072E;
-        Fri, 22 Nov 2019 10:57:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1E5220715;
+        Fri, 22 Nov 2019 10:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420250;
-        bh=QSLuD+YpzU6b8rUYnHY1H1u65Kcdamyi0w+ofodb1vg=;
+        s=default; t=1574419471;
+        bh=DpxXol/N+y1B3DaIv9bxMgSgTTtMjnNY+SmzKS17Jhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bqGPAcoNw3UmydNLnKdZ+FoKtg4nPi5mud5V9abjSyEVMiWcw/aUWOpdyZnengYTr
-         WVaoA46RbglyWrI9+/VN4mpyqZoCFDrJ5Bw7rDckWDS0LmropRN5ZhjAdUemJoUE6v
-         v7LlceUaLrIq1ac6wZ6zIMfreCpm1UNQ+aRHhIz4=
+        b=bSTvMgr3VxSwzPHqTy+k/MH5c3OEfzjPkyUqiXb3LucSpJ+ZVBV8sSMOtVbE0aO6a
+         fyM8MNiO8LvMs1QOQ3sKUhnK1ZtSqqCjh/blBVV95j6qAUNDEnxM2+jEG24hWGrUSK
+         PPjcUDnd9mSfb9px9F9nSwGJQBHJJimqMwto27p0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Kossifidis <mickflemm@gmail.com>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 044/220] ath9k: fix reporting calculated new FFT upper max
+Subject: [PATCH 4.9 069/222] ARM: dts: socfpga: Fix I2C bus unit-address error
 Date:   Fri, 22 Nov 2019 11:26:49 +0100
-Message-Id: <20191122100915.427563948@linuxfoundation.org>
+Message-Id: <20191122100905.349899034@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Wunderlich <sw@simonwunderlich.de>
+From: Dinh Nguyen <dinguyen@kernel.org>
 
-[ Upstream commit 4fb5837ac2bd46a85620b297002c704e9958f64d ]
+[ Upstream commit cbbc488ed85061a765cf370c3e41f383c1e0add6 ]
 
-Since the debug print code is outside of the loop, it shouldn't use the loop
-iterator anymore but instead print the found maximum index.
+dtc has new checks for I2C buses. Fix the warnings in unit-addresses.
 
-Cc: Nick Kossifidis <mickflemm@gmail.com>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dtb: Warning (i2c_bus_reg): /soc/i2c@ffc04000/adxl345@0: I2C bus unit address format error, expected "53"
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/common-spectral.c | 2 +-
+ arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/common-spectral.c b/drivers/net/wireless/ath/ath9k/common-spectral.c
-index 440e16e641e4a..f75eb068e6cfc 100644
---- a/drivers/net/wireless/ath/ath9k/common-spectral.c
-+++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
-@@ -411,7 +411,7 @@ ath_cmn_process_ht20_40_fft(struct ath_rx_status *rs,
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+index afea3645ada43..89d55894d9162 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+@@ -88,7 +88,7 @@
+ 	status = "okay";
+ 	speed-mode = <0>;
  
- 		ath_dbg(common, SPECTRAL_SCAN,
- 			"Calculated new upper max 0x%X at %i\n",
--			tmp_mag, i);
-+			tmp_mag, fft_sample_40.upper_max_index);
- 	} else
- 	for (i = dc_pos; i < SPECTRAL_HT20_40_NUM_BINS; i++) {
- 		if (fft_sample_40.data[i] == (upper_mag >> max_exp))
+-	adxl345: adxl345@0 {
++	adxl345: adxl345@53 {
+ 		compatible = "adi,adxl345";
+ 		reg = <0x53>;
+ 
 -- 
 2.20.1
 
