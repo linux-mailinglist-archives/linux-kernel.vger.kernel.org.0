@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3F1106BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F7C106C67
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbfKVKqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:46:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53596 "EHLO mail.kernel.org"
+        id S1730030AbfKVKvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728297AbfKVKq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:46:26 -0500
+        id S1730100AbfKVKvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE9A6205C9;
-        Fri, 22 Nov 2019 10:46:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15CAE20718;
+        Fri, 22 Nov 2019 10:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419586;
-        bh=LweHk9SyP1/gFilCOzPMPDtIyP9pgPKCmKGKDqvX6ms=;
+        s=default; t=1574419903;
+        bh=iUAeOmTC6KKyCJsPjqadlOssi2y1HjidqPkef2RGGfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hQc+jDZJ7GJnpYmWOWH4VdW755f36FOVVFB6/991nAVuTSTmE/xJvuYn9ZewPKMfr
-         G1hBwnown1J0joLGHsFFpwtVfxnktLtXmCXPgMkiQsrPZXBgb5LIhHx2f9L4bGZuNp
-         947FSwCK1zw03nrt0z0FkDfsojHnDhkB0umVyTkk=
+        b=qSv1MehF/7IWNPKX/bDqre7knEjp38HGeiAPDTeYIvqvnEdsiXw4piB7yCNfwZlzz
+         spjYMvntOItknMLcd3RDW3Mjw4h5reKUQGoYm569dFoP/dR1NvS1Z5g1okvsQZmKqp
+         T4GiQ5SExMP+FJ6KDi+Qp2ko54Umnr9OieAtIG6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 161/222] arm64/numa: Report correct memblock range for the dummy node
+Subject: [PATCH 4.14 048/122] clocksource/drivers/sh_cmt: Fix clocksource width for 32-bit machines
 Date:   Fri, 22 Nov 2019 11:28:21 +0100
-Message-Id: <20191122100914.265778512@linuxfoundation.org>
+Message-Id: <20191122100756.726284211@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +47,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 77cfe950901e5c13aca2df6437a05f39dd9a929b ]
+[ Upstream commit 37e7742c55ba856eaec7e35673ee370f36eb17f3 ]
 
-The dummy node ID is marked into all memory ranges on the system. So the
-dummy node really extends the entire memblock.memory. Hence report correct
-extent information for the dummy node using memblock range helper functions
-instead of the range [0LLU, PFN_PHYS(max_pfn) - 1)].
+The driver seems to abuse *unsigned long* not only for the (32-bit)
+register values but also for the 'sh_cmt_channel::total_cycles' which
+needs to always be 64-bit -- as a result, the clocksource's mask is
+needlessly clamped down to 32-bits on the 32-bit machines...
 
-Fixes: 1a2db30034 ("arm64, numa: Add NUMA support for arm64 platforms")
-Acked-by: Punit Agrawal <punit.agrawal@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 19bdc9d061bc ("clocksource: sh_cmt clocksource support")
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/mm/numa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/sh_cmt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-index 4b32168cf91a0..b1e42bad69ac3 100644
---- a/arch/arm64/mm/numa.c
-+++ b/arch/arm64/mm/numa.c
-@@ -424,7 +424,7 @@ static int __init dummy_numa_init(void)
- 	if (numa_off)
- 		pr_info("NUMA disabled\n"); /* Forced off on command line. */
- 	pr_info("Faking a node at [mem %#018Lx-%#018Lx]\n",
--		0LLU, PFN_PHYS(max_pfn) - 1);
-+		memblock_start_of_DRAM(), memblock_end_of_DRAM() - 1);
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index 560541f53c8d9..3cd62f7c33e30 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -105,7 +105,7 @@ struct sh_cmt_channel {
+ 	raw_spinlock_t lock;
+ 	struct clock_event_device ced;
+ 	struct clocksource cs;
+-	unsigned long total_cycles;
++	u64 total_cycles;
+ 	bool cs_enabled;
+ };
  
- 	for_each_memblock(memory, mblk) {
- 		ret = numa_add_memblk(0, mblk->base, mblk->base + mblk->size);
+@@ -607,8 +607,8 @@ static u64 sh_cmt_clocksource_read(struct clocksource *cs)
+ {
+ 	struct sh_cmt_channel *ch = cs_to_sh_cmt(cs);
+ 	unsigned long flags;
+-	unsigned long value;
+ 	u32 has_wrapped;
++	u64 value;
+ 	u32 raw;
+ 
+ 	raw_spin_lock_irqsave(&ch->lock, flags);
+@@ -682,7 +682,7 @@ static int sh_cmt_register_clocksource(struct sh_cmt_channel *ch,
+ 	cs->disable = sh_cmt_clocksource_disable;
+ 	cs->suspend = sh_cmt_clocksource_suspend;
+ 	cs->resume = sh_cmt_clocksource_resume;
+-	cs->mask = CLOCKSOURCE_MASK(sizeof(unsigned long) * 8);
++	cs->mask = CLOCKSOURCE_MASK(sizeof(u64) * 8);
+ 	cs->flags = CLOCK_SOURCE_IS_CONTINUOUS;
+ 
+ 	dev_info(&ch->cmt->pdev->dev, "ch%u: used as clock source\n",
 -- 
 2.20.1
 
