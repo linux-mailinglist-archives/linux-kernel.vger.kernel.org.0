@@ -2,136 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F5F1079F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 22:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 971F51079FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 22:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfKVVaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 16:30:06 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36393 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfKVVaF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 16:30:05 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k13so3937537pgh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 13:30:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7t6M7j4eqiF4dAhaLb38TLT0fseDmfpNVbu55ek7TJs=;
-        b=UkcU0XtuucvAShhb0pzKP6YFeq4hY9MgO+n6mEWZfPueG4LkIw8qA/WAhVfRd7v2mE
-         ZmhEKbsTpCo64S5pwoid3Js7ErRM5+b5naWqAs2ECtx6og9T5GPgofcFR70vUsmai/tZ
-         wUuheWp6w/Bv5y4QdnOLThkxxiHCSb/23IkmE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7t6M7j4eqiF4dAhaLb38TLT0fseDmfpNVbu55ek7TJs=;
-        b=lgGjgf1IAg4ym9IGqnYo8/bWiXxE2fu6K/BcnxQmxG8vHjJvTOsp8AFdLMyMVEfuue
-         RBRE8ayfA1CyLESd4iHcGLK8O3bWZOGr0BDj9/e+VMKFxzZ/nS6vmUtMhwpxTF0djdzI
-         0alO7Eltc9ERn77m8+zybmyMZAC3kg/0W8iPoREE+DJRctkXEsJVbj3+UoanJ8/HGpCn
-         LlkvFQpamaaI14zCm23C4W3gM+BEaJYWMo9+REyRPqUr2fWEWODiTADyeysb3oneTP1z
-         xHPobNZDrFEDOXle5v7WsBL+BYK7poFKu1XAfIOG+0+btFyTZmlB+Rc3r7d4GPQowdyX
-         3/OQ==
-X-Gm-Message-State: APjAAAV8SFUF6JSOEXfGLBPYrBVTlsSchRA5xPvSnpAOSluj6Iv00dvk
-        I24qP5AUVjuVWfNAwt5kFloSY2tEqW8XyQ==
-X-Google-Smtp-Source: APXvYqwiN/mWcSIoSkuvttbGyx3kyPi5/7BOGNQ2jQdusDflTn8/lXnX1PxEvK/e1tB66wnR/JRJog==
-X-Received: by 2002:a65:68ce:: with SMTP id k14mr11031165pgt.374.1574458204763;
-        Fri, 22 Nov 2019 13:30:04 -0800 (PST)
-Received: from yichengli2.mtv.corp.google.com ([2620:15c:202:201:900:2031:8afd:85a7])
-        by smtp.gmail.com with ESMTPSA id t15sm8019237pgb.0.2019.11.22.13.30.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Nov 2019 13:30:04 -0800 (PST)
-From:   Yicheng Li <yichengli@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     bleung@chromium.org, yichengli@chromium.org, gwendal@chromium.org,
-        enric.balletbo@collabora.com
-Subject: [PATCH v2] mfd / platform: cros_ec: Query EC protocol version if EC transitions between RO/RW
-Date:   Fri, 22 Nov 2019 13:29:05 -0800
-Message-Id: <20191122212905.35679-1-yichengli@chromium.org>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726704AbfKVVd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 16:33:27 -0500
+Received: from mga12.intel.com ([192.55.52.136]:60195 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726089AbfKVVd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 16:33:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 13:33:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,231,1571727600"; 
+   d="scan'208";a="210367928"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by orsmga003.jf.intel.com with ESMTP; 22 Nov 2019 13:33:25 -0800
+Message-ID: <b33151bdfb5611de7db8493cb8fcca4b8f372267.camel@intel.com>
+Subject: Re: [PATCH 1/6] x86/fpu/xstate: Fix small issues before adding
+ supervisor xstates
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Fri, 22 Nov 2019 13:22:37 -0800
+In-Reply-To: <20191009155847.GE10395@zn.tnic>
+References: <20190925151022.21688-1-yu-cheng.yu@intel.com>
+         <20190925151022.21688-2-yu-cheng.yu@intel.com>
+         <20191009155847.GE10395@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RO and RW of EC may have different EC protocol version. If EC transitions
-between RO and RW, but AP does not reboot (this is true for fingerprint
-microcontroller / cros_fp, but not true for main ec / cros_ec), the AP
-still uses the protocol version queried before transition, which can
-cause problems. In the case of fingerprint microcontroller, this causes
-AP to send the wrong version of EC_CMD_GET_NEXT_EVENT to RO in the
-interrupt handler, which in turn prevents RO to clear the interrupt
-line to AP, in an infinite loop.
+On Wed, 2019-10-09 at 08:58 -0700, Borislav Petkov wrote:
+> On Wed, Sep 25, 2019 at 08:10:17AM -0700, Yu-cheng Yu wrote:
+> > In response to earlier comments, fix small issues before introducing XSAVES
+> > supervisor states:
+> > - Add spaces around '*'.
+> > - Fix comments of xfeature_is_supervisor().
+> > - Replace ((u64)1 << 63) with XCOMP_BV_COMPACTED_FORMAT.
+> > 
+> > No functional changes from this patch.
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > Reviewed-by: Tony Luck <tony.luck@intel.com>
+> > ---
+> >  arch/x86/kernel/fpu/xstate.c | 15 ++++++---------
+> >  1 file changed, 6 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+> > index e5cb67d67c03..b793fc2156b9 100644
+> > --- a/arch/x86/kernel/fpu/xstate.c
+> > +++ b/arch/x86/kernel/fpu/xstate.c
+> > @@ -60,7 +60,7 @@ u64 xfeatures_mask __read_mostly;
+> > 
+> >  static unsigned int xstate_offsets[XFEATURE_MAX] = { [ 0 ... XFEATURE_MAX - 1] = -1};
+> >  static unsigned int xstate_sizes[XFEATURE_MAX]   = { [ 0 ... XFEATURE_MAX - 1] = -1};
+> > -static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask)*8];
+> > +static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask) * 8];
+> > 
+> >  /*
+> >   * The XSAVE area of kernel can be in standard or compacted format;
+> > @@ -110,12 +110,8 @@ EXPORT_SYMBOL_GPL(cpu_has_xfeatures);
+> >  static int xfeature_is_supervisor(int xfeature_nr)
+> >  {
+> >       /*
+> > -      * We currently do not support supervisor states, but if
+> > -      * we did, we could find out like this.
+> > -      *
+> > -      * SDM says: If state component 'i' is a user state component,
+> > -      * ECX[0] return 0; if state component i is a supervisor
+> > -      * state component, ECX[0] returns 1.
+> > +      * Extended State Enumeration Sub-leaves (EAX = 0DH, ECX = n, n > 1)
+> > +      * returns ECX[0] set to (1) for a supervisor state.
+> 
+> "... and cleared (0) for a user state."
+> 
+> I believe it is is clearer this way.
+> 
+> >        */
+> >       u32 eax, ebx, ecx, edx;
+> > 
+> 
+> Since you're touching this function: make it return bool as it is used
+> in boolean context only and have it return simply:
+> 
+>         return ecx & 1;
 
-Once an EC_HOST_EVENT_INTERFACE_READY is received, we know that there
-might have been a transition between RO and RW, so re-query the protocol.
+This implicitly converts a u32 to a bool.  By looking at it, I think it should
+be OK, but wonder if anything overlooked?  I would be happy to make this a
+separate patch.
 
-Signed-off-by: Yicheng Li <yichengli@chromium.org>
----
- drivers/platform/chrome/cros_ec.c           | 23 +++++++++++++++++++++
- include/linux/platform_data/cros_ec_proto.h |  5 +++++
- 2 files changed, 28 insertions(+)
-
-diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
-index 9b2d07422e17..a72514ac3ce7 100644
---- a/drivers/platform/chrome/cros_ec.c
-+++ b/drivers/platform/chrome/cros_ec.c
-@@ -104,6 +104,22 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
- 	return ret;
- }
- 
-+static int cros_ec_ready_event(struct notifier_block *nb,
-+	unsigned long queued_during_suspend, void *_notify)
-+{
-+	struct cros_ec_device *ec_dev = container_of(nb, struct cros_ec_device,
-+						     notifier_ready);
-+	u32 host_event = cros_ec_get_host_event(ec_dev);
-+
-+	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_INTERFACE_READY)) {
-+		mutex_lock(&ec_dev->lock);
-+		cros_ec_query_all(ec_dev);
-+		mutex_unlock(&ec_dev->lock);
-+		return NOTIFY_OK;
-+
-+	return NOTIFY_DONE;
-+}
-+
- /**
-  * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
-  * @ec_dev: Device to register.
-@@ -201,6 +217,13 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		dev_dbg(ec_dev->dev, "Error %d clearing sleep event to ec",
- 			err);
- 
-+	/* Register the notifier for EC_HOST_EVENT_INTERFACE_READY event. */
-+	ec_dev->notifier_ready.notifier_call = cros_ec_ready_event;
-+	err = blocking_notifier_chain_register(&ec_dev->event_notifier,
-+					       &ec_dev->notifier_ready);
-+	if (err)
-+		return err;
-+
- 	dev_info(dev, "Chrome EC device registered\n");
- 
- 	return 0;
-diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-index 0d4e4aaed37a..4b016d5dbf50 100644
---- a/include/linux/platform_data/cros_ec_proto.h
-+++ b/include/linux/platform_data/cros_ec_proto.h
-@@ -161,6 +161,11 @@ struct cros_ec_device {
- 	int event_size;
- 	u32 host_event_wake_mask;
- 	u32 last_resume_result;
-+	/*
-+	 * The notifier block to let the kernel re-query EC communication
-+	 * protocol when the EC sends EC_HOST_EVENT_INTERFACE_READY.
-+	 */
-+	struct notifier_block notifier_ready;
- 
- 	/* The platform devices used by the mfd driver */
- 	struct platform_device *ec;
--- 
-2.21.0
-
+Yu-cheng
