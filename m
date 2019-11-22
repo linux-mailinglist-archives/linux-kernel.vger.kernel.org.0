@@ -2,163 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD20106FCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:18:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91B92106F6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:15:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbfKVLSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:18:04 -0500
-Received: from mail-eopbgr60040.outbound.protection.outlook.com ([40.107.6.40]:54809
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729426AbfKVKsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:48:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RvX3AwAHgoQwJdftdhKoxG9p64yGUyp+WmSvsz+FM9t3a7/Pg9sfSCeKGCBrmwldIK0w7vRFUi/5SIWZ70oXTqdFKqIJqaHrkQxsKsKZPWoo3XVMQWIY7IIvQ9IDX/pK6oizwpjxrsGh65bfku2+XTfRmj2WpLPVJ5efCSZJcfqpEh3liiK8TFTuCdIXabvGu/GEDWpPDaydSMegnnuvGITkVPWr+D1+BxNex8AUjKduxmsjqCoeIYtYzf8BarRRyPX2URMZycKyw/2QQjdgyYImDeC/4qpPmBl9CEX0Zkl+7v9w9C7j8sgj/snZcTMYbjUsqxZNuv4zhWziet6NtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aFcaMaCiNx93r3/J5tg+mOqtpfn/9ha3QAxyPVxVuOQ=;
- b=TYWnAgvWE1FabD/1YNlk5+tQ5JZlNFuL8q9KVYwgqn+J5S13avB2hv1mHXet/dP2obxPF1gfLOAImBD7biF1HbLW566X95QL2N1BduHUyIqvWRgPFS5GWwCdz664zSojjDvepdqkWvKO7SCX8adThP/Rh1ykmt2SVAAli7FN3p5AmGhIkKwc7luSv0g7E+PUJNb5Uhv+G9JATpuFG/1IAcTYqA/1EotyVwXD0racKeGPW3cOhWhcZTsxP70sk5E6qcxgX5vhTIj4CuJt/V0IUkzYIrrMVk4zoeziO8WlujvrZgU1olrWRoeQssOM73XDVLyMUeOeflED0KMGh1nc6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aFcaMaCiNx93r3/J5tg+mOqtpfn/9ha3QAxyPVxVuOQ=;
- b=PhU/QG3A6AYWPZ6+4DAUSy/2l6TImk3320jZxcyA2a5E2psGfenAHaPY5p2B2QY7SrJxJp6Wcgm5W5wdJr8uKTJ3FR9vG6Cs0HX1z+NsbHytrtWIUk+g22AmzhsYqzb63K2w5yzLCqXTMEa3xPybYA8yVZQz/x/y+dB+lNSlnaQ=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB6961.eurprd04.prod.outlook.com (52.132.212.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.19; Fri, 22 Nov 2019 10:48:18 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2474.019; Fri, 22 Nov 2019
- 10:48:18 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Jacky Bai <ping.bai@nxp.com>
-CC:     Peng Fan <peng.fan@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2 08/11] clk: imx: Rename the imx_clk_pllv4 to imply it's
- clk_hw based
-Thread-Topic: [PATCH v2 08/11] clk: imx: Rename the imx_clk_pllv4 to imply
- it's clk_hw based
-Thread-Index: AQHVoSJZWozaeArIAU+WAPCOiKGqBw==
-Date:   Fri, 22 Nov 2019 10:48:17 +0000
-Message-ID: <1574419679-3813-9-git-send-email-abel.vesa@nxp.com>
-References: <1574419679-3813-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1574419679-3813-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM0PR0402CA0020.eurprd04.prod.outlook.com
- (2603:10a6:208:15::33) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-x-mailer: git-send-email 2.7.4
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 9dd29a45-3004-4027-02f1-08d76f397ba3
-x-ms-traffictypediagnostic: AM0PR04MB6961:|AM0PR04MB6961:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB69619595DE4034C921EECA74F6490@AM0PR04MB6961.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1247;
-x-forefront-prvs: 02296943FF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(39860400002)(396003)(346002)(189003)(199004)(186003)(44832011)(446003)(11346002)(2616005)(52116002)(76176011)(66446008)(64756008)(66556008)(66476007)(7736002)(478600001)(6636002)(36756003)(5660300002)(6506007)(26005)(2906002)(86362001)(14454004)(102836004)(386003)(305945005)(25786009)(66946007)(256004)(110136005)(8936002)(50226002)(6116002)(316002)(99286004)(54906003)(81166006)(81156014)(8676002)(6436002)(6512007)(4326008)(71190400001)(3846002)(71200400001)(66066001)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6961;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: gyw0GSAw3xS+eR53JAKNvZtkJLv80RiStM+BkqQ1FhdmpFFdK1/7wnuGP287hPTKSWJ+H9rCEnOpASqCA8VtflljntNmTdc70M4HI14SEqiHHf9b8upu3r+l9GLv4tka2d0PRmkSD0siJyWZr6uM0Xgho6a2Yf9o+8oKHOSy4z1v1/XlmvpTAObMvxavgpeL34wwhocgmsTkxPgOG0gNaq03/lbkykOHRvgwwukGJgcn9EjQqHHhQRwW9WlgYwDg/ZpkZRLgk0zWlh/wNCVm2MT01OV3ZLTg+Ai85Eml/nNzfAE9/WEquOL1tMYjKlCCMnXMJfkHPeqjn25a/ZeypQqaIRfHx/NKGvplZlPkmBTZaojb7DCIVzs4jR822S0Sty7vi4y+9Qery8R6oBIW8cI4XvtumOYTV7YJiERG3BNpvk4fWVhzEAdbOA8HexPS
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729605AbfKVKv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:51:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58470 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730111AbfKVKvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:51:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+LEvCZkUnHSn1ZAatYIRXWWTq0G8KGnsYQbP9mJBms4=; b=tmQkQ9J52n1dHJKLZorJDboDu
+        omRcgyQd4d/LXMNsFUgrHg+rkujOQV01/zVPCgA7k2yQMrq6Ks8LNVkmAEARLARytP4luV6lipzrr
+        Zb/rLvt1pYNj6KslApl/Af0WOrBNMwalSKZwzT0hcmJJ9hap1n8CXKTJ1m0qFQnZBAgH934B26xyG
+        teXguRPp/Rbnc2Op4xCTePsgmPRwYcORETAyIU5aeo+pHNds3lzbovx3eMigWXwO+q85FnvLXeOPe
+        vQUN4JWEn/h1DsNEYFe1zX9T3Rhx5DzxzgIm5CNdndjqie6dGrchca7ZeDjXM2Fp1P5bveKIhI0+M
+        5pO0u2a6A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iY6XP-0005jK-V3; Fri, 22 Nov 2019 10:51:45 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1701D3075DD;
+        Fri, 22 Nov 2019 11:50:30 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4A3A2202BC5A1; Fri, 22 Nov 2019 11:51:41 +0100 (CET)
+Date:   Fri, 22 Nov 2019 11:51:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
+ kernel parameter
+Message-ID: <20191122105141.GY4114@hirez.programming.kicks-ass.net>
+References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
+ <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
+ <20191121060444.GA55272@gmail.com>
+ <20191121130153.GS4097@hirez.programming.kicks-ass.net>
+ <20191121171214.GD12042@gmail.com>
+ <20191121173444.GA5581@agluck-desk2.amr.corp.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd29a45-3004-4027-02f1-08d76f397ba3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2019 10:48:17.6992
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XWn62rVvP7df+FzgkWZs5MWVp8s5TxITNW/NR1bYlLFCX4YtZfPSd9zs+b/wNPA0IdwtueJKKIppEdrNnflpgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6961
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121173444.GA5581@agluck-desk2.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Renaming the imx_clk_pllv4 register function to imx_clk_hw_pllv4 to be
-more obvious it is clk_hw based.
+On Thu, Nov 21, 2019 at 09:34:44AM -0800, Luck, Tony wrote:
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx7ulp.c | 4 ++--
- drivers/clk/imx/clk-pllv4.c   | 2 +-
- drivers/clk/imx/clk.h         | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> You'll notice that we are at version 10 ... lots of things have been tried
+> in previous versions. This new version is to get the core functionality
+> in, so we can build fancier features later.
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 64b79a8..afd2c2c 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -90,8 +90,8 @@ static void __init imx7ulp_clk_scg1_init(struct device_no=
-de *np)
- 	clks[IMX7ULP_CLK_SPLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("spll_pre_div=
-", "spll_pre_sel", base + 0x608,	8,	3,	CLK_SET_RATE_GATE);
-=20
- 	/*						name	 parent_name	 base */
--	clks[IMX7ULP_CLK_APLL]		=3D imx_clk_pllv4("apll",  "apll_pre_div", base +=
- 0x500);
--	clks[IMX7ULP_CLK_SPLL]		=3D imx_clk_pllv4("spll",  "spll_pre_div", base +=
- 0x600);
-+	clks[IMX7ULP_CLK_APLL]		=3D imx_clk_hw_pllv4("apll",  "apll_pre_div", bas=
-e + 0x500);
-+	clks[IMX7ULP_CLK_SPLL]		=3D imx_clk_hw_pllv4("spll",  "spll_pre_div", bas=
-e + 0x600);
-=20
- 	/* APLL PFDs */
- 	clks[IMX7ULP_CLK_APLL_PFD0]	=3D imx_clk_pfdv2("apll_pfd0", "apll", base +=
- 0x50c, 0);
-diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
-index 8155b12..f51a800 100644
---- a/drivers/clk/imx/clk-pllv4.c
-+++ b/drivers/clk/imx/clk-pllv4.c
-@@ -206,7 +206,7 @@ static const struct clk_ops clk_pllv4_ops =3D {
- 	.is_enabled	=3D clk_pllv4_is_enabled,
- };
-=20
--struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
-+struct clk_hw *imx_clk_hw_pllv4(const char *name, const char *parent_name,
- 			  void __iomem *base)
- {
- 	struct clk_pllv4 *pll;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index a7d86df..5ca4615 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -175,7 +175,7 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type typ=
-e, const char *name,
- 		.kdiv	=3D	(_k),			\
- 	}
-=20
--struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
-+struct clk_hw *imx_clk_hw_pllv4(const char *name, const char *parent_name,
- 			     void __iomem *base);
-=20
- struct clk_hw *clk_hw_register_gate2(struct device *dev, const char *name,
---=20
-2.7.4
+The cover letter actually mentions that as a non-goal. Seems like a
+conflicting message here.
+
+> Enabling by default at this point would result in a flurry of complaints
+> about applications being killed and kernels panicing. That would be
+> followed by:
+
+I thought we already found and fixed all the few kernel users that got
+it wrong?
+
+And applications? I've desktop'ed around a little with:
+
+  perf stat -e sq_misc.split_lock -a -I 1000
+
+running and that shows exactly, a grant total of, _ZERO_ split lock
+usage. Except when I run my explicit split lock proglet, then it goes
+through the roof.
+
+So I really don't buy that argument. Like I've been saying forever, sane
+architectures have never allowed unaligned atomics in the first place,
+this means that sane software won't have any.
+
+Furthermore, split_lock has been a performance issue on x86 for a long
+long time, which is another reason why x86-specific software will not
+have them.
+
+And if you really really worry, just do a mode that pr_warn()s about the
+userspace instead of SIGBUS.
+
+> #include <linus/all-caps-rant-about-backwards-compatability.h>
+>
+> and the patches being reverted.
+
+I don't buy that either, it would _maybe_ mean flipping the default. But
+that very much depends on how many users and what sort of 'quality'
+software they're running.
+
+I suspect we can get away with a no_split_lock_detect boot flag. We've
+had various such kernel flags in the past for new/dodgy features and
+we've lived through that just fine.
+
+Witness: no5lvl, noapic, noclflush noefi, nofxsr, etc..
+
+> This version can serve a very useful purpose. CI systems with h/w that
+> supports split lock can enable it and begin the process of finding
+> and fixing the remaining kernel issues. Especially helpful if they run
+> randconfig and fuzzers.
+
+A non-lethal default enabled variant would be even better for them :-)
+
+> We'd also find out which libraries and applications currently use
+> split locks.
+
+On my debian desktop, absolutely nothing I've used in the past hour or
+so. That includes both major browsers and some A/V stuff, as well as
+building a kernel and writing emails.
+
+> Any developer with concerns about their BIOS using split locks can also
+> enable using this patch and begin testing today.
+
+I don't worry about developers much; they can't fix their BIOS other
+than to return the box and try and get their money back :/
 
