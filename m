@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79006106F11
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 594441070A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:23:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730187AbfKVK4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:56:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
+        id S1728940AbfKVKkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:40:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730559AbfKVK4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:56:14 -0500
+        id S1728026AbfKVKko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:40:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC79220715;
-        Fri, 22 Nov 2019 10:56:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB3ED2072E;
+        Fri, 22 Nov 2019 10:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420174;
-        bh=gutRD8FjO+NOt2w15Y7GDagDA5jpzhXSAfDnjcZSmPg=;
+        s=default; t=1574419244;
+        bh=v6JF9lRbVOJnYh2zFvmFN0x4ASCwRevslzOjf42Hi90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XVHPeXtSh/NAVV5ktn2GIQrUdCmn4kFUNAboNxtBHQ2fN9i4CFMSCU3JhPGij6VWA
-         hvkkOD3r5DqfRcz+EXGTC1DJ0XI5KnJem+2Nw0Am8KVZwmyIg09UxHwx+DWWADjvQZ
-         nevqDgUEQhluQ6jUZrX8ok1YeUlLZ2orIkzJuzA4=
+        b=DbZvRkDo63RpjpRTkbWYmaJ6fb0SNI5suysDe/skwib537bym3uo7YAc+zkwpAPvP
+         mqo4f+Wb3pdjEIJy5YQnyhSoJ+E73eIez1o03H7/+r6YSnyUotz/NyK46lCCX4+o5g
+         DKEdlSz3TtizSVeNge3wGdcuF4W1xkR0ih1icJo8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 019/220] net: hns3: Fix for netdev not up problem when setting mtu
-Date:   Fri, 22 Nov 2019 11:26:24 +0100
-Message-Id: <20191122100913.907959746@linuxfoundation.org>
+Subject: [PATCH 4.9 046/222] ARM: dts: omap3-gta04: fix touchscreen tsc2007
+Date:   Fri, 22 Nov 2019 11:26:26 +0100
+Message-Id: <20191122100852.799929599@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
-References: <20191122100912.732983531@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: H. Nikolaus Schaller <hns@goldelico.com>
 
-[ Upstream commit 93d8daf460183871a965dae339839d9e35d44309 ]
+[ Upstream commit 7384a24248eda140a234d356b6c840701ee9f055 ]
 
-Currently hns3_nic_change_mtu will try to down the netdev before
-setting mtu, and it does not up the netdev when the setting fails,
-which causes netdev not up problem.
+we fix penirq polarity, add penirq pinmux and touchscreen
+properties.
 
-This patch fixes it by not returning when the setting fails.
-
-Fixes: a8e8b7ff3517 ("net: hns3: Add support to change MTU in HNS3 hardware")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/omap3-gta04.dtsi | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 0ccfa6a845353..a5e3d38f18230 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1447,13 +1447,11 @@ static int hns3_nic_change_mtu(struct net_device *netdev, int new_mtu)
- 	}
+diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+index e86f42086a29b..6e809b0ff5c9f 100644
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -274,6 +274,13 @@
+ 			OMAP3_CORE1_IOPAD(0x2134, PIN_INPUT_PULLUP | MUX_MODE4) /* gpio112 */
+ 		>;
+ 	};
++
++	penirq_pins: pinmux_penirq_pins {
++		pinctrl-single,pins = <
++			/* here we could enable to wakeup the cpu from suspend by a pen touch */
++			OMAP3_CORE1_IOPAD(0x2194, PIN_INPUT_PULLUP | MUX_MODE4) /* gpio160 */
++		>;
++	};
+ };
  
- 	ret = h->ae_algo->ops->set_mtu(h, new_mtu);
--	if (ret) {
-+	if (ret)
- 		netdev_err(netdev, "failed to change MTU in hardware %d\n",
- 			   ret);
--		return ret;
--	}
--
--	netdev->mtu = new_mtu;
-+	else
-+		netdev->mtu = new_mtu;
+ &omap3_pmx_core2 {
+@@ -411,10 +418,19 @@
+ 	tsc2007@48 {
+ 		compatible = "ti,tsc2007";
+ 		reg = <0x48>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&penirq_pins>;
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <0 IRQ_TYPE_EDGE_FALLING>; /* GPIO_160 */
+-		gpios = <&gpio6 0 GPIO_ACTIVE_LOW>;
++		gpios = <&gpio6 0 GPIO_ACTIVE_LOW>;	/* GPIO_160 */
+ 		ti,x-plate-ohms = <600>;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <640>;
++		touchscreen-max-pressure = <1000>;
++		touchscreen-fuzz-x = <3>;
++		touchscreen-fuzz-y = <8>;
++		touchscreen-fuzz-pressure = <10>;
++		touchscreen-inverted-y;
+ 	};
  
- 	/* if the netdev was running earlier, bring it up again */
- 	if (if_running && hns3_nic_net_open(netdev))
+ 	/* RFID EEPROM */
 -- 
 2.20.1
 
