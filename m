@@ -2,156 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80B7E106B3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32645106B58
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfKVKmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:42:40 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37869 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728727AbfKVKmh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:42:37 -0500
-Received: by mail-qt1-f193.google.com with SMTP id w47so3180222qtk.4;
-        Fri, 22 Nov 2019 02:42:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jDn7FS4SAgH0QhCylJqZk4OImBfIGahmhNJNYk8fboQ=;
-        b=W3xgqyeqzc1g9z9cGNgL/1zxvxktUS9d9JPTPlMBZww93GLOp5eBujm6EDWu4BzAAP
-         vGShsGNSes8Am4A8yrCqLsmLrgEdY66dPtktpk835tVCZfO77xAfu/4+tlv44C5NyjxO
-         fijv8NfTQSyl7gIpYAqNAF5RdULH53Y3Wko8jfVjNSFysMD5saKotamHvLN94pp5Dulq
-         mpauleZ1TnO2tj/atrJQmSY9m1d6bhFCAOLT/SEqpHWvhG2DYt6UM9jQJAzQEveZ3/5L
-         kXW0UZdwAgi66qKpNep70cwgPfvxI8nWHrtwLDJYdA/dkbXDi4St1wzGu/68ys+QByrD
-         OnzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jDn7FS4SAgH0QhCylJqZk4OImBfIGahmhNJNYk8fboQ=;
-        b=DTFlE81Ub5ucCAJjEDy6c8pDX3uRzK/MCneiQtvClV23/aFA94NkUXTHP7oY4EQ6V/
-         LEioJNSRjDT50pWUOHtvfdi8gUgU70qWuplUfBcvQcFdUJmojvL+ezPOwhC/yvE1d6m2
-         kMos2bBTs+yNkvU9LbJ7Ae7DB6Ti211g693+ukQDTU2M7AGT9+RrgtBN4rKFvA5Cm9iT
-         wNbrFrVJ8Jy0X+RuoCvJpo8tcu/hbhNNARUHnFzKz4svEzM+DJb7jTEGjeORQZL9YJIa
-         chz3LivAUEQXnv/HI6xzBvnwtC68hF//mQcay+ipNq10hIt6oJFq3cK24uAXVbajKebZ
-         9XwA==
-X-Gm-Message-State: APjAAAVFGNFcYwG0qJk61DQ1UpnDIN3d3YZNum+djYB+Kxl8uQSYbXih
-        AsdBanY60Haq6BFj/IHcybiXAuQeqMj/uQtycww=
-X-Google-Smtp-Source: APXvYqw30MASIwXblRUj1dC6Gt3Qk76pcbnxlOxwl1bC9SrAwzyZZdFoMraU/vhrgWhGTS9lZb1VMcHVAMMULSFHc+8=
-X-Received: by 2002:ac8:3f5d:: with SMTP id w29mr13600844qtk.3.1574419355678;
- Fri, 22 Nov 2019 02:42:35 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1574073572.git.baolin.wang7@gmail.com> <81d66ceaa2763cfc1e5ccb605bb3a4194b947f0d.1574073572.git.baolin.wang7@gmail.com>
- <CAK8P3a1bUt+HERWtGEKmhdD9ctX0GRQQbXHxtUnJ8KNu=v87aw@mail.gmail.com>
-In-Reply-To: <CAK8P3a1bUt+HERWtGEKmhdD9ctX0GRQQbXHxtUnJ8KNu=v87aw@mail.gmail.com>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Fri, 22 Nov 2019 18:42:22 +0800
-Message-ID: <CADBw62qW46KyEuj-YOw21sKxLB_uWxxWa_0-0JOXi-6Y48g0hw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] mmc: Add MMC host software queue support
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
+        id S1729246AbfKVKna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:43:30 -0500
+Received: from mga18.intel.com ([134.134.136.126]:47785 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729217AbfKVKnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:43:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 02:43:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
+   d="scan'208";a="216341366"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 22 Nov 2019 02:43:20 -0800
+Received: by lahna (sSMTP sendmail emulation); Fri, 22 Nov 2019 12:43:20 +0200
+Date:   Fri, 22 Nov 2019 12:43:19 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paolo Valente <paolo.valente@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v3 2/2] gpio: sch: Hook into ACPI SCI handler to catch
+ GPIO edge events
+Message-ID: <20191122104319.GC11621@lahna.fi.intel.com>
+References: <cover.1574277614.git.jan.kiszka@siemens.com>
+ <bf556de14a3d093072e50b6a6cf3c64bd62b1730.1574277614.git.jan.kiszka@siemens.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf556de14a3d093072e50b6a6cf3c64bd62b1730.1574277614.git.jan.kiszka@siemens.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Wed, Nov 20, 2019 at 08:20:14PM +0100, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> The ACPI description on the Quark platform does not provide the required
+> information to do establish generic handling. Therefore, we need to hook
+> from the driver directly into SCI handler of the ACPI subsystem in order
+> to catch and report GPIO-related events.
+> 
+> Validated on the Quark-based IOT2000 platform.
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 
-On Fri, Nov 22, 2019 at 6:32 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Nov 18, 2019 at 11:43 AM Baolin Wang <baolin.wang7@gmail.com> wrote:
-> >
-> > From: Baolin Wang <baolin.wang@linaro.org>
-> >
-> > Now the MMC read/write stack will always wait for previous request is
-> > completed by mmc_blk_rw_wait(), before sending a new request to hardware,
-> > or queue a work to complete request, that will bring context switching
-> > overhead, especially for high I/O per second rates, to affect the IO
-> > performance.
-> >
-> > Thus this patch introduces MMC software queue interface based on the
-> > hardware command queue engine's interfaces, which is similar with the
-> > hardware command queue engine's idea, that can remove the context
-> > switching. Moreover we set the default queue depth as 32 for software
-> > queue, which allows more requests to be prepared, merged and inserted
-> > into IO scheduler to improve performance, but we only allow 2 requests
-> > in flight, that is enough to let the irq handler always trigger the
-> > next request without a context switch, as well as avoiding a long latency.
-> >
-> > From the fio testing data in cover letter, we can see the software
-> > queue can improve some performance with 4K block size, increasing
-> > about 16% for random read, increasing about 90% for random write,
-> > though no obvious improvement for sequential read and write.
-> >
-> > Moreover we can expand the software queue interface to support MMC
-> > packed request or packed command in future.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
->
-> Overall, this looks like enough of a win that I think we should just
-> use the current version for the moment, while still working on all the
-> other improvements.
->
-> My biggest concern is the naming of "software queue", which is
-> a concept that runs against the idea of doing all the heavy lifting,
-> in particular the queueing in bfq.
->
-> Then again, it does not /actually/ do much queuing at all, beyond
-> preparing a single request so it can fire it off early. Even with the
-> packed command support added in, there is not really any queuing
-> beyond what it has to do anyway.
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Yes. But can not find any better name until now and 'software queue'
-was suggested by Adrian.
+Below one minor stylistic comment.
 
->
-> Using the infrastructure that was added for cqe seems like a good
-> compromise, as this already has a way to hand down multiple
-> requests to the hardware and is overall more modern than the
-> existing support.
->
-> I still think we should do all the other things I mentioned in my
-> earlier reply today, but they can be done as add-ons:
->
-> - remove all blocking calls from the queue_rq() function:
->   partition-change, retune, etc should become non-blocking
->   operations that return busy in the queue_rq function.
->
-> - get bfq to send down multiple requests all the way into
->   the device driver, so we don't have to actually queue them
->   here at all to do packed commands
->
-> - add packed command support
->
-> - submit cmds from hardirq context if this is advantageous,
->   and move everything else in the irq handler into irqthread
->   context in order to remove all other workqueue and softirq
->   processing from the request processing path.
->
-> If we can agree on this as the rough plan for the future,
-> feel free to add my
+> ---
+>  drivers/gpio/gpio-sch.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+> index 6a9c5500800c..75c95da145d8 100644
+> --- a/drivers/gpio/gpio-sch.c
+> +++ b/drivers/gpio/gpio-sch.c
+> @@ -155,6 +155,31 @@ static const struct gpio_chip sch_gpio_chip = {
+>  	.to_irq			= sch_gpio_to_irq,
+>  };
+>  
+> +static u32 sch_sci_handler(void *context)
+> +{
+> +	struct sch_gpio *sch = context;
+> +	unsigned long core_status, resume_status;
+> +	unsigned int resume_gpios, offset;
+> +
+> +	core_status = inl(sch->iobase + GTS);
+> +	resume_status = inl(sch->iobase + GTS + 0x20);
+> +
+> +	if (core_status == 0 && resume_status == 0)
 
-Yes, I agree with your plan. Thast's what we should do in future.
+You can also write this like
 
->
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+	if (!core_status &&& !resume_status)
 
-Thanks for your reviewing and good suggestion.
-
-Ulf,
-
-I am not sure if there is any chance to merge this patch set into
-V5.5, I've tested for a long time and did not find any resession.
-Thanks.
+> +		return ACPI_INTERRUPT_NOT_HANDLED;
+> +
+> +	for_each_set_bit(offset, &core_status, sch->resume_base)
+> +		generic_handle_irq(sch->irq_base + offset);
+> +
+> +	resume_gpios = sch->chip.ngpio - sch->resume_base;
+> +	for_each_set_bit(offset, &resume_status, resume_gpios)
+> +		generic_handle_irq(sch->irq_base + sch->resume_base + offset);
+> +
+> +	outl(core_status, sch->iobase + GTS);
+> +	outl(resume_status, sch->iobase + GTS + 0x20);
+> +
+> +	return ACPI_INTERRUPT_HANDLED;
+> +}
+> +
+>  static int sch_irq_type(struct irq_data *d, unsigned int type)
+>  {
+>  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> @@ -215,6 +240,7 @@ static int sch_gpio_probe(struct platform_device *pdev)
+>  	struct irq_chip_type *ct;
+>  	struct sch_gpio *sch;
+>  	struct resource *res;
+> +	acpi_status status;
+>  	int irq_base, ret;
+>  
+>  	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
+> @@ -303,6 +329,10 @@ static int sch_gpio_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	status = acpi_install_sci_handler(sch_sci_handler, sch);
+> +	if (ACPI_FAILURE(status))
+> +		return -EINVAL;
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.16.4
