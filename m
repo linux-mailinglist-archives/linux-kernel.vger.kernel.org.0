@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EECA106C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87334106B80
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbfKVKuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:50:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60052 "EHLO mail.kernel.org"
+        id S1729394AbfKVKo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:44:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728936AbfKVKuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:50:13 -0500
+        id S1727413AbfKVKox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:44:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1213620637;
-        Fri, 22 Nov 2019 10:50:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56928205C9;
+        Fri, 22 Nov 2019 10:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419812;
-        bh=W6Cv9nYKuyieexMWJNDnH/JK4Gkfrg+rFkLPx5ydw7A=;
+        s=default; t=1574419492;
+        bh=K4yGkZRbv35RcfeluxzhT6L6sAAB+YWzrmzYRIBSGGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uQpYgpxWBYbZnqpWBOXX+4B0Tu+7M/MmDBI3RoJVR0hhywsjDx2G5cQPhRxdeyDaS
-         cCSCgw/wrw080LCAiRUdjEPuClnpLCZsenthV9oCJ5Jul6CbN3kcK3KmmulJEwPoNj
-         p0+y9MqGO3ENOU4mw2jwAawBk3YxwjmI/Q2WOcD0=
+        b=GfNczhMHdUhKQDV0ZO4xIsqvVjBQPS223PJ6/kTswcHCO0QaPgDiQJH3mlkv/VDTX
+         a/IfMHL5Fu9QxBQthKTp7gqX9V66ViOJfz8uqKUjZC1zsPd5xDjrmOe2JeI0hRQgvf
+         LChvrk7ClFvJhnW5ZZv0pT/w2JByWprujeHMm/mU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 018/122] IB/hfi1: Ensure ucast_dlid access doesnt exceed bounds
+Subject: [PATCH 4.9 131/222] Bluetooth: L2CAP: Detect if remote is not able to use the whole MPS
 Date:   Fri, 22 Nov 2019 11:27:51 +0100
-Message-Id: <20191122100735.333707874@linuxfoundation.org>
+Message-Id: <20191122100912.426046447@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dennis Dalessandro <dennis.dalessandro@intel.com>
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
 
-[ Upstream commit 3144533bf667c8e53bb20656b78295960073e57b ]
+[ Upstream commit a5c3021bb62b970713550db3f7fd08aa70665d7e ]
 
-The dlid assignment made by looking into the u_ucast_dlid array does not
-do an explicit check for the size of the array. The code path to arrive at
-def_port, the index value is long and complicated so its best to just have
-an explicit check here.
+If the remote is not able to fully utilize the MPS choosen recalculate
+the credits based on the actual amount it is sending that way it can
+still send packets of MTU size without credits dropping to 0.
 
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/bluetooth/l2cap_core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.c b/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.c
-index a72278e9cd274..9c8ddaaa6fbbf 100644
---- a/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.c
-+++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_encap.c
-@@ -351,7 +351,8 @@ static uint32_t opa_vnic_get_dlid(struct opa_vnic_adapter *adapter,
- 			if (unlikely(!dlid))
- 				v_warn("Null dlid in MAC address\n");
- 		} else if (def_port != OPA_VNIC_INVALID_PORT) {
--			dlid = info->vesw.u_ucast_dlid[def_port];
-+			if (def_port < OPA_VESW_MAX_NUM_DEF_PORT)
-+				dlid = info->vesw.u_ucast_dlid[def_port];
- 		}
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index 48d23abfe7992..1306962a792af 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -6811,6 +6811,16 @@ static int l2cap_le_data_rcv(struct l2cap_chan *chan, struct sk_buff *skb)
+ 		chan->sdu_len = sdu_len;
+ 		chan->sdu_last_frag = skb;
+ 
++		/* Detect if remote is not able to use the selected MPS */
++		if (skb->len + L2CAP_SDULEN_SIZE < chan->mps) {
++			u16 mps_len = skb->len + L2CAP_SDULEN_SIZE;
++
++			/* Adjust the number of credits */
++			BT_DBG("chan->mps %u -> %u", chan->mps, mps_len);
++			chan->mps = mps_len;
++			l2cap_chan_le_send_credits(chan);
++		}
++
+ 		return 0;
  	}
  
 -- 
