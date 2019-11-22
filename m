@@ -2,80 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AEF8105EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 04:03:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42521105EE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 04:08:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfKVDDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 22:03:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34986 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726335AbfKVDDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 22:03:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 48413AE2C;
-        Fri, 22 Nov 2019 03:03:02 +0000 (UTC)
-Subject: Re: [PATCH] arm64: dts: realtek: Add Realtek rtd1619 and mjolnir
-To:     James Tai <james.tai@realtek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>
-References: <43B123F21A8CFE44A9641C099E4196FFCF91BEFA@RTITMBSVM04.realtek.com.tw>
- <25fdd8eb-f1a0-82ae-9c4b-22325b163b0e@suse.de>
- <43B123F21A8CFE44A9641C099E4196FFCF920024@RTITMBSVM04.realtek.com.tw>
- <6182b89f-cd7e-ce7c-56f7-e2f500321cde@suse.de>
- <993d5da60a87443995347ee2a4c74959@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <6d44e7f8-1ae5-ed3d-ac3c-0ee7903d660b@suse.de>
-Date:   Fri, 22 Nov 2019 04:03:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <993d5da60a87443995347ee2a4c74959@realtek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726686AbfKVDIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 22:08:22 -0500
+Received: from mga14.intel.com ([192.55.52.115]:53712 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbfKVDIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 22:08:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 19:08:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,228,1571727600"; 
+   d="scan'208";a="232540432"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 21 Nov 2019 19:08:19 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
+        Eric Auger <eric.auger@redhat.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 0/5] iommu/vt-d: Consolidate various cache flush ops
+Date:   Fri, 22 Nov 2019 11:04:44 +0800
+Message-Id: <20191122030449.28892-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Intel VT-d 3.0 introduces more caches and interfaces for software to
+flush when it runs in the scalable mode. Currently various cache flush
+helpers are scattered around. This consolidates them by putting them in
+the existing iommu_flush structure.
 
-Am 20.11.19 um 08:58 schrieb James Tai:
->> This conflicts with what I see in BSP irq mux code here:
->> https://github.com/BPI-SINOVOIP/BPI-M4-bsp/blob/master/linux-rtk/drivers/ir
->> qchip/irq-rtd16xx.h
->>
->> That does show UR0 as bit 2 for the iso irq mux, as for previous SoCs.
->> Is that code wrong, or does the same UART0 IP block have two alternative
->> interrupts for backwards compatibility? I therefore held back RTD1619 irq mux
->> patches from my irqchip v4 series [1].
->>
-> It is code wrong. The UR0 should remove from "irq-rtd16xx.h".
+/* struct iommu_flush - Intel IOMMU cache invalidation ops
+ *
+ * @cc_inv: invalidate context cache
+ * @iotlb_inv: Invalidate IOTLB and paging structure caches when software
+ *             has changed second-level tables.
+ * @p_iotlb_inv: Invalidate IOTLB and paging structure caches when software
+ *               has changed first-level tables.
+ * @pc_inv: invalidate pasid cache
+ * @dev_tlb_inv: invalidate cached mappings used by requests-without-PASID
+ *               from the Device-TLB on a endpoint device.
+ * @p_dev_tlb_inv: invalidate cached mappings used by requests-with-PASID
+ *                 from the Device-TLB on an endpoint device
+ */
+struct iommu_flush {
+        void (*cc_inv)(struct intel_iommu *iommu, u16 did,
+                       u16 sid, u8 fm, u64 type);
+        void (*iotlb_inv)(struct intel_iommu *iommu, u16 did, u64 addr,
+                          unsigned int size_order, u64 type);
+        void (*p_iotlb_inv)(struct intel_iommu *iommu, u16 did, u32 pasid,
+                            u64 addr, unsigned long npages, bool ih);
+        void (*pc_inv)(struct intel_iommu *iommu, u16 did, u32 pasid,
+                       u64 granu);
+        void (*dev_tlb_inv)(struct intel_iommu *iommu, u16 sid, u16 pfsid,
+                            u16 qdep, u64 addr, unsigned int mask);
+        void (*p_dev_tlb_inv)(struct intel_iommu *iommu, u16 sid, u16 pfsid,
+                              u32 pasid, u16 qdep, u64 addr,
+                              unsigned long npages);
+};
 
-Actually, I just tested that UR0 works! (rev A01) So we shouldn't remove
-it from the irqchip driver, given the mapping changes requested for v5.
+The name of each cache flush ops is defined according to the spec section 6.5
+so that people are easy to look up them in the spec.
 
-RTD1619 driver support and DT nodes pushed to my rtd1295-next branch.
+Best regards,
+Lu Baolu
 
->> The BSP DT does assign non-mux interrupts to the UART node like you did:
->> https://github.com/BPI-SINOVOIP/BPI-M4-bsp/blob/master/linux-rtk/arch/arm
->> 64/boot/dts/realtek/rtd16xx/rtd-16xx.dtsi
->> And I obviously trust that you tested your DT to produce serial output.
+Lu Baolu (5):
+  iommu/vt-d: Extend iommu_flush for scalable mode
+  iommu/vt-d: Consolidate pasid cache invalidation
+  iommu/vt-d: Consolidate device tlb invalidation
+  iommu/vt-d: Consolidate pasid-based tlb invalidation
+  iommu/vt-d: Consolidate pasid-based device tlb invalidation
 
-We should obviously leave the new GIC interrupts in the DT.
-
-Regards,
-Andreas
+ drivers/iommu/dmar.c        |  61 ---------
+ drivers/iommu/intel-iommu.c | 246 +++++++++++++++++++++++++++++-------
+ drivers/iommu/intel-pasid.c |  39 +-----
+ drivers/iommu/intel-svm.c   |  60 ++-------
+ include/linux/intel-iommu.h |  39 ++++--
+ 5 files changed, 244 insertions(+), 201 deletions(-)
 
 -- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+2.17.1
+
