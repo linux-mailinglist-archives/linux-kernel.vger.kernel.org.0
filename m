@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 387E91060B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:51:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9791060B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 06:51:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfKVFvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 00:51:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56132 "EHLO mail.kernel.org"
+        id S1728142AbfKVFv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 00:51:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbfKVFvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:51:12 -0500
+        id S1728069AbfKVFvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:51:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 134F42070E;
-        Fri, 22 Nov 2019 05:51:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 643A32070E;
+        Fri, 22 Nov 2019 05:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401871;
-        bh=SU3bXKKx/dkgHEj3sTW+zNMTS0vgQmlPDlzLKapDzcE=;
+        s=default; t=1574401876;
+        bh=NuGwt9UuVhd1Ho4x3f8+0NO0nzyik9SvmiHRiNlBNRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=diaJxDVtLqpyIucblmwEu0/+vDFy/OM8N8VrgtP05l5z+4f29FSq2XvhJvBcTLRPO
-         UXlpILTr6n+LYKXU5qqPfqqQrj49FePEdAgRpkp/5gbtQ+a92EsslIyVwR0rhDbKgX
-         P254A9C8Vx2lXcVMdqaF2lKmaDs8mMnnDYKvi/dM=
+        b=lPdLHHwFrNGY6eNkXvCKZsUDqKaNAAlV6tASZthXHv7Yx6jswwHoTVbmKOXU7ZehQ
+         9AN/lpFZ0RDahFneFyQOYboBqLyLeNPVIk61Y6sld9/kQodp4V9z6zRbAoagfaaFrv
+         ziTgCbTIaCI6yVYQfh7l1TA6TQfY431bCoDE54aQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 107/219] powerpc/xmon: fix dump_segments()
-Date:   Fri, 22 Nov 2019 00:47:19 -0500
-Message-Id: <20191122054911.1750-100-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stafford Horne <shorne@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, openrisc@lists.librecores.org
+Subject: [PATCH AUTOSEL 4.19 111/219] openrisc: Fix broken paths to arch/or32
+Date:   Fri, 22 Nov 2019 00:47:23 -0500
+Message-Id: <20191122054911.1750-104-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -43,33 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-[ Upstream commit 32c8c4c621897199e690760c2d57054f8b84b6e6 ]
+[ Upstream commit 57ce8ba0fd3a95bf29ed741df1c52bd591bf43ff ]
 
-mfsrin() takes segment num from bits 31-28 (IBM bits 0-3).
+OpenRISC was mainlined as "openrisc", not "or32".
+vmlinux.lds is generated from vmlinux.lds.S.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-[mpe: Clarify bit numbering]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/xmon/xmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/openrisc/kernel/entry.S | 2 +-
+ arch/openrisc/kernel/head.S  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index bb5db7bfd8539..f0fa22e7d36c7 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -3493,7 +3493,7 @@ void dump_segments(void)
+diff --git a/arch/openrisc/kernel/entry.S b/arch/openrisc/kernel/entry.S
+index 0c826ad6e994c..ee6159d2ed22e 100644
+--- a/arch/openrisc/kernel/entry.S
++++ b/arch/openrisc/kernel/entry.S
+@@ -240,7 +240,7 @@ handler:							;\
+  *	 occured. in fact they never do. if you need them use
+  *	 values saved on stack (for SPR_EPC, SPR_ESR) or content
+  *       of r4 (for SPR_EEAR). for details look at EXCEPTION_HANDLE()
+- *       in 'arch/or32/kernel/head.S'
++ *       in 'arch/openrisc/kernel/head.S'
+  */
  
- 	printf("sr0-15 =");
- 	for (i = 0; i < 16; ++i)
--		printf(" %x", mfsrin(i));
-+		printf(" %x", mfsrin(i << 28));
- 	printf("\n");
- }
- #endif
+ /* =====================================================[ exceptions] === */
+diff --git a/arch/openrisc/kernel/head.S b/arch/openrisc/kernel/head.S
+index 9fc6b60140f00..31ed257ff0618 100644
+--- a/arch/openrisc/kernel/head.S
++++ b/arch/openrisc/kernel/head.S
+@@ -1728,7 +1728,7 @@ _string_nl:
+ 
+ /*
+  * .data section should be page aligned
+- *	(look into arch/or32/kernel/vmlinux.lds)
++ *	(look into arch/openrisc/kernel/vmlinux.lds.S)
+  */
+ 	.section .data,"aw"
+ 	.align	8192
 -- 
 2.20.1
 
