@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B45106FA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F25D106D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729875AbfKVLQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:16:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
+        id S1731080AbfKVLAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:00:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbfKVKuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:50:16 -0500
+        id S1730440AbfKVLAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:00:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDDA0205C9;
-        Fri, 22 Nov 2019 10:50:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0CE92073B;
+        Fri, 22 Nov 2019 11:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419815;
-        bh=gZnYs58YiVe5TChW7bml8wRKh6KmwgwD+XgFFTEa1qk=;
+        s=default; t=1574420445;
+        bh=m9VhWDbXbHgBh8aFo56pVeSLUAJfO+QY+O/6sQJbDBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cERXZQQhBRWRcpJzPHw2ZTOGvYxQsWGR9MuAWDZCAaUYkWqID0OgfS2r2r4dHeM1E
-         K8NpLubHUNudyFc1BpGOAobQTWm5DiK3pDKKKL5iafEdRXXfSGqfN/s3fjNuzcsr5n
-         xZVBdLYcxeo8IjV3LzhWGtR4OrkhAw6IiEkDlorM=
+        b=VErxQdVBMubsjiIEmWqcnAVuPORKjr4GlqhgCCl2jWdZSSkIPh3W27Dv7uO5RoCH7
+         o4TbVYzIrrsbIichdo1sqLKcxRT+iGwE0FLFX4lCDOn7ZrEh8xnNX10fP2Bb5h/667
+         dZXMQbCdtnABpZUz/WevfQ9lN9S9zPdTI769Lqxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, SolidHal <hal@halemmerich.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 019/122] iommu/io-pgtable-arm: Fix race handling in split_blk_unmap()
-Date:   Fri, 22 Nov 2019 11:27:52 +0100
-Message-Id: <20191122100735.999354490@linuxfoundation.org>
+Subject: [PATCH 4.19 108/220] usb: dwc2: disable power_down on rockchip devices
+Date:   Fri, 22 Nov 2019 11:27:53 +0100
+Message-Id: <20191122100920.538922656@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: SolidHal <hal@halemmerich.com>
 
-[ Upstream commit 85c7a0f1ef624ef58173ef52ea77780257bdfe04 ]
+[ Upstream commit c216765d3a1defda5e7e2dabd878f99f0cd2ebf2 ]
 
-In removing the pagetable-wide lock, we gained the possibility of the
-vanishingly unlikely case where we have a race between two concurrent
-unmappers splitting the same block entry. The logic to handle this is
-fairly straightforward - whoever loses the race frees their partial
-next-level table and instead dereferences the winner's newly-installed
-entry in order to fall back to a regular unmap, which intentionally
-echoes the pre-existing case of recursively splitting a 1GB block down
-to 4KB pages by installing a full table of 2MB blocks first.
+ The bug would let the usb controller enter partial power down,
+ which was formally known as hibernate, upon boot if nothing was plugged
+ in to the port. Partial power down couldn't be exited properly, so any
+ usb devices plugged in after boot would not be usable.
 
-Unfortunately, the chump who implemented that logic failed to update the
-condition check for that fallback, meaning that if said race occurs at
-the last level (where the loser's unmap_idx is valid) then the unmap
-won't actually happen. Fix that to properly account for both the race
-and recursive cases.
+ Before the name change, params.hibernation was false by default, so
+ _dwc2_hcd_suspend() would skip entering hibernation. With the
+ rename, _dwc2_hcd_suspend() was changed to use  params.power_down
+ to decide whether or not to enter partial power down.
 
-Fixes: 2c3d273eabe8 ("iommu/io-pgtable-arm: Support lockless operation")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-[will: re-jig control flow to avoid duplicate cmpxchg test]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+ Since params.power_down is non-zero by default, it needs to be set
+ to 0 for rockchip devices to restore functionality.
+
+ This bug was reported in the linux-usb thread:
+ REGRESSION: usb: dwc2: USB device not seen after boot
+
+ The commit that caused this regression is:
+6d23ee9caa6790aea047f9aca7f3c03cb8d96eb6
+
+Signed-off-by: SolidHal <hal@halemmerich.com>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/io-pgtable-arm.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/usb/dwc2/params.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index e8018a308868e..17a9225283dd1 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -551,13 +551,12 @@ static int arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
- 			return 0;
- 
- 		tablep = iopte_deref(pte, data);
-+	} else if (unmap_idx >= 0) {
-+		io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
-+		return size;
- 	}
- 
--	if (unmap_idx < 0)
--		return __arm_lpae_unmap(data, iova, size, lvl, tablep);
--
--	io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
--	return size;
-+	return __arm_lpae_unmap(data, iova, size, lvl, tablep);
+diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+index dff2c6e8d797c..a93415f33bf36 100644
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -88,6 +88,7 @@ static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
+ 	p->host_perio_tx_fifo_size = 256;
+ 	p->ahbcfg = GAHBCFG_HBSTLEN_INCR16 <<
+ 		GAHBCFG_HBSTLEN_SHIFT;
++	p->power_down = 0;
  }
  
- static int __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+ static void dwc2_set_ltq_params(struct dwc2_hsotg *hsotg)
 -- 
 2.20.1
 
