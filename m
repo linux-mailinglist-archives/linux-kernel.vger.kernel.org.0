@@ -2,214 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 414DF105EC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30041105ECD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 03:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfKVCzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 21:55:23 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43999 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbfKVCzW (ORCPT
+        id S1726767AbfKVC5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 21:57:48 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36464 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfKVC5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 21:55:22 -0500
-Received: by mail-qk1-f195.google.com with SMTP id p14so5017220qkm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 18:55:22 -0800 (PST)
+        Thu, 21 Nov 2019 21:57:48 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k13so2649830pgh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 18:57:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Dtosei2WN9GMgSJa41yHggbCmmspG55kEXkqTZYgrxQ=;
-        b=XZMJrLP5pumaNiOkQSku9hZ/Ex7KQRPGWfh0IHF4XUW182EFj//9CscFh12cCbuxqz
-         cK7h43jax4RKPHaLtfEgBNH3q0V3X/bhlvV5XOzH1I5g2IbHK1S0wnfcrhs3shu44UqW
-         9M5+HjpYVoPU4RqpEvWq8lBEXxFnn7Hw1lL4mABF5+m+QpxHuGCWe+sKF0GqQ+XvNY1w
-         plrpIYgFTcBcXxOCQrXE1PbaHqw//lQEu3F0xlKte0M+dbgttyawCN2uf/+lo2AcNSVq
-         aumNw2ydMsLhv2diO//lcEYCXegLiFZO4rj3vhI+KtFeHCdRxJ/uCEW8lnWKy6Mp1Jux
-         aG+A==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=biLVQ1AkvF5aueMS3h63jwqjzMqooy/ltImr9VK7zXA=;
+        b=iihz00c2qO6qdKXF25QKRNnIzZ3qfhPH+FVj0sOPRn/AkAsMGEgMoJWHFhq1APm8e9
+         mlY2bdkSMK3bfFqemMBu4IZwF8378ceynXZuw1qdbLvs0GdMreYxkyLx136jmSrfEHtv
+         ML++5hzkuZpeOm77Z3Pbih3YgyLAWmPvtjyBFVdY9V7hSN4GAS7vWEEIB359GQn0G+NX
+         IcsFhT8F7QqIKqymepUFuLMx3f9xzFesX+BqevZn07g7z0Dh9KQ0d546sfvl+2mUaOZ2
+         YSUuItpMaVOTO5qIyt71P4r9ONIp87cRSFIP0gVAEMUYCvP7KEEhiuhVc1xwd37F8D53
+         22dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Dtosei2WN9GMgSJa41yHggbCmmspG55kEXkqTZYgrxQ=;
-        b=WaE8i6xK9edBOkboAUKBz73Co6CFOF8DwFyohT4twc/ze46Ic4sBo7i97pJuwC+hxZ
-         DE5HAHntMroh97oJB8nQaYTB8o3aRjMxdkOotTLbu34eM1+OXiBjcFT0ZPCI+qtKrCqT
-         +R3Ne99zmkSZjohNPoz0tTbOIb3ze3oPNCsFtdnZvUZMtKNxT2BGo9EHQTWOFl66Hu+1
-         yQnqudDufz34j69rdFpEg0FZRiF4agQm0usK96m9+wcnWy1QFj1sU6KfG9qcalDFVMt8
-         SwXOd7yk88X2umZBQtXLsBxMUyQdWoE7wK5qM70UF9LBjAS2K2t6e6HZ98vnhKuZBdy+
-         ifNg==
-X-Gm-Message-State: APjAAAXZjeGg4p1yR7K16BIyRLFFDg5fOAL73P40b6RkideGT4atl+Qq
-        YFznOCMbSxIC6jGma3WwVFQUDQ==
-X-Google-Smtp-Source: APXvYqzHHA+GsVokJj9Z/PfUI+0XpRUH38+kPJ+eB7MwYuzX5dpnbiPDjZalZbEpsSDZAsjSjQA5DA==
-X-Received: by 2002:a37:a18d:: with SMTP id k135mr11093412qke.342.1574391321495;
-        Thu, 21 Nov 2019 18:55:21 -0800 (PST)
-Received: from ovpn-126-0.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id n18sm2582804qtl.40.2019.11.21.18.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 18:55:20 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     jroedel@suse.de
-Cc:     joe@perches.com, baolu.lu@linux.intel.com, dwmw2@infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH v2] iommu/iova: silence warnings under memory pressure
-Date:   Thu, 21 Nov 2019 21:55:10 -0500
-Message-Id: <20191122025510.4319-1-cai@lca.pw>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=biLVQ1AkvF5aueMS3h63jwqjzMqooy/ltImr9VK7zXA=;
+        b=lUoZ6RUw0pKep3qvCIpuP9FMpSHJNKfwDHWuX7qp7vGGQ4wiUpxNA0wlvfjc6BzHOL
+         oLnOZGkKZRwcDLQtmIN0H0aIc7TG1U8Ld6InrLIsh9RHPQ7yFC8jsYwHwTGKALtTEpKS
+         /mRv+eoEdRipfJ3Kg711jg0cvOmoTZibKbGosLu+N4ODpD4TjE2DmitAAlgMSG1TqGMX
+         ek5yR1UIOnjojTHPEAx26U0ZEdiwYEZ1tsml6rEhioydAes5xdQFTNQgOsfjc2VLtSGO
+         5SoVZ1gas/SGU7xTKXqUK9nxv7ewVA3hj0TnXA3zcaE9F3tEs7ILHM1UDo0xTP0VGadH
+         72Fw==
+X-Gm-Message-State: APjAAAXqBvvxr9krxTS7e5ab9hzyt5zF/aA/hKvnnnmoCl9lJkwccIlK
+        zb2PnMzi/ZuLGq/UvRYZkEWxBA==
+X-Google-Smtp-Source: APXvYqzA6XSQho+2rXXXt8WxNZbNv/OVvaYZ+jXMHILfYgKzs5VVQA1D0cOnmMAjOg+Stjruiy5+Zg==
+X-Received: by 2002:a63:ed4a:: with SMTP id m10mr13154193pgk.255.1574391467192;
+        Thu, 21 Nov 2019 18:57:47 -0800 (PST)
+Received: from [100.111.14.2] (50.sub-174-194-197.myvzw.com. [174.194.197.50])
+        by smtp.gmail.com with ESMTPSA id a6sm877767pja.30.2019.11.21.18.57.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2019 18:57:46 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by kernel parameter
+Date:   Thu, 21 Nov 2019 18:57:44 -0800
+Message-Id: <863BD058-5DB8-4C87-B799-29CCB5376FE2@amacapital.net>
+References: <fee43477-337a-8de3-9788-e8c8d58d0116@intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+In-Reply-To: <fee43477-337a-8de3-9788-e8c8d58d0116@intel.com>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running heavy memory pressure workloads, this 5+ old system is
-throwing endless warnings below because disk IO is too slow to recover
-from swapping. Since the volume from alloc_iova_fast() could be large,
-once it calls printk(), it will trigger disk IO (writing to the log
-files) and pending softirqs which could cause an infinite loop and make
-no progress for days by the ongoimng memory reclaim. This is the counter
-part for Intel where the AMD part has already been merged. See the
-commit 3d708895325b ("iommu/amd: Silence warnings under memory
-pressure"). Since the allocation failure will be reported in
-intel_alloc_iova(), so just call printk_ratelimted() there and silence
-the one in alloc_iova_mem() to avoid the expensive warn_alloc().
 
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- slab_out_of_memory: 66 callbacks suppressed
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-   cache: iommu_iova, object size: 40, buffer size: 448, default order:
-0, min order: 0
-   node 0: slabs: 1822, objs: 16398, free: 0
-   node 1: slabs: 2051, objs: 18459, free: 31
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-   cache: iommu_iova, object size: 40, buffer size: 448, default order:
-0, min order: 0
-   node 0: slabs: 1822, objs: 16398, free: 0
-   node 1: slabs: 2051, objs: 18459, free: 31
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-   cache: iommu_iova, object size: 40, buffer size: 448, default order:
-0, min order: 0
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   node 0: slabs: 697, objs: 4182, free: 0
-   node 0: slabs: 697, objs: 4182, free: 0
-   node 0: slabs: 697, objs: 4182, free: 0
-   node 0: slabs: 697, objs: 4182, free: 0
-   node 1: slabs: 381, objs: 2286, free: 27
-   node 1: slabs: 381, objs: 2286, free: 27
-   node 1: slabs: 381, objs: 2286, free: 27
-   node 1: slabs: 381, objs: 2286, free: 27
-   node 0: slabs: 1822, objs: 16398, free: 0
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   node 1: slabs: 2051, objs: 18459, free: 31
-   node 0: slabs: 697, objs: 4182, free: 0
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-   node 1: slabs: 381, objs: 2286, free: 27
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   node 0: slabs: 697, objs: 4182, free: 0
-   node 1: slabs: 381, objs: 2286, free: 27
- hpsa 0000:03:00.0: DMAR: Allocating 1-page iova failed
- warn_alloc: 96 callbacks suppressed
- kworker/11:1H: page allocation failure: order:0,
-mode:0xa20(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0-1
- CPU: 11 PID: 1642 Comm: kworker/11:1H Tainted: G    B
- Hardware name: HP ProLiant XL420 Gen9/ProLiant XL420 Gen9, BIOS U19
-12/27/2015
- Workqueue: kblockd blk_mq_run_work_fn
- Call Trace:
-  dump_stack+0xa0/0xea
-  warn_alloc.cold.94+0x8a/0x12d
-  __alloc_pages_slowpath+0x1750/0x1870
-  __alloc_pages_nodemask+0x58a/0x710
-  alloc_pages_current+0x9c/0x110
-  alloc_slab_page+0xc9/0x760
-  allocate_slab+0x48f/0x5d0
-  new_slab+0x46/0x70
-  ___slab_alloc+0x4ab/0x7b0
-  __slab_alloc+0x43/0x70
-  kmem_cache_alloc+0x2dd/0x450
- SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-  alloc_iova+0x33/0x210
-   cache: skbuff_head_cache, object size: 208, buffer size: 640, default
-order: 0, min order: 0
-   node 0: slabs: 697, objs: 4182, free: 0
-  alloc_iova_fast+0x62/0x3d1
-   node 1: slabs: 381, objs: 2286, free: 27
-  intel_alloc_iova+0xce/0xe0
-  intel_map_sg+0xed/0x410
-  scsi_dma_map+0xd7/0x160
-  scsi_queue_rq+0xbf7/0x1310
-  blk_mq_dispatch_rq_list+0x4d9/0xbc0
-  blk_mq_sched_dispatch_requests+0x24a/0x300
-  __blk_mq_run_hw_queue+0x156/0x230
-  blk_mq_run_work_fn+0x3b/0x40
-  process_one_work+0x579/0xb90
-  worker_thread+0x63/0x5b0
-  kthread+0x1e6/0x210
-  ret_from_fork+0x3a/0x50
- Mem-Info:
- active_anon:2422723 inactive_anon:361971 isolated_anon:34403
-  active_file:2285 inactive_file:1838 isolated_file:0
-  unevictable:0 dirty:1 writeback:5 unstable:0
-  slab_reclaimable:13972 slab_unreclaimable:453879
-  mapped:2380 shmem:154 pagetables:6948 bounce:0
-  free:19133 free_pcp:7363 free_cma:0
+> On Nov 21, 2019, at 6:39 PM, Xiaoyao Li <xiaoyao.li@intel.com> wrote:
+>=20
+> =EF=BB=BFOn 11/22/2019 10:21 AM, Andy Lutomirski wrote:
+>>>> On Nov 21, 2019, at 5:52 PM, Sean Christopherson <sean.j.christopherson=
+@intel.com> wrote:
+>>>=20
+>>> =EF=BB=BFOn Thu, Nov 21, 2019 at 03:53:29PM -0800, Fenghua Yu wrote:
+>>>>> On Thu, Nov 21, 2019 at 03:18:46PM -0800, Andy Lutomirski wrote:
+>>>>>=20
+>>>>>> On Nov 21, 2019, at 2:29 PM, Luck, Tony <tony.luck@intel.com> wrote:
+>>>>>>=20
+>>>>>>> It would be really, really nice if we could pass this feature throug=
+h to a VM. Can we?
+>>>>>>=20
+>>>>>> It's hard because the MSR is core scoped rather than thread scoped.  S=
+o on an HT
+>>>>>> enabled system a pair of logical processors gets enabled/disabled tog=
+ether.
+>>>>>>=20
+>>>>>=20
+>>>>> Well that sucks.
+>>>>>=20
+>>>>> Could we pass it through if the host has no HT?  Debugging is *so* muc=
+h
+>>>>> easier in a VM.  And HT is a bit dubious these days anyway.
+>>>>=20
+>>>> I think it's doable to pass it through to KVM. The difficulty is to dis=
+able
+>>>> split lock detection in KVM because that will disable split lock on the=
+ whole
+>>>> core including threads for the host. Without disabling split lock in KV=
+M,
+>>>> it's doable to debug split lock in KVM.
+>>>>=20
+>>>> Sean and Xiaoyao are working on split lock for KVM (in separate patch s=
+et).
+>>>> They may have insight on how to do this.
+>>>=20
+>>> Yes, with SMT off KVM could allow the guest to enable split lock #AC, bu=
+t
+>>> for the initial implementation we'd want to allow it if and only if spli=
+t
+>>> lock #AC is disabled in the host kernel.  Otherwise we have to pull in t=
+he
+>>> logic to control whether or not a guest can disable split lock #AC, what=
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
+>>> to do if a split lock #AC happens when it's enabled by the host but
+>>> disabled by the guest, etc...
+>> What=E2=80=99s the actual issue?  There=E2=80=99s a window around entry a=
+nd exit when a split lock in the host might not give #AC, but as long as no u=
+ser code is run, this doesn=E2=80=99t seem like a big problem.
+> The problem is that guest can trigger split locked memory access just by d=
+isabling split lock #AC even when host has it enabled. In this situation, th=
+ere is bus lock held on the hardware without #AC triggered, which is conflic=
+t with the purpose that host enables split lock #AC
 
-v2: use dev_err_ratelimited() and improve the commit messages.
-
- drivers/iommu/intel-iommu.c | 3 ++-
- drivers/iommu/iova.c        | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 6db6d969e31c..c01a7bc99385 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3401,7 +3401,8 @@ static unsigned long intel_alloc_iova(struct device *dev,
- 	iova_pfn = alloc_iova_fast(&domain->iovad, nrpages,
- 				   IOVA_PFN(dma_mask), true);
- 	if (unlikely(!iova_pfn)) {
--		dev_err(dev, "Allocating %ld-page iova failed", nrpages);
-+		dev_err_ratelimited(dev, "Allocating %ld-page iova failed",
-+				    nrpages);
- 		return 0;
- 	}
- 
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 41c605b0058f..aa1a56aaa5ee 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -233,7 +233,7 @@ static DEFINE_MUTEX(iova_cache_mutex);
- 
- struct iova *alloc_iova_mem(void)
- {
--	return kmem_cache_alloc(iova_cache, GFP_ATOMIC);
-+	return kmem_cache_alloc(iova_cache, GFP_ATOMIC | __GFP_NOWARN);
- }
- EXPORT_SYMBOL(alloc_iova_mem);
- 
--- 
-2.21.0 (Apple Git-122.2)
-
+Fair enough. You need some way to get this enabled in guests eventually, tho=
+ugh.=
