@@ -2,270 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36AA3107109
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:26:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE40106F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbfKVKgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:36:47 -0500
-Received: from mga05.intel.com ([192.55.52.43]:3822 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728420AbfKVKgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:36:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 02:36:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
-   d="scan'208";a="216340610"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 22 Nov 2019 02:36:38 -0800
-Received: by lahna (sSMTP sendmail emulation); Fri, 22 Nov 2019 12:36:37 +0200
-Date:   Fri, 22 Nov 2019 12:36:37 +0200
-From:   Mika Westerberg <mika.westerberg@intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Karol Herbst <kherbst@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Dave Airlie <airlied@gmail.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>
-Subject: Re: [PATCH v4] pci: prevent putting nvidia GPUs into lower device
- states on certain intel bridges
-Message-ID: <20191122103637.GA11621@lahna.fi.intel.com>
-References: <CAJZ5v0hkT-fHFOQKzp2qYPyR+NUa4c-G-uGLPZuQxqsG454PiQ@mail.gmail.com>
- <CACO55ttTPi2XpRRM_NYJU5c5=OvG0=-YngFy1BiR8WpHkavwXw@mail.gmail.com>
- <CAJZ5v0h=7zu3A+ojgUSmwTH0KeXmYP5OKDL__rwkkWaWqcJcWQ@mail.gmail.com>
- <20191121112821.GU11621@lahna.fi.intel.com>
- <CAJZ5v0hQhj5Wf+piU11abC4pF26yM=XHGHAcDv8Jsgdx04aN-w@mail.gmail.com>
- <20191121114610.GW11621@lahna.fi.intel.com>
- <20191121125236.GX11621@lahna.fi.intel.com>
- <CAJZ5v0iMwhudB7O0hR-6KfRfa+_iGOY=t0Zzeh6+9OiTzeYJfA@mail.gmail.com>
- <20191121194942.GY11621@lahna.fi.intel.com>
- <CAJZ5v0gyna0b135uxBVfNXgB9v-U9-93EYe0uzsr2BukJ9OtuA@mail.gmail.com>
+        id S1730481AbfKVKzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:55:33 -0500
+Received: from mx20.baidu.com ([111.202.115.85]:39054 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730453AbfKVKza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:55:30 -0500
+X-Greylist: delayed 968 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Nov 2019 05:55:27 EST
+Received: from BC-Mail-Ex14.internal.baidu.com (unknown [172.31.51.54])
+        by Forcepoint Email with ESMTPS id 5F2AC10F919DB;
+        Fri, 22 Nov 2019 18:39:14 +0800 (CST)
+Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
+ BC-Mail-Ex14.internal.baidu.com (172.31.51.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1531.3; Fri, 22 Nov 2019 18:39:15 +0800
+Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
+ BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
+ 15.01.1713.004; Fri, 22 Nov 2019 18:39:15 +0800
+From:   "Li,Rongqing" <lirongqing@baidu.com>
+To:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Kan.liang@intel.com" <Kan.liang@intel.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXVt2Ml0gd2F0Y2hkb2cvaGFyZGxvY2t1cDogcmVhc3Np?=
+ =?gb2312?Q?gn_last=5Ftimestamp_when_enable_nmi_event?=
+Thread-Topic: [PATCH][v2] watchdog/hardlockup: reassign last_timestamp when
+ enable nmi event
+Thread-Index: AQHVhIbsJWHFXEYJak262w7TdcNcAad/qiDwgBeO69A=
+Date:   Fri, 22 Nov 2019 10:39:15 +0000
+Message-ID: <bfa8ac7ce4794fca99bebcb753648de7@baidu.com>
+References: <1571121247-19392-1-git-send-email-lirongqing@baidu.com>
+ <2142496f954e4f688056c8cc347369a8@baidu.com>
+In-Reply-To: <2142496f954e4f688056c8cc347369a8@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.198.14]
+x-baidu-bdmsfe-datecheck: 1_BC-Mail-Ex14_2019-11-22 18:39:15:620
+x-baidu-bdmsfe-viruscheck: BC-Mail-Ex14_GRAY_Inside_WithoutAtta_2019-11-22
+ 18:39:15:604
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gyna0b135uxBVfNXgB9v-U9-93EYe0uzsr2BukJ9OtuA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:39:23PM +0100, Rafael J. Wysocki wrote:
-> On Thu, Nov 21, 2019 at 8:49 PM Mika Westerberg
-> <mika.westerberg@intel.com> wrote:
-> >
-> > On Thu, Nov 21, 2019 at 04:43:24PM +0100, Rafael J. Wysocki wrote:
-> > > On Thu, Nov 21, 2019 at 1:52 PM Mika Westerberg
-> > > <mika.westerberg@intel.com> wrote:
-> > > >
-> > > > On Thu, Nov 21, 2019 at 01:46:14PM +0200, Mika Westerberg wrote:
-> > > > > On Thu, Nov 21, 2019 at 12:34:22PM +0100, Rafael J. Wysocki wrote:
-> > > > > > On Thu, Nov 21, 2019 at 12:28 PM Mika Westerberg
-> > > > > > <mika.westerberg@intel.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, Nov 20, 2019 at 11:29:33PM +0100, Rafael J. Wysocki wrote:
-> > > > > > > > > last week or so I found systems where the GPU was under the "PCI
-> > > > > > > > > Express Root Port" (name from lspci) and on those systems all of that
-> > > > > > > > > seems to work. So I am wondering if it's indeed just the 0x1901 one,
-> > > > > > > > > which also explains Mikas case that Thunderbolt stuff works as devices
-> > > > > > > > > never get populated under this particular bridge controller, but under
-> > > > > > > > > those "Root Port"s
-> > > > > > > >
-> > > > > > > > It always is a PCIe port, but its location within the SoC may matter.
-> > > > > > >
-> > > > > > > Exactly. Intel hardware has PCIe ports on CPU side (these are called
-> > > > > > > PEG, PCI Express Graphics, ports), and the PCH side. I think the IP is
-> > > > > > > still the same.
-> > > > > > >
-> > > > > > > > Also some custom AML-based power management is involved and that may
-> > > > > > > > be making specific assumptions on the configuration of the SoC and the
-> > > > > > > > GPU at the time of its invocation which unfortunately are not known to
-> > > > > > > > us.
-> > > > > > > >
-> > > > > > > > However, it looks like the AML invoked to power down the GPU from
-> > > > > > > > acpi_pci_set_power_state() gets confused if it is not in PCI D0 at
-> > > > > > > > that point, so it looks like that AML tries to access device memory on
-> > > > > > > > the GPU (beyond the PCI config space) or similar which is not
-> > > > > > > > accessible in PCI power states below D0.
-> > > > > > >
-> > > > > > > Or the PCI config space of the GPU when the parent root port is in D3hot
-> > > > > > > (as it is the case here). Also then the GPU config space is not
-> > > > > > > accessible.
-> > > > > >
-> > > > > > Why would the parent port be in D3hot at that point?  Wouldn't that be
-> > > > > > a suspend ordering violation?
-> > > > >
-> > > > > No. We put the GPU into D3hot first,
-> > >
-> > > OK
-> > >
-> > > Does this involve any AML, like a _PS3 under the GPU object?
-> >
-> > I don't see _PS3 (nor _PS0) for that object. If I read it right the GPU
-> > itself is not described in ACPI tables at all.
-> 
-> OK
-> 
-> > > > > then the root port and then turn
-> > > > > off the power resource (which is attached to the root port) resulting
-> > > > > the topology entering D3cold.
-> > > >
-> > > > I don't see that happening in the AML though.
-> > >
-> > > Which AML do you mean, specifically?  The _OFF method for the root
-> > > port's _PR3 power resource or something else?
-> >
-> > The root port's _OFF method for the power resource returned by its _PR3.
-> 
-> OK, so without the $subject patch we (1) program the downstream
-> component (GPU) into D3hot, then we (2) program the port holding it
-> into D3hot and then we (3) let the AML (_OFF for the power resource
-> listed by _PR3 under the port object) run.
-> 
-> Something strange happens at this point (and I guess that _OFF doesn't
-> even reach the point where it removes power from the port which is why
-> we see a lock-up).
-
-It does not necessary lead to lock-up. Here is dmesg from Karol's
-system:
-
-  https://gist.githubusercontent.com/karolherbst/40eb091c7b7b33ef993525de660f1a3b/raw/2380e31f566e93e5ba7c87ef545420965d4c492c/gistfile1.txt
-
-what seems to happen is that the GPU never "comes back" from D3cold so
-the driver starts breaking apart as the hardware is gone now.
-
-> We know that skipping (1) makes things work and we kind of suspect
-> that skipping (3) would make things work either, but what about doing
-> (1) and (3) without (2)?
-
-You mean in this particular case or in general? Because if the port has
-_PSx methods we need to put it into D3hot AFAIK.
-
-> > > > Basically the difference is that when Windows 7 or Linux (the _REV==5
-> > > > check) then we directly do link disable whereas in Windows 8+ we invoke
-> > > > LKDS() method that puts the link into L2/L3. None of the fields they
-> > > > access seem to touch the GPU itself.
-> > >
-> > > So that may be where the problem is.
-> > >
-> > > Putting the downstream component into PCI D[1-3] is expected to put
-> > > the link into L1, so I'm not sure how that plays with the later
-> > > attempt to put it into L2/L3 Ready.
-> >
-> > That should be fine. What I've seen the link goes into L1 when
-> > downstream component is put to D-state (not D0) and then it is put back
-> > to L0 when L2/3 ready is propagated. Eventually it goes into L2 or L3.
-> 
-> Well, that's the expected behavior, but the observed behavior isn't as
-> expected. :-)
-
-Right :)
-
-> > > Also, L2/L3 Ready is expected to be transient, so finally power should
-> > > be removed somehow.
-> >
-> > There is GPIO for both power and PERST, I think the line here:
-> >
-> >   \_SB.SGOV (0x01010004, Zero)
-> >
-> > is the one that removes power.
-> 
-> OK
-> 
-> > > > LKDS() for the first PEG port looks like this:
-> > > >
-> > > >    P0L2 = One
-> > > >    Sleep (0x10)
-> > > >    Local0 = Zero
-> > > >    While (P0L2)
-> > > >    {
-> > > >         If ((Local0 > 0x04))
-> > > >         {
-> > > >             Break
-> > > >         }
-> > > >
-> > > >         Sleep (0x10)
-> > > >         Local0++
-> > > >    }
-> > > >
-> > > > One thing that comes to mind is that the loop can end even if P0L2 is
-> > > > not cleared as it does only 5 iterations with 16 ms sleep between. Maybe
-> > > > Sleep() is implemented differently in Windows? I mean Linux may be
-> > > > "faster" here and return prematurely and if we leave the port into D0
-> > > > this does not happen, or something. I'm just throwing out ideas :)
-> > >
-> > > But this actually works for the downstream component in D0, doesn't it?
-> >
-> > It does and that leaves the link in L0 so it could be that then the
-> > above AML works better or something.
-> 
-> That would be my guess.
-> 
-> > That reminds me, ASPM may have something to do with this as well.
-> 
-> Not really if D-states are involved.
-> 
-> > > Also, if the downstream component is in D0, the port actually should
-> > > stay in D0 too, so what would happen with the $subject patch applied?
-> >
-> > Parent port cannot be lower D-state than the child so I agree it should
-> > stay in D0 as well. However, it seems that what happens is that the
-> > issue goes away :)
-> 
-> Well, at least this is kind of out of the spec.
-> 
-> Note that pci_pm_suspend_noirq() won't let the port go into D3 if the
-> downstream device is in D0, so the $subject patch will not work as
-> expected in the suspend-to-idle case.
-> 
-> Also we really should make up our minds on whether or not to force
-> PCIe ports to stay in D0 when downstream devices are in D0 and be
-> consequent about that.  Right now we do one thing during system-wide
-> suspend and the other one in PM-runtime, which is confusing.
-> 
-> The current design is mostly based on the PCI PM Spec 1.2, so it would
-> be consequent to follow system-wide suspend in PM-runtime and avoid
-> putting PCIe ports holding devices in D0 into any low-power states.
-> but that would make the approach in the $subject patch ineffective.
-> 
-> Moreover, the fact that there are separate branches for "Windows 7"
-> and "Windows 8+" kind of suggest a change in the expected behavior
-> between Windows 7 and Windows 8, from the AML perspective.  I would
-> guess that Windows 7 followed PCI PM 1.2 and Windows 8 (and later)
-> does something else.
-
-My understanding (which may not be correct) is that up to Windows 7 it
-never put the devices into D3cold runtime. Only when the system entered
-Sx states it evaluated the _OFF methods.
-
-Starting from Windows 8 it started doing this runtime so devices can
-enter D3cold even when system is in S0.
-
-> Now, the structure of the "Windows 8+" branch
-> described by you suggests that, at least in the cases when it is going
-> to remove power from the port eventually, it goes straight for the
-> link preparation (the L2/L3 Ready transition) and power removal
-> without bothering to program the downstream device and port into D3hot
-> (because that's kind of redundant).
-> 
-> That hypothetical "Windows 8+" approach may really work universally,
-> because it doesn't seem to break any rules (going straight from D0 to
-> D3cold is not disallowed and doing that for both a port and a
-> downstream device at the same time is kind of OK either, as long as
-> the link is ready for that).
-
-I guess it depends on how you interpret the specs ;-) From PCIe 5.0 sec
-5.8 we can see the supported PM state transitions and it shows that you
-get to D3cold through D3hot. Of course the device goes into D3cold if
-you simply remove its power so I agree with you as well. However, if
-there is _PS3 method we can't skip the D3hot phase.
+UGluZw0KDQpUaGFua3MNCi1Sb25nUWluZw0KDQo+IC0tLS0t08q8/tStvP4tLS0tLQ0KPiC3orz+
+yMs6IExpLFJvbmdxaW5nDQo+ILeiy83KsbzkOiAyMDE5xOoxMdTCN8jVIDE4OjU0DQo+IMrVvP7I
+yzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPjsgYWtwbUBsaW51eC1mb3VuZGF0
+aW9uLm9yZzsNCj4gc2VyZ2V5LnNlbm96aGF0c2t5LndvcmtAZ21haWwuY29tOyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOw0KPiB0Z2x4QGxpbnV0cm9uaXguZGU7IEthbi5saWFuZ0BpbnRl
+bC5jb20NCj4g1vfM4jogtPC4tDogW1BBVENIXVt2Ml0gd2F0Y2hkb2cvaGFyZGxvY2t1cDogcmVh
+c3NpZ24gbGFzdF90aW1lc3RhbXAgd2hlbg0KPiBlbmFibGUgbm1pIGV2ZW50DQo+IA0KPiBQaW5n
+DQo+IA0KPiBUaGFua3MNCj4gDQo+IC1MaQ0KPiANCj4gPiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4g
+PiC3orz+yMs6IGxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBbbWFpbHRv
+OmxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmddILT6se0gTGkgUm9uZ1FpbmcNCj4g
+PiC3osvNyrG85DogMjAxOcTqMTDUwjE1yNUgMTQ6MzQNCj4gPiDK1bz+yMs6IGFrcG1AbGludXgt
+Zm91bmRhdGlvbi5vcmc7IHNlcmdleS5zZW5vemhhdHNreS53b3JrQGdtYWlsLmNvbTsNCj4gPiBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyB0Z2x4QGxpbnV0cm9uaXguZGU7IEthbi5saWFu
+Z0BpbnRlbC5jb20NCj4gPiDW98ziOiBbUEFUQ0hdW3YyXSB3YXRjaGRvZy9oYXJkbG9ja3VwOiBy
+ZWFzc2lnbiBsYXN0X3RpbWVzdGFtcCB3aGVuDQo+ID4gZW5hYmxlIG5taSBldmVudA0KPiA+DQo+
+ID4gbGFzdF90aW1lc3RhbXAgaXMgbm90IGluaXRpYWxpemVkIGFuZCBpcyB6ZXJvIGFmdGVyIGJv
+b3QsIG9yIHN0b3AgdG8NCj4gPiBmb3J3YXJkIHdoZW4gbm1pIHdhdGNoZG9nIGlzIGRpc2FibGVk
+OyBhbmQgZmFsc2UgcG9zaXRpdmVzIHN0aWxsIGlzDQo+ID4gcG9zc2libGUgd2hlbiByZXN0YXJ0
+IE5NSSB0aW1lciBhZnRlciBzdG9wcGluZyAxMjAgc2Vjb25kcw0KPiA+DQo+ID4gc28gcmVhc3Np
+Z24gbGFzdF90aW1lc3RhbXAgYWx3YXlzIHdoZW4gZW5hYmxlIG5taSBldmVudA0KPiA+DQo+ID4g
+Rml4ZXM6IDdlZGFlYjY4NDFkZiAoImtlcm5lbC93YXRjaGRvZzogUHJldmVudCBmYWxzZSBwb3Np
+dGl2ZXMgd2l0aA0KPiA+IHR1cmJvDQo+ID4gbW9kZXMiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IExp
+IFJvbmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBaaGFu
+ZyBZdSA8emhhbmd5dTMxQGJhaWR1LmNvbT4NCj4gPiAtLS0NCj4gPg0KPiA+IHYxLS0+djI6IG1h
+a2UgaXQgYmUgYWJsZSB0byBiZSBjb21waWxlZCBvbiBubw0KPiA+IHYxLS0+Q09ORklHX0hBUkRM
+T0NLVVBfQ0hFQ0tfVElNRVNUQU1QIHBsYXRmb3JtDQo+ID4NCj4gPiBrZXJuZWwvd2F0Y2hkb2df
+aGxkLmMgfCAxOCArKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE3IGlu
+c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwv
+d2F0Y2hkb2dfaGxkLmMgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMgaW5kZXgNCj4gPiAyNDdiZjBi
+MTU4MmMuLmYxNGQxODI4MDM4NyAxMDA2NDQNCj4gPiAtLS0gYS9rZXJuZWwvd2F0Y2hkb2dfaGxk
+LmMNCj4gPiArKysgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMNCj4gPiBAQCAtOTEsMTEgKzkxLDI0
+IEBAIHN0YXRpYyBib29sIHdhdGNoZG9nX2NoZWNrX3RpbWVzdGFtcCh2b2lkKQ0KPiA+ICAJX190
+aGlzX2NwdV93cml0ZShsYXN0X3RpbWVzdGFtcCwgbm93KTsNCj4gPiAgCXJldHVybiB0cnVlOw0K
+PiA+ICB9DQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCB3YXRjaGRvZ190b3VjaF90aW1lc3RhbXAo
+aW50IGNwdSkgew0KPiA+ICsNCj4gPiArCWt0aW1lX3Qgbm93ID0ga3RpbWVfZ2V0X21vbm9fZmFz
+dF9ucygpOw0KPiA+ICsNCj4gPiArCXBlcl9jcHUobGFzdF90aW1lc3RhbXAsIGNwdSkgPSBub3c7
+DQo+ID4gK30NCj4gPiAgI2Vsc2UNCj4gPiAgc3RhdGljIGlubGluZSBib29sIHdhdGNoZG9nX2No
+ZWNrX3RpbWVzdGFtcCh2b2lkKSAgew0KPiA+ICAJcmV0dXJuIHRydWU7DQo+ID4gIH0NCj4gPiAr
+DQo+ID4gK3N0YXRpYyB2b2lkIHdhdGNoZG9nX3RvdWNoX3RpbWVzdGFtcChpbnQgY3B1KSB7DQo+
+ID4gKw0KPiA+ICt9DQo+ID4gICNlbmRpZg0KPiA+DQo+ID4gIHN0YXRpYyBzdHJ1Y3QgcGVyZl9l
+dmVudF9hdHRyIHdkX2h3X2F0dHIgPSB7IEBAIC0xOTYsNiArMjA5LDcgQEAgdm9pZA0KPiA+IGhh
+cmRsb2NrdXBfZGV0ZWN0b3JfcGVyZl9lbmFibGUodm9pZCkNCj4gPiAgCWlmICghYXRvbWljX2Zl
+dGNoX2luYygmd2F0Y2hkb2dfY3B1cykpDQo+ID4gIAkJcHJfaW5mbygiRW5hYmxlZC4gUGVybWFu
+ZW50bHkgY29uc3VtZXMgb25lIGh3LVBNVSBjb3VudGVyLlxuIik7DQo+ID4NCj4gPiArCXdhdGNo
+ZG9nX3RvdWNoX3RpbWVzdGFtcChzbXBfcHJvY2Vzc29yX2lkKCkpOw0KPiA+ICAJcGVyZl9ldmVu
+dF9lbmFibGUodGhpc19jcHVfcmVhZCh3YXRjaGRvZ19ldikpOw0KPiA+ICB9DQo+ID4NCj4gPiBA
+QCAtMjc0LDggKzI4OCwxMCBAQCB2b2lkIF9faW5pdCBoYXJkbG9ja3VwX2RldGVjdG9yX3BlcmZf
+cmVzdGFydCh2b2lkKQ0KPiA+ICAJZm9yX2VhY2hfb25saW5lX2NwdShjcHUpIHsNCj4gPiAgCQlz
+dHJ1Y3QgcGVyZl9ldmVudCAqZXZlbnQgPSBwZXJfY3B1KHdhdGNoZG9nX2V2LCBjcHUpOw0KPiA+
+DQo+ID4gLQkJaWYgKGV2ZW50KQ0KPiA+ICsJCWlmIChldmVudCkgew0KPiA+ICsJCQl3YXRjaGRv
+Z190b3VjaF90aW1lc3RhbXAoY3B1KTsNCj4gPiAgCQkJcGVyZl9ldmVudF9lbmFibGUoZXZlbnQp
+Ow0KPiA+ICsJCX0NCj4gPiAgCX0NCj4gPiAgfQ0KPiA+DQo+ID4gLS0NCj4gPiAyLjE2LjINCg0K
