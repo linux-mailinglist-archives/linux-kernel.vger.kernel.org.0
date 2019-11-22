@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EF50106E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEA3106E42
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbfKVLFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33258 "EHLO mail.kernel.org"
+        id S1731763AbfKVLFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:05:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728326AbfKVLFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:05:39 -0500
+        id S1731085AbfKVLFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:05:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09D312075E;
-        Fri, 22 Nov 2019 11:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB27C2070E;
+        Fri, 22 Nov 2019 11:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420738;
-        bh=ynIhFj/qx4jDaE1Oo3VHwQCKtQ8asuUgAcjpPSkosCY=;
+        s=default; t=1574420742;
+        bh=PP0VoN0gfOnQZCCZJ3I7rIYd7iS6ObVjGVuvpnxLw1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QDPGXjZ7hzIoVCgrqZA8HPzfCpiN2vWxbdk3jUfVxc7VzlEeWsNrNwxWTydD1qrWs
-         qunva8rLZHuxSAYtG8CvM+Y95BdyNN0Telu7E20dvz8TgxbYsgcSyI3NVmcaRt7jsM
-         WPPt/eCN4DpGmo6D8N1bdKV5Jypf0ND1oZuRoUD4=
+        b=jcRHX3GYLT4tLDjenrnDcswV02qWA0Lb4UkSEZkTU05Lw912R3XmQlvRsyHNTi0wz
+         vDVtqDY4JUgzVi1AVX7wb8pklF2a+RGg6bGmoQixH1N/ohr9OPv8d7/uIj9GIlFYu4
+         31Vp+B6NaRHgnXhAXwgwARAZm8huUVViC+KuA8vU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 207/220] misc: cxl: Fix possible null pointer dereference
-Date:   Fri, 22 Nov 2019 11:29:32 +0100
-Message-Id: <20191122100928.666665210@linuxfoundation.org>
+Subject: [PATCH 4.19 208/220] mac80211: minstrel: fix using short preamble CCK rates on HT clients
+Date:   Fri, 22 Nov 2019 11:29:33 +0100
+Message-Id: <20191122100928.718088746@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
 References: <20191122100912.732983531@linuxfoundation.org>
@@ -45,35 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 3dac3583bf1a61db6aaf31dfd752c677a4400afd ]
+[ Upstream commit 37439f2d6e43ae79e22be9be159f0af157468f82 ]
 
-It is not safe to dereference an object before a null test. It is
-not needed and just remove them. Ftrace can be used instead.
+mi->supported[MINSTREL_CCK_GROUP] needs to be updated
+short preamble rates need to be marked as supported regardless of
+whether it's currently enabled. Its state can change at any time without
+a rate_update call.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 782dda00ab8e ("mac80211: minstrel_ht: move short preamble check out of get_rate")
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/cxl/guest.c | 2 --
- 1 file changed, 2 deletions(-)
+ net/mac80211/rc80211_minstrel_ht.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/misc/cxl/guest.c b/drivers/misc/cxl/guest.c
-index b83a373e3a8dd..08f4a512afad2 100644
---- a/drivers/misc/cxl/guest.c
-+++ b/drivers/misc/cxl/guest.c
-@@ -1020,8 +1020,6 @@ int cxl_guest_init_afu(struct cxl *adapter, int slice, struct device_node *afu_n
+diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
+index 67ebdeaffbbc8..ae1a180d2eee3 100644
+--- a/net/mac80211/rc80211_minstrel_ht.c
++++ b/net/mac80211/rc80211_minstrel_ht.c
+@@ -1132,7 +1132,6 @@ minstrel_ht_update_caps(void *priv, struct ieee80211_supported_band *sband,
+ 	struct ieee80211_mcs_info *mcs = &sta->ht_cap.mcs;
+ 	u16 sta_cap = sta->ht_cap.cap;
+ 	struct ieee80211_sta_vht_cap *vht_cap = &sta->vht_cap;
+-	struct sta_info *sinfo = container_of(sta, struct sta_info, sta);
+ 	int use_vht;
+ 	int n_supported = 0;
+ 	int ack_dur;
+@@ -1258,8 +1257,7 @@ minstrel_ht_update_caps(void *priv, struct ieee80211_supported_band *sband,
+ 	if (!n_supported)
+ 		goto use_legacy;
  
- void cxl_guest_remove_afu(struct cxl_afu *afu)
- {
--	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
--
- 	if (!afu)
- 		return;
+-	if (test_sta_flag(sinfo, WLAN_STA_SHORT_PREAMBLE))
+-		mi->cck_supported_short |= mi->cck_supported_short << 4;
++	mi->supported[MINSTREL_CCK_GROUP] |= mi->cck_supported_short << 4;
  
+ 	/* create an initial rate table with the lowest supported rates */
+ 	minstrel_ht_update_stats(mp, mi);
 -- 
 2.20.1
 
