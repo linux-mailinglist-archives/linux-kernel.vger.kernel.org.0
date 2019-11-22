@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F65F1064A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:19:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 943561063CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 07:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfKVGS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 01:18:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33772 "EHLO mail.kernel.org"
+        id S1727842AbfKVGNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 01:13:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfKVF4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:56:03 -0500
+        id S1728991AbfKVF4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:56:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A2642072D;
-        Fri, 22 Nov 2019 05:56:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 618ED20731;
+        Fri, 22 Nov 2019 05:56:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574402162;
-        bh=IbldVPHNz9zzb+JEgV4LyfJbvojGwsw+3a21bXkCHwU=;
+        s=default; t=1574402165;
+        bh=+101NAiM32AfaI/JI1P5ZDUUQ7lZCyxXo7+NbrFvf4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w/1l4U7C5M9Qd+5bcCImvV+5LQGFNFVgtr1uL9WpbIpBe8Hra0Sf8doCPU082laU3
-         KNcj2NVwxvRp7kxaDCyOnhWFsGTukR1Hx6vSCHHoay/BitomlssDb4k4Wk9J4IBrRY
-         U06DTYB16tDBskKuo/XxjoKfFp+XOXHRXLq1Wyno=
+        b=YHFleNsUi6Wb3Z9FruRjlqqgntDeNr/TquqK2MmAkkWlJgvCgvX/kjH5yTPYMjxpq
+         PDt/z8A5ZXxBVaeM/Z/QXd6dvByCwtaN9mdXMWwWqQ7N7YzN2+uynoMvE/zKwFOiBD
+         Klo18mxOMllolHdEMAae5PvX0mQHdo0Gh3s3XpGY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 016/127] crypto: user - support incremental algorithm dumps
-Date:   Fri, 22 Nov 2019 00:53:54 -0500
-Message-Id: <20191122055544.3299-15-sashal@kernel.org>
+Cc:     Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 018/127] mwifiex: debugfs: correct histogram spacing, formatting
+Date:   Fri, 22 Nov 2019 00:53:56 -0500
+Message-Id: <20191122055544.3299-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122055544.3299-1-sashal@kernel.org>
 References: <20191122055544.3299-1-sashal@kernel.org>
@@ -43,114 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Brian Norris <briannorris@chromium.org>
 
-[ Upstream commit 0ac6b8fb23c724b015d9ca70a89126e8d1563166 ]
+[ Upstream commit 4cb777c64e030778c569f605398d7604d8aabc0f ]
 
-CRYPTO_MSG_GETALG in NLM_F_DUMP mode sometimes doesn't return all
-registered crypto algorithms, because it doesn't support incremental
-dumps.  crypto_dump_report() only permits itself to be called once, yet
-the netlink subsystem allocates at most ~64 KiB for the skb being dumped
-to.  Thus only the first recvmsg() returns data, and it may only include
-a subset of the crypto algorithms even if the user buffer passed to
-recvmsg() is large enough to hold all of them.
+Currently, snippets of this file look like:
 
-Fix this by using one of the arguments in the netlink_callback structure
-to keep track of the current position in the algorithm list.  Then
-userspace can do multiple recvmsg() on the socket after sending the dump
-request.  This is the way netlink dumps work elsewhere in the kernel;
-it's unclear why this was different (probably just an oversight).
+rx rates (in Mbps): 0=1M   1=2M2=5.5M  3=11M   4=6M   5=9M  6=12M
+7=18M  8=24M  9=36M  10=48M  11=54M12-27=MCS0-15(BW20) 28-43=MCS0-15(BW40)
+44-53=MCS0-9(VHT:BW20)54-63=MCS0-9(VHT:BW40)64-73=MCS0-9(VHT:BW80)
+...
+noise_flr[--96dBm] = 22
+noise_flr[--95dBm] = 149
+noise_flr[--94dBm] = 9
+noise_flr[--93dBm] = 2
 
-Also fix an integer overflow when calculating the dump buffer size hint.
+We're missing some spaces, and we're adding a minus sign ('-') on values
+that are already negative signed integers.
 
-Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/crypto_user.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/debugfs.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/crypto/crypto_user.c b/crypto/crypto_user.c
-index 2b8fb8f1391e0..5e457a7dd1c92 100644
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -296,30 +296,33 @@ static int crypto_report(struct sk_buff *in_skb, struct nlmsghdr *in_nlh,
+diff --git a/drivers/net/wireless/marvell/mwifiex/debugfs.c b/drivers/net/wireless/marvell/mwifiex/debugfs.c
+index 6f4239be609d0..49ca84ef1a992 100644
+--- a/drivers/net/wireless/marvell/mwifiex/debugfs.c
++++ b/drivers/net/wireless/marvell/mwifiex/debugfs.c
+@@ -296,15 +296,13 @@ mwifiex_histogram_read(struct file *file, char __user *ubuf,
+ 		     "total samples = %d\n",
+ 		     atomic_read(&phist_data->num_samples));
  
- static int crypto_dump_report(struct sk_buff *skb, struct netlink_callback *cb)
- {
--	struct crypto_alg *alg;
-+	const size_t start_pos = cb->args[0];
-+	size_t pos = 0;
- 	struct crypto_dump_info info;
--	int err;
--
--	if (cb->args[0])
--		goto out;
--
--	cb->args[0] = 1;
-+	struct crypto_alg *alg;
-+	int res;
+-	p += sprintf(p, "rx rates (in Mbps): 0=1M   1=2M");
+-	p += sprintf(p, "2=5.5M  3=11M   4=6M   5=9M  6=12M\n");
+-	p += sprintf(p, "7=18M  8=24M  9=36M  10=48M  11=54M");
+-	p += sprintf(p, "12-27=MCS0-15(BW20) 28-43=MCS0-15(BW40)\n");
++	p += sprintf(p,
++		     "rx rates (in Mbps): 0=1M   1=2M 2=5.5M  3=11M   4=6M   5=9M  6=12M\n"
++		     "7=18M  8=24M  9=36M  10=48M  11=54M 12-27=MCS0-15(BW20) 28-43=MCS0-15(BW40)\n");
  
- 	info.in_skb = cb->skb;
- 	info.out_skb = skb;
- 	info.nlmsg_seq = cb->nlh->nlmsg_seq;
- 	info.nlmsg_flags = NLM_F_MULTI;
- 
-+	down_read(&crypto_alg_sem);
- 	list_for_each_entry(alg, &crypto_alg_list, cra_list) {
--		err = crypto_report_alg(alg, &info);
--		if (err)
--			goto out_err;
-+		if (pos >= start_pos) {
-+			res = crypto_report_alg(alg, &info);
-+			if (res == -EMSGSIZE)
-+				break;
-+			if (res)
-+				goto out;
-+		}
-+		pos++;
+ 	if (ISSUPP_11ACENABLED(priv->adapter->fw_cap_info)) {
+-		p += sprintf(p, "44-53=MCS0-9(VHT:BW20)");
+-		p += sprintf(p, "54-63=MCS0-9(VHT:BW40)");
+-		p += sprintf(p, "64-73=MCS0-9(VHT:BW80)\n\n");
++		p += sprintf(p,
++			     "44-53=MCS0-9(VHT:BW20) 54-63=MCS0-9(VHT:BW40) 64-73=MCS0-9(VHT:BW80)\n\n");
+ 	} else {
+ 		p += sprintf(p, "\n");
  	}
--
-+	cb->args[0] = pos;
-+	res = skb->len;
- out:
--	return skb->len;
--out_err:
--	return err;
-+	up_read(&crypto_alg_sem);
-+	return res;
- }
- 
- static int crypto_dump_report_done(struct netlink_callback *cb)
-@@ -503,7 +506,7 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if ((type == (CRYPTO_MSG_GETALG - CRYPTO_MSG_BASE) &&
- 	    (nlh->nlmsg_flags & NLM_F_DUMP))) {
- 		struct crypto_alg *alg;
--		u16 dump_alloc = 0;
-+		unsigned long dump_alloc = 0;
- 
- 		if (link->dump == NULL)
- 			return -EINVAL;
-@@ -511,16 +514,16 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		down_read(&crypto_alg_sem);
- 		list_for_each_entry(alg, &crypto_alg_list, cra_list)
- 			dump_alloc += CRYPTO_REPORT_MAXSIZE;
-+		up_read(&crypto_alg_sem);
- 
- 		{
- 			struct netlink_dump_control c = {
- 				.dump = link->dump,
- 				.done = link->done,
--				.min_dump_alloc = dump_alloc,
-+				.min_dump_alloc = min(dump_alloc, 65535UL),
- 			};
- 			err = netlink_dump_start(crypto_nlsk, skb, nlh, &c);
- 		}
--		up_read(&crypto_alg_sem);
- 
- 		return err;
+@@ -333,7 +331,7 @@ mwifiex_histogram_read(struct file *file, char __user *ubuf,
+ 	for (i = 0; i < MWIFIEX_MAX_NOISE_FLR; i++) {
+ 		value = atomic_read(&phist_data->noise_flr[i]);
+ 		if (value)
+-			p += sprintf(p, "noise_flr[-%02ddBm] = %d\n",
++			p += sprintf(p, "noise_flr[%02ddBm] = %d\n",
+ 				(int)(i-128), value);
  	}
+ 	for (i = 0; i < MWIFIEX_MAX_SIG_STRENGTH; i++) {
 -- 
 2.20.1
 
