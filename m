@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85980107711
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 19:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6182B107712
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 19:14:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfKVSN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 13:13:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55454 "EHLO mx1.suse.de"
+        id S1727004AbfKVSOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 13:14:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55578 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726046AbfKVSN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 13:13:56 -0500
+        id S1726046AbfKVSOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 13:14:07 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 332B6ADCF;
-        Fri, 22 Nov 2019 18:13:55 +0000 (UTC)
-Date:   Fri, 22 Nov 2019 19:13:54 +0100
-Message-ID: <s5hk17r22zh.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 154AAAFA1;
+        Fri, 22 Nov 2019 18:14:06 +0000 (UTC)
+Date:   Fri, 22 Nov 2019 19:14:06 +0100
+Message-ID: <s5himnb22z5.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Andrew Gabbasov <andrew_gabbasov@mentor.com>
 Cc:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
         "Jaroslav Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Timo Wischer <twischer@de.adit-jv.com>
-Subject: Re: [PATCH 1/2] ALSA: aloop: Remove redundant locking in timer open function
-In-Reply-To: <20191122175218.17187-1-andrew_gabbasov@mentor.com>
+Subject: Re: [PATCH 2/2] ALSA: aloop: Avoid unexpected timer event callback tasklets
+In-Reply-To: <20191122175218.17187-2-andrew_gabbasov@mentor.com>
 References: <20191122175218.17187-1-andrew_gabbasov@mentor.com>
+        <20191122175218.17187-2-andrew_gabbasov@mentor.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -35,20 +36,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 18:52:17 +0100,
+On Fri, 22 Nov 2019 18:52:18 +0100,
 Andrew Gabbasov wrote:
 > 
-> loopback_parse_timer_id() uses snd_card_ref(), that can lock on mutex,
-> also snd_timer_instance_new() uses non-atomic allocation, that can sleep.
-> So, both functions can not be called from loopback_snd_timer_open()
-> with cable->lock spinlock locked.
-> 
-> Moreover, most part of loopback_snd_timer_open() function body works
-> when the opposite stream of the same cable does not yet exist, and
-> the current stream is not yet completely open and can't be running,
-> so existing locking of loopback->cable_lock mutex is enough to protect
-> from conflicts with simultaneous opening or closing.
-> Locking of cable->lock spinlock is not needed in this case.
+> loopback_snd_timer_close_cable() function waits until all
+> scheduled tasklets are completed, but the timer is closed after that
+> and can generate more event callbacks, scheduling new tasklets,
+> that will not be synchronized with cable closing.
+> Move tasklet_kill() call to be executed after snd_timer_close()
+> call to avoid such case.
 > 
 > Fixes: 26c53379f98d ("ALSA: aloop: Support selection of snd_timer instead of jiffies")
 > Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
