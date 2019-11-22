@@ -2,126 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65914106EEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 562F4106E0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbfKVLMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 06:12:32 -0500
-Received: from mga09.intel.com ([134.134.136.24]:24547 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728618AbfKVLMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 06:12:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 03:12:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,229,1571727600"; 
-   d="scan'208";a="210220363"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 22 Nov 2019 03:12:20 -0800
-Received: from andy by smile with local (Exim 4.93-RC1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iY6rL-0000bl-Jr; Fri, 22 Nov 2019 13:12:19 +0200
-Date:   Fri, 22 Nov 2019 13:12:19 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jan Kiszka <jan.kiszka@siemens.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v3 1/2] gpio: sch: Add edge event support
-Message-ID: <20191122111219.GW32742@smile.fi.intel.com>
-References: <cover.1574277614.git.jan.kiszka@siemens.com>
- <42ae6149a14f81fd86c5acb5bd33e987123b6bed.1574277614.git.jan.kiszka@siemens.com>
+        id S1730991AbfKVLFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:05:38 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7165 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728326AbfKVLFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:05:35 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5BB24C7723AC9CBA3167;
+        Fri, 22 Nov 2019 19:05:33 +0800 (CST)
+Received: from localhost.localdomain (10.90.53.225) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 22 Nov 2019 19:05:24 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH] {tty: serial, nand: onenand}: remove variable 'ufstat' set but not used
+Date:   Fri, 22 Nov 2019 19:12:39 +0800
+Message-ID: <1574421159-113624-1-git-send-email-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42ae6149a14f81fd86c5acb5bd33e987123b6bed.1574277614.git.jan.kiszka@siemens.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 08:20:13PM +0100, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Add the required infrastructure consisting of an irq_chip_generic with
-> its irq_chip_type callbacks to enable and report edge events of the pins
-> to the gpio core. The actual hook-up of the event interrupt will happen
-> separately.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> +static int sch_irq_type(struct irq_data *d, unsigned int type)
-> +{
-> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-> +	struct sch_gpio *sch = gc->private;
-> +	unsigned int gpio_num = d->irq - sch->irq_base;
-> +	unsigned long flags;
-> +	int rising = 0;
-> +	int falling = 0;
-> +
-> +	switch (type & IRQ_TYPE_SENSE_MASK) {
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		rising = 1;
-> +		break;
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		falling = 1;
-> +		break;
-> +	case IRQ_TYPE_EDGE_BOTH:
-> +		rising = 1;
-> +		falling = 1;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	spin_lock_irqsave(&sch->lock, flags);
-> +	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
-> +	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
-> +	spin_unlock_irqrestore(&sch->lock, flags);
+drivers/tty/serial/samsung_tty.c: In function s3c24xx_serial_rx_chars_dma:
+drivers/tty/serial/samsung_tty.c:549:24: warning: variable ufstat set but not used [-Wunused-but-set-variable]
 
-Won't we need to set up IRQ handler here and use handle_bad_irq() during
-initialization phase?
+Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+---
+ drivers/tty/serial/samsung_tty.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +
-> +	return 0;
-> +}
-
-> +	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
-> +					NUMA_NO_NODE);
-> +	if (irq_base < 0)
-> +		return irq_base;
-> +	sch->irq_base = irq_base;
-> +
-> +	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
-> +					 NULL, handle_simple_irq);
-> +	if (!gc)
-> +		return -ENOMEM;
-> +
-> +	gc->private = sch;
-> +	ct = gc->chip_types;
-> +
-> +	ct->chip.irq_mask = sch_irq_mask;
-> +	ct->chip.irq_unmask = sch_irq_unmask;
-> +	ct->chip.irq_set_type = sch_irq_type;
-> +
-> +	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
-> +					  IRQ_MSK(sch->chip.ngpio),
-> +					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
-> +	if (ret)
-> +		return ret;
-
-Shan't we do this in the (similar) way how it's done in pinctrl-cherryview.c
-driver? (Keep in mind later patches which are going to be v5.5)
-
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 83fd516..ab3c7d1 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -546,7 +546,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport);
+ 
+ static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
+ {
+-	unsigned int utrstat, ufstat, received;
++	unsigned int utrstat, received;
+ 	struct s3c24xx_uart_port *ourport = dev_id;
+ 	struct uart_port *port = &ourport->port;
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
+@@ -556,7 +556,7 @@ static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
+ 	struct dma_tx_state state;
+ 
+ 	utrstat = rd_regl(port, S3C2410_UTRSTAT);
+-	ufstat = rd_regl(port, S3C2410_UFSTAT);
++	rd_regl(port, S3C2410_UFSTAT);
+ 
+ 	spin_lock_irqsave(&port->lock, flags);
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.7.4
 
