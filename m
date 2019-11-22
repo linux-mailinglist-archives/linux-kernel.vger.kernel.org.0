@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E4F106C1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CEBC106A88
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfKVKuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:50:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59694 "EHLO mail.kernel.org"
+        id S1728286AbfKVKfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729663AbfKVKt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:49:57 -0500
+        id S1727729AbfKVKfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D63BD20656;
-        Fri, 22 Nov 2019 10:49:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34A8B20715;
+        Fri, 22 Nov 2019 10:35:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419797;
-        bh=3ch1Aeuv2nR0Jk6lCWT7dYMB2uUXDzRSZPmEwk8q1aQ=;
+        s=default; t=1574418938;
+        bh=UTXw+8OAS8XcJ+yXQiEfH5etCMRkA8k0yFtoVe6scbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M/aMzMG1aIw+unEB7qeOtsuWGzlzu6bKP0ng7eQteZgF7n1VvQiYBNxmh038EG89M
-         HPP6VNIKYevphjGR/McG8WHXeHdIHUNM0y1dATz4B6BwJRPBZKeRfQ8igEl8QrRaUj
-         HEZaQicggSbB11e4oJUJ0/AQ/33uQd25yeERrNFs=
+        b=CdZs7FZB71kKxRfHX2cemIq9gvhy8JmjTxBHJ6F8oF010y1QWP24o5jB3bxw36fnA
+         KZ8/SOsvPhFmCBsfOLDKz2TqA0aCQBWdIdtLnJtFonWz8mRSzKeYeaIasE45UCqzId
+         hEO612iBMsjJ8ZhqR+MHEGuLNR3A8GBemIFcXTps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 013/122] ARM: dts: omap5: enable OTG role for DWC3 controller
-Date:   Fri, 22 Nov 2019 11:27:46 +0100
-Message-Id: <20191122100731.907058762@linuxfoundation.org>
+Subject: [PATCH 4.4 076/159] net: micrel: fix return type of ndo_start_xmit function
+Date:   Fri, 22 Nov 2019 11:27:47 +0100
+Message-Id: <20191122100759.515021823@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: H. Nikolaus Schaller <hns@goldelico.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 656c1a65ab555ee5c7cd0d6aee8ab82ca3c1795f ]
+[ Upstream commit 2b49117a5abee8478b0470cba46ac74f93b4a479 ]
 
-Since SMPS10 and OTG cable detection extcon are described here, and
-work to enable OTG power when an OTG cable is plugged in, we can
-define OTG mode in the controller (which is disabled by default in
-omap5.dtsi).
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-Tested on OMAP5EVM and Pyra.
+Found by coccinelle.
 
-Suggested-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap5-board-common.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/micrel/ks8695net.c  | 2 +-
+ drivers/net/ethernet/micrel/ks8851_mll.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
-index 7824b2631cb6b..f65343f8e1d69 100644
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -694,6 +694,10 @@
- 	vbus-supply = <&smps10_out1_reg>;
- };
+diff --git a/drivers/net/ethernet/micrel/ks8695net.c b/drivers/net/ethernet/micrel/ks8695net.c
+index a8522d8af95d3..2126286b72e9b 100644
+--- a/drivers/net/ethernet/micrel/ks8695net.c
++++ b/drivers/net/ethernet/micrel/ks8695net.c
+@@ -1156,7 +1156,7 @@ ks8695_timeout(struct net_device *ndev)
+  *	sk_buff and adds it to the TX ring. It then kicks the TX DMA
+  *	engine to ensure transmission begins.
+  */
+-static int
++static netdev_tx_t
+ ks8695_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct ks8695_priv *ksp = netdev_priv(ndev);
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index 2fc5cd56c0a84..8dc1f0277117d 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -1020,9 +1020,9 @@ static void ks_write_qmu(struct ks_net *ks, u8 *pdata, u16 len)
+  * spin_lock_irqsave is required because tx and rx should be mutual exclusive.
+  * So while tx is in-progress, prevent IRQ interrupt from happenning.
+  */
+-static int ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
++static netdev_tx_t ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+-	int retv = NETDEV_TX_OK;
++	netdev_tx_t retv = NETDEV_TX_OK;
+ 	struct ks_net *ks = netdev_priv(netdev);
  
-+&dwc3 {
-+	dr_mode = "otg";
-+};
-+
- &mcspi1 {
- 
- };
+ 	disable_irq(netdev->irq);
 -- 
 2.20.1
 
