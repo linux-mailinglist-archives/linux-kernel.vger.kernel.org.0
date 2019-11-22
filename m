@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F554106ACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97599106CB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:55:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfKVKi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40794 "EHLO mail.kernel.org"
+        id S1730133AbfKVKyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:54:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbfKVKi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:38:26 -0500
+        id S1728150AbfKVKyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:54:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F35E52073F;
-        Fri, 22 Nov 2019 10:38:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA87B20637;
+        Fri, 22 Nov 2019 10:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419106;
-        bh=9bhG71SHdIPOPx2brFLAamLBJekEwZtJUF+//yLby2A=;
+        s=default; t=1574420042;
+        bh=julWjBlCYWiwOVW4slF5Jvmglxdu1fcIEx8uEPF98IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kfTrI+S885/rk9ASUIcUctWRXDxPckR+RFIs7LPgQ3p1WNtmJdO1McDrnAwYvSddN
-         ObHUrLRamLp7OMmxKgDB7ILuyxsHrD9YNXsSftZFJr56PuVWX2R3aVd8AMKqD7KVdX
-         jiDb/QBK3GM0+qxOfxCEI5e1vAe57wp2R61PnzdA=
+        b=G3OpU3ReBoLvsDOemUwwimUaajs03Uu247EjmFwXD5fdW4brWJKFPwprx4UpRugh6
+         OtFs+fJoQn6Epk6xgjRZErdNx2o8ik7LCnQWe+nF7qzxqd/m1kJoqx+fJ9+T7iSR99
+         /Ldz7k3wUH2HH/KZuKhJNZgLhNKpF2dGV5xL0X6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 158/159] ARM: dts: omap5: Fix dual-role mode on Super-Speed port
+Subject: [PATCH 4.14 096/122] backlight: lm3639: Unconditionally call led_classdev_unregister
 Date:   Fri, 22 Nov 2019 11:29:09 +0100
-Message-Id: <20191122100849.607189127@linuxfoundation.org>
+Message-Id: <20191122100830.383590435@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
-References: <20191122100704.194776704@linuxfoundation.org>
+In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
+References: <20191122100722.177052205@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roger Quadros <rogerq@ti.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit a763ecc15d0e37c3a15ff6825183061209832685 ]
+[ Upstream commit 7cea645ae9c5a54aa7904fddb2cdf250acd63a6c ]
 
-OMAP5's Super-Speed USB port has a software mailbox register
-that needs to be fed with VBUS and ID events from an external
-VBUS/ID comparator.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context.
 
-Without this, Host role will not work correctly.
+drivers/video/backlight/lm3639_bl.c:403:14: warning: address of
+'pchip->cdev_torch' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (&pchip->cdev_torch)
+        ~~   ~~~~~~~^~~~~~~~~~
+drivers/video/backlight/lm3639_bl.c:405:14: warning: address of
+'pchip->cdev_flash' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (&pchip->cdev_flash)
+        ~~   ~~~~~~~^~~~~~~~~~
+2 warnings generated.
 
-Fixes: 656c1a65ab55 ("ARM: dts: omap5: enable OTG role for DWC3 controller")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+These statements have been present since 2012, introduced by
+commit 0f59858d5119 ("backlight: add new lm3639 backlight
+driver"). Given that they have been called unconditionally since
+then presumably without any issues, removing the always true if
+statements to fix the warnings without any real world changes.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/119
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap5-board-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/backlight/lm3639_bl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
-index d2398d2a0c08c..4ea4cf6c5b471 100644
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -634,6 +634,7 @@
- };
+diff --git a/drivers/video/backlight/lm3639_bl.c b/drivers/video/backlight/lm3639_bl.c
+index cd50df5807ead..086611c7bc03c 100644
+--- a/drivers/video/backlight/lm3639_bl.c
++++ b/drivers/video/backlight/lm3639_bl.c
+@@ -400,10 +400,8 @@ static int lm3639_remove(struct i2c_client *client)
  
- &dwc3 {
-+	extcon = <&extcon_usb3>;
- 	dr_mode = "otg";
- };
+ 	regmap_write(pchip->regmap, REG_ENABLE, 0x00);
  
+-	if (&pchip->cdev_torch)
+-		led_classdev_unregister(&pchip->cdev_torch);
+-	if (&pchip->cdev_flash)
+-		led_classdev_unregister(&pchip->cdev_flash);
++	led_classdev_unregister(&pchip->cdev_torch);
++	led_classdev_unregister(&pchip->cdev_flash);
+ 	if (pchip->bled)
+ 		device_remove_file(&(pchip->bled->dev), &dev_attr_bled_mode);
+ 	return 0;
 -- 
 2.20.1
 
