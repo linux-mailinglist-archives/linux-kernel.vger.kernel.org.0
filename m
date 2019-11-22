@@ -2,150 +2,331 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434DE106B9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:46:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8929B106B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:45:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbfKVKp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:45:57 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:44312 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729552AbfKVKpw (ORCPT
+        id S1729535AbfKVKpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:45:46 -0500
+Received: from smtp.broadcom.com ([192.19.232.149]:41388 "EHLO
+        relay.smtp.broadcom.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbfKVKpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:45:52 -0500
-Received: by mail-pj1-f66.google.com with SMTP id w8so2881090pjh.11;
-        Fri, 22 Nov 2019 02:45:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2io4k/iq1gwW+3Ml4L4lOh1AzuywwhhqM/bGXIM0Dfg=;
-        b=iMZkNX+PGvb23ecBpYgNQRQUaO8mtr3kGqYmRlTO9CWrFfM75lItHURi2rzgm9oq06
-         r28HwxF0sYxRLtuBx3lJzz/TC+/bz8eCPuZ/ic524dTjXYTJNjf/L+nTapgjLmDUPrOC
-         DZ+zu/haiL/BnkGR6wysoLGx+ryVj+yvLXp9c9D2g0G9Nwb04yo8tz1miD1VSBJumtBT
-         vrDTl+2KIi2z3IMnGVfGcRjyYWPSjzLXOZqJ0+oVcxXjQ3wU7PnczHv5xratdBBiKuEN
-         1hjBUbZXIBl+zHucz+0MXvvyK4a5w5vEJ1zQE48XNOTY84kQb5L8NgiAuCM47y35qCse
-         h/tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2io4k/iq1gwW+3Ml4L4lOh1AzuywwhhqM/bGXIM0Dfg=;
-        b=ePnGGQIjy7mBioz6iOCRG6PjYtqZOMzroipTHdiHr8F7hCPmL/38KfWqSHAYSCXqUv
-         8xn8C7YYDdl5GA2Nmc5q+zxpm7JeqpWGQVWS8WBJbdAuXTU+CCVK+epvt21SB/QLlDTE
-         rXe5HptLJKHQ1wKebS9rMbT2AYTKVlM2hxPg4S85tibtfJNO4CveY/f4aWrJnWGpwgYN
-         Ccss1PbaTEPuMGRktlJO7PZ0aZVFn1JBHS/qVdqJdeDGlTJ1FQztNezT9o13Aty33Nt4
-         2LuTrO8pVYywEmolAqT2M/3JQJr19E0Eb2q8/YNwNqN2lyfhTRyP/8Y5O9kEYXxYc7G9
-         CUzQ==
-X-Gm-Message-State: APjAAAWe4pshzyO0yPNnHb5uR8dfvhUf5niUaLFRl77lsJiSrILscW6H
-        zaOXJtTCkReh7rfU6HiKLn4=
-X-Google-Smtp-Source: APXvYqxNbupSKQWXBXy0M3HLAZgGsZHVaATRyTWbQLfH0dXjq7jJ7Ve2vFUF3xJ5pA3CN94az8rCuw==
-X-Received: by 2002:a17:902:d211:: with SMTP id t17mr7562415ply.141.1574419551426;
-        Fri, 22 Nov 2019 02:45:51 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v16sm2714213pje.1.2019.11.22.02.45.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Nov 2019 02:45:50 -0800 (PST)
-Subject: Re: [PATCH v2 1/1] drivers: watchdog: stm32_iwdg: set WDOG_HW_RUNNING
- at probe
-To:     Christophe Roullier <christophe.roullier@st.com>,
-        wim@linux-watchdog.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20191122082442.21695-1-christophe.roullier@st.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <ffa20f2f-1ca2-9d8f-6594-33b906cbb74a@roeck-us.net>
-Date:   Fri, 22 Nov 2019 02:45:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191122082442.21695-1-christophe.roullier@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 22 Nov 2019 05:45:42 -0500
+X-Greylist: delayed 587 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Nov 2019 05:45:42 EST
+Received: from dhcp-10-123-153-22.dhcp.broadcom.net (bgccx-dev-host-lnx2.bec.broadcom.net [10.123.153.22])
+        by relay.smtp.broadcom.com (Postfix) with ESMTP id 660991BAFC5;
+        Fri, 22 Nov 2019 02:35:52 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 relay.smtp.broadcom.com 660991BAFC5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+        s=dkimrelay; t=1574418953;
+        bh=GHcylQZvoUp6RDeJ08RGL2Df/VrfNllonsxxSxhGYQo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=I3y2lq6B/SNwplMyLQXDr0Uqda+156oDA2I0EHQOxIIVvLBofCflOWpebkY+jTAGU
+         IXM928yFaEUrkmiaaCnAkIndbFv55s1sAFF1UNGO/CskBj4Bb4xenKUYPMXKB8+Z/z
+         twFGM5AIwgMPz5IrHUYgPQRTpyDCxuF5JZAaH6fQ=
+From:   Kalesh A P <kalesh-anakkur.purayil@broadcom.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] be2net: gather more debug info and display on a tx-timeout
+Date:   Fri, 22 Nov 2019 16:17:19 +0530
+Message-Id: <20191122104719.3943-1-kalesh-anakkur.purayil@broadcom.com>
+X-Mailer: git-send-email 2.10.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/19 12:24 AM, Christophe Roullier wrote:
-> If the watchdog hardware is already enabled during the boot process,
-> when the Linux watchdog driver loads, it should start/reset the watchdog
-> and tell the watchdog framework. As a result, ping can be generated from
-> the watchdog framework (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set),
-> until the userspace watchdog daemon takes over control
-> 
-> Fixes:4332d113c66a ("watchdog: Add STM32 IWDG driver")
-> 
-> Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
-> ---
-> Changes since v1:
-> According to Guenter
-> I follow the guidance from intel-mid_wdt.c
-> and I added test to check if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set
-> because we need to be flexible (depends on customer config, but watchdog
-> not always start by bootloader (Uboot, ..))
-> I've tested some config and it is working as expected:
-> Watchdog enable in Uboot + HANDLE_BOOT_ENABLE is not set + daemon watchdog in userland ON ==> No reset IWDG2
-> Watchdog enable in Uboot + HANDLE_BOOT_ENABLE is not set ==> Reset IWDG2
-> Watchdog enable in Uboot + HANDLE_BOOT_ENABLE=y ==> No reset IWDG2
-> Watchdog enable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON puis OFF ==> Reset IWDG2
-> Watchdog disable in Uboot + HANDLE_BOOT_ENABLE is not set ==> No reset IWDG2
-> Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y ==> No reset IWDG2
-> Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON ==> No reset IWDG2
-> Watchdog disable in Uboot + HANDLE_BOOT_ENABLE=y + daemon watchdog in userland ON puis OFF ==> Reset IWDG2
-> 
-> Thanks,
-> Christophe
-> 
->   drivers/watchdog/stm32_iwdg.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
-> index a3a329011a06..7f454a6e17ba 100644
-> --- a/drivers/watchdog/stm32_iwdg.c
-> +++ b/drivers/watchdog/stm32_iwdg.c
-> @@ -50,6 +50,9 @@
->   #define TIMEOUT_US	100000
->   #define SLEEP_US	1000
->   
-> +static bool handle_boot_enabled =
-> +	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
-> +
->   struct stm32_iwdg_data {
->   	bool has_pclk;
->   	u32 max_prescaler;
-> @@ -262,6 +265,24 @@ static int stm32_iwdg_probe(struct platform_device *pdev)
->   	watchdog_set_nowayout(wdd, WATCHDOG_NOWAYOUT);
->   	watchdog_init_timeout(wdd, 0, dev);
->   
-> +	/*
-> +	 * In case of CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is set
-> +	 * (Means U-Boot/bootloaders leaves the watchdog running)
-> +	 * When we get here we should make a decision to prevent
-> +	 * any side effects before user space daemon will take care of it.
-> +	 * The best option, taking into consideration that there is no
-> +	 * way to read values back from hardware, is to enforce watchdog
-> +	 * being run with deterministic values.
-> +	 */
-> +	if (handle_boot_enabled) {
+From: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-You don't need that variable. Just use
-	if (IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) {
-directly.
+In order to start recording the last few tx wqes and
+tx completions, user has to set the msg level to non-zero
+value using "ethtool -s ethX msglvl 1"
 
-> +		ret = stm32_iwdg_start(wdd);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/* Make sure the watchdog is serviced */
-> +		set_bit(WDOG_HW_RUNNING, &wdd->status);
-> +	}
-> +
->   	ret = devm_watchdog_register_device(dev, wdd);
->   	if (ret)
->   		return ret;
-> 
+This patch does the following things:
+1. record last 200 WQE information
+2. record first 128 bytes of last 200 TX packets
+3. record last 200 TX completion info
+4. On TX timeout, log these information for debugging
+
+Signed-off-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Reviewed-by: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
+---
+ drivers/net/ethernet/emulex/benet/be.h      |  92 ++++++++++++++--------
+ drivers/net/ethernet/emulex/benet/be_main.c | 116 ++++++++++++++++++++++++++++
+ 2 files changed, 174 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/net/ethernet/emulex/benet/be.h b/drivers/net/ethernet/emulex/benet/be.h
+index cf3e6f2..7a05adb 100644
+--- a/drivers/net/ethernet/emulex/benet/be.h
++++ b/drivers/net/ethernet/emulex/benet/be.h
+@@ -227,6 +227,60 @@ struct be_tx_stats {
+ 	struct u64_stats_sync sync_compl;
+ };
+ 
++/* Macros to read/write the 'features' word of be_wrb_params structure.
++ */
++#define	BE_WRB_F_BIT(name)			BE_WRB_F_##name##_BIT
++#define	BE_WRB_F_MASK(name)			BIT_MASK(BE_WRB_F_##name##_BIT)
++
++#define	BE_WRB_F_GET(word, name)	\
++	(((word) & (BE_WRB_F_MASK(name))) >> BE_WRB_F_BIT(name))
++
++#define	BE_WRB_F_SET(word, name, val)	\
++	((word) |= (((val) << BE_WRB_F_BIT(name)) & BE_WRB_F_MASK(name)))
++
++/* Feature/offload bits */
++enum {
++	BE_WRB_F_CRC_BIT,		/* Ethernet CRC */
++	BE_WRB_F_IPCS_BIT,		/* IP csum */
++	BE_WRB_F_TCPCS_BIT,		/* TCP csum */
++	BE_WRB_F_UDPCS_BIT,		/* UDP csum */
++	BE_WRB_F_LSO_BIT,		/* LSO */
++	BE_WRB_F_LSO6_BIT,		/* LSO6 */
++	BE_WRB_F_VLAN_BIT,		/* VLAN */
++	BE_WRB_F_VLAN_SKIP_HW_BIT,	/* Skip VLAN tag (workaround) */
++	BE_WRB_F_OS2BMC_BIT		/* Send packet to the management ring */
++};
++
++/* The structure below provides a HW-agnostic abstraction of WRB params
++ * retrieved from a TX skb. This is in turn passed to chip specific routines
++ * during transmit, to set the corresponding params in the WRB.
++ */
++struct be_wrb_params {
++	u32 features;	/* Feature bits */
++	u16 vlan_tag;	/* VLAN tag */
++	u16 lso_mss;	/* MSS for LSO */
++};
++
++/* Store latest 200 occurrences */
++#define BE_TXQ_INFO_LEN		200
++#define PKT_DUMP_SIZE		128
++
++struct be_tx_pktinfo {
++	u16 head;
++	u16 tail;
++	u16 used;
++	struct be_wrb_params wqe_hdr;
++	u8 skb_data[PKT_DUMP_SIZE];
++	u32 len;
++	u32 skb_len;
++	bool valid;
++};
++
++struct be_tx_dump_cmpl {
++	u32 info[32];
++	bool valid;
++};
++
+ /* Structure to hold some data of interest obtained from a TX CQE */
+ struct be_tx_compl_info {
+ 	u8 status;		/* Completion status */
+@@ -244,6 +298,10 @@ struct be_tx_obj {
+ 	u16 pend_wrb_cnt;	/* Number of WRBs yet to be given to HW */
+ 	u16 last_req_wrb_cnt;	/* wrb cnt of the last req in the Q */
+ 	u16 last_req_hdr;	/* index of the last req's hdr-wrb */
++	struct be_tx_pktinfo tx_pktinfo[BE_TXQ_INFO_LEN];
++	struct be_tx_dump_cmpl cmpl_info[BE_TXQ_INFO_LEN];
++	u32 tx_wqe_offset;
++	u32 tx_cmpl_idx;
+ } ____cacheline_aligned_in_smp;
+ 
+ /* Struct to remember the pages posted for rx frags */
+@@ -444,40 +502,6 @@ struct be_hwmon {
+ 	u8 be_on_die_temp;  /* Unit: millidegree Celsius */
+ };
+ 
+-/* Macros to read/write the 'features' word of be_wrb_params structure.
+- */
+-#define	BE_WRB_F_BIT(name)			BE_WRB_F_##name##_BIT
+-#define	BE_WRB_F_MASK(name)			BIT_MASK(BE_WRB_F_##name##_BIT)
+-
+-#define	BE_WRB_F_GET(word, name)	\
+-	(((word) & (BE_WRB_F_MASK(name))) >> BE_WRB_F_BIT(name))
+-
+-#define	BE_WRB_F_SET(word, name, val)	\
+-	((word) |= (((val) << BE_WRB_F_BIT(name)) & BE_WRB_F_MASK(name)))
+-
+-/* Feature/offload bits */
+-enum {
+-	BE_WRB_F_CRC_BIT,		/* Ethernet CRC */
+-	BE_WRB_F_IPCS_BIT,		/* IP csum */
+-	BE_WRB_F_TCPCS_BIT,		/* TCP csum */
+-	BE_WRB_F_UDPCS_BIT,		/* UDP csum */
+-	BE_WRB_F_LSO_BIT,		/* LSO */
+-	BE_WRB_F_LSO6_BIT,		/* LSO6 */
+-	BE_WRB_F_VLAN_BIT,		/* VLAN */
+-	BE_WRB_F_VLAN_SKIP_HW_BIT,	/* Skip VLAN tag (workaround) */
+-	BE_WRB_F_OS2BMC_BIT		/* Send packet to the management ring */
+-};
+-
+-/* The structure below provides a HW-agnostic abstraction of WRB params
+- * retrieved from a TX skb. This is in turn passed to chip specific routines
+- * during transmit, to set the corresponding params in the WRB.
+- */
+-struct be_wrb_params {
+-	u32 features;	/* Feature bits */
+-	u16 vlan_tag;	/* VLAN tag */
+-	u16 lso_mss;	/* MSS for LSO */
+-};
+-
+ struct be_eth_addr {
+ 	unsigned char mac[ETH_ALEN];
+ };
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index 39eb7d5..c0e319b 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -1121,6 +1121,43 @@ static int be_ipv6_tx_stall_chk(struct be_adapter *adapter, struct sk_buff *skb)
+ 	return BE3_chip(adapter) && be_ipv6_exthdr_check(skb);
+ }
+ 
++void be_record_tx_cmpl(struct be_tx_obj *txo,
++		       struct be_eth_tx_compl *cmpl)
++{
++	u32 offset = txo->tx_cmpl_idx;
++	struct be_tx_dump_cmpl *cmpl_dump = &txo->cmpl_info[offset];
++
++	memset(cmpl_dump, 0, sizeof(*cmpl_dump));
++
++	memcpy(&cmpl_dump->info, cmpl, sizeof(cmpl_dump->info));
++	cmpl_dump->valid = 1;
++
++	txo->tx_cmpl_idx = ((txo->tx_cmpl_idx + 1) % BE_TXQ_INFO_LEN);
++}
++
++void be_record_tx_wqes(struct be_tx_obj *txo,
++		       struct be_wrb_params *wrb_params,
++		       struct sk_buff *skb)
++{
++	u32 offset = txo->tx_wqe_offset;
++	struct be_tx_pktinfo *pkt_info = &txo->tx_pktinfo[offset];
++
++	memset(pkt_info, 0, sizeof(*pkt_info));
++
++	pkt_info->tail = txo->q.tail;
++	pkt_info->head = txo->q.head;
++	pkt_info->used = atomic_read(&txo->q.used);
++	pkt_info->valid = 1;
++	pkt_info->skb_len = skb->len;
++	pkt_info->len = min_t(u32, PKT_DUMP_SIZE, skb->len);
++
++	memcpy(&pkt_info->wqe_hdr, wrb_params, sizeof(*wrb_params));
++
++	memcpy(&pkt_info->skb_data, skb->data, pkt_info->len);
++
++	txo->tx_wqe_offset = ((txo->tx_wqe_offset + 1) % BE_TXQ_INFO_LEN);
++}
++
+ static struct sk_buff *be_lancer_xmit_workarounds(struct be_adapter *adapter,
+ 						  struct sk_buff *skb,
+ 						  struct be_wrb_params
+@@ -1399,6 +1436,10 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 			skb_get(skb);
+ 	}
+ 
++	/* Dump TX WQEs and SKB data */
++	if (adapter->msg_enable)
++		be_record_tx_wqes(txo, &wrb_params, skb);
++
+ 	if (be_is_txq_full(txo)) {
+ 		netif_stop_subqueue(netdev, q_idx);
+ 		tx_stats(txo)->tx_stops++;
+@@ -1417,6 +1458,75 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	return NETDEV_TX_OK;
+ }
+ 
++void
++be_print_tx_wqes(struct be_adapter *adapter, struct be_tx_obj *txo)
++{
++	struct device *dev = &adapter->pdev->dev;
++	struct be_tx_pktinfo *pkt_info;
++	u8 *data;
++	int i, j;
++
++	dev_info(dev, "Dumping WQES of TXQ id %d\n", txo->q.id);
++
++	for (i = 0; i < BE_TXQ_INFO_LEN; i++) {
++		pkt_info = &txo->tx_pktinfo[i];
++		if (!pkt_info->valid)
++			continue;
++
++		dev_info(dev, "TXQ head %d tail %d used %d\n",
++			 pkt_info->head, pkt_info->tail, pkt_info->used);
++
++		dev_info(dev, "WRB params: feature:0x%x vlan_tag:0x%x lso_mss:0x%x\n",
++			 pkt_info->wqe_hdr.features, pkt_info->wqe_hdr.vlan_tag,
++			 pkt_info->wqe_hdr.lso_mss);
++
++		dev_info(dev, "SKB len: %d\n", pkt_info->skb_len);
++		data = pkt_info->skb_data;
++		for (j = 0 ; j < pkt_info->len; j++) {
++			printk("%02x ", data[j]);
++			if (j % 8 == 7)
++				printk(KERN_INFO "\n");
++		}
++	}
++}
++
++void
++be_print_tx_cmpls(struct be_adapter *adapter, struct be_tx_obj *txo)
++{
++	struct device *dev = &adapter->pdev->dev;
++	struct be_tx_dump_cmpl *cmpl_info;
++	int i;
++
++	dev_info(dev, "TX CQ id %d head %d tail %d used %d\n",
++		 txo->cq.id, txo->cq.head, txo->cq.tail,
++		 atomic_read(&txo->cq.used));
++
++	for (i = 0; i < BE_TXQ_INFO_LEN; i++) {
++		cmpl_info = &txo->cmpl_info[i];
++		if (!cmpl_info->valid)
++			continue;
++
++		printk(KERN_INFO "0x%x 0x%x 0x%x 0x%x\n",
++		       cmpl_info->info[0], cmpl_info->info[1],
++		       cmpl_info->info[2], cmpl_info->info[3]);
++	}
++}
++
++/* be_dump_info - Print tx-wqes, tx-cmpls and skb-data */
++void be_dump_info(struct be_adapter *adapter)
++{
++	struct be_tx_obj *txo;
++	int i;
++
++	if (!adapter->msg_enable)
++		return;
++
++	for_all_tx_queues(adapter, txo, i) {
++		be_print_tx_wqes(adapter, txo);
++		be_print_tx_cmpls(adapter, txo);
++	}
++}
++
+ static void be_tx_timeout(struct net_device *netdev)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+@@ -1429,6 +1539,8 @@ static void be_tx_timeout(struct net_device *netdev)
+ 	int status;
+ 	int i, j;
+ 
++	be_dump_info(adapter);
++
+ 	for_all_tx_queues(adapter, txo, i) {
+ 		dev_info(dev, "TXQ Dump: %d H: %d T: %d used: %d, qid: 0x%x\n",
+ 			 i, txo->q.head, txo->q.tail,
+@@ -2719,6 +2831,10 @@ static struct be_tx_compl_info *be_tx_compl_get(struct be_adapter *adapter,
+ 	rmb();
+ 	be_dws_le_to_cpu(compl, sizeof(*compl));
+ 
++	/* Dump completion info */
++	if (adapter->msg_enable)
++		be_record_tx_cmpl(txo, compl);
++
+ 	txcp->status = GET_TX_COMPL_BITS(status, compl);
+ 	txcp->end_index = GET_TX_COMPL_BITS(wrb_index, compl);
+ 
+-- 
+2.10.1
 
