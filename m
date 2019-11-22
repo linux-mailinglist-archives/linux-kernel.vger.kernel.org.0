@@ -2,68 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF21105DE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 01:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3413105DEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 02:03:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfKVAzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 19:55:55 -0500
-Received: from mga18.intel.com ([134.134.136.126]:57577 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbfKVAzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 19:55:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 16:55:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,227,1571727600"; 
-   d="scan'208";a="381922129"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by orsmga005.jf.intel.com with ESMTP; 21 Nov 2019 16:55:53 -0800
-Date:   Thu, 21 Nov 2019 16:55:53 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Message-ID: <20191122005553.GA11322@agluck-desk2.amr.corp.intel.com>
-References: <20191121215126.GA9075@agluck-desk2.amr.corp.intel.com>
- <159DB397-87E2-435D-9F33-067FF9296ADC@amacapital.net>
+        id S1726752AbfKVBDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 20:03:46 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35344 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbfKVBDo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 20:03:44 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q13so2639557pff.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2019 17:03:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yLXiD3mid8KH+vzWk5eeV9cjY9C1Tzvqr7ZpCV412RY=;
+        b=hLEhYIK9flS41tAVD9Y1bn4Jt1UMYp7abrfy7AKnCXRyYLediN4w0OgzUjMgs0WAYW
+         rzprgJVKdgJxLcSWW6iAsj72BUpuEc3wX6C78lTdcb6JdJgZL51SVGpEs6Ai7XrsXt+y
+         5MF2Lwf3FHcIrCf8H9/NtYF9ZkNBOYzfwh3jk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yLXiD3mid8KH+vzWk5eeV9cjY9C1Tzvqr7ZpCV412RY=;
+        b=SKeV127On/4X+zQFckrrZDZPAt/Jj8KbTJbQ97l/poZn7BnvZeavv2jsVSp+l1X2eZ
+         ErNJzX08xXgffw0UWxmPpYVEQFeCU1sXpGRgGHtk2pccYjGz1DJw7IvOQdYzVbZHSpxO
+         Bb0UswaZ6tYuJePY3PMhmRmTLBRyQPHsU3xs9ixzszc+YAO9oCCvzIfI22TINLwQOybY
+         RCboJBvCHJfcfJFU3dXNMUVb9XNzXEOZow8y8YJIX+jeYilWqNMur1r7OrgE+WnJB462
+         2LBu7hiIleugImmlx9vlB+7zn+5F7YpZn9lm2z9c5ZuopNYemw5Om//XT60Tm6kMA7YE
+         029g==
+X-Gm-Message-State: APjAAAWE9dVbaqtJyfETBDRlIPpnYK0w8hQRC2MI3cLsh3bTzXYo3zlG
+        EZ8PoulD4F1miMMntl4biVeBoQ==
+X-Google-Smtp-Source: APXvYqz/gdanKWHRL5lO19w7tDA97M8iQ7EDdo45/bL9HF9nQFFMvAJl5aGHe6J3GPDcKfidzkpnhw==
+X-Received: by 2002:a63:4705:: with SMTP id u5mr12607717pga.7.1574384623397;
+        Thu, 21 Nov 2019 17:03:43 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q34sm699235pjb.15.2019.11.21.17.03.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2019 17:03:38 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>,
+        =?UTF-8?q?Jo=C3=A3o=20Moreira?= <joao.moreira@intel.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Stephan Mueller <smueller@chronox.de>, x86@kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH v6 0/8] crypto: x86: Fix indirect function call casts
+Date:   Thu, 21 Nov 2019 17:03:26 -0800
+Message-Id: <20191122010334.12081-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <159DB397-87E2-435D-9F33-067FF9296ADC@amacapital.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 02:24:21PM -0800, Andy Lutomirski wrote:
-> 
-> > On Nov 21, 2019, at 1:51 PM, Luck, Tony <tony.luck@intel.com> wrote:
+v6:
+- minimize need for various internal casts (ebiggers)
+- clarify comments (ebiggers)
+- switch all context pointers to const (ebiggers)
+v5: https://lore.kernel.org/lkml/20191113182516.13545-1-keescook@chromium.org
+v4: https://lore.kernel.org/lkml/20191111214552.36717-1-keescook@chromium.org
+v3: https://lore.kernel.org/lkml/20190507161321.34611-1-keescook@chromium.org
 
-> > Almost all of what's in this set will be required in whatever
-> > final solution we want to end up with. Out of this:
-> 
-> Why don’t we beat it into shape and apply it, hidden behind BROKEN.
-> Then we can work on the rest of the patches and have a way to test them.
+Hi,
 
-That's my goal (and thanks for the help with the constructive beating,
-"die" is a much better choice that "panic" at this stage of development).
+Now that Clang's CFI has been fixed to do the right thing with extern
+asm functions, this patch series is much simplified. Repeating patch
+1's commit log here:
 
-I'm not sure I see the need to hide it behind BROKEN. The reasoning
-behind choosing disabled by default was so that this wouldn't affect
-anyone unless they chose to turn it on.
+    The crypto glue performed function prototype casting to make indirect
+    calls to assembly routines. Instead of performing casts at the call
+    sites (which trips Control Flow Integrity prototype checking), switch
+    each prototype to a common standard set of arguments which allows the
+    incremental removal of the existing macros. In order to keep pointer
+    math unchanged, internal casting between u128 pointers and u8 pointers
+    is added.
 
--Tony
+With this series (and the Clang LTO+CFI series) I am able to boot x86
+with all crytpo selftests enabled without tripping any CFI checks.
+
+Thanks!
+
+-Kees
+
+Kees Cook (8):
+  crypto: x86/glue_helper: Regularize function prototypes
+  crypto: x86/serpent: Remove glue function macros usage
+  crypto: x86/camellia: Remove glue function macro usage
+  crypto: x86/twofish: Remove glue function macro usage
+  crypto: x86/cast6: Remove glue function macro usage
+  crypto: x86/aesni: Remove glue function macro usage
+  crypto: x86/glue_helper: Remove function prototype cast helpers
+  crypto, x86/sha: Eliminate casts on asm implementations
+
+ arch/x86/crypto/aesni-intel_asm.S          |  8 +--
+ arch/x86/crypto/aesni-intel_glue.c         | 45 ++++++-------
+ arch/x86/crypto/camellia_aesni_avx2_glue.c | 74 ++++++++++-----------
+ arch/x86/crypto/camellia_aesni_avx_glue.c  | 72 +++++++++------------
+ arch/x86/crypto/camellia_glue.c            | 45 +++++++------
+ arch/x86/crypto/cast6_avx_glue.c           | 68 +++++++++-----------
+ arch/x86/crypto/glue_helper.c              | 23 ++++---
+ arch/x86/crypto/serpent_avx2_glue.c        | 65 +++++++++----------
+ arch/x86/crypto/serpent_avx_glue.c         | 63 +++++++++---------
+ arch/x86/crypto/serpent_sse2_glue.c        | 30 +++++----
+ arch/x86/crypto/sha1_ssse3_asm.S           | 10 ++-
+ arch/x86/crypto/sha1_ssse3_glue.c          | 64 ++++++++----------
+ arch/x86/crypto/sha256-ssse3-asm.S         |  4 +-
+ arch/x86/crypto/sha256_ssse3_glue.c        | 34 +++++-----
+ arch/x86/crypto/sha512-ssse3-asm.S         |  4 +-
+ arch/x86/crypto/sha512_ssse3_glue.c        | 31 +++++----
+ arch/x86/crypto/twofish_avx_glue.c         | 75 ++++++++++------------
+ arch/x86/crypto/twofish_glue_3way.c        | 37 ++++++-----
+ arch/x86/include/asm/crypto/camellia.h     | 63 +++++++++---------
+ arch/x86/include/asm/crypto/glue_helper.h  | 18 ++----
+ arch/x86/include/asm/crypto/serpent-avx.h  | 20 +++---
+ arch/x86/include/asm/crypto/serpent-sse2.h | 28 ++++----
+ arch/x86/include/asm/crypto/twofish.h      | 19 +++---
+ crypto/cast6_generic.c                     | 18 +++---
+ crypto/serpent_generic.c                   |  6 +-
+ include/crypto/cast6.h                     |  4 +-
+ include/crypto/serpent.h                   |  4 +-
+ include/crypto/xts.h                       |  2 -
+ 28 files changed, 446 insertions(+), 488 deletions(-)
+
+-- 
+2.17.1
+
