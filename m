@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF7D7106B74
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F72106D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:58:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbfKVKoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:44:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50348 "EHLO mail.kernel.org"
+        id S1730753AbfKVK6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:58:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729339AbfKVKo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:44:26 -0500
+        id S1730742AbfKVK56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2921C20637;
-        Fri, 22 Nov 2019 10:44:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC322073B;
+        Fri, 22 Nov 2019 10:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419465;
-        bh=uvTzRYFfk/sJXWEWGYxYzMFli1kGT3IeXso2izXmZUg=;
+        s=default; t=1574420277;
+        bh=pPjVqW+TzBuF+V00o4hpuDk0lt7UMlrEz4zrYZiDHD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ksq13DofqlXY0X88PFP7O0uLVl9vxh5IuqLE+fa8MTmvv0z+MMu4yJdrEjqONmwak
-         /rH3tuaIICqJFaOmfOUjQfIHMk8qGhrf6jpAPYFjq0mS/FQnlTAqdCXOA53zaiU/8v
-         6F/VL8YwOQ4w/BgBAv6xW8Jk5lPcAOFK5AmZtI8s=
+        b=QCzWHFHQvb+bHKex08ljJvRi3j9SWq/SFku//HKTHu9K2zC7zDUa6CpRZ9VHwnxD/
+         KbYnsY0FUKToDBE7lQNwKtqVCZRQ+XMy6F739222cnPokFXukPyZABGIQTYfFsLY+C
+         Hb9yRLQ5iTUxQ/ZDgCu2JSi2WZIJKQWgZYK+Hhf4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Benc <jbenc@redhat.com>,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 077/222] ip_gre: fix parsing gre header in ipgre_err
+Subject: [PATCH 4.19 052/220] watchdog: sama5d4: fix timeout-sec usage
 Date:   Fri, 22 Nov 2019 11:26:57 +0100
-Message-Id: <20191122100908.756029310@linuxfoundation.org>
+Message-Id: <20191122100915.919777684@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
-[ Upstream commit b0350d51f001e6edc13ee4f253b98b50b05dd401 ]
+[ Upstream commit 2e0432f8f8ad11b4bd208445360220efa5b37d82 ]
 
-gre_parse_header stops parsing when csum_err is encountered, which means
-tpi->key is undefined and ip_tunnel_lookup will return NULL improperly.
+When using watchdog_init_timeout to update the default timeout value,
+an error means that there is no "timeout-sec" in the relevant device
+tree node.
 
-This patch introduce a NULL pointer as csum_err parameter. Even when
-csum_err is encountered, it won't return error and continue parsing gre
-header as expected.
+This should not prevent binding of the driver to the device.
 
-Fixes: 9f57c67c379d ("gre: Remove support for sharing GRE protocol hook.")
-Reported-by: Jiri Benc <jbenc@redhat.com>
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 976932e40036 ("watchdog: sama5d4: make use of timeout-secs provided in devicetree")
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/gre_demux.c | 7 ++++---
- net/ipv4/ip_gre.c    | 9 +++------
- 2 files changed, 7 insertions(+), 9 deletions(-)
+ drivers/watchdog/sama5d4_wdt.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/net/ipv4/gre_demux.c b/net/ipv4/gre_demux.c
-index b798862b6be5d..7efe740c06ebf 100644
---- a/net/ipv4/gre_demux.c
-+++ b/net/ipv4/gre_demux.c
-@@ -86,13 +86,14 @@ int gre_parse_header(struct sk_buff *skb, struct tnl_ptk_info *tpi,
- 
- 	options = (__be32 *)(greh + 1);
- 	if (greh->flags & GRE_CSUM) {
--		if (skb_checksum_simple_validate(skb)) {
-+		if (!skb_checksum_simple_validate(skb)) {
-+			skb_checksum_try_convert(skb, IPPROTO_GRE, 0,
-+						 null_compute_pseudo);
-+		} else if (csum_err) {
- 			*csum_err = true;
- 			return -EINVAL;
+diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+index 255169916dbb6..1e93c1b0e3cfc 100644
+--- a/drivers/watchdog/sama5d4_wdt.c
++++ b/drivers/watchdog/sama5d4_wdt.c
+@@ -247,11 +247,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
  		}
- 
--		skb_checksum_try_convert(skb, IPPROTO_GRE, 0,
--					 null_compute_pseudo);
- 		options++;
  	}
  
-diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-index 576f705d81809..9609ad71dd260 100644
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -224,13 +224,10 @@ static void gre_err(struct sk_buff *skb, u32 info)
- 	const int type = icmp_hdr(skb)->type;
- 	const int code = icmp_hdr(skb)->code;
- 	struct tnl_ptk_info tpi;
--	bool csum_err = false;
- 
--	if (gre_parse_header(skb, &tpi, &csum_err, htons(ETH_P_IP),
--			     iph->ihl * 4) < 0) {
--		if (!csum_err)		/* ignore csum errors. */
--			return;
+-	ret = watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "unable to set timeout value\n");
+-		return ret;
 -	}
-+	if (gre_parse_header(skb, &tpi, NULL, htons(ETH_P_IP),
-+			     iph->ihl * 4) < 0)
-+		return;
++	watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
  
- 	if (type == ICMP_DEST_UNREACH && code == ICMP_FRAG_NEEDED) {
- 		ipv4_update_pmtu(skb, dev_net(skb->dev), info,
+ 	timeout = WDT_SEC2TICKS(wdd->timeout);
+ 
 -- 
 2.20.1
 
