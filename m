@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B79B310706B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94BA3106EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbfKVKo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:44:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50254 "EHLO mail.kernel.org"
+        id S1730593AbfKVLM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:12:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726846AbfKVKoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:44:23 -0500
+        id S1730485AbfKVK5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:57:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E50E820637;
-        Fri, 22 Nov 2019 10:44:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F96B2071F;
+        Fri, 22 Nov 2019 10:57:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419462;
-        bh=dBhYL/8fBTCGaEmqO7RyJD8piCm0z71coejeJpx+Kp4=;
+        s=default; t=1574420274;
+        bh=KB354o3/r9P+JtBFvnw5fnhLSpxOdIW6UqA4GyhnQBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RsK1xIO5f9jtgbvMW9uNV6lv1+zsleWOndehagnQSIJzgqCjUEiivqg4iKqaaHtEG
-         SxuOx8+7NFQ8oAqXKJtmC9KYECreYz5hNpdFS5Ol1tppZZOFAG1F1eNdcMN6co0IL4
-         pGkJBsHFUqp543mIIIEQFC5HHV8oWQUyHp7Hv22Q=
+        b=z4+daHzcgtnSuY+zY3dvLsWwEezPEcjJqgCqlijtsMO3astqfNbFDoogeoJaxDcIM
+         1gb8q6ltmAyRmoBtlfG6gF+3xZTZK5q9iMuQoEpgJIntM6+ZOs6Z3nzQWIOdIBLQHg
+         F66390mT42pio8V1M9kgXEpQA+hoCtVgMXvxj3eo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 076/222] kernfs: Fix range checks in kernfs_get_target_path
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 051/220] watchdog: renesas_wdt: stop when unregistering
 Date:   Fri, 22 Nov 2019 11:26:56 +0100
-Message-Id: <20191122100908.434672347@linuxfoundation.org>
+Message-Id: <20191122100915.866371312@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
-References: <20191122100830.874290814@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +47,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[ Upstream commit a75e78f21f9ad4b810868c89dbbabcc3931591ca ]
+[ Upstream commit 14de99b44b34dbb9d0f64845b1cbb675e047767e ]
 
-The terminating NUL byte is only there because the buffer is
-allocated with kzalloc(PAGE_SIZE, GFP_KERNEL), but since the
-range-check is off-by-one, and PAGE_SIZE==PATH_MAX, the
-returned string may not be zero-terminated if it is exactly
-PATH_MAX characters long.  Furthermore also the initial loop
-may theoretically exceed PATH_MAX and cause a fault.
+We want to go into a sane state when unregistering. Currently, it
+happens that the watchdog stops when unbinding because of RuntimePM
+stopping the core clock. When rebinding, the core clock gets reactivated
+and the watchdog fires even though it hasn't been opened by userspace
+yet. Strange scenario, yes, but sane state is much preferred anyhow.
 
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/kernfs/symlink.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/watchdog/renesas_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
-index 80317b04c84a2..e431a850f2f2b 100644
---- a/fs/kernfs/symlink.c
-+++ b/fs/kernfs/symlink.c
-@@ -63,6 +63,9 @@ static int kernfs_get_target_path(struct kernfs_node *parent,
- 		if (base == kn)
- 			break;
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index d01efd342dc0c..62d9d3edcdf25 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -239,6 +239,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	watchdog_set_nowayout(&priv->wdev, nowayout);
+ 	watchdog_set_restart_priority(&priv->wdev, 0);
++	watchdog_stop_on_unregister(&priv->wdev);
  
-+		if ((s - path) + 3 >= PATH_MAX)
-+			return -ENAMETOOLONG;
-+
- 		strcpy(s, "../");
- 		s += 3;
- 		base = base->parent;
-@@ -79,7 +82,7 @@ static int kernfs_get_target_path(struct kernfs_node *parent,
- 	if (len < 2)
- 		return -EINVAL;
- 	len--;
--	if ((s - path) + len > PATH_MAX)
-+	if ((s - path) + len >= PATH_MAX)
- 		return -ENAMETOOLONG;
- 
- 	/* reverse fillup of target string from target to base */
+ 	/* This overrides the default timeout only if DT configuration was found */
+ 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
 -- 
 2.20.1
 
