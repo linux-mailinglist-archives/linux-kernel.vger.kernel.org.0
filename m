@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF05106F39
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06EAB106DE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 12:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730249AbfKVKxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:53:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38414 "EHLO mail.kernel.org"
+        id S1731502AbfKVLEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 06:04:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730223AbfKVKxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:53:38 -0500
+        id S1731490AbfKVLEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 06:04:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6647B20718;
-        Fri, 22 Nov 2019 10:53:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0CB020659;
+        Fri, 22 Nov 2019 11:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574420017;
-        bh=UG/trRbmRpxl3vtMnIFWUwEZ1MwIeNkNhQGy5Vhy+B4=;
+        s=default; t=1574420641;
+        bh=omDMWs7oiMbcZbsR6yFJC92lzmGq0/GwmcRPEeaGxKc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wREesQ1EAese8wEd/48XLJbRW8rdO1+1xvLT/j9JORpdW99n2fxNb/F2xiTD3fE4Y
-         QmfoDe4zcGvkiEOPXUg+DiMM+S3DjMeorUr8ogq4SEAUwb+qRwZqeqlA8FlBZr9rzD
-         45sJfROpIc8vPoRUfXI3348v0pCixGiewJzoGUyk=
+        b=vOSOKxdAnSjPzjnIogXYwPgHC0y+m74DO2byflhGvPWlXg8xlQr6CxS4m36NyiYlf
+         godrbU2KRqSjmhhOYnGWinUBJIRulS7/KCcbY+wzhARCwsN6BSSbbR6fe+IbRqChN0
+         2U8fLZrvEFNofnGgZfkQdevqs4becMkyZMC3wTks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Vikash Garodia <vgarodia@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 088/122] mmc: tmio: Fix SCC error detection
-Date:   Fri, 22 Nov 2019 11:29:01 +0100
-Message-Id: <20191122100826.861772275@linuxfoundation.org>
+Subject: [PATCH 4.19 177/220] media: venus: vdec: fix decoded data size
+Date:   Fri, 22 Nov 2019 11:29:02 +0100
+Message-Id: <20191122100925.580614080@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100912.732983531@linuxfoundation.org>
+References: <20191122100912.732983531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,39 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+From: Vikash Garodia <vgarodia@codeaurora.org>
 
-[ Upstream commit b85fb0a1c8aeaaa40d08945d51a6656b512173f0 ]
+[ Upstream commit ce32c0a530bd955206fe45c2eff77e581202d699 ]
 
-SDR104, HS200 and HS400 need to check for SCC error. If SCC error is
-detected, retuning is necessary.
+Existing code returns the max of the decoded size and buffer size.
+It turns out that buffer size is always greater due to hardware
+alignment requirement. As a result, payload size given to client
+is incorrect. This change ensures that the bytesused is assigned
+to actual payload size, when available.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/qcom/venus/vdec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 2437fcde915a7..01e51b7945750 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -914,8 +914,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index dfbbbf0f746f9..e40fdf97b0f03 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -888,8 +888,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
+ 		unsigned int opb_sz = venus_helper_get_opb_size(inst);
  
--	if (host->check_scc_error)
--		host->check_scc_error(host);
-+	if (host->check_scc_error && host->check_scc_error(host))
-+		mrq->cmd->error = -EILSEQ;
- 
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
+ 		vb = &vbuf->vb2_buf;
+-		vb->planes[0].bytesused =
+-			max_t(unsigned int, opb_sz, bytesused);
++		vb2_set_plane_payload(vb, 0, bytesused ? : opb_sz);
+ 		vb->planes[0].data_offset = data_offset;
+ 		vb->timestamp = timestamp_us * NSEC_PER_USEC;
+ 		vbuf->sequence = inst->sequence_cap++;
 -- 
 2.20.1
 
