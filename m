@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B739106C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29BC3106A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:35:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbfKVKvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:51:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33536 "EHLO mail.kernel.org"
+        id S1727575AbfKVKfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:35:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfKVKvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:51:06 -0500
+        id S1728181AbfKVKfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:35:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9EAD2075B;
-        Fri, 22 Nov 2019 10:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA6320715;
+        Fri, 22 Nov 2019 10:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419865;
-        bh=aO/bn3g/L37I+yaRgds2a8RKO4/vCXQ9XJIrNV99pwM=;
+        s=default; t=1574418900;
+        bh=i1i7cHnRw8mqsnFpsZPU0xEVm/PGqfyMQsM3ZrClmjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=behkjgG3VRMJ4WXZsBUtIb5DfQCSr0NHrblIhI1ub/WI5lp1pfo3QrMQaaWgFEWpp
-         z7cUpog5ndesky5lNktv2gXgdjpwMOXzaLnmcEh8Fcg58gszebhU+R+mM7f9xz5qdk
-         qEhVM/7+EDBabXr1i6tXN3xhb1o0LnBGKgF61hBc=
+        b=KZznfjJbz9LNboMr/5QrWIFRXIeRlGBI5swsykAPpQUM/POUpSzrGvVrjzJDMK1OP
+         0RVvaBLZjHEn51RyaWrPKxbzXFiil0gE9hkHBQPg1Azk/W8FRn27pVK/03fZayAnlo
+         3cYMb6WGm/QoZhxk0fumT6my5RuI7y/dAIHTg8k8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 028/122] irqchip/irq-mvebu-icu: Fix wrong private data retrieval
-Date:   Fri, 22 Nov 2019 11:28:01 +0100
-Message-Id: <20191122100744.712952402@linuxfoundation.org>
+Subject: [PATCH 4.4 091/159] net: smsc: fix return type of ndo_start_xmit function
+Date:   Fri, 22 Nov 2019 11:28:02 +0100
+Message-Id: <20191122100812.012542676@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 2b4dab69dcca13c5be2ddaf1337ae4accd087de6 ]
+[ Upstream commit 6323d57f335ce1490d025cacc83fc10b07792130 ]
 
-The irq_domain structure has an host_data pointer that just stores
-private data. It is meant to not be touched by the IRQ core. However,
-when it comes to MSI, the MSI layer adds its own private data there
-with a structure that also has a host_data pointer.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-Because this IRQ domain is an MSI domain, to access private data we
-should do a d->host_data->host_data, also wrapped as
-'platform_msi_get_host_data()'.
+Found by coccinelle.
 
-This bug was lying there silently because the 'icu' structure retrieved
-this way was just called by dev_err(), only producing a
-'(NULL device *):' output on the console.
-
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-mvebu-icu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/smsc/smc911x.c  | 3 ++-
+ drivers/net/ethernet/smsc/smc91x.c   | 3 ++-
+ drivers/net/ethernet/smsc/smsc911x.c | 3 ++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
-index e18c48d3a92e7..6a77b9ea8e418 100644
---- a/drivers/irqchip/irq-mvebu-icu.c
-+++ b/drivers/irqchip/irq-mvebu-icu.c
-@@ -92,7 +92,7 @@ static int
- mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
- 			       unsigned long *hwirq, unsigned int *type)
+diff --git a/drivers/net/ethernet/smsc/smc911x.c b/drivers/net/ethernet/smsc/smc911x.c
+index bd64eb982e527..37fb6dfc10875 100644
+--- a/drivers/net/ethernet/smsc/smc911x.c
++++ b/drivers/net/ethernet/smsc/smc911x.c
+@@ -511,7 +511,8 @@ static void smc911x_hardware_send_pkt(struct net_device *dev)
+  * now, or set the card to generates an interrupt when ready
+  * for the packet.
+  */
+-static int smc911x_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++smc911x_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
  {
--	struct mvebu_icu *icu = d->host_data;
-+	struct mvebu_icu *icu = platform_msi_get_host_data(d);
- 	unsigned int icu_group;
+ 	struct smc911x_local *lp = netdev_priv(dev);
+ 	unsigned int free;
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 23a0388100834..7405f537beca7 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -637,7 +637,8 @@ done:	if (!THROTTLE_TX_PKTS)
+  * now, or set the card to generates an interrupt when ready
+  * for the packet.
+  */
+-static int smc_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++smc_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct smc_local *lp = netdev_priv(dev);
+ 	void __iomem *ioaddr = lp->base;
+diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+index 219a99b7a631d..b62bf77a64f43 100644
+--- a/drivers/net/ethernet/smsc/smsc911x.c
++++ b/drivers/net/ethernet/smsc/smsc911x.c
+@@ -1677,7 +1677,8 @@ static int smsc911x_stop(struct net_device *dev)
+ }
  
- 	/* Check the count of the parameters in dt */
+ /* Entry point for transmitting a packet */
+-static int smsc911x_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++smsc911x_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct smsc911x_data *pdata = netdev_priv(dev);
+ 	unsigned int freespace;
 -- 
 2.20.1
 
