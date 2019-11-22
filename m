@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C474106C31
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:50:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E81C0106A6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:34:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbfKVKui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:50:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60640 "EHLO mail.kernel.org"
+        id S1728158AbfKVKev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:34:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729435AbfKVKud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:50:33 -0500
+        id S1728142AbfKVKet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:34:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5632A205C9;
-        Fri, 22 Nov 2019 10:50:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C77120656;
+        Fri, 22 Nov 2019 10:34:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419832;
-        bh=PdQVLVDvmxyVyKUrtgndumSRZV085gVoUxALfMKFSKE=;
+        s=default; t=1574418888;
+        bh=avT296kkH6vYPf/CZXBH0ZritG7eBuOV/le7rkHC914=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ikMxKO+SLQWQZmJSP9GJQaD+1l1WVEY80/qqvPiMT4rSXgAxKyo+BdU81bRdiU4PC
-         RRCy4b2Y6sYG/qaQWvarGtN+8tNZaoAnFpkig1KA2PGbOtao7kj7Gf4YKZ6ksVNbGu
-         TdmRErQLhyV3E04sI8Tn44ULBS8E4VmwZedzlqL8=
+        b=2MuGPCeEP/qS9eQE+KlCMI3Yb0HmMu5bScE37TPaMt6+i+0xwhw7vrDRf7Hhvnq2B
+         6/2Sguoi/S+lm2FlcVHoLfGTygnGVkpduFxpDY1dMrHqu8dVuFie5HgRvxJ67GBGk9
+         AY3lqHsnRsglRhk4EChMKaG3DAcaL5lia3DgxIrU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Kossifidis <mickflemm@gmail.com>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Li Qiang <liq3ea@gmail.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 024/122] ath9k: fix reporting calculated new FFT upper max
-Date:   Fri, 22 Nov 2019 11:27:57 +0100
-Message-Id: <20191122100739.517562947@linuxfoundation.org>
+Subject: [PATCH 4.4 087/159] vfio/pci: Fix potential memory leak in vfio_msi_cap_len
+Date:   Fri, 22 Nov 2019 11:27:58 +0100
+Message-Id: <20191122100809.415095358@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+References: <20191122100704.194776704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Wunderlich <sw@simonwunderlich.de>
+From: Li Qiang <liq3ea@gmail.com>
 
-[ Upstream commit 4fb5837ac2bd46a85620b297002c704e9958f64d ]
+[ Upstream commit 30ea32ab1951c80c6113f300fce2c70cd12659e4 ]
 
-Since the debug print code is outside of the loop, it shouldn't use the loop
-iterator anymore but instead print the found maximum index.
+Free allocated vdev->msi_perm in error path.
 
-Cc: Nick Kossifidis <mickflemm@gmail.com>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Li Qiang <liq3ea@gmail.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/common-spectral.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci_config.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/common-spectral.c b/drivers/net/wireless/ath/ath9k/common-spectral.c
-index a41bcbda1d9e8..37d5994eb1ccd 100644
---- a/drivers/net/wireless/ath/ath9k/common-spectral.c
-+++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
-@@ -411,7 +411,7 @@ ath_cmn_process_ht20_40_fft(struct ath_rx_status *rs,
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index c55c632a3b249..ad5929fbceb16 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -1130,8 +1130,10 @@ static int vfio_msi_cap_len(struct vfio_pci_device *vdev, u8 pos)
+ 		return -ENOMEM;
  
- 		ath_dbg(common, SPECTRAL_SCAN,
- 			"Calculated new upper max 0x%X at %i\n",
--			tmp_mag, i);
-+			tmp_mag, fft_sample_40.upper_max_index);
- 	} else
- 	for (i = dc_pos; i < SPECTRAL_HT20_40_NUM_BINS; i++) {
- 		if (fft_sample_40.data[i] == (upper_mag >> max_exp))
+ 	ret = init_pci_cap_msi_perm(vdev->msi_perm, len, flags);
+-	if (ret)
++	if (ret) {
++		kfree(vdev->msi_perm);
+ 		return ret;
++	}
+ 
+ 	return len;
+ }
 -- 
 2.20.1
 
