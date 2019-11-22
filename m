@@ -2,74 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF17107A7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 23:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 168BE107A84
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 23:28:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfKVWT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 17:19:57 -0500
-Received: from mga09.intel.com ([134.134.136.24]:15223 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfKVWT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 17:19:57 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2019 14:19:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,231,1571727600"; 
-   d="scan'208";a="409025722"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Nov 2019 14:19:55 -0800
-Date:   Fri, 22 Nov 2019 14:19:55 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     Marios Pomonis <pomonis@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Finco <nifi@google.com>, Andrew Honig <ahonig@google.com>
-Subject: Re: [PATCH] KVM: x86: Extend Spectre-v1 mitigation
-Message-ID: <20191122221955.GI31235@linux.intel.com>
-References: <20191122184039.7189-1-pomonis@google.com>
- <1ADDE0A8-40F1-4642-B8CC-8DE38609DC10@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1ADDE0A8-40F1-4642-B8CC-8DE38609DC10@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726813AbfKVW2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 17:28:04 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54436 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726089AbfKVW2E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 17:28:04 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMMNMog067356;
+        Fri, 22 Nov 2019 17:26:28 -0500
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wdv0why7c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Nov 2019 17:26:28 -0500
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xAMMKplf032360;
+        Fri, 22 Nov 2019 22:26:27 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma03dal.us.ibm.com with ESMTP id 2wa8r7t2ru-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Nov 2019 22:26:27 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAMMQQR552953380
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 22:26:26 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FBC7112065;
+        Fri, 22 Nov 2019 22:26:26 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C732F112062;
+        Fri, 22 Nov 2019 22:26:25 +0000 (GMT)
+Received: from wrightj-ThinkPad-W520.rchland.ibm.com (unknown [9.10.101.53])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 22 Nov 2019 22:26:25 +0000 (GMT)
+From:   Jim Wright <wrightj@linux.vnet.ibm.com>
+To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jim Wright <jlwright@us.ibm.com>
+Subject: [PATCH 0/2] hwmon: Add UCD90320 power sequencer chip
+Date:   Fri, 22 Nov 2019 16:25:40 -0600
+Message-Id: <20191122222542.29661-1-wrightj@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-22_05:2019-11-21,2019-11-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=520 clxscore=1011 impostorscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911220177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 12:03:27AM +0200, Liran Alon wrote:
-> 
-> > On 22 Nov 2019, at 20:40, Marios Pomonis <pomonis@google.com> wrote:
-> > @@ -5828,6 +5836,8 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
-> > {
-> > 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > 	u32 exit_reason = vmx->exit_reason;
-> > +	u32 bounded_exit_reason = array_index_nospec(exit_reason,
-> > +						kvm_vmx_max_exit_handlers);
-> 
-> Unlike the rest of this patch changes, exit_reason is not attacker-controllable.
-> Therefore, I don’t think we need this change to vmx_handle_exit().
+From: Jim Wright <jlwright@us.ibm.com>
 
-I waffled on this one too.  Theoretically, if an attacker finds a way to
-trigger a VM-Exit that isn't yet known to KVM, and coordinates across
-userspace and guest to keep rerunning the attack in the guest instead of
-killing the VM (on the unexpected VM-Exit), then exit_reason is sort of
-under attacker control.
+Add support for TI UCD90320 power sequencer chip.
 
-Of course the above scenario would require a bug in KVM, e.g. enable an
-unknown enabling/exiting control, or in a CPU, e.g. generate a new VM-Exit
-without software opt-in or generate a completely bogus VM-Exit.  The
-whole thing is pretty far fetched...
+Jim Wright (2):
+  dt-bindings: hwmon/pmbus: Add UCD90320 power sequencer
+  hwmon: Add support for UCD90320 Power Sequencer
+
+ .../bindings/hwmon/pmbus/ucd90320.txt         | 13 +++++++
+ Documentation/hwmon/ucd9000.rst               | 12 +++++-
+ drivers/hwmon/pmbus/Kconfig                   |  6 +--
+ drivers/hwmon/pmbus/ucd9000.c                 | 39 +++++++++++++------
+ 4 files changed, 53 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/ucd90320.txt
+
+-- 
+2.17.1
+
