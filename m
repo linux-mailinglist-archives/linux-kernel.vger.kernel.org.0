@@ -2,103 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB10D106920
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E46AE106927
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 10:46:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfKVJq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 04:46:26 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:48687 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727016AbfKVJqY (ORCPT
+        id S1727320AbfKVJqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 04:46:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52696 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfKVJqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 04:46:24 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-168-zOi8G6s8PYCcEIlNqSrD_g-1; Fri, 22 Nov 2019 09:46:18 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 22 Nov 2019 09:46:16 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 22 Nov 2019 09:46:16 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Lutomirski' <luto@kernel.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
+        Fri, 22 Nov 2019 04:46:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4bMCSmie4xBahDbJdinovuabFdb6Cy8S8dTGqzWuLR4=; b=Gt/m5z4eElJMbtAzlkbsivme/p
+        NNr7pn/ZSfiG76Nm9qhvebnfTv5LORjN3eJnB3bVavVQCX/92ySfbqprcXoxw6389Jjs4RQNafj/v
+        LYyxUSuUanL2v1d8w7C7BK4abFwW4rsXvy+xRYox8sgg6M4WOh4pSh6qEM8ghzR2O/S15Sebtd35T
+        51/ZJljch/mX67diz+L9Ev/OnAhJ3wHs9YsUFC4phFCI+NmLoKoHMjdPLm2EvClM3K3TWdlMeTr/N
+        xG2e2w2vGpSXvem8Qxr/DmqIXxaDLVyfZbrjdDUngBaQ+Ft122nSGGTJeTomWgMKfY2cAEwKcEuwg
+        H98/X7ew==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iY5WQ-0001gv-Lb; Fri, 22 Nov 2019 09:46:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8693630705E;
+        Fri, 22 Nov 2019 10:45:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BF3EF2021C977; Fri, 22 Nov 2019 10:46:35 +0100 (CET)
+Date:   Fri, 22 Nov 2019 10:46:35 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         H Peter Anvin <hpa@zytor.com>,
         Tony Luck <tony.luck@intel.com>,
         Ashok Raj <ashok.raj@intel.com>,
         Ravi V Shankar <ravi.v.shankar@intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: RE: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Thread-Topic: [PATCH v10 6/6] x86/split_lock: Enable split lock detection by
- kernel parameter
-Thread-Index: AQHVoI7WvnywFDJ0u0KDgd00OvHm6qeV5GjQgAAC9YCAAQghMA==
-Date:   Fri, 22 Nov 2019 09:46:16 +0000
-Message-ID: <397239502dad4bc3819c49c7d569c70c@AcuMS.aculab.com>
-References: <1574297603-198156-1-git-send-email-fenghua.yu@intel.com>
- <1574297603-198156-7-git-send-email-fenghua.yu@intel.com>
- <20191121060444.GA55272@gmail.com>
- <20191121130153.GS4097@hirez.programming.kicks-ass.net>
- <20191121171214.GD12042@gmail.com>
- <3481175cbe14457a947f934343946d52@AcuMS.aculab.com>
- <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
-In-Reply-To: <CALCETrW+qxrE633qetS4c1Rn2AX_hk5OgneZRtoZPFN1J395Ng@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+Subject: Re: [PATCH v10 4/6] x86/split_lock: Enumerate split lock detection
+ if the IA32_CORE_CAPABILITIES MSR is not supported
+Message-ID: <20191122094635.GC4097@hirez.programming.kicks-ass.net>
+References: <20191122003754.GF199273@romley-ivt3.sc.intel.com>
+ <5A85615E-EFFF-4DF3-A1A5-DB8532451A42@amacapital.net>
 MIME-Version: 1.0
-X-MC-Unique: zOi8G6s8PYCcEIlNqSrD_g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5A85615E-EFFF-4DF3-A1A5-DB8532451A42@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbSBBbmR5IEx1dG9taXJza2kNCj4gU2VudDogMjEgTm92ZW1iZXIgMjAxOSAxNzo1MQ0KPiBP
-biBUaHUsIE5vdiAyMSwgMjAxOSBhdCA5OjQzIEFNIERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0
-QGFjdWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogSW5nbyBNb2xuYXINCj4gPiA+IFNl
-bnQ6IDIxIE5vdmVtYmVyIDIwMTkgMTc6MTINCj4gPiA+ICogUGV0ZXIgWmlqbHN0cmEgPHBldGVy
-ekBpbmZyYWRlYWQub3JnPiB3cm90ZToNCj4gPiAuLi4NCj4gPiA+ID4gVGhpcyBmZWF0dXJlIE1V
-U1QgYmUgZGVmYXVsdCBlbmFibGVkLCBvdGhlcndpc2UgZXZlcnl0aGluZyB3aWxsDQo+ID4gPiA+
-IGJlL3JlbWFpbiBicm9rZW4gYW5kIHdlJ2xsIGVuZCB1cCBpbiB0aGUgc2l0dWF0aW9uIHdoZXJl
-IHlvdSBjYW4ndCB1c2UNCj4gPiA+ID4gaXQgZXZlbiBpZiB5b3Ugd2FudGVkIHRvLg0KPiA+ID4N
-Cj4gPiA+IEFncmVlZC4NCj4gPg0KPiA+IEJlZm9yZSBpdCBjYW4gYmUgZW5hYmxlZCBieSBkZWZh
-dWx0IHNvbWVvbmUgbmVlZHMgdG8gZ28gdGhyb3VnaCB0aGUNCj4gPiBrZXJuZWwgYW5kIGZpeCBh
-bGwgdGhlIGNvZGUgdGhhdCBhYnVzZXMgdGhlICdiaXQnIGZ1bmN0aW9ucyBieSB1c2luZyB0aGVt
-DQo+ID4gb24gaW50W10gaW5zdGVhZCBvZiBsb25nW10uDQo+ID4NCj4gPiBJJ3ZlIG9ubHkgc2Vl
-biBvbmUgZml4IGdvIHRocm91Z2ggZm9yIG9uZSB1c2UgY2FzZSBvZiBvbmUgcGllY2Ugb2YgY29k
-ZQ0KPiA+IHRoYXQgcmVwZWF0ZWRseSB1c2VzIHBvdGVudGlhbGx5IG1pc2FsaWduZWQgaW50W10g
-YXJyYXlzIGZvciBiaXRtYXNrcy4NCj4gPg0KPiANCj4gQ2FuIHdlIHJlYWxseSBub3QganVzdCBj
-aGFuZ2UgdGhlIGxvY2sgYXNtIHRvIHVzZSAzMi1iaXQgYWNjZXNzZXMgZm9yDQo+IHNldF9iaXQo
-KSwgZXRjPyAgU3VyZSwgaXQgd2lsbCBmYWlsIGlmIHRoZSBiaXQgaW5kZXggaXMgZ3JlYXRlciB0
-aGFuDQo+IDJeMzIsIGJ1dCB0aGF0IHNlZW1zIG51dHMuDQoNCkZvciBsaXR0bGUgZW5kaWFuIDY0
-Yml0IGNwdSBpdCBpcyBzYWZlKGlzaCkgdG8gY2FzdCBpbnQgW10gdG8gbG9uZyBbXSBmb3IgdGhl
-IGJpdG9wcy4NCk9uIEJFIDY0Yml0IGNwdSBhbGwgaGVsbCBicmVha3MgbG9vc2UgaWYgeW91IGRv
-IHRoYXQuDQpJdCByZWFsbHkgd2Fzbid0IG9idmlvdXMgdGhhdCBhbGwgdGhlIGNhc3RzIEkgZm91
-bmQgd2VyZSBhbnl3aGVyZSBuZWFyIHJpZ2h0DQpvbiA2NGJpdCBCRSBzeXN0ZW1zLg0KDQpTbyB3
-aGlsZSBpdCBpcyBhbG1vc3QgY2VydGFpbmx5IHNhZmUgdG8gY2hhbmdlIHRoZSB4ODYtNjQgYml0
-b3BzIHRvIHVzZQ0KMzIgYml0IGFjY2Vzc2VzLCBzb21lIG9mIHRoZSBjb2RlIGlzIGhvcnJpYmx5
-IGJyb2tlbi4NCg0KPiAoV2h5IHRoZSAqaGVsbCogZG8gdGhlIGJpdG9wcyB1c2UgbG9uZyBhbnl3
-YXk/ICBUaGV5J3JlICpiaXQgbWFza3MqDQo+IGZvciBjcnlpbmcgb3V0IGxvdWQuICBBcyBpbiwg
-dXNlcnMgZ2VuZXJhbGx5IHdhbnQgdG8gb3BlcmF0ZSBvbiBmaXhlZA0KPiBudW1iZXJzIG9mIGJp
-dHMuKQ0KDQpUaGUgYml0b3BzIGZ1bmN0aW9ucyB3ZXJlIChwcm9iYWJseSkgd3JpdHRlbiBmb3Ig
-bGFyZ2UgYml0bWFwcyB0aGF0DQphcmUgYmlnZ2VyIHRoYW4gdGhlIHNpemUgb2YgYSAnd29yZCcg
-ICg+IDMyIGJpdHMpIGFuZCBsaWtlbHkgdG8gYmUNCnZhcmlhYmxlIHNpemUuDQpRdWl0ZSB3aHkg
-dGhleSB1c2UgbG9uZyBbXSBpcyBhbnlib2R5J3MgZ3Vlc3MsIGJ1dCB0aGF0IGlzIHRoZSBkZWZp
-bml0aW9uLg0KSXQgYWxzbyBpc24ndCBxdWl0ZSBjbGVhciB0byBtZSB3aHkgdGhhdCBhcmUgcmVx
-dWlyZWQgdG8gYmUgYXRvbWljLg0KT24geDg2IGF0b21pY2l0eSBkb2Vzbid0IGNvc3QgbXVjaCwg
-b24gb3RoZXIgYXJjaGl0ZWN0dXJlcyB0aGUgY29zdA0KaXMgc2lnbmlmaWNhbnQuDQoNCglEYXZp
-ZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQg
-RmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4
-NiAoV2FsZXMpDQo=
+On Thu, Nov 21, 2019 at 06:13:18PM -0800, Andy Lutomirski wrote:
 
+> You seem to be assuming that certain model CPUs have this feature even
+> if not enumerated. You need to make sure you don’t try to use it in a
+> VM without the hypervisor giving you an indication that it’s available
+> and permitted. My suggestion is to disable model-based enumeration if
+> HYPERVISOR is set.  You should also consider probing the MSR to double
+> check even if you don’t think you have a hypervisor.
+
+Yep, in patch 6 this results in an unconditinoal WRMSR, which, when ran
+under a HV, will explode most mighty.
+
+He doesn't double check, doesn't use wrmsrl_safe()...
