@@ -2,159 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2321105EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 04:08:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A144105EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 04:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfKVDId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 21 Nov 2019 22:08:33 -0500
-Received: from mga14.intel.com ([192.55.52.115]:53721 "EHLO mga14.intel.com"
+        id S1726574AbfKVDGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 21 Nov 2019 22:06:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726830AbfKVDIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Nov 2019 22:08:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2019 19:08:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,228,1571727600"; 
-   d="scan'208";a="232540462"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Nov 2019 19:08:28 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
-        Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 5/5] iommu/vt-d: Consolidate pasid-based device tlb invalidation
-Date:   Fri, 22 Nov 2019 11:04:49 +0800
-Message-Id: <20191122030449.28892-6-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191122030449.28892-1-baolu.lu@linux.intel.com>
-References: <20191122030449.28892-1-baolu.lu@linux.intel.com>
+        id S1726335AbfKVDGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Nov 2019 22:06:23 -0500
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC833206B6;
+        Fri, 22 Nov 2019 03:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574391982;
+        bh=WHOYATGBc/KhbUsY17Xhsk4+WhbvgQ0BBAtu736vu44=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wsysb1M4c5Of6auNnd9WrnuX1d02JpYy2mPEoQ+5gjPFolt9aOvDJ6cbTtK9uowg+
+         F3B/IcMPpFYJm+VI2Tz9NzrY3GG//ps0Q2UFi7UhjzC2A/93e1c3Oiee0q/7qX97qx
+         1QSYrvkYUwciXyAbQHhi2Wmon4dgqLNThqpvPjsc=
+Date:   Thu, 21 Nov 2019 19:06:20 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        =?iso-8859-1?Q?Jo=E3o?= Moreira <joao.moreira@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Stephan Mueller <smueller@chronox.de>, x86@kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v6 8/8] crypto, x86/sha: Eliminate casts on asm
+ implementations
+Message-ID: <20191122030620.GD32523@sol.localdomain>
+References: <20191122010334.12081-1-keescook@chromium.org>
+ <20191122010334.12081-9-keescook@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191122010334.12081-9-keescook@chromium.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge pasid-based device tlb invalidation into iommu->flush.p_dev_tlb_inv.
+On Thu, Nov 21, 2019 at 05:03:34PM -0800, Kees Cook wrote:
+> -asmlinkage void sha1_transform_ssse3(u32 *digest, const char *data,
+> -				     unsigned int rounds);
+> +asmlinkage void sha1_transform_ssse3(struct sha1_state *digest,
+> +				     const u8 *data, int rounds);
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 41 +++++++++++++++++++++++++++++++++++++
- drivers/iommu/intel-svm.c   | 33 ++++++-----------------------
- 2 files changed, 47 insertions(+), 27 deletions(-)
+Can you please use:
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index fec78cc877c1..dd16d466320f 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3074,6 +3074,46 @@ qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32 pasid, u64 addr,
- 	qi_submit_sync(&desc, iommu);
- }
- 
-+/* PASID-based device TLB invalidation */
-+static void
-+qi_flush_dev_piotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+		    u32 pasid, u16 qdep, u64 address, unsigned long npages)
-+{
-+	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
-+
-+	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) | QI_DEV_EIOTLB_SID(sid) |
-+			QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
-+			QI_DEV_IOTLB_PFSID(pfsid);
-+
-+	/*
-+	 * npages == -1 means a PASID-selective invalidation, otherwise,
-+	 * a positive value for Page-selective-within-PASID invalidation.
-+	 * 0 is not a valid input.
-+	 */
-+	if (WARN_ON(!npages)) {
-+		pr_err("Invalid input npages = %ld\n", npages);
-+		return;
-+	}
-+
-+	if (npages == -1) {
-+		desc.qw1 = QI_DEV_EIOTLB_ADDR(((u64)-1) >> 1) |
-+				QI_DEV_EIOTLB_SIZE;
-+	} else if (npages > 1) {
-+		/* The least significant zero bit indicates the size. So,
-+		 * for example, an "address" value of 0x12345f000 will
-+		 * flush from 0x123440000 to 0x12347ffff (256KiB). */
-+		unsigned long last = address + ((unsigned long)(npages - 1) << VTD_PAGE_SHIFT);
-+		unsigned long mask = __rounddown_pow_of_two(address ^ last);
-+
-+		desc.qw1 = QI_DEV_EIOTLB_ADDR((address & ~mask) |
-+				(mask - 1)) | QI_DEV_EIOTLB_SIZE;
-+	} else {
-+		desc.qw1 = QI_DEV_EIOTLB_ADDR(address);
-+	}
-+
-+	qi_submit_sync(&desc, iommu);
-+}
-+
- static void intel_iommu_init_qi(struct intel_iommu *iommu)
- {
- 	/*
-@@ -3108,6 +3148,7 @@ static void intel_iommu_init_qi(struct intel_iommu *iommu)
- 		iommu->flush.pc_inv = qi_flush_pasid;
- 		iommu->flush.dev_tlb_inv = qi_flush_dev_iotlb;
- 		iommu->flush.p_iotlb_inv = qi_flush_piotlb;
-+		iommu->flush.p_dev_tlb_inv = qi_flush_dev_piotlb;
- 		pr_info("%s: Using Queued invalidation\n", iommu->name);
- 	}
- }
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 02c6b14f0568..b6b22989eb46 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -114,39 +114,18 @@ void intel_svm_check(struct intel_iommu *iommu)
- 	iommu->flags |= VTD_FLAG_SVM_CAPABLE;
- }
- 
--static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_dev *sdev,
--				unsigned long address, unsigned long pages, int ih)
-+static void
-+intel_flush_svm_range_dev(struct intel_svm *svm, struct intel_svm_dev *sdev,
-+			  unsigned long address, unsigned long pages, int ih)
- {
--	struct qi_desc desc;
- 	struct intel_iommu *iommu = svm->iommu;
- 
- 	iommu->flush.p_iotlb_inv(iommu, sdev->did,
- 				 svm->pasid, address, pages, ih);
- 
--	if (sdev->dev_iotlb) {
--		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
--				QI_DEV_EIOTLB_SID(sdev->sid) |
--				QI_DEV_EIOTLB_QDEP(sdev->qdep) |
--				QI_DEIOTLB_TYPE;
--		if (pages == -1) {
--			desc.qw1 = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
--					QI_DEV_EIOTLB_SIZE;
--		} else if (pages > 1) {
--			/* The least significant zero bit indicates the size. So,
--			 * for example, an "address" value of 0x12345f000 will
--			 * flush from 0x123440000 to 0x12347ffff (256KiB). */
--			unsigned long last = address + ((unsigned long)(pages - 1) << VTD_PAGE_SHIFT);
--			unsigned long mask = __rounddown_pow_of_two(address ^ last);
--
--			desc.qw1 = QI_DEV_EIOTLB_ADDR((address & ~mask) |
--					(mask - 1)) | QI_DEV_EIOTLB_SIZE;
--		} else {
--			desc.qw1 = QI_DEV_EIOTLB_ADDR(address);
--		}
--		desc.qw2 = 0;
--		desc.qw3 = 0;
--		qi_submit_sync(&desc, svm->iommu);
--	}
-+	if (sdev->dev_iotlb)
-+		iommu->flush.p_dev_tlb_inv(iommu, sdev->sid, 0, svm->pasid,
-+					   sdev->qdep, address, pages);
- }
- 
- static void intel_flush_svm_range(struct intel_svm *svm, unsigned long address,
--- 
-2.17.1
+asmlinkage void sha1_transform_ssse3(struct sha1_state *state,
+				     const u8 *data, int blocks);
 
+I.e., rename 'digest' => 'state' and 'rounds' => 'blocks'.
+
+(Or alternatively 'sst' instead of 'state' would be okay since that's what
+sha{1,256,512}_block_fn uses, but 'state' seems much clearer to me.)
+
+Similarly for the other sha{1,256,512}_transform_*() functions.
+
+'digest' is confusing because it would typically be understood to mean the final
+digest, or maybe also the hash chaining state (e.g. u32[5] for SHA-1) if it's
+interpreted loosely.  I don't think it would typically be understand to also
+include buffered data like struct sha1_state does.
+
+'rounds' is confusing because the parameter is actually the number of blocks,
+not the number of rounds -- the latter being fixed for each SHA-* algorithm.
+Since sha{1,256,512}_block_fn already call it 'blocks' and this patch has to
+update the type of this parameter anyway, let's use that.
+
+>  #ifdef CONFIG_AS_AVX
+> -asmlinkage void sha1_transform_avx(u32 *digest, const char *data,
+> -				   unsigned int rounds);
+> +asmlinkage void sha1_transform_avx(struct sha1_state *digest,
+> +				   const u8 *data, int rounds);
+>  
+
+This patch is also still missing updates to the corresponding comments in the
+assembly files:
+
+	sha1_transform_avx()
+	sha1_transform_avx2()
+	sha256_transform_avx()
+	sha256_transform_rorx()
+	sha512_transform_ssse3() [references to D, M, and L remain]
+	sha512_transform_avx()
+	sha512_transform_rorx()
+
+FWIW, this patch is also independent from 1-7, so it could be sent out
+separately if it makes things any easier for you.
+
+Thanks,
+
+- Eric
