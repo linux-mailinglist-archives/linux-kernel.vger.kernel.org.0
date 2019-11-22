@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC489106C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A52106BC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729156AbfKVKwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36000 "EHLO mail.kernel.org"
+        id S1729718AbfKVKrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:47:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727846AbfKVKw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:52:28 -0500
+        id S1729006AbfKVKq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:46:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46ACB20656;
-        Fri, 22 Nov 2019 10:52:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9F420715;
+        Fri, 22 Nov 2019 10:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419947;
-        bh=kk9s2ECVWRZh6QKxhKPAVyCqzJNCNwA+1D7J7+tmnYg=;
+        s=default; t=1574419618;
+        bh=nDvfqjZXN6r7wwXbb9GxQ2ek1DgjPCeAya5u6EOoyBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H3MLsTwTIBoRnJTpolK5RDqQCyMGyM7TpgNBAyldQhi6k+VrD+MJ+jZI0VA6yQ93e
-         n302IPkJ+PtuU3Q8Uv6b+mKDndh/GJ2uUXT1syKREL6J3zywXZtnsKd6VZH/Hm8kCV
-         7jBbFsFyIf0B3mUvbMMMoXt7ise1fyx9q5xgvj5Q=
+        b=Tcd15dr2JTtG7Ot44Neb0QTaVls3Ee8tB0FDgejpmvwudPjNsdhQ8u5TS/bc1C2IH
+         U4UgSQv0pzq+5Ee9fN7ni46x+N1iIF6mzTR5LZeusn9oQ/XlrMYMuYQPmW4tnMRIVk
+         npl1/Z+RmWBJfEzS21kE2hiR1sCcvRlh2re+w3eM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cameron Kaiser <spectre@floodgap.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 062/122] KVM: PPC: Book3S PR: Exiting split hack mode needs to fixup both PC and LR
+Subject: [PATCH 4.9 175/222] ixgbe: Fix crash with VFs and flow director on interface flap
 Date:   Fri, 22 Nov 2019 11:28:35 +0100
-Message-Id: <20191122100805.666729402@linuxfoundation.org>
+Message-Id: <20191122100915.087688646@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191122100722.177052205@linuxfoundation.org>
-References: <20191122100722.177052205@linuxfoundation.org>
+In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
+References: <20191122100830.874290814@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cameron Kaiser <spectre@floodgap.com>
+From: Radoslaw Tyl <radoslawx.tyl@intel.com>
 
-[ Upstream commit 1006284c5e411872333967b1970c2ca46a9e225f ]
+[ Upstream commit 5d826d209164b0752c883607be4cdbbcf7cab494 ]
 
-When an OS (currently only classic Mac OS) is running in KVM-PR and makes a
-linked jump from code with split hack addressing enabled into code that does
-not, LR is not correctly updated and reflects the previously munged PC.
+This patch fix crash when we have restore flow director filters after reset
+adapter. In ixgbe_fdir_filter_restore() filter->action is outside of the
+rx_ring array, as it has a VF identifier in the upper 32 bits.
 
-To fix this, this patch undoes the address munge when exiting split
-hack mode so that code relying on LR being a proper address will now
-execute. This does not affect OS X or other operating systems running
-on KVM-PR.
-
-Signed-off-by: Cameron Kaiser <spectre@floodgap.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
-index d38280b01ef08..1eda812499376 100644
---- a/arch/powerpc/kvm/book3s.c
-+++ b/arch/powerpc/kvm/book3s.c
-@@ -79,8 +79,11 @@ void kvmppc_unfixup_split_real(struct kvm_vcpu *vcpu)
- {
- 	if (vcpu->arch.hflags & BOOK3S_HFLAG_SPLIT_HACK) {
- 		ulong pc = kvmppc_get_pc(vcpu);
-+		ulong lr = kvmppc_get_lr(vcpu);
- 		if ((pc & SPLIT_HACK_MASK) == SPLIT_HACK_OFFS)
- 			kvmppc_set_pc(vcpu, pc & ~SPLIT_HACK_MASK);
-+		if ((lr & SPLIT_HACK_MASK) == SPLIT_HACK_OFFS)
-+			kvmppc_set_lr(vcpu, lr & ~SPLIT_HACK_MASK);
- 		vcpu->arch.hflags &= ~BOOK3S_HFLAG_SPLIT_HACK;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index a5428b6abdac2..8ad20b7852ed7 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -4804,6 +4804,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
+ 	struct ixgbe_hw *hw = &adapter->hw;
+ 	struct hlist_node *node2;
+ 	struct ixgbe_fdir_filter *filter;
++	u64 action;
+ 
+ 	spin_lock(&adapter->fdir_perfect_lock);
+ 
+@@ -4812,12 +4813,17 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
+ 
+ 	hlist_for_each_entry_safe(filter, node2,
+ 				  &adapter->fdir_filter_list, fdir_node) {
++		action = filter->action;
++		if (action != IXGBE_FDIR_DROP_QUEUE && action != 0)
++			action =
++			(action >> ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF) - 1;
++
+ 		ixgbe_fdir_write_perfect_filter_82599(hw,
+ 				&filter->filter,
+ 				filter->sw_idx,
+-				(filter->action == IXGBE_FDIR_DROP_QUEUE) ?
++				(action == IXGBE_FDIR_DROP_QUEUE) ?
+ 				IXGBE_FDIR_DROP_QUEUE :
+-				adapter->rx_ring[filter->action]->reg_idx);
++				adapter->rx_ring[action]->reg_idx);
  	}
- }
+ 
+ 	spin_unlock(&adapter->fdir_perfect_lock);
 -- 
 2.20.1
 
