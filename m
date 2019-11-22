@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 620DC106B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB17106B5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2019 11:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbfKVKnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 05:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49248 "EHLO mail.kernel.org"
+        id S1729275AbfKVKnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 05:43:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbfKVKnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:43:39 -0500
+        id S1729272AbfKVKnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:43:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 239C920707;
-        Fri, 22 Nov 2019 10:43:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C025520637;
+        Fri, 22 Nov 2019 10:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574419418;
-        bh=DvC0D0QxehONCjbsilXKY7Bm0ptoTdza56kz4LCrfTo=;
+        s=default; t=1574419421;
+        bh=5UItLLFjlDhOXz3KBCG5KhmUDXK4+F73pnrDOEoTvcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RyPlPbJpWjEedygNHQFH2fPrWVosuiQykvpHP3/Jcwx+R92WAnUpiM/FHvRn3+9Us
-         IMb99YH889n2A6q2Fe8U/JG08kE/Dxwcx6N3MMGUvReijJyYpqrtxp7QQjvTbvzC14
-         xY+Ernj4cuonuQ8VWPnxS+iSeu7QxlQ4s/SPTDHM=
+        b=vvuBw88VL2szRDmg548yLETw2eks98+ALKQ7qsZ/fhKUdXtSy/3sQ3GKBAsIGfAvG
+         9DSE3tGc7WBYoEaHxZo5lG7SR3gJYeCmUn6lgwvG6mIj6gC8M9jG4oZxhobJy/i30J
+         fSfFWi756Cr8NAn3zBjMkPhA9fZCfp3Z9owhwfcQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 104/222] ARM: dts: marvell: Fix SPI and I2C bus warnings
-Date:   Fri, 22 Nov 2019 11:27:24 +0100
-Message-Id: <20191122100910.858203813@linuxfoundation.org>
+        stable@vger.kernel.org, Shahed Shaikh <Shahed.Shaikh@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 105/222] bnx2x: Ignore bandwidth attention in single function mode
+Date:   Fri, 22 Nov 2019 11:27:25 +0100
+Message-Id: <20191122100910.916537002@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191122100830.874290814@linuxfoundation.org>
 References: <20191122100830.874290814@linuxfoundation.org>
@@ -46,95 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Shahed Shaikh <Shahed.Shaikh@cavium.com>
 
-[ Upstream commit cf680cc5251487b9a39919c3cda31a108af19cf8 ]
+[ Upstream commit 75a110a1783ef8324ffd763b24f4ac268253cbca ]
 
-dtc has new checks for I2C and SPI buses. Fix the warnings in node names
-and unit-addresses.
+This is a workaround for FW bug -
+MFW generates bandwidth attention in single function mode, which
+is only expected to be generated in multi function mode.
+This undesired attention in SF mode results in incorrect HW
+configuration and resulting into Tx timeout.
 
-arch/arm/boot/dts/dove-cubox.dtb: Warning (i2c_bus_reg): /i2c-mux/i2c@0/clock-generator: I2C bus unit address format error, expected "60"
-arch/arm/boot/dts/dove-cubox-es.dtb: Warning (i2c_bus_reg): /i2c-mux/i2c@0/clock-generator: I2C bus unit address format error, expected "60"
-arch/arm/boot/dts/dove-cubox.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/dove-cubox-es.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/dove-dove-db.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/dove-sbc-a510.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/dove-sbc-a510.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@14600: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/orion5x-kuroboxpro.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
-arch/arm/boot/dts/orion5x-linkstation-lschl.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
-arch/arm/boot/dts/orion5x-linkstation-lsgl.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
-arch/arm/boot/dts/orion5x-linkstation-lswtgl.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
-
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Shahed Shaikh <Shahed.Shaikh@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/dove-cubox.dts           | 2 +-
- arch/arm/boot/dts/dove.dtsi                | 6 +++---
- arch/arm/boot/dts/orion5x-linkstation.dtsi | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/dove-cubox.dts b/arch/arm/boot/dts/dove-cubox.dts
-index af3cb633135fc..ee32315e3d3af 100644
---- a/arch/arm/boot/dts/dove-cubox.dts
-+++ b/arch/arm/boot/dts/dove-cubox.dts
-@@ -86,7 +86,7 @@
- 	status = "okay";
- 	clock-frequency = <100000>;
- 
--	si5351: clock-generator {
-+	si5351: clock-generator@60 {
- 		compatible = "silabs,si5351a-msop";
- 		reg = <0x60>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/dove.dtsi b/arch/arm/boot/dts/dove.dtsi
-index 698d58cea20d2..11342aeccb73a 100644
---- a/arch/arm/boot/dts/dove.dtsi
-+++ b/arch/arm/boot/dts/dove.dtsi
-@@ -152,7 +152,7 @@
- 				  0xffffe000 MBUS_ID(0x03, 0x01) 0 0x0000800   /* CESA SRAM  2k */
- 				  0xfffff000 MBUS_ID(0x0d, 0x00) 0 0x0000800>; /* PMU  SRAM  2k */
- 
--			spi0: spi-ctrl@10600 {
-+			spi0: spi@10600 {
- 				compatible = "marvell,orion-spi";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -165,7 +165,7 @@
- 				status = "disabled";
- 			};
- 
--			i2c: i2c-ctrl@11000 {
-+			i2c: i2c@11000 {
- 				compatible = "marvell,mv64xxx-i2c";
- 				reg = <0x11000 0x20>;
- 				#address-cells = <1>;
-@@ -215,7 +215,7 @@
- 				status = "disabled";
- 			};
- 
--			spi1: spi-ctrl@14600 {
-+			spi1: spi@14600 {
- 				compatible = "marvell,orion-spi";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/orion5x-linkstation.dtsi b/arch/arm/boot/dts/orion5x-linkstation.dtsi
-index ed456ab35fd84..c1bc8376d4eb0 100644
---- a/arch/arm/boot/dts/orion5x-linkstation.dtsi
-+++ b/arch/arm/boot/dts/orion5x-linkstation.dtsi
-@@ -156,7 +156,7 @@
- &i2c {
- 	status = "okay";
- 
--	rtc {
-+	rtc@32 {
- 		compatible = "ricoh,rs5c372a";
- 		reg = <0x32>;
- 	};
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index a9681b191304a..ce8a777b1e975 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -3540,6 +3540,16 @@ static void bnx2x_drv_info_iscsi_stat(struct bnx2x *bp)
+  */
+ static void bnx2x_config_mf_bw(struct bnx2x *bp)
+ {
++	/* Workaround for MFW bug.
++	 * MFW is not supposed to generate BW attention in
++	 * single function mode.
++	 */
++	if (!IS_MF(bp)) {
++		DP(BNX2X_MSG_MCP,
++		   "Ignoring MF BW config in single function mode\n");
++		return;
++	}
++
+ 	if (bp->link_vars.link_up) {
+ 		bnx2x_cmng_fns_init(bp, true, CMNG_FNS_MINMAX);
+ 		bnx2x_link_sync_notify(bp);
 -- 
 2.20.1
 
