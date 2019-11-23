@@ -2,109 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 666D41080D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:40:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEEB11080DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfKWVkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 16:40:46 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36413 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfKWVkq (ORCPT
+        id S1726895AbfKWVzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 16:55:46 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:43690 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbfKWVzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 16:40:46 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d13so9472040qko.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 13:40:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rYFSQLQUePhEzpBCVJ4C9SU6P0f+WttzJ5CloUXrqVU=;
-        b=XLHIuHjnWkQQNopbp97l2GmpYDfz23g/qyuuFpd81ELOwGJ4zeH+PtW1uwveUSre0t
-         AwfDfWZa/x0BCJ6jDg7GICxqb9cbWmnxBHuOdmRlKzjetpNzVLAROz90o4qmUwuN+RaD
-         +8PfEGHgDRfJk+L91Pv2FhxOtoGkCMBNgik0O0qexdwJfhnflxN76a0tOb6A3Rqfv+vd
-         KGqeYljktCt4L9pd2+SfvqepwPndhZ9D3pJeOkjfzonFsMJcWRZA8KiP0w1kAtdyk2iW
-         F99dqSoUNF931Na7kUKwMIT2MjYGM3Uv6Br61+bGtCBTI9I39SS44zM09OelmqaFU9Hm
-         Vmdg==
-X-Gm-Message-State: APjAAAVF2B9pVM1fcuGZ2kmf2mtKtcbt2B4nuIfHK3IG+odEMCgU+WBT
-        JjRUxLpScb6Zk9abgCxpEsOxA07lrBk=
-X-Google-Smtp-Source: APXvYqwN084UPRVlYkOJlpg9xsv2NQWKVCuK0qAqjbdQWOeVh2rTlXpbsqCw5X1zcUDlSKOSixEGrA==
-X-Received: by 2002:a05:620a:149b:: with SMTP id w27mr4084950qkj.387.1574545243445;
-        Sat, 23 Nov 2019 13:40:43 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id v189sm933208qkc.37.2019.11.23.13.40.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2019 13:40:42 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND 3/3] init/main.c: fix quoted value handling in unknown_bootoption
-Date:   Sat, 23 Nov 2019 16:40:39 -0500
-Message-Id: <20191123214039.139275-4-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191123214039.139275-1-nivedita@alum.mit.edu>
-References: <20191123210808.107904-1-nivedita@alum.mit.edu>
- <20191123214039.139275-1-nivedita@alum.mit.edu>
+        Sat, 23 Nov 2019 16:55:46 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 080851C1DC8; Sat, 23 Nov 2019 22:55:44 +0100 (CET)
+Date:   Sat, 23 Nov 2019 22:55:28 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Alan Mikhak <alan.mikhak@sifive.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 217/220] tools: PCI: Fix broken pcitest compilation
+Message-ID: <20191123215527.GA22003@duo.ucw.cz>
+References: <20191122100912.732983531@linuxfoundation.org>
+ <20191122100929.234765315@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Disposition: inline
+In-Reply-To: <20191122100929.234765315@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit a99cd1125189 ("init: fix bug where environment vars can't be
-passed via boot args") introduced two minor bugs in unknown_bootoption
-by factoring out the quoted value handling into a separate function.
 
-When value is quoted, repair_env_string will move the value up 1 byte to
-strip the quotes, so val in unknown_bootoption no longer points to the
-actual location of the value.
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The result is that an argument of the form param=".value" is mistakenly
-treated as a potential module parameter and is not placed in init's
-environment, and an argument of the form param="value" can result in a
-duplicate environment variable: eg TERM="vt100" on the command line will
-result in both TERM=linux and TERM=vt100 being placed into init's
-environment.
+Hi!
 
-Fix this by recording the length of the param before calling
-repair_env_string instead of relying on val.
+> From: Alan Mikhak <alan.mikhak@sifive.com>
+>=20
+> [ Upstream commit 8a5e0af240e07dd3d4897eb8ff52aab757da7fab ]
+>=20
+> pcitest is currently broken due to the following compiler error
+> and related warning. Fix by changing the run_test() function
+> signature to return an integer result.
+>=20
+> pcitest.c: In function run_test:
+> pcitest.c:143:9: warning: return with a value, in function
+> returning void
+>   return (ret < 0) ? ret : 1 - ret; /* return 0 if test succeeded */
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- init/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+There is no such line in 4.19 version.
 
-diff --git a/init/main.c b/init/main.c
-index a2008e7a797f..1ee92517c515 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -289,6 +289,8 @@ static int __init set_init_arg(char *param, char *val,
- static int __init unknown_bootoption(char *param, char *val,
- 				     const char *unused, void *arg)
- {
-+	size_t len = strlen(param);
-+
- 	repair_env_string(param, val);
- 
- 	/* Handle obsolete-style parameters */
-@@ -296,7 +298,7 @@ static int __init unknown_bootoption(char *param, char *val,
- 		return 0;
- 
- 	/* Unused module parameter. */
--	if (strchr(param, '.') && (!val || strchr(param, '.') < val))
-+	if (strnchr(param, len, '.'))
- 		return 0;
- 
- 	if (panic_later)
-@@ -310,7 +312,7 @@ static int __init unknown_bootoption(char *param, char *val,
- 				panic_later = "env";
- 				panic_param = param;
- 			}
--			if (!strncmp(param, envp_init[i], val - param))
-+			if (!strncmp(param, envp_init[i], len+1))
- 				break;
- 		}
- 		envp_init[i] = param;
--- 
-2.23.0
+> +++ b/tools/pci/pcitest.c
+> @@ -47,15 +47,15 @@ struct pci_test {
+>  	unsigned long	size;
+>  };
+> =20
+> -static void run_test(struct pci_test *test)
+> +static int run_test(struct pci_test *test)
+>  {
+> -	long ret;
+> +	int ret =3D -EINVAL;
+>  	int fd;
 
+=2E..
+        fflush(stdout);
+}
+
+No, sorry, this will bring back warning fef31ecaaf2c was supposed to
+fix.
+
+My recommendation would be to drop this and fef31ecaaf2c from the
+stable. It is warning, not a "serious bug" after all.
+
+Alternatively, it needs to return something at the end of function,
+after the fflush().
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXdmqzwAKCRAw5/Bqldv6
+8pnlAKDAfSH8VkUmTSRZNPCevb35JDDkBACfa5vcKOesMKaocy/Vkwm65/9lFRo=
+=TbXN
+-----END PGP SIGNATURE-----
+
+--7JfCtLOvnd9MIVvH--
