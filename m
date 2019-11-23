@@ -2,100 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5C3107CF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 06:19:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D41107D2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 06:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfKWFTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 00:19:49 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:36338 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfKWFTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 00:19:49 -0500
-Received: from [192.168.1.13] (c-76-114-240-162.hsd1.md.comcast.net [76.114.240.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kumba)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id A8D1334D254;
-        Sat, 23 Nov 2019 05:19:47 +0000 (UTC)
-Subject: Re: [PATCH 4/8] rtc: ds1685: fix build error with make W=1
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20191122102212.400158-1-alexandre.belloni@bootlin.com>
- <20191122102212.400158-5-alexandre.belloni@bootlin.com>
-From:   Joshua Kinard <kumba@gentoo.org>
-Openpgp: preference=signencrypt
-Message-ID: <bee6cf44-a3e5-f217-388c-47165f1d5f90@gentoo.org>
-Date:   Sat, 23 Nov 2019 00:19:45 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191122102212.400158-5-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726525AbfKWF3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 00:29:06 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:50177 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfKWF3F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 00:29:05 -0500
+Received: by mail-pf1-f201.google.com with SMTP id e13so5699736pff.17
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 21:29:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=bVyv4YX7sBcmbg/cjO2xV4ng37xlI4Fx14aOVCg/YPk=;
+        b=IPue6pH+iGFcyTATyXECvU11P2erhBngc5DZDw11DE48T3vmrNrq3F/wuawLSgPQS8
+         uAeMHCTJgtnFhivGAdK4UJdOvjZSSSqf8AUr5PEJVudhYEHTdTOtwzFL20vc96kkNn+X
+         3DUz6HFHP+idBPxiFTl9yALA7j71nWC8lCZJPo65yjXErrbFZjlZA+30+pimC9oFmjRR
+         IG2ISB2Ah3gctyeBATexyLgYHYVnYW1euFzZLOT10vAogI0L8dTou99IJtiIpQmalROi
+         kuVR4o/5csF44JRTjcb+pBKbrh96WXRg04ta3T99TBtzrOfzhV1rnLnbKIR8FIeoTHBB
+         BozA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=bVyv4YX7sBcmbg/cjO2xV4ng37xlI4Fx14aOVCg/YPk=;
+        b=PHX57AVil3YMbJ3zhgOUn0YwAJLmrQQbQEAMcSiP53TfvZP4VB5IZWkh/dblYFCQb+
+         CMgTh3C8GxnhRqBmsftSaC1SI9U1wbCHRDsL1oWFL8/tUvI24gQToR+FZh+CMRFKNC/9
+         XEH3Xvq8itbzNGHr1zx9mQVE2X2KHpngq4a7POEE5rah0ZhmJ6pMTbSyB8kccb06kmFl
+         ry+HEWM53jOoSVuORsxUsgCFoStzLM1yw76Wr8Cmb7QIACmOoMXsUk6Wn7ARdCrKy6PM
+         xYXrl3BB7LmHyYf8nS97Kj45mAJ2E5QJydXQP+QMMI9ktCGoOs8CtdpTk9+gsNr7Q4wY
+         tO3w==
+X-Gm-Message-State: APjAAAU4+PAgQQ1CQHmY/sNujTcn5EA/ztRGDCl+DvCZ0VJ9icxab3Th
+        Z07ZCHSyVPiHkJu7njYAekxuhAkd9jNQ2tkMIc+mLQ==
+X-Google-Smtp-Source: APXvYqxjRM9ai1CA9dNK82G+vFlip7YVCLCIXbLIH1Csg4LCLSDnDb0tkEU778iwITRS6ZGh5nPtALd01sCBSgOx+P7pbA==
+X-Received: by 2002:a63:368c:: with SMTP id d134mr19610973pga.321.1574486944440;
+ Fri, 22 Nov 2019 21:29:04 -0800 (PST)
+Date:   Fri, 22 Nov 2019 21:29:00 -0800
+Message-Id: <20191123052900.77205-1-thomasanderson@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH] drm/amd/display: Reduce HDMI pixel encoding if max clock is exceeded
+From:   Thomas Anderson <thomasanderson@google.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Cc:     "=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Anderson <thomasanderson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/2019 05:22, Alexandre Belloni wrote:
-> Fix the following parsing errors when building with W=1:
-> drivers/rtc/rtc-ds1685.c:1053: error: Cannot parse struct or union!
-> drivers/rtc/rtc-ds1685.c:1062: error: Cannot parse struct or union!
-> drivers/rtc/rtc-ds1685.c:1363: warning: cannot understand function prototype: 'struct platform_driver ds1685_rtc_driver = '
-> 
-> Cc: Joshua Kinard <kumba@gentoo.org>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-ds1685.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
-> index 8419595e7da7..56c670af2e50 100644
-> --- a/drivers/rtc/rtc-ds1685.c
-> +++ b/drivers/rtc/rtc-ds1685.c
-> @@ -1039,7 +1039,7 @@ ds1685_rtc_sysfs_serial_show(struct device *dev,
->  }
->  static DEVICE_ATTR(serial, S_IRUGO, ds1685_rtc_sysfs_serial_show, NULL);
->  
-> -/**
-> +/*
->   * struct ds1685_rtc_sysfs_misc_attrs - list for misc RTC features.
->   */
->  static struct attribute*
-> @@ -1050,7 +1050,7 @@ ds1685_rtc_sysfs_misc_attrs[] = {
->  	NULL,
->  };
->  
-> -/**
-> +/*
->   * struct ds1685_rtc_sysfs_misc_grp - attr group for misc RTC features.
->   */
->  static const struct attribute_group
-> @@ -1355,7 +1355,7 @@ ds1685_rtc_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -/**
-> +/*
->   * ds1685_rtc_driver - rtc driver properties.
->   */
->  static struct platform_driver ds1685_rtc_driver = {
-> 
+For high-res (8K) or HFR (4K120) displays, using uncompressed pixel
+formats like YCbCr444 would exceed the bandwidth of HDMI 2.0, so the
+"interesting" modes would be disabled, leaving only low-res or low
+framerate modes.
 
-/** is for kerneldoc comments.  Is this a bug in kbuild's W=1 implementation
-of not parsing kerneldoc on a struct correctly?  I'm sure I got that syntax
-for structs out of the kerneldoc guide, unless it changed at some point.
+This change lowers the pixel encoding to 4:2:2 or 4:2:0 if the max TMDS
+clock is exceeded. Verified that 8K30 and 4K120 are now available and
+working with a Samsung Q900R over an HDMI 2.0b link from a Radeon 5700.
 
+Signed-off-by: Thomas Anderson <thomasanderson@google.com>
+---
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 30 ++++++++++++++-----
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 4139f129eafb..a507a6f04c82 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3269,13 +3269,15 @@ static void reduce_mode_colour_depth(struct dc_crtc_timing *timing_out)
+ 	timing_out->display_color_depth--;
+ }
+ 
+-static void adjust_colour_depth_from_display_info(struct dc_crtc_timing *timing_out,
+-						const struct drm_display_info *info)
++static void adjust_timing_from_display_info(
++	struct dc_crtc_timing *timing_out,
++	const struct drm_display_info *info,
++	const struct drm_display_mode *mode_in)
+ {
+ 	int normalized_clk;
+-	if (timing_out->display_color_depth <= COLOR_DEPTH_888)
++	if (timing_out->display_color_depth < COLOR_DEPTH_888)
+ 		return;
+-	do {
++	while (timing_out->display_color_depth > COLOR_DEPTH_888) {
+ 		normalized_clk = timing_out->pix_clk_100hz / 10;
+ 		/* YCbCr 4:2:0 requires additional adjustment of 1/2 */
+ 		if (timing_out->pixel_encoding == PIXEL_ENCODING_YCBCR420)
+@@ -3297,9 +3299,23 @@ static void adjust_colour_depth_from_display_info(struct dc_crtc_timing *timing_
+ 		if (normalized_clk <= info->max_tmds_clock)
+ 			return;
+ 		reduce_mode_colour_depth(timing_out);
++	}
+ 
+-	} while (timing_out->display_color_depth > COLOR_DEPTH_888);
+-
++	/* The color depth is 888 and cannot be reduced any further, but the
++	 * clock would still exceed the max tmds clock. Try reducing the pixel
++	 * encoding next.
++	 */
++	if (timing_out->pixel_encoding == PIXEL_ENCODING_RGB ||
++	    timing_out->pixel_encoding == PIXEL_ENCODING_YCBCR444) {
++		/* YCBCR422 is always supported. */
++		timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR422;
++		normalized_clk = (timing_out->pix_clk_100hz * 3) / 40;
++		if (normalized_clk <= info->max_tmds_clock)
++			return;
++	}
++	/* YCBCR420 may only be supported on specific modes. */
++	if (drm_mode_is_420_also(info, mode_in))
++		timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
+ }
+ 
+ static void fill_stream_properties_from_drm_display_mode(
+@@ -3366,7 +3382,7 @@ static void fill_stream_properties_from_drm_display_mode(
+ 	stream->out_transfer_func->type = TF_TYPE_PREDEFINED;
+ 	stream->out_transfer_func->tf = TRANSFER_FUNCTION_SRGB;
+ 	if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
+-		adjust_colour_depth_from_display_info(timing_out, info);
++		adjust_timing_from_display_info(timing_out, info, mode_in);
+ }
+ 
+ static void fill_audio_info(struct audio_info *audio_info,
 -- 
-Joshua Kinard
-Gentoo/MIPS
-kumba@gentoo.org
-rsa6144/5C63F4E3F5C6C943 2015-04-27
-177C 1972 1FB8 F254 BAD0 3E72 5C63 F4E3 F5C6 C943
+2.24.0.432.g9d3f5f5b63-goog
 
-"The past tempts us, the present confuses us, the future frightens us.  And
-our lives slip away, moment by moment, lost in that vast, terrible in-between."
-
---Emperor Turhan, Centauri Republic
