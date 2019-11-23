@@ -2,92 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 912141080C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87E2D1080CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfKWV0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 16:26:06 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38192 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfKWV0G (ORCPT
+        id S1726940AbfKWVko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 16:40:44 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45725 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbfKWVkn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 16:26:06 -0500
-Received: by mail-qk1-f196.google.com with SMTP id e2so9449016qkn.5
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 13:26:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zw0DnjbSUiHO4CtkLBErDojQYl2nS7Oy3HZbKf7gLks=;
-        b=ZsxZo7DHjv7labO7xzS1GWfJV1NGCKQFngNlUrTjCGl+QrZMnW8T9ED2/nzmLNFyN5
-         AsJnoIGsY/xg2jk6Mbixe2wC9EJNju7pmCU4FF4qqvqEMuqega80o3OZPxgsY9GGxxOD
-         FBB2np8mMSFW+D6abpX0SBlKy6j8poRvVkQoPCQ8GWiDai9ADLXLb/F4CYXzhgq7+kqy
-         pYGq18XoaYj4bfTsR2vPIljnST0/RdFVB0t7I/TI2E0C+O9U5dKCG5U9Zz484YL2CIyO
-         EkVHjkzUd4Fpp8KLufSWyrTNMc/uDpKbFCM4LQ7EBQE+W0XWB8icnkaWmAUHCoiA9/x0
-         MOMw==
+        Sat, 23 Nov 2019 16:40:43 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q70so9421331qke.12
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 13:40:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zw0DnjbSUiHO4CtkLBErDojQYl2nS7Oy3HZbKf7gLks=;
-        b=WcSnffZBsT4mMI/N6mhUcpq9C6aesS2XJP7jfbT7g2e1JnJkzcIq6lVjr0mquJ8VBk
-         5wwLe4ulKy3h+3kwIY9RwqCyiuqIgT+WOfUTUexUZnxTrdXd+5fkpw9wBagTG8mF6g97
-         2rj/30Zi/j5790z65CbVuoKQxSnrmG9wc5az/q+alXZSBUczXQD6huaWThMREg1WY139
-         bpc0F/uce1WH8riHGLYDtWRwurEqOL7EmwV1Z8oG3UxizX/FM41vG/goHvZa+MxZh63O
-         R5z2UaQgyTsQlG6CGoYQ5FpZ6DcbVwLlbs0vG1duF27ZKqb6irjLH/PCkz/LIRbQuL6X
-         jp4w==
-X-Gm-Message-State: APjAAAXeG4lysPqqC5U6BMeFMn0jK2vaUOXrA6G7icd1TaSVSzvS3/PE
-        4AbAPTSqGcdO/xiBGFhhTgaTFLGiA5k=
-X-Google-Smtp-Source: APXvYqwYdCYWJ5q9OM0AjtZwjDjkn7o4ecfX7mZA4oKcKQv2aNJu2Ltcm2/hm8LOQtzAyQ5Nw609aA==
-X-Received: by 2002:a37:bf07:: with SMTP id p7mr16462362qkf.164.1574544365119;
-        Sat, 23 Nov 2019 13:26:05 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fsNbUCO53oXLI0M1MnPVejhOno/TJ5a5bDmO3kiWZjY=;
+        b=q+Lb4JXQ1VlDSK4+81cldpzUg/TGrzVjaFT/0vaso6hwj0vLcMh6CMkelWy5+zqeMD
+         74B8Z4fVV0ovycfxXe1paqYOSslTgWtF4QVpKG5Vqj9kTfOfQyncWuk8TWYFNa1W5f9g
+         NPqT6UchUlHTcYahC2PJ922vvcTTWmp6xNucP1Fz6CNd9oG2n08DA/GU69eBoSvs1a4g
+         VfzDkO6GulJQIZC5J55594B3xAgZuRgmUCOt7oLnEci5e7vjz5JvQff17hcWgtBkfEAA
+         KjHhBP0iAZLP/eRye+2DXqeOaQTZVa3nO9D7sXPKXeuFYfHthNB9g2wGaIJ7QEdSfyLF
+         /Y9w==
+X-Gm-Message-State: APjAAAVtCd7OIZLwfOhWu8THlhDNZUSUeasUyOq17E7ximn4RL+TDgQc
+        4AKjoTSLkvIzf8y95nMbjNUqscDJfus=
+X-Google-Smtp-Source: APXvYqzN6Xqf8lxukGvxDXyO9UtS1FYTy7rp6dY6azwab2tGu9uuzJ/kfmF3uCeZp4gNdj3zqyUSuA==
+X-Received: by 2002:a37:514:: with SMTP id 20mr8058137qkf.321.1574545240687;
+        Sat, 23 Nov 2019 13:40:40 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id c184sm914508qke.118.2019.11.23.13.26.04
+        by smtp.gmail.com with ESMTPSA id v189sm933208qkc.37.2019.11.23.13.40.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2019 13:26:05 -0800 (PST)
+        Sat, 23 Nov 2019 13:40:40 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Sat, 23 Nov 2019 16:26:03 -0500
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] init/main.c: minor cleanup/bugfix of envvar handling
-Message-ID: <20191123212603.GA131323@rani.riverdale.lan>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND 0/3] init/main.c: minor cleanup/bugfix of envvar handling
+Date:   Sat, 23 Nov 2019 16:40:36 -0500
+Message-Id: <20191123214039.139275-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191123210808.107904-1-nivedita@alum.mit.edu>
 References: <20191123210808.107904-1-nivedita@alum.mit.edu>
- <c209b9af-2352-f476-d32a-ae761d8f709a@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c209b9af-2352-f476-d32a-ae761d8f709a@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 01:20:07PM -0800, Randy Dunlap wrote:
-> On 11/23/19 1:08 PM, Arvind Sankar wrote:
-> > unknown_bootoption passes unrecognized command line arguments to init as
-> > either environment variables or arguments. Some of the logic in the
-> > function is broken for quoted command line arguments.
-> > 
-> 
-> Hi,
-> 
-> You will need to send your patches to some maintainer who could merge them.
-> Nobody browses LKML to pick up patches (other than bots).
-> 
-> See Documentation/process/submitting-patches.rst: section 5:
-> 5) Select the recipients for your patch
-> ---------------------------------------
-> 
-> for more info.
-> 
-> -- 
-> ~Randy
-> 
+unknown_bootoption passes unrecognized command line arguments to init as
+either environment variables or arguments. Some of the logic in the
+function is broken for quoted command line arguments.
 
-init/ didn't seem to have anyone in MAINTAINERS, I see that Andrew
-Morton is referenced in that doc as maintainer of last resort, I'll send
-them to him.
+When an argument of the form param="value" is processed by parse_args
+and passed to unknown_bootoption, the command line has
+  param\0"value\0
+with val pointing to the beginning of value. The helper function
+repair_env_string is then used to restore the '=' character that was
+removed by parse_args, and strip the quotes off fully. This results in
+  param=value\0\0
+and val ends up pointing to the 'a' instead of the 'v' in value. This
+bug was introduced when repair_env_string was refactored into a separate
+function, and the decrement of val in repair_env_string became dead code.
 
-Thanks.
+This causes two problems in unknown_bootoption in the two places where
+the val pointer is used as a substitute for the length of param:
+
+1. An argument of the form param=".value" is misinterpreted as a
+potential module parameter, with the result that it will not be placed
+in init's environment.
+
+2. An argument of the form param="value" is checked to see if param is
+an existing environment variable that should be overwritten, but the
+comparison is off-by-one and compares 'param=v' instead of 'param='
+against the existing environment. So passing, for example, TERM="vt100"
+on the command line results in init being passed both TERM=linux and
+TERM=vt100 in its environment.
+
+Patch 1 adds logging for the arguments and environment passed to init
+and is independent of the rest: it can be dropped if this is
+unnecessarily verbose.
+
+Patch 2 removes repair_env_string from initcall parameter parsing in
+do_initcall_level, as that uses a separate copy of the command line now
+and the repairing is no longer necessary.
+
+Patch 3 fixes the bug in unknown_bootoption by recording the length of
+param explicitly instead of implying it from val-param.
+
+Arvind Sankar (3):
+  init/main.c: log arguments and environment passed to init
+  init/main.c: remove unnecessary repair_env_string in do_initcall_level
+  init/main.c: fix quoted value handling in unknown_bootoption
+
+ init/main.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+-- 
+2.23.0
+
