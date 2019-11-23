@@ -2,115 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0540E107F5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 17:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 269E6107F62
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 17:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfKWQhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 11:37:07 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:64650 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbfKWQhH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 11:37:07 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id xANGaggd001459;
-        Sun, 24 Nov 2019 01:36:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xANGaggd001459
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1574527004;
-        bh=jrbt1QEkqhIaRtOZNi98ujxsBHB0idjKNS+OyxTL/hw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BDYqmbmUPVGJzTgpMrQnm6OkUxml0x363j/ZXGqrAKwcLKCYBEdZRzgXJ6ySGL6uM
-         rC81yfmHUcDn4d9S1xt8bp3gZJcDIJosZk+J3SWnefHZ4rmETRFd3QLJxrgArb6PCK
-         GN12pDFuuTZDuLpiJBg+BWsIQoQ3BQLfMVnxCGgN41bsDYFZhg0aw0l+r6dNIFjEfF
-         xCFqVDKJcJTMHDE+7iXWdZR7WxnnS4JdI7tfAWL2m+uzZIMU9DjbjVjRr9tX89rK1z
-         GBO9GzVNS1gNCMNlBwzO6p4VS/m7lXTtYhvQRxfnAG/XfGaWSR5DM2zMOkwjcEWWLE
-         oDeG3SVYKSOXA==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] debugfs: remove modular code
-Date:   Sun, 24 Nov 2019 01:36:33 +0900
-Message-Id: <20191123163633.27227-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191123163633.27227-1-yamada.masahiro@socionext.com>
-References: <20191123163633.27227-1-yamada.masahiro@socionext.com>
+        id S1726922AbfKWQj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 11:39:27 -0500
+Received: from ms.lwn.net ([45.79.88.28]:47560 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726762AbfKWQj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 11:39:26 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id D99A0867;
+        Sat, 23 Nov 2019 16:39:25 +0000 (UTC)
+Date:   Sat, 23 Nov 2019 09:39:24 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, krste@berkeley.edu,
+        waterman@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH] Documentation: riscv: add patch acceptance guidelines
+Message-ID: <20191123092552.1438bc95@lwn.net>
+In-Reply-To: <alpine.DEB.2.21.9999.1911221842200.14532@viisi.sifive.com>
+References: <alpine.DEB.2.21.9999.1911221842200.14532@viisi.sifive.com>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compilation of the code in fs/debugfs/ is controlled by
-CONFIG_DEBUG_FS, which is a bool type option. Hence it is never
-compiled as a module.
+On Fri, 22 Nov 2019 18:44:39 -0800 (PST)
+Paul Walmsley <paul.walmsley@sifive.com> wrote:
 
-Remove meaningless modular code.
+> Formalize, in kernel documentation, the patch acceptance policy for 
+> arch/riscv.  In summary, it states that as maintainers, we plan to only 
+> accept patches for new modules or extensions that have been frozen or 
+> ratified by the RISC-V Foundation.
+> 
+> We've been following these guidelines for the past few months.  In the
+> meantime, we've received quite a bit of feedback that it would be
+> helpful to have these guidelines formally documented.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+If at all possible, I would really love to have this be part of the
+maintainer profile documentation:
 
- fs/debugfs/file.c  | 3 ---
- fs/debugfs/inode.c | 3 ---
- 2 files changed, 6 deletions(-)
+	https://lwn.net/ml/linux-kernel/156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com/
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 87846aad594b..46e55037c0f9 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -9,7 +9,6 @@
-  *  See Documentation/filesystems/ for more details.
-  */
- 
--#include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/seq_file.h>
- #include <linux/pagemap.h>
-@@ -1005,7 +1004,6 @@ static int u32_array_release(struct inode *inode, struct file *file)
- }
- 
- static const struct file_operations u32_array_fops = {
--	.owner	 = THIS_MODULE,
- 	.open	 = u32_array_open,
- 	.release = u32_array_release,
- 	.read	 = u32_array_read,
-@@ -1149,7 +1147,6 @@ static int debugfs_devm_entry_open(struct inode *inode, struct file *f)
- }
- 
- static const struct file_operations debugfs_devm_entry_ops = {
--	.owner = THIS_MODULE,
- 	.open = debugfs_devm_entry_open,
- 	.release = single_release,
- 	.read = seq_read,
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index 7b975dbb2bb4..f3478f7caab6 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -12,7 +12,6 @@
- 
- #define pr_fmt(fmt)	"debugfs: " fmt
- 
--#include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
-@@ -270,12 +269,10 @@ static struct dentry *debug_mount(struct file_system_type *fs_type,
- }
- 
- static struct file_system_type debug_fs_type = {
--	.owner =	THIS_MODULE,
- 	.name =		"debugfs",
- 	.mount =	debug_mount,
- 	.kill_sb =	kill_litter_super,
- };
--MODULE_ALIAS_FS("debugfs");
- 
- /**
-  * debugfs_lookup() - look up an existing debugfs file
--- 
-2.17.1
+...if we could only (hint...CC'd...) get Dan to resubmit it with the
+needed tweaks so it could be merged...
 
+Thanks,
+
+jon
