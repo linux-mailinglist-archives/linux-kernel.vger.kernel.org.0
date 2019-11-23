@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D56F4107D81
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F77107D95
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:16:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfKWIPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 03:15:24 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36327 "EHLO
+        id S1727232AbfKWIPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 03:15:40 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36336 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727095AbfKWIPS (ORCPT
+        with ESMTP id S1727109AbfKWIPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 03:15:18 -0500
+        Sat, 23 Nov 2019 03:15:21 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iYQZU-0002eQ-J0; Sat, 23 Nov 2019 09:15:13 +0100
+        id 1iYQZW-0002ds-Vb; Sat, 23 Nov 2019 09:15:15 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7ECE51C1ADD;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4FB701C1ADC;
         Sat, 23 Nov 2019 09:15:03 +0100 (CET)
 Date:   Sat, 23 Nov 2019 08:15:03 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf map: Pass a dso_id to map__new()
+Subject: [tip: perf/core] perf map: Move comparision of map's dso_id to a
+ separate function
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <tip-gp5s1xgxacurmih5d1l94ymy@git.kernel.org>
-References: <tip-gp5s1xgxacurmih5d1l94ymy@git.kernel.org>
+In-Reply-To: <tip-u2nr1oq03o0i29w2ay9jx03s@git.kernel.org>
+References: <tip-u2nr1oq03o0i29w2ay9jx03s@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157449690340.21853.17517616578399359386.tip-bot2@tip-bot2>
+Message-ID: <157449690325.21853.13915598590850331012.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,112 +50,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     4a7380a52ec90fbb1565dd638ee7f5b6e709f7fb
-Gitweb:        https://git.kernel.org/tip/4a7380a52ec90fbb1565dd638ee7f5b6e709f7fb
+Commit-ID:     7b59a82493b49b715224bfe3b35fae52e48e5fa1
+Gitweb:        https://git.kernel.org/tip/7b59a82493b49b715224bfe3b35fae52e48e5fa1
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Tue, 19 Nov 2019 12:40:29 -03:00
+AuthorDate:    Tue, 19 Nov 2019 16:30:56 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 19 Nov 2019 15:09:26 -03:00
+CommitterDate: Tue, 19 Nov 2019 16:30:56 -03:00
 
-perf map: Pass a dso_id to map__new()
+perf map: Move comparision of map's dso_id to a separate function
 
-Instead of the 4 fields, a step in the direction of moving this to
-struct dso.
+We'll use it when doing DSO lookups using dso_ids.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-gp5s1xgxacurmih5d1l94ymy@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-u2nr1oq03o0i29w2ay9jx03s@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 15 ++++++++-------
- tools/perf/util/map.c     | 13 +++++++------
- tools/perf/util/map.h     |  3 +--
- 3 files changed, 16 insertions(+), 15 deletions(-)
+ tools/perf/util/dsos.c | 25 +++++++++++++++++++++++++
+ tools/perf/util/map.h  |  2 ++
+ tools/perf/util/sort.c | 16 ++++------------
+ 3 files changed, 31 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 71ee078..41b4263 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1651,6 +1651,12 @@ int machine__process_mmap2_event(struct machine *machine,
- {
- 	struct thread *thread;
- 	struct map *map;
-+	struct dso_id dso_id = {
-+		.maj = event->mmap2.maj,
-+		.min = event->mmap2.min,
-+		.ino = event->mmap2.ino,
-+		.ino_generation = event->mmap2.ino_generation,
-+	};
- 	int ret = 0;
+diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
+index 3ea80d2..ecf8d73 100644
+--- a/tools/perf/util/dsos.c
++++ b/tools/perf/util/dsos.c
+@@ -2,6 +2,7 @@
+ #include "debug.h"
+ #include "dsos.h"
+ #include "dso.h"
++#include "map.h"
+ #include "vdso.h"
+ #include "namespaces.h"
+ #include <libgen.h>
+@@ -9,6 +10,30 @@
+ #include <string.h>
+ #include <symbol.h> // filename__read_build_id
  
- 	if (dump_trace)
-@@ -1671,10 +1677,7 @@ int machine__process_mmap2_event(struct machine *machine,
- 
- 	map = map__new(machine, event->mmap2.start,
- 			event->mmap2.len, event->mmap2.pgoff,
--			event->mmap2.maj,
--			event->mmap2.min, event->mmap2.ino,
--			event->mmap2.ino_generation,
--			event->mmap2.prot,
-+			&dso_id, event->mmap2.prot,
- 			event->mmap2.flags,
- 			event->mmap2.filename, thread);
- 
-@@ -1727,9 +1730,7 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
- 
- 	map = map__new(machine, event->mmap.start,
- 			event->mmap.len, event->mmap.pgoff,
--			0, 0, 0, 0, prot, 0,
--			event->mmap.filename,
--			thread);
-+			NULL, prot, 0, event->mmap.filename, thread);
- 
- 	if (map == NULL)
- 		goto out_problem_map;
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 4f50b1b..812d663 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -144,8 +144,8 @@ void map__init(struct map *map, u64 start, u64 end, u64 pgoff, struct dso *dso)
- }
- 
- struct map *map__new(struct machine *machine, u64 start, u64 len,
--		     u64 pgoff, u32 d_maj, u32 d_min, u64 ino,
--		     u64 ino_gen, u32 prot, u32 flags, char *filename,
-+		     u64 pgoff, struct dso_id *id,
-+		     u32 prot, u32 flags, char *filename,
- 		     struct thread *thread)
- {
- 	struct map *map = malloc(sizeof(*map));
-@@ -162,10 +162,11 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
- 		vdso = is_vdso_map(filename);
- 		no_dso = is_no_dso_memory(filename);
- 
--		map->dso_id.maj = d_maj;
--		map->dso_id.min = d_min;
--		map->dso_id.ino = ino;
--		map->dso_id.ino_generation = ino_gen;
-+		if (id)
-+			map->dso_id = *id;
-+		else
-+			map->dso_id.min = map->dso_id.ino = map->dso_id.ino_generation = 0;
++int dso_id__cmp(struct dso_id *a, struct dso_id *b)
++{
++	/*
++	 * The second is always dso->id, so zeroes if not set, assume passing
++	 * NULL for a means a zeroed id
++	 */
++	if (a == NULL)
++		return 0;
 +
- 		map->prot = prot;
- 		map->flags = flags;
- 		nsi = nsinfo__get(thread->nsinfo);
++	if (a->maj > b->maj) return -1;
++	if (a->maj < b->maj) return 1;
++
++	if (a->min > b->min) return -1;
++	if (a->min < b->min) return 1;
++
++	if (a->ino > b->ino) return -1;
++	if (a->ino < b->ino) return 1;
++
++	if (a->ino_generation > b->ino_generation) return -1;
++	if (a->ino_generation < b->ino_generation) return 1;
++
++	return 0;
++}
++
+ bool __dsos__read_build_ids(struct list_head *head, bool with_hits)
+ {
+ 	bool have_build_id = false;
 diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 70d87dc..f962eb9 100644
+index f962eb9..e1e573a 100644
 --- a/tools/perf/util/map.h
 +++ b/tools/perf/util/map.h
-@@ -117,8 +117,7 @@ struct thread;
- void map__init(struct map *map,
- 	       u64 start, u64 end, u64 pgoff, struct dso *dso);
- struct map *map__new(struct machine *machine, u64 start, u64 len,
--		     u64 pgoff, u32 d_maj, u32 d_min, u64 ino,
--		     u64 ino_gen, u32 prot, u32 flags,
-+		     u64 pgoff, struct dso_id *id, u32 prot, u32 flags,
- 		     char *filename, struct thread *thread);
- struct map *map__new2(u64 start, struct dso *dso);
- void map__delete(struct map *map);
+@@ -28,6 +28,8 @@ struct dso_id {
+ 	u64	ino_generation;
+ };
+ 
++int dso_id__cmp(struct dso_id *a, struct dso_id *b);
++
+ struct map {
+ 	union {
+ 		struct rb_node	rb_node;
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index bc58943..f148100 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -1194,6 +1194,7 @@ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right)
+ {
+ 	u64 l, r;
+ 	struct map *l_map, *r_map;
++	int rc;
+ 
+ 	if (!left->mem_info)  return -1;
+ 	if (!right->mem_info) return 1;
+@@ -1212,18 +1213,9 @@ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right)
+ 	if (!l_map) return -1;
+ 	if (!r_map) return 1;
+ 
+-	if (l_map->dso_id.maj > r_map->dso_id.maj) return -1;
+-	if (l_map->dso_id.maj < r_map->dso_id.maj) return 1;
+-
+-	if (l_map->dso_id.min > r_map->dso_id.min) return -1;
+-	if (l_map->dso_id.min < r_map->dso_id.min) return 1;
+-
+-	if (l_map->dso_id.ino > r_map->dso_id.ino) return -1;
+-	if (l_map->dso_id.ino < r_map->dso_id.ino) return 1;
+-
+-	if (l_map->dso_id.ino_generation > r_map->dso_id.ino_generation) return -1;
+-	if (l_map->dso_id.ino_generation < r_map->dso_id.ino_generation) return 1;
+-
++	rc = dso_id__cmp(&l_map->dso_id, &r_map->dso_id);
++	if (rc)
++		return rc;
+ 	/*
+ 	 * Addresses with no major/minor numbers are assumed to be
+ 	 * anonymous in userspace.  Sort those on pid then address.
