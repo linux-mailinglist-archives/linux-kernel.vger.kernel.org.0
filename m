@@ -2,97 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79928107CEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 06:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF04107CF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 06:20:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfKWFQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 00:16:06 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:36174 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726638AbfKWFQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 00:16:06 -0500
-Received: from [192.168.1.13] (c-76-114-240-162.hsd1.md.comcast.net [76.114.240.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kumba)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id 8F77F34D24E;
-        Sat, 23 Nov 2019 05:16:04 +0000 (UTC)
-Subject: Re: [PATCH 3/8] rtc: ds1685: remove set but unused variables
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20191122102212.400158-1-alexandre.belloni@bootlin.com>
- <20191122102212.400158-4-alexandre.belloni@bootlin.com>
-From:   Joshua Kinard <kumba@gentoo.org>
-Openpgp: preference=signencrypt
-Message-ID: <031464cc-bb81-4f63-1a7d-7966b366f4da@gentoo.org>
-Date:   Sat, 23 Nov 2019 00:16:00 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726846AbfKWFUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 00:20:35 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34554 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfKWFUf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 00:20:35 -0500
+Received: by mail-qk1-f193.google.com with SMTP id b188so8280250qkg.1;
+        Fri, 22 Nov 2019 21:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dSJiW8z0Nr8ieUsuKFAIjeRJ7R7kZTaybvOXtSJez8Y=;
+        b=lXYB2eRGlNxuE0Q92udIpIYYLqwUTkfcYVkiJ/UFbMufnWibKPiLkAjHcaFFCW4Z1T
+         DPZ0hweJfKL5jW9a8x6fJjokWUgO8KiiPTKgB0J4M8dHNLGa0l6f539towW+estUsC5A
+         TaR72yHkwBerFYw/wktS9eNI9xOoj8qNMwxzq4dEYPf5i1BaODO7WdsZRGWVDJFBTvvp
+         cdbN3XxUlXHtYRTpEmLQbRBuK9k7XGHuBOaPUfUNDkjJDHObe4Y/84WjlKacImHOqAT3
+         wGD0DePhU7oOzIeQMe1ID58w5aJVK7zXMwA+yZUE23A6CclmQAWp35WJr1Gp4Conww5V
+         2ihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dSJiW8z0Nr8ieUsuKFAIjeRJ7R7kZTaybvOXtSJez8Y=;
+        b=t7Toz9HGe6yTmEtYCCla69zoKI2WwfJUhdLQCDV2Xxqgbdaaj4xp6HXontVloGUIXj
+         JywkdGAOs0tCSSp7+EjgyMvbWJlYqOBg6n8+j06kwyyTtIFznWrEwnZMSnLfq9849pdT
+         BG9n61+d4+PHt/21my1u7LltMl01oFtFCKa731kyUrVAaHwFY/w6mOEOGjliDU8Seuf9
+         bCUnIEQ0FdtoQUdcu1Ivc3RsDxE7I/IQwvhvxieJCjUtOOKz8b9qSlaRaPLTIQ+syegA
+         mcBiM11hRKQ4tD9souJ/JKiWg7MkzSGogyLiM2uGP7H71UY39LlGoEm8C75l8hZa7mjP
+         DyWA==
+X-Gm-Message-State: APjAAAXA1cx6zwABRZl4vMwWAqEUPiFOalY/zInstE/sGf3T6RrjG+hM
+        YfBWnZY+7kPyu27gtFKQh5M=
+X-Google-Smtp-Source: APXvYqwcdIV4A8Q6CT/LktHtIuaaggY3aC//hpkQKzpsZhjuegjpeIoGV1oucIHmJrnUVMq8ZMTfSg==
+X-Received: by 2002:a05:620a:1472:: with SMTP id j18mr12346580qkl.184.1574486434275;
+        Fri, 22 Nov 2019 21:20:34 -0800 (PST)
+Received: from localhost.localdomain ([177.76.215.166])
+        by smtp.gmail.com with ESMTPSA id e10sm145506qte.51.2019.11.22.21.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 21:20:33 -0800 (PST)
+From:   Rodrigo Carvalho <rodrigorsdc@gmail.com>
+To:     alexandru.ardelean@analog.com,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kernel-usp@googlegroups.com,
+        Rodrigo Carvalho <rodrigorsdc@gmail.com>
+Subject: [PATCH v4] dt-bindings: iio: accel: add binding documentation for ADIS16240
+Date:   Sat, 23 Nov 2019 02:19:27 -0300
+Message-Id: <20191123051927.5016-1-rodrigorsdc@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191122102212.400158-4-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/2019 05:22, Alexandre Belloni wrote:
-> Fix the following warnings:
-> drivers/rtc/rtc-ds1685.c: In function ‘ds1685_rtc_read_time’:
-> drivers/rtc/rtc-ds1685.c:264:5: warning: variable ‘ctrlb’ set but not used [-Wunused-but-set-variable]
->   264 |  u8 ctrlb, century;
->       |     ^~~~~
-> drivers/rtc/rtc-ds1685.c: In function ‘ds1685_rtc_proc’:
-> drivers/rtc/rtc-ds1685.c:758:19: warning: variable ‘ctrlc’ set but not used [-Wunused-but-set-variable]
->   758 |  u8 ctrla, ctrlb, ctrlc, ctrld, ctrl4a, ctrl4b, ssn[8];
->       |                   ^~~~~
-> Cc: Joshua Kinard <kumba@gentoo.org>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-ds1685.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
-> index 98d06b3ee913..8419595e7da7 100644
-> --- a/drivers/rtc/rtc-ds1685.c
-> +++ b/drivers/rtc/rtc-ds1685.c
-> @@ -261,7 +261,7 @@ static int
->  ds1685_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  {
->  	struct ds1685_priv *rtc = dev_get_drvdata(dev);
-> -	u8 ctrlb, century;
-> +	u8 century;
->  	u8 seconds, minutes, hours, wday, mday, month, years;
->  
->  	/* Fetch the time info from the RTC registers. */
-> @@ -274,7 +274,6 @@ ds1685_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  	month   = rtc->read(rtc, RTC_MONTH);
->  	years   = rtc->read(rtc, RTC_YEAR);
->  	century = rtc->read(rtc, RTC_CENTURY);
-> -	ctrlb   = rtc->read(rtc, RTC_CTRL_B);
->  	ds1685_rtc_end_data_access(rtc);
->  
->  	/* bcd2bin if needed, perform fixups, and store to rtc_time. */
-> @@ -755,7 +754,7 @@ static int
->  ds1685_rtc_proc(struct device *dev, struct seq_file *seq)
->  {
->  	struct ds1685_priv *rtc = dev_get_drvdata(dev);
-> -	u8 ctrla, ctrlb, ctrlc, ctrld, ctrl4a, ctrl4b, ssn[8];
-> +	u8 ctrla, ctrlb, ctrld, ctrl4a, ctrl4b, ssn[8];
->  	char *model;
->  
->  	/* Read all the relevant data from the control registers. */
-> @@ -763,7 +762,6 @@ ds1685_rtc_proc(struct device *dev, struct seq_file *seq)
->  	ds1685_rtc_get_ssn(rtc, ssn);
->  	ctrla = rtc->read(rtc, RTC_CTRL_A);
->  	ctrlb = rtc->read(rtc, RTC_CTRL_B);
-> -	ctrlc = rtc->read(rtc, RTC_CTRL_C);
->  	ctrld = rtc->read(rtc, RTC_CTRL_D);
->  	ctrl4a = rtc->read(rtc, RTC_EXT_CTRL_4A);
->  	ctrl4b = rtc->read(rtc, RTC_EXT_CTRL_4B);
-> 
+This patch add device tree binding documentation for ADIS16240.
 
-Acked-By: Joshua Kinard <kumba@gentoo.org>
+Signed-off-by: Rodrigo Ribeiro Carvalho <rodrigorsdc@gmail.com>
+---
+V4:
+   - Remove spi-cpha and spi-cpol in binding example, since this driver
+supports only one timing mode.
+ .../bindings/iio/accel/adi,adis16240.yaml     | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+new file mode 100644
+index 000000000000..8e902f7c49e6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/accel/adi,adis16240.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ADIS16240 Programmable Impact Sensor and Recorder driver
++
++maintainers:
++  - Alexandru Ardelean <alexandru.ardelean@analog.com>
++
++description: |
++  ADIS16240 Programmable Impact Sensor and Recorder driver that supports
++  SPI interface.
++    https://www.analog.com/en/products/adis16240.html
++
++properties:
++  compatible:
++    enum:
++      - adi,adis16240
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    spi0 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        /* Example for a SPI device node */
++        accelerometer@0 {
++            compatible = "adi,adis16240";
++            reg = <0>;
++            spi-max-frequency = <2500000>;
++            interrupt-parent = <&gpio0>;
++            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++        };
++    };
+-- 
+2.24.0
+
