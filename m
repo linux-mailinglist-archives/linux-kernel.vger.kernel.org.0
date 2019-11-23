@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B73107FC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 19:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F57107FCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 19:13:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfKWSMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 13:12:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40168 "EHLO mail.kernel.org"
+        id S1727109AbfKWSNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 13:13:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbfKWSMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 13:12:43 -0500
+        id S1726735AbfKWSMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 13:12:42 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37F8220731;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B5692073B;
         Sat, 23 Nov 2019 18:12:42 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iYZth-000Eyp-C3; Sat, 23 Nov 2019 13:12:41 -0500
-Message-Id: <20191123181241.252520677@goodmis.org>
+        id 1iYZth-000EzJ-Gk; Sat, 23 Nov 2019 13:12:41 -0500
+Message-Id: <20191123181241.394403643@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sat, 23 Nov 2019 13:12:01 -0500
+Date:   Sat, 23 Nov 2019 13:12:02 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [for-next][PATCH 04/10] ftrace: Use BIT() macro
+        Xianting Tian <xianting_tian@126.com>
+Subject: [for-next][PATCH 05/10] ring-buffer: Fix typos in function ring_buffer_producer
 References: <20191123181157.851427201@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,66 +36,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+From: Xianting Tian <xianting_tian@126.com>
 
-It's cleaner to use the BIT() macro instead of raw shift operation.
+Fix spelling and other typos
 
-Link: http://lkml.kernel.org/r/20191121133815.15040-1-info@metux.net
+Link: http://lkml.kernel.org/r/1573916755-32478-1-git-send-email-xianting_tian@126.com
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-[ Added BIT() for bits 16 and 17 ]
+Signed-off-by: Xianting Tian <xianting_tian@126.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/ftrace.h | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ kernel/trace/ring_buffer_benchmark.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index af79b0f8cdc1..232806d5689d 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -149,24 +149,24 @@ ftrace_func_t ftrace_ops_get_func(struct ftrace_ops *ops);
-  *            (internal ftrace only, should not be used by others)
-  */
- enum {
--	FTRACE_OPS_FL_ENABLED			= 1 << 0,
--	FTRACE_OPS_FL_DYNAMIC			= 1 << 1,
--	FTRACE_OPS_FL_SAVE_REGS			= 1 << 2,
--	FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED	= 1 << 3,
--	FTRACE_OPS_FL_RECURSION_SAFE		= 1 << 4,
--	FTRACE_OPS_FL_STUB			= 1 << 5,
--	FTRACE_OPS_FL_INITIALIZED		= 1 << 6,
--	FTRACE_OPS_FL_DELETED			= 1 << 7,
--	FTRACE_OPS_FL_ADDING			= 1 << 8,
--	FTRACE_OPS_FL_REMOVING			= 1 << 9,
--	FTRACE_OPS_FL_MODIFYING			= 1 << 10,
--	FTRACE_OPS_FL_ALLOC_TRAMP		= 1 << 11,
--	FTRACE_OPS_FL_IPMODIFY			= 1 << 12,
--	FTRACE_OPS_FL_PID			= 1 << 13,
--	FTRACE_OPS_FL_RCU			= 1 << 14,
--	FTRACE_OPS_FL_TRACE_ARRAY		= 1 << 15,
--	FTRACE_OPS_FL_PERMANENT                 = 1 << 16,
--	FTRACE_OPS_FL_DIRECT			= 1 << 17,
-+	FTRACE_OPS_FL_ENABLED			= BIT(0),
-+	FTRACE_OPS_FL_DYNAMIC			= BIT(1),
-+	FTRACE_OPS_FL_SAVE_REGS			= BIT(2),
-+	FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED	= BIT(3),
-+	FTRACE_OPS_FL_RECURSION_SAFE		= BIT(4),
-+	FTRACE_OPS_FL_STUB			= BIT(5),
-+	FTRACE_OPS_FL_INITIALIZED		= BIT(6),
-+	FTRACE_OPS_FL_DELETED			= BIT(7),
-+	FTRACE_OPS_FL_ADDING			= BIT(8),
-+	FTRACE_OPS_FL_REMOVING			= BIT(9),
-+	FTRACE_OPS_FL_MODIFYING			= BIT(10),
-+	FTRACE_OPS_FL_ALLOC_TRAMP		= BIT(11),
-+	FTRACE_OPS_FL_IPMODIFY			= BIT(12),
-+	FTRACE_OPS_FL_PID			= BIT(13),
-+	FTRACE_OPS_FL_RCU			= BIT(14),
-+	FTRACE_OPS_FL_TRACE_ARRAY		= BIT(15),
-+	FTRACE_OPS_FL_PERMANENT                 = BIT(16),
-+	FTRACE_OPS_FL_DIRECT			= BIT(17),
- };
+diff --git a/kernel/trace/ring_buffer_benchmark.c b/kernel/trace/ring_buffer_benchmark.c
+index 09b0b49f346e..32149e46551c 100644
+--- a/kernel/trace/ring_buffer_benchmark.c
++++ b/kernel/trace/ring_buffer_benchmark.c
+@@ -269,10 +269,10 @@ static void ring_buffer_producer(void)
  
- #ifdef CONFIG_DYNAMIC_FTRACE
+ #ifndef CONFIG_PREEMPTION
+ 		/*
+-		 * If we are a non preempt kernel, the 10 second run will
++		 * If we are a non preempt kernel, the 10 seconds run will
+ 		 * stop everything while it runs. Instead, we will call
+ 		 * cond_resched and also add any time that was lost by a
+-		 * rescedule.
++		 * reschedule.
+ 		 *
+ 		 * Do a cond resched at the same frequency we would wake up
+ 		 * the reader.
 -- 
 2.24.0
 
