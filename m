@@ -2,131 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF99107F05
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A80107F0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:33:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfKWP3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 10:29:55 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46149 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbfKWP3z (ORCPT
+        id S1726931AbfKWPdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 10:33:54 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:55052 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfKWPdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 10:29:55 -0500
-Received: by mail-il1-f195.google.com with SMTP id q1so10162927ile.13;
-        Sat, 23 Nov 2019 07:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8eTkYwKb9m359asPh6Ysgm+Da2MJlqq+l4Sb9nSRTSU=;
-        b=kiOJVG2pmpQJ2VN4v4Zl2HquBydhRrN+GM6xHJk0pF0XDNlCcTJDdbFRgcSX3ZAtdX
-         0Pk/xBzq0xeLOdOKEL6R16XLXVMxQBImQNJVVQg9f97RIbvPIvKGMY83GyR/10HHsKo9
-         nx3P6z9KlUHzpY03/PQawL6RFfHf1XptIRJgBW4vsMQb91eekXOQ4UL1rhzPfKnJcJPW
-         H0ljf7CGLauGHG+QyOS6YkH0wjASY8g7AWlwtU+WupkY/WTdH9a30r7fwAvH01sFegkd
-         JY9jcgrKXipSRbBkOIhywXMJKu1qgPCA2eY4iuyoDnjTUyJE4lBrh+wMfxC2uHn35uQB
-         kslg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8eTkYwKb9m359asPh6Ysgm+Da2MJlqq+l4Sb9nSRTSU=;
-        b=CucwiFNS8pLqu8O4CbhevQGoJ/HsE2Mgmod8v8R1GTCPB2YmP79r7FG6oK86UgC+lj
-         fSwLOXJUStrsm7IFvqdu39LxcgTR2tsnqXvwN3do9HJeQ5XkyN40YwmPDJAEnB12Xuof
-         ZMikHOOibmYbpsR3jNvvzTj8RmLJwoUC15sMJiSz5sLbVLkKrfmfVkuZsMu0hjuP+gqc
-         Yk6qGQ3wvHX17YLYb+1IMCNzgxY6TVsFnGNlzXTa5zyBr8ZdI70N66pbjln31fdD7GwU
-         NjRdbZ6c3FNLvBKXPYD2UHllj2V14vVMI9xfBQc971edfw/QUfwaIscqt1lzQi3IljQQ
-         jypw==
-X-Gm-Message-State: APjAAAVkjO00oHQ8XiCiqFH2lKAhSMX7gisQXBuQ/1L2wxt3cB5C15ZF
-        +cWGOenTIIF99wl8Rz8h3egbt1EYJtuEHpmv8Ms=
-X-Google-Smtp-Source: APXvYqyeE3Pl5UTnhFhCeFBqZT96zgXTOzayS445/qsngeQBnUZzHl5C8tRKJFKD3/2/hNWfkkHcBie3qNPPdLljPpU=
-X-Received: by 2002:a92:d7cf:: with SMTP id g15mr23418989ilq.171.1574522994762;
- Sat, 23 Nov 2019 07:29:54 -0800 (PST)
+        Sat, 23 Nov 2019 10:33:54 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id E99EB2008A;
+        Sat, 23 Nov 2019 16:27:39 +0100 (CET)
+Date:   Sat, 23 Nov 2019 16:27:38 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add Shenzhen Frida LCD
+ Co., Ltd.
+Message-ID: <20191123152738.GA27045@ravnborg.org>
+References: <20191120171027.1102250-1-paul@crapouillou.net>
 MIME-Version: 1.0
-References: <20191121155554.1227-1-andrew.smirnov@gmail.com>
-In-Reply-To: <20191121155554.1227-1-andrew.smirnov@gmail.com>
-From:   Chris Healy <cphealy@gmail.com>
-Date:   Sat, 23 Nov 2019 07:29:43 -0800
-Message-ID: <CAFXsbZpjuWnCdzaO0qSa2gw6R-KNi3aDTwqqPHmYrRNqUj_zDw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] enable CAAM's HWRNG as default
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     linux-crypto@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191120171027.1102250-1-paul@crapouillou.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=ER_8r6IbAAAA:8
+        a=7gkXJVJtAAAA:8 a=qIjRjsPfdrvINvMtCKIA:9 a=CjuIK1q_8ugA:10
+        a=9LHmKk7ezEChjTCyhBa9:22 a=E9Po1WZjFZOl8hwRPBS3:22
+        a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested-by: Chris Healy <cphealy@gmail.com>
+Hi Paul.
 
-On Thu, Nov 21, 2019 at 7:56 AM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
->
-> Everyone:
->
-> This series is a continuation of original [discussion]. I don't know
-> if what's in the series is enough to use CAAMs HWRNG system wide, but
-> I am hoping that with enough iterations and feedback it will be.
->
-> Changes since [v1]:
->
->     - Original hw_random replaced with the one using output of TRNG directly
->
->     - SEC4 DRNG IP block exposed via crypto API
->
->     - Small fix regarding use of GFP_DMA added to the series
->
-> Chagnes since [v2]:
->
->     - msleep in polling loop to avoid wasting CPU cycles
->
->     - caam_trng_read() bails out early if 'wait' is set to 'false'
->
->     - fixed typo in ZII's name
->
-> Changes since [v3]:
->
->     - DRNG's .cra_name is now "stdrng"
->
->     - collected Reviewd-by tag from Lucas
->
->     - typo fixes in commit messages of the series
->
-> Feedback is welcome!
->
-> Thanks,
-> Andrey Smirnov
->
-> [discussion] https://patchwork.kernel.org/patch/9850669/
-> [v1] https://lore.kernel.org/lkml/20191029162916.26579-1-andrew.smirnov@gmail.com
-> [v2] https://lore.kernel.org/lkml/20191118153843.28136-1-andrew.smirnov@gmail.com
-> [v3] https://lore.kernel.org/lkml/20191120165341.32669-1-andrew.smirnov@gmail.com
->
-> Andrey Smirnov (6):
->   crypto: caam - RNG4 TRNG errata
->   crypto: caam - enable prediction resistance in HRWNG
->   crypto: caam - allocate RNG instantiation descriptor with GFP_DMA
->   crypto: caam - move RNG presence check into a shared function
->   crypto: caam - replace DRNG with TRNG for use with hw_random
->   crypto: caam - expose SEC4 DRNG via crypto RNG API
->
->  drivers/crypto/caam/Kconfig   |  15 +-
->  drivers/crypto/caam/Makefile  |   3 +-
->  drivers/crypto/caam/caamrng.c | 358 ----------------------------------
->  drivers/crypto/caam/ctrl.c    |  29 ++-
->  drivers/crypto/caam/desc.h    |   2 +
->  drivers/crypto/caam/drng.c    | 175 +++++++++++++++++
->  drivers/crypto/caam/intern.h  |  32 ++-
->  drivers/crypto/caam/jr.c      |   3 +-
->  drivers/crypto/caam/regs.h    |  14 +-
->  drivers/crypto/caam/trng.c    |  89 +++++++++
->  10 files changed, 338 insertions(+), 382 deletions(-)
->  delete mode 100644 drivers/crypto/caam/caamrng.c
->  create mode 100644 drivers/crypto/caam/drng.c
->  create mode 100644 drivers/crypto/caam/trng.c
->
-> --
-> 2.21.0
->
+On Wed, Nov 20, 2019 at 06:10:25PM +0100, Paul Cercueil wrote:
+> Add an entry for Shenzhen Frida LCD Co., Ltd.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index 967e78c5ec0a..9c6e1b42435b 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -337,6 +337,8 @@ patternProperties:
+>      description: Firefly
+>    "^focaltech,.*":
+>      description: FocalTech Systems Co.,Ltd
+> +  "^frida,.*":
+> +    description: Shenzhen Frida LCD Co., Ltd.
+Random note:
+Some descriptions end with a '.,', others not.
+So both works.
+
+
+>    "^friendlyarm,.*":
+>      description: Guangzhou FriendlyARM Computer Tech Co., Ltd
+>    "^fsl,.*":
+> -- 
+> 2.24.0
