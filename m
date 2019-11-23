@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CAA3107FC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 19:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B84107FCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 19:13:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfKWSMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 13:12:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40192 "EHLO mail.kernel.org"
+        id S1727022AbfKWSNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 13:13:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfKWSMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 13:12:44 -0500
+        id S1726775AbfKWSMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 13:12:43 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E947D20748;
-        Sat, 23 Nov 2019 18:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11C892073A;
+        Sat, 23 Nov 2019 18:12:43 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iYZti-000F1F-34; Sat, 23 Nov 2019 13:12:42 -0500
-Message-Id: <20191123181241.969300509@goodmis.org>
+        id 1iYZti-000F1j-7X; Sat, 23 Nov 2019 13:12:42 -0500
+Message-Id: <20191123181242.114947112@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sat, 23 Nov 2019 13:12:06 -0500
+Date:   Sat, 23 Nov 2019 13:12:07 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Hassan Naveed <hnaveed@wavecomp.com>,
         Paul Burton <paulburton@kernel.org>
-Subject: [for-next][PATCH 09/10] tracing: Use xarray for syscall trace events
+Subject: [for-next][PATCH 10/10] tracing: Enable syscall optimization for MIPS
 References: <20191123181157.851427201@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -39,115 +39,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hassan Naveed <hnaveed@wavecomp.com>
 
-Currently, a lot of memory is wasted for architectures like MIPS when
-init_ftrace_syscalls() allocates the array for syscalls using kcalloc.
-This is because syscalls numbers start from 4000, 5000 or 6000 and
-array elements up to that point are unused.
-Fix this by using a data structure more suited to storing sparsely
-populated arrays. The XARRAY data structure, implemented using radix
-trees, is much more memory efficient for storing the syscalls in
-question.
+Since MIPS architecture has a sparse syscall array, select the
+HAVE_SPARSE_SYSCALL_NR to save space.
 
-Link: http://lkml.kernel.org/r/20191115234314.21599-1-hnaveed@wavecomp.com
+Link: http://lkml.kernel.org/r/20191115234314.21599-2-hnaveed@wavecomp.com
 
 Signed-off-by: Hassan Naveed <hnaveed@wavecomp.com>
 Reviewed-by: Paul Burton <paulburton@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/Kconfig                  |  8 ++++++++
- kernel/trace/trace_syscalls.c | 32 +++++++++++++++++++++++++-------
- 2 files changed, 33 insertions(+), 7 deletions(-)
+ arch/mips/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 5f8a5d84dbbe..69c87e8608d8 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -960,6 +960,14 @@ config RELR
- config ARCH_HAS_MEM_ENCRYPT
- 	bool
- 
-+config HAVE_SPARSE_SYSCALL_NR
-+       bool
-+       help
-+          An architecture should select this if its syscall numbering is sparse
-+	  to save space. For example, MIPS architecture has a syscall array with
-+	  entries at 4000, 5000 and 6000 locations. This option turns on syscall
-+	  related optimizations for a given architecture.
-+
- source "kernel/gcov/Kconfig"
- 
- source "scripts/gcc-plugins/Kconfig"
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index fa8fbff736d6..16fa218556fa 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -7,6 +7,7 @@
- #include <linux/module.h>	/* for MODULE_NAME_LEN via KSYM_SYMBOL_LEN */
- #include <linux/ftrace.h>
- #include <linux/perf_event.h>
-+#include <linux/xarray.h>
- #include <asm/syscall.h>
- 
- #include "trace_output.h"
-@@ -30,6 +31,7 @@ syscall_get_enter_fields(struct trace_event_call *call)
- extern struct syscall_metadata *__start_syscalls_metadata[];
- extern struct syscall_metadata *__stop_syscalls_metadata[];
- 
-+static DEFINE_XARRAY(syscalls_metadata_sparse);
- static struct syscall_metadata **syscalls_metadata;
- 
- #ifndef ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-@@ -101,6 +103,9 @@ find_syscall_meta(unsigned long syscall)
- 
- static struct syscall_metadata *syscall_nr_to_meta(int nr)
- {
-+	if (IS_ENABLED(CONFIG_HAVE_SPARSE_SYSCALL_NR))
-+		return xa_load(&syscalls_metadata_sparse, (unsigned long)nr);
-+
- 	if (!syscalls_metadata || nr >= NR_syscalls || nr < 0)
- 		return NULL;
- 
-@@ -536,12 +541,16 @@ void __init init_ftrace_syscalls(void)
- 	struct syscall_metadata *meta;
- 	unsigned long addr;
- 	int i;
--
--	syscalls_metadata = kcalloc(NR_syscalls, sizeof(*syscalls_metadata),
--				    GFP_KERNEL);
--	if (!syscalls_metadata) {
--		WARN_ON(1);
--		return;
-+	void *ret;
-+
-+	if (!IS_ENABLED(CONFIG_HAVE_SPARSE_SYSCALL_NR)) {
-+		syscalls_metadata = kcalloc(NR_syscalls,
-+					sizeof(*syscalls_metadata),
-+					GFP_KERNEL);
-+		if (!syscalls_metadata) {
-+			WARN_ON(1);
-+			return;
-+		}
- 	}
- 
- 	for (i = 0; i < NR_syscalls; i++) {
-@@ -551,7 +560,16 @@ void __init init_ftrace_syscalls(void)
- 			continue;
- 
- 		meta->syscall_nr = i;
--		syscalls_metadata[i] = meta;
-+
-+		if (!IS_ENABLED(CONFIG_HAVE_SPARSE_SYSCALL_NR)) {
-+			syscalls_metadata[i] = meta;
-+		} else {
-+			ret = xa_store(&syscalls_metadata_sparse, i, meta,
-+					GFP_KERNEL);
-+			WARN(xa_is_err(ret),
-+				"Syscall memory allocation failed\n");
-+		}
-+
- 	}
- }
- 
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index a0bd9bdb5f83..c7f59c4a00d8 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -73,6 +73,7 @@ config MIPS
+ 	select HAVE_PERF_EVENTS
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RSEQ
++	select HAVE_SPARSE_SYSCALL_NR
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING_GEN if 64BIT || !SMP
 -- 
 2.24.0
 
