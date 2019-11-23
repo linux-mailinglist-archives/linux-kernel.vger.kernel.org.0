@@ -2,105 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 730B5107EFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50911107F03
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfKWPQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 10:16:51 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35568 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbfKWPQv (ORCPT
+        id S1726757AbfKWP3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 10:29:03 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:46457 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfKWP3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 10:16:51 -0500
-Received: by mail-wm1-f65.google.com with SMTP id n5so853806wmc.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 07:16:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dFed9VqpsJKafs4auYjqVCiB2JZMUoL2P/uWCdp5l5Q=;
-        b=s5jME4KlROGZt+v99F8rHGB4q5F574j8yIuMkOLNP3orVMGMgvDhzbh43mm6EWJsrP
-         gLnQM/bQ2lxwUP6RhPwXRaIK5x/V+73jG8qTjOOSQmua5yY8ImMouZhjYK4v1hiHGIBy
-         i8+4ZmlLayz0DP50sOFtd+GCdFVJh3eoWerV0D77GNUTwxS4hjVHrXM+fSXt/82piM3x
-         BH3edRluBQo4LxXahRLiShZz+EItaSeBkbewUDLisRKhjcRVJvVBGy6rOdG/4CGEJxHJ
-         PFQyykDM4RliuUz8JePMCw0uYlCGHC+SMxKiJQbY+RoDoBXef4QjkKBQ7VaIv2zFuXRa
-         m9iw==
+        Sat, 23 Nov 2019 10:29:02 -0500
+Received: by mail-il1-f200.google.com with SMTP id i74so9306658ild.13
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 07:29:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dFed9VqpsJKafs4auYjqVCiB2JZMUoL2P/uWCdp5l5Q=;
-        b=rf+bsP51sXUsKYPP7r28I0wUv8gDRdW7iTsFPkqRsJ1jIz6o4Iv09Lh9xjv2qWZg7n
-         QqHKKs0AIQIyuDsQx0d7/mYfR8jkjfE+9yCa5vTP+ZQnlPcFYrYoh0XAwX3/j0hwvgzl
-         K3aGVVaP1ADeU8fuAqGh5NEB7R4mntX+GZm5DL+C7I7K9FGxZQUAKmv0UTcX3+w6kt5D
-         1DI1m9sxfWJ5fF2FLlQC4D1sOyS+2MJiTKEIP7qCl7I9Z9Zu6gMPcn95r1KDuRNx8T8v
-         2jOqQAExaaNPnXS3U3Kt2FqC6Y9WTja12DMK5JMX0ti7AhrV7T8LOxH9bQ5+ZbJqcugW
-         bbVA==
-X-Gm-Message-State: APjAAAUDjgzVPhi5GxSBSQvYy5FdVF54VPt2PUIH2OYi2lp/xS/mUHuz
-        U+2iK5Yg9Z6FhB5RUsa6LVA=
-X-Google-Smtp-Source: APXvYqxej3lQo35o2AcErOq4wsO6GVqMxTmW4YKoxjFD/Rzg4BwQccSqZZSdF/3jycOVQ3dSQGpocg==
-X-Received: by 2002:a05:600c:2549:: with SMTP id e9mr20859986wma.177.1574522208846;
-        Sat, 23 Nov 2019 07:16:48 -0800 (PST)
-Received: from localhost.localdomain (dslb-092-073-054-228.092.073.pools.vodafone-ip.de. [92.73.54.228])
-        by smtp.gmail.com with ESMTPSA id p25sm2126311wma.20.2019.11.23.07.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2019 07:16:48 -0800 (PST)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/3] staging: rtl8188eu: remove return variable from rtw_pwr_unassociated_idle
-Date:   Sat, 23 Nov 2019 16:16:35 +0100
-Message-Id: <20191123151635.155138-3-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191123151635.155138-1-straube.linux@gmail.com>
-References: <20191123151635.155138-1-straube.linux@gmail.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=iWEwDEb/a+W0LwDErZeV1TWmaFzTm+B32y2sBPFqXpk=;
+        b=lm/YR/+Zw86wmeVK20HKEsQnyxHnOgMaUPzj5uqad1j02zYgERT7Ox2UQulFGPhANU
+         nyb7bCJlJ33fyoyf3v6XCFdC2rrCekx5N8xPcUKm8Vf/OwB1VwVkSdYv+jZEdHFY2Xs2
+         KbUoEaZm8kX1fH+9F3RFuY0Ur6Zthj2/8ti0URAxxa5XfSsGD25yx7cjibG8kOCj/GPN
+         a+7Vh66WaIRLC6FFHxiNAR5RHWIc5PAf5vDhsJNb8hqlDJG9ZvtcEOKKsUFgnZNIKoZZ
+         yK37wiwbds8IjHawH4VpjMdwxZy/1tTWrDj6GMoFqFur7Au6unT1VmP5P23Nxk0WKl2p
+         /GgA==
+X-Gm-Message-State: APjAAAVYylPE/jWsk6vRW7IeNdyjfxeXY4rYE2/BOSjLXNVETM6PdJAv
+        GZxJcKYien6VzIVnMGoIyv8xV1SF35X9IwQEcITtl2nn9ea+
+X-Google-Smtp-Source: APXvYqzR7IZ3ZU8hAUSstgRytaL4XuHPpFM7jal23gEyT0xSvDbcd0YQn0CiO0dsSMXH+yS4xQX/b0XtFOETy+C64+sWmMQUxIiu
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:868f:: with SMTP id l15mr23646952ilh.199.1574522940544;
+ Sat, 23 Nov 2019 07:29:00 -0800 (PST)
+Date:   Sat, 23 Nov 2019 07:29:00 -0800
+In-Reply-To: <00000000000009f9a305708faf46@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008fdf12059805304e@google.com>
+Subject: Re: WARNING in cgroup_apply_control_enable
+From:   syzbot <syzbot+5493b2a54d31d6aea629@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, davem@davemloft.net, guro@fb.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+        lizefan@huawei.com, lizf@cn.fujitsu.com, menage@google.com,
+        mingo@redhat.com, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function rtw_pwr_unassociated_idle returns boolean values.
-Remove the return variable ret and the exit label to simplify the
-function a little bit. Return true or false directly instead.
+syzbot has bisected this bug to:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_pwrctrl.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+commit 0d5936344f30aba0f6ddb92b030cb6a05168efe6
+Author: Tejun Heo <tj@kernel.org>
+Date:   Mon Sep 25 16:00:19 2017 +0000
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-index 8e99e10c1fd4..c4f58507dbfd 100644
---- a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-@@ -201,21 +201,17 @@ int ips_leave(struct adapter *padapter)
- static bool rtw_pwr_unassociated_idle(struct adapter *adapter)
- {
- 	struct mlme_priv *pmlmepriv = &adapter->mlmepriv;
--	bool ret = false;
- 
- 	if (time_after_eq(adapter->pwrctrlpriv.ips_deny_time, jiffies))
--		goto exit;
-+		return false;
- 
- 	if (check_fwstate(pmlmepriv, WIFI_ASOC_STATE|WIFI_SITE_MONITOR) ||
- 	    check_fwstate(pmlmepriv, WIFI_UNDER_LINKING|WIFI_UNDER_WPS) ||
- 	    check_fwstate(pmlmepriv, WIFI_AP_STATE) ||
- 	    check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE|WIFI_ADHOC_STATE))
--		goto exit;
--
--	ret = true;
-+		return false;
- 
--exit:
--	return ret;
-+	return true;
- }
- 
- void rtw_ps_processor(struct adapter *padapter)
--- 
-2.24.0
+     sched: Implement interface for cgroup unified hierarchy
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16142bd2e00000
+start commit:   3a272031 Merge tag 'libnvdimm-fixes-4.19-rc8' of git://git..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=15142bd2e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11142bd2e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5493b2a54d31d6aea629
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c890f6400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a94dd6400000
+
+Reported-by: syzbot+5493b2a54d31d6aea629@syzkaller.appspotmail.com
+Fixes: 0d5936344f30 ("sched: Implement interface for cgroup unified  
+hierarchy")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
