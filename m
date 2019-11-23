@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA9A71080B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C61EF1080B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:08:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfKWVIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 16:08:20 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38236 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfKWVIT (ORCPT
+        id S1726937AbfKWVI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 16:08:28 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:32778 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfKWVIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 16:08:19 -0500
-Received: by mail-qk1-f193.google.com with SMTP id e2so9428900qkn.5
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 13:08:19 -0800 (PST)
+        Sat, 23 Nov 2019 16:08:22 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y39so12349498qty.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 13:08:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=moLV8nIBuKPEOn4rga1JnaZprJYQ9aX5C5oLRVjtAxI=;
-        b=jiwtll2qYN29U1ADI2nzYRmeKbkre3GzvhzigqPAajeNZEr+CGpsXEpkW7/sUslR4H
-         CYtBbXS8DvNZSI8LiD5ABzTVsGiT5GC35HJx25yNte57y0+TYrQSmIBkp3IIAQkierU0
-         RVdLRghgbhZYriOyHs4fUpQ4Mu72LeahdY7A6QnTNVNkEqQfi3LxLevKsL23R7iEPpXm
-         VYg+3q15rtyRs/GXTQl76PTLOw2KMJ/O2ktzXvsVMnuuyW40e/P0psTlxLdMaAflEuo3
-         lzWXrHLr+oTeuyhEGWwW3OXkR5qPjAKgiaA7FDtEJqpXTaAHd10Pt2zoSQY7kDUDyT2y
-         clZA==
-X-Gm-Message-State: APjAAAXZMluf7XbeVmDcHxH1ye8FVv+gsF0PtLXO5I0Sv4YUf/JGcrZ0
-        U1oZQqCQHBpW1te7wDmo6F/U/mPZxxM=
-X-Google-Smtp-Source: APXvYqwFkXPtecLSi5tL6mT8CpVMRtplNTEqRvogrXeUkS4g4paOUKRtQ4dZq9w3y8iD0bWYXphyHg==
-X-Received: by 2002:a37:847:: with SMTP id 68mr8469125qki.366.1574543298884;
-        Sat, 23 Nov 2019 13:08:18 -0800 (PST)
+        bh=U73ogPu5oQ0nNykSJGRun0NX2DnBSnxUQ+74Mv45tWo=;
+        b=mz1Nc9ZQ5pl6Ub/W2x0deR7tU3Z9NCRQSpDzy63If2S2DgDlnWQSPS3A7acArOQeGn
+         j939LGs9OJzbFz/TOawC7YWQWp4FmA0TQiQgoNKlkBDX2/vEoRNdqg/IYnirMWmt2aWm
+         un3U7B+yUUwflhMnQwQk++AqjcEULb2IbAgr0rIpoQ5+CojDHRYVh93Gy3yvsJv6yRIG
+         /+5wfANHCXzFR4601CmC5lgAp7HbtmeLI9ebU0+l9zaYHJ27VGouatGoTRRxPFJoIycd
+         InaU14m3pbuxxWV+xy4OImd3Ypu8Uu8xfa7nSZYIi7WVeQfMlIU9rZVR+vPiapf2muEn
+         7wFQ==
+X-Gm-Message-State: APjAAAWF49ttWD9qDP14mYkzQODpufqMKTYeQS8yfkZDyo1hbNawtmGU
+        YF0t9XTulNYBlQN3Kw9jYKPnl6fWbtA=
+X-Google-Smtp-Source: APXvYqxHRwfhyH9OaLwCHLW++8yRqG5pdBvt5K95eDFWmhKfeOxcqYuWpNBAAoy48dlvxlpZv6VQFw==
+X-Received: by 2002:aed:3bf8:: with SMTP id s53mr6526653qte.373.1574543299747;
+        Sat, 23 Nov 2019 13:08:19 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
         by smtp.gmail.com with ESMTPSA id c37sm1164978qta.56.2019.11.23.13.08.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2019 13:08:18 -0800 (PST)
+        Sat, 23 Nov 2019 13:08:19 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     linux-kernel@vger.kernel.org, nivedita@alum.mit.edu
-Subject: [PATCH 1/3] init/main.c: log arguments and environment passed to init
-Date:   Sat, 23 Nov 2019 16:08:06 -0500
-Message-Id: <20191123210808.107904-2-nivedita@alum.mit.edu>
+Subject: [PATCH 2/3] init/main.c: remove unnecessary repair_env_string in do_initcall_level
+Date:   Sat, 23 Nov 2019 16:08:07 -0500
+Message-Id: <20191123210808.107904-3-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191123210808.107904-1-nivedita@alum.mit.edu>
 References: <20191123210808.107904-1-nivedita@alum.mit.edu>
@@ -49,35 +49,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend logging in `run_init_process` to also show the arguments and
-environment that we are passing to init.
+Since commit 08746a65c296 ("init: fix in-place parameter modification
+regression"), parse_args in do_initcall_level is called on a copy of
+saved_command_line. It is unnecessary to call repair_env_string during
+this parsing, as this copy is not used for anything later.
+
+Remove the now unnecessary arguments from repair_env_string as well.
 
 Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- init/main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ init/main.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/init/main.c b/init/main.c
-index 91f6ebb30ef0..c92f0376b1bc 100644
+index c92f0376b1bc..a2008e7a797f 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1042,8 +1042,16 @@ static void __init do_pre_smp_initcalls(void)
+@@ -246,8 +246,7 @@ static int __init loglevel(char *str)
+ early_param("loglevel", loglevel);
  
- static int run_init_process(const char *init_filename)
+ /* Change NUL term back to "=", to make "param" the whole string. */
+-static int __init repair_env_string(char *param, char *val,
+-				    const char *unused, void *arg)
++static void __init repair_env_string(char *param, char *val)
  {
-+	const char *const *p;
+ 	if (val) {
+ 		/* param=val or param="val"? */
+@@ -256,11 +255,9 @@ static int __init repair_env_string(char *param, char *val,
+ 		else if (val == param+strlen(param)+2) {
+ 			val[-2] = '=';
+ 			memmove(val-1, val, strlen(val)+1);
+-			val--;
+ 		} else
+ 			BUG();
+ 	}
+-	return 0;
+ }
+ 
+ /* Anything after -- gets handed straight to init. */
+@@ -272,7 +269,7 @@ static int __init set_init_arg(char *param, char *val,
+ 	if (panic_later)
+ 		return 0;
+ 
+-	repair_env_string(param, val, unused, NULL);
++	repair_env_string(param, val);
+ 
+ 	for (i = 0; argv_init[i]; i++) {
+ 		if (i == MAX_INIT_ARGS) {
+@@ -292,7 +289,7 @@ static int __init set_init_arg(char *param, char *val,
+ static int __init unknown_bootoption(char *param, char *val,
+ 				     const char *unused, void *arg)
+ {
+-	repair_env_string(param, val, unused, NULL);
++	repair_env_string(param, val);
+ 
+ 	/* Handle obsolete-style parameters */
+ 	if (obsolete_checksetup(param))
+@@ -990,6 +987,12 @@ static const char *initcall_level_names[] __initdata = {
+ 	"late",
+ };
+ 
++static int __init ignore_unknown_bootoption(char *param, char *val,
++			       const char *unused, void *arg)
++{
++	return 0;
++}
 +
- 	argv_init[0] = init_filename;
- 	pr_info("Run %s as init process\n", init_filename);
-+	pr_info("  with arguments:\n");
-+	for (p = argv_init; *p; p++)
-+		pr_info("    %s\n", *p);
-+	pr_info("  with environment:\n");
-+	for (p = envp_init; *p; p++)
-+		pr_info("    %s\n", *p);
- 	return do_execve(getname_kernel(init_filename),
- 		(const char __user *const __user *)argv_init,
- 		(const char __user *const __user *)envp_init);
+ static void __init do_initcall_level(int level)
+ {
+ 	initcall_entry_t *fn;
+@@ -999,7 +1002,7 @@ static void __init do_initcall_level(int level)
+ 		   initcall_command_line, __start___param,
+ 		   __stop___param - __start___param,
+ 		   level, level,
+-		   NULL, &repair_env_string);
++		   NULL, ignore_unknown_bootoption);
+ 
+ 	trace_initcall_level(initcall_level_names[level]);
+ 	for (fn = initcall_levels[level]; fn < initcall_levels[level+1]; fn++)
 -- 
 2.23.0
 
