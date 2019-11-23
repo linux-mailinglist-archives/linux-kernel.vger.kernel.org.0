@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 995C8107D8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41F45107D87
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfKWIPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 03:15:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36337 "EHLO
+        id S1727193AbfKWIPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 03:15:33 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36344 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfKWIPV (ORCPT
+        with ESMTP id S1727117AbfKWIPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 03:15:21 -0500
+        Sat, 23 Nov 2019 03:15:23 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iYQZR-0002bo-IT; Sat, 23 Nov 2019 09:15:09 +0100
+        id 1iYQZV-0002bt-Nm; Sat, 23 Nov 2019 09:15:13 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9BE911C1AD9;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C873A1C1ACC;
         Sat, 23 Nov 2019 09:15:02 +0100 (CET)
 Date:   Sat, 23 Nov 2019 08:15:02 -0000
-From:   "tip-bot2 for Jin Yao" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Alexey Budankov" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf util: Move block TUI function to ui browsers
-Cc:     Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+Subject: [tip: perf/core] perf session: Fix decompression of
+ PERF_RECORD_COMPRESSED records
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191118140849.20714-1-yao.jin@linux.intel.com>
-References: <20191118140849.20714-1-yao.jin@linux.intel.com>
+In-Reply-To: <cf782c34-f3f8-2f9f-d6ab-145cee0d5322@linux.intel.com>
+References: <cf782c34-f3f8-2f9f-d6ab-145cee0d5322@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <157449690252.21853.2731655639237747932.tip-bot2@tip-bot2>
+Message-ID: <157449690272.21853.2015069761475695078.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,222 +53,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     5cb456af99f58378fe90649d6faaab25e379be06
-Gitweb:        https://git.kernel.org/tip/5cb456af99f58378fe90649d6faaab25e379be06
-Author:        Jin Yao <yao.jin@linux.intel.com>
-AuthorDate:    Mon, 18 Nov 2019 22:08:48 +08:00
+Commit-ID:     bb1835a3b86c73aa534ef6430ad40223728dfbc0
+Gitweb:        https://git.kernel.org/tip/bb1835a3b86c73aa534ef6430ad40223728dfbc0
+Author:        Alexey Budankov <alexey.budankov@linux.intel.com>
+AuthorDate:    Mon, 18 Nov 2019 17:21:03 +03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 19 Nov 2019 19:33:40 -03:00
+CommitterDate: Tue, 19 Nov 2019 19:31:55 -03:00
 
-perf util: Move block TUI function to ui browsers
+perf session: Fix decompression of PERF_RECORD_COMPRESSED records
 
-It would be nice if we could jump to the assembler/source view (like the
-normal perf report) from total cycles view.
+Avoid termination of trace loading in case the last record in the
+decompressed buffer partly resides in the following mmaped
+PERF_RECORD_COMPRESSED record.
 
-This patch moves the block_hists_tui_browse from block-info.c to
-ui/browsers/hists.c in order to reuse some browser codes (i.e
-do_annotate) for implementing new annotation view.
+In this case NULL value returned by fetch_mmaped_event() means to
+proceed to the next mmaped record then decompress it and load compressed
+events.
 
- v2:
- ---
- Fix the 'make NO_SLANG=1' error. (Change 'int block_hists_tui_browse()'
- to 'static inline int block_hists_tui_browse()')
+The issue can be reproduced like this:
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+  $ perf record -z -- some_long_running_workload
+  $ perf report --stdio -vv
+  decomp (B): 44519 to 163000
+  decomp (B): 48119 to 174800
+  decomp (B): 65527 to 131072
+  fetch_mmaped_event: head=0x1ffe0 event->header_size=0x28, mmap_size=0x20000: fuzzed perf.data?
+  Error:
+  failed to process sample
+  ...
+
+Testing:
+
+  71: Zstd perf.data compression/decompression              : Ok
+
+  $ tools/perf/perf report -vv --stdio
+  decomp (B): 59593 to 262160
+  decomp (B): 4438 to 16512
+  decomp (B): 285 to 880
+  Looking at the vmlinux_path (8 entries long)
+  Using vmlinux for symbols
+  decomp (B): 57474 to 261248
+  prefetch_event: head=0x3fc78 event->header_size=0x28, mmap_size=0x3fc80: fuzzed or compressed perf.data?
+  decomp (B): 25 to 32
+  decomp (B): 52 to 120
+  ...
+
+Fixes: 57fc032ad643 ("perf session: Avoid infinite loop when seeing invalid header.size")
+Link: https://marc.info/?l=linux-kernel&m=156580812427554&w=2
+Co-developed-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191118140849.20714-1-yao.jin@linux.intel.com
+Link: http://lore.kernel.org/lkml/cf782c34-f3f8-2f9f-d6ab-145cee0d5322@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/hists.c | 55 ++++++++++++++++++++++++++++-
- tools/perf/util/block-info.c   | 65 +---------------------------------
- tools/perf/util/hist.h         | 12 ++++++-
- 3 files changed, 68 insertions(+), 64 deletions(-)
+ tools/perf/util/session.c | 44 +++++++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
 
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 4d2d0ac..87405dc 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -3444,3 +3444,58 @@ single_entry:
- 					       warn_lost_event,
- 					       annotation_opts);
- }
-+
-+static int block_hists_browser__title(struct hist_browser *browser, char *bf,
-+				      size_t size)
-+{
-+	struct hists *hists = evsel__hists(browser->block_evsel);
-+	const char *evname = perf_evsel__name(browser->block_evsel);
-+	unsigned long nr_samples = hists->stats.nr_events[PERF_RECORD_SAMPLE];
-+	int ret;
-+
-+	ret = scnprintf(bf, size, "# Samples: %lu", nr_samples);
-+	if (evname)
-+		scnprintf(bf + ret, size -  ret, " of event '%s'", evname);
-+
-+	return 0;
-+}
-+
-+int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
-+			   float min_percent)
-+{
-+	struct hists *hists = &bh->block_hists;
-+	struct hist_browser *browser;
-+	int key = -1;
-+	static const char help[] =
-+	" q             Quit \n";
-+
-+	browser = hist_browser__new(hists);
-+	if (!browser)
-+		return -1;
-+
-+	browser->block_evsel = evsel;
-+	browser->title = block_hists_browser__title;
-+	browser->min_pcnt = min_percent;
-+
-+	/* reset abort key so that it can get Ctrl-C as a key */
-+	SLang_reset_tty();
-+	SLang_init_tty(0, 0, 0);
-+
-+	while (1) {
-+		key = hist_browser__run(browser, "? - help", true);
-+
-+		switch (key) {
-+		case 'q':
-+			goto out;
-+		case '?':
-+			ui_browser__help_window(&browser->b, help);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+out:
-+	hist_browser__delete(browser);
-+	return 0;
-+}
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index 9abc201..5887f8f 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -10,6 +10,7 @@
- #include "map.h"
- #include "srcline.h"
- #include "evlist.h"
-+#include "hist.h"
- #include "ui/browsers/hists.h"
- 
- static struct block_header_column {
-@@ -439,70 +440,6 @@ struct block_report *block_info__create_report(struct evlist *evlist,
- 	return block_reports;
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index f07b8ec..8454a65 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1958,8 +1958,8 @@ out_err:
  }
  
--#ifdef HAVE_SLANG_SUPPORT
--static int block_hists_browser__title(struct hist_browser *browser, char *bf,
--				      size_t size)
--{
--	struct hists *hists = evsel__hists(browser->block_evsel);
--	const char *evname = perf_evsel__name(browser->block_evsel);
--	unsigned long nr_samples = hists->stats.nr_events[PERF_RECORD_SAMPLE];
--	int ret;
--
--	ret = scnprintf(bf, size, "# Samples: %lu", nr_samples);
--	if (evname)
--		scnprintf(bf + ret, size -  ret, " of event '%s'", evname);
--
--	return 0;
--}
--
--static int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
--				  float min_percent)
--{
--	struct hists *hists = &bh->block_hists;
--	struct hist_browser *browser;
--	int key = -1;
--	static const char help[] =
--	" q             Quit \n";
--
--	browser = hist_browser__new(hists);
--	if (!browser)
--		return -1;
--
--	browser->block_evsel = evsel;
--	browser->title = block_hists_browser__title;
--	browser->min_pcnt = min_percent;
--
--	/* reset abort key so that it can get Ctrl-C as a key */
--	SLang_reset_tty();
--	SLang_init_tty(0, 0, 0);
--
--	while (1) {
--		key = hist_browser__run(browser, "? - help", true);
--
--		switch (key) {
--		case 'q':
--			goto out;
--		case '?':
--			ui_browser__help_window(&browser->b, help);
--			break;
--		default:
--			break;
--		}
--	}
--
--out:
--	hist_browser__delete(browser);
--	return 0;
--}
--#else
--static int block_hists_tui_browse(struct block_hist *bh __maybe_unused,
--				  struct evsel *evsel __maybe_unused,
--				  float min_percent __maybe_unused)
--{
--	return 0;
--}
--#endif
--
- int report__browse_block_hists(struct block_hist *bh, float min_percent,
- 			       struct evsel *evsel)
+ static union perf_event *
+-fetch_mmaped_event(struct perf_session *session,
+-		   u64 head, size_t mmap_size, char *buf)
++prefetch_event(char *buf, u64 head, size_t mmap_size,
++	       bool needs_swap, union perf_event *error)
  {
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 4d87c7b..2aca8ce 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -449,6 +449,8 @@ enum rstype {
- 	A_SOURCE
- };
+ 	union perf_event *event;
  
-+struct block_hist;
+@@ -1971,20 +1971,32 @@ fetch_mmaped_event(struct perf_session *session,
+ 		return NULL;
+ 
+ 	event = (union perf_event *)(buf + head);
++	if (needs_swap)
++		perf_event_header__bswap(&event->header);
+ 
+-	if (session->header.needs_swap)
++	if (head + event->header.size <= mmap_size)
++		return event;
 +
- #ifdef HAVE_SLANG_SUPPORT
- #include "../ui/keysyms.h"
- void attr_to_script(char *buf, struct perf_event_attr *attr);
-@@ -474,6 +476,9 @@ void run_script(char *cmd);
- int res_sample_browse(struct res_sample *res_samples, int num_res,
- 		      struct evsel *evsel, enum rstype rstype);
- void res_sample_init(void);
-+
-+int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
-+			   float min_percent);
- #else
- static inline
- int perf_evlist__tui_browse_hists(struct evlist *evlist __maybe_unused,
-@@ -518,6 +523,13 @@ static inline int res_sample_browse(struct res_sample *res_samples __maybe_unuse
++	/* We're not fetching the event so swap back again */
++	if (needs_swap)
+ 		perf_event_header__bswap(&event->header);
  
- static inline void res_sample_init(void) {}
+-	if (head + event->header.size > mmap_size) {
+-		/* We're not fetching the event so swap back again */
+-		if (session->header.needs_swap)
+-			perf_event_header__bswap(&event->header);
+-		pr_debug("%s: head=%#" PRIx64 " event->header_size=%#x, mmap_size=%#zx: fuzzed perf.data?\n",
+-			 __func__, head, event->header.size, mmap_size);
+-		return ERR_PTR(-EINVAL);
+-	}
++	pr_debug("%s: head=%#" PRIx64 " event->header_size=%#x, mmap_size=%#zx:"
++		 " fuzzed or compressed perf.data?\n",__func__, head, event->header.size, mmap_size);
  
-+static inline int block_hists_tui_browse(struct block_hist *bh __maybe_unused,
-+					 struct evsel *evsel __maybe_unused,
-+					 float min_percent __maybe_unused)
-+{
-+	return 0;
+-	return event;
++	return error;
 +}
 +
- #define K_LEFT  -1000
- #define K_RIGHT -2000
- #define K_SWITCH_INPUT_DATA -3000
++static union perf_event *
++fetch_mmaped_event(u64 head, size_t mmap_size, char *buf, bool needs_swap)
++{
++	return prefetch_event(buf, head, mmap_size, needs_swap, ERR_PTR(-EINVAL));
++}
++
++static union perf_event *
++fetch_decomp_event(u64 head, size_t mmap_size, char *buf, bool needs_swap)
++{
++	return prefetch_event(buf, head, mmap_size, needs_swap, NULL);
+ }
+ 
+ static int __perf_session__process_decomp_events(struct perf_session *session)
+@@ -1997,10 +2009,8 @@ static int __perf_session__process_decomp_events(struct perf_session *session)
+ 		return 0;
+ 
+ 	while (decomp->head < decomp->size && !session_done()) {
+-		union perf_event *event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data);
+-
+-		if (IS_ERR(event))
+-			return PTR_ERR(event);
++		union perf_event *event = fetch_decomp_event(decomp->head, decomp->size, decomp->data,
++							     session->header.needs_swap);
+ 
+ 		if (!event)
+ 			break;
+@@ -2100,7 +2110,7 @@ remap:
+ 	}
+ 
+ more:
+-	event = fetch_mmaped_event(session, head, mmap_size, buf);
++	event = fetch_mmaped_event(head, mmap_size, buf, session->header.needs_swap);
+ 	if (IS_ERR(event))
+ 		return PTR_ERR(event);
+ 
