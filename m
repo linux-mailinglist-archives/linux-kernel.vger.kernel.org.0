@@ -2,99 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF8EE107EF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 15:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD221107EFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfKWOr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 09:47:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbfKWOr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 09:47:58 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E744420706;
-        Sat, 23 Nov 2019 14:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574520478;
-        bh=o2L+DU/THgfIcoCzBr6/ruVG0fBZcKIphuRhozunvjI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KvQsdiw+22yCfvC4vaAvtOscYRvXK79XfvPxn/1qRNMmBAkeRp9uDd8fKmmgYdTar
-         dtM3sM3cRaruXv0/CVYVtKhqR/hL0F5bVrDZxUzPZfFfBvd0nDtXoLzRVbIVlrTRoj
-         Uo9zqYix5C9ECkJW7OLtdrBdtVBPM/yIpwEzspRY=
-Date:   Sat, 23 Nov 2019 14:47:53 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Mircea Caprioru <mircea.caprioru@analog.com>
-Cc:     <Michael.Hennerich@analog.com>, <stefan.popa@analog.com>,
-        <lars@metafoo.de>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH V3] iio: adc: ad7124: Fix enabling of internal reference
-Message-ID: <20191123144753.0f94f043@archlinux>
-In-Reply-To: <20191118111948.7414-1-mircea.caprioru@analog.com>
-References: <20191118111948.7414-1-mircea.caprioru@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726825AbfKWPQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 10:16:51 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40991 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfKWPQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 10:16:50 -0500
+Received: by mail-wr1-f65.google.com with SMTP id b18so12150966wrj.8
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 07:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k/TrPUC3MHLbDZj3FLNVhaKoasoXmU+H+GHGqM8LGHY=;
+        b=GlB+0vLNG7e339zd6nPJJuCqwyuni4EvNJZq5VoGqKE3p1pbroyqhD3y6ZtqtofLtd
+         eYRyt29J3ZUYmYSUl9cGBDtvNW5okUPM8fJRO1cgvCUyIcAwLoDSMQjTps/lPqLYC6+j
+         0lYndECfBK4G9nbEqwG+6Rk/xoPK4TH4fJdjX59fwk7TkBRvPPr2oSTnU04hpxREB1c8
+         RH8Daq/7NXRdAzGsVFl8IE/ZUIUbkXzIx3XvAmUR0ttVKehUWwHQ0/FIQIV3MFlwcCPZ
+         KRem+bVv91a+Lzn6wFZhJluqye6uN3CnpJF8r2DR5NEl453J62RcSXFVeeXQZuvd78iJ
+         6VKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k/TrPUC3MHLbDZj3FLNVhaKoasoXmU+H+GHGqM8LGHY=;
+        b=SAt1sL7IwSSXTk9r0PB4g2P/tDnentCfs0ovbHUzDW9KIM6P2aXxrEnSHQaH11aI9M
+         U9O1sVt1CZYlqNJucsvalMZtEKKr99O7LjJa4Q3UzAaWF4jzHIO9U7+VvXj5oVuCyCGG
+         ZgWzmALUI1ROu4eiEdsU7+hnF+e1tSucws7ijToAZ/VLEj0pHBc8sVYGvMSKe1Kui/TL
+         ovh+1jAVDojqPjEGcJlwnCFLX2w94UCr6Oo1/xZLfRrApZ9b/Zvawe4Qlvh1MZG5+cHR
+         HUoAItFPnL/gSvDBYqkjfNR9ZtB+BTb1CBxfxFNjmQHBbeiSnVhXMBXJkWJKzd/RlgXr
+         Jhfg==
+X-Gm-Message-State: APjAAAVmf7XZcDSIvTPic5E7IFV/GDN8GLUv1QiaDRsCSETPys1CASjn
+        BsD7ACPR3loYNrkuFndGuW0=
+X-Google-Smtp-Source: APXvYqyiqj4mouUcmStNAu3bkXi35knuWatKHI4lUv6tYQ2bfMpIwjsiTcICWqYerDGwJkzuywqXgA==
+X-Received: by 2002:adf:ab4c:: with SMTP id r12mr22456332wrc.3.1574522207041;
+        Sat, 23 Nov 2019 07:16:47 -0800 (PST)
+Received: from localhost.localdomain (dslb-092-073-054-228.092.073.pools.vodafone-ip.de. [92.73.54.228])
+        by smtp.gmail.com with ESMTPSA id p25sm2126311wma.20.2019.11.23.07.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2019 07:16:46 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/3] staging: rtl8188eu: remove unnecessary parentheses in rtw_pwrctrl.c
+Date:   Sat, 23 Nov 2019 16:16:33 +0100
+Message-Id: <20191123151635.155138-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Nov 2019 13:19:48 +0200
-Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+Remove unnecessary parentheses reported by checkpatch.
 
-> When the internal reference was selected by a channel it was not enabled.
-> This patch fixes that and enables it.
-Ah well. I took v2 and it's marked for stable so doubt it matters that
-there is no Fix in the title.
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_pwrctrl.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Issues like this happen to us all from time to time, please send a quick
-reply to the earlier version if you are sending a new one.
-
-I'm a bit random in how I apply patches (particularly when I only have
-a few minutes around family stuff) so assume that a series with no replies
-is fine to apply if I'm happy with it!
-
-Thanks,
-
-Jonathan
-
-> 
-> Fixes: b3af341bbd96 ("iio: adc: Add ad7124 support")
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> ---
-> 
-> Changelog v3:
-> - mark this as a fix in the patch title
-> 
->  drivers/iio/adc/ad7124.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index edc6f1cc90b2..3f03abf100b5 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -39,6 +39,8 @@
->  #define AD7124_STATUS_POR_FLAG_MSK	BIT(4)
->  
->  /* AD7124_ADC_CONTROL */
-> +#define AD7124_ADC_CTRL_REF_EN_MSK	BIT(8)
-> +#define AD7124_ADC_CTRL_REF_EN(x)	FIELD_PREP(AD7124_ADC_CTRL_REF_EN_MSK, x)
->  #define AD7124_ADC_CTRL_PWR_MSK	GENMASK(7, 6)
->  #define AD7124_ADC_CTRL_PWR(x)		FIELD_PREP(AD7124_ADC_CTRL_PWR_MSK, x)
->  #define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
-> @@ -424,7 +426,10 @@ static int ad7124_init_channel_vref(struct ad7124_state *st,
->  		break;
->  	case AD7124_INT_REF:
->  		st->channel_config[channel_number].vref_mv = 2500;
-> -		break;
-> +		st->adc_control &= ~AD7124_ADC_CTRL_REF_EN_MSK;
-> +		st->adc_control |= AD7124_ADC_CTRL_REF_EN(1);
-> +		return ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL,
-> +				      2, st->adc_control);
->  	default:
->  		dev_err(&st->sd.spi->dev, "Invalid reference %d\n", refsel);
->  		return -EINVAL;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
+index 03dc7e5fcc38..010a0cdf7940 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
+@@ -154,8 +154,8 @@ void ips_enter(struct adapter *padapter)
+ int ips_leave(struct adapter *padapter)
+ {
+ 	struct pwrctrl_priv *pwrpriv = &padapter->pwrctrlpriv;
+-	struct security_priv *psecuritypriv = &(padapter->securitypriv);
+-	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
++	struct security_priv *psecuritypriv = &padapter->securitypriv;
++	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	int result = _SUCCESS;
+ 	int keyid;
+ 
+@@ -200,7 +200,7 @@ int ips_leave(struct adapter *padapter)
+ 
+ static bool rtw_pwr_unassociated_idle(struct adapter *adapter)
+ {
+-	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
++	struct mlme_priv *pmlmepriv = &adapter->mlmepriv;
+ 	bool ret = false;
+ 
+ 	if (time_after_eq(adapter->pwrctrlpriv.ips_deny_time, jiffies))
+@@ -221,7 +221,7 @@ static bool rtw_pwr_unassociated_idle(struct adapter *adapter)
+ void rtw_ps_processor(struct adapter *padapter)
+ {
+ 	struct pwrctrl_priv *pwrpriv = &padapter->pwrctrlpriv;
+-	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
++	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	enum rt_rf_power_state rfpwrstate;
+ 
+ 	pwrpriv->ps_processing = true;
+@@ -336,7 +336,7 @@ static u8 PS_RDY_CHECK(struct adapter *padapter)
+ {
+ 	unsigned long curr_time, delta_time;
+ 	struct pwrctrl_priv	*pwrpriv = &padapter->pwrctrlpriv;
+-	struct mlme_priv	*pmlmepriv = &(padapter->mlmepriv);
++	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
+ 
+ 	curr_time = jiffies;
+ 	delta_time = curr_time - pwrpriv->DelayLPSLastTimeStamp;
+@@ -483,7 +483,7 @@ void LPS_Leave(struct adapter *padapter)
+ /*  */
+ void LeaveAllPowerSaveMode(struct adapter *Adapter)
+ {
+-	struct mlme_priv	*pmlmepriv = &(Adapter->mlmepriv);
++	struct mlme_priv	*pmlmepriv = &Adapter->mlmepriv;
+ 	u8	enqueue = 0;
+ 
+ 	if (check_fwstate(pmlmepriv, _FW_LINKED))
+-- 
+2.24.0
 
