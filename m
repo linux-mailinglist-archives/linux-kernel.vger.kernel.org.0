@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F45107D87
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF5D107D8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:15:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfKWIPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 03:15:33 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36344 "EHLO
+        id S1727250AbfKWIPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 03:15:42 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36331 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfKWIPX (ORCPT
+        with ESMTP id S1727099AbfKWIPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 03:15:23 -0500
+        Sat, 23 Nov 2019 03:15:20 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iYQZV-0002bt-Nm; Sat, 23 Nov 2019 09:15:13 +0100
+        id 1iYQZV-0002fJ-FA; Sat, 23 Nov 2019 09:15:13 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C873A1C1ACC;
-        Sat, 23 Nov 2019 09:15:02 +0100 (CET)
-Date:   Sat, 23 Nov 2019 08:15:02 -0000
-From:   "tip-bot2 for Alexey Budankov" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B04881C1ADE;
+        Sat, 23 Nov 2019 09:15:03 +0100 (CET)
+Date:   Sat, 23 Nov 2019 08:15:03 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf session: Fix decompression of
- PERF_RECORD_COMPRESSED records
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
+Subject: [tip: perf/core] perf map: Move maj/min/ino/ino_generation to separate struct
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <cf782c34-f3f8-2f9f-d6ab-145cee0d5322@linux.intel.com>
-References: <cf782c34-f3f8-2f9f-d6ab-145cee0d5322@linux.intel.com>
+In-Reply-To: <tip-8v5isitqy0dup47nnwkpc80f@git.kernel.org>
+References: <tip-8v5isitqy0dup47nnwkpc80f@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157449690272.21853.2015069761475695078.tip-bot2@tip-bot2>
+Message-ID: <157449690360.21853.4699547808950551360.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,143 +49,157 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     bb1835a3b86c73aa534ef6430ad40223728dfbc0
-Gitweb:        https://git.kernel.org/tip/bb1835a3b86c73aa534ef6430ad40223728dfbc0
-Author:        Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate:    Mon, 18 Nov 2019 17:21:03 +03:00
+Commit-ID:     99459a84d5870a88274b4f10bc85c3e39e1d642c
+Gitweb:        https://git.kernel.org/tip/99459a84d5870a88274b4f10bc85c3e39e1d642c
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Tue, 19 Nov 2019 12:26:19 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 19 Nov 2019 19:31:55 -03:00
+CommitterDate: Tue, 19 Nov 2019 15:09:26 -03:00
 
-perf session: Fix decompression of PERF_RECORD_COMPRESSED records
+perf map: Move maj/min/ino/ino_generation to separate struct
 
-Avoid termination of trace loading in case the last record in the
-decompressed buffer partly resides in the following mmaped
-PERF_RECORD_COMPRESSED record.
+And this patch highlights where these fields are being used: in the sort
+order where it uses it to compare maps and classify samples taking into
+account not just the DSO, but those DSO id fields.
 
-In this case NULL value returned by fetch_mmaped_event() means to
-proceed to the next mmaped record then decompress it and load compressed
-events.
+I think these should be used to differentiate DSOs with the same name
+but different 'struct dso_id' fields, i.e. these fields should move to
+'struct dso' and then be used as part of the key when doing lookups for
+DSOs, in addition to the DSO name.
 
-The issue can be reproduced like this:
-
-  $ perf record -z -- some_long_running_workload
-  $ perf report --stdio -vv
-  decomp (B): 44519 to 163000
-  decomp (B): 48119 to 174800
-  decomp (B): 65527 to 131072
-  fetch_mmaped_event: head=0x1ffe0 event->header_size=0x28, mmap_size=0x20000: fuzzed perf.data?
-  Error:
-  failed to process sample
-  ...
-
-Testing:
-
-  71: Zstd perf.data compression/decompression              : Ok
-
-  $ tools/perf/perf report -vv --stdio
-  decomp (B): 59593 to 262160
-  decomp (B): 4438 to 16512
-  decomp (B): 285 to 880
-  Looking at the vmlinux_path (8 entries long)
-  Using vmlinux for symbols
-  decomp (B): 57474 to 261248
-  prefetch_event: head=0x3fc78 event->header_size=0x28, mmap_size=0x3fc80: fuzzed or compressed perf.data?
-  decomp (B): 25 to 32
-  decomp (B): 52 to 120
-  ...
-
-Fixes: 57fc032ad643 ("perf session: Avoid infinite loop when seeing invalid header.size")
-Link: https://marc.info/?l=linux-kernel&m=156580812427554&w=2
-Co-developed-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/cf782c34-f3f8-2f9f-d6ab-145cee0d5322@linux.intel.com
+Link: https://lkml.kernel.org/n/tip-8v5isitqy0dup47nnwkpc80f@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/session.c | 44 +++++++++++++++++++++++---------------
- 1 file changed, 27 insertions(+), 17 deletions(-)
+ tools/perf/builtin-report.c |  2 +-
+ tools/perf/util/map.c       |  8 ++++----
+ tools/perf/util/map.h       | 14 +++++++++++---
+ tools/perf/util/sort.c      | 24 ++++++++++++------------
+ 4 files changed, 28 insertions(+), 20 deletions(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index f07b8ec..8454a65 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1958,8 +1958,8 @@ out_err:
- }
- 
- static union perf_event *
--fetch_mmaped_event(struct perf_session *session,
--		   u64 head, size_t mmap_size, char *buf)
-+prefetch_event(char *buf, u64 head, size_t mmap_size,
-+	       bool needs_swap, union perf_event *error)
- {
- 	union perf_event *event;
- 
-@@ -1971,20 +1971,32 @@ fetch_mmaped_event(struct perf_session *session,
- 		return NULL;
- 
- 	event = (union perf_event *)(buf + head);
-+	if (needs_swap)
-+		perf_event_header__bswap(&event->header);
- 
--	if (session->header.needs_swap)
-+	if (head + event->header.size <= mmap_size)
-+		return event;
-+
-+	/* We're not fetching the event so swap back again */
-+	if (needs_swap)
- 		perf_event_header__bswap(&event->header);
- 
--	if (head + event->header.size > mmap_size) {
--		/* We're not fetching the event so swap back again */
--		if (session->header.needs_swap)
--			perf_event_header__bswap(&event->header);
--		pr_debug("%s: head=%#" PRIx64 " event->header_size=%#x, mmap_size=%#zx: fuzzed perf.data?\n",
--			 __func__, head, event->header.size, mmap_size);
--		return ERR_PTR(-EINVAL);
--	}
-+	pr_debug("%s: head=%#" PRIx64 " event->header_size=%#x, mmap_size=%#zx:"
-+		 " fuzzed or compressed perf.data?\n",__func__, head, event->header.size, mmap_size);
- 
--	return event;
-+	return error;
-+}
-+
-+static union perf_event *
-+fetch_mmaped_event(u64 head, size_t mmap_size, char *buf, bool needs_swap)
-+{
-+	return prefetch_event(buf, head, mmap_size, needs_swap, ERR_PTR(-EINVAL));
-+}
-+
-+static union perf_event *
-+fetch_decomp_event(u64 head, size_t mmap_size, char *buf, bool needs_swap)
-+{
-+	return prefetch_event(buf, head, mmap_size, needs_swap, NULL);
- }
- 
- static int __perf_session__process_decomp_events(struct perf_session *session)
-@@ -1997,10 +2009,8 @@ static int __perf_session__process_decomp_events(struct perf_session *session)
- 		return 0;
- 
- 	while (decomp->head < decomp->size && !session_done()) {
--		union perf_event *event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data);
--
--		if (IS_ERR(event))
--			return PTR_ERR(event);
-+		union perf_event *event = fetch_decomp_event(decomp->head, decomp->size, decomp->data,
-+							     session->header.needs_swap);
- 
- 		if (!event)
- 			break;
-@@ -2100,7 +2110,7 @@ remap:
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 585805f..04c197d 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -771,7 +771,7 @@ static size_t maps__fprintf_task(struct maps *maps, int indent, FILE *fp)
+ 				   map->prot & PROT_EXEC ? 'x' : '-',
+ 				   map->flags & MAP_SHARED ? 's' : 'p',
+ 				   map->pgoff,
+-				   map->ino, map->dso->name);
++				   map->dso_id.ino, map->dso->name);
  	}
  
- more:
--	event = fetch_mmaped_event(session, head, mmap_size, buf);
-+	event = fetch_mmaped_event(head, mmap_size, buf, session->header.needs_swap);
- 	if (IS_ERR(event))
- 		return PTR_ERR(event);
+ 	return printed;
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 67e0f81..4f50b1b 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -162,10 +162,10 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+ 		vdso = is_vdso_map(filename);
+ 		no_dso = is_no_dso_memory(filename);
  
+-		map->maj = d_maj;
+-		map->min = d_min;
+-		map->ino = ino;
+-		map->ino_generation = ino_gen;
++		map->dso_id.maj = d_maj;
++		map->dso_id.min = d_min;
++		map->dso_id.ino = ino;
++		map->dso_id.ino_generation = ino_gen;
+ 		map->prot = prot;
+ 		map->flags = flags;
+ 		nsi = nsinfo__get(thread->nsinfo);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 0a6c45f..70d87dc 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -18,6 +18,16 @@ struct map_groups;
+ struct machine;
+ struct evsel;
+ 
++/*
++ * Data about backing storage DSO, comes from PERF_RECORD_MMAP2 meta events
++ */
++struct dso_id {
++	u32	maj;
++	u32	min;
++	u64	ino;
++	u64	ino_generation;
++};
++
+ struct map {
+ 	union {
+ 		struct rb_node	rb_node;
+@@ -30,9 +40,6 @@ struct map {
+ 	u32			prot;
+ 	u64			pgoff;
+ 	u64			reloc;
+-	u32			maj, min; /* only valid for MMAP2 record */
+-	u64			ino;      /* only valid for MMAP2 record */
+-	u64			ino_generation;/* only valid for MMAP2 record */
+ 
+ 	/* ip -> dso rip */
+ 	u64			(*map_ip)(struct map *, u64);
+@@ -40,6 +47,7 @@ struct map {
+ 	u64			(*unmap_ip)(struct map *, u64);
+ 
+ 	struct dso		*dso;
++	struct dso_id		dso_id;
+ 	refcount_t		refcnt;
+ 	u32			flags;
+ };
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 6b626e6..bc58943 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -1212,17 +1212,17 @@ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right)
+ 	if (!l_map) return -1;
+ 	if (!r_map) return 1;
+ 
+-	if (l_map->maj > r_map->maj) return -1;
+-	if (l_map->maj < r_map->maj) return 1;
++	if (l_map->dso_id.maj > r_map->dso_id.maj) return -1;
++	if (l_map->dso_id.maj < r_map->dso_id.maj) return 1;
+ 
+-	if (l_map->min > r_map->min) return -1;
+-	if (l_map->min < r_map->min) return 1;
++	if (l_map->dso_id.min > r_map->dso_id.min) return -1;
++	if (l_map->dso_id.min < r_map->dso_id.min) return 1;
+ 
+-	if (l_map->ino > r_map->ino) return -1;
+-	if (l_map->ino < r_map->ino) return 1;
++	if (l_map->dso_id.ino > r_map->dso_id.ino) return -1;
++	if (l_map->dso_id.ino < r_map->dso_id.ino) return 1;
+ 
+-	if (l_map->ino_generation > r_map->ino_generation) return -1;
+-	if (l_map->ino_generation < r_map->ino_generation) return 1;
++	if (l_map->dso_id.ino_generation > r_map->dso_id.ino_generation) return -1;
++	if (l_map->dso_id.ino_generation < r_map->dso_id.ino_generation) return 1;
+ 
+ 	/*
+ 	 * Addresses with no major/minor numbers are assumed to be
+@@ -1234,8 +1234,8 @@ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right)
+ 
+ 	if ((left->cpumode != PERF_RECORD_MISC_KERNEL) &&
+ 	    (!(l_map->flags & MAP_SHARED)) &&
+-	    !l_map->maj && !l_map->min && !l_map->ino &&
+-	    !l_map->ino_generation) {
++	    !l_map->dso_id.maj && !l_map->dso_id.min &&
++	    !l_map->dso_id.ino && !l_map->dso_id.ino_generation) {
+ 		/* userspace anonymous */
+ 
+ 		if (left->thread->pid_ > right->thread->pid_) return -1;
+@@ -1271,8 +1271,8 @@ static int hist_entry__dcacheline_snprintf(struct hist_entry *he, char *bf,
+ 		if ((he->cpumode != PERF_RECORD_MISC_KERNEL) &&
+ 		     map && !(map->prot & PROT_EXEC) &&
+ 		    (map->flags & MAP_SHARED) &&
+-		    (map->maj || map->min || map->ino ||
+-		     map->ino_generation))
++		    (map->dso_id.maj || map->dso_id.min ||
++		     map->dso_id.ino || map->dso_id.ino_generation))
+ 			level = 's';
+ 		else if (!map)
+ 			level = 'X';
