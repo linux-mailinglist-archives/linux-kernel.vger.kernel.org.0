@@ -2,111 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A206107F12
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD13107F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 16:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfKWPiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 10:38:55 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:55288 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfKWPiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 10:38:54 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 5595C2008C;
-        Sat, 23 Nov 2019 16:29:37 +0100 (CET)
-Date:   Sat, 23 Nov 2019 16:29:36 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/panel: simple: Add support for the Frida
- FRD350H54004 panel
-Message-ID: <20191123152936.GC27045@ravnborg.org>
-References: <20191120171027.1102250-1-paul@crapouillou.net>
- <20191120171027.1102250-3-paul@crapouillou.net>
+        id S1726910AbfKWPa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 10:30:57 -0500
+Received: from mga17.intel.com ([192.55.52.151]:26031 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbfKWPa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 10:30:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Nov 2019 07:30:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,233,1571727600"; 
+   d="scan'208";a="216591668"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Nov 2019 07:30:54 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iYXN8-000D6h-52; Sat, 23 Nov 2019 23:30:54 +0800
+Date:   Sat, 23 Nov 2019 23:30:23 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [tip:WIP.x86/mm 22/27] arch/x86/mm/pat/set_memory.c:334:6: sparse:
+ sparse: symbol '__cpa_flush_tlb' was not declared. Should it be static?
+Message-ID: <201911232317.EPmp7XHQ%lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191120171027.1102250-3-paul@crapouillou.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=ER_8r6IbAAAA:8
-        a=ynqdyZ908_tY_8WrgD8A:9 a=CjuIK1q_8ugA:10 a=9LHmKk7ezEChjTCyhBa9:22
-        a=pHzHmUro8NiASowvMSCR:22 a=6VlIyEUom7LUIeUMNQJH:22
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul.
+Hi Ingo,
 
-On Wed, Nov 20, 2019 at 06:10:27PM +0100, Paul Cercueil wrote:
-> The FRD350H54004 is a simple 3.5" 320x240 24-bit TFT panel, found for
-> instance inside the Anbernic RG-350 handheld gaming console.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 29 ++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 28fa6ba7b767..8c03f7fe461c 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1378,6 +1378,32 @@ static const struct panel_desc evervision_vgg804821 = {
->  	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_NEGEDGE,
->  };
->  
-> +static const struct drm_display_mode frida_frd350h54004_mode = {
-> +	.clock = 6777,
-> +	.hdisplay = 320,
-> +	.hsync_start = 320 + 70,
-> +	.hsync_end = 320 + 70 + 50,
-> +	.htotal = 320 + 70 + 50 + 10,
-> +	.vdisplay = 240,
-> +	.vsync_start = 240 + 5,
-> +	.vsync_end = 240 + 5 + 1,
-> +	.vtotal = 240 + 5 + 1 + 5,
-> +	.vrefresh = 60,
-> +	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
-> +};
-> +
-> +static const struct panel_desc frida_frd350h54004 = {
-> +	.modes = &frida_frd350h54004_mode,
-> +	.num_modes = 1,
-> +	.bpc = 8,
-> +	.size = {
-> +		.width = 77,
-> +		.height = 64,
-> +	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> +};
-> +
->  static const struct drm_display_mode foxlink_fl500wvr00_a0t_mode = {
->  	.clock = 32260,
->  	.hdisplay = 800,
-> @@ -3186,6 +3212,9 @@ static const struct of_device_id platform_of_match[] = {
->  	}, {
->  		.compatible = "evervision,vgg804821",
->  		.data = &evervision_vgg804821,
-> +	}, {
-> +		.compatible = "frida,frd350h54004",
-> +		.data = &frida_frd350h54004,
->  	}, {
->  		.compatible = "foxlink,fl500wvr00-a0t",
->  		.data = &foxlink_fl500wvr00_a0t,
+First bad commit (maybe != root cause):
 
-In alphabetic order. frida comes after fox.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/mm
+head:   f53ee099dface98b5d75f6ba3b15c7ae8b26099c
+commit: b2c61e70cccafd312eba9b0e4ca06361d800bc93 [22/27] x86/mm/pat: Move the memtype related files to arch/x86/mm/pat/
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-36-g9305d48-dirty
+        git checkout b2c61e70cccafd312eba9b0e4ca06361d800bc93
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-	Sam
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> arch/x86/mm/pat/set_memory.c:334:6: sparse: sparse: symbol '__cpa_flush_tlb' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
