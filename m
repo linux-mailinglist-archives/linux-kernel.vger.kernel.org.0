@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FAC7108073
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 21:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4480C1080B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 22:08:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfKWUi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 15:38:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34394 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726861AbfKWUiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 15:38:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84761B166;
-        Sat, 23 Nov 2019 20:38:12 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-realtek-soc@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v4 8/8] ARM: realtek: Enable RTD1195 arch timer
-Date:   Sat, 23 Nov 2019 21:37:59 +0100
-Message-Id: <20191123203759.20708-9-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191123203759.20708-1-afaerber@suse.de>
-References: <20191123203759.20708-1-afaerber@suse.de>
+        id S1726774AbfKWVIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 16:08:20 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40031 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbfKWVIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 16:08:19 -0500
+Received: by mail-qk1-f196.google.com with SMTP id a137so7588911qkc.7
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 13:08:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ks6VXyhQYbwbWdDu7jOK7bIaMkmqq8TaCySgeWCd3V0=;
+        b=ZQPOVJsmnr/YB4JJUh7M4A17p3WJUMZkzKOe6eFJEX2piFQ60VIVnAlAk0Js7bC63J
+         ViluqgLhjzkz8pN3GTLIOPOKPJWLehgtDU6YxDrAvFR0wKpFMYgYqONazdJy+ScQGnO0
+         0FRbQGquIY9AlFkOUsWq7NlbpOiCPWTD1scQHSQ5UG7EYfCeR62bF7JcdUXdRBxtwceY
+         Q9tpulvXr7DA0jKsBH6IktU+GwSll6VJy08dSxnrn1l0hlvxJekLDdgGG5+eP8qGj8Wa
+         cWlmJ+j/DQL4YywAgFtJVHw1UVw4cTBMuO4Jv7D/jUeUlCo/svlCsDJcRxbqcMEkJq1T
+         MBXw==
+X-Gm-Message-State: APjAAAXdoxfgz35JeLT4BMCNflIc/fzLWpWpuke3F99Cx1Qij1u1DWn5
+        nDNrah+NcNkRxrCi4IV8zNAJMnifq0w=
+X-Google-Smtp-Source: APXvYqxEK6VBfv8iN4hHfoWax8DOYZupNkOySjgJ26b8LhXNpKa6qZWeoEJCc3IO4bnDb91n9so3sg==
+X-Received: by 2002:a37:6481:: with SMTP id y123mr2854280qkb.171.1574543298296;
+        Sat, 23 Nov 2019 13:08:18 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id c37sm1164978qta.56.2019.11.23.13.08.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2019 13:08:17 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] init/main.c: minor cleanup/bugfix of envvar handling
+Date:   Sat, 23 Nov 2019 16:08:05 -0500
+Message-Id: <20191123210808.107904-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this magic write the timer doesn't work and boot gets stuck.
+unknown_bootoption passes unrecognized command line arguments to init as
+either environment variables or arguments. Some of the logic in the
+function is broken for quoted command line arguments.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- What is the name of the register 0xff018000?
- Is 0x1 a BIT(0) write, or how are the register bits defined?
- Is this a reset or a clock gate? How should we model it in DT?
- 
- v3 -> v4:
- * Use writel_relaxed() instead of writel()
- 
- v2 -> v3: Unchanged
- 
- v2: New
- 
- arch/arm/mach-realtek/rtd1195.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+When an argument of the form param="value" is processed by parse_args
+and passed to unknown_bootoption, the command line has
+  param\0"value\0
+with val pointing to the beginning of value. The helper function
+repair_env_string is then used to restore the '=' character that was
+removed by parse_args, and strip the quotes off fully. This results in
+  param=value\0\0
+and val ends up pointing to the 'a' instead of the 'v' in value. This
+bug was introduced when repair_env_string was refactored into a separate
+function, and the decrement of val in repair_env_string became dead code.
 
-diff --git a/arch/arm/mach-realtek/rtd1195.c b/arch/arm/mach-realtek/rtd1195.c
-index 0381a4447384..8d4de0c2308d 100644
---- a/arch/arm/mach-realtek/rtd1195.c
-+++ b/arch/arm/mach-realtek/rtd1195.c
-@@ -5,6 +5,9 @@
-  * Copyright (c) 2017-2019 Andreas Färber
-  */
- 
-+#include <linux/clk-provider.h>
-+#include <linux/clocksource.h>
-+#include <linux/io.h>
- #include <linux/memblock.h>
- #include <asm/mach/arch.h>
- 
-@@ -27,6 +30,18 @@ static void __init rtd1195_reserve(void)
- 	rtd1195_memblock_remove(0x18100000, 0x01000000);
- }
- 
-+static void __init rtd1195_init_time(void)
-+{
-+	void __iomem *base;
-+
-+	base = ioremap(0xff018000, 4);
-+	writel_relaxed(0x1, base);
-+	iounmap(base);
-+
-+	of_clk_init(NULL);
-+	timer_probe();
-+}
-+
- static const char *const rtd1195_dt_compat[] __initconst = {
- 	"realtek,rtd1195",
- 	NULL
-@@ -34,6 +49,7 @@ static const char *const rtd1195_dt_compat[] __initconst = {
- 
- DT_MACHINE_START(rtd1195, "Realtek RTD1195")
- 	.dt_compat = rtd1195_dt_compat,
-+	.init_time = rtd1195_init_time,
- 	.reserve = rtd1195_reserve,
- 	.l2c_aux_val = 0x0,
- 	.l2c_aux_mask = ~0x0,
--- 
-2.16.4
+This causes two problems in unknown_bootoption in the two places where
+the val pointer is used as a substitute for the length of param:
+
+1. An argument of the form param=".value" is misinterpreted as a
+potential module parameter, with the result that it will not be placed
+in init's environment.
+
+2. An argument of the form param="value" is checked to see if param is
+an existing environment variable that should be overwritten, but the
+comparison is off-by-one and compares 'param=v' instead of 'param='
+against the existing environment. So passing, for example, TERM="vt100"
+on the command line results in init being passed both TERM=linux and
+TERM=vt100 in its environment.
+
+Patch 1 adds logging for the arguments and environment passed to init
+and is independent of the rest: it can be dropped if this is
+unnecessarily verbose.
+
+Patch 2 removes repair_env_string from initcall parameter parsing in
+do_initcall_level, as that uses a separate copy of the command line now
+and the repairing is no longer necessary.
+
+Patch 3 fixes the bug in unknown_bootoption by recording the length of
+param explicitly instead of implying it from val-param.
+
 
