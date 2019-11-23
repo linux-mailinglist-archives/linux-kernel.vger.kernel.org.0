@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B603F107DAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:16:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE32107DA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:16:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfKWIQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 03:16:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36254 "EHLO
+        id S1727339AbfKWIQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 03:16:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36275 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbfKWIPL (ORCPT
+        with ESMTP id S1726757AbfKWIPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 03:15:11 -0500
+        Sat, 23 Nov 2019 03:15:13 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iYQZN-0002ZZ-3g; Sat, 23 Nov 2019 09:15:05 +0100
+        id 1iYQZQ-0002Yz-15; Sat, 23 Nov 2019 09:15:08 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A72281C1AD2;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 595E51C19FD;
         Sat, 23 Nov 2019 09:15:01 +0100 (CET)
 Date:   Sat, 23 Nov 2019 08:15:01 -0000
 From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf record: Add support for AUX area sampling
+Subject: [tip: perf/core] perf inject: Cut AUX area samples
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191115124225.5247-7-adrian.hunter@intel.com>
-References: <20191115124225.5247-7-adrian.hunter@intel.com>
+In-Reply-To: <20191115124225.5247-9-adrian.hunter@intel.com>
+References: <20191115124225.5247-9-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <157449690160.21853.4410247253219938717.tip-bot2@tip-bot2>
+Message-ID: <157449690128.21853.4094754237556646489.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,110 +48,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     c0a6de06c446f8d173ef53fba361acedd5880b20
-Gitweb:        https://git.kernel.org/tip/c0a6de06c446f8d173ef53fba361acedd5880b20
+Commit-ID:     ba2675bf15fc3ec1d54b9bf938cf5b28392f79fb
+Gitweb:        https://git.kernel.org/tip/ba2675bf15fc3ec1d54b9bf938cf5b28392f79fb
 Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Fri, 15 Nov 2019 14:42:16 +02:00
+AuthorDate:    Fri, 15 Nov 2019 14:42:18 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Fri, 22 Nov 2019 10:48:13 -03:00
 
-perf record: Add support for AUX area sampling
+perf inject: Cut AUX area samples
 
-Add a 'perf record' option '--aux-sample' to request AUX area sampling.
-AUX area sampling uses an overwriting buffer much like snapshot mode, so
-adjust the AUX buffer mmapping accordingly. To make it easy to queue
-samples for decoding, synthesize an ID index.
+After decoding AUX area samples, the AUX area data is no longer needed
+(having been replaced by synthesized events) so cut it out.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191115124225.5247-7-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20191115124225.5247-9-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-record.txt |  6 ++++++
- tools/perf/builtin-record.c              | 21 ++++++++++++++++++++-
- 2 files changed, 26 insertions(+), 1 deletion(-)
+ tools/perf/builtin-inject.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index ebcba1f..e216d7b 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -433,6 +433,12 @@ can be specified in a string that follows this option:
- In Snapshot Mode trace data is captured only when signal SIGUSR2 is received
- and on exit if the above 'e' option is given.
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index 1e5d283..9664a72 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -45,6 +45,7 @@ struct perf_inject {
+ 	u64			aux_id;
+ 	struct list_head	samples;
+ 	struct itrace_synth_opts itrace_synth_opts;
++	char			event_copy[PERF_SAMPLE_MAX_SIZE];
+ };
  
-+--aux-sample[=OPTIONS]::
-+Select AUX area sampling. At least one of the events selected by the -e option
-+must be an AUX area event. Samples on other events will be created containing
-+data from the AUX area. Optionally sample size may be specified, otherwise it
-+defaults to 4KiB.
-+
- --proc-map-timeout::
- When processing pre-existing threads /proc/XXX/mmap, it may take a long time,
- because the file may be huge. A time out is needed in such cases.
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 7ab3110..b5063d3 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -680,6 +680,11 @@ static int record__auxtrace_init(struct record *rec)
- 	if (err)
- 		return err;
- 
-+	err = auxtrace_parse_sample_options(rec->itr, rec->evlist, &rec->opts,
-+					    rec->opts.auxtrace_sample_opts);
-+	if (err)
-+		return err;
-+
- 	return auxtrace_parse_filters(rec->evlist);
+ struct event_entry {
+@@ -214,6 +215,28 @@ static int perf_event__drop_aux(struct perf_tool *tool,
+ 	return 0;
  }
  
-@@ -752,6 +757,8 @@ static int record__mmap_evlist(struct record *rec,
- 			       struct evlist *evlist)
- {
- 	struct record_opts *opts = &rec->opts;
-+	bool auxtrace_overwrite = opts->auxtrace_snapshot_mode ||
-+				  opts->auxtrace_sample_mode;
- 	char msg[512];
- 
- 	if (opts->affinity != PERF_AFFINITY_SYS)
-@@ -759,7 +766,7 @@ static int record__mmap_evlist(struct record *rec,
- 
- 	if (evlist__mmap_ex(evlist, opts->mmap_pages,
- 				 opts->auxtrace_mmap_pages,
--				 opts->auxtrace_snapshot_mode,
-+				 auxtrace_overwrite,
- 				 opts->nr_cblocks, opts->affinity,
- 				 opts->mmap_flush, opts->comp_level) < 0) {
- 		if (errno == EPERM) {
-@@ -1046,6 +1053,7 @@ static int record__mmap_read_evlist(struct record *rec, struct evlist *evlist,
- 		}
- 
- 		if (map->auxtrace_mmap.base && !rec->opts.auxtrace_snapshot_mode &&
-+		    !rec->opts.auxtrace_sample_mode &&
- 		    record__auxtrace_mmap_read(rec, map) != 0) {
- 			rc = -1;
- 			goto out;
-@@ -1321,6 +1329,15 @@ static int record__synthesize(struct record *rec, bool tail)
- 	if (err)
- 		goto out;
- 
-+	/* Synthesize id_index before auxtrace_info */
-+	if (rec->opts.auxtrace_sample_mode) {
-+		err = perf_event__synthesize_id_index(tool,
-+						      process_synthesized_event,
-+						      session->evlist, machine);
-+		if (err)
-+			goto out;
-+	}
++static union perf_event *
++perf_inject__cut_auxtrace_sample(struct perf_inject *inject,
++				 union perf_event *event,
++				 struct perf_sample *sample)
++{
++	size_t sz1 = sample->aux_sample.data - (void *)event;
++	size_t sz2 = event->header.size - sample->aux_sample.size - sz1;
++	union perf_event *ev = (union perf_event *)inject->event_copy;
 +
- 	if (rec->opts.full_auxtrace) {
- 		err = perf_event__synthesize_auxtrace_info(rec->itr, tool,
- 					session, process_synthesized_event);
-@@ -2329,6 +2346,8 @@ static struct option __record_options[] = {
- 	parse_clockid),
- 	OPT_STRING_OPTARG('S', "snapshot", &record.opts.auxtrace_snapshot_opts,
- 			  "opts", "AUX area tracing Snapshot Mode", ""),
-+	OPT_STRING_OPTARG(0, "aux-sample", &record.opts.auxtrace_sample_opts,
-+			  "opts", "sample AUX area", ""),
- 	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
- 			"per thread proc mmap processing timeout in ms"),
- 	OPT_BOOLEAN(0, "namespaces", &record.opts.record_namespaces,
++	if (sz1 > event->header.size || sz2 > event->header.size ||
++	    sz1 + sz2 > event->header.size ||
++	    sz1 < sizeof(struct perf_event_header) + sizeof(u64))
++		return event;
++
++	memcpy(ev, event, sz1);
++	memcpy((void *)ev + sz1, (void *)event + event->header.size - sz2, sz2);
++	ev->header.size = sz1 + sz2;
++	((u64 *)((void *)ev + sz1))[-1] = 0;
++
++	return ev;
++}
++
+ typedef int (*inject_handler)(struct perf_tool *tool,
+ 			      union perf_event *event,
+ 			      struct perf_sample *sample,
+@@ -226,6 +249,9 @@ static int perf_event__repipe_sample(struct perf_tool *tool,
+ 				     struct evsel *evsel,
+ 				     struct machine *machine)
+ {
++	struct perf_inject *inject = container_of(tool, struct perf_inject,
++						  tool);
++
+ 	if (evsel && evsel->handler) {
+ 		inject_handler f = evsel->handler;
+ 		return f(tool, event, sample, evsel, machine);
+@@ -233,6 +259,9 @@ static int perf_event__repipe_sample(struct perf_tool *tool,
+ 
+ 	build_id__mark_dso_hit(tool, event, sample, evsel, machine);
+ 
++	if (inject->itrace_synth_opts.set && sample->aux_sample.size)
++		event = perf_inject__cut_auxtrace_sample(inject, event, sample);
++
+ 	return perf_event__repipe_synth(tool, event);
+ }
+ 
