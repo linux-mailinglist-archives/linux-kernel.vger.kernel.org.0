@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25591107D91
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B603F107DAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfKWIPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 03:15:16 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36289 "EHLO
+        id S1727419AbfKWIQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 03:16:38 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36254 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfKWIPP (ORCPT
+        with ESMTP id S1726704AbfKWIPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 03:15:15 -0500
+        Sat, 23 Nov 2019 03:15:11 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iYQZO-0002a6-Iy; Sat, 23 Nov 2019 09:15:06 +0100
+        id 1iYQZN-0002ZZ-3g; Sat, 23 Nov 2019 09:15:05 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C97361C1AD4;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A72281C1AD2;
         Sat, 23 Nov 2019 09:15:01 +0100 (CET)
 Date:   Sat, 23 Nov 2019 08:15:01 -0000
 From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf auxtrace: Add support for AUX area sample recording
+Subject: [tip: perf/core] perf record: Add support for AUX area sampling
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191115124225.5247-6-adrian.hunter@intel.com>
-References: <20191115124225.5247-6-adrian.hunter@intel.com>
+In-Reply-To: <20191115124225.5247-7-adrian.hunter@intel.com>
+References: <20191115124225.5247-7-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <157449690175.21853.6088707204491010593.tip-bot2@tip-bot2>
+Message-ID: <157449690160.21853.4410247253219938717.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,238 +48,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     f0bb7ee8530a07d3c23bd2e06984796e66cfbcf1
-Gitweb:        https://git.kernel.org/tip/f0bb7ee8530a07d3c23bd2e06984796e66cfbcf1
+Commit-ID:     c0a6de06c446f8d173ef53fba361acedd5880b20
+Gitweb:        https://git.kernel.org/tip/c0a6de06c446f8d173ef53fba361acedd5880b20
 Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Fri, 15 Nov 2019 14:42:15 +02:00
+AuthorDate:    Fri, 15 Nov 2019 14:42:16 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Fri, 22 Nov 2019 10:48:13 -03:00
 
-perf auxtrace: Add support for AUX area sample recording
+perf record: Add support for AUX area sampling
 
-Add support for parsing and validating AUX area sample options. At
-present, the only option is the sample size, but it is also necessary to
-ensure that events are in a group with an AUX area event as the leader.
-
-Committer note:
-
-Add missing 'static inline' in front of auxtrace_parse_sample_options()
-for when we don't HAVE_AUXTRACE_SUPPORT.
+Add a 'perf record' option '--aux-sample' to request AUX area sampling.
+AUX area sampling uses an overwriting buffer much like snapshot mode, so
+adjust the AUX buffer mmapping accordingly. To make it easy to queue
+samples for decoding, synthesize an ID index.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191115124225.5247-6-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20191115124225.5247-7-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.c | 107 ++++++++++++++++++++++++++++++++++++-
- tools/perf/util/auxtrace.h |  17 ++++++-
- tools/perf/util/pmu.h      |   1 +-
- tools/perf/util/record.h   |   2 +-
- 4 files changed, 127 insertions(+)
+ tools/perf/Documentation/perf-record.txt |  6 ++++++
+ tools/perf/builtin-record.c              | 21 ++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 263d1d9..51fbe01 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -69,6 +69,13 @@ static struct perf_pmu *perf_evsel__find_pmu(struct evsel *evsel)
- 	return pmu;
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index ebcba1f..e216d7b 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -433,6 +433,12 @@ can be specified in a string that follows this option:
+ In Snapshot Mode trace data is captured only when signal SIGUSR2 is received
+ and on exit if the above 'e' option is given.
+ 
++--aux-sample[=OPTIONS]::
++Select AUX area sampling. At least one of the events selected by the -e option
++must be an AUX area event. Samples on other events will be created containing
++data from the AUX area. Optionally sample size may be specified, otherwise it
++defaults to 4KiB.
++
+ --proc-map-timeout::
+ When processing pre-existing threads /proc/XXX/mmap, it may take a long time,
+ because the file may be huge. A time out is needed in such cases.
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 7ab3110..b5063d3 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -680,6 +680,11 @@ static int record__auxtrace_init(struct record *rec)
+ 	if (err)
+ 		return err;
+ 
++	err = auxtrace_parse_sample_options(rec->itr, rec->evlist, &rec->opts,
++					    rec->opts.auxtrace_sample_opts);
++	if (err)
++		return err;
++
+ 	return auxtrace_parse_filters(rec->evlist);
  }
  
-+static bool perf_evsel__is_aux_event(struct evsel *evsel)
-+{
-+	struct perf_pmu *pmu = perf_evsel__find_pmu(evsel);
-+
-+	return pmu && pmu->auxtrace;
-+}
-+
- static bool auxtrace__dont_decode(struct perf_session *session)
+@@ -752,6 +757,8 @@ static int record__mmap_evlist(struct record *rec,
+ 			       struct evlist *evlist)
  {
- 	return !session->itrace_synth_opts ||
-@@ -609,6 +616,106 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
- 	return -EINVAL;
- }
+ 	struct record_opts *opts = &rec->opts;
++	bool auxtrace_overwrite = opts->auxtrace_snapshot_mode ||
++				  opts->auxtrace_sample_mode;
+ 	char msg[512];
  
-+/*
-+ * Event record size is 16-bit which results in a maximum size of about 64KiB.
-+ * Allow about 4KiB for the rest of the sample record, to give a maximum
-+ * AUX area sample size of 60KiB.
-+ */
-+#define MAX_AUX_SAMPLE_SIZE (60 * 1024)
-+
-+/* Arbitrary default size if no other default provided */
-+#define DEFAULT_AUX_SAMPLE_SIZE (4 * 1024)
-+
-+static int auxtrace_validate_aux_sample_size(struct evlist *evlist,
-+					     struct record_opts *opts)
-+{
-+	struct evsel *evsel;
-+	bool has_aux_leader = false;
-+	u32 sz;
-+
-+	evlist__for_each_entry(evlist, evsel) {
-+		sz = evsel->core.attr.aux_sample_size;
-+		if (perf_evsel__is_group_leader(evsel)) {
-+			has_aux_leader = perf_evsel__is_aux_event(evsel);
-+			if (sz) {
-+				if (has_aux_leader)
-+					pr_err("Cannot add AUX area sampling to an AUX area event\n");
-+				else
-+					pr_err("Cannot add AUX area sampling to a group leader\n");
-+				return -EINVAL;
-+			}
-+		}
-+		if (sz > MAX_AUX_SAMPLE_SIZE) {
-+			pr_err("AUX area sample size %u too big, max. %d\n",
-+			       sz, MAX_AUX_SAMPLE_SIZE);
-+			return -EINVAL;
-+		}
-+		if (sz) {
-+			if (!has_aux_leader) {
-+				pr_err("Cannot add AUX area sampling because group leader is not an AUX area event\n");
-+				return -EINVAL;
-+			}
-+			perf_evsel__set_sample_bit(evsel, AUX);
-+			opts->auxtrace_sample_mode = true;
-+		} else {
-+			perf_evsel__reset_sample_bit(evsel, AUX);
-+		}
-+	}
-+
-+	if (!opts->auxtrace_sample_mode) {
-+		pr_err("AUX area sampling requires an AUX area event group leader plus other events to which to add samples\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!perf_can_aux_sample()) {
-+		pr_err("AUX area sampling is not supported by kernel\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+int auxtrace_parse_sample_options(struct auxtrace_record *itr,
-+				  struct evlist *evlist,
-+				  struct record_opts *opts, const char *str)
-+{
-+	bool has_aux_leader = false;
-+	struct evsel *evsel;
-+	char *endptr;
-+	unsigned long sz;
-+
-+	if (!str)
-+		return 0;
-+
-+	if (!itr) {
-+		pr_err("No AUX area event to sample\n");
-+		return -EINVAL;
-+	}
-+
-+	sz = strtoul(str, &endptr, 0);
-+	if (*endptr || sz > UINT_MAX) {
-+		pr_err("Bad AUX area sampling option: '%s'\n", str);
-+		return -EINVAL;
-+	}
-+
-+	if (!sz)
-+		sz = itr->default_aux_sample_size;
-+
-+	if (!sz)
-+		sz = DEFAULT_AUX_SAMPLE_SIZE;
-+
-+	/* Set aux_sample_size based on --aux-sample option */
-+	evlist__for_each_entry(evlist, evsel) {
-+		if (perf_evsel__is_group_leader(evsel)) {
-+			has_aux_leader = perf_evsel__is_aux_event(evsel);
-+		} else if (has_aux_leader) {
-+			evsel->core.attr.aux_sample_size = sz;
-+		}
-+	}
-+
-+	return auxtrace_validate_aux_sample_size(evlist, opts);
-+}
-+
- struct auxtrace_record *__weak
- auxtrace_record__init(struct evlist *evlist __maybe_unused, int *err)
- {
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index 3f4aa54..ab48de1 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -313,6 +313,7 @@ struct auxtrace_mmap_params {
-  * @reference: provide a 64-bit reference number for auxtrace_event
-  * @read_finish: called after reading from an auxtrace mmap
-  * @alignment: alignment (if any) for AUX area data
-+ * @default_aux_sample_size: default sample size for --aux sample option
-  */
- struct auxtrace_record {
- 	int (*recording_options)(struct auxtrace_record *itr,
-@@ -336,6 +337,7 @@ struct auxtrace_record {
- 	u64 (*reference)(struct auxtrace_record *itr);
- 	int (*read_finish)(struct auxtrace_record *itr, int idx);
- 	unsigned int alignment;
-+	unsigned int default_aux_sample_size;
- };
+ 	if (opts->affinity != PERF_AFFINITY_SYS)
+@@ -759,7 +766,7 @@ static int record__mmap_evlist(struct record *rec,
  
- /**
-@@ -498,6 +500,9 @@ struct auxtrace_record *auxtrace_record__init(struct evlist *evlist,
- int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
- 				    struct record_opts *opts,
- 				    const char *str);
-+int auxtrace_parse_sample_options(struct auxtrace_record *itr,
-+				  struct evlist *evlist,
-+				  struct record_opts *opts, const char *str);
- int auxtrace_record__options(struct auxtrace_record *itr,
- 			     struct evlist *evlist,
- 			     struct record_opts *opts);
-@@ -649,6 +654,18 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr __maybe_unused,
- }
+ 	if (evlist__mmap_ex(evlist, opts->mmap_pages,
+ 				 opts->auxtrace_mmap_pages,
+-				 opts->auxtrace_snapshot_mode,
++				 auxtrace_overwrite,
+ 				 opts->nr_cblocks, opts->affinity,
+ 				 opts->mmap_flush, opts->comp_level) < 0) {
+ 		if (errno == EPERM) {
+@@ -1046,6 +1053,7 @@ static int record__mmap_read_evlist(struct record *rec, struct evlist *evlist,
+ 		}
  
- static inline
-+int auxtrace_parse_sample_options(struct auxtrace_record *itr __maybe_unused,
-+				  struct evlist *evlist __maybe_unused,
-+				  struct record_opts *opts __maybe_unused,
-+				  const char *str)
-+{
-+	if (!str)
-+		return 0;
-+	pr_err("AUX area tracing not supported\n");
-+	return -EINVAL;
-+}
+ 		if (map->auxtrace_mmap.base && !rec->opts.auxtrace_snapshot_mode &&
++		    !rec->opts.auxtrace_sample_mode &&
+ 		    record__auxtrace_mmap_read(rec, map) != 0) {
+ 			rc = -1;
+ 			goto out;
+@@ -1321,6 +1329,15 @@ static int record__synthesize(struct record *rec, bool tail)
+ 	if (err)
+ 		goto out;
+ 
++	/* Synthesize id_index before auxtrace_info */
++	if (rec->opts.auxtrace_sample_mode) {
++		err = perf_event__synthesize_id_index(tool,
++						      process_synthesized_event,
++						      session->evlist, machine);
++		if (err)
++			goto out;
++	}
 +
-+static inline
- int auxtrace__process_event(struct perf_session *session __maybe_unused,
- 			    union perf_event *event __maybe_unused,
- 			    struct perf_sample *sample __maybe_unused,
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 3e8cd31..2eb7a70 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -26,6 +26,7 @@ struct perf_pmu {
- 	__u32 type;
- 	bool selectable;
- 	bool is_uncore;
-+	bool auxtrace;
- 	int max_precise;
- 	struct perf_event_attr *default_config;
- 	struct perf_cpu_map *cpus;
-diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-index 948bbcf..5421fd2 100644
---- a/tools/perf/util/record.h
-+++ b/tools/perf/util/record.h
-@@ -32,6 +32,7 @@ struct record_opts {
- 	bool	      full_auxtrace;
- 	bool	      auxtrace_snapshot_mode;
- 	bool	      auxtrace_snapshot_on_exit;
-+	bool	      auxtrace_sample_mode;
- 	bool	      record_namespaces;
- 	bool	      record_switch_events;
- 	bool	      all_kernel;
-@@ -56,6 +57,7 @@ struct record_opts {
- 	u64	      user_interval;
- 	size_t	      auxtrace_snapshot_size;
- 	const char    *auxtrace_snapshot_opts;
-+	const char    *auxtrace_sample_opts;
- 	bool	      sample_transaction;
- 	unsigned      initial_delay;
- 	bool	      use_clockid;
+ 	if (rec->opts.full_auxtrace) {
+ 		err = perf_event__synthesize_auxtrace_info(rec->itr, tool,
+ 					session, process_synthesized_event);
+@@ -2329,6 +2346,8 @@ static struct option __record_options[] = {
+ 	parse_clockid),
+ 	OPT_STRING_OPTARG('S', "snapshot", &record.opts.auxtrace_snapshot_opts,
+ 			  "opts", "AUX area tracing Snapshot Mode", ""),
++	OPT_STRING_OPTARG(0, "aux-sample", &record.opts.auxtrace_sample_opts,
++			  "opts", "sample AUX area", ""),
+ 	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_BOOLEAN(0, "namespaces", &record.opts.record_namespaces,
