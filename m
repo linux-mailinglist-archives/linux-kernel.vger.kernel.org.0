@@ -2,67 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 015D1107C75
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 03:33:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 849C8107C88
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 03:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfKWCdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 21:33:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57076 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfKWCde (ORCPT
+        id S1726686AbfKWCon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 21:44:43 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:45979 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfKWCom (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 21:33:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nPuduIsmzT4eyNy6AgYyeWm8a3lye8lEUGi+OFLWHQE=; b=UMaVsJijpyg+a0E75vUQkK7rg
-        XWQcUQCgvHIOltFSFQ8of0MXhAXTDQ+LEgp/aZPcsKfZWDNuJMxrT+JnVRsrnGPLN4ZTHWN/1P61s
-        IRlUCeGaPjd+/enFAGSylVBReBSPyMYmb2poYTrDXEoIRo9Xdjp6/XFZp9AesW02vXhaItc8wJ/9q
-        YKBaQA6k8wkdU9IdCLgjSxKrEJvzglgm7vDvCvdzkjRqsqpwUrqjCh9ObctTA1RPyVJQoU/4FQVXQ
-        YZUp89zmv4AAxj9Sgx/hYqgCrKN0wB34ICyv7xwzPvoRtQWW68GhucrtJL9ijKCjACkcod6bd4vhd
-        ves1wV+4w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iYLEj-0004Ol-JZ; Sat, 23 Nov 2019 02:33:25 +0000
-Date:   Fri, 22 Nov 2019 18:33:25 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "zhengbin (A)" <zhengbin13@huawei.com>
-Cc:     Hugh Dickins <hughd@google.com>, viro@zeniv.linux.org.uk,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        houtao1@huawei.com, yi.zhang@huawei.com,
-        "J. R. Okajima" <hooanon05g@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH] tmpfs: use ida to get inode number
-Message-ID: <20191123023325.GY20752@bombadil.infradead.org>
-References: <1574259798-144561-1-git-send-email-zhengbin13@huawei.com>
- <20191120154552.GS20752@bombadil.infradead.org>
- <1c64e7c2-6460-49cf-6db0-ec5f5f7e09c4@huawei.com>
- <alpine.LSU.2.11.1911202026040.1825@eggly.anvils>
- <d22bcbcb-d507-7c8c-e946-704ffc499fa6@huawei.com>
- <alpine.LSU.2.11.1911211125190.1697@eggly.anvils>
- <5423a199-eefb-0a02-6e86-1f6210939c11@huawei.com>
- <20191122221327.GW20752@bombadil.infradead.org>
- <77f67d7a-4a93-4319-e6af-54daffcc37e2@huawei.com>
+        Fri, 22 Nov 2019 21:44:42 -0500
+Received: by mail-il1-f196.google.com with SMTP id o18so8999734ils.12
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2019 18:44:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=7g/Y3wR5gVZOwog74zMjqNNgFW5KdBsIY/ptyys6DJE=;
+        b=aBHRxzwcxFQNrfM9pZLRT4ER5wxGCxmHVr4QWLCAj0lXXyLePykza3DWEfRn2xTjtb
+         DbzrSsje9VHZpAfkiZBKWJ6rg2zn+5ujIq3RxemUuIzVN832GWoXfPeJj/JePleSXGZW
+         BwzmjDsqiWOyYwXaQuTbSNok8IL/qPFuHXHeJQ3UiEgOd4h7iWn3zarnNLQwgTw92RSV
+         hC2069cqB57RCKP3Z8vg7rw5QIYdXwMhWIxSuznScJCJWoS9y0eE+FzU0UKZXq5Tk94Z
+         1dTUEgBLtqwoRIgKcmEKpru0HVAPe0Q3x73efiQ+7Wkbpkvo25iYguHhLGem8et3HB5E
+         H1LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=7g/Y3wR5gVZOwog74zMjqNNgFW5KdBsIY/ptyys6DJE=;
+        b=jH+dawPwKXF+cnZhGH0yc3twkdmJDBAH+xAAmzfwPDt4tc2PIVMBKT/Ym06s6jNPy9
+         CllfoO3QZlZaNZ9LUE5zqgiJfizhY4my6/1Mo+9FRhIk71blApWfFPO8l3DfQWo2LtJ3
+         mSPVrVBS+1a6iTQJuNOXpztvguaZW+qXad7QW/TSG3PKkEtHLlYHqMc5Wsr2czSnzQOv
+         jJN6NSAX/pzNA1JLgCZSNR+3TxTdXAJLqnItGT5FilzaDiitKLMZuAUmC96cXTEWBdwJ
+         rEyoDXSoBtDUbEaF+5n2oks3mXd6YCBXu2UY4f/2+kLf4RwWtIV+qMoNci0n1j/yIBqu
+         kEaQ==
+X-Gm-Message-State: APjAAAVbNxWA/3dfM5j21SG30Ms8kMP/6wHQq6eLvXT3KeptmlFRURmb
+        vW03K7exTFt4xNofIy7XMy/o3g==
+X-Google-Smtp-Source: APXvYqx+rLljVRhSTLXDzWQSdfPi1a0ZZ07AY/mQyuSP3TF8FbIDJWJeh1aiWBGMfCOa4b4vzbLGMw==
+X-Received: by 2002:a02:94e9:: with SMTP id x96mr2440290jah.68.1574477081696;
+        Fri, 22 Nov 2019 18:44:41 -0800 (PST)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id l63sm2783843ioa.19.2019.11.22.18.44.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2019 18:44:41 -0800 (PST)
+Date:   Fri, 22 Nov 2019 18:44:39 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     linux-riscv@lists.infradead.org
+cc:     palmer@dabbelt.com, aou@eecs.berkeley.edu, krste@berkeley.edu,
+        waterman@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org
+Subject: [PATCH] Documentation: riscv: add patch acceptance guidelines
+Message-ID: <alpine.DEB.2.21.9999.1911221842200.14532@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77f67d7a-4a93-4319-e6af-54daffcc37e2@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 10:16:39AM +0800, zhengbin (A) wrote:
-> By the way, percpu IDA is for reducing performance impact? This patch has 2.16%
-> performance degradation(Use perf to get the cost of ida_alloc_range)
 
-2.16% degradation in your tests ... I bet Eric didn't make it so complex
-for only 2% performance impact.  Unfortunately, he didn't give any
-numbers in his patch submission, but it's going to be a bigger problem
-on multi-socket machines than on a laptop.
+Formalize, in kernel documentation, the patch acceptance policy for 
+arch/riscv.  In summary, it states that as maintainers, we plan to only 
+accept patches for new modules or extensions that have been frozen or 
+ratified by the RISC-V Foundation.
 
-Eric, any memories from 2010?  Commit
-f991bd2e14210fb93d722cb23e54991de20e8a3d if it helps.
+We've been following these guidelines for the past few months.  In the
+meantime, we've received quite a bit of feedback that it would be
+helpful to have these guidelines formally documented.
+
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Krste Asanovic <krste@berkeley.edu>
+Cc: Andrew Waterman <waterman@eecs.berkeley.edu>
+---
+ Documentation/riscv/patch-acceptance.rst | 32 ++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/riscv/patch-acceptance.rst
+
+diff --git a/Documentation/riscv/patch-acceptance.rst b/Documentation/riscv/patch-acceptance.rst
+new file mode 100644
+index 000000000000..2e658353b53c
+--- /dev/null
++++ b/Documentation/riscv/patch-acceptance.rst
+@@ -0,0 +1,32 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++====================================================
++arch/riscv maintenance and the RISC-V specifications
++====================================================
++
++The RISC-V instruction set architecture is developed in the open:
++in-progress drafts are available for all to review and to experiment
++with implementations.  New module or extension drafts can change
++during the development process - sometimes in ways that are
++incompatible with previous drafts.  This flexibility can present a
++challenge for RISC-V Linux maintenance.  Linux maintainers disapprove
++of churn, and the Linux development process prefers well-reviewed and
++tested code over experimental code.  We wish to extend these same
++principles to the RISC-V-related code that will be accepted for
++inclusion in the kernel.
++
++Therefore, as maintainers, we'll only accept patches for new modules
++or extensions if the specifications for those modules or extensions
++are listed as being "Frozen" or "Ratified" by the RISC-V Foundation.
++(Developers may, of course, maintain their own Linux kernel trees that
++contain code for any draft extensions that they wish.)
++
++Additionally, the RISC-V specification allows implementors to create
++their own custom extensions.  These custom extensions aren't required
++to go through any review or ratification process by the RISC-V
++Foundation.  To avoid the maintenance complexity and potential
++performance impact of adding kernel code for implementor-specific
++RISC-V extensions, we'll only to accept patches for extensions that
++have been officially frozen or ratified by the RISC-V Foundation.
++(Implementors, may, of course, maintain their own Linux kernel trees
++containing code for any custom extensions that they wish.)
+-- 
+2.24.0.rc0
+
