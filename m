@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93614107DA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81EF8107D7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 09:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfKWIQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 03:16:21 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36264 "EHLO
+        id S1726875AbfKWIPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 03:15:13 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36266 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbfKWIPM (ORCPT
+        with ESMTP id S1726747AbfKWIPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 23 Nov 2019 03:15:12 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iYQZJ-0002WM-54; Sat, 23 Nov 2019 09:15:01 +0100
+        id 1iYQZO-0002WS-Gd; Sat, 23 Nov 2019 09:15:06 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B45CD1C19FD;
-        Sat, 23 Nov 2019 09:15:00 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 01BD61C1ACF;
+        Sat, 23 Nov 2019 09:15:01 +0100 (CET)
 Date:   Sat, 23 Nov 2019 08:15:00 -0000
 From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf pmu: When using default config, record which
- bits of config were changed by the user
+Subject: [tip: perf/core] perf session: Add facility to peek at all events
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191115124225.5247-13-adrian.hunter@intel.com>
-References: <20191115124225.5247-13-adrian.hunter@intel.com>
+In-Reply-To: <20191115124225.5247-11-adrian.hunter@intel.com>
+References: <20191115124225.5247-11-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <157449690066.21853.17967904681518450208.tip-bot2@tip-bot2>
+Message-ID: <157449690093.21853.12380294088272415245.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,163 +48,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     a1ac7de6902c1ea6def7a743f1d2e6ba429684b3
-Gitweb:        https://git.kernel.org/tip/a1ac7de6902c1ea6def7a743f1d2e6ba429684b3
+Commit-ID:     103ed40e4bfa6986d80983b3e67be9d2f61fc9ee
+Gitweb:        https://git.kernel.org/tip/103ed40e4bfa6986d80983b3e67be9d2f61fc9ee
 Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Fri, 15 Nov 2019 14:42:22 +02:00
+AuthorDate:    Fri, 15 Nov 2019 14:42:20 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Fri, 22 Nov 2019 10:48:13 -03:00
 
-perf pmu: When using default config, record which bits of config were changed by the user
+perf session: Add facility to peek at all events
 
-Default config for a PMU is defined before selected events are parsed.
-That allows the user-entered config to override the default config.
-
-However that does not allow for changing the default config based on
-other options.
-
-For example, if the user chooses AUX area sampling mode, in the case of
-Intel PT, the psb_period needs to be small for sampling, so there is a
-need to set the default psb_period to 0 (2 KiB) in that case. However
-that should not override a value set by the user. To allow for that,
-when using default config, record which bits of config were changed by
-the user.
+AUX area samples are not limited in how far back in time the sample
+could start. Consequently samples must be queued in advance to allow for
+time-ordered processing. To achieve that, add
+perf_session__peek_events() that walks and peeks at all the events.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20191115124225.5247-13-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20191115124225.5247-11-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c        |  2 ++-
- tools/perf/util/evsel_config.h |  2 ++-
- tools/perf/util/parse-events.c | 42 ++++++++++++++++++++++++++++++++-
- tools/perf/util/pmu.c          | 10 ++++++++-
- tools/perf/util/pmu.h          |  1 +-
- 5 files changed, 56 insertions(+), 1 deletion(-)
+ tools/perf/util/session.c | 28 ++++++++++++++++++++++++++++
+ tools/perf/util/session.h |  5 +++++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ad7665a..f4dea05 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -849,6 +849,8 @@ static void apply_config_terms(struct evsel *evsel,
- 		case PERF_EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE:
- 			/* Already applied by auxtrace */
- 			break;
-+		case PERF_EVSEL__CONFIG_TERM_CFG_CHG:
-+			break;
- 		default:
- 			break;
- 		}
-diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-index 6e654ed..1f8d2fe 100644
---- a/tools/perf/util/evsel_config.h
-+++ b/tools/perf/util/evsel_config.h
-@@ -26,6 +26,7 @@ enum evsel_term_type {
- 	PERF_EVSEL__CONFIG_TERM_PERCORE,
- 	PERF_EVSEL__CONFIG_TERM_AUX_OUTPUT,
- 	PERF_EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE,
-+	PERF_EVSEL__CONFIG_TERM_CFG_CHG,
- };
- 
- struct perf_evsel_config_term {
-@@ -46,6 +47,7 @@ struct perf_evsel_config_term {
- 		bool	      percore;
- 		bool	      aux_output;
- 		u32	      aux_sample_size;
-+		u64	      cfg_chg;
- 	} val;
- 	bool weak;
- };
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index fc5e27b..6c313c4 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1290,7 +1290,40 @@ do {								\
- 			break;
- 		}
- 	}
--#undef ADD_EVSEL_CONFIG
-+	return 0;
-+}
-+
-+/*
-+ * Add PERF_EVSEL__CONFIG_TERM_CFG_CHG where cfg_chg will have a bit set for
-+ * each bit of attr->config that the user has changed.
-+ */
-+static int get_config_chgs(struct perf_pmu *pmu, struct list_head *head_config,
-+			   struct list_head *head_terms)
-+{
-+	struct parse_events_term *term;
-+	u64 bits = 0;
-+	int type;
-+
-+	list_for_each_entry(term, head_config, list) {
-+		switch (term->type_term) {
-+		case PARSE_EVENTS__TERM_TYPE_USER:
-+			type = perf_pmu__format_type(&pmu->format, term->config);
-+			if (type != PERF_PMU_FORMAT_VALUE_CONFIG)
-+				continue;
-+			bits |= perf_pmu__format_bits(&pmu->format, term->config);
-+			break;
-+		case PARSE_EVENTS__TERM_TYPE_CONFIG:
-+			bits = ~(u64)0;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	if (bits)
-+		ADD_CONFIG_TERM(CFG_CHG, cfg_chg, bits);
-+
-+#undef ADD_CONFIG_TERM
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index ab4dae1..d0d7d25 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1659,6 +1659,34 @@ out_parse_sample:
  	return 0;
  }
  
-@@ -1419,6 +1452,13 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	if (get_config_terms(head_config, &config_terms))
- 		return -ENOMEM;
- 
-+	/*
-+	 * When using default config, record which bits of attr->config were
-+	 * changed by the user.
-+	 */
-+	if (pmu->default_config && get_config_chgs(pmu, head_config, &config_terms))
-+		return -ENOMEM;
-+
- 	if (perf_pmu__config(pmu, &attr, head_config, parse_state->error)) {
- 		struct perf_evsel_config_term *pos, *tmp;
- 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index db1e571..e8d3489 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -931,6 +931,16 @@ __u64 perf_pmu__format_bits(struct list_head *formats, const char *name)
- 	return bits;
- }
- 
-+int perf_pmu__format_type(struct list_head *formats, const char *name)
++int perf_session__peek_events(struct perf_session *session, u64 offset,
++			      u64 size, peek_events_cb_t cb, void *data)
 +{
-+	struct perf_pmu_format *format = pmu_find_format(formats, name);
++	u64 max_offset = offset + size;
++	char buf[PERF_SAMPLE_MAX_SIZE];
++	union perf_event *event;
++	int err;
 +
-+	if (!format)
-+		return -1;
++	do {
++		err = perf_session__peek_event(session, offset, buf,
++					       PERF_SAMPLE_MAX_SIZE, &event,
++					       NULL);
++		if (err)
++			return err;
 +
-+	return format->value;
++		err = cb(session, event, offset, data);
++		if (err)
++			return err;
++
++		offset += event->header.size;
++		if (event->header.type == PERF_RECORD_AUXTRACE)
++			offset += event->auxtrace.size;
++
++	} while (offset < max_offset);
++
++	return err;
 +}
 +
- /*
-  * Sets value based on the format definition (format parameter)
-  * and unformated value (value parameter).
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 2eb7a70..6737e3d 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -72,6 +72,7 @@ int perf_pmu__config_terms(struct list_head *formats,
- 			   struct list_head *head_terms,
- 			   bool zero, struct parse_events_error *error);
- __u64 perf_pmu__format_bits(struct list_head *formats, const char *name);
-+int perf_pmu__format_type(struct list_head *formats, const char *name);
- int perf_pmu__check_alias(struct perf_pmu *pmu, struct list_head *head_terms,
- 			  struct perf_pmu_info *info);
- struct list_head *perf_pmu__alias(struct perf_pmu *pmu,
+ static s64 perf_session__process_event(struct perf_session *session,
+ 				       union perf_event *event, u64 file_offset)
+ {
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index 8456e1d..f764801 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -64,6 +64,11 @@ int perf_session__peek_event(struct perf_session *session, off_t file_offset,
+ 			     void *buf, size_t buf_sz,
+ 			     union perf_event **event_ptr,
+ 			     struct perf_sample *sample);
++typedef int (*peek_events_cb_t)(struct perf_session *session,
++				union perf_event *event, u64 offset,
++				void *data);
++int perf_session__peek_events(struct perf_session *session, u64 offset,
++			      u64 size, peek_events_cb_t cb, void *data);
+ 
+ int perf_session__process_events(struct perf_session *session);
+ 
