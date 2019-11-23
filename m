@@ -2,73 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1745107BD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 01:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EC5107BDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 01:04:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfKWACG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 19:02:06 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36595 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfKWACG (ORCPT
+        id S1726855AbfKWAEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 19:04:21 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33078 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfKWAEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 19:02:06 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f10so7745827oto.3;
-        Fri, 22 Nov 2019 16:02:05 -0800 (PST)
+        Fri, 22 Nov 2019 19:04:20 -0500
+Received: by mail-ot1-f68.google.com with SMTP id q23so1894703otn.0;
+        Fri, 22 Nov 2019 16:04:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UYRop2h5oq/V7Zd/ECRh55ucEaP6cWcggnLJFjyrjyc=;
-        b=gRgEORhrVXKVtvzn3lcUIxsKpap7J8VwQ4mJYbi2gOpRiu3iIL4T4IYkWCSBzObc/E
-         axLAsOa5CZaxIO9GaUoAEeF2205ysWhwuBT+8uFoQlRv2KwLF+hpZkthDJ11vw9562zk
-         oKCdp1fiMtBmqf/BmEA27z2JXQpGDTXQMFvgYWF2EJwbxElRK7pTwVrxCqS8SLS8QVq0
-         DsmpZvh7h1Tu8cFt7P9hYMFKggpV2IC4L8ufhGgNUlfJIU/eeUj2fdK4Nt2/qjKeYY7w
-         xK9GLW0tzeY0umDyiJiSb4F9s53obqhmhZ3WhAvJvthjaf4hxIVzMPivT1cU+2m1yPSO
-         0RuA==
-X-Gm-Message-State: APjAAAXvq75VHnGSfBnRCYAex783aBaeQbAfAoCndeAUrsR8dm0Yalu7
-        QxUS2gy/lbytSxoMa7Jung==
-X-Google-Smtp-Source: APXvYqz183lykh/6KKbgXxLpzmHDXXs9QM/I350iV1R7oLP6tD7QwiCYU2T6vzcZTRlz89Al56YpMw==
-X-Received: by 2002:a9d:4003:: with SMTP id m3mr13219180ote.50.1574467325133;
-        Fri, 22 Nov 2019 16:02:05 -0800 (PST)
+        bh=Mh7ibfrhNKP+OX0OZlKsFx13aIqVgLPbq5iGSYIdzxA=;
+        b=jhdIWcJbl60zCS03hk+gChnMlH5SUVmn9yYCBKFcrGQzPKjsCcaqrG56u1cMLMIGw0
+         91lKFHZ88A+7UnsBMMxnoCUG9g8UcHv9RasXFHpcI/fPjU4x2C/I3WP6JkzIZhnZxGlz
+         1WXVt6nqva4gS/1KXyZggWYjyAmNRNf+l2QQgvMh8XyyjkR7RfbU81HTDVmcDuu97u2r
+         UORTVWqfSrELkR+TaL6pjh75wrhiuHEIJB84k1wj4airLzLSlNgtnfWIPwFnD8ee9aXb
+         ZTzmUFXm/eJafswEOa4DwHKascXwrJSHGs/KAae+RTobY9VKJIeja0W7ig0pM2ayA87R
+         HnNA==
+X-Gm-Message-State: APjAAAVgdl2EAjyMnjNCo+VmnaeG/Ykk0dWj0eDzg2X4vnxnmuYzz/4R
+        d1vkeiPV0ihA41zrUpGaBA==
+X-Google-Smtp-Source: APXvYqwdcuZg6Ci0LUijlWn0ZMT85d8WWT5QI9fVNF6xt5nP6k61iZb1lUjrwcAuJgzF2ivfZniaaQ==
+X-Received: by 2002:a05:6830:50:: with SMTP id d16mr12263248otp.132.1574467459915;
+        Fri, 22 Nov 2019 16:04:19 -0800 (PST)
 Received: from localhost ([2607:fb90:bd7:3743:c9ec:246b:67b7:9768])
-        by smtp.gmail.com with ESMTPSA id 94sm2741749otg.70.2019.11.22.16.02.03
+        by smtp.gmail.com with ESMTPSA id x11sm2563645oie.25.2019.11.22.16.04.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 16:02:03 -0800 (PST)
-Date:   Fri, 22 Nov 2019 18:02:02 -0600
+        Fri, 22 Nov 2019 16:04:19 -0800 (PST)
+Date:   Fri, 22 Nov 2019 18:04:17 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grigoryev Denis <grigoryev@fastwel.ru>,
-        Axel Lin <axel.lin@ingics.com>, Dan Murphy <dmurphy@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] dt-bindings: mfd: update TI tps6105x chip bindings
-Message-ID: <20191123000202.GA27127@bogus>
-References: <20191121142726.22856-1-TheSven73@gmail.com>
- <20191121142726.22856-3-TheSven73@gmail.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     robh@kernel.org, broonie@kernel.org, lee.jones@linaro.org,
+        linus.walleij@linaro.org, vinod.koul@linaro.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, spapothi@codeaurora.org,
+        bgoswami@codeaurora.org, linux-gpio@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v4 01/12] dt-bindings: SLIMBus: add slim devices optional
+ properties
+Message-ID: <20191123000417.GA30207@bogus>
+References: <20191121170509.10579-1-srinivas.kandagatla@linaro.org>
+ <20191121170509.10579-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121142726.22856-3-TheSven73@gmail.com>
+In-Reply-To: <20191121170509.10579-2-srinivas.kandagatla@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Nov 2019 09:27:26 -0500, Sven Van Asbroeck wrote:
-> The driver has been extended to optionally get its operational
-> mode, regulator init data and led naming from the devicetree.
+On Thu, 21 Nov 2019 17:04:58 +0000, Srinivas Kandagatla wrote:
+> This patch adds an optional SLIMBus Interface device phandle property
+> that could be used by some of the SLIMBus devices.
 > 
-> Tree: next-20191118
-> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+> Interface device is mostly used with devices that are dealing
+> with streaming.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  .../devicetree/bindings/mfd/tps6105x.txt      | 47 ++++++++++++++++++-
->  1 file changed, 46 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/slimbus/bus.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
