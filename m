@@ -2,27 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0BF10806D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 21:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB9F0108076
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 21:38:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfKWUiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 15:38:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34328 "EHLO mx1.suse.de"
+        id S1726752AbfKWUie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 15:38:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34340 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726759AbfKWUiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 15:38:11 -0500
+        id S1726638AbfKWUiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Nov 2019 15:38:12 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A2132AF22;
-        Sat, 23 Nov 2019 20:38:09 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 45D66AF10;
+        Sat, 23 Nov 2019 20:38:10 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v4 2/8] ARM: Prepare Realtek RTD1195
-Date:   Sat, 23 Nov 2019 21:37:53 +0100
-Message-Id: <20191123203759.20708-3-afaerber@suse.de>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v4 3/8] ARM: dts: Prepare Realtek RTD1195 and MeLE X1000
+Date:   Sat, 23 Nov 2019 21:37:54 +0100
+Message-Id: <20191123203759.20708-4-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191123203759.20708-1-afaerber@suse.de>
 References: <20191123203759.20708-1-afaerber@suse.de>
@@ -34,142 +35,224 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce ARCH_REALTEK Kconfig option also for 32-bit Arm.
+Add Device Trees for Realtek RTD1195 SoC and MeLE X1000 TV box.
 
-Override the text offset to cope with boot ROM occupying first 0xa800
-bytes and further reservations up to 0xf4000 (compare Device Tree).
+Reuse the existing RTD1295 watchdog compatible for now.
 
-Add a custom machine_desc to enforce memory carveout for I/O registers.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
+[AF: Fixed r-bus size, fixed GIC, updated memreserve & memory]
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
  v3 -> v4:
- * Added reservation of boot ROM (James)
+ * Inserted /memory reg entry to compensate reduced r-bus size (James)
+ * Extended GIC reg and added interrupt (Marc)
+ * Added comments to /memory node
  
  v2 -> v3:
- * Fixed r-bus size in .reserve from 0x100000 to 0x70000 (James)
+ * Fixed r-bus size in /soc ranges from 0x1000000 to 0x70000 (James)
+ * Adjusted /memreserve/ to close gap from 0xa800 to 0xc000 for full 0x100000
+ * Changed arch timer from GIC_CPU_MASK_RAW(0xf) to GIC_CPU_MASK_SIMPLE(2)
+   squashed from RTD1395 v1 series
  
  v1 -> v2:
- * Dropped selection of COMMON_CLK (Arnd)
- * Dropped selection of AMBA, SCU, TWD
- * Added comment about text offset to distinguish from HTC comment above
- * Added machine_desc with .reserve to exclude peripheral spaces (Rob)
+ * Dropped /memreserve/ and reserved-memory nodes for peripherals and NOR (Rob)
+ * Carved them out from memory reg instead (Rob)
+ * Converted some /memreserve/s to reserved-memory nodes
  
- arch/arm/Kconfig                |  2 ++
- arch/arm/Makefile               |  3 +++
- arch/arm/mach-realtek/Kconfig   | 11 +++++++++++
- arch/arm/mach-realtek/Makefile  |  2 ++
- arch/arm/mach-realtek/rtd1195.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 58 insertions(+)
- create mode 100644 arch/arm/mach-realtek/Kconfig
- create mode 100644 arch/arm/mach-realtek/Makefile
- create mode 100644 arch/arm/mach-realtek/rtd1195.c
+ arch/arm/boot/dts/Makefile               |   2 +
+ arch/arm/boot/dts/rtd1195-mele-x1000.dts |  32 ++++++++
+ arch/arm/boot/dts/rtd1195.dtsi           | 130 +++++++++++++++++++++++++++++++
+ 3 files changed, 164 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rtd1195-mele-x1000.dts
+ create mode 100644 arch/arm/boot/dts/rtd1195.dtsi
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 9771b56e79f1..cd37b5e9f86d 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -699,6 +699,8 @@ source "arch/arm/mach-qcom/Kconfig"
- 
- source "arch/arm/mach-rda/Kconfig"
- 
-+source "arch/arm/mach-realtek/Kconfig"
-+
- source "arch/arm/mach-realview/Kconfig"
- 
- source "arch/arm/mach-rockchip/Kconfig"
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index db857d07114f..16d41efea7f2 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -148,6 +148,8 @@ head-y		:= arch/arm/kernel/head$(MMUEXT).o
- textofs-y	:= 0x00008000
- # We don't want the htc bootloader to corrupt kernel during resume
- textofs-$(CONFIG_PM_H1940)      := 0x00108000
-+# RTD1195 has Boot ROM at start of address space
-+textofs-$(CONFIG_ARCH_REALTEK)  := 0x00108000
- # SA1111 DMA bug: we don't want the kernel to live in precious DMA-able memory
- ifeq ($(CONFIG_ARCH_SA1100),y)
- textofs-$(CONFIG_SA1111) := 0x00208000
-@@ -207,6 +209,7 @@ machine-$(CONFIG_ARCH_PICOXCELL)	+= picoxcell
- machine-$(CONFIG_ARCH_PXA)		+= pxa
- machine-$(CONFIG_ARCH_QCOM)		+= qcom
- machine-$(CONFIG_ARCH_RDA)		+= rda
-+machine-$(CONFIG_ARCH_REALTEK)		+= realtek
- machine-$(CONFIG_ARCH_REALVIEW)		+= realview
- machine-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip
- machine-$(CONFIG_ARCH_RPC)		+= rpc
-diff --git a/arch/arm/mach-realtek/Kconfig b/arch/arm/mach-realtek/Kconfig
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 08011dc8c7a6..4853a13c8cf2 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -865,6 +865,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ dtb-$(CONFIG_ARCH_RDA) += \
+ 	rda8810pl-orangepi-2g-iot.dtb \
+ 	rda8810pl-orangepi-i96.dtb
++dtb-$(CONFIG_ARCH_REALTEK) += \
++	rtd1195-mele-x1000.dtb
+ dtb-$(CONFIG_ARCH_REALVIEW) += \
+ 	arm-realview-pb1176.dtb \
+ 	arm-realview-pb11mp.dtb \
+diff --git a/arch/arm/boot/dts/rtd1195-mele-x1000.dts b/arch/arm/boot/dts/rtd1195-mele-x1000.dts
 new file mode 100644
-index 000000000000..19fdcf093fd1
+index 000000000000..e2050cb64474
 --- /dev/null
-+++ b/arch/arm/mach-realtek/Kconfig
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+menuconfig ARCH_REALTEK
-+	bool "Realtek SoCs"
-+	depends on ARCH_MULTI_V7
-+	select ARM_GIC
-+	select ARM_GLOBAL_TIMER
-+	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
-+	select GENERIC_IRQ_CHIP
-+	select RESET_CONTROLLER
-+	help
-+	  This enables support for the Realtek RTD1195 SoC family.
-diff --git a/arch/arm/mach-realtek/Makefile b/arch/arm/mach-realtek/Makefile
-new file mode 100644
-index 000000000000..5382d5bbdd3c
---- /dev/null
-+++ b/arch/arm/mach-realtek/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+obj-y += rtd1195.o
-diff --git a/arch/arm/mach-realtek/rtd1195.c b/arch/arm/mach-realtek/rtd1195.c
-new file mode 100644
-index 000000000000..0381a4447384
---- /dev/null
-+++ b/arch/arm/mach-realtek/rtd1195.c
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/arch/arm/boot/dts/rtd1195-mele-x1000.dts
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
 +/*
-+ * Realtek RTD1195
-+ *
 + * Copyright (c) 2017-2019 Andreas Färber
 + */
 +
-+#include <linux/memblock.h>
-+#include <asm/mach/arch.h>
++/dts-v1/;
 +
-+static void __init rtd1195_memblock_remove(phys_addr_t base, phys_addr_t size)
-+{
-+	int ret;
++#include "rtd1195.dtsi"
 +
-+	ret = memblock_remove(base, size);
-+	if (ret)
-+		pr_err("Failed to remove memblock %pa (%d)\n", &base, ret);
-+}
++/ {
++	compatible = "mele,x1000", "realtek,rtd1195";
++	model = "MeLE X1000";
 +
-+static void __init rtd1195_reserve(void)
-+{
-+	/* Exclude boot ROM from RAM */
-+	rtd1195_memblock_remove(0x00000000, 0x0000a800);
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+	/* Exclude peripheral register spaces from RAM */
-+	rtd1195_memblock_remove(0x18000000, 0x00070000);
-+	rtd1195_memblock_remove(0x18100000, 0x01000000);
-+}
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
-+static const char *const rtd1195_dt_compat[] __initconst = {
-+	"realtek,rtd1195",
-+	NULL
++	memory@0 {
++		device_type = "memory";
++		reg = <0x00000000 0x18000000>, /* up to r-bus */
++		      <0x18070000 0x00090000>, /* r-bus to NOR flash */
++		      <0x19100000 0x26f00000>; /* NOR flash to 1 GiB */
++	};
 +};
 +
-+DT_MACHINE_START(rtd1195, "Realtek RTD1195")
-+	.dt_compat = rtd1195_dt_compat,
-+	.reserve = rtd1195_reserve,
-+	.l2c_aux_val = 0x0,
-+	.l2c_aux_mask = ~0x0,
-+MACHINE_END
++&uart0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.dtsi
+new file mode 100644
+index 000000000000..c5713a5ef472
+--- /dev/null
++++ b/arch/arm/boot/dts/rtd1195.dtsi
+@@ -0,0 +1,130 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
++/*
++ * Copyright (c) 2017-2019 Andreas Färber
++ */
++
++/memreserve/ 0x00000000 0x0000a800; /* boot code */
++/memreserve/ 0x0000a800 0x000f5800;
++/memreserve/ 0x17fff000 0x00001000;
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "realtek,rtd1195";
++	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0x0>;
++			clock-frequency = <1000000000>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0x1>;
++			clock-frequency = <1000000000>;
++		};
++	};
++
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		rpc_comm: rpc@b000 {
++			reg = <0x0000b000 0x1000>;
++		};
++
++		audio@1b00000 {
++			reg = <0x01b00000 0x400000>;
++		};
++
++		rpc_ringbuf: rpc@1ffe000 {
++			reg = <0x01ffe000 0x4000>;
++		};
++
++		secure@10000000 {
++			reg = <0x10000000 0x100000>;
++			no-map;
++		};
++	};
++
++	arm-pmu {
++		compatible = "arm,cortex-a7-pmu";
++		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts = <GIC_PPI 13
++			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14
++			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10
++			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++		clock-frequency = <27000000>;
++	};
++
++	osc27M: osc {
++		compatible = "fixed-clock";
++		clock-frequency = <27000000>;
++		#clock-cells = <0>;
++		clock-output-names = "osc27M";
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x18000000 0x18000000 0x00070000>,
++			 <0x18100000 0x18100000 0x01000000>,
++			 <0x80000000 0x80000000 0x80000000>;
++
++		wdt: watchdog@18007680 {
++			compatible = "realtek,rtd1295-watchdog";
++			reg = <0x18007680 0x100>;
++			clocks = <&osc27M>;
++		};
++
++		uart0: serial@18007800 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x18007800 0x400>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clock-frequency = <27000000>;
++			status = "disabled";
++		};
++
++		uart1: serial@1801b200 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x1801b200 0x100>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clock-frequency = <27000000>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller@ff011000 {
++			compatible = "arm,cortex-a7-gic";
++			reg = <0xff011000 0x1000>,
++			      <0xff012000 0x2000>,
++			      <0xff014000 0x2000>,
++			      <0xff016000 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
++	};
++};
 -- 
 2.16.4
 
