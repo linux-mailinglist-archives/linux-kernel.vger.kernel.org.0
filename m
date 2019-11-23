@@ -2,109 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E71107C71
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 03:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF67107C78
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2019 03:34:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfKWCbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 22 Nov 2019 21:31:12 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6701 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725962AbfKWCbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Nov 2019 21:31:12 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4BE8A966CB0AAB32D4C5;
-        Sat, 23 Nov 2019 10:31:09 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Sat, 23 Nov 2019
- 10:31:03 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <maz@kernel.org>, <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
-        <suzuki.poulose@arm.com>
-CC:     <linmiaohe@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-Subject: [PATCH] KVM: arm: fix missing free_percpu_irq in kvm_timer_hyp_init()
-Date:   Sat, 23 Nov 2019 10:30:29 +0800
-Message-ID: <1574476229-15448-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+        id S1726762AbfKWCeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 22 Nov 2019 21:34:36 -0500
+Received: from sender4-pp-o98.zoho.com ([136.143.188.98]:25889 "EHLO
+        sender4-pp-o98.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfKWCeg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Nov 2019 21:34:36 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574476438; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=g3lmfCqx3I2xWKQYAwHkZXCzXGzvyxZqzNzU7RymwUAnzIXNsmmKFb7E/wN1Mmi90vVkYmvQH0XeJCVpB71CEGBoUZqEpqdfFg93I/AcSs/i1NDz4I5AQJ6B4eoNg1HWvUqkdNn3V9Ro9vRLtfNPWsHX5FlSbWRRshWoephcIpI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574476438; h=Cc:Date:From:Message-ID:Subject:To; 
+        bh=dCM44G4kUl5QOVe/uw5T8hO9Qh8KnzxxvZE4pOJAobM=; 
+        b=QRNq+v839lkg/hwt0s+Ul04xb+merU4Ka4ixGGzuqhqWJ1UlnvQBQrcWmW/xPac0/MKcFK/ySx4qJZOCyjVVQokIFe4l3KVSCyY+uj2Asp4ydAEhk3VxmCEm/GIb7yo4s8qwwGA0OPCJVmUytHaN+6jnXeikL2d1i19xy8zv4jU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=otKbVOYI3dSiLZQ6dLS4BO1UXGkeoKXDofCo8ki18HiPhhr4sOjsVdnD2hF9p/pvrBDAxCEexe31
+    nQTTh7rtAYYUhY9gjK/vPUtSqoUzwOSiCCgBZJXpelwT11jmK9Km  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574476438;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        bh=dCM44G4kUl5QOVe/uw5T8hO9Qh8KnzxxvZE4pOJAobM=;
+        b=UHL82Wu7NsaWKU/egoA2Rt4qtmZnz0zaAvr3jbxwsJpRi7aIfPg8nTtfI5ERIEi+
+        NxlPK/jbVC1oUaDfoftTHVE+opws2b14grStdUvDOPUjRrsvJ6WmNjaoXyNYKiLIiRT
+        cL3f6ZcGdPaeKTLW8M5KqXWx0scDXsyhLPlDPgk8=
+Received: from zhouyanjie-virtual-machine.localdomain (182.148.48.217 [182.148.48.217]) by mx.zohomail.com
+        with SMTPS id 1574476437253956.326840571938; Fri, 22 Nov 2019 18:33:57 -0800 (PST)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        jhogan@kernel.org, mripard@kernel.org, shawnguo@kernel.org,
+        mark.rutland@arm.com, syq@debian.org, ralf@linux-mips.org,
+        heiko@sntech.de, icenowy@aosc.io,
+        laurent.pinchart@ideasonboard.com, krzk@kernel.org,
+        geert+renesas@glider.be, paul@crapouillou.net,
+        prasannatsmkumar@gmail.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com, 772753199@qq.com
+Subject: Add initial support for Ingenic X1000 SoC and Y&A CU Neo board v2.
+Date:   Sat, 23 Nov 2019 10:32:20 +0800
+Message-Id: <1574476344-62631-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+v1->v2:
+Rebase on top of mips-next, use ingenic-timer driver
+for system timer and clocksource.
 
-When host_ptimer_irq request irq resource failed, we forget
-to release the host_vtimer_irq resource already requested.
-Fix this missing irq release and other similar scenario.
-
-Fixes: 9e01dc76be6a ("KVM: arm/arm64: arch_timer: Assign the phys timer on VHE systems")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- virt/kvm/arm/arch_timer.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
-index f182b2380345..73867f97040c 100644
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -935,7 +935,7 @@ int kvm_timer_hyp_init(bool has_gic)
- 					    kvm_get_running_vcpus());
- 		if (err) {
- 			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
--			goto out_free_irq;
-+			goto out_free_vtimer_irq;
- 		}
- 
- 		static_branch_enable(&has_gic_active_state);
-@@ -960,7 +960,7 @@ int kvm_timer_hyp_init(bool has_gic)
- 		if (err) {
- 			kvm_err("kvm_arch_timer: can't request ptimer interrupt %d (%d)\n",
- 				host_ptimer_irq, err);
--			return err;
-+			goto out_disable_gic_state;
- 		}
- 
- 		if (has_gic) {
-@@ -968,7 +968,7 @@ int kvm_timer_hyp_init(bool has_gic)
- 						    kvm_get_running_vcpus());
- 			if (err) {
- 				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
--				goto out_free_irq;
-+				goto out_free_ptimer_irq;
- 			}
- 		}
- 
-@@ -977,15 +977,22 @@ int kvm_timer_hyp_init(bool has_gic)
- 		kvm_err("kvm_arch_timer: invalid physical timer IRQ: %d\n",
- 			info->physical_irq);
- 		err = -ENODEV;
--		goto out_free_irq;
-+		goto out_disable_gic_state;
- 	}
- 
- 	cpuhp_setup_state(CPUHP_AP_KVM_ARM_TIMER_STARTING,
- 			  "kvm/arm/timer:starting", kvm_timer_starting_cpu,
- 			  kvm_timer_dying_cpu);
- 	return 0;
--out_free_irq:
-+
-+out_free_ptimer_irq:
-+	free_percpu_irq(host_ptimer_irq, kvm_get_running_vcpus());
-+out_disable_gic_state:
-+	if (has_gic)
-+		static_branch_disable(&has_gic_active_state);
-+out_free_vtimer_irq:
- 	free_percpu_irq(host_vtimer_irq, kvm_get_running_vcpus());
-+
- 	return err;
- }
- 
--- 
-2.19.1
 
