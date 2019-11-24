@@ -2,125 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6686C1082D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 11:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C37A71082E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 11:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfKXKU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 05:20:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:38022 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725980AbfKXKU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 05:20:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABE5855D;
-        Sun, 24 Nov 2019 02:20:25 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 908363F52E;
-        Sun, 24 Nov 2019 02:20:24 -0800 (PST)
-Date:   Sun, 24 Nov 2019 10:20:22 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Helge Deller <deller@gmx.de>
-Cc:     "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Armijn Hemel <armijn@tjaldur.nl>, linux-parisc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 06/12] parisc: Replace cpu_up/down with
- device_online/offline
-Message-ID: <20191124102021.k4oi3r4rgorikxnc@e107158-lin.cambridge.arm.com>
-References: <20191030153837.18107-1-qais.yousef@arm.com>
- <20191030153837.18107-7-qais.yousef@arm.com>
- <20191120110933.wjtmpc4pmqmxhmma@e107158-lin.cambridge.arm.com>
- <057185a2-e876-4237-c0bf-8754d302fdfc@gmx.de>
+        id S1726802AbfKXKgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 05:36:00 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:29826 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfKXKgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 05:36:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574591757;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=7/Su7LIUFXCMYAAUJpgUrh1IyPiKuKgf6Y9rKoiIpQI=;
+        b=ZtAYDcZCbtMSahR0IGQlOWDCDHAnVXCAV4WJXpaxKDyN8EevX+VnTnN7xOdcxbUiEV
+        k2fVGFvORRbEHm090jvcj3ltaerMsuXcaKjR25xlMyKxvrQSiSG+rwWT0KUZGPgM8iFS
+        Ip2AHCK9FsME/sGVXYusb7v4CeCGR6BT7nr5wo2vHrjrkCnVr7zXsWZ2dlWpotaIWp7f
+        95jsLden61E5HZYQh5pm4BsFGfoJKiKq0PF3Bsh05uyI+tZygnUYFrqVN80paA5NRDaW
+        VacvKJrFoJS0/f1zcyeupttcn15OBULpG16JFcnG8URQbCLUntQSj1xJshftvCkvlX5C
+        fF/A==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH4HEaKeuIV"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
+        with ESMTPSA id L09db3vAOAZlw8u
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 24 Nov 2019 11:35:47 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: [PATCH 0/2] net: wireless: ti: wl1251: sdio: remove ti,power-gpio
+Date:   Sun, 24 Nov 2019 11:35:44 +0100
+Message-Id: <cover.1574591746.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <057185a2-e876-4237-c0bf-8754d302fdfc@gmx.de>
-User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/19 20:51, Helge Deller wrote:
-> On 20.11.19 12:09, Qais Yousef wrote:
-> > On 10/30/19 15:38, Qais Yousef wrote:
-> >> The core device API performs extra housekeeping bits that are missing
-> >> from directly calling cpu_up/down.
-> >>
-> >> See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
-> >> serialization during LPM") for an example description of what might go
-> >> wrong.
-> >>
-> >> This also prepares to make cpu_up/down a private interface for anything
-> >> but the cpu subsystem.
-> >>
-> >> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> >> CC: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> >> CC: Helge Deller <deller@gmx.de>
-> >> CC: Richard Fontana <rfontana@redhat.com>
-> >> CC: Armijn Hemel <armijn@tjaldur.nl>
-> >> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> CC: Thomas Gleixner <tglx@linutronix.de>
-> >> CC: linux-parisc@vger.kernel.org
-> >> CC: linux-kernel@vger.kernel.org
-> >> ---
-> >>
-> >> Couldn't compile test this one.
-> >>
-> >> I'm not confident that this is a correct patch to be honest. This __init
-> >> indicates we're booting the secondary cpus and that might be too early in the
-> >> process to use the core API..?
-> >
-> > Helge, James
-> >
-> > Do you have any comment on this? I have no means to test it and I'd
-> > appreciate if you can spin it through one of your systems.
-> 
-> I pulled your cpu-hp-cleanup branch from git://linux-arm.org/linux-qy
-> and compiled a 32- and a 64-bit parisc kernel.
-> 
-> I faced one compile warning:
-> linux-2.6/kernel/cpu.c: In function ‘hibernation_bringup_sleep_cpu’:
-> linux-2.6/kernel/cpu.c:1237:1: warning: control reaches end of non-void function [-Wreturn-type]
-> 
-> Other than that the 32- and 64-bit SMP kernel booted nicely.
-> You may add to the series:
-> Acked-by: Helge Deller <deller@gmx.de>   # parisc
+The driver has been updated to use the mmc/sdio core
+which does full power control. So we do no longer need
+the power control gipo.
 
-Great! Thanks for testing it and reporting the warning.
+Note that it is still needed for the SPI based interface
+(N900).
 
-Cheers
+Suggested by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested by: H. Nikolaus Schaller <hns@goldelico.com> # OpenPandora 600MHz
 
---
-Qais Yousef
+H. Nikolaus Schaller (2):
+  DTS: bindings: wl1251: mark ti,power-gpio as optional
+  net: wireless: ti: wl1251: sdio: remove ti,power-gpio
 
-> 
-> Thanks,
-> Helge
-> 
-> 
-> >>
-> >>  arch/parisc/kernel/processor.c | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/parisc/kernel/processor.c b/arch/parisc/kernel/processor.c
-> >> index 13f771f74ee3..4dde5fe78f0c 100644
-> >> --- a/arch/parisc/kernel/processor.c
-> >> +++ b/arch/parisc/kernel/processor.c
-> >> @@ -212,7 +212,9 @@ static int __init processor_probe(struct parisc_device *dev)
-> >>  #ifdef CONFIG_SMP
-> >>  	if (cpuid) {
-> >>  		set_cpu_present(cpuid, true);
-> >> -		cpu_up(cpuid);
-> >> +		lock_device_hotplug();
-> >> +		device_online(get_cpu_device(cpuid));
-> >> +		unlock_device_hotplug();
-> >>  	}
-> >>  #endif
-> >>
-> >> --
-> >> 2.17.1
-> >>
-> 
+ .../bindings/net/wireless/ti,wl1251.txt       |  3 +-
+ drivers/net/wireless/ti/wl1251/sdio.c         | 30 -------------------
+ 2 files changed, 2 insertions(+), 31 deletions(-)
+
+-- 
+2.23.0
+
