@@ -2,67 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A6E108179
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 03:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A08E10817C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 03:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfKXCfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 23 Nov 2019 21:35:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45825 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfKXCfA (ORCPT
+        id S1726840AbfKXCoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 23 Nov 2019 21:44:19 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:35749 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbfKXCoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Nov 2019 21:35:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w7so4858891plz.12
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 18:35:00 -0800 (PST)
+        Sat, 23 Nov 2019 21:44:19 -0500
+Received: by mail-pj1-f67.google.com with SMTP id s8so4859693pji.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2019 18:44:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=netronome-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:in-reply-to:references
          :organization:mime-version:content-transfer-encoding;
-        bh=aCxfmpw6xFMQsH0PMgD2wEqkiouLFZYLHWTSbq5KYkM=;
-        b=Iyha71TIaAg/veuNz/2483TFLUscAexCtYPGq+oY1gUBhi/ff4cemRjG3Y4xXY+TFQ
-         O9ql71hZGyWHCtMzNxJ/RWp+cvrByLph8sr7r0k/3dM3J2MKhbAS2ToJusmcOsbzf7gq
-         /ccNK3wcdkJQsJYoJPYylEVx5fW4Tgaq9dv5F1IrD7PiXWMvREY5tE2PBm/vU0aFC6Yj
-         PwDaj246pi8zKYDlQCdpPMhmhri+t8BXBwTSC7wdDSccAk4qwi+vOswCVI+mQDR2NBwT
-         73EgZ7gs4RGQJ5OHSbbPVAzAJrvK9jzMleDsY7sTlC9EmNouohdfMTYJnQMrklie7nkm
-         GQ9g==
+        bh=uSbEr+vhnRVppHeZqO76/gkPHgaCCiq0/m4Ia9qLGuM=;
+        b=FwdFgM4aWBOE61JY1zLzibGzXN+gX+CqAjxfTq9aeaW5PrH+QPslmXMFJKbd87qpFk
+         D7JNVtl4GVidu26ZYnJqUbhNbm9Dd4NkWJSetB9Nbk6Z+wyWeFq9YF3OlLzdiqARum+U
+         yEKWuRfuXQVfBwriu1eqU1kxSPHV8ePvWcYAeNuueS/4oJblmWlc0y2K5qPf8VskDH/u
+         tcpZcS99bfJabnMo45/YjLEVaqHQm+o8j51EWE/k9Op+7iU9yZ+KykLnfMevOs6iLubr
+         owluzqwZfe77rRmm1pmc+Zr8YtGwMquw2rT7Q6awnV3YKPhQMOzzvpof5tTeXsfCAS8X
+         B1Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
          :references:organization:mime-version:content-transfer-encoding;
-        bh=aCxfmpw6xFMQsH0PMgD2wEqkiouLFZYLHWTSbq5KYkM=;
-        b=Z3vmaDVxoHbOn80YRld3gv8oTZ9Q8r6wwW6qcOvRsUngiQkNCgixclYIrE0Z299XdE
-         /pFKpaLxp/TQZCF1dbGdxxqFI453qnM5NQ5s+MkYzG6qQGlv3GDTeK3GL6eqkURQ6V5P
-         nUQ5EB2q1WR+keCr2VaojInGEI5gkcrScSfouommg/r9c5ZbuzkYLfOk2QFtpWa4Go7g
-         vyAWKpIRIjQ2ukl9aHlMmCuFRl8c+bwnNPtjvrqsVW13F+qx0NjtY74F4nfGABEbIrWD
-         FoqXT+GHSMZV+JcItZ0xw8y4a3v/WXS2LeI/SWrEuINSpgrVXFtGa27jaLJmt8sR0SbK
-         b4Ow==
-X-Gm-Message-State: APjAAAUUZxCPvF9SUrzv8o17A+muXaWW+8u3IGekU3p74+i3tuoc0Joh
-        e+FGhTAOlTwu0OMJ3QHK98avqitG73E=
-X-Google-Smtp-Source: APXvYqwVLtPb9Y66MfjtEJ3pY/cbVHyEpaqcazb0NNI5OZUjqIM/ZX4qjxPKhkH9KEDMjRA0yO877Q==
-X-Received: by 2002:a17:90a:a4e:: with SMTP id o72mr29191875pjo.66.1574562900160;
-        Sat, 23 Nov 2019 18:35:00 -0800 (PST)
+        bh=uSbEr+vhnRVppHeZqO76/gkPHgaCCiq0/m4Ia9qLGuM=;
+        b=Ob5gyMnhJk9ehTc7TIzqWaL19IxTmqg04Ngd/v/liKoaGGjDnUf04BvIJw45qVSXGb
+         6vxL8mofYhqXJl9WKlU3O6fewg0yJJBqYWnYviDc+cYWUJ4YAA10Fb8WACpoYHSz87Ib
+         Cc0jBoTZEV1K2NHLfH1sPA5ewsH3yXkIY6IyWF/NtyJg1JrOkcAgPq/h8YWOpgMqqSZa
+         GIwAcUMda2Wa9cAbYmBhYet/Cd4U61NJpy+RIBRLp0fM3jslL8N+ni1OX4yVHiHJr2kZ
+         dIRyXeMqSF0kLGVb+EqWcuOlKpCKomVg0kOH13PIlfnqfZ/lHxyl5fAN5rbYGxn8p9wh
+         gD5Q==
+X-Gm-Message-State: APjAAAW4RzqjkcE1e+bieP1HuQNBEFq0zS6D2tfr+fTxLxFmukVapDye
+        5szw0SSBxSZS7bWCSe9t1Mp+B2kHgOY=
+X-Google-Smtp-Source: APXvYqwMfHgA5rV5ZOiOUcicFeeVxfDJ7wYY9KmH6lop7UKE8nWEIWhS1PKfh3F1m0NnPerfgZO34g==
+X-Received: by 2002:a17:902:8ec5:: with SMTP id x5mr18613869plo.201.1574563458444;
+        Sat, 23 Nov 2019 18:44:18 -0800 (PST)
 Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id j7sm3191767pjz.12.2019.11.23.18.34.59
+        by smtp.gmail.com with ESMTPSA id n62sm3249514pjc.6.2019.11.23.18.44.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2019 18:35:00 -0800 (PST)
-Date:   Sat, 23 Nov 2019 18:34:55 -0800
+        Sat, 23 Nov 2019 18:44:18 -0800 (PST)
+Date:   Sat, 23 Nov 2019 18:44:13 -0800
 From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>, netdev@vger.kernel.org,
+To:     Haiyang Zhang <haiyangz@microsoft.com>
+Cc:     sashal@kernel.org, linux-hyperv@vger.kernel.org,
+        netdev@vger.kernel.org, kys@microsoft.com, sthemmin@microsoft.com,
+        olaf@aepfle.de, vkuznets@redhat.com, davem@davemloft.net,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: Use the correct style for SPDX License
- Identifier
-Message-ID: <20191123183455.6266e9a8@cakuba.netronome.com>
-In-Reply-To: <20191123130815.GA3288@nishad>
-References: <20191123130815.GA3288@nishad>
+Subject: Re: [PATCH net-next] hv_netvsc: make recording RSS hash depend on
+ feature flag
+Message-ID: <20191123184413.3b179db4@cakuba.netronome.com>
+In-Reply-To: <1574553017-87877-1-git-send-email-haiyangz@microsoft.com>
+References: <1574553017-87877-1-git-send-email-haiyangz@microsoft.com>
 Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -72,19 +66,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Nov 2019 18:38:19 +0530, Nishad Kamdar wrote:
-> diff --git a/drivers/net/phy/aquantia.h b/drivers/net/phy/aquantia.h
-> index 5a16caab7b2f..40e0be0f4e1c 100644
-> --- a/drivers/net/phy/aquantia.h
-> +++ b/drivers/net/phy/aquantia.h
-> @@ -1,5 +1,5 @@
-> -/* SPDX-License-Identifier: GPL-2.0
-> - * HWMON driver for Aquantia PHY
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*  HWMON driver for Aquantia PHY
+On Sat, 23 Nov 2019 15:50:17 -0800, Haiyang Zhang wrote:
+> From: Stephen Hemminger <sthemmin@microsoft.com>
+> 
+> The recording of RSS hash should be controlled by NETIF_F_RXHASH.
+> 
+> Fixes: 1fac7ca4e63b ("hv_netvsc: record hardware hash in skb")
+> Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
+> Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-You're adding an extra space here. Is this intentional?
-
->   *
->   * Author: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
->   * Author: Andrew Lunn <andrew@lunn.ch>
+Applied, thank you!
