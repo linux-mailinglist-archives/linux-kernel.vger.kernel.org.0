@@ -2,82 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 565AD108566
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 23:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D19FA108556
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 23:39:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfKXWw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 17:52:59 -0500
-Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17478 "EHLO
-        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfKXWw7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 17:52:59 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1574635958; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=nkhEXIzF9+0eSVEWhcQyoV6RJb7cH7U8Gr2gkLFCjEeuJUg2huMqkHX0csaHlKyVgttBtlmDlKmWemY0aVu/zthNq2k2KSD+DscGEN05VjaeiZ11vK7T5saX6/nN7xxYjPFNNrByvVz3HcsxcsCB6lL+rDvDFh2aEdoqoFfBLCM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1574635958; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=VBlCIOBlmhYT1nXzZeusUrp2ZE5E5KFbCpOclqk1oRI=; 
-        b=H9LIerKIxFLVX+a3CgdMu5BaAD8LkvS1IfTDtU6XBlJ4JhB/Ve3h8gklOB/hfWRDtUAJb9qdkBJOPSTTLVegEd5k5y/ffGTLwnlkWiUVFkDnLjLmFmxuOc7sgFNdTxiYP+cIQzzj6yyU8q8xgptetWnCe8uBeJ8shM+4enZtpTc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=dlrobertson.com;
-        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
-        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
-Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
-        with SMTPS id 1574635957113882.9905876044394; Sun, 24 Nov 2019 14:52:37 -0800 (PST)
-Date:   Sun, 24 Nov 2019 22:37:34 +0000
-From:   Dan Robertson <dan@dlrobertson.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree <devicetree@vger.kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1727006AbfKXWjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 17:39:19 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:41995 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbfKXWjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 17:39:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47LlTH2Vrhz9sPT;
+        Mon, 25 Nov 2019 09:39:15 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574635156;
+        bh=4q1KyTDlb0ND4mkqK8ewLqPEYFfOu065MxrD5xwKFzo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=t63HcXb0b0Mer6zIkRhVWPC2By3UYL+T+Tj4eyhld18gQIEDHHo3HOJdhRSDC+PDw
+         PCXJ9QEwmUY/1391+tu/5Lvyga4E5//cv0G0I/aIBS/EWf+bbd7BRwqb3le/JvVS/N
+         jfwZzGDCQi61f3xJ73B23J2fcEQKsCuO5DCMIPYFdz4HZZA+zjLlpeYdUE1JapuoCc
+         gFhiA8pQRSf+PXYtUEx1XJUmh27DfSwFOnOwFU/kLZ0IYJmV0BPBtAzda15JZFgfwN
+         SNfJnrZZDAkf8otD9T7lpv1KZoYOuw3+rPT/2hK9sKr09RQfiEbJdkwvhlyhtpkyXP
+         qwCfTysJumUCQ==
+Date:   Mon, 25 Nov 2019 09:39:07 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v4 2/2] iio: (bma400) add driver for the BMA400
-Message-ID: <20191124223734.GA13261@nessie>
-References: <20191018031848.18538-1-dan@dlrobertson.com>
- <20191018031848.18538-3-dan@dlrobertson.com>
- <CAHp75VfMW0fvmO9jGTnQumJ9Sm-SgNL0ohjSR4qRQY365aeMBw@mail.gmail.com>
- <20191019024351.GB8593@nessie>
- <20191021162016.531e6a2e@archlinux>
- <20191118002504.GA29469@nessie>
- <20191123125135.4c7efcb0@archlinux>
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: linux-next: manual merge of the pci tree with the powerpc tree
+Message-ID: <20191125093907.45e3421b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191123125135.4c7efcb0@archlinux>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-ZohoMailClient: External
+Content-Type: multipart/signed; boundary="Sig_/b+Onz14PBl20uhRM4dwdRuw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 12:51:35PM +0000, Jonathan Cameron wrote:
-> If a function is your preferred route you could also just use it to compute
-> the values for the available table at startup?
+--Sig_/b+Onz14PBl20uhRM4dwdRuw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah that makes sense. I'll add that in the next patchset version.
+Hi all,
 
-> > The sampling ratio, frequency, etc code seems to be the most complicated part
-> > of the driver. Is it typically recommended to upstream a more minimal driver
-> > that might assume the defaults?
-> 
-> Often people upstream a first version that just uses defaults, then follow
-> up (if they care) with later series adding the more fiddly elements.
-> 
-> Sometimes those more fiddly bits never come as a particular author
-> never needed them.  That's absolutely fine.  It's a rare driver
-> that supports all the features on a non trivial device!
+Today's linux-next merge of the pci tree got a conflict in:
 
-Makes sense. I'll likely add some extra bits in a follow-up patchset, so I can
-learn a bit more.
+  arch/powerpc/include/asm/Kbuild
 
+between commit:
+
+  265c3491c4bc ("powerpc: Add support for GENERIC_EARLY_IOREMAP")
+
+from the powerpc tree and commit:
+
+  356f42aff121 ("asm-generic: Make msi.h a mandatory include/asm header")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
 Cheers,
+Stephen Rothwell
 
- - Dan
+diff --cc arch/powerpc/include/asm/Kbuild
+index 148bee20e7e2,17726f2e46de..000000000000
+--- a/arch/powerpc/include/asm/Kbuild
++++ b/arch/powerpc/include/asm/Kbuild
+@@@ -11,5 -10,3 +11,4 @@@ generic-y +=3D local64.
+  generic-y +=3D mcs_spinlock.h
+  generic-y +=3D preempt.h
+  generic-y +=3D vtime.h
+- generic-y +=3D msi.h
+ +generic-y +=3D early_ioremap.h
 
+--Sig_/b+Onz14PBl20uhRM4dwdRuw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3bBosACgkQAVBC80lX
+0GxSCQf9GqVqx1LQuv7pxaUpAfSHTgqiURU3NYL+s6pFWcZqlqSZZuwOgW3Dlte5
+Q5CwCC4z6FDugRWucbXvWo2dYTqBypijJugygqXYruHOHl3i40mgSyiTqIXkleWR
+mdBbA8EOYfLfI7f/DboasIxKk/qaN4TZfCjW+rT7bPwHha/kMr1vYR8pUHPLsvVX
+PNHDFavWlCT9UaPOo5CU4Q4H3gsGuag5m6owS42Ifp2gwQF3r25tgjtYDcxLPkh0
+IoiqmtXKYIvHclm1p7QIjwxqbLreiuL/wvJWJYOWUICu66s3a2jkyVVjCCtOX2D8
+8gHptQa/NAyg8RkEzB/F6yGCSJz/Qg==
+=Idfr
+-----END PGP SIGNATURE-----
+
+--Sig_/b+Onz14PBl20uhRM4dwdRuw--
