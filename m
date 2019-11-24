@@ -2,135 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E30108501
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 22:05:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9724F108533
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 23:00:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKXVF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 16:05:29 -0500
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:58476 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfKXVF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 16:05:29 -0500
-Date:   Sun, 24 Nov 2019 21:05:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1574629524;
-        bh=ZAxv2jVK0Z3Qt1z6lNZQ74w2PqsNzQE8blamFUnouYI=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=s45Tglkxan9Qh0Dd8J2Z0vYX5Y+oUm3btR7RNAf+2mPcFvutr3mns2TMVKVVCvQLl
-         gdyKhiWgPzXD3Zpdkd/k0rOJffwHE0cC7LMuMv423YGpmF8H//4eCpqITnlTjH7+Zb
-         NiFymq5i3uXERvBBkDOxcUkGkhPZ8eGYuPLIYSa8=
-To:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-From:   Mazin Rezk <mnrzk@protonmail.com>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "jikos@kernel.org" <jikos@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>,
-        "mnrzk@protonmail.com" <mnrzk@protonmail.com>
-Reply-To: Mazin Rezk <mnrzk@protonmail.com>
-Subject: Re: [PATCH v8 0/2] Logitech HID++ Bluetooth LE support
-Message-ID: <haSzI6CpbhKWB-YGuSryCNj3sW6YXUkBlN1LZyy6pyoYPUD-Z7DwCkoRnVY-1iHX3FlxpsydH2YF_effQsePpDZnTp7937mNgvLVPjneUYY=@protonmail.com>
-In-Reply-To: <_0snBXtGhwWiRLYmuVIeDLYkvksMVMxiBv1lW_bTTaFpcVN45l6yCU5gWZ_5oJr8SQOZA6qCZSkVskkEX0ZePpboYtDYRsTdVg3xfcwmw6M=@protonmail.com>
-References: <_0snBXtGhwWiRLYmuVIeDLYkvksMVMxiBv1lW_bTTaFpcVN45l6yCU5gWZ_5oJr8SQOZA6qCZSkVskkEX0ZePpboYtDYRsTdVg3xfcwmw6M=@protonmail.com>
-Feedback-ID: 18B_FC5q-t32TXzMsVp9BgkgrdNH3iwklfW8WOrHrcxZA0WRj7JodCh5VXKxs6A3OaiHK0QNd8wi3SImKex8yQ==:Ext:ProtonMail
+        id S1726942AbfKXV6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 16:58:08 -0500
+Received: from ns1.linedc.com ([95.173.187.145]:48971 "EHLO ereseller.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726855AbfKXV6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 16:58:08 -0500
+X-Greylist: delayed 2517 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Nov 2019 16:58:06 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sakli.com.tr; s=default; h=Message-ID:Reply-To:Subject:To:From:Date:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Cc:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=oXDNnmVoYxKjclV0tsZ3GgefWpc3kTSq0tTePn9EbyA=; b=VFMipURsVqAQTC8aYalYgkz+gs
+        F0lSB59EpZiom1s1R2VsbXQ/bW0UgzCLh9XtZ4woBpGwIDZ/ivhUqrH6Fg1XCzo1oIWznsNwb0ecZ
+        2Eqr7XXiSRD1X03G95OZhZGqV/QEIEWaELLc+xDQkyLsr4P5dmKLZQCu5AuSzkiCKyY68K102uU6B
+        yua4iyl5XxBQJbV5PN5x+PjrcBD2fR6rzYm0trzGTOVPLK/77K47Hfh4XZIeg4p4Cua+kbf1qKDHj
+        ciXE/iEzsv4+NGafk5N4O+ZolBKIrlHwAkGeFt9885pM+j5lSwAjfoC/A42t4lWHrAGe9Bb4Bc7sT
+        /W2Tt1ew==;
+Received: from [::1] (port=57762 helo=ns1.linedc.com)
+        by ns1.linedc.com with esmtpa (Exim 4.92)
+        (envelope-from <info@sakli.com.tr>)
+        id 1iYz9D-000Djy-3K; Mon, 25 Nov 2019 00:10:27 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_REPLYTO
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 25 Nov 2019 00:10:22 +0300
+From:   AL-MOHAD MOHAMMED BASHIRU <info@sakli.com.tr>
+To:     undisclosed-recipients:;
+Subject: DIPLOMATIC IMMUNITY DELIVERY
+Reply-To: cam40@endustriyelservisi.net
+Mail-Reply-To: cam40@endustriyelservisi.net
+Message-ID: <2e00d599c2c55f34661bcf0b248c82bd@sakli.com.tr>
+X-Sender: info@sakli.com.tr
+User-Agent: Roundcube Webmail/1.3.8
+X-OutGoing-Spam-Status: No, score=0.3
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - ns1.linedc.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - sakli.com.tr
+X-Get-Message-Sender-Via: ns1.linedc.com: authenticated_id: info@sakli.com.tr
+X-Authenticated-Sender: ns1.linedc.com: info@sakli.com.tr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, October 27, 2019 1:44 PM, Mazin Rezk <mnrzk@protonmail.com> wrot=
-e:
 
-> This series allows hid-logitech-hidpp to support Bluetooth LE HID++
-> devices. Only the MX Master (b012 and b01e) is added right now but more
-> HID++ Bluetooth LE devices can be added once they are tested.
->
-> Changes since [v7]:
-> - Squashed "HID: logitech-hidpp: Support MX Master (b012, b01e)
-> over Bluetooth" into "HID: logitech-hidpp: Support translations
-> from short to long reports"
->
-> Changes since [v6]:
->
-> - Based patch on "HID: logitech-hidpp: rework device validation"
->
-> - Removed the need for additional quirks
->
-> Changes since [v5]:
->
-> - Fixed bug where added quirks would overflow an unsigned long
->
-> - Changed the reserved quirk class bits from 0..20 to 0..15
->
-> Changes since [v4]:
->
-> - Omitted "HID: logitech: Add feature 0x0001: FeatureSet"
->
-> - Stored WirelessDeviceStatus feature index in hidpp_device
->
-> - Made Bluetooth quirk class alias quirks instead of vice versa
->
-> - Omitted non-tested devices
->
-> Changes since [v3]:
->
-> - Renamed hidpp20_featureset_get_feature to
-> hidpp20_featureset_get_feature_id.
->
-> - Re-ordered hidpp20_featureset_get_count and
-> hidpp20_featureset_get_feature_id based on their command IDs.
->
-> - Made feature_count initialize to 0 before running
-> hidpp20_get_features.
->
-> Changes since [v2]:
->
-> - Split up the single patch into a series
->
-> Changes since [v1]:
->
-> - Added WirelessDeviceStatus support
->
-> [v7] https://lore.kernel.org/lkml/t5LOL-A4W7aknqQdC-3TavitC94BY_Ra1qyxCZM=
-h_nprrDNSl4UF-jYpWtaDSU-0oQ5xzRyAo9o_mvSnA78bib_p6I3ePSJnTrp3Eb0X_yg=3D@pro=
-tonmail.com
-> [v6] https://lore.kernel.org/lkml/ggKipcQplIlTFmoP3hPnrQ-7_5-C0PKGd5feFym=
-ts3uenIBA8zOwz47YmKheD34H1rpkguDAGdx5YbS9UqpwfjT5Ir0Lji941liLVp--QtQ=3D@pro=
-tonmail.com
-> [v5] https://lore.kernel.org/lkml/Mbf4goGxXZTfWwWtQQUke_rNf8kezpNOS9DVEVH=
-f6RnnmjS1oRtMOJf4r14WfCC6GRYVs7gi0uZcIJ18Va2OJowzSbyMUGwLrl6I5fjW48o=3D@pro=
-tonmail.com
-> [v4] https://lore.kernel.org/lkml/uBbIS3nFJ1jdYNLHcqjW5wxQAwmZv0kmYEoeoPr=
-xNhfzi6cHwmCOY-ewdqe7S1hNEj-p4Hd9D0_Y3PymUTdh_6WFXuMmIYUkV2xaKCPMYz0=3D@pro=
-tonmail.com
-> [v3] https://lore.kernel.org/lkml/l7xYjnA9EGfZe03FsrFhnH2aMq8qS8plWhHVvOt=
-Y_l4ShZ1NV6HA6hn9aI-jAzbLYUGFCIQCIKkx9z42Uoj4-AZDwBfRcAecYIn-0ZA5upE=3D@pro=
-tonmail.com
-> [v2] https://www.spinics.net/lists/linux-input/msg63467.html
-> [v1] https://www.spinics.net/lists/linux-input/msg63317.html
->
-> Mazin Rezk (2):
-> HID: logitech-hidpp: Support translations from short to long reports
-> HID: logitech-hidpp: Support WirelessDeviceStatus connect events
->
-> drivers/hid/hid-logitech-hidpp.c | 69 +++++++++++++++++++++++++++-----
-> 1 file changed, 59 insertions(+), 10 deletions(-)
->
-> ---
-> 2.23.0
 
-I recently saw "HID: logitech-hidpp: Silence intermittent
-get_battery_capacity errors" get applied into the kernel, would I need to
-rebase this patch on top of https://patchwork.kernel.org/patch/11243871/
 
-Thanks,
-Mazin
 
+-- 
+NO.1A, WILAYAH PERSEKUTUAN,
+ТАМАН БУКИТ ПАСИР,
+93000 KUALA LUMPUR,
+Малайзия.
+
+Уважаеми господине,
+
+Казвам се Алмохад Мохамед Баширу. Радвам се да ви информирам, че 
+договорният панел, който току-що завърши мястото си в Куала Лумпур 
+Малайзия, просто пусна вашето име и идентификационен номер на електронна 
+поща сред изпълнителите, за да се възползват от плащането на 
+дипломатическия имунитет. Този панел беше делегиран предимно за 
+разследване на манипулирани претенции по договори, договори и плащане на 
+фактури, тъй като ефектът е изял дълбоко в икономиката на нашата скъпа 
+страна.
+
+
+
+Въпреки това искаме да ви уведомим, че профилът на вашия договор все още 
+се отразява в централния ни компютър като неплатен изпълнител по време 
+на извършването на одита. Вашият договор за прехвърляне в офиса ми от 
+одиторите като непоискан фонд, искаме да използваме този носител, за да 
+ви информираме, че за момента правителството на Малайзия е спряло 
+по-нататъшното плащане чрез банка до банков превод поради множество 
+изпълнители на петиции към ООН Малайзия за неправилно плащане и 
+отклоняване на договорните средства към различна сметка.
+
+
+
+Във връзка с това ние ще изпратим плащане за част от вашия договор в 
+размер на 35 000 000.00 евро (само тридесет и пет милиона евро) до вас 
+чрез нашата акредитирана корабоплавателна компания и аз обезпечих всички 
+необходими документи за покриване на парите. Забележка: Парите идват на 
+2 кутии за сигурност. Кутиите са запечатани със синтетично найлоново 
+уплътнение и подплатени с машина. Моля, не е нужно да се притеснявате за 
+нищо, тъй като транзакцията е 100% без риск. Кутиите идват с 
+дипломатически агент, който ще придружава кутиите до домашния ви адрес. 
+Всичко, което трябва да направите сега, е да ми изпратите пълния си 
+адрес и вашата самоличност, като международен паспорт или шофьорска 
+книжка и вашия мобилен телефонен номер, Diplomatic Attached ще пътува с 
+него. Той ще ви се обади веднага, когато пристигне на летището на вашата 
+страна. Надявам се че ме разбираш?
+
+
+
+Моля, любезно се свържете с мен днес също с исканата информация, за да 
+можем да продължим по този въпрос възможно най-скоро.
+
+
+
+1) Вашето пълно име:
+
+2) Телефон, факс и мобилен телефон:
+
+3) Име на компанията, длъжност и адрес .:
+
+4) Професия, възраст и семейно положение.
+
+5) Копие на вътрешен паспорт, шофьорска книжка или валидна лична карта:
+
+
+
+Забележка: Дипломатът не знае оригиналното съдържание на кутиите. Това, 
+което им декларирах като съдържание, са чувствителни фотографски филмови 
+материали от съображения за сигурност. Не съм декларирал пари за тях, 
+моля. Ако ви се обадят и ви попитат съдържанието, моля, кажете им 
+същото? И ще ви уведомя докъде съм стигнал с уговорката. Ще осигуря 
+сертификата за разрешаване на дипломатически имунитет, който ще го 
+накара да премине всеки персонализиран контролно-пропускателен пункт по 
+целия свят, без да се задържа. Потвърдете получаването на това съобщение 
+и изпратете изискванията към мен веднага, когато получите това 
+съобщение. Моля, имам нужда от вашия спешен отговор, тъй като кутиите са 
+планирани за отпътуване към вашата страна, веднага щом чуем от вас.
+
+
+Ние сме решени да ви служим по-добре
+
+
+С уважение,
+Ал-Мохад Мохамед Баширу
+Главен одитор за правителството на Малайзия
