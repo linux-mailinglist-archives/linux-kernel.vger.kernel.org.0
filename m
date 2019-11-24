@@ -2,70 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D7410838A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 14:48:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1727A1083C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 15:15:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKXNss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 08:48:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40004 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726767AbfKXNsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 08:48:47 -0500
-Received: from rapoport-lnx (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 604D32071A;
-        Sun, 24 Nov 2019 13:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574603327;
-        bh=vRGUVLAcUuZh1Fo6Olic1qmPe1jv7ZKjYbAXpyNgem8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UrvL4psCN4R9RDCHRFLm32wo1sCgKWgKtJqROmDCvSwCnRLmzxOoLZrusXivJspLp
-         4oigQaEgXZExFs2mQPqDO6Xa7pTJLgzYNCTgREPzCxEbA6XndjhlMrzRYxA/WP4LOV
-         04ti3HnKeJnp7KLzcU4WXpMjqK98scYnJpbFOusc=
-Date:   Sun, 24 Nov 2019 15:48:41 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH] sparc64: add support for folded p4d page tables
-Message-ID: <20191124134840.GA6630@rapoport-lnx>
-References: <20191124085720.6201-1-rppt@kernel.org>
- <e91984fa-3544-8b7e-d577-54125b075fbe@physik.fu-berlin.de>
+        id S1727008AbfKXOPv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 24 Nov 2019 09:15:51 -0500
+Received: from customer-187-141-72-141-sta.uninet-ide.com.mx ([187.141.72.141]:40802
+        "EHLO correo.opb.gob.mx" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbfKXOPv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 09:15:51 -0500
+X-Greylist: delayed 4888 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Nov 2019 09:15:49 EST
+Received: from localhost (localhost [127.0.0.1])
+        by correo.opb.gob.mx (Postfix) with ESMTP id E583C1A322D;
+        Sun, 24 Nov 2019 06:57:37 -0500 (EST)
+Received: from correo.opb.gob.mx ([127.0.0.1])
+        by localhost (correo.opb.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id dNCeQ6LoFeWR; Sun, 24 Nov 2019 06:57:37 -0500 (EST)
+Received: from localhost (localhost [127.0.0.1])
+        by correo.opb.gob.mx (Postfix) with ESMTP id 1BCE41A3223;
+        Sun, 24 Nov 2019 06:57:35 -0500 (EST)
+X-Virus-Scanned: amavisd-new at opb.gob.mx
+Received: from correo.opb.gob.mx ([127.0.0.1])
+        by localhost (correo.opb.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id odZvaJKm3JFG; Sun, 24 Nov 2019 06:57:34 -0500 (EST)
+Received: from correo.opb.gob.mx (correo.opb.gob.mx [172.16.254.57])
+        by correo.opb.gob.mx (Postfix) with ESMTP id 476171A3205;
+        Sun, 24 Nov 2019 06:57:30 -0500 (EST)
+Date:   Sun, 24 Nov 2019 05:57:30 -0600 (CST)
+From:   "Mr.WEHNER DAVID M." <jesus.valencia@opb.gob.mx>
+Reply-To: "Mr.WEHNER DAVID M." <info@zbukgroupltd.info>
+Message-ID: <1105698182.24559.1574596650210.JavaMail.zimbra@opb.gob.mx>
+In-Reply-To: <1063337394.24307.1574596445839.JavaMail.zimbra@opb.gob.mx>
+Subject: =?utf-8?Q?Pengar_=C3=B6verf=C3=B6rs?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e91984fa-3544-8b7e-d577-54125b075fbe@physik.fu-berlin.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [198.199.76.158]
+X-Mailer: Zimbra 8.0.7_GA_6021 (ZimbraWebClient - GC75 (Win)/8.0.7_GA_6021)
+Thread-Topic: Pengar =?utf-8?B?w7Z2ZXJmw7Zycw==?=
+Thread-Index: Wlue1ObLHW28G6QK4CR7qvueCy2AHA==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 24, 2019 at 10:44:36AM +0100, John Paul Adrian Glaubitz wrote:
-> Hi!
-> 
-> On 11/24/19 9:57 AM, Mike Rapoport wrote:
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> > 
-> > Implement primitives necessary for the 4th level folding, add walks of p4d
-> > level where appropriate and replace 5leve-fixup.h with pgtable-nop4d.h.                                      
->                                       ^^^^^ typo?
+Office Of The Head
+Internationell överföring
+Operation Zenith Bank
+(UK) Ltd LONDON United
+Storbritannien och Irland
+Tel: +44 203 389 5674
+Fax: +44 704 307 1539
 
-Oops, indeed :)
+Hälsning,
 
-David, if everything else is ok, could you please fix this when applying?
+Din e-postadress kom upp i ett slumpmässigt drag som genomfördes i Zenith Banks huvudkontor, International Transfer Operation i London, Storbritannien.
 
-> 
-> Adrian
-> 
-> -- 
->  .''`.  John Paul Adrian Glaubitz
-> : :' :  Debian Developer - glaubitz@debian.org
-> `. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
->   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Jag är Mr.WEHNER DAVID M.A personlig bokföring till avdöd Michael Blair som arbetade med Shell British Petroleum. Mr.Michael Blair, en välkänd filantropist, innan han dog, gjorde en testamente i ett advokatbyrå om att 12,5 miljoner US dollar (tolv miljoner femhundra tusen amerikanska dollar) bör doneras till någon lycklig individuell filantrop eller välgörenhetsorganisation utomlands.
 
--- 
-Sincerely yours,
-Mike.
+Zenith Bank Abp är en överenskommelse med sena Michael Blair om att donera fonden till alla lyckliga individer i Amerika, Europa, Asien och Afrika i andra för att förbättra liv och företag
+
+Vi har gjort vårt slumpmässiga drag och din e-postadress valdes för att ta emot denna fond som mottagare av hans testament. Vänligen snälla tillbaka till mig
+så snart du har fått vårt e-postmeddelande för att aktivera överföringen
+Operationen riktar dig till vad du ska göra för att få denna fond lagligen.
+
+Du rekommenderas att ta med följande nedan:
+
+FULLSTÄNDIGA NAMN:
+
+FULL KONTAKTADRESS:
+
+TELEFON- OCH FAXNUMMER:
+
+Med vänliga hälsningar,
+Mr.WEHNER DAVID M.
+Chef, internationell överföringsoperation
+Zenith Bank (UK) Abp
