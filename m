@@ -2,69 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A04108552
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 23:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 565AD108566
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 23:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfKXWdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 17:33:23 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:32980 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbfKXWdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 17:33:22 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C14731A07FE;
-        Sun, 24 Nov 2019 23:33:20 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B45771A07F3;
-        Sun, 24 Nov 2019 23:33:20 +0100 (CET)
-Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F4F6203C5;
-        Sun, 24 Nov 2019 23:33:20 +0100 (CET)
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Subject: [PATCH] crypto: caam - do not reset pointer size if caam_ptr_size is 64 bits
-Date:   Mon, 25 Nov 2019 00:33:04 +0200
-Message-Id: <1574634784-10571-1-git-send-email-iuliana.prodan@nxp.com>
-X-Mailer: git-send-email 2.1.0
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727006AbfKXWw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 17:52:59 -0500
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17478 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfKXWw7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 17:52:59 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574635958; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=nkhEXIzF9+0eSVEWhcQyoV6RJb7cH7U8Gr2gkLFCjEeuJUg2huMqkHX0csaHlKyVgttBtlmDlKmWemY0aVu/zthNq2k2KSD+DscGEN05VjaeiZ11vK7T5saX6/nN7xxYjPFNNrByvVz3HcsxcsCB6lL+rDvDFh2aEdoqoFfBLCM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574635958; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=VBlCIOBlmhYT1nXzZeusUrp2ZE5E5KFbCpOclqk1oRI=; 
+        b=H9LIerKIxFLVX+a3CgdMu5BaAD8LkvS1IfTDtU6XBlJ4JhB/Ve3h8gklOB/hfWRDtUAJb9qdkBJOPSTTLVegEd5k5y/ffGTLwnlkWiUVFkDnLjLmFmxuOc7sgFNdTxiYP+cIQzzj6yyU8q8xgptetWnCe8uBeJ8shM+4enZtpTc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
+        with SMTPS id 1574635957113882.9905876044394; Sun, 24 Nov 2019 14:52:37 -0800 (PST)
+Date:   Sun, 24 Nov 2019 22:37:34 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v4 2/2] iio: (bma400) add driver for the BMA400
+Message-ID: <20191124223734.GA13261@nessie>
+References: <20191018031848.18538-1-dan@dlrobertson.com>
+ <20191018031848.18538-3-dan@dlrobertson.com>
+ <CAHp75VfMW0fvmO9jGTnQumJ9Sm-SgNL0ohjSR4qRQY365aeMBw@mail.gmail.com>
+ <20191019024351.GB8593@nessie>
+ <20191021162016.531e6a2e@archlinux>
+ <20191118002504.GA29469@nessie>
+ <20191123125135.4c7efcb0@archlinux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191123125135.4c7efcb0@archlinux>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 'a1cf573ee95 ("crypto: caam - select DMA address
-size at runtime")' CAAM pointer size (caam_ptr_size) is changed
-from sizeof(dma_addr_t) to runtime value computed from MCFGR register.
-At some point, the bit for Pointer Size should be reset to 0,
-but only for the case when the CAAM pointer size if 32 bits.
-Therefore, use caam_ptr_size instead of sizeof(dma_addr_t).
+On Sat, Nov 23, 2019 at 12:51:35PM +0000, Jonathan Cameron wrote:
+> If a function is your preferred route you could also just use it to compute
+> the values for the available table at startup?
 
-Fixes: a1cf573ee95 ("crypto: caam - select DMA address size at runtime")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
----
- drivers/crypto/caam/ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah that makes sense. I'll add that in the next patchset version.
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index d7c3c38..786eef6 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -674,7 +674,7 @@ static int caam_probe(struct platform_device *pdev)
- 		clrsetbits_32(&ctrl->mcr, MCFGR_AWCACHE_MASK | MCFGR_LONG_PTR,
- 			      MCFGR_AWCACHE_CACH | MCFGR_AWCACHE_BUFF |
- 			      MCFGR_WDENABLE | MCFGR_LARGE_BURST |
--			      (sizeof(dma_addr_t) == sizeof(u64) ?
-+			      (caam_ptr_sz == sizeof(u64) ?
- 			       MCFGR_LONG_PTR : 0));
- 
- 	handle_imx6_err005766(&ctrl->mcr);
--- 
-2.1.0
+> > The sampling ratio, frequency, etc code seems to be the most complicated part
+> > of the driver. Is it typically recommended to upstream a more minimal driver
+> > that might assume the defaults?
+> 
+> Often people upstream a first version that just uses defaults, then follow
+> up (if they care) with later series adding the more fiddly elements.
+> 
+> Sometimes those more fiddly bits never come as a particular author
+> never needed them.  That's absolutely fine.  It's a rare driver
+> that supports all the features on a non trivial device!
+
+Makes sense. I'll likely add some extra bits in a follow-up patchset, so I can
+learn a bit more.
+
+Cheers,
+
+ - Dan
 
