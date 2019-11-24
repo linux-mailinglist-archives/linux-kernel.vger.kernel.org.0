@@ -2,96 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47110108323
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 12:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D4C10833D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2019 12:44:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfKXLkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 06:40:52 -0500
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.120]:8163 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbfKXLkv (ORCPT
+        id S1726851AbfKXLoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 06:44:15 -0500
+Received: from mail-40136.protonmail.ch ([185.70.40.136]:13058 "EHLO
+        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfKXLoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 06:40:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574595649;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=11dnnmhb1p7k4nx66KvKMNZIk0qpx8gkJedgWR7HCNM=;
-        b=eS4K+WL/SFTR6d/xYkF5lhb8d/GMjFdszHfPtLZCrbM7/jqw3KfHWX5x/dUMGg9wWq
-        ay07uRUabJr1pEOVprAzDGDG+7FMCilrQIpRBpBmskfRdpwHgrkOiKuJyAJfGXHH2A1m
-        L0ydbAtCP3k47W2hzoLvVWNBkYxDvajBcFeZDT23un3A7ZKtSvgxCpQrAlvl4ZFUhNMi
-        H0i/jwE1xEBPFEfPSnlMQeJ0XgAkn6feCFsuVzFOFR0Kbo+abk3xNYNjUsnps2L2yHyb
-        twYWr9NNvERujdfa4APMa0jLMmNR2e2XOQgZDa5v2XmWjl4c/pcEihYHXhgpLSabKF8J
-        C00A==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH4HEaKeuIV"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
-        with ESMTPSA id L09db3vAOBeXwEa
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Sun, 24 Nov 2019 12:40:33 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Paul Boddie <paul@boddie.org.uk>
-Subject: [PATCH v3 8/8] MIPS: DTS: jz4780: add sgx gpu node
-Date:   Sun, 24 Nov 2019 12:40:28 +0100
-Message-Id: <c73e2cee4f818654f264b0b7b5458bfaa0ac6a7a.1574595627.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1574595627.git.hns@goldelico.com>
-References: <cover.1574595627.git.hns@goldelico.com>
+        Sun, 24 Nov 2019 06:44:14 -0500
+Date:   Sun, 24 Nov 2019 11:44:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1574595852;
+        bh=nhis89C/C6gQENCSXM8hG02Q56puEYVkV8eOjHa3DWk=;
+        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
+        b=vo3A4D2pvexb3ExEOVkXal7IUIejiKkJthrHWPTuMUm4lfHej9KsBEOFM0yEt0i/y
+         BExWArJFzjJgZD5cLEF0lmmMTlDjZWklAj4utkJIbcwuWeg07z4H0bY+Hnox9aJWUI
+         +sMJ9BeDZI981sAJvK4H/KeYyeL379yW2kX1m7O8=
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Subject: Re: was: Fair Pay, some more poiints.
+Message-ID: <SuQr8vhWTpASkrW3LlNy4lNZG5jfCtCwBZ6IoNSk2B54n2CnI1UsFN0hTm-1BX3ugx6ZoCZ_8VHyEgZIyk7_vT6gglzdcSU-Ofop8xOXJRU=@protonmail.com>
+Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-and add interrupt and clocks.
+So ultimately after what hippie philoophy became, summarized as "just distr=
+ibution for the 99%", which is a perfect democratic ideal, we see the old J=
+ah, also in this. So it seems an ultimate democratic god, and interesting f=
+rom that point of view. Which I will take further into account.
 
-Tested to build for CI20 board and load a (non-working) driver.
+Peace.
 
-Suggested-by: Paul Boddie <paul@boddie.org.uk>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index c54bd7cfec55..21ea5f4a405b 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -46,6 +46,17 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	gpu: gpu@13040000 {
-+		compatible = "ingenic,jz4780-sgx540-120", "img,sgx540-120", "img,sgx540", "img,sgx5";
-+		reg = <0x13040000 0x4000>;
-+
-+		clocks = <&cgu JZ4780_CLK_GPU>;
-+		clock-names = "gpu";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <63>;
-+	};
-+
- 	tcu: timer@10002000 {
- 		compatible = "ingenic,jz4780-tcu",
- 			     "ingenic,jz4770-tcu",
--- 
-2.23.0
+Sent with ProtonMail Secure Email.
+
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Wednesday 20. November 2019 kl. 23:47, Ywe C=C3=A6rlyn <ywecrn@protonmai=
+l.com> wrote:
+
+> We are ofcourse also with Just Distribution Of Means For The 99%.
+>
+> Peace!
+
 
