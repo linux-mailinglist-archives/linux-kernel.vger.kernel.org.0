@@ -2,195 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9411C108963
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 08:45:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9929F108968
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 08:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfKYHpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 02:45:07 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:10348 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfKYHpH (ORCPT
+        id S1727090AbfKYHqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 02:46:23 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41036 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfKYHqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 02:45:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1574667907; x=1606203907;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=veR5xcsh46CAFCSGHhbKyQjYagkOVqrWozEmXOW5TIk=;
-  b=jeWyFsPnq4tzwRis9xZqQDnynsV6OCTh1wQ6HKUS9grdhGjhtundgEF7
-   3jlp8JKMABbi7+etRCFr5YpfsYCNK3KVvrwsk8QwUxVYMpi37fG2BogVr
-   ZFTgDzN36P25/P5ddFAxAVl7279Dde4pUduO8HvD0t047UAToSg9MUSFR
-   Wfym1qak4bx98RqUVMPFDSuor7D3M2Q/2b3GmSZ6LCvpHUyHbJgD73TW0
-   cZrLc6MyiTMK2zEPEE9NxVNtorqtNUZxKHOA0CAWRugoAlrxcnrtyMVXQ
-   kY82pAvACytJ+ycOOG0/xv0ny9wJ+65wpZILsHGF2sGXaYwh6bnSS1Afl
-   g==;
-IronPort-SDR: REp4/Egt//ZzzfmY0NRy6+lvPfbbRUBHqApR4XE67Ffhjkv/XbG50KC52ky4cwrmpvBQlCrdwr
- 22IAuhUAswg062TEWqCLx0O7YTe7fGf3/+W003grf9biwfROtVmNg3410e5XllqViJQsXqkOoP
- gfJctgpQ10lRsCLWtJ5amrPM0hod5WDq5PXYi7JaixuZ0MrOX0a8n6F/RFntj5I2s3IYTd37VC
- 6ejLMQ0bpWq5443ZAoDcbIlj52CrfGkY00HBzacveSgwTOAQ2doQVb3Qh5gkspTv/QPvjeAi3E
- 2kk=
-X-IronPort-AV: E=Sophos;i="5.69,240,1571673600"; 
-   d="scan'208";a="125523470"
-Received: from mail-bn3nam01lp2059.outbound.protection.outlook.com (HELO NAM01-BN3-obe.outbound.protection.outlook.com) ([104.47.33.59])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Nov 2019 15:45:05 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OOQY7wVQU0q1q1kmnXvMMbKBdxfjyvDBtqC5hd4S58JcKh41RPWzEZ3POAtXaMZV7DNeE9KMCSFDAW1yoySheIsP83r5RkP/MWBtPlk8NRpZjBqRuh4F2FE097gLnqZMacs+fhcrUF4/AnLw7S59LWOhlNq5kAz/x0HOV1CTfOhtIvqAqNiYHKzf45PllqCvfHWQ0F2xZuKsoGj8gSOMh6MUZ3iW5e6mzbTM2VtHFrjtoPn0sJCijUOFalsYZAHU4WjA46KjwzRG7hk+ddkce135RVe0BwEiFJpLCifBY3q7p6p9QjR4hUgUlHLhNGUknK/vVW7SiY12WEL1y8gY/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=veR5xcsh46CAFCSGHhbKyQjYagkOVqrWozEmXOW5TIk=;
- b=oDj1Sio/Dvh7O2cjrFQ9bmiOKCHCVmajIJkqHmRCTVlRiHTu0MDY150ErEJEnO80ifBMPoYOFTtM3vFHlYG83fvyHnErZ2XQMcfa5R+YrxGa8Ts+9sdgIcKQ17alRBbK5lbMwJoCnK1QBhkRu4SCuW8tKSbyr/QzkKT3tgd3uWmmIjLuiFctYXb4gZNIoWAcWYmqQrz1We5PAymD8Oj3UoK+EMmunrcu2GgwPmO6R1Yd8Tkni0y5pYdcdSkAlOOm9ZpRJEzvigW0R6NHvlRD9eJYmodJWdzvykEJ+0pBDBxe7Lve01eHY6kepHWm5hbHdUQ8hKMb8s/cKQkexHEETg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 25 Nov 2019 02:46:23 -0500
+Received: by mail-qt1-f194.google.com with SMTP id 59so10635485qtg.8
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 23:46:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=veR5xcsh46CAFCSGHhbKyQjYagkOVqrWozEmXOW5TIk=;
- b=M0cx9G1mceMjmhX4MeE6MEBSycsbmeQ7KBqQ9/vRRytpL6jMZWY9B6uoWLSrowMIj0D296Xq/wwXg2lBNgeHAJW5io1bjIrAvwZaqDmn4KuNJBC1pRVFCC3COozHwepYdYJpQkxkyo6JA6kqt6Ya/ujONlNJeymrz9hkZofZ/tY=
-Received: from MN2PR04MB6991.namprd04.prod.outlook.com (10.186.144.209) by
- MN2PR04MB5662.namprd04.prod.outlook.com (20.179.20.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.22; Mon, 25 Nov 2019 07:45:03 +0000
-Received: from MN2PR04MB6991.namprd04.prod.outlook.com
- ([fe80::5852:6199:7952:c2ce]) by MN2PR04MB6991.namprd04.prod.outlook.com
- ([fe80::5852:6199:7952:c2ce%7]) with mapi id 15.20.2474.023; Mon, 25 Nov 2019
- 07:45:03 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     "cang@codeaurora.org" <cang@codeaurora.org>
-CC:     "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        "saravanak@google.com" <saravanak@google.com>,
-        "salyzyn@google.com" <salyzyn@google.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 5/5] scsi: ufs: Do not free irq in suspend
-Thread-Topic: [PATCH v4 5/5] scsi: ufs: Do not free irq in suspend
-Thread-Index: AQHVmee9U/BswetsqkSHgDuGmRZmjqeUO0QQgAdZC4CAAAAzMA==
-Date:   Mon, 25 Nov 2019 07:45:02 +0000
-Message-ID: <MN2PR04MB6991EB241D59FD4221CDA65FFC4A0@MN2PR04MB6991.namprd04.prod.outlook.com>
-References: <1573624824-671-1-git-send-email-cang@codeaurora.org>
- <1573624824-671-6-git-send-email-cang@codeaurora.org>
- <MN2PR04MB69913C6C9ED425F99302D870FC4F0@MN2PR04MB6991.namprd04.prod.outlook.com>
- <0101016ea18429ac-d170e670-bde4-4769-a6c1-6767fae70534-000000@us-west-2.amazonses.com>
-In-Reply-To: <0101016ea18429ac-d170e670-bde4-4769-a6c1-6767fae70534-000000@us-west-2.amazonses.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 41558e4d-4c16-4d1b-b925-08d7717b61bd
-x-ms-traffictypediagnostic: MN2PR04MB5662:
-x-microsoft-antispam-prvs: <MN2PR04MB56623E53C6DBD7EF68CF4ABBFC4A0@MN2PR04MB5662.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1284;
-x-forefront-prvs: 0232B30BBC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(39860400002)(366004)(396003)(376002)(199004)(189003)(5640700003)(54906003)(316002)(99286004)(478600001)(2501003)(11346002)(4001150100001)(14454004)(446003)(6916009)(14444005)(25786009)(256004)(186003)(2906002)(15650500001)(81156014)(81166006)(8936002)(53546011)(76176011)(66946007)(66476007)(9686003)(7696005)(66556008)(64756008)(66446008)(33656002)(7736002)(305945005)(55016002)(3846002)(6116002)(6506007)(6246003)(26005)(7416002)(2351001)(4326008)(52536014)(76116006)(71200400001)(102836004)(66066001)(229853002)(6436002)(74316002)(71190400001)(5660300002)(86362001)(8676002)(1730700003);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5662;H:MN2PR04MB6991.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: =?us-ascii?Q?oDRpCTDoWI905nMEClP0xqj3aWACBIKKMRvmthcc26spIF1e4oo+fxeULze9?=
- =?us-ascii?Q?Wm/GNYc09wSD0l56sVxloSLjER2WZ38XokypHd6ZgFAwpS2szXaZ/eM8rfcS?=
- =?us-ascii?Q?0KidD4trJqWcp1WCZXy7NQkTQ2qi88R33I+cp3AMzAvgMo9B8GaWcD5PlWl7?=
- =?us-ascii?Q?yPdyX7WueO9KAbBtqWO72VjJ+ExT/qPqe+BEIocTIETOKh7FUVBQxObBOWXN?=
- =?us-ascii?Q?Lkj+EppLqRyMd4Qi3MKxzYfw2GEk2PHIViXj9u9i1GSsd/N4gZ72HDeWYzj7?=
- =?us-ascii?Q?IoOpRebTnRpnPrZZNOQXpoFxaZ4vWrzbaCPi5HD6EqaHFfGP0BdN9H5YNU5i?=
- =?us-ascii?Q?opAVr7WjXcTeSL9y8hb+pkqNPaWyPgWWAXXhceHURTu9O3J9K8FUJkFul02K?=
- =?us-ascii?Q?Cn9RWpmPemx6QzERIz03k8Znqh1B3+GTT/vkujvmCoUrgTOg5wmw3/d0dyB6?=
- =?us-ascii?Q?aPhKmaCW3mVcAgB4rON1QgMoEjeC2usvS7mk5blMa5MkHygOtdSNlobT9wUI?=
- =?us-ascii?Q?4BNQPP8Eh4MAO5KVkMXAga7EGhum3tXMhlf1vC6SCH4ME5yM5RrlotUtxyky?=
- =?us-ascii?Q?x3ZRiKEdLNX3om99TI4CuVZgxxb+jhlPMFU9bEy4XX9ZZgyR+ugqYtfC7FSE?=
- =?us-ascii?Q?1S8irubDxbvLlqU/EJOjDeFvhRuPEBcdX+vUd8Q/pZnE63dtsa5dPS2RxuKy?=
- =?us-ascii?Q?zJ/nWjk/7lQzvcm7HkdjGLSlDZODQhhasYRcrl0t1r7GkfvOPAvbv5opJdC0?=
- =?us-ascii?Q?nHeQNM4H41f54V+zZNOb4SiQe1dBtxxAgrZNfoGYl2XNChTgypYgiYC9u0Mf?=
- =?us-ascii?Q?pa+MQNWBN0CJpBHKgxA+oDT3XAL3WELq1V+LFaQ2HxdGAjx6s1z4XTcvMs9a?=
- =?us-ascii?Q?MiqUH9GPASSGczcS3lRYjzr3PDx0Sv6kO3vHQzLoyrnrLiqMZnrs7PP9VAae?=
- =?us-ascii?Q?lirbfjbNPKeuk3MFH+AMpUkDLmOUoe7ik0mwNbdJXHSpaVlq5fqfDMyFOozW?=
- =?us-ascii?Q?L27eW3cejK9jf1fEDUceQpxoHLb1MAqmBoPPMWl1BnP6BwbiE1DnQr0xjM3c?=
- =?us-ascii?Q?pmbrxnE5LdDXcOlz+tISpKpSTEqM6YHVlZZmt2wOpdSfmNSlfcyjbZHBYl+l?=
- =?us-ascii?Q?qBYKk95tTg/HmwiqYtk3XjZ6YauwKtW8IXtALRAxew8o9OCvtsSWmiL53436?=
- =?us-ascii?Q?Fqi1O73MqmBDUpAjWUuRkk9WNPRjLXC8CU4etM/OX4eSibZ5TNxf00r9rf0S?=
- =?us-ascii?Q?9SShZwniPUFq0WzNEeewyYYNZ5cNIP45Nw5YnltbWDJdj2zWWhUR1V97nL7f?=
- =?us-ascii?Q?kjMEPmcIoGmmPLP67hHsefluvFzzARaw1zUbrUMOEXi0ERKGjBdqyiM27vh1?=
- =?us-ascii?Q?/ZrbEVtFcwFEhm46qhkW4ONzZPuUZy/qv+MNkire2XZNJ8dvGs/wYwn29E/C?=
- =?us-ascii?Q?pKHeLuuNbK7mrbu0LgzRi7xl3/aGdrKvKrp5rD8vv0ZPN8Fcb6mZVDbzTYYJ?=
- =?us-ascii?Q?EDH0ZjDV0bvrBj8O8Z8q1E3+fbfOdh2YePTuL84TptEfpKEQ7qgtpEAXuyQ7?=
- =?us-ascii?Q?gMds9BkuTusADG2MFPpFw75ORSQguMJI1XUM0m7E7m/JgtF7EIXYw3OsSgm+?=
- =?us-ascii?Q?9DVX99wOxe+9JIDnKRshjgw0yHgfTd9VCpnI80kQovhanWcSH1u68lUl5kYE?=
- =?us-ascii?Q?y2aDeL8FMoMdUG4StVfM3Cp0OB9rLFJG1/d29SMU/+8NQ+SKMoNeMm4exa64?=
- =?us-ascii?Q?fcnxmO9PYWjrJLLe+/mNxGhmir4sjeVFDIcLhc9M9Xjw28nxgl7rC/1MKhhV?=
- =?us-ascii?Q?hN3lIMjNYfROEpToiA9c4Cfu6OFLvBXSeUI0C5asVRq8OQVgN7o+kdgz9+5F?=
- =?us-ascii?Q?hw9A+NIGoerXOoYpgcaMiykoBGU28ARFiH8sq/mvTfaxhmbx03/khd5agRHE?=
- =?us-ascii?Q?x08ZFbeQMtqFSAdc+9E7dg=3D=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=oLi2YA+YnQ9sXMgSmEYykhD9m/ZwLSI80BLJ2vGRm2w=;
+        b=W9cNNOZnyhfOf5geJcaqqASPsIOop6RsCo732DvWhS1vwteWdTo67szKXmegCy+a20
+         4uJ6t5hAHcOqLZ3DSLzz3bYrcHvX+xSqgg6GSTYEQOgkHGHeWar0HWAn5Kyx8vyJRDrx
+         CGVHQFdowVRxtnfqW9GiPFvJ1Aak0BEgbluyYqhe4lw32yynZh4MLPD7seLXfUsS7yx3
+         6oqXe4oNqopG0mXYpdsykqXiNP5ea7TciHhCXFA5oboC4XeUtfqe//i5YnoTLm2RCQyz
+         glEiijkYjgx7LYY9Wn5J1vHR9PbGXQTT479RlGNLeVcZtVqzVw+iEgv9+3kvL0vooSc/
+         MbzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=oLi2YA+YnQ9sXMgSmEYykhD9m/ZwLSI80BLJ2vGRm2w=;
+        b=kgfLW+pBIxV0zscOV+eqgf4aFrBweS2oPL2gkUsZNRbcjShnSP92RK3AKmfPvq7M6+
+         XmKsO8XeCgvqzbH/zEQlXBqcVvlbr5IPweR+vtPYppKH4jese6+KhqtkP9SibLQxt8UY
+         UtzdqludUkdLmMqPFN54vHj6/7l5BPyh1UUDn10oUZ1FJLxG+AbkheCVBHmgUc+Y4vxZ
+         9jGMs0zBGH6JmTD77UGjZa++4eoAoX9v9/7Iw7LGa4pu+BBOc8Z79kzqfV8ryIb6jLLL
+         PX3IazFcxO2dbW3LdKopZkbQyTtSD81zlRRi+RplV09A0F9Ce1XRDCEYjMVNMVh/Ogvu
+         AImA==
+X-Gm-Message-State: APjAAAVLH1bqm54NjvixEFHdPw1Hph7t9VuqPnFbn8IUPPnb4F4RZQPS
+        1d6MkWmX4bYFyuxsIaNc+EwV11XEy3Me0S01Br0=
+X-Google-Smtp-Source: APXvYqxNdsC9aXACQBu13uAoBqlaIKmbniquSW425KH6CTubFp+iIFuK+wN9rbgifybdLTy+zXg3vWiDy7oNfGEqttU=
+X-Received: by 2002:aed:2ae7:: with SMTP id t94mr15194355qtd.130.1574667981717;
+ Sun, 24 Nov 2019 23:46:21 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41558e4d-4c16-4d1b-b925-08d7717b61bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2019 07:45:03.0058
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ebvx7kgw33qQMeea/JuMaqSQQFGoOlNrimVcHiLsLyEF6G5TsbELkDlY8knzl4QVe13VXtfDb0MJ9/wEc1kPXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5662
+Reply-To: mrsmercyfrank0@gmail.com
+Received: by 2002:ac8:6b87:0:0:0:0:0 with HTTP; Sun, 24 Nov 2019 23:46:21
+ -0800 (PST)
+From:   "Mrs. Mercy Frank" <mrsmercyfrank1@gmail.com>
+Date:   Sun, 24 Nov 2019 23:46:21 -0800
+X-Google-Sender-Auth: GrK11ZjT1FdThEAfmMHdo4ij9bY
+Message-ID: <CA+as4LXM7HWOpqdb5f75qojSkHZTTbdZV4ezwHYXn3Rw60i1YQ@mail.gmail.com>
+Subject: Hello Dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
->=20
-> On 2019-11-20 23:36, Avri Altman wrote:
-> >>
-> >> If PM QoS is enabled and we set request type to PM_QOS_REQ_AFFINE_IRQ
-> >> then freeing up the irq makes the free_irq() print out warning with
-> >> call stack.
-> >> We don't really need to free up irq during suspend, disabling it
-> >> during suspend and reenabling it during resume should be good enough.
-> >>
-> >> Signed-off-by: Can Guo <cang@codeaurora.org>
-> > Your approach seems reasonable,
-> > However I failed to locate in the kernel PM_QOS_REQ_AFFINE_IRQ, Just
-> > in codeaurora.
-> >
-> > Is the WARN_ON in free_irq still applies?
-> >
-> > Thanks,
-> > Avri
->=20
-> Hi Avri,
->=20
-> Thanks for pointing. It seems PM_QOS_REQ_AFFINE_IRQ is not present on
-> upstream yet. But this change is still applicable.
-> How about changing the commit message to below?
->=20
-> "Since ufshcd irq resource is allocated with the device resource manageme=
-nt
-> aware IRQ request implementation, we don't really need to free up irq dur=
-ing
-> suspend, disabling it during suspend and reenabling it during resume shou=
-ld be
-> good enough."
+Hello Dear,
 
-Looks good to me.
-Thanks,
-Avri
+I am Mrs. Mercy Frank, executive office holder, General operation and
+regional accountant of Standard Bank of United Kingdom, i believe it's
+God's will for me to come across you today, also I hope that you will
+not expose or betray this trust and confident that I am about to
+impose on you. I have been in search of someone with the same last
+name of yours, so when I saw your name, I was pushed to contact you
+for our mutual benefit.
 
->=20
-> Thanks,
-> Can Guo
+One of our customers from your country had a fixed deposit account
+with our bank in 2004 that valued the Sum of =C2=A36,300,000.00 (Six
+million, Three hundred thousand British pounds). The maturity date for
+this deposit was on 2007, unfortunately he was among the death victims
+of the May 26th, 2006 earthquake disaster in Jawa, Indonesia that
+killed about 5,782 people. He was on a business trip in Indonesia
+during this disaster that end up his life and entire family. And he
+did not state any next of kin Heir-apparent when the account was
+opened, although as his account officer, he told me that he will later
+forward one of his relative=E2=80=99s name as his next of kin Heir to the
+account which he did not fulfilled before he met his death.
+
+And since then, I have been looking for someone from your country with
+similar name. I was happy when i saw your name and I am now seeking
+for your co-operation to present you as the next of kin Heir to this
+account hence you have similar last name with the deceased. Do not be
+afraid, there is no risk involved and every legitimate arrangement to
+perfect this deal has been put in place. And for your involvement in
+this deal, you will receive 50% of the total amount after the money is
+transfer to you. Also for confidentiality in this transaction i will
+like us to keep via email for now. Should you consider this offer
+interesting, kindly send me the below information of yours completely.
+
+Your complete name:
+Your full contact address:
+Your direct mobile phone number:
+Your major occupation:
+Your Age:
+
+Thanks in anticipation of your urgent response.
+
+Best Regards
+Mrs. Mercy Frank
