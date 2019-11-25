@@ -2,162 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D20108693
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 03:48:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC30108682
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 03:31:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfKYCsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 21:48:11 -0500
-Received: from mga17.intel.com ([192.55.52.151]:34958 "EHLO mga17.intel.com"
+        id S1726957AbfKYCb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 21:31:29 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:46427 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726895AbfKYCsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 21:48:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2019 18:48:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,240,1571727600"; 
-   d="scan'208";a="205972989"
-Received: from hu.sh.intel.com ([10.239.158.51])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Nov 2019 18:48:08 -0800
-From:   "Chen, Hu" <hu1.chen@intel.com>
-Cc:     avagin@openvz.org, hu1.chen@intel.com, lkp@intel.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
-Date:   Mon, 25 Nov 2019 10:26:37 +0800
-Message-Id: <20191125022641.4169-1-hu1.chen@intel.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <201911221116.HjFCwKbG%lkp@intel.com>
-References: <201911221116.HjFCwKbG%lkp@intel.com>
+        id S1726880AbfKYCb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 21:31:29 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Lrd83MmGz9s3Z;
+        Mon, 25 Nov 2019 13:31:23 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574649085;
+        bh=BzRBNWLSBnO1sMeoG28bNh55SJgbkWN8n682XaAPfPI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=aSf2LBm7JDPh292XPXIwNfbOP34d0CyRIF7/eVcBRyHdhVjPPLGT31WOOBtt7N+ji
+         u3RFPLTpPh/90eijAjgLJxpWGjQ0xQLLQA+YGmxP7YgswRYmSH6MgWt+cO2J5Vaoto
+         5/gyklW2f7bP2NKpLX9lgd2xIa1rJevUzQY+Pu6oyDc101URbPCWnWzkUt4VK9nIpF
+         VZSpTvhmVoTK7YeQMntGsKYBTnJcPezsDwJg7R+jHLA6lD3ofj4Zroj3EVsFs+VLs8
+         RUDWWZyRP9beYKpCP67l88zbpHqFf0FqjPLCOKQW9+sTRnCGWbBUns0LEbkK56BzGU
+         9tpiev54hUkgg==
+Date:   Mon, 25 Nov 2019 13:31:20 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: linux-next: manual merge of the ftrace tree with the arm64 tree
+Message-ID: <20191125133120.553097b7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; boundary="Sig_/DZ9/N/+VBIja8LnYfxmT.oj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For Android application process, we found that the mnt_id read from
-/proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
-to dump such process and it complains
+--Sig_/DZ9/N/+VBIja8LnYfxmT.oj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-"(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
-fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
+Hi all,
 
-This is due to how Android application is launched. In Android, there is
-a special process called Zygote which handles the forking of each new
-application process:
-0. Zygote opens and maps some files, for example
-   "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
-   mount namespace, say "old mnt ns".
-1. Zygote waits for the request to fork a new application.
-2. Zygote gets a request, it forks and run the new process in a new
-   mount namespace, say "new mnt ns".
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-The file opened in step 0 ties to the mount point in "old mnt ns". The
-mnt_id of that mount is listed in /proc/pid/fdinfo. However,
-/proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
+  include/asm-generic/vmlinux.lds.h
 
-Althgouh this issue is exposed in Android, we believe it's generic.
-Prcoess may open files and enter new mnt ns.
+between commit:
 
-To address it, this patch searches the mirror mount in current ns with
-MAJOR and MINOR and shows the mirror's mnt_id.
+  a1326b17ac03 ("module/ftrace: handle patchable-function-entry")
 
-v2: fix warning reported by lkp
+from the arm64 tree and commits:
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Chen, Hu <hu1.chen@intel.com>
----
- fs/mount.h     |  2 ++
- fs/namespace.c | 30 ++++++++++++++++++++++++++++++
- fs/proc/fd.c   | 12 ++++++++++--
- 3 files changed, 42 insertions(+), 2 deletions(-)
+  b83b43ffc6e4 ("fgraph: Fix function type mismatches of ftrace_graph_retur=
+n using ftrace_stub")
+  46f9469247c6 ("ftrace: Rename ftrace_graph_stub to ftrace_stub_graph")
 
-diff --git a/fs/mount.h b/fs/mount.h
-index 711a4093e475..6bbfc2b3b8ba 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -153,3 +153,5 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
- {
- 	return ns->seq == 0;
- }
-+
-+extern struct mount *lookup_mirror_mnt(const struct mount *mnt);
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 2adfe7b166a3..131b36517472 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -683,6 +683,36 @@ bool __is_local_mountpoint(struct dentry *dentry)
- 	return is_covered;
- }
- 
-+/*
-+ * lookup_mirror_mnt - Return @mnt's mirror mount in the current/local mount
-+ * namespace. If mirror isn't found, just return NULL.
-+ */
-+struct mount *lookup_mirror_mnt(const struct mount *mnt)
-+{
-+	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
-+	struct mount *mnt_local;
-+	bool is_matched = false;
-+
-+	/* mnt belongs to current namesapce */
-+	if (mnt->mnt_ns == ns)
-+		return (struct mount *) mnt;
-+
-+	down_read(&namespace_sem);
-+	list_for_each_entry(mnt_local, &ns->list, mnt_list) {
-+		struct super_block *sb = mnt->mnt.mnt_sb;
-+		struct super_block *sb_local = mnt_local->mnt.mnt_sb;
-+
-+		if (MAJOR(sb->s_dev) == MAJOR(sb_local->s_dev) &&
-+		    MINOR(sb->s_dev) == MINOR(sb_local->s_dev)) {
-+			is_matched = true;
-+			break;
-+		}
-+	}
-+	up_read(&namespace_sem);
-+
-+	return is_matched ? mnt_local : NULL;
-+}
-+
- static struct mountpoint *lookup_mountpoint(struct dentry *dentry)
- {
- 	struct hlist_head *chain = mp_hash(dentry);
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 81882a13212d..cbf2571b0620 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -23,6 +23,7 @@ static int seq_show(struct seq_file *m, void *v)
- 	int f_flags = 0, ret = -ENOENT;
- 	struct file *file = NULL;
- 	struct task_struct *task;
-+	struct mount *mount = NULL;
- 
- 	task = get_proc_task(m->private);
- 	if (!task)
-@@ -53,9 +54,16 @@ static int seq_show(struct seq_file *m, void *v)
- 	if (ret)
- 		return ret;
- 
-+	/* After unshare -m, real_mount(file->f_path.mnt) is not meaningful in
-+	 * current mount namesapce. We want to know the mnt_id in current mount
-+	 * namespace
-+	 */
-+	mount = lookup_mirror_mnt(real_mount(file->f_path.mnt));
-+	if (!mount)
-+		mount = real_mount(file->f_path.mnt);
-+
- 	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
--		   (long long)file->f_pos, f_flags,
--		   real_mount(file->f_path.mnt)->mnt_id);
-+		   (long long)file->f_pos, f_flags, mount->mnt_id);
- 
- 	show_fd_locks(m, file, files);
- 	if (seq_has_overflowed(m))
--- 
-2.22.0
+from the ftrace tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/asm-generic/vmlinux.lds.h
+index 63cedc3c0c77,996db32c491b..000000000000
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@@ -136,19 -110,30 +136,28 @@@
+  #endif
+ =20
+  #ifdef CONFIG_FTRACE_MCOUNT_RECORD
+ -#ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
+  /*
+ + * The ftrace call sites are logged to a section whose name depends on the
+ + * compiler option used. A given kernel image will only use one, AKA
+ + * FTRACE_CALLSITE_SECTION. We capture all of them here to avoid header
+ + * dependencies for FTRACE_CALLSITE_SECTION's definition.
+++ *
++  * Need to also make ftrace_stub_graph point to ftrace_stub
++  * so that the same stub location may have different protocols
++  * and not mess up with C verifiers.
+   */
+ -#define MCOUNT_REC()	. =3D ALIGN(8);				\
+ -			__start_mcount_loc =3D .;			\
+ -			KEEP(*(__patchable_function_entries))	\
+ -			__stop_mcount_loc =3D .;			\
+ -			ftrace_stub_graph =3D ftrace_stub;
+ -#else
+  #define MCOUNT_REC()	. =3D ALIGN(8);				\
+  			__start_mcount_loc =3D .;			\
+  			KEEP(*(__mcount_loc))			\
+ +			KEEP(*(__patchable_function_entries))	\
+- 			__stop_mcount_loc =3D .;
++ 			__stop_mcount_loc =3D .;			\
++ 			ftrace_stub_graph =3D ftrace_stub;
+ -#endif
+  #else
+- #define MCOUNT_REC()
++ # ifdef CONFIG_FUNCTION_TRACER
++ #  define MCOUNT_REC()	ftrace_stub_graph =3D ftrace_stub;
++ # else
++ #  define MCOUNT_REC()
++ # endif
+  #endif
+ =20
+  #ifdef CONFIG_TRACE_BRANCH_PROFILING
+
+--Sig_/DZ9/N/+VBIja8LnYfxmT.oj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3bPPgACgkQAVBC80lX
+0GzvoAf9FF7bDyxJxWnKnIRuywcv/X+fqBtC/9M0+C06gSBaF5Px/FfU6CvgGiQ6
+ROyXX/8gpqmcDzs7Qf3MRTKOuD9sh1k9IRuYYfOs48yfk1j0Ie9r52emO+J/ORKw
+xrc80hXneNGZvFSk8qvEFGHvqWeTntGTrLwvxSeetBKFA6N499pvlN68J4cQKzV3
+yyxi4uyHi+P1d4sOb7avF1O+URREKuy8Pviz46tU5pammDsivdutoF0wpN/PsAPT
+Vy+9zzF5dYVDYUIqhOH5Bv7J/ugybJ9BObz03MyJV51IByTHS/OGZjupgkufgWzy
+wOEC8h63hOXmfE6Ijw8vF2KQujVXzQ==
+=KRiG
+-----END PGP SIGNATURE-----
+
+--Sig_/DZ9/N/+VBIja8LnYfxmT.oj--
