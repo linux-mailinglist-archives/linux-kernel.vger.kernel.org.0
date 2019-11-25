@@ -2,162 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49B2108EA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 14:17:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14085108EAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 14:20:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfKYNRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 08:17:36 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55284 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfKYNRf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 08:17:35 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b11so5963886wmj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 05:17:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=UDLB+hS1jJmJ3wYcAAWpOrQoHI8SabS9Sb+YslLdlM4=;
-        b=Hw60Gmt28Vrso94r8urKA0qlQk4b1sL2MNU2G7Yeb6jrPGefxXKQjcs6a828r/7QEv
-         sPNkzf0Zxw34u2IcM/CNS0+cyqXFAiBBcUiFKtosv9cAJPX/2EHlxsGeGP/PnpH9CxyE
-         GTf6HiyvpTcoj4vt4CcSwXcL6w+XKTUpAJQGXsF95yiYY2UvxnJt6d1E5v94Xp7bVY0f
-         YyCfV/l7M556zL6lRoriS4ApAbqG+HPUr0MY/35K0aaLntx8CIWKI2PwpsgMOd/k5xq0
-         +B+xfDCnstIPME2Tl6sxCKNkyNtQ22/LjP2JQf+C4vP0DrmyTX7myNm6AgFMO9r/dv/m
-         0ulg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=UDLB+hS1jJmJ3wYcAAWpOrQoHI8SabS9Sb+YslLdlM4=;
-        b=un4nqmZ5/efvXg4gp23bTlHfMThtTd/kT7GSLcJnncGNqddrLAJ8vtApkwQaBDWQhX
-         t8SuAx9KKFS1+GDiemhRGgAqBBbHxnnppAiXsbIDvbI2iuHA+GfQoO/gka9vBZ2tncAB
-         favfPPDAC3z/guwxn+8QImJDYs+d0Xj4n7R/JdsObYlT8V+emQq37J3lc44lj6EYM1vx
-         f61KiBsshTFkHReCWu4e/csbAIRsBtBTm017I892Vo0CfVnBM4ESXfPGSfd6Df7uYH51
-         QndwJ/zMQ7cSfj0j0vWtckvdMsWgu4lWgTLwYfje6+vUaqco27iNPMi3gwBjYVSWuBUo
-         93Iw==
-X-Gm-Message-State: APjAAAWUM+B+jQu20CWMnWmafyR/fJBryk/1IMF+e5iXJaSfeX/4y7qn
-        URAHo6USBzEla7qPD46MHB0=
-X-Google-Smtp-Source: APXvYqy+hiP6QfQv9auMidhNFgImL/qFKT3WwfodC0mJ5w6ZxLJtN5czS4V99glRqCempRArWIJU+Q==
-X-Received: by 2002:a7b:c307:: with SMTP id k7mr26808528wmj.134.1574687852244;
-        Mon, 25 Nov 2019 05:17:32 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id u13sm7970002wmm.45.2019.11.25.05.17.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 05:17:31 -0800 (PST)
-Date:   Mon, 25 Nov 2019 14:17:29 +0100
-From:   Ingo Molnar <mingo@kernel.org>
+        id S1727756AbfKYNUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 08:20:54 -0500
+Received: from foss.arm.com ([217.140.110.172]:50378 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725823AbfKYNUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 08:20:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 166C131B;
+        Mon, 25 Nov 2019 05:20:52 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 869663F68E;
+        Mon, 25 Nov 2019 05:20:51 -0800 (PST)
+Date:   Mon, 25 Nov 2019 13:20:49 +0000
+From:   Mark Brown <broonie@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/apic changes for v5.5
-Message-ID: <20191125131729.GA79722@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+Subject: [GIT PULL] regulator updates for v5.5
+Message-ID: <20191125132049.GC4535@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kVXhAStRUZ/+rrGn"
 Content-Disposition: inline
+X-Cookie: -- Owen Meredith
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
 
-Please pull the latest x86-apic-for-linus git tree from:
+--kVXhAStRUZ/+rrGn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-apic-for-linus
+The following changes since commit af42d3466bdc8f39806b26f593604fdc54140bcb:
 
-   # HEAD: 2579a4eefc04d1c23eef8f3f0db3309f955e5792 x86/ioapic: Rename misnamed functions
+  Linux 5.4-rc8 (2019-11-17 14:47:30 -0800)
 
-Two changes: a cleanup and a fix for an (old) race for oneshot threaded 
-IRQ handlers.
+are available in the Git repository at:
 
- Thanks,
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tag=
+s/regulator-v5.5
 
-	Ingo
+for you to fetch changes up to a21da94f617bce0771144ea8093b6987184b38d0:
 
------------------->
-Thomas Gleixner (2):
-      x86/ioapic: Prevent inconsistent state when moving an interrupt
-      x86/ioapic: Rename misnamed functions
+  Merge branch 'regulator-5.5' into regulator-next (2019-11-22 19:56:20 +00=
+00)
 
+----------------------------------------------------------------
+regulator: Updates for v5.5
 
- arch/x86/kernel/apic/io_apic.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+Another fairly quiet release for the regulator API, some work all around
+including some core work but mostly in specialist or driver specific
+code:
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index d6af97fd170a..913c88617848 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -1725,19 +1725,20 @@ static bool io_apic_level_ack_pending(struct mp_chip_data *data)
- 	return false;
- }
- 
--static inline bool ioapic_irqd_mask(struct irq_data *data)
-+static inline bool ioapic_prepare_move(struct irq_data *data)
- {
--	/* If we are moving the irq we need to mask it */
-+	/* If we are moving the IRQ we need to mask it */
- 	if (unlikely(irqd_is_setaffinity_pending(data))) {
--		mask_ioapic_irq(data);
-+		if (!irqd_irq_masked(data))
-+			mask_ioapic_irq(data);
- 		return true;
- 	}
- 	return false;
- }
- 
--static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
-+static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
--	if (unlikely(masked)) {
-+	if (unlikely(moveit)) {
- 		/* Only migrate the irq if the ack has been received.
- 		 *
- 		 * On rare occasions the broadcast level triggered ack gets
-@@ -1766,15 +1767,17 @@ static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
- 		 */
- 		if (!io_apic_level_ack_pending(data->chip_data))
- 			irq_move_masked_irq(data);
--		unmask_ioapic_irq(data);
-+		/* If the IRQ is masked in the core, leave it: */
-+		if (!irqd_irq_masked(data))
-+			unmask_ioapic_irq(data);
- 	}
- }
- #else
--static inline bool ioapic_irqd_mask(struct irq_data *data)
-+static inline bool ioapic_prepare_move(struct irq_data *data)
- {
- 	return false;
- }
--static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
-+static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
- }
- #endif
-@@ -1783,11 +1786,11 @@ static void ioapic_ack_level(struct irq_data *irq_data)
- {
- 	struct irq_cfg *cfg = irqd_cfg(irq_data);
- 	unsigned long v;
--	bool masked;
-+	bool moveit;
- 	int i;
- 
- 	irq_complete_move(cfg);
--	masked = ioapic_irqd_mask(irq_data);
-+	moveit = ioapic_prepare_move(irq_data);
- 
- 	/*
- 	 * It appears there is an erratum which affects at least version 0x11
-@@ -1842,7 +1845,7 @@ static void ioapic_ack_level(struct irq_data *irq_data)
- 		eoi_ioapic_pin(cfg->vector, irq_data->chip_data);
- 	}
- 
--	ioapic_irqd_unmask(irq_data, masked);
-+	ioapic_finish_move(irq_data, moveit);
- }
- 
- static void ioapic_ir_ack_level(struct irq_data *irq_data)
+ - Fix for powering off boot-on regulators.
+ - Enhancements to the coupled regulator support introduced in the last
+   release.
+ - Conversion of a bunch of drivers to the fwnode API for GPIOs.
+ - Mode support for DA9062.
+ - New device support for Qualcomm PM1650, PM8004 and PM895 and Silergy
+   SR83X.
+ - Removal of obsolete AB8505 support.
+
+----------------------------------------------------------------
+Andreas Kemnade (1):
+      regulator: rn5t618: fix rc5t619 ldo10 enable
+
+Angelo G. Del Regno (3):
+      regulator: qcom_spmi: Add PM8950 SPMI regulator
+      regulator: qcom_smd: Add PM8950 regulators
+      regulator: qcom_spmi: Add support for PM8004 regulators
+
+Axel Lin (9):
+      regulator: pbias: Use of_device_get_match_data
+      regulator: da9063: Simplify da9063_buck_set_mode for BUCK_MODE_MANUAL=
+ case
+      regulator: da9062: Simplify the code iterating all regulators
+      regulator: pbias: Get rid of struct pbias_regulator_data
+      regulator: rk808: Constify rk817 regulator_ops
+      regulator: rk808: Fix warning message in rk817_set_ramp_delay
+      regulator: rk808: Remove rk817_set_suspend_voltage function
+      regulator: da9062: Simplify da9062_buck_set_mode for BUCK_MODE_MANUAL=
+ case
+      regulator: da9062: Return REGULATOR_MODE_INVALID for invalid mode
+
+Christoph Fritz (3):
+      regulator: da9062: refactor buck modes into header
+      regulator: da9062: add of_map_mode support for bucks
+      dt-bindings: mfd: da9062: describe buck modes
+
+Dmitry Osipenko (2):
+      regulator: core: Release coupled_rdevs on regulator_init_coupling() e=
+rror
+      regulator: core: Allow generic coupling only for always-on regulators
+
+Dmitry Torokhov (9):
+      gpiolib: introduce devm_fwnode_gpiod_get_index()
+      gpiolib: introduce fwnode_gpiod_get_index()
+      regulator: s5m8767: switch to using devm_fwnode_gpiod_get
+      regulator: slg51000: switch to using fwnode_gpiod_get_index
+      regulator: tps65090: switch to using devm_fwnode_gpiod_get
+      regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+      regulator: da9211: switch to using devm_fwnode_gpiod_get
+      regulator: tps65132: switch to using devm_fwnode_gpiod_get()
+      regulator: max77686: switch to using fwnode_gpiod_get_index
+
+Douglas Anderson (1):
+      regulator: Document "regulator-boot-on" binding more thoroughly
+
+Guido G=FCnther (1):
+      regulator: bd718x7: Add MODULE_ALIAS()
+
+Kiran Gunda (2):
+      regulator: dt-bindings: Add PM6150x compatibles
+      regulator: qcom-rpmh: add PM6150/PM6150L regulator support
+
+Krzysztof Kozlowski (1):
+      regulator: Fix Kconfig indentation
+
+Mark Brown (4):
+      Merge branch 'ib-fwnode-gpiod-get-index' of git://git.kernel.org/.../=
+linusw/linux-gpio into regulator-5.5
+      Merge branch 'regulator-5.4' into regulator-5.5
+      Merge branch 'regulator-5.4' into regulator-linus
+      Merge branch 'regulator-5.5' into regulator-next
+
+Matti Vaittinen (1):
+      regulator: bd70528: Add MODULE_ALIAS to allow module auto loading
+
+Pascal Paillet (2):
+      regulator: core: Let boot-on regulators be powered off
+      regulator: stpmic1: Set a default ramp delay value
+
+Peng Fan (2):
+      dt-bindings: regulator: fixed: add off-on-delay-us property
+      regulator: fixed: add off-on-delay
+
+Pragnesh Patel (1):
+      fixed-regulator: dt-bindings: Fixed building error for compatible pro=
+perty
+
+Saravana Kannan (1):
+      regulator: core: Don't try to remove device links if add failed
+
+Stephan Gerhold (2):
+      regulator: ab8500: Remove AB8505 USB regulator
+      regulator: ab8500: Remove SYSCLKREQ from enum ab8505_regulator_id
+
+Sven Van Asbroeck (2):
+      tps6105x: add optional devicetree support
+      regulator: tps6105x: add optional devicetree support
+
+Vasily Khoruzhick (1):
+      regulator: fan53555: add chip id for Silergy SYR83X
+
+Yizhuo (1):
+      regulator: max8907: Fix the usage of uninitialized variable in max890=
+7_regulator_probe()
+
+YueHaibing (3):
+      regulator: pcap-regulator: remove unused variable 'SW3_table'
+      regulator: stm32-vrefbuf: use devm_platform_ioremap_resource() to sim=
+plify code
+      regulator: uniphier: use devm_platform_ioremap_resource() to simplify=
+ code
+
+zhengbin (1):
+      regulator: vexpress: Use PTR_ERR_OR_ZERO() to simplify code
+
+ Documentation/devicetree/bindings/mfd/da9062.txt   |  4 +
+ .../bindings/regulator/fixed-regulator.yaml        |  4 +
+ .../bindings/regulator/qcom,rpmh-regulator.txt     |  4 +
+ .../bindings/regulator/qcom,smd-rpm-regulator.txt  | 21 +++++
+ .../bindings/regulator/qcom,spmi-regulator.txt     | 25 ++++++
+ .../devicetree/bindings/regulator/regulator.yaml   |  7 +-
+ drivers/gpio/gpiolib-devres.c                      | 33 +++-----
+ drivers/gpio/gpiolib.c                             | 48 +++++++++++
+ drivers/mfd/tps6105x.c                             | 34 +++++++-
+ drivers/regulator/Kconfig                          |  8 +-
+ drivers/regulator/ab8500.c                         | 17 ----
+ drivers/regulator/bd70528-regulator.c              |  1 +
+ drivers/regulator/bd718x7-regulator.c              |  1 +
+ drivers/regulator/core.c                           | 19 ++++-
+ drivers/regulator/da9062-regulator.c               | 63 ++++++++-------
+ drivers/regulator/da9063-regulator.c               |  9 +--
+ drivers/regulator/da9211-regulator.c               | 12 +--
+ drivers/regulator/fan53555.c                       |  2 +
+ drivers/regulator/fixed.c                          |  2 +
+ drivers/regulator/internal.h                       |  1 +
+ drivers/regulator/max77686-regulator.c             |  5 +-
+ drivers/regulator/max8907-regulator.c              | 15 +++-
+ drivers/regulator/pbias-regulator.c                | 75 +++++++-----------
+ drivers/regulator/pcap-regulator.c                 |  4 -
+ drivers/regulator/qcom-rpmh-regulator.c            | 62 ++++++++++++++-
+ drivers/regulator/qcom_smd-regulator.c             | 92 ++++++++++++++++++=
+++++
+ drivers/regulator/qcom_spmi-regulator.c            | 41 ++++++++++
+ drivers/regulator/rk808-regulator.c                | 29 ++-----
+ drivers/regulator/rn5t618-regulator.c              |  2 +-
+ drivers/regulator/s2mps11.c                        |  7 +-
+ drivers/regulator/s5m8767.c                        |  7 +-
+ drivers/regulator/slg51000-regulator.c             | 13 ++-
+ drivers/regulator/stm32-vrefbuf.c                  |  4 +-
+ drivers/regulator/stpmic1_regulator.c              |  6 ++
+ drivers/regulator/tps6105x-regulator.c             |  2 +
+ drivers/regulator/tps65090-regulator.c             | 26 +++---
+ drivers/regulator/tps65132-regulator.c             | 17 ++--
+ drivers/regulator/uniphier-regulator.c             |  4 +-
+ drivers/regulator/vexpress-regulator.c             |  5 +-
+ .../dt-bindings/regulator/dlg,da9063-regulator.h   | 16 ++++
+ include/linux/gpio/consumer.h                      | 54 ++++++++++---
+ include/linux/regulator/ab8500.h                   |  3 -
+ include/linux/regulator/fixed.h                    |  1 +
+ 43 files changed, 576 insertions(+), 229 deletions(-)
+ create mode 100644 include/dt-bindings/regulator/dlg,da9063-regulator.h
+
+--kVXhAStRUZ/+rrGn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3b1TEACgkQJNaLcl1U
+h9CYBQf8DLE6c1Hmi+lDtfE9UwkuRRIBJtjShuQTU5mNDwb5vK8TZufkHfOYBrss
+xSVmSW0PChW+QDGqR+e7w37jNHzdHHhEzTjGN9IMSnlEE2pD2L7K1YlywdzGdJ33
++fGMxpBfSsWuAr62d+aPUs1cIHlsjoqy6lU42T9c3i9fzGrMVaCYZWuuY14EmuFB
+l165rPShUHhGlVxol5HlPQbKH7NKmvdzj9qJHgKbn4wdGF34gUcUNnn4try+jEK6
+Bf7SE9VmmbhlcASjW1m4g0qOJ51J14bdlJPNTGOuHh/7MrZnD3eK/up77ylIOavB
+iPZH8FJSRtaJJoWqY+mJKrJAztyNuA==
+=AKzk
+-----END PGP SIGNATURE-----
+
+--kVXhAStRUZ/+rrGn--
